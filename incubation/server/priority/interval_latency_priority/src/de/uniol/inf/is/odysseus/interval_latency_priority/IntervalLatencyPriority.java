@@ -15,74 +15,181 @@
  */
 package de.uniol.inf.is.odysseus.interval_latency_priority;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
 
-public class IntervalLatencyPriority extends TimeInterval implements ILatency,
-		IPriority, Serializable {
+final public class IntervalLatencyPriority extends AbstractMetaAttribute
+		implements ITimeInterval, ILatency, IPriority {
+
+	private static final long serialVersionUID = -4924797905689073685L;
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] {
 			ITimeInterval.class, ILatency.class, IPriority.class };
 
-	private static final long serialVersionUID = -4924797905689073685L;
-	
-	static final SDFSchema schema;
-	static{
-		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Latency.schema, Priority.schema);
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return classes;
+	}
+
+	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+			classes.length);
+	static {
+		schema.addAll(TimeInterval.schema);
+		schema.addAll(Latency.schema);
+		schema.addAll(Priority.schema);
 	}
 
 	@Override
-	public SDFSchema getSchema() {
+	public List<SDFSchema> getSchema() {
 		return schema;
 	}
 
-	private ILatency latency;
-	private IPriority prio;
+	final private ITimeInterval timeInterval;
+	final private ILatency latency;
+	final private IPriority prio;
 
 	public IntervalLatencyPriority() {
-		super(PointInTime.getInfinityTime());
+		this.timeInterval = new TimeInterval();
 		this.latency = new Latency();
 		this.prio = new Priority();
 	}
 
 	public IntervalLatencyPriority(long start) {
-		super(PointInTime.getInfinityTime());
-		this.latency = new Latency();
-		this.prio = new Priority();
+		this();
 		setMinLatencyStart(start);
 	}
 
 	public IntervalLatencyPriority(IntervalLatencyPriority original) {
-		super(original);
-
+		this.timeInterval = original.timeInterval.clone();
 		this.latency = original.latency.clone();
-		this.prio = (IPriority) original.prio.clone();
+		this.prio = original.prio.clone();
 	}
-	
+
+	@Override
+	public IntervalLatencyPriority clone() {
+		return new IntervalLatencyPriority(this);
+	}
+
+	// ------------------------------------------------------------------------------
+	// Methods that need to merge different types
+	// ------------------------------------------------------------------------------
+
 	@Override
 	public void fillValueList(List<Tuple<?>> values) {
-		super.fillValueList(values);
+		timeInterval.fillValueList(values);
 		latency.fillValueList(values);
 		prio.fillValueList(values);
 	}
 
 	@Override
+	public <K> K getValue(int subtype, int index) {
+		switch (subtype) {
+		case 0:
+			return timeInterval.getValue(0, index);
+		case 1:
+			return latency.getValue(0, index);
+		case 2:
+			return prio.getValue(0, index);
+		}
+		return null;
+	}
+
+	@Override
+	public String toString(PointInTime baseTime) {
+		return "( i= " + timeInterval.toString(baseTime) + " ; " + " l="
+				+ this.latency + "" + " ; p=" + this.prio + ")";
+	}
+
+	@Override
+	public String toString() {
+		return "( i= " + timeInterval.toString() + " ; " + " l=" + this.latency
+				+ "" + " ; p=" + this.prio + ")";
+	}
+
+	@Override
+	public String csvToString(WriteOptions options) {
+		return timeInterval.csvToString(options) + options.getDelimiter()
+				+ this.latency.csvToString(options) + options.getDelimiter()
+				+ this.prio.csvToString(options);
+	}
+
+	@Override
+	public String getCSVHeader(char delimiter) {
+		return timeInterval.getCSVHeader(delimiter) + "+delimiter+"
+				+ this.latency.getCSVHeader(delimiter) + "+delimiter+"
+				+ this.prio.getCSVHeader(delimiter);
+	}
+
+	// ------------------------------------------------------------------------------
+	// Delegates for timeInterval
+	// ------------------------------------------------------------------------------
+
+	@Override
+	public PointInTime getStart() {
+		return timeInterval.getStart();
+	}
+
+	@Override
+	public PointInTime getEnd() {
+		return timeInterval.getEnd();
+	}
+
+	@Override
+	public void setStart(PointInTime point) {
+		timeInterval.setStart(point);
+	}
+
+	@Override
+	public void setEnd(PointInTime point) {
+		timeInterval.setEnd(point);
+	}
+
+	@Override
+	public void setStartAndEnd(PointInTime start, PointInTime end) {
+		timeInterval.setStartAndEnd(start, end);
+	}
+
+	@Override
+	public int compareTo(ITimeInterval o) {
+		return timeInterval.compareTo(o);
+	}
+
+	// ------------------------------------------------------------------------------
+	// Delegates for latency
+	// ------------------------------------------------------------------------------
+
+	@Override
+	public final long getLatency() {
+		return latency.getLatency();
+	}
+
+	@Override
+	public long getMaxLatency() {
+		return latency.getMaxLatency();
+	}
+
+	@Override
 	public final long getLatencyEnd() {
-		return this.latency.getLatencyEnd();
+		return latency.getLatencyEnd();
+	}
+
+	@Override
+	public final long getLatencyStart() {
+		return latency.getLatencyStart();
 	}
 
 	@Override
@@ -91,28 +198,13 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 	}
 
 	@Override
-	public final long getLatency() {
-		return this.latency.getLatency();
-	}
-
-	@Override
-	public long getMaxLatency() {
-		return this.latency.getMaxLatency();
-	}
-
-	@Override
-	public final long getLatencyStart() {
-		return this.latency.getLatencyStart();
-	}
-
-	@Override
 	public final void setLatencyEnd(long timestamp) {
-		this.latency.setLatencyEnd(timestamp);
+		latency.setLatencyEnd(timestamp);
 	}
 
 	@Override
 	public final void setMinLatencyStart(long timestamp) {
-		this.latency.setMinLatencyStart(timestamp);
+		latency.setMinLatencyStart(timestamp);
 	}
 
 	@Override
@@ -120,32 +212,9 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 		latency.setMaxLatencyStart(timestamp);
 	}
 
-	@Override
-	public IntervalLatencyPriority clone() {
-		return new IntervalLatencyPriority(this);
-	}
-
-	@Override
-	public String toString() {
-		return "( i= " + super.toString() + " ; " + " l=" + this.latency + ""
-				+ " ; p=" + this.prio + ")";
-	}
-
-	@Override
-	public String csvToString(WriteOptions options) {
-		return super.csvToString(options)
-				+ options.getDelimiter()
-				+ this.latency.csvToString(options)
-				+ options.getDelimiter()
-				+ this.prio.csvToString(options);
-	}
-
-	@Override
-	public String getCSVHeader(char delimiter) {
-		return super.getCSVHeader(delimiter) + "+delimiter+"
-				+ this.latency.getCSVHeader(delimiter) + "+delimiter+"
-				+ this.prio.getCSVHeader(delimiter);
-	}
+	// ------------------------------------------------------------------------------
+	// Delegates for Priority
+	// ------------------------------------------------------------------------------
 
 	@Override
 	public final byte getPriority() {
@@ -155,11 +224,6 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 	@Override
 	public final void setPriority(byte priority) {
 		this.prio.setPriority(priority);
-	}
-
-	@Override
-	public Class<? extends IMetaAttribute>[] getClasses() {
-		return classes;
 	}
 
 	@Override

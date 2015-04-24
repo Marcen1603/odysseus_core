@@ -21,6 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -28,12 +29,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
-public class Latency implements ILatency {
+final public class Latency extends AbstractMetaAttribute implements ILatency {
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ILatency.class };
 
-	public static final SDFSchema schema;
+	public static final List<SDFSchema> schema = new ArrayList<>(classes.length);
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Latency", "minlstart",
@@ -42,12 +43,14 @@ public class Latency implements ILatency {
 				SDFDatatype.LONG, null));
 		attributes.add(new SDFAttribute("Latency", "lend", SDFDatatype.LONG,
 				null));
-		schema = SDFSchemaFactory.createNewSchema("Latency", Tuple.class,
-				attributes);
+		attributes.add(new SDFAttribute("Latency", "latency", SDFDatatype.LONG,
+				null));
+		schema.add(SDFSchemaFactory.createNewSchema("Latency", Tuple.class,
+				attributes));
 	}
 
 	@Override
-	public SDFSchema getSchema() {
+	public List<SDFSchema> getSchema() {
 		return schema;
 	}
 
@@ -60,11 +63,6 @@ public class Latency implements ILatency {
 		this.minlstart = System.nanoTime();
 		this.maxlstart = minlstart;
 	}
-
-	// public Latency(long start, long end){
-	// this.lend = end;
-	// this.lstart = start;
-	// }
 
 	public Latency(Latency copy) {
 		this.lend = copy.lend;
@@ -79,7 +77,24 @@ public class Latency implements ILatency {
 		t.setAttribute(0, minlstart);
 		t.setAttribute(1, maxlstart);
 		t.setAttribute(2, lend);
+		t.setAttribute(3, getLatency());
 		values.add(t);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <K> K getValue(int subtype, int index) {
+		switch (index) {
+		case 0:
+			return (K)(Long)minlstart;
+		case 1:
+			return (K)(Long)maxlstart;
+		case 2:
+			return (K)(Long)lend;
+		case 3:
+			return (K)(Long)getLatency();
+		}
+		return null;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.systemload;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -11,24 +12,40 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
-public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
+final public class SystemLoad extends AbstractMetaAttribute implements
+		ISystemLoad, Cloneable, Serializable {
 
 	private static final String LOCAL_NAME = "local";
 	private transient static final long serialVersionUID = 1L;
-	
+
 	@SuppressWarnings("unchecked")
 	public transient static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ISystemLoad.class };
 
-	private final Map<String, SystemLoadEntry> systemLoads = Maps.newHashMap();
+	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+			CLASSES.length);
+
+	static {
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute("Systemload", "todo",
+				SDFDatatype.DOUBLE, null));
+		schema.add(SDFSchemaFactory.createNewSchema("Systemload", Tuple.class,
+				attributes));
+	}
 
 	@Override
-	public SDFSchema getSchema() {
-		throw new RuntimeException("currently not implemented for SystemLoad");
+	public List<SDFSchema> getSchema() {
+		return schema;
 	}
-	
+
+	private final Map<String, SystemLoadEntry> systemLoads = Maps.newHashMap();
+
 	public SystemLoad() {
 		addSystemLoad(LOCAL_NAME);
 	}
@@ -38,13 +55,17 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 			systemLoads.put(name, copy.systemLoads.get(name).clone());
 		}
 	}
-	
+
 	@Override
 	public void fillValueList(List<Tuple<?>> values) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("currently not implemented for SystemLoad");
+
 	}
-	
+
+	@Override
+	public <K> K getValue(int subtype, int index) {
+		return null;
+	}
+
 	@Override
 	public ISystemLoad clone() {
 		return new SystemLoad(this);
@@ -52,35 +73,37 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 
 	@Override
 	public void addSystemLoad(String name) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name for system load must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(name),
+				"Name for system load must not be null or empty!");
 
 		// replaces older ones if necessary
 		systemLoads.put(name, new SystemLoadEntry(name));
 	}
-	
+
 	@Override
 	public void removeSystemLoad(String name) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name for system load must not be null or empty!");
-		
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(name),
+				"Name for system load must not be null or empty!");
+
 		systemLoads.remove(name);
 	}
 
 	@Override
 	public int getCpuLoad(String name) {
-		return (int) (systemLoads.get( checkName(name) ).getCpuLoad() * 100);
+		return (int) (systemLoads.get(checkName(name)).getCpuLoad() * 100);
 	}
 
 	@Override
 	public int getMemLoad(String name) {
-		return (int) (systemLoads.get(checkName(name) ).getMemLoad() * 100);
+		return (int) (systemLoads.get(checkName(name)).getMemLoad() * 100);
 	}
 
 	@Override
 	public int getNetLoad(String name) {
-		return (int) (systemLoads.get(checkName(name) ).getNetLoad() * 100);
+		return (int) (systemLoads.get(checkName(name)).getNetLoad() * 100);
 	}
-	
-	private static String checkName( String name ) {
+
+	private static String checkName(String name) {
 		return Strings.isNullOrEmpty(name) ? LOCAL_NAME : name;
 	}
 
@@ -130,7 +153,7 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 			sb.append(LOCAL_NAME).append(delimiter);
 
 			SystemLoadEntry systemLoadEntry = new SystemLoadEntry(LOCAL_NAME);
-			
+
 			int cpuValue = (int) (systemLoadEntry.getCpuLoad() * 100);
 			int memValue = (int) (systemLoadEntry.getMemLoad() * 100);
 			int netValue = (int) (systemLoadEntry.getNetLoad() * 100);
@@ -138,9 +161,9 @@ public class SystemLoad implements ISystemLoad, Cloneable, Serializable {
 			sb.append(cpuValue).append(delimiter);
 			sb.append(memValue).append(delimiter);
 			sb.append(netValue);
-			
+
 		}
-		
+
 		return sb.toString();
 	}
 

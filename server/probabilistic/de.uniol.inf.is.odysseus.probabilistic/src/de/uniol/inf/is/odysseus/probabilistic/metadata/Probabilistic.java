@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class Probabilistic implements IProbabilistic {
+final public class Probabilistic extends AbstractMetaAttribute implements IProbabilistic {
     /**
 	 * 
 	 */
@@ -41,18 +42,20 @@ public class Probabilistic implements IProbabilistic {
     /** The classes. */
     @SuppressWarnings("unchecked")
     public static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { IProbabilistic.class };
+   
     /** Tuple existence probability. */
     private double existence;
 
-	public static final SDFSchema schema;
+	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+			CLASSES.length);
 	static{
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Probabilistic", "existence", SDFDatatype.DOUBLE, null));
-		schema = SDFSchemaFactory.createNewSchema("Probabilistic", Tuple.class, attributes);
+		schema.add(SDFSchemaFactory.createNewSchema("Probabilistic", Tuple.class, attributes));
 	}
 	
 	@Override
-	public SDFSchema getSchema() {
+	public List<SDFSchema> getSchema() {
 		return schema;
 	}
     
@@ -93,6 +96,16 @@ public class Probabilistic implements IProbabilistic {
 		values.add(t);
 	}
     
+	@SuppressWarnings("unchecked")
+	@Override
+	public <K> K getValue(int subtype, int index) {
+		switch (index) {
+		case 0:
+			return (K) (Double) existence;
+		}
+		return null;
+	}
+	
     /**
      * 
      * {@inheritDoc}

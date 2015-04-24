@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.priority;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public interface IPriority extends IMetaAttribute{
-	public byte getPriority();
-	public void setPriority(byte priority);
+	byte getPriority();
+	void setPriority(byte priority);
+	@Override
+	IPriority clone();
 }

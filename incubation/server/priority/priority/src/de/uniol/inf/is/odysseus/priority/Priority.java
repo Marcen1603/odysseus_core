@@ -20,28 +20,29 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
-public class Priority implements IPriority {
+final public class Priority extends AbstractMetaAttribute implements IPriority {
 
 	private static final long serialVersionUID = 1837720176871400611L;
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IPriority.class };
 
-	public static final SDFSchema schema;
+	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(classes.length);
 	static{
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Priority", "priority", SDFDatatype.BYTE, null));
-		schema = SDFSchemaFactory.createNewSchema("Priority", Tuple.class, attributes);
+		schema.add(SDFSchemaFactory.createNewSchema("Priority", Tuple.class, attributes));
 	}
 	
 	@Override
-	public SDFSchema getSchema() {
+	public List<SDFSchema> getSchema() {
 		return schema;
 	}
 	
@@ -61,6 +62,16 @@ public class Priority implements IPriority {
 		Tuple t = new Tuple(1,false);
 		t.setAttribute(0, prio);
 		values.add(t);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <K> K getValue(int subtype, int index) {
+		switch (index) {
+		case 0:
+			return (K) (Byte) prio;
+		}
+		return null;
 	}
 	
 	@Override

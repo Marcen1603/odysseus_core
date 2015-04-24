@@ -15,143 +15,193 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticTimeInterval extends TimeInterval implements IProbabilisticTimeInterval {
+final public class ProbabilisticTimeInterval extends AbstractMetaAttribute
+		implements IProbabilisticTimeInterval {
 
-    /**
-	 * 
-	 */
-    private static final long serialVersionUID = -9030157268224460919L;
-    /** The classes. */
-    @SuppressWarnings("unchecked")
-    public static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ITimeInterval.class, IProbabilistic.class };
-    /** The tuple probability. */
-    private final IProbabilistic probabilistic;
+	private static final long serialVersionUID = -9030157268224460919L;
+	/** The classes. */
+	@SuppressWarnings("unchecked")
+	public static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] {
+			ITimeInterval.class, IProbabilistic.class };
 
-	static final SDFSchema schema;
-	static{
-		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Probabilistic.schema);
+	private final ITimeInterval timeInterval;
+	/** The tuple probability. */
+	private final IProbabilistic probabilistic;
+
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return CLASSES;
+	}
+
+	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+			CLASSES.length);
+	static {
+		schema.addAll(TimeInterval.schema);
+		schema.addAll(Probabilistic.schema);
 	}
 
 	@Override
-	public SDFSchema getSchema() {
+	public List<SDFSchema> getSchema() {
 		return schema;
 	}
 
-    
-    /**
-     * 
-     * Default constructor.
-     */
-    public ProbabilisticTimeInterval() {
-        super();
-        this.probabilistic = new Probabilistic();
-    }
+	/**
+	 * 
+	 * Default constructor.
+	 */
+	public ProbabilisticTimeInterval() {
+		timeInterval = new TimeInterval();
+		probabilistic = new Probabilistic();
+	}
 
-    /**
-     * Clone constructor.
-     * 
-     * @param copy
-     *            The object to copy from
-     */
-    public ProbabilisticTimeInterval(final ProbabilisticTimeInterval copy) {
-        super(copy);
-        this.probabilistic = copy.probabilistic.clone();
-    }
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param copy
+	 *            The object to copy from
+	 */
+	public ProbabilisticTimeInterval(final ProbabilisticTimeInterval copy) {
+		timeInterval = copy.timeInterval.clone();
+		probabilistic = copy.probabilistic.clone();
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ProbabilisticTimeInterval clone() {
+		return new ProbabilisticTimeInterval(this);
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return "ProbabilisticTimeInterval";
+	}
+
+	// ------------------------------------------------------------------------------
+	// Methods that need to merge different types
+	// ------------------------------------------------------------------------------
 
 	@Override
 	public void fillValueList(List<Tuple<?>> values) {
-		super.fillValueList(values);
+		timeInterval.fillValueList(values);
 		probabilistic.fillValueList(values);
 	}
-    
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public ProbabilisticTimeInterval clone() {
-        return new ProbabilisticTimeInterval(this);
-    }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public double getExistence() {
-        return this.probabilistic.getExistence();
-    }
+	@Override
+	public <K> K getValue(int subtype, int index) {
+		switch(subtype){
+			case 0:
+				return timeInterval.getValue(0, index);
+			case 1:
+				return probabilistic.getValue(0, index);
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "i=" + timeInterval.toString() + " | prob=" + this.probabilistic;
+	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void setExistence(final double existence) {
-        Preconditions.checkArgument((existence >= 0.0) && (existence <= 1.0));
-        this.probabilistic.setExistence(existence);
-    }
+	@Override
+	public String toString(PointInTime baseTime) {
+		return "i=" + timeInterval.toString(baseTime) + " | prob="
+				+ this.probabilistic;
+	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return super.toString() + " | " + this.probabilistic;
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String csvToString(WriteOptions options) {
+		return timeInterval.csvToString(options) + options.getDelimiter()
+				+ this.probabilistic.csvToString(options);
+	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public String csvToString(WriteOptions options) {
-        return super.csvToString(options) + options.getDelimiter()
-                + this.probabilistic.csvToString(options);
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getCSVHeader(final char delimiter) {
+		return timeInterval.getCSVHeader(delimiter) + delimiter
+				+ this.probabilistic.getCSVHeader(delimiter);
+	}
+	
+	// ------------------------------------------------------------------------------
+	// Delegates for timeInterval
+	// ------------------------------------------------------------------------------
+	
+	@Override
+	public PointInTime getStart() {
+		return timeInterval.getStart();
+	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public String getCSVHeader(final char delimiter) {
-        return super.getCSVHeader(delimiter) + delimiter + this.probabilistic.getCSVHeader(delimiter);
-    }
+	@Override
+	public PointInTime getEnd() {
+		return timeInterval.getEnd();
+	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public Class<? extends IMetaAttribute>[] getClasses() {
-        return ProbabilisticTimeInterval.CLASSES;
-    }
+	@Override
+	public void setStart(PointInTime point) {
+		timeInterval.setStart(point);
+	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return "ProbabilisticTimeInterval";
-    }
+	@Override
+	public void setEnd(PointInTime point) {
+		timeInterval.setEnd(point);
+	}
+
+	@Override
+	public void setStartAndEnd(PointInTime start, PointInTime end) {
+		timeInterval.setStartAndEnd(start, end);
+	}
+
+	@Override
+	public int compareTo(ITimeInterval o) {
+		return timeInterval.compareTo(o);
+	}
+	
+	// ------------------------------------------------------------------------------
+	// Delegates for Probabilistic
+	// ------------------------------------------------------------------------------
+
+	public double getExistence() {
+		return probabilistic.getExistence();
+	}
+
+	public void setExistence(double existence) {
+		probabilistic.setExistence(existence);
+	}
+	
+	
+
 }

@@ -1,64 +1,163 @@
 package de.uniol.inf.is.odysseus.systemload;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
-public class TimeIntervalLatencySystemLoad extends TimeIntervalSystemLoad implements ILatency, ITimeIntervalLatencySystemLoad {
+final public class TimeIntervalLatencySystemLoad extends AbstractMetaAttribute
+		implements ITimeInterval, ILatency, ISystemLoad {
 
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[]{ 
-		ITimeInterval.class, ILatency.class, ISystemLoad.class
-	};
+	public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[] {
+			ITimeInterval.class, ILatency.class, ISystemLoad.class };
 
-	private ILatency latency = new Latency();
-	
-	public TimeIntervalLatencySystemLoad() {
-		super();
-		
-	}
-	
-	public TimeIntervalLatencySystemLoad( TimeIntervalLatencySystemLoad copy ) {
-		super(copy);
-		
-		latency = copy.latency.clone();
-	}
-	
 	@Override
-	public ITimeIntervalLatencySystemLoad clone() {
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return CLASSES;
+	}
+
+	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+			CLASSES.length);
+	static {
+		schema.addAll(TimeInterval.schema);
+		schema.addAll(Latency.schema);
+		schema.addAll(SystemLoad.schema);
+	}
+
+	@Override
+	public List<SDFSchema> getSchema() {
+		return schema;
+	}
+
+	final private ITimeInterval timeInterval;
+	final private ILatency latency;
+	final private ISystemLoad systemload;
+
+	public TimeIntervalLatencySystemLoad() {
+		timeInterval = new TimeInterval();
+		latency = new Latency();
+		systemload = new SystemLoad();
+	}
+
+	public TimeIntervalLatencySystemLoad(TimeIntervalLatencySystemLoad copy) {
+		timeInterval = copy.timeInterval.clone();
+		latency = copy.latency.clone();
+		systemload = copy.systemload.clone();
+	}
+
+	@Override
+	public TimeIntervalLatencySystemLoad clone() {
 		return new TimeIntervalLatencySystemLoad(this);
 	}
 
 	@Override
+	public String getName() {
+		return "TimeIntervalLatencySystemLoad";
+	}
+
+	// ------------------------------------------------------------------------------
+	// Methods that need to merge different types
+	// ------------------------------------------------------------------------------
+
+	@Override
 	public void fillValueList(List<Tuple<?>> values) {
-		super.fillValueList(values);
+		timeInterval.fillValueList(values);
 		latency.fillValueList(values);
+		systemload.fillValueList(values);
 	}
 	
 	@Override
-	public void setMinLatencyStart(long timestamp) {
-		latency.setMinLatencyStart(timestamp);
+	public <K> K getValue(int subtype, int index) {
+		switch(subtype){
+			case 0:
+				return timeInterval.getValue(0, index);
+			case 1:
+				return latency.getValue(0, index);
+			case 2:
+				return systemload.getValue(0, index);
+		}
+		return null;
 	}
 
 	@Override
-	public void setMaxLatencyStart(long timestamp) {
-		latency.setMaxLatencyStart(timestamp);
+	public String getCSVHeader(char delimiter) {
+		return timeInterval.getCSVHeader(delimiter) + delimiter
+				+ latency.getCSVHeader(delimiter) + delimiter
+				+ systemload.getCSVHeader(delimiter);
 	}
 
 	@Override
-	public void setLatencyEnd(long timestamp) {
-		latency.setLatencyEnd(timestamp);
+	public String csvToString(WriteOptions options) {
+		return timeInterval.csvToString(options) + options.getDelimiter()
+				+ latency.csvToString(options) + options.getDelimiter()
+				+ systemload.csvToString(options);
 	}
 
 	@Override
-	public long getLatencyStart() {
-		return latency.getLatencyStart();
+	public String toString() {
+		return "i=" + timeInterval.toString() + "| +l=" + latency.toString()
+				+ " | sysload= " + systemload.toString();
+	}
+
+	@Override
+	public String toString(PointInTime baseTime) {
+		return "i=" + timeInterval.toString(baseTime) + "| +l="
+				+ latency.toString() + " | sysload= " + systemload.toString();
+	}
+
+	// ------------------------------------------------------------------------------
+	// Delegates for timeInterval
+	// ------------------------------------------------------------------------------
+
+	@Override
+	public PointInTime getStart() {
+		return timeInterval.getStart();
+	}
+
+	@Override
+	public PointInTime getEnd() {
+		return timeInterval.getEnd();
+	}
+
+	@Override
+	public void setStart(PointInTime point) {
+		timeInterval.setStart(point);
+	}
+
+	@Override
+	public void setEnd(PointInTime point) {
+		timeInterval.setEnd(point);
+	}
+
+	@Override
+	public void setStartAndEnd(PointInTime start, PointInTime end) {
+		timeInterval.setStartAndEnd(start, end);
+	}
+
+	@Override
+	public int compareTo(ITimeInterval o) {
+		return timeInterval.compareTo(o);
+	}
+
+	// ------------------------------------------------------------------------------
+	// Delegates for latency
+	// ------------------------------------------------------------------------------
+
+	@Override
+	public final long getLatency() {
+		return latency.getLatency();
 	}
 
 	@Override
@@ -67,42 +166,61 @@ public class TimeIntervalLatencySystemLoad extends TimeIntervalSystemLoad implem
 	}
 
 	@Override
-	public long getLatencyEnd() {
+	public final long getLatencyEnd() {
 		return latency.getLatencyEnd();
 	}
 
 	@Override
-	public long getLatency() {
-		return latency.getLatency();
+	public final long getLatencyStart() {
+		return latency.getLatencyStart();
 	}
 
 	@Override
 	public long getMaxLatencyStart() {
 		return latency.getMaxLatencyStart();
 	}
-	
+
 	@Override
-	public String toString() {
-		return "( (i,sysload)= " + super.toString() + " | l= " + latency.toString() + " )";
+	public final void setLatencyEnd(long timestamp) {
+		latency.setLatencyEnd(timestamp);
 	}
 
 	@Override
-	public String getCSVHeader(char delimiter) {
-		return super.getCSVHeader(delimiter) + delimiter + latency.getCSVHeader(delimiter);
+	public final void setMinLatencyStart(long timestamp) {
+		latency.setMinLatencyStart(timestamp);
 	}
 
 	@Override
-	public String csvToString(WriteOptions options) {
-		return super.csvToString(options) + options.getDelimiter() + latency.csvToString(options);
+	public void setMaxLatencyStart(long timestamp) {
+		latency.setMaxLatencyStart(timestamp);
 	}
-	
-	@Override
-	public Class<? extends IMetaAttribute>[] getClasses() {
-		return CLASSES;
+
+	// ------------------------------------------------------------------------------
+	// Delegates for systemload
+	// ------------------------------------------------------------------------------
+
+	public void addSystemLoad(String name) {
+		systemload.addSystemLoad(name);
 	}
-	
-	@Override
-	public String getName() {
-		return "TimeIntervalLatencySystemLoad";
+
+	public void removeSystemLoad(String name) {
+		systemload.removeSystemLoad(name);
 	}
+
+	public Collection<String> getSystemLoadNames() {
+		return systemload.getSystemLoadNames();
+	}
+
+	public int getCpuLoad(String name) {
+		return systemload.getCpuLoad(name);
+	}
+
+	public int getMemLoad(String name) {
+		return systemload.getMemLoad(name);
+	}
+
+	public int getNetLoad(String name) {
+		return systemload.getNetLoad(name);
+	}
+
 }

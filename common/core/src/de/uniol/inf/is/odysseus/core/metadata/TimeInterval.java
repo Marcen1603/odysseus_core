@@ -37,34 +37,40 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  * @author Marco Grawunder, Jonas Jacobi
  */
 
-public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
+final public class TimeInterval extends AbstractMetaAttribute implements
+		ITimeInterval, Cloneable, Serializable {
+
+	private static final long serialVersionUID = 2210545271466064814L;
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ITimeInterval.class };
 
-	public static final SDFSchema schema;
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return classes;
+	}
+
+	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+			classes.length);
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("TimeInterval", "start",
 				SDFDatatype.TIMESTAMP, null));
 		attributes.add(new SDFAttribute("TimeInterval", "end",
 				SDFDatatype.TIMESTAMP, null));
-		schema = SDFSchemaFactory.createNewSchema("TimeInterval", Tuple.class,
-				attributes);
+		schema.add(SDFSchemaFactory.createNewSchema("TimeInterval",
+				Tuple.class, attributes));
 	}
 
 	@Override
-	public SDFSchema getSchema() {
+	public List<SDFSchema> getSchema() {
 		return schema;
 	}
-
-	private static final long serialVersionUID = 2210545271466064814L;
 
 	private static final TimeInterval forever = new TimeInterval(
 			new PointInTime(0), PointInTime.getInfinityTime());
 
 	private PointInTime start;
-
 	private PointInTime end;
 
 	public TimeInterval(PointInTime start, PointInTime end) {
@@ -84,16 +90,7 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		PointInTime end = original.getEnd().clone();
 		init(start, end);
 	}
-	
-	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		@SuppressWarnings("rawtypes")
-		Tuple t = new Tuple(2,false);
-		t.setAttribute(0, start.getMainPoint());
-		t.setAttribute(1, end.getMainPoint());
-		values.add(t);
-	}
-	
+
 	protected void init(PointInTime start, PointInTime end) {
 		if (!start.before(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
@@ -103,6 +100,29 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		this.start = start;
 		this.end = end;
 	}
+	
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		@SuppressWarnings("rawtypes")
+		Tuple t = new Tuple(2, false);
+		t.setAttribute(0, start.getMainPoint());
+		t.setAttribute(1, end.getMainPoint());
+		values.add(t);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <K> K getValue(int subtype, int index) {
+		switch (index) {
+		case 0:
+			return (K) start;
+		case 1:
+			return (K) end;
+		}
+		return null;
+	}
+
+
 
 	public boolean isEndInfinite() {
 		return end.isInfinite();
@@ -163,22 +183,6 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return interval.getEnd().beforeOrEquals(point);
 	}
 
-	// /**
-	// * Berhren sich die beiden Intervall an einer der beiden Grenzen
-	// *
-	// * @param left
-	// * Linkes Intervall
-	// * @param right
-	// * Rechtes Intervall
-	// * @return true, wenn das Ende von left und das Start von right oder wenn
-	// * der Start von left und das Ende von right zusammenfallen
-	// *
-	// * ACHTUNG! Rechtsoffenes Intervall --> evtl. Klassennamen anpassen?
-	// */
-	// public static boolean meets(TimeInterval left, TimeInterval right) {
-	// return left.getEnd().equals(right.getStart()) ||
-	// left.getStart().equals(right.getEnd());
-	// }
 	public static boolean totallyAfter(ITimeInterval left, ITimeInterval right) {
 		return totallyBefore(right, left);
 	}
@@ -255,24 +259,6 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		ITimeInterval ti = (ITimeInterval) obj;
 		return ti.getStart().equals(this.getStart())
 				&& ti.getEnd().equals(this.getEnd());
-		// if (this == obj)
-		// return true;
-		// if (!super.equals(obj))
-		// return false;
-		// if (getClass() != obj.getClass())
-		// return false;
-		// final TimeInterval other = (TimeInterval) obj;
-		// if (end == null) {
-		// if (other.getEnd() != null)
-		// return false;
-		// } else if (!end.equals(other.getEnd()))
-		// return false;
-		// if (start == null) {
-		// if (other.getStart() != null)
-		// return false;
-		// } else if (!start.equals(other.getStart()))
-		// return false;
-		// return true;
 	}
 
 	/*
@@ -300,23 +286,6 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		}
 		return new ITimeInterval[] { left, null };
 	}
-
-	/**
-	 * Setting the time interval is used often in nest po code, so an extra
-	 * method for setting both, start and end, would be appropiate.
-	 * 
-	 * @author Jendrik Poloczek
-	 * @return
-	 */
-	// public void setTimeInterval(PointInTime start, PointInTime end) {
-	// this.start = start.clone();
-	// this.setEnd(end.clone());
-	// }
-	//
-	// public void setTimeInterval(ITimeInterval ti) {
-	// this.start = ti.getStart().clone();
-	// this.setEnd(ti.getEnd().clone());
-	// }
 
 	/**
 	 * Difference method is returning a distance between time intervals and not
@@ -429,7 +398,6 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 
 	@Override
 	public String toString() {
-		// return "[" + getStart().toString() + "," + getEnd().toString() + ")";
 		return getStart().toString() + "|" + getEnd().toString();
 	}
 
@@ -464,11 +432,6 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 	@Override
 	public TimeInterval clone() {
 		return new TimeInterval(this);
-	}
-
-	@Override
-	public Class<? extends IMetaAttribute>[] getClasses() {
-		return classes;
 	}
 
 	@Override

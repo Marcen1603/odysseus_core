@@ -15,141 +15,234 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic_latency.metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticTimeInterval;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TimeIntervalProbabilisticLatency extends ProbabilisticTimeInterval implements ILatency, ILatencyTimeIntervalProbabilistic {
-    /**
+final public class TimeIntervalProbabilisticLatency extends AbstractMetaAttribute
+		implements ILatency, ITimeInterval, IProbabilistic {
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 4833031661270663461L;
-    /** Included classes. */
-    @SuppressWarnings("unchecked")
-    public static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ITimeInterval.class, ILatency.class, IProbabilistic.class };
-    /** The {@link ILatency} instance. */
-    private final ILatency latency;
+	private static final long serialVersionUID = 4833031661270663461L;
+	/** Included classes. */
+	@SuppressWarnings("unchecked")
+	public static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] {
+			ITimeInterval.class, ILatency.class, IProbabilistic.class };
 
-	static final SDFSchema schema;
-	static{
-		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Latency.schema, Probabilistic.schema);
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return CLASSES;
+	}
+
+	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+			CLASSES.length);
+	static {
+		schema.addAll(TimeInterval.schema);
+		schema.addAll(Latency.schema);
+		schema.addAll(Probabilistic.schema);
 	}
 
 	@Override
-	public SDFSchema getSchema() {
+	public List<SDFSchema> getSchema() {
 		return schema;
 	}
 
-    
-    /**
-     * Creates a new {@link TimeIntervalProbabilisticLatency} instance.
-     */
-    public TimeIntervalProbabilisticLatency() {
-        super();
-        this.latency = new Latency();
-    }
+	private final ITimeInterval timeInterval;
+	/** The {@link ILatency} instance. */
+	private final ILatency latency;
+	private final IProbabilistic probabilistic;
 
-    /**
-     * Clone constructor.
-     * 
-     * @param clone
-     *            The object to clone from
-     */
-    public TimeIntervalProbabilisticLatency(final TimeIntervalProbabilisticLatency clone) {
-        super(clone);
-        this.latency = clone.latency.clone();
-    }
-	
-    @Override
-	public void fillValueList(List<Tuple<?>> values) {
-		super.fillValueList(values);
-		latency.fillValueList(values);
+	/**
+	 * Creates a new {@link TimeIntervalProbabilisticLatency} instance.
+	 */
+	public TimeIntervalProbabilisticLatency() {
+		timeInterval = new TimeInterval();
+		latency = new Latency();
+		probabilistic = new Probabilistic();
 	}
 
-    
-    @Override
-    public final long getLatency() {
-        return this.latency.getLatency();
-    }
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param clone
+	 *            The object to clone from
+	 */
+	public TimeIntervalProbabilisticLatency(
+			final TimeIntervalProbabilisticLatency clone) {
+		this.timeInterval = clone.timeInterval.clone();
+		this.latency = clone.latency.clone();
+		this.probabilistic = clone.probabilistic.clone();
+	}
 
-    @Override
-    public final long getMaxLatency() {
-        return this.latency.getMaxLatency();
-    }
+	@Override
+	public final TimeIntervalProbabilisticLatency clone() {
+		return new TimeIntervalProbabilisticLatency(this);
+	}
 
-    @Override
-    public final long getLatencyEnd() {
-        return this.latency.getLatencyEnd();
-    }
+	@Override
+	public String getName() {
+		return "TimeIntervalProbabilisticLatency";
+	}
 
-    @Override
-    public final long getLatencyStart() {
-        return this.latency.getLatencyStart();
-    }
+	// ------------------------------------------------------------------------------
+	// Methods that need to merge different types
+	// ------------------------------------------------------------------------------
 
-    @Override
-    public final long getMaxLatencyStart() {
-        return this.latency.getMaxLatencyStart();
-    }
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		timeInterval.fillValueList(values);
+		latency.fillValueList(values);
+		probabilistic.fillValueList(values);
+	}
+	
+	@Override
+	public <K> K getValue(int subtype, int index) {
+		switch(subtype){
+			case 0:
+				return timeInterval.getValue(0, index);
+			case 1:
+				return latency.getValue(0, index);
+			case 2:
+				return probabilistic.getValue(0, index);
+		}
+		return null;
+	}
 
-    @Override
-    public final void setLatencyEnd(final long timestamp) {
-        this.latency.setLatencyEnd(timestamp);
-    }
+	@Override
+	public final String toString() {
+		return "( i= " + timeInterval.toString() + " | l=" + this.latency
+				+ " | prob =" + probabilistic.toString() + ")";
+	}
 
-    @Override
-    public final void setMinLatencyStart(final long timestamp) {
-        this.latency.setMinLatencyStart(timestamp);
-    }
+	@Override
+	public String toString(PointInTime baseTime) {
+		return "( i= " + timeInterval.toString(baseTime) + " | l="
+				+ this.latency + " | prob =" + probabilistic.toString() + ")";
+	}
 
-    @Override
-    public final void setMaxLatencyStart(final long timestamp) {
-        this.latency.setMaxLatencyStart(timestamp);
-    }
+	@Override
+	public final String csvToString(WriteOptions options) {
+		return timeInterval.csvToString(options) + options.getDelimiter()
+				+ this.latency.csvToString(options) + options.getDelimiter()
+				+ probabilistic.csvToString(options);
+	}
 
-    @Override
-    public final TimeIntervalProbabilisticLatency clone() {
-        return new TimeIntervalProbabilisticLatency(this);
-    }
+	@Override
+	public final String getCSVHeader(final char delimiter) {
+		return timeInterval.getCSVHeader(delimiter) + delimiter
+				+ this.latency.getCSVHeader(delimiter) + delimiter
+				+ probabilistic.getCSVHeader(delimiter);
+	}
+	
+	// ------------------------------------------------------------------------------
+	// Delegates for timeInterval
+	// ------------------------------------------------------------------------------
+	
+	@Override
+	public PointInTime getStart() {
+		return timeInterval.getStart();
+	}
 
-    @Override
-    public final String toString() {
-        return "( i= " + super.toString() + " | " + " l=" + this.latency + ")";
-    }
+	@Override
+	public PointInTime getEnd() {
+		return timeInterval.getEnd();
+	}
 
-    @Override
-    public final String csvToString(WriteOptions options) {
-        return super.csvToString(options) + options.getDelimiter()
-                + this.latency.csvToString(options);
-    }
+	@Override
+	public void setStart(PointInTime point) {
+		timeInterval.setStart(point);
+	}
 
-    @Override
-    public final String getCSVHeader(final char delimiter) {
-        return super.getCSVHeader(delimiter) + "+delimiter+" + this.latency.getCSVHeader(delimiter);
-    }
+	@Override
+	public void setEnd(PointInTime point) {
+		timeInterval.setEnd(point);
+	}
 
-    @Override
-    public final Class<? extends IMetaAttribute>[] getClasses() {
-        return TimeIntervalProbabilisticLatency.CLASSES;
-    }
+	@Override
+	public void setStartAndEnd(PointInTime start, PointInTime end) {
+		timeInterval.setStartAndEnd(start, end);
+	}
 
-    @Override
-    public String getName() {
-        return "TimeIntervalProbabilisticLatency";
-    }
+	@Override
+	public int compareTo(ITimeInterval o) {
+		return timeInterval.compareTo(o);
+	}
+	
+	// ------------------------------------------------------------------------------
+	// Delegates for latency
+	// ------------------------------------------------------------------------------
+
+	
+	@Override
+	public final long getLatency() {
+		return latency.getLatency();
+	}
+	
+	@Override
+	public long getMaxLatency() {
+		return latency.getMaxLatency();
+	}
+
+	@Override
+	public final long getLatencyEnd() {
+		return latency.getLatencyEnd();
+	}
+
+	@Override
+	public final long getLatencyStart() {
+		return latency.getLatencyStart();
+	}
+	
+	@Override
+	public long getMaxLatencyStart() {
+		return latency.getMaxLatencyStart();
+	}
+
+	@Override
+	public final void setLatencyEnd(long timestamp) {
+		latency.setLatencyEnd(timestamp);
+	}
+
+	@Override
+	public final void setMinLatencyStart(long timestamp) {
+		latency.setMinLatencyStart(timestamp);
+	}
+	
+	@Override
+	public void setMaxLatencyStart(long timestamp) {
+		latency.setMaxLatencyStart(timestamp);
+	}
+
+	// ------------------------------------------------------------------------------
+	// Delegates for Probabilistic
+	// ------------------------------------------------------------------------------
+
+	public double getExistence() {
+		return probabilistic.getExistence();
+	}
+
+	public void setExistence(double existence) {
+		probabilistic.setExistence(existence);
+	}
+	
+	
+	
+
 }

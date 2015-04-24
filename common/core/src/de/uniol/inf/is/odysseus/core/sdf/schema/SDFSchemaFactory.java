@@ -250,7 +250,7 @@ public class SDFSchemaFactory {
 	 * @return
 	 */
 	public static SDFSchema createNewWithMetaSchema(SDFSchema currentSchema,
-			SDFSchema metaSchema) {
+			List<SDFSchema> metaSchema) {
 		return new SDFSchema(currentSchema, metaSchema);
 	}
 	

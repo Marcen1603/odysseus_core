@@ -1,91 +1,60 @@
 package de.uniol.inf.is.odysseus.datarate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
-public class TimeIntervalLatencyDatarate extends TimeIntervalDatarate implements ILatency, ITimeIntervalLatencyDatarate {
+final public class TimeIntervalLatencyDatarate extends AbstractMetaAttribute
+		implements ITimeInterval, ILatency, IDatarate {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 3739945183008260647L;
+
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[]{ 
-		ITimeInterval.class, ILatency.class, IDatarate.class
-	};
-	
-	static final SDFSchema schema;
-	static{
-		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Latency.schema, Datarate.schema);
+	public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[] {
+			ITimeInterval.class, ILatency.class, IDatarate.class };
+
+	@Override
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return CLASSES;
+	}
+
+	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+			CLASSES.length);
+	static {
+		schema.addAll(TimeInterval.schema);
+		schema.addAll(Latency.schema);
+		schema.addAll(Datarate.schema);
 	}
 
 	@Override
-	public SDFSchema getSchema() {
+	public List<SDFSchema> getSchema() {
 		return schema;
 	}
 
-	
-	private ILatency latency;
+	final private ITimeInterval timeInterval;
+	final private ILatency latency;
+	final private IDatarate datarate;
 
 	public TimeIntervalLatencyDatarate() {
+		timeInterval = new TimeInterval();
 		latency = new Latency();
+		datarate = new Datarate();
 	}
-	
-	public TimeIntervalLatencyDatarate( TimeIntervalLatencyDatarate other ) {
-		super(other);	
+
+	public TimeIntervalLatencyDatarate(TimeIntervalLatencyDatarate other) {
+		timeInterval = other.timeInterval.clone();
 		latency = other.latency.clone();
-	}
-	
-	@Override
-	public void fillValueList(List<Tuple<?>> values) {
-		super.fillValueList(values);
-		latency.fillValueList(values);
-	}
-	
-	@Override
-	public void setMinLatencyStart(long timestamp) {
-		latency.setMinLatencyStart(timestamp);
-	}
-
-	@Override
-	public void setMaxLatencyStart(long timestamp) {
-		latency.setMaxLatencyStart(timestamp);
-	}
-
-	@Override
-	public void setLatencyEnd(long timestamp) {
-		latency.setLatencyEnd(timestamp);
-	}
-
-	@Override
-	public long getLatencyStart() {
-		return latency.getLatencyStart();
-	}
-
-	@Override
-	public long getMaxLatency() {
-		return latency.getMaxLatency();
-	}
-
-	@Override
-	public long getLatencyEnd() {
-		return latency.getLatencyEnd();
-	}
-
-	@Override
-	public long getLatency() {
-		return latency.getLatency();
-	}
-
-	@Override
-	public long getMaxLatencyStart() {
-		return latency.getMaxLatencyStart();
+		datarate = other.datarate.clone();
 	}
 
 	@Override
@@ -94,27 +63,150 @@ public class TimeIntervalLatencyDatarate extends TimeIntervalDatarate implements
 	}
 	
 	@Override
-	public Class<? extends IMetaAttribute>[] getClasses() {
-		return CLASSES;
+	public String getName() {
+		return "TimeIntervalLatencyDatarate";
+	}
+
+	// ------------------------------------------------------------------------------
+	// Methods that need to merge different types
+	// ------------------------------------------------------------------------------
+
+	@Override
+	public void fillValueList(List<Tuple<?>> values) {
+		timeInterval.fillValueList(values);
+		latency.fillValueList(values);
+		datarate.fillValueList(values);
+	}
+
+	@Override
+	public <K> K getValue(int subtype, int index) {
+		switch(subtype){
+			case 0:
+				return timeInterval.getValue(0, index);
+			case 1:
+				return latency.getValue(0, index);
+			case 2:
+				return datarate.getValue(0, index);
+		}
+		return null;
 	}
 	
 	@Override
 	public String toString() {
-		return "( (i,datarate) = " + super.toString() + " | l = " + latency.toString() + " )";
+		return "i = " + timeInterval.toString() + " | l = "
+				+ latency.toString() + " | d = " + datarate.toString() + "";
 	}
 	
+	@Override
+	public String toString(PointInTime baseTime) {
+		return "i = " + timeInterval.toString(baseTime) + " | l = "
+				+ latency.toString() + " | d = " + datarate.toString() + "";
+	}
+
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return super.getCSVHeader(delimiter) + delimiter + latency.getCSVHeader(delimiter);
+		return timeInterval.getCSVHeader(delimiter) + delimiter
+				+ latency.getCSVHeader(delimiter) + delimiter
+				+ datarate.getCSVHeader(delimiter);
 	}
-	
+
 	@Override
 	public String csvToString(WriteOptions options) {
-		return super.csvToString(options)+ options.getDelimiter() + latency.csvToString(options);
+		return timeInterval.csvToString(options) + options.getDelimiter()
+				+ latency.csvToString(options) + options.getDelimiter()
+				+ datarate.csvToString(options);
+	}
+	
+	// ------------------------------------------------------------------------------
+	// Delegates for timeInterval
+	// ------------------------------------------------------------------------------
+	
+	@Override
+	public PointInTime getStart() {
+		return timeInterval.getStart();
+	}
+
+	@Override
+	public PointInTime getEnd() {
+		return timeInterval.getEnd();
+	}
+
+	@Override
+	public void setStart(PointInTime point) {
+		timeInterval.setStart(point);
+	}
+
+	@Override
+	public void setEnd(PointInTime point) {
+		timeInterval.setEnd(point);
+	}
+
+	@Override
+	public void setStartAndEnd(PointInTime start, PointInTime end) {
+		timeInterval.setStartAndEnd(start, end);
+	}
+
+	@Override
+	public int compareTo(ITimeInterval o) {
+		return timeInterval.compareTo(o);
+	}
+	
+	// ------------------------------------------------------------------------------
+	// Delegates for latency
+	// ------------------------------------------------------------------------------
+
+	
+	@Override
+	public final long getLatency() {
+		return latency.getLatency();
 	}
 	
 	@Override
-	public String getName() {
-		return "TimeIntervalLatencyDatarate";
+	public long getMaxLatency() {
+		return latency.getMaxLatency();
+	}
+
+	@Override
+	public final long getLatencyEnd() {
+		return latency.getLatencyEnd();
+	}
+
+	@Override
+	public final long getLatencyStart() {
+		return latency.getLatencyStart();
+	}
+	
+	@Override
+	public long getMaxLatencyStart() {
+		return latency.getMaxLatencyStart();
+	}
+
+	@Override
+	public final void setLatencyEnd(long timestamp) {
+		latency.setLatencyEnd(timestamp);
+	}
+
+	@Override
+	public final void setMinLatencyStart(long timestamp) {
+		latency.setMinLatencyStart(timestamp);
+	}
+	
+	@Override
+	public void setMaxLatencyStart(long timestamp) {
+		latency.setMaxLatencyStart(timestamp);
+	}
+
+	// ------------------------------------------------------------------------------
+	// Delegates for Datarate
+	// ------------------------------------------------------------------------------
+	
+	@Override
+	public void setDatarate(double datarate) {
+		this.datarate.setDatarate(datarate);
+	}
+
+	@Override
+	public double getDatarate() {
+		return datarate.getDatarate();
 	}
 }

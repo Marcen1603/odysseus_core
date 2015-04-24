@@ -15,56 +15,154 @@
   */
 package de.uniol.inf.is.odysseus.priority_interval;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
 
-public class IntervalPriority extends TimeInterval implements IPriority {
+final public class IntervalPriority extends AbstractMetaAttribute implements ITimeInterval, IPriority {
 
 	private static final long serialVersionUID = -313473603482217362L;
-	private IPriority priority = new Priority();
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
 		ITimeInterval.class, IPriority.class
 	};
-	
-	static final SDFSchema schema;
-	static{
-		schema = SDFSchemaFactory.createNewSchema(TimeInterval.schema, Priority.schema);
-	}
 
 	@Override
-	public SDFSchema getSchema() {
-		return schema;
+	public Class<? extends IMetaAttribute>[] getClasses() {
+		return classes;
 	}
 
 	
+	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(classes.length);
+	static{
+		schema.addAll(TimeInterval.schema);
+		schema.addAll(Priority.schema);
+	}
+	
+	@Override
+	public List<SDFSchema> getSchema() {
+		return schema;
+	}
+	
+	final private ITimeInterval timeInterval;
+	final private IPriority priority;
+	
+
 	public IntervalPriority() {
+		timeInterval = new TimeInterval();
+		priority = new Priority();
 	}
 	
 	public IntervalPriority(IntervalPriority other){
-		super(other);
-		this.priority = other.priority;
+		this.timeInterval = other.timeInterval.clone();
+		this.priority = other.priority.clone();
 	}
 	
 	@Override
+	public IntervalPriority clone() {
+		return new IntervalPriority(this);
+	}
+
+	@Override
+	public String getName() {
+		return "IntervalPriority";
+	}
+
+	// ------------------------------------------------------------------------------
+	// Methods that need to merge different types
+	// ------------------------------------------------------------------------------
+
+	
+	@Override
 	public void fillValueList(List<Tuple<?>> values) {
-		super.fillValueList(values);
+		timeInterval.fillValueList(values);
 		priority.fillValueList(values);
+	}
+
+	@Override
+	public <K> K getValue(int subtype, int index) {
+		switch(subtype){
+			case 0:
+				return timeInterval.getValue(0, index);
+			case 1:
+				return priority.getValue(0, index);
+		}
+		return null;
 	}
 
 	
 	@Override
-	public byte getPriority() {
+	public String toString() {
+		return "i="+timeInterval.toString()+" p= "+this.priority;
+	}
+	
+	@Override
+	public String toString(PointInTime baseTime) {
+		return "i="+timeInterval.toString(baseTime)+" p= "+this.priority;
+	}
+	
+	@Override
+	public String csvToString(WriteOptions options) {
+		return timeInterval.csvToString(options)+options.getDelimiter()+this.priority;
+	}
+	
+	@Override
+	public String getCSVHeader(char delimiter) {
+		return timeInterval.getCSVHeader(delimiter)+delimiter+priority.getCSVHeader(delimiter);
+	}
+	
+	// ------------------------------------------------------------------------------
+	// Delegates for timeInterval
+	// ------------------------------------------------------------------------------
+	
+	@Override
+	public PointInTime getStart() {
+		return timeInterval.getStart();
+	}
+
+	@Override
+	public PointInTime getEnd() {
+		return timeInterval.getEnd();
+	}
+
+	@Override
+	public void setStart(PointInTime point) {
+		timeInterval.setStart(point);
+	}
+
+	@Override
+	public void setEnd(PointInTime point) {
+		timeInterval.setEnd(point);
+	}
+
+	@Override
+	public void setStartAndEnd(PointInTime start, PointInTime end) {
+		timeInterval.setStartAndEnd(start, end);
+	}
+
+	@Override
+	public int compareTo(ITimeInterval o) {
+		return timeInterval.compareTo(o);
+	}
+
+	// ------------------------------------------------------------------------------
+	// Delegates for Priority
+	// ------------------------------------------------------------------------------
+
+
+	@Override
+	public final byte getPriority() {
 		return priority.getPriority();
 	}
 
@@ -72,34 +170,10 @@ public class IntervalPriority extends TimeInterval implements IPriority {
 	public void setPriority(byte priority) {
 		this.priority.setPriority(priority);
 	}
-	
-	@Override
-	public IntervalPriority clone() {
-		return new IntervalPriority(this);
-	}
-	
-	@Override
-	public String toString() {
-		return super.toString()+" p= "+this.priority;
-	}
-	
-	@Override
-	public String csvToString(WriteOptions options) {
-		return super.csvToString(options)+options.getDelimiter()+this.priority;
-	}
-	
-	@Override
-	public String getCSVHeader(char delimiter) {
-		return super.getCSVHeader(delimiter)+delimiter+"priority";
-	}
 
-	@Override
-	public Class<? extends IMetaAttribute>[] getClasses() {
-		return classes;
-	}
+
+
 	
-	@Override
-	public String getName() {
-		return "IntervalPriority";
-	}
+
+	
 }

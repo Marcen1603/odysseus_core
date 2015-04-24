@@ -90,7 +90,7 @@ public class MetadataRegistry {
 		}
 	}
 
-	public static SDFSchema getMetadataSchema(SortedSet<String> types) {
+	public static List<SDFSchema> getMetadataSchema(SortedSet<String> types) {
 		synchronized (combinedMetadataTypes) {
 			IMetaAttribute type = combinedMetadataTypes.get(types);
 			if (type == null) {

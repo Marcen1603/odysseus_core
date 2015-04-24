@@ -171,7 +171,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			}
 			// add metaschema
 			if (attributes.getMetaschema()!=null){
-				children.add(attributes.getMetaschema());
+				children.addAll(attributes.getMetaschema());
 			}
 			if (attributes.isInOrder() == false){
 				children.add("OutOfOrder");

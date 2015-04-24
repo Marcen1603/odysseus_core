@@ -321,7 +321,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		IMetaAttribute metaAttribute = localMetaAttribute!=null?localMetaAttribute:getMetaAttribute();
 		
 		if (metaAttribute != null){
-			SDFSchema metaSchema = metaAttribute.getSchema();
+			List<SDFSchema> metaSchema = metaAttribute.getSchema();
 			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);			
 		}
 		
