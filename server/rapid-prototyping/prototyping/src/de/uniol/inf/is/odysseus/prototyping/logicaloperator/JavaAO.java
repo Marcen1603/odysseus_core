@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @version $Id$
  *
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "JAVA", doc = "This operator suports Java for data processing", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "JAVA", doc = "This operator supports Java for data processing", category = { LogicalOperatorCategory.BASE })
 public class JavaAO extends UnaryLogicalOp {
 
     /**

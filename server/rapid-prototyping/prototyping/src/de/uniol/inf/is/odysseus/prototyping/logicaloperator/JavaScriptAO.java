@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @version $Id$
  *
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "JS", doc = "This operator suports JavaScript scripts for data processing", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "JS", doc = "This operator supports JavaScript scripts for data processing", category = { LogicalOperatorCategory.BASE })
 public class JavaScriptAO extends AbstractScriptAO {
 
     /**

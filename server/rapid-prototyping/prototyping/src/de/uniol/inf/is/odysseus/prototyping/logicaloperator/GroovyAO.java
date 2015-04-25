@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @version $Id$
  *
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "GROOVY", doc = "This operator suports Groovy scripts for data processing", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "GROOVY", doc = "This operator supports Groovy scripts for data processing", category = { LogicalOperatorCategory.BASE })
 public class GroovyAO extends AbstractScriptAO {
 
     /**
