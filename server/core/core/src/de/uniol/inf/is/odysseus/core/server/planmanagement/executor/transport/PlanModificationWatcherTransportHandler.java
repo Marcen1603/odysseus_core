@@ -84,7 +84,7 @@ public class PlanModificationWatcherTransportHandler extends
 			Tuple<IMetaAttribute> output = new Tuple<IMetaAttribute>(3, false);
 			output.setAttribute(0, System.currentTimeMillis());
 			output.setAttribute(1, e.getValue().getID());
-			output.setAttribute(2, e.getEventType());
+			output.setAttribute(2, e.getEventType().toString());
 			fireProcess(output);
 		}
 	}
