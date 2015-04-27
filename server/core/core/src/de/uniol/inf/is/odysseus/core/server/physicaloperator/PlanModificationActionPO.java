@@ -113,7 +113,7 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<?>> {
 				LOG.error("Unknown command '{}' for query id {}", command, queryID);
 			}
 		} catch( Throwable t ) {
-			LOG.error("Could not execute command '{}' for query id {}", command, queryID, t);
+			LOG.error("Could not execute command '{}' for query id {}", new Object[]{ command, queryID, t});
 		}
 	}
 
