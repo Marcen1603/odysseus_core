@@ -83,6 +83,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryStarter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterParserID;
@@ -356,6 +357,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				if (parameters.getPriority() > 0) {
 					query.setPriority(parameters.getPriority());
 				}
+				
+				query.setParameter(ACQueryParameter.class.getSimpleName(), parameters.get(ACQueryParameter.class));
 
 				// // this executor processes reoptimize requests
 				// if (query instanceof IPhysicalQuery) {
