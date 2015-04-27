@@ -29,7 +29,7 @@ public class PlanModificationWatcherPO extends AbstractSource<Tuple<?>> implemen
 			output.setAttribute(0, System.currentTimeMillis());
 			output.setAttribute(1, e.getValue().getID()); 
 			output.setAttribute(2, e.getEventType().toString());
-			
+						
 			// BUG: Output has no Metadata
 			
 			transfer(output);
