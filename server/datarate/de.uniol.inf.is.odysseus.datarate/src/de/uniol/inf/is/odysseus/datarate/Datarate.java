@@ -6,14 +6,14 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
-final public class Datarate extends AbstractMetaAttribute implements IDatarate,
+final public class Datarate extends AbstractBaseMetaAttribute implements IDatarate,
 		Cloneable, Serializable {
 
 	private static final long serialVersionUID = -3947845802567855438L;
@@ -59,6 +59,11 @@ final public class Datarate extends AbstractMetaAttribute implements IDatarate,
 		values.add(t);
 	}
 
+	@Override
+	public void writeValue(Tuple<?> value) {
+		this.datarate = value.getAttribute(0);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <K> K getValue(int subtype, int index) {
@@ -69,6 +74,7 @@ final public class Datarate extends AbstractMetaAttribute implements IDatarate,
 		return null;
 	}
 
+	
 	@Override
 	public String getName() {
 		return "Datarate";

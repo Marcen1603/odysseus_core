@@ -261,6 +261,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 						.getSupportedDataTypes().get(0), options);
 		SDFSchema outputSchema = createOutputSchema(resource);
 		source.setOutputSchema(outputSchema);
+		source.setLocalMetaAttribute(metaAttribute);
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
@@ -285,6 +286,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 				new TupleDataHandler().getSupportedDataTypes().get(0), options);
 		SDFSchema outputSchema = createOutputSchema(resource);
 		source.setOutputSchema(outputSchema);
+		source.setLocalMetaAttribute(metaAttribute);
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;

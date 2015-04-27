@@ -20,7 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-final public class TimeIntervalProbabilisticLatency extends AbstractMetaAttribute
+final public class TimeIntervalProbabilisticLatency extends AbstractCombinedMetaAttribute 
 		implements ILatency, ITimeInterval, IProbabilistic {
 	/**
 	 * 
@@ -110,6 +110,13 @@ final public class TimeIntervalProbabilisticLatency extends AbstractMetaAttribut
 		timeInterval.retrieveValues(values);
 		latency.retrieveValues(values);
 		probabilistic.retrieveValues(values);
+	}
+	
+	@Override
+	public void writeValues(List<Tuple<?>> values) {
+		timeInterval.writeValue(values.get(0));
+		latency.writeValue(values.get(1));
+		probabilistic.writeValue(values.get(2));
 	}
 	
 	@Override

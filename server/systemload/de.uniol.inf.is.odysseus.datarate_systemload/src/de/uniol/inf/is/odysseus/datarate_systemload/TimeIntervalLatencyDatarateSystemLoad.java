@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 import de.uniol.inf.is.odysseus.systemload.SystemLoad;
 
 final public class TimeIntervalLatencyDatarateSystemLoad extends
-		AbstractMetaAttribute implements ITimeInterval, ILatency, IDatarate,
-		ISystemLoad {
+		AbstractCombinedMetaAttribute implements ITimeInterval, ILatency,
+		IDatarate, ISystemLoad {
 
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unchecked")
@@ -81,7 +81,7 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 	// ------------------------------------------------------------------------------
 	// Methods that need to merge different types
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
 		timeInterval.retrieveValues(values);
@@ -91,16 +91,24 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 	}
 	
 	@Override
+	public void writeValues(List<Tuple<?>> values) {
+		timeInterval.writeValue(values.get(0));
+		latency.writeValue(values.get(1));
+		datarate.writeValue(values.get(2));
+		systemload.writeValue(values.get(3));
+	}
+
+	@Override
 	public <K> K getValue(int subtype, int index) {
-		switch(subtype){
-			case 0:
-				return timeInterval.getValue(0, index);
-			case 1:
-				return latency.getValue(0, index);
-			case 2:
-				return datarate.getValue(0, index);
-			case 3:
-				return systemload.getValue(0, index);
+		switch (subtype) {
+		case 0:
+			return timeInterval.getValue(0, index);
+		case 1:
+			return latency.getValue(0, index);
+		case 2:
+			return datarate.getValue(0, index);
+		case 3:
+			return systemload.getValue(0, index);
 		}
 		return null;
 	}
@@ -134,11 +142,11 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 				+ latency.toString() + " | datarate = " + datarate.toString()
 				+ " | sysload = )" + systemload + toString();
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for timeInterval
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public PointInTime getStart() {
 		return timeInterval.getStart();
@@ -168,17 +176,16 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 	public int compareTo(ITimeInterval o) {
 		return timeInterval.compareTo(o);
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for latency
 	// ------------------------------------------------------------------------------
 
-	
 	@Override
 	public final long getLatency() {
 		return latency.getLatency();
 	}
-	
+
 	@Override
 	public long getMaxLatency() {
 		return latency.getMaxLatency();
@@ -193,7 +200,7 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 	public final long getLatencyStart() {
 		return latency.getLatencyStart();
 	}
-	
+
 	@Override
 	public long getMaxLatencyStart() {
 		return latency.getMaxLatencyStart();
@@ -208,16 +215,16 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 	public final void setMinLatencyStart(long timestamp) {
 		latency.setMinLatencyStart(timestamp);
 	}
-	
+
 	@Override
 	public void setMaxLatencyStart(long timestamp) {
 		latency.setMaxLatencyStart(timestamp);
 	}
-	
+
 	// ------------------------------------------------------------------------------
 	// Delegates for Datarate
 	// ------------------------------------------------------------------------------
-	
+
 	@Override
 	public void setDatarate(double datarate) {
 		this.datarate.setDatarate(datarate);
@@ -228,7 +235,6 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 		return datarate.getDatarate();
 	}
 
-	
 	// ------------------------------------------------------------------------------
 	// Delegates for systemload
 	// ------------------------------------------------------------------------------
@@ -257,6 +263,4 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 		return systemload.getNetLoad(name);
 	}
 
-	
-	
 }

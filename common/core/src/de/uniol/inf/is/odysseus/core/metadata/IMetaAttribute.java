@@ -49,12 +49,34 @@ public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
 	void retrieveValues(List<Tuple<?>> values);
 	
 	/**
+	 * Write all meta data with new values
+	 * @param values A list of tuples that contain meta data. The list must contain a set of tuples where
+	 * each tuple corresponds to one single meta data (e.g. TimeInterval) and must have the corresponding schema. 
+	 * The list must contain the meta data values in the same order as getSchema() returns 
+	 */
+	void writeValues(List<Tuple<?>> values);
+	
+	/**
+	 * For all meta data with a single Tuple (for simple meta types)
+	 * @param value
+	 */
+	void writeValue(Tuple<?> value);
+	
+	/**
 	 * Returns the value of the current meta data for the subtype and the position
-	 * @param subtype
-	 * @param index
+	 * @param subtype which subtype position (ignored in base types)
+	 * @param index the position of the value
 	 * @return
 	 */
 	<K> K getValue(int subtype, int index);
+	
+//	/**
+//	 * Allows to set a single value
+//	 * @param subtype which subtype position (ignored in base types)
+//	 * @param index which position the value should be set
+//	 * @param value which value should be set
+//	 */
+//	<K> void setValue(int subtype, int index, K value);
 	
 	/**
 	 * Clone this meta attribute

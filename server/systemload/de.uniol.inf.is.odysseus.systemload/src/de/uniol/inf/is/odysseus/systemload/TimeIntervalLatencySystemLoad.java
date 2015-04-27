@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
-final public class TimeIntervalLatencySystemLoad extends AbstractMetaAttribute
+final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAttribute 
 		implements ITimeInterval, ILatency, ISystemLoad {
 
 	private static final long serialVersionUID = 1L;
@@ -76,6 +76,13 @@ final public class TimeIntervalLatencySystemLoad extends AbstractMetaAttribute
 		timeInterval.retrieveValues(values);
 		latency.retrieveValues(values);
 		systemload.retrieveValues(values);
+	}
+	
+	@Override
+	public void writeValues(List<Tuple<?>> values) {
+		timeInterval.writeValue(values.get(0));
+		latency.writeValue(values.get(1));
+		systemload.writeValue(values.get(2));
 	}
 	
 	@Override

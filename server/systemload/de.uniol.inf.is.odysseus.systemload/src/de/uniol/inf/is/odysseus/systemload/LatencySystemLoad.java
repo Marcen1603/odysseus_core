@@ -6,13 +6,13 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
-public class LatencySystemLoad extends AbstractMetaAttribute implements
+final public class LatencySystemLoad extends AbstractCombinedMetaAttribute implements
 	  ILatency, ISystemLoad {
 
 	private static final long serialVersionUID = 1L;
@@ -57,6 +57,12 @@ public class LatencySystemLoad extends AbstractMetaAttribute implements
 	public void retrieveValues(List<Tuple<?>> values) {
 		latency.retrieveValues(values);
 		systemload.retrieveValues(values);
+	}
+	
+	@Override
+	public void writeValues(List<Tuple<?>> values) {
+		latency.writeValue(values.get(0));
+		systemload.writeValue(values.get(1));		
 	}
 	
 	@Override

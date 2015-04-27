@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  * @author Marco Grawunder, Jonas Jacobi
  */
 
-final public class TimeInterval extends AbstractMetaAttribute implements
+final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		ITimeInterval, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 2210545271466064814L;
@@ -109,7 +109,7 @@ final public class TimeInterval extends AbstractMetaAttribute implements
 		t.setAttribute(1, end.getMainPoint());
 		values.add(t);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <K> K getValue(int subtype, int index) {
@@ -122,7 +122,11 @@ final public class TimeInterval extends AbstractMetaAttribute implements
 		return null;
 	}
 
-
+	@Override
+	public void writeValue(Tuple<?> value) {
+		this.start = new PointInTime((long)value.getAttribute(0));
+		this.end = new PointInTime((long)value.getAttribute(1));
+	}
 
 	public boolean isEndInfinite() {
 		return end.isInfinite();

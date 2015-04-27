@@ -6,17 +6,15 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.datarate.Datarate;
 import de.uniol.inf.is.odysseus.datarate.IDatarate;
-import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 import de.uniol.inf.is.odysseus.systemload.SystemLoad;
 
-final public class DatarateSystemLoad extends AbstractMetaAttribute implements ISystemLoad, IDatarate {
+final public class DatarateSystemLoad extends AbstractCombinedMetaAttribute implements ISystemLoad, IDatarate {
 
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unchecked")
@@ -69,6 +67,12 @@ final public class DatarateSystemLoad extends AbstractMetaAttribute implements I
 	public void retrieveValues(List<Tuple<?>> values) {
 		systemload.retrieveValues(values);
 		datarate.retrieveValues(values);
+	}
+	
+	@Override
+	public void writeValues(List<Tuple<?>> values) {
+		systemload.writeValue(values.get(0));
+		datarate.writeValue(values.get(1));
 	}
 	
 	@Override

@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.datarate.IDatarate;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 import de.uniol.inf.is.odysseus.systemload.SystemLoad;
 
-final public class TimeIntervalDatarateSystemLoad extends AbstractMetaAttribute
+final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAttribute 
 		implements ITimeInterval, IDatarate, ISystemLoad  {
 
 	private static final long serialVersionUID = -3865342510097346722L;
@@ -105,6 +105,13 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractMetaAttribute
 		systemload.retrieveValues(values);
 	}
 
+	@Override
+	public void writeValues(List<Tuple<?>> values) {
+		timeInterval.writeValue(values.get(0));
+		datarate.writeValue(values.get(1));
+		systemload.writeValue(values.get(2));
+	}
+	
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch (subtype) {

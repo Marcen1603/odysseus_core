@@ -1569,8 +1569,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		if (type == null) {
 			type = Tuple.class;
 		}
-		@SuppressWarnings("unchecked")
-		SDFSchema outputSchema = SDFSchemaFactory.createNewSchema(sourceName, (Class<? extends IStreamObject<?>>) type, attributes);
+
+		SDFSchema outputSchema = createOutputSchema(sourceName, attributes);
 
 		Map<String, String> options = new HashMap<>();
 		if (node.jjtGetChild(node.jjtGetNumChildren() - 1) instanceof ASTOptions) {
@@ -1585,6 +1585,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		AccessAO access = new AccessAO(new Resource(getCaller().getUser(),
 				sourceName), wrapper, transport, protocol, datahandler, options);
+		access.setLocalMetaAttribute(metaAttribute);
 		access.setOutputSchema(outputSchema);
 		CreateStreamCommand cmd = new CreateStreamCommand(sourceName, access,
 				getCaller());
@@ -1592,6 +1593,18 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		return null;
 	}
+	
+	private SDFSchema createOutputSchema(String resource, List<SDFAttribute> attributes) {
+		SDFSchema outputSchema = SDFSchemaFactory.createNewTupleSchema(
+				resource.toString(), attributes);
+		if (metaAttribute != null) {
+			outputSchema = SDFSchemaFactory.createNewWithMetaSchema(
+					outputSchema, metaAttribute.getSchema());
+		}
+		return outputSchema;
+	}
+
+	
 
 	@Override
 	public Object visit(ASTDropSinkStatement node, Object data)

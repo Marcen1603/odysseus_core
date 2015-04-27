@@ -5,14 +5,14 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-final public class TimeIntervalDatarate extends AbstractMetaAttribute implements ITimeInterval, IDatarate {
+final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute implements ITimeInterval, IDatarate {
 
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unchecked")
@@ -65,6 +65,12 @@ final public class TimeIntervalDatarate extends AbstractMetaAttribute implements
 	public void retrieveValues(List<Tuple<?>> values) {
 		timeInterval.retrieveValues(values);
 		datarate.retrieveValues(values);
+	}
+	
+	@Override
+	public void writeValues(List<Tuple<?>> values) {
+		timeInterval.writeValue(values.get(0));
+		datarate.writeValue(values.get(1));
 	}
 	
 	@Override

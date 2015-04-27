@@ -20,7 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
 
-final public class IntervalLatencyPriority extends AbstractMetaAttribute
+final public class IntervalLatencyPriority extends AbstractCombinedMetaAttribute 
 		implements ITimeInterval, ILatency, IPriority {
 
 	private static final long serialVersionUID = -4924797905689073685L;
@@ -95,6 +95,13 @@ final public class IntervalLatencyPriority extends AbstractMetaAttribute
 		prio.retrieveValues(values);
 	}
 
+	@Override
+	public void writeValues(List<Tuple<?>> values) {
+		timeInterval.writeValue(values.get(0));
+		latency.writeValue(values.get(1));
+		prio.retrieveValues(values);
+	}
+	
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch (subtype) {

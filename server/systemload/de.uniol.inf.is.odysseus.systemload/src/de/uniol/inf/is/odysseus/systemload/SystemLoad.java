@@ -12,14 +12,14 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
-final public class SystemLoad extends AbstractMetaAttribute implements
+final public class SystemLoad extends AbstractBaseMetaAttribute implements
 		ISystemLoad, Cloneable, Serializable {
 
 	private static final String LOCAL_NAME = "local";
@@ -58,13 +58,19 @@ final public class SystemLoad extends AbstractMetaAttribute implements
 
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
-
+		// TODO
 	}
 
+	@Override
+	public void writeValue(Tuple<?> value) {
+		// TODO
+	}
+	
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		return null;
 	}
+
 
 	@Override
 	public ISystemLoad clone() {

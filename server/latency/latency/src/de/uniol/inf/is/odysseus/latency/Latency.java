@@ -21,7 +21,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
-final public class Latency extends AbstractMetaAttribute implements ILatency {
+final public class Latency extends AbstractBaseMetaAttribute implements ILatency {
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ILatency.class };
@@ -79,6 +79,13 @@ final public class Latency extends AbstractMetaAttribute implements ILatency {
 		t.setAttribute(2, lend);
 		t.setAttribute(3, getLatency());
 		values.add(t);
+	}
+	
+	@Override
+	public void writeValue(Tuple<?> value) {
+		minlstart = value.getAttribute(0);
+		maxlstart= value.getAttribute(1);
+		lend = value.getAttribute(2);
 	}
 	
 	@SuppressWarnings("unchecked")

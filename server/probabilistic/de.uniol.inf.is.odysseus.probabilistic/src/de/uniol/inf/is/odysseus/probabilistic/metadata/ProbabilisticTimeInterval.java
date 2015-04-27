@@ -20,7 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-final public class ProbabilisticTimeInterval extends AbstractMetaAttribute
+final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribute 
 		implements IProbabilisticTimeInterval {
 
 	private static final long serialVersionUID = -9030157268224460919L;
@@ -108,6 +108,12 @@ final public class ProbabilisticTimeInterval extends AbstractMetaAttribute
 	public void retrieveValues(List<Tuple<?>> values) {
 		timeInterval.retrieveValues(values);
 		probabilistic.retrieveValues(values);
+	}
+	
+	@Override
+	public void writeValues(List<Tuple<?>> values) {
+		timeInterval.writeValue(values.get(0));
+		probabilistic.writeValue(values.get(1));
 	}
 
 	@Override

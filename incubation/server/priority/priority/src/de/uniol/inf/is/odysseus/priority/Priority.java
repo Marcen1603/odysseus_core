@@ -20,14 +20,14 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
-final public class Priority extends AbstractMetaAttribute implements IPriority {
+final public class Priority extends AbstractBaseMetaAttribute implements IPriority {
 
 	private static final long serialVersionUID = 1837720176871400611L;
 
@@ -62,6 +62,11 @@ final public class Priority extends AbstractMetaAttribute implements IPriority {
 		Tuple t = new Tuple(1,false);
 		t.setAttribute(0, prio);
 		values.add(t);
+	}
+	
+	@Override
+	public void writeValue(Tuple<?> value) {
+		prio = value.getAttribute(0);
 	}
 	
 	@SuppressWarnings("unchecked")

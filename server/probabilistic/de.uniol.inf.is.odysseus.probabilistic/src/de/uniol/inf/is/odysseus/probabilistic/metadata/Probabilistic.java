@@ -22,7 +22,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.AbstractMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-final public class Probabilistic extends AbstractMetaAttribute implements IProbabilistic {
+final public class Probabilistic extends AbstractBaseMetaAttribute implements IProbabilistic {
     /**
 	 * 
 	 */
@@ -94,6 +94,11 @@ final public class Probabilistic extends AbstractMetaAttribute implements IProba
 		Tuple t = new Tuple(1,false);
 		t.setAttribute(0, existence);
 		values.add(t);
+	}
+	
+	@Override
+	public void writeValue(Tuple<?> value) {
+		existence = value.getAttribute(0);
 	}
     
 	@SuppressWarnings("unchecked")
