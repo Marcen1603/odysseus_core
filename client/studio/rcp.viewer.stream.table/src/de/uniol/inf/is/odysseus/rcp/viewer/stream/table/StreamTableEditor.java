@@ -83,11 +83,6 @@ public class StreamTableEditor implements IStreamEditorType {
 	private boolean isShowingMetadata = true;
 	private boolean isShowingHashCode = false;
 
-	private TableViewerColumn metadataColumn;
-	private TableViewerColumn metadataMapColumn;
-	private TableViewerColumn hashCodeColumn;
-
-	
 	public StreamTableEditor(int maxTuples) {
 		setMaxTuplesCount(maxTuples);
 	}
@@ -372,9 +367,6 @@ public class StreamTableEditor implements IStreamEditorType {
 		while (tableViewer.getTable().getColumnCount() > 0) {
 			disposeColumn(tableViewer.getTable().getColumn(0));
 		}
-		metadataColumn = null;
-		metadataMapColumn = null;
-		hashCodeColumn = null;
 	}
 
 	private void setMaxTuplesCount(int maxTuples) {
@@ -419,17 +411,30 @@ public class StreamTableEditor implements IStreamEditorType {
 				TableViewerColumn col = createColumn(tableViewer, getSchema().get(attributeIndex));
 				layout.setColumnData(col.getColumn(), new ColumnWeightData(weight, 25, true));
 			}
-
+			
 			if (isShowingMetadata) {
-				metadataColumn = createMetadataColumn(tableViewer);
-				layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
-
-				metadataMapColumn = createMetadataMapColumn(tableViewer);
-				layout.setColumnData(metadataMapColumn.getColumn(), new ColumnWeightData(weight, 25, true));
+				
+				List<SDFSchema> metaschemaList = getSchema().getMetaschema();
+				if( metaschemaList != null ) {
+					for( int i = 0; i < metaschemaList.size(); i++) {
+						SDFSchema metaschema = metaschemaList.get(i);
+						for (int j = 0; j < metaschema.size(); j++ ) {
+							SDFAttribute metaAttribute = metaschema.get(j);
+							TableViewerColumn metadataColumn = createMetadataAttributeColumn(tableViewer, metaAttribute, i, j);
+							layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
+						}
+					}
+				} else {
+					TableViewerColumn metadataColumn = createMetadataColumn(tableViewer);
+					layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
+	
+					TableViewerColumn metadataMapColumn = createMetadataMapColumn(tableViewer);
+					layout.setColumnData(metadataMapColumn.getColumn(), new ColumnWeightData(weight, 25, true));
+				}
 			}
 			
 			if (isShowingHashCode){
-				hashCodeColumn = createHashCodeColumn(tableViewer);
+				TableViewerColumn hashCodeColumn = createHashCodeColumn(tableViewer);
 				layout.setColumnData(hashCodeColumn.getColumn(), new ColumnWeightData(weight,10,true));
 			}
 
@@ -476,6 +481,33 @@ public class StreamTableEditor implements IStreamEditorType {
 		return col;
 	}
 
+	private TableViewerColumn createMetadataAttributeColumn(TableViewer tableViewer, SDFAttribute metadataAttribute, final int metaschemaIndex, final int metaAttributeIndex) {
+		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
+		col.getColumn().setText(metadataAttribute.getAttributeName());
+		col.getColumn().setAlignment(SWT.CENTER);
+
+		col.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				try {
+					Tuple<?> tuple = (Tuple<?>) cell.getElement();
+					Object metadata = tuple.getMetadata().getValue(metaschemaIndex, metaAttributeIndex);
+					if (metadata != null) {
+						cell.setText(metadata.toString());
+					} else {
+						cell.setText("<null>");
+					}
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+
+				} catch (Throwable t) {
+					LOG.error("Could not retrieve metadata attribute ", t);
+					cell.setText("<Error>");
+				}
+			}
+		});
+
+		return col;
+	}
 	private TableViewerColumn createMetadataMapColumn(TableViewer tableViewer) {
 		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
 		col.getColumn().setText("MetadataMap");
