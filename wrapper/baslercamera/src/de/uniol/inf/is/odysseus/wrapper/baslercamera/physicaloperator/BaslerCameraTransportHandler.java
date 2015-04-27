@@ -78,7 +78,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		 			{
 		 				@Override public void onGrabbed(ByteBuffer buffer)
 		 				{
-							Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), true);
+							Tuple<IMetaAttribute> tuple = new Tuple<>(getSchema().size(), false);
 							int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
 							if (attrs.length > 0)
 							{
