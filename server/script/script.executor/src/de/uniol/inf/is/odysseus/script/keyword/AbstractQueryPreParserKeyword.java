@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -79,18 +80,21 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 		if (transCfgName == null) {
 			transCfgName = "Standard";
 		}
+		
 		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(AbstractPreParserKeyword.ADD_TRANS_PARAMS);
-
-		ISession queryCaller = (ISession) variables.get("USER");
-		String queryName = (String) variables.get(QueryNamePreParserKeyword.QNAME);
 		if (addSettings == null) {
 			addSettings = new ArrayList<>();
 		}
+		
+		// QNAME
+		String queryName = (String) variables.get(QueryNamePreParserKeyword.QNAME);
 		if (queryName != null && queryName.trim().length() > 0) {
 			addSettings.add(new ParameterQueryName(queryName));
 			// Only for this query
 			variables.remove(QueryNamePreParserKeyword.QNAME);
 		}
+		
+		// PRIO
 		if (variables.containsKey(QueryPriorityPreParserKeyword.NAME)) {
 			try {
 				int priority = Integer.parseInt((String) variables.get(QueryPriorityPreParserKeyword.NAME));
@@ -103,9 +107,15 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 			variables.remove(QueryPriorityPreParserKeyword.NAME);
 
 		}
+		
+		// CALLER
+		ISession queryCaller = (ISession) variables.get("USER");
 		if (queryCaller == null) {
 			queryCaller = caller;
 		}
+		
+		// AC-QUERIES
+		addSettings.add(new ACQueryParameter(isACQuery()));
 
 		try {
 			parserID = parserID.trim();
@@ -148,6 +158,10 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 		} catch (Exception ex) {
 			throw new OdysseusScriptException("Error while executing Odysseus script during executing a query!", ex);
 		}
+	}
+
+	protected boolean isACQuery() {
+		return false;
 	}
 
 	// @SuppressWarnings({ "rawtypes", "unchecked" })

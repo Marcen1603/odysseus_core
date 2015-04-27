@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.script.executor;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.script.keyword.ACQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ActivateRewriteRulePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.AddQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.BufferPlacementPreParserKeyword;
@@ -64,6 +65,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(AddQueryPreParserKeyword.QUERY, AddQueryPreParserKeyword.class);
 		keywords.put(AddQueryPreParserKeyword.ADDQUERY, AddQueryPreParserKeyword.class);
 		keywords.put(ExecuteQueryPreParserKeyword.RUNQUERY, ExecuteQueryPreParserKeyword.class);
+		keywords.put(ACQueryPreParserKeyword.NAME, ACQueryPreParserKeyword.class);
 		keywords.put(StartAllClosedQueriesPreParserKeyword.STARTQUERIES, StartAllClosedQueriesPreParserKeyword.class);
 		keywords.put(SchedulerPreParserKeyword.SCHEDULER, SchedulerPreParserKeyword.class);
 		keywords.put(DropAllQueriesPreParserKeyword.DROPALLQUERIES, DropAllQueriesPreParserKeyword.class);
