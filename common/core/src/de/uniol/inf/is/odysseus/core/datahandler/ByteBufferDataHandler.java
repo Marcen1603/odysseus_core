@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.ByteBufferWrapper;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -26,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Henrik Surm
  *
  */
-public class ByteBufferDataHandler extends AbstractDataHandler<ByteBuffer>
+public class ByteBufferDataHandler extends AbstractDataHandler<ByteBufferWrapper>
 {
 	static protected List<String> types = new ArrayList<String>();
 	static {
@@ -37,7 +38,7 @@ public class ByteBufferDataHandler extends AbstractDataHandler<ByteBuffer>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ByteBuffer readData(List<String> input) 
+	public ByteBufferWrapper readData(List<String> input) 
 	{
 		throw new UnsupportedOperationException("Not implemented yet!");
 	}
@@ -46,7 +47,7 @@ public class ByteBufferDataHandler extends AbstractDataHandler<ByteBuffer>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ByteBuffer readData(String[] input) 
+	public ByteBufferWrapper readData(String[] input) 
 	{
 		throw new UnsupportedOperationException("Not implemented yet!");
 	}
@@ -55,7 +56,7 @@ public class ByteBufferDataHandler extends AbstractDataHandler<ByteBuffer>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ByteBuffer readData(String string) 
+	public ByteBufferWrapper readData(String string) 
 	{
 		throw new UnsupportedOperationException("Not implemented yet!");
 	}
@@ -75,6 +76,14 @@ public class ByteBufferDataHandler extends AbstractDataHandler<ByteBuffer>
 			throw new UnsupportedOperationException("Cannot write \"" + data.getClass().getName() + "\" to ByteBuffer!");
 	}
 
+	@Override
+	public ByteBufferWrapper readData(ByteBuffer buffer) 
+	{
+		// "Read" all data from buffer
+		buffer.position(buffer.limit());
+		return new ByteBufferWrapper(buffer);
+	}	
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -97,7 +106,7 @@ public class ByteBufferDataHandler extends AbstractDataHandler<ByteBuffer>
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected IDataHandler<ByteBuffer> getInstance(SDFSchema schema) {
+	protected IDataHandler<ByteBufferWrapper> getInstance(SDFSchema schema) {
 		return new ByteBufferDataHandler();
 	}
 
