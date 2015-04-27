@@ -118,6 +118,8 @@ public class BasicMFLearner
 	 */
 	protected boolean buildFromScratch = false;
 
+	protected boolean resetChangedFeatureVectors = false;
+
 	/**
 	 * The random generator to init the feature vectors.
 	 */
@@ -215,6 +217,15 @@ public class BasicMFLearner
 					this.additionalInfo = new HashMap<String, Object>();
 				}
 			}
+
+			if (options.get("reset_changed_feature_vectors") != null) {
+
+				if (Boolean.parseBoolean(options
+						.get("reset_changed_feature_vectors"))) {
+					this.resetChangedFeatureVectors = true;
+				}
+			}
+
 		}
 
 		this.clear();
@@ -365,6 +376,13 @@ public class BasicMFLearner
 			// this.noRatings;
 			final double ratingBias = oldValue - rating;
 			this.globalMean += ratingBias / this.noRatings;
+		}
+
+		if (this.resetChangedFeatureVectors) {
+			this.userFeatures.put(user,
+					this.getRandomDoubleArray(this.numOfFeatures));
+			this.itemFeatures.put(item,
+					this.getRandomDoubleArray(this.numOfFeatures));
 		}
 	}
 
