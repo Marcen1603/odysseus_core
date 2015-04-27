@@ -28,7 +28,7 @@ public class PlanModificationWatcherPO extends AbstractSource<Tuple<?>> implemen
 			Tuple<IMetaAttribute> output = new Tuple<IMetaAttribute>(3,false);
 			output.setAttribute(0, System.currentTimeMillis());
 			output.setAttribute(1, e.getValue().getID()); 
-			output.setAttribute(2, e.getEventType());
+			output.setAttribute(2, e.getEventType().toString());
 			transfer(output);
 		}
 	}
