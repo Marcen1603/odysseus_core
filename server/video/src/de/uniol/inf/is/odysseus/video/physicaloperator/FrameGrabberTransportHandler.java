@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.video.physicaloperator;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -172,7 +173,14 @@ public abstract class FrameGrabberTransportHandler extends AbstractSimplePullTra
 						image = new ImageJCV(iplImage.width(), iplImage.height(), iplImage.depth(), iplImage.nChannels());
 		
 					image.getImageData().rewind();
-					image.getImageData().put(iplImage.getByteBuffer());									
+					
+					if (image.getWidthStep() != iplImage.widthStep())
+					{
+						image.getImage().copyFrom(iplImage.getBufferedImage());						
+					}
+					else
+						image.getImageData().put(iplImage.getByteBuffer());
+					
 					currentTuple.setAttribute(attrs[0], image);
 				}
 				
