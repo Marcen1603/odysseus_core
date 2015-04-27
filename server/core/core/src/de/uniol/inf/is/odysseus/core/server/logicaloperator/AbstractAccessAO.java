@@ -323,7 +323,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		if (metaAttribute != null){
 			List<SDFSchema> metaSchema = metaAttribute.getSchema();
 			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);			
+			// Keep meta attribute!
+			this.localMetaAttribute = metaAttribute;
 		}
+		
 		
 		return schema;
 	}
