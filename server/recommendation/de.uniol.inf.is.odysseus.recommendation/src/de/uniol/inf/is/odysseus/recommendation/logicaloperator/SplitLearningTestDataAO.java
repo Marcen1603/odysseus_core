@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Cornelius Ludmann
  *
  */
-@LogicalOperator(name = "SPLIT_LEARNING_TEST_DATA", minInputPorts = 1, maxInputPorts = 1, category = { LogicalOperatorCategory.MINING }, doc = "This operator splits input data into learning and test data.")
+@LogicalOperator(name = "EXTRACT_TEST_DATA", minInputPorts = 1, maxInputPorts = 1, category = { LogicalOperatorCategory.MINING }, doc = "This operator splits input data into learning and test data.")
 public class SplitLearningTestDataAO extends AbstractLogicalOperator {
 
 	/**
@@ -69,7 +69,7 @@ public class SplitLearningTestDataAO extends AbstractLogicalOperator {
 	 * @return the strategy
 	 */
 	public String getStrategy() {
-		return strategy;
+		return this.strategy;
 	}
 
 	/**
@@ -77,12 +77,12 @@ public class SplitLearningTestDataAO extends AbstractLogicalOperator {
 	 *            the strategy to set
 	 */
 	@Parameter(name = "strategy", type = StringParameter.class, doc = "The strategy how the data should be splitted.", possibleValues = "getStrategyValues")
-	public void setStrategy(String strategy) {
+	public void setStrategy(final String strategy) {
 		this.strategy = strategy;
 	}
 
 	public List<String> getStrategyValues() {
-		List<String> list = new ArrayList<String>();
+		final List<String> list = new ArrayList<String>();
 		list.add("ITTT");
 		list.add("Hold out");
 		return list;
