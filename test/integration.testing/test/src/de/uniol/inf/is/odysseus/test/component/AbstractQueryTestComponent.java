@@ -40,7 +40,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 			ids = executor.addQuery(set.getQuery(), "OdysseusScript", session, Context.empty());
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
-			return StatusCode.QUERY_NOT_INSTALLABLE;
+			return StatusCode.ERROR_QUERY_NOT_INSTALLABLE;
 		}
 		try {
 			LOG.debug("adding " + ids.size() + " queries done.");

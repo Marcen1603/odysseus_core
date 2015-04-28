@@ -1,8 +1,22 @@
+/*******************************************************************************
+ * Copyright 2015 The Odysseus Team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.component;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -20,12 +34,19 @@ import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
 import de.uniol.inf.is.odysseus.test.set.ITestSet;
 
+/**
+ * 
+ * @author Christian Kuka 
+ *
+ * @param <T>
+ * @param <S>
+ */
 public abstract class AbstractTestComponent<T extends ITestContext, S extends ITestSet> implements ITestComponent<T> {
+    protected static Logger LOG = LoggerFactory.getLogger(AbstractTestComponent.class);
 
 	protected IServerExecutor executor;
 	protected List<S> testsets;
 	protected ISession session;
-	protected static Logger LOG = LoggerFactory.getLogger(AbstractTestComponent.class);
 
 	@Override
 	public void setupTest(T context) {
@@ -89,22 +110,36 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 		}
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
-	public List<StatusCode> runTest(T context) {
-		List<StatusCode> codes = new ArrayList<>();
-		int i = 1;
+	public TestReport runTest(T context) {
+		int i = 0;
 		tryStartExecutor(executor);
+		TestReport report = new TestReport(getName(), testsets.size());
 		for (S set : testsets) {
-			LOG.debug("Running sub test " + i + " of " + testsets.size() + ": \"" + set.getName() + "\" ....");
+		    report.set(i, set.getName(), set.getQuery());
+			LOG.debug("Running sub test " + (i+1) + " of " + testsets.size() + ": \"" + set.getName() + "\" ....");
 			LOG.debug(set.getQuery());
-			StatusCode code = executeTestSet(set);
+			long start = System.nanoTime();
+            StatusCode code = null;
+            try {
+                code = executeTestSet(set);
+            }
+            catch (Throwable e) {
+                report.setError(i, e);
+                throw e;
+            }
+            report.setDuration(i, System.nanoTime()-start);
+            report.setStatusCode(i, code);
 			LOG.debug("Sub test \"" + set.getName() + "\" ended with code: " + code);
 			LOG.debug("***************************************************************************************");
-			codes.add(code);
 			i++;
 		}
 		tryStopExecutor(executor);
-		return codes;
+		return report;
 	}
 
 	protected abstract StatusCode executeTestSet(S set);
@@ -113,7 +148,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	public String getName() {
 		return getClass().getSimpleName();
 	}
-
+    
 	@Override
 	public String toString() {
 		return getName();

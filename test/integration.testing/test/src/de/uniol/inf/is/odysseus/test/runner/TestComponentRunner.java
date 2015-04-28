@@ -15,10 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.runner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +22,13 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.component.ITestComponent;
+import de.uniol.inf.is.odysseus.test.component.TestReport;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
 
 /**
  * Wrapper class for an implementation of ITestComponent.
  * 
- * @author Dennis Geesen
+ * @author Dennis Geesen, Christian Kuka
  * 
  */
 public class TestComponentRunner<T extends ITestContext> {
@@ -47,23 +44,32 @@ public class TestComponentRunner<T extends ITestContext> {
 		component.setupTest(context);
 	}
 
-	public List<StatusCode> run() {
-		LOG.debug("Start Testcomponent '" + component + "'");
-		long startTime = System.nanoTime();
-		List<StatusCode> testResult = new ArrayList<>();
-		try {
-			if (component.isActivated()) {
-				testResult = component.runTest(context);
-			}else{
-				LOG.debug("Component is deactivated, skipping...");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return Arrays.asList(StatusCode.EXCEPTION_DURING_TEST);
-		}
-		long elapsedTime = System.nanoTime() - startTime;
-		LOG.debug("End Testcomponent '" + component + "'. Duration = " + (elapsedTime / 1000000) + " ms");
-		return testResult;
+	public TestReport run() {
+        LOG.debug("Start Testcomponent '" + component + "'");
+        long startTime = System.nanoTime();
+        TestReport report = null;
+        try {
+            if (component.isActivated()) {
+                report = component.runTest(context);
+                report.setDuration(System.nanoTime() - startTime);
+                report.setError(null);
+                report.setStatusCode(StatusCode.OK);
+            }
+            else {
+                LOG.debug("Component is deactivated, skipping...");
+            }
+        }
+        catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            report = new TestReport(component.getName(), 0);
+            report.setDuration(System.nanoTime() - startTime);
+            report.setError(e);
+            report.setStatusCode(StatusCode.ERROR_EXCEPTION_DURING_TEST);
+            return report;
+        }
+        long elapsedTime = System.nanoTime() - startTime;
+        LOG.debug("End Testcomponent '" + component + "'. Duration = " + (elapsedTime / 1000000) + " ms");
+        return report;
 	}
 
 	public final ITestComponent<T> getTestComponent() {

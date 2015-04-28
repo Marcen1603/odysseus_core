@@ -15,9 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.component;
 
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
 
 /**
@@ -25,12 +22,12 @@ import de.uniol.inf.is.odysseus.test.context.ITestContext;
  * executed during Odysseus Test. The Plugin test.runner
  * executes them, when they are registered over Declarative Services.
  * 
- * @author Timo Michelsen, Dennis Geesen
+ * @author Timo Michelsen, Dennis Geesen, Christian Kuka
  *
  */
 public interface ITestComponent<T extends ITestContext> {
 	public void setupTest(T context);
-	public List<StatusCode> runTest(T context);	
+	public TestReport runTest(T context);	
 	public T createTestContext();
 	public String getName();
 	public boolean isActivated();

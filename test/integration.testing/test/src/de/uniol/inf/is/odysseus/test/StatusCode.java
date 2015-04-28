@@ -16,18 +16,47 @@
 package de.uniol.inf.is.odysseus.test;
 
 /**
- * @author Merlin Wasmann, Dennis Geesen
+ * @author Merlin Wasmann, Dennis Geesen, Christian Kuka
  *
  */
 public enum StatusCode {
 
-	OK, 
-	QUERY_NOT_INSTALLABLE,
-	EXCEPTION_DURING_TEST,
-	ERROR_DUPLICATES, 
-	ERROR_OUT_OF_ORDER, 
-	ERROR_MISSING_DATA,
-	ERROR_NOT_EQUIVALENT, 
-	ERROR_WRONG_PARAMETERS,
-	ERROR_DEADLOCK_POSSIBLE;
+    OK("OK"),
+
+    FAILED("Failed"),
+
+    ERROR_QUERY_NOT_INSTALLABLE("Query not installable"),
+
+    ERROR_EXCEPTION_DURING_TEST("Exception during test"),
+
+    ERROR_DUPLICATES("Duplicates"),
+
+    ERROR_OUT_OF_ORDER("Out of order"),
+
+    ERROR_MISSING_DATA("Missing data"),
+
+    ERROR_NOT_EQUIVALENT("Not equivalent"),
+
+    ERROR_WRONG_PARAMETERS("Wrong parameters"),
+
+    ERROR_DEADLOCK_POSSIBLE("Deadlock possible");
+
+    private String message;
+
+    /**
+     * Class constructor.
+     *
+     */
+    private StatusCode(String message) {
+        this.message = message;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return message;
+    }
+
 }
