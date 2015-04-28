@@ -121,7 +121,8 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 			meta = getMetadataInstance();
 		} catch (InstantiationException | IllegalAccessException e1) {
 			LOG.error("Error creating meta data",e1);
-			sendError("Error creating meta data",e1);
+            // BAD Bad bad idea, this line kills your screen with popups!!!
+			// sendError("Error creating meta data",e1);
 		}
 
 		if (isOpen() && !isDone()) {
@@ -141,7 +142,8 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 				}
 			} catch (Exception e) {
 				LOG.error("Error Reading from input", e);
-				sendError("Error Reading from input", e);
+				// BAD Bad bad idea, this line kills your screen with popups!!!
+			//	sendError("Error Reading from input", e);
 			}
 		}
 	}
