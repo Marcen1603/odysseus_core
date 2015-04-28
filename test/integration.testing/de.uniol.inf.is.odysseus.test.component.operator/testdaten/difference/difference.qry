@@ -29,8 +29,7 @@ wind1 = ACCESS({
 	options=[
 		['filename', '${BUNDLE-ROOT}\testdaten\difference\input1.csv'],
 		['csv.delimiter', ';'],
-		['csv.trim', 'true'],
-		['delay', '200']
+		['csv.trim', 'true']
 	], 
 	schema=[
 		['timestamp', 'STARTTIMESTAMP'], 

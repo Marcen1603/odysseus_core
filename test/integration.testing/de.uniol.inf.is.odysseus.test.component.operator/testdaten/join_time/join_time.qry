@@ -10,8 +10,7 @@ wind = ACCESS({
 	options=[
 		['filename', '${BUNDLE-ROOT}\testdaten\join_time\input0.csv'],
 		['csv.delimiter', ';'],
-		['csv.trim', 'true'],
-		['delay', '200']
+		['csv.trim', 'true']
 	], 
 	schema=[
 		['timestamp', 'STARTTIMESTAMP'], 

@@ -10,8 +10,7 @@ wind = ACCESS({
 	options=[
 		['filename', '${BUNDLE-ROOT}\testdaten\join_tuple\input0.csv'],
 		['csv.delimiter', ';'],
-		['csv.trim', 'true'],
-		['delay', '200']
+		['csv.trim', 'true']
 	], 
 	schema=[
 		['timestamp', 'STARTTIMESTAMP'], 
@@ -29,8 +28,7 @@ temperature = ACCESS({
 	options=[
 		['filename', '${BUNDLE-ROOT}\testdaten\join_tuple\input1.csv'],
 		['csv.delimiter', ';'],
-		['csv.trim', 'true'],
-		['delay', '100']
+		['csv.trim', 'true']
 		], 
 	schema=[
 		['timestamp', 'STARTTIMESTAMP'], 

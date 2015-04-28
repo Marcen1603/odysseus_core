@@ -10,8 +10,7 @@ wind0 = ACCESS({
 	options=[
 		['filename', '${BUNDLE-ROOT}\testdaten\intersection\input0.csv'],
 		['csv.delimiter', ';'],
-		['csv.trim', 'true'],
-		['delay', '200']
+		['csv.trim', 'true']
 	], 
 	schema=[
 		['timestamp', 'STARTTIMESTAMP'], 
