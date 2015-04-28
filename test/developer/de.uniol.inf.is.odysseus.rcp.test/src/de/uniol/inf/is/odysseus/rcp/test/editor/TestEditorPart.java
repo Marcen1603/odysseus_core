@@ -21,8 +21,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -33,6 +36,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -66,6 +70,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.slf4j.Logger;
@@ -266,6 +271,14 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
     @Override
     public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
         this.input = (FileEditorInput) input;
+        if (input instanceof FileStoreEditorInput) {
+            IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(((FileStoreEditorInput) input).getURI().getPath()));
+            this.input = new FileEditorInput(file);
+        }
+        else if (input instanceof FileEditorInput) {
+            this.input = (FileEditorInput) input;
+        }
+        Objects.requireNonNull(this.input);
         this.model = TestModel.load(this.input.getFile());
         this.setPartName(this.input.getName());
         this.setSite(site);

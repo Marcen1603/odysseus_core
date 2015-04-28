@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.test;
 
+import java.util.Objects;
+
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -82,6 +84,7 @@ public class Activator extends AbstractUIPlugin {
     }
 
     public static IExecutor getExecutor() {
+        Objects.requireNonNull(Activator.executor, "Executor instance not bonded");
         return Activator.executor;
     }
 
