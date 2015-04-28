@@ -103,8 +103,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			try {
 				attributes[i] = dataHandlers[i].readData(inputStream);
 			} catch (Exception e) {
-				logger.warn("Error parsing stream with "
-						+ dataHandlers[i].getClass() + " " + e.getMessage());
+                if (dataHandlers.length > i) {
+                    logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
+                }
+                else {
+                    logger.warn("Error parsing stream with no data handler defined " + e.getMessage());
+                }
 				attributes[i] = null;
 			}
 		}
@@ -119,8 +123,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			try {
 				attributes[i] = dataHandlers[i].readData(input[i]);
 			} catch (Exception e) {
-				logger.warn("Error parsing " + input[i] + " with "
-						+ dataHandlers[i].getClass() + " " + e.getMessage());
+                if (dataHandlers.length > i) {
+                    logger.warn("Error parsing " + input[i] + " with " + dataHandlers[i].getClass() + " " + e.getMessage());
+                }
+                else {
+                    logger.warn("Error parsing " + input[i] + " with no data handler defined " + e.getMessage());
+                }
 				attributes[i] = null;
 			}
 		}
@@ -136,11 +144,15 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 				tuple.setAttribute(i,
 						this.dataHandlers[i].readData(input.get(i)));
 			} catch (Exception e) {
-				logger.warn("Error parsing " + input.get(i) + " with "
-						+ dataHandlers[i].getClass() + " " + e.getMessage());
+                if (dataHandlers.length > i) {
+                    logger.warn("Error parsing " + input.get(i) + " with " + dataHandlers[i].getClass() + " " + e.getMessage());
+                }
+                else {
+                    logger.warn("Error parsing " + input.get(i) + " with no data handler defined " + e.getMessage());
+                }
 				tuple.setAttribute(i, (Object) null);
 			}
-		}
+	}
 		return tuple;
 	}
 
@@ -168,9 +180,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 					try {
 						attributes[i] = dataHandlers[i].readData(buffer);
 					} catch (Exception e) {
-						logger.warn("Error parsing stream with "
-								+ dataHandlers[i].getClass() + " "
-								+ e.getMessage());
+		                if (dataHandlers.length > i) {
+		                    logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
+		                }
+		                else {
+		                    logger.warn("Error parsing stream with no data handler defined " + e.getMessage());
+		                }
 						attributes[i] = null;
 					}
 				}
