@@ -48,7 +48,7 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	@Override
 	protected T readLine(String line) {
 		List<String> ret = CSVParser.parseCSV(line, textDelimiter, delimiter, trim);
-        if (ret.size() < this.getDataHandler().getSchema().size()) {
+        if ((this.getDataHandler().getSchema() != null) && (ret.size() < this.getDataHandler().getSchema().size())) {
             for (int i = ret.size(); i < this.getDataHandler().getSchema().size(); i++) {
                 ret.add(null);
             }
