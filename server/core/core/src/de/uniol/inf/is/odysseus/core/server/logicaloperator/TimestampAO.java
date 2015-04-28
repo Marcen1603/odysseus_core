@@ -114,7 +114,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return endTimestamp;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "END", isList = false, optional = true, doc="The name of the attribute for the start timestamp for application time")
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "END", isList = false, optional = true, doc="The name of the attribute for the end timestamp for application time")
 	public void setEndTimestamp(SDFAttribute endTimestamp) {
 		this.endTimestamp = endTimestamp;
 		addParameterInfoIfNeeded("END", endTimestamp);
