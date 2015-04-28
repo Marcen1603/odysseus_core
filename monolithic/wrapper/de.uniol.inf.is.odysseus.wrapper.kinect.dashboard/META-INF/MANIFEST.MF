@@ -10,7 +10,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.ruleengine,
  com.jogamp.jogl;bundle-version="2.0.0",
  de.uniol.inf.is.odysseus.wrapper.kinect;bundle-version="1.0.0",
- org.eclipse.core.resources;bundle-version="3.7.101"
+ org.eclipse.core.resources;bundle-version="3.7.101",
+ org.eclipse.core.runtime;bundle-version="3.7.0"
 Import-Package: com.google.common.collect,
  de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datahandler,
