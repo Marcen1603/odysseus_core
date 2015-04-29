@@ -63,7 +63,7 @@ import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappin
 public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 		implements ActionListener {
 
-	final private static Logger logger = LoggerFactory
+	final private static Logger LOG = LoggerFactory
 			.getLogger(DatabaseSinkPO.class);
 	final private static InfoService INFO = InfoServiceFactory
 			.getInfoService(DatabaseSinkPO.class);
@@ -157,7 +157,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 			this.counter = 0;
 			opened = true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 			opened = false;
 			throw new OpenFailedException(e);
 		}
@@ -168,7 +168,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 		try {
 			this.connection.dropTable(this.tablename);
 		} catch (SQLException e) {
-			e.printStackTrace();
+            LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -176,7 +176,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 		try {
 			this.connection.truncateTable(this.tablename);
 		} catch (SQLException e) {
-			e.printStackTrace();
+            LOG.error(e.getMessage(), e);
 		}
 	}
 
@@ -205,6 +205,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 			sep = ",";
 		}
 		s.append(")");
+        LOG.trace("Prepared statement: {}", s.toString());
 		return s.toString();
 	}
 
@@ -227,7 +228,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 	@Override
 	protected void process_next(Tuple<ITimeInterval> tuple, int port) {
 		if (!opened) {
-			System.err.println("Error: not connected to database");
+		    LOG.error("Error: not connected to database");
 			return;
 		}
 		if (isOpen()) {
@@ -259,10 +260,11 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 				}
 				// calcLatency(tuple);
 				// logger.debug("Inserted "+count+" rows in database");
-			} catch (SQLException e) {
-				e.printStackTrace();
-				INFO.error("ERROR WRTING TO DATABASE "+preparedStatement,e.getNextException());
-			}
+            }
+            catch (SQLException e) {
+                LOG.error(e.getMessage(), e);
+                INFO.error("ERROR WRTING TO DATABASE " + preparedStatement, e.getNextException());
+            }
 		}
 	}
 
@@ -271,14 +273,15 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<ITimeInterval>>
 		if (timer != null) {
 			timer.restart();
 		}
-		try{
-		count = this.preparedStatement.executeBatch().length;
-		this.jdbcConnection.commit();
-		}catch(SQLException e){
-			e.printStackTrace();
-			INFO.error("ERROR WRTING TO DATABASE "+preparedStatement,e.getNextException());
-		}
-		logger.debug("Inserted " + count + " rows in database");
+        try {
+            count = this.preparedStatement.executeBatch().length;
+            this.jdbcConnection.commit();
+        }
+        catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+            INFO.error("ERROR WRTING TO DATABASE " + preparedStatement, e.getNextException());
+        }
+		 LOG.trace("Inserted " + count + " rows in database");
 	}
 
 	@Override
