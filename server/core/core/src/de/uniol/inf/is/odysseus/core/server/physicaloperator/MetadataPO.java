@@ -52,6 +52,7 @@ public class MetadataPO<R extends IStreamObject<IMetaAttribute>> extends
 				throw new RuntimeException(e);
 			}
 
+			// 3. Restore "old" values
 			object.getMetadata().retrieveValues(currentValues);
 			for (Entry<Integer, Integer> mapping: mappings.entrySet()){
 				currentValues.set(mapping.getValue(), inputMeta.get(mapping.getKey()));
