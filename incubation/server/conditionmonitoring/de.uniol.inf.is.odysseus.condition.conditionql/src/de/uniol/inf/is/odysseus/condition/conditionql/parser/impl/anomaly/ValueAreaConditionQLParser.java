@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-@ConditionQL(conditionAlgorithm = ConditionAlgorithm.SIMPLESENSOR)
+@ConditionQL(conditionAlgorithm = ConditionAlgorithm.VALUEAREA)
 public class ValueAreaConditionQLParser implements IConditionQLParser {
 
 	public static final String QUERY_NAME = "SimpleSensor";
@@ -21,7 +21,7 @@ public class ValueAreaConditionQLParser implements IConditionQLParser {
 	public ILogicalQuery parse(ISession session, ConditionQLQuery conditionQL) {
 
 		String sourceName = conditionQL.getStream().getStreamName();
-		String valueName = "temp";
+		//String valueName = "temp";
 		// TODO Maybe define more than one are as good values
 		// TODO Maybe make it possible to define explicit bad value areas
 		double minValue = 20;

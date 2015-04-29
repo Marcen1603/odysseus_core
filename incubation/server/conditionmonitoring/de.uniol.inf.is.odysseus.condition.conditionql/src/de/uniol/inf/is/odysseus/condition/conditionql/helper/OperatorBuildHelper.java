@@ -88,25 +88,25 @@ public class OperatorBuildHelper {
 		return streamAO;
 	}
 	
-	public static AccessAO createSource(String sourceName) {
-		AccessAO accessAO = new AccessAO();
-		accessAO.setTransportHandler("tcpclient");
-		accessAO.setAccessAOName(new Resource(sourceName));
-		accessAO.setDataHandler("tuple");
-		accessAO.setWrapper("GenericPush");
-		accessAO.setProtocolHandler("simplecsv");
-		
-		List<Option> optionsList = new ArrayList<Option>();
-		Option optionPort = new Option("port", "19991");
-		Option optionHost = new Option("host", "127.0.0.1");
-		Option optionDelimeter = new Option("Delimeter", ",");
-		accessAO.setOptions(optionsList);
-		
-		List<SDFAttribute> schema = new ArrayList<SDFAttribute>();
-		//SDFAttribute attr = new SDFAttribute();
-		
-		return accessAO;
-	}
+//	public static AccessAO createSource(String sourceName) {
+//		AccessAO accessAO = new AccessAO();
+//		accessAO.setTransportHandler("tcpclient");
+//		accessAO.setAccessAOName(new Resource(sourceName));
+//		accessAO.setDataHandler("tuple");
+//		accessAO.setWrapper("GenericPush");
+//		accessAO.setProtocolHandler("simplecsv");
+//		
+//		List<Option> optionsList = new ArrayList<Option>();
+//		Option optionPort = new Option("port", "19991");
+//		Option optionHost = new Option("host", "127.0.0.1");
+//		Option optionDelimeter = new Option("Delimeter", ",");
+//		accessAO.setOptions(optionsList);
+//		
+//		List<SDFAttribute> schema = new ArrayList<SDFAttribute>();
+//		//SDFAttribute attr = new SDFAttribute();
+//		
+//		return accessAO;
+//	}
 	
 	/**
 	 * Method to get AccessAO. DO NOT USE THIS DO ACCESS SOURCES DIRECTLY. Use StreamAO instead.
