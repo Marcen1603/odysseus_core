@@ -1,6 +1,6 @@
 /// Odysseus Testcase: Map
 /// Operator: MAP
-/// Date: Thu Apr 30 00:36:19 CST 2015
+/// Date: Thu Apr 30 00:59:50 CST 2015
 /// User: ckuka
 /// Parameter: 
 ///  THREADS: 
@@ -37,6 +37,6 @@ input0 = ACCESS({
         ['csv.delimiter', ';'],
         ['csv.trim', 'true']
         ],
-    schema=[['timestamp', 'STARTTIMESTAMP'], ['timestamp', 'StartTimestamp'], ['x', 'Double'], ['y', 'Double'], ['z', 'Double']]})
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double'], ['y', 'Double'], ['z', 'Double']]})
 
 output = MAP({EXPRESSIONS=[['x+z','a']]}, input0)

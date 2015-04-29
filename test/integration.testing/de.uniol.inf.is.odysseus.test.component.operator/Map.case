@@ -4,7 +4,6 @@
 <PARAMETER IMemento.internal.id="EXPRESSIONS" VALUE="[[&apos;x+z&apos;,&apos;a&apos;]]"/>
 </PARAMETERS>
 <SCHEMA PORT="0">
-<ATTRIBUTE ACTIVE="false" IMemento.internal.id="timestamp" MAX="0" MIN="0" NULL="false" TYPE="StartTimestamp"/>
 <ATTRIBUTE ACTIVE="false" IMemento.internal.id="x" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
 <ATTRIBUTE ACTIVE="false" IMemento.internal.id="y" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
 <ATTRIBUTE ACTIVE="true" IMemento.internal.id="z" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
