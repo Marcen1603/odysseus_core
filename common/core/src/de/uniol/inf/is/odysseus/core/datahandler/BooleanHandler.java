@@ -49,13 +49,15 @@ public class BooleanHandler  extends AbstractDataHandler<Boolean> {
 		// System.out.println("read Int Data: "+i);
 		if(i==0){
 			return false;
-		}else{
-			return true;
 		}
+        return true;
 	}
 
 	@Override
 	public Boolean readData(String string) {
+        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+            return null;
+        }
 		return Boolean.parseBoolean(string);
 	}
 

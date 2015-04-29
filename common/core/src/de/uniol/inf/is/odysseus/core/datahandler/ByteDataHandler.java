@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public class ByteDataHandler extends AbstractDataHandler<Byte> {
 	
-	static protected List<String> types = new ArrayList<String>();
+	static protected List<String> types = new ArrayList<>();
 	static{
 		types.add(SDFDatatype.BYTE.getURI());		
 	}
@@ -45,6 +45,9 @@ public class ByteDataHandler extends AbstractDataHandler<Byte> {
 
 	@Override
 	public Byte readData(String string) {
+        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+            return null;
+        }
 		return Byte.parseByte(string);		
 	}
 

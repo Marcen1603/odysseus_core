@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
 public class ShortDataHandler extends AbstractDataHandler<Short> {
-	static protected List<String> types = new ArrayList<String>();
+	static protected List<String> types = new ArrayList<>();
 	static {		
 		types.add(SDFDatatype.SHORT.getURI());		
 	}
@@ -42,6 +42,9 @@ public class ShortDataHandler extends AbstractDataHandler<Short> {
 
 	@Override
 	public Short readData(String string) {
+        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+            return null;
+        }
 		return Short.parseShort(string);
 	}
 

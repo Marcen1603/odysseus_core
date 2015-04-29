@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
 public class LongHandler extends AbstractDataHandler<Long> {
-	static protected List<String> types = new ArrayList<String>();
+	static protected List<String> types = new ArrayList<>();
 	static{
 		types.add(SDFDatatype.LONG.getURI());
 		types.add(SDFDatatype.TIMESTAMP.getURI());
@@ -46,6 +46,9 @@ public class LongHandler extends AbstractDataHandler<Long> {
 	
 	@Override
 	public Long readData(String string) {
+        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+            return null;
+        }
 		return Long.parseLong(string);
 	}
 

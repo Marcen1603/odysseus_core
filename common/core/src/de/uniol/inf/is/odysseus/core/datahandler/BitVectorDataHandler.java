@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class BitVectorDataHandler extends AbstractDataHandler<BitVector> {
 	
-	static protected List<String> types = new ArrayList<String>();
+	static protected List<String> types = new ArrayList<>();
 	static {		
 		types.add(SDFDatatype.BITVECTOR.getURI());
 	}

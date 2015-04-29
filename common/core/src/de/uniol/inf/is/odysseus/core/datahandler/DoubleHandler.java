@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class DoubleHandler extends AbstractDataHandler<Double> {
-	static protected List<String> types = new ArrayList<String>();
+	static protected List<String> types = new ArrayList<>();
 	static {
 		types.add(SDFDatatype.DOUBLE.getURI());
 		types.add("MV"); //??
@@ -39,13 +39,12 @@ public class DoubleHandler extends AbstractDataHandler<Double> {
 	}
 
 	@Override
-	public Double readData(String string) {
-		if (string != null && string.length() > 0) {
-			return Double.parseDouble(string);
-		} else {
-			return null;
-		}
-	}
+    public Double readData(String string) {
+        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+            return null;
+        }
+        return Double.parseDouble(string);
+    }
 
 	@Override
 	public Double readData(ByteBuffer buffer) {

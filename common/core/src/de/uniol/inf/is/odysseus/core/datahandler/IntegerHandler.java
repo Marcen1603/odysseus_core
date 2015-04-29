@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class IntegerHandler extends AbstractDataHandler<Integer> {
-	static protected List<String> types = new ArrayList<String>();
+	static protected List<String> types = new ArrayList<>();
 	static {
 		types.add(SDFDatatype.INTEGER.getURI());
 		types.add(SDFDatatype.UNSIGNEDINT16.getURI());
@@ -42,13 +42,12 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 	}
 
 	@Override
-	public Integer readData(String string) {
-		if (string != null && string.length() > 0) {
-			return Integer.parseInt(string);
-		} else {
-			return null;
-		}
-	}
+    public Integer readData(String string) {
+        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+            return null;
+        }
+        return Integer.parseInt(string);
+    }
 
 	@Override
 	public void writeData(List<String> output, Object data) {

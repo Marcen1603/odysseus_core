@@ -46,6 +46,9 @@ public class CharDataHandler extends AbstractDataHandler<Character> {
 
 	@Override
 	public Character readData(String string) {
+        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+            return null;
+        }
 		return new Character(string.toCharArray()[0]);		
 	}
 

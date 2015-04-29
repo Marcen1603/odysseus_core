@@ -32,27 +32,30 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Andre Bolles
  *
  */
-public class DateHandler extends AbstractDataHandler<Long> {
-	static protected List<String> types = new ArrayList<String>();
+public class DateHandler extends AbstractDataHandler<Date> {
+	static protected List<String> types = new ArrayList<>();
 	static{
 		types.add(SDFDatatype.DATE.getURI());
 	}
 
 	@Override
-	public IDataHandler<Long> getInstance(SDFSchema schema) {
+	public IDataHandler<Date> getInstance(SDFSchema schema) {
 		return new DateHandler();
 	}
 	
 	@Override
-	public Long readData(ByteBuffer buffer) {
+	public Date readData(ByteBuffer buffer) {
 		long l = buffer.getLong();
 		//System.out.println("read Long Data: "+l);
-		return l;
+		return new Date(l);
 	}
 	
 	@Override
-	public Long readData(String string) {
-		return Long.parseLong(string);
+	public Date readData(String string) {
+        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+            return null;
+        }
+		return new Date(Long.parseLong(string));
 	}
 
 	@Override
@@ -75,7 +78,7 @@ public class DateHandler extends AbstractDataHandler<Long> {
 	
 	@Override
 	public Class<?> createsType() {
-		return Long.class;
+		return Date.class;
 	}
 	
 	

@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * 
  */
 public class FloatDataHandler extends AbstractDataHandler<Float> {
-    static protected List<String> types = new ArrayList<String>();
+    static protected List<String> types = new ArrayList<>();
     static {
         types.add(SDFDatatype.FLOAT.getURI());
     }
@@ -43,12 +43,10 @@ public class FloatDataHandler extends AbstractDataHandler<Float> {
 
     @Override
     public Float readData(String string) {
-        if (string != null && string.length() > 0) {
-            return Float.parseFloat(string);
-        }
-        else {
+        if ((string == null) || ("null".equalsIgnoreCase(string))) {
             return null;
         }
+        return Float.parseFloat(string);
     }
 
     @Override
