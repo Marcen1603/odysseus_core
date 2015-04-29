@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
@@ -17,7 +18,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
  */
 public class SDFSchemaFactory {
 
-	
 	/**
 	 * This method can be used to create a new SDFSchema object. <b>This method
 	 * should only be used, if there is no input schema (e.g. from an input
@@ -34,10 +34,17 @@ public class SDFSchemaFactory {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	static public SDFSchema createNewSchema(String uri,
-			Class<?> type,
+	static public SDFSchema createNewSchema(String uri, Class<?> type,
 			Collection<SDFAttribute> attributes) {
-		return new SDFSchema(uri, (Class<? extends IStreamObject<?>>) type, attributes);
+		return new SDFSchema(uri, (Class<? extends IStreamObject<?>>) type,
+				attributes);
+	}
+
+	@SuppressWarnings("unchecked")
+	static public SDFMetaSchema createNewMetaSchema(String uri, Class<?> type,
+			Collection<SDFAttribute> attributes, Class<? extends IMetaAttribute> metaAttribute) {
+		return new SDFMetaSchema(uri, (Class<? extends IStreamObject<?>>) type,
+				attributes, metaAttribute);
 	}
 
 	/**
@@ -201,7 +208,7 @@ public class SDFSchemaFactory {
 	 */
 	static public SDFSchema createNewWithStrictOrder(boolean strictOrder,
 			SDFSchema inputSchema) {
-		SDFSchema output = new SDFSchema(inputSchema,strictOrder);
+		SDFSchema output = new SDFSchema(inputSchema, strictOrder);
 		return output;
 	}
 
@@ -223,6 +230,7 @@ public class SDFSchemaFactory {
 
 	/**
 	 * Create a new schema by adding all attributes of schema2 into schema
+	 * 
 	 * @param schema1
 	 * @param schema2
 	 * @return
@@ -230,28 +238,31 @@ public class SDFSchemaFactory {
 	public static SDFSchema createNewSchema(SDFSchema schema1, SDFSchema schema2) {
 		return SDFSchema.union(schema1, schema2);
 	}
-	
+
 	/**
 	 * Create a new schema by adding all attributes of schema2 into schema
+	 * 
 	 * @param schema1
 	 * @param schema2
 	 * @param schema3
 	 * @return
 	 */
-	public static SDFSchema createNewSchema(SDFSchema schema1, SDFSchema schema2, SDFSchema schema3) {
+	public static SDFSchema createNewSchema(SDFSchema schema1,
+			SDFSchema schema2, SDFSchema schema3) {
 		SDFSchema tmp = SDFSchema.union(schema1, schema2);
-		return SDFSchema.union(tmp,schema3);
+		return SDFSchema.union(tmp, schema3);
 	}
 
 	/**
-	 * Creates a new schema by adding the metaSchema to the current schema 
+	 * Creates a new schema by adding the metaSchema to the current schema
+	 * 
 	 * @param currentSchema
 	 * @param metaSchema
 	 * @return
 	 */
 	public static SDFSchema createNewWithMetaSchema(SDFSchema currentSchema,
-			List<SDFSchema> metaSchema) {
+			List<SDFMetaSchema> metaSchema) {
 		return new SDFSchema(currentSchema, metaSchema);
 	}
-	
+
 }

@@ -50,10 +50,10 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	final private Boolean outOfOrder;
 
 	//final 
-	private List<SDFSchema> metaschema;
+	private List<SDFMetaSchema> metaschema;
 
 	private SDFSchema(String URI, Class<? extends IStreamObject> type,
-			Map<String, SDFConstraint> constraints, List<SDFSchema> metaschema, boolean outOfOrder) {
+			Map<String, SDFConstraint> constraints, List<SDFMetaSchema> metaschema, boolean outOfOrder) {
 		super(URI);
 		this.type = type;
 		if (!URI.equals("")) {
@@ -138,7 +138,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	 */
      SDFSchema(String uri, Class<? extends IStreamObject> type,
 			Map<String, SDFConstraint> constraints,
-			Collection<SDFAttribute> attributes1, List<SDFSchema> metaschema, boolean outOfOrder) {
+			Collection<SDFAttribute> attributes1, List<SDFMetaSchema> metaschema, boolean outOfOrder) {
 		super(uri, attributes1);
 		this.type = type;
 		if (!uri.equals("")) {
@@ -169,7 +169,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		this(schema.getURI(), schema.type, schema.constraints, attributes1,schema.metaschema, schema.outOfOrder);
 	}
 
-	SDFSchema(SDFSchema currentSchema, List<SDFSchema> metaSchema) {
+	SDFSchema(SDFSchema currentSchema, List<SDFMetaSchema> metaSchema) {
 		this(currentSchema.getURI(), currentSchema.type, currentSchema.constraints, currentSchema.getAttributes(), metaSchema, currentSchema.outOfOrder);
 	}
 
@@ -204,7 +204,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return (outOfOrder == null) || (outOfOrder == false);
 	}
 	
-	public List<SDFSchema> getMetaschema() {
+	public List<SDFMetaSchema> getMetaschema() {
 		return metaschema;
 	}
 

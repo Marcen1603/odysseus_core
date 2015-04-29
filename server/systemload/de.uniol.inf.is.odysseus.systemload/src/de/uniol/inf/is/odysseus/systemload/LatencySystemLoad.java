@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
@@ -20,14 +20,14 @@ final public class LatencySystemLoad extends AbstractCombinedMetaAttribute imple
 	public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[] {
 			ILatency.class, ISystemLoad.class };
 
-	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(CLASSES.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(CLASSES.length);
 	static{
 		schema.addAll(Latency.schema);
 		schema.addAll(SystemLoad.schema);
 	}
 	
 	@Override
-	public List<SDFSchema> getSchema() {
+	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
 	

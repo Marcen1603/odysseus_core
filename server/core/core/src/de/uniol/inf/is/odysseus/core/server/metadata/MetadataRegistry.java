@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
 
 public class MetadataRegistry {
@@ -90,7 +90,7 @@ public class MetadataRegistry {
 		}
 	}
 
-	public static List<SDFSchema> getMetadataSchema(SortedSet<String> types) {
+	public static List<SDFMetaSchema> getMetadataSchema(SortedSet<String> types) {
 		synchronized (combinedMetadataTypes) {
 			IMetaAttribute type = combinedMetadataTypes.get(types);
 			if (type == null) {
@@ -159,9 +159,18 @@ public class MetadataRegistry {
 		}
 	}
 
-	public static Set<String> toClassNames(
+	public static SortedSet<String> toClassNames(
 			List<Class<? extends IMetaAttribute>> classes) {
-		Set<String> classNames = new TreeSet<String>();
+		SortedSet<String> classNames = new TreeSet<String>();
+		for (Class<?> c : classes) {
+			classNames.add(c.getName());
+		}
+		return classNames;
+	}
+	
+	public static SortedSet<String> toClassNames(
+			Class<? extends IMetaAttribute>[] classes) {
+		SortedSet<String> classNames = new TreeSet<String>();
 		for (Class<?> c : classes) {
 			classNames.add(c.getName());
 		}

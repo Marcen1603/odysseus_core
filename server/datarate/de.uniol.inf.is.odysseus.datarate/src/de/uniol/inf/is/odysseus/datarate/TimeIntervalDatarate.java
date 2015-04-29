@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
 final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute implements ITimeInterval, IDatarate {
 
@@ -23,14 +23,14 @@ final public class TimeIntervalDatarate extends AbstractCombinedMetaAttribute im
 		return CLASSES;
 	}
 
-	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(CLASSES.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(CLASSES.length);
 	static{
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(Datarate.schema);
 	}
 	
 	@Override
-	public List<SDFSchema> getSchema() {
+	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
 	

@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority.Priority;
 
@@ -44,14 +44,14 @@ final public class IntervalPriority extends AbstractCombinedMetaAttribute implem
 	}
 
 	
-	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(classes.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
 	static{
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(Priority.schema);
 	}
 	
 	@Override
-	public List<SDFSchema> getSchema() {
+	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
 	

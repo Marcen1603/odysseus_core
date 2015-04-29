@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 final public class Datarate extends AbstractBaseMetaAttribute implements IDatarate,
@@ -21,7 +21,7 @@ final public class Datarate extends AbstractBaseMetaAttribute implements IDatara
 	@SuppressWarnings("unchecked")
 	public transient static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { IDatarate.class };
 
-	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+	public static final List<SDFMetaSchema> schema = new ArrayList<>(
 			CLASSES.length);
 	
 	@Override
@@ -33,12 +33,12 @@ final public class Datarate extends AbstractBaseMetaAttribute implements IDatara
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Datarate", "datarate",
 				SDFDatatype.DOUBLE, null));
-		schema.add(SDFSchemaFactory.createNewSchema("Datarate", Tuple.class,
-				attributes));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("Datarate", Tuple.class,
+				attributes, IDatarate.class));
 	}
 
 	@Override
-	public List<SDFSchema> getSchema() {
+	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
 

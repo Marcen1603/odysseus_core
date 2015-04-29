@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
@@ -46,16 +46,16 @@ final public class Probabilistic extends AbstractBaseMetaAttribute implements IP
     /** Tuple existence probability. */
     private double existence;
 
-	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(
 			CLASSES.length);
 	static{
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Probabilistic", "existence", SDFDatatype.DOUBLE, null));
-		schema.add(SDFSchemaFactory.createNewSchema("Probabilistic", Tuple.class, attributes));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("Probabilistic", Tuple.class, attributes, IProbabilistic.class));
 	}
 	
 	@Override
-	public List<SDFSchema> getSchema() {
+	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
     

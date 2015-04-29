@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFTimeUnit;
@@ -321,7 +322,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		IMetaAttribute metaAttribute = localMetaAttribute!=null?localMetaAttribute:getMetaAttribute();
 		
 		if (metaAttribute != null){
-			List<SDFSchema> metaSchema = metaAttribute.getSchema();
+			List<SDFMetaSchema> metaSchema = metaAttribute.getSchema();
 			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);			
 			// Keep meta attribute!
 			this.localMetaAttribute = metaAttribute;

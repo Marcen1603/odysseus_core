@@ -49,6 +49,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.mep.ParseException;
@@ -414,7 +415,7 @@ public class StreamTableEditor implements IStreamEditorType {
 			
 			if (isShowingMetadata) {
 				
-				List<SDFSchema> metaschemaList = getSchema().getMetaschema();
+				List<SDFMetaSchema> metaschemaList = getSchema().getMetaschema();
 				if( metaschemaList != null ) {
 					for( int i = 0; i < metaschemaList.size(); i++) {
 						SDFSchema metaschema = metaschemaList.get(i);

@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.datarate.Datarate;
 import de.uniol.inf.is.odysseus.datarate.IDatarate;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
@@ -30,7 +30,7 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 		return CLASSES;
 	}
 	
-	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(CLASSES.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(CLASSES.length);
 	static{
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(Datarate.schema);
@@ -38,7 +38,7 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 	}
 	
 	@Override
-	public List<SDFSchema> getSchema() {
+	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
 

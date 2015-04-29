@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 final public class Priority extends AbstractBaseMetaAttribute implements IPriority {
@@ -34,15 +34,15 @@ final public class Priority extends AbstractBaseMetaAttribute implements IPriori
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IPriority.class };
 
-	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(classes.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
 	static{
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Priority", "priority", SDFDatatype.BYTE, null));
-		schema.add(SDFSchemaFactory.createNewSchema("Priority", Tuple.class, attributes));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("Priority", Tuple.class, attributes, IPriority.class));
 	}
 	
 	@Override
-	public List<SDFSchema> getSchema() {
+	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
 	

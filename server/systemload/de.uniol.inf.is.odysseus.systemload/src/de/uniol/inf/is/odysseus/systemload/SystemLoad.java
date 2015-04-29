@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 final public class SystemLoad extends AbstractBaseMetaAttribute implements
@@ -28,19 +28,19 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements
 	@SuppressWarnings("unchecked")
 	public transient static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ISystemLoad.class };
 
-	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(
 			CLASSES.length);
 
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Systemload", "todo",
 				SDFDatatype.DOUBLE, null));
-		schema.add(SDFSchemaFactory.createNewSchema("Systemload", Tuple.class,
-				attributes));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("Systemload", Tuple.class,
+				attributes, ISystemLoad.class));
 	}
 
 	@Override
-	public List<SDFSchema> getSchema() {
+	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
 
@@ -58,12 +58,14 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements
 
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
-		// TODO
+		@SuppressWarnings("rawtypes")
+		Tuple t = new Tuple(1, false);
+		t.setAttribute(0, "toto");
+		values.add(t);			
 	}
 
 	@Override
 	public void writeValue(Tuple<?> value) {
-		// TODO
 	}
 	
 	@Override

@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
@@ -34,7 +34,7 @@ final public class Latency extends AbstractBaseMetaAttribute implements ILatency
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ILatency.class };
 
-	public static final List<SDFSchema> schema = new ArrayList<>(classes.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<>(classes.length);
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("Latency", "minlstart",
@@ -45,12 +45,12 @@ final public class Latency extends AbstractBaseMetaAttribute implements ILatency
 				null));
 		attributes.add(new SDFAttribute("Latency", "latency", SDFDatatype.LONG,
 				null));
-		schema.add(SDFSchemaFactory.createNewSchema("Latency", Tuple.class,
-				attributes));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("Latency", Tuple.class,
+				attributes, ILatency.class));
 	}
 
 	@Override
-	public List<SDFSchema> getSchema() {
+	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
 
@@ -73,7 +73,7 @@ final public class Latency extends AbstractBaseMetaAttribute implements ILatency
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
 		@SuppressWarnings("rawtypes")
-		Tuple t = new Tuple(3, false);
+		Tuple t = new Tuple(4, false);
 		t.setAttribute(0, minlstart);
 		t.setAttribute(1, maxlstart);
 		t.setAttribute(2, lend);

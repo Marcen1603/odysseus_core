@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
@@ -28,7 +28,7 @@ final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAtt
 		return CLASSES;
 	}
 
-	public static final List<SDFSchema> schema = new ArrayList<SDFSchema>(
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(
 			CLASSES.length);
 	static {
 		schema.addAll(TimeInterval.schema);
@@ -37,7 +37,7 @@ final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAtt
 	}
 
 	@Override
-	public List<SDFSchema> getSchema() {
+	public List<SDFMetaSchema> getSchema() {
 		return schema;
 	}
 

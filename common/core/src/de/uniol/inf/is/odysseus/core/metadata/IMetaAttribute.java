@@ -21,7 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
 public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
 	/**
@@ -39,7 +39,7 @@ public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
 	 * are in the same order as getClasses()
 	 * @return
 	 */
-	List<SDFSchema> getSchema();
+	List<SDFMetaSchema> getSchema();
 	
 	/**
 	 * Returns all values of the current meta data settings by adding to
