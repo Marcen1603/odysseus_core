@@ -1,0 +1,13 @@
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\communication\sender\IDataSender.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\communication\receiver\IDataReceiver.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\model\Machine.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\view\SensorListCell.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\view\MachineListCell.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\Main.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\view\MachineEventListCell.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\communication\receiver\AbstractReceiver.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\controller\MainController.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\model\MachineEvent.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\communication\receiver\TemperatureReceiver.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\controller\listeners\MachineListViewListener.java
+D:\Dropbox\Studium\Master\Masterarbeit\SVN\GUI\src\main\java\cm\model\Sensor.java
