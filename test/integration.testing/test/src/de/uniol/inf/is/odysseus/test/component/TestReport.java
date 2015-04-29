@@ -111,7 +111,10 @@ public class TestReport {
         else {
             sb.append(String.format("%7s %62s %7dms", statusCode, name, time / 1000000)).append("\n");
         }
-
+        for (int i = 0; i < 86; i++) {
+            sb.append("-");
+        }
+        sb.append("\n");
         for (Report subReport : getReports()) {
             if (subReport != null) {
                 if (subReport.error != null) {
@@ -122,6 +125,10 @@ public class TestReport {
                 }
             }
         }
+        for (int i = 0; i < 86; i++) {
+            sb.append("-");
+        }
+        sb.append("\n");
         return sb.toString();
     }
 
