@@ -8,7 +8,7 @@ percentage = ACCESS({
 	protocol='SimpleCSV',
 	dataHandler='Tuple', 
 	options=[
-		['filename', '${BUNDLE-ROOT}\testdaten\project\input0.csv'], 
+		['filename', '${BUNDLE-ROOT}\testdaten\select.old\input0.csv'], 
 		['csv.delimiter', ';'],
 		['csv.trim', 'true']
 		], 
@@ -16,4 +16,4 @@ percentage = ACCESS({
 		['timestamp', 'STARTTIMESTAMP'], 
 		['percentage', 'INTEGER']
 ]})
-project0 = project({attributes = ['percentage']}, percentage)
+select0 = select({predicate = RelationalPredicate('percentage >= 50')}, percentage)
