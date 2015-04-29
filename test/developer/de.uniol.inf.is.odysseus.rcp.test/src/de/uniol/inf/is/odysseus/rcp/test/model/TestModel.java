@@ -80,6 +80,7 @@ public class TestModel implements Serializable {
     private static final String NULL = "NULL";
     private static final String NAME = "NAME";
     private static final String ACTIVE = "ACTIVE";
+    private static final String TIMESTAMP = "TIMESTAMP";
 
     public static TestModel createEmpty(/* @NonNull */final LogicalOperatorInformation operator) {
         Objects.requireNonNull(operator);
@@ -123,6 +124,7 @@ public class TestModel implements Serializable {
     private final List<String> metadatas = new ArrayList<>();
     private String directory = "";
     private String name = "";
+    private boolean timestamp = true;
 
     /**
      * Class constructor.
@@ -270,6 +272,21 @@ public class TestModel implements Serializable {
     }
 
     /**
+     * @return the timestamp
+     */
+    public boolean isTimestamp() {
+        return timestamp;
+    }
+
+    /**
+     * @param timestamp
+     *            the timestamp to set
+     */
+    public void setTimestamp(boolean timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    /**
      * @return the name
      */
     public String getName() {
@@ -297,6 +314,7 @@ public class TestModel implements Serializable {
         memento.putString(TestModel.OPERATOR, this.operator.getOperatorName());
         memento.putString(TestModel.DIRECTORY, this.directory);
         memento.putString(TestModel.NAME, this.name);
+        memento.putBoolean(TestModel.TIMESTAMP, this.timestamp);
 
         final IMemento paramMem = memento.createChild(TestModel.PARAMETERS);
         for (final Entry<String, String> parameter : this.parameters.entrySet()) {
@@ -341,6 +359,8 @@ public class TestModel implements Serializable {
                 this.setOperator(this.getOperator(operatorName));
                 this.setDirectory(memento.getString(TestModel.DIRECTORY));
                 this.setName(memento.getString(TestModel.NAME));
+                this.setTimestamp(memento.getBoolean(TestModel.TIMESTAMP));
+
                 final IMemento paramMem = memento.getChild(TestModel.PARAMETERS);
                 if (paramMem != null) {
                     for (final IMemento mem : paramMem.getChildren(TestModel.PARAMETER)) {
@@ -442,7 +462,7 @@ public class TestModel implements Serializable {
             else if (type.equals(SDFDatatype.INTEGER)) {
                 return new Integer(Integer.MIN_VALUE);
             }
-            else if (type.equals(SDFDatatype.LONG)) {
+            else if ((type.equals(SDFDatatype.LONG)) || (type.equals(SDFDatatype.START_TIMESTAMP))) {
                 return new Long(Long.MIN_VALUE);
             }
             else if (type.equals(SDFDatatype.FLOAT)) {
@@ -480,7 +500,7 @@ public class TestModel implements Serializable {
             else if (type.equals(SDFDatatype.INTEGER)) {
                 return new Integer(Integer.MAX_VALUE);
             }
-            else if (type.equals(SDFDatatype.LONG)) {
+            else if ((type.equals(SDFDatatype.LONG)) || (type.equals(SDFDatatype.START_TIMESTAMP))) {
                 return new Long(Long.MAX_VALUE);
             }
             else if (type.equals(SDFDatatype.FLOAT)) {
@@ -524,7 +544,7 @@ public class TestModel implements Serializable {
         else if (type.equals(SDFDatatype.INTEGER)) {
             return new Integer(0);
         }
-        else if (type.equals(SDFDatatype.LONG)) {
+        else if ((type.equals(SDFDatatype.LONG)) || (type.equals(SDFDatatype.START_TIMESTAMP))) {
             return new Long(0l);
         }
         else if (type.equals(SDFDatatype.FLOAT)) {
@@ -563,7 +583,7 @@ public class TestModel implements Serializable {
         else if (type.equals(SDFDatatype.INTEGER)) {
             return new Integer((int) (((((Integer) min) + ((Integer) max)) - ((Integer) min)) / 2.0));
         }
-        else if (type.equals(SDFDatatype.LONG)) {
+        else if ((type.equals(SDFDatatype.LONG)) || (type.equals(SDFDatatype.START_TIMESTAMP))) {
             return new Long((long) (((((Long) min) + ((Long) max)) - ((Long) min)) / 2.0));
         }
         else if (type.equals(SDFDatatype.FLOAT)) {

@@ -92,9 +92,7 @@ public class WizardTestPage extends WizardPage {
                 }
             });
             for (final LogicalOperatorInformation operator : this.operators) {
-                if (!operator.isHidden()) {
-                    combo.add(operator.getOperatorName());
-                }
+                combo.add(operator.getOperatorName());
             }
             combo.select(0);
             combo.addSelectionListener(new SelectionAdapter() {
@@ -108,7 +106,7 @@ public class WizardTestPage extends WizardPage {
         {// Set output path
             final Label label = new Label(composite, SWT.NONE);
             label.setText("Path:");
-            final Text outputPath = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
+            final Text outputPath = new Text(composite, SWT.BORDER);
             outputPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
             final Button choosePathButton = new Button(composite, SWT.PUSH);

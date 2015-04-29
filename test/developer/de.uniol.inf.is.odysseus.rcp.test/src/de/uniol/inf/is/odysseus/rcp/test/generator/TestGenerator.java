@@ -24,10 +24,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.slf4j.Logger;
@@ -35,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.rcp.test.Activator;
 import de.uniol.inf.is.odysseus.rcp.test.model.TestModel;
 import de.uniol.inf.is.odysseus.rcp.test.model.TestModel.AttributeParameter;
@@ -46,15 +49,19 @@ import de.uniol.inf.is.odysseus.rcp.test.model.TestModel.AttributeParameter;
  */
 public class TestGenerator implements IRunnableWithProgress {
     static final Logger LOG = LoggerFactory.getLogger(TestGenerator.class);
-
+    private static final long MAX_PROCESSING_TIME = 60000;
     private final TestModel model;
+
+    private final IContainer container;
 
     /**
      * Class constructor.
      *
      */
-    public TestGenerator(/* @NonNull */final TestModel model) {
+    public TestGenerator(/* @NonNull */final IContainer container, /* @NonNull */final TestModel model) {
+        Objects.requireNonNull(container);
         Objects.requireNonNull(model);
+        this.container = container;
         this.model = model;
     }
 
@@ -64,7 +71,14 @@ public class TestGenerator implements IRunnableWithProgress {
     @Override
     public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         monitor.beginTask("Generate test streams", this.model.getOperator().getMaxPorts() + (this.model.getMetadatas().size() * 2));
-        final Path root = Paths.get(this.model.getDirectory()).toAbsolutePath();
+        Path path = Paths.get(this.model.getDirectory());
+        Path root;
+        if (!path.isAbsolute()) {
+            root = Paths.get(this.container.getRawLocation().toOSString(), this.model.getDirectory());
+        }
+        else {
+            root = path.toAbsolutePath();
+        }
         if (!root.toFile().exists()) {
             root.toFile().mkdirs();
         }
@@ -87,7 +101,7 @@ public class TestGenerator implements IRunnableWithProgress {
             try {
                 output.createNewFile();
                 try (BufferedWriter out = new BufferedWriter(new FileWriter(output))) {
-                    this.generateQuery(out, metadata);
+                    this.generateQuery(out, path, metadata);
                 }
             }
             catch (final IOException e) {
@@ -103,7 +117,7 @@ public class TestGenerator implements IRunnableWithProgress {
 
             try {
                 try (BufferedReader in = new BufferedReader(new FileReader(input))) {
-                    this.generateOutput(in, metadata, ouput);
+                    this.generateOutput(in, metadata, this.container, ouput);
                 }
             }
             catch (final IOException e) {
@@ -129,45 +143,76 @@ public class TestGenerator implements IRunnableWithProgress {
         }
     }
 
-    public void generateOutput(final BufferedReader in, final String metadata, final File output) throws IOException {
+    public void generateOutput(final BufferedReader in, final String metadata, final IContainer container, final File output) throws IOException {
         final StringBuilder query = new StringBuilder();
         String line;
         while ((line = in.readLine()) != null) {
-            query.append(line.replace("${BUNDLE-ROOT}", output.getParentFile().getAbsolutePath())).append("\n");
+            query.append(line.replace("${BUNDLE-ROOT}", container.getRawLocation().toOSString())).append("\n");
         }
         query.append("file = SENDER({\n");
         query.append("    sink='sink',\n");
         query.append("    wrapper='GenericPush',\n");
         query.append("    transport='file',\n");
-        query.append("    protocol='SimpleCSV',\n");
+        query.append("    protocol='Text',\n");
         query.append("    dataHandler='Tuple',\n");
         query.append("    options=[\n");
         query.append("        ['filename', '" + output.getAbsolutePath() + "'],\n");
-        query.append("        ['csv.delimiter', ';'],\n");
-        query.append("        ['csv.trim', 'true']\n");
+        query.append("        ['delimiter', '\n']\n");
         query.append("        ]}, output)\n");
 
         final IExecutor executor = Activator.getExecutor();
-        executor.addQuery(query.toString(), "OdysseusScript", Activator.getSession(), Context.empty());
+        try {
+            Collection<Integer> ids = executor.addQuery(query.toString(), "OdysseusScript", Activator.getSession(), Context.empty());
 
+            try {
+                for (int id : ids) {
+                    executor.startQuery(id, Activator.getSession());
+                }
+                boolean running = true;
+                long time = 0;
+                while ((running) && (time < MAX_PROCESSING_TIME)) {
+                    running = false;
+                    for (int id : ids) {
+                        QueryState state = executor.getQueryState(id, Activator.getSession());
+                        if (state == QueryState.RUNNING) {
+                            running = true;
+                        }
+                    }
+                    try {
+                        Thread.sleep(100);
+                        time += 100;
+                    }
+                    catch (InterruptedException e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                }
+            }
+            finally {
+                for (int id : ids) {
+                    executor.removeQuery(id, Activator.getSession());
+                }
+            }
+        }
+        catch (Throwable e) {
+            LOG.error(e.getMessage(), e);
+        }
     }
 
-    public void generateQuery(final BufferedWriter out, final String metadata) throws IOException {
+    public void generateQuery(final BufferedWriter out, final Path root, final String metadata) throws IOException {
         this.writeTestdata(out);
 
         this.writeHeader(out);
         this.writeMetadata(out, metadata);
 
-        out.write("#RUNQUERY\n\n");
+        out.write("#ADDQUERY\n\n");
 
         for (int i = 0; i < this.model.getOperator().getMaxPorts(); i++) {
-            this.writeAccess(i, out);
+            this.writeAccess(i, root, out);
         }
         out.write("output = ");
         out.write(this.model.getOperator().getOperatorName().toUpperCase());
         out.write("(");
         if (this.model.getParameters().size() > 0) {
-            out.write("{");
             final StringBuilder sb = new StringBuilder();
             for (final Entry<String, String> parameter : this.model.getParameters().entrySet()) {
                 if ((parameter.getValue() != null) && (!"".equals(parameter.getValue()))) {
@@ -177,10 +222,13 @@ public class TestGenerator implements IRunnableWithProgress {
                     sb.append(parameter.getKey()).append("=").append(parameter.getValue());
                 }
             }
-            out.write(sb.toString());
-            out.write("}");
+            if (sb.length() > 0) {
+                out.write("{");
+                out.write(sb.toString());
+                out.write("}");
+                out.write(", ");
+            }
         }
-        out.write(", ");
         for (int i = 0; i < this.model.getOperator().getMaxPorts(); i++) {
             if (i != 0) {
                 out.write(", ");
@@ -216,7 +264,7 @@ public class TestGenerator implements IRunnableWithProgress {
         out.write("\n");
     }
 
-    private void writeAccess(final int port, final BufferedWriter out) throws IOException {
+    private void writeAccess(final int port, final Path root, final BufferedWriter out) throws IOException {
         out.write("input" + port + " = ACCESS({\n");
         out.write("    source='source',\n");
         out.write("    wrapper='GenericPull',\n");
@@ -224,12 +272,15 @@ public class TestGenerator implements IRunnableWithProgress {
         out.write("    protocol='SimpleCSV',\n");
         out.write("    dataHandler='Tuple',\n");
         out.write("    options=[\n");
-        out.write("        ['filename', '${BUNDLE-ROOT}/input" + port + ".csv'],\n");
+        out.write("        ['filename', '${BUNDLE-ROOT}/" + root.toString() + "/input" + port + ".csv'],\n");
         out.write("        ['csv.delimiter', ';'],\n");
         out.write("        ['csv.trim', 'true']\n");
         out.write("        ],\n");
         out.write("    schema=[");
         final StringBuilder sb = new StringBuilder();
+        if (this.model.isTimestamp()) {
+            sb.append("['timestamp', 'STARTTIMESTAMP']");
+        }
         for (final Entry<String, AttributeParameter> attribute : this.model.getSchema(port).entrySet()) {
             if (sb.length() != 0) {
                 sb.append(", ");
@@ -255,34 +306,45 @@ public class TestGenerator implements IRunnableWithProgress {
                 testCase++;
             }
             else {
-                final Object[] value = new Object[attributes];
+                final Object[] value;
+                int offset = 0;
+                if (this.model.isTimestamp()) {
+                    value = new Object[attributes + 1];
+                    offset = 1;
+                }
+                else {
+                    value = new Object[attributes];
+                }
                 int i = 0;
                 for (final Entry<String, AttributeParameter> attribute : this.model.getSchema(port).entrySet()) {
                     if ((n & (0x1 << i)) != 0) {
                         if (testCase == 0) {
-                            value[i] = this.model.getMin(port, attribute.getKey());
+                            value[offset + i] = this.model.getMin(port, attribute.getKey());
                         }
                         else if (testCase == 1) {
-                            value[i] = this.model.getMax(port, attribute.getKey());
+                            value[offset + i] = this.model.getMax(port, attribute.getKey());
                         }
                         else if (testCase == 2) {
                             if (attribute.getValue().isNullValue()) {
-                                value[i] = null;
+                                value[offset + i] = null;
                             }
                             else {
-                                value[i] = this.model.getZero(port, attribute.getKey());
+                                value[offset + i] = this.model.getZero(port, attribute.getKey());
                             }
                         }
                         else if (testCase == 3) {
-                            value[i] = this.model.getZero(port, attribute.getKey());
+                            value[offset + i] = this.model.getZero(port, attribute.getKey());
                         }
                     }
                     else {
-                        value[i] = this.model.getAverage(port, attribute.getKey());
+                        value[offset + i] = this.model.getAverage(port, attribute.getKey());
                     }
                     i++;
                 }
                 values[n - (int) (1.0 + (n / (Math.pow(2, attributes))))] = value;
+                if (this.model.isTimestamp()) {
+                    values[n - (int) (1.0 + (n / (Math.pow(2, attributes))))][0]=n - (int) (1.0 + (n / (Math.pow(2, attributes))));
+                }
             }
         }
         return values;

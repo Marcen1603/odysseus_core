@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.test.editor;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -24,8 +25,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -36,7 +35,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -51,6 +49,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -70,7 +69,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.slf4j.Logger;
@@ -104,7 +102,7 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
      *
      */
     public TestEditorPart() {
-        // Empty block
+        super();
     }
 
     @Override
@@ -144,12 +142,10 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
         int index = 0;
         for (int i = 0; i < operators.size(); i++) {
             final LogicalOperatorInformation operator = operators.get(i);
-            if (!operator.isHidden()) {
-                comboOperator.add(operator.getOperatorName());
-                comboOperator.setData(operator.getOperatorName(), operator);
-                if ((this.model.getOperator() != null) && (operator.getOperatorName().equalsIgnoreCase(this.model.getOperator().getOperatorName()))) {
-                    index = i;
-                }
+            comboOperator.add(operator.getOperatorName());
+            comboOperator.setData(operator.getOperatorName(), operator);
+            if ((this.model.getOperator() != null) && (operator.getOperatorName().equalsIgnoreCase(this.model.getOperator().getOperatorName()))) {
+                index = i;
             }
         }
         comboOperator.select(index);
@@ -167,8 +163,30 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
                 TestEditorPart.this.setDirty(true);
             }
         });
+        
+        final Label lblTimestamp = new Label(container, SWT.NONE);
+        lblTimestamp.setText("");
+        final Button txtTimestamp = new Button(container, SWT.CHECK);
+        txtTimestamp.setText("Timestamps");
+        txtTimestamp.setSelection(this.model.isTimestamp());
+        txtTimestamp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+        txtTimestamp.addSelectionListener(new SelectionListener() {
 
-        final Group grpSchema = new Group(container, SWT.NONE);
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                TestEditorPart.this.model.setTimestamp(txtTimestamp.getSelection());
+                TestEditorPart.this.setDirty(true);                
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                
+            }
+        });
+
+        final Composite operatorContainer = new Composite(container, SWT.NONE);
+        operatorContainer.setLayout(new GridLayout(1, false));
+        final Group grpSchema = new Group(operatorContainer, SWT.NONE);
         grpSchema.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
         grpSchema.setLayout(new GridLayout(1, true));
         grpSchema.setText("Schema");
@@ -183,7 +201,7 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
         for (int i = 0; i < ports; i++) {
             this.createAttributeTab(tabFolder, i);
         }
-        final Group grpParameter = new Group(container, SWT.NONE);
+        final Group grpParameter = new Group(operatorContainer, SWT.NONE);
         grpParameter.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
         grpParameter.setLayout(new GridLayout(1, false));
         grpParameter.setText("Parameter");
@@ -210,12 +228,11 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
                 for (int i = 0; i < ports; i++) {
                     TestEditorPart.this.createAttributeTab(tabFolder, i);
                 }
-                tabFolder.layout();
                 for (final Control control : grpParameter.getChildren()) {
                     control.dispose();
                 }
                 TestEditorPart.this.createParameter(grpParameter);
-                grpParameter.layout();
+                operatorContainer.layout();
                 TestEditorPart.this.setDirty(true);
             }
         });
@@ -248,7 +265,7 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
         }
 
         try {
-            new ProgressMonitorDialog(shell).run(true, true, new TestGenerator(this.model));
+            new ProgressMonitorDialog(shell).run(true, true, new TestGenerator(this.input.getFile().getParent(), this.model));
         }
         catch (InvocationTargetException | InterruptedException e) {
             TestEditorPart.LOG.error(e.getMessage(), e);
@@ -258,7 +275,6 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
 
     @Override
     public void doSave(final IProgressMonitor monitor) {
-
         this.model.save(this.input.getFile());
         this.setDirty(false);
     }
@@ -270,15 +286,11 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
 
     @Override
     public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
+        setInput(input);
+        setSite(site);
         this.input = (FileEditorInput) input;
-        if (input instanceof FileStoreEditorInput) {
-            IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(((FileStoreEditorInput) input).getURI().getPath()));
-            this.input = new FileEditorInput(file);
-        }
-        else if (input instanceof FileEditorInput) {
-            this.input = (FileEditorInput) input;
-        }
         Objects.requireNonNull(this.input);
+        setPartName(this.input.getName());
         this.model = TestModel.load(this.input.getFile());
         this.setPartName(this.input.getName());
         this.setSite(site);
@@ -461,7 +473,14 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
         comboType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 
         final ISession session = Activator.getSession();
-        final Set<SDFDatatype> datatypes = Activator.getExecutor().getRegisteredDatatypes(session);
+        final List<SDFDatatype> datatypes = new ArrayList<>(Activator.getExecutor().getRegisteredDatatypes(session));
+        Collections.sort(datatypes, new Comparator<SDFDatatype>() {
+
+            @Override
+            public int compare(SDFDatatype o1, SDFDatatype o2) {
+                return o1.getQualName().compareTo(o2.getQualName());
+            }
+        });
         for (final SDFDatatype datatype : datatypes) {
             comboType.add(datatype.getQualName());
             comboType.setData(datatype.getQualName(), datatype);
