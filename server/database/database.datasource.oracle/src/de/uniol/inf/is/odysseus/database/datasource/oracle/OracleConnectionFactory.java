@@ -11,6 +11,9 @@ public class OracleConnectionFactory extends AbstractDatabaseConnectionFactory {
 	@Override
 	public IDatabaseConnection createConnection(String server, int port, String database, String user, String password) {
 		Properties connectionProps = getCredentials(user, password);
+        if ((server == null) || ("".equals(server))) {
+            server = "localhost";
+        }   
 		String connString = "jdbc:oracle:thin:@" + server + ":" + port + ":" + database;
 		return new DatabaseConnection(connString, connectionProps);
 	}

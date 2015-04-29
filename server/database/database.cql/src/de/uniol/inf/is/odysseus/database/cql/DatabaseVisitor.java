@@ -196,7 +196,7 @@ public class DatabaseVisitor extends CQLParser {
 			if (node.jjtGetChild(1) instanceof ASTIdentifier) {
 				String dbms = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 				String dbname = ((ASTIdentifier) node.jjtGetChild(2)).getName();
-				String host = "localhost";
+				String host = "";
 				int port = -1;
 				String user = "";
 				String pass = "";
