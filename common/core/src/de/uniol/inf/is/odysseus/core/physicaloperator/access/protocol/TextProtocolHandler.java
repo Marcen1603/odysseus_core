@@ -79,9 +79,9 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
 				scanner.useDelimiter(objectDelimiter);
 			}
 		} else {
-			if ((this.getAccessPattern().equals(IAccessPattern.PULL))
+			if ((this.getAccessPattern().equals(IAccessPattern.PUSH))
 					|| (this.getAccessPattern()
-							.equals(IAccessPattern.ROBUST_PULL))) {
+							.equals(IAccessPattern.ROBUST_PUSH))) {
 				writer = new BufferedWriter(new OutputStreamWriter(
 						getTransportHandler().getOutputStream()));
 			}
