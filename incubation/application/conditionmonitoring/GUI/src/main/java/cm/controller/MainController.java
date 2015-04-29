@@ -84,7 +84,11 @@ public class MainController {
 
         sensorsList.setCellFactory(listView -> new SensorListCell());
 
-        String conditionQL = "{\n" +
+        String conditionQL = "#PARSER ConditionQL\n" +
+                "#DOREWRITE false\n" +
+                "#RUNQUERY\n" +
+                "\n" +
+                "{\n" +
                 "\t\"msgType\"\t:\t\"ANOMALYDETECTION\",\n" +
                 "\t\"algorithm\"\t:\t{\n" +
                 "\t\t\t\t\t\t\"algorithm\"\t:\t\"VALUEAREA\",\n" +
@@ -113,7 +117,7 @@ public class MainController {
 
         try {
             String token = RestService.login("127.0.0.1", "System", "manager");
-            SocketInfo socketInfo = RestService.addConditionQLQuery("127.0.0.1", token, conditionQL);
+            SocketInfo socketInfo = RestService.runQuery("127.0.0.1", token, conditionQL);
             System.out.println("SocketInfo: " + socketInfo.getIp() + ":" + socketInfo.getPort() + ", Schema: " + socketInfo.getSchema());
             SocketReceiver receiver = new SocketReceiver(socketInfo);
         } catch (RestException e) {
