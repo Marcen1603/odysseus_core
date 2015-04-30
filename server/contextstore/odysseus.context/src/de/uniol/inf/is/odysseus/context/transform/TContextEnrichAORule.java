@@ -35,14 +35,14 @@ import de.uniol.inf.is.odysseus.context.physicaloperator.ContextEnrichPO;
 import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -58,13 +58,13 @@ public class TContextEnrichAORule extends AbstractTransformationRule<ContextEnri
 		return 0;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void execute(ContextEnrichAO operator, TransformationConfiguration config) throws RuleException {
 		IContextStore<Tuple<ITimeInterval>> store = ContextStoreManager.getStore(operator.getStoreName());
 		IDataMergeFunction<Tuple<ITimeInterval>, ITimeInterval> dataMerge = new RelationalMergeFunction<ITimeInterval>(operator.getOutputSchema().size());		
-		CombinedMergeFunction<ITimeInterval> metadataMerge = new CombinedMergeFunction<ITimeInterval>();		
-		metadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
-		ContextEnrichPO<ITimeInterval> enrich = new ContextEnrichPO<ITimeInterval>(store, operator.isOuter(), dataMerge, metadataMerge, operator.getAttributes());		
+		IMetadataMergeFunction metadataMerge = MetadataRegistry.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames());
+		ContextEnrichPO<ITimeInterval> enrich = new ContextEnrichPO<ITimeInterval>(store, operator.isOuter(), dataMerge, (IMetadataMergeFunction<ITimeInterval>) metadataMerge, operator.getAttributes());		
 		defaultExecute(operator, enrich, config, true, true);
 	}
 

@@ -16,16 +16,16 @@
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferedFilterAO;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.BufferedFilterPO;
-import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 public class TBufferedFilterAORule extends
@@ -44,9 +44,13 @@ public class TBufferedFilterAORule extends
 				operator.getInputSchema(0), operator.getInputSchema(1),
 				operator.getOutputSchema());
 		// IMetadataMergeFunction<?> metaDataMerge = new UseLeftInputMetadata();
-		CombinedMergeFunction metaDataMerge = new CombinedMergeFunction();
-		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
+		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry
+				.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames(),
+						operator.getInputSchema(1).getMetaAttributeNames());
 
+//		CombinedMergeFunction metaDataMerge = new CombinedMergeFunction();
+//		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
+//
 		BufferedFilterPO po = new BufferedFilterPO(operator.getPredicate(),
 				operator.getBufferTime(), operator.getDeliverTime(), dataMerge,
 				metaDataMerge);

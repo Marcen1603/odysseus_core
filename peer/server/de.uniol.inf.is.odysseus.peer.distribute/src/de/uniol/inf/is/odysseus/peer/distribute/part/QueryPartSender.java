@@ -395,7 +395,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 
 			if (!peerID.equals(p2pNetworkManager.getLocalPeerID())) {
 				ParameterTransformationConfiguration paramConfiguration = parameters.get(ParameterTransformationConfiguration.class);
-				Collection<String> metaTypes = paramConfiguration.getValue().getMetaTypes();
+				Collection<String> metaTypes = paramConfiguration.getValue().getDefaultMetaTypeSet();
 				AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName(), queryPartIDCounter++, metaTypes, queryName);
 
 				RepeatingMessageSend msgSender = new RepeatingMessageSend(peerCommunicator, msg, peerID);
@@ -578,7 +578,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 			Optional<ParameterTransformationConfiguration> params = getParameterTransformationConfiguration(configuration);
 			if (params.isPresent()) {
 				ParameterTransformationConfiguration paramConfiguration = config.get(ParameterTransformationConfiguration.class);
-				Collection<String> metaTypes = paramConfiguration.getValue().getMetaTypes();
+				Collection<String> metaTypes = paramConfiguration.getValue().getDefaultMetaTypeSet();
 
 				params.get().getValue().addTypes(Sets.newHashSet(metaTypes));
 			}

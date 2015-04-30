@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.systemload;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 
 public class SystemLoadMergeFunction implements IInlineMetadataMergeFunction<ISystemLoad>, Cloneable{
 
@@ -15,8 +15,9 @@ public class SystemLoadMergeFunction implements IInlineMetadataMergeFunction<ISy
 	
 	@Override
 	public void mergeInto(ISystemLoad result, ISystemLoad inLeft, ISystemLoad inRight) {
-		((SystemLoad)result).insert((SystemLoad)inLeft);
-		((SystemLoad)result).insert((SystemLoad)inRight);
+		// TODO: insert now in interface of ISystemLoad
+		result.insert(inLeft);
+		result.insert(inRight);
 	}
 
 	@Override

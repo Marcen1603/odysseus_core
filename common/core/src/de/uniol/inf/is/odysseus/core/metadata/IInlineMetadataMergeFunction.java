@@ -13,33 +13,14 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.priority;
+package de.uniol.inf.is.odysseus.core.metadata;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 
-/**
- * @author Jonas Jacobi
- */
-public class PriorityMergeFunction implements
-		IInlineMetadataMergeFunction<IPriority> {
+public interface IInlineMetadataMergeFunction<T> {
+	public void mergeInto(T result, T inLeft, T inRight);
 
-	@Override
-	public void mergeInto(IPriority result, IPriority inLeft, IPriority inRight) {
-		result
-				.setPriority(inLeft.getPriority() > inRight.getPriority() ? inLeft
-						.getPriority()
-						: inRight.getPriority());
-	}
+	public IInlineMetadataMergeFunction<? super T> clone() ;
 	
-	@Override
-	public PriorityMergeFunction clone() {
-		return new PriorityMergeFunction();
-	}
-	
-	@Override
-	public Class<? extends IMetaAttribute> getMetadataType() {
-		return IPriority.class;
-	}
-
+	public Class<? extends IMetaAttribute> getMetadataType();
 }

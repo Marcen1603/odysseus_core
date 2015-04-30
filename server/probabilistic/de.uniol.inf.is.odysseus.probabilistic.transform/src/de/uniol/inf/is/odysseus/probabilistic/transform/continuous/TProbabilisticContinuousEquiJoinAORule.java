@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -72,7 +73,11 @@ public class TProbabilisticContinuousEquiJoinAORule extends
 			final TransformationConfiguration config) throws RuleException {
 		Objects.requireNonNull(operator);
 		Objects.requireNonNull(config);
-		final JoinTIPO joinPO = new JoinTIPO();
+		
+		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry
+				.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames(),
+						operator.getInputSchema(1).getMetaAttributeNames());
+		final JoinTIPO joinPO = new JoinTIPO(metaDataMerge);
 
 		boolean isCross = false;
 		final IPredicate pred = operator.getPredicate();
@@ -83,7 +88,6 @@ public class TProbabilisticContinuousEquiJoinAORule extends
 			joinPO.setJoinPredicate(pred.clone());
 		}
 		joinPO.setTransferFunction(new TITransferArea());
-		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setCreationFunction(new DefaultProbabilisticTIDummyDataCreation());
 
 		this.defaultExecute(operator, joinPO, config, true, true);

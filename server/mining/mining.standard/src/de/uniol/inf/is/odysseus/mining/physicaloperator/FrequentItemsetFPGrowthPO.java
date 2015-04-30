@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.FList;
@@ -41,7 +40,7 @@ import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.Transaction;
  * @author Dennis Geesen
  * 
  */
-public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> implements IHasMetadataMergeFunction<M>{
+public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>>{
 
 	private Lock processLock = new ReentrantLock();
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
@@ -57,11 +56,11 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 
 	private FList<M> flist = new FList<M>();
 
-	private IMetadataMergeFunction<M> metadatamergefunction;
+	final private IMetadataMergeFunction<M> metadatamergefunction;
 	private M lastMetadata;
 
-	public FrequentItemsetFPGrowthPO() {
-
+	public FrequentItemsetFPGrowthPO(IMetadataMergeFunction<M> metadatamergefunction) {
+		this.metadatamergefunction = metadatamergefunction;
 	}
 
 	public FrequentItemsetFPGrowthPO(FrequentItemsetFPGrowthPO<M> old) {
@@ -70,9 +69,10 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		this.metadatamergefunction = old.metadatamergefunction.clone();
 	}
 
-	public FrequentItemsetFPGrowthPO(int minSupport, int maxTransactions) {
+	public FrequentItemsetFPGrowthPO(int minSupport, int maxTransactions, IMetadataMergeFunction<M> metadatamergefunction) {
 		this.minsupport = minSupport;
 		this.maxTransactions = maxTransactions;
+		this.metadatamergefunction = metadatamergefunction;
 	}
 
 	@Override
@@ -289,20 +289,5 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		}
 	}
 
-	/**
-	 * @param combinedMergeFunction
-	 */
-	public void setMetadataMerge(IMetadataMergeFunction<M> combinedMergeFunction) {
-		this.metadatamergefunction = combinedMergeFunction;
-
-	}
-
-	/**
-	 * @return
-	 */
-	@Override
-	public IMetadataMergeFunction<M> getMetadataMerge() {
-		return this.metadatamergefunction;
-	}
 
 }

@@ -21,10 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 
-public class CombinedMergeFunction<T extends IClone> implements
+class CombinedMergeFunction<T extends IClone> implements
 		IMetadataMergeFunction<T>, IClone {
 
 	protected static Logger _logger = null;

@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.keyperformanceindicators.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.logicaloperator.KeyPerformanceIndicatorsAO;
 import de.uniol.inf.is.odysseus.keyperformanceindicators.physicaloperator.KeyPerformanceIndicatorsPO;
@@ -14,11 +15,14 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class KeyPerformanceIndicatorsRule extends AbstractTransformationRule<KeyPerformanceIndicatorsAO> {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(KeyPerformanceIndicatorsAO operator,
 			TransformationConfiguration config) throws RuleException {
 
-		CombinedMergeFunction<ITimeInterval> metaDataMerge = new CombinedMergeFunction<ITimeInterval>();
+		@SuppressWarnings("rawtypes")
+		IMetadataMergeFunction metaDataMerge = MetadataRegistry.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames());
+		
 		TITransferArea<Tuple<ITimeInterval>, Tuple<ITimeInterval>> transferFunction = new TITransferArea<>();
 		
 		defaultExecute(

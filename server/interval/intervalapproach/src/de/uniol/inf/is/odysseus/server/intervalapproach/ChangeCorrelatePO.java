@@ -40,7 +40,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
@@ -49,7 +48,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
  * 
  * @author Dennis Geesen Created at: 29.05.2012
  */
-public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject<K>> extends AbstractPipe<R, R> implements IProcessInternal<R>, IHasMetadataMergeFunction<K> {
+public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject<K>> extends AbstractPipe<R, R> implements IProcessInternal<R>{
 
 	private R lasthigh;
 	private R lastlow;
@@ -58,13 +57,13 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 	private final IPredicate<R> rightHighPredicate;
 	private final IPredicate<R> rightLowPredicate;
 	private IDataMergeFunction<R,K> dataMerge;
-	private IMetadataMergeFunction<K> metadataMerge;
+	final private IMetadataMergeFunction<K> metadataMerge;
 	private IInputStreamSyncArea<R> inputStreamSyncArea;
 	protected ITransferArea<R, R> outputTransferArea;
 	
 
 	public ChangeCorrelatePO(IPredicate<R> leftHighPredicate, IPredicate<R> leftLowPredicate, IPredicate<R> rightHighPredicate, IPredicate<R> rightLowPredicate,
-			IInputStreamSyncArea<R> inputStreamSyncArea, ITransferArea<R, R> outputTransferArea) {
+			IInputStreamSyncArea<R> inputStreamSyncArea, ITransferArea<R, R> outputTransferArea, IMetadataMergeFunction<K> metadataMerge) {
 		super();
 		this.leftHighPredicate = leftHighPredicate.clone();
 		this.leftLowPredicate = leftLowPredicate.clone();
@@ -72,6 +71,7 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 		this.rightLowPredicate = rightLowPredicate.clone();
 		this.inputStreamSyncArea = inputStreamSyncArea;
 		this.outputTransferArea = outputTransferArea;
+		this.metadataMerge = metadataMerge;
 	}
 
 	public ChangeCorrelatePO(ChangeCorrelatePO<K, R> changeCorrelatePO) {
@@ -147,17 +147,8 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 		return dataMerge;
 	}
 
-	@Override
-	public IMetadataMergeFunction<K> getMetadataMerge() {
-		return metadataMerge;
-	}
-
 	public void setDataMerge(IDataMergeFunction<R, K> dataMerge) {
 		this.dataMerge = dataMerge;
-	}
-
-	public void setMetadataMerge(IMetadataMergeFunction<K> metadataMerge) {
-		this.metadataMerge = metadataMerge;
 	}
 
 

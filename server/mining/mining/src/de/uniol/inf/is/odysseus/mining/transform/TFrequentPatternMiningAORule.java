@@ -30,8 +30,9 @@
 
 package de.uniol.inf.is.odysseus.mining.transform;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.MiningAlgorithmRegistry;
 import de.uniol.inf.is.odysseus.mining.frequentitem.IFrequentPatternMiner;
@@ -39,7 +40,6 @@ import de.uniol.inf.is.odysseus.mining.logicaloperator.FrequentPatternMiningAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentPatternMiningPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -52,14 +52,16 @@ public class TFrequentPatternMiningAORule extends AbstractTransformationRule<Fre
 	@Override
 	public void execute(FrequentPatternMiningAO operator, TransformationConfiguration config) throws RuleException {
 
-		CombinedMergeFunction<ITimeInterval> metaDataMerge = new CombinedMergeFunction<ITimeInterval>();
-		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
+		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry
+				.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames(),
+						operator.getInputSchema(1).getMetaAttributeNames());
+	
 
 		IFrequentPatternMiner<ITimeInterval> fpm = MiningAlgorithmRegistry.getInstance().getFrequentPatternMiner(operator.getLearner());
 		fpm.setOptions(operator.getOptionsMap());
 		fpm.init(operator.getInputSchema(0), operator.getMinSupport());
-		FrequentPatternMiningPO<ITimeInterval> po = new FrequentPatternMiningPO<>(fpm, operator.getMaxTransactions());
-		po.setMetadataMerge(metaDataMerge);
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		FrequentPatternMiningPO po = new FrequentPatternMiningPO(fpm, operator.getMaxTransactions(), metaDataMerge);
 		defaultExecute(operator, po, config, false, false);
 		po.setOutputSchema(operator.getOutputSchema(0), 0);
 		po.setOutputSchema(operator.getOutputSchema(1), 1);

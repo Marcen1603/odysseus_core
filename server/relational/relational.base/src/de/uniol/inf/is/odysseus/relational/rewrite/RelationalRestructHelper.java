@@ -21,6 +21,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -38,7 +41,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.IUnaryFunctor;
-import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RestructParameterInfoUtil;
 
@@ -50,8 +52,10 @@ import de.uniol.inf.is.odysseus.relational.rewrite.rules.RestructParameterInfoUt
  */
 public class RelationalRestructHelper {
 
-	static String LOGGER_NAME = RelationalRestructHelper.class.toString();
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(RelationalRestructHelper.class);
+	
 	public static boolean containsAllSources(ILogicalOperator op, Set<?> sources) {
 		Collection<SDFAttribute> schema = op.getOutputSchema().getAttributes();
 		Set<?> schemaSources = sourcesOfAttributes(schema);
@@ -323,7 +327,7 @@ public class RelationalRestructHelper {
 	// }
 
 	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op) {
-		LoggerHelper.getInstance(LOGGER_NAME).debug("removing operator:" + op);
+		LOG.debug("removing operator:" + op);
 		return RestructHelper.removeOperator(op, false);
 	}
 

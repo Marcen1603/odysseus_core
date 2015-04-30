@@ -249,7 +249,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		// translate query and build logical plans
 		IMetaAttribute metaAttribute = MetadataRegistry
 				.getMetadataType(parameters.getTransformationConfiguration()
-						.getMetaTypes());
+						.getDefaultMetaTypeSet());
 		List<IExecutorCommand> commands = getCompiler().translateQuery(
 				queryStr, parameters.getParserID(), user,
 				getDataDictionary(user), context, metaAttribute);

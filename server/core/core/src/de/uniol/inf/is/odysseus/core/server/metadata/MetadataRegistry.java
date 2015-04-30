@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,17 +26,22 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
-import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
+
+/**
+ * Registry for all meta data types currently supported
+ * @author Marco Grawunder
+ *
+ */
 
 public class MetadataRegistry {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(MetadataRegistry.class);
-
-	private static final String LOGGER_NAME = MetadataRegistry.class.getName();
-
+	
 	private static Map<SortedSet<String>, IMetaAttribute> combinedMetadataTypes = new HashMap<>();
 
 	private static Map<String, IMetaAttribute> byName = new HashMap<>();
@@ -61,7 +67,7 @@ public class MetadataRegistry {
 					throw new IllegalArgumentException(msg);
 				}
 			} catch (Exception e) {
-				LoggerHelper.getInstance(LOGGER_NAME).warn(
+				logger.warn(
 						"could not check wether '"
 								+ implementationType.getName()
 								+ "' supports clone() method, reason:\n\t"
@@ -176,4 +182,47 @@ public class MetadataRegistry {
 		}
 		return classNames;
 	}
+
+	@SuppressWarnings("unchecked")
+	public static IMetadataMergeFunction<?> getMergeFunction(List<String> left,
+			List<String> right) {
+		// TODO: Find ways to handle different meta schemas
+		if (left.size() != right.size()){
+			throw new IllegalArgumentException("Meta data of inputs do not match!");
+		}
+		CombinedMergeFunction<IMetaAttribute> cmf = new CombinedMergeFunction<>();
+
+		Collections.sort(left);
+		Collections.sort(right);
+		
+		for (int i=0;i<left.size();i++){
+			String l = left.get(i);
+			String r = right.get(i);
+			if (!l.equals(r)){
+				throw new IllegalArgumentException("Meta data of inputs do not match!");
+			}
+			List<?> functions = getMetadataType(l).getInlineMergeFunctions();
+			for (Object f :functions){
+				cmf.add((IInlineMetadataMergeFunction<? super IMetaAttribute>) f);
+			}
+		}
+		
+		
+		return cmf;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static IMetadataMergeFunction getMergeFunction(
+			List<String> metadataSet) {
+		CombinedMergeFunction<IMetaAttribute> cmf = new CombinedMergeFunction<>();
+		for (String m:metadataSet){
+			List<?> functions = getMetadataType(m).getInlineMergeFunctions();
+			for (Object f :functions){
+				cmf.add((IInlineMetadataMergeFunction<? super IMetaAttribute>) f);
+			}
+		}
+		return cmf;
+	}
+
+
 }

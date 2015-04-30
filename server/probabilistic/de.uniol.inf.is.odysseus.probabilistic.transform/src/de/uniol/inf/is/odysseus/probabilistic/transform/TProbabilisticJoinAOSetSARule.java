@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
@@ -36,7 +35,6 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TIMergeFunction;
-import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -60,15 +58,6 @@ public class TProbabilisticJoinAOSetSARule extends AbstractTransformationRule<Jo
 
         final IDataMergeFunction<Tuple<IProbabilisticTimeInterval>, IProbabilisticTimeInterval> dataMerge = new ProbabilisticMergeFunction<Tuple<IProbabilisticTimeInterval>, IProbabilisticTimeInterval>(
                 operator.getOutputSchema().size());
-        IMetadataMergeFunction<?> metadataMerge;
-        if (transformConfig.getMetaTypes().size() > 1) {
-            final CombinedMergeFunction<IProbabilisticTimeInterval> combinedMetadataMerge = new CombinedMergeFunction<IProbabilisticTimeInterval>();
-            combinedMetadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
-            metadataMerge = combinedMetadataMerge;
-        }
-        else {
-            metadataMerge = TIMergeFunction.getInstance();
-        }
         final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
         if (operator.getPredicate() != null) {
             attributes.addAll(SchemaUtils.getProbabilisticAttributes(operator.getPredicate().getAttributes()));
@@ -103,7 +92,8 @@ public class TProbabilisticJoinAOSetSARule extends AbstractTransformationRule<Jo
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getOutputSchema());
         Objects.requireNonNull(transformConfig);
-        if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
+        if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && operator.getInputSchema(0).hasMetatype(ITimeInterval.class)
+        		&& operator.getInputSchema(1).hasMetatype(ITimeInterval.class)) {
             if (operator.getAreas() == null) {
                 return true;
             }

@@ -194,6 +194,14 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		return this.noInputPorts;
 	}
 
+	public SDFSchema getInputSchema(int port){
+		AbstractPhysicalSubscription<ISource<? extends R>> sub = getSubscribedToSource(port);
+		if (sub != null){
+			return sub.getSchema();
+		}
+		return null;
+	}
+	
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------

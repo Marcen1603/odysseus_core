@@ -21,6 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -77,6 +78,11 @@ final public class Priority extends AbstractBaseMetaAttribute implements IPriori
 			return (K) (Byte) prio;
 		}
 		return null;
+	}
+	
+	@Override
+	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
+		return new PriorityMergeFunction();
 	}
 	
 	@Override

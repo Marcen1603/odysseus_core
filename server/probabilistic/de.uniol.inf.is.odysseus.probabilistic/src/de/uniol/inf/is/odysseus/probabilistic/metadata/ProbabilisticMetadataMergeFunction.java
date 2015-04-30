@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 
 /**
  * Merge function for probabilistic data streams.

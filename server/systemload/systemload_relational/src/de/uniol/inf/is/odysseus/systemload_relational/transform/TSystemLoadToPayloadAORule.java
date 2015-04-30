@@ -25,8 +25,8 @@ public class TSystemLoadToPayloadAORule extends
 	public boolean isExecutable(SystemLoadToPayloadAO operator,
 			TransformationConfiguration config) {
 		if (operator.getInputSchema(0).getType() == Tuple.class
-				&& config.getMetaTypes().contains(
-						ISystemLoad.class.getCanonicalName())) {
+				&& operator.getInputSchema(0).hasMetatype(
+						ISystemLoad.class)) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
 			}

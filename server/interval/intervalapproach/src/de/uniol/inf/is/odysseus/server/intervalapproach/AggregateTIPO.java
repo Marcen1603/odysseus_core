@@ -43,7 +43,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
@@ -61,14 +60,14 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.state.AggregateTIPOState
  * @param <W>: The type of the element that is written
  */
 public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
-		extends AggregatePO<Q, R, W> implements IHasMetadataMergeFunction<Q>,
+		extends AggregatePO<Q, R, W> implements
 		IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
 
 	/**
 	 * When combining different elements the meta data must be merged. Because the operator does not know, which
 	 * meta data is used, the metadataMerge function is injection at transformation time 
 	 */
-	private IMetadataMergeFunction<Q> metadataMerge;
+	final private IMetadataMergeFunction<Q> metadataMerge;
 
 	/**
 	 * if set to a value higher than -1, every dumpAtValueCount elements are also written, even if no new elements
@@ -131,9 +130,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public AggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
-			boolean fastGrouping) {
+			boolean fastGrouping, IMetadataMergeFunction<Q> metadataMerge ) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations,
 				fastGrouping);
+		this.metadataMerge = metadataMerge;
 		transferArea = new TITransferArea<W, W>();
 	}
 
@@ -451,24 +451,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		return this.groups;
 	}
 
-	/**
-	 * What is the current meta date merge function
-	 */
-	@Override
-	public IMetadataMergeFunction<Q> getMetadataMerge() {
-		return metadataMerge;
-	}
-
-	/**
-	 * Set the current meta data merge function, so the aggregation does not need to know 
-	 * what meta data is processed. Remark: This merge function is not allowed to
-	 * contain a merge function on the time intervals, because the merge is done inside the
-	 * aggregation
-	 * @param metadataMerge
-	 */
-	public void setMetadataMerge(IMetadataMergeFunction<Q> metadataMerge) {
-		this.metadataMerge = metadataMerge;
-	}
 
 	/**
 	 * This method does for every group/sweep area the core calculation of the new aggregation state, when a new

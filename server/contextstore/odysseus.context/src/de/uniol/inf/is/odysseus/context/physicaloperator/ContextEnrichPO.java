@@ -45,25 +45,23 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 
 /**
  * 
  * @author Dennis Geesen Created at: 27.04.2012
  */
-public class ContextEnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> implements IHasMetadataMergeFunction<M> {
+public class ContextEnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
     private IContextStore<Tuple<M>> store;
     protected IDataMergeFunction<Tuple<M>, M> dataMerge;
-    protected IMetadataMergeFunction<M> metadataMerge;
+    final protected IMetadataMergeFunction<M> metadataMerge;
     private List<String> attribtues;
     private int[] restrictList;
     private boolean outer;
 
-    public ContextEnrichPO(IContextStore<Tuple<M>> store, boolean outer, IDataMergeFunction<Tuple<M>, M> dataMerge, CombinedMergeFunction<M> metadataMerge, List<String> attributes) {
+    public ContextEnrichPO(IContextStore<Tuple<M>> store, boolean outer, IDataMergeFunction<Tuple<M>, M> dataMerge, IMetadataMergeFunction<M> metadataMerge, List<String> attributes) {
         super();
         this.store = store;
         this.metadataMerge = metadataMerge;
@@ -149,16 +147,5 @@ public class ContextEnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple
         return OutputMode.MODIFIED_INPUT;
     }
 
-    @Override
-    public IMetadataMergeFunction<M> getMetadataMerge() {
-        return metadataMerge;
-    }
-
-    /**
-     * @param metadataMerge
-     */
-    public void setMetadataMerge(IMetadataMergeFunction<M> metadataMerge) {
-        this.metadataMerge = metadataMerge;
-    }
 
 }

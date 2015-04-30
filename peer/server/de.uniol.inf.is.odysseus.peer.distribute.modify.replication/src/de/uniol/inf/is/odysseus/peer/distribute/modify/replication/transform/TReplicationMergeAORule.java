@@ -1,20 +1,19 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.replication.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperator.ReplicationMergeAO;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.physicaloperator.ReplicationMergePO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.transform.AbstractIntervalTransformationRule;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * The rule of transformation for the {@link ReplicationMergeAO}. Any {@link ReplicationMergeAO} will be 
  * transformed into a new {@link ReplicationMergePO}.
  * @author Michael Brand
  */
-public class TReplicationMergeAORule extends AbstractTransformationRule<ReplicationMergeAO> {
+public class TReplicationMergeAORule extends AbstractIntervalTransformationRule<ReplicationMergeAO> {
 
 	 @Override
 	 public int getPriority() {
@@ -32,14 +31,6 @@ public class TReplicationMergeAORule extends AbstractTransformationRule<Replicat
 		 
 	 }
 	 
-	 @Override
-	public boolean isExecutable(ReplicationMergeAO mergeAO, TransformationConfiguration transformConfig) {
-		 
-		return mergeAO.isAllPhysicalInputSet() &&
-				transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName());
-		
-	}
-
 	@Override
 	public String getName() {
 		

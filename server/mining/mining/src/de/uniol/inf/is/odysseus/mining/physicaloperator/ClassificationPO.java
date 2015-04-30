@@ -44,7 +44,7 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	private DefaultTISweepArea<Tuple<M>> elementSA = new DefaultTISweepArea<Tuple<M>>();
 	@SuppressWarnings("unchecked")
 	private DefaultTISweepArea<Tuple<M>> areas[] = new DefaultTISweepArea[2];
-	protected IMetadataMergeFunction<M> metadataMerge;
+	final protected IMetadataMergeFunction<M> metadataMerge;
 	protected ITransferArea<Tuple<M>, Tuple<M>> transferFunction;
 	private int classifierAttribute;
 	private boolean oneClassifier = false;
@@ -146,10 +146,6 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	@Override
 	public ClassificationPO<M> clone() {
 		return new ClassificationPO<M>(this);
-	}
-
-	public IMetadataMergeFunction<M> getMetadataMerge() {
-		return this.metadataMerge;
 	}
 
 	public boolean isOneClassifier() {

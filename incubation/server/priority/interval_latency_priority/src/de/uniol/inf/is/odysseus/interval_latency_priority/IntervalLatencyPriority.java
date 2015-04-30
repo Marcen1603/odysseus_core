@@ -21,6 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -101,6 +102,16 @@ final public class IntervalLatencyPriority extends AbstractCombinedMetaAttribute
 		latency.writeValue(values.get(1));
 		prio.retrieveValues(values);
 	}
+	
+	@Override
+	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
+		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
+		list.addAll(timeInterval.getInlineMergeFunctions());
+		list.addAll(latency.getInlineMergeFunctions());
+		list.addAll(prio.getInlineMergeFunctions());
+		return list;
+	}
+
 	
 	@Override
 	public <K> K getValue(int subtype, int index) {

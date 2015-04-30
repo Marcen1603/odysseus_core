@@ -119,7 +119,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
 	@Override
 	public boolean isExecutable(JoinTIPO operator, TransformationConfiguration transformConfig) {
-		if(operator.getOutputSchema().getType() == Tuple.class && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
+		if(operator.getOutputSchema().getType() == Tuple.class && operator.getInputSchema(0).hasMetatype(ITimeInterval.class)){
 			if(operator.getAreas()==null){
 				return true;
 			}

@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
@@ -36,6 +37,10 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
     private static Logger LOG = LoggerFactory.getLogger(ProbabilisticJoinTIPO.class);
 
+	public ProbabilisticJoinTIPO(IMetadataMergeFunction<K> metadataMerge) {
+		super(metadataMerge);
+	}
+    
     /**
      * {@inheritDoc}
      */

@@ -17,6 +17,7 @@ Import-Package: com.fasterxml.jackson.core,
  de.undercouch.bson4jackson.serializers,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.server.intervalapproach.transform,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.6.0",
  org.slf4j

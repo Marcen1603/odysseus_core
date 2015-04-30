@@ -83,5 +83,7 @@ public interface IMetaAttribute extends IClone, ICSVToString, Serializable {
 	 */
 	@Override
 	IMetaAttribute clone();
+	
+	List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions();
 
 }

@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -72,6 +73,11 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements
 	public <K> K getValue(int subtype, int index) {
 		return null;
 	}
+	
+	@Override
+	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
+		return new SystemLoadMergeFunction();
+	}
 
 
 	@Override
@@ -115,15 +121,21 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements
 		return Strings.isNullOrEmpty(name) ? LOCAL_NAME : name;
 	}
 
-	void insert(SystemLoad other) {
-		for (String name : other.systemLoads.keySet()) {
-			systemLoads.put(name, other.systemLoads.get(name));
+	@Override
+	public void insert(ISystemLoad other) {
+		for (String name : other.getSystemLoadNames()) {
+			systemLoads.put(name, other.getSystemLoad(name));
 		}
 	}
 
 	@Override
 	public Collection<String> getSystemLoadNames() {
 		return systemLoads.keySet();
+	}
+	
+	@Override
+	public SystemLoadEntry getSystemLoad(String name){
+		return systemLoads.get(name);
 	}
 
 	@Override

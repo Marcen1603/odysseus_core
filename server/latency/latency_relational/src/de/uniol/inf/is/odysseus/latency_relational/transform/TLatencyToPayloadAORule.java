@@ -21,8 +21,8 @@ public class TLatencyToPayloadAORule extends AbstractTransformationRule<LatencyT
 	@Override
 	public boolean isExecutable(LatencyToPayloadAO operator, TransformationConfiguration config) {
 		if (operator.getInputSchema(0).getType() == Tuple.class
-				&& config.getMetaTypes().contains(
-						ILatency.class.getCanonicalName())) {
+				&& operator.getInputSchema(0).hasMetatype(
+						ILatency.class)) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
 			}

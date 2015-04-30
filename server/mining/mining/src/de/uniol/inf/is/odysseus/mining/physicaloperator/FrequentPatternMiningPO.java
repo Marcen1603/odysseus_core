@@ -5,36 +5,38 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
-import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.frequentitem.IFrequentPatternMiner;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
+import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
+import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
 
 public class FrequentPatternMiningPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>(new FastLinkedList<Tuple<M>>());
 	private FastArrayList<PointInTime> points = new FastArrayList<PointInTime>();
 	private IFrequentPatternMiner<M> fpm;
-	private CombinedMergeFunction<ITimeInterval> metamergeFunction;
+	final private IMetadataMergeFunction<M> metamergeFunction;
 	private int maxtransactions;
 	private LinkedList<List<Tuple<M>>> transactions = new LinkedList<>();
 
-	public FrequentPatternMiningPO(IFrequentPatternMiner<M> fpm, int maxtransactions) {
+	public FrequentPatternMiningPO(IFrequentPatternMiner<M> fpm, int maxtransactions, IMetadataMergeFunction<M> metamergeFunction) {
 		this.fpm = fpm;
 		this.maxtransactions = maxtransactions;
+		this.metamergeFunction = metamergeFunction;
 	}
 
 	public FrequentPatternMiningPO(FrequentPatternMiningPO<M> old) {
 		this.fpm = old.fpm;
 		this.maxtransactions = old.maxtransactions;
+		this.metamergeFunction = old.metamergeFunction;
 	}
 
 	@Override
@@ -114,10 +116,6 @@ public class FrequentPatternMiningPO<M extends ITimeInterval> extends AbstractPi
 	@Override
 	protected void process_open() throws OpenFailedException {
 		this.metamergeFunction.init();
-	}
-
-	public void setMetadataMerge(CombinedMergeFunction<ITimeInterval> metaDataMerge) {
-		this.metamergeFunction = metaDataMerge;
 	}
 
 }

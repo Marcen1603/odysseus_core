@@ -17,10 +17,11 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import java.util.Objects;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
@@ -58,12 +59,16 @@ public class TProbabilisticJoinAORule extends TJoinAORule {
             super.execute(operator, config);
         }
         else {
+        	
+    		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry
+    				.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames(),
+    						operator.getInputSchema(1).getMetaAttributeNames());        	
             JoinTIPO joinPO;
             if (SchemaUtils.containsProbabilisticAttributes(PredicateUtils.getAttributes(pred))) {
-                joinPO = new ProbabilisticJoinTIPO();
+                joinPO = new ProbabilisticJoinTIPO(metaDataMerge);
             }
             else {
-                joinPO = new JoinTIPO();
+                joinPO = new JoinTIPO(metaDataMerge);
             }
             final boolean isCross = false;
             joinPO.setJoinPredicate(pred);
@@ -71,7 +76,6 @@ public class TProbabilisticJoinAORule extends TJoinAORule {
 
             joinPO.setTransferFunction(new TITransferArea());
 
-            joinPO.setMetadataMerge(new CombinedMergeFunction());
             joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
             this.defaultExecute(operator, joinPO, config, true, true);

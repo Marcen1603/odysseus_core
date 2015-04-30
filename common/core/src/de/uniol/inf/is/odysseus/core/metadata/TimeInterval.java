@@ -127,6 +127,11 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		this.start = new PointInTime((long)value.getAttribute(0));
 		this.end = new PointInTime((long)value.getAttribute(1));
 	}
+	
+	@Override
+	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
+		return new TimeIntervalInlineMetadataMergeFunction();
+	}
 
 	public boolean isEndInfinite() {
 		return end.isInfinite();

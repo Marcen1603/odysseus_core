@@ -66,7 +66,7 @@ public class TRelationalExistenceToPayloadRule extends AbstractTransformationRul
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema(0));
         Objects.requireNonNull(config);
-        if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+        if (operator.getInputSchema().hasMetatype(IProbabilistic.class)) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 if (operator.isAllPhysicalInputSet()) {
                     return true;

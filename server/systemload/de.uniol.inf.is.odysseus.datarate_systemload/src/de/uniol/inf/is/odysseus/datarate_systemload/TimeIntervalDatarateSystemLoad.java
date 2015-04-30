@@ -7,6 +7,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -16,6 +17,7 @@ import de.uniol.inf.is.odysseus.datarate.Datarate;
 import de.uniol.inf.is.odysseus.datarate.IDatarate;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
 import de.uniol.inf.is.odysseus.systemload.SystemLoad;
+import de.uniol.inf.is.odysseus.systemload.SystemLoadEntry;
 
 final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAttribute 
 		implements ITimeInterval, IDatarate, ISystemLoad  {
@@ -113,6 +115,15 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 	}
 	
 	@Override
+	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
+		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
+		list.addAll(timeInterval.getInlineMergeFunctions());
+		list.addAll(datarate.getInlineMergeFunctions());
+		list.addAll(systemload.getInlineMergeFunctions());
+		return list;
+	}
+	
+	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch (subtype) {
 		case 0:
@@ -201,4 +212,11 @@ final public class TimeIntervalDatarateSystemLoad extends AbstractCombinedMetaAt
 		return systemload.getNetLoad(name);
 	}
 
+	public void insert(ISystemLoad other) {
+		systemload.insert(other);
+	}
+
+	public SystemLoadEntry getSystemLoad(String name) {
+		return systemload.getSystemLoad(name);
+	}	
 }

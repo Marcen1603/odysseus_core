@@ -7,6 +7,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -83,6 +84,15 @@ final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAtt
 		timeInterval.writeValue(values.get(0));
 		latency.writeValue(values.get(1));
 		systemload.writeValue(values.get(2));
+	}
+	
+	@Override
+	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
+		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
+		list.addAll(timeInterval.getInlineMergeFunctions());
+		list.addAll(latency.getInlineMergeFunctions());
+		list.addAll(systemload.getInlineMergeFunctions());
+		return list;
 	}
 	
 	@Override
@@ -229,5 +239,12 @@ final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAtt
 	public int getNetLoad(String name) {
 		return systemload.getNetLoad(name);
 	}
+	
+	public void insert(ISystemLoad other) {
+		systemload.insert(other);
+	}
 
+	public SystemLoadEntry getSystemLoad(String name) {
+		return systemload.getSystemLoad(name);
+	}	
 }

@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.latency;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
 public class LatencyMergeFunction implements IInlineMetadataMergeFunction<ILatency> {

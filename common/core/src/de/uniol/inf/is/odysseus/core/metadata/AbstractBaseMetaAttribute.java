@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -16,5 +17,15 @@ abstract public class AbstractBaseMetaAttribute extends AbstractMetaAttribute {
 			throw new IllegalArgumentException("Cannot write multiple values in single meta attribute");
 		}
 	}
+
+	@Override
+	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
+		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> ret = new ArrayList<>();
+		ret.add(getInlineMergeFunction());
+		return ret;
+	}
+	
+	abstract protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction();
+
 	
 }

@@ -187,7 +187,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				IMetaAttribute type = operator.getLocalMetaAttribute();
 				if (type == null) {
 					type = MetadataRegistry.getMetadataType(config
-							.getMetaTypes());
+							.getDefaultMetaTypeSet());
 				}
 				((IMetadataInitializer) accessPO).setMetadataType(type);
 

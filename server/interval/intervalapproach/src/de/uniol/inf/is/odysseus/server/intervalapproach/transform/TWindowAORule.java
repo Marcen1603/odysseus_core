@@ -90,8 +90,8 @@ public class TWindowAORule extends
 	@Override
 	public boolean isExecutable(AbstractWindowAO operator,
 			TransformationConfiguration config) {
-		if (config.getMetaTypes().contains(
-				ITimeInterval.class.getCanonicalName())) {
+		if (operator.getInputSchema().hasMetatype(
+				ITimeInterval.class)) {
 			return operator.isAllPhysicalInputSet();
 
 		}

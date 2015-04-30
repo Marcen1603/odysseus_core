@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.video.physicaloperator;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

@@ -21,6 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractCombinedMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -114,6 +115,14 @@ final public class ProbabilisticTimeInterval extends AbstractCombinedMetaAttribu
 	public void writeValues(List<Tuple<?>> values) {
 		timeInterval.writeValue(values.get(0));
 		probabilistic.writeValue(values.get(1));
+	}
+	
+	@Override
+	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
+		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
+		list.addAll(timeInterval.getInlineMergeFunctions());
+		list.addAll(probabilistic.getInlineMergeFunctions());
+		return list;
 	}
 
 	@Override

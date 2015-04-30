@@ -68,7 +68,8 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>>
 	}
 
 	public LeftJoinTIPO(SDFSchema leftSchema, SDFSchema rightSchema,
-			SDFSchema resultSchema) {
+			SDFSchema resultSchema, IMetadataMergeFunction<M> metadataMerge) {
+		super(metadataMerge);
 		this.leftSchema = leftSchema;
 		this.rightSchema = rightSchema;
 		this.resultSchema = resultSchema;

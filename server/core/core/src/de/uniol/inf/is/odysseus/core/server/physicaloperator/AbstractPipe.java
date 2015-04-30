@@ -74,6 +74,11 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		protected void setInputPortCount(int ports) {
 			super.setInputPortCount(ports);
 		}
+		
+		@Override
+		public SDFSchema getInputSchema(int port) {
+			return super.getInputSchema(port);
+		}
 
 		@Override
 		final protected ISink<R> getInstance() {
@@ -143,6 +148,10 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 	protected int getInputPortCount() {
 		return this.delegateSink.noInputPorts;
+	}
+	
+	public final SDFSchema getInputSchema(int port){
+		return this.delegateSink.getInputSchema(port);
 	}
 
 	abstract public OutputMode getOutputMode();

@@ -76,8 +76,7 @@ public class TProbabilisticAORule extends AbstractTransformationRule<Probabilist
     public final boolean isExecutable(final ProbabilisticAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
-        Objects.requireNonNull(config.getMetaTypes());
-        if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+        if (operator.getInputSchema().hasMetatype(IProbabilistic.class)) {
             if (operator.isAllPhysicalInputSet()) {
                 return true;
             }

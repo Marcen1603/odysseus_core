@@ -28,9 +28,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 
-public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K>> extends AbstractPipe<R, R> implements IHasMetadataMergeFunction<K>{
+public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K>> extends AbstractPipe<R, R>{
 
 	private static final int BUFFERPORT = 0;
 
@@ -135,11 +134,6 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K
 	@Override
 	public BufferedFilterPO<K, R> clone() {
 		return new BufferedFilterPO<K, R>(this);
-	}
-
-	@Override
-	public IMetadataMergeFunction<K> getMetadataMerge() {
-		return metadataMerge;
 	}
 
 }

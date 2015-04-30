@@ -63,7 +63,8 @@ public class TProbabilisticContinuousLeftJoinAOSetSARule extends AbstractTransfo
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getOutputSchema());
         Objects.requireNonNull(transformConfig);
-        if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
+        if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && operator.getInputSchema(0).hasMetatype(ITimeInterval.class)
+        		&& operator.getInputSchema(1).hasMetatype(ITimeInterval.class)) {
             if (operator.getAreas() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);

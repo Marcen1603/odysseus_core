@@ -355,7 +355,7 @@ public class StandardCompiler implements ICompiler {
 			Context context) throws QueryParseException,
 			TransformationException {
 		IMetaAttribute metaAttribute = MetadataRegistry
-				.getMetadataType(transformationConfiguration.getMetaTypes());
+				.getMetadataType(transformationConfiguration.getDefaultMetaTypeSet());
 		List<IExecutorCommand> translate = translateQuery(query, parserID,
 				user, dd, context, metaAttribute);
 		List<IPhysicalQuery> translated = new ArrayList<IPhysicalQuery>();

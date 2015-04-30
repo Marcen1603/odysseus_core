@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 @SuppressWarnings({"rawtypes"})
@@ -627,6 +628,26 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			Class<? extends IStreamObject> newType) {
 		return new SDFSchema(toAdapt.getURI(), newType, toAdapt.constraints,
 				toAdapt.getAttributes(), toAdapt.metaschema, toAdapt.outOfOrder);
+	}
+
+	public boolean hasMetatype(Class<? extends IMetaAttribute> metaClass) {
+		if (metaschema == null){
+			return false;
+		}
+		for (SDFMetaSchema ms: metaschema){
+			if (ms.getMetaAttribute() == metaClass){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public List<String> getMetaAttributeNames() {
+		List<String> list = new ArrayList<String>();
+		for (SDFMetaSchema m:metaschema){
+			list.add(m.getMetaAttribute().getName());
+		}
+		return list;
 	}
 
 }

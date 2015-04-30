@@ -6,14 +6,16 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public interface ISystemLoad extends IMetaAttribute {
 	
-	public void addSystemLoad( String name );
-	public void removeSystemLoad( String name );
-	public Collection<String> getSystemLoadNames();
-	public int getCpuLoad(String name);
-	public int getMemLoad(String name);
-	public int getNetLoad(String name);
-	
+	void addSystemLoad( String name );
+	void removeSystemLoad( String name );
+	Collection<String> getSystemLoadNames();
+	int getCpuLoad(String name);
+	int getMemLoad(String name);
+	int getNetLoad(String name);
+	SystemLoadEntry getSystemLoad(String name);
+	void insert(ISystemLoad other);
+
 	@Override
 	public ISystemLoad clone();
-
+	
 }

@@ -39,7 +39,6 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
@@ -60,8 +59,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  *            Datentyp
  */
 public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
-		extends AbstractPipe<T, T> implements IHasPredicate,
-		IHasMetadataMergeFunction<K>, IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
+		extends AbstractPipe<T, T> implements IHasPredicate, IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
 	private static Logger _logger = null;
 
 	private static Logger getLogger() {
@@ -75,7 +73,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	protected IPredicate<? super T> joinPredicate;
 
 	protected IDataMergeFunction<T, K> dataMerge;
-	protected IMetadataMergeFunction<K> metadataMerge;
+	final protected IMetadataMergeFunction<K> metadataMerge;
 	protected ITransferArea<T, T> transferFunction;
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
@@ -85,8 +83,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	// ------------------------------------------------------------------------------------
 
-	public JoinTIPO() {
-
+	public JoinTIPO(IMetadataMergeFunction<K> metadataMerge) {
+		this.metadataMerge = metadataMerge;
 	}
 
 	public JoinTIPO(IDataMergeFunction<T, K> dataMerge,
@@ -128,14 +126,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	public void setDataMerge(IDataMergeFunction<T, K> dataMerge) {
 		this.dataMerge = dataMerge;
 	}
-
-	@Override
+	
 	public IMetadataMergeFunction<K> getMetadataMerge() {
 		return metadataMerge;
-	}
-
-	public void setMetadataMerge(IMetadataMergeFunction<K> metadataMerge) {
-		this.metadataMerge = metadataMerge;
 	}
 
 	public void setAreas(ITimeIntervalSweepArea<T>[] areas) {

@@ -50,8 +50,8 @@ public class TDeleteDatarateAORule extends
 	public boolean isExecutable(DatarateAO operator,
 			TransformationConfiguration transformConfig) {
 		// Remove if tranformConfig does not contain IDataRate
-		return !transformConfig.getMetaTypes().contains(
-				IDatarate.class.getCanonicalName());
+		return !operator.getInputSchema().hasMetatype(
+				IDatarate.class);
 	}
 
 	@Override

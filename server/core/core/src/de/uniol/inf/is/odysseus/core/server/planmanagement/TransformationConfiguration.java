@@ -82,7 +82,8 @@ public class TransformationConfiguration {
 				.asList(strings)));
 	}
 
-	public SortedSet<String> getMetaTypes() {
+	// Renamed to avoid usage in other transformation rules than access 
+	public SortedSet<String> getDefaultMetaTypeSet() {
 		return metaTypes;
 	}
 	

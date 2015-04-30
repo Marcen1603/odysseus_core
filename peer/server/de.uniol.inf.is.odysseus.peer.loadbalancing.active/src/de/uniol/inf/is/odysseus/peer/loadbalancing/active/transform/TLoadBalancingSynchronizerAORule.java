@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.logicaloperator.LoadBa
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.physicaloperator.LoadBalancingSynchronizerPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.transform.AbstractIntervalTransformationRule;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * The rule of transformation for the {@link LoadBalancingSynchronizerAO}. Any
@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Michael Brand
  */
 public class TLoadBalancingSynchronizerAORule extends
-		AbstractTransformationRule<LoadBalancingSynchronizerAO> {
+		AbstractIntervalTransformationRule<LoadBalancingSynchronizerAO> {
 
 	@Override
 	public int getPriority() {
@@ -34,16 +34,6 @@ public class TLoadBalancingSynchronizerAORule extends
 		defaultExecute(syncAO,
 				new LoadBalancingSynchronizerPO<IStreamObject<ITimeInterval>>(
 						syncAO), config, true, true);
-
-	}
-
-	@Override
-	public boolean isExecutable(LoadBalancingSynchronizerAO syncAO,
-			TransformationConfiguration transformConfig) {
-
-		return syncAO.isAllPhysicalInputSet()
-				&& transformConfig.getMetaTypes().contains(
-						ITimeInterval.class.getCanonicalName());
 
 	}
 

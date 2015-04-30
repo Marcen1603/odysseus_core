@@ -41,8 +41,8 @@ public class TKeyValueMapRule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public boolean isExecutable(MapAO operator, TransformationConfiguration config) {
-		if ((operator.getInputSchema().getType() == KeyValueObject.class || 
-				operator.getInputSchema().getType() == NestedKeyValueObject.class) &&
+		if ((operator.getInputSchema(0).getType() == KeyValueObject.class || 
+				operator.getInputSchema(0).getType() == NestedKeyValueObject.class) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
 		}

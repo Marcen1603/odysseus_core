@@ -75,35 +75,37 @@ public class TLeftJoinAOSetSARule extends
 		areas[1] = new JoinTISweepArea();
 
 		// See comment in TJoinAOSetSARule
-		
+
 		// check the paths
-//		for (int port = 0; port < 2; port++) {
-//			int otherPort = port ^ 1;
-//			if (JoinTransformationHelper.checkPhysicalPath(joinPO
-//					.getSubscribedToSource(port).getTarget())) {
-//				// check the predicate and calculate
-//				// the restrictList
-//				Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
-//
-//				if (JoinTransformationHelper.checkPredicate(joinPO
-//						.getPredicate(), neededAttrs, joinPO
-//						.getSubscribedToSource(port).getSchema(), joinPO
-//						.getSubscribedToSource(otherPort).getSchema())) {
-//
-//					// transform the set into a list to guarantee the
-//					// same order of attributes for both restrict lists
-//					List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new ArrayList<Pair<SDFAttribute, SDFAttribute>>();
-//					for (Pair<SDFAttribute, SDFAttribute> attr : neededAttrs) {
-//						neededAttrsList.add(attr);
-//					}
-//
-//					Pair<int[], int[]> restrictLists = JoinTransformationHelper
-//							.createRestrictLists(joinPO, neededAttrsList, port);
-//					areas[port] = new HashJoinSweepArea(restrictLists.getE1(),
-//							restrictLists.getE2());
-//				}
-//			}
-//		}
+		// for (int port = 0; port < 2; port++) {
+		// int otherPort = port ^ 1;
+		// if (JoinTransformationHelper.checkPhysicalPath(joinPO
+		// .getSubscribedToSource(port).getTarget())) {
+		// // check the predicate and calculate
+		// // the restrictList
+		// Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new
+		// TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+		//
+		// if (JoinTransformationHelper.checkPredicate(joinPO
+		// .getPredicate(), neededAttrs, joinPO
+		// .getSubscribedToSource(port).getSchema(), joinPO
+		// .getSubscribedToSource(otherPort).getSchema())) {
+		//
+		// // transform the set into a list to guarantee the
+		// // same order of attributes for both restrict lists
+		// List<Pair<SDFAttribute, SDFAttribute>> neededAttrsList = new
+		// ArrayList<Pair<SDFAttribute, SDFAttribute>>();
+		// for (Pair<SDFAttribute, SDFAttribute> attr : neededAttrs) {
+		// neededAttrsList.add(attr);
+		// }
+		//
+		// Pair<int[], int[]> restrictLists = JoinTransformationHelper
+		// .createRestrictLists(joinPO, neededAttrsList, port);
+		// areas[port] = new HashJoinSweepArea(restrictLists.getE1(),
+		// restrictLists.getE2());
+		// }
+		// }
+		// }
 
 		joinPO.setAreas(areas);
 		/*
@@ -124,8 +126,8 @@ public class TLeftJoinAOSetSARule extends
 	public boolean isExecutable(LeftJoinTIPO operator,
 			TransformationConfiguration transformConfig) {
 		if (operator.getOutputSchema().getType() == Tuple.class
-				&& transformConfig.getMetaTypes().contains(
-						ITimeInterval.class.getCanonicalName())) {
+				&& operator.getInputSchema(0).hasMetatype(ITimeInterval.class)
+				&& operator.getInputSchema(1).hasMetatype(ITimeInterval.class)) {
 			if (operator.getAreas() == null) {
 				return true;
 			}

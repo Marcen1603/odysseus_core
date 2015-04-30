@@ -15,22 +15,22 @@
   */
 package de.uniol.inf.is.odysseus.server.intervalapproach.transform.join;
 
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
-import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.LeftJoinTITransferArea;
+import de.uniol.inf.is.odysseus.server.intervalapproach.transform.AbstractIntervalTransformationRule;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({"unchecked","rawtypes"})
-public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
+public class TLeftJoinAORule extends AbstractIntervalTransformationRule<LeftJoinAO> {
 
 	@Override
 	public int getPriority() {	
@@ -42,7 +42,13 @@ public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
 
 	@Override
 	public void execute(LeftJoinAO joinAO, TransformationConfiguration transformConfig) throws RuleException {
-		LeftJoinTIPO joinPO = new LeftJoinTIPO(joinAO.getInputSchema(0), joinAO.getInputSchema(1), joinAO.getOutputSchema());
+		
+		
+		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry
+				.getMergeFunction(joinAO.getInputSchema(0).getMetaAttributeNames(),
+						joinAO.getInputSchema(1).getMetaAttributeNames());
+		
+		LeftJoinTIPO joinPO = new LeftJoinTIPO(joinAO.getInputSchema(0), joinAO.getInputSchema(1), joinAO.getOutputSchema(), metaDataMerge);
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? TruePredicate.getInstance() : pred.clone());
 	
@@ -67,21 +73,11 @@ public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
 			joinPO.setTransferFunction(new LeftJoinTITransferArea());	
 //		}
 		
-		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 		
 		defaultExecute(joinAO, joinPO, transformConfig, true, true);
 	}
 
-	@Override
-	public boolean isExecutable(LeftJoinAO operator, TransformationConfiguration transformConfig) {
-		if(operator.isAllPhysicalInputSet()){
-			if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
-				return true;
-			}
-		}
-		return false;
-	}
 
 	@Override
 	public String getName() {
