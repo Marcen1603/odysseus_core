@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 
 public class MetadataPO<R extends IStreamObject<IMetaAttribute>> extends
@@ -60,6 +61,17 @@ public class MetadataPO<R extends IStreamObject<IMetaAttribute>> extends
 			object.getMetadata().writeValues(currentValues);
 		}
 		transfer(object);
+	}
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof MetadataPO)){
+			return false;
+		}
+		@SuppressWarnings("unchecked")
+		MetadataPO<IStreamObject<IMetaAttribute>> other = (MetadataPO<IStreamObject<IMetaAttribute>>)ipo;
+		return this.metaClass.equals(other.metaClass);
+		
 	}
 
 }
