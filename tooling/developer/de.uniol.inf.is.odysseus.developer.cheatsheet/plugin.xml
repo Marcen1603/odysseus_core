@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.uniol.inf.is.odysseus.developer.cheatsheet" name="Cheat Sheet" schema="schema/de.uniol.inf.is.odysseus.developer.cheatsheet.exsd"/>
+              <extension
+         point="org.eclipse.ui.commands">
+              <command
+            defaultHandler="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GenerateCheatSheetCommand"
+            id="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GenerateCheatSheetCommand"
+            name="Generate Cheat Sheet">
+      </command>     
+       </extension>
+      
+           <extension
+         point="org.eclipse.ui.menus">
+            <menuContribution
+            allPopups="false"
+            locationURI="menu:help">
+         <command
+               commandId="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GenerateCheatSheetCommand"
+               label="Generate Cheat Sheet"
+               style="push">
+         </command>
+      </menuContribution>
+      </extension>
+</plugin>
