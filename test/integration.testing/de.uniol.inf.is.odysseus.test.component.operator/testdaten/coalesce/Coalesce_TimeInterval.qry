@@ -1,6 +1,6 @@
 /// Odysseus Testcase: Coalesce
 /// Operator: COALESCE
-/// Date: Thu Apr 30 15:59:01 CST 2015
+/// Date: Thu Apr 30 17:01:47 CST 2015
 /// User: ckuka
 /// Parameter: 
 ///  FASTGROUPING: 
@@ -10,7 +10,7 @@
 ///  DESTINATION: 
 ///  CREATEONHEARTBEAT: 
 ///  DRAIN: 
-///  AGGREGATIONS: [['COUNT', 'x', 'count']]
+///  AGGREGATIONS: [['AVG', 'x', 'avg']]
 ///  SUPPRESSPUNCTUATIONS: 
 ///  MAXELEMENTSPERGROUP: 
 ///  ENDPREDICATE: 'y>0'
@@ -45,4 +45,4 @@ input0 = ACCESS({
         ],
     schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double'], ['y', 'Double'], ['z', 'Double']]})
 
-output = COALESCE({AGGREGATIONS=[['COUNT', 'x', 'count']], ENDPREDICATE='y>0', STARTPREDICATE='x>0'}, input0)
+output = COALESCE({AGGREGATIONS=[['AVG', 'x', 'avg']], ENDPREDICATE='y>0', STARTPREDICATE='x>0'}, input0)

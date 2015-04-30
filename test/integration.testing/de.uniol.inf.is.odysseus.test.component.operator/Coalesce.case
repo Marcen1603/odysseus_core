@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TESTCASE DIRECTORY="testdaten/coalesce/" NAME="Coalesce" OPERATOR="COALESCE" TIMESTAMP="true">
 <PARAMETERS>
-<PARAMETER IMemento.internal.id="AGGREGATIONS" VALUE="[[&apos;COUNT&apos;, &apos;x&apos;, &apos;count&apos;]]"/>
+<PARAMETER IMemento.internal.id="AGGREGATIONS" VALUE="[[&apos;AVG&apos;, &apos;x&apos;, &apos;avg&apos;]]"/>
 <PARAMETER IMemento.internal.id="ENDPREDICATE" VALUE="&apos;y&gt;0&apos;"/>
 <PARAMETER IMemento.internal.id="STARTPREDICATE" VALUE="&apos;x&gt;0&apos;"/>
 </PARAMETERS>
