@@ -84,7 +84,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			accessPO = getDataDictionary().getAccessAO(
 					operator.getAccessAOName());
 		}
-
+		
 		if (accessPO == null) {
 
 			OptionMap options = new OptionMap(operator.getOptionsMap());
@@ -172,14 +172,12 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			}
 
 		} else {
-			// if (operator.getWrapper() != null) {
-			// // throw new
-			// //
-			// TransformationException("Multiple definiton of source with name "+operator.getAccessAOName());
-			// infoService
-			// .warning("Potential problem? Multiple definition of source with name "
-			// + operator.getAccessAOName());
-			// }
+			List<String> opMT = operator.getMetadataTypes();
+			List<String> acMT = accessPO.getOutputSchema().getMetaAttributeNames();
+			
+			if (!MetadataRegistry.isSame(opMT, acMT)){
+				throw new TransformationException("The source "+operator.getName()+" is already defined with meta data "+acMT);
+			}
 		}
 		// Set metadata types
 		if (accessPO instanceof IMetadataInitializer) {

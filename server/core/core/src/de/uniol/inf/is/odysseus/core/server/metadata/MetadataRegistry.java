@@ -210,6 +210,24 @@ public class MetadataRegistry {
 		
 		return cmf;
 	}
+	
+	public static boolean isSame(List<String> first, List<String> second){
+		if (first.size() != second.size()){
+			return false;
+		}
+		
+		Collections.sort(first);
+		Collections.sort(second);
+		
+		for (int i=0;i<first.size();i++){
+			String l = first.get(i);
+			String r = second.get(i);
+			if (!l.equals(r)){
+				return false;
+			}
+		}
+		return true;
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static IMetadataMergeFunction getMergeFunction(
