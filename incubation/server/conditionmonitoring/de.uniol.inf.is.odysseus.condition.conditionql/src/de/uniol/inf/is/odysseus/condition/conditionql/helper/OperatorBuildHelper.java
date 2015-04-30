@@ -70,16 +70,17 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
  *
  */
 public class OperatorBuildHelper {
-	
-	
-	public static ValueAreaAnomalyDetectionAO createValueAreaAnomalyDetectionAO(double minValue, double maxValue, ILogicalOperator source) {
+
+	public static ValueAreaAnomalyDetectionAO createValueAreaAnomalyDetectionAO(double minValue, double maxValue,
+			boolean sendAllAnomalies, ILogicalOperator source) {
 		ValueAreaAnomalyDetectionAO valueAreaDetector = new ValueAreaAnomalyDetectionAO();
 		valueAreaDetector.setMinValue(minValue);
 		valueAreaDetector.setMaxValue(maxValue);
+		valueAreaDetector.setSendAllAnomalies(sendAllAnomalies);
 		valueAreaDetector.subscribeToSource(source, 0, 0, source.getOutputSchema());
 		return valueAreaDetector;
 	}
-	
+
 	public static StreamAO createSensorSource(ISession session, String sourceName) {
 		StreamAO streamAO = new StreamAO();
 		AccessAO accessAO = createAccessAO(session, sourceName);
@@ -87,29 +88,30 @@ public class OperatorBuildHelper {
 		streamAO.setName(sourceName);
 		return streamAO;
 	}
-	
-//	public static AccessAO createSource(String sourceName) {
-//		AccessAO accessAO = new AccessAO();
-//		accessAO.setTransportHandler("tcpclient");
-//		accessAO.setAccessAOName(new Resource(sourceName));
-//		accessAO.setDataHandler("tuple");
-//		accessAO.setWrapper("GenericPush");
-//		accessAO.setProtocolHandler("simplecsv");
-//		
-//		List<Option> optionsList = new ArrayList<Option>();
-//		Option optionPort = new Option("port", "19991");
-//		Option optionHost = new Option("host", "127.0.0.1");
-//		Option optionDelimeter = new Option("Delimeter", ",");
-//		accessAO.setOptions(optionsList);
-//		
-//		List<SDFAttribute> schema = new ArrayList<SDFAttribute>();
-//		//SDFAttribute attr = new SDFAttribute();
-//		
-//		return accessAO;
-//	}
-	
+
+	// public static AccessAO createSource(String sourceName) {
+	// AccessAO accessAO = new AccessAO();
+	// accessAO.setTransportHandler("tcpclient");
+	// accessAO.setAccessAOName(new Resource(sourceName));
+	// accessAO.setDataHandler("tuple");
+	// accessAO.setWrapper("GenericPush");
+	// accessAO.setProtocolHandler("simplecsv");
+	//
+	// List<Option> optionsList = new ArrayList<Option>();
+	// Option optionPort = new Option("port", "19991");
+	// Option optionHost = new Option("host", "127.0.0.1");
+	// Option optionDelimeter = new Option("Delimeter", ",");
+	// accessAO.setOptions(optionsList);
+	//
+	// List<SDFAttribute> schema = new ArrayList<SDFAttribute>();
+	// //SDFAttribute attr = new SDFAttribute();
+	//
+	// return accessAO;
+	// }
+
 	/**
-	 * Method to get AccessAO. DO NOT USE THIS DO ACCESS SOURCES DIRECTLY. Use StreamAO instead.
+	 * Method to get AccessAO. DO NOT USE THIS DO ACCESS SOURCES DIRECTLY. Use
+	 * StreamAO instead.
 	 * 
 	 * @param sourcename
 	 *            Name of source
@@ -128,10 +130,10 @@ public class OperatorBuildHelper {
 
 		return source.getValue();
 	}
-	
 
 	/**
-	 * Creates a MapAP with a list of expressions. To create such expressions, see {@link createExpressionParameter}.
+	 * Creates a MapAP with a list of expressions. To create such expressions,
+	 * see {@link createExpressionParameter}.
 	 * 
 	 * @param expressions
 	 *            List of expressions for this MAP-Operator
@@ -160,13 +162,15 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates a StateMapAO with the list of expressions. To create such expressions, see
-	 * {@link createExpressionParameter}. Optional you can group in this operator.
+	 * Creates a StateMapAO with the list of expressions. To create such
+	 * expressions, see {@link createExpressionParameter}. Optional you can
+	 * group in this operator.
 	 * 
 	 * @param expressions
 	 *            List of expressions for this StateMap-Operator
 	 * @param groupBy
-	 *            The variable you want to group by (e.g., "sensorid"). Enter empty String if you don't want to group
+	 *            The variable you want to group by (e.g., "sensorid"). Enter
+	 *            empty String if you don't want to group
 	 * @param source
 	 *            Source for this operator
 	 * @return A StateMapAO with given expressions and grouping
@@ -183,8 +187,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates a StateMapAO with the list of expressions. To create such expressions, see
-	 * {@link createExpressionParameter}.
+	 * Creates a StateMapAO with the list of expressions. To create such
+	 * expressions, see {@link createExpressionParameter}.
 	 * 
 	 * @param expressions
 	 *            List of expressions for this StateMap-Operator
@@ -197,8 +201,9 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates a StateMapAO with the list of expressions. To create such expressions, see
-	 * {@link createExpressionParameter}. Optional you can group in this operator.
+	 * Creates a StateMapAO with the list of expressions. To create such
+	 * expressions, see {@link createExpressionParameter}. Optional you can
+	 * group in this operator.
 	 * 
 	 * @param expressions
 	 *            List of expressions for this StateMap-Operator
@@ -268,8 +273,8 @@ public class OperatorBuildHelper {
 	 * @param streamToEnrich
 	 *            Normal stream that should be enriched
 	 * @param metaStram
-	 *            Stream with probably limited metadata to enrich the other stream. This will be on port 1 (input and
-	 *            output)
+	 *            Stream with probably limited metadata to enrich the other
+	 *            stream. This will be on port 1 (input and output)
 	 * @return
 	 */
 	public static EnrichAO createEnrichAO(String joinPredicate, ILogicalOperator streamToEnrich,
@@ -294,8 +299,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates an AggregateAO with standard output-type as double (or what Odysseus use as standard the time you use
-	 * this function)
+	 * Creates an AggregateAO with standard output-type as double (or what
+	 * Odysseus use as standard the time you use this function)
 	 * 
 	 * @param aggregationFunction
 	 *            The name of the aggregate-function, e.g. "SUM" or "MAX"
@@ -322,7 +327,8 @@ public class OperatorBuildHelper {
 	 * @param outputAttributeName
 	 *            The name of the output attribute for this aggregation
 	 * @param outputType
-	 *            The optional type of output (null, if you don't want to specify, should then be double)
+	 *            The optional type of output (null, if you don't want to
+	 *            specify, should then be double)
 	 * @param source
 	 *            The operator before this one
 	 * @return
@@ -347,7 +353,8 @@ public class OperatorBuildHelper {
 	 * @param outputAttributeName
 	 *            The name of the output attribute for this aggregation
 	 * @param outputType
-	 *            The optional type of output (null, if you don't want to specify, should then be double)
+	 *            The optional type of output (null, if you don't want to
+	 *            specify, should then be double)
 	 * @param source
 	 *            The operator before this one
 	 * @return
@@ -376,11 +383,13 @@ public class OperatorBuildHelper {
 	 * @param groupBy
 	 *            The list of names of the attributes you want to group by
 	 * @param inputAttributeName
-	 *            The list of input attributes over which the aggregation should be done
+	 *            The list of input attributes over which the aggregation should
+	 *            be done
 	 * @param outputAttributeName
 	 *            The list of names of the output attribute for this aggregation
 	 * @param outputType
-	 *            List of optional types of output (null, if you don't want to specify, should then be double)
+	 *            List of optional types of output (null, if you don't want to
+	 *            specify, should then be double)
 	 * @param source
 	 *            The operator before this one
 	 * @return
@@ -569,38 +578,37 @@ public class OperatorBuildHelper {
 		rAO.subscribeTo(source, source.getOutputSchema());
 		return rAO;
 	}
-	
-	
-		
-	public static CSVFileSink createFileSinkAO( String queryName, String fileName, String sinkName, List<Option> parameter, ILogicalOperator source){
+
+	public static CSVFileSink createFileSinkAO(String queryName, String fileName, String sinkName,
+			List<Option> parameter, ILogicalOperator source) {
 		CSVFileSink fAO = new CSVFileSink();
-		
-		if(parameter!= null){
+
+		if (parameter != null) {
 			fAO.setOptions(parameter);
 		}
-	
-		
-		if(fileName != null && !fileName.equals("")){
+
+		if (fileName != null && !fileName.equals("")) {
 			fAO.setFilename(fileName);
-		}else{
-			fAO.setFilename(queryName+"_"+System.currentTimeMillis());
+		} else {
+			fAO.setFilename(queryName + "_" + System.currentTimeMillis());
 		}
-		
-		if(sinkName!=null && !sinkName.equals("")){
+
+		if (sinkName != null && !sinkName.equals("")) {
 			fAO.setName(sinkName);
-			fAO.setSink(new Resource("system",sinkName));
-		}else{
+			fAO.setSink(new Resource("system", sinkName));
+		} else {
 			fAO.setName("filesink");
-			fAO.setSink(new Resource("system","filesink"));
+			fAO.setSink(new Resource("system", "filesink"));
 		}
-		
-		fAO.subscribeToSource(source, 0 ,0, source.getOutputSchema());
-	
+
+		fAO.subscribeToSource(source, 0, 0, source.getOutputSchema());
+
 		return fAO;
 	}
 
 	/**
-	 * Returns changeDetectAO with list of Attributes, groupBy, relative tolerance and absolute tolerance
+	 * Returns changeDetectAO with list of Attributes, groupBy, relative
+	 * tolerance and absolute tolerance
 	 * 
 	 * @param attributes
 	 * @param groupBy
@@ -633,7 +641,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Returns changeDetectAO with list of Attributes, relative tolerance and absolute tolerance
+	 * Returns changeDetectAO with list of Attributes, relative tolerance and
+	 * absolute tolerance
 	 * 
 	 * @param attributes
 	 * @param relativeTolerance
@@ -652,7 +661,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Returns changeDetectAO with a list of Attributes and an absolute tolerance with deliverFirstElement set to false
+	 * Returns changeDetectAO with a list of Attributes and an absolute
+	 * tolerance with deliverFirstElement set to false
 	 * 
 	 * @param attributes
 	 *            List of Attributes where changes should occur
@@ -668,7 +678,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Returns changeDetectAO with a list of Attributes and an absolute tolerance with deliverFirstElement set to false
+	 * Returns changeDetectAO with a list of Attributes and an absolute
+	 * tolerance with deliverFirstElement set to false
 	 * 
 	 * @param attributes
 	 *            List of Attributes where changes should occur
@@ -686,7 +697,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Returns changeDetectAO with a list of Attributes and an absolute tolerance
+	 * Returns changeDetectAO with a list of Attributes and an absolute
+	 * tolerance
 	 * 
 	 * @param attributes
 	 *            List of Attributes where changes should occur
@@ -710,7 +722,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Returns changeDetectAO with a list of Attributes and an absolute tolerance
+	 * Returns changeDetectAO with a list of Attributes and an absolute
+	 * tolerance
 	 * 
 	 * @param attributes
 	 *            List of Attributes where changes should occur
@@ -783,8 +796,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * If you create a IPredictate by yourself, e.g. cause it's very special, you can use this method to create a
-	 * SelectAO with this predicate
+	 * If you create a IPredictate by yourself, e.g. cause it's very special,
+	 * you can use this method to create a SelectAO with this predicate
 	 * 
 	 * @param predicate
 	 *            e.g. made with createAndPredicate
@@ -844,7 +857,8 @@ public class OperatorBuildHelper {
 	 * Creates a TimeWindow.
 	 * 
 	 * @param size
-	 *            How big the window is. Number of seconds, minutes, etc. (depends on the timeUnit) in this Window
+	 *            How big the window is. Number of seconds, minutes, etc.
+	 *            (depends on the timeUnit) in this Window
 	 * @param timeUnit
 	 *            e.g. "second" or "minute"
 	 * @param source
@@ -870,7 +884,8 @@ public class OperatorBuildHelper {
 	 * Creates a TimeWindow.
 	 * 
 	 * @param size
-	 *            How big the window is. Number of seconds, minutes, etc. (depends on the timeUnit) in this Window
+	 *            How big the window is. Number of seconds, minutes, etc.
+	 *            (depends on the timeUnit) in this Window
 	 * @param slide
 	 *            slide of the Window
 	 * @param timeUnit
@@ -932,12 +947,15 @@ public class OperatorBuildHelper {
 	 * @param endCondition
 	 *            When to stop, e.g. "sameShotTS = 100"
 	 * @param sameStartTime
-	 *            For predicate windows: If set to true, all produced elements get the same start timestamp
+	 *            For predicate windows: If set to true, all produced elements
+	 *            get the same start timestamp
 	 * @param size
-	 *            The size of your window, e.g. 1000; Type -1 if you don't want to set this
+	 *            The size of your window, e.g. 1000; Type -1 if you don't want
+	 *            to set this
 	 * @param sizeUnit
-	 *            The unit you want to measure your size in, e.g. "Milliseconds". default time is the base time of the
-	 *            stream (typically milliseconds)
+	 *            The unit you want to measure your size in, e.g.
+	 *            "Milliseconds". default time is the base time of the stream
+	 *            (typically milliseconds)
 	 * @return
 	 */
 	public static PredicateWindowAO createPredicateWindowAO(String startCondition, String endCondition,
@@ -1084,10 +1102,12 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * You can use this, if you want to create a JoinAO with a predicate made by yourself
+	 * You can use this, if you want to create a JoinAO with a predicate made by
+	 * yourself
 	 * 
 	 * @param predicate
-	 *            If you build a predicate by yourself, e.g. with createRelationalPredicate
+	 *            If you build a predicate by yourself, e.g. with
+	 *            createRelationalPredicate
 	 * @param card
 	 *            e.g. ONE_MANY, ONE_ONE, ...
 	 * @param source1
@@ -1118,7 +1138,8 @@ public class OperatorBuildHelper {
 	 * @param aliases
 	 *            The list new attribute names to use from now on
 	 * @param pairs
-	 *            If the flag pairs is set, aliases will be interpreted as pairs of (old_name, new_name)
+	 *            If the flag pairs is set, aliases will be interpreted as pairs
+	 *            of (old_name, new_name)
 	 * @param source
 	 * @return
 	 */
@@ -1145,15 +1166,15 @@ public class OperatorBuildHelper {
 	public static ILogicalOperator getLogicalOperatorsFromSource(ISession session, String sourceName) {
 		IDataDictionary dataDict = OperatorBuildHelper.getDataDictionary();
 		ILogicalOperator stream = dataDict.getStreamForTransformation(sourceName, session);
-		
-		if( stream == null ) {
+
+		if (stream == null) {
 			stream = dataDict.getView(sourceName, session);
-			
-			if( stream == null ) {
+
+			if (stream == null) {
 				throw new RuntimeException("Could not find stream or view '" + sourceName + "'!");
 			}
 		}
-		
+
 		ILogicalOperator streamCopy = copyLogicalPlan(stream);
 
 		return streamCopy;
@@ -1162,7 +1183,8 @@ public class OperatorBuildHelper {
 	private static ILogicalOperator copyLogicalPlan(ILogicalOperator originPlan) {
 		Preconditions.checkNotNull(originPlan, "Logical plan to copy must not be null!");
 
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(originPlan.getOwner());
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
+				originPlan.getOwner());
 
 		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<>();
 
@@ -1171,12 +1193,14 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates a simple TopAO which indicates the top node in the query (maybe necessary for Odysseus: This could /
-	 * should be the operator you return in the plan.)
+	 * Creates a simple TopAO which indicates the top node in the query (maybe
+	 * necessary for Odysseus: This could / should be the operator you return in
+	 * the plan.)
 	 * 
 	 * @param source
-	 *            The top logical operator in your query is the source of this operator. You can imagine that you just
-	 *            put this as a hat on top of your finished plan.
+	 *            The top logical operator in your query is the source of this
+	 *            operator. You can imagine that you just put this as a hat on
+	 *            top of your finished plan.
 	 * @return A simple TopAO.
 	 */
 	public static TopAO createTopAO(ILogicalOperator source) {
@@ -1186,8 +1210,10 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * If you have more than one Operator at the end of your query you can use this. It will put the TopAO on top of all
-	 * the operators, with the input-port beginning with 0 and increasing up to the number of the operators -1.
+	 * If you have more than one Operator at the end of your query you can use
+	 * this. It will put the TopAO on top of all the operators, with the
+	 * input-port beginning with 0 and increasing up to the number of the
+	 * operators -1.
 	 * 
 	 * Assumes that all output-ports of the sources are 0.
 	 * 
@@ -1204,14 +1230,16 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates an expressionParameter with a name which you can use to create some AOs, especially MapAOs.
+	 * Creates an expressionParameter with a name which you can use to create
+	 * some AOs, especially MapAOs.
 	 * 
 	 * @param expression
-	 *            Expression as a String as you would type it in PQL (e.g. just "x" or more complex things like
-	 *            "toDate(ts/100000)")
+	 *            Expression as a String as you would type it in PQL (e.g. just
+	 *            "x" or more complex things like "toDate(ts/100000)")
 	 * @param name
-	 *            The name the calculated value from this expression should have (e.g., "minutes"). This name will
-	 *            appear in the OutputSchema of the operator you put the expression in
+	 *            The name the calculated value from this expression should have
+	 *            (e.g., "minutes"). This name will appear in the OutputSchema
+	 *            of the operator you put the expression in
 	 * @return An expression which can be used in various AOs, especially MapAOs
 	 */
 	public static SDFExpressionParameter createExpressionParameter(String expression, String name,
@@ -1230,12 +1258,12 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates an expressionParameter without a name (the expression will be the name) which you can use to create some
-	 * AOs, especially MapAOs.
+	 * Creates an expressionParameter without a name (the expression will be the
+	 * name) which you can use to create some AOs, especially MapAOs.
 	 * 
 	 * @param expression
-	 *            Expression as a String as you would type it in PQL (e.g. just "x" or more complex things like
-	 *            "toDate(ts/100000)")
+	 *            Expression as a String as you would type it in PQL (e.g. just
+	 *            "x" or more complex things like "toDate(ts/100000)")
 	 * @return An expression which can be used in various AOs, especially MapAOs
 	 */
 	public static SDFExpressionParameter createExpressionParameter(String expression, ILogicalOperator source) {
@@ -1247,7 +1275,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Calls "initialize()" for all given AOs. Some AOs maybe need this call so it recommended to initialize the AOs.
+	 * Calls "initialize()" for all given AOs. Some AOs maybe need this call so
+	 * it recommended to initialize the AOs.
 	 * 
 	 * @param operators
 	 */
@@ -1258,12 +1287,14 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates a list of attributes from a list of strings representing attributes. Such a string could be something
-	 * easy as "x". Used to create a ChangeDetectAO for example.
+	 * Creates a list of attributes from a list of strings representing
+	 * attributes. Such a string could be something easy as "x". Used to create
+	 * a ChangeDetectAO for example.
 	 * 
 	 * @param listOfAttributes
 	 *            List of Strings representing attributes (e.g., just "x")
-	 * @return A list of attributes which can be used e.g. to create a ChangeDetectAO.
+	 * @return A list of attributes which can be used e.g. to create a
+	 *         ChangeDetectAO.
 	 */
 	public static List<SDFAttribute> createAttributeList(List<String> listOfAttributes, List<ILogicalOperator> sources) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
@@ -1278,8 +1309,9 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * You maybe need the DataDictionary to get sources or other things installed in Odysseus. Maybe a parameter or
-	 * something else need a DataDictionary to work.
+	 * You maybe need the DataDictionary to get sources or other things
+	 * installed in Odysseus. Maybe a parameter or something else need a
+	 * DataDictionary to work.
 	 * 
 	 * @return The DataDictionary
 	 */
@@ -1320,7 +1352,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates SDFAttributes from a single String, e.g. to use as groupBy attribute.
+	 * Creates SDFAttributes from a single String, e.g. to use as groupBy
+	 * attribute.
 	 * 
 	 * @param groupBy
 	 *            String to group By
@@ -1353,7 +1386,8 @@ public class OperatorBuildHelper {
 	}
 
 	/**
-	 * Creates an ILogicalQuery with an TopAO on top of the query. Initialized all operators and gives the query a name
+	 * Creates an ILogicalQuery with an TopAO on top of the query. Initialized
+	 * all operators and gives the query a name
 	 * 
 	 * @param topSources
 	 *            Top sources of your query
@@ -1379,9 +1413,10 @@ public class OperatorBuildHelper {
 
 		return query;
 	}
-	
+
 	/**
-	 * Creates an ILogicalQuery with an TopAO on top of the query. Initialized all operators and gives the query a name
+	 * Creates an ILogicalQuery with an TopAO on top of the query. Initialized
+	 * all operators and gives the query a name
 	 * 
 	 * @param topSource
 	 *            Top source of your query
@@ -1391,7 +1426,8 @@ public class OperatorBuildHelper {
 	 *            The name this query shall get
 	 * @return A finished logical query.
 	 */
-	public static ILogicalQuery finishQuery(ILogicalOperator topSource, List<ILogicalOperator> allOperators, String queryName) {
+	public static ILogicalQuery finishQuery(ILogicalOperator topSource, List<ILogicalOperator> allOperators,
+			String queryName) {
 		List<ILogicalOperator> topSources = new ArrayList<ILogicalOperator>(1);
 		topSources.add(topSource);
 		return finishQuery(topSources, allOperators, queryName);

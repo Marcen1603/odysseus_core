@@ -1,16 +1,13 @@
 package de.uniol.inf.is.odysseus.condition.physicaloperator;
 
-import de.uniol.inf.is.odysseus.condition.MessageHelper;
 import de.uniol.inf.is.odysseus.condition.logicaloperator.ValueAreaAnomalyDetectionAO;
-import de.uniol.inf.is.odysseus.condition.messages.WarningLevel;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
- * An operator that finds anomalies when the values are not in the declared
- * area. Expects the machine id on port 0, the sensor id on port 1 and the value
- * on port 2
+ * An operator that finds anomalies when the values are not in the declared area
+ * and gives the anomalies a score.
  * 
  * @author Tobias Brandt
  *
@@ -19,56 +16,123 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 @SuppressWarnings("rawtypes")
 public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> {
 
+	public static final String VALUE_NAME = "value";
+	
 	private double minValue;
 	private double maxValue;
-	private double difference;
-	private boolean toLow;
-	private boolean toHigh;
+	private boolean sendAllAnomalies;
 
+	private boolean tooLow;
+	private boolean tooHigh;
+	private boolean sendTooHigh;
+	private double distance;
+	private double lastSendDistance;
+	private double nextWarningDistance = 1.0;
+
+	/**
+	 * Create the physical operator from the logical operator.
+	 * 
+	 * @param ao
+	 */
 	public ValueAreaAnomalyDetectionPO(ValueAreaAnomalyDetectionAO ao) {
 		this.minValue = ao.getMinValue();
 		this.maxValue = ao.getMaxValue();
-		toLow = false;
-		toHigh = false;
+		this.sendAllAnomalies = ao.showAllAnomalies();
+		tooLow = false;
+		tooHigh = false;
 	}
-	
-	public ValueAreaAnomalyDetectionPO(double minValue, double maxValue) {
+
+	/**
+	 * Create the physical operator.
+	 * 
+	 * @param minValue
+	 *            The minimal value which is in the accepted area
+	 * @param maxValue
+	 *            The maximal value which is in the accepted area
+	 * @param sendAllAnomalies
+	 *            Set to true, if you want to have a tuple for every tuple which
+	 *            is an anomaly. If set to false, the operator will send
+	 *            anomaly-tuples if the value changed significantly or turned
+	 *            from being to small to being to high or the other way around
+	 */
+	public ValueAreaAnomalyDetectionPO(double minValue, double maxValue, boolean sendAllAnomalies) {
 		this.minValue = minValue;
 		this.maxValue = maxValue;
-		toLow = false;
-		toHigh = false;
+		this.sendAllAnomalies = sendAllAnomalies;
+		tooLow = false;
+		tooHigh = false;
 	}
 
 	@Override
 	protected void process_next(T object, int port) {
-		
-		int machineId = object.getAttribute(0);
-		int sensorId = object.getAttribute(1);
-		double sensorValue = object.getAttribute(2);
-		
-		if (sensorValue > maxValue && !toHigh) {
-			toHigh = true;
-			toLow = false;
-			difference = sensorValue - maxValue;
-			String description = "Value too high at " + sensorValue;
-			Tuple out = MessageHelper.createWarningTuple(machineId, sensorId, WarningLevel.MEDIUM, description);
-			transfer(out);
-		} else if (sensorValue < minValue && !toLow) {
-			toHigh = false;
-			toLow = true;
-			difference = minValue - sensorValue;
-			String description = "Value too low at " + sensorValue;
-			Tuple out = MessageHelper.createWarningTuple(machineId, sensorId, WarningLevel.MEDIUM, description);
-			transfer(out);
-		} else if (sensorValue <= maxValue && sensorValue >= minValue) {
-			// Correct value
-			toHigh = false;
-			toLow = false;
-			difference = 0;
-			// TODO Negative tuple to tell user that everything is ok again
+
+		int valueIndex = getOutputSchema().findAttributeIndex(VALUE_NAME);
+		double sensorValue = object.getAttribute(valueIndex);
+
+		// Calc the distance to the normal area. Distance is always positive or
+		// 0
+		distance = sensorValue > maxValue ? sensorValue - maxValue : sensorValue < minValue ? minValue - sensorValue
+				: 0;
+		double anomalyScore = calcAnomalyScore(distance);
+
+		// In case that we want to see all the anomalies: just send the anomaly
+		// score
+		if (distance > 0 && sendAllAnomalies) {
+			Tuple newTuple = object.append(anomalyScore);
+			transfer(newTuple);
+			return;
+		}
+
+		// In case that we want an "intelligent" filtering
+		// Check, if we are too high or too low
+		tooHigh = sensorValue > maxValue;
+		tooLow = sensorValue < minValue;
+
+		if (distance > 0) {
+			if (tooHigh && !sendTooHigh || tooLow && sendTooHigh
+					|| Math.abs(distance - lastSendDistance) > nextWarningDistance * (maxValue - minValue)) {
+				// Send a new warning if
+				// 1. We are now too high, but last tuple was too low
+				// 2. We are now too low, but last tuple was too high
+				// 3. The distance got (much) bigger in comparison to the
+				// "good area"
+				lastSendDistance = distance;
+				sendTooHigh = tooHigh;
+				Tuple newTuple = object.append(anomalyScore);
+				transfer(newTuple);
+				return;
+			}
 		}
 	}
-	
+
+	/**
+	 * Calculates the anomaly score, a value between 0 and 1. (Will actually
+	 * never reach 1)
+	 * 
+	 * @param distance
+	 *            Distance to good area
+	 * @return Anomaly score (0, 1]
+	 */
+	private double calcAnomalyScore(double distance) {
+
+		double div = distance / (maxValue - minValue);
+
+		double addValue = 0.5;
+		double anomalyScore = 0;
+		while (div > 0) {
+			if (div >= 1) {
+				anomalyScore += addValue;
+				addValue /= 2;
+				div -= 1;
+			} else {
+				anomalyScore += div * addValue;
+				div -= 1;
+			}
+		}
+
+		return anomalyScore;
+	}
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);

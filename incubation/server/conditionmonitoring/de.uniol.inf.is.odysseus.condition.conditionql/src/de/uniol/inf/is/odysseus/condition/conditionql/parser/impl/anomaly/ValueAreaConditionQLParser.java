@@ -21,18 +21,17 @@ public class ValueAreaConditionQLParser implements IConditionQLParser {
 	public ILogicalQuery parse(ISession session, ConditionQLQuery conditionQL) {
 
 		String sourceName = conditionQL.getStream().getStreamName();
-		//String valueName = "temp";
-		// TODO Maybe define more than one are as good values
-		// TODO Maybe make it possible to define explicit bad value areas
-		double minValue = 20;
-		double maxValue = 25;
+		double minValue = Double.parseDouble(conditionQL.getAlgorithm().getParameters().get("minValue"));
+		double maxValue = Double.parseDouble(conditionQL.getAlgorithm().getParameters().get("maxValue"));
+		boolean sendAllAnomalies = Boolean.parseBoolean(conditionQL.getAlgorithm().getParameters()
+				.get("sendAllAnomalies"));
 
 		List<ILogicalOperator> allOperators = new ArrayList<ILogicalOperator>();
 		ILogicalOperator source = OperatorBuildHelper.createSensorSource(session, sourceName);
 		allOperators.add(source);
 
 		ILogicalOperator valueAreaAnomalyDetection = OperatorBuildHelper.createValueAreaAnomalyDetectionAO(minValue,
-				maxValue, source);
+				maxValue, sendAllAnomalies, source);
 		allOperators.add(valueAreaAnomalyDetection);
 
 		return OperatorBuildHelper.finishQuery(valueAreaAnomalyDetection, allOperators, QUERY_NAME);

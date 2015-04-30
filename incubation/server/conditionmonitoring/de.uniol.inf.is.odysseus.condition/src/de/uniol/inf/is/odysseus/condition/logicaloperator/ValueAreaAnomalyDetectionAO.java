@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "VALUEANOMALYDETECTION", doc = "Todo", category = { LogicalOperatorCategory.PROCESSING })
@@ -21,14 +22,16 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 
 	private double minValue;
 	private double maxValue;
+	private boolean sendAllAnomalies;
 
 	public ValueAreaAnomalyDetectionAO() {
-
+		sendAllAnomalies = true;
 	}
 
-	public ValueAreaAnomalyDetectionAO(double minValue, double maxValue) {
+	public ValueAreaAnomalyDetectionAO(double minValue, double maxValue, boolean sendAllAnomalies) {
 		this.minValue = minValue;
 		this.maxValue = maxValue;
+		this.sendAllAnomalies = sendAllAnomalies;
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "minValue", optional = false)
@@ -41,6 +44,11 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 		this.maxValue = maxValue;
 	}
 
+	@Parameter(type = BooleanParameter.class, name = "sendAllAnomalies", optional = true, doc = "If true, all tuples which have the wrong value will be send further. If false, only tuples which show a changing situation will be send further.")
+	public void setSendAllAnomalies(boolean sendAllAnomalies) {
+		this.sendAllAnomalies = sendAllAnomalies;
+	}
+
 	public double getMinValue() {
 		return minValue;
 	}
@@ -49,24 +57,27 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 		return maxValue;
 	}
 
+	public boolean showAllAnomalies() {
+		return sendAllAnomalies;
+	}
+
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
-		// We always have the json info string
+		// add the anomaly-score to the attributes and keep the old attributes
 		SDFSchema inSchema = getInputSchema(0);
-
+		SDFAttribute map = new SDFAttribute(null, "anomalyScore", SDFDatatype.DOUBLE, null, null, null);
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
-		SDFAttribute info = new SDFAttribute(null, "info", SDFDatatype.STRING, null, null, null);
-		outputAttributes.add(info);
-
+		outputAttributes.addAll(inSchema.getAttributes());
+		outputAttributes.add(map);
 		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
 		setOutputSchema(outSchema);
 
-		return outSchema;
+		return getOutputSchema();
 	}
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new ValueAreaAnomalyDetectionAO(minValue, maxValue);
+		return new ValueAreaAnomalyDetectionAO(minValue, maxValue, sendAllAnomalies);
 	}
 
 }

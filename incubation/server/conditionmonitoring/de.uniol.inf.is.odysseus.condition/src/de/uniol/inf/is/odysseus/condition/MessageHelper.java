@@ -28,21 +28,9 @@ public class MessageHelper {
 	@SuppressWarnings("rawtypes")
 	public static Tuple createWarningTuple(int machineId, int sensorId, WarningLevel level, String description) {
 		Tuple out = new Tuple(1, false);
-		MessageEnvelope message = new MessageEnvelope();
-		message.setMessageType(MessageType.WARNING);
-		message.setMessageContent(createWarningJSONMessage(machineId, sensorId, level, description));
+				
 		
-		ObjectMapper mapper = new ObjectMapper();
-		String info = "";
-		try {
-			info = mapper.writeValueAsString(message);
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		
-		out.setAttribute(0, info);
+		//out.setAttribute(0, info);
 		return out;
 	}
 
