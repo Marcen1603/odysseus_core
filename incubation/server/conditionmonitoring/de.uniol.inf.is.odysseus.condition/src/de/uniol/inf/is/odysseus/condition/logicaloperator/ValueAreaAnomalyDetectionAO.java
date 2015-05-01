@@ -60,7 +60,7 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 	public boolean showAllAnomalies() {
 		return sendAllAnomalies;
 	}
-
+	
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		// add the anomaly-score to the attributes and keep the old attributes

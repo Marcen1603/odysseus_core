@@ -3,5 +3,5 @@
    <implementation class="de.uniol.inf.is.odysseus.condition.transform.rules.RuleProvider"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider"/>
-   </service>ansform.rules.RuleProvider"/>
+   </service>
 </scr:component>
