@@ -14,6 +14,7 @@ Bundle-Vendor: Christian Kuka
 Import-Package: de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.script.parser.keyword,
+ com.google.common.collect,
  org.osgi.framework,
  org.slf4j
 Service-Component: OSGI-INF/Executor.xml
