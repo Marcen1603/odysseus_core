@@ -50,9 +50,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
+import de.uniol.inf.is.odysseus.developer.cheatsheet.Activator;
 import de.uniol.inf.is.odysseus.mep.FunctionSignature;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.ReplacementProviderManager;
 
@@ -228,8 +228,8 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
 
     private static void buildDatatypes(final StringBuilder builder) {
         builder.append("\\section{Datatypes}\n");
-        if (OdysseusRCPPlugIn.getExecutor() != null) {
-            List<SDFDatatype> datatypes = new ArrayList<>(OdysseusRCPPlugIn.getExecutor().getRegisteredDatatypes(OdysseusRCPPlugIn.getActiveSession()));
+        if (Activator.getExecutor() != null) {
+            List<SDFDatatype> datatypes = new ArrayList<>(Activator.getExecutor().getRegisteredDatatypes(Activator.getSession()));
             Collections.sort(datatypes, new Comparator<SDFDatatype>() {
 
                 @Override
@@ -245,7 +245,7 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
 
     private static void buildMetadatas(final StringBuilder builder) {
         builder.append("\\section{Metadata}\n");
-        if (OdysseusRCPPlugIn.getExecutor() != null) {
+        if (Activator.getExecutor() != null) {
             List<String> metadatas = new ArrayList<>(MetadataRegistry.getNames());
             Collections.sort(metadatas);
             for (final String metadata : metadatas) {
@@ -262,8 +262,8 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
 
     private static void buildSchedulers(final StringBuilder builder) {
         builder.append("\\subsection{Schedulers}\n");
-        if (OdysseusRCPPlugIn.getExecutor() != null) {
-            List<String> schedulers = new ArrayList<>(OdysseusRCPPlugIn.getExecutor().getRegisteredSchedulers(OdysseusRCPPlugIn.getActiveSession()));
+        if (Activator.getExecutor() != null) {
+            List<String> schedulers = new ArrayList<>(Activator.getExecutor().getRegisteredSchedulers(Activator.getSession()));
             Collections.sort(schedulers);
             for (final String scheduler : schedulers) {
                 builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(scheduler.toUpperCase())).append("}\\\\\n");
@@ -273,8 +273,8 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
 
     private static void buildSchedulingStrategies(final StringBuilder builder) {
         builder.append("\\subsection{Scheduling Strategies}\n");
-        if (OdysseusRCPPlugIn.getExecutor() != null) {
-            List<String> schedulingStrategies = new ArrayList<>(OdysseusRCPPlugIn.getExecutor().getRegisteredSchedulingStrategies(OdysseusRCPPlugIn.getActiveSession()));
+        if (Activator.getExecutor() != null) {
+            List<String> schedulingStrategies = new ArrayList<>(Activator.getExecutor().getRegisteredSchedulingStrategies(Activator.getSession()));
             Collections.sort(schedulingStrategies);
             for (final String schedulingStrategy : schedulingStrategies) {
                 builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(schedulingStrategy.toUpperCase())).append("}\\\\\n");
@@ -284,8 +284,8 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
 
     private static void buildBufferPlacementStrategies(final StringBuilder builder) {
         builder.append("\\section{Buffer Placement Strategies}\n");
-        if (OdysseusRCPPlugIn.getExecutor() != null) {
-            List<String> bufferPlacementStrategies = new ArrayList<>(OdysseusRCPPlugIn.getExecutor().getRegisteredBufferPlacementStrategiesIDs(OdysseusRCPPlugIn.getActiveSession()));
+        if (Activator.getExecutor() != null) {
+            List<String> bufferPlacementStrategies = new ArrayList<>(Activator.getExecutor().getRegisteredBufferPlacementStrategiesIDs(Activator.getSession()));
             Collections.sort(bufferPlacementStrategies);
             for (final String bufferPlacementStrategy : bufferPlacementStrategies) {
                 builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(bufferPlacementStrategy.toUpperCase())).append("}\\\\\n");
@@ -294,8 +294,8 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
     }
 
     private static void buildPQLOperators(final StringBuilder builder) {
-        if (OdysseusRCPPlugIn.getExecutor() != null) {
-            final List<LogicalOperatorInformation> operators = OdysseusRCPPlugIn.getExecutor().getOperatorInformations(OdysseusRCPPlugIn.getActiveSession());
+        if (Activator.getExecutor() != null) {
+            final List<LogicalOperatorInformation> operators = Activator.getExecutor().getOperatorInformations(Activator.getSession());
 
             Map<String, List<LogicalOperatorInformation>> categories = new HashMap<>();
             for (final LogicalOperatorInformation operator : operators) {
