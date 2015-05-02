@@ -238,7 +238,12 @@ public class TestGenerator implements IRunnableWithProgress {
             if (i != 0) {
                 out.write(", ");
             }
-            out.write("input" + i);
+            if (this.model.getWindow(i) > 0) {
+                out.write("ELEMENTWINDOW({SIZE = " + this.model.getWindow(i) + "}, input" + i + ")");
+            }
+            else {
+                out.write("input" + i);
+            }
         }
         out.write(")\n");
     }

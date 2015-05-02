@@ -81,6 +81,7 @@ public class TestModel implements Serializable {
     private static final String NAME = "NAME";
     private static final String ACTIVE = "ACTIVE";
     private static final String TIMESTAMP = "TIMESTAMP";
+    private static final String WINDOW = "WINDOW";
 
     public static TestModel createEmpty(/* @NonNull */final LogicalOperatorInformation operator) {
         Objects.requireNonNull(operator);
@@ -120,6 +121,7 @@ public class TestModel implements Serializable {
 
     private LogicalOperatorInformation operator;
     private final List<Map<String, AttributeParameter>> schema = new ArrayList<>();
+    private final List<Integer> windows = new ArrayList<>();
     private final Map<String, String> parameters = new HashMap<>();
     private final List<String> metadatas = new ArrayList<>();
     private String directory = "";
@@ -165,7 +167,7 @@ public class TestModel implements Serializable {
 
     public void addAttribute(final int port, /* @NonNull */final String name, final AttributeParameter parameter) {
         Objects.requireNonNull(name);
-        if (this.schema.size() <= port) {
+        while (this.schema.size() <= port) {
             this.schema.add(new LinkedHashMap<String, AttributeParameter>());
         }
         this.schema.get(port).put(name, parameter);
@@ -173,7 +175,7 @@ public class TestModel implements Serializable {
 
     public void removeAttribute(final int port, /* @NonNull */final String name) {
         Objects.requireNonNull(name);
-        if (this.schema.size() <= port) {
+        while (this.schema.size() <= port) {
             this.schema.add(new LinkedHashMap<String, AttributeParameter>());
         }
         this.schema.get(port).remove(name);
@@ -185,7 +187,7 @@ public class TestModel implements Serializable {
                                                                                 */final String newName) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(newName);
-        if (this.schema.size() <= port) {
+        while (this.schema.size() <= port) {
             this.schema.add(new LinkedHashMap<String, AttributeParameter>());
         }
 
@@ -253,6 +255,27 @@ public class TestModel implements Serializable {
     public void setParameter(/* @NonNull */final String name, final String value) {
         Objects.requireNonNull(name);
         this.parameters.put(name, value);
+    }
+
+    public void addWindow(final int port, final Integer size) {
+        while (this.windows.size() <= port) {
+            this.windows.add(0);
+        }
+        this.windows.set(port, size);
+    }
+
+    public void removeWindow(final int port) {
+        while (this.windows.size() <= port) {
+            this.windows.add(0);
+        }
+        this.windows.set(port, 0);
+    }
+
+    public Integer getWindow(int port) {
+        while (this.windows.size() <= port) {
+            return 0;
+        }
+        return this.windows.get(port);
     }
 
     /**
@@ -327,6 +350,7 @@ public class TestModel implements Serializable {
         for (int port = 0; port < this.schema.size(); port++) {
             final IMemento attrMem = memento.createChild(TestModel.SCHEMA);
             attrMem.putInteger(TestModel.PORT, port);
+            attrMem.putInteger(TestModel.WINDOW, windows.get(port));
             for (final Entry<String, AttributeParameter> attribute : this.schema.get(port).entrySet()) {
                 final IMemento attrChild = attrMem.createChild(TestModel.ATTRIBUTE, attribute.getKey());
                 attrChild.putString(TestModel.TYPE, attribute.getValue().getType().getQualName());
@@ -382,6 +406,7 @@ public class TestModel implements Serializable {
                 final IMemento attrMem = memento.getChild(TestModel.SCHEMA);
                 if (attrMem != null) {
                     final int port = attrMem.getInteger(TestModel.PORT);
+                    this.addWindow(port, attrMem.getInteger(TestModel.WINDOW));
                     for (final IMemento mem : attrMem.getChildren(TestModel.ATTRIBUTE)) {
                         final String name = mem.getID();
                         final SDFDatatype type = this.getSDFDatatype(mem.getString(TestModel.TYPE));

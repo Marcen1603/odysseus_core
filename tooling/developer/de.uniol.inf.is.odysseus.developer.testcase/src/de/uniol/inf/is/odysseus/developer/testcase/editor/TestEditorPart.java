@@ -163,7 +163,7 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
                 TestEditorPart.this.setDirty(true);
             }
         });
-        
+
         final Label lblTimestamp = new Label(container, SWT.NONE);
         lblTimestamp.setText("");
         final Button txtTimestamp = new Button(container, SWT.CHECK);
@@ -175,12 +175,12 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
             @Override
             public void widgetSelected(SelectionEvent e) {
                 TestEditorPart.this.model.setTimestamp(txtTimestamp.getSelection());
-                TestEditorPart.this.setDirty(true);                
+                TestEditorPart.this.setDirty(true);
             }
 
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
-                
+
             }
         });
 
@@ -433,10 +433,37 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
         final TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
         tabItem.setText("Port " + port);
 
+
+        
         final Composite composite = new Composite(tabFolder, SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         composite.setLayout(new GridLayout(2, false));
 
+        final Composite comWindow = new Composite(composite, SWT.NONE);
+        comWindow.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        comWindow.setLayout(new GridLayout(2, false));
+        
+        final Label lblWindow = new Label(comWindow, SWT.NONE);
+        lblWindow.setText("Window:");
+        final Text txtWindow = new Text(comWindow, SWT.NONE);
+        txtWindow.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+        txtWindow.addModifyListener(new ModifyListener() {
+
+            @Override
+            public void modifyText(final ModifyEvent e) {
+                try {
+                    TestEditorPart.this.model.addWindow(port, Integer.parseInt(txtWindow.getText()));
+                    TestEditorPart.this.setDirty(true);
+                }
+                catch (Throwable t) {
+
+                }
+            }
+        });
+        txtWindow.setText(this.model.getWindow(port).toString());
+        @SuppressWarnings("unused")
+        Label lblEmpty = new Label(composite, SWT.NONE);
+        
         final CheckboxTableViewer checkboxTableViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER | SWT.FULL_SELECTION);
         checkboxTableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         checkboxTableViewer.setLabelProvider(new SchemaLabelProvider());
@@ -578,7 +605,9 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
 
             }
         });
+        
 
+        
         final Composite comButton = new Composite(composite, SWT.NONE);
         comButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         comButton.setLayout(new GridLayout(6, true));
