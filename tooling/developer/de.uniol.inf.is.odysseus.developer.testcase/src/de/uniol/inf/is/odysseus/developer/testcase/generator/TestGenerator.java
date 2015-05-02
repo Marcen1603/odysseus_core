@@ -24,8 +24,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -96,8 +98,10 @@ public class TestGenerator implements IRunnableWithProgress {
             monitor.worked(1);
         }
         monitor.setTaskName("Generate test queries");
-        for (final String metadata : this.model.getMetadatas()) {
-            final File output = root.resolve(this.model.getName() + "_" + metadata + ".qry").toFile();
+
+        List<List<String>> metadataPermutations = getMetadataCombinations(this.model.getMetadatas());
+        for (final List<String> metadata : metadataPermutations) {
+            final File output = root.resolve(getFilename(this.model, metadata) + ".qry").toFile();
             try {
                 output.createNewFile();
                 try (BufferedWriter out = new BufferedWriter(new FileWriter(output))) {
@@ -111,13 +115,14 @@ public class TestGenerator implements IRunnableWithProgress {
         }
 
         monitor.setTaskName("Generate test results");
-        for (final String metadata : this.model.getMetadatas()) {
-            final File input = root.resolve(this.model.getName() + "_" + metadata + ".qry").toFile();
-            final File ouput = root.resolve(this.model.getName() + "_" + metadata + ".csv").toFile();
+        for (final List<String> metadata : metadataPermutations) {
+
+            final File input = root.resolve(getFilename(this.model, metadata) + ".qry").toFile();
+            final File ouput = root.resolve(getFilename(this.model, metadata) + ".csv").toFile();
 
             try {
                 try (BufferedReader in = new BufferedReader(new FileReader(input))) {
-                    this.generateOutput(in, metadata, this.container, ouput);
+                    this.generateOutput(in, this.container, ouput);
                 }
             }
             catch (final IOException e) {
@@ -143,7 +148,7 @@ public class TestGenerator implements IRunnableWithProgress {
         }
     }
 
-    public void generateOutput(final BufferedReader in, final String metadata, final IContainer container, final File output) throws IOException {
+    public void generateOutput(final BufferedReader in, final IContainer container, final File output) throws IOException {
         final StringBuilder query = new StringBuilder();
         String line;
         while ((line = in.readLine()) != null) {
@@ -198,7 +203,7 @@ public class TestGenerator implements IRunnableWithProgress {
         }
     }
 
-    public void generateQuery(final BufferedWriter out, final Path root, final String metadata) throws IOException {
+    public void generateQuery(final BufferedWriter out, final Path root, final List<String> metadata) throws IOException {
         this.writeTestdata(out);
 
         this.writeHeader(out);
@@ -253,15 +258,18 @@ public class TestGenerator implements IRunnableWithProgress {
 
     private void writeHeader(final BufferedWriter out) throws IOException {
         out.write("#PARSER PQL\n\n");
-        out.write("#DROPALLSOURCES\n");
         out.write("#DROPALLQUERIES\n");
+        out.write("#DROPALLSINKS\n");
+        out.write("#DROPALLSOURCES\n");
         out.write("\n");
     }
 
-    private void writeMetadata(final BufferedWriter out, final String metadata) throws IOException {
-        out.write("#METADATA ");
-        out.write(metadata);
-        out.write("\n");
+    private void writeMetadata(final BufferedWriter out, final List<String> metadatas) throws IOException {
+        for (String metadata : metadatas) {
+            out.write("#METADATA ");
+            out.write(metadata);
+            out.write("\n");
+        }
     }
 
     private void writeAccess(final int port, final Path root, final BufferedWriter out) throws IOException {
@@ -343,12 +351,46 @@ public class TestGenerator implements IRunnableWithProgress {
                 }
                 values[n - (int) (1.0 + (n / (Math.pow(2, attributes))))] = value;
                 if (this.model.isTimestamp()) {
-                    values[n - (int) (1.0 + (n / (Math.pow(2, attributes))))][0]=n - (int) (1.0 + (n / (Math.pow(2, attributes))));
+                    values[n - (int) (1.0 + (n / (Math.pow(2, attributes))))][0] = n - (int) (1.0 + (n / (Math.pow(2, attributes))));
                 }
             }
         }
         return values;
 
+    }
+
+    private String getFilename(TestModel model, List<String> metadatas) {
+        StringBuilder sb = new StringBuilder();
+        for (String metadata : metadatas) {
+            if (sb.length() > 0) {
+                sb.append("_");
+            }
+            sb.append(metadata);
+        }
+        return this.model.getName() + "_" + sb.toString();
+    }
+
+    private List<List<String>> getMetadataCombinations(Collection<String> metadatas) {
+        final int num = (int) (Math.pow(2.0, metadatas.size()));
+        final List<List<String>> values = new ArrayList<>(num);
+
+        for (int n = 0; n < num; n++) {
+            final int pos = n % (int) (Math.pow(2.0, metadatas.size()));
+            if (pos != 0) {
+                final List<String> value = new ArrayList<>(metadatas.size());
+
+                int i = 0;
+                for (final String metadata : metadatas) {
+                    if ((n & (0x1 << i)) != 0) {
+                        value.add(metadata);
+                    }
+                    i++;
+                }
+                values.add(value);
+            }
+        }
+
+        return values;
     }
 
 }
