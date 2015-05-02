@@ -32,7 +32,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: QuadTreeDashboardPart.java | Thu Apr 16 17:51:24 2015 +0000 |
+ *          ckuka $
  * @param <Node>
  *
  */
@@ -40,6 +41,8 @@ public class QuadTreeDashboardPart extends AbstractCanvasDashboardPart {
     private RGB backgroundColor = new RGB(255, 255, 255);
     private RGB color = new RGB(0, 255, 0);
 
+    /** Background alpha. */
+    private int backgroundAlpha = 255;
     /** Min Y value. */
     private double minY = 0.0;
     /** Max Y value. */
@@ -67,7 +70,7 @@ public class QuadTreeDashboardPart extends AbstractCanvasDashboardPart {
             this.adjust();
         }
         final RGB background = this.getBackgroundColor();
-        this.setAlpha(0);
+        this.setAlpha(getBackgroundAlpha());
         this.fill(background);
         this.setAlpha(255);
         QuadTree<Double, Double> tree = new QuadTree<>();
@@ -82,13 +85,11 @@ public class QuadTreeDashboardPart extends AbstractCanvasDashboardPart {
         }
 
         Queue<QuadTree<Double, Double>.Node> queue = new LinkedList<>();
-
         queue.offer(tree.root);
         CIELCH c = getColor().toCIELCH();
         while (!queue.isEmpty()) {
             QuadTree<Double, Double>.Node node = queue.poll();
             if (node != null) {
-
                 Coordinate corner = new Coordinate(node.ex1.doubleValue(), node.ey1.doubleValue());
                 this.fillRectangle(corner, (node.ex2.intValue() - node.ex1.intValue()), (node.ey2.intValue() - node.ey1.intValue()), new CIELCH(c.L, c.C, c.H + node.value.doubleValue()));
                 if (node.NE != null) {
@@ -386,6 +387,21 @@ public class QuadTreeDashboardPart extends AbstractCanvasDashboardPart {
      */
     public void setBackgroundColor(final RGB backgroundColor) {
         this.backgroundColor = backgroundColor;
+    }
+
+    /**
+     * @return the backgroundAlpha
+     */
+    public int getBackgroundAlpha() {
+        return backgroundAlpha;
+    }
+
+    /**
+     * @param backgroundAlpha
+     *            the backgroundAlpha to set
+     */
+    public void setBackgroundAlpha(int backgroundAlpha) {
+        this.backgroundAlpha = backgroundAlpha;
     }
 
     private static class QuadTree<K extends Comparable<K>, T> {

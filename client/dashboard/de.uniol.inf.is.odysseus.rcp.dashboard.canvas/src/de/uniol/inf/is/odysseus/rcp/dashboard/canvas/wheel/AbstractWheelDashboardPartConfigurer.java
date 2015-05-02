@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FontDialog;
+import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
@@ -343,7 +344,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                 @SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
-                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
+                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
                 backgroundColorText.setEditable(false);
                 final Button backgroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 backgroundColorButton.addSelectionListener(new SelectionAdapter() {
@@ -362,6 +363,23 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                     }
                 });
             }
+            {// Alpha
+                toolkit.createLabel(group, "Alpha");
+                final int alpha = this.getDashboardPart().getBackgroundAlpha();
+                @SuppressWarnings("boxing")
+                final Slider alphaSlide = new Slider(group, SWT.NONE);
+                alphaSlide.setMinimum(0);
+                alphaSlide.setMaximum(255);
+                alphaSlide.setIncrement(1);
+                alphaSlide.setSelection(alpha);
+                alphaSlide.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(final SelectionEvent e) {
+                        AbstractWheelDashboardPartConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                    }
+                });
+                toolkit.createLabel(group, "");
+            }
             {// Foregroundcolor
                 toolkit.createLabel(group, "Foreground");
 
@@ -369,7 +387,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                 @SuppressWarnings("boxing")
                 final Text foregroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B));
                 foregroundColorText
-                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B)));
+                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B)));
                 foregroundColorText.setEditable(false);
                 final Button foregroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 foregroundColorButton.addSelectionListener(new SelectionAdapter() {

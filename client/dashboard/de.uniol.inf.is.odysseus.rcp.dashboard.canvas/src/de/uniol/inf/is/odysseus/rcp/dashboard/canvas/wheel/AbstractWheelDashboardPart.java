@@ -55,6 +55,8 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
     }
 
     private static final double TWO_PI = 2.0 * Math.PI;
+    /** Background alpha. */
+    private int backgroundAlpha = 255;
     /** Min Y value. */
     private double minY = 0.0;
     /** Max Y value. */
@@ -88,7 +90,7 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
         final RGB foreground = this.getForegroundColor();
 
         final RGB background = this.getBackgroundColor();
-        this.setAlpha(0);
+        this.setAlpha(getBackgroundAlpha());
         this.fill(background);
         final RGB[] circleColor = foreground.getTriadic();
         this.setAlpha(128);
@@ -398,6 +400,21 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
      */
     public void setBackgroundColor(final RGB backgroundColor) {
         this.backgroundColor = backgroundColor;
+    }
+
+    /**
+     * @return the backgroundAlpha
+     */
+    public int getBackgroundAlpha() {
+        return backgroundAlpha;
+    }
+
+    /**
+     * @param backgroundAlpha
+     *            the backgroundAlpha to set
+     */
+    public void setBackgroundAlpha(int backgroundAlpha) {
+        this.backgroundAlpha = backgroundAlpha;
     }
 
     /**

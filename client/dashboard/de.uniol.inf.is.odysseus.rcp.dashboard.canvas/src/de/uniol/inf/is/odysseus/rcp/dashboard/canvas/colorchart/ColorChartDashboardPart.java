@@ -37,7 +37,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
     private RGB backgroundColor = new RGB(255, 255, 255);
     private RGB color = new RGB(0, 255, 0);
-
+    /** Background alpha. */
+    private int backgroundAlpha = 255;
     /** Min Y value. */
     private double minY = 0.0;
     /** Max Y value. */
@@ -65,7 +66,7 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
             this.adjust();
         }
         final RGB background = this.getBackgroundColor();
-        this.setAlpha(0);
+        this.setAlpha(getBackgroundAlpha());
         this.fill(background);
         this.setAlpha(255);
         final Iterator<IStreamObject<?>> iter = this.getObjects().iterator();
@@ -368,6 +369,21 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
      */
     public void setBackgroundColor(final RGB backgroundColor) {
         this.backgroundColor = backgroundColor;
+    }
+
+    /**
+     * @return the backgroundAlpha
+     */
+    public int getBackgroundAlpha() {
+        return backgroundAlpha;
+    }
+
+    /**
+     * @param backgroundAlpha
+     *            the backgroundAlpha to set
+     */
+    public void setBackgroundAlpha(int backgroundAlpha) {
+        this.backgroundAlpha = backgroundAlpha;
     }
 
     public static void main(final String[] args) {

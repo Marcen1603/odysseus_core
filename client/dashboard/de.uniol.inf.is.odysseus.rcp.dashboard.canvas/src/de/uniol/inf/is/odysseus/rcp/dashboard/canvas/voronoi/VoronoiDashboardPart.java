@@ -40,10 +40,13 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  * JavaScript by Nicolas Garcia Belmonte.
  *
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: VoronoiDashboardPart.java | Thu Apr 16 16:55:17 2015 +0000 |
+ *          ckuka $
  *
  */
 public class VoronoiDashboardPart extends AbstractCanvasDashboardPart {
+    /** Background alpha. */
+    private int backgroundAlpha = 255;
     /** Min Y value. */
     private double minY = 0.0;
     /** Max Y value. */
@@ -71,8 +74,9 @@ public class VoronoiDashboardPart extends AbstractCanvasDashboardPart {
         }
         final RGB foreground = this.getForegroundColor();
         final RGB background = this.getBackgroundColor();
-        this.setAlpha(255);
+        this.setAlpha(getBackgroundAlpha());
         this.fill(background);
+        this.setAlpha(255);
 
         final EdgeList edgeList = new EdgeList();
         final EventQueue eventQueue = new EventQueue();
@@ -834,6 +838,21 @@ public class VoronoiDashboardPart extends AbstractCanvasDashboardPart {
      */
     public void setBackgroundColor(final RGB backgroundColor) {
         this.backgroundColor = backgroundColor;
+    }
+
+    /**
+     * @return the backgroundAlpha
+     */
+    public int getBackgroundAlpha() {
+        return backgroundAlpha;
+    }
+
+    /**
+     * @param backgroundAlpha
+     *            the backgroundAlpha to set
+     */
+    public void setBackgroundAlpha(int backgroundAlpha) {
+        this.backgroundAlpha = backgroundAlpha;
     }
 
     /**

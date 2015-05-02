@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FontDialog;
+import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
@@ -59,6 +60,9 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
 
     @Override
     public void init(final LiquidGaugeDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
+        if (roots.size() == 0) {
+            throw new IllegalArgumentException("Insifficient physical operators " + roots.size());
+        }
         this.dashboardPart = dashboardPart;
         this.schemas = new SDFSchema[roots.size()];
         final Iterator<IPhysicalOperator> iter = roots.iterator();
@@ -231,7 +235,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                 @SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
-                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
+                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
                 backgroundColorText.setEditable(false);
                 final Button backgroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 backgroundColorButton.addSelectionListener(new SelectionAdapter() {
@@ -249,6 +253,23 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                         LiquidGaugeConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
                     }
                 });
+            }
+            {// Alpha
+                toolkit.createLabel(group, "Alpha");
+                final int alpha = this.getDashboardPart().getBackgroundAlpha();
+                @SuppressWarnings("boxing")
+                final Slider alphaSlide = new Slider(group, SWT.NONE);
+                alphaSlide.setMinimum(0);
+                alphaSlide.setMaximum(255);
+                alphaSlide.setIncrement(1);
+                alphaSlide.setSelection(alpha);
+                alphaSlide.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(final SelectionEvent e) {
+                        LiquidGaugeConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                    }
+                });
+                toolkit.createLabel(group, "");
             }
             {// Liquid Color
                 toolkit.createLabel(group, "Liquid");

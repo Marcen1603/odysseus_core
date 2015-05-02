@@ -40,6 +40,8 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
     private static final double TWO_PI = 2.0 * Math.PI;
     private RGB backgroundColor = new RGB(255, 255, 255);
     private RGB arrowColor = new RGB(0, 255, 0);
+    /** Background alpha. */
+    private int backgroundAlpha = 255;
     /** The font name. */
     private String font = "Verdana";
     /** Min value. */
@@ -59,7 +61,7 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
             this.adjust();
         }
         final RGB background = this.getBackgroundColor();
-        this.setAlpha(0);
+        this.setAlpha(getBackgroundAlpha());
         this.fill(background);
         this.setAlpha(255);
 
@@ -253,6 +255,21 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
      */
     public void setBackgroundColor(final RGB backgroundColor) {
         this.backgroundColor = backgroundColor;
+    }
+
+    /**
+     * @return the backgroundAlpha
+     */
+    public int getBackgroundAlpha() {
+        return backgroundAlpha;
+    }
+
+    /**
+     * @param backgroundAlpha
+     *            the backgroundAlpha to set
+     */
+    public void setBackgroundAlpha(int backgroundAlpha) {
+        this.backgroundAlpha = backgroundAlpha;
     }
 
     /**

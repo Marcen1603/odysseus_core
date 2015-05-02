@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
@@ -47,7 +48,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: QuadTreeConfigurer.java | Thu Apr 16 16:54:32 2015 +0000 | ckuka  $
  *
  */
 public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTreeDashboardPart> {
@@ -56,6 +57,9 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
 
     @Override
     public void init(final QuadTreeDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
+        if (roots.size() == 0) {
+            throw new IllegalArgumentException("Insifficient physical operators " + roots.size());
+        }
         this.dashboardPart = dashboardPart;
         this.schemas = new SDFSchema[roots.size()];
         final Iterator<IPhysicalOperator> iter = roots.iterator();
@@ -356,6 +360,23 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                         QuadTreeConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
                     }
                 });
+            }
+            {// Alpha
+                toolkit.createLabel(group, "Alpha");
+                final int alpha = this.getDashboardPart().getBackgroundAlpha();
+                @SuppressWarnings("boxing")
+                final Slider alphaSlide = new Slider(group, SWT.NONE);
+                alphaSlide.setMinimum(0);
+                alphaSlide.setMaximum(255);
+                alphaSlide.setIncrement(1);
+                alphaSlide.setSelection(alpha);
+                alphaSlide.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(final SelectionEvent e) {
+                        QuadTreeConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                    }
+                });
+                toolkit.createLabel(group, "");
             }
             {// Foregroundcolor
                 toolkit.createLabel(group, "Base Color");
