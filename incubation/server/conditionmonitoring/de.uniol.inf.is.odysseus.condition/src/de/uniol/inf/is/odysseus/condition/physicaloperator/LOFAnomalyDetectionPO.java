@@ -21,20 +21,26 @@ public class LOFAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, T
 
 	public static final String VALUE_NAME = "value";
 
-	private List<Double> values;
+	private List<Double> sortedValues;
+	private List<Double> timeSortedValues;
 	private int k;
 	private double minLOFValue;
+	private long maxTuples;
 
 	public LOFAnomalyDetectionPO() {
-		values = new ArrayList<Double>();
+		sortedValues = new ArrayList<Double>();
+		timeSortedValues = new ArrayList<Double>();
 		this.k = 3;
 		this.minLOFValue = 1.5;
+		this.maxTuples = 5000;
 	}
 
 	public LOFAnomalyDetectionPO(LOFAnomalyDetectionAO ao) {
-		values = new ArrayList<Double>();
+		sortedValues = new ArrayList<Double>();
+		timeSortedValues = new ArrayList<Double>();
 		this.k = ao.getNumberOfNeighbors();
 		this.minLOFValue = ao.getLOFAnomalyValue();
+		this.maxTuples = ao.getMaxTuples();
 	}
 
 	@Override
@@ -43,9 +49,13 @@ public class LOFAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, T
 		int valueIndex = getOutputSchema().findAttributeIndex(VALUE_NAME);
 		double sensorValue = tuple.getAttribute(valueIndex);
 
-		values.add(sensorValue);
-		if (values.size() < k + 1)
+		timeSortedValues.add(sensorValue);
+		sortedValues.add(sensorValue);
+		if (sortedValues.size() < k + 1) {
 			return;
+		} else if (sortedValues.size() > maxTuples) {
+			removeOldValues(1);
+		}
 
 		double lof = getLOF(k, sensorValue);
 
@@ -53,6 +63,20 @@ public class LOFAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, T
 			Tuple newTuple = tuple.append(lof);
 			transfer(newTuple);
 			return;
+		}
+	}
+
+	/**
+	 * Removes the oldest numberOfValues tuples from the operator intern
+	 * value-storage
+	 * 
+	 * @param numberOfValues
+	 *            The number of values / tuples that should be removed
+	 */
+	private void removeOldValues(int numberOfValues) {
+		for (int i = 0; i < numberOfValues; i++) {
+			double value = timeSortedValues.remove(0);
+			sortedValues.remove(value);
 		}
 	}
 
@@ -70,7 +94,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, T
 	private List<Double> getKNearestNeighbors(int k, double value) {
 
 		List<Double> kNearest = new ArrayList<Double>(k);
-		int index = values.indexOf(value);
+		int index = sortedValues.indexOf(value);
 
 		int kRunningLow = 1;
 		int kRunningHigh = 1;
@@ -79,20 +103,21 @@ public class LOFAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, T
 
 			if (index - kRunningLow < 0) {
 				// We can't go "down"
-				kNearest.add(values.get(index + kRunningHigh));
+				kNearest.add(sortedValues.get(index + kRunningHigh));
 				kRunningHigh++;
-			} else if (index + kRunningHigh >= values.size()) {
+			} else if (index + kRunningHigh >= sortedValues.size()) {
 				// We can't go "up"
-				kNearest.add(values.get(index - kRunningLow));
+				kNearest.add(sortedValues.get(index - kRunningLow));
 				kRunningLow++;
-			} else if (Math.abs(values.get(index - kRunningLow) - value) < Math.abs(values.get(index + kRunningHigh)
+			} else if (Math.abs(sortedValues.get(index - kRunningLow) - value) < Math.abs(sortedValues.get(index
+					+ kRunningHigh)
 					- value)) {
 				// The one under the value is nearer
-				kNearest.add(values.get(index - kRunningLow));
+				kNearest.add(sortedValues.get(index - kRunningLow));
 				kRunningLow++;
 			} else {
 				// The one above the value is nearer
-				kNearest.add(values.get(index + kRunningHigh));
+				kNearest.add(sortedValues.get(index + kRunningHigh));
 				kRunningHigh++;
 			}
 		}
@@ -110,14 +135,14 @@ public class LOFAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, T
 	 * @return The distance to the k'th neighbor
 	 */
 	private double getKDistance(int k, double value) {
-		int index = values.indexOf(value);
+		int index = sortedValues.indexOf(value);
 
 		// Get distances from all values from index - 5 to index + 5
 		List<Double> distances = new ArrayList<Double>(2 * k);
 		for (int i = -k; i <= k; i++) {
-			if (index + i < 0 || index + i >= values.size())
+			if (index + i < 0 || index + i >= sortedValues.size())
 				continue;
-			distances.add(Math.abs(values.get(index + i) - value));
+			distances.add(Math.abs(sortedValues.get(index + i) - value));
 		}
 
 		// Sort by the distances
@@ -177,8 +202,8 @@ public class LOFAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, T
 	 * @return The LOF for the given value
 	 */
 	private double getLOF(int k, double value) {
-		Collections.sort(values);
-		
+		Collections.sort(sortedValues);
+
 		double lrdSum = 0;
 		for (double neighbor : getKNearestNeighbors(k, value)) {
 			lrdSum += getLocalReachabilityDensity(k, neighbor);

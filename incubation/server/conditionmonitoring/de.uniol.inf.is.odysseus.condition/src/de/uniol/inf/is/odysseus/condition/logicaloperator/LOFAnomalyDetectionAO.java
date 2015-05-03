@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LOFANOMALYDETECTION", doc = "Searches for anomalies on the base of the local outlier factor algorithm.", category = { LogicalOperatorCategory.PROCESSING })
 public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
@@ -23,15 +24,18 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	// Number of neighbors
 	private int k;
 	private double lofAnomalyValue;
+	private long maxTuples;
 
 	public LOFAnomalyDetectionAO() {
 		this.k = 10;
 		this.lofAnomalyValue = 1.5;
+		this.maxTuples = 5000;
 	}
 
 	public LOFAnomalyDetectionAO(LOFAnomalyDetectionAO ao) {
 		this.k = ao.getNumberOfNeighbors();
 		this.lofAnomalyValue = ao.getLOFAnomalyValue();
+		this.maxTuples = ao.getMaxTuples();
 	}
 
 	@Parameter(type = IntegerParameter.class, name = "NEIGHBORS", optional = true, doc = "The number of neighbors used, sometimes called k")
@@ -43,6 +47,11 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	public void setLOFAnomalyValue(double value) {
 		this.lofAnomalyValue = value;
 	}
+	
+	@Parameter(type = LongParameter.class, name = "MAXTUPLES", optional = true, doc = "The maximum number of values hold in the LOF algorithms list")
+	public void setMaxTuples(long maxTuples) {
+		this.maxTuples = maxTuples;
+	}
 
 	public int getNumberOfNeighbors() {
 		return this.k;
@@ -52,6 +61,10 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		return this.lofAnomalyValue;
 	}
 
+	public long getMaxTuples() {
+		return this.maxTuples;
+	}
+	
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		// add the anomaly-score to the attributes and keep the old attributes
