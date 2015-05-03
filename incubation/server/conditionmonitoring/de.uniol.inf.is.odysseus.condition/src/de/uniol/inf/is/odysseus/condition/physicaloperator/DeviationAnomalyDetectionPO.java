@@ -63,7 +63,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 	private void processTuple(double sensorValue, double mean, double standardDeviation, Tuple tuple) {
 		if (sensorValue < mean - interval * standardDeviation || sensorValue > mean + interval * standardDeviation) {
 			// Maybe here we have an anomaly
-			double anomalyScore = calcAnomalyScore(sensorValue, mean, standardDeviation);
+			double anomalyScore = calcAnomalyScore(sensorValue, mean, standardDeviation, interval);
 			Tuple newTuple = tuple.append(anomalyScore);
 			newTuple = newTuple.append(mean);
 			newTuple = newTuple.append(standardDeviation);
@@ -72,7 +72,15 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 		}
 	}
 
-	// TODO Source of algorithm (it's not my own idea)
+	/**
+	 * Calculates the standard deviation of the data seen so far. Algorithm like
+	 * Knuth (http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#
+	 * Online_algorithm)
+	 * 
+	 * @param newValue
+	 *            The new value which came in
+	 * @return The standard deviation of the data seen so far
+	 */
 	private double calcStandardDeviation(double newValue) {
 		n += 1;
 		double delta = newValue - mean;
@@ -95,10 +103,15 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 	 *            Distance to good area
 	 * @return Anomaly score (0, 1]
 	 */
-	private double calcAnomalyScore(double sensorValue, double mean, double standardDeviation) {
+	private double calcAnomalyScore(double sensorValue, double mean, double standardDeviation, double interval) {
 
-		double distance = Math.abs(mean - sensorValue);
-		double div = distance / standardDeviation;
+		double minValue = mean - (interval * standardDeviation);
+		double maxValue = mean + (interval * standardDeviation);
+
+		double distance = sensorValue > maxValue ? sensorValue - maxValue : sensorValue < minValue ? minValue
+				- sensorValue : 0;
+
+		double div = distance / (maxValue - minValue);
 
 		double addValue = 0.5;
 		double anomalyScore = 0;

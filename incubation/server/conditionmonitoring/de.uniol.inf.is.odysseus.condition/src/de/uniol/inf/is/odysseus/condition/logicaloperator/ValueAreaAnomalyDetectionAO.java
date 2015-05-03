@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "VALUEANOMALYDETECTION", doc = "Todo", category = { LogicalOperatorCategory.PROCESSING })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "VALUEANOMALYDETECTION", doc = "Searches for anomalies on the base of a predefined value-area.", category = { LogicalOperatorCategory.PROCESSING })
 public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -6202091035427561666L;

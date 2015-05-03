@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DEVIATIONANOMALYDETECTION", doc = "Todo", category = { LogicalOperatorCategory.PROCESSING })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DEVIATIONANOMALYDETECTION", doc = "Searches for anomalies on the base of the standard-deviation.", category = { LogicalOperatorCategory.PROCESSING })
 public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -7283600658977972140L;
@@ -54,7 +54,7 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 		this.standardDeviation = standardDeviation;
 	}
 	
-	@Parameter(type = LongParameter.class, name = "tupleToLearn", optional = true)
+	@Parameter(type = LongParameter.class, name = "tuplesToLearn", optional = true)
 	public void setTuplesToLearn(long tuplesToLearn) {
 		this.tuplesToLearn = tuplesToLearn;
 	}
