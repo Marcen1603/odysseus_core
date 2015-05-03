@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 @SuppressWarnings("rawtypes")
 public class LOFAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> {
 
-	public static final String VALUE_NAME = "value";
+	private String valueAttributeName;
 
 	private List<Double> sortedValues;
 	private List<Double> timeSortedValues;
@@ -30,9 +30,10 @@ public class LOFAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, T
 	public LOFAnomalyDetectionPO() {
 		sortedValues = new ArrayList<Double>();
 		timeSortedValues = new ArrayList<Double>();
-		this.k = 3;
+		this.k = 10;
 		this.minLOFValue = 1.5;
 		this.maxTuples = 5000;
+		this.valueAttributeName = "value";
 	}
 
 	public LOFAnomalyDetectionPO(LOFAnomalyDetectionAO ao) {
@@ -41,12 +42,13 @@ public class LOFAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, T
 		this.k = ao.getNumberOfNeighbors();
 		this.minLOFValue = ao.getLOFAnomalyValue();
 		this.maxTuples = ao.getMaxTuples();
+		this.valueAttributeName = ao.getNameOfValue();
 	}
 
 	@Override
 	protected void process_next(T tuple, int port) {
 
-		int valueIndex = getOutputSchema().findAttributeIndex(VALUE_NAME);
+		int valueIndex = getOutputSchema().findAttributeIndex(valueAttributeName);
 		double sensorValue = tuple.getAttribute(valueIndex);
 
 		timeSortedValues.add(sensorValue);

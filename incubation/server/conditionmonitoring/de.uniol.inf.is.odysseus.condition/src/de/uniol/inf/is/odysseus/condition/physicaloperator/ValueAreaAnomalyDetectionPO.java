@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 @SuppressWarnings("rawtypes")
 public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> {
 
-	public static final String VALUE_NAME = "value";
+	private String valueAttributeName;
 	
 	private double minValue;
 	private double maxValue;
@@ -37,9 +37,10 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 	public ValueAreaAnomalyDetectionPO(ValueAreaAnomalyDetectionAO ao) {
 		this.minValue = ao.getMinValue();
 		this.maxValue = ao.getMaxValue();
-		this.sendAllAnomalies = ao.showAllAnomalies();
+		this.sendAllAnomalies = ao.sendAllAnomalies();
 		tooLow = false;
 		tooHigh = false;
+		this.valueAttributeName = ao.getNameOfValue();
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 	@Override
 	protected void process_next(T object, int port) {
 
-		int valueIndex = getOutputSchema().findAttributeIndex(VALUE_NAME);
+		int valueIndex = getOutputSchema().findAttributeIndex(valueAttributeName);
 		double sensorValue = object.getAttribute(valueIndex);
 
 		// Calc the distance to the normal area. Distance is always positive or

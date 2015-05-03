@@ -9,8 +9,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 @SuppressWarnings("rawtypes")
 public class DeviationAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> {
 
-	public static final String VALUE_NAME = "value";
-
+	private String valueAttributeName;
+	
 	private long n = 0;
 	private double mean = 0;
 	private double m2 = 0;
@@ -24,12 +24,14 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 		super();
 		this.interval = 3.0;
 		this.trainingMode = TrainingMode.ONLINE;
+		this.valueAttributeName = "value";
 	}
 
 	public DeviationAnomalyDetectionPO(DeviationAnomalyDetectionAO ao) {
 		this.interval = ao.getInterval();
 		this.trainingMode = ao.getTrainingMode();
-
+		this.valueAttributeName = ao.getNameOfValue();
+		
 		if (this.trainingMode.equals(TrainingMode.MANUAL)) {
 			// Set the values for standardDeviation and mean manually
 			this.mean = ao.getMean();
@@ -42,7 +44,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 	@Override
 	protected void process_next(T tuple, int port) {
 
-		int valueIndex = getOutputSchema().findAttributeIndex(VALUE_NAME);
+		int valueIndex = getOutputSchema().findAttributeIndex(valueAttributeName);
 		double sensorValue = tuple.getAttribute(valueIndex);
 
 		if (this.trainingMode.equals(TrainingMode.ONLINE)) {

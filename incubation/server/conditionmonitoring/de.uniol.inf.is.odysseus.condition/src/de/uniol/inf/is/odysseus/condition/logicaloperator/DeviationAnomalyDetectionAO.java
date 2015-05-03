@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DEVIATIONANOMALYDETECTION", doc = "Searches for anomalies on the base of the standard-deviation.", category = { LogicalOperatorCategory.PROCESSING })
 public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
@@ -28,10 +29,21 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 	private double mean;
 	private double standardDeviation;
 	private long tuplesToLearn;
+	private String nameOfValue;
 	
 	public DeviationAnomalyDetectionAO() {
 		interval = 3.0;
 		trainingMode = TrainingMode.ONLINE;
+		nameOfValue = "value";
+	}
+	
+	public DeviationAnomalyDetectionAO(DeviationAnomalyDetectionAO ao) {
+		this.setInterval(ao.getInterval());
+		this.setTrainingMode(ao.getTrainingMode());
+		this.setMean(ao.getMean());
+		this.setStandardDeviation(ao.getStandardDeviation());
+		this.setTuplesToLearn(ao.getTuplesToLearn());
+		this.setNameOfValue(ao.getNameOfValue());
 	}
 	
 	@Parameter(type = DoubleParameter.class, name = "interval", optional = true, doc = "Defines, how many standard deviations are allowed for a tuple to be different from the mean. 3.0 is the default value. Choose a smaller value to get more anomalies.")
@@ -59,6 +71,11 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 		this.tuplesToLearn = tuplesToLearn;
 	}
 	
+	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = true, doc = "Name of the attribute which should be analysed")
+	public void setNameOfValue(String nameOfValue) {
+		this.nameOfValue = nameOfValue;
+	}
+	
 	public double getInterval() {
 		return this.interval;
 	}
@@ -77,6 +94,10 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 	
 	public long getTuplesToLearn() {
 		return this.tuplesToLearn;
+	}
+	
+	public String getNameOfValue() {
+		return nameOfValue;
 	}
 
 	@Override
@@ -99,13 +120,7 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		DeviationAnomalyDetectionAO ao = new DeviationAnomalyDetectionAO();
-		ao.setInterval(this.getInterval());
-		ao.setTrainingMode(this.getTrainingMode());
-		ao.setMean(this.getMean());
-		ao.setStandardDeviation(this.getStandardDeviation());
-		ao.setTuplesToLearn(this.getTuplesToLearn());
-		return ao;
+		return new DeviationAnomalyDetectionAO(this);
 	}
 
 }

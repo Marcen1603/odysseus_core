@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "VALUEANOMALYDETECTION", doc = "Searches for anomalies on the base of a predefined value-area.", category = { LogicalOperatorCategory.PROCESSING })
 public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
@@ -23,15 +24,17 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 	private double minValue;
 	private double maxValue;
 	private boolean sendAllAnomalies;
+	private String nameOfValue;
 
 	public ValueAreaAnomalyDetectionAO() {
 		sendAllAnomalies = true;
+		nameOfValue = "value";
 	}
 
-	public ValueAreaAnomalyDetectionAO(double minValue, double maxValue, boolean sendAllAnomalies) {
-		this.minValue = minValue;
-		this.maxValue = maxValue;
-		this.sendAllAnomalies = sendAllAnomalies;
+	public ValueAreaAnomalyDetectionAO(ValueAreaAnomalyDetectionAO ao) {
+		this.minValue = ao.getMinValue();
+		this.maxValue = ao.getMaxValue();
+		this.sendAllAnomalies = ao.sendAllAnomalies();
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "minValue", optional = false)
@@ -48,6 +51,11 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 	public void setSendAllAnomalies(boolean sendAllAnomalies) {
 		this.sendAllAnomalies = sendAllAnomalies;
 	}
+	
+	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = true, doc = "Name of the attribute which should be analysed")
+	public void setNameOfValue(String nameOfValue) {
+		this.nameOfValue = nameOfValue;
+	}
 
 	public double getMinValue() {
 		return minValue;
@@ -57,8 +65,12 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 		return maxValue;
 	}
 
-	public boolean showAllAnomalies() {
+	public boolean sendAllAnomalies() {
 		return sendAllAnomalies;
+	}
+	
+	public String getNameOfValue() {
+		return nameOfValue;
 	}
 	
 	@Override
@@ -77,7 +89,7 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new ValueAreaAnomalyDetectionAO(minValue, maxValue, sendAllAnomalies);
+		return new ValueAreaAnomalyDetectionAO(this);
 	}
 
 }
