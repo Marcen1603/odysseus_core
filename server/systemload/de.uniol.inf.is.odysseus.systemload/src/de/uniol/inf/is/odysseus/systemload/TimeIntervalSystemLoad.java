@@ -14,21 +14,18 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
-final public class TimeIntervalSystemLoad extends AbstractCombinedMetaAttribute
-		implements ITimeInterval, ISystemLoad {
+final public class TimeIntervalSystemLoad extends AbstractCombinedMetaAttribute implements ITimeInterval, ISystemLoad {
 
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[] {
-			ITimeInterval.class, ISystemLoad.class };
+	public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ITimeInterval.class, ISystemLoad.class };
 
 	@Override
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return CLASSES;
 	}
 
-	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(
-			CLASSES.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(CLASSES.length);
 	static {
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(SystemLoad.schema);
@@ -71,13 +68,13 @@ final public class TimeIntervalSystemLoad extends AbstractCombinedMetaAttribute
 		timeInterval.retrieveValues(values);
 		systemload.retrieveValues(values);
 	}
-	
+
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
 		timeInterval.writeValue(values.get(0));
 		systemload.writeValue(values.get(1));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -93,32 +90,29 @@ final public class TimeIntervalSystemLoad extends AbstractCombinedMetaAttribute
 			return timeInterval.getValue(0, index);
 		case 1:
 			return systemload.getValue(0, index);
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	@Override
 	public String toString() {
-		return "( i= " + timeInterval.toString() + " | sysload= "
-				+ super.toString() + " )";
+		return "( i= " + timeInterval.toString() + " | sysload= " + super.toString() + " )";
 	}
 
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return timeInterval.getCSVHeader(delimiter) + delimiter
-				+ systemload.getCSVHeader(delimiter);
+		return timeInterval.getCSVHeader(delimiter) + delimiter + systemload.getCSVHeader(delimiter);
 	}
 
 	@Override
 	public String csvToString(WriteOptions options) {
-		return timeInterval.csvToString(options) + options.getDelimiter()
-				+ systemload.csvToString(options);
+		return timeInterval.csvToString(options) + options.getDelimiter() + systemload.csvToString(options);
 	}
 
 	@Override
 	public String toString(PointInTime baseTime) {
-		return "( i= " + timeInterval.toString(baseTime) + " | sysload= "
-				+ super.toString() + " )";
+		return "( i= " + timeInterval.toString(baseTime) + " | sysload= " + super.toString() + " )";
 	}
 
 	// ------------------------------------------------------------------------------
@@ -159,35 +153,43 @@ final public class TimeIntervalSystemLoad extends AbstractCombinedMetaAttribute
 	// Delegates for systemload
 	// ------------------------------------------------------------------------------
 
+	@Override
 	public void addSystemLoad(String name) {
 		systemload.addSystemLoad(name);
 	}
 
+	@Override
 	public void removeSystemLoad(String name) {
 		systemload.removeSystemLoad(name);
 	}
 
+	@Override
 	public Collection<String> getSystemLoadNames() {
 		return systemload.getSystemLoadNames();
 	}
 
+	@Override
 	public int getCpuLoad(String name) {
 		return systemload.getCpuLoad(name);
 	}
 
+	@Override
 	public int getMemLoad(String name) {
 		return systemload.getMemLoad(name);
 	}
 
+	@Override
 	public int getNetLoad(String name) {
 		return systemload.getNetLoad(name);
 	}
-	
+
+	@Override
 	public void insert(ISystemLoad other) {
 		systemload.insert(other);
 	}
 
+	@Override
 	public SystemLoadEntry getSystemLoad(String name) {
 		return systemload.getSystemLoad(name);
-	}	
+	}
 }

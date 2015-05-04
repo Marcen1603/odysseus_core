@@ -16,21 +16,18 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
-final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAttribute 
-		implements ITimeInterval, ILatency, ISystemLoad {
+final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAttribute implements ITimeInterval, ILatency, ISystemLoad {
 
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[] {
-			ITimeInterval.class, ILatency.class, ISystemLoad.class };
+	public final static Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ITimeInterval.class, ILatency.class, ISystemLoad.class };
 
 	@Override
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return CLASSES;
 	}
 
-	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(
-			CLASSES.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(CLASSES.length);
 	static {
 		schema.addAll(TimeInterval.schema);
 		schema.addAll(Latency.schema);
@@ -78,14 +75,14 @@ final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAtt
 		latency.retrieveValues(values);
 		systemload.retrieveValues(values);
 	}
-	
+
 	@Override
 	public void writeValues(List<Tuple<?>> values) {
 		timeInterval.writeValue(values.get(0));
 		latency.writeValue(values.get(1));
 		systemload.writeValue(values.get(2));
 	}
-	
+
 	@Override
 	public List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> getInlineMergeFunctions() {
 		List<IInlineMetadataMergeFunction<? extends IMetaAttribute>> list = new ArrayList<>();
@@ -94,44 +91,39 @@ final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAtt
 		list.addAll(systemload.getInlineMergeFunctions());
 		return list;
 	}
-	
+
 	@Override
 	public <K> K getValue(int subtype, int index) {
-		switch(subtype){
-			case 0:
-				return timeInterval.getValue(0, index);
-			case 1:
-				return latency.getValue(0, index);
-			case 2:
-				return systemload.getValue(0, index);
+		switch (subtype) {
+		case 0:
+			return timeInterval.getValue(0, index);
+		case 1:
+			return latency.getValue(0, index);
+		case 2:
+			return systemload.getValue(0, index);
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return timeInterval.getCSVHeader(delimiter) + delimiter
-				+ latency.getCSVHeader(delimiter) + delimiter
-				+ systemload.getCSVHeader(delimiter);
+		return timeInterval.getCSVHeader(delimiter) + delimiter + latency.getCSVHeader(delimiter) + delimiter + systemload.getCSVHeader(delimiter);
 	}
 
 	@Override
 	public String csvToString(WriteOptions options) {
-		return timeInterval.csvToString(options) + options.getDelimiter()
-				+ latency.csvToString(options) + options.getDelimiter()
-				+ systemload.csvToString(options);
+		return timeInterval.csvToString(options) + options.getDelimiter() + latency.csvToString(options) + options.getDelimiter() + systemload.csvToString(options);
 	}
 
 	@Override
 	public String toString() {
-		return "i=" + timeInterval.toString() + "| +l=" + latency.toString()
-				+ " | sysload= " + systemload.toString();
+		return "i=" + timeInterval.toString() + "| +l=" + latency.toString() + " | sysload= " + systemload.toString();
 	}
 
 	@Override
 	public String toString(PointInTime baseTime) {
-		return "i=" + timeInterval.toString(baseTime) + "| +l="
-				+ latency.toString() + " | sysload= " + systemload.toString();
+		return "i=" + timeInterval.toString(baseTime) + "| +l=" + latency.toString() + " | sysload= " + systemload.toString();
 	}
 
 	// ------------------------------------------------------------------------------
@@ -216,35 +208,43 @@ final public class TimeIntervalLatencySystemLoad extends AbstractCombinedMetaAtt
 	// Delegates for systemload
 	// ------------------------------------------------------------------------------
 
+	@Override
 	public void addSystemLoad(String name) {
 		systemload.addSystemLoad(name);
 	}
 
+	@Override
 	public void removeSystemLoad(String name) {
 		systemload.removeSystemLoad(name);
 	}
 
+	@Override
 	public Collection<String> getSystemLoadNames() {
 		return systemload.getSystemLoadNames();
 	}
 
+	@Override
 	public int getCpuLoad(String name) {
 		return systemload.getCpuLoad(name);
 	}
 
+	@Override
 	public int getMemLoad(String name) {
 		return systemload.getMemLoad(name);
 	}
 
+	@Override
 	public int getNetLoad(String name) {
 		return systemload.getNetLoad(name);
 	}
-	
+
+	@Override
 	public void insert(ISystemLoad other) {
 		systemload.insert(other);
 	}
 
+	@Override
 	public SystemLoadEntry getSystemLoad(String name) {
 		return systemload.getSystemLoad(name);
-	}	
+	}
 }
