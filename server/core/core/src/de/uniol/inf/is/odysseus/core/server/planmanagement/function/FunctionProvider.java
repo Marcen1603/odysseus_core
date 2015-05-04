@@ -13,6 +13,7 @@ public class FunctionProvider implements IFunctionProvider {
 		List<IFunction<?>> funcs = new LinkedList<>();
 		funcs.add(new RetrieveQueryIDsFunction());
 		funcs.add(new QueryPriorityFunction());
+		funcs.add(new IsACQueryFunction());
 		return funcs;
 	}
 
