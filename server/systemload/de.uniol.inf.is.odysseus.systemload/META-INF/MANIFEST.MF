@@ -19,7 +19,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.server.intervalapproach
-Service-Component: OSGI-INF/*,
- OSGI-INF/systemLoadFunctions.xml
+Service-Component: OSGI-INF/*
 Export-Package: de.uniol.inf.is.odysseus.systemload,
  de.uniol.inf.is.odysseus.systemload.logicaloperator
