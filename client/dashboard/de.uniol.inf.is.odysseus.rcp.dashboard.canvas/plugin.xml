@@ -63,6 +63,11 @@
             configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.quadtree.QuadTreeConfigurer"
             name="Quad Tree">
       </dashboardPart> 
-    </extension>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.spatial.SpatialMapDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.spatial.SpatialMapConfigurer"
+            name="Spatial Map">
+      </dashboardPart> 
+   </extension>
 
 </plugin>
