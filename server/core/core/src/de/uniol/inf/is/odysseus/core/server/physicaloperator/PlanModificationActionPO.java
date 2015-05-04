@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,6 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -27,6 +30,8 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<?>> {
 	
 	private int commandAttributeIndex;
 	private int queryIDAttributeIndex;
+
+	private ISession caller;
 	
 	public PlanModificationActionPO(PlanModificationActionAO ao, IServerExecutor executor) {
 		Preconditions.checkNotNull(executor, "ServerExecutor must not be null!");
@@ -44,6 +49,15 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<?>> {
 		// AO made sure that these attribute are valid
 		commandAttributeIndex = schema.indexOf(commandAttribute);
 		queryIDAttributeIndex = schema.indexOf(queryIDAttribute);
+		
+		List<ISession> callers = getSessions();
+		
+		if (callers.size() != 1){
+			throw new OpenFailedException("This operator cannot be sharded");
+		}
+		
+		this.caller = callers.get(0);
+
 	}
 	
 	@Override
@@ -72,7 +86,6 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<?>> {
 			}
 		}
 		
-		ISession caller = physicalQuery.getSession();
 		
 		try {
 			switch( command.toUpperCase() ) {
@@ -120,5 +133,10 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<?>> {
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// ignore
+	}
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		return false;
 	}
 }

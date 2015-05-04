@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -23,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * @author Marco Grawunder, Jonas Jacobi
@@ -98,4 +100,6 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	void setDebug(boolean debug);
 	
 	void setSuppressPunctuations(boolean suppressPunctuations);
+	
+	List<ISession> getSessions();
 }

@@ -15,6 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.core.planmanagement;
 
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+
 /**
  * Describes an object which could own an operator.
  * 
@@ -27,6 +29,8 @@ public interface IOperatorOwner extends Comparable<IOperatorOwner>{
 	 * @return ID which identifies an owner. This ID should be unique.
 	 */
 	public int getID();
+	
+	public ISession getSession();
 	
 	public void done(IOwnedOperator op);
 	

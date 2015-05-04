@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.mep;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public abstract class AbstractFunction<T> implements IFunction<T> {
 
@@ -48,9 +50,11 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	private final SDFDatatype[] acceptedTypes2;
 	private final SDFDatatype returnType;
 	private final boolean optimizeConstantParameter;
-    private final int timeComplexity;
-    private final int spaceComplexity;
-	
+	private final int timeComplexity;
+	private final int spaceComplexity;
+
+	private List<ISession> sessions;
+
 	public AbstractFunction(String symbol, int arity,
 			SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
 		this(symbol, arity, acceptedTypes, returnType, true);
@@ -59,43 +63,31 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 	}
 
-//	public AbstractFunction(String symbol, int arity, SDFDatatype returnType) {
-//		this(symbol, arity, null, null, returnType, true);
-//		if (optimizeConstantParameter == true && arity == 0) {
-//			LOG.warn("This function will be precompiled and creates the same value in each run.");
-//		}
-//	}
-
-//	@Deprecated
-//	public AbstractFunction(String symbol, int arity,
-//			SDFDatatype[] acceptedTypes, SDFDatatype returnType) {
-//		this(symbol, arity, null, acceptedTypes, returnType, true);
-//		if (optimizeConstantParameter == true && arity == 0) {
-//			LOG.warn("This function will be precompiled and creates the same value in each run.");
-//		}
-//	}
-
 	public AbstractFunction(String symbol, int arity,
 			SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
 			boolean optimizeConstantParameter) {
 		this(symbol, arity, acceptedTypes, null, returnType,
- optimizeConstantParameter, 9, 9);
+				optimizeConstantParameter, 9, 9);
 	}
 
-    public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType, boolean optimizeConstantParameter, int timeComplexity, int spaceComplexity) {
-        this(symbol, arity, acceptedTypes, null, returnType, optimizeConstantParameter, timeComplexity, spaceComplexity);
-    }
+	public AbstractFunction(String symbol, int arity,
+			SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
+			boolean optimizeConstantParameter, int timeComplexity,
+			int spaceComplexity) {
+		this(symbol, arity, acceptedTypes, null, returnType,
+				optimizeConstantParameter, timeComplexity, spaceComplexity);
+	}
 
 	private AbstractFunction(String symbol, int arity,
 			SDFDatatype[][] acceptedTypes, SDFDatatype[] acceptedTypes2,
- SDFDatatype returnType, boolean optimizeConstantParameter, int timeComplexity,
-            int spaceComplexity) {
+			SDFDatatype returnType, boolean optimizeConstantParameter,
+			int timeComplexity, int spaceComplexity) {
 		this.symbol = symbol;
 		this.arity = arity;
 		this.optimizeConstantParameter = optimizeConstantParameter;
 		this.acceptedTypes2 = acceptedTypes2;
-        this.timeComplexity = timeComplexity;
-        this.spaceComplexity = spaceComplexity;
+		this.timeComplexity = timeComplexity;
+		this.spaceComplexity = spaceComplexity;
 
 		if (acceptedTypes != null) {
 			this.acceptedTypes = acceptedTypes;
@@ -103,7 +95,6 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 				throw new IllegalArgumentException(
 						"Error: arity and types do not fit for " + symbol + " "
 								+ this.getClass());
-				// System.err.println("Error: arity and types do not fit for "+symbol+" "+this.getClass());
 			}
 		} else {
 			this.acceptedTypes = getAllTypes(arity);
@@ -116,15 +107,14 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 	}
 
-	protected static SDFDatatype[][] getAllTypes(int arity){
+	protected static SDFDatatype[][] getAllTypes(int arity) {
 		SDFDatatype[][] types = new SDFDatatype[arity][];
 		for (int i = 0; i < arity; i++) {
-			types[i] = SDFDatatype.getTypes().toArray(
-					new SDFDatatype[0]);
+			types[i] = SDFDatatype.getTypes().toArray(new SDFDatatype[0]);
 		}
 		return types;
 	}
-	
+
 	protected SDFDatatype determineReturnType() {
 		return SDFDatatype.OBJECT;
 	}
@@ -156,46 +146,48 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		return arity;
 	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    final public int getTimeComplexity() {
-        int complexity = this.timeComplexity;
-        for (int i = 0; i < getArity(); ++i) {
-            if (getArguments()[i].isFunction()) {
-                complexity += getArguments()[i].toFunction().getTimeComplexity();
-            }
-        }
-        return complexity;
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	final public int getTimeComplexity() {
+		int complexity = this.timeComplexity;
+		for (int i = 0; i < getArity(); ++i) {
+			if (getArguments()[i].isFunction()) {
+				complexity += getArguments()[i].toFunction()
+						.getTimeComplexity();
+			}
+		}
+		return complexity;
+	}
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    final public int getSpaceComplexity() {
-        int complexity = this.spaceComplexity;
-        for (int i = 0; i < getArity(); ++i) {
-            if (getArguments()[i].isFunction()) {
-                complexity += getArguments()[i].toFunction().getSpaceComplexity();
-            }
-        }
-        return complexity;
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	final public int getSpaceComplexity() {
+		int complexity = this.spaceComplexity;
+		for (int i = 0; i < getArity(); ++i) {
+			if (getArguments()[i].isFunction()) {
+				complexity += getArguments()[i].toFunction()
+						.getSpaceComplexity();
+			}
+		}
+		return complexity;
+	}
 
 	@Override
 	final public SDFDatatype getReturnType() {
-		if (determineTypeFromInput()){
-			if (arguments != null){
+		if (determineTypeFromInput()) {
+			if (arguments != null) {
 				return determineType(arguments);
 			}
 		}
 		return returnType;
-	}	
-	
+	}
+
 	@Override
 	final public boolean optimizeConstantParameter() {
 		return optimizeConstantParameter;
@@ -238,10 +230,20 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public IMetaAttribute[] getMetaAttributeContainer() {
 		return metaAttribute;
 	}
-	
+
 	@Override
 	public IMetaAttribute getMetaAttribute() {
 		return metaAttribute[0];
+	}
+
+	@Override
+	public List<ISession> getSessions() {
+		return sessions;
+	}
+	
+	@Override
+	public void setSessions(List<ISession> sessions) {
+		this.sessions = sessions;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -253,41 +255,57 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		return ((Variable) arguments[argumentPos]).getMetadata();
 	}
 
-    final protected int getInputPosition(int argumentPos) {
-        return ((Variable) arguments[argumentPos]).getPosition();
-    }
-	   
+	final protected int getInputPosition(int argumentPos) {
+		return ((Variable) arguments[argumentPos]).getPosition();
+	}
+
 	final protected Double getNumericalInputValue(int argumentPos) {
-		try{
-			double val = ((Number) arguments[argumentPos].getValue()).doubleValue();
+		try {
+			double val = ((Number) arguments[argumentPos].getValue())
+					.doubleValue();
 			return val;
-		}catch(ClassCastException e){
-			throw new IllegalArgumentException("Input \""+arguments[argumentPos].getValue()+"\" is not a number!");
+		} catch (ClassCastException e) {
+			throw new IllegalArgumentException("Input \""
+					+ arguments[argumentPos].getValue() + "\" is not a number!");
 		}
 	}
-	
+
 	@Override
-    public void propagateAdditionalContentReference(final Map<String, Serializable> additionalContent) {
-        this.additionalContent = additionalContent;
-        final IExpression<?>[] arguments = this.getArguments();
-        for (final IExpression<?> arg : arguments) {
-            if (arg instanceof AbstractFunction) {
-                ((AbstractFunction<?>) arg).propagateAdditionalContentReference(additionalContent);
-            }
-        }
-    }
-    
+	public void propagateAdditionalContentReference(
+			final Map<String, Serializable> additionalContent) {
+		this.additionalContent = additionalContent;
+		final IExpression<?>[] arguments = this.getArguments();
+		for (final IExpression<?> arg : arguments) {
+			if (arg instanceof AbstractFunction) {
+				((AbstractFunction<?>) arg)
+						.propagateAdditionalContentReference(additionalContent);
+			}
+		}
+	}
+
 	@Override
-    public void propagateMetadataReference(final IMetaAttribute[] metaAttribute) {
-        this.metaAttribute = metaAttribute;
-        final IExpression<?>[] arguments = this.getArguments();
-        for (final IExpression<?> arg : arguments) {
-            if (arg instanceof AbstractFunction) {
-                ((AbstractFunction<?>) arg).propagateMetadataReference(metaAttribute);
-            }
-        }
-    }
-    
+	public void propagateMetadataReference(final IMetaAttribute[] metaAttribute) {
+		this.metaAttribute = metaAttribute;
+		final IExpression<?>[] arguments = this.getArguments();
+		for (final IExpression<?> arg : arguments) {
+			if (arg instanceof AbstractFunction) {
+				((AbstractFunction<?>) arg)
+						.propagateMetadataReference(metaAttribute);
+			}
+		}
+	}
+
+	@Override
+	public void propagateSessionReference(final List<ISession> sessions) {
+		this.sessions = sessions;
+		final IExpression<?>[] arguments = this.getArguments();
+		for (final IExpression<?> arg : arguments) {
+			if (arg instanceof AbstractFunction) {
+				((AbstractFunction<?>) arg).propagateSessionReference(sessions);
+			}
+		}
+	}
+
 	@Override
 	public Object acceptVisitor(IExpressionVisitor visitor, Object data) {
 		return visitor.visit(this, data);
@@ -405,10 +423,11 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public boolean determineTypeFromInput() {
 		return false;
 	}
-	
+
 	@Override
 	public SDFDatatype determineType(IExpression<?>[] args) {
-		throw new RuntimeException("Function "+this+" must implement determineType function");
+		throw new RuntimeException("Function " + this
+				+ " must implement determineType function");
 	}
-	
+
 }

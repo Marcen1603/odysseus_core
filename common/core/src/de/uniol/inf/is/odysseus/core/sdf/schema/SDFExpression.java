@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi
@@ -54,6 +55,9 @@ public class SDFExpression implements Serializable, IClone {
 
 	private Object value;
 
+	/**
+	 * The session information for this expression
+	 */
 	private List<SDFAttribute> attributes;
 
 	/**
@@ -66,7 +70,9 @@ public class SDFExpression implements Serializable, IClone {
 	private IAttributeResolver attributeResolver;
 	/** The schema */
 	private List<SDFSchema> schema;
-
+	
+	private List<ISession> sessions;
+	
 	private transient IExpressionParser expressionParser;
 
 	Pattern pattern = null;
@@ -174,26 +180,6 @@ public class SDFExpression implements Serializable, IClone {
 				this.attributeResolver = new DirectAttributeResolver(
 						tmpExpression.getVariables());
 				this.schema = this.attributeResolver.getSchema();
-				// IExpression<?> tmpExpression =
-				// expressionParser.parse(expressionString, null);
-				// List<SDFAttribute> attribs = new ArrayList<SDFAttribute>();
-				// for (Variable var : tmpExpression.getVariables()) {
-				// String[] split =
-				// var.getIdentifier().split(Pattern.quote("."));
-				// if (split.length > 2) {
-				// attribs.add(new SDFAttribute(null, split[split.length -
-				// 1], var.getReturnType()));
-				// }
-				// else if (split.length == 2) {
-				// attribs.add(new SDFAttribute(split[0], split[1],
-				// var.getReturnType()));
-				// }
-				// else if (split.length == 1) {
-				// attribs.add(new SDFAttribute(null, split[0],
-				// var.getReturnType()));
-				// }
-				// }
-				// this.schema = new SDFSchema("", attribs);
 
 			} catch (ParseException e) {
 				e.printStackTrace();
@@ -227,6 +213,8 @@ public class SDFExpression implements Serializable, IClone {
 					.getAdditionalContents());
 			function.propagateMetadataReference(function
 					.getMetaAttributeContainer());
+			function.propagateSessionReference(sessions);
+			setSessions(function.getSessions());
 			setAdditionalContent(function.getAdditionalContents());
 			setMetaAttribute(function.getMetaAttributeContainer());
 		}
@@ -531,5 +519,12 @@ public class SDFExpression implements Serializable, IClone {
 			}
 		}
 		return false;
+	}
+
+	public void setSessions(List<ISession> sessions) {
+		this.sessions = sessions;
+		if (expression.isFunction()){
+			((IFunction<?>)expression).setSessions(sessions);
+		}
 	}
 }

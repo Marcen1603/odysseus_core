@@ -135,6 +135,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 					this.expressions[i].bindAdditionalContent(object
 							.getAdditionalContent());
 					this.expressions[i].bindVariables(meta, values);
+					this.expressions[i].setSessions(getSessions());
 					Object expr = this.expressions[i].getValue();
 					// SDFDatatype retType = expressions[i].getMEPExpression()
 					// .getReturnType();

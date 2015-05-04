@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataPro
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.IMyLock;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.NonLockingLock;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi, Tobias Witt, Marco Grawunder
@@ -931,6 +932,11 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	@Override
 	public String getOwnerIDs() {
 		return ownerHandler.getOwnerIDs();
+	}
+	
+	@Override
+	public List<ISession> getSessions() {
+		return ownerHandler.getSessions();
 	}
 
 	// ------------------------------------------------------------------------

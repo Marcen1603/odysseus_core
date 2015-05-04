@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder
@@ -680,6 +681,11 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	@Override
 	public String getOwnerIDs() {
 		return ownerHandler.getOwnerIDs();
+	}
+	
+	@Override
+	public List<ISession> getSessions() {
+		return ownerHandler.getSessions();
 	}
 
 	// ------------------------------------------------------------------------

@@ -16,11 +16,13 @@
 package de.uniol.inf.is.odysseus.core.mep;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
 public interface IFunction<T> extends IExpression<T> {
@@ -76,6 +78,16 @@ public interface IFunction<T> extends IExpression<T> {
      */
     public IMetaAttribute getMetaAttribute();
 	public IMetaAttribute[] getMetaAttributeContainer();
+	
+	/**
+	 * Get the sessions assigned to this function
+	 * @return
+	 */
+	public List<ISession> getSessions();
+	/**
+	 * Set sessions
+	 */
+	public void setSessions(List<ISession> session);
 	
 	/**
 	 * Gets the types that are accepted at the position
@@ -139,5 +151,7 @@ public interface IFunction<T> extends IExpression<T> {
      * @param metaAttributeContainer
      */
     void propagateMetadataReference(IMetaAttribute[] metaAttributeContainer);
+
+	void propagateSessionReference(List<ISession> sessions);
 
 }

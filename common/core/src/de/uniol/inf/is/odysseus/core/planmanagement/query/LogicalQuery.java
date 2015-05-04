@@ -273,6 +273,11 @@ public class LogicalQuery implements ILogicalQuery {
 	public ISession getUser() {
 		return user;
 	}
+	
+	@Override
+	public ISession getSession() {
+		return user;
+	}
 
 	@Override
 	public void setParserId(String parserId) {

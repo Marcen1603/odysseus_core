@@ -5,20 +5,21 @@ import java.util.Collections;
 import java.util.List;
 
 import sun.awt.util.IdentityArrayList;
-import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.OperatorOwnerComparator;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class OwnerHandler implements IOwnedOperator {
 
 	final private List<IOperatorOwner> owners;
+	final private List<ISession> sessions;
 
 	public OwnerHandler() {
 		owners = new IdentityArrayList<IOperatorOwner>();
+		sessions = new IdentityArrayList<ISession>();
 	}
 
 	public OwnerHandler(OwnerHandler other) {
 		owners = new IdentityArrayList<IOperatorOwner>(other.owners);
+		sessions = new IdentityArrayList<ISession>(other.sessions);
 	}
 
 
@@ -27,12 +28,16 @@ public class OwnerHandler implements IOwnedOperator {
 		if (!this.owners.contains(owner)) {
 			this.owners.add(owner);
 		}
+		sessions.add(owner.getSession());
 		Collections.sort(owners, OperatorOwnerComparator.getInstance());
 	}
 	
 	@Override
 	public void addOwner(Collection<IOperatorOwner> owner) {
 		this.owners.addAll(owner);
+		for (IOperatorOwner o: owners){
+			sessions.add(o.getSession());
+		}
 		Collections.sort(owners, OperatorOwnerComparator.getInstance());
 	}
 
@@ -40,6 +45,7 @@ public class OwnerHandler implements IOwnedOperator {
 	public void removeOwner(IOperatorOwner owner) {
 		// remove all occurrences
 		while (this.owners.remove(owner)) {
+			sessions.remove(owner.getSession());
 		}
 		// synchronized (this.deactivateRequestControls) {
 		// this.deactivateRequestControls.remove(owner);
@@ -50,6 +56,7 @@ public class OwnerHandler implements IOwnedOperator {
 	@Override
 	public void removeAllOwners() {
 		this.owners.clear();
+		this.sessions.clear();
 	}
 
 	@Override
@@ -100,6 +107,10 @@ public class OwnerHandler implements IOwnedOperator {
 			result.append(iOperatorOwner.getID());
 		}
 		return result.toString();
+	}
+
+	public List<ISession> getSessions() {
+		return Collections.unmodifiableList(sessions);
 	}
 
 	

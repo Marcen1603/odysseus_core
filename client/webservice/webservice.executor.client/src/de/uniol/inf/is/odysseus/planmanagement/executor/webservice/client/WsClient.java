@@ -1323,5 +1323,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	@Override
+	public ISession getSession() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

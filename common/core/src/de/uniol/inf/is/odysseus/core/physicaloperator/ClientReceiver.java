@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * ReceiverPO without AbstractSource but with ISource
@@ -171,6 +172,11 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		return Collections.unmodifiableMap(this.outputSchema);
 	}
 
+	@Override
+	public List<ISession> getSessions() {
+		return null;
+	}
+	
 	// ------------------------------------------------------------------------
 	// Owner Management
 	// ------------------------------------------------------------------------
