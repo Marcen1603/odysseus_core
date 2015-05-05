@@ -14,6 +14,13 @@ public class FunctionProvider implements IFunctionProvider {
 		funcs.add(new RetrieveQueryIDsFunction());
 		funcs.add(new QueryPriorityFunction());
 		funcs.add(new IsACQueryFunction());
+		funcs.add(new QueryBasePriorityFunction());
+		funcs.add(new QueryStateFunction());
+		funcs.add(new QueryNameFunction());
+		funcs.add(new QueryStartTSFunction());
+		funcs.add(new QueryLastStateChangeTSFunction());
+		funcs.add(new QuerySheddingFactorFunction());
+	
 		return funcs;
 	}
 
