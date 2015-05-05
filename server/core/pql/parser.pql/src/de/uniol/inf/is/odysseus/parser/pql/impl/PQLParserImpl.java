@@ -466,7 +466,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       break;
     case CHAR_LITERAL:
       t = jj_consume_token(CHAR_LITERAL);
-      value = t.image.substring(1, t.image.length() - 1);
+      value = t.image.substring(1, t.image.length() - 1).replace("\u005c\u005c\u005c'","\u005c'").replace("\u005c\u005c\u005c"","\u005c"");
       break;
     case BOOLEAN:
       t = jj_consume_token(BOOLEAN);
@@ -652,6 +652,11 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_10() {
     if (jj_scan_token(FLOAT)) return true;
     return false;
@@ -757,11 +762,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     xsp = jj_scanpos;
     if (jj_3R_7()) jj_scanpos = xsp;
     if (jj_scan_token(28)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_11() {
-    if (jj_scan_token(INTEGER)) return true;
     return false;
   }
 

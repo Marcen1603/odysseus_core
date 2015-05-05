@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
   }
 
 }PARSER_END(PQLParserImpl)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN :{   < BOOLEAN : ("TRUE" | "FALSE" )>
-|  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    "_"  | "."  | ":" >| < CHAR_LITERAL :    "'" (~[ "'" ])* "'"    (      "'" (~[ "'" ])* "'"    )*  | "\"" (~[ "\"" ])* "\""    (      "\"" (~[ "\"" ])* "\""    )* >| < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >
+|  < IDENTIFIER :    (< LETTER >)+    (      < DIGIT >    | < LETTER >    | < SPECIAL_CHARS >    )* >| < #LETTER : [ "a"-"z", "A"-"Z" ] >| < #SPECIAL_CHARS :    "_"  | "."  | ":" >| < CHAR_LITERAL :    "'" ("\\" ~[] |~[ "'" ])* "'"  | "\"" ("\\" ~[] | ~[ "\"" ])* "\"" >| < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >
 }TOKEN : /* Numeric Constants */
 {
   < FLOAT :
@@ -98,7 +98,8 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
     if (!parameters.containsKey(key)){      parameters.put(key, value);
     }else{
       throw new QueryParseException("Parameter "+key+" is used more than once!");
-    }  }}Object parameterValue() :{  Token t;  Object value;}{  (    t = < FLOAT >    {      value = Double.valueOf(t.image);    }  | t = < INTEGER >    {      value = Long.valueOf(t.image);    }  | t = < CHAR_LITERAL >    {      value = t.image.substring(1, t.image.length() - 1);    }
+    }  }}Object parameterValue() :{  Token t;  Object value;}{  (    t = < FLOAT >    {      value = Double.valueOf(t.image);    }  | t = < INTEGER >    {      value = Long.valueOf(t.image);    }  | t = < CHAR_LITERAL >    {      value = t.image.substring(1, t.image.length() - 1).replace("\\\'","\'").replace("\\\"","\"");
+    }
   | t = < BOOLEAN >
   {
   	  value = Boolean.valueOf(t.image);
