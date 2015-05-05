@@ -26,16 +26,15 @@ import de.uniol.inf.is.odysseus.wrapper.baslercamera.swig.BaslerCamera.Operation
 
 public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> implements ICommandProvider  
 {
-	@SuppressWarnings("unused")
-	private final Logger logger = LoggerFactory.getLogger(BaslerCameraTransportHandler.class);
-	private final Object processLock = new Object();
+	private final Logger LOG = LoggerFactory.getLogger(BaslerCameraTransportHandler.class);
 
 	private String serialNumber;
-	private BaslerCamera cameraCapture;
 	private BaslerCamera.OperationMode operationMode;
 	
+	private BaslerCamera cameraCapture;
 	private Tuple<IMetaAttribute> currentTuple;
 	private ImageJCV imageJCV;
+	private final Object processLock = new Object();
 	
 	public BaslerCameraTransportHandler() 
 	{
@@ -74,6 +73,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			try
 			{
+				LOG.debug("Starting basler camera...");
 		 		cameraCapture = new BaslerCamera(serialNumber)
 		 			{
 		 				@Override public void onGrabbed(ByteBuffer buffer)
@@ -95,15 +95,13 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 				cameraCapture.setLineLength(imageJCV.getWidthStep());
 				
 				currentTuple = null;
+				
+				LOG.debug("Basler camera started.");
 			}
-			catch (RuntimeException e) 
-			{
-				try
-				{
+			catch (Exception e) {
+				try {
 					processInClose();
-				}
-				catch (Exception e2)
-				{
+				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
 				throw new IOException(e);
@@ -115,7 +113,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		synchronized (processLock)
 		{
-			System.out.println("Stopping...");
+			LOG.debug("Stopping basler camera...");
 			if (cameraCapture != null)
 			{
 				cameraCapture.stop();
@@ -124,18 +122,16 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			
 			imageJCV = null;
 			currentTuple = null;
-			System.out.println("Stopped");
+			LOG.debug("Basler camera stopped");
 		}
 	}
 
 	private double smoothFPS = 0.0f;
 	private double alpha = 0.95f;
-	
 	private long lastTime = 0;
-	
 	private int imageCount = 0;
 	
-	@Override public Tuple<IMetaAttribute> getNext() 
+	private void logStats()
 	{
 		long now = System.nanoTime();
 		double dt = (now - lastTime) / 1.0e9;
@@ -145,8 +141,13 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		
 //		System.out.println("getNext " + now / 1.0e9 + ", dt = " + dt + " = " + 1.0/dt + " FPS");
 		System.out.println(String.format("%d %s: %.4f FPS (%.4f)", imageCount++, serialNumber, smoothFPS, fps));
-		lastTime = now;
-
+		lastTime = now;		
+	}
+	
+	@Override public Tuple<IMetaAttribute> getNext() 
+	{
+		logStats();
+		
 		Tuple<IMetaAttribute> tuple = currentTuple;
 		currentTuple = null;				
         return tuple;					
@@ -159,9 +160,13 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			if (cameraCapture == null) return false;
 
 			if (!cameraCapture.grabRGB8(imageJCV.getImageData(), 1000))
+			{
+				// TODO: Sometimes the camera is opened successfully, but grab always returns false. 
+				// Check if it is OK to throw an exception on first grab failure, or if there are 10 in a row...?
 				return false;
-
-			// System.out.println("Frame grabbed from " + serialNumber);
+			}
+			
+			LOG.debug("Grabbed frame from Basler camera " + serialNumber);
 
 			currentTuple = new Tuple<IMetaAttribute>(getSchema().size(), false);
 			int[] attrs = getSchema().getSDFDatatypeAttributePositions(SDFImageJCVDatatype.IMAGEJCV);
@@ -173,16 +178,14 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			return true;
 		}
 	}	
-    @Override
-    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
-    	if(!(o instanceof BaslerCameraTransportHandler)) {
-    		return false;
-    	}
-    	BaslerCameraTransportHandler other = (BaslerCameraTransportHandler)o;
-    	if(!this.serialNumber.equals(other.serialNumber))
-    		return false;
+	
+    @Override public boolean isSemanticallyEqualImpl(ITransportHandler o) 
+    {
+    	if(!(o instanceof BaslerCameraTransportHandler)) return false;
     	
-    	return true;
+    	BaslerCameraTransportHandler other = (BaslerCameraTransportHandler)o;
+    	
+    	return serialNumber.equals(other.serialNumber) && operationMode.equals(other.operationMode); 
     }
     
     @Override
@@ -190,18 +193,18 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
     {
     	switch (commandName)
     	{
-    	case "trigger":
-    	{
-    		return new Command()
-    		{
-    			@Override public boolean run(IStreamObject<?> input) 
-    			{
-    				return cameraCapture.trigger();
-    			}
-    		};
-    	}
+	    	case "trigger":
+	    	{
+	    		return new Command()
+	    		{
+	    			@Override public boolean run(IStreamObject<?> input) 
+	    			{
+	    				return cameraCapture.trigger();
+	    			}
+	    		};
+	    	}
 
-    	default: return null;
+	    	default: return null;
     	}
     } 
 }
