@@ -187,6 +187,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	
 	final boolean acQuery;
 
+	private int sheddingFactor;
+
 	/**
 	 * Creates a query based on a physical plan and
 	 * {@link QueryBuildConfiguration}
@@ -575,6 +577,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public void partial(int sheddingFactor) {
 		try {
+			this.sheddingFactor = sheddingFactor;
 			final QueryState nextState;
 			if (sheddingFactor > 0) {
 				nextState = QueryState.next(queryState, QueryFunction.PARTIAL);
@@ -659,6 +662,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public final long getQueryStartTS(){
 		return queryStartedTS;
+	}
+	
+	@Override
+	public int getSheddingFactor() {
+		return sheddingFactor;
 	}
 	
 	/*

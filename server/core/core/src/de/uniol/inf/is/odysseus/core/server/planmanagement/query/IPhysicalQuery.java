@@ -227,6 +227,13 @@ public interface IPhysicalQuery extends IMonitoringDataProvider,
 	void partial(int sheddingFactor);
 
 	/**
+	 * If in partial or partial_suspended, deliver current shedding factor,
+	 * else value could have to defined value
+	 * @return
+	 */
+	int getSheddingFactor();
+	
+	/**
 	 * System time that the query was started the last time (if stopped)
 	 * 
 	 * @return

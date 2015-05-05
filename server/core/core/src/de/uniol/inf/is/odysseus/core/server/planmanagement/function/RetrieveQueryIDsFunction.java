@@ -24,7 +24,7 @@ public class RetrieveQueryIDsFunction extends AbstractFunction<List<Integer>> {
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.STRING } };
 
 	private enum QInformation {
-		QUERY_PRIORTIY, QUERY_BASE_PRIORITY, QUERY_STATE, QUERY_AC_QUERY, QUERY_NAME, QUERY_START_TS, QUERY_LAST_STATE_CHANGE_TS
+		QUERY_PRIORTIY, QUERY_BASE_PRIORITY, QUERY_STATE, QUERY_AC_QUERY, QUERY_NAME, QUERY_START_TS, QUERY_LAST_STATE_CHANGE_TS, QUERY_SHEDDING_FACTOR
 	}
 
 	List<QInformation> toRead;
@@ -93,6 +93,9 @@ public class RetrieveQueryIDsFunction extends AbstractFunction<List<Integer>> {
 			return q.getLastQueryStateChangeTS();
 		case QUERY_START_TS:
 			return q.getQueryStartTS();
+		case QUERY_SHEDDING_FACTOR:
+			return q.getSheddingFactor();
+			
 		}
 
 		return null;
@@ -119,6 +122,9 @@ public class RetrieveQueryIDsFunction extends AbstractFunction<List<Integer>> {
 		}		
 		if (attribute.getAttributeName().equalsIgnoreCase("lastStateChangeTS")) {
 			return QInformation.QUERY_LAST_STATE_CHANGE_TS;
+		}		
+		if (attribute.getAttributeName().equalsIgnoreCase("sheddingFactor")) {
+			return QInformation.QUERY_SHEDDING_FACTOR;
 		}		
 		throw new IllegalArgumentException("Information "+attribute+" not defined");
 	}
