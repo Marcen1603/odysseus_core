@@ -33,11 +33,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public interface IPhysicalQuery extends IMonitoringDataProvider, IReoptimizeHandler<IQueryReoptimizeListener>,
-IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQuery {
+public interface IPhysicalQuery extends IMonitoringDataProvider,
+		IReoptimizeHandler<IQueryReoptimizeListener>,
+		IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner,
+		IHasRoots, IQuery {
 
 	String getName();
-	
+
 	/**
 	 * The method must be called for each of the physical roots of a query.
 	 * Usually there is only one, but sometimes like in object tracking, there
@@ -52,7 +54,7 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	 * @param roots
 	 *            The roots of this Query.
 	 */
-	 void initializePhysicalRoots(List<IPhysicalOperator> roots);
+	void initializePhysicalRoots(List<IPhysicalOperator> roots);
 
 	/**
 	 * Sets the current physical plan which will be executed. Owner relationship
@@ -68,7 +70,7 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	 *            The new root of the physical plan.
 	 * @return The new physical plan of this query.
 	 */
-	 List<IPhysicalOperator> setRoots(List<IPhysicalOperator> root);
+	List<IPhysicalOperator> setRoots(List<IPhysicalOperator> root);
 
 	/**
 	 * Returns the physical plan of this query.
@@ -76,7 +78,7 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	 * @return The physical plan of this query.
 	 */
 	@Override
-	 List<IPhysicalOperator> getRoots();
+	List<IPhysicalOperator> getRoots();
 
 	/**
 	 * Returns the direct physical children ( i.e. all physical operators of
@@ -85,31 +87,37 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	 * @return The direct physical children which are necessary for the
 	 *         execution of this query.
 	 */
-	 List<IPhysicalOperator> getPhysicalChilds();
+	List<IPhysicalOperator> getPhysicalChilds();
 
 	/**
-	 * Methods for scheduling 
+	 * Methods for scheduling
 	 */
-	
-	 List<IIterableSource<?>> getIterableSources();
-	 boolean hasIteratableSources();
-	 IIterableSource<?> getIterableSource(int id);
-	 int getSourceId(IIterableSource<?> source);
-	 List<IIterableSource<?>> getIteratableLeafSources();
-	 List<IPhysicalOperator> getLeafSources();
+
+	List<IIterableSource<?>> getIterableSources();
+
+	boolean hasIteratableSources();
+
+	IIterableSource<?> getIterableSource(int id);
+
+	int getSourceId(IIterableSource<?> source);
+
+	List<IIterableSource<?>> getIteratableLeafSources();
+
+	List<IPhysicalOperator> getLeafSources();
 
 	/**
 	 * Removes the ownership of this query and the registered child operators.
 	 * After this method this query has no relationship to any operator.
 	 */
-	 void removeOwnerschip();
-	
-	 boolean isStarting();
-	 boolean isOpened();
-	
-	 Set<IPhysicalOperator> getSharedOperators(IPhysicalQuery otherQuery);
-	
-	 Set<IPhysicalOperator> getAllOperators();
+	void removeOwnerschip();
+
+	boolean isStarting();
+
+	boolean isOpened();
+
+	Set<IPhysicalOperator> getSharedOperators(IPhysicalQuery otherQuery);
+
+	Set<IPhysicalOperator> getAllOperators();
 
 	void start(IQueryStarter queryListener) throws OpenFailedException;
 
@@ -121,71 +129,82 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	 * @param planMonitor
 	 */
 	@SuppressWarnings("rawtypes")
-	 void addPlanMonitor(String name, IPlanMonitor planMonitor);
+	void addPlanMonitor(String name, IPlanMonitor planMonitor);
 
 	/**
 	 * Get Monitor for plans
 	 * 
 	 * @param planMonitor
 	 */
-	 IPlanMonitor<?> getPlanMonitor(String name);
+	IPlanMonitor<?> getPlanMonitor(String name);
 
 	/**
 	 * Get List of all plan monitors
 	 */
-	 Collection<IPlanMonitor<?>> getPlanMonitors();
+	Collection<IPlanMonitor<?>> getPlanMonitors();
 
 	ISession getSession();
+
 	void setSession(ISession user);
-	
+
 	boolean isOwner(ISession session);
 
 	void addChild(IPhysicalOperator child);
 
-	 void replaceOperator(IPhysicalOperator op1, IPhysicalOperator op2);
-	 void replaceRoot(IPhysicalOperator op1, IPhysicalOperator op2);
+	void replaceOperator(IPhysicalOperator op1, IPhysicalOperator op2);
 
-	 int getPriority();
-	
-	 long getCurrentPriority();
-	 void setCurrentPriority(long newPriority);
-	 long getBasePriority();
+	void replaceRoot(IPhysicalOperator op1, IPhysicalOperator op2);
 
-	 boolean containsCycles();
+	int getPriority();
 
-	 ILogicalQuery getLogicalQuery();	
-	
+	long getCurrentPriority();
+
+	void setCurrentPriority(long newPriority);
+
+	long getBasePriority();
+
+	boolean containsCycles();
+
+	ILogicalQuery getLogicalQuery();
+
 	/**
 	 * Store key values pairs
+	 * 
 	 * @param name
 	 * @param value
 	 */
-	 void setParameter(String name, Object value);
+	void setParameter(String name, Object value);
 
 	/**
 	 * Retrieve value for key
+	 * 
 	 * @param name
 	 * @return
 	 */
-	 Object getParameter(String name);
-	
-	 void setLogicalQuery(ILogicalQuery q);
+	Object getParameter(String name);
+
+	void setLogicalQuery(ILogicalQuery q);
 
 	/**
-	 * For whenever there might be a discrepancy between the logical query's ID and the one to expect from creating a new physical one.
-	 * Mainly when creating the Physical Query based on a physical plan instead of a logical query
-	 * (the latter takes the logical query's id automatically)
-	 * @param q the logical query to be associated with this physical query
+	 * For whenever there might be a discrepancy between the logical query's ID
+	 * and the one to expect from creating a new physical one. Mainly when
+	 * creating the Physical Query based on a physical plan instead of a logical
+	 * query (the latter takes the logical query's id automatically)
+	 * 
+	 * @param q
+	 *            the logical query to be associated with this physical query
 	 */
-	 void setLogicalQueryAndAdoptItsID(ILogicalQuery q);
-	
+	void setLogicalQueryAndAdoptItsID(ILogicalQuery q);
+
 	/**
 	 * 
 	 */
-	 void setAsStopping(boolean isStopping);
-	 boolean isMarkedAsStopping();
-	
+	void setAsStopping(boolean isStopping);
+
+	boolean isMarkedAsStopping();
+
 	void setNotice(String notice);
+
 	String getNotice();
 
 	void suspend();
@@ -194,22 +213,30 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 
 	/**
 	 * 
-	 * @return 
+	 * @return
 	 */
 	QueryState getState();
-	
+
 	long getLastQueryStateChangeTS();
 
 	/**
 	 * Set query load shedding. Value must be between 0 and 100
+	 * 
 	 * @param sheddingFactor
 	 */
 	void partial(int sheddingFactor);
 
 	/**
 	 * System time that the query was started the last time (if stopped)
+	 * 
 	 * @return
 	 */
 	long getQueryStartTS();
+
+	/**
+	 * Is AC query
+	 */
+
+	boolean isACquery();
 
 }

@@ -24,7 +24,7 @@ public class RetrieveQueryIDsFunction extends AbstractFunction<List<Integer>> {
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.STRING } };
 
 	private enum QInformation {
-		QUERY_PRIORTIY, QUERY_STATE
+		QUERY_PRIORTIY, QUERY_BASE_PRIORITY, QUERY_STATE, QUERY_AC_QUERY, QUERY_NAME, QUERY_START_TS, QUERY_LAST_STATE_CHANGE_TS
 	}
 
 	List<QInformation> toRead;
@@ -81,8 +81,18 @@ public class RetrieveQueryIDsFunction extends AbstractFunction<List<Integer>> {
 		switch (qInformation) {
 		case QUERY_PRIORTIY:
 			return q.getPriority();
+		case QUERY_BASE_PRIORITY:
+			return q.getBasePriority();
 		case QUERY_STATE:
 			return q.getState().toString();
+		case QUERY_AC_QUERY:
+			return q.isACquery();
+		case QUERY_NAME:
+			return q.getName();
+		case QUERY_LAST_STATE_CHANGE_TS:
+			return q.getLastQueryStateChangeTS();
+		case QUERY_START_TS:
+			return q.getQueryStartTS();
 		}
 
 		return null;
@@ -92,9 +102,24 @@ public class RetrieveQueryIDsFunction extends AbstractFunction<List<Integer>> {
 		if (attribute.getAttributeName().equalsIgnoreCase("priority")) {
 			return QInformation.QUERY_PRIORTIY;
 		}
+		if (attribute.getAttributeName().equalsIgnoreCase("basepriority")) {
+			return QInformation.QUERY_BASE_PRIORITY;
+		}
 		if (attribute.getAttributeName().equalsIgnoreCase("state")) {
 			return QInformation.QUERY_STATE;
 		}
+		if (attribute.getAttributeName().equalsIgnoreCase("acquery")) {
+			return QInformation.QUERY_AC_QUERY;
+		}
+		if (attribute.getAttributeName().equalsIgnoreCase("name")) {
+			return QInformation.QUERY_NAME;
+		}
+		if (attribute.getAttributeName().equalsIgnoreCase("startTS")) {
+			return QInformation.QUERY_START_TS;
+		}		
+		if (attribute.getAttributeName().equalsIgnoreCase("lastStateChangeTS")) {
+			return QInformation.QUERY_LAST_STATE_CHANGE_TS;
+		}		
 		throw new IllegalArgumentException("Information "+attribute+" not defined");
 	}
 

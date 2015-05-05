@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -183,6 +184,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * Notice can be used to annotade a query
 	 */
 	private String notice;
+	
+	final boolean acQuery;
 
 	/**
 	 * Creates a query based on a physical plan and
@@ -195,6 +198,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 */
 	public PhysicalQuery(List<IPhysicalOperator> physicalPlan) {
 		id = idCounter++;
+		acQuery = false;
 		initializePhysicalRoots(physicalPlan);
 		determineIteratableSourcesAndLeafs(physicalPlan);
 	}
@@ -216,6 +220,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 		this.basePriority = query.getPriority();
 		this.currentPriority = query.getPriority();
 		this.containsCycles = query.containsCycles();
+		Object parameter = getLogicalQuery().getParameter(ACQueryParameter.class.getSimpleName());
+		if( parameter != null && parameter instanceof ACQueryParameter ) {
+			this.acQuery = ((ACQueryParameter)parameter).getValue();
+		}else{
+			this.acQuery = false;
+		}
 		initializePhysicalRoots(physicalPlan);
 		determineIteratableSourcesAndLeafs(physicalPlan);
 	}
@@ -979,4 +989,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 		}
 	}
 
+	@Override
+	public boolean isACquery() {
+		return this.acQuery;		
+	}
 }
