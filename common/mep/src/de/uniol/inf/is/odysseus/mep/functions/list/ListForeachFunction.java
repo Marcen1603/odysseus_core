@@ -1,45 +1,18 @@
 package de.uniol.inf.is.odysseus.mep.functions.list;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.mep.MEP;
-
-public class ListForeachFunction extends AbstractFunction<List<Object>> {
+public class ListForeachFunction extends AbstractLambdaListFunction {
 
 	private static final long serialVersionUID = -8269748747594828192L;
-
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { {SDFDatatype.LIST}, {SDFDatatype.STRING}};
-
-	SDFExpression expression;
 	
 	public ListForeachFunction() {
-		super("foreach",2,accTypes,SDFDatatype.LIST, false);
-	}
-	
-	@Override
-	public List<Object> getValue() {
-		if (expression == null){
-			String expr = getInputValue(1);
-			init(expr);
-		}
-		List<Object> out = new ArrayList<Object>();
-		List<Object> in = getInputValue(0);
-		for (Object o:in){
-			expression.bindVariables(o);
-			out.add(expression.getValue());
-		}
-		
-		return out;
+		super("foreach");
 	}
 
-	private void init(String expr) {
-		expression = new SDFExpression(expr, MEP.getInstance());	
+	@Override
+	protected void fillReturnList(List<Object> out, Object o) {
+		out.add(expression.getValue());	
 	}
-	
-	
 
 }
