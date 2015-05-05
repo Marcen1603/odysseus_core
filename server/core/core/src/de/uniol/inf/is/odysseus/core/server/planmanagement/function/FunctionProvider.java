@@ -12,6 +12,7 @@ public class FunctionProvider implements IFunctionProvider {
 	public List<IFunction<?>> getFunctions() {
 		List<IFunction<?>> funcs = new LinkedList<>();
 		funcs.add(new RetrieveQueryIDsFunction());
+		funcs.add(new FilterQueryIDsFunction());		
 		funcs.add(new QueryPriorityFunction());
 		funcs.add(new IsACQueryFunction());
 		funcs.add(new QueryBasePriorityFunction());
@@ -20,7 +21,7 @@ public class FunctionProvider implements IFunctionProvider {
 		funcs.add(new QueryStartTSFunction());
 		funcs.add(new QueryLastStateChangeTSFunction());
 		funcs.add(new QuerySheddingFactorFunction());
-	
+		
 		return funcs;
 	}
 
