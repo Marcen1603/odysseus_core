@@ -82,7 +82,7 @@ public class RetrieveQueryIDsFunction extends AbstractFunction<List<Integer>> {
 		case QUERY_PRIORTIY:
 			return q.getPriority();
 		case QUERY_STATE:
-			return q.getState();
+			return q.getState().toString();
 		}
 
 		return null;
