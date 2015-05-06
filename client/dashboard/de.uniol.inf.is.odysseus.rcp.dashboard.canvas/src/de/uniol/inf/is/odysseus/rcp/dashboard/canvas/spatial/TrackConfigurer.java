@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+
 package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.spatial;
 
 import java.util.Collection;
@@ -55,12 +56,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *          $
  *
  */
-public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<SpatialMapDashboardPart> {
-    SpatialMapDashboardPart dashboardPart;
+public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashboardPart> {
+    TrackDashboardPart dashboardPart;
     private SDFSchema[] schemas;
 
     @Override
-    public void init(final SpatialMapDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
+    public void init(final TrackDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
         if (roots.size() == 0) {
             throw new IllegalArgumentException("Insifficient physical operators " + roots.size());
         }
@@ -76,7 +77,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
     /**
      * @return the dashboardPart
      */
-    public SpatialMapDashboardPart getDashboardPart() {
+    public TrackDashboardPart getDashboardPart() {
         return this.dashboardPart;
     }
 
@@ -112,7 +113,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
-                        SpatialMapConfigurer.this.dashboardPart.setXPos(combo.getSelectionIndex());
+                        TrackConfigurer.this.dashboardPart.setXPos(combo.getSelectionIndex());
                     }
                 });
             }
@@ -124,7 +125,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
-                        SpatialMapConfigurer.this.dashboardPart.setYPos(combo.getSelectionIndex());
+                        TrackConfigurer.this.dashboardPart.setYPos(combo.getSelectionIndex());
 
                     }
                 });
@@ -141,7 +142,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                         final String text = maxElementsText.getText();
                         if (!"".equals(text)) {
                             try {
-                                SpatialMapConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                                TrackConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -182,7 +183,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
                         final Button b = (Button) e.widget;
-                        SpatialMapConfigurer.this.dashboardPart.setAutoadjust(b.getSelection());
+                        TrackConfigurer.this.dashboardPart.setAutoadjust(b.getSelection());
                     }
                 });
 
@@ -199,7 +200,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                         final String text = minXText.getText();
                         if (!"".equals(text)) {
                             try {
-                                SpatialMapConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                                TrackConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -220,7 +221,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                         final String text = maxXText.getText();
                         if (!"".equals(text)) {
                             try {
-                                SpatialMapConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                                TrackConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -241,7 +242,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                         final String text = minYText.getText();
                         if (!"".equals(text)) {
                             try {
-                                SpatialMapConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                                TrackConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -262,7 +263,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                         final String text = maxYText.getText();
                         if (!"".equals(text)) {
                             try {
-                                SpatialMapConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                                TrackConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -294,7 +295,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                 @SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
-                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
+                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
                 backgroundColorText.setEditable(false);
                 final Button backgroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 backgroundColorButton.addSelectionListener(new SelectionAdapter() {
@@ -309,7 +310,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                         }
                         backgroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         backgroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
-                        SpatialMapConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        TrackConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
                     }
                 });
             }
@@ -325,7 +326,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                 alphaSlide.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
-                        SpatialMapConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                        TrackConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
                     }
                 });
                 toolkit.createLabel(group, "");
@@ -337,7 +338,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                 @SuppressWarnings("boxing")
                 final Text foregroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B));
                 foregroundColorText
-                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B)));
+                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B)));
                 foregroundColorText.setEditable(false);
                 final Button foregroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 foregroundColorButton.addSelectionListener(new SelectionAdapter() {
@@ -352,7 +353,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                         }
                         foregroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         foregroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
-                        SpatialMapConfigurer.this.getDashboardPart().setForegroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        TrackConfigurer.this.getDashboardPart().setForegroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
                     }
                 });
             }
@@ -373,7 +374,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                             return;
                         }
                         imageText.setText(selectedFile);
-                        SpatialMapConfigurer.this.getDashboardPart().setImage(selectedFile);
+                        TrackConfigurer.this.getDashboardPart().setImage(selectedFile);
                     }
                 });
             }
@@ -392,7 +393,7 @@ public class SpatialMapConfigurer extends AbstractDashboardPartConfigurer<Spatia
                             return;
                         }
                         fontNameText.setText(selectedFont.getName());
-                        SpatialMapConfigurer.this.getDashboardPart().setFont(selectedFont.getName());
+                        TrackConfigurer.this.getDashboardPart().setFont(selectedFont.getName());
                     }
                 });
             }

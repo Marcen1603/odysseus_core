@@ -1,19 +1,19 @@
 /*******************************************************************************
- * Copyright (C) 2015  Christian Kuka <christian@kuka.cc>
+ * Copyright 2015 The Odysseus Team
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
 package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.spatial;
 
 import java.nio.file.Paths;
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  * @version $Id$
  *
  */
-public class SpatialMapDashboardPart extends AbstractCanvasDashboardPart {
+public class TrackDashboardPart extends AbstractCanvasDashboardPart {
     /** Background alpha. */
     private int backgroundAlpha = 255;
     /** Min Y value. */
@@ -62,19 +62,19 @@ public class SpatialMapDashboardPart extends AbstractCanvasDashboardPart {
      */
     @Override
     public void doPaint() {
-        if ((image == null) && (imagePath != null) && (Paths.get(imagePath).toFile().exists())) {
-            this.image = new Image(getCanvas().getDisplay(), imagePath);
+        if ((this.image == null) && (this.imagePath != null) && (Paths.get(this.imagePath).toFile().exists())) {
+            this.image = new Image(this.getCanvas().getDisplay(), this.imagePath);
         }
         if (this.isAutoadjust()) {
             this.adjust();
         }
         final RGB foreground = this.getForegroundColor();
         final RGB background = this.getBackgroundColor();
-        this.setAlpha(getBackgroundAlpha());
+        this.setAlpha(this.getBackgroundAlpha());
         this.fill(background);
         this.setAlpha(255);
-        if (image != null) {
-            getGC().drawImage(image, 0, 0, image.getBounds().width, image.getBounds().height, 0, 0, this.getClipping().width, this.getClipping().height);
+        if (this.image != null) {
+            this.getGC().drawImage(this.image, 0, 0, this.image.getBounds().width, this.image.getBounds().height, 0, 0, this.getClipping().width, this.getClipping().height);
         }
         final Iterator<IStreamObject<?>> iter = this.getObjects().iterator();
         IStreamObject<?> element = null;
@@ -82,11 +82,11 @@ public class SpatialMapDashboardPart extends AbstractCanvasDashboardPart {
         int i = 0;
         while (iter.hasNext()) {
             element = iter.next();
-            Coordinate cur = this.getCoordinate(element);
+            final Coordinate cur = this.getCoordinate(element);
             if (last != null) {
-                this.setAlpha(255 / this.getObjects().size() * i);
-                getGC().setLineWidth(3); 
-                drawLine(last, cur, foreground);
+                this.setAlpha((255 / this.getObjects().size()) * i);
+                this.getGC().setLineWidth(3);
+                this.drawLine(last, cur, foreground);
             }
             last = cur;
             i++;
@@ -294,14 +294,14 @@ public class SpatialMapDashboardPart extends AbstractCanvasDashboardPart {
      * @return the backgroundAlpha
      */
     public int getBackgroundAlpha() {
-        return backgroundAlpha;
+        return this.backgroundAlpha;
     }
 
     /**
      * @param backgroundAlpha
      *            the backgroundAlpha to set
      */
-    public void setBackgroundAlpha(int backgroundAlpha) {
+    public void setBackgroundAlpha(final int backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
     }
 
@@ -324,14 +324,14 @@ public class SpatialMapDashboardPart extends AbstractCanvasDashboardPart {
      * @return the image path
      */
     public String getImage() {
-        return imagePath;
+        return this.imagePath;
     }
 
     /**
      * @param image
      *            the image to set
      */
-    public void setImage(String image) {
+    public void setImage(final String image) {
         if (this.image != null) {
             this.image.dispose();
             this.image = null;
@@ -362,7 +362,7 @@ public class SpatialMapDashboardPart extends AbstractCanvasDashboardPart {
         shell.setSize(500, 500);
 
         shell.open();
-        final SpatialMapDashboardPart map = new SpatialMapDashboardPart();
+        final TrackDashboardPart map = new TrackDashboardPart();
         map.setImage("/home/ckuka/Pictures/Misc/BNX3.jpg");
         final Thread generator = new Thread() {
             /**
