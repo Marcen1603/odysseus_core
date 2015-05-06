@@ -91,7 +91,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 
 	private static final SDFDatatype MV = new SDFDatatype("MV");
 	public static final SDFDatatype LIST = new SDFDatatype("List",
-			SDFDatatype.KindOfDatatype.BASE, SDFDatatype.OBJECT);
+			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.OBJECT);
 
 	public static final SDFDatatype LIST_STRING = new SDFDatatype(
 			"List_String", SDFDatatype.KindOfDatatype.LIST, SDFDatatype.STRING);
