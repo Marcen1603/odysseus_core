@@ -18,7 +18,7 @@ abstract public class AbstractToTupleFunction extends AbstractFunction<Tuple<IMe
 	public Tuple<IMetaAttribute> getValue() {
 		Tuple<IMetaAttribute> ret = new Tuple<>(getArity(), false);
 		for (int i=0;i<getArity();i++){
-			ret.addAttributeValue(i, getInputValue(i));
+			ret.setAttribute(i, getInputValue(i));
 		}
 		return ret;
 	}
