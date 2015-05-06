@@ -115,9 +115,9 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	public <K> K getValue(int subtype, int index) {
 		switch (index) {
 		case 0:
-			return (K) start;
+			return (K) (Long) start.point;
 		case 1:
-			return (K) end;
+			return (K) (Long) end.point;
 		}
 		return null;
 	}

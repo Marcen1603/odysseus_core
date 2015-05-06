@@ -57,14 +57,14 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 			if(this.expression.getAllAttributes().get(i).getDatatype().getURI().equalsIgnoreCase("String") &&
 					vars.get(i).getAcceptedTypes().length == 1 ){ 
 				if(vars.get(i).getAcceptedTypes()[0].isNumeric()){
-					values[i]=Double.parseDouble((String)input.getAttribute(this.attributePositions[i]));
+					values[i]=Double.parseDouble((String)input.getAttribute(this.attributePositions[i].getE2()));
 				}
 				else{
-					values[i] = input.getAttribute(this.attributePositions[i]);
+					values[i] = input.getAttribute(this.attributePositions[i].getE2());
 				}
 			}
 			else{
-				values[i] = input.getAttribute(this.attributePositions[i]);
+				values[i] = input.getAttribute(this.attributePositions[i].getE2());
 			}
 		}
 		this.expression.bindAdditionalContent(input.getAdditionalContent());
@@ -77,7 +77,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 		Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			Tuple<?> r = fromRightChannel[i] ? right : left;
-			values[i] = r.getAttribute(this.attributePositions[i]);
+			values[i] = getValue(r,i);
 		}
 		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
         additionalContent.putAll(left.getAdditionalContent());

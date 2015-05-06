@@ -128,7 +128,7 @@ public abstract class AbstractCompareSink<T extends IStreamObject<? extends ITim
 			logger.debug("Received done...");
 			if (expected.size() > 0) {
 				stopOperation(true, StatusCode.ERROR_MISSING_DATA);
-				logger.debug(StatusCode.ERROR_MISSING_DATA.name() + ": Some expected data was not part of the processing. Expected output still contains the following objects (last " + MAX_OBJECTS + "):");
+				logger.debug(StatusCode.ERROR_MISSING_DATA.name() + ": Some expected data was not part of the processing. Expected output still contains "+expected.size()+" objects. Last " + MAX_OBJECTS + " are:");
 				logger.debug(expected.getSweepAreaAsString("\t", MAX_OBJECTS, true));
 
 			} else {

@@ -188,26 +188,37 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 
 	@Override
 	public boolean evaluate(Tuple<?> input) {
-		Object[] values ;
+		Object[] values;
 		try {
 			values = new Object[this.attributePositions.length];
 		} catch (NullPointerException e) {
 			if (attributePositions == null) {
 				throw new IllegalStateException("The predicate "
 						+ this.expression + " is not initialized!");
-			}else{
+			} else {
 				throw e;
 			}
-				
+
 		}
 
 		for (int i = 0; i < values.length; ++i) {
-			values[i] = input.getAttribute(this.attributePositions[i]);
+			values[i] = getValue(input, i);
 		}
 		this.expression.bindMetaAttribute(input.getMetadata());
 		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
+	}
+
+	protected Object getValue(Tuple<?> input, int i) {
+		Object value = null;
+		if (this.attributePositions[i].getE1() == -1) {
+			value = input.getAttribute(this.attributePositions[i]
+					.getE2());
+		}else{
+			value = input.getMetadata().getValue(attributePositions[i].getE1(), attributePositions[i].getE2());
+		}
+		return value;
 	}
 
 	@Override
@@ -216,7 +227,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		// TODO: IMetaAttribute
 		for (int i = 0; i < values.length; ++i) {
 			Tuple<?> r = fromRightChannel[i] ? right : left;
-			values[i] = r.getAttribute(this.attributePositions[i]);
+			values[i] = getValue(r,i);
 		}
 		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
 		additionalContent.putAll(left.getAdditionalContent());
@@ -234,7 +245,8 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 
 		for (int i = 0; i < neededAttributes.size(); ++i) {
 			if (!fromRightChannel[i]) {
-				values[i] = input.getAttribute(this.attributePositions[i]);
+				
+				values[i] = getValue(input,i);
 			} else {
 				values[i] = additional.getAttribute(neededAttributes.get(i)
 						.getURI());
@@ -673,48 +685,54 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		return expression.isAlwaysTrue();
 	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IPredicate<Tuple<?>> and(IPredicate<Tuple<?>> predicate) {
-        if (predicate instanceof RelationalPredicate) {
-            SDFExpression expr = ((RelationalPredicate) predicate).expression;
-            AndOperator and = new AndOperator();
-            and.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
-            RelationalPredicate andPredicate = new RelationalPredicate(new SDFExpression(and.toString(), MEP.getInstance()));
-            return andPredicate;
-        }
-        return super.and(predicate);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IPredicate<Tuple<?>> and(IPredicate<Tuple<?>> predicate) {
+		if (predicate instanceof RelationalPredicate) {
+			SDFExpression expr = ((RelationalPredicate) predicate).expression;
+			AndOperator and = new AndOperator();
+			and.setArguments(new IExpression<?>[] {
+					expression.getMEPExpression(), expr.getMEPExpression() });
+			RelationalPredicate andPredicate = new RelationalPredicate(
+					new SDFExpression(and.toString(), MEP.getInstance()));
+			return andPredicate;
+		}
+		return super.and(predicate);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IPredicate<Tuple<?>> or(IPredicate<Tuple<?>> predicate) {
-        if (predicate instanceof RelationalPredicate) {
-            SDFExpression expr = ((RelationalPredicate) predicate).expression;
-            OrOperator or = new OrOperator();
-            or.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
-            // We need to reparse the expression because of multiple instances
-            // of the same variable may exist
-            RelationalPredicate orPredicate = new RelationalPredicate(new SDFExpression(or.toString(), MEP.getInstance()));
-            return orPredicate;
-        }
-        return super.or(predicate);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IPredicate<Tuple<?>> or(IPredicate<Tuple<?>> predicate) {
+		if (predicate instanceof RelationalPredicate) {
+			SDFExpression expr = ((RelationalPredicate) predicate).expression;
+			OrOperator or = new OrOperator();
+			or.setArguments(new IExpression<?>[] {
+					expression.getMEPExpression(), expr.getMEPExpression() });
+			// We need to reparse the expression because of multiple instances
+			// of the same variable may exist
+			RelationalPredicate orPredicate = new RelationalPredicate(
+					new SDFExpression(or.toString(), MEP.getInstance()));
+			return orPredicate;
+		}
+		return super.or(predicate);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IPredicate<Tuple<?>> not() {
-        NotOperator not = new NotOperator();
-        not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
-        RelationalPredicate notPredicate = new RelationalPredicate(new SDFExpression(not, expression.getAttributeResolver(), MEP.getInstance()));
-        return notPredicate;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IPredicate<Tuple<?>> not() {
+		NotOperator not = new NotOperator();
+		not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
+		RelationalPredicate notPredicate = new RelationalPredicate(
+				new SDFExpression(not, expression.getAttributeResolver(),
+						MEP.getInstance()));
+		return notPredicate;
+	}
 
 	public static void main(String[] args) {
 		SDFAttribute a = new SDFAttribute("", "p_out", SDFDatatype.DOUBLE,

@@ -72,8 +72,8 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 	public Tuple<T> determineObjectForExpression(Tuple<T> object,
 			LinkedList<Tuple<T>> lastObjects, int i, int j) {
 		Tuple<T> obj = null;
-		if (lastObjects.size() > this.variables[i][j].objectPosToUse) {
-			obj = lastObjects.get(this.variables[i][j].objectPosToUse);
+		if (lastObjects.size() > this.variables[i][j].getObjectPosToUse()) {
+			obj = lastObjects.get(this.variables[i][j].getObjectPosToUse());
 		}
 		return obj;
 	}

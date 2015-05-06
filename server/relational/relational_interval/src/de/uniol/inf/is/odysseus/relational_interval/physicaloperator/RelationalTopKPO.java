@@ -243,7 +243,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		for (int j = 0; j < this.variables.length; ++j) {
 
 			if (object != null) {
-				values[j] = object.getAttribute(this.variables[j].pos);
+				values[j] = object.getAttribute(this.variables[j].getPos());
 				meta[j] = object.getMetadata();
 			}
 		}

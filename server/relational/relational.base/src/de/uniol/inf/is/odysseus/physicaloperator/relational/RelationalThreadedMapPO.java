@@ -126,11 +126,11 @@ public class RelationalThreadedMapPO<T extends IMetaAttribute> extends AbstractP
                 Object[] values = new Object[this.variables[i].length];
                 for (int j = 0; j < this.variables[i].length; ++j) {
                     Tuple<T> obj = null;
-                    if (lastObjectSize > this.variables[i][j].objectPosToUse) {
-                        obj = lastObjects.get(this.variables[i][j].objectPosToUse);
+                    if (lastObjectSize > this.variables[i][j].getObjectPosToUse()) {
+                        obj = lastObjects.get(this.variables[i][j].getObjectPosToUse());
                     }
                     if (obj != null) {
-                        values[j] = obj.getAttribute(this.variables[i][j].pos);
+                        values[j] = obj.getAttribute(this.variables[i][j].getPos());
                     }
                 }
 

@@ -114,7 +114,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         final Object[] values = new Object[this.attributePositions.length];
         final IMetaAttribute[] meta = new IMetaAttribute[this.attributePositions.length];
         for (int i = 0; i < values.length; ++i) {
-            Object attribute = input.getAttribute(this.attributePositions[i]);
+            Object attribute = input.getAttribute(this.attributePositions[i].getE2());
             if (attribute.getClass() == ProbabilisticDouble.class) {
                 final int index = ((ProbabilisticDouble) attribute).getDistribution();
                 attribute = input.getDistribution(index);
@@ -146,7 +146,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         final Object[] values = new Object[this.attributePositions.length];
         final IMetaAttribute[] meta = new IMetaAttribute[this.attributePositions.length];
         for (int i = 0; i < values.length; ++i) {
-            Object attribute = input.getAttribute(this.attributePositions[i]);
+            Object attribute = input.getAttribute(this.attributePositions[i].getE2());
             if (attribute.getClass() == ProbabilisticDouble.class) {
                 final int index = ((ProbabilisticDouble) attribute).getDistribution();
                 attribute = input.getDistribution(index);
@@ -210,7 +210,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         final IMetaAttribute[] meta = new IMetaAttribute[values.length];
         final int[] positions = new int[values.length];
         for (int i = 0; i < values.length; ++i) {
-            final int pos = this.fromRightChannel[i] ? left.getAttributes().length + this.attributePositions[i] : this.attributePositions[i];
+            final int pos = this.fromRightChannel[i] ? left.getAttributes().length + this.attributePositions[i].getE2() : this.attributePositions[i].getE2();
             Object attribute = newAttributes[pos];
             if (attribute.getClass() == ProbabilisticDouble.class) {
                 final int index = ((ProbabilisticDouble) attribute).getDistribution();
@@ -251,7 +251,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         final IMetaAttribute[] meta = new IMetaAttribute[values.length];
         final int[] positions = new int[values.length];
         for (int i = 0; i < values.length; ++i) {
-            final int pos = this.fromRightChannel[i] ? left.getAttributes().length + this.attributePositions[i] : this.attributePositions[i];
+            final int pos = this.fromRightChannel[i] ? left.getAttributes().length + this.attributePositions[i].getE2() : this.attributePositions[i].getE2();
             Object attribute = newAttributes[pos];
             if (attribute.getClass() == ProbabilisticDouble.class) {
                 final int index = ((ProbabilisticDouble) attribute).getDistribution();
@@ -321,7 +321,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 
         for (int i = 0; i < this.neededAttributes.size(); ++i) {
             if (!this.fromRightChannel[i]) {
-                values[i] = input.getAttribute(this.attributePositions[i]);
+                values[i] = input.getAttribute(this.attributePositions[i].getE2());
             }
             else {
                 values[i] = additional.getAttribute(this.neededAttributes.get(i).getURI());

@@ -143,16 +143,16 @@ final public class TimeIntervalLatencyDatarateSystemLoad extends
 
 	@Override
 	public String toString() {
-		return "( i = " + timeInterval.toString() + " | l = "
-				+ latency.toString() + " | datarate = " + datarate.toString()
-				+ " | sysload = )" + systemload + toString();
+		return "( i = " + timeInterval + " | l = "
+				+ latency + " | datarate = " + datarate
+				+ " | sysload = )" + systemload;
 	}
 
 	@Override
 	public String toString(PointInTime baseTime) {
 		return "( i = " + timeInterval.toString(baseTime) + " | l = "
-				+ latency.toString() + " | datarate = " + datarate.toString()
-				+ " | sysload = )" + systemload + toString();
+				+ latency + " | datarate = " + datarate
+				+ " | sysload = )" + systemload;
 	}
 
 	// ------------------------------------------------------------------------------

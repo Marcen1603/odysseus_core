@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -89,7 +90,17 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	}
 
 	public VarHelper initAttribute(SDFSchema schema, SDFAttribute curAttribute) {
-		return new VarHelper(schema.indexOf(curAttribute), 0);
+		int index = schema.indexOf(curAttribute);
+		// Attribute is part of payload
+		if (index >= 0) {
+			return new VarHelper(index, 0);
+		} else { // Attribute is (potentially) part of meta data;
+			Pair<Integer, Integer> pos = schema.indexOfMetaAttribute(curAttribute);
+			if (pos != null){
+				return new VarHelper(pos.getE1(), pos.getE2(), 0);
+			}
+		}
+		throw new RuntimeException("Cannot find attribute "+curAttribute+" in input stream!");
 	}
 
 	@Override
@@ -125,7 +136,11 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 					Tuple<T> obj = determineObjectForExpression(object,
 							preProcessResult, i, j);
 					if (obj != null) {
-						values[j] = obj.getAttribute(this.variables[i][j].pos);
+						if (this.variables[i][j].getSchema() == -1){
+							values[j] = obj.getAttribute(this.variables[i][j].getPos());
+						}else{
+							values[j] = obj.getMetadata().getValue(variables[i][j].getSchema(), variables[i][j].getPos());
+						}
 						meta[j] = obj.getMetadata();
 					}
 				}

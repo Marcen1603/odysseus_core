@@ -12,6 +12,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
@@ -43,9 +44,9 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 
     protected final SDFExpression expression;
 
-    // stores which attributes are needed at which position for
+    // stores which attributes are needed from which input at which position for
     // variable bindings
-    protected int[] attributePositions;
+    protected Pair<Integer,Integer>[] attributePositions;
 
     protected final List<SDFAttribute> neededAttributes;
 
@@ -67,7 +68,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
     }
 
     public AbstractRelationalPredicate(AbstractRelationalPredicate<T> predicate) {
-        this.attributePositions = predicate.attributePositions == null ? null : (int[]) predicate.attributePositions.clone();
+        this.attributePositions = predicate.attributePositions == null ? null : (Pair<Integer,Integer>[]) predicate.attributePositions.clone();
         this.fromRightChannel = predicate.fromRightChannel == null ? null : (boolean[]) predicate.fromRightChannel.clone();
         this.expression = predicate.expression == null ? null : predicate.expression.clone();
         this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(predicate.replacementMap);
@@ -106,13 +107,14 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
     	
     }
     
-    public void init(SDFSchema leftSchema, SDFSchema rightSchema, boolean checkRightSchema) {
+    @SuppressWarnings("unchecked")
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema, boolean checkRightSchema) {
         logger.debug("Init ("+this+"): Left "+leftSchema+" Right "+rightSchema);
         this.leftSchema = leftSchema;
         this.rightSchema = rightSchema;
 
         List<SDFAttribute> neededAttributes = expression.getAllAttributes();
-        this.attributePositions = new int[neededAttributes.size()];
+        this.attributePositions = new Pair[neededAttributes.size()];
         this.fromRightChannel = new boolean[neededAttributes.size()];
 
         int i = 0;
@@ -124,8 +126,11 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
             	 throw new IllegalArgumentException("Attribute "+curAttr.getURI()+" not found in "+leftSchema);
             }
             int pos = leftSchema.indexOf(curAttribute);
+            Pair<Integer, Integer> metaPos = null;
             if (pos == -1) {
-                if (rightSchema == null && checkRightSchema) {
+            	metaPos = leftSchema.indexOfMetaAttribute(curAttribute);
+            	
+                if (metaPos == null && rightSchema == null && checkRightSchema) {
                     throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + leftSchema + " and rightSchema is null!");
                 }
                 if (rightSchema != null && checkRightSchema) {
@@ -136,12 +141,17 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
                 	curAttribute = rightSchema.findAttribute(replOfCurAttr.getURI());
                     pos = rightSchema.indexOf(curAttribute);
                     if (pos == -1) {
+                    	metaPos = rightSchema.indexOfMetaAttribute(curAttribute);
                         throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + rightSchema);
                     }
                 }
                 this.fromRightChannel[i] = true;
             }
-            this.attributePositions[i++] = pos;
+            if (pos != -1){
+            	this.attributePositions[i++] = new Pair<Integer, Integer>(-1,pos);
+            }else{
+            	this.attributePositions[i++] = metaPos;
+            }
         }
     }
 
