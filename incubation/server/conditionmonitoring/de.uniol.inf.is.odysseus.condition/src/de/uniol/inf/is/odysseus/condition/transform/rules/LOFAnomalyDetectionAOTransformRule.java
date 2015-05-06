@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.condition.transform.rules;
 import de.uniol.inf.is.odysseus.condition.logicaloperator.LOFAnomalyDetectionAO;
 import de.uniol.inf.is.odysseus.condition.physicaloperator.LOFAnomalyDetectionPO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -13,10 +14,11 @@ public class LOFAnomalyDetectionAOTransformRule extends AbstractTransformationRu
 
 	@Override
 	public void execute(LOFAnomalyDetectionAO operator, TransformationConfiguration config) throws RuleException {
-		LOFAnomalyDetectionPO<Tuple<?>> po = new LOFAnomalyDetectionPO<Tuple<?>>(operator);
+		LOFAnomalyDetectionPO<Tuple<ITimeInterval>, ITimeInterval> po = new LOFAnomalyDetectionPO<Tuple<ITimeInterval>, ITimeInterval>(
+				operator);
 		defaultExecute(operator, po, config, true, true);
 	}
-	
+
 	@Override
 	public String getName() {
 		return "LOFAnomalyDetectionAO --> LOFAnomalyDetectionPO";

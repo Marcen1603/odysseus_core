@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LOFANOMALYDETECTION", doc = "Searches for anomalies on the base of the local outlier factor algorithm.", category = { LogicalOperatorCategory.PROCESSING })
@@ -25,20 +24,17 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	// Number of neighbors
 	private int k;
 	private double lofAnomalyValue;
-	private long maxTuples;
 	private String nameOfValue;
 
 	public LOFAnomalyDetectionAO() {
 		this.k = 10;
 		this.lofAnomalyValue = 1.5;
-		this.maxTuples = 5000;
 		this.nameOfValue = "value";
 	}
 
 	public LOFAnomalyDetectionAO(LOFAnomalyDetectionAO ao) {
 		this.k = ao.getNumberOfNeighbors();
 		this.lofAnomalyValue = ao.getLOFAnomalyValue();
-		this.maxTuples = ao.getMaxTuples();
 		this.nameOfValue = ao.getNameOfValue();
 	}
 
@@ -52,11 +48,6 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.lofAnomalyValue = value;
 	}
 	
-	@Parameter(type = LongParameter.class, name = "MAXTUPLES", optional = true, doc = "The maximum number of values hold in the LOF algorithms list")
-	public void setMaxTuples(long maxTuples) {
-		this.maxTuples = maxTuples;
-	}
-	
 	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = true, doc = "Name of the attribute which should be analysed")
 	public void setNameOfValue(String nameOfValue) {
 		this.nameOfValue = nameOfValue;
@@ -68,10 +59,6 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 
 	public double getLOFAnomalyValue() {
 		return this.lofAnomalyValue;
-	}
-
-	public long getMaxTuples() {
-		return this.maxTuples;
 	}
 	
 	public String getNameOfValue() {
