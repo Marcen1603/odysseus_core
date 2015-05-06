@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.SerializablePair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -243,7 +244,11 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		for (int j = 0; j < this.variables.length; ++j) {
 
 			if (object != null) {
-				values[j] = object.getAttribute(this.variables[j].getPos());
+				if (variables[j].getSchema() == -1){
+					values[j] = object.getAttribute(this.variables[j].getPos());
+				}else{
+					values[j] = object.getMetadata().getValue(variables[j].getSchema(),variables[j].getPos());
+				}
 				meta[j] = object.getMetadata();
 			}
 		}
@@ -270,6 +275,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	protected void initScoringFunction(SDFSchema schema) {
 		List<SDFAttribute> neededAttributes = scoringFunction
 				.getAllAttributes();
+		
 		this.variables = new VarHelper[neededAttributes.size()];
 		int j = 0;
 		for (SDFAttribute curAttribute : neededAttributes) {
@@ -278,7 +284,17 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	}
 
 	public VarHelper initAttribute(SDFSchema schema, SDFAttribute curAttribute) {
-		return new VarHelper(schema.indexOf(curAttribute), 0);
+		int index = schema.indexOf(curAttribute);
+		// Attribute is part of payload
+		if (index >= 0) {
+			return new VarHelper(index, 0);
+		} else { // Attribute is (potentially) part of meta data;
+			Pair<Integer, Integer> pos = schema.indexOfMetaAttribute(curAttribute);
+			if (pos != null){
+				return new VarHelper(pos.getE1(), pos.getE2(), 0);
+			}
+		}
+		throw new RuntimeException("Cannot find attribute "+curAttribute+" in input stream!");
 	}
 
 	@Override
