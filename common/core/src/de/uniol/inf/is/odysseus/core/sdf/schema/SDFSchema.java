@@ -164,6 +164,12 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		this(uri, type, null, attributes1, null, false);
 	}
 
+	SDFSchema(String uri, Class<? extends IStreamObject> type,
+			Collection<SDFAttribute> attributes1, SDFSchema schema) {
+		this(uri, type, schema.constraints, attributes1, schema.metaschema, schema.outOfOrder);
+	}
+
+	
 	SDFSchema(String uri, SDFSchema schema, Collection<SDFAttribute> attributes1) {
 		this(uri, schema.type, schema.constraints, attributes1,
 				schema.metaschema, schema.outOfOrder);

@@ -87,7 +87,16 @@ public class SDFSchemaFactory {
 				(Class<? extends IStreamObject<?>>) Tuple.class, attributes);
 		return out;
 	}
+	
+	static public SDFSchema createNewSchema(String uri, Class<? extends IMetaAttribute> type,
+			Collection<SDFAttribute> attributes, SDFSchema oldSchema) {
+		@SuppressWarnings("unchecked")
+		SDFSchema out = new SDFSchema(uri,
+				(Class<? extends IStreamObject<?>>) type, attributes, oldSchema);
+		return out;
+	}
 
+	
 	/**
 	 * This method can be used to create a new SDFSchema object (with tuples as
 	 * types). <b>This method should only be used, if there is no input schema
