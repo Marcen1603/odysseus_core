@@ -51,7 +51,7 @@ public class TimerSource extends AbstractAccessAO {
 			return -1;
 	}
 
-	@Parameter(name = TimerTransportHandler.TIMEFROMSTART, type = BooleanParameter.class, optional = true, doc = "Start from Jan 1th 1970. If set to false, start from 0.")
+	@Parameter(name = TimerTransportHandler.TIMEFROMSTART, type = BooleanParameter.class, optional = true, doc = "Start from 0. If set to false, start from Jan 1th 1970.")
 	public void setTimeFromStart2(boolean time){
 		addOption(TimerTransportHandler.TIMEFROMSTART,time+"");
 	}
