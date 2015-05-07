@@ -5,7 +5,7 @@ public class ListMaxElementFunction1 extends AbstractListMinMaxElementFunction1 
 	private static final long serialVersionUID = 3875344825004654777L;
 
 	public ListMaxElementFunction1(){
-		super("max");
+		super("max_");
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
