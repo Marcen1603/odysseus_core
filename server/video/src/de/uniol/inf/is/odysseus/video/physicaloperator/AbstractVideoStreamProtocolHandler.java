@@ -78,14 +78,14 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 	
 	@Override public void open() throws UnknownHostException, IOException 
 	{
-		if (getAccessPattern().equals(IAccessPattern.PUSH) || getAccessPattern().equals(IAccessPattern.ROBUST_PUSH))
-			throw new UnsupportedOperationException(getName() + " cannot be run in Push mode!");		
-		
 		recorder = null;
 		grabber = null;
 				
 		if (getDirection().equals(ITransportDirection.IN))
 		{
+			if (getAccessPattern().equals(IAccessPattern.PUSH) || getAccessPattern().equals(IAccessPattern.ROBUST_PUSH))
+				throw new UnsupportedOperationException(getName() + " cannot be run in Push mode!");			
+			
 			switch (timeStampMode)
 			{
 			case start:
@@ -304,8 +304,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 			return false;
 		
 		AbstractVideoStreamProtocolHandler other = (AbstractVideoStreamProtocolHandler) o;
-		if (!streamUrl.equals(other.streamUrl) ||
-			frameRate != other.frameRate)
+		if (!streamUrl.equals(other.streamUrl) || frameRate != other.frameRate)
 			return false;
 		
 		return true;
