@@ -5,6 +5,8 @@ package de.uniol.inf.is.odysseus.probabilistic.functions;
 
 import java.util.Objects;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -16,6 +18,8 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class TimelinessFunction extends AbstractFunction<Double> {
 
+	private static final InfoService INFO = InfoServiceFactory
+			.getInfoService(TimelinessFunction.class);
     /**
      * 
      */
@@ -23,6 +27,8 @@ public class TimelinessFunction extends AbstractFunction<Double> {
 
     public TimelinessFunction() {
         super("timeliness", 1, TimelinessFunction.ACC_TYPES, SDFDatatype.DOUBLE, false);
+        INFO.warning("timeliness is deprecated.");
+
     }
 
     /*

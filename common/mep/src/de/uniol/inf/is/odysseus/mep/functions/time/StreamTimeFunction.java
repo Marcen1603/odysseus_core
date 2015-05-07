@@ -4,6 +4,8 @@
 package de.uniol.inf.is.odysseus.mep.functions.time;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -17,6 +19,9 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class StreamTimeFunction extends AbstractFunction<Long> implements IHasAlias{
 
+	private static final InfoService INFO = InfoServiceFactory
+			.getInfoService(StreamTimeFunction.class);
+	
     private static final long serialVersionUID = -9167197876743665507L;
 
     public StreamTimeFunction() {
@@ -25,6 +30,7 @@ public class StreamTimeFunction extends AbstractFunction<Long> implements IHasAl
 
     protected StreamTimeFunction(String name) {
         super(name, 0, new SDFDatatype[0][0], SDFDatatype.LONG, false);
+        INFO.warning("Streamtime is deprecated. Use attribute TimeInterval.start instead");
     }
 
     @Override
