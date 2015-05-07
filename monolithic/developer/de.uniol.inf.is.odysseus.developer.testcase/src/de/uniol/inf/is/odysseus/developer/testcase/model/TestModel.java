@@ -167,6 +167,10 @@ public class TestModel implements Serializable {
 
     public void addAttribute(final int port, /* @NonNull */final String name, final AttributeParameter parameter) {
         Objects.requireNonNull(name);
+        if (port < 0) {
+            return;
+        }
+
         while (this.schema.size() <= port) {
             this.schema.add(new LinkedHashMap<String, AttributeParameter>());
         }
@@ -175,6 +179,10 @@ public class TestModel implements Serializable {
 
     public void removeAttribute(final int port, /* @NonNull */final String name) {
         Objects.requireNonNull(name);
+        if (port < 0) {
+            return;
+        }
+
         while (this.schema.size() <= port) {
             this.schema.add(new LinkedHashMap<String, AttributeParameter>());
         }
@@ -187,6 +195,10 @@ public class TestModel implements Serializable {
                                                                                 */final String newName) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(newName);
+        if (port < 0) {
+            return;
+        }
+
         while (this.schema.size() <= port) {
             this.schema.add(new LinkedHashMap<String, AttributeParameter>());
         }
@@ -207,6 +219,10 @@ public class TestModel implements Serializable {
      * @return the schema
      */
     public Map<String, AttributeParameter> getSchema(final int port) {
+        if (port < 0) {
+            return null;
+        }
+
         if (this.schema.size() <= port) {
             return null;
         }
@@ -258,6 +274,9 @@ public class TestModel implements Serializable {
     }
 
     public void addWindow(final int port, final Integer size) {
+        if (port < 0) {
+            return;
+        }
         while (this.windows.size() <= port) {
             this.windows.add(0);
         }
@@ -265,6 +284,9 @@ public class TestModel implements Serializable {
     }
 
     public void removeWindow(final int port) {
+        if (port < 0) {
+            return;
+        }
         while (this.windows.size() <= port) {
             this.windows.add(0);
         }
@@ -272,7 +294,7 @@ public class TestModel implements Serializable {
     }
 
     public Integer getWindow(int port) {
-        while (this.windows.size() <= port) {
+        if ((port < 0) || (this.windows.size() <= port) || (this.windows.get(port) == null)) {
             return 0;
         }
         return this.windows.get(port);
