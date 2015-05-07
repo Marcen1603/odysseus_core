@@ -33,11 +33,13 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 	private String nameOfValue;
 	private List<SDFAttribute> groupingAttributes;
 	private boolean fastGrouping;
+	private boolean exactCalculation;
 
 	public DeviationAnomalyDetectionAO() {
 		interval = 3.0;
 		trainingMode = TrainingMode.ONLINE;
 		nameOfValue = "value";
+		exactCalculation = true;
 	}
 
 	public DeviationAnomalyDetectionAO(DeviationAnomalyDetectionAO ao) {
@@ -51,6 +53,7 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 			this.groupingAttributes = new ArrayList<SDFAttribute>(ao.groupingAttributes);
 		}
 		this.fastGrouping = ao.isFastGrouping();
+		this.exactCalculation = ao.getExactCalculation();
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "interval", optional = true, doc = "Defines, how many standard deviations are allowed for a tuple to be different from the mean. 3.0 is the default value. Choose a smaller value to get more anomalies.")
@@ -92,6 +95,11 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 	public void setFastGrouping(boolean fastGrouping) {
 		this.fastGrouping = fastGrouping;
 	}
+	
+	@Parameter(name = "exactCalculation", type = BooleanParameter.class, optional = true, doc = "If set to true, it uses exact calculation for window mode (recalc values every new tuple). This may be slower. Unexact calculation may be faster, but unaccurate, especially if the mean changes dramatically over time.")
+	public void setExactCalculation(boolean exactCalculation) {
+		this.exactCalculation = exactCalculation;
+	}
 
 	public double getInterval() {
 		return this.interval;
@@ -123,6 +131,10 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 
 	public boolean isFastGrouping() {
 		return fastGrouping;
+	}
+
+	public boolean getExactCalculation() {
+		return exactCalculation;
 	}
 
 	@Override
