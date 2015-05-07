@@ -48,8 +48,10 @@ public class RelationalTupleAggregatePO extends AbstractPipe<Tuple<? extends ITi
 	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// TODO: How to handle punctuations
-		//	sendPunctuation(punctuation);
+		Iterator<Tuple<? extends ITimeInterval>> elems = sa.extractElementsBefore(punctuation.getTime());
+		retList.clear();
+		method.process(elems, pos, retList);
+		transfer(retList);
 	}
 	
 	@Override
