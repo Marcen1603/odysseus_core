@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.video.physicaloperator;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameRecorder;
@@ -23,15 +26,20 @@ import de.uniol.inf.is.odysseus.imagejcv.common.datatype.ImageJCV;
 public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>> 
 {
 	public static final String NAME = "VideoStream";
+	public static final String PREFIX = "ffmpeg:";
+	
 	static final Runtime RUNTIME = Runtime.getRuntime();
 
 	Logger LOG = LoggerFactory.getLogger(VideoStreamProtocolHandler.class);
 	private final Object processLock = new Object();
 
 	private FFmpegFrameRecorder	recorder;
-	private double				frameRate;
-		
-	private String				streamUrl;
+	private String streamUrl;
+	private double frameRate;
+	private int bitRate;
+	private String format;
+	
+	private Map<String, String> videoOptions = new HashMap<>();
 
 	public VideoStreamProtocolHandler() 
 	{
@@ -44,8 +52,16 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 		
 		options.checkRequired("streamurl");
 		
-		frameRate = options.getDouble("framerate", 30.0);
+		frameRate = options.getDouble("framerate", 0.0);
 		streamUrl = options.get("streamurl");
+		bitRate = options.getInt("bitRate", 0);
+		format = options.get("format", "h264");
+		
+		for (String key : options.getUnreadOptions())
+		{
+			if (key.startsWith(PREFIX))
+				videoOptions.put(key.substring(PREFIX.length()), options.get(key));
+		}
 	}
 	
 	@Override
@@ -56,28 +72,30 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 	
 	@Override public void open() throws UnknownHostException, IOException 
 	{
+		System.out.println("VideoStreamTransportHandler.open enter");
 		recorder = null;
+		System.out.println("VideoStreamTransportHandler.open leave");
 	}
 	
 	@Override
 	public void close() throws IOException 
 	{
-		try 
-		{
-			synchronized (processLock)
-			{
-				recorder.stop();
-				recorder.release();
+		System.out.println("VideoStreamTransportHandler.close enter");
+		
+		if (recorder != null) {
+			try {
+				synchronized (processLock) {
+					recorder.stop();
+					recorder.release();
+				}
+			} catch (FrameRecorder.Exception e) {
+				throw new IOException(e);
+			} finally {
+				recorder = null;
 			}
-		} 
-		catch (FrameRecorder.Exception e) 
-		{
-			throw new IOException(e);
 		}
-		finally
-		{
-			recorder = null;
-		}
+		
+		System.out.println("VideoStreamTransportHandler.close leave");
 	}	
 	
 	private void setUpStream(ImageJCV image) throws FrameRecorder.Exception
@@ -85,14 +103,21 @@ public class VideoStreamProtocolHandler extends AbstractProtocolHandler<Tuple<?>
 		int w = image.getWidth();
 		int h = image.getHeight();
 		System.out.println("Start streaming server @ " + streamUrl + ", w = " + w + ", h = " + h);
+
+//		recorder.setPixelFormat(avutil.PIX_FMT_YUV420P16);
+//		recorder.setVideoCodec(13);		
+//		recorder.setVideoOption("preset", "ultrafast");
+//		recorder.setVideoOption("tune", "zerolatency");
 		
 		recorder = new FFmpegFrameRecorder(streamUrl, w, h);
-//		recorder.setVideoBitrate(716800);
-//		recorder.setPixelFormat(avutil.PIX_FMT_YUV420P16);
-//		recorder.setVideoCodec(13);
-//		
-		recorder.setFrameRate(frameRate);
-		recorder.setFormat("h264");
+		recorder.setFormat(format);
+		
+		if (frameRate != 0.0) recorder.setFrameRate(frameRate);
+		if (bitRate != 0) recorder.setVideoBitrate(bitRate);
+		
+		for (Entry<String, String> entry : videoOptions.entrySet())
+			recorder.setVideoOption(entry.getKey(), entry.getValue());
+		
 		recorder.start();
 			
         System.out.println("Streaming server is running");
