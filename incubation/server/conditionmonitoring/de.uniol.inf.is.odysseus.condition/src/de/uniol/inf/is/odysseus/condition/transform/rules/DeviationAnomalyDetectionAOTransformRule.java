@@ -1,9 +1,16 @@
 package de.uniol.inf.is.odysseus.condition.transform.rules;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationAnomalyDetectionAO;
 import de.uniol.inf.is.odysseus.condition.physicaloperator.DeviationAnomalyDetectionPO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -13,7 +20,19 @@ public class DeviationAnomalyDetectionAOTransformRule extends AbstractTransforma
 
 	@Override
 	public void execute(DeviationAnomalyDetectionAO operator, TransformationConfiguration config) throws RuleException {
-		DeviationAnomalyDetectionPO<Tuple<?>> deviatoionDetection = new DeviationAnomalyDetectionPO<Tuple<?>>(operator);
+
+		// Defining the group processor
+		IGroupProcessor<Tuple<ITimeInterval>, Tuple<ITimeInterval>> groupProcessor;
+		List<SDFAttribute> grouping = operator.getGroupingAttributes();
+		if (grouping != null) {
+			groupProcessor = new RelationalGroupProcessor<>(operator.getInputSchema(0), operator.getOutputSchema(),
+					grouping, null, operator.isFastGrouping());
+		} else {
+			groupProcessor = new NoGroupProcessor<Tuple<ITimeInterval>, Tuple<ITimeInterval>>();
+		}
+
+		DeviationAnomalyDetectionPO<Tuple<ITimeInterval>, ITimeInterval> deviatoionDetection = new DeviationAnomalyDetectionPO<Tuple<ITimeInterval>, ITimeInterval>(
+				operator, groupProcessor);
 		defaultExecute(operator, deviatoionDetection, config, true, true);
 	}
 

@@ -60,7 +60,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	}
 
 	/**
-	 * Removes the old values from the operator internal storge due to the
+	 * Removes the old values from the operator internal storage due to the
 	 * timestamps set by the window
 	 * 
 	 * @param start
