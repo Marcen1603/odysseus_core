@@ -7,7 +7,7 @@
 <PARAMETER IMemento.internal.id="ROUNDINGFACTOR" VALUE="100"/>
 <PARAMETER IMemento.internal.id="ATTRIBUTE" VALUE="&apos;x&apos;"/>
 </PARAMETERS>
-<SCHEMA PORT="0">
+<SCHEMA PORT="0" WINDOW="0">
 <ATTRIBUTE ACTIVE="false" IMemento.internal.id="x" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
 <ATTRIBUTE ACTIVE="false" IMemento.internal.id="y" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
 <ATTRIBUTE ACTIVE="false" IMemento.internal.id="z" MAX="1.7976931348623157E308" MIN="-4.9E-324" NULL="false" TYPE="Double"/>
