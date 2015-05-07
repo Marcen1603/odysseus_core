@@ -47,6 +47,7 @@ public class SDFExpression implements Serializable, IClone {
 	private Map<String, Serializable> additionalContent;
 
 	/** The meta attributes */
+	@Deprecated
 	private IMetaAttribute[] metaAttribute;
 	private int varCounter;
 	private IExpression<?> expression;
@@ -315,6 +316,7 @@ public class SDFExpression implements Serializable, IClone {
 	 * @return The additional content under that name or <code>null</code> if no
 	 *         additional content under that name exists
 	 */
+	@Deprecated
 	public Serializable getAdditionalContent(String name) {
 		return this.additionalContent.get(name);
 	}
@@ -350,12 +352,13 @@ public class SDFExpression implements Serializable, IClone {
 
 		for (int i = 0; i < values.length; ++i) {
 			Variable variable = variableArrayList.get(i);
-			variable.bind(values[i], null, -1);
+			variable.bind(values[i],  -1);
 		}
 
 		setValue(expression.getValue());
 	}
 
+	@Deprecated
 	public void bindVariables(IMetaAttribute[] metadata, Object... values) {
 		if (expression instanceof Constant) {
 			return;
@@ -374,6 +377,7 @@ public class SDFExpression implements Serializable, IClone {
 		setValue(expression.getValue());
 	}
 
+	@Deprecated
 	public void bindVariables(int[] positions, IMetaAttribute[] metadata,
 			Object... values) {
 		if (expression instanceof Constant) {
@@ -392,6 +396,24 @@ public class SDFExpression implements Serializable, IClone {
 
 		setValue(expression.getValue());
 	}
+	
+	public void bindVariables(int[] positions, 	Object... values) {
+		if (expression instanceof Constant) {
+			return;
+		}
+
+		if (values.length != variableArrayList.size()) {
+			throw new IllegalArgumentException(
+					"illegal variable bindings in expression");
+		}
+
+		for (int i = 0; i < values.length; ++i) {
+			Variable variable = variableArrayList.get(i);
+			variable.bind(values[i], positions[i]);
+		}
+
+		setValue(expression.getValue());
+	}
 
 	/**
 	 * Bind the additional content to this expression
@@ -399,6 +421,7 @@ public class SDFExpression implements Serializable, IClone {
 	 * @param additionalContent
 	 *            The additional content to bind
 	 */
+	@Deprecated
 	public void bindAdditionalContent(
 			Map<String, Serializable> additionalContent) {
 		if ((getMEPExpression() instanceof Constant)
@@ -416,6 +439,7 @@ public class SDFExpression implements Serializable, IClone {
 	 * @param metaAttribute
 	 *            The meta attributes to bind
 	 */
+	@Deprecated
 	public void bindMetaAttribute(IMetaAttribute metaAttribute) {
 		if ((getMEPExpression() instanceof Constant)
 				|| (getMEPExpression() instanceof Variable)) {

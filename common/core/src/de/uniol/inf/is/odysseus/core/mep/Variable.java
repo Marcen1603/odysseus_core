@@ -43,6 +43,7 @@ public class Variable implements IExpression<Object> {
 	/**
 	 * The metadata for this object, could be null
 	 */
+	@Deprecated
 	private IMetaAttribute metadata;
 	/** The position in the schema. */
 	private int position;
@@ -101,17 +102,25 @@ public class Variable implements IExpression<Object> {
 	 * @param value
 	 *            The value to bind
 	 */
+	@Deprecated
 	public void bind(Object value, IMetaAttribute metadata, int position) {
 		this.value = value;
 		this.metadata = metadata;
 		this.position = position;
 	}
 
+	public void bind(Object value, int position) {
+		this.value = value;
+		this.position = position;
+	}
+
+	
 	@Override
 	public Object getValue() {
 		return this.value;
 	}
 
+	@Deprecated
 	public IMetaAttribute getMetadata() {
 		return metadata;
 	}

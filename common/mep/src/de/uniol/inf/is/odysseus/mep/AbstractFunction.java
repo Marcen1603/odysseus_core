@@ -41,13 +41,14 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	private static final long serialVersionUID = 3805396798229438499L;
 	private IExpression<?>[] arguments;
+	@Deprecated
 	private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+	@Deprecated
 	private IMetaAttribute[] metaAttribute = new IMetaAttribute[1];
 	private TimeUnit baseTimeUnit = TimeUnit.MILLISECONDS;
 	private final String symbol;
 	private final int arity;
 	private final SDFDatatype[][] acceptedTypes;
-	private final SDFDatatype[] acceptedTypes2;
 	private final SDFDatatype returnType;
 	private final boolean optimizeConstantParameter;
 	private final int timeComplexity;
@@ -66,26 +67,17 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	public AbstractFunction(String symbol, int arity,
 			SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
 			boolean optimizeConstantParameter) {
-		this(symbol, arity, acceptedTypes, null, returnType,
+		this(symbol, arity, acceptedTypes, returnType,
 				optimizeConstantParameter, 9, 9);
 	}
 
-	public AbstractFunction(String symbol, int arity,
-			SDFDatatype[][] acceptedTypes, SDFDatatype returnType,
-			boolean optimizeConstantParameter, int timeComplexity,
-			int spaceComplexity) {
-		this(symbol, arity, acceptedTypes, null, returnType,
-				optimizeConstantParameter, timeComplexity, spaceComplexity);
-	}
-
 	private AbstractFunction(String symbol, int arity,
-			SDFDatatype[][] acceptedTypes, SDFDatatype[] acceptedTypes2,
+			SDFDatatype[][] acceptedTypes, 
 			SDFDatatype returnType, boolean optimizeConstantParameter,
 			int timeComplexity, int spaceComplexity) {
 		this.symbol = symbol;
 		this.arity = arity;
 		this.optimizeConstantParameter = optimizeConstantParameter;
-		this.acceptedTypes2 = acceptedTypes2;
 		this.timeComplexity = timeComplexity;
 		this.spaceComplexity = spaceComplexity;
 
@@ -129,11 +121,7 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 			throw new IllegalArgumentException(symbol + " has only " + arity
 					+ " argument(s).");
 		}
-		if (acceptedTypes2 != null) {
-			return acceptedTypes2;
-		} else {
-			return acceptedTypes[argPos];
-		}
+		return acceptedTypes[argPos];
 	}
 
 	@Override
@@ -217,22 +205,24 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	}
 
 	@Override
-	public Map<String, Serializable> getAdditionalContents() {
+	final public Map<String, Serializable> getAdditionalContents() {
 		return additionalContent;
 	}
 
 	@Override
-	public Serializable getAdditionalContent(String name) {
+	final public Serializable getAdditionalContent(String name) {
 		return additionalContent.get(name);
 	}
 
 	@Override
-	public IMetaAttribute[] getMetaAttributeContainer() {
+	@Deprecated
+	final public IMetaAttribute[] getMetaAttributeContainer() {
 		return metaAttribute;
 	}
 
 	@Override
-	public IMetaAttribute getMetaAttribute() {
+	@Deprecated
+	final public IMetaAttribute getMetaAttribute() {
 		return metaAttribute[0];
 	}
 
@@ -285,14 +275,14 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	@Override
 	public void propagateMetadataReference(final IMetaAttribute[] metaAttribute) {
-		this.metaAttribute = metaAttribute;
-		final IExpression<?>[] arguments = this.getArguments();
-		for (final IExpression<?> arg : arguments) {
-			if (arg instanceof AbstractFunction) {
-				((AbstractFunction<?>) arg)
-						.propagateMetadataReference(metaAttribute);
-			}
-		}
+//		this.metaAttribute = metaAttribute;
+//		final IExpression<?>[] arguments = this.getArguments();
+//		for (final IExpression<?> arg : arguments) {
+//			if (arg instanceof AbstractFunction) {
+//				((AbstractFunction<?>) arg)
+//						.propagateMetadataReference(metaAttribute);
+//			}
+//		}
 	}
 
 	@Override

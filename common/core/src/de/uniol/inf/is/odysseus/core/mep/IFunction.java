@@ -63,6 +63,7 @@ public interface IFunction<T> extends IExpression<T> {
      * Get the additional content if present
      * @return The additional content
      */
+	@Deprecated
     public Map<String, Serializable> getAdditionalContents();
     
     /**
@@ -70,14 +71,17 @@ public interface IFunction<T> extends IExpression<T> {
      * @param name The name (key) of the additional content
      * @return The additional content at the given name
      */
+    @Deprecated
     public Serializable getAdditionalContent(String name);
     
     /**
      * Get the meta attribute of the tuple if present
      * @return The meta attribute
      */
+    @Deprecated
     public IMetaAttribute getMetaAttribute();
-	public IMetaAttribute[] getMetaAttributeContainer();
+	@Deprecated
+    public IMetaAttribute[] getMetaAttributeContainer();
 	
 	/**
 	 * Get the sessions assigned to this function
@@ -145,11 +149,13 @@ public interface IFunction<T> extends IExpression<T> {
     /**
      * @param additionalContents
      */
+	@Deprecated
     void propagateAdditionalContentReference(Map<String, Serializable> additionalContents);
 
     /**
      * @param metaAttributeContainer
      */
+    @Deprecated
     void propagateMetadataReference(IMetaAttribute[] metaAttributeContainer);
 
 	void propagateSessionReference(List<ISession> sessions);
