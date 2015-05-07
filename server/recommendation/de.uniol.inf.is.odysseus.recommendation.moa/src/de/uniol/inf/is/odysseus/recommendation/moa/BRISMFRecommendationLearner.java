@@ -113,6 +113,11 @@ public class BRISMFRecommendationLearner extends
 			double rating = getRatingInTuple(tuple);
 			this.brismfPredictor.getData().setRating(user, item, rating);
 		}
+		
+		
+		for (final Tuple<ITimeInterval> t : newLearningObjects) {
+			addRatedItem(getUserInTuple(t), getItemInTuple(t));
+		}
 	}
 
 	/*
@@ -131,6 +136,10 @@ public class BRISMFRecommendationLearner extends
 		int item = getItemInTuple(tuple);
 		double rating = getRatingInTuple(tuple);
 		this.brismfPredictor.getData().setRating(user, item, rating);
+		
+		
+		addRatedItem(getUserInTuple(tuple),
+				getItemInTuple(tuple));
 	}
 
 	/*
@@ -150,6 +159,11 @@ public class BRISMFRecommendationLearner extends
 			int item = getItemInTuple(tuple);
 			this.brismfPredictor.getData().removeRating(user, item);
 		}
+		
+		
+		for (final Tuple<ITimeInterval> t : oldLearningObjects) {
+			removeRatedItem(getUserInTuple(t), getItemInTuple(t));
+		}
 	}
 
 	/*
@@ -167,6 +181,10 @@ public class BRISMFRecommendationLearner extends
 		int user = getUserInTuple(tuple);
 		int item = getItemInTuple(tuple);
 		this.brismfPredictor.getData().removeRating(user, item);
+		
+		
+		removeRatedItem(getUserInTuple(tuple),
+				getItemInTuple(tuple));
 	}
 
 	/*

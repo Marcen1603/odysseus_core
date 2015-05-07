@@ -127,7 +127,7 @@ public abstract class AbstractTupleBasedRecommendationLearner<T extends Tuple<M>
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner#
 	 * addLearningData
 	 * (de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject)
@@ -169,7 +169,7 @@ public abstract class AbstractTupleBasedRecommendationLearner<T extends Tuple<M>
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner#
 	 * removeLearningData(java.util.Set)
 	 */
@@ -183,7 +183,7 @@ public abstract class AbstractTupleBasedRecommendationLearner<T extends Tuple<M>
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner#clear()
 	 */
@@ -196,7 +196,7 @@ public abstract class AbstractTupleBasedRecommendationLearner<T extends Tuple<M>
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner
 	 * #getRecommendationCandidatesModel()
@@ -238,7 +238,7 @@ public abstract class AbstractTupleBasedRecommendationLearner<T extends Tuple<M>
 	 * @param ratedItem
 	 *            . The item
 	 */
-	private void addRatedItem(final U user, final I ratedItem) {
+	protected void addRatedItem(final U user, final I ratedItem) {
 		if (user != null && ratedItem != null) {
 			addRatedItemOccurrence(ratedItem);
 			Set<I> ratedItemsByUser = this.ratedItemsByUser.get(user);
@@ -251,7 +251,7 @@ public abstract class AbstractTupleBasedRecommendationLearner<T extends Tuple<M>
 		}
 	}
 
-	private void removeRatedItem(final U user, final I ratedItem) {
+	protected void removeRatedItem(final U user, final I ratedItem) {
 		if (user != null && ratedItem != null) {
 			removeRatedItemOccurrence(ratedItem);
 			final Set<I> ratedItemsByUser = this.ratedItemsByUser.get(user);
