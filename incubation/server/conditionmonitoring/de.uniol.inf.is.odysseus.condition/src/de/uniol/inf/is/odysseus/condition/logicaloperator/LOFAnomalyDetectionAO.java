@@ -12,8 +12,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LOFANOMALYDETECTION", doc = "Searches for anomalies on the base of the local outlier factor algorithm.", category = { LogicalOperatorCategory.PROCESSING })
@@ -25,6 +27,8 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	private int k;
 	private double lofAnomalyValue;
 	private String nameOfValue;
+	private List<SDFAttribute> groupingAttributes;
+	private boolean fastGrouping;
 
 	public LOFAnomalyDetectionAO() {
 		this.k = 10;
@@ -36,6 +40,8 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.k = ao.getNumberOfNeighbors();
 		this.lofAnomalyValue = ao.getLOFAnomalyValue();
 		this.nameOfValue = ao.getNameOfValue();
+		this.groupingAttributes = ao.getGroupingAttributes();
+		this.fastGrouping = ao.isFastGrouping();
 	}
 
 	@Parameter(type = IntegerParameter.class, name = "NEIGHBORS", optional = true, doc = "The number of neighbors used, sometimes called k")
@@ -52,6 +58,16 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	public void setNameOfValue(String nameOfValue) {
 		this.nameOfValue = nameOfValue;
 	}
+	
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	public void setGroupingAttributes(List<SDFAttribute> attributes) {
+		this.groupingAttributes = attributes;
+	}
+
+	@Parameter(name = "fastGrouping", type = BooleanParameter.class, optional = true, doc = "Use hash code instead of tuple compare to create group. Potentially unsafe!")
+	public void setFastGrouping(boolean fastGrouping) {
+		this.fastGrouping = fastGrouping;
+	}
 
 	public int getNumberOfNeighbors() {
 		return this.k;
@@ -63,6 +79,14 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	
 	public String getNameOfValue() {
 		return nameOfValue;
+	}
+	
+	public List<SDFAttribute> getGroupingAttributes() {
+		return groupingAttributes;
+	}
+
+	public boolean isFastGrouping() {
+		return fastGrouping;
 	}
 	
 	@Override
