@@ -170,6 +170,20 @@ public class ImageJCV implements IClone, Cloneable
 	
 	public double[][] getMatrix() {
 		throw new UnsupportedOperationException("Currenlty not implemented");
+	}
+	
+	public void copyFrom(IplImage iplImage) 
+	{
+		// TODO: Make sure image fits!
+		
+		imageData.rewind();
+		
+		if (widthStep != iplImage.widthStep())
+		{
+			image.copyFrom(iplImage.getBufferedImage());						
+		}
+		else
+			imageData.put(iplImage.getByteBuffer());
 	}	
 }
 
