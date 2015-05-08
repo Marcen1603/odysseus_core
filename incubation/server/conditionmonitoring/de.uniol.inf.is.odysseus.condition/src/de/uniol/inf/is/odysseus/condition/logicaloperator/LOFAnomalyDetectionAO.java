@@ -93,10 +93,12 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		// add the anomaly-score to the attributes and keep the old attributes
 		SDFSchema inSchema = getInputSchema(0);
-		SDFAttribute map = new SDFAttribute(null, "anomalyScore", SDFDatatype.DOUBLE, null, null, null);
+		SDFAttribute lofValue = new SDFAttribute(null, "LOF", SDFDatatype.DOUBLE, null, null, null);
+		SDFAttribute anomalyScore = new SDFAttribute(null, "anomalyScore", SDFDatatype.DOUBLE, null, null, null);
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		outputAttributes.addAll(inSchema.getAttributes());
-		outputAttributes.add(map);
+		outputAttributes.add(lofValue);
+		outputAttributes.add(anomalyScore);
 		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
 		setOutputSchema(outSchema);
 

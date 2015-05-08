@@ -60,7 +60,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 		double lof = getLOF(k, tuple, sortedValues);
 
 		if (lof > this.minLOFValue) {
-			Tuple newTuple = tuple.append(lof);
+			Tuple newTuple = tuple.append(lof).append(calcAnomalyScore(lof, this.minLOFValue));
 			transfer(newTuple);
 			return;
 		}
@@ -226,7 +226,35 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 		}
 		double lof = lrdSum / (k * getLocalReachabilityDensity(k, value, allNeighbors));
 		return lof;
+	}
+	
+	/**
+	 * Calculates the anomaly score, a value between 0 and 1. (Will actually
+	 * never reach 1)
+	 * 
+	 * @param distance
+	 *            Distance to good area
+	 * @return Anomaly score (0, 1]
+	 */
+	private double calcAnomalyScore(double lof, double minLOF) {
 
+		// This should be at least 1 since we only to this if the lof > minLOF
+		double div = lof / minLOF;
+
+		double addValue = 0.5;
+		double anomalyScore = 0;
+		while (div > 0) {
+			if (div >= 1) {
+				anomalyScore += addValue;
+				addValue /= 2;
+				div -= 1;
+			} else {
+				anomalyScore += div * addValue;
+				div -= 1;
+			}
+		}
+
+		return anomalyScore;
 	}
 
 	@Override
