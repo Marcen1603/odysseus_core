@@ -25,7 +25,7 @@ public class FFmpegVideoStreamProtocolHandler extends AbstractVideoStreamProtoco
 
 	public FFmpegVideoStreamProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, OptionMap options) 
 	{
-		super(direction, access, dataHandler, options);
+		super(direction, access, dataHandler, options);		
 	}
 	
 	@Override
@@ -34,36 +34,28 @@ public class FFmpegVideoStreamProtocolHandler extends AbstractVideoStreamProtoco
 		return new FFmpegVideoStreamProtocolHandler(direction, access, dataHandler, options);
 	}	
 	
-	public FrameRecorder startRecorder(ImageJCV image) throws FrameRecorder.Exception
+	public FrameRecorder createRecorder(ImageJCV image)
 	{
-		FrameRecorder recorder = new FFmpegFrameRecorder(getStreamUrl(), image.getWidth(), image.getHeight());
-//		recorder.setVideoBitrate(716800);
-//		recorder.setPixelFormat(avutil.PIX_FMT_YUV420P16);
-//		recorder.setVideoCodec(13);
-//		
-		double fps = getFrameRate();
-		
-		if (fps == 0.0) fps = 30.0;
-		
-		recorder.setFrameRate(fps);
-		recorder.setFormat("h264");
-		recorder.start();
-		
-		return recorder;
+		return new FFmpegFrameRecorder(getStreamUrl(), image.getWidth(), image.getHeight());
 	}
-	
-	public void recordFrame(ImageJCV image) throws FrameRecorder.Exception
+		
+	public FrameGrabber createGrabber()
 	{
-		getRecorder().record(image.getImage());
-	}
-	
-	public FrameGrabber startGrabber() throws FrameGrabber.Exception
-	{
-		FrameGrabber grabber = new FFmpegFrameGrabber(getStreamUrl());
-		grabber.start();
-		return grabber;
+		return new FFmpegFrameGrabber(getStreamUrl());
 	}
 
 	@Override
 	public String getName() { return NAME; }
+	
+	@Override
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) 
+	{
+		if (!(o instanceof FFmpegVideoStreamProtocolHandler)) 
+			return false;
+		
+		if (!super.isSemanticallyEqualImpl(o)) 
+			return false;
+		
+		return true;
+	}	
 }
