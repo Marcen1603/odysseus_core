@@ -290,7 +290,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 					return false;
 				}
 				
-				LOG.debug("Frame received!");
+				LOG.debug("Frame received at " + System.currentTimeMillis());
 				
 				// Create result tuple and image, if not created yet
 				Tuple<IMetaAttribute> currentTuple = new Tuple<>(getSchema().size(), false);
@@ -335,8 +335,6 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 				currentFrameSystemTime = System.currentTimeMillis() / 1000.0;
 
 				tupleQueue.addLast(currentTuple);
-				
-				System.out.println(System.currentTimeMillis());
 				
 	//			if (this instanceof FFmpegVideoStreamProtocolHandler)
 	//				System.out.println("hasNext leave true");
