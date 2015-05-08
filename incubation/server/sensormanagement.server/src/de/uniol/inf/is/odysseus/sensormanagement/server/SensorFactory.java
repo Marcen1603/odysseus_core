@@ -110,7 +110,7 @@ public class SensorFactory
 			  + "                         protocol='OpenCVVideoStream',\n"
 			  + "                         dataHandler='Tuple',\n"
 			  + "                         schema=[['Image', 'ImageJCV']],\n"
-			  + "                         options=[%(optionsEx) ['timestampmode', 'none']})\n";
+			  + "                         options=[%(optionsEx) ['timestampmode', 'none']]})\n";
 
 		String logQuery = 
 				"#PARSER PQL\n"
