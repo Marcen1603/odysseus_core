@@ -83,6 +83,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 		useDelay = options.getBoolean("usedelay",  false);
 		bitRate = options.getInt("bitRate", 0);
 		videoCodec = options.getInt("videoCodec", AV_CODEC_ID_NONE);
+		videoQuality = options.getDouble("videoQuality", -1.0);
 		format = options.get("format", null); 
 		
 		for (String key : options.getUnreadOptions())

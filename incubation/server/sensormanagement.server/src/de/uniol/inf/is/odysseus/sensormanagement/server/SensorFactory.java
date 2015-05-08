@@ -106,11 +106,11 @@ public class SensorFactory
 			  + "#RUNQUERY\n"				
 			  + "%(sourceName) := ACCESS({source='%(sourceName)',\n"
 			  + "                         wrapper='GenericPull',\n"
-			  + "                         transport='IntegratedCamera',\n"
-			  + "                         protocol='none',\n"
+			  + "                         transport='none',\n"
+			  + "                         protocol='OpenCVVideoStream',\n"
 			  + "                         dataHandler='Tuple',\n"
 			  + "                         schema=[['Image', 'ImageJCV']],\n"
-			  + "                         options=[%(options)]})\n";
+			  + "                         options=[%(optionsEx) ['timestampmode', 'none']})\n";
 
 		String logQuery = 
 				"#PARSER PQL\n"
@@ -129,16 +129,19 @@ public class SensorFactory
 				+ "resizedVideo = MAP({expressions=['resizeCV(image,300,300)']}, %(sourceName))\n"
 				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 				+ "			             wrapper='GenericPush',\n"
-				+ "                      transport='None',\n"
-				+ "			             protocol='VideoStream',\n"
+				+ "                      transport='none',\n"
+				+ "			             protocol='FFmpegVideoStream',\n"
 				+ "                      dataHandler='Tuple',\n"
-				+ "                      options=[['streamurl', 'udp://%(host):%(port)']]},\n"
+				+ "                      options=[['streamurl', 'udp://%(host):%(port)'],\n"
+				+ "                               ['format', 'h264'],\n"
+				+ "                               ['codec:tune', 'zerolatency'],\n"
+				+ "                               ['codec:preset', 'ultrafast']]},\n"
 				+ "                     resizedVideo)\n";		
 		
 		String liveViewUrl = "udp://%(host):%(port)";
 		
 		Map<String, String> optionsInformation = new HashMap<>();
-		optionsInformation.put("cameraId", "The Id of the integrated camera");
+		optionsInformation.put("streamUrl", "Specify camera id as \"camera://[ID]\"");
 		
 		return new SensorType("IntegratedCamera", dataQuery, logQuery, liveViewQuery, liveViewUrl, optionsInformation);
 	}	
@@ -173,10 +176,13 @@ public class SensorFactory
 				+ "resizedVideo = MAP({expressions=['resizeCV(image,300,300)']}, %(sourceName))\n"
 				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 				+ "			             wrapper='GenericPush',\n"
-				+ "                      transport='None',\n"
-				+ "			             protocol='VideoStream',\n"
+				+ "                      transport='none',\n"
+				+ "			             protocol='FFmpegVideoStream',\n"
 				+ "                      dataHandler='Tuple',\n"
-				+ "                      options=[['streamurl', 'udp://%(host):%(port)']]},\n"
+				+ "                      options=[['streamurl', 'udp://%(host):%(port)'],\n"
+				+ "                               ['format', 'h264'],\n"
+				+ "                               ['codec:tune', 'zerolatency'],\n"
+				+ "                               ['codec:preset', 'ultrafast']]},\n"
 				+ "                     resizedVideo)\n";		
 		
 		String liveViewUrl = "udp://%(host):%(port)";
@@ -217,10 +223,13 @@ public class SensorFactory
 				+ "resizedVideo = MAP({expressions=['resizeCV(image,300,300)']}, %(sourceName))\n"
 				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 				+ "			             wrapper='GenericPush',\n"
-				+ "                      transport='None',\n"
-				+ "			             protocol='VideoStream',\n"
+				+ "                      transport='none',\n"
+				+ "			             protocol='FFmpegVideoStream',\n"
 				+ "                      dataHandler='Tuple',\n"
-				+ "                      options=[['streamurl', 'udp://%(host):%(port)']]},\n"
+				+ "                      options=[['streamurl', 'udp://%(host):%(port)'],\n"
+				+ "                               ['format', 'h264'],\n"
+				+ "                               ['codec:tune', 'zerolatency'],\n"
+				+ "                               ['codec:preset', 'ultrafast']]},\n"
 				+ "                     resizedVideo)\n";		
 		
 		String liveViewUrl = "udp://%(host):%(port)";
