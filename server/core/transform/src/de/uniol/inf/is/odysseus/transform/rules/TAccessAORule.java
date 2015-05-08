@@ -113,21 +113,23 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 					protocolHandler.setSchema(dataHandler.getSchema());
 				}
 
-				ITransportHandler transportHandler = getTransportHandler(
-						operator, protocolHandler, options);
-				if (transportHandler == null) {
-					LOG.error("No transport handler {} found.",
-							operator.getTransportHandler());
-					throw new TransformationException("No transport handler "
-							+ operator.getTransportHandler() + " found.");
-				}
-
-				transportHandler.setExecutor((IExecutor) config
-						.getOption(IServerExecutor.class.getName()));
-
-				// In some cases the transport handler needs to know the schema
-				if (dataHandler != null) {
-					transportHandler.setSchema(dataHandler.getSchema());
+				if (!operator.getTransportHandler().equalsIgnoreCase("NONE")) {
+					ITransportHandler transportHandler = getTransportHandler(
+							operator, protocolHandler, options);
+					if (transportHandler == null) {
+						LOG.error("No transport handler {} found.",
+								operator.getTransportHandler());
+						throw new TransformationException("No transport handler "
+								+ operator.getTransportHandler() + " found.");
+					}
+	
+					transportHandler.setExecutor((IExecutor) config
+							.getOption(IServerExecutor.class.getName()));
+	
+					// In some cases the transport handler needs to know the schema
+					if (dataHandler != null) {
+						transportHandler.setSchema(dataHandler.getSchema());
+					}
 				}
 
 				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
