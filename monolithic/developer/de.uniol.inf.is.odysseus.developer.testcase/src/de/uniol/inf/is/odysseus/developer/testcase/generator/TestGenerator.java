@@ -207,12 +207,12 @@ public class TestGenerator implements IRunnableWithProgress {
         this.writeTestdata(out);
 
         this.writeHeader(out);
-        this.writeMetadata(out, metadata);
+        // this.writeMetadata(out, metadata);
 
         out.write("#ADDQUERY\n\n");
 
         for (int i = 0; i < this.model.getOperator().getMaxPorts(); i++) {
-            this.writeAccess(i, root, out);
+            this.writeAccess(i, root, metadata, out);
         }
         out.write("output = ");
         out.write(this.model.getOperator().getOperatorName().toUpperCase());
@@ -269,6 +269,8 @@ public class TestGenerator implements IRunnableWithProgress {
         out.write("\n");
     }
 
+    @SuppressWarnings("unused")
+    @Deprecated
     private void writeMetadata(final BufferedWriter out, final List<String> metadatas) throws IOException {
         for (String metadata : metadatas) {
             out.write("#METADATA ");
@@ -277,20 +279,31 @@ public class TestGenerator implements IRunnableWithProgress {
         }
     }
 
-    private void writeAccess(final int port, final Path root, final BufferedWriter out) throws IOException {
+    private void writeAccess(final int port, final Path root, List<String> metadatas, final BufferedWriter out) throws IOException {
         out.write("input" + port + " = ACCESS({\n");
-        out.write("    source='source',\n");
+
+        out.write("    source='source" + port + "_" + metadatasToString(metadatas) + "',\n");
         out.write("    wrapper='GenericPull',\n");
         out.write("    transport='file',\n");
         out.write("    protocol='SimpleCSV',\n");
         out.write("    dataHandler='Tuple',\n");
+        out.write("    metaattribute=[\n");
+        StringBuilder sb = new StringBuilder();
+        for (String metadata : metadatas) {
+            if (sb.length() != 0) {
+                sb.append(", ");
+            }
+            sb.append("'").append(metadata).append("'");
+        }
+        out.write("                  " + sb.toString() + "\n");
+        out.write("                  ],\n");
         out.write("    options=[\n");
         out.write("        ['filename', '${BUNDLE-ROOT}/" + root.toString() + "/input" + port + ".csv'],\n");
         out.write("        ['csv.delimiter', ';'],\n");
         out.write("        ['csv.trim', 'true']\n");
         out.write("        ],\n");
         out.write("    schema=[");
-        final StringBuilder sb = new StringBuilder();
+        sb = new StringBuilder();
         if (this.model.isTimestamp()) {
             sb.append("['timestamp', 'STARTTIMESTAMP']");
         }
@@ -306,6 +319,17 @@ public class TestGenerator implements IRunnableWithProgress {
         }
         out.write(sb.toString());
         out.write("]})\n\n");
+    }
+
+    private String metadatasToString(List<String> metadatas) {
+        StringBuilder sb = new StringBuilder();
+        for (String metadata : metadatas) {
+            if (sb.length() != 0) {
+                sb.append("_");
+            }
+            sb.append(metadata);
+        }
+        return sb.toString();
     }
 
     private Object[][] generateValues(final int port) {
