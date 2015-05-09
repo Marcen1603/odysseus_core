@@ -1,0 +1,9 @@
+NaN | META | 0|1
+-Infinity | META | 1|2
+-Infinity | META | 2|3
+NaN | META | 3|4
+NaN | META | 4|5
+NaN | META | 5|6
+NaN | META | 9|10
+-Infinity | META | 10|11
+-Infinity | META | 11|12
