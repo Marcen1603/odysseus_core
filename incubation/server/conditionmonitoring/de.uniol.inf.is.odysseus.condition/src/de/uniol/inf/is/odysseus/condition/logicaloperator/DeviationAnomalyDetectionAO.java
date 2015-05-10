@@ -35,6 +35,9 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 	private boolean fastGrouping;
 	private boolean exactCalculation;
 
+	private boolean windowChecking;
+	private boolean onlyOnChange;
+
 	public DeviationAnomalyDetectionAO() {
 		interval = 3.0;
 		trainingMode = TrainingMode.ONLINE;
@@ -54,6 +57,8 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 		}
 		this.fastGrouping = ao.isFastGrouping();
 		this.exactCalculation = ao.getExactCalculation();
+		this.windowChecking = ao.isWindowChecking();
+		this.onlyOnChange = ao.isOnlyOnChange();
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "interval", optional = true, doc = "Defines, how many standard deviations are allowed for a tuple to be different from the mean. 3.0 is the default value. Choose a smaller value to get more anomalies.")
@@ -95,10 +100,20 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 	public void setFastGrouping(boolean fastGrouping) {
 		this.fastGrouping = fastGrouping;
 	}
-	
+
 	@Parameter(name = "exactCalculation", type = BooleanParameter.class, optional = true, doc = "If set to true, it uses exact calculation for window mode (recalc values every new tuple). This may be slower. Unexact calculation may be faster, but unaccurate, especially if the mean changes dramatically over time.")
 	public void setExactCalculation(boolean exactCalculation) {
 		this.exactCalculation = exactCalculation;
+	}
+
+	@Parameter(name = "windowChecking", type = BooleanParameter.class, optional = true, doc = "If true, it's checked if the last (tumbling) window had an anomaly. Only sends anomaly-tuple once per window.")
+	public void setWindowChecking(boolean windowChecking) {
+		this.windowChecking = windowChecking;
+	}
+
+	@Parameter(name = "onlyOnChange", type = BooleanParameter.class, optional = true, doc = "If you use windowChecking and set this option true, then an anomaly tuple is only send, if the last window had no anomaly.")
+	public void setOnlyOnChange(boolean onlyOnChange) {
+		this.onlyOnChange = onlyOnChange;
 	}
 
 	public double getInterval() {
@@ -135,6 +150,14 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 
 	public boolean getExactCalculation() {
 		return exactCalculation;
+	}
+
+	public boolean isWindowChecking() {
+		return windowChecking;
+	}
+
+	public boolean isOnlyOnChange() {
+		return onlyOnChange;
 	}
 
 	@Override

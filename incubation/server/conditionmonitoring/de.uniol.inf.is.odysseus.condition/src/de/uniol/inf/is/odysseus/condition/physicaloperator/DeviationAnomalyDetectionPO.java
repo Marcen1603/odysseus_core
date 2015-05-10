@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationAnomalyDetect
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -38,13 +39,15 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private Map<Long, List<T>> tupleMap;
 	private boolean exactCalculation;
 
-	// Testing purposes
 	private boolean oncePerWindow;
 	private boolean alreadySendThisWindow;
 
 	private boolean onlyOnChange;
 	private boolean lastWindowWithAnomaly;
 	private boolean foundAnomaly;
+
+	// Testing purposes
+	PointInTime lastTuple;
 
 	public DeviationAnomalyDetectionPO(DeviationAnomalyDetectionAO ao, IGroupProcessor<T, T> groupProcessor) {
 		this.interval = ao.getInterval();
@@ -55,11 +58,11 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		this.exactCalculation = ao.getExactCalculation();
 
 		// Testing purposes
-		oncePerWindow = true;
+		oncePerWindow = ao.isWindowChecking();
 		alreadySendThisWindow = false;
 		tupleMap = new HashMap<Long, List<T>>();
 
-		onlyOnChange = true;
+		onlyOnChange = ao.isOnlyOnChange();
 		lastWindowWithAnomaly = false;
 		foundAnomaly = false;
 
@@ -80,6 +83,9 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 	@Override
 	protected void process_next(T tuple, int port) {
+
+		lastTuple = tuple.getMetadata().getStart();
+
 		// Get the group for this tuple (e.g., the incoming values have
 		// different contexts)
 		Long gId = groupProcessor.getGroupID(tuple);
@@ -95,30 +101,17 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		if (this.trainingMode.equals(TrainingMode.ONLINE)) {
 			// Calculate new value for standard deviation
 			info.standardDeviation = calcStandardDeviationOnline(sensorValue, info);
-			processTuple(sensorValue, info.mean, info.standardDeviation, tuple);
+			processTuple(gId, sensorValue, info.mean, info.standardDeviation, tuple, info);
 		} else if (this.trainingMode.equals(TrainingMode.MANUAL)) {
 			// Don't change the values - they are set by the user
-			processTuple(sensorValue, manualMean, manualStandardDeviation, tuple);
+			processTuple(gId, sensorValue, manualMean, manualStandardDeviation, tuple, info);
 		} else if (this.trainingMode.equals(TrainingMode.TUPLE_BASED)) {
 			// Only change the values the first tuplesToLearn tuples (per group)
 			if (info.n <= this.tuplesToLearn) {
 				double sigma = calcStandardDeviationOnline(sensorValue, info);
 				info.standardDeviation = sigma;
 			}
-			if (this.oncePerWindow) {
-				// OK, we have a window, but it's not the one for training, but
-				// for checking
-				// This window should be a tumbling one, that would be good,
-				// e.g. 1 minute
-				List<T> tuples = tupleMap.get(gId);
-				if (tuples == null) {
-					tuples = new ArrayList<T>();
-					tupleMap.put(gId, tuples);
-				}
-				tuples.add(tuple);
-				removeOldValues(tuples, tuple.getMetadata().getStart(), info, exactCalculation);
-			}
-			processTuple(sensorValue, info.mean, info.standardDeviation, tuple);
+			processTuple(gId, sensorValue, info.mean, info.standardDeviation, tuple, info);
 		} else if (this.trainingMode.equals(TrainingMode.WINDOW)) {
 			// Use the window which is before this operator
 			processTupleWithWindow(gId, tuple, info, this.exactCalculation);
@@ -158,7 +151,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			mean = info.mean;
 		}
 
-		processTuple(getValue(tuple), mean, standardDeviation, tuple);
+		processTuple(gId, getValue(tuple), mean, standardDeviation, tuple, info);
 	}
 
 	/**
@@ -196,6 +189,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * Processes a tuple with the given values. This includes the calculation of
 	 * the anomaly score. Transfers the tuple if it is an anomaly
 	 * 
+	 * @param gId
+	 *            The id if the group for this tuple
 	 * @param sensorValue
 	 *            The value of the sensor
 	 * @param mean
@@ -204,16 +199,35 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 *            The standard deviation for that group
 	 * @param tuple
 	 *            The tuple which has to be transfered if it is an anomaly
+	 * @param info
+	 *            The deviationInformation for the group
+	 * 
 	 */
-	private void processTuple(double sensorValue, double mean, double standardDeviation, Tuple tuple) {
-		if (sensorValue < mean - interval * standardDeviation || sensorValue > mean + interval * standardDeviation) {
+	private void processTuple(long gId, double sensorValue, double mean, double standardDeviation, T tuple,
+			DeviationInformation info) {
+
+		if (this.oncePerWindow) {
+			// OK, we have a window, but it's not the one for training, but
+			// for checking
+			// This window should be a tumbling one, that would be good,
+			// e.g. 1 minute
+			List<T> tuples = tupleMap.get(gId);
+			if (tuples == null) {
+				tuples = new ArrayList<T>();
+				tupleMap.put(gId, tuples);
+			}
+			tuples.add(tuple);
+			removeOldValues(tuples, tuple.getMetadata().getStart(), info, exactCalculation);
+		}
+
+		if (isAnomaly(sensorValue, standardDeviation, mean)) {
 			// Maybe here we have an anomaly
 			if (!oncePerWindow || (oncePerWindow && !this.alreadySendThisWindow)) {
 				// If we are in normal mode, send
 				// If not (onePerWindow) only send if we did not already send
 				// this window
 				foundAnomaly = true;
-				
+
 				if (!onlyOnChange || (onlyOnChange && !lastWindowWithAnomaly)) {
 					// If we only want to send if the last window had no
 					// anomaly, we have to check this
@@ -225,10 +239,20 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 					transfer(newTuple);
 					return;
 				}
-				
+
 				lastWindowWithAnomaly = true;
 			}
 		}
+
+		Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
+		sendPunctuation(beat);
+	}
+
+	private boolean isAnomaly(double sensorValue, double standardDeviation, double mean) {
+		if (sensorValue < mean - interval * standardDeviation || sensorValue > mean + interval * standardDeviation) {
+			return true;
+		}
+		return false;
 	}
 
 	/*
@@ -412,8 +436,23 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
 
+		boolean timePunctuationSensitive = true;
+		DeviationInformation info = this.deviationInfo.get(0l);
+
+		if (timePunctuationSensitive && info != null) {
+			PointInTime time = punctuation.getTime().minus(lastTuple);
+			if (time.getMainPoint() > info.mean) {
+				// The next tuple takes longer than normal (if we look for
+				// durations)
+				if (isAnomaly(time.getMainPoint(), info.standardDeviation, info.mean)) {
+					// Here we have an anomaly which did not really occur, cause
+					// the source stopped sending
+					// System.out.println("This would be a new anomaly.");
+				}
+			}
+		}
+		sendPunctuation(punctuation);
 	}
 
 	@Override
