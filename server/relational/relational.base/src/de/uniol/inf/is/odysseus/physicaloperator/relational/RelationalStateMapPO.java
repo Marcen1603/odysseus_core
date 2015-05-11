@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -62,6 +63,14 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 				maxHistoryElements = pos + 1;
 			}
 			int index = schema.indexOf(curAttribute);
+			if (index >= 0) {
+				return new VarHelper(index, pos);
+			} else { // Attribute is (potentially) part of meta data;
+				Pair<Integer, Integer> posi = schema.indexOfMetaAttribute(curAttribute);
+				if (posi != null){
+					return new VarHelper(posi.getE1(), posi.getE2(), pos);
+				}
+			}
 			return new VarHelper(index, pos);
 		} else {
 			return super.initAttribute(schema, curAttribute);
