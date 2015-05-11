@@ -18,9 +18,12 @@ http://odysseus.informatik.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -clean -debug -nl en -data @noDefault</programArgs>
-      <vmArgs>-Xms1000M -Xmx1000M</vmArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <programArgs>-console -clean -debug -nl en -data @noDefault
+      </programArgs>
+      <vmArgs>-Xms1000M -Xmx1000M
+      </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="/de.uniol.inf.is.odysseus.client.starter/icons/16_16.gif" i32="/de.uniol.inf.is.odysseus.client.starter/icons/32_32.gif" i48="/de.uniol.inf.is.odysseus.client.starter/icons/48_48.gif" i64="/de.uniol.inf.is.odysseus.client.starter/icons/64_64.gif" i128="/de.uniol.inf.is.odysseus.client.starter/icons/128_128.gif"/>
@@ -74,6 +77,7 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.wrapper.web.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.image.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.imagejcv.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.systemload.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
