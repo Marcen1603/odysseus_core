@@ -87,10 +87,9 @@ abstract public class AbstractQueryIDsFunction extends AbstractFunction<List<Int
 			return q.getQueryStartTS();
 		case QUERY_SHEDDING_FACTOR:
 			return q.getSheddingFactor();
-			
+		default:
+			return null;
 		}
-
-		return null;
 	}
 
 	private QInformation getQInformation(SDFAttribute attribute) {
