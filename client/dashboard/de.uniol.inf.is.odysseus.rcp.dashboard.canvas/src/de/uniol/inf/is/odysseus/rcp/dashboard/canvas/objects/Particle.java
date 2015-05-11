@@ -16,8 +16,6 @@
  *******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.objects;
 
-import javax.media.opengl.GL2;
-
 import org.lwjgl.opengl.GL11;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.Coordinate;
@@ -38,7 +36,7 @@ public class Particle {
     }
 
     public void draw(final Coordinate coordinate) {
-        GL11.glBegin(GL2.GL_QUADS);
+        GL11.glBegin(GL11.GL_QUADS);
         GL11.glTexCoord2f(0.0f, 0.0f);
         GL11.glVertex3d(coordinate.x, coordinate.y - 2, coordinate.z);
         GL11.glTexCoord2f(1.0f, 0.0f);
