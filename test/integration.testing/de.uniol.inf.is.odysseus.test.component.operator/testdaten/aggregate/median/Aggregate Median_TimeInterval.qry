@@ -1,12 +1,12 @@
 /// Odysseus Testcase: Aggregate Median
 /// Operator: AGGREGATE
-/// Date: Sat May 09 21:33:12 CST 2015
+/// Date: Mon May 11 22:06:38 CST 2015
 /// User: ckuka
 /// Parameter: 
 ///  AGGREGATIONS: [['median','x','median_x']]
 ///  SUPPRESSPUNCTUATIONS: 
-///  FASTGROUPING: 
 ///  NAME: 
+///  FASTGROUPING: 
 ///  GROUP_BY: 
 ///  DRAINATDONE: 
 ///  OUTPUTPA: 

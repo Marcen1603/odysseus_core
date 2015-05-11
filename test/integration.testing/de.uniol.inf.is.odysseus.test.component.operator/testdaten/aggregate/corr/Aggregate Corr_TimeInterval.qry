@@ -1,12 +1,12 @@
 /// Odysseus Testcase: Aggregate Corr
 /// Operator: AGGREGATE
-/// Date: Sat May 09 21:38:10 CST 2015
+/// Date: Mon May 11 22:20:22 CST 2015
 /// User: ckuka
 /// Parameter: 
 ///  AGGREGATIONS: [['corr',['x', 'y'],'corr_x_y']]
 ///  SUPPRESSPUNCTUATIONS: 
-///  FASTGROUPING: 
 ///  NAME: 
+///  FASTGROUPING: 
 ///  GROUP_BY: 
 ///  DRAINATDONE: 
 ///  OUTPUTPA: 

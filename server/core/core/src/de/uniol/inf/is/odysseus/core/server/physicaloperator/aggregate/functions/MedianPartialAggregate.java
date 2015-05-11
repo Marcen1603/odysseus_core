@@ -16,11 +16,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class MedianPartialAggregate<T> extends AbstractPartialAggregate<T> {
 
-	private static final long serialVersionUID = -7798856857638228860L;
+    private static final long serialVersionUID = -7798856857638228860L;
 
-	private final Queue<Double> upper = new PriorityQueue<Double>();
+    private final Queue<Double> upper = new PriorityQueue<>();
 
-    private final Queue<Double> lower = new PriorityQueue<Double>(11, new Comparator<Double>() {
+    private final Queue<Double> lower = new PriorityQueue<>(11, new Comparator<Double>() {
         @Override
         public int compare(final Double a, final Double b) {
             if (a < b) {
@@ -64,24 +64,24 @@ public class MedianPartialAggregate<T> extends AbstractPartialAggregate<T> {
             if (this.lower.size() < this.upper.size()) {
                 return this.upper.peek();
             }
-            else {
-                return this.lower.peek();
-            }
+            return this.lower.peek();
         }
     }
 
-    public MedianPartialAggregate<T> add(final Double value) {
-        if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
-            this.lower.add(value);
-        }
-        else {
-            if (value <= this.lower.peek()) {
-                this.lower.add(value);
+    public MedianPartialAggregate<T> add(final Number value) {
+        if (value != null) {
+            if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
+                this.lower.add(value.doubleValue());
             }
             else {
-                this.upper.add(value);
+                if (value.doubleValue() <= this.lower.peek()) {
+                    this.lower.add(value.doubleValue());
+                }
+                else {
+                    this.upper.add(value.doubleValue());
+                }
+                this.rebalance();
             }
-            this.rebalance();
         }
         return this;
     }
@@ -106,14 +106,14 @@ public class MedianPartialAggregate<T> extends AbstractPartialAggregate<T> {
     }
 
     @Override
-	public void clear() {
+    public void clear() {
         lower.clear();
         upper.clear();
     }
 
     @Override
     public MedianPartialAggregate<T> clone() {
-        return new MedianPartialAggregate<T>(this);
+        return new MedianPartialAggregate<>(this);
     }
 
     @Override

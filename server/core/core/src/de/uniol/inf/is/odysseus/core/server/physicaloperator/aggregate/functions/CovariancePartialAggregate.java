@@ -23,13 +23,13 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class CovariancePartialAggregate<R> extends AbstractPartialAggregate<R> {
 
-	private static final long serialVersionUID = 3904441654181161018L;
-	private double sumA;
+    private static final long serialVersionUID = 3904441654181161018L;
+    private double sumA;
     private double sumB;
     private double crossproductSum;
     private int count;
 
-    public CovariancePartialAggregate(final Double a, final Double b) {
+    public CovariancePartialAggregate(final Number a, final Number b) {
         this.add(a, b);
     }
 
@@ -44,11 +44,13 @@ public class CovariancePartialAggregate<R> extends AbstractPartialAggregate<R> {
         return (this.crossproductSum - (this.sumA * this.sumB) / this.count) / (this.count - 1);
     }
 
-    public void add(final Double a, final Double b) {
-        this.sumA += a;
-        this.sumB += b;
-        this.crossproductSum += a * b;
-        this.count++;
+    public void add(final Number a, final Number b) {
+        if ((a != null) && (b != null)) {
+            this.sumA += a.doubleValue();
+            this.sumB += b.doubleValue();
+            this.crossproductSum += a.doubleValue() * b.doubleValue();
+            this.count++;
+        }
     }
 
     public void add(final CovariancePartialAggregate<?> value) {
@@ -60,7 +62,7 @@ public class CovariancePartialAggregate<R> extends AbstractPartialAggregate<R> {
 
     @Override
     public CovariancePartialAggregate<R> clone() {
-        return new CovariancePartialAggregate<R>(this);
+        return new CovariancePartialAggregate<>(this);
     }
 
     @Override

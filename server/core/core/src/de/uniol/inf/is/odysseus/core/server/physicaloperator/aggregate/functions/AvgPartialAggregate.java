@@ -5,25 +5,26 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.function
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractPartialAggregate;
 
-
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class AvgPartialAggregate<R> extends AbstractPartialAggregate<R> {
 
-	private static final long serialVersionUID = 8223160967939959922L;
-	
-	private double mean;
+    private static final long serialVersionUID = 8223160967939959922L;
+
+    private double mean;
     private int count;
 
-    public AvgPartialAggregate(double value) {
+    public AvgPartialAggregate(Number value) {
         this.add(value);
     }
 
-    public AvgPartialAggregate(double mean, int count) {
-        this.mean = mean;
-        this.count = count;
+    public AvgPartialAggregate(Number mean, int count) {
+        if (mean != null) {
+            this.mean = mean.doubleValue();
+            this.count = count;
+        }
     }
 
     public AvgPartialAggregate(AvgPartialAggregate<R> avgPartialAggregate) {
@@ -35,10 +36,11 @@ public class AvgPartialAggregate<R> extends AbstractPartialAggregate<R> {
         return mean;
     }
 
-    public void add(Double value) {
-        this.count++;
-        this.mean += 1.0 / count * (value - mean);
-
+    public void add(Number value) {
+        if (value != null) {
+            this.count++;
+            this.mean += 1.0 / count * (value.doubleValue() - mean);
+        }
     }
 
     public void add(AvgPartialAggregate<R> avgPartialAggregate) {
@@ -48,7 +50,7 @@ public class AvgPartialAggregate<R> extends AbstractPartialAggregate<R> {
 
     @Override
     public AvgPartialAggregate<R> clone() {
-        return new AvgPartialAggregate<R>(this);
+        return new AvgPartialAggregate<>(this);
     }
 
     @Override

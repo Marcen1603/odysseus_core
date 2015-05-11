@@ -1,3 +1,4 @@
 NaN | META | 0|1
-Infinity | META | 1|2
-NaN | META | 3|4
+2.0 | META | 1|2
+2.0 | META | 2|3
+0.5 | META | 3|4

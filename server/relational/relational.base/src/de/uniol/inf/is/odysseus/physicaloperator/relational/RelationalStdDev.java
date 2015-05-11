@@ -56,7 +56,7 @@ public class RelationalStdDev extends StandardDeviation<Tuple<?>, Tuple<?>> {
             return this.init((StandardDeviationPartialAggregate<Tuple<?>>) in.getAttribute(this.pos));
         }
         else {
-            return new StandardDeviationPartialAggregate<Tuple<?>>(((Number) in.getAttribute(this.pos)).doubleValue());
+            return new StandardDeviationPartialAggregate<Tuple<?>>(((Number) in.getAttribute(this.pos)));
         }
     }
 
@@ -102,7 +102,7 @@ public class RelationalStdDev extends StandardDeviation<Tuple<?>, Tuple<?>> {
             return this.merge(p, (IPartialAggregate) toMerge.getAttribute(this.pos), false);
         }
         else {
-            pa.add(((Number) toMerge.getAttribute(this.pos)).doubleValue());
+            pa.add(((Number) toMerge.getAttribute(this.pos)));
             return pa;
         }
     }

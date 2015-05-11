@@ -23,12 +23,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class StandardDeviationPartialAggregate<R> extends AbstractPartialAggregate<R> {
 
-	private static final long serialVersionUID = 939387870546254316L;
-	private double diffSquareSum;
+    private static final long serialVersionUID = 939387870546254316L;
+    private double diffSquareSum;
     private double mean;
     private int count;
 
-    public StandardDeviationPartialAggregate(final Double value) {
+    public StandardDeviationPartialAggregate(final Number value) {
         this.add(value);
     }
 
@@ -42,14 +42,18 @@ public class StandardDeviationPartialAggregate<R> extends AbstractPartialAggrega
         return Math.sqrt(this.diffSquareSum / (this.count - 1.0));
     }
 
-    public void add(final Double value) {
-        // Estimate online variance value using
-        // Donald E. Knuth (1998). The Art of Computer Programming, volume 2:
-        // Seminumerical Algorithms, 3rd edn., p. 232. Boston: Addison-Wesley.
-        this.count++;
-        final double delta = value - this.mean;
-        this.mean += delta / this.count;
-        this.diffSquareSum += delta * (value - this.mean);
+    public void add(final Number value) {
+        if (value != null) {
+            // Estimate online variance value using
+            // Donald E. Knuth (1998). The Art of Computer Programming, volume
+            // 2:
+            // Seminumerical Algorithms, 3rd edn., p. 232. Boston:
+            // Addison-Wesley.
+            this.count++;
+            final double delta = value.doubleValue() - this.mean;
+            this.mean += delta / this.count;
+            this.diffSquareSum += delta * (value.doubleValue() - this.mean);
+        }
     }
 
     public void add(final StandardDeviationPartialAggregate<?> value) {
@@ -60,7 +64,7 @@ public class StandardDeviationPartialAggregate<R> extends AbstractPartialAggrega
 
     @Override
     public StandardDeviationPartialAggregate<R> clone() {
-        return new StandardDeviationPartialAggregate<R>(this);
+        return new StandardDeviationPartialAggregate<>(this);
     }
 
     @Override

@@ -22,9 +22,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class GreenwaldKhannaMedianPartialAggregate<T> extends AbstractPartialAggregate<T> {
 
-	private static final long serialVersionUID = -6999923917595784322L;
+    private static final long serialVersionUID = -6999923917595784322L;
 
-	private static final Logger LOG = LoggerFactory.getLogger(GreenwaldKhannaMedianPartialAggregate.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GreenwaldKhannaMedianPartialAggregate.class);
 
     private final double epsilon;
     private LinkedList<Tuple> summary;
@@ -39,7 +39,7 @@ public class GreenwaldKhannaMedianPartialAggregate<T> extends AbstractPartialAgg
      */
     public GreenwaldKhannaMedianPartialAggregate(final double epsilon) {
         this.epsilon = epsilon;
-        this.summary = new LinkedList<Tuple>();
+        this.summary = new LinkedList<>();
         this.min = Double.POSITIVE_INFINITY;
         this.max = Double.NEGATIVE_INFINITY;
         this.count = 0;
@@ -76,23 +76,25 @@ public class GreenwaldKhannaMedianPartialAggregate<T> extends AbstractPartialAgg
      * @return
      */
     public GreenwaldKhannaMedianPartialAggregate<T> add(final Double value) {
-        // Compress if number of values n=0mod1/2e
-        if ((this.count % (1.0 / (2.0 * this.epsilon()))) == 0) {
-            if (GreenwaldKhannaMedianPartialAggregate.LOG.isTraceEnabled()) {
-                GreenwaldKhannaMedianPartialAggregate.LOG.trace("Running compress before inserting the {}. element with value: {}", this.count + 1, value);
+        if (value != null) {
+            // Compress if number of values n=0mod1/2e
+            if ((this.count % (1.0 / (2.0 * this.epsilon()))) == 0) {
+                if (GreenwaldKhannaMedianPartialAggregate.LOG.isTraceEnabled()) {
+                    GreenwaldKhannaMedianPartialAggregate.LOG.trace("Running compress before inserting the {}. element with value: {}", this.count + 1, value);
+                }
+                try {
+                    this.compress(this.count);
+                }
+                catch (final Exception e) {
+                    GreenwaldKhannaMedianPartialAggregate.LOG.error(e.getMessage(), e);
+                }
+                if (GreenwaldKhannaMedianPartialAggregate.LOG.isTraceEnabled()) {
+                    GreenwaldKhannaMedianPartialAggregate.LOG.trace("Summary size {}", this.summary.size());
+                }
             }
-            try {
-                this.compress(this.count);
-            }
-            catch (final Exception e) {
-                GreenwaldKhannaMedianPartialAggregate.LOG.error(e.getMessage(), e);
-            }
-            if (GreenwaldKhannaMedianPartialAggregate.LOG.isTraceEnabled()) {
-                GreenwaldKhannaMedianPartialAggregate.LOG.trace("Summary size {}", this.summary.size());
-            }
+            this.insert(value, this.count);
+            this.count++;
         }
-        this.insert(value, this.count);
-        this.count++;
         return this;
     }
 
@@ -121,14 +123,10 @@ public class GreenwaldKhannaMedianPartialAggregate<T> extends AbstractPartialAgg
                 if (((this.count % 2) != 0) || ((quantile + 1) <= (i + cur.gain))) {
                     return cur.value;
                 }
-                else {
-                    final Tuple next = iter.next();
-                    return (cur.value + next.value) / 2.0;
-                }
+                final Tuple next = iter.next();
+                return (cur.value + next.value) / 2.0;
             }
-            else {
-                i += cur.gain;
-            }
+            i += cur.gain;
         }
         return null;
     }
@@ -149,7 +147,7 @@ public class GreenwaldKhannaMedianPartialAggregate<T> extends AbstractPartialAgg
      */
     @Override
     public GreenwaldKhannaMedianPartialAggregate<T> clone() {
-        return new GreenwaldKhannaMedianPartialAggregate<T>(this);
+        return new GreenwaldKhannaMedianPartialAggregate<>(this);
     }
 
     private void insert(final double v, final int n) {
@@ -252,9 +250,7 @@ public class GreenwaldKhannaMedianPartialAggregate<T> extends AbstractPartialAgg
         if (diff == 1.0) {
             return (0);
         }
-        else {
-            return (int) (Math.log(diff) / Math.log(2.0));
-        }
+        return (int) (Math.log(diff) / Math.log(2.0));
     }
 
     private double epsilon() {

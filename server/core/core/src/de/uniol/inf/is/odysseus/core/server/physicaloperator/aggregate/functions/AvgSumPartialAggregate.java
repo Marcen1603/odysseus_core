@@ -22,18 +22,20 @@ public class AvgSumPartialAggregate<R> extends AbstractPartialAggregate<R> {
 
 	private static final long serialVersionUID = -1345991906490443262L;
 	
-	Double aggValue;
+	double aggValue;
 	int aggCount;
 	
-	public AvgSumPartialAggregate(Double initAggValue, int initCount){
-		this.aggValue = initAggValue;
-		this.aggCount = initCount;
+	public AvgSumPartialAggregate(Number initAggValue, int initCount){
+        if (initAggValue != null) {
+            this.aggValue = initAggValue.doubleValue();
+            this.aggCount = initCount;
+        }
 	}
 	
 	public AvgSumPartialAggregate(
 			AvgSumPartialAggregate<R> avgSumPartialAggregate) {
 		this.aggCount = avgSumPartialAggregate.aggCount;
-		this.aggValue = new Double(avgSumPartialAggregate.aggValue);
+		this.aggValue = avgSumPartialAggregate.aggValue;
 	}
 
 	public AvgSumPartialAggregate<R> merge(AvgSumPartialAggregate<R> toMerge){
@@ -50,15 +52,19 @@ public class AvgSumPartialAggregate<R> extends AbstractPartialAggregate<R> {
 		return aggCount;
 	}
 	
-	public AvgSumPartialAggregate<R> addAggValue(Double toAdd){
-		this.aggValue += toAdd;
-		aggCount++;
+	public AvgSumPartialAggregate<R> addAggValue(Number toAdd){
+        if (toAdd != null) {
+            this.aggValue += toAdd.doubleValue();
+            aggCount++;
+        }
 		return this;
 	}
 	
-	public void setAggValue(Double newAggValue, int newCount){
-		this.aggValue = newAggValue;
-		aggCount = newCount;
+	public void setAggValue(Number newAggValue, int newCount){
+        if (newAggValue != null) {
+            this.aggValue = newAggValue.doubleValue();
+            aggCount = newCount;
+        }
 	}
 	
 	@Override

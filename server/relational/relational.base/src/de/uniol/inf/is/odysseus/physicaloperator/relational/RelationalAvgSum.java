@@ -45,7 +45,7 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>> {
 			return init((AvgSumPartialAggregate<Tuple<?>>) in.getAttribute(pos));
 		} else {
 			return new AvgSumPartialAggregate<Tuple<?>>(
-					((Number) in.getAttribute(pos)).doubleValue(), 1);
+					((Number) in.getAttribute(pos)), 1);
 		}
 	}
 
@@ -57,8 +57,7 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>> {
 			return merge(p, (IPartialAggregate) toMerge.getAttribute(pos),
 					false);
 		} else {
-			return pa.addAggValue(((Number) toMerge.getAttribute(pos))
-					.doubleValue());
+			return pa.addAggValue(((Number) toMerge.getAttribute(pos)));
 		}
 	}
 

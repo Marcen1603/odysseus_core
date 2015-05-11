@@ -57,9 +57,7 @@ public class RelationalCov extends Covariance<Tuple<?>, Tuple<?>> {
         if (this.isPartialAggregateInput()) {
             return this.init((CovariancePartialAggregate<Tuple<?>>) in.getAttribute(this.posA));
         }
-        else {
-            return new CovariancePartialAggregate<Tuple<?>>(((Number) in.getAttribute(this.posA)).doubleValue(), ((Number) in.getAttribute(this.posB)).doubleValue());
-        }
+        return new CovariancePartialAggregate<>(((Number) in.getAttribute(this.posA)), ((Number) in.getAttribute(this.posB)));
     }
 
     /**
@@ -68,7 +66,7 @@ public class RelationalCov extends Covariance<Tuple<?>, Tuple<?>> {
      */
     @Override
     public IPartialAggregate<Tuple<?>> init(final IPartialAggregate<Tuple<?>> in) {
-        return new CovariancePartialAggregate<Tuple<?>>((CovariancePartialAggregate<Tuple<?>>) in);
+        return new CovariancePartialAggregate<>((CovariancePartialAggregate<Tuple<?>>) in);
     }
 
     /**
@@ -83,7 +81,7 @@ public class RelationalCov extends Covariance<Tuple<?>, Tuple<?>> {
         CovariancePartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
             final CovariancePartialAggregate<Tuple<?>> h = (CovariancePartialAggregate<Tuple<?>>) p;
-            pa = new CovariancePartialAggregate<Tuple<?>>(h);
+            pa = new CovariancePartialAggregate<>(h);
 
         }
         else {
@@ -103,10 +101,8 @@ public class RelationalCov extends Covariance<Tuple<?>, Tuple<?>> {
         if (this.isPartialAggregateInput()) {
             return this.merge(p, (IPartialAggregate) toMerge.getAttribute(this.posA), false);
         }
-        else {
-            pa.add(((Number) toMerge.getAttribute(this.posA)).doubleValue(), ((Number) toMerge.getAttribute(this.posB)).doubleValue());
-            return pa;
-        }
+        pa.add(((Number) toMerge.getAttribute(this.posA)), ((Number) toMerge.getAttribute(this.posB)));
+        return pa;
     }
 
     /**
@@ -118,7 +114,7 @@ public class RelationalCov extends Covariance<Tuple<?>, Tuple<?>> {
         CovariancePartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
             final CovariancePartialAggregate<Tuple<?>> h = (CovariancePartialAggregate<Tuple<?>>) p;
-            pa = new CovariancePartialAggregate<Tuple<?>>(h);
+            pa = new CovariancePartialAggregate<>(h);
         }
         else {
             pa = (CovariancePartialAggregate<Tuple<?>>) p;

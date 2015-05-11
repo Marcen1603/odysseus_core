@@ -55,9 +55,7 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
         if (this.isPartialAggregateInput()) {
             return this.init((VariancePartialAggregate<Tuple<?>>) in.getAttribute(this.pos));
         }
-        else {
-            return new VariancePartialAggregate<Tuple<?>>(((Number) in.getAttribute(this.pos)).doubleValue());
-        }
+        return new VariancePartialAggregate<>(((Number) in.getAttribute(this.pos)));
     }
 
     /**
@@ -66,7 +64,7 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
      */
     @Override
     public IPartialAggregate<Tuple<?>> init(final IPartialAggregate<Tuple<?>> in) {
-        return new VariancePartialAggregate<Tuple<?>>((VariancePartialAggregate<Tuple<?>>) in);
+        return new VariancePartialAggregate<>((VariancePartialAggregate<Tuple<?>>) in);
     }
 
     /**
@@ -81,7 +79,7 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
         VariancePartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
             final VariancePartialAggregate<Tuple<?>> h = (VariancePartialAggregate<Tuple<?>>) p;
-            pa = new VariancePartialAggregate<Tuple<?>>(h);
+            pa = new VariancePartialAggregate<>(h);
 
         }
         else {
@@ -101,10 +99,8 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
         if (this.isPartialAggregateInput()) {
             return this.merge(p, (IPartialAggregate) toMerge.getAttribute(this.pos), false);
         }
-        else {
-            pa.add(((Number) toMerge.getAttribute(this.pos)).doubleValue());
-            return pa;
-        }
+        pa.add(((Number) toMerge.getAttribute(this.pos)));
+        return pa;
     }
 
     /**
@@ -116,7 +112,7 @@ public class RelationalVar extends Variance<Tuple<?>, Tuple<?>> {
         VariancePartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
             final VariancePartialAggregate<Tuple<?>> h = (VariancePartialAggregate<Tuple<?>>) p;
-            pa = new VariancePartialAggregate<Tuple<?>>(h);
+            pa = new VariancePartialAggregate<>(h);
         }
         else {
             pa = (VariancePartialAggregate<Tuple<?>>) p;

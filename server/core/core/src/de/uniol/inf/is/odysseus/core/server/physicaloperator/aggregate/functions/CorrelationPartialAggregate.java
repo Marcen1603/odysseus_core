@@ -23,15 +23,15 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  */
 public class CorrelationPartialAggregate<R> extends AbstractPartialAggregate<R> {
 
-	private static final long serialVersionUID = -1700211702940005284L;
-	private double sumA;
+    private static final long serialVersionUID = -1700211702940005284L;
+    private double sumA;
     private double sumB;
     private double squareSumA;
     private double squareSumB;
     private double crossproductSum;
     private int count;
 
-    public CorrelationPartialAggregate(final Double a, final Double b) {
+    public CorrelationPartialAggregate(final Number a, final Number b) {
         this.add(a, b);
     }
 
@@ -50,13 +50,15 @@ public class CorrelationPartialAggregate<R> extends AbstractPartialAggregate<R> 
                 / (Math.sqrt((this.count * this.squareSumA) - Math.pow(this.sumA, 2.0)) * Math.sqrt((this.count * this.squareSumB) - Math.pow(this.sumB, 2.0)));
     }
 
-    public void add(final Double a, final Double b) {
-        this.sumA += a;
-        this.sumB += b;
-        this.squareSumA += Math.pow(a, 2.0);
-        this.squareSumB += Math.pow(b, 2.0);
-        this.crossproductSum += a * b;
-        this.count++;
+    public void add(final Number a, final Number b) {
+        if ((a != null) && (b != null)) {
+            this.sumA += a.doubleValue();
+            this.sumB += b.doubleValue();
+            this.squareSumA += Math.pow(a.doubleValue(), 2.0);
+            this.squareSumB += Math.pow(b.doubleValue(), 2.0);
+            this.crossproductSum += a.doubleValue() * b.doubleValue();
+            this.count++;
+        }
     }
 
     public void add(final CorrelationPartialAggregate<?> value) {
@@ -70,7 +72,7 @@ public class CorrelationPartialAggregate<R> extends AbstractPartialAggregate<R> 
 
     @Override
     public CorrelationPartialAggregate<R> clone() {
-        return new CorrelationPartialAggregate<R>(this);
+        return new CorrelationPartialAggregate<>(this);
     }
 
     @Override

@@ -57,9 +57,7 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
         if (this.isPartialAggregateInput()) {
             return this.init((CorrelationPartialAggregate<Tuple<?>>) in.getAttribute(this.posA));
         }
-        else {
-            return new CorrelationPartialAggregate<Tuple<?>>(((Number) in.getAttribute(this.posA)).doubleValue(), ((Number) in.getAttribute(this.posB)).doubleValue());
-        }
+        return new CorrelationPartialAggregate<>(((Number) in.getAttribute(this.posA)), ((Number) in.getAttribute(this.posB)));
     }
 
     /**
@@ -68,7 +66,7 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
      */
     @Override
     public IPartialAggregate<Tuple<?>> init(final IPartialAggregate<Tuple<?>> in) {
-        return new CorrelationPartialAggregate<Tuple<?>>((CorrelationPartialAggregate<Tuple<?>>) in);
+        return new CorrelationPartialAggregate<>((CorrelationPartialAggregate<Tuple<?>>) in);
     }
 
     /**
@@ -83,7 +81,7 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
         CorrelationPartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
             final CorrelationPartialAggregate<Tuple<?>> h = (CorrelationPartialAggregate<Tuple<?>>) p;
-            pa = new CorrelationPartialAggregate<Tuple<?>>(h);
+            pa = new CorrelationPartialAggregate<>(h);
 
         }
         else {
@@ -103,10 +101,8 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
         if (this.isPartialAggregateInput()) {
             return this.merge(p, (IPartialAggregate) toMerge.getAttribute(this.posA), false);
         }
-        else {
-            pa.add(((Number) toMerge.getAttribute(this.posA)).doubleValue(), ((Number) toMerge.getAttribute(this.posB)).doubleValue());
-            return pa;
-        }
+        pa.add(((Number) toMerge.getAttribute(this.posA)), ((Number) toMerge.getAttribute(this.posB)));
+        return pa;
     }
 
     /**
@@ -118,7 +114,7 @@ public class RelationalCorr extends Correlation<Tuple<?>, Tuple<?>> {
         CorrelationPartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
             final CorrelationPartialAggregate<Tuple<?>> h = (CorrelationPartialAggregate<Tuple<?>>) p;
-            pa = new CorrelationPartialAggregate<Tuple<?>>(h);
+            pa = new CorrelationPartialAggregate<>(h);
         }
         else {
             pa = (CorrelationPartialAggregate<Tuple<?>>) p;
