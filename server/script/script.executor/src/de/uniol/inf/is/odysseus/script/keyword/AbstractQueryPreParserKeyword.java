@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanManager
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterMaxSheddingFactor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
@@ -37,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+import de.uniol.inf.is.odysseus.script.parser.keyword.MaxSheddingFactorPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyword;
 
@@ -93,6 +95,13 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 			// Only for this query
 			variables.remove(QueryNamePreParserKeyword.QNAME);
 		}
+		
+		// MAX SHEDDING FACTOR
+		Integer maxSheddingFactor = (Integer)variables.get(MaxSheddingFactorPreParserKeyword.SHEDDING_FACTOR_NAME);
+		if( maxSheddingFactor == null ) {
+			maxSheddingFactor = 1;
+		}
+		addSettings.add(new ParameterMaxSheddingFactor(maxSheddingFactor));
 		
 		// PRIO
 		if (variables.containsKey(QueryPriorityPreParserKeyword.NAME)) {
