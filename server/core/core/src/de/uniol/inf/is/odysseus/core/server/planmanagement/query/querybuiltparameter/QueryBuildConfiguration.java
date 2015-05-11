@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDistribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterFragmentationType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterMaxSheddingFactor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterShareSimilarOperators;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
@@ -68,6 +69,10 @@ public class QueryBuildConfiguration extends
 
 		if (!contains(ParameterBufferPlacementStrategy.class)) {
 			set(new ParameterBufferPlacementStrategy());
+		}
+		
+		if( !contains(ParameterMaxSheddingFactor.class)) {
+			set( new ParameterMaxSheddingFactor(1));
 		}
 
 		if (!contains(ParameterPriority.class)) {

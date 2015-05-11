@@ -21,6 +21,7 @@ public class FunctionProvider implements IFunctionProvider {
 		funcs.add(new QueryStartTSFunction());
 		funcs.add(new QueryLastStateChangeTSFunction());
 		funcs.add(new QuerySheddingFactorFunction());
+		funcs.add(new QueryMaxSheddingFactorFunction());
 		
 		return funcs;
 	}
