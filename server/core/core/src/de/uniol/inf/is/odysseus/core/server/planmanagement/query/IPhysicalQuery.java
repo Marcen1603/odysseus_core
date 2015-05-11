@@ -143,6 +143,7 @@ public interface IPhysicalQuery extends IMonitoringDataProvider,
 	 */
 	Collection<IPlanMonitor<?>> getPlanMonitors();
 
+	@Override
 	ISession getSession();
 
 	void setSession(ISession user);
