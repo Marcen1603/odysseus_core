@@ -147,6 +147,15 @@
          <enablement></enablement>
       </commonWizard>
    </extension>
+      <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.perspectives.DashboardPerspective"
+            icon="icons/layout.png"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.perspectives.DashboardPerspective"
+            name="Dashboard Designer">
+      </perspective>
+   </extension>
    <extension
          point="org.eclipse.ui.views">
       <view
