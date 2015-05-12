@@ -87,6 +87,10 @@ public class NavicoRadarWrapper {
     if (getClass() == NavicoRadarWrapper.class) NavicoRadarJavaJNI.NavicoRadarWrapper_onTargetUpdate(swigCPtr, this, buffer); else NavicoRadarJavaJNI.NavicoRadarWrapper_onTargetUpdateSwigExplicitNavicoRadarWrapper(swigCPtr, this, buffer);
   }
 
+  public void onTargetUpdateTTM(String TTMmessage) {
+    if (getClass() == NavicoRadarWrapper.class) NavicoRadarJavaJNI.NavicoRadarWrapper_onTargetUpdateTTM(swigCPtr, this, TTMmessage); else NavicoRadarJavaJNI.NavicoRadarWrapper_onTargetUpdateTTMSwigExplicitNavicoRadarWrapper(swigCPtr, this, TTMmessage);
+  }
+
   public void setCat240Out() {
     NavicoRadarJavaJNI.NavicoRadarWrapper_setCat240Out(swigCPtr, this);
   }
