@@ -28,7 +28,11 @@ import de.uniol.inf.is.odysseus.spatial.functions.AsMultiPoint;
 import de.uniol.inf.is.odysseus.spatial.functions.AsMultiPolygon;
 import de.uniol.inf.is.odysseus.spatial.functions.AsPoint;
 import de.uniol.inf.is.odysseus.spatial.functions.AsPolygon;
+import de.uniol.inf.is.odysseus.spatial.functions.CalculateBearing;
+import de.uniol.inf.is.odysseus.spatial.functions.CalculateDistance;
+import de.uniol.inf.is.odysseus.spatial.functions.CalculateEndingCoordinates;
 import de.uniol.inf.is.odysseus.spatial.functions.FromWKT;
+import de.uniol.inf.is.odysseus.spatial.functions.GetCoordinate;
 import de.uniol.inf.is.odysseus.spatial.functions.ST_SetSRID;
 import de.uniol.inf.is.odysseus.spatial.functions.ST_Transform;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialBuffer;
@@ -51,6 +55,7 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialWithin;
 import de.uniol.inf.is.odysseus.spatial.functions.GetCentroid;
 import de.uniol.inf.is.odysseus.spatial.functions.ToCartesianCoordinate;
 import de.uniol.inf.is.odysseus.spatial.functions.AsCartesianCoordinates;
+import de.uniol.inf.is.odysseus.spatial.functions.ToEllipsoid;
 import de.uniol.inf.is.odysseus.spatial.functions.ToPoint;
 import de.uniol.inf.is.odysseus.spatial.functions.ToPolarCoordinate;
 import de.uniol.inf.is.odysseus.spatial.functions.AsPolarCoordinates;
@@ -103,6 +108,12 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new ToPoint());
 		
 		functions.add(new SpatialDistance());
+		
+		functions.add(new CalculateBearing());
+		functions.add(new CalculateEndingCoordinates());
+		functions.add(new CalculateDistance());
+		functions.add(new ToEllipsoid());
+		functions.add(new GetCoordinate());
 		return functions;
 	}
 
