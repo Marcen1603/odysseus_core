@@ -546,7 +546,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	public T peekLast() {
-		return getElements().get(getElements().size());
+		return getElements().size() != 0 ? getElements().get(getElements().size()-1) : null;
 	}
 
 	public Iterator<T> extractAllElements() {
