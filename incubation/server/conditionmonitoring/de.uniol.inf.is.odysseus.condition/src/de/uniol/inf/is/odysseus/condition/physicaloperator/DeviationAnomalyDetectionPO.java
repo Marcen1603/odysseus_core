@@ -115,7 +115,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		} else if (this.trainingMode.equals(TrainingMode.WINDOW)) {
 			// Use the window which is before this operator
 			processTupleWithWindow(gId, tuple, info, this.exactCalculation);
-		}
+		} 
 	}
 
 	/**
@@ -140,18 +140,17 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		}
 		tuples.add(tuple);
 		removeOldValues(tuples, tuple.getMetadata().getStart(), info, exactCalculation);
-		double standardDeviation = 0;
 		double mean = 0;
 		if (exactCalculation) {
 			addValue(getValue(tuple), info);
-			standardDeviation = calcStandardDeviationApprox(info);
+			info.standardDeviation = calcStandardDeviationApprox(info);
 			mean = getMeanValue(info);
 		} else {
-			standardDeviation = calcStandardDeviationOffline(tuples, info);
+			info.standardDeviation = calcStandardDeviationOffline(tuples, info);
 			mean = info.mean;
 		}
 
-		processTuple(gId, getValue(tuple), mean, standardDeviation, tuple, info);
+		processTuple(gId, getValue(tuple), mean, info.standardDeviation, tuple, info);
 	}
 
 	/**

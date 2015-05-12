@@ -22,6 +22,7 @@ public class RuleProvider implements IRuleProvider {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new ValueAreaAnomalyDetectionAOTransformRule());
 		rules.add(new DeviationAnomalyDetectionAOTransformRule());
+		rules.add(new RarePatternPOTransformRule());
 		return rules;
 	}
 }
