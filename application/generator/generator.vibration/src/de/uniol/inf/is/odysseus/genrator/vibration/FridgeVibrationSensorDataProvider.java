@@ -73,8 +73,7 @@ public class FridgeVibrationSensorDataProvider extends AbstractDataGenerator {
 
 	@Override
 	protected void process_init() {
-		// This is simple vibration - not too realistic, but ok. Should be in
-		// m/s^2
+		// This is simple vibration - not too realistic, but ok. m/s^2
 		vibrationsGenerator = new AlternatingGenerator(new RandomErrorModel(new JitterNoise(1.5)), 0, 2.0, -5, 5);
 		offVibrationGenerator = new AlternatingGenerator(new RandomErrorModel(new JitterNoise(0.1)), 0, 0.15, -0.2, 0.2);
 		paused = false;

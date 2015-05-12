@@ -50,6 +50,11 @@ public class Activator implements BundleActivator {
 		for (StreamServer server : servers) {
 			server.start();
 		}
+		
+		// Create a state data provider
+		StateDataProvider stateProvider = new StateDataProvider();
+		StreamServer server = new StreamServer(53211, stateProvider);
+		server.start();
 
 		// Listen for commands
 		while (true) {
