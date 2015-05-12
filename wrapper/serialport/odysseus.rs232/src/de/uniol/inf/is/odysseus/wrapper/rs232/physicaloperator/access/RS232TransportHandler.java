@@ -180,8 +180,10 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
                     else {
                         final ByteBuffer buffer = ByteBuffer.allocate(1024);
                         while (this.input.ready()) {
-                            final int r = this.input.read();
-                            buffer.putInt(r);
+                        	 final Integer r = this.input.read();
+                             buffer.put(r.byteValue());
+//                            final int r = this.input.read();
+//                            buffer.putInt(r);
                         }
                         super.fireProcess(buffer);
                     }
