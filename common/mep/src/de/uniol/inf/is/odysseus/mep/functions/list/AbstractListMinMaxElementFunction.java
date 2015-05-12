@@ -15,7 +15,7 @@ abstract public class AbstractListMinMaxElementFunction extends AbstractFunction
 
 	
 	public AbstractListMinMaxElementFunction(String name){
-		super(name,2, accTypes, SDFDatatype.OBJECT, false);
+		super(name,2, accTypes, SDFDatatype.TUPLE, false);
 	}
 	
 	@Override
