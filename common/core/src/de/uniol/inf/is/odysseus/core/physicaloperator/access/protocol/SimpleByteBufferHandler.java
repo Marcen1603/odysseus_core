@@ -22,6 +22,9 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	final static Logger LOG = LoggerFactory.getLogger(SimpleByteBufferHandler.class);
 	
     protected ByteBufferHandler<T> objectHandler;
+    
+    private static String bufferSizeOption = "buffersize";
+    private int bufferSize = 1024;
 	
 	public SimpleByteBufferHandler() {
 		super();
@@ -32,12 +35,14 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 			IDataHandler<T> dataHandler) {
 		super(direction, access, dataHandler, options);
 		objectHandler = new ByteBufferHandler<T>(dataHandler);
+		if(options.containsKey(bufferSizeOption))
+			this.bufferSize = options.getInt(bufferSizeOption, this.bufferSize);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void write(T object) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(1024);
+		ByteBuffer buffer = ByteBuffer.allocate(this.bufferSize);
 		//getDataHandler().writeData(buffer, object);
 		ByteBufferUtil.toBuffer(buffer, (IStreamObject)object, getDataHandler(), exportMetadata);
 		buffer.flip();
