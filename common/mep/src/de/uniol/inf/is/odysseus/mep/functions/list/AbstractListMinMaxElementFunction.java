@@ -22,16 +22,21 @@ abstract public class AbstractListMinMaxElementFunction extends AbstractFunction
 	@SuppressWarnings({ "rawtypes"})
 	public Tuple<?> getValue() {
 		List<Tuple<?>> list = getInputValue(0);
-		int pos = getNumericalInputValue(1).intValue();
-		Tuple<?> ret = list.get(0);
-		Comparable val = ret.getAttribute(pos);
-		for (Tuple<?> t:list){
-			if (compare(pos, val, t)){
-				val = t.getAttribute(pos);
-				ret = t;
+		
+		if( list != null && !list.isEmpty()) {
+			int pos = getNumericalInputValue(1).intValue();
+			Tuple<?> ret = list.get(0);
+			Comparable val = ret.getAttribute(pos);
+			for (Tuple<?> t:list){
+				if (compare(pos, val, t)){
+					val = t.getAttribute(pos);
+					ret = t;
+				}
 			}
-		}
-		return ret;
+			return ret;
+		} 
+		
+		return null;
 	}
 
 	@SuppressWarnings("rawtypes")
