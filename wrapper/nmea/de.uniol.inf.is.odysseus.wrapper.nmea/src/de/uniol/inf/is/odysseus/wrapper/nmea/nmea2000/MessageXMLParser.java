@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.nmea2000;
 
-import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
