@@ -247,7 +247,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/  Token t;}{/*@bgen(jjtree) ContextStoreType */
   try {
-/*@egen*/  (    t = < K_SINGLE >  | t = < K_MULTI > < K_SIZE > Integer()  )/*@bgen(jjtree)*/
+/*@egen*/  (    t = < K_SINGLE >  | t = < K_MULTI > < K_SIZE > Integer() [ < K_PARTITION > < K_BY > Integer() ]  )/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;

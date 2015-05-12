@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
-@SuppressWarnings("all")
+
 /** Token Manager. */
 public class NewSQLParserTokenManager implements NewSQLParserConstants
 {
