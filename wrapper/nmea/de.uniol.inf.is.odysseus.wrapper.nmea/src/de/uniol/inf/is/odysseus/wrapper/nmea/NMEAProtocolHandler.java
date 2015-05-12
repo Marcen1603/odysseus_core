@@ -221,13 +221,18 @@ public class NMEAProtocolHandler extends
 	public void write(KeyValueObject<? extends IMetaAttribute> object)
 			throws IOException {
 		try {
+			//Case1: Avoid writing decoded AIS messages, because such messages are only processed 
+			//and transfered between the operators (transfered, not transported, from operator to another)
+			if(object.getMetadata("decodedAIS") != null)
+				return;
+			//Case2: get the sentence from MetaData if existed  
 			Object obj = object.getMetadata("originalNMEA");
 			if (obj instanceof Sentence)
 			{
-				Sentence sentence = (Sentence) obj;// System.out.println("wrtten nmea: "
-												// + sentence.getNmeaString());
+				Sentence sentence = (Sentence) obj;
 				getTransportHandler().send(sentence.toNMEA().getBytes());
 			}
+			//Case3: create the sentence out from the key-value attributes 
 			else
 			{
 				Sentence sentence = SentenceFactory.getInstance().createSentence(object.getAttributes());

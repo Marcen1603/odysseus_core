@@ -40,6 +40,6 @@ public class PositionReportClassAAssignedSchedule extends PositionReport {
 		if (getSecond() != null) res.put("second", getSecond());
 		if (getManeuverIndicator() != null) res.put("maneuverIndicator", getManeuverIndicator());
 		if (getRaimFlag() != null) res.put("raimFlag", getRaimFlag());
-		if (getRaimFlag() != null) res.put("sourceMmsi", getSourceMmsi().getMMSI());
+		if (getSourceMmsi().getMMSI() != null) res.put("sourceMmsi", getSourceMmsi().getMMSI());
 	}
 }
