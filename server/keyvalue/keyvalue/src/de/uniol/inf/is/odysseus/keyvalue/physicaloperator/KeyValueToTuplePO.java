@@ -81,7 +81,9 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 			}
 		}
 		Tuple<M> output = (Tuple<M>) tHandler.readData(data);
-        output.setMetadata((M) input.getMetadata().clone());
+		
+		if (input.getMetadata() != null)
+			output.setMetadata((M) input.getMetadata().clone());
         
 		if (keepInputObject) {
 			output.setAdditionalContent("base",input.clone());
