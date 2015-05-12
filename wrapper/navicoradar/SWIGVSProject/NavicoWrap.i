@@ -40,7 +40,6 @@ $input = (jenv)->NewDirectByteBuffer($1, $2); }
 
 %{
 #include "NavicoWrap.h"
-
 %}
 
 /* turn on director wrapping Callback */

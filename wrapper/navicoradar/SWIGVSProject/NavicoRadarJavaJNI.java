@@ -22,6 +22,8 @@ public class NavicoRadarJavaJNI {
   public final static native void NavicoRadarWrapper_onCat240SpokeUpdateSwigExplicitNavicoRadarWrapper(long jarg1, NavicoRadarWrapper jarg1_, java.nio.ByteBuffer jarg2);
   public final static native void NavicoRadarWrapper_onTargetUpdate(long jarg1, NavicoRadarWrapper jarg1_, java.nio.ByteBuffer jarg2);
   public final static native void NavicoRadarWrapper_onTargetUpdateSwigExplicitNavicoRadarWrapper(long jarg1, NavicoRadarWrapper jarg1_, java.nio.ByteBuffer jarg2);
+  public final static native void NavicoRadarWrapper_onTargetUpdateTTM(long jarg1, NavicoRadarWrapper jarg1_, String jarg2);
+  public final static native void NavicoRadarWrapper_onTargetUpdateTTMSwigExplicitNavicoRadarWrapper(long jarg1, NavicoRadarWrapper jarg1_, String jarg2);
   public final static native void NavicoRadarWrapper_setCat240Out(long jarg1, NavicoRadarWrapper jarg1_);
   public final static native void NavicoRadarWrapper_delCat240Out(long jarg1, NavicoRadarWrapper jarg1_);
   public final static native boolean NavicoRadarWrapper_setAntennaHeight(long jarg1, NavicoRadarWrapper jarg1_, int jarg2);
@@ -43,6 +45,9 @@ public class NavicoRadarJavaJNI {
   }
   public static void SwigDirector_NavicoRadarWrapper_onTargetUpdate(NavicoRadarWrapper self, java.nio.ByteBuffer buffer) {
     self.onTargetUpdate(buffer);
+  }
+  public static void SwigDirector_NavicoRadarWrapper_onTargetUpdateTTM(NavicoRadarWrapper self, String TTMmessage) {
+    self.onTargetUpdateTTM(TTMmessage);
   }
 
   private final static native void swig_module_init();

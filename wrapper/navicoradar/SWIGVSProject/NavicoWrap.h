@@ -137,6 +137,7 @@ public:
 	virtual void onSpokeUpdate(void *buffer, long size);
 	virtual void onCat240SpokeUpdate(void *buffer, long size);
 	virtual void onTargetUpdate(void *buffer, long size);
+	virtual void onTargetUpdateTTM(std::string TTMmessage); //Testing
 	
 	void setCat240Out();
 	void delCat240Out();
@@ -173,6 +174,28 @@ private:
     int GetUnlockKey( const char* pSerialNumber, const uint8_t* pLockID, unsigned lockIDSize, uint8_t* pUnlockKey, unsigned maxUnlockKeySize );
     void UpdateUnlockState( const char* pSerialNumber, int lockState );
 	
+	static inline const std::string computeCheckSum(const std::string& sentence)
+{
+#define CARRIAGE_RETURN 0x0D
+#define LINE_FEED       0x0A
+	  unsigned char checksum_value = 0;
+
+	   int string_length = sentence.length();
+	   int index = 1; // Skip over the $ at the begining of the sentence
+
+	   while( index < string_length    &&
+			  sentence[ index ] != '*' &&
+			  sentence[ index ] != CARRIAGE_RETURN &&
+			  sentence[ index ] != LINE_FEED )
+	   {
+		  checksum_value ^= sentence[ index ];
+		  index++;
+	   }
+
+	   char buffer[20];
+	   sprintf(buffer, "%02X\r\n", checksum_value);
+  return buffer;
+}
 
 	int initState;
 	int myRadarLockState;

@@ -545,7 +545,60 @@ void NavicoRadarWrapper::UpdateTarget( const NRP::tTrackedTarget* pTarget )
 
 		onTargetUpdate(&target, sizeof(target));
 		
-			
+		std::stringstream ttm;
+		ttm << "$RATTM,";
+		ttm << (pTarget->targetID) << ",";
+		if (pTarget->infoAbsoluteValid)
+		{
+			ttm << pTarget->infoAbsolute.distance_m << ".000,";
+			ttm << (pTarget->infoAbsolute.bearing_ddeg / 10.0)<< ",";
+			ttm << "T,";
+			ttm << (pTarget->infoAbsolute.speed_dmps / 10.0)<< ",";
+			ttm << (pTarget->infoAbsolute.course_ddeg / 10.0)<< ",";
+			ttm << "T,";
+		}
+		else
+		{
+			ttm << pTarget->infoRelative.distance_m<< ".000,";
+			ttm << (pTarget->infoRelative.bearing_ddeg / 10.0)<< ",";
+			ttm << "R,";
+			ttm << (pTarget->infoRelative.speed_dmps / 10.0)<< ",";
+			ttm << (pTarget->infoRelative.course_ddeg / 10.0)<< ",";
+			ttm << "R,";
+		}		
+		ttm << (pTarget->CPA_m)/1000.0 << ",";
+		ttm << (pTarget->TCPA_sec) << ".0,";
+		ttm << "K,";
+		ttm << (int)pTarget->serverTargetID << ",";
+		switch(pTarget->targetState)
+		{
+			case Navico::Protocol::NRP::eAcquiringTarget:	ttm << "Q,";
+															break;      ///< Attempting to acquire target
+			case Navico::Protocol::NRP::eSafeTarget:		ttm << "T,";
+															break;            ///< Target acquired and not on a collision course
+			case Navico::Protocol::NRP::eDangerousTarget:	ttm << "T,";
+															break;      ///< Target acquired and may be on a collision course
+			case Navico::Protocol::NRP::eLostTarget:		ttm << "L,";
+															break;     ///< Target has been lost and needs to be cancelled an reacquired
+			case Navico::Protocol::NRP::eAcquireFailure:	ttm << "L,";
+															break;       ///< Failed to acquire a target
+			case Navico::Protocol::NRP::eOutOfRange:		ttm << "Q,";
+															break;            ///< Target is now out of range
+			case Navico::Protocol::NRP::eLostOutOfRange:	ttm << "L,";
+															break;        ///< Target lost due to staying out of range
+			case Navico::Protocol::NRP::eFailAcquireMax:	ttm << "L,";
+															break;     ///< Acquire failed because no target IDs were free
+			case Navico::Protocol::NRP::eFailAcquirePos:	ttm << "L,";
+															break;   ///< Acquire failed because the position was invalid
+				default:									ttm << "L,";
+				break;
+		}
+		
+		ttm << "|,"; //Reference Targets are Calibration Targets
+		
+
+		ttm << "*" << computeCheckSum(ttm.str());
+	    onTargetUpdateTTM(ttm.str());
 }
 
 
@@ -637,3 +690,4 @@ int	NavicoRadarWrapper::getDangerTime()
 void NavicoRadarWrapper::onSpokeUpdate(void *buffer, long size){}
 void NavicoRadarWrapper::onCat240SpokeUpdate(void *buffer, long size){}
 void NavicoRadarWrapper::onTargetUpdate(void *buffer, long size){}
+void NavicoRadarWrapper::onTargetUpdateTTM(std::string TTMmessage){}

@@ -615,7 +615,7 @@ namespace Swig {
 namespace Swig {
   namespace {
     jclass jclass_NavicoRadarJavaJNI = NULL;
-    jmethodID director_methids[3];
+    jmethodID director_methids[4];
   }
 }
 
@@ -660,7 +660,6 @@ SWIGINTERN void SWIG_JavaException(JNIEnv *jenv, int code, const char *msg) {
 
 
 #include "NavicoWrap.h"
-
 
 
 
@@ -757,6 +756,32 @@ void SwigDirector_NavicoRadarWrapper::onTargetUpdate(void *buffer, long size) {
   if (swigjobj) jenv->DeleteLocalRef(swigjobj);
 }
 
+void SwigDirector_NavicoRadarWrapper::onTargetUpdateTTM(std::string TTMmessage) {
+  JNIEnvWrapper swigjnienv(this) ;
+  JNIEnv * jenv = swigjnienv.getJNIEnv() ;
+  jobject swigjobj = (jobject) NULL ;
+  jstring jTTMmessage  ;
+  
+  if (!swig_override[3]) {
+    NavicoRadarWrapper::onTargetUpdateTTM(TTMmessage);
+    return;
+  }
+  swigjobj = swig_get_self(jenv);
+  if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
+    jTTMmessage = jenv->NewStringUTF((&TTMmessage)->c_str()); 
+    jenv->CallStaticVoidMethod(Swig::jclass_NavicoRadarJavaJNI, Swig::director_methids[3], swigjobj, jTTMmessage);
+    jthrowable swigerror = jenv->ExceptionOccurred();
+    if (swigerror) {
+      jenv->ExceptionClear();
+      throw Swig::DirectorException(jenv, swigerror);
+    }
+    
+  } else {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in NavicoRadarWrapper::onTargetUpdateTTM ");
+  }
+  if (swigjobj) jenv->DeleteLocalRef(swigjobj);
+}
+
 void SwigDirector_NavicoRadarWrapper::swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global) {
   static struct {
     const char *mname;
@@ -771,6 +796,9 @@ void SwigDirector_NavicoRadarWrapper::swig_connect_director(JNIEnv *jenv, jobjec
     },
     {
       "onTargetUpdate", "(Ljava/nio/ByteBuffer;)V", NULL 
+    },
+    {
+      "onTargetUpdateTTM", "(Ljava/lang/String;)V", NULL 
     }
   };
   
@@ -783,7 +811,7 @@ void SwigDirector_NavicoRadarWrapper::swig_connect_director(JNIEnv *jenv, jobjec
       baseclass = (jclass) jenv->NewGlobalRef(baseclass);
     }
     bool derived = (jenv->IsSameObject(baseclass, jcls) ? false : true);
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 4; ++i) {
       if (!methods[i].base_methid) {
         methods[i].base_methid = jenv->GetMethodID(baseclass, methods[i].mname, methods[i].mdesc);
         if (!methods[i].base_methid) return;
@@ -1039,6 +1067,46 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_N
 }
 
 
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_NavicoRadarJavaJNI_NavicoRadarWrapper_1onTargetUpdateTTM(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+  NavicoRadarWrapper *arg1 = (NavicoRadarWrapper *) 0 ;
+  std::string arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(NavicoRadarWrapper **)&jarg1; 
+  if(!jarg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return ;
+  } 
+  const char *arg2_pstr = (const char *)jenv->GetStringUTFChars(jarg2, 0); 
+  if (!arg2_pstr) return ;
+  (&arg2)->assign(arg2_pstr);
+  jenv->ReleaseStringUTFChars(jarg2, arg2_pstr); 
+  (arg1)->onTargetUpdateTTM(arg2);
+}
+
+
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_NavicoRadarJavaJNI_NavicoRadarWrapper_1onTargetUpdateTTMSwigExplicitNavicoRadarWrapper(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jstring jarg2) {
+  NavicoRadarWrapper *arg1 = (NavicoRadarWrapper *) 0 ;
+  std::string arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(NavicoRadarWrapper **)&jarg1; 
+  if(!jarg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return ;
+  } 
+  const char *arg2_pstr = (const char *)jenv->GetStringUTFChars(jarg2, 0); 
+  if (!arg2_pstr) return ;
+  (&arg2)->assign(arg2_pstr);
+  jenv->ReleaseStringUTFChars(jarg2, arg2_pstr); 
+  (arg1)->NavicoRadarWrapper::onTargetUpdateTTM(arg2);
+}
+
+
 SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_NavicoRadarJavaJNI_NavicoRadarWrapper_1setCat240Out(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   NavicoRadarWrapper *arg1 = (NavicoRadarWrapper *) 0 ;
   
@@ -1215,7 +1283,7 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_N
   static struct {
     const char *method;
     const char *signature;
-  } methods[3] = {
+  } methods[4] = {
     {
       "SwigDirector_NavicoRadarWrapper_onSpokeUpdate", "(Lde/uniol/inf/is/odysseus/wrapper/navicoradar/SWIG/NavicoRadarWrapper;Ljava/nio/ByteBuffer;)V" 
     },
@@ -1224,6 +1292,9 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_N
     },
     {
       "SwigDirector_NavicoRadarWrapper_onTargetUpdate", "(Lde/uniol/inf/is/odysseus/wrapper/navicoradar/SWIG/NavicoRadarWrapper;Ljava/nio/ByteBuffer;)V" 
+    },
+    {
+      "SwigDirector_NavicoRadarWrapper_onTargetUpdateTTM", "(Lde/uniol/inf/is/odysseus/wrapper/navicoradar/SWIG/NavicoRadarWrapper;Ljava/lang/String;)V" 
     }
   };
   Swig::jclass_NavicoRadarJavaJNI = (jclass) jenv->NewGlobalRef(jcls);
