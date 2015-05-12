@@ -174,7 +174,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			}
 
 		} else {
-			List<String> opMT = operator.getMetadataTypes();
+			Class<? extends IMetaAttribute>[] opMT = operator.getLocalMetaAttribute().getClasses();
 			List<String> acMT = accessPO.getOutputSchema().getMetaAttributeNames();
 			
 			if (!MetadataRegistry.isSame(opMT, acMT)){

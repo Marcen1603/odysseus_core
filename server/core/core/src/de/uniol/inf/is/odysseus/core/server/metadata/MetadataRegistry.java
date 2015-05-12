@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.core.server.metadata;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -209,6 +211,11 @@ public class MetadataRegistry {
 		
 		
 		return cmf;
+	}
+
+	public static boolean isSame(Class<? extends IMetaAttribute>[] first, List<String> second){
+		List<String> firstStr = new ArrayList<String>((Collection<String>) toClassNames(first));
+		return isSame(firstStr, second);
 	}
 	
 	public static boolean isSame(List<String> first, List<String> second){
