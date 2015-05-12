@@ -38,6 +38,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.util.ByteBufferBackedInputStream;
+import de.uniol.inf.is.odysseus.wrapper.nmea.nmea2000.MessageXMLParser;
+import de.uniol.inf.is.odysseus.wrapper.nmea.nmea2000.NMEA2000ProtocolHandlerPlugin;
 
 class N2KMessage
 {
@@ -118,18 +120,20 @@ class N2KMessage
 		resultMap.put("DestinationAddress", destinationAddress);
 //		resultMap.put("Length", length);
 		
-		LittleEndianDataInputStream payloadStream = new LittleEndianDataInputStream(new ByteArrayInputStream(payload));
+//		LittleEndianDataInputStream payloadStream = new LittleEndianDataInputStream(new ByteArrayInputStream(payload));
 		
-		if (PGN == 129025)
-		{
-			int lat = payloadStream.readInt();
-			int lon = payloadStream.readInt();
-			
-			resultMap.put("Latitude",  (double)(lat) * 1.0e-7);
-			resultMap.put("Longitude", (double)(lon) * 1.0e-7);			
-		}
+		NMEA2000ProtocolHandlerPlugin.INSTANCE.extractMessage(resultMap, (int)PGN, payload);
 		
-		payloadStream.close();
+//		if (PGN == 129025)
+//		{
+//			int lat = payloadStream.readInt();
+//			int lon = payloadStream.readInt();
+//			
+//			resultMap.put("Latitude",  (double)(lat) * 1.0e-7);
+//			resultMap.put("Longitude", (double)(lon) * 1.0e-7);			
+//		}
+		
+//		payloadStream.close();
 		
 		return resultMap;
 	}	
@@ -180,6 +184,7 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 	@Override
 	public void open() throws UnknownHostException, IOException 
 	{
+		MessageXMLParser.INSTANCE.parse();
 		getTransportHandler().open();
 		if (getDirection().equals(ITransportDirection.IN)) 
 		{
