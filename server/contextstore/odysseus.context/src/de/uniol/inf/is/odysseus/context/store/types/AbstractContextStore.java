@@ -31,6 +31,7 @@
 package de.uniol.inf.is.odysseus.context.store.types;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -39,6 +40,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.context.IContextStoreListener;
 import de.uniol.inf.is.odysseus.context.physicaloperator.StorePO;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
+import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -141,5 +144,19 @@ public abstract class AbstractContextStore<T extends Tuple<? extends ITimeInterv
 
 	abstract protected void internalClear();
 	
+	@Override
+	public Iterator<T> query(T element, Order order) throws Exception{
+		throw new RuntimeException("Sorry. Currently not implemented");
+	}
+
+	@Override
+	public Iterator<T> queryCopy(T element, Order order, boolean extract) throws Exception {
+		throw new RuntimeException("Sorry. Currently not implemented");
+	}
+	
+	@Override
+	public void setQueryPredicate(IPredicate<? super T> queryPredicate)throws Exception {
+		throw new RuntimeException("Sorry. Currently not implemented");
+	}
 	
 }

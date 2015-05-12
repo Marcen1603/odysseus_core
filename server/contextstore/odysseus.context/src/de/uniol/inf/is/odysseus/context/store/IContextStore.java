@@ -30,13 +30,16 @@
 
 package de.uniol.inf.is.odysseus.context.store;
 
+import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.context.IContextStoreListener;
 import de.uniol.inf.is.odysseus.context.physicaloperator.StorePO;
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
@@ -63,7 +66,36 @@ public interface IContextStore<T extends Tuple<? extends ITimeInterval>>{
 	public StorePO<T> getWriter();
 	public void close();
 	public void open();
-	public int getSize();	
+	public int getSize();
 	
+	/**
+	 * This method is used to iterate over elements in the context store. 
+	 * The element will be used together with the queryPredicate
+	 * 
+	 * @param element
+	 *            The new element from an input stream
+	 * @param order
+	 *            LeftRight, if element is from the left input stream RightLeft,
+	 *            if element is from the right input stream
+	 * @return
+	 * @throws Exception 
+	 */
+	public Iterator<T> query(T element, Order order) throws Exception;
+
+	/**
+	 * same as above, but you are guaranteed to iterate over your own copy of
+	 * the query results
+	 * 
+	 * @param extract
+	 *            if set to true, elements will be remove from sweep area
+	 * @throws Exception 
+	 */
+	public Iterator<T> queryCopy(T element, Order order, boolean extract) throws Exception;
 	
+	/**
+	 * This predicate is used to retrieve elements from the sweep area
+	 * 
+	 * @param queryPredicate
+	 */
+	public void setQueryPredicate(IPredicate<? super T> queryPredicate) throws Exception;
 }
