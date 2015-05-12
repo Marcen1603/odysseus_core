@@ -35,7 +35,9 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
+import de.uniol.inf.is.odysseus.context.store.types.PartitionedMultiElementStore;
 import de.uniol.inf.is.odysseus.context.store.types.MultiElementStore;
+//import de.uniol.inf.is.odysseus.context.store.types.MultiElementStore;
 import de.uniol.inf.is.odysseus.context.store.types.SingleElementStore;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -56,6 +58,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIfExists;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
+//import de.uniol.inf.is.odysseus.wrapper.ivef.contextmodel.contextstore.HistoryContextStore;
 
 /**
  * 
@@ -83,7 +86,14 @@ public class ContextVisitor implements IVisitor {
             store = new SingleElementStore<Tuple<? extends ITimeInterval>>(name, schema);
         }
         else {
-            store = new MultiElementStore<Tuple<? extends ITimeInterval>>(name, schema, size);
+        	if(typeNode.jjtGetNumChildren() == 1)
+        		store = new MultiElementStore<Tuple<? extends ITimeInterval>>(name, schema, size);
+        	else{
+        		int partitionBy = ((ASTInteger) typeNode.jjtGetChild(1)).getValue().intValue();
+        		if(partitionBy < 0 || partitionBy >= schema.size())
+        			throw new QueryParseException("Partition key index is not compatiple with the schema!");
+        		store = new PartitionedMultiElementStore<Tuple<? extends ITimeInterval>>(name, schema, size, partitionBy);
+        	}
         }
 
 		try {
