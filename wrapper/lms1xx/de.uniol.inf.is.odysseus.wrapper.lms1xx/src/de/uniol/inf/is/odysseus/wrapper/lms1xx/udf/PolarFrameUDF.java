@@ -167,7 +167,10 @@ public class PolarFrameUDF implements IUserDefinedFunction<Tuple<? extends IMeta
         }
 
         @Override
-        public void paint(final Graphics graphics) {
+        public void paint(final Graphics graphics) 
+        {
+        	if ((x == null) || (y == null)) return;
+        	
             graphics.setColor(Color.BLACK);
             graphics.fillRect(0, 0, 1000, 1000);
             graphics.setColor(Color.WHITE);
