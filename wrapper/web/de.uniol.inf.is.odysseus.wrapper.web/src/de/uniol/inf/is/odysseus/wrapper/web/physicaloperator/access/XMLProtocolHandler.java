@@ -70,6 +70,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     public static final String REVERSE = "reverse";
     public static final String NANODELAY = "nanodelay";
     public static final String DELAY = "delay";
+    public static final String PRETTYPRINT = "prettyprint";
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLProtocolHandler.class);
 
@@ -81,6 +82,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     private final List<String> xpaths = new ArrayList<String>();
     private List<T> result = new LinkedList<>();
     private boolean reverse;
+    private boolean prettyprint = true;
 
     /**
      * Create a new XML Data Handler
@@ -135,6 +137,9 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
             reverse = false;
         }
 
+        if(options.get(PRETTYPRINT) != null) {
+			this.prettyprint = Boolean.parseBoolean(options.get(PRETTYPRINT));
+		}
     }
 
     @Override
@@ -272,14 +277,20 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     public void write(final T object) throws IOException {
         final StringBuilder sb = new StringBuilder();
         sb.append("<tuple>");
+        if(prettyprint)
+			sb.append("\n");
         final SDFSchema schema = this.getDataHandler().getSchema();
         for (int i = 0; i < schema.size(); i++) {
             final String attr = schema.get(i).getAttributeName();
             sb.append("<").append(attr).append(">");
             sb.append(object.getAttribute(i).toString());
             sb.append("</").append(attr).append(">");
+            if(prettyprint)
+				sb.append("\n");
         }
         sb.append("</tuple>");
+        if(prettyprint)
+			sb.append("\n");
         this.output.write(sb.toString().getBytes());
     }
 
