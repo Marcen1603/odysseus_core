@@ -130,22 +130,26 @@ public abstract class AbstractTransformationRule<T> extends
 		if (id != null) {
 			if (!config.isVirtualTransformation()) {
 
-				if (getDataDictionary().containsOperator(id)) {
+				IPhysicalOperator op = getDataDictionary().getOperator(id,
+						getCaller());
+				if (op != null && !(op == physical)) {
+					// throw only an exception if this operator is not the same
 					throw new TransformationException("Operator with id " + id
 							+ " is already registered.");
 				} else {
-					getDataDictionary().setOperator(id, physical);
-					@SuppressWarnings("unchecked")
-					List<Resource> newDefinedRessources = (List<Resource>) this
-							.getCurrentWorkingMemory().getFromKeyValueMap(
-									OPERATOR_IDS_SET);
-					if (newDefinedRessources == null) {
-						newDefinedRessources = new LinkedList<Resource>();
-						this.getCurrentWorkingMemory().addToKeyValueMap(
-								OPERATOR_IDS_SET, newDefinedRessources);
+					if (op == null) {
+						getDataDictionary().setOperator(id, physical);
+						@SuppressWarnings("unchecked")
+						List<Resource> newDefinedRessources = (List<Resource>) this
+								.getCurrentWorkingMemory().getFromKeyValueMap(
+										OPERATOR_IDS_SET);
+						if (newDefinedRessources == null) {
+							newDefinedRessources = new LinkedList<Resource>();
+							this.getCurrentWorkingMemory().addToKeyValueMap(
+									OPERATOR_IDS_SET, newDefinedRessources);
+						}
+						newDefinedRessources.add(id);
 					}
-					newDefinedRessources.add(id);
-
 					for (IOperatorOwner owner : logical.getOwner()) {
 						physical.addUniqueId(owner, id);
 					}
@@ -244,7 +248,7 @@ public abstract class AbstractTransformationRule<T> extends
 	protected TimestampAO getTimestampAOAsFather(ILogicalOperator operator) {
 		for (LogicalSubscription sub : operator.getSubscriptions()) {
 			if (sub.getTarget() instanceof TimestampAO) {
-				return (TimestampAO)sub.getTarget();
+				return (TimestampAO) sub.getTarget();
 			}
 		}
 		return null;

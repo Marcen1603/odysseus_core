@@ -980,6 +980,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 						}
 						for (Entry<IOperatorOwner, Resource> id : p
 								.getUniqueIds().entrySet()) {
+							
 							getDataDictionary(caller).removeOperator(
 									id.getValue());
 							toRemove.add(id.getKey());
@@ -1020,7 +1021,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				}
 			} catch (Exception e) {
 				LOG.warn("Query not removed. An Error while removing occurd (ID: "
-						+ queryToRemove.getID() + ").");
+						+ (queryToRemove!=null?queryToRemove.getID():"NULL" )+ ").");
 				throw new PlanManagementException(e);
 			} finally {
 				executionPlanLock.unlock();
