@@ -74,21 +74,18 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		}
 	}
 	
-	private void startLogging(Tuple<?> object) throws IOException
+	private void startLogging(Tuple<?> object, long firstTimeStamp) throws IOException
 	{
 		if (logSetUp) return;		
-			
-        TimeInterval timeStamp = (TimeInterval)object.getMetadata();
-        long now = timeStamp.getStart().getMainPoint();
-        
-        String startTimeString = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss").format(new Date(now));
+			        
+        String startTimeString = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss").format(new Date(firstTimeStamp));
         fileNameBase = loggingDirectory + "/" + sensorModel.id + "_" + startTimeString;
         logMetaDataFileName = fileNameBase + ".cfg";		
 		
 		try
 		{
 			logMetaData = startLoggingInternal(object);
-			logMetaData.startTime = now;
+			logMetaData.startTime = firstTimeStamp;
 			logMetaData.endTime = 0;
 			logMetaData.sensor = sensorModel;
 			
@@ -131,11 +128,14 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	{
 		synchronized (processLock)
 		{
+	        TimeInterval timeStamp = (TimeInterval)object.getMetadata();
+	        if (timeStamp != null)
+	        	lastTimeStamp = timeStamp.getStart().getMainPoint();
+	        else
+	        	lastTimeStamp = System.currentTimeMillis();			
+			
 			if (!logSetUp)
-				startLogging(object);
-		
-			TimeInterval timeStamp = (TimeInterval)object.getMetadata();
-			lastTimeStamp = timeStamp.getStart().getMainPoint();		
+				startLogging(object, lastTimeStamp);
 		
 			boolean logFileSizeLimitReached = writeInternal(object, lastTimeStamp) >= getLogfileSizeLimit();
 		
