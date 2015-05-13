@@ -142,6 +142,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
         }
         else {
             RS232TransportHandler.LOG.error("Trying to write to a not opened connection!");
+            throw new IOException("Trying to write to a not opened connection!");
         }
     }
 
@@ -223,16 +224,20 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
         catch (final NoSuchPortException e) {
             RS232TransportHandler.LOG.error("No such port {}", this.portName);
             RS232TransportHandler.LOG.error(e.getMessage(), e);
+            throw new IOException(e);
         }
         catch (final UnsupportedCommOperationException e) {
             RS232TransportHandler.LOG.error(e.getMessage(), e);
+            throw new IOException(e);
         }
         catch (final PortInUseException e) {
             RS232TransportHandler.LOG.error("Port {} in use", this.portName);
             RS232TransportHandler.LOG.error(e.getMessage(), e);
+            throw new IOException(e);
         }
         catch (final TooManyListenersException e) {
             RS232TransportHandler.LOG.error(e.getMessage(), e);
+            throw new IOException(e);
         }
     }
 
@@ -247,13 +252,16 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
         catch (final NoSuchPortException e) {
             RS232TransportHandler.LOG.error("No such port {}", this.portName);
             RS232TransportHandler.LOG.error(e.getMessage(), e);
+            throw new IOException(e);
         }
         catch (final UnsupportedCommOperationException e) {
             RS232TransportHandler.LOG.error(e.getMessage(), e);
+            throw new IOException(e);
         }
         catch (final PortInUseException e) {
             RS232TransportHandler.LOG.error("Port {} in use", this.portName);
             RS232TransportHandler.LOG.error(e.getMessage(), e);
+            throw new IOException(e);
         }
 
     }
