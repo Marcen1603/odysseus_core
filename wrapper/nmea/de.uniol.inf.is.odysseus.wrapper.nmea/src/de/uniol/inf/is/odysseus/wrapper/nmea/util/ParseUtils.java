@@ -58,9 +58,9 @@ public class ParseUtils {
 	public static Date parseDate(String value) {
 		Date res = new Date();
 		try {
-			res.setYear(Integer.parseInt(value.substring(0, 2)));
+			res.setDay(Integer.parseInt(value.substring(0, 2)));
 			res.setMonth(Integer.parseInt(value.substring(2, 4)));
-			res.setDay(Integer.parseInt(value.substring(4, 6)));
+			res.setYear(Integer.parseInt(value.substring(4, 6)));
 		} catch (Exception e) {
 			return null;
 		}
