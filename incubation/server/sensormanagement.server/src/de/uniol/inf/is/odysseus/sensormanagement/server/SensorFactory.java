@@ -256,7 +256,7 @@ public class SensorFactory
 		  + "RMC = SELECT({predicate=\"sentenceId='RMC'\"}, gps)	\n"
 						
 		  + "Pos = KEYVALUETOTUPLE({schema=[['longitude', 'Double'], ['latitude', 'Double'], ['longitudeHem', 'String'], ['latitudeHem', 'String'], \n"
-		  + "                               ['time.hours', 'Integer'], ['time.minutes', 'Integer'], ['time.seconds', 'Integer'], ['time.miliseconds', 'Integer']],	\n"
+		  + "                               ['time.hours', 'Integer'], ['time.minutes', 'Integer'], ['time.seconds', 'Integer'], ['time.miliSeconds', 'Integer']],	\n"
 		  + "                      type='Tuple', keepinput='false'}, GLL)	\n"
 
 		  + "Signal = KEYVALUETOTUPLE({schema=[['signalIntegrity', 'String']], type='Tuple', keepinput='false'}, RMC)	\n"
