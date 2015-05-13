@@ -10,6 +10,14 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
+/**
+ * This operator searches for rare patterns in data. It's especially designed to
+ * find rare state sequences. E.g. if state "b" nearly always follows state "a",
+ * but very seldom a "c" follows a. This operator should find the seldom pattern
+ * "a" -> "c".
+ * 
+ * @author Tobias Brandt
+ */
 @SuppressWarnings("rawtypes")
 public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
 
@@ -17,15 +25,18 @@ public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends 
 	private int depthCounter;
 	private int maxDepth;
 	private CounterNode<T> currentNode;
+	private double minRelativeFrequency;
 
 	public RarePatternPO(RarePatternAO ao) {
 		root = new CounterNode<T>(null);
-		maxDepth = 2;
+		maxDepth = ao.getDepth();
+		minRelativeFrequency = ao.getMinRelativeFrequency();
 	}
 
 	@Override
 	protected void process_next(T tuple, int port) {
 
+		// Put the tuple into the tree
 		if (depthCounter == 0) {
 			// Start again from root
 			currentNode = root.addChild(tuple);
@@ -39,7 +50,8 @@ public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends 
 		}
 
 		double relativeFrequencyOfPath = currentNode.calcRelativeFrequencyPath();
-		if (relativeFrequencyOfPath < 0.3) {
+		if (relativeFrequencyOfPath < minRelativeFrequency) {
+			// In this case, it was a seldom pattern
 			String path = getPath(currentNode);
 			Tuple newTuple = tuple.append(1.0 - relativeFrequencyOfPath).append(path);
 			transfer(newTuple);
@@ -47,6 +59,13 @@ public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends 
 		}
 	}
 
+	/**
+	 * Creates a string that shows the path from the root to the given node.
+	 * 
+	 * @param node
+	 *            The node that is the end of the path
+	 * @return A string that shows the path from root to the given node
+	 */
 	private String getPath(CounterNode node) {
 
 		// Collect nodes to get correct order

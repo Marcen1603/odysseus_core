@@ -12,36 +12,60 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
+/**
+ * 
+ * This operator searches for rare patterns in data. It's especially designed to
+ * find rare state sequences. E.g. if state "b" nearly always follows state "a",
+ * but very seldom a "c" follows a. This operator should find the seldom pattern
+ * "a" -> "c".
+ * 
+ * @author Tobias Brandt
+ *
+ */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "RarePattern", doc = "Searches for rare pattern in a stream of (discrete) states", category = { LogicalOperatorCategory.PROCESSING })
 public class RarePatternAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -7990417520941357348L;
 
-	private String nameOfValue;
-	
+	private int depth;
+	private double minRelativeFrequency;
+
 	public RarePatternAO() {
+		this.depth = 2;
+		this.minRelativeFrequency = 0.3;
 	}
-	
+
 	public RarePatternAO(RarePatternAO ao) {
-		this.nameOfValue = ao.getNameOfValue();
+		this.depth = ao.getDepth();
+		this.minRelativeFrequency = ao.getMinRelativeFrequency();
 	}
-	
-	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = true, doc = "Name of the attribute which should be analysed")
-	public void setNameOfValue(String nameOfValue) {
-		this.nameOfValue = nameOfValue;
+
+	@Parameter(type = IntegerParameter.class, name = "treeDepth", optional = true, doc = "The depth of the tree. Default is 2.")
+	public void setDepth(int depth) {
+		this.depth = depth;
 	}
-	
-	public String getNameOfValue() {
-		return nameOfValue;
+
+	@Parameter(type = DoubleParameter.class, name = "minRelativeFrequency", optional = true, doc = "The minimal relative frequency of that path. The default is 0.3 (which means 30%).")
+	public void setMinRelativeFrequency(double minRelativeFrequency) {
+		this.minRelativeFrequency = minRelativeFrequency;
 	}
-	
+
+	public int getDepth() {
+		return depth;
+	}
+
+	public double getMinRelativeFrequency() {
+		return minRelativeFrequency;
+	}
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new RarePatternAO(this);
 	}
-	
+
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		// add the anomaly-score to the attributes and keep the old attributes
