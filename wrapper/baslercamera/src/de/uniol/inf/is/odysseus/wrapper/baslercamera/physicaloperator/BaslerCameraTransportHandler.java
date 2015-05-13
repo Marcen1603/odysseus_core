@@ -73,7 +73,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 		{
 			try
 			{
-				LOG.debug("Starting basler camera...");
+				LOG.info("Starting basler camera...");
 		 		cameraCapture = new BaslerCamera(serialNumber)
 		 			{
 		 				@Override public void onGrabbed(ByteBuffer buffer)
@@ -96,7 +96,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 				
 				currentTuple = null;
 				
-				LOG.debug("Basler camera started.");
+				LOG.info("Basler camera started.");
 			}
 			catch (Exception e) {
 				try {
@@ -113,7 +113,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 	{
 		synchronized (processLock)
 		{
-			LOG.debug("Stopping basler camera...");
+			LOG.info("Stopping basler camera...");
 			if (cameraCapture != null)
 			{
 				cameraCapture.stop();
@@ -122,7 +122,7 @@ public class BaslerCameraTransportHandler extends AbstractSimplePullTransportHan
 			
 			imageJCV = null;
 			currentTuple = null;
-			LOG.debug("Basler camera stopped");
+			LOG.info("Basler camera stopped");
 		}
 	}
 
