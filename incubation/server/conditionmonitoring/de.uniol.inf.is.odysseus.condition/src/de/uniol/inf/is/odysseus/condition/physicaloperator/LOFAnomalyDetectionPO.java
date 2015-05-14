@@ -42,23 +42,28 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 
 	@Override
 	protected void process_next(T tuple, int port) {
-		
+
+		// If set from the AO, use the group processor
 		Long gId = groupProcessor.getGroupID(tuple);
 		List<T> sortedValues = sortedValueMap.get(gId);
-		
+
+		// Use the right list for this group
 		if (sortedValues == null) {
 			sortedValues = new ArrayList<T>();
 			sortedValueMap.put(gId, sortedValues);
 		}
-		
+
 		sortedValues.add(tuple);
 		removeOldValues(sortedValues, tuple.getMetadata().getStart());
-		
+
+		// If we have less tuples, we can't process the needed operations, as we
+		// need at least k neighbors
 		if (sortedValues.size() < k + 1) {
 			return;
 		}
 		double lof = getLOF(k, tuple, sortedValues);
 
+		// Check, if the LOF is higher than the maximum wanted by the user
 		if (lof > this.minLOFValue) {
 			Tuple newTuple = tuple.append(lof).append(calcAnomalyScore(lof, this.minLOFValue));
 			transfer(newTuple);
@@ -222,12 +227,12 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 
 		double lrdSum = 0;
 		for (T neighbor : getKNearestNeighbors(k, value, allNeighbors)) {
-			lrdSum += getLocalReachabilityDensity(k, neighbor,allNeighbors);
+			lrdSum += getLocalReachabilityDensity(k, neighbor, allNeighbors);
 		}
 		double lof = lrdSum / (k * getLocalReachabilityDensity(k, value, allNeighbors));
 		return lof;
 	}
-	
+
 	/**
 	 * Calculates the anomaly score, a value between 0 and 1. (Will actually
 	 * never reach 1)

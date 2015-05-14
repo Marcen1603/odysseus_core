@@ -23,6 +23,8 @@ public class RuleProvider implements IRuleProvider {
 		rules.add(new ValueAreaAnomalyDetectionAOTransformRule());
 		rules.add(new DeviationAnomalyDetectionAOTransformRule());
 		rules.add(new RarePatternPOTransformRule());
+		rules.add(new FrequencyAnalysisAOTransformRule());
+		rules.add(new LOFAnomalyDetectionAOTransformRule());
 		return rules;
 	}
 }
