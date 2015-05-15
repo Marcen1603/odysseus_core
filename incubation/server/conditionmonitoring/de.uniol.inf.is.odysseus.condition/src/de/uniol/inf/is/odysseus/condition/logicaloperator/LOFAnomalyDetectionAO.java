@@ -29,11 +29,13 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	private String nameOfValue;
 	private List<SDFAttribute> groupingAttributes;
 	private boolean fastGrouping;
+	private boolean ignoreEqual;
 
 	public LOFAnomalyDetectionAO() {
 		this.k = 10;
 		this.lofAnomalyValue = 1.5;
 		this.nameOfValue = "value";
+		this.ignoreEqual = false;
 	}
 
 	public LOFAnomalyDetectionAO(LOFAnomalyDetectionAO ao) {
@@ -42,6 +44,7 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.nameOfValue = ao.getNameOfValue();
 		this.groupingAttributes = ao.getGroupingAttributes();
 		this.fastGrouping = ao.isFastGrouping();
+		this.ignoreEqual = ao.isIgnoreEqual();
 	}
 
 	@Parameter(type = IntegerParameter.class, name = "NEIGHBORS", optional = true, doc = "The number of neighbors used, sometimes called k")
@@ -53,12 +56,12 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	public void setLOFAnomalyValue(double value) {
 		this.lofAnomalyValue = value;
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = true, doc = "Name of the attribute which should be analysed")
 	public void setNameOfValue(String nameOfValue) {
 		this.nameOfValue = nameOfValue;
 	}
-	
+
 	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "Group by the given attribute, e.g. if you have a context like 'on' and 'off' you want to analyse separately.")
 	public void setGroupingAttributes(List<SDFAttribute> attributes) {
 		this.groupingAttributes = attributes;
@@ -69,6 +72,11 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.fastGrouping = fastGrouping;
 	}
 
+	@Parameter(name = "ignoreEqual", type = BooleanParameter.class, optional = true, doc = "Set to true, if you want to ignore, if there are a lot of equal values. This can lead to false positives.")
+	public void setIgnoreEqual(boolean ignoreEqual) {
+		this.ignoreEqual = ignoreEqual;
+	}
+
 	public int getNumberOfNeighbors() {
 		return this.k;
 	}
@@ -76,11 +84,11 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	public double getLOFAnomalyValue() {
 		return this.lofAnomalyValue;
 	}
-	
+
 	public String getNameOfValue() {
 		return nameOfValue;
 	}
-	
+
 	public List<SDFAttribute> getGroupingAttributes() {
 		return groupingAttributes;
 	}
@@ -88,7 +96,11 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	public boolean isFastGrouping() {
 		return fastGrouping;
 	}
-	
+
+	public boolean isIgnoreEqual() {
+		return ignoreEqual;
+	}
+
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		// add the anomaly-score to the attributes and keep the old attributes

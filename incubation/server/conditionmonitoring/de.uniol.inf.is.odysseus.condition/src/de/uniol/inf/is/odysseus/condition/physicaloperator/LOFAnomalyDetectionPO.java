@@ -31,6 +31,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	private int k;
 	private double minLOFValue;
 	private IGroupProcessor<T, T> groupProcessor;
+	private boolean ignoreEqual;
 
 	public LOFAnomalyDetectionPO(LOFAnomalyDetectionAO ao, IGroupProcessor<T, T> groupProcessor) {
 		sortedValueMap = new HashMap<Long, List<T>>();
@@ -38,6 +39,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 		this.minLOFValue = ao.getLOFAnomalyValue();
 		this.valueAttributeName = ao.getNameOfValue();
 		this.groupProcessor = groupProcessor;
+		this.ignoreEqual = ao.isIgnoreEqual();
 	}
 
 	@Override
@@ -61,7 +63,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 		if (sortedValues.size() < k + 1) {
 			return;
 		}
-		double lof = getLOF(k, tuple, sortedValues);
+		double lof = getLOF(k, tuple, sortedValues, this.ignoreEqual);
 
 		// Check, if the LOF is higher than the maximum wanted by the user
 		if (lof > this.minLOFValue) {
@@ -112,7 +114,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	 * @return A list with the k nearest neighbors. The first value in the list
 	 *         is the nearest neighbor
 	 */
-	private List<T> getKNearestNeighbors(int k, T value, List<T> neighbors) {
+	private List<T> getKNearestNeighbors(int k, T value, List<T> neighbors, boolean ignoreEqual) {
 
 		List<T> kNearest = new ArrayList<T>(k);
 		int index = neighbors.indexOf(value);
@@ -121,28 +123,40 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 		int kRunningHigh = 1;
 
 		while (kNearest.size() < k) {
+			// Do this until we have k neighbors
 
 			if (index - kRunningLow < 0) {
 				// We can't go "down"
-				kNearest.add(neighbors.get(index + kRunningHigh));
+				kNearest = addToNeighborList(neighbors.get(index + kRunningHigh), kNearest, ignoreEqual);
 				kRunningHigh++;
 			} else if (index + kRunningHigh >= neighbors.size()) {
 				// We can't go "up"
-				kNearest.add(neighbors.get(index - kRunningLow));
+				kNearest = addToNeighborList(neighbors.get(index - kRunningLow), kNearest, ignoreEqual);
 				kRunningLow++;
 			} else if (Math.abs(getValue(neighbors.get(index - kRunningLow)) - getValue(value)) < Math
 					.abs(getValue(neighbors.get(index + kRunningHigh)) - getValue(value))) {
 				// The one under the value is nearer
-				kNearest.add(neighbors.get(index - kRunningLow));
+				kNearest = addToNeighborList(neighbors.get(index - kRunningLow), kNearest, ignoreEqual);
 				kRunningLow++;
 			} else {
 				// The one above the value is nearer
-				kNearest.add(neighbors.get(index + kRunningHigh));
+				kNearest = addToNeighborList(neighbors.get(index + kRunningHigh), kNearest, ignoreEqual);
 				kRunningHigh++;
 			}
+			
+			if ((index - kRunningLow < 0 && index + kRunningHigh >= neighbors.size()))
+				 // break if we went through the whole list (can occur if we ignore equal values)
+				break;
 		}
 
 		return kNearest;
+	}
+
+	private List<T> addToNeighborList(T tuple, List<T> neighbors, boolean ignoreEqual) {
+		if (ignoreEqual && neighbors.contains(tuple))
+			return neighbors;
+		neighbors.add(tuple);
+		return neighbors;
 	}
 
 	/**
@@ -202,13 +216,13 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	 *            The value for which you want to calculate the neighborhood
 	 * @return The local reachability density
 	 */
-	private double getLocalReachabilityDensity(int k, T value, List<T> allNeighbors) {
+	private double getLocalReachabilityDensity(int k, T value, List<T> allNeighbors, boolean ignoreEqual) {
 		double sum = 0;
-		List<T> neighbors = getKNearestNeighbors(k, value, allNeighbors);
+		List<T> neighbors = getKNearestNeighbors(k, value, allNeighbors, ignoreEqual);
 		for (T neighbor : neighbors) {
 			sum += getReachabilityDistance(k, value, neighbor, allNeighbors);
 		}
-		
+
 		return 1 / (sum / neighbors.size());
 	}
 
@@ -223,20 +237,20 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	 *            The element you want to get the LOF for
 	 * @return The LOF for the given value
 	 */
-	private double getLOF(int k, T value, List<T> allNeighbors) {
+	private double getLOF(int k, T value, List<T> allNeighbors, boolean ignoreEqual) {
 		Collections.sort(allNeighbors);
 
 		double lrdSum = 0;
-		for (T neighbor : getKNearestNeighbors(k, value, allNeighbors)) {
-			lrdSum += getLocalReachabilityDensity(k, neighbor, allNeighbors);
+		for (T neighbor : getKNearestNeighbors(k, value, allNeighbors, ignoreEqual)) {
+			lrdSum += getLocalReachabilityDensity(k, neighbor, allNeighbors, ignoreEqual);
 		}
-		double lrdLocal = getLocalReachabilityDensity(k, value, allNeighbors);
-		
+		double lrdLocal = getLocalReachabilityDensity(k, value, allNeighbors, ignoreEqual);
+
 		if (Double.isInfinite(lrdSum) && Double.isInfinite(lrdLocal)) {
 			// There are at least k + 1 duplicated, so this is no outlier
 			return 0;
 		}
-		
+
 		double lof = lrdSum / (k * lrdLocal);
 		return lof;
 	}
@@ -265,7 +279,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 				div -= 1;
 			}
 		}
-		
+
 		if (Double.isInfinite(div)) {
 			anomalyScore = 1;
 		}
