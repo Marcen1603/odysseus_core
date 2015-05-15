@@ -7,6 +7,12 @@ import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.IDataGenerator;
 
+/**
+ * This data generator generates states due to a specified model.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class StateDataProvider extends AbstractDataGenerator {
 
 	private int sleepTime;
@@ -29,7 +35,7 @@ public class StateDataProvider extends AbstractDataGenerator {
 
 		lowerSpeed.addFollowingState(running, 1);
 		higherSpeed.addFollowingState(running, 1);
-		
+
 		this.state = running;
 
 	}

@@ -50,11 +50,16 @@ public class Activator implements BundleActivator {
 		for (StreamServer server : servers) {
 			server.start();
 		}
-		
+
 		// Create a state data provider
 		StateDataProvider stateProvider = new StateDataProvider();
 		StreamServer server = new StreamServer(53211, stateProvider);
 		server.start();
+
+		// Create a temperature data provider
+		TemperatureDataProvider tempProvider = new TemperatureDataProvider();
+		StreamServer tempServer = new StreamServer(53212, tempProvider);
+		tempServer.start();
 
 		// Listen for commands
 		while (true) {
