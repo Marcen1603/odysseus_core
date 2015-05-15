@@ -59,7 +59,7 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.nameOfValue = nameOfValue;
 	}
 	
-	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "Group by the given attribute, e.g. if you have a context like 'on' and 'off' you want to analyse separately.")
 	public void setGroupingAttributes(List<SDFAttribute> attributes) {
 		this.groupingAttributes = attributes;
 	}

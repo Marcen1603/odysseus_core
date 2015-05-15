@@ -157,7 +157,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	private double getKDistance(int k, T tuple, List<T> neighbors) {
 		int index = neighbors.indexOf(tuple);
 
-		// Get distances from all values from index - 5 to index + 5
+		// Get distances from all values from index - k to index + k
 		List<Double> distances = new ArrayList<Double>(2 * k);
 		for (int i = -k; i <= k; i++) {
 			if (index + i < 0 || index + i >= neighbors.size())
@@ -208,7 +208,8 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 		for (T neighbor : neighbors) {
 			sum += getReachabilityDistance(k, value, neighbor, allNeighbors);
 		}
-		return neighbors.size() / sum;
+		
+		return 1 / (sum / neighbors.size());
 	}
 
 	/**
@@ -216,7 +217,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	 * the k nearest neighbors.
 	 * 
 	 * @param k
-	 *            The number of neighbors that need to be resprected for the
+	 *            The number of neighbors that need to be respected for the
 	 *            calculation
 	 * @param value
 	 *            The element you want to get the LOF for
@@ -229,13 +230,19 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 		for (T neighbor : getKNearestNeighbors(k, value, allNeighbors)) {
 			lrdSum += getLocalReachabilityDensity(k, neighbor, allNeighbors);
 		}
-		double lof = lrdSum / (k * getLocalReachabilityDensity(k, value, allNeighbors));
+		double lrdLocal = getLocalReachabilityDensity(k, value, allNeighbors);
+		
+		if (Double.isInfinite(lrdSum) && Double.isInfinite(lrdLocal)) {
+			// There are at least k + 1 duplicated, so this is no outlier
+			return 0;
+		}
+		
+		double lof = lrdSum / (k * lrdLocal);
 		return lof;
 	}
 
 	/**
-	 * Calculates the anomaly score, a value between 0 and 1. (Will actually
-	 * never reach 1)
+	 * Calculates the anomaly score, a value between 0 and 1.
 	 * 
 	 * @param distance
 	 *            Distance to good area
@@ -248,7 +255,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 
 		double addValue = 0.5;
 		double anomalyScore = 0;
-		while (div > 0) {
+		while (div > 0 && !Double.isInfinite(div)) {
 			if (div >= 1) {
 				anomalyScore += addValue;
 				addValue /= 2;
@@ -257,6 +264,10 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 				anomalyScore += div * addValue;
 				div -= 1;
 			}
+		}
+		
+		if (Double.isInfinite(div)) {
+			anomalyScore = 1;
 		}
 
 		return anomalyScore;
