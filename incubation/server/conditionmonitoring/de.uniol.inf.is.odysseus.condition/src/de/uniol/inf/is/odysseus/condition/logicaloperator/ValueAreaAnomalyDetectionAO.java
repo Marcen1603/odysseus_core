@@ -35,6 +35,7 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 		this.minValue = ao.getMinValue();
 		this.maxValue = ao.getMaxValue();
 		this.sendAllAnomalies = ao.sendAllAnomalies();
+		this.nameOfValue = ao.getNameOfValue();
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "minValue", optional = false)
@@ -51,7 +52,7 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 	public void setSendAllAnomalies(boolean sendAllAnomalies) {
 		this.sendAllAnomalies = sendAllAnomalies;
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = true, doc = "Name of the attribute which should be analysed")
 	public void setNameOfValue(String nameOfValue) {
 		this.nameOfValue = nameOfValue;
@@ -68,11 +69,11 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 	public boolean sendAllAnomalies() {
 		return sendAllAnomalies;
 	}
-	
+
 	public String getNameOfValue() {
 		return nameOfValue;
 	}
-	
+
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		// add the anomaly-score to the attributes and keep the old attributes

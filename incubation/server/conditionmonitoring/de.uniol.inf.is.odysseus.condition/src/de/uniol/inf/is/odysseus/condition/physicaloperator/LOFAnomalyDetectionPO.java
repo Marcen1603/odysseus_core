@@ -143,9 +143,10 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 				kNearest = addToNeighborList(neighbors.get(index + kRunningHigh), kNearest, ignoreEqual);
 				kRunningHigh++;
 			}
-			
+
 			if ((index - kRunningLow < 0 && index + kRunningHigh >= neighbors.size()))
-				 // break if we went through the whole list (can occur if we ignore equal values)
+				// break if we went through the whole list (can occur if we
+				// ignore equal values)
 				break;
 		}
 
@@ -153,10 +154,22 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	}
 
 	private List<T> addToNeighborList(T tuple, List<T> neighbors, boolean ignoreEqual) {
-		if (ignoreEqual && neighbors.contains(tuple))
+		if (ignoreEqual && contains(neighbors, tuple))
 			return neighbors;
 		neighbors.add(tuple);
 		return neighbors;
+	}
+
+	private boolean contains(List<T> list, T tuple) {
+
+		// Go through the list from top to bottom, cause probably, if the
+		// element is already in there, it was inserted just before this element
+		for (int i = list.size() - 1; i >= 0; i--) {
+			if (getValue(list.get(i)) == getValue(tuple))
+				return true;
+		}
+
+		return false;
 	}
 
 	/**

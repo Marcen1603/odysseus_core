@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> {
 
 	private String valueAttributeName;
-	
+
 	private double minValue;
 	private double maxValue;
 	private boolean sendAllAnomalies;
@@ -25,6 +25,7 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 	private boolean tooLow;
 	private boolean tooHigh;
 	private boolean sendTooHigh;
+	private boolean wasNormalTuple;
 	private double distance;
 	private double lastSendDistance;
 	private double nextWarningDistance = 1.0;
@@ -43,35 +44,14 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 		this.valueAttributeName = ao.getNameOfValue();
 	}
 
-	/**
-	 * Create the physical operator.
-	 * 
-	 * @param minValue
-	 *            The minimal value which is in the accepted area
-	 * @param maxValue
-	 *            The maximal value which is in the accepted area
-	 * @param sendAllAnomalies
-	 *            Set to true, if you want to have a tuple for every tuple which
-	 *            is an anomaly. If set to false, the operator will send
-	 *            anomaly-tuples if the value changed significantly or turned
-	 *            from being to small to being to high or the other way around
-	 */
-	public ValueAreaAnomalyDetectionPO(double minValue, double maxValue, boolean sendAllAnomalies) {
-		this.minValue = minValue;
-		this.maxValue = maxValue;
-		this.sendAllAnomalies = sendAllAnomalies;
-		tooLow = false;
-		tooHigh = false;
-	}
-
 	@Override
 	protected void process_next(T object, int port) {
 
 		int valueIndex = getOutputSchema().findAttributeIndex(valueAttributeName);
 		double sensorValue = object.getAttribute(valueIndex);
 
-		// Calc the distance to the normal area. Distance is always positive or
-		// 0
+		// Calculate the distance to the normal area. Distance is always
+		// positive or 0
 		distance = sensorValue > maxValue ? sensorValue - maxValue : sensorValue < minValue ? minValue - sensorValue
 				: 0;
 		double anomalyScore = calcAnomalyScore(distance);
@@ -90,19 +70,25 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 		tooLow = sensorValue < minValue;
 
 		if (distance > 0) {
-			if (tooHigh && !sendTooHigh || tooLow && sendTooHigh
+			if (wasNormalTuple || tooHigh && !sendTooHigh || tooLow && sendTooHigh
 					|| Math.abs(distance - lastSendDistance) > nextWarningDistance * (maxValue - minValue)) {
 				// Send a new warning if
+				// 0. The last tuple was normal (no anomaly)
 				// 1. We are now too high, but last tuple was too low
 				// 2. We are now too low, but last tuple was too high
 				// 3. The distance got (much) bigger in comparison to the
 				// "good area"
 				lastSendDistance = distance;
 				sendTooHigh = tooHigh;
+				wasNormalTuple = false;
 				Tuple newTuple = object.append(anomalyScore);
 				transfer(newTuple);
 				return;
 			}
+		}
+		
+		if (distance <= 0) {
+			wasNormalTuple = true;
 		}
 	}
 

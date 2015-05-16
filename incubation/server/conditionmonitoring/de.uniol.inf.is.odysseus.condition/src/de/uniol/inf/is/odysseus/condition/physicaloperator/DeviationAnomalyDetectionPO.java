@@ -115,7 +115,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		} else if (this.trainingMode.equals(TrainingMode.WINDOW)) {
 			// Use the window which is before this operator
 			processTupleWithWindow(gId, tuple, info, this.exactCalculation);
-		} 
+		}
 	}
 
 	/**
@@ -248,7 +248,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	}
 
 	private boolean isAnomaly(double sensorValue, double standardDeviation, double mean) {
-		if (sensorValue < mean - interval * standardDeviation || sensorValue > mean + interval * standardDeviation) {
+		if (sensorValue < mean - (interval * standardDeviation) || sensorValue > mean + (interval * standardDeviation)) {
 			return true;
 		}
 		return false;
@@ -296,15 +296,15 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 */
 	private void addValue(double value, DeviationInformation info) {
 		// It would be nice to know the mean of the distribution, but we don't
-		// know before we see the tuples. So set k not to the mean, but
+		// know before we see the tuples. Hence, don't set k to the mean, but
 		// to the first value we see. A value near the mean would be perfect.
 		// A problem occurs when the mean value changes dramatically.
 		if (info.n == 0)
 			info.k = value;
 
 		info.n++;
-		info.ex += value - info.k;
-		info.ex2 += (value - info.k) * (value - info.k);
+		info.sumWindow += value - info.k;
+		info.sumWindowSqr += (value - info.k) * (value - info.k);
 	}
 
 	/**
@@ -318,8 +318,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 */
 	private void removeValue(double value, DeviationInformation info) {
 		info.n--;
-		info.ex -= value - info.k;
-		info.ex2 -= (value - info.k) * (value - info.k);
+		info.sumWindow -= value - info.k;
+		info.sumWindowSqr -= (value - info.k) * (value - info.k);
 	}
 
 	/**
@@ -330,7 +330,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * @return The approximate mean value
 	 */
 	private double getMeanValue(DeviationInformation info) {
-		return info.k + (info.ex / info.n);
+		return info.k + (info.sumWindow / info.n);
 	}
 
 	/**
@@ -341,13 +341,13 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * @return The approximate standard deviation
 	 */
 	private double calcStandardDeviationApprox(DeviationInformation info) {
-		double variance = (info.ex2 - ((info.ex + info.ex) / info.n)) / (info.n - 1);
+		double variance = (info.sumWindowSqr - ((info.sumWindow * info.sumWindow) / info.n)) / (info.n - 1);
 		double standardDeviation = Math.sqrt(variance);
 		return standardDeviation;
 	}
 
 	/*
-	 * ------ OFFLINE -------
+	 * ------ OFFLINE (exact) -------
 	 */
 
 	/**
@@ -472,8 +472,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 		// For window (approximate) calculation
 		public double k;
-		public double ex;
-		public double ex2;
+		public double sumWindow;
+		public double sumWindowSqr;
 
 		// For offline calculation
 		public double sum1;
