@@ -1,0 +1,39 @@
+/// Odysseus Testcase: Filter
+/// Operator: FILTER
+/// Date: Sat May 16 07:05:29 CST 2015
+/// User: ckuka
+/// Parameter: 
+///  SUPPRESSPUNCTUATIONS: 
+///  NAME: 
+///  DESTINATION: 
+///  ID: 
+///  PREDICATE: 'x<y'
+///  HEARTBEATRATE: 
+///  DEBUG: 
+
+
+#PARSER PQL
+
+#DROPALLQUERIES
+#DROPALLSINKS
+#DROPALLSOURCES
+
+#ADDQUERY
+
+input0 = ACCESS({
+    source='source0_TimeInterval',
+    wrapper='GenericPull',
+    transport='file',
+    protocol='SimpleCSV',
+    dataHandler='Tuple',
+    metaattribute=[
+                  'TimeInterval'
+                  ],
+    options=[
+        ['filename', '${BUNDLE-ROOT}/testdaten/filter/input0.csv'],
+        ['csv.delimiter', ';'],
+        ['csv.trim', 'true']
+        ],
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double'], ['y', 'Double'], ['z', 'Double']]})
+
+output = FILTER({PREDICATE='x<y'}, input0)

@@ -149,7 +149,6 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
             }
         }
         comboOperator.select(index);
-
         final Label lblDirectory = new Label(container, SWT.NONE);
         lblDirectory.setText("Directory:");
         final Text txtDirectory = new Text(container, SWT.NONE);
@@ -198,9 +197,14 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
         if (this.model.getOperator() != null) {
             ports = this.model.getOperator().getMaxPorts();
         }
+        // Restrict number of ports in case of UNION etc.
+        if (ports > 10) {
+            ports = 10;
+        }
         for (int i = 0; i < ports; i++) {
             this.createAttributeTab(tabFolder, i);
         }
+
         final Group grpParameter = new Group(operatorContainer, SWT.NONE);
         grpParameter.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
         grpParameter.setLayout(new GridLayout(1, false));
@@ -217,23 +221,30 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 final int index = comboOperator.getSelectionIndex();
-                TestEditorPart.this.model.setOperator((LogicalOperatorInformation) comboOperator.getData(comboOperator.getItem(index)));
-                int ports = 1;
-                if (TestEditorPart.this.model.getOperator() != null) {
-                    ports = TestEditorPart.this.model.getOperator().getMaxPorts();
+                if ((model.getOperator() == null) || (!model.getOperator().equals(comboOperator.getData(comboOperator.getItem(index))))) {
+                    TestEditorPart.this.model.setOperator((LogicalOperatorInformation) comboOperator.getData(comboOperator.getItem(index)));
+                    int ports = 1;
+                    if (TestEditorPart.this.model.getOperator() != null) {
+                        ports = TestEditorPart.this.model.getOperator().getMaxPorts();
+                    }
+                    if (ports > 10) {
+                        ports = 10;
+                    }
+                    for (final TabItem item : tabFolder.getItems()) {
+                        item.dispose();
+                    }
+                    for (int i = 0; i < ports; i++) {
+                        TestEditorPart.this.createAttributeTab(tabFolder, i);
+                    }
+
+                    for (final Control control : grpParameter.getChildren()) {
+                        control.dispose();
+                    }
+
+                    TestEditorPart.this.createParameter(grpParameter);
+                    operatorContainer.layout();
+                    TestEditorPart.this.setDirty(true);
                 }
-                for (final TabItem item : tabFolder.getItems()) {
-                    item.dispose();
-                }
-                for (int i = 0; i < ports; i++) {
-                    TestEditorPart.this.createAttributeTab(tabFolder, i);
-                }
-                for (final Control control : grpParameter.getChildren()) {
-                    control.dispose();
-                }
-                TestEditorPart.this.createParameter(grpParameter);
-                operatorContainer.layout();
-                TestEditorPart.this.setDirty(true);
             }
         });
 
@@ -296,6 +307,7 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
         this.setSite(site);
         this.setInput(input);
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+        setDirty(false);
     }
 
     @Override
@@ -433,8 +445,6 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
         final TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
         tabItem.setText("Port " + port);
 
-
-        
         final Composite composite = new Composite(tabFolder, SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         composite.setLayout(new GridLayout(2, false));
@@ -442,7 +452,7 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
         final Composite comWindow = new Composite(composite, SWT.NONE);
         comWindow.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         comWindow.setLayout(new GridLayout(2, false));
-        
+
         final Label lblWindow = new Label(comWindow, SWT.NONE);
         lblWindow.setText("Window:");
         final Text txtWindow = new Text(comWindow, SWT.NONE);
@@ -451,19 +461,15 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
 
             @Override
             public void modifyText(final ModifyEvent e) {
-                try {
-                    TestEditorPart.this.model.addWindow(port, Integer.parseInt(txtWindow.getText()));
-                    TestEditorPart.this.setDirty(true);
-                }
-                catch (Throwable t) {
-
-                }
+                TestEditorPart.this.model.addWindow(port, Integer.parseInt(txtWindow.getText()));
+                TestEditorPart.this.setDirty(true);
             }
         });
+
         txtWindow.setText(this.model.getWindow(port).toString());
         @SuppressWarnings("unused")
         Label lblEmpty = new Label(composite, SWT.NONE);
-        
+
         final CheckboxTableViewer checkboxTableViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER | SWT.FULL_SELECTION);
         checkboxTableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         checkboxTableViewer.setLabelProvider(new SchemaLabelProvider());
@@ -520,8 +526,10 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
                     final String attribute = (String) checkboxTableViewer.getTable().getItem(index).getData();
                     final AttributeParameter parameter = TestEditorPart.this.model.getSchema(port).get(attribute);
                     final int datatypeIndex = ((Combo) e.getSource()).getSelectionIndex();
-                    parameter.setType((SDFDatatype) comboType.getData(comboType.getItem(datatypeIndex)));
-                    TestEditorPart.this.setDirty(true);
+                    if ((parameter.getType() == null) || (!parameter.getType().equals(comboType.getData(comboType.getItem(datatypeIndex))))) {
+                        parameter.setType((SDFDatatype) comboType.getData(comboType.getItem(datatypeIndex)));
+                        TestEditorPart.this.setDirty(true);
+                    }
                 }
             }
         });
@@ -581,7 +589,7 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 final int index = checkboxTableViewer.getTable().getSelectionIndex();
-                if (index >= 0) {
+                if ((index >= 0) && (checkboxTableViewer.getTable().getItem(index) != null)) {
                     final String attribute = (String) checkboxTableViewer.getTable().getItem(index).getData();
                     final AttributeParameter parameter = TestEditorPart.this.model.getSchema(port).get(attribute);
                     txtName.setText(attribute);
@@ -605,9 +613,7 @@ public class TestEditorPart extends EditorPart implements IResourceChangeListene
 
             }
         });
-        
 
-        
         final Composite comButton = new Composite(composite, SWT.NONE);
         comButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         comButton.setLayout(new GridLayout(6, true));

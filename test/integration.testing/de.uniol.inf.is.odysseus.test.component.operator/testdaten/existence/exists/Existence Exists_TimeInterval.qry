@@ -1,0 +1,56 @@
+/// Odysseus Testcase: Existence Exists
+/// Operator: EXISTENCE
+/// Date: Sat May 16 07:04:19 CST 2015
+/// User: ckuka
+/// Parameter: 
+///  SUPPRESSPUNCTUATIONS: 
+///  NAME: 
+///  DESTINATION: 
+///  ID: 
+///  PREDICATE: 'x==y'
+///  type: 'EXISTS'
+///  DEBUG: 
+///  TYPE: 
+
+
+#PARSER PQL
+
+#DROPALLQUERIES
+#DROPALLSINKS
+#DROPALLSOURCES
+
+#ADDQUERY
+
+input0 = ACCESS({
+    source='source0_TimeInterval',
+    wrapper='GenericPull',
+    transport='file',
+    protocol='SimpleCSV',
+    dataHandler='Tuple',
+    metaattribute=[
+                  'TimeInterval'
+                  ],
+    options=[
+        ['filename', '${BUNDLE-ROOT}/testdaten/existence/exists/input0.csv'],
+        ['csv.delimiter', ';'],
+        ['csv.trim', 'true']
+        ],
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double']]})
+
+input1 = ACCESS({
+    source='source1_TimeInterval',
+    wrapper='GenericPull',
+    transport='file',
+    protocol='SimpleCSV',
+    dataHandler='Tuple',
+    metaattribute=[
+                  'TimeInterval'
+                  ],
+    options=[
+        ['filename', '${BUNDLE-ROOT}/testdaten/existence/exists/input1.csv'],
+        ['csv.delimiter', ';'],
+        ['csv.trim', 'true']
+        ],
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['y', 'Double']]})
+
+output = EXISTENCE({PREDICATE='x==y', type='EXISTS'}, ELEMENTWINDOW({SIZE = 3}, input0), ELEMENTWINDOW({SIZE = 3}, input1))

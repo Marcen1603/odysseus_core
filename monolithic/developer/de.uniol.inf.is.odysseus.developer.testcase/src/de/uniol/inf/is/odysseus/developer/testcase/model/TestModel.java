@@ -167,7 +167,7 @@ public class TestModel implements Serializable {
 
     public void addAttribute(final int port, /* @NonNull */final String name, final AttributeParameter parameter) {
         Objects.requireNonNull(name);
-        if (port < 0) {
+        if ((port < 0) || (port >= 10)) {
             return;
         }
 
@@ -179,7 +179,7 @@ public class TestModel implements Serializable {
 
     public void removeAttribute(final int port, /* @NonNull */final String name) {
         Objects.requireNonNull(name);
-        if (port < 0) {
+        if ((port < 0) || (port >= 10)) {
             return;
         }
 
@@ -195,7 +195,7 @@ public class TestModel implements Serializable {
                                                                                 */final String newName) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(newName);
-        if (port < 0) {
+        if ((port < 0) || (port >= 10)) {
             return;
         }
 
@@ -219,12 +219,12 @@ public class TestModel implements Serializable {
      * @return the schema
      */
     public Map<String, AttributeParameter> getSchema(final int port) {
-        if (port < 0) {
+        if ((port < 0) || (port >= 10)) {
             return null;
         }
 
         if (this.schema.size() <= port) {
-            return null;
+            return new LinkedHashMap<>();
         }
         return Collections.unmodifiableMap(this.schema.get(port));
     }
@@ -274,7 +274,7 @@ public class TestModel implements Serializable {
     }
 
     public void addWindow(final int port, final Integer size) {
-        if (port < 0) {
+        if ((port < 0) || (port >= 10)) {
             return;
         }
         while (this.windows.size() <= port) {
@@ -284,7 +284,7 @@ public class TestModel implements Serializable {
     }
 
     public void removeWindow(final int port) {
-        if (port < 0) {
+        if ((port < 0) || (port >= 10)) {
             return;
         }
         while (this.windows.size() <= port) {
@@ -294,7 +294,7 @@ public class TestModel implements Serializable {
     }
 
     public Integer getWindow(int port) {
-        if ((port < 0) || (this.windows.size() <= port) || (this.windows.get(port) == null)) {
+        if ((port < 0) || (port >= 10) || (this.windows.size() <= port) || (this.windows.get(port) == null)) {
             return 0;
         }
         return this.windows.get(port);
@@ -369,7 +369,7 @@ public class TestModel implements Serializable {
             }
         }
 
-        for (int port = 0; port < this.schema.size(); port++) {
+        for (int port = 0; port < this.schema.size() && port < 10; port++) {
             final IMemento attrMem = memento.createChild(TestModel.SCHEMA);
             attrMem.putInteger(TestModel.PORT, port);
             attrMem.putInteger(TestModel.WINDOW, windows.get(port));
@@ -425,18 +425,20 @@ public class TestModel implements Serializable {
                         }
                     }
                 }
-                final IMemento attrMem = memento.getChild(TestModel.SCHEMA);
-                if (attrMem != null) {
-                    final int port = attrMem.getInteger(TestModel.PORT);
-                    this.addWindow(port, attrMem.getInteger(TestModel.WINDOW));
-                    for (final IMemento mem : attrMem.getChildren(TestModel.ATTRIBUTE)) {
-                        final String name = mem.getID();
-                        final SDFDatatype type = this.getSDFDatatype(mem.getString(TestModel.TYPE));
-                        final Object min = TestModel.getValue(mem.getString(TestModel.MIN), type);
-                        final Object max = TestModel.getValue(mem.getString(TestModel.MAX), type);
-                        final boolean nullValue = mem.getBoolean(TestModel.NULL);
-                        final boolean active = mem.getBoolean(TestModel.ACTIVE);
-                        this.addAttribute(port, name, new AttributeParameter(type, min, max, nullValue, active));
+
+                for (IMemento attrMem : memento.getChildren(TestModel.SCHEMA)) {
+                    if (attrMem != null) {
+                        final int port = attrMem.getInteger(TestModel.PORT);
+                        this.addWindow(port, attrMem.getInteger(TestModel.WINDOW));
+                        for (final IMemento mem : attrMem.getChildren(TestModel.ATTRIBUTE)) {
+                            final String name = mem.getID();
+                            final SDFDatatype type = this.getSDFDatatype(mem.getString(TestModel.TYPE));
+                            final Object min = TestModel.getValue(mem.getString(TestModel.MIN), type);
+                            final Object max = TestModel.getValue(mem.getString(TestModel.MAX), type);
+                            final boolean nullValue = mem.getBoolean(TestModel.NULL);
+                            final boolean active = mem.getBoolean(TestModel.ACTIVE);
+                            this.addAttribute(port, name, new AttributeParameter(type, min, max, nullValue, active));
+                        }
                     }
                 }
             }

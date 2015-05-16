@@ -84,16 +84,19 @@ public class TestGenerator implements IRunnableWithProgress {
         if (!root.toFile().exists()) {
             root.toFile().mkdirs();
         }
-        for (int i = 0; i < this.model.getOperator().getMaxPorts(); i++) {
-            final File output = root.resolve("input" + i + ".csv").toFile();
-            try {
-                output.createNewFile();
-                try (BufferedWriter out = new BufferedWriter(new FileWriter(output))) {
-                    this.generateInput(i, out);
+        for (int i = 0; i < this.model.getOperator().getMaxPorts() && i < 10; i++) {
+            if (this.model.getSchema(i).size() > 0) {
+
+                final File output = root.resolve("input" + i + ".csv").toFile();
+                try {
+                    output.createNewFile();
+                    try (BufferedWriter out = new BufferedWriter(new FileWriter(output))) {
+                        this.generateInput(i, out);
+                    }
                 }
-            }
-            catch (final IOException e) {
-                TestGenerator.LOG.error(e.getMessage(), e);
+                catch (final IOException e) {
+                    TestGenerator.LOG.error(e.getMessage(), e);
+                }
             }
             monitor.worked(1);
         }
@@ -211,8 +214,10 @@ public class TestGenerator implements IRunnableWithProgress {
 
         out.write("#ADDQUERY\n\n");
 
-        for (int i = 0; i < this.model.getOperator().getMaxPorts(); i++) {
-            this.writeAccess(i, root, metadata, out);
+        for (int i = 0; i < this.model.getOperator().getMaxPorts() && i < 10; i++) {
+            if (this.model.getSchema(i).size() > 0) {
+                this.writeAccess(i, root, metadata, out);
+            }
         }
         out.write("output = ");
         out.write(this.model.getOperator().getOperatorName().toUpperCase());
@@ -234,15 +239,17 @@ public class TestGenerator implements IRunnableWithProgress {
                 out.write(", ");
             }
         }
-        for (int i = 0; i < this.model.getOperator().getMaxPorts(); i++) {
-            if (i != 0) {
-                out.write(", ");
-            }
-            if (this.model.getWindow(i) > 0) {
-                out.write("ELEMENTWINDOW({SIZE = " + this.model.getWindow(i) + "}, input" + i + ")");
-            }
-            else {
-                out.write("input" + i);
+        for (int i = 0; i < this.model.getOperator().getMaxPorts() && i < 10; i++) {
+            if (this.model.getSchema(i).size() > 0) {
+                if (i != 0) {
+                    out.write(", ");
+                }
+                if (this.model.getWindow(i) > 0) {
+                    out.write("ELEMENTWINDOW({SIZE = " + this.model.getWindow(i) + "}, input" + i + ")");
+                }
+                else {
+                    out.write("input" + i);
+                }
             }
         }
         out.write(")\n");
@@ -334,6 +341,9 @@ public class TestGenerator implements IRunnableWithProgress {
 
     private Object[][] generateValues(final int port) {
         final int attributes = this.model.getSchema(port).size();
+        if (attributes == 0) {
+            return new Object[0][0];
+        }
         final int num = (int) (Math.pow(2.0, attributes) * 4.0);
         final Object[][] values = new Object[num - 4][];
         int testCase = -1;
