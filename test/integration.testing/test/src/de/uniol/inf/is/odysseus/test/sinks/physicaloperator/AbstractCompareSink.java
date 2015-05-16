@@ -91,9 +91,25 @@ public abstract class AbstractCompareSink<T extends IStreamObject<? extends ITim
 						logger.debug("\t" + "Processed: " + object.toString());
 						logger.debug("\t" + "Expected:" + object.toString());
 					}
-				} else {
-					logger.debug("There are more than one matching values. Just removed one from expected outputs!");
-				}
+                }
+                else {
+                    // Found multiple instances with same start timestamp
+                    logger.debug("There are more than one matching values. Just removed one from expected outputs!");
+                    T other = startSame.get(0);
+                    if (object.getMetadata().getEnd().equals(other.getMetadata().getEnd())) {
+                        // ok - exactly same metadata
+                        // System.out.println("FOUND EXACTLY MATCH");
+                    }
+                    else {
+                        logger.debug("Found a match with same starttime, but endtimestamp is different! Objects are:");
+                        logger.debug("\t" + "Processed: " + object.toString());
+                        logger.debug("\t" + "Expected:" + object.toString());
+                    }
+                    // Reinsert the other elements
+                    for (int i = 1; i < startSame.size(); i++) {
+                        expected.insert(startSame.get(i));
+                    }
+                }
 
 			}
 		}
