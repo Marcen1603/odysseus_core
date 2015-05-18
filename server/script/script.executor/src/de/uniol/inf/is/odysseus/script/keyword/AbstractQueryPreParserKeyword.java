@@ -124,7 +124,10 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 		}
 		
 		// AC-QUERIES
-		addSettings.add(new ACQueryParameter(isACQuery()));
+		if (isACQuery()){
+			// TODO: Currently not working in client/server scenario
+			addSettings.add(new ACQueryParameter(isACQuery()));
+		}
 
 		try {
 			parserID = parserID.trim();
