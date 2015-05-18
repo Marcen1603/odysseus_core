@@ -222,7 +222,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		this.basePriority = query.getPriority();
 		this.currentPriority = query.getPriority();
 		this.containsCycles = query.containsCycles();
-		Object parameter = getLogicalQuery().getParameter(ACQueryParameter.class.getSimpleName());
+		Object parameter = getLogicalQuery().getServerParameter(ACQueryParameter.class.getSimpleName());
 		if( parameter != null && parameter instanceof ACQueryParameter ) {
 			this.acQuery = ((ACQueryParameter)parameter).getValue();
 		}else{

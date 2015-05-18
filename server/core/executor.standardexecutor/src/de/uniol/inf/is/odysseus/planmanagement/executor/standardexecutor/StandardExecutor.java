@@ -357,8 +357,13 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				if (parameters.getPriority() > 0) {
 					query.setPriority(parameters.getPriority());
 				}
-				
-				query.setParameter(ACQueryParameter.class.getSimpleName(), parameters.get(ACQueryParameter.class));
+
+				if (parameters.get(ACQueryParameter.class) != null
+						&& parameters.get(ACQueryParameter.class).getValue()) {
+					query.setServerParameter(
+							ACQueryParameter.class.getSimpleName(),
+							parameters.get(ACQueryParameter.class));
+				}
 
 				// // this executor processes reoptimize requests
 				// if (query instanceof IPhysicalQuery) {
@@ -980,7 +985,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 						}
 						for (Entry<IOperatorOwner, Resource> id : p
 								.getUniqueIds().entrySet()) {
-							
+
 							getDataDictionary(caller).removeOperator(
 									id.getValue());
 							toRemove.add(id.getKey());
@@ -1021,7 +1026,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				}
 			} catch (Exception e) {
 				LOG.warn("Query not removed. An Error while removing occurd (ID: "
-						+ (queryToRemove!=null?queryToRemove.getID():"NULL" )+ ").");
+						+ (queryToRemove != null ? queryToRemove.getID()
+								: "NULL") + ").");
 				throw new PlanManagementException(e);
 			} finally {
 				executionPlanLock.unlock();

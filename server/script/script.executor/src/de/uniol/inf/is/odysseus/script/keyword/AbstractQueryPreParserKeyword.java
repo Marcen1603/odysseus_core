@@ -125,7 +125,6 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 		
 		// AC-QUERIES
 		if (isACQuery()){
-			// TODO: Currently not working in client/server scenario
 			addSettings.add(new ACQueryParameter(isACQuery()));
 		}
 

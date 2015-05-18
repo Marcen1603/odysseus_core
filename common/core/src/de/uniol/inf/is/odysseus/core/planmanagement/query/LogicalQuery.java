@@ -94,6 +94,9 @@ public class LogicalQuery implements ILogicalQuery {
 	final private ArrayList<Pair<String, Object>> parameters = new ArrayList<>();
 	final transient Map<String, Object> transParams = new HashMap<>();
 	
+	final private Map<String, Object> serverParameters = new HashMap<>();
+
+	
 	private String notice;
 
 	// TODO: check in which constructors alternativeLogicalPlans have to be set!
@@ -417,16 +420,11 @@ public class LogicalQuery implements ILogicalQuery {
 		transParams.put(key,value);
 	}
 	
-	private Pair<String, Object> getP(String key){
-		for (Pair<String, Object> p:parameters){
-			if (p.getE1().equals(key)){
-				return p;
-			}
-		}
-		return null;
+	@Override
+	public void setServerParameter(String key, Object value) {
+		serverParameters.put(key,value);		
 	}
 	
-
 	@Override
 	public Object getParameter(String key) {
 		Object v = transParams.get(key);
@@ -438,6 +436,23 @@ public class LogicalQuery implements ILogicalQuery {
 		}
 		return v;
 	}
+	
+	@Override
+	public Object getServerParameter(String key) {
+		return serverParameters.get(key);
+	}
+
+	
+	private Pair<String, Object> getP(String key){
+		for (Pair<String, Object> p:parameters){
+			if (p.getE1().equals(key)){
+				return p;
+			}
+		}
+		return null;
+	}
+	
+
 
 	@Override
 	public void done(IOwnedOperator op) {
