@@ -94,7 +94,7 @@ public class LogicalQuery implements ILogicalQuery {
 	final private ArrayList<Pair<String, Object>> parameters = new ArrayList<>();
 	final transient Map<String, Object> transParams = new HashMap<>();
 	
-	final private Map<String, Object> serverParameters = new HashMap<>();
+	final transient private Map<String, Object> serverParameters = new HashMap<>();
 
 	
 	private String notice;
