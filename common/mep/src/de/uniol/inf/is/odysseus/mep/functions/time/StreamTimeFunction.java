@@ -4,8 +4,6 @@
 package de.uniol.inf.is.odysseus.mep.functions.time;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -19,9 +17,6 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 @Deprecated
 public class StreamTimeFunction extends AbstractFunction<Long> implements IHasAlias{
-
-	private static final InfoService INFO = InfoServiceFactory
-			.getInfoService(StreamTimeFunction.class);
 	
     private static final long serialVersionUID = -9167197876743665507L;
 
