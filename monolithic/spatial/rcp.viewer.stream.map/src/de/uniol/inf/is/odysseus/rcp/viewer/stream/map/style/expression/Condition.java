@@ -51,7 +51,7 @@ public abstract class Condition<T>{
 					int index = schema.indexOf(attr);
 					variables.put(index, variable);
 					if (variable.getIdentifier().equals("defaultValue")){
-						variable.bind(defaultValue, null, -1);
+						variable.bind(defaultValue, -1);
 					}
 				}
 				this.variables = variables.entrySet();

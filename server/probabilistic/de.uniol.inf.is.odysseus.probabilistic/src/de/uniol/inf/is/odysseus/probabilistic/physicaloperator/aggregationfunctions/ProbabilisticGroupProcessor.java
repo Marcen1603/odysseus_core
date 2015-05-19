@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
+import de.uniol.inf.is.odysseus.core.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;

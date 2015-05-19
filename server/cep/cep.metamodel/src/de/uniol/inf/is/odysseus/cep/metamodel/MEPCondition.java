@@ -85,7 +85,7 @@ public abstract class MEPCondition extends AbstractCondition{
 
 	@Override
 	public void setValue(CepVariable varName, Object newValue) {
-		symbolTable.get(varName).bind(newValue, null, -1);
+		symbolTable.get(varName).bind(newValue, -1);
 	}
 	
 	@Override

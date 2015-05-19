@@ -215,6 +215,20 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
         return new Tuple<>();
     }
 
+    public static <T extends IMetaAttribute> Tuple<T> createEmptyTupleWithMeta(int size, IStreamObject<T> from, boolean requiresDeepClone){
+		Tuple<T> outputVal = new Tuple<T>(size, requiresDeepClone);
+		@SuppressWarnings("unchecked")
+		T meta = (T) from.getMetadata().clone();
+		outputVal.setMetadata(meta);
+		if (from.getMetadataMap() != null) {
+			for (Entry<String, Object> entry : from.getMetadataMap()
+					.entrySet()) {
+				outputVal.setMetadata(entry.getKey(), entry.getValue());
+			}
+		}
+		return outputVal;
+    }
+    
     /**
      * Creates a clone of all attribute values.
      * Handles primitive types, matrix/vectors, list, and complex types.

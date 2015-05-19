@@ -21,8 +21,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 
-public class AggregateFunction implements
-		Serializable, IClone {
+public class AggregateFunction implements Serializable, IClone {
 
 	/**
 * 
