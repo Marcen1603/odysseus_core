@@ -17,8 +17,9 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * Returns the stream time
  * 
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
+@Deprecated
 public class StreamDateFunction2 extends AbstractFunction<Date> {
 
 	private static final InfoService INFO = InfoServiceFactory
@@ -28,7 +29,6 @@ public class StreamDateFunction2 extends AbstractFunction<Date> {
 
     public StreamDateFunction2() {
     	super("streamdate", 1,getAllTypes(1), SDFDatatype.DATE);
-        INFO.warning("Streamdate is deprecated. Use attribute TimeInterval.start instead");
     }
     
     @Override

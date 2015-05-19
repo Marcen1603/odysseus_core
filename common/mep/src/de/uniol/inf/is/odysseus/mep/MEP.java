@@ -360,6 +360,9 @@ public class MEP implements IExpressionParser {
 		}
 		// getLogger().debug("Register Function: " + function.getSymbol());
 		functionStore.put(signature, function);
+		if (function.getClass().getAnnotation(Deprecated.class) != null){
+			functionStore.setDeprecated(function);
+		}
 	}
 
 	/**
@@ -425,6 +428,16 @@ public class MEP implements IExpressionParser {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public static boolean isDepreacted(IFunction<?> function) {
+		try {
+			boolean dep = functionStore.isDeprecated(function);
+			return dep;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 
 	public static IFunction<?> getFunction(String symbol,
 			List<SDFDatatype> parameter) {

@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.mep.MEP;
 
 public class MEPFunctionInfo {
 
@@ -35,8 +36,9 @@ public class MEPFunctionInfo {
 	private final int arity;
 	private final ImmutableList<String> argTypes;
 	private final String resultType;
+	private final boolean deprecated;
 
-	public MEPFunctionInfo(String symbol, int arity, ImmutableList<String> argTypes, String resultType) {
+	public MEPFunctionInfo(String symbol, int arity, ImmutableList<String> argTypes, String resultType, boolean deprecated) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(symbol), "Symbol of Function must not be null!");
 		Preconditions.checkArgument(arity >= 0, "Arity of function must be zero or positive, instead of %s!", arity);
 		Preconditions.checkNotNull(argTypes, "List of argument types of function must not be null!");
@@ -46,29 +48,33 @@ public class MEPFunctionInfo {
 		this.arity = arity;
 		this.argTypes = argTypes;
 		this.resultType = resultType;
+		this.deprecated = deprecated;
 	}
 
 	public static MEPFunctionInfo fromMEPFunction( IFunction<?> function ) {
 		Preconditions.checkNotNull(function, "Function must not be null!");
 		
+		boolean dep = false;
 		try {
 			ImmutableList.Builder<String> builder = ImmutableList.builder();
 			for( int i = 0; i < function.getArity(); i++ ) {
 				builder.add( concat(function.getAcceptedTypes(i)));
 			}
-
+			
+			dep = MEP.isDepreacted(function);
+			
 			return new MEPFunctionInfo(
 				function.getSymbol(),
 				function.getArity(),
 				builder.build(),
-				tryGetReturnType(function));
+				tryGetReturnType(function), dep);
 		} catch( Throwable t ) {
 			LOG.error("Exception during creating MEPFunctionInfo from MEPFunction {}", function, t);
 			return new MEPFunctionInfo(
 					function.getSymbol(),
 					0,
 					ImmutableList.<String>of("???"),
-					"???"
+					"???",dep
 					);
 		}
 	}
@@ -96,6 +102,10 @@ public class MEPFunctionInfo {
 
 	public String getResultType() {
 		return resultType;
+	}
+	
+	public boolean isDeprecated(){
+		return deprecated;
 	}
 
 	private static String concat(SDFDatatype[] types) {

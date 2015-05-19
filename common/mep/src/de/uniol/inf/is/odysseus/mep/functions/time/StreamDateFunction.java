@@ -6,8 +6,6 @@ package de.uniol.inf.is.odysseus.mep.functions.time;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import org.omg.PortableInterceptor.INACTIVE;
-
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -21,6 +19,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
+@Deprecated
 public class StreamDateFunction extends AbstractFunction<Date> {
 
 	private static final InfoService INFO = InfoServiceFactory
@@ -30,7 +29,6 @@ public class StreamDateFunction extends AbstractFunction<Date> {
 
     public StreamDateFunction() {
         super("streamdate", 0, new SDFDatatype[0][0], SDFDatatype.DATE, false);
-        INFO.warning("Streamdate is deprecated. Use attribute toDate(TimeInterval.start) instead");
     }
 
     @Override

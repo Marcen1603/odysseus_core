@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
+@Deprecated
 public class StreamTimeFunction extends AbstractFunction<Long> implements IHasAlias{
 
 	private static final InfoService INFO = InfoServiceFactory
@@ -30,7 +31,6 @@ public class StreamTimeFunction extends AbstractFunction<Long> implements IHasAl
 
     protected StreamTimeFunction(String name) {
         super(name, 0, new SDFDatatype[0][0], SDFDatatype.LONG, false);
-        INFO.warning("Streamtime is deprecated. Use attribute TimeInterval.start instead");
     }
 
     @Override

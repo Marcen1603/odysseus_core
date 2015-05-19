@@ -33,7 +33,8 @@ public class FunctionStore {
     private static FunctionStore instance;
     private final Map<String, List<FunctionSignature>> symbols = new HashMap<String, List<FunctionSignature>>();
     private final Map<FunctionSignature, IFunction<?>> signatures = new HashMap<FunctionSignature, IFunction<?>>();
-
+    private final List<Class<?>> deprecated = new ArrayList<Class<?>>();
+    
     public static FunctionStore getInstance() {
         if (FunctionStore.instance == null) {
             FunctionStore.instance = new FunctionStore();
@@ -109,6 +110,14 @@ public class FunctionStore {
         }
         return function;
     }
+    
+    public void setDeprecated(final IFunction<?> function){
+    	this.deprecated.add(function.getClass());
+    }
+    
+    public boolean isDeprecated(final IFunction<?> function){
+    	return deprecated.contains(function.getClass());
+    }
 
     public synchronized IFunction<?> remove(final FunctionSignature signature) {
         Objects.requireNonNull(signature);
@@ -123,6 +132,7 @@ public class FunctionStore {
                 this.symbols.get(signature.getSymbol()).remove(signature);
             }
         }
+        deprecated.remove(function.getClass());
         return function;
     }
 

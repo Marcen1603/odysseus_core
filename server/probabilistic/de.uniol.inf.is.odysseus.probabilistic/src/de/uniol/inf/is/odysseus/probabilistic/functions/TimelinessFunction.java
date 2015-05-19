@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
+@Deprecated
 public class TimelinessFunction extends AbstractFunction<Double> {
 
 	private static final InfoService INFO = InfoServiceFactory
@@ -27,8 +28,6 @@ public class TimelinessFunction extends AbstractFunction<Double> {
 
     public TimelinessFunction() {
         super("timeliness", 1, TimelinessFunction.ACC_TYPES, SDFDatatype.DOUBLE, false);
-        INFO.warning("timeliness is deprecated.");
-
     }
 
     /*
