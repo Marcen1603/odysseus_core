@@ -57,8 +57,6 @@ public class SocketReceiver {
                         }
                     }
                     QueryResults results = new QueryResults(values);
-                    results.getValues();
-
                     Gson gson = new Gson();
                     Message message = gson.fromJson(results.getValues().get(0).toString(), Message.class);
                     switch (message.getMessageType()) {
