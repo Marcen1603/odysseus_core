@@ -40,11 +40,9 @@ public class RSwitchProjectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
 	@Override
 	public void execute(RenameAO rename, RewriteConfiguration config) {
-		ProjectAO proj = (ProjectAO) getSubscribingOperatorAndCheckType(rename,
-				ProjectAO.class);
+		ProjectAO proj = (ProjectAO) getSubscribingOperatorAndCheckType(rename, ProjectAO.class);
 		if (proj != null) {
-			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-					.switchOperator(proj, rename);
+			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.switchOperator(proj, rename);
 			for (ILogicalOperator o : toUpdate) {
 				update(o);
 			}
@@ -56,6 +54,9 @@ public class RSwitchProjectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
 	@Override
 	public boolean isExecutable(RenameAO ren, RewriteConfiguration config) {
+		if (ren.getAliases() != null && ren.getAliases().isEmpty()) {
+			return false;
+		}
 		return getSubscribingOperatorAndCheckType(ren, ProjectAO.class) != null;
 	}
 
