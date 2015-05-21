@@ -1,0 +1,42 @@
+/// Odysseus Testcase: Sase
+/// Operator: SASE
+/// Date: Thu May 21 14:21:43 CST 2015
+/// User: ckuka
+/// Parameter: 
+///  SUPPRESSPUNCTUATIONS: 
+///  QUERY: 'PATTERN SEQ(source0_TimeInterval s1, source0_TimeInterval s2) where skip_till_any_match(s1,s2){ s1.x=s2.y } return s1.x,s2.y'
+///  NAME: 
+///  SCHEMA: [['x','double'],['y','double']]
+///  ONEMATCHPERINSTANCE: 
+///  DESTINATION: 
+///  ID: 
+///  HEARTBEATRATE: 1
+///  DEBUG: 
+///  TYPE: 'source0_TimeInterval'
+
+
+#PARSER PQL
+
+#DROPALLQUERIES
+#DROPALLSINKS
+#DROPALLSOURCES
+
+#ADDQUERY
+
+input0 = ACCESS({
+    source='source0_TimeInterval',
+    wrapper='GenericPull',
+    transport='file',
+    protocol='SimpleCSV',
+    dataHandler='Tuple',
+    metaattribute=[
+                  'TimeInterval'
+                  ],
+    options=[
+        ['filename', '${BUNDLE-ROOT}/testdaten/sase/input0.csv'],
+        ['csv.delimiter', ';'],
+        ['csv.trim', 'true']
+        ],
+    schema=[['timestamp', 'STARTTIMESTAMP'], ['x', 'Double'], ['y', 'Double'], ['z', 'Double']]})
+
+output = SASE({QUERY='PATTERN SEQ(source0_TimeInterval s1, source0_TimeInterval s2) where skip_till_any_match(s1,s2){ s1.x=s2.y } return s1.x,s2.y', SCHEMA=[['x','double'],['y','double']], HEARTBEATRATE=1, TYPE='source0_TimeInterval'}, input0)
