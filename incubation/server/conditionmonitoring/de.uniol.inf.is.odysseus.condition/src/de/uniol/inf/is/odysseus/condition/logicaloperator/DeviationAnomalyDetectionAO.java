@@ -29,10 +29,13 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 
 	private boolean windowChecking;
 	private boolean onlyOnChange;
+	
+	private boolean reportEndOfAnomalies;
 
 	public DeviationAnomalyDetectionAO() {
 		interval = 3.0;
 		nameOfValue = "value";
+		reportEndOfAnomalies = false;
 	}
 
 	public DeviationAnomalyDetectionAO(DeviationAnomalyDetectionAO ao) {
@@ -44,6 +47,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.fastGrouping = ao.isFastGrouping();
 		this.windowChecking = ao.isWindowChecking();
 		this.onlyOnChange = ao.isOnlyOnChange();
+		this.reportEndOfAnomalies = ao.isReportEndOfAnomalyWindows();
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "interval", optional = true, doc = "Defines, how many standard deviations are allowed for a tuple to be different from the mean. 3.0 is the default value. Choose a smaller value to get more anomalies.")
@@ -76,6 +80,11 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.onlyOnChange = onlyOnChange;
 	}
 
+	@Parameter(name = "reportEndOfAnomalies", type = BooleanParameter.class, optional = true, doc = "If you use windowChecking and set this option true, then a tuple with anomaly score = 0 is send, if the last window had an anomyly, but the current has not.")
+	public void setReportEndOfAnomalyWindows(boolean reportEndOfAnomalyWindows) {
+		this.reportEndOfAnomalies = reportEndOfAnomalyWindows;
+	}
+
 	public double getInterval() {
 		return this.interval;
 	}
@@ -98,6 +107,10 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 
 	public boolean isOnlyOnChange() {
 		return onlyOnChange;
+	}
+	
+	public boolean isReportEndOfAnomalyWindows() {
+		return reportEndOfAnomalies;
 	}
 
 	@Override

@@ -39,8 +39,13 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 	private boolean onlyOnChange;
 	private boolean lastWindowWithAnomaly;
+	private boolean prevLastWindowWithAnomaly;
 	private boolean foundAnomaly;
 
+	// If true, sends a tuple with anomaly score = 0, if the last window had an
+	// anomaly, but this one didn't
+	private boolean reportEndOfAnomalyWindows;
+	
 	private String standardDeviationAttributeName = "standardDeviation";
 	private String meanAttributeName = "mean";
 
@@ -59,7 +64,10 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 		onlyOnChange = ao.isOnlyOnChange();
 		lastWindowWithAnomaly = false;
+		prevLastWindowWithAnomaly = false;
 		foundAnomaly = false;
+
+		this.reportEndOfAnomalyWindows = ao.isReportEndOfAnomalyWindows();
 	}
 
 	@Override
@@ -124,6 +132,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 				// We delete something, the last tumbling window is history
 				this.alreadySendThisWindow = false;
 			}
+			prevLastWindowWithAnomaly = lastWindowWithAnomaly;
 			lastWindowWithAnomaly = foundAnomaly;
 			foundAnomaly = false;
 		}
@@ -169,7 +178,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			// Maybe here we have an anomaly
 			if (!oncePerWindow || (oncePerWindow && !this.alreadySendThisWindow)) {
 				// If we are in normal mode, send
-				// If not (onePerWindow) only send if we did not already send
+				// If not (oncePerWindow) only send if we did not already send
 				// this window
 				foundAnomaly = true;
 
@@ -182,15 +191,21 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 					newTuple = newTuple.append(mean);
 					newTuple = newTuple.append(standardDeviation);
 					transfer(newTuple);
-					return;
 				}
 
 				lastWindowWithAnomaly = true;
 			}
+		} else if (reportEndOfAnomalyWindows && prevLastWindowWithAnomaly && !lastWindowWithAnomaly && !alreadySendThisWindow) {
+			alreadySendThisWindow = true;
+			double anomalyScore = 0;
+			Tuple newTuple = tuple.append(anomalyScore);
+			newTuple = newTuple.append(mean);
+			newTuple = newTuple.append(standardDeviation);
+			transfer(newTuple);
+		} else {
+			Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
+			sendPunctuation(beat);
 		}
-
-		Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
-		sendPunctuation(beat);
 	}
 
 	private boolean isAnomaly(double sensorValue, double standardDeviation, double mean) {
@@ -257,21 +272,22 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
-//		boolean timePunctuationSensitive = true;
-//		DeviationInformation info = this.deviationInfo.get(0l);
-//
-//		if (timePunctuationSensitive && info != null) {
-//			PointInTime time = punctuation.getTime().minus(lastTuple);
-//			if (time.getMainPoint() > info.mean) {
-//				// The next tuple takes longer than normal (if we look for
-//				// durations)
-//				if (isAnomaly(time.getMainPoint(), info.standardDeviation, info.mean)) {
-//					// Here we have an anomaly which did not really occur, cause
-//					// the source stopped sending
-//					// System.out.println("This would be a new anomaly.");
-//				}
-//			}
-//		}
+		// boolean timePunctuationSensitive = true;
+		// DeviationInformation info = this.deviationInfo.get(0l);
+		//
+		// if (timePunctuationSensitive && info != null) {
+		// PointInTime time = punctuation.getTime().minus(lastTuple);
+		// if (time.getMainPoint() > info.mean) {
+		// // The next tuple takes longer than normal (if we look for
+		// // durations)
+		// if (isAnomaly(time.getMainPoint(), info.standardDeviation,
+		// info.mean)) {
+		// // Here we have an anomaly which did not really occur, cause
+		// // the source stopped sending
+		// // System.out.println("This would be a new anomaly.");
+		// }
+		// }
+		// }
 		sendPunctuation(punctuation);
 	}
 
