@@ -124,16 +124,25 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 
 	@Override
 	public List<IViewableAttribute> getViewableAttributes(int port) {
+        if (!this.viewSchema.containsKey(port)) {
+            return null;
+        }
 		return this.viewSchema.get(port).getViewableAttributes();
 	}
 
 	@Override
 	public List<IViewableAttribute> getChoosenAttributes(int port) {
+        if (!this.viewSchema.containsKey(port)) {
+            return null;
+        }
 		return this.viewSchema.get(port).getChoosenAttributes();
 	}
 	
 	@Override
 	public List<IViewableAttribute> getGroupByAttributes(int port) {
+        if (!this.viewSchema.containsKey(port)) {
+            return null;
+        }
 		return this.viewSchema.get(port).getGroupByAttributes();
 	}
 
