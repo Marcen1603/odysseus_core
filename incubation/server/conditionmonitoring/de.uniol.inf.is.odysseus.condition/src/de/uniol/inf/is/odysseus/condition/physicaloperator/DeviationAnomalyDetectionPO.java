@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.condition.enums.TrainingMode;
 import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationAnomalyDetectionAO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -30,10 +29,6 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private String valueAttributeName;
 
 	private double interval;
-	private TrainingMode trainingMode;
-	private double manualStandardDeviation;
-	private double manualMean;
-	private long tuplesToLearn;
 	private IGroupProcessor<T, T> groupProcessor;
 	private Map<Long, DeviationInformation> deviationInfo;
 	private Map<Long, List<T>> tupleMap;
@@ -46,18 +41,18 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private boolean lastWindowWithAnomaly;
 	private boolean foundAnomaly;
 
+	private String standardDeviationAttributeName = "standardDeviation";
+	private String meanAttributeName = "mean";
+
 	// Testing purposes
 	PointInTime lastTuple;
 
 	public DeviationAnomalyDetectionPO(DeviationAnomalyDetectionAO ao, IGroupProcessor<T, T> groupProcessor) {
 		this.interval = ao.getInterval();
-		this.trainingMode = ao.getTrainingMode();
-		this.valueAttributeName = ao.getNameOfValue();
 		this.groupProcessor = groupProcessor;
+		this.valueAttributeName = ao.getNameOfValue();
 		this.deviationInfo = new HashMap<Long, DeviationInformation>();
-		this.exactCalculation = ao.getExactCalculation();
 
-		// Testing purposes
 		oncePerWindow = ao.isWindowChecking();
 		alreadySendThisWindow = false;
 		tupleMap = new HashMap<Long, List<T>>();
@@ -65,15 +60,6 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		onlyOnChange = ao.isOnlyOnChange();
 		lastWindowWithAnomaly = false;
 		foundAnomaly = false;
-
-		if (this.trainingMode.equals(TrainingMode.MANUAL)) {
-			// Set the values for standardDeviation and mean manually
-			this.manualMean = ao.getMean();
-			this.manualStandardDeviation = ao.getStandardDeviation();
-		} else if (this.trainingMode.equals(TrainingMode.TUPLE_BASED)) {
-			this.tuplesToLearn = ao.getTuplesToLearn();
-		}
-
 	}
 
 	@Override
@@ -83,8 +69,6 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 	@Override
 	protected void process_next(T tuple, int port) {
-
-		lastTuple = tuple.getMetadata().getStart();
 
 		// Get the group for this tuple (e.g., the incoming values have
 		// different contexts)
@@ -96,61 +80,24 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			this.deviationInfo.put(gId, info);
 		}
 
-		double sensorValue = getValue(tuple);
-
-		if (this.trainingMode.equals(TrainingMode.ONLINE)) {
-			// Calculate new value for standard deviation
-			info.standardDeviation = calcStandardDeviationOnline(sensorValue, info);
-			processTuple(gId, sensorValue, info.mean, info.standardDeviation, tuple, info);
-		} else if (this.trainingMode.equals(TrainingMode.MANUAL)) {
-			// Don't change the values - they are set by the user
-			processTuple(gId, sensorValue, manualMean, manualStandardDeviation, tuple, info);
-		} else if (this.trainingMode.equals(TrainingMode.TUPLE_BASED)) {
-			// Only change the values the first tuplesToLearn tuples (per group)
-			if (info.n <= this.tuplesToLearn) {
-				double sigma = calcStandardDeviationOnline(sensorValue, info);
-				info.standardDeviation = sigma;
+		if (port == 0 && info.wasWritten) {
+			// Process data
+			lastTuple = tuple.getMetadata().getStart();
+			double sensorValue = getValue(tuple);
+			processTuple(gId, sensorValue, tuple, info);
+		} else if (port == 1) {
+			// Update deviation information
+			int stdDevIndex = getInputSchema(1).findAttributeIndex(standardDeviationAttributeName);
+			if (stdDevIndex >= 0) {
+				info.standardDeviation = tuple.getAttribute(stdDevIndex);
 			}
-			processTuple(gId, sensorValue, info.mean, info.standardDeviation, tuple, info);
-		} else if (this.trainingMode.equals(TrainingMode.WINDOW)) {
-			// Use the window which is before this operator
-			processTupleWithWindow(gId, tuple, info, this.exactCalculation);
-		}
-	}
+			int meanIndex = getInputSchema(1).findAttributeIndex(meanAttributeName);
+			if (meanIndex >= 0) {
+				info.mean = tuple.getAttribute(meanIndex);
+			}
 
-	/**
-	 * Processes a tuple if the operator is used in window mode. You have the
-	 * choice to use the exact calculation or the (faster) approximate
-	 * calculation.
-	 * 
-	 * @param gId
-	 *            The id of the group for this tuple
-	 * @param tuple
-	 *            The new tuple
-	 * @param info
-	 *            The info object for this group
-	 * @param exactCalculation
-	 *            Your choice if you want to use exact calculation
-	 */
-	private void processTupleWithWindow(Long gId, T tuple, DeviationInformation info, boolean exactCalculation) {
-		List<T> tuples = tupleMap.get(gId);
-		if (tuples == null) {
-			tuples = new ArrayList<T>();
-			tupleMap.put(gId, tuples);
+			info.wasWritten = true;
 		}
-		tuples.add(tuple);
-		removeOldValues(tuples, tuple.getMetadata().getStart(), info, exactCalculation);
-		double mean = 0;
-		if (exactCalculation) {
-			addValue(getValue(tuple), info);
-			info.standardDeviation = calcStandardDeviationApprox(info);
-			mean = getMeanValue(info);
-		} else {
-			info.standardDeviation = calcStandardDeviationOffline(tuples, info);
-			mean = info.mean;
-		}
-
-		processTuple(gId, getValue(tuple), mean, info.standardDeviation, tuple, info);
 	}
 
 	/**
@@ -168,8 +115,6 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		while (iter.hasNext()) {
 			T next = iter.next();
 			if (next.getMetadata().getEnd().beforeOrEquals(start)) {
-				if (!exactCalculation)
-					removeValue(getValue(next), info);
 				iter.remove();
 				removedSomething = true;
 			}
@@ -202,12 +147,13 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 *            The deviationInformation for the group
 	 * 
 	 */
-	private void processTuple(long gId, double sensorValue, double mean, double standardDeviation, T tuple,
-			DeviationInformation info) {
+	private void processTuple(long gId, double sensorValue, T tuple, DeviationInformation info) {
+
+		double mean = info.mean;
+		double standardDeviation = info.standardDeviation;
 
 		if (this.oncePerWindow) {
-			// OK, we have a window, but it's not the one for training, but
-			// for checking
+			// OK, we have a window (for checking, not for training)
 			// This window should be a tumbling one, that would be good,
 			// e.g. 1 minute
 			List<T> tuples = tupleMap.get(gId);
@@ -254,137 +200,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		return false;
 	}
 
-	/*
-	 * ----- ONLINE -----
-	 */
-
 	/**
-	 * Calculates the standard deviation of the data seen so far (online).
-	 * Algorithm from Knuth
-	 * (http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#
-	 * Online_algorithm)
-	 * 
-	 * @param newValue
-	 *            The new value which came in
-	 * @return The standard deviation of the data seen so far
-	 */
-	private double calcStandardDeviationOnline(double newValue, DeviationInformation info) {
-		info.n += 1;
-		double delta = newValue - info.mean;
-		info.mean += (delta / info.n);
-		info.m2 += delta * (newValue - info.mean);
-
-		if (info.n < 2)
-			return 0;
-
-		double variance = info.m2 / (info.n - 1);
-		double standardDeviation = Math.sqrt(variance);
-		return standardDeviation;
-	}
-
-	/*
-	 * ----- WINDOW (approximate)------
-	 */
-
-	/**
-	 * Adds a value to the approximate standard deviation (and mean) calculation
-	 * 
-	 * @param value
-	 *            The value which has to be added
-	 * @param info
-	 *            The info object for this group
-	 */
-	private void addValue(double value, DeviationInformation info) {
-		// It would be nice to know the mean of the distribution, but we don't
-		// know before we see the tuples. Hence, don't set k to the mean, but
-		// to the first value we see. A value near the mean would be perfect.
-		// A problem occurs when the mean value changes dramatically.
-		if (info.n == 0)
-			info.k = value;
-
-		info.n++;
-		info.sumWindow += value - info.k;
-		info.sumWindowSqr += (value - info.k) * (value - info.k);
-	}
-
-	/**
-	 * Removes a value from the approximate standard deviation (and mean)
-	 * calculation
-	 * 
-	 * @param value
-	 *            The value which has to be removed
-	 * @param info
-	 *            The info object for this group
-	 */
-	private void removeValue(double value, DeviationInformation info) {
-		info.n--;
-		info.sumWindow -= value - info.k;
-		info.sumWindowSqr -= (value - info.k) * (value - info.k);
-	}
-
-	/**
-	 * Calculates the approximate mean value for the given group info object
-	 * 
-	 * @param info
-	 *            The info object for this group
-	 * @return The approximate mean value
-	 */
-	private double getMeanValue(DeviationInformation info) {
-		return info.k + (info.sumWindow / info.n);
-	}
-
-	/**
-	 * Calculates an approximation of the standard calculation
-	 * 
-	 * @param info
-	 *            The info object for this group
-	 * @return The approximate standard deviation
-	 */
-	private double calcStandardDeviationApprox(DeviationInformation info) {
-		double variance = (info.sumWindowSqr - ((info.sumWindow * info.sumWindow) / info.n)) / (info.n - 1);
-		double standardDeviation = Math.sqrt(variance);
-		return standardDeviation;
-	}
-
-	/*
-	 * ------ OFFLINE (exact) -------
-	 */
-
-	/**
-	 * Exact (but expensive) calculation of the standard deviation
-	 * 
-	 * @param tuples
-	 *            List of tuples for which the standard deviation needs to be
-	 *            calculated
-	 * @param info
-	 *            The info object for this group (there you can find the mean
-	 *            after the calculation)
-	 * @return The standard deviation of the given list
-	 */
-	private double calcStandardDeviationOffline(List<T> tuples, DeviationInformation info) {
-		info.n = 0;
-		info.sum1 = 0;
-		info.sum2 = 0;
-
-		for (T tuple : tuples) {
-			info.n++;
-			info.sum1 += getValue(tuple);
-		}
-
-		info.mean = info.sum1 / info.n;
-
-		for (T tuple : tuples) {
-			info.sum2 += (getValue(tuple) - info.mean) * (getValue(tuple) - info.mean);
-		}
-
-		double variance = info.sum2 / (info.n - 1);
-		info.standardDeviation = Math.sqrt(variance);
-		return info.standardDeviation;
-	}
-
-	/**
-	 * Calculates the anomaly score, a value between 0 and 1. (Will actually
-	 * never reach 1)
+	 * Calculates the anomaly score, a value between 0 and 1.
 	 * 
 	 * @param distance
 	 *            Distance to good area
@@ -402,7 +219,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 		double addValue = 0.5;
 		double anomalyScore = 0;
-		while (div > 0) {
+		while (div > 0 && !Double.isInfinite(div)) {
 			if (div >= 1) {
 				anomalyScore += addValue;
 				addValue /= 2;
@@ -411,6 +228,10 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 				anomalyScore += div * addValue;
 				div -= 1;
 			}
+		}
+
+		if (Double.isInfinite(div)) {
+			anomalyScore = 1;
 		}
 
 		return anomalyScore;
@@ -436,21 +257,21 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
-		boolean timePunctuationSensitive = true;
-		DeviationInformation info = this.deviationInfo.get(0l);
-
-		if (timePunctuationSensitive && info != null) {
-			PointInTime time = punctuation.getTime().minus(lastTuple);
-			if (time.getMainPoint() > info.mean) {
-				// The next tuple takes longer than normal (if we look for
-				// durations)
-				if (isAnomaly(time.getMainPoint(), info.standardDeviation, info.mean)) {
-					// Here we have an anomaly which did not really occur, cause
-					// the source stopped sending
-					// System.out.println("This would be a new anomaly.");
-				}
-			}
-		}
+//		boolean timePunctuationSensitive = true;
+//		DeviationInformation info = this.deviationInfo.get(0l);
+//
+//		if (timePunctuationSensitive && info != null) {
+//			PointInTime time = punctuation.getTime().minus(lastTuple);
+//			if (time.getMainPoint() > info.mean) {
+//				// The next tuple takes longer than normal (if we look for
+//				// durations)
+//				if (isAnomaly(time.getMainPoint(), info.standardDeviation, info.mean)) {
+//					// Here we have an anomaly which did not really occur, cause
+//					// the source stopped sending
+//					// System.out.println("This would be a new anomaly.");
+//				}
+//			}
+//		}
 		sendPunctuation(punctuation);
 	}
 
@@ -464,20 +285,9 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * different groups
 	 */
 	class DeviationInformation {
-		// For online calculation
-		public long n;
+		public boolean wasWritten = false;
 		public double mean;
-		public double m2;
 		public double standardDeviation;
-
-		// For window (approximate) calculation
-		public double k;
-		public double sumWindow;
-		public double sumWindowSqr;
-
-		// For offline calculation
-		public double sum1;
-		public double sum2;
 	}
 
 }

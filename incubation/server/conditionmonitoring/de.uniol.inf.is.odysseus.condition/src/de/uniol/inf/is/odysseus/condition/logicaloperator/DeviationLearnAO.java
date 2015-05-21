@@ -37,6 +37,7 @@ public class DeviationLearnAO extends UnaryLogicalOp {
 	public DeviationLearnAO() {
 		this.trainingMode = TrainingMode.ONLINE;
 		this.nameOfValue = "value";
+		this.exactCalculation = true;
 	}
 
 	public DeviationLearnAO(DeviationLearnAO ao) {

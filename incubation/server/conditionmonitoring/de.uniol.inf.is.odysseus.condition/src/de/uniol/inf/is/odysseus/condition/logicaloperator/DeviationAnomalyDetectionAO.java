@@ -3,60 +3,45 @@ package de.uniol.inf.is.odysseus.condition.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.condition.enums.TrainingMode;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DEVIATIONANOMALYDETECTION", doc = "Searches for anomalies on the base of the standard-deviation.", category = { LogicalOperatorCategory.PROCESSING })
-public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "DEVIATIONANOMALYDETECTION", doc = "Searches for anomalies on the base of the standard-deviation. First port: data, Second port: deviation information.", category = { LogicalOperatorCategory.PROCESSING })
+public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = -7283600658977972140L;
 
 	private double interval;
-	private TrainingMode trainingMode;
-	private double mean;
-	private double standardDeviation;
-	private long tuplesToLearn;
 	private String nameOfValue;
 	private List<SDFAttribute> groupingAttributes;
 	private boolean fastGrouping;
-	private boolean exactCalculation;
 
 	private boolean windowChecking;
 	private boolean onlyOnChange;
 
 	public DeviationAnomalyDetectionAO() {
 		interval = 3.0;
-		trainingMode = TrainingMode.ONLINE;
 		nameOfValue = "value";
-		exactCalculation = true;
 	}
 
 	public DeviationAnomalyDetectionAO(DeviationAnomalyDetectionAO ao) {
 		this.setInterval(ao.getInterval());
-		this.setTrainingMode(ao.getTrainingMode());
-		this.setMean(ao.getMean());
-		this.setStandardDeviation(ao.getStandardDeviation());
-		this.setTuplesToLearn(ao.getTuplesToLearn());
 		this.setNameOfValue(ao.getNameOfValue());
 		if (ao.groupingAttributes != null) {
 			this.groupingAttributes = new ArrayList<SDFAttribute>(ao.groupingAttributes);
 		}
 		this.fastGrouping = ao.isFastGrouping();
-		this.exactCalculation = ao.getExactCalculation();
 		this.windowChecking = ao.isWindowChecking();
 		this.onlyOnChange = ao.isOnlyOnChange();
 	}
@@ -64,26 +49,6 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 	@Parameter(type = DoubleParameter.class, name = "interval", optional = true, doc = "Defines, how many standard deviations are allowed for a tuple to be different from the mean. 3.0 is the default value. Choose a smaller value to get more anomalies.")
 	public void setInterval(double interval) {
 		this.interval = interval;
-	}
-
-	@Parameter(type = EnumParameter.class, name = "trainingMode", optional = true)
-	public void setTrainingMode(TrainingMode trainingMode) {
-		this.trainingMode = trainingMode;
-	}
-
-	@Parameter(type = DoubleParameter.class, name = "mean", optional = true)
-	public void setMean(double mean) {
-		this.mean = mean;
-	}
-
-	@Parameter(type = DoubleParameter.class, name = "standardDeviation", optional = true)
-	public void setStandardDeviation(double standardDeviation) {
-		this.standardDeviation = standardDeviation;
-	}
-
-	@Parameter(type = LongParameter.class, name = "tuplesToLearn", optional = true)
-	public void setTuplesToLearn(long tuplesToLearn) {
-		this.tuplesToLearn = tuplesToLearn;
 	}
 
 	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = true, doc = "Name of the attribute which should be analysed")
@@ -101,11 +66,6 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 		this.fastGrouping = fastGrouping;
 	}
 
-	@Parameter(name = "exactCalculation", type = BooleanParameter.class, optional = true, doc = "If set to true, it uses exact calculation for window mode (recalc values every new tuple). This may be slower. Unexact calculation may be faster, but unaccurate, especially if the mean changes dramatically over time.")
-	public void setExactCalculation(boolean exactCalculation) {
-		this.exactCalculation = exactCalculation;
-	}
-
 	@Parameter(name = "windowChecking", type = BooleanParameter.class, optional = true, doc = "If true, it's checked if the last (tumbling) window had an anomaly. Only sends anomaly-tuple once per window.")
 	public void setWindowChecking(boolean windowChecking) {
 		this.windowChecking = windowChecking;
@@ -120,22 +80,6 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 		return this.interval;
 	}
 
-	public TrainingMode getTrainingMode() {
-		return this.trainingMode;
-	}
-
-	public double getMean() {
-		return this.mean;
-	}
-
-	public double getStandardDeviation() {
-		return this.standardDeviation;
-	}
-
-	public long getTuplesToLearn() {
-		return this.tuplesToLearn;
-	}
-
 	public String getNameOfValue() {
 		return nameOfValue;
 	}
@@ -146,10 +90,6 @@ public class DeviationAnomalyDetectionAO extends UnaryLogicalOp {
 
 	public boolean isFastGrouping() {
 		return fastGrouping;
-	}
-
-	public boolean getExactCalculation() {
-		return exactCalculation;
 	}
 
 	public boolean isWindowChecking() {

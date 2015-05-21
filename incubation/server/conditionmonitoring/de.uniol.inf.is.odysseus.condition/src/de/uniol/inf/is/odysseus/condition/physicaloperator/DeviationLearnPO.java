@@ -82,9 +82,9 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 
 		Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(3, false);
 		output.setMetadata(tuple.getMetadata());
-		output.addAttributeValue(0, gId);
-		output.addAttributeValue(1, info.mean);
-		output.addAttributeValue(2, info.standardDeviation);
+		output.setAttribute(0, gId);
+		output.setAttribute(1, info.mean);
+		output.setAttribute(2, info.standardDeviation);
 		transfer(output);
 	}
 
