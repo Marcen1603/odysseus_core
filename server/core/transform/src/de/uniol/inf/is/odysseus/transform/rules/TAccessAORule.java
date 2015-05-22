@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
@@ -73,10 +74,6 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 	public void execute(AbstractAccessAO operator,
 			TransformationConfiguration config) throws RuleException {
 
-		TimestampAO tsAO = getTimestampAOAsFather(operator);
-		if (tsAO == null) {
-			tsAO = insertTimestampAO(operator, operator.getDateFormat());
-		}
 
 		ISource accessPO = null;
 
@@ -184,6 +181,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		// Set metadata types
 		if (accessPO instanceof IMetadataInitializer) {
 			if (!config.hasOption("NO_METADATA")) {
+								
 				IMetaAttribute type = operator.getLocalMetaAttribute();
 				if (type == null) {
 					type = MetadataRegistry.getMetadataType(config
@@ -191,19 +189,12 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				}
 				((IMetadataInitializer) accessPO).setMetadataType(type);
 
-				// Is done in AccessAO directly
-				// try {
-				// SDFSchema metaSchema = MetadataRegistry
-				// .getMetadataSchema(config.getMetaTypes());
-				//
-				// SDFSchema accessOutputSchema = SDFSchemaFactory
-				// .createNewWithMetaSchema(
-				// operator.getOutputSchema(), metaSchema);
-				// operator.setOutputSchema(accessOutputSchema);
-				// tsAO.setOutputSchema(accessOutputSchema);
-				// } catch (Exception e) {
-				// infoService.warning("Cannot create metadata schema for "+type,e);
-				// }
+				TimestampAO tsAO = getTimestampAOAsFather(operator);
+				Class<? extends IMetaAttribute> toC = ITimeInterval.class;
+				if (MetadataRegistry.contains(type.getClasses(),toC) &&  tsAO == null ) {
+					tsAO = insertTimestampAO(operator, operator.getDateFormat());
+				}
+
 			}
 		}
 

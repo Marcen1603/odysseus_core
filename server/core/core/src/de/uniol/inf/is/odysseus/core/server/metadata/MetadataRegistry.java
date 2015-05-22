@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 
 /**
@@ -247,6 +248,16 @@ public class MetadataRegistry {
 			}
 		}
 		return cmf;
+	}
+
+	public static boolean contains(Class<? extends IMetaAttribute>[] classes,
+			Class<? extends IMetaAttribute> class1) {
+		for (Class<? extends IMetaAttribute> c:classes){
+			if (c == class1){
+				return true;
+			}
+		}
+		return false;
 	}
 
 
