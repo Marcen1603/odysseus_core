@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.condition.datatypes.DeviationInformation;
 import de.uniol.inf.is.odysseus.condition.enums.TrainingMode;
 import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationLearnAO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -14,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupProcessor;
 
 @SuppressWarnings("rawtypes")
 public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
@@ -27,6 +29,13 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	private Map<Long, List<T>> tupleMap;
 	private boolean exactCalculation;
 	private TrainingMode trainingMode;
+
+	public DeviationLearnPO(TrainingMode trainingMode, String attributeName) {
+		this.groupProcessor = (IGroupProcessor<T, T>) new NoGroupProcessor<T, T>();
+		this.deviationInfo = new HashMap<Long, DeviationInformation>();
+		this.valueAttributeName = attributeName;
+		this.trainingMode = trainingMode;
+	}
 
 	public DeviationLearnPO(DeviationLearnAO ao, IGroupProcessor<T, T> groupProcessor) {
 		this.groupProcessor = groupProcessor;
@@ -64,7 +73,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 
 		if (this.trainingMode.equals(TrainingMode.ONLINE)) {
 			// Calculate new value for standard deviation
-			info.standardDeviation = calcStandardDeviationOnline(sensorValue, info);
+			info = calcStandardDeviationOnline(sensorValue, info);
 		} else if (this.trainingMode.equals(TrainingMode.MANUAL)) {
 			// Don't change the values - they are set by the user
 			info.standardDeviation = this.manualStandardDeviation;
@@ -72,8 +81,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		} else if (this.trainingMode.equals(TrainingMode.TUPLE_BASED)) {
 			// Only change the values the first tuplesToLearn tuples (per group)
 			if (info.n <= this.tuplesToLearn) {
-				double sigma = calcStandardDeviationOnline(sensorValue, info);
-				info.standardDeviation = sigma;
+				info = calcStandardDeviationOnline(sensorValue, info);
 			}
 		} else if (this.trainingMode.equals(TrainingMode.WINDOW)) {
 			// Use the window which is before this operator
@@ -146,26 +154,30 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 
 	/**
 	 * Calculates the standard deviation of the data seen so far (online).
-	 * Algorithm from Knuth
 	 * (http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#
 	 * Online_algorithm)
 	 * 
 	 * @param newValue
 	 *            The new value which came in
-	 * @return The standard deviation of the data seen so far
+	 * @param info
+	 *            The deviation information object you want to update
+	 * @return Updated info object with new mean and new standard deviation
 	 */
-	private double calcStandardDeviationOnline(double newValue, DeviationInformation info) {
+	protected DeviationInformation calcStandardDeviationOnline(double newValue, DeviationInformation info) {
 		info.n += 1;
 		double delta = newValue - info.mean;
 		info.mean += (delta / info.n);
 		info.m2 += delta * (newValue - info.mean);
 
-		if (info.n < 2)
-			return 0;
+		if (info.n < 2) {
+			info.standardDeviation = 0;
+		} else {
+			double variance = info.m2 / (info.n - 1);
+			double standardDeviation = Math.sqrt(variance);
+			info.standardDeviation = standardDeviation;
+		}
 
-		double variance = info.m2 / (info.n - 1);
-		double standardDeviation = Math.sqrt(variance);
-		return standardDeviation;
+		return info;
 	}
 
 	/*
@@ -276,7 +288,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	 *            The tuple where this attribute is in
 	 * @return The double value in the tuple
 	 */
-	private double getValue(T tuple) {
+	protected double getValue(T tuple) {
 		int valueIndex = getInputSchema(0).findAttributeIndex(valueAttributeName);
 		if (valueIndex >= 0) {
 			double sensorValue = tuple.getAttribute(valueIndex);
@@ -289,29 +301,4 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO Auto-generated method stub
 	}
-
-	/**
-	 * A small helper object to store the deviation information for the
-	 * different groups
-	 */
-	class DeviationInformation {
-
-		// For all
-		public double standardDeviation;
-		public double mean;
-
-		// For online calculation
-		public long n;
-		public double m2;
-
-		// For window (approximate) calculation
-		public double k;
-		public double sumWindow;
-		public double sumWindowSqr;
-
-		// For offline calculation
-		public double sum1;
-		public double sum2;
-	}
-
 }
