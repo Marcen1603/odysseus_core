@@ -61,13 +61,6 @@ public class SDFExpression implements Serializable, IClone {
 	 */
 	private List<SDFAttribute> attributes;
 
-	/**
-	 * Using prediction functions you know in advance of query processing, which
-	 * attributes have to be used and where they are located in the schema. So
-	 * the attribute positions can be initialized in advance.
-	 */
-	private int[] attributePositions;
-
 	private IAttributeResolver attributeResolver;
 	/** The schema */
 	private List<SDFSchema> schema;
@@ -95,18 +88,6 @@ public class SDFExpression implements Serializable, IClone {
 	/**
 	 * @param URI
 	 * @param value
-	 * @param schema
-	 * @throws ParseException
-	 */
-	// public SDFExpression(String URI, String value, SDFSchema schema,
-	// IExpressionParser expressionParser)
-	// throws SDFExpressionParseException {
-	// init(null, value, schema, expressionParser);
-	// }
-
-	/**
-	 * @param URI
-	 * @param value
 	 * @param attributeResolver
 	 * @throws ParseException
 	 */
@@ -119,13 +100,6 @@ public class SDFExpression implements Serializable, IClone {
 			throws SDFExpressionParseException {
 		init(expression.expression, expression.expressionString,
 				expression.attributeResolver, expression.expressionParser);
-
-		if (expression.attributePositions != null) {
-			this.attributePositions = new int[expression.attributePositions.length];
-			for (int i = 0; i < expression.attributePositions.length; i++) {
-				this.attributePositions[i] = expression.attributePositions[i];
-			}
-		}
 	}
 
 	public SDFExpression(IExpression<?> expression,
@@ -134,11 +108,6 @@ public class SDFExpression implements Serializable, IClone {
 		init(expression, null, attributeResolver, expressionParser);
 	}
 
-	// public SDFExpression(IExpression<?> expression, SDFSchema schema,
-	// IExpressionParser expressionParser) {
-	// init(expression, null, schema, expressionParser);
-	// }
-
 	public SDFExpression(IExpression<?> expression,
 			IAttributeResolver attributeResolver,
 			IExpressionParser expressionParser, String expressionString) {
@@ -146,17 +115,7 @@ public class SDFExpression implements Serializable, IClone {
 		this.expressionString = expressionString;
 	}
 
-	// public SDFExpression(IExpression<?> expression, SDFSchema schema,
-	// IExpressionParser expressionParser,
-	// String expressionString) {
-	// init(expression, null, schema, expressionParser);
-	// this.expressionString = expressionString;
-	// }
-
-	// private void init(IExpression<?> expre, String value, SDFSchema schema,
-	// IExpressionParser expressionParser) {
-	// }
-
+	@SuppressWarnings("deprecation")
 	private void init(IExpression<?> expre, String value,
 			IAttributeResolver attributeResolver,
 			IExpressionParser expressionParser) {
@@ -284,21 +243,6 @@ public class SDFExpression implements Serializable, IClone {
 			this.variableArrayList.add(var);
 		}
 	}
-
-//	public void initAttributePositions(SDFSchema schema) {
-//		this.attributePositions = new int[this.attributes.size()];
-//		int j = 0;
-//		DirectAttributeResolver dar = new DirectAttributeResolver(schema);
-//		for (SDFAttribute curAttribute : this.attributes) {
-//			SDFAttribute resolvedAttribute = dar.getAttribute(curAttribute
-//					.getAttributeName());
-//			this.attributePositions[j++] = schema.indexOf(resolvedAttribute);
-//		}
-//	}
-
-//	public int[] getAttributePositions() {
-//		return this.attributePositions;
-//	}
 
 	public SDFDatatype getType() {
 		return this.expression.getReturnType();
