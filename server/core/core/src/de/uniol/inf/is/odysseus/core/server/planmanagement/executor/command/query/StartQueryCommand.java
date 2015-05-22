@@ -18,7 +18,11 @@ public class StartQueryCommand extends AbstractExecutorCommand {
 	@Override
 	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um,
 			IServerExecutor executor) {
-		executor.startQuery(queryName, getCaller());
+		if (queryName == null){
+			executor.startAllClosedQueries(getCaller());
+		}else{
+			executor.startQuery(queryName, getCaller());
+		}
 	}
 
 }
