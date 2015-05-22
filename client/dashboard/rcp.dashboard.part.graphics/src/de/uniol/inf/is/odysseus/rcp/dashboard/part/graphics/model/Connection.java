@@ -30,6 +30,8 @@ import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.TuplePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -55,19 +57,19 @@ public class Connection extends AbstractPart {
 	private List<Pair<Color, TuplePredicate>> entries = new ArrayList<>();
 
 	private String bottomText = "";
-	private SDFExpression bottomExpression;
+	private RelationalExpression<IMetaAttribute> bottomExpression;
 	private String currentTextBottom;
 
 	private String topText = "";
-	private SDFExpression topExpression;
+	private RelationalExpression<IMetaAttribute> topExpression;
 	private String currentTextTop;
 
 	private String sourceText = "";
-	private SDFExpression sourceExpression;
+	private RelationalExpression<IMetaAttribute> sourceExpression;
 	private String currentTextSource;
 
 	private String targetText = "";
-	private SDFExpression targetExpression;
+	private RelationalExpression<IMetaAttribute> targetExpression;
 	private String currentTextTarget;
 
 	public Connection() {
@@ -134,7 +136,7 @@ public class Connection extends AbstractPart {
 	public void setTargetText(String targetText) {
 		this.targetText = targetText;
 		if (targetText.startsWith("=")) {
-			targetExpression = new SDFExpression(targetText.substring(1), MEP.getInstance());
+			targetExpression = new RelationalExpression<>(new SDFExpression(targetText.substring(1), MEP.getInstance()));
 		} else {
 			targetExpression = null;
 			this.currentTextTarget = this.targetText;
@@ -149,7 +151,7 @@ public class Connection extends AbstractPart {
 	public void setSourceText(String sourceText) {
 		this.sourceText = sourceText;
 		if (sourceText.startsWith("=")) {
-			sourceExpression = new SDFExpression(sourceText.substring(1), MEP.getInstance());
+			sourceExpression = new RelationalExpression<>(new SDFExpression(sourceText.substring(1), MEP.getInstance()));
 		} else {
 			sourceExpression = null;
 			this.currentTextSource = this.sourceText;
@@ -260,16 +262,16 @@ public class Connection extends AbstractPart {
 				ce.getE2().init(root.getOutputSchema(), null);
 			}
 			if (this.bottomExpression != null) {
-				this.bottomExpression.initAttributePositions(root.getOutputSchema());
+				this.bottomExpression.initVars(root.getOutputSchema());
 			}
 			if (this.topExpression != null) {
-				this.topExpression.initAttributePositions(root.getOutputSchema());
+				this.topExpression.initVars(root.getOutputSchema());
 			}
 			if (this.sourceExpression != null) {
-				this.sourceExpression.initAttributePositions(root.getOutputSchema());
+				this.sourceExpression.initVars(root.getOutputSchema());
 			}
 			if (this.targetExpression != null) {
-				this.targetExpression.initAttributePositions(root.getOutputSchema());
+				this.targetExpression.initVars(root.getOutputSchema());
 			}
 
 		} catch (Exception e) {
@@ -285,19 +287,20 @@ public class Connection extends AbstractPart {
 	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
 	 * #process(de.uniol.inf.is.odysseus.core.collection.Tuple)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process(Tuple<?> tuple) {
 		if (this.topExpression != null) {
-			this.currentTextTop = getExpressionValue(this.topExpression, tuple);
+			this.currentTextTop = getExpressionValue(this.topExpression, (Tuple<IMetaAttribute>) tuple);
 		}
 		if (this.bottomExpression != null) {
-			this.currentTextBottom = getExpressionValue(this.bottomExpression, tuple);
+			this.currentTextBottom = getExpressionValue(this.bottomExpression, (Tuple<IMetaAttribute>) tuple);
 		}
 		if (this.targetExpression != null) {
-			this.currentTextTarget = getExpressionValue(this.targetExpression, tuple);
+			this.currentTextTarget = getExpressionValue(this.targetExpression, (Tuple<IMetaAttribute>) tuple);
 		}
 		if (this.sourceExpression != null) {
-			this.currentTextSource = getExpressionValue(this.sourceExpression, tuple);
+			this.currentTextSource = getExpressionValue(this.sourceExpression, (Tuple<IMetaAttribute>) tuple);
 		}
 		for (Pair<Color, TuplePredicate> ce : entries) {
 			if (ce.getE2().evaluate(tuple)) {
@@ -383,7 +386,7 @@ public class Connection extends AbstractPart {
 	public void setTopText(String topText) {
 		this.topText = topText;
 		if (topText.startsWith("=")) {
-			topExpression = new SDFExpression(topText.substring(1), MEP.getInstance());
+			topExpression = new RelationalExpression<>(new SDFExpression(topText.substring(1), MEP.getInstance()));
 		} else {
 			topExpression = null;
 			this.currentTextTop = this.topText;
@@ -398,7 +401,7 @@ public class Connection extends AbstractPart {
 	public void setBottomText(String textBottom) {
 		this.bottomText = textBottom;
 		if (textBottom.startsWith("=")) {
-			bottomExpression = new SDFExpression(textBottom.substring(1), MEP.getInstance());
+			bottomExpression = new RelationalExpression<>(new SDFExpression(textBottom.substring(1), MEP.getInstance()));
 		} else {
 			bottomExpression = null;
 			this.currentTextBottom = this.bottomText;

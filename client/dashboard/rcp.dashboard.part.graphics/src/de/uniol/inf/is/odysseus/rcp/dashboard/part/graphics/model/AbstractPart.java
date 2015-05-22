@@ -13,6 +13,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.TuplePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -70,10 +72,8 @@ public abstract class AbstractPart extends Observable implements Observer {
 	
 	protected abstract void internalProcessRelavant(Tuple<?> t);
 
-	protected String getExpressionValue(SDFExpression expression, Tuple<?> tuple) {
-		int[] positions = expression.getAttributePositions();
-		expression.bindVariables(tuple.restrict(positions, true).getAttributes());
-		return expression.getValue().toString();
+	protected String getExpressionValue(RelationalExpression<IMetaAttribute> expression, Tuple<IMetaAttribute> tuple) {
+		return expression.evaluate(tuple, null, null)+"";
 	}
 
 	private void refreshVisuals() {

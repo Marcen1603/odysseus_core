@@ -22,6 +22,10 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 
 	protected VarHelper initAttribute(SDFSchema schema, SDFAttribute curAttribute) {
 		int index = schema.indexOf(curAttribute);
+		// Maybe the attribute is not given totally, use another way to find attribute
+		if (index == -1){
+			index = schema.findAttributeIndex(curAttribute.getAttributeName());
+		}
 		// Attribute is part of payload
 		if (index >= 0) {
 			return new VarHelper(index, 0);

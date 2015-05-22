@@ -5,6 +5,9 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.cep.PatternDetectAO;
 import de.uniol.inf.is.odysseus.cep.sase.SaseBuilder;
 import de.uniol.inf.is.odysseus.cep.sase.logicaloperator.SaseAO;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
@@ -30,9 +33,12 @@ public class TSaseAOToPatternDetectAORule extends AbstractTransformationRule<Sas
 			newOp.setHeartbeatRate(operator.getHeartbeatrate());
 			//Init Schema (and other things)
 			replace(operator, newOp, config);
-			newOp.getOutputSchema();
+			SDFSchema outputSchema = newOp.getOutputSchema();
+			List<SDFAttribute> attributes = operator.getOutputSchema().getAttributes();
+			
+			SDFSchema newOutputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, outputSchema);
+			newOp.setOutputSchema(newOutputSchema);
 			retract(operator);
-			newOp.setOutputSchema(operator.getOutputSchema());
 			insert(newOp);
 		}
 	}

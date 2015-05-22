@@ -285,20 +285,20 @@ public class SDFExpression implements Serializable, IClone {
 		}
 	}
 
-	public void initAttributePositions(SDFSchema schema) {
-		this.attributePositions = new int[this.attributes.size()];
-		int j = 0;
-		DirectAttributeResolver dar = new DirectAttributeResolver(schema);
-		for (SDFAttribute curAttribute : this.attributes) {
-			SDFAttribute resolvedAttribute = dar.getAttribute(curAttribute
-					.getAttributeName());
-			this.attributePositions[j++] = schema.indexOf(resolvedAttribute);
-		}
-	}
+//	public void initAttributePositions(SDFSchema schema) {
+//		this.attributePositions = new int[this.attributes.size()];
+//		int j = 0;
+//		DirectAttributeResolver dar = new DirectAttributeResolver(schema);
+//		for (SDFAttribute curAttribute : this.attributes) {
+//			SDFAttribute resolvedAttribute = dar.getAttribute(curAttribute
+//					.getAttributeName());
+//			this.attributePositions[j++] = schema.indexOf(resolvedAttribute);
+//		}
+//	}
 
-	public int[] getAttributePositions() {
-		return this.attributePositions;
-	}
+//	public int[] getAttributePositions() {
+//		return this.attributePositions;
+//	}
 
 	public SDFDatatype getType() {
 		return this.expression.getReturnType();

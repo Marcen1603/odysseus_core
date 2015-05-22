@@ -10,21 +10,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.SerializablePair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.VarHelper;
 
 /**
  * This operator calculates the top k elements from the input with a scoring
@@ -90,7 +87,8 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		}
 	}
 
-	final private SDFExpression scoringFunction;
+	//final private SDFExpression scoringFunction;
+	final private RelationalExpression<M> expression;
 	final private int k;
 	final private Map<Long, ArrayList<SerializablePair<Double, T>>> topKMap = new HashMap<Long, ArrayList<SerializablePair<Double, T>>>();
 	final private Comparator<SerializablePair<Double, T>> comparator;
@@ -99,7 +97,6 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	private Map<Long, LinkedList<T>> lastResultMap = new HashMap<>();
 	private long elementsRead;
 
-	private VarHelper[] variables;
 	private boolean suppressDuplicates;
 	private boolean orderByTimestamp = true;
 
@@ -107,8 +104,8 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 			SDFExpression scoringFunction, int k, boolean descending,
 			boolean suppressDuplicates, IGroupProcessor<T, T> groupProcessor) {
 		super();
-		this.scoringFunction = scoringFunction;
-		initScoringFunction(inputSchema);
+		this.expression = new RelationalExpression<M>(scoringFunction);
+		expression.initVars(inputSchema);
 		this.k = k;
 		if (isOrderByTimestamp()) {
 			comparator = descending ? new TopKComparatorDescTS()
@@ -239,31 +236,16 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		Double score = null;
 		scoredObject.setE2(object);
 
-		Object[] values = new Object[this.variables.length];
-		IMetaAttribute[] meta = new IMetaAttribute[this.variables.length];
-		for (int j = 0; j < this.variables.length; ++j) {
-
-			if (object != null) {
-				if (variables[j].getSchema() == -1){
-					values[j] = object.getAttribute(this.variables[j].getPos());
-				}else{
-					values[j] = object.getMetadata().getValue(variables[j].getSchema(),variables[j].getPos());
-				}
-				meta[j] = object.getMetadata();
-			}
-		}
-
+		// TODO: Fill history
+		LinkedList<Tuple<M>> history = null;		
+		
 		try {
-			this.scoringFunction.bindMetaAttribute(object.getMetadata());
-			this.scoringFunction.bindAdditionalContent(object
-					.getAdditionalContent());
-			this.scoringFunction.bindVariables(meta, values);
-			score = ((Number) this.scoringFunction.getValue()).doubleValue();
+			score = ((Number) this.expression.evaluate(object, getSessions(), history)).doubleValue();
 
 		} catch (Exception e) {
 			if (!(e instanceof NullPointerException)) {
 				sendWarning("Cannot calc result for " + object
-						+ " with expression " + scoringFunction, e);
+						+ " with expression " + expression, e);
 			}
 		}
 
@@ -272,30 +254,6 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		return scoredObject;
 	}
 
-	protected void initScoringFunction(SDFSchema schema) {
-		List<SDFAttribute> neededAttributes = scoringFunction
-				.getAllAttributes();
-		
-		this.variables = new VarHelper[neededAttributes.size()];
-		int j = 0;
-		for (SDFAttribute curAttribute : neededAttributes) {
-			variables[j++] = initAttribute(schema, curAttribute);
-		}
-	}
-
-	public VarHelper initAttribute(SDFSchema schema, SDFAttribute curAttribute) {
-		int index = schema.indexOf(curAttribute);
-		// Attribute is part of payload
-		if (index >= 0) {
-			return new VarHelper(index, 0);
-		} else { // Attribute is (potentially) part of meta data;
-			Pair<Integer, Integer> pos = schema.indexOfMetaAttribute(curAttribute);
-			if (pos != null){
-				return new VarHelper(pos.getE1(), pos.getE2(), 0);
-			}
-		}
-		throw new RuntimeException("Cannot find attribute "+curAttribute+" in input stream!");
-	}
 
 	@Override
 	public Map<String, String> getKeyValues() {

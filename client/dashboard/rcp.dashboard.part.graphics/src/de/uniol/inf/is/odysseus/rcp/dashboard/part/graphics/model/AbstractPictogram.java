@@ -14,6 +14,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -39,9 +41,9 @@ public abstract class AbstractPictogram extends AbstractPart {
 	private String textMiddle = "";
 	private String textBottom = "";
 
-	private SDFExpression bottomExpression;
-	private SDFExpression middleExpression;
-	private SDFExpression topExpression;
+	private RelationalExpression<IMetaAttribute> bottomExpression;
+	private RelationalExpression<IMetaAttribute> middleExpression;
+	private RelationalExpression<IMetaAttribute> topExpression;
 
 	private String currentTextBottom;
 	private String currentTextMiddle;
@@ -83,13 +85,13 @@ public abstract class AbstractPictogram extends AbstractPart {
 	protected void internalOpen(IPhysicalOperator root) {
 		try {
 			if (this.bottomExpression != null) {
-				this.bottomExpression.initAttributePositions(root.getOutputSchema());
+				this.bottomExpression.initVars(root.getOutputSchema());
 			}
 			if (this.middleExpression != null) {
-				this.middleExpression.initAttributePositions(root.getOutputSchema());
+				this.middleExpression.initVars(root.getOutputSchema());
 			}
 			if (this.topExpression != null) {
-				this.topExpression.initAttributePositions(root.getOutputSchema());
+				this.topExpression.initVars(root.getOutputSchema());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,16 +106,17 @@ public abstract class AbstractPictogram extends AbstractPart {
 	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
 	 * #internalProcessRelavant(de.uniol.inf.is.odysseus.core.collection.Tuple)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void internalProcessRelavant(Tuple<?> tuple) {
 		if (this.topExpression != null) {
-			this.currentTextTop = getExpressionValue(this.topExpression, tuple);
+			this.currentTextTop = getExpressionValue(this.topExpression, (Tuple<IMetaAttribute>) tuple);
 		}
 		if (this.middleExpression != null) {
-			this.currentTextMiddle = getExpressionValue(this.middleExpression, tuple);
+			this.currentTextMiddle = getExpressionValue(this.middleExpression, (Tuple<IMetaAttribute>)tuple);
 		}
 		if (this.bottomExpression != null) {
-			this.currentTextBottom = getExpressionValue(this.bottomExpression, tuple);
+			this.currentTextBottom = getExpressionValue(this.bottomExpression, (Tuple<IMetaAttribute>)tuple);
 		}
 	}
 
@@ -221,7 +224,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 	public void setTextTop(String textTop) {
 		this.textTop = textTop;
 		if (textTop.startsWith("=")) {
-			topExpression = new SDFExpression(textTop.substring(1), MEP.getInstance());
+			topExpression = new RelationalExpression<>(new SDFExpression(textTop.substring(1), MEP.getInstance()));
 		} else {
 			topExpression = null;
 			this.currentTextTop = this.textTop;
@@ -243,7 +246,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 	public void setTextMiddle(String textMiddle) {
 		this.textMiddle = textMiddle;
 		if (textMiddle.startsWith("=")) {
-			middleExpression = new SDFExpression(textMiddle.substring(1), MEP.getInstance());
+			middleExpression = new RelationalExpression<>(new SDFExpression(textMiddle.substring(1), MEP.getInstance()));
 		} else {
 			middleExpression = null;
 			this.currentTextMiddle = this.textMiddle;
@@ -267,7 +270,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 	public void setTextBottom(String textBottom) {
 		this.textBottom = textBottom;
 		if (textBottom.startsWith("=")) {
-			bottomExpression = new SDFExpression(textBottom.substring(1), MEP.getInstance());
+			bottomExpression = new RelationalExpression<IMetaAttribute>(new SDFExpression(textBottom.substring(1), MEP.getInstance()));
 		} else {
 			bottomExpression = null;
 			this.currentTextBottom = this.textBottom;

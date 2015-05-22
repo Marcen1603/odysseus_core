@@ -15,13 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.cep;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
@@ -41,7 +42,7 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 	private StateMachine<T> secondStateMachine;
 	private Map<Integer, String> portNames = new HashMap<Integer, String>();
 	private boolean oneMatchPerInstance = true;
-	private SDFSchema outputSchemaIntern;
+	private List<SDFAttribute> outputAttributes;
 
 	private int rate;
 	
@@ -54,14 +55,14 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 		this.portNames = new HashMap<Integer, String>(patternDetectAO.portNames);
 		this.oneMatchPerInstance = patternDetectAO.oneMatchPerInstance;
 		this.rate =  patternDetectAO.rate;
-		this.outputSchemaIntern = patternDetectAO.outputSchemaIntern;
+		this.outputAttributes = new ArrayList<SDFAttribute>(patternDetectAO.outputAttributes);
 	}
 
 	public PatternDetectAO() {
 	}
 
 	public void setOutputSchemaIntern(SDFSchema outputSchemaIntern) {
-		this.outputSchemaIntern = outputSchemaIntern;
+		this.outputAttributes = outputSchemaIntern.getAttributes();
 	}
 	
 	public StateMachine<T> getStateMachine() {
@@ -167,10 +168,7 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 		}
 		
 		List<SDFAttribute> outAttributeList = new LinkedList<SDFAttribute>();
-		// Try to optimize output types
-		List<SDFAttribute> outAttributes = outputSchemaIntern
-				.getAttributes();
-		for (SDFAttribute outAttr : outAttributes) {
+		for (SDFAttribute outAttr : outputAttributes) {
 			String attr = outAttr.getQualName();
 			//WRITE|MIN|MAX|SUM|COUNT|AVG
 			if (attr.startsWith("WRITE") || attr.startsWith("MIN") || attr.startsWith("MAX")) {
@@ -207,7 +205,7 @@ public class PatternDetectAO<T> extends AbstractLogicalOperator{
 
 		}
 
-		SDFSchema output = SDFSchemaFactory.createNewWithAttributes(outAttributeList, outputSchemaIntern);
+		SDFSchema output = SDFSchemaFactory.createNewWithAttributes(outAttributeList, getInputSchema(0));
 		setOutputSchema(output);
 
 		return output;

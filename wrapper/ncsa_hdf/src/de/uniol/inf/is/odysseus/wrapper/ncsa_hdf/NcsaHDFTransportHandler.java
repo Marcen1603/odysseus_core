@@ -253,8 +253,9 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 
 	@Override
 	public void processOutClose() throws IOException {
-		throw new IllegalArgumentException(
-				"This handler cannot be used for writing!");
+		// ignore
+		//		throw new IllegalArgumentException(
+		//				"This handler cannot be used for writing!");
 	}
 
 	@Override
