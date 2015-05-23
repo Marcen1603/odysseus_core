@@ -14,10 +14,14 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class DeviationCurveAnalysisPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
 
 	private static final int DATA_PORT = 0;
-	private static final int LEARN_PORT = 1;
+	private static final int LEARN_PORT_SINGLE_TUPLE = 1;
+	//private static final int LEARN_PORT_CURVE = 2;
 
+	// For analysis
 	private List<DeviationInformation> deviationInfo;
 	private double interval;
+	private int lastCounter;
+	private double totalDifference;
 
 	// Learn attributes
 	private String tupleGroupAttributeName;
@@ -51,6 +55,21 @@ public class DeviationCurveAnalysisPO<T extends Tuple<M>, M extends ITimeInterva
 				// We don't have information about this yet
 				return;
 			}
+
+			if (lastCounter > counter) {
+				// A new curve starts, the last one is finished
+				// We can now send the info about the last curve
+
+				Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(1, false);
+				output.setMetadata(tuple.getMetadata());
+				output.setAttribute(0, totalDifference);
+				transfer(output, 1);
+				
+				totalDifference = 0;
+			}
+
+			lastCounter = counter;
+
 			DeviationInformation info = deviationInfo.get(counter);
 			if (info == null) {
 				// TODO We don't have information about this, hence, we can't
@@ -58,6 +77,9 @@ public class DeviationCurveAnalysisPO<T extends Tuple<M>, M extends ITimeInterva
 				// information yet)
 				return;
 			}
+
+			totalDifference += Math.abs(info.mean - getValue(tuple));
+
 			if (isAnomaly(getValue(tuple), info.standardDeviation, info.mean)) {
 				// We have an anomaly for this tuple
 				double anomalyScore = calcAnomalyScore(getValue(tuple), info.mean, info.standardDeviation,
@@ -65,7 +87,7 @@ public class DeviationCurveAnalysisPO<T extends Tuple<M>, M extends ITimeInterva
 				Tuple newTuple = tuple.append(anomalyScore).append(info.mean).append(info.standardDeviation);
 				transfer(newTuple);
 			}
-		} else if (port == LEARN_PORT) {
+		} else if (port == LEARN_PORT_SINGLE_TUPLE) {
 			// Update deviation information
 			updateDeviationInfo(tuple);
 		}
@@ -107,7 +129,7 @@ public class DeviationCurveAnalysisPO<T extends Tuple<M>, M extends ITimeInterva
 	private DeviationInformation updateDeviationInfo(T tuple) {
 		DeviationInformation info = null;
 
-		int valueIndex = getInputSchema(LEARN_PORT).findAttributeIndex(tupleGroupAttributeName);
+		int valueIndex = getInputSchema(LEARN_PORT_SINGLE_TUPLE).findAttributeIndex(tupleGroupAttributeName);
 		if (valueIndex >= 0) {
 			int tupleCount = tuple.getAttribute(valueIndex);
 			if (tupleCount >= deviationInfo.size()) {

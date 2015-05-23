@@ -108,22 +108,40 @@ public class DeviationCurveAnalysisAO extends BinaryLogicalOp {
 	}
 
 	@Override
-	public SDFSchema getOutputSchemaIntern(int pos) {
-		// add the anomaly-score to the attributes and keep the old attributes
-		SDFSchema inSchema = getInputSchema(DATA_PORT);
-		SDFAttribute anomalyScore = new SDFAttribute(null, "anomalyScore", SDFDatatype.DOUBLE, null, null, null);
-		SDFAttribute meanValue = new SDFAttribute(null, "mean", SDFDatatype.DOUBLE, null, null, null);
-		SDFAttribute standardDeviation = new SDFAttribute(null, "standardDeviation", SDFDatatype.DOUBLE, null, null,
-				null);
-		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
-		outputAttributes.addAll(inSchema.getAttributes());
-		outputAttributes.add(anomalyScore);
-		outputAttributes.add(meanValue);
-		outputAttributes.add(standardDeviation);
-		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
-		setOutputSchema(outSchema);
+	public SDFSchema getOutputSchemaIntern(int port) {
+		if (port == 0) {
+			// The port for each tuple
 
-		return getOutputSchema();
+			// add the anomaly-score to the attributes and keep the old
+			// attributes
+			SDFSchema inSchema = getInputSchema(DATA_PORT);
+			SDFAttribute anomalyScore = new SDFAttribute(null, "anomalyScore", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute meanValue = new SDFAttribute(null, "mean", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute standardDeviation = new SDFAttribute(null, "standardDeviation", SDFDatatype.DOUBLE, null,
+					null, null);
+			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+			outputAttributes.addAll(inSchema.getAttributes());
+			outputAttributes.add(anomalyScore);
+			outputAttributes.add(meanValue);
+			outputAttributes.add(standardDeviation);
+			SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
+			setOutputSchema(0, outSchema);
+
+			return getOutputSchema(0);
+		} else if (port == 1) {
+			// The port for information about a whole curve
+			// add the anomaly-score to the attributes and keep the old
+			// attributes
+			SDFSchema inSchema = getInputSchema(DATA_PORT);
+			SDFAttribute totalDifference = new SDFAttribute(null, "totalDifference", SDFDatatype.DOUBLE, null, null, null);
+			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+			outputAttributes.add(totalDifference);
+			SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
+			setOutputSchema(1, outSchema);
+
+			return getOutputSchema(1);
+		}
+		return null;
 	}
 
 }
