@@ -138,7 +138,9 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 
 	@Override
 	public void process_open() throws OpenFailedException {
-		this.predicate.init();
+		if (this.predicate != null) {
+			this.predicate.init();
+		}
 	}
 
 	@Override

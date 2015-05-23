@@ -60,17 +60,36 @@ public class Activator implements BundleActivator {
 		TemperatureDataProvider tempProvider = new TemperatureDataProvider();
 		StreamServer tempServer = new StreamServer(53212, tempProvider);
 		tempServer.start();
+		
+		// Create a manual data provider
+		ManualDataProvider manualProvider = new ManualDataProvider();
+		StreamServer manualServer = new StreamServer(53213, manualProvider);
+		manualServer.start();
+		
+		// Create a fridge vibration data provider
+		FridgeVibrationSensorDataProvider fridgeProvider = new FridgeVibrationSensorDataProvider();
+		StreamServer fridgeServer = new StreamServer(53214, fridgeProvider);
+		fridgeServer.start();
 
 		// Listen for commands
 		while (true) {
 			sc = new Scanner(System.in);
 			String command = sc.nextLine();
-			if (command.equals("stopfirst")) {
+			if (command.equalsIgnoreCase("stopfirst")) {
 				powerPlants.get(0).stopPlant();
 				System.out.println("Paused plant 0");
-			} else {
+			} else if (command.equalsIgnoreCase("resume")) {
 				powerPlants.get(0).restartPlant();
 				System.out.println("Resumed plant 0");
+			} else {
+				double newValue = 0;
+				try {
+					newValue = Double.parseDouble(command);
+				} catch (Exception e) {
+					System.out.println("Could not parse command.");
+				}
+				
+				manualProvider.sendNewValue(newValue);
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.genrator.vibration;
+package de.uniol.inf.is.odysseus.generator.conditionmonitoring;
 
 import java.util.ArrayList;
 import java.util.List;
