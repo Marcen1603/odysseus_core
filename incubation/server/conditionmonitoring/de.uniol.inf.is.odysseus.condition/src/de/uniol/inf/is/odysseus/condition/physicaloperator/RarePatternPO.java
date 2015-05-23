@@ -93,6 +93,6 @@ public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends 
 
 	@Override
 	public OutputMode getOutputMode() {
-		return OutputMode.INPUT;
+		return OutputMode.MODIFIED_INPUT;
 	}
 }

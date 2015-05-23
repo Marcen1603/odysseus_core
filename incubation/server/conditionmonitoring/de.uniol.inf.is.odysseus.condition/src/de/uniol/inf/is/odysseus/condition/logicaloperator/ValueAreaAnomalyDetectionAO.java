@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -14,10 +15,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "VALUEANOMALYDETECTION", doc = "Searches for anomalies on the base of a predefined value-area.", category = { LogicalOperatorCategory.PROCESSING })
-public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
+public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp implements IHasPredicate {
 
 	private static final long serialVersionUID = -6202091035427561666L;
 
@@ -25,6 +28,9 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 	private double maxValue;
 	private boolean sendAllAnomalies;
 	private String nameOfValue;
+
+	// Testing purposes for predicates
+	private IPredicate<?> predicate;
 
 	public ValueAreaAnomalyDetectionAO() {
 		sendAllAnomalies = true;
@@ -36,14 +42,15 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 		this.maxValue = ao.getMaxValue();
 		this.sendAllAnomalies = ao.sendAllAnomalies();
 		this.nameOfValue = ao.getNameOfValue();
+		this.predicate = ao.getPredicate();
 	}
 
-	@Parameter(type = DoubleParameter.class, name = "minValue", optional = false)
+	@Parameter(type = DoubleParameter.class, name = "minValue", optional = false, doc = "The minimal value which is still allowed.")
 	public void setMinValue(double minValue) {
 		this.minValue = minValue;
 	}
 
-	@Parameter(type = DoubleParameter.class, name = "maxValue", optional = false)
+	@Parameter(type = DoubleParameter.class, name = "maxValue", optional = false, doc = "The maximum allowed value.")
 	public void setMaxValue(double maxValue) {
 		this.maxValue = maxValue;
 	}
@@ -56,6 +63,11 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = true, doc = "Name of the attribute which should be analysed")
 	public void setNameOfValue(String nameOfValue) {
 		this.nameOfValue = nameOfValue;
+	}
+	@SuppressWarnings("rawtypes")
+	@Parameter(type = PredicateParameter.class, name = "predicate", optional = true, doc = "Additional predicate that needs to be true to send the anomaly. You need to deactivate 'sendAllAnomalies'.")
+	public void setPredicate(IPredicate predicate) {
+		this.predicate = predicate;
 	}
 
 	public double getMinValue() {
@@ -72,6 +84,10 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp {
 
 	public String getNameOfValue() {
 		return nameOfValue;
+	}
+	
+	public IPredicate<?> getPredicate() {
+		return predicate;
 	}
 
 	@Override

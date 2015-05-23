@@ -308,6 +308,6 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 
 	@Override
 	public OutputMode getOutputMode() {
-		return OutputMode.INPUT;
+		return OutputMode.MODIFIED_INPUT;
 	}
 }

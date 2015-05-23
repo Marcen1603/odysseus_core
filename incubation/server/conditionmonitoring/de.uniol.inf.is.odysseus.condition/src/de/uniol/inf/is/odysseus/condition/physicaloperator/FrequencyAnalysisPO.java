@@ -234,7 +234,7 @@ public class FrequencyAnalysisPO<T extends Tuple<M>, M extends ITimeInterval> ex
 
 	@Override
 	public OutputMode getOutputMode() {
-		return OutputMode.INPUT;
+		return OutputMode.MODIFIED_INPUT;
 	}
 
 }

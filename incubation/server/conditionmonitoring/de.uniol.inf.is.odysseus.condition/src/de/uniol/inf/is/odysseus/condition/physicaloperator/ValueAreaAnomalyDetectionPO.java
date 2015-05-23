@@ -3,7 +3,10 @@ package de.uniol.inf.is.odysseus.condition.physicaloperator;
 import de.uniol.inf.is.odysseus.condition.logicaloperator.ValueAreaAnomalyDetectionAO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
 /**
  * An operator that finds anomalies when the values are not in the declared area
@@ -14,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * @param <T>
  */
 @SuppressWarnings("rawtypes")
-public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> {
+public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> implements IHasPredicate {
 
 	private String valueAttributeName;
 
@@ -30,11 +33,16 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 	private double lastSendDistance;
 	private double nextWarningDistance = 1.0;
 
+	// Additional predicate which needs to be true to send anomalies (if not
+	// sendAllAnomalies)
+	private IPredicate<? super T> predicate;
+
 	/**
 	 * Create the physical operator from the logical operator.
 	 * 
 	 * @param ao
 	 */
+	@SuppressWarnings("unchecked")
 	public ValueAreaAnomalyDetectionPO(ValueAreaAnomalyDetectionAO ao) {
 		this.minValue = ao.getMinValue();
 		this.maxValue = ao.getMaxValue();
@@ -42,6 +50,8 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 		tooLow = false;
 		tooHigh = false;
 		this.valueAttributeName = ao.getNameOfValue();
+		if (ao.getPredicate() != null)
+			this.predicate = (IPredicate<? super T>) ao.getPredicate().clone();
 	}
 
 	@Override
@@ -70,14 +80,16 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 		tooLow = sensorValue < minValue;
 
 		if (distance > 0) {
-			if (wasNormalTuple || tooHigh && !sendTooHigh || tooLow && sendTooHigh
-					|| Math.abs(distance - lastSendDistance) > nextWarningDistance * (maxValue - minValue)) {
-				// Send a new warning if
-				// 0. The last tuple was normal (no anomaly)
-				// 1. We are now too high, but last tuple was too low
-				// 2. We are now too low, but last tuple was too high
+			if ((predicate == null && (wasNormalTuple || tooHigh && !sendTooHigh || tooLow && sendTooHigh || Math
+					.abs(distance - lastSendDistance) > nextWarningDistance * (maxValue - minValue)))
+					|| (predicate != null && predicate.evaluate(object))) {
+				// Send a new warning if we don't have a predicate and
+				// 0. The last tuple was normal (no anomaly) OR
+				// 1. We are now too high, but last tuple was too low OR
+				// 2. We are now too low, but last tuple was too high OR
 				// 3. The distance got (much) bigger in comparison to the
 				// "good area"
+				// OR if we use a predicate
 				lastSendDistance = distance;
 				sendTooHigh = tooHigh;
 				wasNormalTuple = false;
@@ -86,7 +98,7 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 				return;
 			}
 		}
-		
+
 		if (distance <= 0) {
 			wasNormalTuple = true;
 		}
@@ -120,6 +132,15 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 		return anomalyScore;
 	}
 
+	public IPredicate<?> getPredicate() {
+		return predicate;
+	}
+
+	@Override
+	public void process_open() throws OpenFailedException {
+		this.predicate.init();
+	}
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
@@ -127,7 +148,7 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 
 	@Override
 	public OutputMode getOutputMode() {
-		return OutputMode.INPUT;
+		return OutputMode.MODIFIED_INPUT;
 	}
 
 }

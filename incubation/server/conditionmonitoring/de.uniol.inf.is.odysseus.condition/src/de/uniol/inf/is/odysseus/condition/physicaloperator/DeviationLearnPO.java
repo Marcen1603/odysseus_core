@@ -52,11 +52,6 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	}
 
 	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.NEW_ELEMENT;
-	}
-
-	@Override
 	protected void process_next(T tuple, int port) {
 
 		// Get the group for this tuple (e.g., the incoming values have
@@ -299,6 +294,11 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// TODO Auto-generated method stub
+		sendPunctuation(punctuation, port);
+	}
+	
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 }
