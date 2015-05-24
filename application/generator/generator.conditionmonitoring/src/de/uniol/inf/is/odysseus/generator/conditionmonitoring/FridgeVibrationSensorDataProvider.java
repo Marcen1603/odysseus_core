@@ -32,7 +32,11 @@ public class FridgeVibrationSensorDataProvider extends AbstractDataGenerator {
 
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
-		Thread.sleep(100);
+		int sleepTime = 100 + (int) (Math.random() * 20);
+		Thread.sleep(sleepTime);
+		
+		motorOnTuples = 60 + (int) (Math.random() * 20);
+		motorOffTuples = 200 + (int) (Math.random() * 10);
 
 		double value = 0;
 

@@ -35,6 +35,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		this.deviationInfo = new HashMap<Long, DeviationInformation>();
 		this.valueAttributeName = attributeName;
 		this.trainingMode = trainingMode;
+		this.tupleMap = new HashMap<Long, List<T>>();
 	}
 
 	public DeviationLearnPO(DeviationLearnAO ao, IGroupProcessor<T, T> groupProcessor) {
@@ -48,6 +49,8 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		if (this.trainingMode.equals(TrainingMode.MANUAL)) {
 			this.manualMean = ao.getManualMean();
 			this.manualStandardDeviation = ao.getManualStandardDeviation();
+		} else if (this.trainingMode.equals(TrainingMode.WINDOW)) {
+			this.tupleMap = new HashMap<Long, List<T>>();
 		}
 	}
 
@@ -113,7 +116,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		}
 		tuples.add(tuple);
 		removeOldValues(tuples, tuple.getMetadata().getStart(), info, exactCalculation);
-		if (exactCalculation) {
+		if (!exactCalculation) {
 			addValue(getValue(tuple), info);
 			info.standardDeviation = calcStandardDeviationApprox(info);
 			info.mean = getMeanValue(info);

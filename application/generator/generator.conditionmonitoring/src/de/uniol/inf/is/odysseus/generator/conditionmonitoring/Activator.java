@@ -74,23 +74,41 @@ public class Activator implements BundleActivator {
 		// Listen for commands
 		while (true) {
 			sc = new Scanner(System.in);
-			String command = sc.nextLine();
-			if (command.equalsIgnoreCase("stopfirst")) {
-				powerPlants.get(0).stopPlant();
-				System.out.println("Paused plant 0");
-			} else if (command.equalsIgnoreCase("resume")) {
-				powerPlants.get(0).restartPlant();
-				System.out.println("Resumed plant 0");
-			} else {
-				double newValue = 0;
-				try {
-					newValue = Double.parseDouble(command);
-				} catch (Exception e) {
-					System.out.println("Could not parse command.");
+			while(sc.hasNextLine()) {
+				String command = sc.nextLine();
+				if (command.equalsIgnoreCase("stopfirst")) {
+					// Wind power plant
+					powerPlants.get(0).stopPlant();
+					System.out.println("Paused plant 0");
+				} else if (command.equalsIgnoreCase("resume")) {
+					// Wind power plant
+					powerPlants.get(0).restartPlant();
+					System.out.println("Resumed plant 0");
+				} else if (command.equalsIgnoreCase("reduceFirst")) {
+					// Wind power plant
+					powerPlants.get(0).reducePlant();
+					System.out.println("Reduced plant 0");
+				} else if (command.equalsIgnoreCase("pauseFridge")) {
+					// Fridge
+					fridgeProvider.pause();
+					System.out.println("Paused fridge");
+				} else if (command.equalsIgnoreCase("resumeFridge")) {
+					// Fridge
+					fridgeProvider.resume();
+					System.out.println("Resumed fridge");
+				} else {
+					double newValue = 0;
+					try {
+						newValue = Double.parseDouble(command);
+					} catch (Exception e) {
+						System.out.println("Could not parse command.");
+					}
+					
+					manualProvider.sendNewValue(newValue);
 				}
-				
-				manualProvider.sendNewValue(newValue);
+				Thread.sleep(10);
 			}
+			
 		}
 	}
 

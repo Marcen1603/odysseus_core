@@ -17,7 +17,7 @@ public class ManualDataProvider extends AbstractDataGenerator {
 	public List<DataTuple> next() throws InterruptedException {
 
 		while (!sendNewValue) {
-			Thread.sleep(500);
+			Thread.sleep(1);
 		}
 
 		synchronized (lock) {

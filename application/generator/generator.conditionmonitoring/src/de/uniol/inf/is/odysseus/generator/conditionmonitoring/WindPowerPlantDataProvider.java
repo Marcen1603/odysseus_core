@@ -22,12 +22,11 @@ public class WindPowerPlantDataProvider extends AbstractDataGenerator {
 	private PlantDataProvider plantDataProvider;
 	private int sleepTime = 500;
 
-	private boolean stopped;
+	private double factor = 1;
 
 	public WindPowerPlantDataProvider(int plantId, PlantDataProvider plantDataProvider) {
 		this.plantId = plantId;
 		this.plantDataProvider = plantDataProvider;
-		this.stopped = false;
 	}
 
 	@Override
@@ -44,22 +43,23 @@ public class WindPowerPlantDataProvider extends AbstractDataGenerator {
 		tuple.addAttribute(plantDataProvider.getWindSpeed());
 
 		// The rotation speed
-		if (!stopped) {
-			tuple.addAttribute(plantDataProvider.getRotationSpeed());
-		} else {
-			tuple.addAttribute(0.0);
-		}
+		tuple.addAttribute(factor * plantDataProvider.getRotationSpeed());
+		
 		List<DataTuple> dataTuplesList = new ArrayList<DataTuple>();
 		dataTuplesList.add(tuple);
 		return dataTuplesList;
 	}
+	
+	public void reducePlant() {
+		this.factor = 0.8;
+	}
 
 	public void stopPlant() {
-		this.stopped = true;
+		this.factor = 0;
 	}
 
 	public void restartPlant() {
-		this.stopped = false;
+		this.factor = 1;
 	}
 
 	@Override
