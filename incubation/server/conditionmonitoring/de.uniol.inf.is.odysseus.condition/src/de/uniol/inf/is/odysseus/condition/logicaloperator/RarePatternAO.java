@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
@@ -32,15 +33,18 @@ public class RarePatternAO extends UnaryLogicalOp {
 
 	private int depth;
 	private double minRelativeFrequency;
+	private boolean firstTupleIsRoot;
 
 	public RarePatternAO() {
 		this.depth = 2;
 		this.minRelativeFrequency = 0.3;
+		this.firstTupleIsRoot = false;
 	}
 
 	public RarePatternAO(RarePatternAO ao) {
 		this.depth = ao.getDepth();
 		this.minRelativeFrequency = ao.getMinRelativeFrequency();
+		this.firstTupleIsRoot = ao.isFirstTupleIsRoot();
 	}
 
 	@Parameter(type = IntegerParameter.class, name = "treeDepth", optional = true, doc = "The depth of the tree. Default is 2.")
@@ -53,12 +57,21 @@ public class RarePatternAO extends UnaryLogicalOp {
 		this.minRelativeFrequency = minRelativeFrequency;
 	}
 
+	@Parameter(type = BooleanParameter.class, name = "firstTupleIsRoot", optional = true, doc = "If true, tuples which are equal to the first tuple are always the root. It could be good to set the maxdepth higher than the expected number of states between two occurences of the root state.")
+	public void setFirstTupleIsRoot(boolean firstTupleIsRoot) {
+		this.firstTupleIsRoot = firstTupleIsRoot;
+	}
+
 	public int getDepth() {
 		return depth;
 	}
 
 	public double getMinRelativeFrequency() {
 		return minRelativeFrequency;
+	}
+	
+	public boolean isFirstTupleIsRoot() {
+		return firstTupleIsRoot;
 	}
 
 	@Override
@@ -71,10 +84,12 @@ public class RarePatternAO extends UnaryLogicalOp {
 		// add the anomaly-score to the attributes and keep the old attributes
 		SDFSchema inSchema = getInputSchema(0);
 		SDFAttribute anomalyScore = new SDFAttribute(null, "anomalyScore", SDFDatatype.DOUBLE, null, null, null);
+		SDFAttribute pathProbability = new SDFAttribute(null, "pathProbability", SDFDatatype.DOUBLE, null, null, null);
 		SDFAttribute path = new SDFAttribute(null, "path", SDFDatatype.DOUBLE, null, null, null);
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		outputAttributes.addAll(inSchema.getAttributes());
 		outputAttributes.add(anomalyScore);
+		outputAttributes.add(pathProbability);
 		outputAttributes.add(path);
 		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
 		setOutputSchema(outSchema);

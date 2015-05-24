@@ -27,11 +27,11 @@ public class StateDataProvider extends AbstractDataGenerator {
 		State lowerSpeed = new State("lower speed");
 		State higherSpeed = new State("higher speed");
 
-		running.addFollowingState(breakInUse, 0.5);
-		running.addFollowingState(running, 0.5);
+		running.addFollowingState(breakInUse, 0.2);
+		running.addFollowingState(running, 0.8);
 
-		breakInUse.addFollowingState(lowerSpeed, 0.9);
-		breakInUse.addFollowingState(higherSpeed, 0.1);
+		breakInUse.addFollowingState(lowerSpeed, 0.95);
+		breakInUse.addFollowingState(higherSpeed, 0.05);
 
 		lowerSpeed.addFollowingState(running, 1);
 		higherSpeed.addFollowingState(running, 1);
