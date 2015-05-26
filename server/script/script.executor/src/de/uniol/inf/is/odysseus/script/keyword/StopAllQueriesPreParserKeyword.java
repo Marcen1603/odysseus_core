@@ -21,14 +21,14 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.StartQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.StopQueryCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class StartAllClosedQueriesPreParserKeyword extends
+public class StopAllQueriesPreParserKeyword extends
 		AbstractPreParserExecutorKeyword {
 
-	public static final String STARTQUERIES = "STARTQUERIES";
+	public static final String NAME = "STOPQUERIES";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
@@ -40,7 +40,7 @@ public class StartAllClosedQueriesPreParserKeyword extends
 			String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
 		List<IExecutorCommand> ret = new LinkedList<>();
-		ret.add(new StartQueryCommand(caller, null));
+		ret.add(new StopQueryCommand(caller, null));
 		return ret;
 	}
 

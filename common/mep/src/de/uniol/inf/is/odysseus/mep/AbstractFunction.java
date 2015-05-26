@@ -275,14 +275,14 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	@Override
 	public void propagateMetadataReference(final IMetaAttribute[] metaAttribute) {
-//		this.metaAttribute = metaAttribute;
-//		final IExpression<?>[] arguments = this.getArguments();
-//		for (final IExpression<?> arg : arguments) {
-//			if (arg instanceof AbstractFunction) {
-//				((AbstractFunction<?>) arg)
-//						.propagateMetadataReference(metaAttribute);
-//			}
-//		}
+		this.metaAttribute = metaAttribute;
+		final IExpression<?>[] arguments = this.getArguments();
+		for (final IExpression<?> arg : arguments) {
+			if (arg instanceof AbstractFunction) {
+				((AbstractFunction<?>) arg)
+						.propagateMetadataReference(metaAttribute);
+			}
+		}
 	}
 
 	@Override

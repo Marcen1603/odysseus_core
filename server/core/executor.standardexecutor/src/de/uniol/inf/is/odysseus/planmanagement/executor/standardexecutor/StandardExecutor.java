@@ -1130,6 +1130,18 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		executionPlanLock.unlock();
 		return started;
 	}
+	
+	@Override
+	public void stopAllQueries(ISession user) {
+		executionPlanLock.lock();
+		for (IPhysicalQuery q : executionPlan.getQueries()) {
+			if (!q.isOpened()) {
+				stopQuery(q.getID(), user);
+			}
+		}
+		executionPlanLock.unlock();
+		
+	}
 
 	private void validateUserRight(IPhysicalQuery query, ISession caller,
 			ExecutorPermission executorAction) {

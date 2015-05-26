@@ -288,4 +288,11 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * @return a list of query states where the order is the same as in the input list
 	 */
 	public List<QueryState> getQueryStates(List<Integer> id);
+
+	/**
+	 * Stop all running queries
+	 */
+	public void stopAllQueries(ISession user);
+
+
 }

@@ -18,7 +18,11 @@ public class StopQueryCommand extends AbstractExecutorCommand {
 	@Override
 	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um,
 			IServerExecutor executor) {
-		executor.stopQuery(queryName, getCaller());
+		if (queryName == null){
+			executor.stopAllQueries(getCaller());
+		}else{
+			executor.stopQuery(queryName, getCaller());
+		}
 	}
 
 }

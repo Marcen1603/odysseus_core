@@ -82,7 +82,7 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 				heartbeatGenerationStrategy.generateHeartbeat(object, this);
 			}
 		} catch (Exception e) {
-			infoService.warning("Cannot evaluate predicate with input "+object,e);
+			infoService.warning("Cannot evaluate "+predicate+" predicate with input "+object,e);
 		}
 	}
 	
