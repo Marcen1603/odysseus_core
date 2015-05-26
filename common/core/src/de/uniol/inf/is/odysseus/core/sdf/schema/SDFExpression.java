@@ -296,9 +296,7 @@ public class SDFExpression implements Serializable, IClone {
 
 		for (int i = 0; i < values.length; ++i) {
 			Variable variable = variableArrayList.get(i);
-			if (metaAttribute != null && metaAttribute[0] != null){
-				variable.bind(values[i], metaAttribute[0], -1);
-			}
+			variable.bind(values[i], -1);
 		}
 
 		setValue(expression.getValue());
