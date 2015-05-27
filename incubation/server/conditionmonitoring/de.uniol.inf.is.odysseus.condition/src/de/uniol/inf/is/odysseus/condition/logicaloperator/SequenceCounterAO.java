@@ -15,19 +15,19 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "CURVECOUNTER", doc = "Counts the tuples in every curve. Port 0: Normal values. Port 1: Start / Stop messages.", category = { LogicalOperatorCategory.PROCESSING })
-public class CurveCounterAO extends BinaryLogicalOp {
+public class SequenceCounterAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 7194867265040245699L;
 	
 	private String stateAttributeName;
 	private String startMessage;
 	
-	public CurveCounterAO() {
+	public SequenceCounterAO() {
 		stateAttributeName = "state";
 		startMessage = "start";
 	}
 
-	public CurveCounterAO(CurveCounterAO ao) {
+	public SequenceCounterAO(SequenceCounterAO ao) {
 		this.stateAttributeName = ao.getStateAttributeName();
 		this.startMessage = ao.getStartMessage();
 	}
@@ -52,7 +52,7 @@ public class CurveCounterAO extends BinaryLogicalOp {
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new CurveCounterAO(this);
+		return new SequenceCounterAO(this);
 	}
 
 	@Override

@@ -15,8 +15,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "DEVIATIONCURVEANOMALYDETECTION", doc = "Searches for anomalies in a curve in comparison to the learned curves. The data port is 0, the port with learn data is 1.", category = { LogicalOperatorCategory.PROCESSING })
-public class DeviationCurveAnalysisAO extends BinaryLogicalOp {
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "DEVIATIONSEQUENCEANOMALYDETECTION", doc = "Searches for anomalies in a sequence in comparison to the learned sequences. The data port is 0, the port with learn data is 1.", category = { LogicalOperatorCategory.PROCESSING })
+public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 2247550004872347984L;
 
@@ -33,11 +33,11 @@ public class DeviationCurveAnalysisAO extends BinaryLogicalOp {
 	private String tupleCountDataAttribute;
 	private String valueAttributeName;
 
-	public DeviationCurveAnalysisAO() {
+	public DeviationSequenceAnalysisAO() {
 		this.interval = 3.0;
 	}
 
-	public DeviationCurveAnalysisAO(DeviationCurveAnalysisAO ao) {
+	public DeviationSequenceAnalysisAO(DeviationSequenceAnalysisAO ao) {
 		this.interval = ao.getInterval();
 
 		this.tupleCountLearnAttributeName = ao.getTupleGroupAttributeName();
@@ -61,7 +61,7 @@ public class DeviationCurveAnalysisAO extends BinaryLogicalOp {
 		return tupleCountLearnAttributeName;
 	}
 
-	@Parameter(type = StringParameter.class, name = "tupleCountLearnAttribute", optional = true, doc = "The attribute name on the learn port that gives the group count (the counter that gives each tuple in the curve a number)")
+	@Parameter(type = StringParameter.class, name = "tupleCountLearnAttribute", optional = true, doc = "The attribute name on the learn port that gives the group count (the counter that gives each tuple in the sequence a number)")
 	public void setTupleGroupAttributeName(String tupleGroupAttributeName) {
 		this.tupleCountLearnAttributeName = tupleGroupAttributeName;
 	}
@@ -88,7 +88,7 @@ public class DeviationCurveAnalysisAO extends BinaryLogicalOp {
 		return tupleCountDataAttribute;
 	}
 
-	@Parameter(type = StringParameter.class, name = "tupleCountDataAttribute", optional = true, doc = "The attribute name on the data port that gives the group count (the counter that gives each tuple in the curve a number)")
+	@Parameter(type = StringParameter.class, name = "tupleCountDataAttribute", optional = true, doc = "The attribute name on the data port that gives the group count (the counter that gives each tuple in the sequence a number)")
 	public void setTupleCountAttribute(String tupleCountAttribute) {
 		this.tupleCountDataAttribute = tupleCountAttribute;
 	}
@@ -104,7 +104,7 @@ public class DeviationCurveAnalysisAO extends BinaryLogicalOp {
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new DeviationCurveAnalysisAO(this);
+		return new DeviationSequenceAnalysisAO(this);
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class DeviationCurveAnalysisAO extends BinaryLogicalOp {
 
 			return getOutputSchema(0);
 		} else if (port == 1) {
-			// The port for information about a whole curve
+			// The port for information about a whole sequence
 			// add the anomaly-score to the attributes and keep the old
 			// attributes
 			SDFSchema inSchema = getInputSchema(DATA_PORT);

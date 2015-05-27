@@ -1,22 +1,29 @@
 package de.uniol.inf.is.odysseus.condition.physicaloperator;
 
-import de.uniol.inf.is.odysseus.condition.logicaloperator.CurveCounterAO;
+import de.uniol.inf.is.odysseus.condition.logicaloperator.SequenceCounterAO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
+/**
+ * This operator gives every tuple of a sequence a number. Therefore it needs
+ * messages that indicate, when a sequence starts and ends. The tuples must be
+ * on port 0, the start and end messages for the sequences on port 1.
+ * 
+ * @author Tobias Brandt
+ */
 @SuppressWarnings("rawtypes")
-public class CurveCounterPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
+public class SequenceCounterPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
 
-	private int curveTupleCounter;
+	private int sequenceTupleCounter;
 	private boolean isStarted;
 
 	private String stateAttributeName;
 	private String startMessage;
 
-	public CurveCounterPO(CurveCounterAO ao) {
-		curveTupleCounter = 0;
+	public SequenceCounterPO(SequenceCounterAO ao) {
+		sequenceTupleCounter = 0;
 		stateAttributeName = ao.getStateAttributeName();
 		startMessage = ao.getStartMessage();
 	}
@@ -26,14 +33,14 @@ public class CurveCounterPO<T extends Tuple<M>, M extends ITimeInterval> extends
 
 		if (port == 0 && isStarted) {
 			// Append the counter and transfer the tuple
-			Tuple newTuple = tuple.append(curveTupleCounter);
+			Tuple newTuple = tuple.append(sequenceTupleCounter);
 			transfer(newTuple);
-			curveTupleCounter++;
+			sequenceTupleCounter++;
 		} else if (port == 1) {
-			// Curve start and end messages
+			// Sequence start and end messages
 
 			// Reset the counter
-			curveTupleCounter = 0;
+			sequenceTupleCounter = 0;
 
 			// Save the state
 			String message = getStartAttribute(tuple);

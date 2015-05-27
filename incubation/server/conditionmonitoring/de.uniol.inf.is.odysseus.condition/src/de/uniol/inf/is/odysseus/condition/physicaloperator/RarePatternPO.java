@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 /**
  * This operator searches for rare patterns in data. It's especially designed to
  * find rare state sequences. E.g. if state "b" nearly always follows state "a",
- * but very seldom a "c" follows a. This operator should find the seldom pattern
+ * but very seldom a "c" follows "a". This operator should find the seldom pattern
  * "a" -> "c".
  * 
  * @author Tobias Brandt

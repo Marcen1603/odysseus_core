@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.condition.datatypes.DeviationInformation;
-import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationCurveAnalysisAO;
+import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationSequenceAnalysisAO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 @SuppressWarnings("rawtypes")
-public class DeviationCurveAnalysisPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
+public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
 
 	private static final int DATA_PORT = 0;
 	private static final int LEARN_PORT_SINGLE_TUPLE = 1;
@@ -32,7 +32,7 @@ public class DeviationCurveAnalysisPO<T extends Tuple<M>, M extends ITimeInterva
 	private String tupleCountAttribute;
 	private String valueAttributeName;
 
-	public DeviationCurveAnalysisPO(DeviationCurveAnalysisAO ao) {
+	public DeviationSequenceAnalysisPO(DeviationSequenceAnalysisAO ao) {
 		deviationInfo = new ArrayList<DeviationInformation>();
 
 		this.interval = ao.getInterval();

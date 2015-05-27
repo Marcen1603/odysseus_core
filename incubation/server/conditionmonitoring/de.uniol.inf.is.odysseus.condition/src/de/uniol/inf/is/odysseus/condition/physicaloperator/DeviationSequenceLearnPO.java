@@ -5,11 +5,11 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.condition.datatypes.DeviationInformation;
 import de.uniol.inf.is.odysseus.condition.enums.TrainingMode;
-import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationCurveLearnAO;
+import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationSequenceLearnAO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
-public class DeviationCurveLearnPO<T extends Tuple<M>, M extends ITimeInterval> extends
+public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterval> extends
 		DeviationLearnPO<Tuple<ITimeInterval>, ITimeInterval> {
 
 	private List<DeviationInformation> deviationInfo;
@@ -19,7 +19,7 @@ public class DeviationCurveLearnPO<T extends Tuple<M>, M extends ITimeInterval> 
 	private int lastCurveCounter;
 	private int curvesToLearn;
 
-	public DeviationCurveLearnPO(DeviationCurveLearnAO ao) {
+	public DeviationSequenceLearnPO(DeviationSequenceLearnAO ao) {
 		super(TrainingMode.ONLINE, "");
 		this.deviationInfo = new ArrayList<DeviationInformation>();
 		this.curvesToLearn = ao.getCurvesToLearn();

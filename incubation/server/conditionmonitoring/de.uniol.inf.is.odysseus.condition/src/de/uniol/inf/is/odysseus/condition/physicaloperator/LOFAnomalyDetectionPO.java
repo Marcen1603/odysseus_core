@@ -181,24 +181,11 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	 *            The element you search the distance for
 	 * @return The distance to the k'th neighbor
 	 */
-	private double getKDistance(int k, T tuple, List<T> neighbors) {
-		int index = neighbors.indexOf(tuple);
-
-		// Get distances from all values from index - k to index + k
-		List<Double> distances = new ArrayList<Double>(2 * k);
-		for (int i = -k; i <= k; i++) {
-			if (index + i < 0 || index + i >= neighbors.size())
-				continue;
-			distances.add(Math.abs(getValue(neighbors.get(index + i)) - getValue(tuple)));
-		}
-
-		// Sort by the distances
-		Collections.sort(distances);
-
-		// Get the k nearest (we can take the k'th and not the k'th - 1, cause
-		// we have the distance to the item itself within this list)
-		double kNearestValue = distances.get(k);
-		return kNearestValue;
+	private double getKDistance(int k, T tuple, List<T> neighbors, boolean ignoreEqual) {
+		List<T> kNeighbors = getKNearestNeighbors(k, tuple, neighbors, ignoreEqual);
+		T kNeighbor = kNeighbors.get(kNeighbors.size() - 1);
+		double distance = Math.abs(getValue(kNeighbor) - getValue(tuple));
+		return distance;
 	}
 
 	/**
@@ -213,8 +200,8 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	 *            The neighbor you want to know the distance for to the value.
 	 * @return The reachability-distance.
 	 */
-	private double getReachabilityDistance(int k, T value, T neighbour, List<T> neighbors) {
-		double reachabilityDistance = Math.max(getKDistance(k, neighbour, neighbors),
+	private double getReachabilityDistance(int k, T value, T neighbour, List<T> neighbors, boolean ignoreEqual) {
+		double reachabilityDistance = Math.max(getKDistance(k, neighbour, neighbors, ignoreEqual),
 				Math.abs(getValue(value) - getValue(neighbour)));
 		return reachabilityDistance;
 	}
@@ -233,7 +220,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 		double sum = 0;
 		List<T> neighbors = getKNearestNeighbors(k, value, allNeighbors, ignoreEqual);
 		for (T neighbor : neighbors) {
-			sum += getReachabilityDistance(k, value, neighbor, allNeighbors);
+			sum += getReachabilityDistance(k, value, neighbor, allNeighbors, ignoreEqual);
 		}
 
 		return 1 / (sum / neighbors.size());

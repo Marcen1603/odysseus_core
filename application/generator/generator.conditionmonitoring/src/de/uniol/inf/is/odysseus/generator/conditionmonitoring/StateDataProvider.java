@@ -19,7 +19,7 @@ public class StateDataProvider extends AbstractDataGenerator {
 	private State state;
 
 	public StateDataProvider() {
-		sleepTime = 50;
+		sleepTime = 10;
 
 		// Create a state-model
 		State running = new State("running");

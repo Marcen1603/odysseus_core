@@ -17,6 +17,17 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupProcessor;
 
+/**
+ * This operator learns the mean and the standard deviation of an (number)
+ * attribute of the incoming tuple. It sends the mean and the standard deviation
+ * to the output port. The operator supports the different algorithms to
+ * calculate the mean and standard deviation. The methods have different pros
+ * and cons, therefore you can choose the algorithm that fits best to your
+ * needs.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 @SuppressWarnings("rawtypes")
 public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
 
@@ -83,7 +94,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 			}
 		} else if (this.trainingMode.equals(TrainingMode.WINDOW)) {
 			// Use the window which is before this operator
-			processTupleWithWindow(gId, tuple, info, this.exactCalculation);
+			info = processTupleWithWindow(gId, tuple, info, this.exactCalculation);
 		}
 
 		Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(3, false);
@@ -108,7 +119,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	 * @param exactCalculation
 	 *            Your choice if you want to use exact calculation
 	 */
-	private void processTupleWithWindow(Long gId, T tuple, DeviationInformation info, boolean exactCalculation) {
+	private DeviationInformation processTupleWithWindow(Long gId, T tuple, DeviationInformation info, boolean exactCalculation) {
 		List<T> tuples = tupleMap.get(gId);
 		if (tuples == null) {
 			tuples = new ArrayList<T>();
@@ -121,8 +132,10 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 			info.standardDeviation = calcStandardDeviationApprox(info);
 			info.mean = getMeanValue(info);
 		} else {
-			info.standardDeviation = calcStandardDeviationOffline(tuples, info);
+			info = calcStandardDeviationOffline(tuples, info);
 		}
+		
+		return info;
 	}
 
 	/**
@@ -257,7 +270,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	 *            after the calculation)
 	 * @return The standard deviation of the given list
 	 */
-	private double calcStandardDeviationOffline(List<T> tuples, DeviationInformation info) {
+	private DeviationInformation calcStandardDeviationOffline(List<T> tuples, DeviationInformation info) {
 		info.n = 0;
 		info.sum1 = 0;
 		info.sum2 = 0;
@@ -275,7 +288,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 
 		double variance = info.sum2 / (info.n - 1);
 		info.standardDeviation = Math.sqrt(variance);
-		return info.standardDeviation;
+		return info;
 	}
 
 	/**
@@ -299,7 +312,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation, port);
 	}
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
