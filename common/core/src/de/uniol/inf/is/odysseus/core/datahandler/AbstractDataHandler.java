@@ -17,11 +17,15 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -29,6 +33,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
 	final private SDFSchema schema;
+	protected IMetaAttribute metaAttribute;
+	boolean handleMetaData;
+	private List<NullAwareTupleDataHandler> metaDataHandler;
 	
 	protected AbstractDataHandler(SDFSchema schema){
 		this.schema = schema;
@@ -129,6 +136,105 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	@Override
 	abstract public List<String> getSupportedDataTypes();
 	
+	
+	// ------------------------------------------------------------------------------------------
+	// Meta data handling
+	// ------------------------------------------------------------------------------------------
+	
+	@Override
+	public void setHandleMetaData(boolean handleMetaData) {
+		this.handleMetaData = handleMetaData;
+	}
+	
+	@Override
+	public void setMetaAttribute(IMetaAttribute metaAttribute) {
+		this.metaAttribute = metaAttribute;
+		for (SDFSchema schema: metaAttribute.getSchema()){
+			this.metaDataHandler.add((NullAwareTupleDataHandler) new NullAwareTupleDataHandler().getInstance(schema));
+		}
+	};
+
+	protected final IMetaAttribute readMetaData(InputStream inputStream) throws IOException{
+		List<Tuple<?>> res = new ArrayList<Tuple<?>>();
+		for (NullAwareTupleDataHandler dh: metaDataHandler){
+			res.add(dh.readData(inputStream));
+		}
+		IMetaAttribute newMeta = metaAttribute.clone();
+		newMeta.writeValues(res);
+		return newMeta;
+	}
+
+	protected final IMetaAttribute readMetaData(String[] input){
+		List<Tuple<?>> res = new ArrayList<Tuple<?>>();
+		for (NullAwareTupleDataHandler dh: metaDataHandler){
+			res.add(dh.readData(input));
+		}
+		IMetaAttribute newMeta = metaAttribute.clone();
+		newMeta.writeValues(res);
+		return newMeta;
+	}
+	
+	protected final IMetaAttribute readMetaData(List<String> input){
+		List<Tuple<?>> res = new ArrayList<Tuple<?>>();
+		for (NullAwareTupleDataHandler dh: metaDataHandler){
+			res.add(dh.readData(input));
+		}
+		IMetaAttribute newMeta = metaAttribute.clone();
+		newMeta.writeValues(res);
+		return newMeta;
+	}
+
+	protected final IMetaAttribute readMetaData(ByteBuffer input){
+		List<Tuple<?>> res = new ArrayList<Tuple<?>>();
+		for (NullAwareTupleDataHandler dh: metaDataHandler){
+			res.add(dh.readData(input));
+		}
+		IMetaAttribute newMeta = metaAttribute.clone();
+		newMeta.writeValues(res);
+		return newMeta;
+	}
+
+	protected final void writeMetaData(List<String> output, IMetaAttribute metaAttribute){
+		List<Tuple<?>> v = new ArrayList<Tuple<?>>();
+		metaAttribute.retrieveValues(v);
+		int i = 0;
+		for (NullAwareTupleDataHandler dh: metaDataHandler){
+			dh.writeData(output,v.get(i++));
+		}
+	}	
+	
+	protected final void writeMetaData(StringBuilder output, IMetaAttribute metaAttribute){
+		List<Tuple<?>> v = new ArrayList<Tuple<?>>();
+		metaAttribute.retrieveValues(v);
+		int i = 0;
+		for (NullAwareTupleDataHandler dh: metaDataHandler){
+			dh.writeData(output,v.get(i++));
+		}
+	}
+	
+	
+	protected final void writeMetaData(ByteBuffer output, IMetaAttribute metaAttribute){
+		List<Tuple<?>> v = new ArrayList<Tuple<?>>();
+		metaAttribute.retrieveValues(v);
+		int i = 0;
+		for (NullAwareTupleDataHandler dh: metaDataHandler){
+			dh.writeData(output,v.get(i++));
+		}
+	}
+	
+	protected final long getMetaDataMemSize(IMetaAttribute metaAttribute){
+		List<Tuple<?>> v = new ArrayList<Tuple<?>>();
+		metaAttribute.retrieveValues(v);
+		int i = 0;
+		long size = 0;
+		for (NullAwareTupleDataHandler dh: metaDataHandler){
+			size+=dh.memSize(v.get(i++));
+		}
+		return size;
+	}
+	
+	// ------------------------------------------------------------------------------------------
+
 	@Override
 	public boolean isSemanticallyEqual(IDataHandler<?> other) {
 		

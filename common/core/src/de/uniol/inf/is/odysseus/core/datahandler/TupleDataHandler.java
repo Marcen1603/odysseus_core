@@ -103,16 +103,22 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			try {
 				attributes[i] = dataHandlers[i].readData(inputStream);
 			} catch (Exception e) {
-                if (dataHandlers.length > i) {
-                    logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
-                }
-                else {
-                    logger.warn("Error parsing stream with no data handler defined " + e.getMessage());
-                }
+				if (dataHandlers.length > i) {
+					logger.warn("Error parsing stream with "
+							+ dataHandlers[i].getClass() + " " + e.getMessage());
+				} else {
+					logger.warn("Error parsing stream with no data handler defined "
+							+ e.getMessage());
+				}
 				attributes[i] = null;
 			}
 		}
-		return new Tuple<IMetaAttribute>(attributes, false);
+		Tuple<IMetaAttribute> ret = new Tuple<IMetaAttribute>(attributes, false);
+		if (handleMetaData) {
+			IMetaAttribute meta = readMetaData(inputStream);
+			ret.setMetadata(meta);
+		}
+		return ret;
 	}
 
 	@Override
@@ -123,16 +129,22 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			try {
 				attributes[i] = dataHandlers[i].readData(input[i]);
 			} catch (Exception e) {
-                if (dataHandlers.length > i) {
-                    logger.warn("Error parsing " + input[i] + " with " + dataHandlers[i].getClass() + " " + e.getMessage());
-                }
-                else {
-                    logger.warn("Error parsing " + input[i] + " with no data handler defined " + e.getMessage());
-                }
+				if (dataHandlers.length > i) {
+					logger.warn("Error parsing " + input[i] + " with "
+							+ dataHandlers[i].getClass() + " " + e.getMessage());
+				} else {
+					logger.warn("Error parsing " + input[i]
+							+ " with no data handler defined " + e.getMessage());
+				}
 				attributes[i] = null;
 			}
 		}
-		return new Tuple<IMetaAttribute>(attributes, false);
+		Tuple<IMetaAttribute> ret = new Tuple<IMetaAttribute>(attributes, false);
+		if (handleMetaData) {
+			IMetaAttribute meta = readMetaData(input);
+			ret.setMetadata(meta);
+		}
+		return ret;
 	}
 
 	@Override
@@ -144,15 +156,21 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 				tuple.setAttribute(i,
 						this.dataHandlers[i].readData(input.get(i)));
 			} catch (Exception e) {
-                if (dataHandlers.length > i) {
-                    logger.warn("Error parsing " + input.get(i) + " with " + dataHandlers[i].getClass() + " " + e.getMessage());
-                }
-                else {
-                    logger.warn("Error parsing " + input.get(i) + " with no data handler defined " + e.getMessage());
-                }
+				if (dataHandlers.length > i) {
+					logger.warn("Error parsing " + input.get(i) + " with "
+							+ dataHandlers[i].getClass() + " " + e.getMessage());
+				} else {
+					logger.warn("Error parsing " + input.get(i)
+							+ " with no data handler defined " + e.getMessage());
+				}
 				tuple.setAttribute(i, (Object) null);
 			}
-	}
+		}
+		
+		if (handleMetaData){
+			IMetaAttribute meta = readMetaData(input);
+			tuple.setMetadata(meta);
+		}
 		return tuple;
 	}
 
@@ -165,7 +183,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 */
 	@Override
 	public Tuple<?> readData(ByteBuffer buffer) {
-		Tuple<?> r = null;
+		Tuple<IMetaAttribute> r = null;
 		synchronized (buffer) {
 			// buffer.flip(); // DO NOT FLIP THIS BUFFER, OTHER READERS MIGHT
 			// STILL USE IT
@@ -180,12 +198,14 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 					try {
 						attributes[i] = dataHandlers[i].readData(buffer);
 					} catch (Exception e) {
-		                if (dataHandlers.length > i) {
-		                    logger.warn("Error parsing stream with " + dataHandlers[i].getClass() + " " + e.getMessage());
-		                }
-		                else {
-		                    logger.warn("Error parsing stream with no data handler defined " + e.getMessage());
-		                }
+						if (dataHandlers.length > i) {
+							logger.warn("Error parsing stream with "
+									+ dataHandlers[i].getClass() + " "
+									+ e.getMessage());
+						} else {
+							logger.warn("Error parsing stream with no data handler defined "
+									+ e.getMessage());
+						}
 						attributes[i] = null;
 					}
 				}
@@ -193,6 +213,10 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			r = new Tuple<IMetaAttribute>(attributes, false);
 			// buffer.clear(); // DO NOT CLEAR THIS BUFFER, OTHER READERS MIGHT
 			// STILL USE IT
+			if (handleMetaData){
+				IMetaAttribute meta = readMetaData(buffer);
+				r.setMetadata(meta);
+			}
 		}
 		return r;
 	}
@@ -213,11 +237,15 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 */
 	@Override
 	public void writeData(List<String> output, Object data) {
-		Tuple<?> r = (Tuple<?>) data;
+		@SuppressWarnings("unchecked")
+		Tuple<IMetaAttribute> r = (Tuple<IMetaAttribute>) data;
 
 		synchronized (output) {
 			for (int i = 0; i < dataHandlers.length; i++) {
 				dataHandlers[i].writeData(output, r.getAttribute(i));
+			}
+			if (handleMetaData){
+				writeMetaData(output, r.getMetadata());
 			}
 		}
 	}
@@ -237,6 +265,9 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		synchronized (string) {
 			for (int i = 0; i < dataHandlers.length; i++) {
 				dataHandlers[i].writeData(string, r.getAttribute(i));
+			}
+			if (handleMetaData){
+				writeMetaData(string, r.getMetadata());
 			}
 		}
 	}
@@ -276,6 +307,9 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 				if (!nullMode || (nullMode && v != null)) {
 					dataHandlers[i].writeData(buffer, r.getAttribute(i));
 				}
+			}
+			if (handleMetaData){
+				writeMetaData(buffer, r.getMetadata());
 			}
 		}
 	}
@@ -318,10 +352,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			if (type.isTuple()) {
 				subSchema = attribute.getSubSchema();
 			} else {
-				subSchema = SDFSchemaFactory.createNewTupleSchema("", attribute);
+				subSchema = SDFSchemaFactory
+						.createNewTupleSchema("", attribute);
 			}
 
-			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, subSchema);
+			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri,
+					subSchema);
 
 		}
 	}
@@ -353,6 +389,9 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		// Marker for null or not null values
 		if (nullMode) {
 			size += dataHandlers.length;
+		}
+		if (handleMetaData){
+			size += getMetaDataMemSize(r.getMetadata());
 		}
 		return size;
 	}

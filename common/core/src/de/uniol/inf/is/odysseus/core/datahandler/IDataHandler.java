@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.WriteOptions;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -153,9 +154,13 @@ public interface IDataHandler<T> {
 	public byte[] writeBSONData(Object data);
 	
 	public List<String> getSupportedDataTypes();
-	public int memSize(Object attribute);
+	int memSize(Object attribute);
 
-	public Class<?> createsType();
+	 Class<?> createsType();
 
+	void setHandleMetaData(boolean handleMetaData);
+	void setMetaAttribute(IMetaAttribute metaAttribute);
+	
+	
 	public boolean isSemanticallyEqual(IDataHandler<?> other);
 }
