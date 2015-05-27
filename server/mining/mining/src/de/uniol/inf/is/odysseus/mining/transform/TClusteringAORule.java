@@ -52,8 +52,8 @@ public class TClusteringAORule extends AbstractTransformationRule<ClusteringAO> 
 	@Override
 	public void execute(ClusteringAO operator, TransformationConfiguration config) throws RuleException {
 		IClusterer<ITimeInterval> clusterer = MiningAlgorithmRegistry.getInstance().createClusterer(operator.getLearner());
-		clusterer.setOptions(operator.getOptionsMap());
 		clusterer.init(operator.getAlgorithm(), operator.getInputSchema(0));
+		clusterer.setOptions(operator.getOptionsMap());
 		AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> po = new ClusteringPO<ITimeInterval>(clusterer);
 		defaultExecute(operator, po, config, true, true);
 	}
