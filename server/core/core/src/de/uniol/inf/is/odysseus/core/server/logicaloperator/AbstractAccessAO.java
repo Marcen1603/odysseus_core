@@ -68,6 +68,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	private IMetaAttribute localMetaAttribute;
 
+	private boolean readMetaData;
+
 	public AbstractAccessAO(AbstractLogicalOperator po) {
 		super(po);
 	}
@@ -90,6 +92,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		this.dateFormat = po.dateFormat;
 		this.newAccessFramework = po.newAccessFramework;
 		this.localMetaAttribute = po.localMetaAttribute;
+		this.readMetaData = po.readMetaData;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper,
@@ -263,6 +266,15 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return localMetaAttribute;
 	}
 
+	@Parameter(type = BooleanParameter.class, name = "readMetadata", optional = true, isList = false, doc = "If the source provides meta data, use this flag to enable reading of meta data.")
+	public void setReadMetaData(boolean readMetaData) {
+		this.readMetaData = readMetaData;
+	}
+
+	public boolean readMetaData() {
+		return readMetaData;
+	}
+
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -377,4 +389,5 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	public boolean isSinkOperator() {
 		return false;
 	}
+	
 }

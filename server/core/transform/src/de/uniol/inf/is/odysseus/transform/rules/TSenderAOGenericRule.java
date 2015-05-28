@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
@@ -34,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -50,11 +52,11 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TSenderAOGenericRule extends
 		AbstractTransformationRule<AbstractSenderAO> {
-	
+
 	static Logger LOG = LoggerFactory.getLogger(TSenderAOGenericRule.class);
-	static final InfoService INFOSERVICE = InfoServiceFactory.getInfoService(TSenderAOGenericRule.class);
-	
-	
+	static final InfoService INFOSERVICE = InfoServiceFactory
+			.getInfoService(TSenderAOGenericRule.class);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -84,6 +86,14 @@ public class TSenderAOGenericRule extends
 			LOG.error("No data handler {} found.", operator.getDataHandler());
 			throw new TransformationException("No data handler "
 					+ operator.getDataHandler() + " found.");
+		}
+
+		if (operator.isWriteMetaData()) {
+			dataHandler.setHandleMetaData(true);
+			IMetaAttribute metaAttribute = MetadataRegistry
+					.getMetadataType(operator.getInputSchema(0)
+							.getMetaAttributeNames());
+			dataHandler.setMetaAttribute(metaAttribute);
 		}
 
 		IProtocolHandler<?> protocolHandler = getProtocolHandler(operator,
@@ -118,8 +128,9 @@ public class TSenderAOGenericRule extends
 
 		List<String> unusedOptions = options.getUnreadOptions();
 		if (!unusedOptions.isEmpty()) {
-			INFOSERVICE.warning("The following options where not used in translation "
-					+ unusedOptions);
+			INFOSERVICE
+					.warning("The following options where not used in translation "
+							+ unusedOptions);
 		}
 
 		defaultExecute(operator, senderPO, config, true, true);

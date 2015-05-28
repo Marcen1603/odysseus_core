@@ -94,7 +94,14 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 					throw new TransformationException("No data handler "
 							+ operator.getDataHandler() + " found.");
 				}
-
+				
+				if (operator.readMetaData()) {
+					dataHandler.setHandleMetaData(true);
+					IMetaAttribute metaAttribute = MetadataRegistry
+							.getMetadataType(operator.getInputSchema(0)
+									.getMetaAttributeNames());
+					dataHandler.setMetaAttribute(metaAttribute);
+				}
 				IProtocolHandler<?> protocolHandler = getProtocolHandler(
 						operator, dataHandler, options);
 				if (protocolHandler == null) {
@@ -180,7 +187,8 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		}
 		// Set metadata types
 		if (accessPO instanceof IMetadataInitializer) {
-			if (!config.hasOption("NO_METADATA")) {
+			// New: do no create meta data creation and update, if operator already read the meta data from the source
+			if (!config.hasOption("NO_METADATA") && !operator.readMetaData()) {
 								
 				IMetaAttribute type = operator.getLocalMetaAttribute();
 				if (type == null) {
@@ -188,7 +196,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 							.getDefaultMetaTypeSet());
 				}
 				((IMetadataInitializer) accessPO).setMetadataType(type);
-
+				
 				TimestampAO tsAO = getTimestampAOAsFather(operator);
 				Class<? extends IMetaAttribute> toC = ITimeInterval.class;
 				if (MetadataRegistry.contains(type.getClasses(),toC) &&  tsAO == null ) {

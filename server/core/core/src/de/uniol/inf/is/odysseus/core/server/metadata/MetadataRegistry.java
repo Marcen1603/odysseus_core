@@ -98,6 +98,14 @@ public class MetadataRegistry {
 			return type;
 		}
 	}
+	
+	public static IMetaAttribute getMetadataType(List<String> metaAttributeNames) {
+		SortedSet<String> names = new TreeSet<String>();
+		for (String n: metaAttributeNames){
+			names.add(n);
+		}
+		return getMetadataType(names);
+	}
 
 	public static List<SDFMetaSchema> getMetadataSchema(SortedSet<String> types) {
 		synchronized (combinedMetadataTypes) {
@@ -259,6 +267,8 @@ public class MetadataRegistry {
 		}
 		return false;
 	}
+
+
 
 
 }

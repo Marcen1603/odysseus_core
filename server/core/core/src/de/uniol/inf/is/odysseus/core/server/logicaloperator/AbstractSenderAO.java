@@ -23,7 +23,9 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
@@ -45,6 +47,7 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	private Resource sink = null;
 	private String dataHandler = new TupleDataHandler().getSupportedDataTypes()
 			.get(0);
+	private boolean writeMetaData;
 	private String protocolHandler;
 	private String transportHandler;
 	final private Map<String, String> optionsMap = new HashMap<>();
@@ -109,6 +112,7 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 		this.optionsMap.putAll(senderAO.optionsMap);
 		this.protocolHandler = senderAO.protocolHandler;
 		this.transportHandler = senderAO.transportHandler;
+		this.writeMetaData = senderAO.writeMetaData;
 	}
 
 	/**
@@ -217,6 +221,15 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 		this.dataHandler = dataHandler;
 	}
 
+	@Parameter(type = BooleanParameter.class, name = AbstractCSVHandler.CSV_WRITE_METADATA, optional = true, doc = "Write metadata.")
+	public void setWriteMetaData(boolean writeMetaData){
+		this.writeMetaData = writeMetaData;
+	}
+	
+	public boolean isWriteMetaData(){
+		return writeMetaData;
+	}
+	
 	/**
 	 * @return The name of the protocol handler
 	 */
