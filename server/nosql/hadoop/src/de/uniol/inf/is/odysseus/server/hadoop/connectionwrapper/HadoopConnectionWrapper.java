@@ -15,12 +15,12 @@ import java.security.PrivilegedExceptionAction;
  */
 public class HadoopConnectionWrapper extends NoSQLConnectionWrapper<FileSystem> {
 
-    public HadoopConnectionWrapper(String host, int port, @Nullable String user, @Nullable String password) throws OpenFailedException {
-        super(host, port, user, password);
+    public HadoopConnectionWrapper(String host, int port, @Nullable String user, @Nullable String password, @Nullable String database) throws OpenFailedException {
+        super(host, port, user, password, database);
     }
 
     @Override
-    protected FileSystem establishConnection(final String host, final int port, @Nullable String user, @Nullable String password) throws OpenFailedException {
+    protected FileSystem establishConnection(final String host, final int port, @Nullable String user, @Nullable String password, @Nullable String database) throws OpenFailedException {
 
         try {
 

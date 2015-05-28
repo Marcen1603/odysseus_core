@@ -35,11 +35,6 @@ public class MongoDBSinkPO extends AbstractNoSQLJsonSinkPO {
 
     @Override
     public void setupConnection(Object connection) {
-    	
-    	// TODO?
-    	// MongoCredential credential = MongoCredential.createCredential(userName, database, password);
-    	// MongoClient mongoClient = new MongoClient(new ServerAddress(), Arrays.asList(credential));
-    	
         MongoClient mongoClient = (MongoClient) connection;
         mongoDBCollection = mongoClient.getDB(mongoDBName).getCollection(collectionName);
     }

@@ -13,8 +13,8 @@ public abstract class NoSQLConnectionWrapper<E> {
     protected E connection;
     protected int userCount = 0;
 
-    public NoSQLConnectionWrapper(String host, int port, String user, String password) throws OpenFailedException{
-        this.connection = establishConnection(host, port, user, password);
+    public NoSQLConnectionWrapper(String host, int port, String user, String password, String database) throws OpenFailedException{
+        this.connection = establishConnection(host, port, user, password, database);
     }
 
     /**
@@ -23,7 +23,7 @@ public abstract class NoSQLConnectionWrapper<E> {
      * @return the connection to the database
      * @throws OpenFailedException
      */
-    protected abstract E establishConnection(String host, int port, String user, String password) throws OpenFailedException;
+    protected abstract E establishConnection(String host, int port, String user, String password, String database) throws OpenFailedException;
 
     public E getConnection() {
         userCount++;
