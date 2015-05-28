@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -34,7 +35,7 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
     }
 
     @Override
-    public void preTransform(IServerExecutor executor, ISession caller, ILogicalQuery query, QueryBuildConfiguration config, List<String> handlerParameters, Context context) {
+    public void preTransform(IServerExecutor executor, ISession caller, ILogicalQuery query, QueryBuildConfiguration config, List<Pair<String, String>> handlerParameters, Context context) {
         Object modelObject = context.get(EvaluationRun.class.getName());
         EvaluationRun run = (EvaluationRun) modelObject;
         if (run != null) {
