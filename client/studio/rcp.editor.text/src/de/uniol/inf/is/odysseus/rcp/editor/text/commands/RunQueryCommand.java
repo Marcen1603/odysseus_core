@@ -74,7 +74,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 
     @Override
     public boolean isEnabled() {
-        return !getSelectedFiles().isEmpty() || getScriptEditor().isPresent();
+		return true;
     }
 
     @SuppressWarnings("unchecked")
