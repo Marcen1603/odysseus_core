@@ -33,6 +33,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -297,13 +298,13 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				.get(PreTransformationHandlerParameter.class);
 		if (preTransformationHandlerParameter != null
 				&& preTransformationHandlerParameter.hasPairs()) {
-			List<PreTransformationHandlerParameter.Pair> pairs = preTransformationHandlerParameter
+			List<PreTransformationHandlerParameter.HandlerParameterPair> pairs = preTransformationHandlerParameter
 					.getPairs();
 
 			for (ILogicalQuery query : queries) {
-				for (PreTransformationHandlerParameter.Pair pair : pairs) {
+				for (PreTransformationHandlerParameter.HandlerParameterPair pair : pairs) {
 					String handlerName = pair.name;
-					List<String> handlerParameters = pair.parameters;
+					List<Pair<String, String>> handlerParameters = pair.parameters;
 
 					try {
 						IPreTransformationHandler handler = getPreTransformationHandler(handlerName);
