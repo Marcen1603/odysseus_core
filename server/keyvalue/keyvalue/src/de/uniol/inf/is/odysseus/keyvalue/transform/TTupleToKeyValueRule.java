@@ -41,7 +41,7 @@ public class TTupleToKeyValueRule extends AbstractTransformationRule<TupleToKeyV
 	@Override
 	public boolean isExecutable(TupleToKeyValueAO operator, TransformationConfiguration config) {
 		if (operator.getInputSchema().getType() == Tuple.class &&
-				operator.getPhysSubscriptionTo() != null) {
+				operator.isAllPhysicalInputSet()) {
 			return true;
 			
 		}

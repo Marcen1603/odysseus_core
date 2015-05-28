@@ -117,6 +117,7 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.wrapper.xovis.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.snet.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.developer.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.nosql.mongodb.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

@@ -14,8 +14,8 @@ public abstract class AbstractNoSQLSinkAO extends AbstractNoSQLAO {
 
 	public static final int DEFAULT_BATCHSIZE = 10;
 	public static final int DEFAULT_BATCHTIMEOUT = 5000;
-	protected int batchSize;
-	protected int batchTimeout;
+	protected int batchSize = DEFAULT_BATCHSIZE;
+	protected int batchTimeout = DEFAULT_BATCHTIMEOUT;
 
 	protected AbstractNoSQLSinkAO(AbstractNoSQLSinkAO old) {
 		super(old);

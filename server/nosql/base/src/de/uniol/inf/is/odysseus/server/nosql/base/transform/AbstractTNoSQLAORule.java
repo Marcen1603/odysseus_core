@@ -48,7 +48,7 @@ abstract class AbstractTNoSQLAORule<L extends AbstractNoSQLAO, P extends IPhysic
 
     @Override
     public boolean isExecutable(L operator, TransformationConfiguration config) {
-        return true;
+        return operator.isAllPhysicalInputSet();
     }
 
     @Override
