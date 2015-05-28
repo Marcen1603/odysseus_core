@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.uniol.inf.is.odysseus.wrapper.mosaik.feature"
+      label="Feature"
+      version="1.0.0.qualifier">
+
+   <description url="http://mosaik.offis.de/">
+      This feature allows to connect the smart grid co-simulation framework
+mosaik to odysseus.
+   </description>
+
+   <copyright url="http://mosaik.offis.de/">
+      Text
+   </copyright>
+
+   <license url="http://mosaik.offis.de/">
+      Text
+   </license>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.wrapper.mosaik"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
