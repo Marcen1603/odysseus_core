@@ -80,7 +80,7 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.ignoreEqual = ignoreEqual;
 	}
 
-	@Parameter(name = "deliverFirstElement", type = BooleanParameter.class, optional = true, doc = "The operator starts to work when the window contains at least the number of neighbors + 1 tuples. If you want to get the first elements before this is reached, you can set this to true. Default is false.")
+	@Parameter(name = "deliverFirstElements", type = BooleanParameter.class, optional = true, doc = "The operator starts to work when the window contains at least the number of neighbors + 1 tuples. If you want to get the first elements before this is reached, you can set this to true. Default is false.")
 	public void setDeliverFirstElement(boolean deliverFirstElement) {
 		this.deliverFirstElement = deliverFirstElement;
 	}

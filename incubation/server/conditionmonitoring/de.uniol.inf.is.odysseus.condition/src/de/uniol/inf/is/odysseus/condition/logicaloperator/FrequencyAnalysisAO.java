@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 
 /**
@@ -36,15 +37,19 @@ public class FrequencyAnalysisAO extends BinaryLogicalOp {
 
 	private double toleranceNegative;
 	private double tolerancePositive;
+	
+	private boolean deliverFirstElements;
 
 	public FrequencyAnalysisAO() {
 		this.toleranceNegative = 0.3;
 		this.tolerancePositive = 0.3;
+		this.deliverFirstElements = false;
 	}
 
 	public FrequencyAnalysisAO(FrequencyAnalysisAO ao) {
 		this.toleranceNegative = ao.getToleranceNegative();
 		this.tolerancePositive = ao.getTolerancePositive();
+		this.deliverFirstElements = ao.isDeliverFirstElements();
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "negativeTolerance", optional = true, doc = "The tolerance to the negative side (if less tuples of type 'a' occur in the small window in comparisson to the big window). Standard is 0.3, which means 30% less is allowed")
@@ -56,6 +61,11 @@ public class FrequencyAnalysisAO extends BinaryLogicalOp {
 	public void setTolerancePositive(double tolerancePositive) {
 		this.tolerancePositive = tolerancePositive;
 	}
+	
+	@Parameter(type = BooleanParameter.class, name = "deliverFirstElements", optional = true, doc = "Normally the operator starts to compare the frequencies when the big window is at least as big as the small window. With this option set to true, the comparison will start with the first tuple reaching this operator. Default is false.")
+	public void setDeliverFirstElements(boolean deliverFirstElements) {
+		this.deliverFirstElements = deliverFirstElements;
+	}
 
 	public double getToleranceNegative() {
 		return toleranceNegative;
@@ -63,6 +73,10 @@ public class FrequencyAnalysisAO extends BinaryLogicalOp {
 
 	public double getTolerancePositive() {
 		return tolerancePositive;
+	}
+	
+	public boolean isDeliverFirstElements() {
+		return deliverFirstElements;
 	}
 
 	@Override

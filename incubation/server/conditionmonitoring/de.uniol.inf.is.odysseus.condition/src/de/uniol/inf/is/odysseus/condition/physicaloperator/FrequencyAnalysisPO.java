@@ -40,6 +40,8 @@ public class FrequencyAnalysisPO<T extends Tuple<M>, M extends ITimeInterval> ex
 	// The tolerance values from the user (e.g. both = 0.3)
 	private double toleranceNegative;
 	private double tolerancePositive;
+	
+	private boolean deliverFirstElements;
 
 	public FrequencyAnalysisPO(FrequencyAnalysisAO ao) {
 		this.bigWindow = new ArrayList<T>();
@@ -50,6 +52,8 @@ public class FrequencyAnalysisPO<T extends Tuple<M>, M extends ITimeInterval> ex
 		
 		this.toleranceNegative = ao.getToleranceNegative();
 		this.tolerancePositive = ao.getTolerancePositive();
+		
+		this.deliverFirstElements = ao.isDeliverFirstElements();
 	}
 
 	@Override
@@ -81,7 +85,7 @@ public class FrequencyAnalysisPO<T extends Tuple<M>, M extends ITimeInterval> ex
 		}
 
 		// Do not compare every tuple twice
-		if (port == 1 && this.bigWindow.size() >= this.smallWindow.size()) {
+		if (port == 1 && (this.bigWindow.size() >= this.smallWindow.size() || this.deliverFirstElements )) {
 			// Compare the frequencies for this tuple
 			double compare = compareFrequencies(tuple, this.bigCounter, this.smallCounter);
 
@@ -190,8 +194,7 @@ public class FrequencyAnalysisPO<T extends Tuple<M>, M extends ITimeInterval> ex
 	}
 
 	/**
-	 * Calculates the anomaly score, a value between 0 and 1. (Will actually
-	 * never reach 1)
+	 * Calculates the anomaly score, a value between 0 and 1. 
 	 * 
 	 * @param distance
 	 *            Distance to good area
@@ -199,6 +202,9 @@ public class FrequencyAnalysisPO<T extends Tuple<M>, M extends ITimeInterval> ex
 	 */
 	private double calcAnomalyScore(double compareValue, double toleranceNegative, double tolerancePositive) {
 
+		if (Double.isInfinite(compareValue))
+			return 1;
+		
 		double minValue = 1 - toleranceNegative;
 		double maxValue = 1 + tolerancePositive;
 
