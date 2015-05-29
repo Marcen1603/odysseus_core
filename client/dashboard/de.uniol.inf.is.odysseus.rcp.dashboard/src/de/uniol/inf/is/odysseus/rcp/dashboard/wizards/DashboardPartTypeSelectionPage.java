@@ -116,7 +116,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 			}
 			
 			setPageComplete(true);
-		} catch (ControllerException ex) {
+		} catch (Exception ex) {
 			INFO.error("Could not execute query", ex);
 			LOG.error("Could not execute query", ex);
 			setErrorMessage("Selected Odysseus Script has some errors. See log for details.");
@@ -198,7 +198,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 			selectedConfigurer.createPartControl(configComposite);
 			
 			rootComposite.layout();
-		} catch (InstantiationException e) {
+		} catch (Exception e) {
 			LOG.error("Could not create DashboardPart", e);
 			INFO.error("Could not create DashboardPart", e);
 		}
