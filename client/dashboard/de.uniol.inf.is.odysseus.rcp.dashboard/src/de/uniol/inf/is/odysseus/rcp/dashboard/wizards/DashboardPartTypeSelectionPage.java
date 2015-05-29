@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableCollection;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
@@ -43,6 +45,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.controller.QueryExecutionHandler;
 public class DashboardPartTypeSelectionPage extends WizardPage {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartTypeSelectionPage.class);
+	private static final InfoService INFO = InfoServiceFactory
+			.getInfoService(DashboardPartTypeSelectionPage.class);
 	
 	private final List<String> dashboardPartNames;
 	private final QueryFileSelectionPage queryFilePage;
@@ -113,6 +117,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 			
 			setPageComplete(true);
 		} catch (ControllerException ex) {
+			INFO.error("Could not execute query", ex);
 			LOG.error("Could not execute query", ex);
 			setErrorMessage("Selected Odysseus Script has some errors. See log for details.");
 		}
@@ -195,6 +200,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 			rootComposite.layout();
 		} catch (InstantiationException e) {
 			LOG.error("Could not create DashboardPart", e);
+			INFO.error("Could not create DashboardPart", e);
 		}
 	}
 	
