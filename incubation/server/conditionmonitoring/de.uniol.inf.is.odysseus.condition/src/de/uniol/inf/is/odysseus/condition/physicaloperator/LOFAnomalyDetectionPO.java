@@ -32,6 +32,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 	private double minLOFValue;
 	private IGroupProcessor<T, T> groupProcessor;
 	private boolean ignoreEqual;
+	private boolean deliverFirstElements;
 
 	public LOFAnomalyDetectionPO(LOFAnomalyDetectionAO ao, IGroupProcessor<T, T> groupProcessor) {
 		sortedValueMap = new HashMap<Long, List<T>>();
@@ -40,6 +41,7 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 		this.valueAttributeName = ao.getNameOfValue();
 		this.groupProcessor = groupProcessor;
 		this.ignoreEqual = ao.isIgnoreEqual();
+		this.deliverFirstElements = ao.isDeliverFirstElement();
 	}
 
 	@Override
@@ -60,7 +62,13 @@ public class LOFAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> 
 
 		// If we have less tuples, we can't process the needed operations, as we
 		// need at least k neighbors
-		if (sortedValues.size() < k + 1) {
+		if (sortedValues.size() < k + 1 && !deliverFirstElements) {
+			return;
+		} else if (sortedValues.size() < k + 1 && deliverFirstElements) {
+			// We can't process it anyway, but the user wants to see the first
+			// elements
+			Tuple newTuple = tuple.append(0.0).append(0.0);
+			transfer(newTuple);
 			return;
 		}
 		double lof = getLOF(k, tuple, sortedValues, this.ignoreEqual);

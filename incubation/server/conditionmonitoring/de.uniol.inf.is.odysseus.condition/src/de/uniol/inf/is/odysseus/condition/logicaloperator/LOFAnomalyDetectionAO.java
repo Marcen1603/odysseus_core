@@ -30,12 +30,14 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	private List<SDFAttribute> groupingAttributes;
 	private boolean fastGrouping;
 	private boolean ignoreEqual;
+	private boolean deliverFirstElement;
 
 	public LOFAnomalyDetectionAO() {
 		this.k = 10;
 		this.lofAnomalyValue = 1.5;
 		this.nameOfValue = "value";
 		this.ignoreEqual = false;
+		this.deliverFirstElement = true;
 	}
 
 	public LOFAnomalyDetectionAO(LOFAnomalyDetectionAO ao) {
@@ -45,6 +47,7 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.groupingAttributes = ao.getGroupingAttributes();
 		this.fastGrouping = ao.isFastGrouping();
 		this.ignoreEqual = ao.isIgnoreEqual();
+		this.deliverFirstElement = ao.isDeliverFirstElement();
 	}
 
 	@Parameter(type = IntegerParameter.class, name = "NEIGHBORS", optional = true, doc = "The number of neighbors used, sometimes called k")
@@ -77,6 +80,11 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.ignoreEqual = ignoreEqual;
 	}
 
+	@Parameter(name = "deliverFirstElement", type = BooleanParameter.class, optional = true, doc = "The operator starts to work when the window contains at least the number of neighbors + 1 tuples. If you want to get the first elements before this is reached, you can set this to true. Default is false.")
+	public void setDeliverFirstElement(boolean deliverFirstElement) {
+		this.deliverFirstElement = deliverFirstElement;
+	}
+
 	public int getNumberOfNeighbors() {
 		return this.k;
 	}
@@ -99,6 +107,10 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 
 	public boolean isIgnoreEqual() {
 		return ignoreEqual;
+	}
+	
+	public boolean isDeliverFirstElement() {
+		return deliverFirstElement;
 	}
 
 	@Override

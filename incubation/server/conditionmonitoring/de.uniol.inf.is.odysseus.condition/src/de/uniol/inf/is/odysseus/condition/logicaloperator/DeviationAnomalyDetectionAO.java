@@ -87,7 +87,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.reportEndOfAnomalies = reportEndOfAnomalyWindows;
 	}
 	
-	@Parameter(name = "deliverUnlearnedTuples", type = BooleanParameter.class, optional = true, doc = "If you want to get tuples for which no deviation information is available (e.g. the first tuple), you can set this to true. Default is false.")
+	@Parameter(name = "deliverUnlearnedElements", type = BooleanParameter.class, optional = true, doc = "If you want to get tuples for which no deviation information is available (e.g. the first tuple), you can set this to true. Default is false.")
 	public void setDeliverUnlearnedTuples(boolean deliverUnlearnedTuples) {
 		this.deliverUnlearnedTuples = deliverUnlearnedTuples;
 	}
