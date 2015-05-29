@@ -37,6 +37,8 @@ public class SortByComplexityRule extends AbstractExpressionOptimizerRule<AndOpe
     @Override
     public IExpression<?> execute(AndOperator expression) {
         List<IExpression<?>> split = new ArrayList<>();
+        split.addAll(getConjunctiveSplit(expression));
+        
         Collections.sort(split, new Comparator<IExpression<?>>() {
             /**
              * 
@@ -54,7 +56,6 @@ public class SortByComplexityRule extends AbstractExpressionOptimizerRule<AndOpe
             }
         });
 
-        split.addAll(getConjunctiveSplit(expression));
         return conjunction(split);
     }
 
