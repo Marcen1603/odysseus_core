@@ -109,4 +109,10 @@ public final class ExpressionOptimizer {
         IExpression<?> cnf = conjunctiveNormalFormRule.executeRule(expression);
         return optimize(cnf);
     }
+    
+    public static IExpression<?> sortByStringExpressions(IExpression<?> expression){
+    	SortByStringExpressionRule rules = new SortByStringExpressionRule();
+    	IExpression<?> res = rules.executeRule(expression);
+    	return res;
+    }
 }

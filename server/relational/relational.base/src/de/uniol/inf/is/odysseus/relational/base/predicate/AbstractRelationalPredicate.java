@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
+import de.uniol.inf.is.odysseus.mep.optimizer.ExpressionOptimizer;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -160,6 +161,21 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
      */
     @Override
     public boolean equals(IPredicate<T> pred) {
+    	
+    	if (pred instanceof AbstractRelationalPredicate){
+        	if (this.expression.equals(((AbstractRelationalPredicate<T>)pred).expression)){
+        		return true;
+        	}
+        	        	
+        	// build cnf
+        	IExpression<?> cnf1 = ExpressionOptimizer.sortByStringExpressions(ExpressionOptimizer.toConjunctiveNormalForm(expression.getMEPExpression()));
+        	IExpression<?> cnf2 = ExpressionOptimizer.sortByStringExpressions(ExpressionOptimizer.toConjunctiveNormalForm(((AbstractRelationalPredicate<T>) pred).expression.getMEPExpression()));
+        	if (cnf1.toString().equals(cnf2.toString())){
+        		return true;
+        	}
+
+    	}
+    	
         // Falls die Expressions nicht identisch sind, ist dennoch eine
         // inhaltliche ���quivalenz m���glich
         if (!this.equals((Object) pred)) {

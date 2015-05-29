@@ -194,7 +194,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		if (!(other instanceof RelationalPredicate)) {
 			return false;
 		}
-		return this.expression.equals(((RelationalPredicate) other).expression);
+		return equals(((RelationalPredicate) other));
 	}
 
 	@Override
