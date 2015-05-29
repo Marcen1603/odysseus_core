@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -39,6 +40,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PlatformUI;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -181,7 +183,7 @@ public class ContextMapPage extends WizardPage {
 				IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
 				for( Object selectedObject : selection.toArray() ) {
 					TableEntry entry = (TableEntry)selectedObject;
-					if( !entry.fixed ) {
+					if( !entry.fixed || MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Remove mandatory key", "Are you sure you want to remove\nthe mandatory key '" + entry.key + "'?")) {
 						tableEntries.remove(entry);
 					}
 				}
