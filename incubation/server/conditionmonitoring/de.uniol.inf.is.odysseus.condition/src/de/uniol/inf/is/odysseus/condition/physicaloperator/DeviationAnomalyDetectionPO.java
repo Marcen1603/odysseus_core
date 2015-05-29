@@ -42,10 +42,12 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private boolean prevLastWindowWithAnomaly;
 	private boolean foundAnomaly;
 
+	private boolean deliverUnlearnedTuples;
+
 	// If true, sends a tuple with anomaly score = 0, if the last window had an
 	// anomaly, but this one didn't
 	private boolean reportEndOfAnomalyWindows;
-	
+
 	private String standardDeviationAttributeName = "standardDeviation";
 	private String meanAttributeName = "mean";
 
@@ -68,6 +70,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		foundAnomaly = false;
 
 		this.reportEndOfAnomalyWindows = ao.isReportEndOfAnomalyWindows();
+		this.deliverUnlearnedTuples = ao.isDeliverUnlearnedTuples();
 	}
 
 	@Override
@@ -93,6 +96,10 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			lastTuple = tuple.getMetadata().getStart();
 			double sensorValue = getValue(tuple);
 			processTuple(gId, sensorValue, tuple, info);
+		} else if (port == 0 && deliverUnlearnedTuples) {
+			// We don't have an anomaly as we don't know the deviation. But the
+			// user want to get such tuples, so there it is.
+			transferTuple(tuple, 0.0, getValue(tuple), 0.0);
 		} else if (port == 1) {
 			// Update deviation information
 			int stdDevIndex = getInputSchema(1).findAttributeIndex(standardDeviationAttributeName);
@@ -163,8 +170,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 		if (this.oncePerWindow) {
 			// OK, we have a window (for checking, not for training)
-			// This window should be a tumbling one, that would be good,
-			// e.g. 1 minute
+			// This window should be a tumbling one (that would be good, not
+			// necessary) e.g. 1 minute
 			List<T> tuples = tupleMap.get(gId);
 			if (tuples == null) {
 				tuples = new ArrayList<T>();
@@ -187,25 +194,25 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 					// anomaly, we have to check this
 					alreadySendThisWindow = true;
 					double anomalyScore = calcAnomalyScore(sensorValue, mean, standardDeviation, interval);
-					Tuple newTuple = tuple.append(anomalyScore);
-					newTuple = newTuple.append(mean);
-					newTuple = newTuple.append(standardDeviation);
-					transfer(newTuple);
+					transferTuple(tuple, anomalyScore, mean, standardDeviation);
 				}
 
 				lastWindowWithAnomaly = true;
 			}
-		} else if (reportEndOfAnomalyWindows && prevLastWindowWithAnomaly && !lastWindowWithAnomaly && !alreadySendThisWindow) {
+		} else if (reportEndOfAnomalyWindows && prevLastWindowWithAnomaly && !lastWindowWithAnomaly
+				&& !alreadySendThisWindow) {
 			alreadySendThisWindow = true;
 			double anomalyScore = 0;
-			Tuple newTuple = tuple.append(anomalyScore);
-			newTuple = newTuple.append(mean);
-			newTuple = newTuple.append(standardDeviation);
-			transfer(newTuple);
+			transferTuple(tuple, anomalyScore, mean, standardDeviation);
 		} else {
 			Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
 			sendPunctuation(beat);
 		}
+	}
+
+	private void transferTuple(Tuple originalTuple, double anomalyScore, double mean, double standardDeviation) {
+		Tuple newTuple = originalTuple.append(anomalyScore).append(mean).append(standardDeviationAttributeName);
+		transfer(newTuple);
 	}
 
 	private boolean isAnomaly(double sensorValue, double standardDeviation, double mean) {

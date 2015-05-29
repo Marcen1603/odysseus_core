@@ -29,13 +29,14 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 
 	private boolean windowChecking;
 	private boolean onlyOnChange;
-	
 	private boolean reportEndOfAnomalies;
+	private boolean deliverUnlearnedTuples;
 
 	public DeviationAnomalyDetectionAO() {
 		interval = 3.0;
 		nameOfValue = "value";
 		reportEndOfAnomalies = false;
+		this.deliverUnlearnedTuples = false;
 	}
 
 	public DeviationAnomalyDetectionAO(DeviationAnomalyDetectionAO ao) {
@@ -48,6 +49,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.windowChecking = ao.isWindowChecking();
 		this.onlyOnChange = ao.isOnlyOnChange();
 		this.reportEndOfAnomalies = ao.isReportEndOfAnomalyWindows();
+		this.deliverUnlearnedTuples = ao.isDeliverUnlearnedTuples();
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "interval", optional = true, doc = "Defines, how many standard deviations are allowed for a tuple to be different from the mean. 3.0 is the default value. Choose a smaller value to get more anomalies.")
@@ -84,6 +86,11 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 	public void setReportEndOfAnomalyWindows(boolean reportEndOfAnomalyWindows) {
 		this.reportEndOfAnomalies = reportEndOfAnomalyWindows;
 	}
+	
+	@Parameter(name = "deliverUnlearnedTuples", type = BooleanParameter.class, optional = true, doc = "If you want to get tuples for which no deviation information is available (e.g. the first tuple), you can set this to true. Default is false.")
+	public void setDeliverUnlearnedTuples(boolean deliverUnlearnedTuples) {
+		this.deliverUnlearnedTuples = deliverUnlearnedTuples;
+	}
 
 	public double getInterval() {
 		return this.interval;
@@ -111,6 +118,10 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 	
 	public boolean isReportEndOfAnomalyWindows() {
 		return reportEndOfAnomalies;
+	}
+	
+	public boolean isDeliverUnlearnedTuples() {
+		return deliverUnlearnedTuples;
 	}
 
 	@Override

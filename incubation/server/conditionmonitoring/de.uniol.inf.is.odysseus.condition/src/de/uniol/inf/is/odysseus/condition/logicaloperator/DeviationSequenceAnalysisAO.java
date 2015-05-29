@@ -134,8 +134,12 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 			// attributes
 			SDFSchema inSchema = getInputSchema(DATA_PORT);
 			SDFAttribute totalDifference = new SDFAttribute(null, "totalDifference", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute totalSum = new SDFAttribute(null, "totalSum", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute relativeDifference = new SDFAttribute(null, "relativeDifference", SDFDatatype.DOUBLE, null, null, null);
 			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 			outputAttributes.add(totalDifference);
+			outputAttributes.add(totalSum);
+			outputAttributes.add(relativeDifference);
 			SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
 			setOutputSchema(1, outSchema);
 
