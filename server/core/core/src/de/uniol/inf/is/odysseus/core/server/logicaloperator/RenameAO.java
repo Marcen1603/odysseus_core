@@ -46,21 +46,31 @@ public class RenameAO extends UnaryLogicalOp {
 	private boolean aliasesAsPairs;
 	private String typeName;
 	private boolean calculated;
-	private boolean isNoOp;
+	private boolean noOp;
+	private boolean keepPosition = false;
 
 	public RenameAO() {
 		super();
 	}
 
-	public RenameAO(AbstractLogicalOperator po) {
-		super(po);
+	public RenameAO(AbstractLogicalOperator ao) {
+		super(ao);
 	}
 
 	public RenameAO(RenameAO ao) {
 		super(ao);
 		aliases = ao.aliases;
 		aliasesAsPairs = ao.aliasesAsPairs;
-		isNoOp = ao.isNoOp;
+		noOp = ao.noOp;
+		keepPosition = ao.keepPosition;
+	}
+
+	public boolean isKeepPosition() {
+		return keepPosition;
+	}
+
+	public void setKeepPosition(boolean keepPosition) {
+		this.keepPosition = keepPosition;
 	}
 
 	@Parameter(type = StringParameter.class, isList = true, optional = true, doc = "The new list of attributes. Must be exactly the same length as in the input schema.")
@@ -80,16 +90,16 @@ public class RenameAO extends UnaryLogicalOp {
 	
 	@Parameter(name = "isNoOp", type = BooleanParameter.class, optional = true, doc = "A flag to avoid removing this operator even if nothing in the schema is changed.", deprecated=true)
 	public void setNoOpOld( boolean isNoOp ) {
-		this.isNoOp = isNoOp;
+		this.noOp = isNoOp;
 	}
 
 	@Parameter(name = "NoOp", type = BooleanParameter.class, optional = true, doc = "A flag to avoid removing this operator even if nothing in the schema is changed.", deprecated=false)
 	public void setNoOp( boolean isNoOp ) {
-		this.isNoOp = isNoOp;
+		this.noOp = isNoOp;
 	}
 
 	public boolean isNoOp() {
-		return isNoOp;
+		return noOp;
 	}
 	
 	public boolean getPairs() {

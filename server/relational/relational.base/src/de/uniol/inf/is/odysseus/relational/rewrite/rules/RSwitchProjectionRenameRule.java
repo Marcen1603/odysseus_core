@@ -54,7 +54,11 @@ public class RSwitchProjectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
 	@Override
 	public boolean isExecutable(RenameAO ren, RewriteConfiguration config) {
-		if (ren.getAliases() == null || ren.getAliases().isEmpty()) {
+		if(ren.isKeepPosition()) {
+			// for renames on top of source definitions
+			return false;
+		}
+		else if (ren.getAliases() == null || ren.getAliases().isEmpty()) {
 			return false;
 		}
 		return getSubscribingOperatorAndCheckType(ren, ProjectAO.class) != null;

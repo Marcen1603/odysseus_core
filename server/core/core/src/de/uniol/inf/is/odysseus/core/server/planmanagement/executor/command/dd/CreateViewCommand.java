@@ -37,6 +37,7 @@ public class CreateViewCommand extends AbstractExecutorCommand {
 	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {		
 		RenameAO rename = new RenameAO();
+		rename.setKeepPosition(true);
 		rename.subscribeTo(rootAO, rootAO.getOutputSchema());
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute old : rootAO.getOutputSchema()) {

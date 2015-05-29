@@ -56,6 +56,10 @@ public class RSwitchSelectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
 	@Override
 	public boolean isExecutable(RenameAO ren, RewriteConfiguration config) {
+		if(ren.isKeepPosition()) {
+			// for renames on top of source definitions
+			return false;
+		}
 		return getSubscribingOperatorAndCheckType(ren, SelectAO.class) != null;
 	}
 
