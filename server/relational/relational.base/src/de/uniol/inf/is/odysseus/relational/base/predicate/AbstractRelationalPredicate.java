@@ -174,16 +174,8 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
         		return true;
         	}
 
-    	}
-    	
-        // Falls die Expressions nicht identisch sind, ist dennoch eine
-        // inhaltliche ���quivalenz m���glich
-        if (!this.equals((Object) pred)) {
-            // boolean isContainedIn1 = this.isContainedIn(pred);
-            // boolean isContainedIn2 = pred.isContainedIn(this);
-            return this.isContainedIn(pred) && pred.isContainedIn(this);
-        }
-        return true;
+    	}    	
+        return this.isContainedIn(pred) && pred.isContainedIn(this);
     }
 
     /**
