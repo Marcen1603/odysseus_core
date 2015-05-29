@@ -39,7 +39,6 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
-import de.uniol.inf.is.odysseus.rcp.dashboard.controller.ControllerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.QueryExecutionHandler;
 
 public class DashboardPartTypeSelectionPage extends WizardPage {
