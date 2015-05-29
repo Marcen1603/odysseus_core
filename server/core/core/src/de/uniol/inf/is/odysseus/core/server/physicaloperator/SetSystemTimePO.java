@@ -1,10 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,9 +37,9 @@ public class SetSystemTimePO<T extends IStreamObject<?>> extends AbstractPipe<T,
         	long diff = elementTime - systemTime;
         	if (Math.abs(diff) > threshold)
         	{
-        		System.out.println("Time diff too big! " + diff + "ms. Setting system time...");
+        		System.out.println("Time diff too big! " + diff + "ms. TODO: Set system time");
 
-        		Date d = new Date();
+/*        		Date d = new Date();
         		
         		String dateToSet = new SimpleDateFormat("dd-MM-yy").format(d);
         		String timeToSet = new SimpleDateFormat("hh:mm:ss").format(d);
@@ -55,7 +50,7 @@ public class SetSystemTimePO<T extends IStreamObject<?>> extends AbstractPipe<T,
 					Runtime.getRuntime().exec("cmd /C time " + timeToSet); // hh:mm:ss
 				} catch (IOException e) {
 					e.printStackTrace();
-				} 
+				}*/ 
         		        		
         	}
         	else
