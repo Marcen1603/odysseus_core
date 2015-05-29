@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 
-@LogicalOperator(name = "LATENCYTOPAYLOAD", maxInputPorts = 1, minInputPorts = 1, doc = "Adds attributes with the current latency information (start,end,latency,max_start,max_latency) to each tuple.", category = { LogicalOperatorCategory.BENCHMARK })
+@LogicalOperator(name = "LATENCYTOPAYLOAD", maxInputPorts = 1, minInputPorts = 1, doc = "Deprecated: You Latency.start, Latency.end, Latency.latency etc. directly as attributes! Adds attributes with the current latency information (start,end,latency,max_start,max_latency) to each tuple.", category = { LogicalOperatorCategory.BENCHMARK }, deprecation=true)
 public class LatencyToPayloadAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -8208189869158067885L;
