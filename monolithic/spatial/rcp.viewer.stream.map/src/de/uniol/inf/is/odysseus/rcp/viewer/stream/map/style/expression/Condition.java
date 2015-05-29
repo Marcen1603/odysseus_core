@@ -62,6 +62,7 @@ public abstract class Condition<T>{
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public T eval(Tuple<?> tuple) {
 		T eval = null;
 		if (tuple != null && exp != null){
