@@ -5,8 +5,11 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.multithreaded.interoperator
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.multithreaded.interoperator.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.multithreaded.keyword,
+Import-Package: de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.multithreaded.keyword,
  de.uniol.inf.is.odysseus.multithreaded.transform,
+ de.uniol.inf.is.odysseus.relational.base.predicate,
+ de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
