@@ -74,7 +74,7 @@ public class LiquidGaugeWheelDashboardPart extends AbstractWheelDashboardPart {
                 * (1.0 / 3.0) * this.getRadius())));
         path.close();
         this.fillPath(path, this.getGaugeColor());
-        final String text = NumberFormat.getIntegerInstance().format(z);
+        final String text = NumberFormat.getNumberInstance().format(z);
         final int fontSize = this.getFontSize(text, this.getFont(), (int) ((1.0 / 3.0) * this.getRadius()), (int) ((1.0 / 3.0) * this.getRadius()));
         this.getGC().setFont(new Font(this.getGC().getDevice(), this.getFont(), fontSize, SWT.NORMAL));
         final Coordinate extent = this.textExtent(text);

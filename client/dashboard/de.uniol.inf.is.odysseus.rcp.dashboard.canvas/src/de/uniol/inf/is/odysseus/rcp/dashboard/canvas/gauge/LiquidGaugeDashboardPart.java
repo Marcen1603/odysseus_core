@@ -100,7 +100,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
             path.close();
             this.fillPath(path, this.liquidColor);
 
-            final String text = NumberFormat.getIntegerInstance().format(this.get(element));
+            final String text = NumberFormat.getNumberInstance().format(this.get(element));
             final int fontSize = this.getFontSize(text, this.getFont(), (int) (this.getRadius()), (int) (this.getRadius()));
             this.getGC().setFont(new Font(this.getGC().getDevice(), this.getFont(), fontSize, SWT.NORMAL));
             final Coordinate extent = this.textExtent(text);
