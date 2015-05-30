@@ -69,13 +69,15 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
         this.setAlpha(getBackgroundAlpha());
         this.fill(background);
         this.setAlpha(255);
+
+        final int width = (int) (this.getClipping().width / (Math.abs(this.getMaxX() - this.getMinX()) * 100.0) + 0.5);
+        final int height = (int) (this.getClipping().height / (Math.abs(this.getMaxY() - this.getMinY()) * 100.0) + 0.5);
+
         final Iterator<IStreamObject<?>> iter = this.getObjects().iterator();
         IStreamObject<?> element = null;
         while (iter.hasNext()) {
             element = iter.next();
             final Number value = this.normalizeZ(this.getZ(element));
-            final int width = (int) ((this.getClipping().width / this.getMaxX()) + 0.5);
-            final int height = (int) ((this.getClipping().height / this.getMaxY()) + 0.5);
             this.fillRectangle(this.getCoordinate(element), width, height, this.getColor(value));
         }
     }
