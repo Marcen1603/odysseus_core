@@ -25,10 +25,10 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 	private double maxValue;
 	private boolean sendAllAnomalies;
 
-	private boolean tooLow;
-	private boolean tooHigh;
-	private boolean sendTooHigh;
-	private boolean wasNormalTuple;
+	private boolean tooLow = false;;
+	private boolean tooHigh = false;;
+	private boolean sendTooHigh = false;;
+	private boolean wasNormalTuple = false;;
 	private double distance;
 	private double lastSendDistance;
 	private double nextWarningDistance = 1.0;

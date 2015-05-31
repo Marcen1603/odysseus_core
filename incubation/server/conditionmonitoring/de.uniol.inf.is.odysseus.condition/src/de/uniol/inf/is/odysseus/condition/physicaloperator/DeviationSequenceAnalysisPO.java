@@ -21,8 +21,8 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 	private List<DeviationInformation> deviationInfo;
 	private double interval;
 	private int lastCounter;
-	private double totalDifference;
 	private double totalSum;
+	private double meanSum;
 
 	// Learn attributes
 	private String tupleGroupAttributeName;
@@ -60,17 +60,22 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 			if (lastCounter > counter) {
 				// A new curve starts, the last one is finished
 				// We can now send the info about the last curve
+				double totalDifference = Math.abs(totalSum - meanSum);
 
-				// TODO Maybe this belongs to the learnPO
-				Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(3, false);
+				Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(6, false);
 				output.setMetadata(tuple.getMetadata());
-				output.setAttribute(0, totalDifference);
-				output.setAttribute(1, totalSum);
-				output.setAttribute(2, totalDifference / totalSum);
+				output.setAttribute(0, totalSum);
+				output.setAttribute(1, meanSum);
+				output.setAttribute(2, totalDifference);
+				output.setAttribute(3, totalDifference / meanSum);
+				output.setAttribute(4, lastCounter);
+				output.setAttribute(5, totalSum / lastCounter);
+				
 				transfer(output, 1);
 
 				totalDifference = 0;
 				totalSum = 0;
+				meanSum = 0;
 			}
 
 			lastCounter = counter;
@@ -83,8 +88,8 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 				return;
 			}
 
-			totalDifference += Math.abs(info.mean - getValue(tuple));
 			totalSum += getValue(tuple);
+			meanSum += info.mean;
 
 			if (isAnomaly(getValue(tuple), info.standardDeviation, info.mean)) {
 				// We have an anomaly for this tuple

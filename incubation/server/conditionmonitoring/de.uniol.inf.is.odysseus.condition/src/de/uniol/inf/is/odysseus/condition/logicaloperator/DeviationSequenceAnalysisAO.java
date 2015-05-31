@@ -133,13 +133,19 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 			// add the anomaly-score to the attributes and keep the old
 			// attributes
 			SDFSchema inSchema = getInputSchema(DATA_PORT);
-			SDFAttribute totalDifference = new SDFAttribute(null, "totalDifference", SDFDatatype.DOUBLE, null, null, null);
 			SDFAttribute totalSum = new SDFAttribute(null, "totalSum", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute meanSum = new SDFAttribute(null, "meanSum", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute totalDifference = new SDFAttribute(null, "totalDifference", SDFDatatype.DOUBLE, null, null, null);
 			SDFAttribute relativeDifference = new SDFAttribute(null, "relativeDifference", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute numberOfTuples = new SDFAttribute(null, "numberOfTuples", SDFDatatype.INTEGER, null, null, null);
+			SDFAttribute averageTupleValue = new SDFAttribute(null, "averageTupleValue", SDFDatatype.INTEGER, null, null, null);
 			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
-			outputAttributes.add(totalDifference);
 			outputAttributes.add(totalSum);
+			outputAttributes.add(meanSum);
+			outputAttributes.add(totalDifference);
 			outputAttributes.add(relativeDifference);
+			outputAttributes.add(numberOfTuples);
+			outputAttributes.add(averageTupleValue);
 			SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
 			setOutputSchema(1, outSchema);
 

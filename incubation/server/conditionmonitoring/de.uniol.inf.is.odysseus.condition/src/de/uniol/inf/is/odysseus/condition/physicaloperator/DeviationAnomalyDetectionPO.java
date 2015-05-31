@@ -211,7 +211,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	}
 
 	private void transferTuple(Tuple originalTuple, double anomalyScore, double mean, double standardDeviation) {
-		Tuple newTuple = originalTuple.append(anomalyScore).append(mean).append(standardDeviationAttributeName);
+		Tuple newTuple = originalTuple.append(anomalyScore).append(mean).append(standardDeviation);
 		transfer(newTuple);
 	}
 
