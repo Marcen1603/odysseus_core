@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @version $Id$
  *
  */
-public class AbstractToListFunction extends AbstractFunction<List<?>> {
+abstract public class AbstractToListFunction extends AbstractFunction<List<?>> {
     /**
      * 
      */
