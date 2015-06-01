@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.script.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -825,12 +824,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 		}
 		throw new QueryParseException("Parsing Odysseus script failed:"
 				+ e.getMessage(), e);
-	}
-
-	@Override
-	public List<IExecutorCommand> parse(Reader reader, ISession user,
-			IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException {
-		throw new QueryParseException("This method is not implemented yet");
 	}
 
 	@Override

@@ -15,7 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.core.server.planmanagement;
 
-import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public interface IQueryParser {
 	public String getLanguage();
 	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException;
-	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException;
 	
 	public Map<String, List<String>> getTokens(ISession user);	
 	public List<String> getSuggestions(String hint, ISession user);

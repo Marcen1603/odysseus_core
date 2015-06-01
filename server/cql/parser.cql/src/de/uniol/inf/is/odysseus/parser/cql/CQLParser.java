@@ -141,11 +141,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public synchronized List<IExecutorCommand> parse(String query,
 			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException {
+		// replace deprecated strings?
+		
 		return parse(new StringReader(query), user, dd, context, metaAttribute);
 	}
 
-	@Override
-	public synchronized List<IExecutorCommand> parse(Reader reader,
+	private synchronized List<IExecutorCommand> parse(Reader reader,
 			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException {
 		this.caller = user;

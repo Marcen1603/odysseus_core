@@ -15,15 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.cep.sase;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.antlr.runtime.ANTLRReaderStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -73,20 +70,6 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 				printTree((CommonTree) t.getChild(i), indent + 1);
 			}
 		}
-	}
-
-	@Override
-	public List<IExecutorCommand> parse(Reader reader, ISession user,
-			IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException {
-		this.user = user;
-		this.dd = dd;
-		SaseLexer lex = null;
-		try {
-			lex = new SaseLexer(new ANTLRReaderStream(reader));
-		} catch (IOException e) {
-			throw new QueryParseException(e);
-		}
-		return processParse(lex, true, false);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.condition.conditionql.parser;
 
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,12 +43,6 @@ public class ConditionQLParser implements IQueryParser {
 		return exeCommands;
 	}
 
-	@Override
-	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context,
-			IMetaAttribute metaAttribute) throws QueryParseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) {

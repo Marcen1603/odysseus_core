@@ -53,12 +53,6 @@ public class SportsQLParser implements IQueryParser {
 		}
 	}
 
-	@Override
-	public List<IExecutorCommand> parse(Reader reader, ISession user,
-			IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) {

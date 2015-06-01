@@ -61,8 +61,7 @@ public class PQLParser implements IQueryParser {
 		return parse(new StringReader(query), user, dd, context, metaAttribute);
 	}
 
-	@Override
-	public synchronized List<IExecutorCommand> parse(Reader reader,
+	private synchronized List<IExecutorCommand> parse(Reader reader,
 			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException {
 		// this.user = user;
