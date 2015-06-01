@@ -135,7 +135,7 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 			SDFSchema inSchema = getInputSchema(DATA_PORT);
 			SDFAttribute totalSum = new SDFAttribute(null, "totalSum", SDFDatatype.DOUBLE, null, null, null);
 			SDFAttribute meanSum = new SDFAttribute(null, "meanSum", SDFDatatype.DOUBLE, null, null, null);
-			SDFAttribute totalDifference = new SDFAttribute(null, "totalDifference", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute totalDifference = new SDFAttribute(null, "absoluteDifference", SDFDatatype.DOUBLE, null, null, null);
 			SDFAttribute relativeDifference = new SDFAttribute(null, "relativeDifference", SDFDatatype.DOUBLE, null, null, null);
 			SDFAttribute numberOfTuples = new SDFAttribute(null, "numberOfTuples", SDFDatatype.INTEGER, null, null, null);
 			SDFAttribute averageTupleValue = new SDFAttribute(null, "averageTupleValue", SDFDatatype.INTEGER, null, null, null);

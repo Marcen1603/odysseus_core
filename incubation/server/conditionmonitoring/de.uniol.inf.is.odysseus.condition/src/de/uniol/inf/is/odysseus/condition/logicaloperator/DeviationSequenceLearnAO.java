@@ -27,7 +27,7 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 	public DeviationSequenceLearnAO() {
 		this.valueAttributeName = "value";
 		this.counterAttributeName = "counter";
-		this.sequencesToLearn = 3;
+		this.sequencesToLearn = 0;
 	}
 	
 	public DeviationSequenceLearnAO(DeviationSequenceLearnAO ao) {
@@ -53,7 +53,7 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 		return counterAttributeName;
 	}
 
-	@Parameter(type = IntegerParameter.class, name = "sequencesToLearn", optional = true, doc = "THe number of (correct) curves to learn from. The first x sequences will define the perfect sequence the others are compared to.")
+	@Parameter(type = IntegerParameter.class, name = "sequencesToLearn", optional = true, doc = "THe number of (correct) curves to learn from. The first x sequences will define the perfect sequence the others are compared to. If set to 0, the operator will not stop to learn (learn infinity sequences). Default is 0.")
 	public void setSequencesToLearn(int sequencesToLearn) {
 		this.sequencesToLearn = sequencesToLearn;
 	}

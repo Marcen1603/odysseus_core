@@ -30,14 +30,14 @@ public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterva
 		// Get the counter from the curveCounter before this operator
 		int curveTupleCounter = getCounter(tuple);
 
-		if (curveTupleCounter < lastCurveCounter && learnedCurves <= curvesToLearn) {
+		if (curveTupleCounter < lastCurveCounter && (learnedCurves <= curvesToLearn || curvesToLearn == 0)) {
 			// We are in the next curve
 			learnedCurves++;
 		}
 
 		lastCurveCounter = curveTupleCounter;
 
-		if (learnedCurves <= curvesToLearn) {
+		if (learnedCurves <= curvesToLearn || curvesToLearn == 0) {
 			// Curve tuples
 			DeviationInformation info = null;
 			if (curveTupleCounter >= deviationInfo.size()) {

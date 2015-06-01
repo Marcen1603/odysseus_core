@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "CURVECOUNTER", doc = "Counts the tuples in every curve. Port 0: Normal values. Port 1: Start / Stop messages.", category = { LogicalOperatorCategory.PROCESSING })
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "SEQUENCECOUNTER", doc = "Counts the tuples in every curve. Port 0: Normal values. Port 1: Start / Stop messages.", category = { LogicalOperatorCategory.PROCESSING })
 public class SequenceCounterAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 7194867265040245699L;
