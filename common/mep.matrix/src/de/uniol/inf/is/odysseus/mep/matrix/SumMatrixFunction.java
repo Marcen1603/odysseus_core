@@ -33,7 +33,7 @@ public class SumMatrixFunction extends AbstractFunction<Double> {
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
     public SumMatrixFunction() {
-        super("sSum", 1, SumMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("Sum", 1, SumMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

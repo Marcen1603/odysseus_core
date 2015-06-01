@@ -26,7 +26,7 @@ public class MedianVectorFunction extends AbstractFunction<Double> {
     final DescriptiveStatistics statistics = new DescriptiveStatistics();
 
     public MedianVectorFunction() {
-        super("sMedian", 1, MedianVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("Median", 1, MedianVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class AvgVectorFunction extends AbstractFunction<Double> {
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public AvgVectorFunction() {
-        super("sAVG", 1, AvgVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("AVG", 1, AvgVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

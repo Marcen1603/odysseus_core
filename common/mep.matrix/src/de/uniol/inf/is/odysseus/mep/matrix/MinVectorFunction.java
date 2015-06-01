@@ -32,7 +32,7 @@ public class MinVectorFunction extends AbstractFunction<Double> {
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public MinVectorFunction() {
-        super("sMin", 1, MinVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("Min", 1, MinVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

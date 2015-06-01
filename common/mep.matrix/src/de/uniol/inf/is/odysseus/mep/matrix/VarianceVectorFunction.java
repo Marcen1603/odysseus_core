@@ -39,7 +39,7 @@ public class VarianceVectorFunction extends AbstractFunction<Double> {
     final DescriptiveStatistics statistics = new DescriptiveStatistics();
 
     public VarianceVectorFunction() {
-        super("sVar", 1, VarianceVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("Var", 1, VarianceVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

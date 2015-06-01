@@ -32,7 +32,7 @@ public class MaxVectorFunction extends AbstractFunction<Double> {
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public MaxVectorFunction() {
-        super("sMax", 1, MaxVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("Max", 1, MaxVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

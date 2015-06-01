@@ -23,7 +23,7 @@ public class MedianMatrixFunction extends AbstractFunction<Double> {
     final DescriptiveStatistics statistics = new DescriptiveStatistics();
 
     public MedianMatrixFunction() {
-        super("sMedian", 1, MedianMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("Median", 1, MedianMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

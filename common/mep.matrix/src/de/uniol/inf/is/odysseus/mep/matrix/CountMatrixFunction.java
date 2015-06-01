@@ -32,7 +32,7 @@ public class CountMatrixFunction extends AbstractFunction<Integer> {
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
     public CountMatrixFunction() {
-        super("sCount", 1, CountMatrixFunction.ACC_TYPES, SDFDatatype.INTEGER);
+        super("Count", 1, CountMatrixFunction.ACC_TYPES, SDFDatatype.INTEGER);
     }
 
     @Override

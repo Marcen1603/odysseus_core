@@ -38,7 +38,7 @@ public class StandardDeviationMatrixFunction extends AbstractFunction<Double> {
     final DescriptiveStatistics statistics = new DescriptiveStatistics();
 
     public StandardDeviationMatrixFunction() {
-        super("sStdDev", 1, StandardDeviationMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("StdDev", 1, StandardDeviationMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

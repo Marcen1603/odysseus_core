@@ -37,7 +37,7 @@ public class MaxMatrixFunction extends AbstractFunction<Double> {
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
     public MaxMatrixFunction() {
-        super("sMax", 1, MaxMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("Max", 1, MaxMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

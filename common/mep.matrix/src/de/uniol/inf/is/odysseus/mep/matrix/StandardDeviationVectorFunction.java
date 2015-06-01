@@ -39,7 +39,7 @@ public class StandardDeviationVectorFunction extends AbstractFunction<Double> {
     final DescriptiveStatistics statistics = new DescriptiveStatistics();
 
     public StandardDeviationVectorFunction() {
-        super("sStdDev", 1, StandardDeviationVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("StdDev", 1, StandardDeviationVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

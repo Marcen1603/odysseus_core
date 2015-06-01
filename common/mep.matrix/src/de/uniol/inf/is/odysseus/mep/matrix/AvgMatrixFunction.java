@@ -36,7 +36,7 @@ public class AvgMatrixFunction extends AbstractFunction<Double> {
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
     public AvgMatrixFunction() {
-        super("sAVG", 1, AvgMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("AVG", 1, AvgMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

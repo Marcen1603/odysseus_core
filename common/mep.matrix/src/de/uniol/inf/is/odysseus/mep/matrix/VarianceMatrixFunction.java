@@ -38,7 +38,7 @@ public class VarianceMatrixFunction extends AbstractFunction<Double> {
     final DescriptiveStatistics statistics = new DescriptiveStatistics();
 
     public VarianceMatrixFunction() {
-        super("sVar", 1, VarianceMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("Var", 1, VarianceMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

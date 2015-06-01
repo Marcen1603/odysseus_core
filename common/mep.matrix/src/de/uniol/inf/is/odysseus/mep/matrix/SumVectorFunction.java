@@ -33,7 +33,7 @@ public class SumVectorFunction extends AbstractFunction<Double> {
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.VECTORS };
 
     public SumVectorFunction() {
-        super("sSum", 1, SumVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("Sum", 1, SumVectorFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override

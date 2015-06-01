@@ -37,7 +37,7 @@ public class MinMatrixFunction extends AbstractFunction<Double> {
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.MATRIXS };
 
     public MinMatrixFunction() {
-        super("sMin", 1, MinMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
+        super("Min", 1, MinMatrixFunction.ACC_TYPES, SDFDatatype.DOUBLE);
     }
 
     @Override
