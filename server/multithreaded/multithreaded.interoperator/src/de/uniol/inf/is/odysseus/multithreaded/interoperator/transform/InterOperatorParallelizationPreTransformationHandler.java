@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.multithreaded.interoperator.transform;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -13,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -72,6 +74,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 				// get last operator of the plan
 				Set<Class<? extends ILogicalOperator>> set = new HashSet<>();
 				set.add(AggregateAO.class);
+				set.add(JoinAO.class);
 				CollectOperatorLogicalGraphVisitor<ILogicalOperator> collVisitor = new CollectOperatorLogicalGraphVisitor<>(
 						set, true);
 				GenericGraphWalker collectWalker = new GenericGraphWalker();
@@ -79,7 +82,11 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 
 				for (ILogicalOperator operatorForTransformation : collVisitor
 						.getResult()) {
-					transformOperator(operatorForTransformation);
+					if (operatorForTransformation instanceof AggregateAO) {
+						transformAggregateOperator((AggregateAO) operatorForTransformation);
+					} else if (operatorForTransformation instanceof JoinAO) {
+						transformJoinOperator((JoinAO) operatorForTransformation);
+					}
 				}
 
 			}
@@ -87,13 +94,16 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 		}
 	}
 
-	private void transformOperator(ILogicalOperator operatorForTransformation) {
-		// remove subscriptions
-		Collection<LogicalSubscription> upstreamOperatorSubscriptions = operatorForTransformation
-				.getSubscribedToSource();
-		Collection<LogicalSubscription> downstreamOperatorSubscriptions = operatorForTransformation
-				.getSubscriptions();
+	private void transformAggregateOperator(AggregateAO aggregateOperator) {
+		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		upstreamOperatorSubscriptions.addAll(aggregateOperator
+				.getSubscribedToSource());
 
+		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		downstreamOperatorSubscriptions.addAll(aggregateOperator
+				.getSubscriptions());
+
+		// remove subscriptions
 		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
 			ILogicalOperator target = upstreamOperatorSubscription.getTarget();
 			target.unsubscribeSink(upstreamOperatorSubscription);
@@ -105,65 +115,154 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 			target.unsubscribeFromSource(downstreamOperatorSubscription);
 		}
 
-		if (operatorForTransformation instanceof AggregateAO) {
-			AggregateAO aggregate = (AggregateAO) operatorForTransformation;
-			List<SDFAttribute> groupingAttributes = aggregate
-					.getGroupingAttributes();
-			if (!groupingAttributes.isEmpty()) {
-				// Fragment operator
-				HashFragmentAO fragment = new HashFragmentAO();
-				fragment.setAttributes(groupingAttributes);
-				fragment.setNumberOfFragments(degreeOfParallelization);
-				fragment.setName("Hash Fragment");
+		List<SDFAttribute> groupingAttributes = aggregateOperator
+				.getGroupingAttributes();
+		if (!groupingAttributes.isEmpty()) {
+			// Fragment operator
+			HashFragmentAO fragment = new HashFragmentAO();
+			fragment.setAttributes(groupingAttributes);
+			fragment.setNumberOfFragments(degreeOfParallelization);
+			fragment.setName("Hash Fragment");
 
-				// subscribe new operator
-				for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
-					operatorForTransformation
+			// subscribe new operator
+			for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
+				aggregateOperator
+						.unsubscribeFromSource(upstreamOperatorSubscription);
+				fragment.subscribeToSource(upstreamOperatorSubscription
+						.getTarget(), upstreamOperatorSubscription
+						.getSinkInPort(), upstreamOperatorSubscription
+						.getSourceOutPort(), upstreamOperatorSubscription
+						.getTarget().getOutputSchema());
+			}
+
+			UnionAO union = new UnionAO();
+			union.setName("Union");
+
+			for (int i = 0; i < degreeOfParallelization; i++) {
+				BufferAO buffer = new BufferAO();
+				buffer.setName("Buffer_" + i);
+				buffer.setThreaded(true);
+				buffer.setMaxBufferSize(10000000);
+
+				AggregateAO newPartialAggregate = aggregateOperator.clone();
+				newPartialAggregate.setName(aggregateOperator.getName() + "_"
+						+ i);
+
+				buffer.subscribeToSource(fragment, 0, i,
+						fragment.getOutputSchema());
+
+				newPartialAggregate.subscribeToSource(buffer, 0, 0,
+						buffer.getOutputSchema());
+
+				union.subscribeToSource(newPartialAggregate, i, 0,
+						newPartialAggregate.getOutputSchema());
+			}
+
+			for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
+				aggregateOperator
+						.unsubscribeSink(downstreamOperatorSubscription);
+				downstreamOperatorSubscription.getTarget().subscribeToSource(
+						union, downstreamOperatorSubscription.getSinkInPort(),
+						downstreamOperatorSubscription.getSourceOutPort(),
+						union.getOutputSchema());
+			}
+		}
+	}
+
+	private void transformJoinOperator(JoinAO joinOperator) {
+		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		upstreamOperatorSubscriptions.addAll(joinOperator
+				.getSubscribedToSource());
+
+		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		downstreamOperatorSubscriptions.addAll(joinOperator
+				.getSubscriptions());
+
+		// remove subscriptions
+		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
+			ILogicalOperator target = upstreamOperatorSubscription.getTarget();
+			target.unsubscribeSink(upstreamOperatorSubscription);
+		}
+
+		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
+			ILogicalOperator target = downstreamOperatorSubscription
+					.getTarget();
+			target.unsubscribeFromSource(downstreamOperatorSubscription);
+		}
+
+		List<SDFAttribute> attributes = joinOperator.getPredicate()
+				.getAttributes();
+		int numberOfFragments = 0;
+
+		List<Pair<HashFragmentAO, Integer>> fragmentsSinkInPorts = new ArrayList<Pair<HashFragmentAO, Integer>>();
+
+		for (SDFAttribute sdfAttribute : attributes) {
+
+			for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
+				int indexOfAttribute = upstreamOperatorSubscription.getSchema()
+						.indexOf(sdfAttribute);
+				if (indexOfAttribute != -1) {
+					// if join predicate attribute references on the source from
+					// this subscription, create fragment operator
+					// Fragment operator
+					HashFragmentAO fragment = new HashFragmentAO();
+					ArrayList<SDFAttribute> fragmentAttributes = new ArrayList<SDFAttribute>();
+					fragmentAttributes.add(sdfAttribute);
+					fragment.setAttributes(fragmentAttributes);
+					fragment.setNumberOfFragments(degreeOfParallelization);
+					fragment.setName("Hash Fragment_" + numberOfFragments);
+
+					Pair<HashFragmentAO, Integer> pair = new Pair<HashFragmentAO, Integer>();
+					pair.setE1(fragment);
+					pair.setE2(upstreamOperatorSubscription.getSinkInPort());
+					fragmentsSinkInPorts.add(pair);
+
+					joinOperator
 							.unsubscribeFromSource(upstreamOperatorSubscription);
 					fragment.subscribeToSource(upstreamOperatorSubscription
-							.getTarget(), upstreamOperatorSubscription
-							.getSinkInPort(), upstreamOperatorSubscription
+							.getTarget(), 0, upstreamOperatorSubscription
 							.getSourceOutPort(), upstreamOperatorSubscription
 							.getTarget().getOutputSchema());
-				}
 
-				UnionAO union = new UnionAO();
-				union.setName("Union");
-
-				for (int i = 0; i < degreeOfParallelization; i++) {
-					BufferAO buffer = new BufferAO();
-					buffer.setName("Buffer_"+i);
-					buffer.setThreaded(true);
-					buffer.setMaxBufferSize(10000000);
-					
-					AggregateAO newPartialAggregate = (AggregateAO) operatorForTransformation
-							.clone();
-					newPartialAggregate.setName(operatorForTransformation
-							.getName() + "_" + i);
-
-					buffer.subscribeToSource(fragment, 0, i,
-							fragment.getOutputSchema());
-					
-					newPartialAggregate.subscribeToSource(buffer, 0, 0,
-							buffer.getOutputSchema());
-					
-					union.subscribeToSource(newPartialAggregate, i, 0,
-							newPartialAggregate.getOutputSchema());
-				}
-
-				for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-					operatorForTransformation
-							.unsubscribeSink(downstreamOperatorSubscription);
-					downstreamOperatorSubscription.getTarget()
-							.subscribeToSource(
-									union,
-									downstreamOperatorSubscription
-											.getSinkInPort(),
-									downstreamOperatorSubscription
-											.getSourceOutPort(),
-									union.getOutputSchema());
+					numberOfFragments++;
+					break;
 				}
 			}
+
+		}
+
+		UnionAO union = new UnionAO();
+		union.setName("Union");
+
+		int bufferCounter = 0;
+		for (int i = 0; i < degreeOfParallelization; i++) {
+			JoinAO newJoin = joinOperator.clone();
+			newJoin.setName(joinOperator.getName() + "_" + i);
+
+			for (Pair<HashFragmentAO, Integer> pair : fragmentsSinkInPorts) {
+				BufferAO buffer = new BufferAO();
+				buffer.setName("Buffer_" + bufferCounter);
+				buffer.setThreaded(true);
+				buffer.setMaxBufferSize(10000000);
+				bufferCounter++;
+
+				buffer.subscribeToSource(pair.getE1(), 0, i, pair.getE1()
+						.getOutputSchema());
+
+				newJoin.subscribeToSource(buffer, pair.getE2(), 0,
+						buffer.getOutputSchema());
+
+				union.subscribeToSource(newJoin, i, 0,
+						newJoin.getOutputSchema());
+			}
+		}
+
+		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
+			joinOperator.unsubscribeSink(downstreamOperatorSubscription);
+			downstreamOperatorSubscription.getTarget().subscribeToSource(union,
+					downstreamOperatorSubscription.getSinkInPort(),
+					downstreamOperatorSubscription.getSourceOutPort(),
+					union.getOutputSchema());
 		}
 
 	}
