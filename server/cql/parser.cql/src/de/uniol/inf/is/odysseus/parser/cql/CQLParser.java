@@ -141,8 +141,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public synchronized List<IExecutorCommand> parse(String query,
 			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
 			throws QueryParseException {
-		// replace deprecated strings?
-		
+		// HACK: replace deprecated strings
+		query = query.replace("Now()", "TimeInterval.start");
+		query = query.replace("now()", "TimeInterval.start");
+		query = query.replace("streamtime()", "TimeInterval.start");
+		query = query.replace("Streamtime()", "TimeInterval.start");
+		query = query.replace("StreamTime()", "TimeInterval.start");
 		return parse(new StringReader(query), user, dd, context, metaAttribute);
 	}
 
