@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,9 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
+
+import org.apache.commons.io.FilenameUtils;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session.PresentationStyle;
@@ -37,6 +41,8 @@ public class MainFrame extends JFrame
 	private JTabbedPane sessionTabbedPane;
 	private List<Session> sessions;
 	private JMenuBar menuBar;
+	
+	private JFileChooser playbackFileChooser = new JFileChooser();
 	
 	/**
 	 * Create the frame.
@@ -250,13 +256,24 @@ public class MainFrame extends JFrame
 	
 	protected void startPlaybackSessionMenuClick() 
 	{
-		JFileChooser fc = new JFileChooser();				
-		int returnVal = fc.showOpenDialog(this);		
+		playbackFileChooser.setFileFilter(new FileFilter() 
+			{
+				@Override public String getDescription() 
+				{ 
+					return "Scenario files (*.xml)"; 
+				}
+				
+				@Override public boolean accept(File file) 
+				{
+					return file.isDirectory() || FilenameUtils.getExtension(file.getName()).equals("xml");
+				}
+		});
+		int returnVal = playbackFileChooser.showOpenDialog(this);		
 		if (returnVal == JFileChooser.APPROVE_OPTION) 
 		{
 			try 
 			{			
-				Scene scene = Scene.fromFile(fc.getSelectedFile());
+				Scene scene = Scene.fromFile(playbackFileChooser.getSelectedFile());
 			
 				PlaybackSession playbackSession = new PlaybackSession(scene);
 				Application.getMainFrame().addSession(playbackSession);

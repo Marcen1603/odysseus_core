@@ -59,6 +59,10 @@ public class MapVisualization extends Visualization
     	
         graphics.setColor(Color.BLACK);
         graphics.fillRect(0, 0, w, h);    	
+
+    	// Quit this function w/o having to comment everything to avoid warnings...
+    	// TODO: Do correct implementation of Map
+    	if (Math.abs(1+2)==3) return;        
         
 		int mapW = mapImage.getWidth();
 		int mapH = mapImage.getHeight();
