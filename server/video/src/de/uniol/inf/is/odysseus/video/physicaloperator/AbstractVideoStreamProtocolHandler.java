@@ -119,7 +119,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 				// Frame timestamps will be extrapolated from beginning time stamp specified in the options
 				// If no timestamp is given, system time will be used
 				// curTime = startTime + frameNum/fps
-				startTime = getOptionsMap().getLong("starttime", 0);
+				startTime = getOptionsMap().getLong("starttime", -1);
 				break;
 				
 			case fileTime:
@@ -135,7 +135,8 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 				// Frame timestamps will be read from synchronization file
 				syncFileName = getOptionsMap().get("syncfilename");
 				// TODO: Read first timestamp
-				break;
+				throw new UnsupportedOperationException("Timestamp mode \"syncfile\" not yet implemented for reading!");
+//				break;
 				
 			case none:
 				break;
@@ -143,7 +144,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 				break;
 			}
 	
-			if (startTime == 0)
+			if (startTime == -1)
 				startTime = System.currentTimeMillis();				
 			
 			currentTime = startTime / 1000.0;	
