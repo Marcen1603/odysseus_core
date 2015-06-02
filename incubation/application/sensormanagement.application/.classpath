@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client"/>
+	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.core"/>
+	<classpathentry kind="src" path="/de.jaret.util.ui.timebars"/>
+	<classpathentry kind="src" path="/de.jaret.util"/>
+	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.wrapper.baslercamera"/>
+	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.wrapper.lms1xx"/>
+	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.image"/>
+	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.wrapper.fnirs"/>
+	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.s100.common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/de.uniol.inf.is.odysseus.sensormanagement.client"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/de.uniol.inf.is.odysseus.sensormanagement.common"/>
+	<classpathentry exported="true" kind="lib" path="/org.apache.hadoop.driver/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="/org.bytedeco.javacv/ffmpeg-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="/org.bytedeco.javacv/javacpp.jar"/>
+	<classpathentry kind="lib" path="/org.bytedeco.javacv/javacv.jar"/>
+	<classpathentry kind="lib" path="/org.bytedeco.javacv/opencv-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/miglayout15-swing.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.bytedeco.javacv"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
