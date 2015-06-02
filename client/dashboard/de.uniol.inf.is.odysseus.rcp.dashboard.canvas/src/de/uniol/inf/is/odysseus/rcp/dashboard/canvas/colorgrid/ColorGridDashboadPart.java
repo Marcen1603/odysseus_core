@@ -10,7 +10,6 @@ import org.eclipse.swt.widgets.Display;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
@@ -27,7 +26,8 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	private int boxWidth = 2;
 	private int boxHeight = 2;
 	private int value_pos = 2;
-	private long maxDuration = 1000*60*60;
+	///private long maxDuration = 1000*60*60*24*14;
+	private long maxDuration = -1;
 	private long maxTime;
 	private RGB color = new RGB(0, 255, 0);
 
@@ -48,13 +48,13 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 
 				// todo clear older values
 				if (grid[x][y] != null){
-					if (grid[x][y].getMetadata().getStart().getMainPoint()
+					if (maxDuration > 0 && grid[x][y].getMetadata().getStart().getMainPoint()
 							+ maxDuration < maxTime) {
 						fillRectangle(x * boxWidth, y * boxWidth, boxWidth,
 								boxHeight, backgroundColor);
 						grid[x][y] = null;
 					} else {
-						double v = grid[x][y].getAttribute(value_pos);
+						Number v = grid[x][y].getAttribute(value_pos);
 						fillRectangle(x * boxWidth, y * boxWidth, boxWidth,
 								boxHeight, getColor(v));
 					}
