@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -86,7 +87,8 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 
 	@Override
 	public void paintControl(PaintEvent e) {
-		Image bufferImage = new Image(Display.getCurrent(), width, height);
+		Point s = this.getCanvas().getSize();
+		Image bufferImage = new Image(Display.getCurrent(), s.x, s.y);
 		gc = new GC(bufferImage);
 		gc.setTextAntialias(SWT.ON);
 		gc.setAdvanced(true);
