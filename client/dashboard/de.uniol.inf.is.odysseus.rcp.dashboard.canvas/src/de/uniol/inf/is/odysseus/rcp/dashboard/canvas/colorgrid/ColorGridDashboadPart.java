@@ -27,7 +27,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	private int boxWidth = 2;
 	private int boxHeight = 2;
 	private int value_pos = 2;
-	private long maxDuration = 100000000000l;
+	private long maxDuration = 1000*60*60;
 	private long maxTime;
 	private RGB color = new RGB(0, 255, 0);
 
@@ -87,6 +87,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 
 	@Override
 	public void paintControl(PaintEvent e) {
+		// TODO: use clipping from e
 		Point s = this.getCanvas().getSize();
 		Image bufferImage = new Image(Display.getCurrent(), s.x, s.y);
 		gc = new GC(bufferImage);
