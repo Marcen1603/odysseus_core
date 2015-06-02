@@ -23,8 +23,8 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	private int height = 600;
 	private int xpos = 0;
 	private int ypos = 1;
-	private int boxWidth = 3;
-	private int boxHeight = 3;
+	private int boxWidth = 2;
+	private int boxHeight = 2;
 	private int value_pos = 2;
 	private long maxDuration = 100000000000l;
 	private long maxTime;
