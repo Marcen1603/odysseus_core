@@ -24,16 +24,17 @@ import org.eclipse.swt.widgets.Canvas;
  */
 public class CanvasUpdater extends Thread {
     final Canvas canvas;
-
+    final long delay;
+    
     /**
      * Class constructor.
      *
      */
-    public CanvasUpdater(final Canvas canvas) {
+    public CanvasUpdater(final Canvas canvas, long delay) {
         this.canvas = canvas;
         this.setName("Canvas updater");
         this.setDaemon(true);
-
+        this.delay = delay;
     }
 
     /**
@@ -53,7 +54,7 @@ public class CanvasUpdater extends Thread {
                 });
 
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(delay);
                 }
                 catch (final InterruptedException e) {
                     // Empty block

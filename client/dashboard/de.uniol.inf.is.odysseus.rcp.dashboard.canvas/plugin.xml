@@ -67,6 +67,11 @@
             class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.spatial.TrackDashboardPart"
             configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.spatial.TrackConfigurer"
             name="Track">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorgrid.ColorGridDashboadPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorgrid.ColorGridConfigurer"
+            name="ColorGrid (dashboadPart)">
       </dashboardPart> 
    </extension>
 

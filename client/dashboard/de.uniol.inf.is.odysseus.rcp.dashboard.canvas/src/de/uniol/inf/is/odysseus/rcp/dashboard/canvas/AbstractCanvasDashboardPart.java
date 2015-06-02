@@ -56,8 +56,10 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
     private Canvas canvas;
     private final Queue<IStreamObject<?>> queue = new ConcurrentLinkedQueue<>();
     private CanvasUpdater updater;
-    private GC gc;
+    protected GC gc;
     private int maxElements = 100;
+    private long delay = 100;
+    protected Color backgroundColor;
 
     /**
      * {@inheritDoc}
@@ -69,12 +71,13 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
         final Composite composite = new Composite(parent, SWT.BORDER);
         composite.setLayout(new FillLayout());
 
-        this.canvas = new Canvas(composite, SWT.BORDER);
-        this.canvas.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+        this.canvas = new Canvas(composite, SWT.BORDER | SWT.DOUBLE_BUFFERED);
+        backgroundColor = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+        this.canvas.setBackground(backgroundColor);
         this.canvas.addPaintListener(this);
 
         parent.layout();
-        this.updater = new CanvasUpdater(this.canvas);
+        this.updater = new CanvasUpdater(this.canvas, delay);
         this.updater.start();
     }
 
@@ -387,6 +390,20 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
         final Color tmpColor = this.gc.getBackground();
         this.gc.setBackground(this.toColor(color));
         this.gc.fillRectangle((int) corner.x, (int) corner.y, width, height);
+        this.gc.setBackground(tmpColor);
+    }
+    
+    public void fillRectangle(final int x, final int y, final int width, final int height, final IColorSpace color) {
+        final Color tmpColor = this.gc.getBackground();
+        this.gc.setBackground(this.toColor(color));
+        this.gc.fillRectangle(x, y, width, height);
+        this.gc.setBackground(tmpColor);
+    }
+    
+    public void fillRectangle(final int x, final int y, final int width, final int height, final Color color) {
+        final Color tmpColor = this.gc.getBackground();
+        this.gc.setBackground(color);
+        this.gc.fillRectangle(x, y, width, height);
         this.gc.setBackground(tmpColor);
     }
 
