@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.command.Command;
+import de.uniol.inf.is.odysseus.core.command.ICommandProvider;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -123,7 +125,7 @@ class VectorAttributeFilter extends TupleAttributeFilter
 	}
 }
 
-public class RelationalDigitalFilterPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> 
+public class RelationalDigitalFilterPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> implements ICommandProvider 
 {
 	static Logger LOG = LoggerFactory.getLogger(SenderPO.class);
 
@@ -208,6 +210,20 @@ public class RelationalDigitalFilterPO<T extends IMetaAttribute> extends Abstrac
 		}
 	}
 
+	@Override
+	public Command getCommandByName(String commandName, SDFSchema schema) 
+	{
+		switch (commandName)
+		{
+			case "setfilterparameters":
+			{
+				return null;
+			}
+			
+ 		default: return null;
+		}
+	}	
+	
 	@Override
 	public OutputMode getOutputMode() 
 	{
