@@ -354,16 +354,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 	{
 		synchronized (processLock)
 		{
-			if (isDone) return null;
-			
-			if (this instanceof FFmpegVideoStreamProtocolHandler)
-				System.out.println("getNext enter: queue size = " + tupleQueue.size());
-			
-			Tuple<IMetaAttribute> tuple = tupleQueue.pop();
-			
-//			if (this instanceof FFmpegVideoStreamProtocolHandler)
-//				System.out.println("getNext leave");
-	        return tuple;
+	        return isDone ? null : tupleQueue.pop();
 		}
 	}
 
