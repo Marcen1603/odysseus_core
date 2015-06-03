@@ -28,27 +28,28 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	private long elementsRead;
 	private long puncRead;
-	
+
 	final private long limit;
 	private boolean done;
-	
+
 	private List<IStreamable> inputBuffer = new ArrayList<>();
 	private List<IStreamable> outputBuffer = new ArrayList<>();
 	final private ReentrantLock lockInput = new ReentrantLock(true);
 	final private ReentrantLock lockOutput = new ReentrantLock(true);
 
 	Runner runner;
-	
-	class Runner extends Thread{
-		
+	private boolean drainAtClose;
+
+	class Runner extends Thread {
+
 		private boolean terminate = false;
 		private boolean started = false;
-		
+
 		public Runner(String name) {
 			super(name);
 		}
-		
-		public void terminate(){
+
+		public void terminate() {
 			this.terminate = true;
 		}
 
@@ -105,17 +106,16 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		return outputBuffer.size();
 	}
 
-	public boolean isRunning(){
+	public boolean isRunning() {
 		return runner != null && runner.started;
 	}
-	
+
 	@Override
 	protected void process_next(R object, int port) {
 		elementsRead++;
 		addObjectToBuffer(object);
 	}
 
-	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		puncRead++;
@@ -154,7 +154,10 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	@Override
 	protected void process_close() {
 		lockOutput.lock();
-		drainBuffers();
+		if (drainAtClose) {
+			drainBuffers();
+		}
+		runner.terminate = true;
 		lockOutput.unlock();
 	}
 
@@ -164,10 +167,10 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		lockOutput.unlock();
 		done = true;
 	}
-	
+
 	@Override
 	public boolean isDone() {
-		return done ;
+		return done;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -203,17 +206,17 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
-		map.put("Elements processed", elementsRead+"");
-		map.put("Punctuations processed", puncRead+"");
-		map.put("CurrentSize", getElementsStored1()+"");
-		map.put("InputQueue", getInputBufferSize()+"");
-		map.put("OutputQueue", getOutputBufferSize()+"");
-		map.put("started",isRunning()+"");
+		map.put("Elements processed", elementsRead + "");
+		map.put("Punctuations processed", puncRead + "");
+		map.put("CurrentSize", getElementsStored1() + "");
+		map.put("InputQueue", getInputBufferSize() + "");
+		map.put("OutputQueue", getOutputBufferSize() + "");
+		map.put("started", isRunning() + "");
 		return map;
 	}
-	
-	
-	
-	
-}
 
+	public void setDrainAtClose(boolean drainAtClose) {
+		this.drainAtClose = drainAtClose;
+	}
+
+}

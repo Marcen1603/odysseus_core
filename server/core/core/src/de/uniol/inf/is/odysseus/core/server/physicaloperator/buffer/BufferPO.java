@@ -53,18 +53,11 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 	public BufferPO() {
 		super();
-//		final BufferPO<T> t = this;
-//		this.addMonitoringData("selectivity",
-//				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
 	}
 
 	public BufferPO(BufferPO<T> bufferedPipe) {
 		super(bufferedPipe);
 		buffer.addAll(bufferedPipe.buffer);
-//		final BufferPO<T> t = this;
-//		this.addMonitoringData("selectivity",
-//				new StaticValueMonitoringData<Double>(t, "selectivity", 1d));
-
 	}
 
 	@Override
@@ -88,22 +81,12 @@ public class BufferPO<T extends IStreamObject<?>> extends
 
 	@Override
 	public boolean hasNext() {
-
-		// Its not possible
-		// if (!isOpen()) {
-		// getLogger()
-		// .error("hasNext call on not opened buffer! " + this + " "
-		// + buffer);
-		// return false;
-		// }
-
 		return !buffer.isEmpty();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
-		//dumpBuffer();
 		if (!this.buffer.isEmpty()) {
 			// the transfer might take some time, so pop element first and
 			// release lock on buffer instead of transfer(buffer.pop())

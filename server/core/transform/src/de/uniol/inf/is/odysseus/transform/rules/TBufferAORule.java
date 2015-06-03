@@ -46,6 +46,7 @@ public class TBufferAORule extends AbstractTransformationRule<BufferAO> {
 
 		if (algebraOp.isThreaded()) {
 			po = new ThreadedBufferPO(algebraOp.getMaxBufferSize());
+			((ThreadedBufferPO)po).setDrainAtClose(algebraOp.isDrainAtClose());
 		} else if (algebraOp.getMaxBufferSize() > 0) {
 			po = new BlockingBufferPO(algebraOp.getMaxBufferSize());
 		} else {
