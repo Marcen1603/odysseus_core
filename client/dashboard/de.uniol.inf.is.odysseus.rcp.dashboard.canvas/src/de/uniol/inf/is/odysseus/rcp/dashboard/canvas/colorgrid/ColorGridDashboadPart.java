@@ -85,20 +85,21 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 
-	@Override
-	public void paintControl(PaintEvent e) {
-		// TODO: use clipping from e
-		Point s = this.getCanvas().getSize();
-		Image bufferImage = new Image(Display.getCurrent(), s.x, s.y);
-		gc = new GC(bufferImage);
-		gc.setTextAntialias(SWT.ON);
-		gc.setAdvanced(true);
-		gc.setAntialias(SWT.ON);
-		doPaint();
-		gc.dispose();
-		gc = null;
-		e.gc.drawImage(bufferImage, 0, 0);
-		bufferImage.dispose();
-	}
+	// Now correctly in super class
+//	@Override
+//	public void paintControl(PaintEvent e) {
+//		// TODO: use clipping from e
+//		Point s = this.getCanvas().getSize();
+//		Image bufferImage = new Image(Display.getCurrent(), s.x, s.y);
+//		gc = new GC(bufferImage);
+//		gc.setTextAntialias(SWT.ON);
+//		gc.setAdvanced(true);
+//		gc.setAntialias(SWT.ON);
+//		doPaint();
+//		gc.dispose();
+//		gc = null;
+//		e.gc.drawImage(bufferImage, 0, 0);
+//		bufferImage.dispose();
+//	}
 
 }
