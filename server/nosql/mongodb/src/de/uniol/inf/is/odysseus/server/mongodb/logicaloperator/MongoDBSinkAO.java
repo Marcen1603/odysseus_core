@@ -51,4 +51,9 @@ public class MongoDBSinkAO extends AbstractNoSQLSinkAO {
     public String getCollectionName() {
         return collectionName;
     }
+    
+    @Override
+    public boolean isSourceOperator() {
+    	return false;
+    }
 }
