@@ -110,7 +110,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator, Object element, int port) {
+	public void streamElementReceived(IPhysicalOperator senderOperator, Object element, int port) {
 		synchronized (pendingElements) {
 			pendingElements.add(element != null ? element.toString() : "null");
 			if (!isInfinite() && pendingElements.size() > maxElements) {
@@ -120,7 +120,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
+	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
 		synchronized (pendingElements) {
 			if (!punctuation.isHeartbeat() || showHeartbeats) {
 				pendingElements.add("Punctuation: " + punctuation);
@@ -132,7 +132,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 		synchronized (pendingElements) {
 			pendingElements.add("Security Punctuation: " + sp);
 			if (!isInfinite() && pendingElements.size() > maxElements) {

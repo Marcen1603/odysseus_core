@@ -366,7 +366,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		synchronized (listeners) {
 			for (IStreamElementListener<In> l : listeners) {
 				try {
-					l.streamElementRecieved(senderOperator, element, port);
+					l.streamElementReceived(senderOperator, element, port);
 				} catch (Throwable t) {
 					LOG.error(
 							"Exception during invoking listener for DefaultStreamConnection",
@@ -383,7 +383,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 				if (l != null) {
 					for (IStreamElementListener<In> ls : l) {
 						try {
-							ls.streamElementRecieved(senderOperator, element,
+							ls.streamElementReceived(senderOperator, element,
 									port);
 						} catch (Throwable t) {
 							LOG.error(
@@ -402,7 +402,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		synchronized (listeners) {
 			for (IStreamElementListener<In> l : listeners) {
 				try {
-					l.punctuationElementRecieved(senderOperator, point, port);
+					l.punctuationElementReceived(senderOperator, point, port);
 				} catch (Throwable t) {
 					LOG.error(
 							"Exception during invoking punctuation listener for DefaultStreamConnection",
@@ -419,7 +419,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 				if (l != null) {
 					for (IStreamElementListener<In> ls : l) {
 						try {
-							ls.punctuationElementRecieved(senderOperator,
+							ls.punctuationElementReceived(senderOperator,
 									point, port);
 						} catch (Throwable t) {
 							LOG.error(
@@ -439,7 +439,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		synchronized (listeners) {
 			for (IStreamElementListener<In> l : listeners) {
 				try {
-					l.securityPunctuationElementRecieved(senderOperator, sp,
+					l.securityPunctuationElementReceived(senderOperator, sp,
 							port);
 				} catch (Throwable t) {
 					LOG.error(
@@ -457,7 +457,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 				if (l != null) {
 					for (IStreamElementListener<In> ls : l) {
 						try {
-							ls.securityPunctuationElementRecieved(
+							ls.securityPunctuationElementReceived(
 									senderOperator, sp, port);
 						} catch (Throwable t) {
 							LOG.error(

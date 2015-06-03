@@ -157,7 +157,7 @@ public abstract class AbstractHistogramSeriesChart extends AbstractJFreeChart<Do
 
     @SuppressWarnings("unchecked")
     @Override
-    public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, final int port) {
+    public void streamElementReceived(IPhysicalOperator senderOperator, IStreamObject<?> element, final int port) {
         if (!(element instanceof Tuple<?>)) {
             LOG.warn("Stream visualization is only for relational tuple, not for {}!", element.getClass());
             return;

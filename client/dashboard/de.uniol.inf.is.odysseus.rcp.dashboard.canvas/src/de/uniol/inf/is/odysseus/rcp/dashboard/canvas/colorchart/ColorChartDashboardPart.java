@@ -505,7 +505,7 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
                     tuple.setAttribute(0, rnd.nextDouble() * 100);
                     tuple.setAttribute(1, rnd.nextDouble() * 100);
                     tuple.setAttribute(2, rnd.nextDouble() * 10);
-                    chart.streamElementRecieved(null, tuple, 0);
+                    chart.streamElementReceived(null, tuple, 0);
                     try {
                         Thread.sleep(100);
                     }

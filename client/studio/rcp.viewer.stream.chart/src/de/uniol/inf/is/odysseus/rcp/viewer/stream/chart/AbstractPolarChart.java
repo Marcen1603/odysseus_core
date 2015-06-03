@@ -132,7 +132,7 @@ public abstract class AbstractPolarChart extends AbstractJFreeChart<Double, ITim
 
     @SuppressWarnings("unchecked")
     @Override
-    public void streamElementRecieved(final IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
+    public void streamElementReceived(final IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
         if (!(element instanceof Tuple<?>)) {
             AbstractPolarChart.LOG.warn("Stream visualization is only for relational tuple, not for {}!", element.getClass());
             return;

@@ -622,7 +622,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void securityPunctuationElementRecieved(
 			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-		punctuationElementRecieved(senderOperator, sp, port);
+		punctuationElementReceived(senderOperator, sp, port);
 	}
 
 	/**

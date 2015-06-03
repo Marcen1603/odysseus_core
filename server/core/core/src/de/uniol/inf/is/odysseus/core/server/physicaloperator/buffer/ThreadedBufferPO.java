@@ -29,6 +29,9 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	private long elementsRead;
 	private long puncRead;
 	
+	final private long limit;
+	private boolean done;
+	
 	private List<IStreamable> inputBuffer = new ArrayList<>();
 	private List<IStreamable> outputBuffer = new ArrayList<>();
 	final private ReentrantLock lockInput = new ReentrantLock(true);
@@ -80,9 +83,6 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	}
 
-	final private long limit;
-	private boolean done;
-
 	public ThreadedBufferPO(long l) {
 		this.limit = l;
 	}
@@ -112,15 +112,6 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	@Override
 	protected void process_next(R object, int port) {
 		elementsRead++;
-		// Start thread
-		
-//		try {
-//			if (!isRunning()) {
-//				runner.start();
-//			}
-//		} catch (Exception e) {
-//			// TODO: handle exception
-//		}
 		addObjectToBuffer(object);
 	}
 

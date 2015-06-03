@@ -204,7 +204,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
      * {@inheritDoc}
      */
     @Override
-    public void streamElementRecieved(final IPhysicalOperator operator, final IStreamObject<?> element, final int port) {
+    public void streamElementReceived(final IPhysicalOperator operator, final IStreamObject<?> element, final int port) {
         this.queue.offer(element);
         while (this.queue.size() > this.getMaxElements()) {
             this.queue.poll();
@@ -215,7 +215,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
      * {@inheritDoc}
      */
     @Override
-    public void punctuationElementRecieved(final IPhysicalOperator operator, final IPunctuation punctuation, final int port) {
+    public void punctuationElementReceived(final IPhysicalOperator operator, final IPunctuation punctuation, final int port) {
         // Empty method
     }
 
@@ -223,7 +223,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
      * {@inheritDoc}
      */
     @Override
-    public void securityPunctuationElementRecieved(final IPhysicalOperator operator, final ISecurityPunctuation punctuation, final int port) {
+    public void securityPunctuationElementReceived(final IPhysicalOperator operator, final ISecurityPunctuation punctuation, final int port) {
         // Empty method
     }
 

@@ -65,7 +65,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	}
 
 	@Override
-	public void streamElementRecieved(IPhysicalOperator operator,
+	public void streamElementReceived(IPhysicalOperator operator,
 			IStreamObject<?> element, int port) {
 		@SuppressWarnings("unchecked")
 		Tuple<? extends ITimeInterval> t = (Tuple<? extends ITimeInterval>) element;
@@ -76,12 +76,12 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator,
+	public void punctuationElementReceived(IPhysicalOperator senderOperator,
 			IPunctuation point, int port) {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(
+	public void securityPunctuationElementReceived(
 			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 

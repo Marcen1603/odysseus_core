@@ -112,7 +112,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	}
 
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator, Object element, int port) {
+	public void streamElementReceived(IPhysicalOperator senderOperator, Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {
 			System.out.println("Warning: StreamTable is only for relational tuple!");
 			return;
@@ -161,11 +161,11 @@ public class StreamTableEditor implements IStreamEditorType {
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
+	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 
 	@Override

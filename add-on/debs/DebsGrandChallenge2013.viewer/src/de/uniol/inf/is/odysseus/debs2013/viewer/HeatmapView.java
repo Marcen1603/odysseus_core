@@ -42,7 +42,7 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 	private ConcurrentHashMap<Integer, Double> colorValueMap;
 	
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator, Object element, int port) {
+	public void streamElementReceived(IPhysicalOperator senderOperator, Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {
 			System.out.println("Warning: Soccer is only for relational tuple!");
 			return;
@@ -67,9 +67,9 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 		
 	}
 	@Override
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {}
+	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port) {}
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
+	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
 			int port) {}
 	@Override
 	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {

@@ -359,7 +359,7 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
                     tuple.setAttribute(0, i);
                     tuple.setAttribute(1, rnd.nextDouble() * 100);
                     tuple.setAttribute(2, rnd.nextDouble() * 1000);
-                    compass.streamElementRecieved(null, tuple, 0);
+                    compass.streamElementReceived(null, tuple, 0);
                     try {
                         Thread.sleep(200);
                     }

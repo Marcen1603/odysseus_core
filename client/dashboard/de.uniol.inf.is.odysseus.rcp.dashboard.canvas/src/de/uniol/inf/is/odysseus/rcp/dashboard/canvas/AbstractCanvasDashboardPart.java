@@ -42,8 +42,6 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.IColorSpace;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
@@ -57,13 +55,14 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  */
 public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart implements PaintListener {
     private final static String MAX_ELEMENTS = "maxElements";
+    private final static String REPAINT_DELAY = "repaintDelay";
 
     private Canvas canvas;
     private final Queue<IStreamObject<?>> queue = new ConcurrentLinkedQueue<>();
     private CanvasUpdater updater;
     protected GC gc;
     private int maxElements = 100;
-    private long delay = 100;
+    private long repaintDelay = 1000;
     protected Color backgroundColor;
 
     /**
@@ -82,7 +81,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
         this.canvas.addPaintListener(this);
 
         parent.layout();
-        this.updater = new CanvasUpdater(this.canvas, delay);
+        this.updater = new CanvasUpdater(this.canvas, repaintDelay);
         this.updater.start();
     }
 
@@ -90,27 +89,11 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
      * {@inheritDoc}
      */
     @Override
-    public void streamElementRecieved(final IPhysicalOperator operator, final IStreamObject<?> element, final int port) {
+    public void streamElementReceived(final IPhysicalOperator operator, final IStreamObject<?> element, final int port) {
         this.queue.offer(element);
         while (this.queue.size() > this.getMaxElements()) {
             this.queue.poll();
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void punctuationElementRecieved(final IPhysicalOperator operator, final IPunctuation punctuation, final int port) {
-        // Empty method
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void securityPunctuationElementRecieved(final IPhysicalOperator operator, final ISecurityPunctuation punctuation, final int port) {
-        // Empty method
     }
 
     /**
@@ -164,6 +147,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
     @Override
     public void onLoad(Map<String, String> saved) {
         maxElements = Integer.valueOf(saved.get(MAX_ELEMENTS) != null ? saved.get(MAX_ELEMENTS) : "1000");
+        repaintDelay = Long.valueOf(saved.get(REPAINT_DELAY) != null? saved.get(REPAINT_DELAY):"1000");
     }
 
     /**
@@ -174,6 +158,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
     public Map<String, String> onSave() {
         Map<String, String> toSaveMap = Maps.newHashMap();
         toSaveMap.put(MAX_ELEMENTS, String.valueOf(maxElements));
+        toSaveMap.put(REPAINT_DELAY, String.valueOf(repaintDelay));
         return toSaveMap;
     }
 

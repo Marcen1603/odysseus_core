@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.server.nosql.base.util.connection.NoSQLConnectio
  */
 @SuppressWarnings("all")
 public class ElasticSearchConnectionWrapper extends NoSQLConnectionWrapper<TransportClient> {
-
+	
     public ElasticSearchConnectionWrapper(String host, int port, String user, String password, String database) throws OpenFailedException {
         super(host, port, user, password, database);
     }

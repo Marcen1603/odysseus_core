@@ -36,7 +36,10 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public abstract class AbstractDashboardPart implements IDashboardPart {
 
@@ -233,8 +236,45 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	
 	@Override
 	public void removeContext( String key ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");
-		
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "key for context map must not be null or empty!");		
 		contextMap.remove(key);
 	}
+	
+	@Override
+	public void streamElementReceived(IPhysicalOperator senderOperator,
+			IStreamObject<?> element, int port) {
+		// Just for migration cases
+		streamElementRecieved(senderOperator,element, port);
+	}
+	
+	@Deprecated
+	protected void streamElementRecieved(IPhysicalOperator senderOperator,
+			IStreamObject<?> element, int port) {
+	}
+	
+	@Override
+	public void punctuationElementReceived(IPhysicalOperator senderOperator,
+			IPunctuation point, int port) {
+		// Just for migration cases
+		punctuationElementRecieved(senderOperator, point, port);
+	}
+	
+	@Deprecated
+	protected void punctuationElementRecieved(IPhysicalOperator senderOperator,
+			IPunctuation point, int port) {
+	}
+	
+	@Override
+	public void securityPunctuationElementReceived(
+			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
+		// Just for migration cases		
+		securityPunctuationElementRecieved(senderOperator, sp, port);
+	}
+
+	@Deprecated
+	protected void securityPunctuationElementRecieved(
+			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
+		
+	}
+
 }

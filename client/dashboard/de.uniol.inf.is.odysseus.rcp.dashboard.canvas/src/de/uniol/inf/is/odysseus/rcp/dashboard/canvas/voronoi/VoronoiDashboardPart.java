@@ -942,7 +942,7 @@ public class VoronoiDashboardPart extends AbstractCanvasDashboardPart {
                     tuple.setAttribute(0, rnd.nextDouble() * 100);
                     tuple.setAttribute(1, rnd.nextDouble() * 100);
                     tuple.setAttribute(2, rnd.nextDouble() * 100);
-                    voronoi.streamElementRecieved(null, tuple, 0);
+                    voronoi.streamElementReceived(null, tuple, 0);
 
                     try {
                         Thread.sleep(1000);

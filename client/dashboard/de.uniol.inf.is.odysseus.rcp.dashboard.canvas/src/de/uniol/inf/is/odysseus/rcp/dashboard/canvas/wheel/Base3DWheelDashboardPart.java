@@ -65,7 +65,7 @@ public class Base3DWheelDashboardPart extends Abstract3DWheelDashboardPart {
                     tuple.setAttribute(0, i);
                     tuple.setAttribute(1, rnd.nextDouble() * 100);
                     tuple.setAttribute(2, rnd.nextDouble() * 1000);
-                    wheel.streamElementRecieved(null, tuple, 0);
+                    wheel.streamElementReceived(null, tuple, 0);
                     i++;
                     try {
                         Thread.sleep(100);

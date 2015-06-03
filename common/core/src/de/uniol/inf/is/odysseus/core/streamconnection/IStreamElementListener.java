@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public interface IStreamElementListener<In> {
 
-	public void streamElementRecieved(IPhysicalOperator senderOperator, In element, int port );
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port);
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port );
+	public void streamElementReceived(IPhysicalOperator senderOperator, In element, int port );
+	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port);
+	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port );
 	
 }

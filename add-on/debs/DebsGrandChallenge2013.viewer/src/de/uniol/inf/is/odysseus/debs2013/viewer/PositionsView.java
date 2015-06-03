@@ -56,7 +56,7 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 	final int sensorIdToRecognizeTimeProgress = 13;
 	
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator, Object element, int port) {
+	public void streamElementReceived(IPhysicalOperator senderOperator, Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {
 			System.out.println("Warning: Soccer is only for relational tuple!");
 			return;
@@ -71,10 +71,10 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {}
+	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port) {}
 
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
+	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
 			int port) {}
 
 	@Override

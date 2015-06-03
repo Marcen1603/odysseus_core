@@ -73,7 +73,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	}
 
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator, Object element, int port) {
+	public void streamElementReceived(IPhysicalOperator senderOperator, Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {
 			LOG.error("Warning: StreamMap is only for spatial relational tuple!");
 			return;
@@ -221,13 +221,13 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {
+	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
+	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
 			int port) {
 		// TODO Auto-generated method stub
 	}

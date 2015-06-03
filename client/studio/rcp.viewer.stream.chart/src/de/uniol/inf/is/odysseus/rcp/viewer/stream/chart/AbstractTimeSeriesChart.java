@@ -163,7 +163,7 @@ public abstract class AbstractTimeSeriesChart extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator,
+	public void streamElementReceived(IPhysicalOperator senderOperator,
 			IStreamObject<?> element, final int port) {
 		if (!(element instanceof Tuple<?>)) {
 			LOG.warn(

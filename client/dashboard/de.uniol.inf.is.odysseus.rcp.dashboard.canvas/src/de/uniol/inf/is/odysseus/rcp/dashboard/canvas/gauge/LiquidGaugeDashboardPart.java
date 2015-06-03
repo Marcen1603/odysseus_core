@@ -362,7 +362,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
                     tuple.setAttribute(0, i);
                     tuple.setAttribute(1, rnd.nextDouble() * 100);
                     tuple.setAttribute(2, rnd.nextDouble() * 1000);
-                    liquidGauge.streamElementRecieved(null, tuple, 0);
+                    liquidGauge.streamElementReceived(null, tuple, 0);
                     i++;
                     if (i > 100) {
                         i = 0;
