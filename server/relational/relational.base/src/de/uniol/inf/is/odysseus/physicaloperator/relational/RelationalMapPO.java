@@ -100,13 +100,12 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		Tuple<T> outputVal = Tuple.createEmptyTupleWithMeta(this.getOutputSchema().size(), object, requiresDeepClone);
 
 		synchronized (this.expressions) {
-			int outAttrPos = 0;
 			for (int i = 0; i < this.expressions.length; ++i) {
 
 				try {
 					Object expr = this.expressions[i].evaluate(object, getSessions(), preProcessResult);
 
-					outputVal.setAttribute(outAttrPos, expr);
+					outputVal.setAttribute(i, expr);
 					if (expr == null) {
 						nullValueOccured = true;
 					}
@@ -124,9 +123,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 									+ " with expression " + expressions[i], e);
 						}
 					}
-				} finally {
-					outAttrPos++;
-				}
+				} 
 			}
 		}
 		if (!nullValueOccured || (nullValueOccured && allowNull)) {
