@@ -4,8 +4,7 @@ Bundle-Name: Odysseus Core
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.core.Activator
-Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
- io.netty.bootstrap,
+Import-Package: io.netty.bootstrap,
  io.netty.buffer,
  io.netty.channel,
  io.netty.channel.nio,
