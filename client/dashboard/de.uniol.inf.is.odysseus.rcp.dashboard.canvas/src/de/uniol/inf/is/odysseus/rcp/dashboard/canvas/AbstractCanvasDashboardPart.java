@@ -27,6 +27,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Pattern;
 import org.eclipse.swt.graphics.Point;
@@ -115,13 +116,16 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
      */
     @Override
     public void paintControl(final PaintEvent e) {
-        this.gc = new GC(this.getCanvas());
+        Image bufferImage = new Image(Display.getCurrent(), this.getCanvas().getBounds());
+        this.gc = new GC(bufferImage);
         this.gc.setTextAntialias(SWT.ON);
         this.gc.setAdvanced(true);
         this.gc.setAntialias(SWT.ON);
         this.doPaint();
         this.gc.dispose();
         this.gc = null;
+        e.gc.drawImage(bufferImage, 0, 0);
+        bufferImage.dispose();
     }
 
     public abstract void doPaint();
