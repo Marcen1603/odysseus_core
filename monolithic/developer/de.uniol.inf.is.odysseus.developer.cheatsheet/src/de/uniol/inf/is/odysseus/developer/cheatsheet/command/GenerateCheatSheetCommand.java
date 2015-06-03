@@ -221,7 +221,9 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
         builder.append("\\rule{0.3\\linewidth}{0.25pt}\n");
         builder.append("\\scriptsize\n\n");
         builder.append("Copyright \\copyright\\ ").append(Calendar.getInstance().get(Calendar.YEAR)).append(" ODYSSEUS Team\n\n");
-        builder.append("\\href{http://odysseus.informatik.uni-oldenburg.de/}{http://odysseus.informatik.uni-oldenburg.de/}\n\n");
+        builder.append("\\href{http://odysseus.informatik.uni-oldenburg.de}{http://odysseus.informatik.uni-oldenburg.de}\n\n");
+        builder.append("Wiki: \\href{http://wiki.odysseus.informatik.uni-oldenburg.de}{http://wiki.odysseus.informatik.uni-oldenburg.de}\n\n");
+        builder.append("Forum: \\href{http://forum.odysseus.informatik.uni-oldenburg.de}{http://forum.odysseus.informatik.uni-oldenburg.de}\n\n");
         builder.append("\\end{multicols}\n");
         builder.append("\\end{document}\n");
     }
@@ -525,10 +527,11 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
         builder.append("#PARSER PQL\n");
         builder.append("#ADDQUERY\n\n");
         builder.append("input = ACCESS({source='source',\n");
-        builder.append("        wrapper='GenericPush',\n");
+        builder.append("        wrapper='GenericPull',\n");
         builder.append("        transport='File',\n");
         builder.append("        protocol='CSV',\n");
         builder.append("        dataHandler='Tuple',\n");
+        builder.append("        metaattribute=['TimeInterval'],\n");
         builder.append("        options=[['filename','example.csv']],\n");
         builder.append("        schema=[['value','Double']]\n");
         builder.append("})\n");
