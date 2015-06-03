@@ -84,6 +84,7 @@ public class ColorWheelConfigurer extends AbstractWheelDashboardPartConfigurer<C
                         gaugeColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         gaugeColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         ColorWheelConfigurer.this.getDashboardPart().setBaseColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }

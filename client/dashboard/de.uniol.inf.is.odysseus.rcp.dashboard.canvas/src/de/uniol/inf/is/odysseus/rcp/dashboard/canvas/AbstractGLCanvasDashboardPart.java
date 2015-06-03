@@ -260,7 +260,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
      */
     @Override
     public void onLoad(Map<String, String> saved) {
-        maxElements = Integer.valueOf(saved.get(MAX_ELEMENTS));
+        maxElements = Integer.valueOf(saved.get(MAX_ELEMENTS) != null ? saved.get(MAX_ELEMENTS) : "100");
     }
 
     /**

@@ -84,6 +84,7 @@ public class LiquidGaugeWheelConfigurer extends AbstractWheelDashboardPartConfig
                         gaugeColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         gaugeColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         LiquidGaugeWheelConfigurer.this.getDashboardPart().setGaugeColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }

@@ -84,6 +84,7 @@ public class ArrowWheelConfigurer extends AbstractWheelDashboardPartConfigurer<A
                         gaugeColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         gaugeColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         ArrowWheelConfigurer.this.getDashboardPart().setArrowColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }

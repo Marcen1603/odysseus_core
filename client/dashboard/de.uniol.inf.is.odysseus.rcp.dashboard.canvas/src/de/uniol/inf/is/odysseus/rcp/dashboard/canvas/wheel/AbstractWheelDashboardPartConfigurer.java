@@ -109,6 +109,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         AbstractWheelDashboardPartConfigurer.this.dashboardPart.setXPos(combo.getSelectionIndex());
+                        fireListener();
                     }
                 });
             }
@@ -121,6 +122,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         AbstractWheelDashboardPartConfigurer.this.dashboardPart.setYPos(combo.getSelectionIndex());
+                        fireListener();
 
                     }
                 });
@@ -134,6 +136,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         AbstractWheelDashboardPartConfigurer.this.dashboardPart.setZPos(combo.getSelectionIndex());
+                        fireListener();
 
                     }
                 });
@@ -151,6 +154,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                         if (!"".equals(text)) {
                             try {
                                 AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -192,6 +196,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                     public void widgetSelected(final SelectionEvent e) {
                         final Button b = (Button) e.widget;
                         AbstractWheelDashboardPartConfigurer.this.dashboardPart.setAutoadjust(b.getSelection());
+                        fireListener();
                     }
                 });
 
@@ -209,6 +214,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                         if (!"".equals(text)) {
                             try {
                                 AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -230,6 +236,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                         if (!"".equals(text)) {
                             try {
                                 AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -251,6 +258,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                         if (!"".equals(text)) {
                             try {
                                 AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -272,6 +280,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                         if (!"".equals(text)) {
                             try {
                                 AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -293,6 +302,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                         if (!"".equals(text)) {
                             try {
                                 AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMinZ(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -314,6 +324,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                         if (!"".equals(text)) {
                             try {
                                 AbstractWheelDashboardPartConfigurer.this.dashboardPart.setMaxZ(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -360,6 +371,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                         backgroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         backgroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         AbstractWheelDashboardPartConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -376,6 +388,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
                         AbstractWheelDashboardPartConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                        fireListener();
                     }
                 });
                 toolkit.createLabel(group, "");
@@ -403,6 +416,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                         foregroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         foregroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         AbstractWheelDashboardPartConfigurer.this.getDashboardPart().setForegroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -422,6 +436,7 @@ public abstract class AbstractWheelDashboardPartConfigurer<T extends AbstractWhe
                         }
                         fontNameText.setText(selectedFont.getName());
                         AbstractWheelDashboardPartConfigurer.this.getDashboardPart().setFont(selectedFont.getName());
+                        fireListener();
                     }
                 });
             }

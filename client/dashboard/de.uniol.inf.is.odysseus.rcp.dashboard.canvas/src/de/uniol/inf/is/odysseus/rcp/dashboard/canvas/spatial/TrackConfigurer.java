@@ -25,7 +25,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -33,7 +32,6 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
@@ -114,6 +112,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         TrackConfigurer.this.dashboardPart.setXPos(combo.getSelectionIndex());
+                        fireListener();
                     }
                 });
             }
@@ -126,6 +125,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         TrackConfigurer.this.dashboardPart.setYPos(combo.getSelectionIndex());
+                        fireListener();
 
                     }
                 });
@@ -143,6 +143,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                         if (!"".equals(text)) {
                             try {
                                 TrackConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -184,6 +185,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                     public void widgetSelected(final SelectionEvent e) {
                         final Button b = (Button) e.widget;
                         TrackConfigurer.this.dashboardPart.setAutoadjust(b.getSelection());
+                        fireListener();
                     }
                 });
 
@@ -201,6 +203,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                         if (!"".equals(text)) {
                             try {
                                 TrackConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -222,6 +225,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                         if (!"".equals(text)) {
                             try {
                                 TrackConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -243,6 +247,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                         if (!"".equals(text)) {
                             try {
                                 TrackConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -264,6 +269,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                         if (!"".equals(text)) {
                             try {
                                 TrackConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -311,6 +317,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                         backgroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         backgroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         TrackConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -327,6 +334,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
                         TrackConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                        fireListener();
                     }
                 });
                 toolkit.createLabel(group, "");
@@ -354,6 +362,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                         foregroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         foregroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         TrackConfigurer.this.getDashboardPart().setForegroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -375,6 +384,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                         }
                         imageText.setText(selectedFile);
                         TrackConfigurer.this.getDashboardPart().setImage(selectedFile);
+                        fireListener();
                     }
                 });
             }

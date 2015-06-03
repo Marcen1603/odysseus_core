@@ -110,6 +110,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         VoronoiConfigurer.this.dashboardPart.setXPos(combo.getSelectionIndex());
+                        fireListener();
                     }
                 });
             }
@@ -122,6 +123,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         VoronoiConfigurer.this.dashboardPart.setYPos(combo.getSelectionIndex());
+                        fireListener();
 
                     }
                 });
@@ -139,6 +141,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                         if (!"".equals(text)) {
                             try {
                                 VoronoiConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -180,6 +183,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                     public void widgetSelected(final SelectionEvent e) {
                         final Button b = (Button) e.widget;
                         VoronoiConfigurer.this.dashboardPart.setAutoadjust(b.getSelection());
+                        fireListener();
                     }
                 });
 
@@ -197,6 +201,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                         if (!"".equals(text)) {
                             try {
                                 VoronoiConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -218,6 +223,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                         if (!"".equals(text)) {
                             try {
                                 VoronoiConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -239,6 +245,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                         if (!"".equals(text)) {
                             try {
                                 VoronoiConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -260,6 +267,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                         if (!"".equals(text)) {
                             try {
                                 VoronoiConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -307,6 +315,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                         backgroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         backgroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         VoronoiConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -323,6 +332,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
                         VoronoiConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                        fireListener();
                     }
                 });
                 toolkit.createLabel(group, "");
@@ -350,6 +360,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                         foregroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         foregroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         VoronoiConfigurer.this.getDashboardPart().setForegroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }

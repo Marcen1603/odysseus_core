@@ -19,6 +19,8 @@ import java.text.NumberFormat;
 import java.util.Map;
 import java.util.Random;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -50,9 +52,11 @@ public class GaugeWheelDashboardPart extends AbstractWheelDashboardPart {
         this.fillArc(this.getCenter(), (int) (((1.0 / 3.0) * this.getRadius()) - 4), 180, (int) (-(value + 180) / 2), this.getGaugeColor());
         this.fillArc(this.getCenter(), (int) (((1.0 / 3.0) * this.getRadius()) - 14), 0, 360, gaugeBackgroundColor);
         final String text = NumberFormat.getNumberInstance().format(z);
-        final Coordinate extent = this.textExtent(text);
         this.setBackground(gaugeBackgroundColor);
-        this.drawText(text, new Coordinate(this.getCenter().x - (extent.x / 2), this.getCenter().y - extent.y), true);
+        final int fontSize = this.getFontSize(text, this.getFont(), (int) ((1.0 / 3.0) * this.getRadius() - 4), (int) ((1.0 / 3.0) * this.getRadius() - 4));
+        this.getGC().setFont(new Font(this.getGC().getDevice(), this.getFont(), fontSize, SWT.NORMAL));
+        final Coordinate extent = this.textExtent(text);
+        this.drawText(text, new Coordinate(this.getCenter().x - (extent.x / 2), this.getCenter().y + (extent.y / 2)), true);
     }
 
     /**
@@ -62,7 +66,7 @@ public class GaugeWheelDashboardPart extends AbstractWheelDashboardPart {
     @Override
     public void onLoad(Map<String, String> saved) {
         super.onLoad(saved);
-        gaugeColor = RGB.valueOf(saved.get(GAUGE_COLOR)!=null?saved.get(GAUGE_COLOR):"255,0,0");
+        gaugeColor = RGB.valueOf(saved.get(GAUGE_COLOR) != null ? saved.get(GAUGE_COLOR) : "255,0,0");
     }
 
     /**

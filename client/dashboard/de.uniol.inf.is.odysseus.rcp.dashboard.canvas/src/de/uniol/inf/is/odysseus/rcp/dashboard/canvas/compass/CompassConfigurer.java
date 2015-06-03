@@ -112,6 +112,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         CompassConfigurer.this.dashboardPart.setPos(combo.getSelectionIndex());
+                        fireListener();
                     }
                 });
             }
@@ -128,6 +129,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                         if (!"".equals(text)) {
                             try {
                                 CompassConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -169,6 +171,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                     public void widgetSelected(final SelectionEvent e) {
                         final Button b = (Button) e.widget;
                         CompassConfigurer.this.dashboardPart.setAutoadjust(b.getSelection());
+                        fireListener();
                     }
                 });
 
@@ -186,6 +189,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                         if (!"".equals(text)) {
                             try {
                                 CompassConfigurer.this.dashboardPart.setMin(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -207,6 +211,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                         if (!"".equals(text)) {
                             try {
                                 CompassConfigurer.this.dashboardPart.setMax(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -254,6 +259,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                         backgroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         backgroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         CompassConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -270,6 +276,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
                         CompassConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                        fireListener();
                     }
                 });
                 toolkit.createLabel(group, "");
@@ -296,6 +303,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                         arrowColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         arrowColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         CompassConfigurer.this.getDashboardPart().setColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -315,6 +323,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                         }
                         fontNameText.setText(selectedFont.getName());
                         CompassConfigurer.this.getDashboardPart().setFont(selectedFont.getName());
+                        fireListener();
                     }
                 });
             }

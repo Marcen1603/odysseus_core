@@ -110,6 +110,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         ColorChartConfigurer.this.dashboardPart.setXPos(combo.getSelectionIndex());
+                        fireListener();
                     }
                 });
             }
@@ -122,6 +123,8 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         ColorChartConfigurer.this.dashboardPart.setYPos(combo.getSelectionIndex());
+                        fireListener();
+
                     }
                 });
             }
@@ -134,6 +137,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         ColorChartConfigurer.this.dashboardPart.setZPos(combo.getSelectionIndex());
+                        fireListener();
 
                     }
                 });
@@ -151,6 +155,8 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                         if (!"".equals(text)) {
                             try {
                                 ColorChartConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                                fireListener();
+
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -192,6 +198,8 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                     public void widgetSelected(final SelectionEvent e) {
                         final Button b = (Button) e.widget;
                         ColorChartConfigurer.this.dashboardPart.setAutoadjust(b.getSelection());
+                        fireListener();
+
                     }
                 });
 
@@ -209,6 +217,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                         if (!"".equals(text)) {
                             try {
                                 ColorChartConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -230,6 +239,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                         if (!"".equals(text)) {
                             try {
                                 ColorChartConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -251,6 +261,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                         if (!"".equals(text)) {
                             try {
                                 ColorChartConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -272,6 +283,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                         if (!"".equals(text)) {
                             try {
                                 ColorChartConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -293,6 +305,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                         if (!"".equals(text)) {
                             try {
                                 ColorChartConfigurer.this.dashboardPart.setMinZ(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -314,6 +327,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                         if (!"".equals(text)) {
                             try {
                                 ColorChartConfigurer.this.dashboardPart.setMaxZ(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -360,6 +374,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                         backgroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         backgroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         ColorChartConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -376,6 +391,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
                         ColorChartConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                        fireListener();
                     }
                 });
                 toolkit.createLabel(group, "");
@@ -398,6 +414,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                         }
                         imageText.setText(selectedFile);
                         ColorChartConfigurer.this.getDashboardPart().setImage(selectedFile);
+                        fireListener();
                     }
                 });
             }
@@ -423,6 +440,7 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                         colorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         colorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         ColorChartConfigurer.this.getDashboardPart().setColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }

@@ -112,6 +112,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         LiquidGaugeConfigurer.this.dashboardPart.setPos(combo.getSelectionIndex());
+                        fireListener();
                     }
                 });
             }
@@ -125,6 +126,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                         if (!"".equals(text)) {
                             try {
                                 LiquidGaugeConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -166,6 +168,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                     public void widgetSelected(final SelectionEvent e) {
                         final Button b = (Button) e.widget;
                         LiquidGaugeConfigurer.this.dashboardPart.setAutoadjust(b.getSelection());
+                        fireListener();
                     }
                 });
 
@@ -183,6 +186,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                         if (!"".equals(text)) {
                             try {
                                 LiquidGaugeConfigurer.this.dashboardPart.setMin(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -204,6 +208,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                         if (!"".equals(text)) {
                             try {
                                 LiquidGaugeConfigurer.this.dashboardPart.setMax(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -251,6 +256,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                         backgroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         backgroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         LiquidGaugeConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -267,6 +273,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
                         LiquidGaugeConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                        fireListener();
                     }
                 });
                 toolkit.createLabel(group, "");
@@ -293,6 +300,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                         liquidColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         liquidColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         LiquidGaugeConfigurer.this.getDashboardPart().setLiquidColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -312,6 +320,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                         }
                         fontNameText.setText(selectedFont.getName());
                         LiquidGaugeConfigurer.this.getDashboardPart().setFont(selectedFont.getName());
+                        fireListener();
                     }
                 });
             }

@@ -104,6 +104,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setXPos(combo.getSelectionIndex());
+                        fireListener();
                     }
                 });
             }
@@ -116,6 +117,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setYPos(combo.getSelectionIndex());
+                        fireListener();
 
                     }
                 });
@@ -129,6 +131,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setZPos(combo.getSelectionIndex());
+                        fireListener();
 
                     }
                 });
@@ -142,6 +145,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                         final String text = maxElementsText.getText();
                         if (!"".equals(text)) {
                             Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                            fireListener();
                         }
                     }
                 });
@@ -179,6 +183,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                     public void widgetSelected(final SelectionEvent e) {
                         final Button b = (Button) e.widget;
                         Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setAutoadjust(b.getSelection());
+                        fireListener();
                     }
                 });
 
@@ -192,6 +197,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                         final String text = minXText.getText();
                         if (!"".equals(text)) {
                             Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                            fireListener();
                         }
                     }
                 });
@@ -205,6 +211,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                         final String text = maxXText.getText();
                         if (!"".equals(text)) {
                             Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                            fireListener();
                         }
                     }
                 });
@@ -218,6 +225,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                         final String text = minYText.getText();
                         if (!"".equals(text)) {
                             Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                            fireListener();
                         }
                     }
                 });
@@ -231,6 +239,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                         final String text = maxYText.getText();
                         if (!"".equals(text)) {
                             Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                            fireListener();
                         }
                     }
                 });
@@ -244,6 +253,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                         final String text = minZText.getText();
                         if (!"".equals(text)) {
                             Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setMinZ(Double.parseDouble(text));
+                            fireListener();
                         }
                     }
                 });
@@ -257,6 +267,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                         final String text = maxZText.getText();
                         if (!"".equals(text)) {
                             Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setMaxZ(Double.parseDouble(text));
+                            fireListener();
                         }
                     }
                 });
@@ -286,6 +297,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                         final String text = radiusText.getText();
                         if (!"".equals(text)) {
                             Abstract3DWheelDashboardPartConfigurer.this.dashboardPart.setRadius(Integer.parseInt(text));
+                            fireListener();
                         }
                     }
                 });
@@ -313,6 +325,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                         backgroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         backgroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         Abstract3DWheelDashboardPartConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -339,6 +352,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                         foregroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         foregroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         Abstract3DWheelDashboardPartConfigurer.this.getDashboardPart().setForegroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }

@@ -48,7 +48,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id: QuadTreeConfigurer.java | Thu Apr 16 16:54:32 2015 +0000 | ckuka  $
+ * @version $Id: QuadTreeConfigurer.java | Thu Apr 16 16:54:32 2015 +0000 |
+ *          ckuka $
  *
  */
 public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTreeDashboardPart> {
@@ -108,6 +109,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         QuadTreeConfigurer.this.dashboardPart.setXPos(combo.getSelectionIndex());
+                        fireListener();
                     }
                 });
             }
@@ -120,6 +122,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         QuadTreeConfigurer.this.dashboardPart.setYPos(combo.getSelectionIndex());
+                        fireListener();
                     }
                 });
             }
@@ -132,6 +135,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                     public void widgetSelected(final SelectionEvent e) {
                         final Combo combo = (Combo) e.widget;
                         QuadTreeConfigurer.this.dashboardPart.setZPos(combo.getSelectionIndex());
+                        fireListener();
 
                     }
                 });
@@ -149,6 +153,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                         if (!"".equals(text)) {
                             try {
                                 QuadTreeConfigurer.this.dashboardPart.setMaxElements(Integer.parseInt(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -190,6 +195,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                     public void widgetSelected(final SelectionEvent e) {
                         final Button b = (Button) e.widget;
                         QuadTreeConfigurer.this.dashboardPart.setAutoadjust(b.getSelection());
+                        fireListener();
                     }
                 });
 
@@ -207,6 +213,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                         if (!"".equals(text)) {
                             try {
                                 QuadTreeConfigurer.this.dashboardPart.setMinX(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -228,6 +235,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                         if (!"".equals(text)) {
                             try {
                                 QuadTreeConfigurer.this.dashboardPart.setMaxX(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -249,6 +257,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                         if (!"".equals(text)) {
                             try {
                                 QuadTreeConfigurer.this.dashboardPart.setMinY(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -270,6 +279,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                         if (!"".equals(text)) {
                             try {
                                 QuadTreeConfigurer.this.dashboardPart.setMaxY(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -291,6 +301,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                         if (!"".equals(text)) {
                             try {
                                 QuadTreeConfigurer.this.dashboardPart.setMinZ(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -312,6 +323,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                         if (!"".equals(text)) {
                             try {
                                 QuadTreeConfigurer.this.dashboardPart.setMaxZ(Double.parseDouble(text));
+                                fireListener();
                             }
                             catch (final NumberFormatException ex) {
                                 // Empty block
@@ -358,6 +370,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                         backgroundColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         backgroundColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         QuadTreeConfigurer.this.getDashboardPart().setBackgroundColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
@@ -374,6 +387,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                     @Override
                     public void widgetSelected(final SelectionEvent e) {
                         QuadTreeConfigurer.this.getDashboardPart().setBackgroundAlpha(alphaSlide.getSelection());
+                        fireListener();
                     }
                 });
                 toolkit.createLabel(group, "");
@@ -400,6 +414,7 @@ public class QuadTreeConfigurer extends AbstractDashboardPartConfigurer<QuadTree
                         colorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         colorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
                         QuadTreeConfigurer.this.getDashboardPart().setColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        fireListener();
                     }
                 });
             }
