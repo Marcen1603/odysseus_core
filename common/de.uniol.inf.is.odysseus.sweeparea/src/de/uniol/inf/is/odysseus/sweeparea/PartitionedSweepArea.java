@@ -29,6 +29,10 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
+/**
+ * @author msalous
+ *
+ */
 
 /**
  *This class represents an efficient online storage for different data streams.
@@ -39,9 +43,6 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 public class PartitionedSweepArea<T extends IStreamObject<?>> implements
 		ISweepArea<T>, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 348544350063903648L;
 
 	private final IFastList<IFastList<T>> elements;
@@ -60,7 +61,7 @@ public class PartitionedSweepArea<T extends IStreamObject<?>> implements
 
 		public QueryIterator(T element, Order order) {
 			for(IFastList<T> observations : getElements()){
-				if(comparator.compare(element, observations.get(0)) <= 0){
+				if(queryPredicate.evaluate(element, observations.get(0))){
 					this.it = observations.iterator();
 					break;
 				}
