@@ -13,10 +13,11 @@ public abstract class AbstractNoSQLAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -1402629936641429743L;
 	
-	protected String host;
-    protected int port;
-    protected String user;
-    protected String password;
+	private String host;
+    private int port;
+    private String user;
+    private String password;
+    private String database;
 
     public AbstractNoSQLAO() {
         super();
@@ -25,6 +26,7 @@ public abstract class AbstractNoSQLAO extends AbstractLogicalOperator {
     public AbstractNoSQLAO(AbstractNoSQLAO old) {
         super(old);
         this.host = old.host;
+        this.database = old.database;
         this.port = old.port;
         this.user = old.user;
         this.password = old.password;
@@ -38,6 +40,15 @@ public abstract class AbstractNoSQLAO extends AbstractLogicalOperator {
         this.host = host;
     }
 
+    /**
+     * @param host Name of the associated host
+     */
+    @Parameter(name = "Database", type = StringParameter.class, optional = true, doc = "The name of the target database")
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    
     /**
      * @param port Port of the associated NoSQL database
      */
@@ -77,4 +88,8 @@ public abstract class AbstractNoSQLAO extends AbstractLogicalOperator {
     public String getHost() {
         return host;
     }
+    
+    public String getDatabase() {
+		return database;
+	}
 }

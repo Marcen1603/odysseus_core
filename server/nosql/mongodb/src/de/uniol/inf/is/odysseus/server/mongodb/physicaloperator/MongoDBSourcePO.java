@@ -24,7 +24,7 @@ public class MongoDBSourcePO extends AbstractNoSQLJsonSourcePO {
 
     public MongoDBSourcePO(MongoDBSourceAO mongoDBSourceAO) {
         super(mongoDBSourceAO);
-        this.mongoDBName = mongoDBSourceAO.getMongoDBName();
+        this.mongoDBName = mongoDBSourceAO.getDatabase();
         this.collectionName = mongoDBSourceAO.getCollectionName();
         this.referenceObject = mongoDBSourceAO.getReferenceObject();
     }

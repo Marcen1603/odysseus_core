@@ -41,13 +41,14 @@ public class NoSQLConnectionManager {
                                 int port,
                                 String user,
                                 String password,
+                                String database,
                                 Class<? extends NoSQLConnectionWrapper> noSQLConnectionWrapperClass)
             throws OpenFailedException{
 
         NoSQLConnectionWrapper noSQLConnectionWrapper = connectionMap.get(host, port);
 
         if(noSQLConnectionWrapper == null){
-            noSQLConnectionWrapper = createNoSQLConnectionWrapper(host, port, user, password, noSQLConnectionWrapperClass);
+            noSQLConnectionWrapper = createNoSQLConnectionWrapper(host, port, user, password, database, noSQLConnectionWrapperClass);
             connectionMap.put(host, port, noSQLConnectionWrapper);
         }
         return noSQLConnectionWrapper.getConnection();
@@ -60,15 +61,16 @@ public class NoSQLConnectionManager {
                                                                 int port,
                                                                 String user,
                                                                 String password,
+                                                                String database,
                                                                 Class<? extends NoSQLConnectionWrapper> noSQLConnectionWrapperClass)
             throws OpenFailedException {
 
         try {
             Constructor<? extends NoSQLConnectionWrapper> declaredConstructor =
-                    noSQLConnectionWrapperClass.getDeclaredConstructor(String.class, int.class, String.class, String.class);
-//                                                                     Host        , Port     , User        , Password
+                    noSQLConnectionWrapperClass.getDeclaredConstructor(String.class, int.class, String.class, String.class, String.class);
+//                                                                     Host        , Port     , User        , Password.     Database
 
-            return declaredConstructor.newInstance(host, port, user, password);
+            return declaredConstructor.newInstance(host, port, user, password, database);
 
         }catch (Exception e){
             throw new OpenFailedException(e);

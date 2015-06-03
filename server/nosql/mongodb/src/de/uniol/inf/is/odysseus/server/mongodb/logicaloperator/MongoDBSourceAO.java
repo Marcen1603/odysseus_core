@@ -12,7 +12,6 @@ public class MongoDBSourceAO extends AbstractNoSQLSourceAO {
 
 	private static final long serialVersionUID = 7290475028394007187L;
 	private String collectionName;
-    private String mongoDBName;
     private String referenceObject;
 
     public MongoDBSourceAO(){
@@ -21,17 +20,19 @@ public class MongoDBSourceAO extends AbstractNoSQLSourceAO {
 
     public MongoDBSourceAO(MongoDBSourceAO old) {
         super(old);
-
         this.collectionName = old.collectionName;
-        this.mongoDBName = old.mongoDBName;
         this.referenceObject = old.referenceObject;
     }
 
-    @Parameter(name = "MONGODBNAME", type = StringParameter.class, optional = false, doc = "Name of store mongo database")
-    public void setMongoDBName(String mongoDBName) {
-        this.mongoDBName = mongoDBName;
+    /**
+     * @param host Name of the associated host
+     */
+    @Parameter(name = "Database", type = StringParameter.class, optional = false, doc = "The name of the target database")
+    public void setDatabase(String database) {
+        super.setDatabase(database);
     }
 
+    
     @Parameter(name = "COLLECTIONNAME", type = StringParameter.class, optional = false, doc = "Name of store mongo collection")
     public void setCollectionName(String collectionName) {
         this.collectionName = collectionName;
@@ -48,10 +49,6 @@ public class MongoDBSourceAO extends AbstractNoSQLSourceAO {
 
     public String getCollectionName() {
         return collectionName;
-    }
-
-    public String getMongoDBName() {
-        return mongoDBName;
     }
 
     @Override

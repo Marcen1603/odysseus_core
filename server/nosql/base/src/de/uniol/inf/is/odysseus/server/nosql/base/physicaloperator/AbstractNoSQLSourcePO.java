@@ -22,7 +22,8 @@ public abstract class AbstractNoSQLSourcePO<E extends IStreamObject<?>> extends 
     private int port;
     private String user;
     private String password;
-
+    private String database;
+    
     private final int maxTupleCount;
     private final int delayBetweenTuple;
     private final int reloadDataInterval;
@@ -35,6 +36,7 @@ public abstract class AbstractNoSQLSourcePO<E extends IStreamObject<?>> extends 
         port = abstractNoSQLSourceAO.getPort();
         user = abstractNoSQLSourceAO.getUser();
         password = abstractNoSQLSourceAO.getPassword();
+        database = abstractNoSQLSourceAO.getDatabase();
 
         maxTupleCount = abstractNoSQLSourceAO.getMaxTupleCount();
         delayBetweenTuple = abstractNoSQLSourceAO.getDelayBetweenTuple();
@@ -45,7 +47,7 @@ public abstract class AbstractNoSQLSourcePO<E extends IStreamObject<?>> extends 
     @Override
     protected void process_open() throws OpenFailedException {
 
-        Object noSQLConnection = connectionManager.getConnection(host, port, user, password, getNoSQLConnectionWrapperClass());
+        Object noSQLConnection = connectionManager.getConnection(host, port, user, password, database, getNoSQLConnectionWrapperClass());
         setupConnection(noSQLConnection);
 
         transferThread = new TransferThread();

@@ -31,9 +31,12 @@ public class MongoDBSinkAO extends AbstractNoSQLSinkAO {
         return new MongoDBSinkAO(this);
     }
 
-    @Parameter(name = "MONGODBNAME", type = StringParameter.class, optional = false, doc = "Name of store mongo database")
-    public void setMongoDBName(String mongoDBName) {
-        this.mongoDBName = mongoDBName;
+    /**
+     * @param host Name of the associated host
+     */
+    @Parameter(name = "Database", type = StringParameter.class, optional = false, doc = "The name of the target database")
+    public void setDatabase(String database) {
+        super.setDatabase(database);
     }
 
     @Parameter(name = "COLLECTIONNAME", type = StringParameter.class, optional = false, doc = "Name of store mongo collection")

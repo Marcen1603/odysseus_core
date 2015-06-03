@@ -61,6 +61,7 @@ abstract class AbstractTNoSQLAORule<L extends AbstractNoSQLAO, P extends IPhysic
 	@Override
 	public boolean isExecutable(L operator, TransformationConfiguration config) {
 		// All NoSQL operator currently require key value objects?
+		// Distinguish between sources (do not have an input schema and sinks with schema and type)
 		return (operator.isSourceOperator() || ((operator.getInputSchema(0).getType() == KeyValueObject.class || operator
 				.getInputSchema(0).getType() == NestedKeyValueObject.class)
 				&& operator.isAllPhysicalInputSet()));

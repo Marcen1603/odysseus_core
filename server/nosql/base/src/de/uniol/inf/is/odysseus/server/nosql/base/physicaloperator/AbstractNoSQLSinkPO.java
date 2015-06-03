@@ -1,15 +1,13 @@
 package de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSinkAO;
 import de.uniol.inf.is.odysseus.server.nosql.base.util.BatchSizeTimer;
 import de.uniol.inf.is.odysseus.server.nosql.base.util.BatchSizeTimerTask;
-import de.uniol.inf.is.odysseus.server.nosql.base.util.connection.NoSQLConnectionManager;
-
-import java.util.List;
 
 /**
  *  The AbstractNoSQLSinkPO ist the superclass for all NoSQL sinks. It helps the concrete implementation with the
@@ -18,13 +16,6 @@ import java.util.List;
  */
 public abstract class AbstractNoSQLSinkPO<E extends IStreamObject<?>> extends AbstractSink<E> implements IPhysicalNoSQLOperator {
 
-    private static NoSQLConnectionManager connectionManager = NoSQLConnectionManager.getInstance();
-
-    private String host;
-    private int port;
-    private String user;
-    private String password;
-
     BatchSizeTimer<E> batchSizeTimer;
 
     public AbstractNoSQLSinkPO(AbstractNoSQLSinkAO abstractNoSQLSinkAO){
@@ -32,20 +23,9 @@ public abstract class AbstractNoSQLSinkPO<E extends IStreamObject<?>> extends Ab
 
         int batchSize = abstractNoSQLSinkAO.getBatchSize();
         int batchTimeout = abstractNoSQLSinkAO.getBatchTimeout();
-        host = abstractNoSQLSinkAO.getHost();
-        port = abstractNoSQLSinkAO.getPort();
-        user = abstractNoSQLSinkAO.getUser();
-        password = abstractNoSQLSinkAO.getPassword();
 
         BatchSizeTimerTask<E> batchSizeTimerTask = new BatchSizeTimerTaskImpl();
         batchSizeTimer = new BatchSizeTimer<>(batchSizeTimerTask, batchSize, batchTimeout);
-    }
-
-    @Override
-    protected final void process_open() throws OpenFailedException {
-
-        Object noSQLConnection = connectionManager.getConnection(host, port, user, password, getNoSQLConnectionWrapperClass());
-        setupConnection(noSQLConnection);
     }
 
     @Override
@@ -62,9 +42,13 @@ public abstract class AbstractNoSQLSinkPO<E extends IStreamObject<?>> extends Ab
     @Override
     protected void process_close() {
         batchSizeTimer.ring();
-        connectionManager.unregisterConnection(host, port);
     }
 
+    @Override
+    protected void process_done(int port) {
+    	batchSizeTimer.ring();
+    }
+    
     /**
      *  process_next_tuple_to_write will be implemented in the concrete NoSQLSinkPO.
      *  In this method all elements of elementsToWrite will be written into the NoSQL database.
