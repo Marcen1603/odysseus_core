@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel;
 
+import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.swt.graphics.Path;
@@ -32,6 +33,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *
  */
 public class ArrowWheelDashboardPart extends AbstractWheelDashboardPart {
+    private final static String ARROW_COLOR = "arrowColor";
+
     private RGB arrowColor = new RGB(0, 255, 0);
 
     /**
@@ -55,6 +58,28 @@ public class ArrowWheelDashboardPart extends AbstractWheelDashboardPart {
         this.getGC().setTransform(transform);
         this.fillPath(path, this.arrowColor);
         this.getGC().setTransform(null);
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLoad(Map<String, String> saved) {
+        super.onLoad(saved);
+        arrowColor = RGB.valueOf(saved.get(ARROW_COLOR)!=null?saved.get(ARROW_COLOR):"255,0,0");
+
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> onSave() {
+        Map<String, String> toSaveMap = super.onSave();
+        toSaveMap.put(ARROW_COLOR, String.valueOf(arrowColor));
+        return toSaveMap;
     }
 
     /**

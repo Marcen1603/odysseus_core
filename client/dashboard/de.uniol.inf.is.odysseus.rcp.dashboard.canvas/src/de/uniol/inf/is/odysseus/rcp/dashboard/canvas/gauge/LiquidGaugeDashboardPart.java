@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.gauge;
 
 import java.text.NumberFormat;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.swt.SWT;
@@ -39,8 +40,17 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *
  */
 public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
+    private final static String POS = "xPos";
+    private final static String MIN = "minX";
+    private final static String MAX = "maxX";
+    private final static String AUTOADJUST = "autoadjust";
+    private final static String BACKGROUND_COLOR = "backgroundColor";
+    private final static String BACKGROUND_ALPHA = "backgroundAlpha";
+    private final static String COLOR = "color";
+    private final static String FONT = "font";
+
     private RGB backgroundColor = new RGB(255, 255, 255);
-    private RGB liquidColor = new RGB(0, 255, 0);
+    private RGB color = new RGB(0, 255, 0);
     /** Background alpha. */
     private int backgroundAlpha = 255;
     /** The font name. */
@@ -98,7 +108,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
                     (float) ((this.getCenter().y - ((value - 1.0) * this.getRadius())) + ((1.0 / 6.0) * (value / 2.0) * this.getRadius())), (float) (this.getCenter().x + pathX),
                     (int) (this.getCenter().y - ((value - 1.0) * this.getRadius())));
             path.close();
-            this.fillPath(path, this.liquidColor);
+            this.fillPath(path, this.color);
 
             final String text = NumberFormat.getNumberInstance().format(this.get(element));
             final int fontSize = this.getFontSize(text, this.getFont(), (int) (this.getRadius()), (int) (this.getRadius()));
@@ -116,6 +126,41 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
             this.drawText(text, new Coordinate(this.getCenter().x - (extent.x / 2), this.getCenter().y - (extent.y / 2)), true);
             this.getGC().setTransform(null);
         }
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLoad(Map<String, String> saved) {
+        super.onLoad(saved);     
+        pos = Integer.valueOf(saved.get(POS)!=null?saved.get(POS):"0");
+        min = Double.valueOf(saved.get(MIN)!=null?saved.get(MIN):"0");
+        max = Double.valueOf(saved.get(MAX)!=null?saved.get(MAX):"1");
+        autoadjust = Boolean.valueOf(saved.get(AUTOADJUST) != null ? saved.get(AUTOADJUST) : "true");
+        backgroundColor = RGB.valueOf(saved.get(BACKGROUND_COLOR) != null ? saved.get(BACKGROUND_COLOR) : "255,0,0");
+        backgroundAlpha = Integer.valueOf(saved.get(BACKGROUND_ALPHA) != null ? saved.get(BACKGROUND_ALPHA) : "255");
+        color = RGB.valueOf(saved.get(COLOR) != null ? saved.get(COLOR) : "0,0,0");
+        font = String.valueOf(saved.get(FONT)!=null?saved.get(FONT):"Verdana");
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> onSave() {
+        Map<String, String> toSaveMap = super.onSave();
+        toSaveMap.put(POS, String.valueOf(pos));
+        toSaveMap.put(MIN, String.valueOf(min));
+        toSaveMap.put(MAX, String.valueOf(max));
+        toSaveMap.put(AUTOADJUST, String.valueOf(autoadjust));
+        toSaveMap.put(BACKGROUND_COLOR, String.valueOf(backgroundColor));
+        toSaveMap.put(BACKGROUND_ALPHA, String.valueOf(backgroundAlpha));
+        toSaveMap.put(COLOR, String.valueOf(color));
+        toSaveMap.put(FONT, String.valueOf(font));
+        return toSaveMap;
     }
 
     public Coordinate getCenter() {
@@ -238,14 +283,14 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
      *            the liquidColor to set
      */
     public void setLiquidColor(final RGB liquidColor) {
-        this.liquidColor = liquidColor;
+        this.color = liquidColor;
     }
 
     /**
      * @return the liquidColor
      */
     public RGB getLiquidColor() {
-        return this.liquidColor;
+        return this.color;
     }
 
     /**

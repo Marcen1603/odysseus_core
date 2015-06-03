@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.canvas;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -44,6 +45,8 @@ import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.PartialDisk;
 import org.lwjgl.util.glu.Sphere;
 
+import com.google.common.collect.Maps;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -63,6 +66,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.objects.Tree;
  */
 @SuppressWarnings("unused")
 public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPart implements PaintListener, KeyListener {
+    private final static String MAX_ELEMENTS = "maxElements";
+
     GLCanvas canvas;
     private final Queue<IStreamObject<?>> queue = new ConcurrentLinkedQueue<>();
     private GLCanvasUpdater updater;
@@ -247,6 +252,26 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
         this.canvas.swapBuffers();
         this.gc.dispose();
         this.gc = null;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLoad(Map<String, String> saved) {
+        maxElements = Integer.valueOf(saved.get(MAX_ELEMENTS));
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> onSave() {
+        Map<String, String> toSaveMap = Maps.newHashMap();
+        toSaveMap.put(MAX_ELEMENTS, String.valueOf(maxElements));
+        return toSaveMap;
     }
 
     /**

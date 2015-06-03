@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * @version $Id$
+ * @version $Id: RGB.java | Fri Apr 10 23:28:57 2015 +0000 | ckuka $
  *
  */
 public class RGB extends AbstractColorSpace {
@@ -313,7 +313,18 @@ public class RGB extends AbstractColorSpace {
      */
     @Override
     public String toString() {
-        return "RGB [R=" + this.R + ", G=" + this.G + ", B=" + this.B + "]";
+        return this.R + "," + this.G + "," + this.B;
     }
 
+    /**
+     * @param string
+     * @return
+     */
+    public static RGB valueOf(String string) {
+        String[] values = string.split(",");
+        if (values.length == 3) {
+            return new RGB(Double.valueOf(values[0]), Double.valueOf(values[1]), Double.valueOf(values[2]));
+        }
+        return null;
+    }
 }

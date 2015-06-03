@@ -277,7 +277,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
             {// Arrow Color
                 toolkit.createLabel(group, "Foreground");
 
-                final RGB arrowColor = this.getDashboardPart().getArrowColor();
+                final RGB arrowColor = this.getDashboardPart().getColor();
                 @SuppressWarnings("boxing")
                 final Text arrowColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) arrowColor.R, (int) arrowColor.G, (int) arrowColor.B));
                 arrowColorText.setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) arrowColor.R, (int) arrowColor.G, (int) arrowColor.B)));
@@ -295,7 +295,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                         }
                         arrowColorText.setText(selectedColor.red + "," + selectedColor.green + "," + selectedColor.blue);
                         arrowColorText.setBackground(new Color(group.getShell().getDisplay(), selectedColor));
-                        CompassConfigurer.this.getDashboardPart().setArrowColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
+                        CompassConfigurer.this.getDashboardPart().setColor(new RGB(selectedColor.red, selectedColor.green, selectedColor.blue));
                     }
                 });
             }

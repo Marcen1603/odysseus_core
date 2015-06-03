@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.spatial;
 
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.swt.graphics.Image;
@@ -36,6 +37,18 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *
  */
 public class TrackDashboardPart extends AbstractCanvasDashboardPart {
+    private final static String X_POS = "xPos";
+    private final static String Y_POS = "yPos";
+    private final static String MIN_X = "minX";
+    private final static String MAX_X = "maxX";
+    private final static String MIN_Y = "minY";
+    private final static String MAX_Y = "maxY";
+    private final static String AUTOADJUST = "autoadjust";
+    private final static String BACKGROUND_COLOR = "backgroundColor";
+    private final static String BACKGROUND_ALPHA = "backgroundAlpha";
+    private final static String BACKGROUND_IMAGE = "backgroundmage";
+    private final static String COLOR = "color";
+
     /** Background alpha. */
     private int backgroundAlpha = 255;
     /** Min Y value. */
@@ -48,12 +61,10 @@ public class TrackDashboardPart extends AbstractCanvasDashboardPart {
     private double maxX = 1.0;
     /** Auto adjust min and max value. */
     private boolean autoadjust = true;
-    /** The font name. */
-    private String font = "Verdana";
     private int xPos = 0;
     private int yPos = 1;
     private RGB backgroundColor = new RGB(255, 255, 255);
-    private RGB foregroundColor = new RGB(255, 0, 0);
+    private RGB color = new RGB(255, 0, 0);
     private String imagePath;
     private Image image;
 
@@ -92,6 +103,47 @@ public class TrackDashboardPart extends AbstractCanvasDashboardPart {
             i++;
         }
 
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLoad(Map<String, String> saved) {
+        super.onLoad(saved);
+        xPos = Integer.valueOf(saved.get(X_POS) != null ? saved.get(X_POS) : "0");
+        yPos = Integer.valueOf(saved.get(Y_POS) != null ? saved.get(Y_POS) : "0");
+        minX = Double.valueOf(saved.get(MIN_X) != null ? saved.get(MIN_X) : "0");
+        maxX = Double.valueOf(saved.get(MAX_X) != null ? saved.get(MAX_X) : "1");
+        minY = Double.valueOf(saved.get(MIN_Y) != null ? saved.get(MIN_Y) : "0");
+        maxY = Double.valueOf(saved.get(MAX_Y) != null ? saved.get(MAX_Y) : "1");
+        autoadjust = Boolean.valueOf(saved.get(AUTOADJUST) != null ? saved.get(AUTOADJUST) : "true");
+        backgroundColor = RGB.valueOf(saved.get(BACKGROUND_COLOR) != null ? saved.get(BACKGROUND_COLOR) : "255,0,0");
+        backgroundAlpha = Integer.valueOf(saved.get(BACKGROUND_ALPHA) != null ? saved.get(BACKGROUND_ALPHA) : "255");
+        color = RGB.valueOf(saved.get(COLOR) != null ? saved.get(COLOR) : "0,0,0");
+        imagePath = saved.get(BACKGROUND_IMAGE);
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> onSave() {
+        Map<String, String> toSaveMap = super.onSave();
+        toSaveMap.put(X_POS, String.valueOf(xPos));
+        toSaveMap.put(Y_POS, String.valueOf(yPos));
+        toSaveMap.put(MIN_X, String.valueOf(minX));
+        toSaveMap.put(MAX_X, String.valueOf(maxX));
+        toSaveMap.put(MIN_Y, String.valueOf(minY));
+        toSaveMap.put(MAX_Y, String.valueOf(maxY));
+        toSaveMap.put(AUTOADJUST, String.valueOf(autoadjust));
+        toSaveMap.put(BACKGROUND_COLOR, String.valueOf(backgroundColor));
+        toSaveMap.put(BACKGROUND_ALPHA, String.valueOf(backgroundAlpha));
+        toSaveMap.put(COLOR, String.valueOf(color));
+        toSaveMap.put(BACKGROUND_IMAGE, String.valueOf(imagePath));
+        return toSaveMap;
     }
 
     private void adjust() {
@@ -309,7 +361,7 @@ public class TrackDashboardPart extends AbstractCanvasDashboardPart {
      * @return the foregroundColor
      */
     public RGB getForegroundColor() {
-        return this.foregroundColor;
+        return this.color;
     }
 
     /**
@@ -317,7 +369,7 @@ public class TrackDashboardPart extends AbstractCanvasDashboardPart {
      *            the foregroundColor to set
      */
     public void setForegroundColor(final RGB foregroundColor) {
-        this.foregroundColor = foregroundColor;
+        this.color = foregroundColor;
     }
 
     /**
@@ -337,21 +389,6 @@ public class TrackDashboardPart extends AbstractCanvasDashboardPart {
             this.image = null;
         }
         this.imagePath = image;
-    }
-
-    /**
-     * @param font
-     *            the font to set
-     */
-    public void setFont(final String font) {
-        this.font = font;
-    }
-
-    /**
-     * @return the font
-     */
-    public String getFont() {
-        return this.font;
     }
 
     public static void main(final String[] args) {

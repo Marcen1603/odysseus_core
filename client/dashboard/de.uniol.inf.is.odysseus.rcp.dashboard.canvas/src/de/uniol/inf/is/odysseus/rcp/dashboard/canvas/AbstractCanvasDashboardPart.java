@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.canvas;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -37,6 +38,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 
+import com.google.common.collect.Maps;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -53,6 +56,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *
  */
 public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart implements PaintListener {
+    private final static String MAX_ELEMENTS = "maxElements";
+
     private Canvas canvas;
     private final Queue<IStreamObject<?>> queue = new ConcurrentLinkedQueue<>();
     private CanvasUpdater updater;
@@ -150,6 +155,26 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
             this.canvas.removePaintListener(this);
             this.canvas.dispose();
         }
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLoad(Map<String, String> saved) {
+        maxElements = Integer.valueOf(saved.get(MAX_ELEMENTS) != null ? saved.get(MAX_ELEMENTS) : "1000");
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> onSave() {
+        Map<String, String> toSaveMap = Maps.newHashMap();
+        toSaveMap.put(MAX_ELEMENTS, String.valueOf(maxElements));
+        return toSaveMap;
     }
 
     /**
@@ -392,14 +417,14 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
         this.gc.fillRectangle((int) corner.x, (int) corner.y, width, height);
         this.gc.setBackground(tmpColor);
     }
-    
+
     public void fillRectangle(final int x, final int y, final int width, final int height, final IColorSpace color) {
         final Color tmpColor = this.gc.getBackground();
         this.gc.setBackground(this.toColor(color));
         this.gc.fillRectangle(x, y, width, height);
         this.gc.setBackground(tmpColor);
     }
-    
+
     public void fillRectangle(final int x, final int y, final int width, final int height, final Color color) {
         final Color tmpColor = this.gc.getBackground();
         this.gc.setBackground(color);

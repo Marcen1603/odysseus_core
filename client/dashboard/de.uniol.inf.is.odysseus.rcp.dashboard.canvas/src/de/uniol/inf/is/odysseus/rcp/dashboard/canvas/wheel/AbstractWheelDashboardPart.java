@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.graphics.Rectangle;
 
@@ -34,6 +35,21 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *
  */
 public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboardPart {
+    private final static String X_POS = "xPos";
+    private final static String Y_POS = "yPos";
+    private final static String Z_POS = "zPos";
+    private final static String MIN_X = "minX";
+    private final static String MAX_X = "maxX";
+    private final static String MIN_Y = "minY";
+    private final static String MAX_Y = "maxY";
+    private final static String MIN_Z = "minZ";
+    private final static String MAX_Z = "maxZ";
+    private final static String AUTOADJUST = "autoadjust";
+    private final static String BACKGROUND_COLOR = "backgroundColor";
+    private final static String BACKGROUND_ALPHA = "backgroundAlpha";
+    private final static String COLOR = "color";
+    private final static String FONT = "font";
+
     private class CircleCoordinate {
         final int x;
         final int y;
@@ -77,7 +93,7 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
     private int yPos = 1;
     private int zPos = 2;
     private RGB backgroundColor = new RGB(255, 255, 255);
-    private RGB foregroundColor = new RGB(255, 0, 0);
+    private RGB color = new RGB(255, 0, 0);
 
     /**
      * {@inheritDoc}
@@ -112,6 +128,54 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
         if (element != null) {
             this.doPaintZ(this.getZ(element));
         }
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLoad(Map<String, String> saved) {
+        super.onLoad(saved);
+        xPos = Integer.valueOf(saved.get(X_POS) != null ? saved.get(X_POS) : "0");
+        yPos = Integer.valueOf(saved.get(Y_POS) != null ? saved.get(Y_POS) : "0");
+        zPos = Integer.valueOf(saved.get(Z_POS) != null ? saved.get(Z_POS) : "0");
+        minX = Double.valueOf(saved.get(MIN_X) != null ? saved.get(MIN_X) : "0");
+        maxX = Double.valueOf(saved.get(MAX_X) != null ? saved.get(MAX_X) : "1");
+        minY = Double.valueOf(saved.get(MIN_Y) != null ? saved.get(MIN_Y) : "0");
+        maxY = Double.valueOf(saved.get(MAX_Y) != null ? saved.get(MAX_Y) : "1");
+        minZ = Double.valueOf(saved.get(MIN_Z) != null ? saved.get(MIN_Z) : "0");
+        maxZ = Double.valueOf(saved.get(MAX_Z) != null ? saved.get(MAX_Z) : "1");
+        autoadjust = Boolean.valueOf(saved.get(AUTOADJUST) != null ? saved.get(AUTOADJUST) : "true");
+        backgroundColor = RGB.valueOf(saved.get(BACKGROUND_COLOR) != null ? saved.get(BACKGROUND_COLOR) : "255,0,0");
+        backgroundAlpha = Integer.valueOf(saved.get(BACKGROUND_ALPHA) != null ? saved.get(BACKGROUND_ALPHA) : "255");
+        color = RGB.valueOf(saved.get(COLOR) != null ? saved.get(COLOR) : "0,0,0");
+        font = String.valueOf(saved.get(FONT) != null ? saved.get(FONT) : "Verdana");
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> onSave() {
+        Map<String, String> toSaveMap = super.onSave();
+        toSaveMap.put(X_POS, String.valueOf(xPos));
+        toSaveMap.put(Y_POS, String.valueOf(yPos));
+        toSaveMap.put(Z_POS, String.valueOf(zPos));
+        toSaveMap.put(MIN_X, String.valueOf(minX));
+        toSaveMap.put(MAX_X, String.valueOf(maxX));
+        toSaveMap.put(MIN_Y, String.valueOf(minY));
+        toSaveMap.put(MAX_Y, String.valueOf(maxY));
+        toSaveMap.put(MIN_Z, String.valueOf(minZ));
+        toSaveMap.put(MAX_Z, String.valueOf(maxZ));
+        toSaveMap.put(AUTOADJUST, String.valueOf(autoadjust));
+        toSaveMap.put(BACKGROUND_COLOR, String.valueOf(backgroundColor));
+        toSaveMap.put(BACKGROUND_ALPHA, String.valueOf(backgroundAlpha));
+        toSaveMap.put(COLOR, String.valueOf(color));
+        toSaveMap.put(FONT, String.valueOf(font));
+
+        return toSaveMap;
     }
 
     /**
@@ -421,7 +485,7 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
      * @return the foregroundColor
      */
     public RGB getForegroundColor() {
-        return this.foregroundColor;
+        return this.color;
     }
 
     /**
@@ -429,7 +493,7 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
      *            the foregroundColor to set
      */
     public void setForegroundColor(final RGB foregroundColor) {
-        this.foregroundColor = foregroundColor;
+        this.color = foregroundColor;
     }
 
     /**

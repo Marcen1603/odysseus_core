@@ -295,7 +295,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                 @SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
-                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
+                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
                 backgroundColorText.setEditable(false);
                 final Button backgroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 backgroundColorButton.addSelectionListener(new SelectionAdapter() {
@@ -338,7 +338,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                 @SuppressWarnings("boxing")
                 final Text foregroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B));
                 foregroundColorText
-                .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B)));
+                        .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B)));
                 foregroundColorText.setEditable(false);
                 final Button foregroundColorButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
                 foregroundColorButton.addSelectionListener(new SelectionAdapter() {
@@ -378,25 +378,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                     }
                 });
             }
-            {// Font
-                toolkit.createLabel(group, "Font");
-                final Text fontNameText = toolkit.createText(group, this.getDashboardPart().getFont());
-                fontNameText.setEditable(false);
-                final Button fontNameButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
-                fontNameButton.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(final SelectionEvent e) {
-                        final FontDialog dialog = new FontDialog(group.getShell());
-                        dialog.setText("Select Font");
-                        final FontData selectedFont = dialog.open();
-                        if (selectedFont == null) {
-                            return;
-                        }
-                        fontNameText.setText(selectedFont.getName());
-                        TrackConfigurer.this.getDashboardPart().setFont(selectedFont.getName());
-                    }
-                });
-            }
+
             section.setClient(group);
         }
 

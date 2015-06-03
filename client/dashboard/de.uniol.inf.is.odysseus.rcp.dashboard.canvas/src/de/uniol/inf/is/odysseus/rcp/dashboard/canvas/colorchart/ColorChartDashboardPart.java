@@ -15,9 +15,12 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorchart;
 
+import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -35,6 +38,22 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *
  */
 public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
+
+    private final static String X_POS = "xPos";
+    private final static String Y_POS = "yPos";
+    private final static String Z_POS = "zPos";
+    private final static String MIN_X = "minX";
+    private final static String MAX_X = "maxX";
+    private final static String MIN_Y = "minY";
+    private final static String MAX_Y = "maxY";
+    private final static String MIN_Z = "minZ";
+    private final static String MAX_Z = "maxZ";
+    private final static String AUTOADJUST = "autoadjust";
+    private final static String BACKGROUND_COLOR = "backgroundColor";
+    private final static String BACKGROUND_ALPHA = "backgroundAlpha";
+    private final static String BACKGROUND_IMAGE = "backgroundImage";
+    private final static String COLOR = "color";
+
     private RGB backgroundColor = new RGB(255, 255, 255);
     private RGB color = new RGB(0, 255, 0);
     /** Background alpha. */
@@ -56,12 +75,18 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
     private int xPos = 0;
     private int yPos = 1;
     private int zPos = 2;
+    private String imagePath;
+    private Image image;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void doPaint() {
+        if ((this.image == null) && (this.imagePath != null) && (Paths.get(this.imagePath).toFile().exists())) {
+            this.image = new Image(this.getCanvas().getDisplay(), this.imagePath);
+        }
+
         if (this.isAutoadjust()) {
             this.adjust();
         }
@@ -69,7 +94,9 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
         this.setAlpha(getBackgroundAlpha());
         this.fill(background);
         this.setAlpha(255);
-
+        if (this.image != null) {
+            this.getGC().drawImage(this.image, 0, 0, this.image.getBounds().width, this.image.getBounds().height, 0, 0, this.getClipping().width, this.getClipping().height);
+        }
         final int width = (int) (this.getClipping().width / (Math.abs(this.getMaxX() - this.getMinX()) * 100.0) + 0.5);
         final int height = (int) (this.getClipping().height / (Math.abs(this.getMaxY() - this.getMinY()) * 100.0) + 0.5);
 
@@ -80,6 +107,53 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
             final Number value = this.normalizeZ(this.getZ(element));
             this.fillRectangle(this.getCoordinate(element), width, height, this.getColor(value));
         }
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLoad(Map<String, String> saved) {
+        super.onLoad(saved);
+        xPos = Integer.valueOf(saved.get(X_POS) != null ? saved.get(X_POS) : "0");
+        yPos = Integer.valueOf(saved.get(Y_POS) != null ? saved.get(Y_POS) : "0");
+        zPos = Integer.valueOf(saved.get(Z_POS) != null ? saved.get(Z_POS) : "0");
+        minX = Double.valueOf(saved.get(MIN_X) != null ? saved.get(MIN_X) : "0");
+        maxX = Double.valueOf(saved.get(MAX_X) != null ? saved.get(MAX_X) : "1");
+        minY = Double.valueOf(saved.get(MIN_Y) != null ? saved.get(MIN_Y) : "0");
+        maxY = Double.valueOf(saved.get(MAX_Y) != null ? saved.get(MAX_Y) : "1");
+        minZ = Double.valueOf(saved.get(MIN_Z) != null ? saved.get(MIN_Z) : "0");
+        maxZ = Double.valueOf(saved.get(MAX_Z) != null ? saved.get(MAX_Z) : "1");
+        autoadjust = Boolean.valueOf(saved.get(AUTOADJUST) != null ? saved.get(AUTOADJUST) : "true");
+        backgroundColor = RGB.valueOf(saved.get(BACKGROUND_COLOR) != null ? saved.get(BACKGROUND_COLOR) : "255,0,0");
+        backgroundAlpha = Integer.valueOf(saved.get(BACKGROUND_ALPHA) != null ? saved.get(BACKGROUND_ALPHA) : "255");
+        color = RGB.valueOf(saved.get(COLOR) != null ? saved.get(COLOR) : "0,0,0");
+        imagePath = saved.get(BACKGROUND_IMAGE);
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> onSave() {
+        Map<String, String> toSaveMap = super.onSave();
+        toSaveMap.put(X_POS, String.valueOf(xPos));
+        toSaveMap.put(Y_POS, String.valueOf(yPos));
+        toSaveMap.put(Z_POS, String.valueOf(zPos));
+        toSaveMap.put(MIN_X, String.valueOf(minX));
+        toSaveMap.put(MAX_X, String.valueOf(maxX));
+        toSaveMap.put(MIN_Y, String.valueOf(minY));
+        toSaveMap.put(MAX_Y, String.valueOf(maxY));
+        toSaveMap.put(MIN_Z, String.valueOf(minZ));
+        toSaveMap.put(MAX_Z, String.valueOf(maxZ));
+        toSaveMap.put(AUTOADJUST, String.valueOf(autoadjust));
+        toSaveMap.put(BACKGROUND_COLOR, String.valueOf(backgroundColor));
+        toSaveMap.put(BACKGROUND_ALPHA, String.valueOf(backgroundAlpha));
+        toSaveMap.put(COLOR, String.valueOf(color));
+        toSaveMap.put(BACKGROUND_IMAGE, String.valueOf(imagePath));
+        return toSaveMap;
     }
 
     private void adjust() {
@@ -386,6 +460,25 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
      */
     public void setBackgroundAlpha(int backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
+    }
+
+    /**
+     * @return the image path
+     */
+    public String getImage() {
+        return this.imagePath;
+    }
+
+    /**
+     * @param image
+     *            the image to set
+     */
+    public void setImage(final String image) {
+        if (this.image != null) {
+            this.image.dispose();
+            this.image = null;
+        }
+        this.imagePath = image;
     }
 
     public static void main(final String[] args) {

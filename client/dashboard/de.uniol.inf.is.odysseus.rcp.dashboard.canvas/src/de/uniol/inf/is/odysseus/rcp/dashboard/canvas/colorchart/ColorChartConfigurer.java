@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
@@ -60,7 +61,8 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
     public void init(final ColorChartDashboardPart dashboardPart, final Collection<IPhysicalOperator> roots) {
         if (roots.size() == 0) {
             throw new IllegalArgumentException("Insifficient physical operators " + roots.size());
-        }  this.dashboardPart = dashboardPart;
+        }
+        this.dashboardPart = dashboardPart;
         this.schemas = new SDFSchema[roots.size()];
         final Iterator<IPhysicalOperator> iter = roots.iterator();
         for (int i = 0; iter.hasNext(); i++) {
@@ -377,6 +379,27 @@ public class ColorChartConfigurer extends AbstractDashboardPartConfigurer<ColorC
                     }
                 });
                 toolkit.createLabel(group, "");
+            }
+            {// Background image
+                toolkit.createLabel(group, "Background Image");
+                final String image = this.getDashboardPart().getImage();
+                @SuppressWarnings("boxing")
+                final Text imageText = toolkit.createText(group, image);
+                imageText.setEditable(true);
+                final Button imageButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
+                imageButton.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(final SelectionEvent e) {
+                        final FileDialog dialog = new FileDialog(group.getShell());
+                        dialog.setText("Select Image");
+                        final String selectedFile = dialog.open();
+                        if (selectedFile == null) {
+                            return;
+                        }
+                        imageText.setText(selectedFile);
+                        ColorChartConfigurer.this.getDashboardPart().setImage(selectedFile);
+                    }
+                });
             }
             {// Foregroundcolor
                 toolkit.createLabel(group, "Base Color");

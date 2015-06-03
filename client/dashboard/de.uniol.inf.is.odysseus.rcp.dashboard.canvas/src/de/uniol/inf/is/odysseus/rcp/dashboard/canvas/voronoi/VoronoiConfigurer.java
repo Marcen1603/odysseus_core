@@ -24,14 +24,12 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
@@ -355,25 +353,7 @@ public class VoronoiConfigurer extends AbstractDashboardPartConfigurer<VoronoiDa
                     }
                 });
             }
-            {// Font
-                toolkit.createLabel(group, "Font");
-                final Text fontNameText = toolkit.createText(group, this.getDashboardPart().getFont());
-                fontNameText.setEditable(false);
-                final Button fontNameButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);
-                fontNameButton.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(final SelectionEvent e) {
-                        final FontDialog dialog = new FontDialog(group.getShell());
-                        dialog.setText("Select Font");
-                        final FontData selectedFont = dialog.open();
-                        if (selectedFont == null) {
-                            return;
-                        }
-                        fontNameText.setText(selectedFont.getName());
-                        VoronoiConfigurer.this.getDashboardPart().setFont(selectedFont.getName());
-                    }
-                });
-            }
+
             section.setClient(group);
         }
 

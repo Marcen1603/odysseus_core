@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.wheel;
 
 import java.text.NumberFormat;
+import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.swt.widgets.Display;
@@ -32,6 +33,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *
  */
 public class GaugeWheelDashboardPart extends AbstractWheelDashboardPart {
+    private final static String GAUGE_COLOR = "gaugeColor";
+
     private RGB gaugeColor = new RGB(0, 255, 0);
 
     /**
@@ -50,6 +53,27 @@ public class GaugeWheelDashboardPart extends AbstractWheelDashboardPart {
         final Coordinate extent = this.textExtent(text);
         this.setBackground(gaugeBackgroundColor);
         this.drawText(text, new Coordinate(this.getCenter().x - (extent.x / 2), this.getCenter().y - extent.y), true);
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLoad(Map<String, String> saved) {
+        super.onLoad(saved);
+        gaugeColor = RGB.valueOf(saved.get(GAUGE_COLOR)!=null?saved.get(GAUGE_COLOR):"255,0,0");
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> onSave() {
+        Map<String, String> toSaveMap = super.onSave();
+        toSaveMap.put(GAUGE_COLOR, String.valueOf(gaugeColor));
+        return toSaveMap;
     }
 
     /**

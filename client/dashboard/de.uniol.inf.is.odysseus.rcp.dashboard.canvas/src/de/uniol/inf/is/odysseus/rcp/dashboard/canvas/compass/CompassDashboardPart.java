@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.compass;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.swt.graphics.Path;
@@ -37,9 +38,18 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *
  */
 public class CompassDashboardPart extends AbstractCanvasDashboardPart {
+    private final static String POS = "pos";
+    private final static String MIN = "min";
+    private final static String MAX = "max";
+    private final static String AUTOADJUST = "autoadjust";
+    private final static String BACKGROUND_COLOR = "backgroundColor";
+    private final static String BACKGROUND_ALPHA = "backgroundAlpha";
+    private final static String COLOR = "color";
+    private final static String FONT = "font";
+
     private static final double TWO_PI = 2.0 * Math.PI;
     private RGB backgroundColor = new RGB(255, 255, 255);
-    private RGB arrowColor = new RGB(0, 255, 0);
+    private RGB color = new RGB(0, 255, 0);
     /** Background alpha. */
     private int backgroundAlpha = 255;
     /** The font name. */
@@ -107,9 +117,44 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
             transform.translate((int) this.getCenter().x, (int) this.getCenter().y);
             transform.rotate((float) (angle - 90.0));
             this.getGC().setTransform(transform);
-            this.fillPath(path, this.arrowColor);
+            this.fillPath(path, this.color);
             this.getGC().setTransform(null);
         }
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public void onLoad(Map<String, String> saved) {
+        super.onLoad(saved);
+        pos = Integer.valueOf(saved.get(POS)!=null?saved.get(POS):"0");
+        min = Double.valueOf(saved.get(MIN)!=null?saved.get(MIN):"0");
+        max = Double.valueOf(saved.get(MAX)!=null?saved.get(MAX):"1");
+        autoadjust = Boolean.valueOf(saved.get(AUTOADJUST) != null ? saved.get(AUTOADJUST) : "true");
+        backgroundColor = RGB.valueOf(saved.get(BACKGROUND_COLOR) != null ? saved.get(BACKGROUND_COLOR) : "255,0,0");
+        backgroundAlpha = Integer.valueOf(saved.get(BACKGROUND_ALPHA) != null ? saved.get(BACKGROUND_ALPHA) : "255");
+        color = RGB.valueOf(saved.get(COLOR) != null ? saved.get(COLOR) : "0,0,0");
+        font = String.valueOf(saved.get(FONT)!=null?saved.get(FONT):"Verdana");
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> onSave() {
+        Map<String, String> toSaveMap = super.onSave();
+        toSaveMap.put(POS, String.valueOf(pos));
+        toSaveMap.put(MIN, String.valueOf(min));
+        toSaveMap.put(MAX, String.valueOf(max));
+        toSaveMap.put(AUTOADJUST, String.valueOf(autoadjust));
+        toSaveMap.put(BACKGROUND_COLOR, String.valueOf(backgroundColor));
+        toSaveMap.put(BACKGROUND_ALPHA, String.valueOf(backgroundAlpha));
+        toSaveMap.put(COLOR, String.valueOf(color));
+        toSaveMap.put(FONT, String.valueOf(font));
+        return toSaveMap;
     }
 
     public Coordinate getCenter() {
@@ -228,18 +273,18 @@ public class CompassDashboardPart extends AbstractCanvasDashboardPart {
     }
 
     /**
-     * @param arrowColor
-     *            the arrowColor to set
+     * @param color
+     *            the color to set
      */
-    public void setArrowColor(final RGB arrowColor) {
-        this.arrowColor = arrowColor;
+    public void setColor(final RGB color) {
+        this.color = color;
     }
 
     /**
-     * @return the arrowColor
+     * @return the color
      */
-    public RGB getArrowColor() {
-        return this.arrowColor;
+    public RGB getColor() {
+        return this.color;
     }
 
     /**
