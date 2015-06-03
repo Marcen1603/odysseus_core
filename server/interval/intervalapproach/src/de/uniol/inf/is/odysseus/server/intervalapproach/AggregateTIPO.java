@@ -51,8 +51,9 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.state.AggregateTIPOState;
 
 /**
- * This class represents the physical implementation of the aggregation operation in the
- * interval approach
+ * This class represents the physical implementation of the aggregation
+ * operation in the interval approach
+ * 
  * @author Marco Grawunder
  *
  * @param <Q>: The metadata datatype
@@ -60,77 +61,90 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.state.AggregateTIPOState
  * @param <W>: The type of the element that is written
  */
 public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
-		extends AggregatePO<Q, R, W> implements
-		IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
+		extends AggregatePO<Q, R, W> implements IStatefulOperator, IStatefulPO,
+		IPhysicalOperatorKeyValueProvider {
 
 	/**
-	 * When combining different elements the meta data must be merged. Because the operator does not know, which
-	 * meta data is used, the metadataMerge function is injection at transformation time 
+	 * When combining different elements the meta data must be merged. Because
+	 * the operator does not know, which meta data is used, the metadataMerge
+	 * function is injection at transformation time
 	 */
 	final private IMetadataMergeFunction<Q> metadataMerge;
 
 	/**
-	 * if set to a value higher than -1, every dumpAtValueCount elements are also written, even if no new elements
-	 * has reached its final value. The result element has a shorter validity.
+	 * if set to a value higher than -1, every dumpAtValueCount elements are
+	 * also written, even if no new elements has reached its final value. The
+	 * result element has a shorter validity.
 	 */
 	private int dumpAtValueCount = -1;
-	
+
 	/**
 	 * How many elements have been read since last dump of elements
 	 */
 	private long createOutputCounter = 0;
-	
+
 	/**
-	 * The aggregation could output values or partial aggregates. 
+	 * The aggregation could output values or partial aggregates.
 	 */
 	private boolean outputPA = false;
 	/**
-	 * if set to true, the current elements that are still stored to keep order are 
-	 * written, when a done call from the input operator arrives
+	 * if set to true, the current elements that are still stored to keep order
+	 * are written, when a done call from the input operator arrives
 	 */
 	private boolean drainAtDone = true;
 	/**
-	 * if set to true, the current elements that are still stored to keep order are 
-	 * written, when a close call from the output operator arrives
+	 * if set to true, the current elements that are still stored to keep order
+	 * are written, when a close call from the output operator arrives
 	 */
 	private boolean drainAtClose = false;
 
-	
 	/**
-	 * Aggreation can create out of order elements. The transferArea is used to assure the right out order
+	 * Aggreation can create out of order elements. The transferArea is used to
+	 * assure the right out order
 	 */
 	private ITransferArea<W, W> transferArea;
-	
+
 	/**
-	 * For every group exists a sweep area that keeps the state for the aggregation
+	 * For every group exists a sweep area that keeps the state for the
+	 * aggregation
 	 */
 	private Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
 
 	/**
-	 * For information purposes: The start time stamp of the element that leaded to a sweep area cleanup 
+	 * For information purposes: The start time stamp of the element that leaded
+	 * to a sweep area cleanup
 	 */
 	private PointInTime lastTimestamp;
 
-	
 	static final Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
-
 	/**
-	 * Create a new aggregation operator 
-	 * @param inputSchema: The input schema of the operator
-	 * @param outputSchema: The output schema of the operator
-	 * @param groupingAttributes: The attributes for which grouping should be done
-	 * @param aggregations: What aggregations should be done. The map contains first a schema, that contains the 
-	 * attributes from the input schema that are used as input for the aggregation, the second map contains the aggreation functions for
-	 * this input attributes and the output attribute (from the output schema) where the result of the aggregation should be stored.
-	 * @param fastGrouping: If set to true, the grouping will be based the the java hashCode function for the grouping attributes. 
-	 * This could be unsafe, as multiple different input elements could be mapped to the same hashCode. In such cases, fastGrouping should
-	 * be false!
+	 * Create a new aggregation operator
+	 * 
+	 * @param inputSchema
+	 *            : The input schema of the operator
+	 * @param outputSchema
+	 *            : The output schema of the operator
+	 * @param groupingAttributes
+	 *            : The attributes for which grouping should be done
+	 * @param aggregations
+	 *            : What aggregations should be done. The map contains first a
+	 *            schema, that contains the attributes from the input schema
+	 *            that are used as input for the aggregation, the second map
+	 *            contains the aggreation functions for this input attributes
+	 *            and the output attribute (from the output schema) where the
+	 *            result of the aggregation should be stored.
+	 * @param fastGrouping
+	 *            : If set to true, the grouping will be based the the java
+	 *            hashCode function for the grouping attributes. This could be
+	 *            unsafe, as multiple different input elements could be mapped
+	 *            to the same hashCode. In such cases, fastGrouping should be
+	 *            false!
 	 */
 	public AggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
-			boolean fastGrouping, IMetadataMergeFunction<Q> metadataMerge ) {
+			boolean fastGrouping, IMetadataMergeFunction<Q> metadataMerge) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations,
 				fastGrouping);
 		this.metadataMerge = metadataMerge;
@@ -138,18 +152,25 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	/**
-	 * if set to a value higher than -1, every dumpAtValueCount elements are also written, even if no new elements
-	 * has reached its final value. The result element has a shorter validity.
-	 * @param dumpAtValueCount: A which rate, should additional output be created
+	 * if set to a value higher than -1, every dumpAtValueCount elements are
+	 * also written, even if no new elements has reached its final value. The
+	 * result element has a shorter validity.
+	 * 
+	 * @param dumpAtValueCount
+	 *            : A which rate, should additional output be created
 	 */
 	public void setDumpAtValueCount(int dumpAtValueCount) {
 		this.dumpAtValueCount = dumpAtValueCount;
 	}
 
 	/**
-	 * The aggreation can created concrete values as output, e.g. 20 for an AVG aggregation. If the aggregation is splitted
-	 * partial aggregates can be used to keep the state, e.g. Sum = 100, Count = 5 for an average. 
-	 * @param outputPA if set to true, partial aggregate will be used in the output instead of real values
+	 * The aggreation can created concrete values as output, e.g. 20 for an AVG
+	 * aggregation. If the aggregation is splitted partial aggregates can be
+	 * used to keep the state, e.g. Sum = 100, Count = 5 for an average.
+	 * 
+	 * @param outputPA
+	 *            if set to true, partial aggregate will be used in the output
+	 *            instead of real values
 	 */
 	public void setOutputPA(boolean outputPA) {
 		this.outputPA = outputPA;
@@ -157,6 +178,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	/**
 	 * Does this aggregation return partial aggregates
+	 * 
 	 * @return
 	 */
 	public boolean isOutputPA() {
@@ -164,30 +186,30 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	/**
-	 * if set to true, the current elements that are still stored to keep order are 
-	 * written, when a done call from the input operator arrives
+	 * if set to true, the current elements that are still stored to keep order
+	 * are written, when a done call from the input operator arrives
 	 */
 	public void setDrainAtDone(boolean drainAtDone) {
 		this.drainAtDone = drainAtDone;
 	}
 
 	/**
-	 * if set to true, the current elements that are still stored to keep order are 
-	 * written, when a close call from the output operator arrives
+	 * if set to true, the current elements that are still stored to keep order
+	 * are written, when a close call from the output operator arrives
 	 */
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
 	}
 
 	/**
-	 * The aggregation creates always a new element. So no input data needs to be cloned.
+	 * The aggregation creates always a new element. So no input data needs to
+	 * be cloned.
 	 */
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	
 	@Override
 	protected void process_open() throws OpenFailedException {
 		IGroupProcessor<R, W> g = getGroupProcessor();
@@ -212,7 +234,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	/**
-	 * Iterate over all groups sweep areas,  create output and clear state
+	 * Iterate over all groups sweep areas, create output and clear state
 	 */
 	private void drainGroups() {
 		for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
@@ -222,7 +244,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			produceResults(results, entry.getKey());
 			entry.getValue().clear();
 		}
-		// Send information to transfer area that no more elements will be delivered on port 0, so all data can be written
+		// Send information to transfer area that no more elements will be
+		// delivered on port 0, so all data can be written
 		transferArea.done(0);
 	}
 
@@ -247,11 +270,14 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	@Override
 	protected void process_next(R object, int port) {
 
-		// Remark: Typically, the transferArea would get a notification about the time progress
-		// but here the aggregate operator keeps state for different groups, so the time progress
-		// cannot be determined by the last read object, but by the oldest object in every group 
+		// Remark: Typically, the transferArea would get a notification about
+		// the time progress
+		// but here the aggregate operator keeps state for different groups, so
+		// the time progress
+		// cannot be determined by the last read object, but by the oldest
+		// object in every group
 		// somehow similar to a logical port for every group
-		
+
 		if (debug) {
 			System.err.println(object);
 		}
@@ -267,76 +293,76 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			groups.put(groupID, sa);
 		}
 
-		// Update sweep area with new element and retrieve results, that can be written to transferArea (i.e. 
-		// where the partial aggregate can receive no modification because it validity is before the
-		// start time stamp of the current object (and the stream is ordered regarding time stamps)
+		// Update sweep area with new element and retrieve results, that can be
+		// written to transferArea (i.e.
+		// where the partial aggregate can receive no modification because it
+		// validity is before the
+		// start time stamp of the current object (and the stream is ordered
+		// regarding time stamps)
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
 				sa, object, outputPA);
 
-		if (debug){
+		if (debug) {
 			System.err.println(sa);
 		}
-		// If the update has found elements to write, create output
-		if (results.size() > 0) {
-			produceResults(results, groupID);
+		createOutput(results, groupID, object.getMetadata().getStart());
+	}
+
+	private void createOutput(
+			List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults,
+			Long groupID, PointInTime timestamp) {
+
+		// Check if additional output should be created 
+		 // Allow to create additional output by cutting all current partial
+		 // aggregate into two, one before the split point and one after the split
+		 //point. By this aggregate with a long valid time interval can be split
+		 // into multiple elements
+		boolean createAdditionalOutput = false;
+		if (dumpAtValueCount > 0) {
+
+			createOutputCounter++;
+			if (createOutputCounter >= dumpAtValueCount) {
+				createOutputCounter = 0;
+				createAdditionalOutput = true;
+			}
 		}
-
-		// For special cases (e.g. dumpAtValueCount) or because of time progress, 
-		// additional output could be send to the transferArea
-		cleanUpAndcreateOutput(object.getMetadata().getStart());
-	}
-
-	
-	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation,
-			int port) {
-		// Keep punctuation order by sending to transfer area
-		transferArea.sendPunctuation(punctuation, port);
-		// Maybe new output can be created because of time progress
-		cleanUpAndcreateOutput(punctuation.getTime());
-	}
-	
-	/**
-	 * This method is used by process and processPunctuation to create output on
-	 * time progress and on element count
-	 * @param timestamp
-	 */
-	private void cleanUpAndcreateOutput(PointInTime timestamp) {
-		this.lastTimestamp = timestamp;
-		// Extract all Elements before current Time, these elements cannot be touched/changed anymore
-		// and send to transferArea
-		cleanUpSweepArea(timestamp);
-
-		// To raise the output rate, aggregations can be written earlier 
-		createAddOutput(timestamp);
-
-		// To determine the time progress for the transferArea
-		// Find minimal start time stamp in all current groups. If no
-		// group has an entry, the timestamp is the given timestamp
-		PointInTime mints = findMinTimestamp(timestamp);
-		// Inform transferArea about the time progress
-		transferArea.newHeartbeat(mints, 0);
-
-		if (debug) {
-			System.err.println("CREATE OUTPUT " + mints);
-			transferArea.dump();
-		}
-
-		// THIS HEARTBEAT IS TO HIGH!!
-		// transferArea.newHeartbeat(timestamp, 0);
-	}
-
-	/**
-	 * A helper method that looks in every sweep area to determine the minimum time stamp, i.e. the oldest starting 
-	 * point that is still stored in the state (the watermark)
-	 * @param timestamp The current time stamp of the input stream. If all groups are empty, this will be the minimum value
-	 * @return
-	 */
-	private PointInTime findMinTimestamp(PointInTime timestamp) {
+		
 		PointInTime border = timestamp;
-		for (AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> entry : groups
-					.values()) {
-				PointInTime sa_min_ts = entry.calcMinTs();
+		// Keep group order in output --> so first create output of group 1,
+		// then group etc.
+		// for group groupID use the existings results derived from updating
+		// sweep area
+		for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+				.entrySet()) {
+
+			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = entry
+					.getValue();
+
+			if (groupID != entry.getKey()) {
+
+				// /System.err.println(entry.getValue());
+				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
+						.getValue().extractElementsBefore(timestamp);
+				if (debug) {
+					System.err.println("AREA FOR GROUP " + entry.getKey());
+					// System.err.println(entry.getValue().getSweepAreaAsString());
+				}
+				produceResults(results, entry.getKey());
+			} else {
+				if (existingResults != null) {
+					produceResults(existingResults, groupID);
+				}
+			}
+			if (createAdditionalOutput) {
+				List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
+						entry.getValue(), timestamp);
+				if (results.size() > 0) {
+					produceResults(results, entry.getKey());
+				}
+			}
+
+			PointInTime sa_min_ts = sa.calcMinTs();
+
 			if (sa_min_ts != null) {
 				if (sa_min_ts.before(border)) {
 					border = sa_min_ts;
@@ -344,61 +370,37 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			}
 
 		}
-		return border;
-	}
 
-	/**
-	 * Remove all elements that are before the time stamp (i.e. end time stamp is before the given time stamp) 
-	 * and send to transferArea. These are all elements that could not be touched anymore and as so, cannot change
-	 * @param timestamp The time stamp that states the current progress of the input stream 
-	 */
-	private void cleanUpSweepArea(PointInTime timestamp) {
-		for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
-				.entrySet()) {
-			// /System.err.println(entry.getValue());
-			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
-					.getValue().extractElementsBefore(timestamp);
-			if (debug) {
-				System.err.println("AREA FOR GROUP " + entry.getKey());
-				//System.err.println(entry.getValue().getSweepAreaAsString());
-			}
-			produceResults(results, entry.getKey());
+		// Inform transferArea about the time progress
+		transferArea.newHeartbeat(border, 0);
+
+		if (debug) {
+			System.err.println("CREATE OUTPUT " + border);
+			transferArea.dump();
 		}
+
 	}
 
-	/**
-	 * Allow to create additional output by cutting all current partial aggregate into two, one before the split point and one after the
-	 * split point. By this aggregate with a long valid time interval can be split into multiple elements
-	 * @param splitPoint the point where the elements should be split up
-	 */
-	private void createAddOutput(PointInTime splitPoint) {
-		if (dumpAtValueCount > 0) {
-
-			createOutputCounter++;
-			if (createOutputCounter >= dumpAtValueCount) {
-				createOutputCounter = 0;
-
-				for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
-						.entrySet()) {
-					// System.err.println("Updating "+entry.getKey());
-					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
-							entry.getValue(), splitPoint);
-					if (results.size() > 0) {
-						produceResults(results, entry.getKey());
-					}
-				}
-
-			}
-		}
+	@Override
+	public synchronized void processPunctuation(IPunctuation punctuation,
+			int port) {
+		// Keep punctuation order by sending to transfer area
+		transferArea.sendPunctuation(punctuation, port);
+		// Maybe new output can be created because of time progress
+		createOutput(null,null,punctuation.getTime());
 	}
 
-	
+
 	/**
-	 * The output data is build from the result of the current aggregation, the values of the
-	 * grouping attributes in this group and the meta data of the partial aggregate
-	 * This function creates output elements and sends them to the transferArea
-	 * @param results The calculated aggregation values
-	 * @param groupID for which group should the output 
+	 * The output data is build from the result of the current aggregation, the
+	 * values of the grouping attributes in this group and the meta data of the
+	 * partial aggregate This function creates output elements and sends them to
+	 * the transferArea
+	 * 
+	 * @param results
+	 *            The calculated aggregation values
+	 * @param groupID
+	 *            for which group should the output
 	 */
 	private void produceResults(
 			List<PairMap<SDFSchema, AggregateFunction, W, Q>> results,
@@ -413,11 +415,15 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	/**
-	 * The output data is build from the current partial aggregates, the values of the
-	 * grouping attributes in this group and the meta data of the partial aggregate
-	 * This function creates output elements and sends them to the transferArea 
-	 * @param results: The partial aggregates for the input attributes
-	 * @param groupID: The group for which the result should be created
+	 * The output data is build from the current partial aggregates, the values
+	 * of the grouping attributes in this group and the meta data of the partial
+	 * aggregate This function creates output elements and sends them to the
+	 * transferArea
+	 * 
+	 * @param results
+	 *            : The partial aggregates for the input attributes
+	 * @param groupID
+	 *            : The group for which the result should be created
 	 */
 	private void produceResults(
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
@@ -451,32 +457,33 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		return this.groups;
 	}
 
-
 	/**
-	 * This method does for every group/sweep area the core calculation of the new aggregation state, when a new
-	 * element is inserted. This algorithm is inspired by the online aggregation algorithm of [Hellerstein] and the stream
-	 * algorithm from [Kraemer]. It allow to apply different aggregations functions on multiple attributes
+	 * This method does for every group/sweep area the core calculation of the
+	 * new aggregation state, when a new element is inserted. This algorithm is
+	 * inspired by the online aggregation algorithm of [Hellerstein] and the
+	 * stream algorithm from [Kraemer]. It allow to apply different aggregations
+	 * functions on multiple attributes
 	 * 
-	 * Different cases are handled:
-	 * 1) The element does not overlap with any existing elements --> Create a new partial aggregate (init)
-	 * 2) The element overlaps with other existing elements --> build overlapping areas
-	 *    a) part before or after an overlap --> init 
-	 *    b) part overlapping --> merge
-	 *    
-	 *    ----------------------------------------------------------------------------------------------
-	 *      ---pa1-------   ---pa2----------
-	 *          ----------newElem-----
-	 *          
-	 *  -->
-	 *     -pa1-
-	 *          --pa1+nE-
-	 *                   -ne
-	 *                      --pa2+n2--
-	 *                                --ne-- 
-	 * @param sa The sweep area that should be updated
-	 * @param elemToAdd The new element that should be inserted into the sweep area
-	 * @param outputPA a boolean that states, if the output should be partial aggregates or evaluated values
-	 * @return a list of aggregations that cannot be modified anymore, because of the progress of time
+	 * Different cases are handled: 1) The element does not overlap with any
+	 * existing elements --> Create a new partial aggregate (init) 2) The
+	 * element overlaps with other existing elements --> build overlapping areas
+	 * a) part before or after an overlap --> init b) part overlapping --> merge
+	 * 
+	 * ------------------------------------------------------------------------
+	 * ---------------------- ---pa1------- ---pa2----------
+	 * ----------newElem-----
+	 * 
+	 * --> -pa1- --pa1+nE- -ne --pa2+n2-- --ne--
+	 * 
+	 * @param sa
+	 *            The sweep area that should be updated
+	 * @param elemToAdd
+	 *            The new element that should be inserted into the sweep area
+	 * @param outputPA
+	 *            a boolean that states, if the output should be partial
+	 *            aggregates or evaluated values
+	 * @return a list of aggregations that cannot be modified anymore, because
+	 *         of the progress of time
 	 */
 	protected List<PairMap<SDFSchema, AggregateFunction, W, Q>> updateSA(
 			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
@@ -497,22 +504,28 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		} else {
 			// Overlapping --> Partial Aggregates need to be touched
 
-			// 1. Determine the splitting points of the meta data of the new element (t_probe) and
+			// 1. Determine the splitting points of the meta data of the new
+			// element (t_probe) and
 			// all element in the sweep area that overlaps
-			// 2. sort this list increasing to determine the areas with no overlap and with overlap
-			List<_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> pl = getSortedIntersectionPoints(t_probe, qualifies);
+			// 2. sort this list increasing to determine the areas with no
+			// overlap and with overlap
+			List<_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> pl = getSortedIntersectionPoints(
+					t_probe, qualifies);
 
 			// Now iterate over all points
-			Iterator<_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> pointIter = pl.iterator();
+			Iterator<_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> pointIter = pl
+					.iterator();
 			// Compare always to points
 			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p1 = null;
 			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p2 = null;
 
-			// get the first point (Must be one, else qualifies would not have returned values)
+			// get the first point (Must be one, else qualifies would not have
+			// returned values)
 			p1 = pointIter.next();
 			// Remember the last partial aggregate (init with the first one)
-			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggregate = p1.getLoad();
-	
+			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> lastPartialAggregate = p1
+					.getLoad();
+
 			while (pointIter.hasNext()) {
 				// p2 is the current point
 				p2 = pointIter.next();
@@ -581,11 +594,17 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	/**
 	 * Handle the case where p1 and p2 are end time stamps
-	 * @param sa: The sweep are
-	 * @param elemToAdd: The element that should be added
-	 * @param p1: the left point
-	 * @param p2: the right point
-	 * @param lastPartialAggregate: the aggregate that overlaps with the elemToAdd
+	 * 
+	 * @param sa
+	 *            : The sweep are
+	 * @param elemToAdd
+	 *            : The element that should be added
+	 * @param p1
+	 *            : the left point
+	 * @param p2
+	 *            : the right point
+	 * @param lastPartialAggregate
+	 *            : the aggregate that overlaps with the elemToAdd
 	 */
 	private void updateSAEndEnd(
 			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
@@ -598,21 +617,21 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		if (p2.newElement()) {
 			// In this case the old element need not be touched
 			// but the new element must be handled (not inserted!) from p1 to p2
-			//       ------- Old
-			//          -------- New
+			// ------- Old
+			// -------- New
 			// -->
-			//       ------- Old
-			//              ---- New			
+			// ------- Old
+			// ---- New
 			updateSAEndStart(sa, elemToAdd, p1, p2);
 		} else { // The left element is the new element New End && Old End
 			// in this case the new element must not be touched
 			// but the partial aggregate must get other valid intervals
 			// it has to start later
-			//       ------- Old
-			// --------      New
-			// -->   
-			//         ----- Old
-			// --------      New
+			// ------- Old
+			// -------- New
+			// -->
+			// ----- Old
+			// -------- New
 			@SuppressWarnings("unchecked")
 			Q newTI = (Q) partialAggregate.getMetadata().clone();
 			newTI.setStartAndEnd(p1.getPoint(), p2.getPoint());
@@ -622,7 +641,9 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	private void updateSAEndStart(
 			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
-			R elemToAdd, _Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p1, _Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p2) {
+			R elemToAdd,
+			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p1,
+			_Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> p2) {
 		// New element has a part that is newer than the partial
 		// aggregate
 		@SuppressWarnings("unchecked")
@@ -650,14 +671,16 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			v.getMetadata().setEnd(p2.getPoint());
 			returnValues.add(v);
 		} else {
-			createNew = !(p1.getPoint().equals(lastPartialAggregate.getMetadata()
-					.getStart()) && p2.getPoint().equals(lastPartialAggregate
-					.getMetadata().getEnd()));
+			createNew = !(p1.getPoint().equals(
+					lastPartialAggregate.getMetadata().getStart()) && p2
+					.getPoint().equals(
+							lastPartialAggregate.getMetadata().getEnd()));
 		}
 
 		@SuppressWarnings("unchecked")
 		Q newMeta = (Q) metadataMerge.mergeMetadata(
-				lastPartialAggregate.getMetadata(), elemToAdd.getMetadata()).clone();
+				lastPartialAggregate.getMetadata(), elemToAdd.getMetadata())
+				.clone();
 		newMeta.setStartAndEnd(p1.getPoint(), p2.getPoint());
 		saInsert(sa, calcMerge(lastPartialAggregate, elemToAdd, createNew),
 				newMeta);
@@ -706,12 +729,16 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			// Add the points with corresponding partial aggregates and info
 			// if
 			// point is start oder end into list of points
-			pl.add(new _Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>(t_agg.getStart(), true, element_agg));
-			pl.add(new _Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>(t_agg.getEnd(), false, element_agg));
+			pl.add(new _Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>(
+					t_agg.getStart(), true, element_agg));
+			pl.add(new _Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>(
+					t_agg.getEnd(), false, element_agg));
 		}
 		// Add the time interval of the element to add in the list of points
-		pl.add(new _Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>(t_probe.getStart(), true, null));
-		pl.add(new _Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>(t_probe.getEnd(), false, null));
+		pl.add(new _Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>(
+				t_probe.getStart(), true, null));
+		pl.add(new _Point<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>(
+				t_probe.getEnd(), false, null));
 
 		// Sort the List
 		Collections.sort(pl);
@@ -803,18 +830,19 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
 		map.put("OutputQueueSize", transferArea.size() + "");
-		map.put("Groups", groups.size()+"");
-		map.put("LastInputTS", lastTimestamp+"");
+		map.put("Groups", groups.size() + "");
+		map.put("LastInputTS", lastTimestamp + "");
 		map.put("Watermark", transferArea.getWatermark() + "");
 		return map;
 	}
 }
 
 /**
- * This class represents points in time. The points are derived from time intervals. 
- * Each point stores the left or right side of the interval (isStartPoint = true --> left side, 
- * else right side)
- * Additionally, a load field can be used to keep reference data.
+ * This class represents points in time. The points are derived from time
+ * intervals. Each point stores the left or right side of the interval
+ * (isStartPoint = true --> left side, else right side) Additionally, a load
+ * field can be used to keep reference data.
+ * 
  * @author Marco Grawunder
  *
  */
@@ -824,20 +852,17 @@ class _Point<T> implements Comparable<_Point<T>> {
 	 */
 	final private PointInTime point;
 	/**
-	 * if set to true, this point was derived from a starting point of an interval, else it was derived from
-	 * an end point
+	 * if set to true, this point was derived from a starting point of an
+	 * interval, else it was derived from an end point
 	 */
 	final private boolean isStartPoint;
-	
+
 	/**
 	 * Additional load that can be held
 	 */
 	final private T load;
 
-	public _Point(
-			PointInTime p,
-			boolean isStartPoint,
-			T element_agg) {
+	public _Point(PointInTime p, boolean isStartPoint, T element_agg) {
 		this.point = p;
 		this.isStartPoint = isStartPoint;
 		this.load = element_agg;
@@ -875,24 +900,23 @@ class _Point<T> implements Comparable<_Point<T>> {
 	public boolean isEnd() {
 		return !isStartPoint;
 	}
-	
+
 	public T getLoad() {
 		return load;
 	}
-	
+
 	public PointInTime getPoint() {
 		return point;
 	}
-	
-	public boolean before(_Point<T> other){
+
+	public boolean before(_Point<T> other) {
 		return point.before(other.point);
 	}
 
-	public boolean before(PointInTime other){
+	public boolean before(PointInTime other) {
 		return point.before(other);
 	}
 
-	
 	@Override
 	public int hashCode() {
 		final int PRIME = 31;
@@ -928,8 +952,7 @@ class _Point<T> implements Comparable<_Point<T>> {
 
 	@Override
 	public String toString() {
-		return (isStartPoint ? "s" : "e") + (newElement() ? "^" : "")
-				+ point;
+		return (isStartPoint ? "s" : "e") + (newElement() ? "^" : "") + point;
 	}
 
 }
