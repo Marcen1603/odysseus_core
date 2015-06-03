@@ -37,7 +37,7 @@ public class AbstractRelationalNumericChangeDetectPO extends RelationalChangeDet
 		for (int i:comparePositions){
 			Number a = object.getAttribute(i);
 			Number b = lastElement.getAttribute(i);
-			if (Math.abs(a.doubleValue()-b.doubleValue()) <= tolerance){
+			if (Math.abs(a.doubleValue()-b.doubleValue()) >= tolerance){
 				return true;
 			}
 			return false;
