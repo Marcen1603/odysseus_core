@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene;
+package de.uniol.inf.is.odysseus.sensormanagement.application.view.scene;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,28 +8,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackScene;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelperHandler;
-
-@XmlRootElement(name = "view")
-@XmlAccessorType (XmlAccessType.FIELD)
-class View
-{
-	double startTime;
-	double endTime;		
-	
-	public View()
-	{
-		startTime = -1.0;
-		endTime = -1.0;
-	}
-	
-	public View(double startTime, double endTime) 
-	{
-		this.startTime = startTime;
-		this.endTime = endTime;
-	}
-}
 
 @XmlRootElement(name = "scene")
 @XmlAccessorType (XmlAccessType.FIELD)

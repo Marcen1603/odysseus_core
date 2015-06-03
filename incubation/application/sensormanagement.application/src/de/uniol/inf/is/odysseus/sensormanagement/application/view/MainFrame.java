@@ -32,9 +32,9 @@ import org.apache.commons.io.FilenameUtils;
 import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session.PresentationStyle;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.live.LiveSession;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackScene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSession;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene.PlaybackScene;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene.Scene;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.Utilities;
 
 @SuppressWarnings("serial")

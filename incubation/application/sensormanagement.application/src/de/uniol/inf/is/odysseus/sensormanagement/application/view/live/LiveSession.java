@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewEntity;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewException;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene.Scene;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.TreeCellRenderer;
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.RemoteSensor;
 

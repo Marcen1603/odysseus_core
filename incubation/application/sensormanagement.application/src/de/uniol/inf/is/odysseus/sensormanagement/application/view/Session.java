@@ -19,7 +19,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene.Scene;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.MapVisualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.JTreeItemClickListener;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.TreeCellRenderer;

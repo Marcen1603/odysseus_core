@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene;
+package de.uniol.inf.is.odysseus.sensormanagement.application.view.playback;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,6 +8,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.TimeInterval;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.View;
 
 @XmlRootElement(name = "playbackscene")
 @XmlAccessorType (XmlAccessType.FIELD)
