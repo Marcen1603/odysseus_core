@@ -28,6 +28,10 @@ import java.io.Serializable;
 public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		Serializable, ITimeComparable {
 
+	static long counter = 0;
+	
+	public final long tiBreaker = counter++;
+	
 	private static final String INFINITY_SYMBOL = "oo";
 
 	private static final long serialVersionUID = -350811211489411617L;
@@ -82,10 +86,10 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		point = -1 * Long.MAX_VALUE;
 	}
 
-	protected PointInTime(PointInTime time) {
-		this.point = time.point;
-		// this.isInfinite = time.isInfinite;
-	}
+//	protected PointInTime(PointInTime time) {
+//		this.point = time.point;
+//		// this.isInfinite = time.isInfinite;
+//	}
 
 	public boolean isInfinite() {
 		return point == INFINITY.point;

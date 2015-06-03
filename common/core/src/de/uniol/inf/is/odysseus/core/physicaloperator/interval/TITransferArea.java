@@ -65,7 +65,12 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 					.getE1()).getTime() : ((W) right.getE1()).getMetadata()
 					.getStart();
 
-			return l.compareTo(r);
+								
+			int c = l.compareTo(r);
+			if (c == 0){
+				return Long.compare(l.tiBreaker, r.tiBreaker);
+			}
+			return c;
 		}
 
 	}
