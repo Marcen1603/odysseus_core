@@ -87,7 +87,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		}
 	}
 
-	//final private SDFExpression scoringFunction;
+	// final private SDFExpression scoringFunction;
 	final private RelationalExpression<M> expression;
 	final private int k;
 	final private Map<Long, ArrayList<SerializablePair<Double, T>>> topKMap = new HashMap<Long, ArrayList<SerializablePair<Double, T>>>();
@@ -109,7 +109,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		this.k = k;
 		if (isOrderByTimestamp()) {
 			comparator = descending ? new TopKComparatorDescTS()
-			: new TopKComparatorAscTS();
+					: new TopKComparatorAscTS();
 		} else {
 			comparator = descending ? new TopKComparatorDesc()
 					: new TopKComparatorAsc();
@@ -128,7 +128,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		topKMap.clear();
 		lastResultMap.clear();
 		groupProcessor.init();
-		elementsRead=0;
+		elementsRead = 0;
 	}
 
 	@Override
@@ -175,12 +175,18 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	private void addObject(SerializablePair<Double, T> scoredObject,
 			ArrayList<SerializablePair<Double, T>> topK) {
 		// add object to list
-		// 1. find position to insert with binary search
 
+		// 1. find position to insert with binary search
 		int pos = Collections.binarySearch(topK, scoredObject, comparator);
 		if (pos < 0) {
 			topK.add((-(pos) - 1), scoredObject);
 		} else {
+			if (orderByTimestamp) {
+				while (pos > 0
+						&& topK.get(pos).getE1().equals(scoredObject.getE1())) {
+					pos--;
+				}
+			}
 			topK.add(pos, scoredObject);
 		}
 	}
@@ -237,10 +243,11 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		scoredObject.setE2(object);
 
 		// TODO: Fill history
-		LinkedList<Tuple<M>> history = null;		
-		
+		LinkedList<Tuple<M>> history = null;
+
 		try {
-			score = ((Number) this.expression.evaluate(object, getSessions(), history)).doubleValue();
+			score = ((Number) this.expression.evaluate(object, getSessions(),
+					history)).doubleValue();
 
 		} catch (Exception e) {
 			if (!(e instanceof NullPointerException)) {
@@ -254,17 +261,18 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		return scoredObject;
 	}
 
-
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> kv = new HashMap<String, String>();
-		kv.put("Elements processed",elementsRead+"");
-		kv.put("No Of Groups", topKMap.size() + "");		
+		kv.put("Elements processed", elementsRead + "");
+		kv.put("No Of Groups", topKMap.size() + "");
 		// Show at least 10 groups
 		int i = 10;
-		for (Entry<Long, ArrayList<SerializablePair<Double, T>>> e: topKMap.entrySet()){
-			kv.put("Top-k-Map size group "+e.getKey(), e.getValue().size()+ "");
-			if (i-- < 0){
+		for (Entry<Long, ArrayList<SerializablePair<Double, T>>> e : topKMap
+				.entrySet()) {
+			kv.put("Top-k-Map size group " + e.getKey(), e.getValue().size()
+					+ "");
+			if (i-- < 0) {
 				break;
 			}
 		}
@@ -279,7 +287,8 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	}
 
 	/**
-	 * @param orderByTimestamp the orderByTimestamp to set
+	 * @param orderByTimestamp
+	 *            the orderByTimestamp to set
 	 */
 	public void setOrderByTimestamp(boolean orderByTimestamp) {
 		this.orderByTimestamp = orderByTimestamp;

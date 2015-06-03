@@ -43,6 +43,7 @@ public class TopKAO extends AbstractLogicalOperator {
 			this.groupingAttributes = new ArrayList<SDFAttribute>(other.groupingAttributes);
 		}
 		this.fastGrouping = other.fastGrouping;
+		this.tieWithTimestamp = other.tieWithTimestamp;
 	}
 
 	public NamedExpression getScoringFunction() {
