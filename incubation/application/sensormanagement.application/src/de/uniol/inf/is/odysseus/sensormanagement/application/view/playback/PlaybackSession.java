@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
 import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory;
 import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory.SensorFactoryEntry;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene.Scene;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene.PlaybackScene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene.TimeInterval;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.Utilities;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
@@ -56,8 +56,6 @@ public class PlaybackSession extends Session
 	private TimeBarMarkerImpl 	currentTimeMarker;
 	private boolean				currentTimeMarkerDragged;
 	
-	private Scene				scene;
-		
 	public double getStartTime() 	{ return startTime; }
 	public double getEndTime()		{ return endTime;	}
 	
@@ -145,9 +143,9 @@ public class PlaybackSession extends Session
         getPresentationPanel().add(timeBar, BorderLayout.SOUTH);		
 	}
 	
-	public PlaybackSession(Scene scene) throws IOException
+	public PlaybackSession(PlaybackScene scene) throws IOException
 	{
-		super(scene.getName());
+		super(scene);
 		
 		setupTimeBar();
 		
@@ -173,8 +171,6 @@ public class PlaybackSession extends Session
 										  1.4023966022596202E9)); // 10.06.2014 12:36:42.259
 						*/
 
-		this.scene = scene;
-		
 		for (String file : scene.getFileList())
 		{
 			// TODO: Get list of all LogMetaData classes			
@@ -398,7 +394,7 @@ public class PlaybackSession extends Session
 		{
 			// TODO: Better implementation of jump markers, maybe only keep track of next jumpmarker
 			// and refresh after every marker / jumpToTime-call ?
-			List<TimeInterval> list = scene.getTimeIntervalList();
+			List<TimeInterval> list = ((PlaybackScene) getScene()).getTimeIntervalList();
 			Iterator<TimeInterval> iter = list.iterator();
 			while (iter.hasNext())
 			{

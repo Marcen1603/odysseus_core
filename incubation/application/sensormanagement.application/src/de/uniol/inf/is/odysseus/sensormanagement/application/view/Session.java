@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene.Scene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.MapVisualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.JTreeItemClickListener;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.TreeCellRenderer;
@@ -32,16 +34,19 @@ public abstract class Session extends JSplitPane
 	
 	private static final long serialVersionUID = 1L;
 
+	private String 				sessionName;
+	private Scene				scene;
+	
 	private JTree 				entityTree;
 	private JTabbedPane 		viewTabbedPane;
 	private JPanel 				viewTiledPanel;
-	private JPanel				presentationPanel;
-	private String 				sessionName;
+	private JPanel				presentationPanel;	
 	private PresentationStyle	presentationStyle;
 	private List<Visualization>	visualizationList = new ArrayList<Visualization>();
 	private MapVisualization	map;
 	
 	public String					getSessionName()		{ return sessionName; }
+	public Scene					getScene()				{ return scene; }
 	public JTree 					getEntityTree() 		{ return entityTree; }
 	public DefaultTreeModel 		getTreeModel()			{ return ((DefaultTreeModel) entityTree.getModel()); }
 	public DefaultMutableTreeNode 	getTreeRoot()			{ return (DefaultMutableTreeNode) entityTree.getModel().getRoot(); }
@@ -52,9 +57,10 @@ public abstract class Session extends JSplitPane
 
 	public abstract double 			getNow();
 	
-	public Session(String sessionName)
+	public Session(Scene scene)
 	{
-		this.sessionName = sessionName;
+		this.scene = scene;
+		this.sessionName = scene.getName();
 		
 		entityTree = new JTree(new DefaultMutableTreeNode("Global"));		
 		entityTree.setMinimumSize(new Dimension(150, 16));
@@ -79,9 +85,17 @@ public abstract class Session extends JSplitPane
 		
 		setPresentationStyle(PresentationStyle.TILED);
 		
-		map = new MapVisualization(this, "Map");
-		map.setDisplayConstraints("cell 0 0 2 2");
-		addVisualization(map);
+		if (scene.getMapImage() != null)
+		{
+			String mapImageFileName = scene.getPath() + scene.getMapImage();
+			try {
+				map = new MapVisualization(this, "Map", mapImageFileName);
+			} catch (IOException e) {
+				throw new RuntimeException("Could not create map visualization", e);
+			}
+			map.setDisplayConstraints("cell 0 0 2 2");
+			addVisualization(map);
+		}
 	}
 
 	public void setPresentationStyle(PresentationStyle presentationStyle)

@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session.PresentationStyle;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.live.LiveSession;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSession;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene.PlaybackScene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.scene.Scene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.Utilities;
 
@@ -42,7 +44,7 @@ public class MainFrame extends JFrame
 	private List<Session> sessions;
 	private JMenuBar menuBar;
 	
-	private JFileChooser playbackFileChooser = new JFileChooser();
+	private JFileChooser sceneFileChooser;
 	
 	/**
 	 * Create the frame.
@@ -58,42 +60,72 @@ public class MainFrame extends JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1077, 605);
 		
+		sceneFileChooser = new JFileChooser();
+		sceneFileChooser.setFileFilter(new FileFilter() 
+			{
+				@Override public String getDescription()
+				{ 
+					return "Scenario files (*.xml)"; 
+				}
+				
+				@Override public boolean accept(File file) 
+				{
+					return file.isDirectory() || FilenameUtils.getExtension(file.getName()).equals("xml");
+				}
+			});		
+		
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JMenu mnNewMenu = new JMenu("File");
-		menuBar.add(mnNewMenu);
+		JMenu fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Start playback session");
-		mntmNewMenuItem.addActionListener(	new ActionListener() 
+		JMenu startLiveSessionMenu = new JMenu("Start live session");
+		fileMenu.add(startLiveSessionMenu);
+		
+		JMenuItem liveSessionNewSceneMenu = new JMenuItem("New scene");
+		startLiveSessionMenu.add(liveSessionNewSceneMenu);
+		
+		JMenuItem mntmFromExistingScene = new JMenuItem("From existing scene...");
+		mntmFromExistingScene.addActionListener(new ActionListener() 
+												{
+													public void actionPerformed(ActionEvent arg0) { startLiveSessionFromSceneMenuItemClick(); }
+												});
+		startLiveSessionMenu.add(mntmFromExistingScene);
+		liveSessionNewSceneMenu.addActionListener(new ActionListener() 
+												{
+													public void actionPerformed(ActionEvent e) { startLiveSessionMenuItemClick(); }
+												});
+		
+		JMenu startPlaybackSessionMenu = new JMenu("Start playback session");
+		fileMenu.add(startPlaybackSessionMenu);
+		
+		JMenuItem playbackSessionFromSceneMenu = new JMenuItem("From scene...");
+		startPlaybackSessionMenu.add(playbackSessionFromSceneMenu);
+		
+		JMenuItem playbackSessionFromDirectoryMenu = new JMenuItem("From directory...");
+		startPlaybackSessionMenu.add(playbackSessionFromDirectoryMenu);
+		playbackSessionFromSceneMenu.addActionListener(	new ActionListener() 
 											{
 												public void actionPerformed(ActionEvent arg0) { startPlaybackSessionMenuClick(); }
 											});
 		
-		JMenuItem mntmStartLiveSession = new JMenuItem("Start live session");
-		mntmStartLiveSession.addActionListener(	new ActionListener() 
-												{
-													public void actionPerformed(ActionEvent e) { startLiveSessionMenuItemClick(); }
-												});
-		mnNewMenu.add(mntmStartLiveSession);
-		mnNewMenu.add(mntmNewMenuItem);
-		
-		JMenuItem mntmStopCurrentSession = new JMenuItem("Stop current session");
-		mntmStopCurrentSession.addActionListener(new ActionListener() 
+		JMenuItem stopCurrentSessionMenu = new JMenuItem("Stop current session");
+		stopCurrentSessionMenu.addActionListener(new ActionListener() 
 												{
 													public void actionPerformed(ActionEvent e) { stopCurrentSessionMenuItemClick(); }
 												});
-		mnNewMenu.add(mntmStopCurrentSession);
+		fileMenu.add(stopCurrentSessionMenu);
 		
 		JSeparator separator = new JSeparator();
-		mnNewMenu.add(separator);
+		fileMenu.add(separator);
 		
-		JMenuItem mntmClose = new JMenuItem("Close");
-		mntmClose.addActionListener(new ActionListener() 
+		JMenuItem closeMenu = new JMenuItem("Close");
+		closeMenu.addActionListener(new ActionListener() 
 									{
 										public void actionPerformed(ActionEvent e) { closeMenuItemClick(); }
 									});
-		mnNewMenu.add(mntmClose);
+		fileMenu.add(closeMenu);
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -178,7 +210,7 @@ public class MainFrame extends JFrame
 												 public void actionPerformed(ActionEvent arg0) { getCurrentSession().startLiveViewBtnClick(); }
 											 });
 	}
-	
+
 	protected void toggleFullScreen() 
 	{
 		boolean visible = !menuBar.isVisible();		
@@ -225,7 +257,23 @@ public class MainFrame extends JFrame
 
 	protected void startLiveSessionMenuItemClick() 
 	{
-		LiveSession liveSession = new LiveSession("Live Session");
+		startLiveSession(new Scene(null, "Live Session", null));
+	}
+
+	protected void startLiveSessionFromSceneMenuItemClick() 
+	{
+		try 
+		{
+			if (sceneFileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+				startLiveSession(Scene.fromFile(sceneFileChooser.getSelectedFile()));
+		} catch (IOException e) {
+			Application.showException(e);
+		}
+	}
+	
+	private void startLiveSession(Scene scene)
+	{
+		LiveSession liveSession = new LiveSession(scene);
 		try
 		{
 			liveSession.addSensorBox("192.168.1.101:9669");
@@ -245,9 +293,9 @@ public class MainFrame extends JFrame
 		{
 			liveSession.remove();
 			Application.showException(e);
-		}				
+		}		
 	}
-
+	
 	protected void closeMenuItemClick() 
 	{
         setVisible(false);
@@ -256,24 +304,12 @@ public class MainFrame extends JFrame
 	
 	protected void startPlaybackSessionMenuClick() 
 	{
-		playbackFileChooser.setFileFilter(new FileFilter() 
-			{
-				@Override public String getDescription() 
-				{ 
-					return "Scenario files (*.xml)"; 
-				}
-				
-				@Override public boolean accept(File file) 
-				{
-					return file.isDirectory() || FilenameUtils.getExtension(file.getName()).equals("xml");
-				}
-		});
-		int returnVal = playbackFileChooser.showOpenDialog(this);		
+		int returnVal = sceneFileChooser.showOpenDialog(this);		
 		if (returnVal == JFileChooser.APPROVE_OPTION) 
 		{
 			try 
 			{			
-				Scene scene = Scene.fromFile(playbackFileChooser.getSelectedFile());
+				PlaybackScene scene = (PlaybackScene) Scene.fromFile(sceneFileChooser.getSelectedFile());
 			
 				PlaybackSession playbackSession = new PlaybackSession(scene);
 				Application.getMainFrame().addSession(playbackSession);

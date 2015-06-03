@@ -8,6 +8,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.Arc2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,24 +26,14 @@ public class MapVisualization extends Visualization
 {
 	private static final long serialVersionUID = 3745022811236756800L;
 
-	private static final BufferedImage mapImage;
-	static
-	{
-	    try
-	    {
-	    	mapImage = ImageIO.read(new File("res/map_port.png"));
-	    }
-	    catch(final Exception e)
-	    {
-	        throw new RuntimeException("Failed to create map instance in static block.", e);
-	    }  
-	}	
-	
 	private Map<SensorModel2, Event> currentEvents = new ConcurrentHashMap<>();
-
-	public MapVisualization(Session session, String displayName) 
+	private final BufferedImage mapImage;
+	
+	public MapVisualization(Session session, String displayName, String mapImageFileName) throws IOException 
 	{
 		super(session, displayName);
+		
+    	mapImage = ImageIO.read(new File(mapImageFileName));
 	}
 
     @Override

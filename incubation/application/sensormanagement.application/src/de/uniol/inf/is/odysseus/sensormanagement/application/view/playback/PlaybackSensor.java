@@ -178,7 +178,8 @@ public class PlaybackSensor extends ViewEntity implements ReceiverListener
 	{
 		if (visualization != null) visualization.sensorDataReceived(source, event);
 		
-		getSession().getMap().sensorDataReceived(source, event);
+		if (getSession().getMap() != null)
+			getSession().getMap().sensorDataReceived(source, event);
 	}
 	
 	@Override public void listeningStarted(Receiver receiver) 
