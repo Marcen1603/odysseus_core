@@ -116,7 +116,8 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart 
      */
     @Override
     public void paintControl(final PaintEvent e) {
-        Image bufferImage = new Image(Display.getCurrent(), this.getCanvas().getBounds());
+    	Point s = this.getCanvas().getSize();
+        Image bufferImage = new Image(Display.getCurrent(), s.x, s.y);
         this.gc = new GC(bufferImage);
         this.gc.setTextAntialias(SWT.ON);
         this.gc.setAdvanced(true);
