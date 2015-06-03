@@ -32,7 +32,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 		} else { // Attribute is (potentially) part of meta data;
 			Pair<Integer, Integer> pos = schema.indexOfMetaAttribute(curAttribute);
 			if (pos != null){
-				return new VarHelper(pos.getE1(), pos.getE2(), 0);
+				return new VarHelper(pos.getE2(), pos.getE1(), 0);
 			}
 		}
 		throw new RuntimeException("Cannot find attribute "+curAttribute+" in input stream!");
