@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.Collection;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -37,7 +36,7 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 
 	@Override
 	public int getPriority() {
-		return 10;
+		return 0;
 	}
 
 	@Override
@@ -53,17 +52,28 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 				} else {
 					join.setPredicate(sel.getPredicate());
 				}
-                ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration().get(ParameterPredicateOptimizer.class);
-                if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
-                    if (join.getPredicate() instanceof RelationalPredicate) {
-                        RelationalPredicate relationalPredicate = (RelationalPredicate) join.getPredicate();
-                        IExpression<?> expression = ((RelationalPredicate) join.getPredicate()).getExpression().getMEPExpression();
-                        expression = ExpressionOptimizer.optimize(expression);
-                        IExpression<?> cnf = ExpressionOptimizer.toConjunctiveNormalForm(expression);
-                        SDFExpression sdfExpression = new SDFExpression(cnf, relationalPredicate.getExpression().getAttributeResolver(), relationalPredicate.getExpression().getExpressionParser());
-                        join.setPredicate(new RelationalPredicate(sdfExpression));
-                    }
-                }
+				ParameterPredicateOptimizer optimizeConfig = config
+						.getQueryBuildConfiguration().get(
+								ParameterPredicateOptimizer.class);
+				if (optimizeConfig != null
+						&& optimizeConfig.getValue().booleanValue()) {
+					if (join.getPredicate() instanceof RelationalPredicate) {
+						RelationalPredicate relationalPredicate = (RelationalPredicate) join
+								.getPredicate();
+						IExpression<?> expression = ((RelationalPredicate) join
+								.getPredicate()).getExpression()
+								.getMEPExpression();
+						expression = ExpressionOptimizer.optimize(expression);
+						IExpression<?> cnf = ExpressionOptimizer
+								.toConjunctiveNormalForm(expression);
+						SDFExpression sdfExpression = new SDFExpression(cnf,
+								relationalPredicate.getExpression()
+										.getAttributeResolver(),
+								relationalPredicate.getExpression()
+										.getExpressionParser());
+						join.setPredicate(new RelationalPredicate(sdfExpression));
+					}
+				}
 				RestructParameterInfoUtil.updatePredicateParameterInfo(
 						join.getParameterInfos(), join.getPredicate());
 
@@ -82,33 +92,13 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
 		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(join,
 				SelectAO.class);
-		return sel != null && canMerge(sel, join);
-	}
-
-	private static boolean canMerge(SelectAO sel, JoinAO join) {
-		if (sel.getPredicate() != null) {
-			Set<?> sources = RelationalRestructHelper.sourcesOfPredicate(sel
-					.getPredicate());
-			ILogicalOperator left = join.getLeftInput();
-			ILogicalOperator right = join.getRightInput();
-			if (!RelationalRestructHelper.containsAllSources(left, sources)) {
-				if (!RelationalRestructHelper
-						.containsAllSources(right, sources)) {
-					if (RelationalRestructHelper.containsAllSources(join,
-							sources)) {
-						if (sel.getPredicate() != null) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return false;
+		// Join and select can always be merged
+		return sel != null;
 	}
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return RewriteRuleFlowGroup.SWITCH;
+		return RewriteRuleFlowGroup.GROUP;
 	}
 
 	@Override

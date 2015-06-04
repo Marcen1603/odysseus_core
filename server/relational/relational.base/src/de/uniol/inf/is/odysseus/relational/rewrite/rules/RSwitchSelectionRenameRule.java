@@ -22,21 +22,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
-import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
-import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-public class RSwitchSelectionRenameRule extends AbstractRewriteRule<RenameAO> {
-
-	@Override
-	public int getPriority() {
-		return 20;
-	}
-
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return RewriteRuleFlowGroup.SWITCH;
-	}
+public class RSwitchSelectionRenameRule extends
+		AbstractSwitchSelectionRule<RenameAO> {
 
 	@Override
 	public void execute(RenameAO rename, RewriteConfiguration config) {
@@ -56,7 +44,7 @@ public class RSwitchSelectionRenameRule extends AbstractRewriteRule<RenameAO> {
 
 	@Override
 	public boolean isExecutable(RenameAO ren, RewriteConfiguration config) {
-		if(ren.isKeepPosition()) {
+		if (ren.isKeepPosition()) {
 			// for renames on top of source definitions
 			return false;
 		}

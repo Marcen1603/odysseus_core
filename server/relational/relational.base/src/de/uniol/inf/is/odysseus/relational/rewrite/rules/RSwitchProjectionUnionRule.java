@@ -23,21 +23,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
-import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
-import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-public class RSwitchProjectionUnionRule extends AbstractRewriteRule<UnionAO> {
-
-	@Override
-	public int getPriority() {
-		return 20;
-	}
-
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return RewriteRuleFlowGroup.SWITCH;
-	}
+public class RSwitchProjectionUnionRule extends
+		AbstractSwitchProjectionRule<UnionAO> {
 
 	@Override
 	public void execute(UnionAO union, RewriteConfiguration config) {

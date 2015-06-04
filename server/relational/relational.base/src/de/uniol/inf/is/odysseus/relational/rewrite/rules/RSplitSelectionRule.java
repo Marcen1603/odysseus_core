@@ -37,8 +37,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 
     @Override
     public int getPriority() {
-        // Should be the highest priority
-        return 50;
+        return 0;
     }
 
     @Override

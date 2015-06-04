@@ -40,7 +40,8 @@ Export-Package: de.uniol.inf.is.odysseus.logicaloperator.relational,
 Bundle-ClassPath: .
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
+ com.google.guava
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/*
 

@@ -35,7 +35,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 
 	@Override
 	public int getPriority() {
-		return 30;
+		return 0;
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return RewriteRuleFlowGroup.CLEANUP;
+		return RewriteRuleFlowGroup.GROUP;
 	}
 
 	@Override

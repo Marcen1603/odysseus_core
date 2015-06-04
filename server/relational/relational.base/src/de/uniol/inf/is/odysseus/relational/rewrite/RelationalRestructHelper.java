@@ -24,10 +24,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
@@ -91,9 +94,25 @@ public class RelationalRestructHelper {
 	}
 	
 	private static Collection<String> attributesToUris(Collection<SDFAttribute> attributes) {
-		Collection<String> uris = new ArrayList<String>(attributes.size());
+		List<String> uris = Lists.newArrayList();
 		for (SDFAttribute curAttr : attributes) {
 			uris.add(curAttr.getURI());
+		}
+		return uris;
+	}
+	
+	private static Collection<String> metadataAttributesToUris(SDFMetaSchema metaSchema) {
+		List<String> uris = Lists.newArrayList();
+		for (SDFAttribute curAttr : metaSchema.getAttributes()) {
+			uris.add(curAttr.getURI());
+		}
+		return uris;
+	}
+	
+	private static Collection<String> metadataAttributesToUris(Collection<SDFMetaSchema> metaSchemata) {
+		List<String> uris = Lists.newArrayList();
+		for (SDFMetaSchema curSchema : metaSchemata) {
+			uris.addAll(metadataAttributesToUris(curSchema));
 		}
 		return uris;
 	}
@@ -101,6 +120,7 @@ public class RelationalRestructHelper {
 	public static boolean subsetPredicate(IPredicate<?> predicate, SDFSchema attributes) {
 
 		final Collection<String> uris = attributesToUris(attributes.getAttributes());
+		uris.addAll(metadataAttributesToUris(attributes.getMetaschema()));
 		final boolean[] retValue = new boolean[] { true };
 		ComplexPredicateHelper.visitPredicates(predicate, new IUnaryFunctor<IPredicate<?>>() {
 			@Override
@@ -109,9 +129,6 @@ public class RelationalRestructHelper {
 					IRelationalPredicate<?> relPred = (IRelationalPredicate<?>) predicate;
 					Collection<SDFAttribute> tmpAttrs = relPred.getAttributes();
 					Collection<String> tmpUris = attributesToUris(tmpAttrs);
-					for (SDFAttribute curAttr : tmpAttrs) {
-						tmpUris.add(curAttr.getURI());
-					}
 					if (!uris.containsAll(tmpUris)) {
 						retValue[0] = false;
 					}
