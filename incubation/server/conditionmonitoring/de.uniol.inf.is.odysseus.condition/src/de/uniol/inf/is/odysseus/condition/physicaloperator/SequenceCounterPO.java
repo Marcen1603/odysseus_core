@@ -84,7 +84,7 @@ public class SequenceCounterPO<T extends Tuple<M>, M extends ITimeInterval> exte
 		while (iter.hasNext()) {
 			T next = iter.next();
 			if (next.getMetadata().getStart().afterOrEquals(lastStart)
-					&& next.getMetadata().getStart().beforeOrEquals(until)) {
+					&& next.getMetadata().getStart().before(until)) {
 				// If we got here, the tuple is within the next sequence,
 				// because it is after the last start but before the last
 				// timeStamp from the heartbeat: therefore send it to the next
@@ -110,7 +110,7 @@ public class SequenceCounterPO<T extends Tuple<M>, M extends ITimeInterval> exte
 
 	private boolean isInTimeInterval(T tuple) {
 		PointInTime start = tuple.getMetadata().getStart();
-		if (this.lastStart != null && start.after(this.lastStart) && this.lastPunctuation != null
+		if (this.lastStart != null && start.afterOrEquals(this.lastStart) && this.lastPunctuation != null
 				&& start.before(this.lastPunctuation)) {
 			// We can only look until the last punctuation we got, cause maybe
 			// there will be a stop soon
@@ -151,7 +151,7 @@ public class SequenceCounterPO<T extends Tuple<M>, M extends ITimeInterval> exte
 			newestInfo = this.lastPunctuation;
 		}
 
-		if (newestInfo == null || (newestInfo != null && start.after(newestInfo))) {
+		if (newestInfo == null || (newestInfo != null && start.afterOrEquals(newestInfo))) {
 			// It's after the last info we got, therefore we have to save it
 			// Or we don't know where in time we are. Then we have to save it,
 			// too.

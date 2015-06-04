@@ -81,7 +81,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 		this.reportEndOfAnomalyWindows = ao.isReportEndOfAnomalyWindows();
 		this.deliverUnlearnedTuples = ao.isDeliverUnlearnedTuples();
-		
+
 		this.tuplesToWait = ao.getTuplesToWait();
 		this.maxRelativeChange = ao.getMaxRelativeChange();
 		this.startToDeliver = false;
@@ -133,7 +133,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 				info.mean = tuple.getAttribute(meanIndex);
 			}
 			double newMean = info.mean;
-			if (this.maxRelativeChange > 0 && oldMean != 0 && (Math.abs(oldMean - newMean) / oldMean) < this.maxRelativeChange) {
+			if (this.maxRelativeChange > 0 && oldMean != 0
+					&& (Math.abs(oldMean - newMean) / oldMean) < this.maxRelativeChange) {
 				this.hadLittleChange = true;
 			}
 
@@ -208,6 +209,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			removeOldValues(tuples, tuple.getMetadata().getStart(), info, exactCalculation);
 		}
 
+		boolean sentTuple = false;
 		if (isAnomaly(sensorValue, standardDeviation, mean)) {
 			// Maybe here we have an anomaly
 			if (!oncePerWindow || (oncePerWindow && !this.alreadySendThisWindow)) {
@@ -222,8 +224,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 					alreadySendThisWindow = true;
 					double anomalyScore = calcAnomalyScore(sensorValue, mean, standardDeviation, interval);
 					transferTuple(tuple, anomalyScore, mean, standardDeviation);
+					sentTuple = true;
 				}
-
 				lastWindowWithAnomaly = true;
 			}
 		} else if (reportEndOfAnomalyWindows && prevLastWindowWithAnomaly && !lastWindowWithAnomaly
@@ -231,7 +233,10 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			alreadySendThisWindow = true;
 			double anomalyScore = 0;
 			transferTuple(tuple, anomalyScore, mean, standardDeviation);
-		} else {
+			sentTuple = true;
+		}
+
+		if (!sentTuple) {
 			Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
 			sendPunctuation(beat);
 		}
@@ -322,7 +327,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		// }
 		// }
 		// }
-		sendPunctuation(punctuation);
+		// sendPunctuation(punctuation);
 	}
 
 	@Override
