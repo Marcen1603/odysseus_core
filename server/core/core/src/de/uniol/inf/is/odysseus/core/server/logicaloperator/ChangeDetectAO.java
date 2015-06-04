@@ -65,9 +65,9 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		this.isRelativeTolerance = ao.isRelativeTolerance;
 		this.suppressCountAttribute = ao.suppressCountAttribute;
 		this.sendLastOfSameObjects = ao.sendLastOfSameObjects;
-		this.baseValue = po.getBaseValue();
-		this.useBaseValue = po.isUseBaseValue();
-		this.useWindow = po.isUseWindow();
+		this.baseValue = ao.getBaseValue();
+		this.useBaseValue = ao.isUseBaseValue();
+		this.useWindow = ao.isUseWindow();
 	}
 
 	public ChangeDetectAO() {
