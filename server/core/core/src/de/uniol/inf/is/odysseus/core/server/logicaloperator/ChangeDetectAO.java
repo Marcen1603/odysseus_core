@@ -48,21 +48,23 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	private boolean isRelativeTolerance = false;
 	private int rate;
 	private boolean deliverFirstElement = false;
+	private boolean sendLastOfSameObjects = false;
 	private List<SDFAttribute> groupingAttributes = new ArrayList<>();
 	private SDFAttribute suppressCountAttribute;
 	private double baseValue;
 	private boolean useBaseValue = false;
 	private boolean useWindow = false;
 
-	public ChangeDetectAO(ChangeDetectAO po) {
-		super(po);
-		attributes = po.attributes;
-		this.rate = po.rate;
-		this.deliverFirstElement = po.deliverFirstElement;
-		this.groupingAttributes = new ArrayList<>(po.getGroupingAttributes());
-		this.tolerance = po.tolerance;
-		this.isRelativeTolerance = po.isRelativeTolerance;
-		this.suppressCountAttribute = po.suppressCountAttribute;
+	public ChangeDetectAO(ChangeDetectAO ao) {
+		super(ao);
+		attributes = ao.attributes;
+		this.rate = ao.rate;
+		this.deliverFirstElement = ao.deliverFirstElement;
+		this.groupingAttributes = new ArrayList<>(ao.getGroupingAttributes());
+		this.tolerance = ao.tolerance;
+		this.isRelativeTolerance = ao.isRelativeTolerance;
+		this.suppressCountAttribute = ao.suppressCountAttribute;
+		this.sendLastOfSameObjects = ao.sendLastOfSameObjects;
 		this.baseValue = po.getBaseValue();
 		this.useBaseValue = po.isUseBaseValue();
 		this.useWindow = po.isUseWindow();
@@ -93,6 +95,15 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		return deliverFirstElement;
 	}
 
+	public boolean isSendLastOfSameObjects(){
+		return sendLastOfSameObjects;
+	}
+	
+	@Parameter(type = BooleanParameter.class, name = "SendLastOfSameObjects", optional = true, doc ="If set to false (default), in a group of same objects, the first is send. If set to true, the last one is send.")
+	public void setSendLastOfSameObjects(boolean sendLastOfSameObjects) {
+		this.sendLastOfSameObjects = sendLastOfSameObjects;
+	}
+	
 	@Parameter(type = BooleanParameter.class, name = "deliverFirstElement", optional = true)
 	public void setDeliverFirstElement(boolean deliverFirstElement) {
 		this.deliverFirstElement = deliverFirstElement;

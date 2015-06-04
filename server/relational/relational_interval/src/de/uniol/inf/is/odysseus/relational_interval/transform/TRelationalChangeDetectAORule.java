@@ -78,9 +78,12 @@ public class TRelationalChangeDetectAORule extends AbstractRelationalIntervalTra
 			po.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(operator.getHeartbeatRate()));
 		}
 		po.setDeliverFirstElement(operator.isDeliverFirstElement());
-		if (operator.getGroupingAttributes().size() > 0) {
-			RelationalGroupProcessor r = new RelationalGroupProcessor(operator.getInputSchema(),
-					operator.getOutputSchema(), operator.getGroupingAttributes(), null, false);
+		po.setSendLastOfSameObjects(operator.isSendLastOfSameObjects());
+		if (operator.getGroupingAttributes().size() > 0){
+			RelationalGroupProcessor r = new RelationalGroupProcessor(
+					operator.getInputSchema(), operator.getOutputSchema(),
+					operator.getGroupingAttributes(),
+					null, false);
 			po.setGroupProcessor(r);
 		}
 		SDFAttribute suppressAttribute = operator.getSuppressCountAttributeValue();

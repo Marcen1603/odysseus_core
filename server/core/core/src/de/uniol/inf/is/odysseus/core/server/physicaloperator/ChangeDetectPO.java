@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,27 +44,28 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 
 	static final Logger logger = LoggerFactory.getLogger(ChangeDetectPO.class);
 
-	private R lastElement = null;
 	private Map<Long, R> lastElements = new HashMap<>();
+
 	protected IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
 	protected boolean deliverFirstElement = false;
+	protected boolean sendLastOfSameObjects = false;
 	protected IGroupProcessor<R, R> groupProcessor = null;
-	protected long suppressedElements = 0; 
+	protected long suppressedElements = 0;
 
 	public ChangeDetectPO() {
 	}
 
 	public ChangeDetectPO(ChangeDetectPO<R> other) {
 		super(other);
-		
-		this.lastElement = other.lastElement;
 		this.lastElements = Maps.newHashMap(other.lastElements);
-		this.heartbeatGenerationStrategy = other.heartbeatGenerationStrategy.clone();
+		this.heartbeatGenerationStrategy = other.heartbeatGenerationStrategy
+				.clone();
 		this.deliverFirstElement = other.deliverFirstElement;
 		this.groupProcessor = other.groupProcessor;
 		this.suppressedElements = other.suppressedElements;
+		this.sendLastOfSameObjects = other.sendLastOfSameObjects;
 	}
-	
+
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.INPUT;
@@ -82,10 +84,11 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		// Optimization: Use HashMap only if grouping is used
 		if (groupProcessor != null) {
 			groupID = groupProcessor.getGroupID(object);
-			lastElem = lastElements.get(groupID);
 		} else {
-			lastElem = lastElement;
+			groupID = 0l;
 		}
+
+		lastElem = lastElements.get(groupID);
 
 		if (lastElem == null) {
 			newLastElement = object;
@@ -95,18 +98,27 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		} else {
 			if (object != null && areDifferent(object, lastElem)) {
 				newLastElement = object;
-				transferInternal(object);
+				if (sendLastOfSameObjects) {
+					transferInternal(lastElem);
+				} else {
+					transferInternal(object);
+				}
 			} else {
 				heartbeatGenerationStrategy.generateHeartbeat(object, this);
 				suppressedElements++;
+				if (sendLastOfSameObjects){
+					newLastElement = object;
+				}
 			}
 		}
+		lastElements.put(groupID, newLastElement);
+	}
 
-		if (newLastElement != null) {
-			if (groupID != null) {
-				lastElements.put(groupID, newLastElement);
-			} else {
-				lastElement = newLastElement;
+	@Override
+	protected void process_done() {
+		if (sendLastOfSameObjects){
+			for (Entry<Long, R> e: lastElements.entrySet()){
+				transferInternal(e.getValue());
 			}
 		}
 	}
@@ -120,7 +132,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		transfer(enrichObject(object, suppressedElements));
 		this.suppressedElements = 0;
 	}
-	
+
 	protected R enrichObject(R object, long suppressedElements) {
 		return object;
 	}
@@ -131,7 +143,6 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		this.lastElement = null;
 		this.suppressedElements = 0;
 		this.lastElements.clear();
 		if (groupProcessor != null) {
@@ -157,6 +168,10 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		this.deliverFirstElement = deliverFirstElement;
 	}
 
+	public void setSendLastOfSameObjects(boolean sendLastOfSameObjects) {
+		this.sendLastOfSameObjects = sendLastOfSameObjects;
+	}
+
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof ChangeDetectPO)) {
@@ -166,11 +181,9 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		ChangeDetectPO<R> rppo = (ChangeDetectPO<R>) ipo;
 		if (this.deliverFirstElement == rppo.deliverFirstElement
 				&& this.heartbeatGenerationStrategy
-						.equals(rppo.heartbeatGenerationStrategy) &&
-						((this.groupProcessor != null && 
-							this.groupProcessor.equals(rppo.groupProcessor)) || 
-						(this.groupProcessor == null && rppo.groupProcessor == null))
-						) {
+						.equals(rppo.heartbeatGenerationStrategy)
+				&& ((this.groupProcessor != null && this.groupProcessor
+						.equals(rppo.groupProcessor)) || (this.groupProcessor == null && rppo.groupProcessor == null))) {
 			return true;
 		}
 
