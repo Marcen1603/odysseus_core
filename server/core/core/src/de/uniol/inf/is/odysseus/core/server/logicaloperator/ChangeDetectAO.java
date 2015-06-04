@@ -50,6 +50,9 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	private boolean deliverFirstElement = false;
 	private List<SDFAttribute> groupingAttributes = new ArrayList<>();
 	private SDFAttribute suppressCountAttribute;
+	private double baseValue;
+	private boolean useBaseValue = false;
+	private boolean useWindow = false;
 
 	public ChangeDetectAO(ChangeDetectAO po) {
 		super(po);
@@ -60,6 +63,9 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		this.tolerance = po.tolerance;
 		this.isRelativeTolerance = po.isRelativeTolerance;
 		this.suppressCountAttribute = po.suppressCountAttribute;
+		this.baseValue = po.getBaseValue();
+		this.useBaseValue = po.isUseBaseValue();
+		this.useWindow = po.isUseWindow();
 	}
 
 	public ChangeDetectAO() {
@@ -131,6 +137,33 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	
 	public boolean isRelativeTolerance() {
 		return isRelativeTolerance;
+	}
+
+	public double getBaseValue() {
+		return baseValue;
+	}
+
+	@Parameter(type = DoubleParameter.class, name = "baseValue", optional = true, doc = "If 'useBaseValue' is true, the actual value is compared to the base value instead to the last value.")
+	public void setBaseValue(double baseValue) {
+		this.baseValue = baseValue;
+	}
+
+	public boolean isUseBaseValue() {
+		return useBaseValue;
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "useBaseValue", optional = true, doc = "If this is set to true, the actual value is compared to the base value instead to the last value. Default is false.")
+	public void setUseBaseValue(boolean useBaseValue) {
+		this.useBaseValue = useBaseValue;
+	}
+
+	public boolean isUseWindow() {
+		return useWindow;
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "useWindow", optional = true, doc = "If this is set to true, the operator compares not to the last value (or base value), but instead to the oldest element in the window. Default is false.")
+	public void setUseWindow(boolean useWindow) {
+		this.useWindow = useWindow;
 	}
 
 	@Override

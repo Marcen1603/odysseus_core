@@ -45,10 +45,10 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 
 	private R lastElement = null;
 	private Map<Long, R> lastElements = new HashMap<>();
-	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
-	private boolean deliverFirstElement = false;
-	private IGroupProcessor<R, R> groupProcessor = null;
-	private long suppressedElements = 0; 
+	protected IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
+	protected boolean deliverFirstElement = false;
+	protected IGroupProcessor<R, R> groupProcessor = null;
+	protected long suppressedElements = 0; 
 
 	public ChangeDetectPO() {
 	}
@@ -116,7 +116,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		sendPunctuation(punctuation);
 	}
 
-	private void transferInternal(R object) {
+	protected void transferInternal(R object) {
 		transfer(enrichObject(object, suppressedElements));
 		this.suppressedElements = 0;
 	}
