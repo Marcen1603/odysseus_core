@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -26,17 +27,22 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 	private String nameOfValue;
 	private List<SDFAttribute> groupingAttributes;
 	private boolean fastGrouping;
-
+	
+	private int tuplesToWait;
+	private double maxRelativeChange;
+	
 	private boolean windowChecking;
 	private boolean onlyOnChange;
 	private boolean reportEndOfAnomalies;
 	private boolean deliverUnlearnedTuples;
 
 	public DeviationAnomalyDetectionAO() {
-		interval = 3.0;
-		nameOfValue = "value";
-		reportEndOfAnomalies = false;
+		this.interval = 3.0;
+		this.nameOfValue = "value";
+		this.reportEndOfAnomalies = false;
 		this.deliverUnlearnedTuples = false;
+		this.tuplesToWait = 0;
+		this.maxRelativeChange = 0;
 	}
 
 	public DeviationAnomalyDetectionAO(DeviationAnomalyDetectionAO ao) {
@@ -50,6 +56,8 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.onlyOnChange = ao.isOnlyOnChange();
 		this.reportEndOfAnomalies = ao.isReportEndOfAnomalyWindows();
 		this.deliverUnlearnedTuples = ao.isDeliverUnlearnedTuples();
+		this.tuplesToWait = ao.getTuplesToWait();
+		this.maxRelativeChange = ao.getMaxRelativeChange();
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "interval", optional = true, doc = "Defines, how many standard deviations are allowed for a tuple to be different from the mean. 3.0 is the default value. Choose a smaller value to get more anomalies.")
@@ -92,6 +100,16 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.deliverUnlearnedTuples = deliverUnlearnedTuples;
 	}
 
+	@Parameter(name = "tuplesToWait", type = IntegerParameter.class, optional = true, doc = "If you want the operator to learn for a while before it starts to analyse, you can set that the operator has to wait x tuples (each group has its own counter) before it starts to analyse. Default is 0.")
+	public void setTuplesToWait(int tuplesToWait) {
+		this.tuplesToWait = tuplesToWait;
+	}
+	
+	@Parameter(name = "maxRelativeChange", type = DoubleParameter.class, optional = true, doc = "If you want the operator to learn for a while before it starts to analyse, you can set that the operator has to wait until the relative change between the last mean and the new mean from the operator before this one is lower than the given value. This avoids early false-positives. Can be used together with 'tuplesToWait'. Default is 0.")
+	public void setMaxRelativeChange(double maxRelativeChange) {
+		this.maxRelativeChange = maxRelativeChange;
+	}
+
 	public double getInterval() {
 		return this.interval;
 	}
@@ -122,6 +140,14 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 	
 	public boolean isDeliverUnlearnedTuples() {
 		return deliverUnlearnedTuples;
+	}
+	
+	public int getTuplesToWait() {
+		return tuplesToWait;
+	}
+	
+	public double getMaxRelativeChange() {
+		return maxRelativeChange;
 	}
 
 	@Override

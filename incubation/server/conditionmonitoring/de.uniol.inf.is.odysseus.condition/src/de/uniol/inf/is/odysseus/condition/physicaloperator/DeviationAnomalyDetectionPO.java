@@ -26,6 +26,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
 @SuppressWarnings("rawtypes")
 public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
 
+	public static final int DATA_PORT = 0;
+	public static final int LEARN_PORT = 1;
+
 	private String valueAttributeName;
 
 	private double interval;
@@ -42,7 +45,14 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private boolean prevLastWindowWithAnomaly;
 	private boolean foundAnomaly;
 
+	// For groups that did not occur before
 	private boolean deliverUnlearnedTuples;
+
+	// Parameters to avoid early false-positives
+	private int tuplesToWait;
+	private double maxRelativeChange;
+	private boolean startToDeliver;
+	private boolean hadLittleChange;
 
 	// If true, sends a tuple with anomaly score = 0, if the last window had an
 	// anomaly, but this one didn't
@@ -60,17 +70,22 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		this.valueAttributeName = ao.getNameOfValue();
 		this.deviationInfo = new HashMap<Long, DeviationInformation>();
 
-		oncePerWindow = ao.isWindowChecking();
-		alreadySendThisWindow = false;
-		tupleMap = new HashMap<Long, List<T>>();
+		this.oncePerWindow = ao.isWindowChecking();
+		this.alreadySendThisWindow = false;
+		this.tupleMap = new HashMap<Long, List<T>>();
 
-		onlyOnChange = ao.isOnlyOnChange();
-		lastWindowWithAnomaly = false;
-		prevLastWindowWithAnomaly = false;
-		foundAnomaly = false;
+		this.onlyOnChange = ao.isOnlyOnChange();
+		this.lastWindowWithAnomaly = false;
+		this.prevLastWindowWithAnomaly = false;
+		this.foundAnomaly = false;
 
 		this.reportEndOfAnomalyWindows = ao.isReportEndOfAnomalyWindows();
 		this.deliverUnlearnedTuples = ao.isDeliverUnlearnedTuples();
+		
+		this.tuplesToWait = ao.getTuplesToWait();
+		this.maxRelativeChange = ao.getMaxRelativeChange();
+		this.startToDeliver = false;
+		this.hadLittleChange = false;
 	}
 
 	@Override
@@ -91,27 +106,39 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			this.deviationInfo.put(gId, info);
 		}
 
-		if (port == 0 && info.wasWritten) {
+		if (!(this.maxRelativeChange > 0) || (this.maxRelativeChange > 0 && hadLittleChange)) {
+			if (info.counter > this.tuplesToWait) {
+				this.startToDeliver = true;
+			}
+		}
+
+		if (port == DATA_PORT && startToDeliver) {
 			// Process data
 			lastTuple = tuple.getMetadata().getStart();
 			double sensorValue = getValue(tuple);
 			processTuple(gId, sensorValue, tuple, info);
-		} else if (port == 0 && deliverUnlearnedTuples) {
+		} else if (port == DATA_PORT && deliverUnlearnedTuples) {
 			// We don't have an anomaly as we don't know the deviation. But the
-			// user want to get such tuples, so there it is.
+			// user wants to get such tuples, so there it is.
 			transferTuple(tuple, 0.0, getValue(tuple), 0.0);
-		} else if (port == 1) {
+		} else if (port == LEARN_PORT) {
 			// Update deviation information
-			int stdDevIndex = getInputSchema(1).findAttributeIndex(standardDeviationAttributeName);
+			int stdDevIndex = getInputSchema(LEARN_PORT).findAttributeIndex(standardDeviationAttributeName);
 			if (stdDevIndex >= 0) {
 				info.standardDeviation = tuple.getAttribute(stdDevIndex);
 			}
-			int meanIndex = getInputSchema(1).findAttributeIndex(meanAttributeName);
+			double oldMean = info.mean;
+			int meanIndex = getInputSchema(LEARN_PORT).findAttributeIndex(meanAttributeName);
 			if (meanIndex >= 0) {
 				info.mean = tuple.getAttribute(meanIndex);
 			}
+			double newMean = info.mean;
+			if (this.maxRelativeChange > 0 && oldMean != 0 && (Math.abs(oldMean - newMean) / oldMean) < this.maxRelativeChange) {
+				this.hadLittleChange = true;
+			}
 
-			info.wasWritten = true;
+			// Count, how many updates this information got
+			info.counter++;
 		}
 	}
 
@@ -308,9 +335,9 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * different groups
 	 */
 	class DeviationInformation {
-		public boolean wasWritten = false;
 		public double mean;
 		public double standardDeviation;
+		public int counter;
 	}
 
 }
