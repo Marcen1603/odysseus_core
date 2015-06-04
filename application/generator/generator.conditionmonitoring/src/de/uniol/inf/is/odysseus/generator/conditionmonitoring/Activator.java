@@ -70,7 +70,17 @@ public class Activator implements BundleActivator {
 		FridgeVibrationSensorDataProvider fridgeProvider = new FridgeVibrationSensorDataProvider();
 		StreamServer fridgeServer = new StreamServer(53214, fridgeProvider);
 		fridgeServer.start();
+		
+		// Create a slow temperature data provider
+		SlowTemperatureDataProvider slowTempProvider = new SlowTemperatureDataProvider();
+		StreamServer slowTempServer = new StreamServer(53215, slowTempProvider);
+		slowTempServer.start();
 
+		// Create a data provider for the milling cutter 
+		MillingCutterPowerConsumptionDataProvider millingCutterProvider = new MillingCutterPowerConsumptionDataProvider();
+		StreamServer millingCutterServer = new StreamServer(53216, millingCutterProvider);
+		millingCutterServer.start();
+		
 		// Listen for commands
 		while (true) {
 			sc = new Scanner(System.in);
