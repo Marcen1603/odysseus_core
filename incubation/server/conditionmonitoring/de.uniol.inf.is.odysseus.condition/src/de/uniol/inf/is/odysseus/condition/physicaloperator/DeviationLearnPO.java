@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.condition.datatypes.DeviationInformation;
 import de.uniol.inf.is.odysseus.condition.enums.TrainingMode;
@@ -40,19 +41,25 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	private Map<Long, List<T>> tupleMap;
 	private boolean exactCalculation;
 	private TrainingMode trainingMode;
+	
+	// For save backup management
+	private UUID uniqueId;
+
+	// Ports
+	private static final int DATA_PORT = 0;
+	private static final int BACKUP_PORT = 1;
 
 	public DeviationLearnPO(TrainingMode trainingMode, String attributeName) {
+		init();
 		this.groupProcessor = (IGroupProcessor<T, T>) new NoGroupProcessor<T, T>();
-		this.deviationInfo = new HashMap<Long, DeviationInformation>();
 		this.valueAttributeName = attributeName;
 		this.trainingMode = trainingMode;
-		this.tupleMap = new HashMap<Long, List<T>>();
 	}
 
 	public DeviationLearnPO(DeviationLearnAO ao, IGroupProcessor<T, T> groupProcessor) {
+		init();
 		this.groupProcessor = groupProcessor;
 		this.trainingMode = ao.getTrainingMode();
-		this.deviationInfo = new HashMap<Long, DeviationInformation>();
 		this.valueAttributeName = ao.getNameOfValue();
 		this.tuplesToLearn = ao.getTuplesToLearn();
 		this.exactCalculation = ao.isExactCalculation();
@@ -60,9 +67,13 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		if (this.trainingMode.equals(TrainingMode.MANUAL)) {
 			this.manualMean = ao.getManualMean();
 			this.manualStandardDeviation = ao.getManualStandardDeviation();
-		} else if (this.trainingMode.equals(TrainingMode.WINDOW)) {
-			this.tupleMap = new HashMap<Long, List<T>>();
 		}
+	}
+	
+	private void init() {
+		this.uniqueId = UUID.randomUUID();
+		this.deviationInfo = new HashMap<Long, DeviationInformation>();
+		this.tupleMap = new HashMap<Long, List<T>>();
 	}
 
 	@Override
@@ -77,6 +88,60 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 			info = new DeviationInformation();
 			this.deviationInfo.put(gId, info);
 		}
+
+		if (port == DATA_PORT) {
+			// Learn the deviation with a now incoming tuple
+			processStandardTuple(tuple, info, gId);
+		} else if (port == BACKUP_PORT) {
+			// Update the deviation information with the info from an external
+			// operator, e.g. a backup database connection
+			info = updateInfo(tuple, info, gId);
+		}
+
+		// Transfer learn information (whole deviation information) to port
+		// 1 to back it up
+		Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(11, false);
+		output.setMetadata(tuple.getMetadata());
+		output.setAttribute(0, gId);
+		output.setAttribute(1, uniqueId.toString());
+		
+		output.setAttribute(2, info.mean);
+		output.setAttribute(3, info.standardDeviation);
+
+		output.setAttribute(4, info.n);
+		output.setAttribute(5, info.m2);
+
+		output.setAttribute(6, info.k);
+		output.setAttribute(7, info.sumWindow);
+		output.setAttribute(8, info.sumWindowSqr);
+
+		output.setAttribute(9, info.sum1);
+		output.setAttribute(10, info.sum2);
+		transfer(output, BACKUP_PORT);
+
+	}
+
+	private DeviationInformation updateInfo(T infoTuple, DeviationInformation info, Long gId) {
+		info.mean = getValue(infoTuple, BACKUP_PORT, "mean", Long.class);
+		info.standardDeviation = getValue(infoTuple, BACKUP_PORT, "standardDeviation", Long.class);
+
+		// Add instead of just set the values, because maybe we already got some
+		// tuples in the data port to learn when we start getting the backup
+		// from the database
+		info.n += getValue(infoTuple, BACKUP_PORT, "n", Long.class);
+		info.m2 += getValue(infoTuple, BACKUP_PORT, "m2", Double.class);
+
+		info.k += getValue(infoTuple, BACKUP_PORT, "k", Double.class);
+		info.sumWindow += getValue(infoTuple, BACKUP_PORT, "sumWindow", Double.class);
+		info.sumWindowSqr += getValue(infoTuple, BACKUP_PORT, "sumWindowSqr", Double.class);
+
+		info.sum1 += getValue(infoTuple, BACKUP_PORT, "sum1", Double.class);
+		info.sum2 += getValue(infoTuple, BACKUP_PORT, "sum2", Double.class);
+
+		return info;
+	}
+
+	private void processStandardTuple(T tuple, DeviationInformation info, Long gId) {
 
 		double sensorValue = getValue(tuple);
 
@@ -97,6 +162,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 			info = processTupleWithWindow(gId, tuple, info, this.exactCalculation);
 		}
 
+		// Transfer results on port 0
 		Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(3, false);
 		output.setMetadata(tuple.getMetadata());
 		output.setAttribute(0, gId);
@@ -119,7 +185,8 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	 * @param exactCalculation
 	 *            Your choice if you want to use exact calculation
 	 */
-	private DeviationInformation processTupleWithWindow(Long gId, T tuple, DeviationInformation info, boolean exactCalculation) {
+	private DeviationInformation processTupleWithWindow(Long gId, T tuple, DeviationInformation info,
+			boolean exactCalculation) {
 		List<T> tuples = tupleMap.get(gId);
 		if (tuples == null) {
 			tuples = new ArrayList<T>();
@@ -134,7 +201,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		} else {
 			info = calcStandardDeviationOffline(tuples, info);
 		}
-		
+
 		return info;
 	}
 
@@ -306,6 +373,16 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 			return sensorValue;
 		}
 		return 0;
+	}
+
+	protected <X extends Object> X getValue(T tuple, int port, String attributeName, Class<X> type) {
+		int valueIndex = getInputSchema(port).findAttributeIndex(attributeName);
+		if (valueIndex >= 0) {
+			Object value = tuple.getAttribute(valueIndex);
+			if (type.isInstance(value))
+				return type.cast(value);
+		}
+		return null;
 	}
 
 	@Override

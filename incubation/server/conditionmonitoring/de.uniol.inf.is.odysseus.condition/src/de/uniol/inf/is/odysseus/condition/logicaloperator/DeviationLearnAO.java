@@ -25,6 +25,10 @@ public class DeviationLearnAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 4859491963759169252L;
 
+	// Ports
+	private static final int DATA_PORT = 0;
+	private static final int BACKUP_PORT = 1;
+
 	private double manualMean;
 	private double manualStandardDeviation;
 	private List<SDFAttribute> groupingAttributes;
@@ -129,20 +133,61 @@ public class DeviationLearnAO extends UnaryLogicalOp {
 	}
 
 	@Override
-	public SDFSchema getOutputSchemaIntern(int pos) {
+	public SDFSchema getOutputSchemaIntern(int port) {
 
-		// Transfer the mean and the standard deviation to the next operator
-		SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);
-		SDFAttribute meanValue = new SDFAttribute(null, "mean", SDFDatatype.DOUBLE, null, null, null);
-		SDFAttribute standardDeviation = new SDFAttribute(null, "standardDeviation", SDFDatatype.DOUBLE, null, null,
-				null);
-		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
-		outputAttributes.add(groupId);
-		outputAttributes.add(meanValue);
-		outputAttributes.add(standardDeviation);
+		if (port == DATA_PORT) {
+			// Transfer the mean and the standard deviation to the next operator
+			SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);
+			SDFAttribute meanValue = new SDFAttribute(null, "mean", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute standardDeviation = new SDFAttribute(null, "standardDeviation", SDFDatatype.DOUBLE, null,
+					null, null);
+			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+			outputAttributes.add(groupId);
+			outputAttributes.add(meanValue);
+			outputAttributes.add(standardDeviation);
 
-		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema());
-		this.setOutputSchema(outputSchema);
+			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema());
+			this.setOutputSchema(port, outputSchema);
+			return getOutputSchema(DATA_PORT);
+		} else if (port == BACKUP_PORT) {
+			// Backup-Information
+			SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);
+			SDFAttribute uuid = new SDFAttribute(null, "uuid", SDFDatatype.STRING, null, null, null);
+			
+			SDFAttribute meanValue = new SDFAttribute(null, "mean", SDFDatatype.LONG, null, null, null);
+			SDFAttribute stdDeviationValue = new SDFAttribute(null, "standardDeviation", SDFDatatype.LONG, null, null, null);
+			
+			SDFAttribute nValue = new SDFAttribute(null, "n", SDFDatatype.LONG, null, null, null);
+			SDFAttribute m2Value = new SDFAttribute(null, "m2", SDFDatatype.DOUBLE, null, null, null);
+			
+			SDFAttribute kValue = new SDFAttribute(null, "k", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute sumWindowValue = new SDFAttribute(null, "sumWindow", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute sumWindowSqrValue = new SDFAttribute(null, "sumWindowSqr", SDFDatatype.DOUBLE, null, null, null);
+			
+			SDFAttribute sum1Value = new SDFAttribute(null, "sum1", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute sum2Value = new SDFAttribute(null, "sum2", SDFDatatype.DOUBLE, null, null, null);
+			
+			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+			outputAttributes.add(groupId);
+			outputAttributes.add(uuid);
+			
+			outputAttributes.add(meanValue);
+			outputAttributes.add(stdDeviationValue);
+			
+			outputAttributes.add(nValue);
+			outputAttributes.add(m2Value);
+
+			outputAttributes.add(kValue);
+			outputAttributes.add(sumWindowValue);
+			outputAttributes.add(sumWindowSqrValue);
+			
+			outputAttributes.add(sum1Value);
+			outputAttributes.add(sum2Value);
+			
+			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema());
+			this.setOutputSchema(port, outputSchema);
+			return getOutputSchema(BACKUP_PORT);
+		}
 
 		return getOutputSchema();
 	}
