@@ -110,12 +110,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 */
 	private Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
 
-	/**
-	 * For information purposes: The start time stamp of the element that leaded
-	 * to a sweep area cleanup
-	 */
-	private PointInTime lastTimestamp;
-
 	static final Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
 	/**
@@ -217,6 +211,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			g.init();
 			transferArea.init(this, getSubscribedToSource().size());
 			groups.clear();
+			createOutputCounter = 0;
 		}
 	}
 
@@ -231,6 +226,12 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				drainGroups();
 			}
 		}
+		// Send information to transfer area that no more elements will be
+		// delivered on port 0, so all data can be written
+		if (debug){
+			System.err.println(this+" done");
+		}
+		transferArea.done(0);
 	}
 
 	/**
@@ -244,9 +245,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			produceResults(results, entry.getKey());
 			entry.getValue().clear();
 		}
-		// Send information to transfer area that no more elements will be
-		// delivered on port 0, so all data can be written
-		transferArea.done(0);
 	}
 
 	@Override
@@ -279,44 +277,50 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		// somehow similar to a logical port for every group
 
 		if (debug) {
-			System.err.println(object);
+			System.err.println(this+" READ "+object);
 		}
 
-		// Determine group ID from input object
-		Long groupID = getGroupProcessor().getGroupID(object);
+		IGroupProcessor<R, W> g = getGroupProcessor();
+		synchronized (g) {
+			// Determine group ID from input object
+			Long groupID = g.getGroupID(object);
 
-		// Find or create sweep area for group
-		AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
-				.get(groupID);
-		if (sa == null) {
-			sa = new AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
-			groups.put(groupID, sa);
+			// Find or create sweep area for group
+			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
+					.get(groupID);
+			if (sa == null) {
+				sa = new AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
+				groups.put(groupID, sa);
+			}
+
+			// Update sweep area with new element and retrieve results, that can
+			// be
+			// written to transferArea (i.e.
+			// where the partial aggregate can receive no modification because
+			// it
+			// validity is before the
+			// start time stamp of the current object (and the stream is ordered
+			// regarding time stamps)
+			List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
+					sa, object, outputPA);
+
+			if (debug) {
+				System.err.println(sa);
+			}
+			createOutput(results, groupID, object.getMetadata().getStart());
 		}
-
-		// Update sweep area with new element and retrieve results, that can be
-		// written to transferArea (i.e.
-		// where the partial aggregate can receive no modification because it
-		// validity is before the
-		// start time stamp of the current object (and the stream is ordered
-		// regarding time stamps)
-		List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
-				sa, object, outputPA);
-
-		if (debug) {
-			System.err.println(sa);
-		}
-		createOutput(results, groupID, object.getMetadata().getStart());
 	}
 
 	private void createOutput(
 			List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults,
 			Long groupID, PointInTime timestamp) {
 
-		// Check if additional output should be created 
-		 // Allow to create additional output by cutting all current partial
-		 // aggregate into two, one before the split point and one after the split
-		 //point. By this aggregate with a long valid time interval can be split
-		 // into multiple elements
+		// Check if additional output should be created
+		// Allow to create additional output by cutting all current partial
+		// aggregate into two, one before the split point and one after the
+		// split
+		// point. By this aggregate with a long valid time interval can be split
+		// into multiple elements
 		boolean createAdditionalOutput = false;
 		if (dumpAtValueCount > 0) {
 
@@ -326,57 +330,60 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				createAdditionalOutput = true;
 			}
 		}
-		
+
 		PointInTime border = timestamp;
-		// Keep group order in output --> so first create output of group 1,
-		// then group etc.
-		// for group groupID use the existings results derived from updating
-		// sweep area
-		for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
-				.entrySet()) {
+		IGroupProcessor<R, W> g = getGroupProcessor();
+		synchronized (g) {
+			// Keep group order in output --> so first create output of group 1,
+			// then group etc.
+			// for group groupID use the existings results derived from updating
+			// sweep area
+			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+					.entrySet()) {
 
-			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = entry
-					.getValue();
+				AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = entry
+						.getValue();
 
-			if (groupID != entry.getKey()) {
+				if (groupID != entry.getKey()) {
 
-				// /System.err.println(entry.getValue());
-				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
-						.getValue().extractElementsBefore(timestamp);
-				if (debug) {
-					System.err.println("AREA FOR GROUP " + entry.getKey());
-					// System.err.println(entry.getValue().getSweepAreaAsString());
-				}
-				produceResults(results, entry.getKey());
-			} else {
-				if (existingResults != null) {
-					produceResults(existingResults, groupID);
-				}
-			}
-			if (createAdditionalOutput) {
-				List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
-						entry.getValue(), timestamp);
-				if (results.size() > 0) {
+					// /System.err.println(entry.getValue());
+					Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
+							.getValue().extractElementsBefore(timestamp);
+					if (debug) {
+						System.err.println("AREA FOR GROUP " + entry.getKey());
+						// System.err.println(entry.getValue().getSweepAreaAsString());
+					}
 					produceResults(results, entry.getKey());
+				} else {
+					if (existingResults != null) {
+						produceResults(existingResults, groupID);
+					}
 				}
+				if (createAdditionalOutput) {
+					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
+							entry.getValue(), timestamp);
+					if (results.size() > 0) {
+						produceResults(results, entry.getKey());
+					}
+				}
+
+				PointInTime sa_min_ts = sa.calcMinTs();
+
+				if (sa_min_ts != null) {
+					if (sa_min_ts.before(border)) {
+						border = sa_min_ts;
+					}
+				}
+
 			}
 
-			PointInTime sa_min_ts = sa.calcMinTs();
+			// Inform transferArea about the time progress
+			transferArea.newHeartbeat(border, 0);
 
-			if (sa_min_ts != null) {
-				if (sa_min_ts.before(border)) {
-					border = sa_min_ts;
-				}
+			if (debug) {
+				System.err.println("CREATE OUTPUT " + border);
+				transferArea.dump();
 			}
-
-		}
-
-		// Inform transferArea about the time progress
-		transferArea.newHeartbeat(border, 0);
-
-		if (debug) {
-			System.err.println("CREATE OUTPUT " + border);
-			transferArea.dump();
 		}
 
 	}
@@ -387,9 +394,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		// Keep punctuation order by sending to transfer area
 		transferArea.sendPunctuation(punctuation, port);
 		// Maybe new output can be created because of time progress
-		createOutput(null,null,punctuation.getTime());
+		createOutput(null, null, punctuation.getTime());
 	}
-
 
 	/**
 	 * The output data is build from the result of the current aggregation, the
@@ -831,7 +837,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		Map<String, String> map = new HashMap<>();
 		map.put("OutputQueueSize", transferArea.size() + "");
 		map.put("Groups", groups.size() + "");
-		map.put("LastInputTS", lastTimestamp + "");
 		map.put("Watermark", transferArea.getWatermark() + "");
 		return map;
 	}
