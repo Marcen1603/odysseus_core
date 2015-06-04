@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
+@Deprecated
 public class SMinFunction extends AbstractFunction<Double> {
 
 	private static final long serialVersionUID = 8052397285858330468L;

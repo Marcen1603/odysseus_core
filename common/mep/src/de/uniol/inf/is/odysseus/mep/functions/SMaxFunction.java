@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
+@Deprecated
 public class SMaxFunction extends AbstractFunction<Double> {
 	
 	private static final long serialVersionUID = -9061250775833636682L;
