@@ -22,10 +22,6 @@ import de.uniol.inf.is.odysseus.relational.rewrite.rules.RDeleteProjectionWithou
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RDeleteSelectionWithoutPredicate;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionJoinRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RMergeSelectionRule;
-import de.uniol.inf.is.odysseus.relational.rewrite.rules.ROptimizeJoinPredicate;
-import de.uniol.inf.is.odysseus.relational.rewrite.rules.ROptimizeSelectionPredicate;
-import de.uniol.inf.is.odysseus.relational.rewrite.rules.RPrepareJoinCNF;
-import de.uniol.inf.is.odysseus.relational.rewrite.rules.RPrepareSelectionCNF;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSplitSelectionRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchProjectionRenameRule;
 import de.uniol.inf.is.odysseus.relational.rewrite.rules.RSwitchProjectionUnionRule;
@@ -56,10 +52,10 @@ public class RuleProvider implements IRewriteRuleProvider {
 		rules.add(new RSwitchSelectionRenameRule());
 		rules.add(new RSwitchSelectionUnionRule());
 		rules.add(new RSwitchSelectionWindowRule());
-		rules.add(new RPrepareSelectionCNF());
-		rules.add(new RPrepareJoinCNF());
-		rules.add(new ROptimizeSelectionPredicate());
-		rules.add(new ROptimizeJoinPredicate());
+//		rules.add(new RPrepareSelectionCNF());
+//		rules.add(new RPrepareJoinCNF());
+//		rules.add(new ROptimizeSelectionPredicate());
+//		rules.add(new ROptimizeJoinPredicate());
 		return rules;
 	}
 
