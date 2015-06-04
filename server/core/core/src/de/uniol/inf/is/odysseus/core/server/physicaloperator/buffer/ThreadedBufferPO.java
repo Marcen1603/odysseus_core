@@ -60,6 +60,9 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 					try {
 						if (inputBuffer.isEmpty()) {
 							wait(1000);
+							if (terminate){
+								continue;
+							}
 						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -156,8 +159,14 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		lockOutput.lock();
 		if (drainAtClose) {
 			drainBuffers();
+		}else{
+			inputBuffer.clear();
+			outputBuffer.clear();
 		}
 		runner.terminate = true;
+//		synchronized (this) {
+//			this.notifyAll();
+//		}
 		lockOutput.unlock();
 	}
 
@@ -193,6 +202,9 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		// drain buffer at done/close
 		// Copy everything from inputBuffer to outputBuffer
 		runner.terminate();
+//		synchronized (this) {
+//			this.notifyAll();
+//		}
 		lockInput.lock();
 		outputBuffer.addAll(inputBuffer);
 		inputBuffer.clear();
