@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rewrite.flow;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public enum RewriteRuleFlowGroup implements IRuleFlowGroup {
+	PREPARE,
 	DELETE,
 	SPLIT,
 	SWITCH,
