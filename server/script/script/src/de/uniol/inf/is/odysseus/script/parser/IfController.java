@@ -114,7 +114,10 @@ public class IfController {
 			Optional<String> optionalUndefined = determineUndefine(currentLine);
 			if (optionalUndefined.isPresent()) {
 				LOG.trace("Found #UNDEF: Line {}: {}", this.currentLine, currentLine);
-				defined.remove(optionalUndefined.get());
+				if( canExecuteNow() ) {
+					defined.remove(optionalUndefined.get());
+					return true;
+				}
 				return false;
 			}
 
