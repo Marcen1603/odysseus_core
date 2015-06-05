@@ -204,7 +204,8 @@ public class SequenceCounterPO<T extends Tuple<M>, M extends ITimeInterval> exte
 	 * Searches for the state attribute in the given tuple and returns it. State
 	 * attribute holds the message whether the sequence starts or stops
 	 * 
-	 * @param tuple The tuple in which we look for the attribute
+	 * @param tuple
+	 *            The tuple in which we look for the attribute
 	 * @return The state attribute or an empty string, if it's not found
 	 */
 	private String getStateAttribute(T tuple) {
