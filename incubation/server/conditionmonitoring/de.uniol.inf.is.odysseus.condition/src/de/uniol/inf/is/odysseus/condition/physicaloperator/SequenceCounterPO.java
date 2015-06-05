@@ -15,7 +15,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 /**
  * This operator gives every tuple of a sequence a number. Therefore it needs
  * messages that indicate, when a sequence starts and ends. The tuples must be
- * on port 0, the start and end messages for the sequences on port 1.
+ * on port 0, the start and end messages for the sequences on port 1. To get a
+ * live sequence, punctuations are needed
  * 
  * @author Tobias Brandt
  */
@@ -46,13 +47,13 @@ public class SequenceCounterPO<T extends Tuple<M>, M extends ITimeInterval> exte
 	@Override
 	protected void process_next(T tuple, int port) {
 
-		if (port == DATA_PORT && isInTimeInterval(tuple)) {
+		if (port == DATA_PORT && isInSequence(tuple)) {
 			sendToNextOperator(tuple);
 		} else if (port == SEQUENCE_PORT) {
 			// Sequence start and end messages
 
 			// Save the state
-			String message = getStartAttribute(tuple);
+			String message = getStateAttribute(tuple);
 			if (message.equals(startMessage)) {
 				if (lastStart == null) {
 					lastStart = tuple.getMetadata().getStart();
@@ -72,6 +73,13 @@ public class SequenceCounterPO<T extends Tuple<M>, M extends ITimeInterval> exte
 		}
 	}
 
+	/**
+	 * Transfers the tuple to the next operator on port 0 with the calculated
+	 * sequence number
+	 * 
+	 * @param tuple
+	 *            The tuple to transfer (without sequence number)
+	 */
 	private void sendToNextOperator(T tuple) {
 		// Append the counter and transfer the tuple
 		Tuple newTuple = tuple.append(sequenceTupleCounter);
@@ -79,12 +87,25 @@ public class SequenceCounterPO<T extends Tuple<M>, M extends ITimeInterval> exte
 		sequenceTupleCounter++;
 	}
 
+	/**
+	 * Goes through the list of saved tuples and sends them to the next operator
+	 * if they are in the latest sequence. Deletes them if they were send
+	 * further or if they are sure not to be in a sequence.
+	 * 
+	 * @param tupleList
+	 *            The list of saved tuples
+	 * @param lastStart
+	 *            The start-timeStamp of the latest sequence
+	 * @param until
+	 *            The timeStamp from which we know that the current sequence
+	 *            goes at least until it
+	 */
 	private void workThroughTupleList(List<T> tupleList, PointInTime lastStart, PointInTime until) {
 		Iterator<T> iter = tupleList.iterator();
 		while (iter.hasNext()) {
 			T next = iter.next();
 			if (next.getMetadata().getStart().afterOrEquals(lastStart)
-					&& next.getMetadata().getStart().before(until)) {
+					&& next.getMetadata().getStart().beforeOrEquals(until)) {
 				// If we got here, the tuple is within the next sequence,
 				// because it is after the last start but before the last
 				// timeStamp from the heartbeat: therefore send it to the next
@@ -108,10 +129,24 @@ public class SequenceCounterPO<T extends Tuple<M>, M extends ITimeInterval> exte
 		}
 	}
 
-	private boolean isInTimeInterval(T tuple) {
+	/**
+	 * Checks, if the tuple is in a sequence. Therefore it will be checked, if
+	 * the tuple is in the current sequence or in one of the old sequences. If
+	 * the tuple is after an old sequence, the old sequence will be removed from
+	 * the list.
+	 * 
+	 * If the tuple is in a future we don't know about, it will be stored to
+	 * check it later.
+	 * 
+	 * @param tuple
+	 *            The new tuple which we have to check
+	 * @return true, if the tuple is in a sequence we know and false, if it's
+	 *         not
+	 */
+	private boolean isInSequence(T tuple) {
 		PointInTime start = tuple.getMetadata().getStart();
 		if (this.lastStart != null && start.afterOrEquals(this.lastStart) && this.lastPunctuation != null
-				&& start.before(this.lastPunctuation)) {
+				&& start.beforeOrEquals(this.lastPunctuation)) {
 			// We can only look until the last punctuation we got, cause maybe
 			// there will be a stop soon
 			return true;
@@ -165,8 +200,15 @@ public class SequenceCounterPO<T extends Tuple<M>, M extends ITimeInterval> exte
 		return false;
 	}
 
-	private String getStartAttribute(T tuple) {
-		int valueIndex = getInputSchema(1).findAttributeIndex(stateAttributeName);
+	/**
+	 * Searches for the state attribute in the given tuple and returns it. State
+	 * attribute holds the message whether the sequence starts or stops
+	 * 
+	 * @param tuple The tuple in which we look for the attribute
+	 * @return The state attribute or an empty string, if it's not found
+	 */
+	private String getStateAttribute(T tuple) {
+		int valueIndex = getInputSchema(SEQUENCE_PORT).findAttributeIndex(stateAttributeName);
 		if (valueIndex >= 0) {
 			String value = "" + tuple.getAttribute(valueIndex);
 			return value;

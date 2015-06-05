@@ -57,6 +57,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	// If true, sends a tuple with anomaly score = 0, if the last window had an
 	// anomaly, but this one didn't
 	private boolean reportEndOfAnomalyWindows;
+	private T lastAnomaly;
 
 	private String standardDeviationAttributeName = "standardDeviation";
 	private String meanAttributeName = "mean";
@@ -209,8 +210,10 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			removeOldValues(tuples, tuple.getMetadata().getStart(), info, exactCalculation);
 		}
 
-		boolean sentTuple = false;
 		if (isAnomaly(sensorValue, standardDeviation, mean)) {
+			// Save the last anomaly
+			this.lastAnomaly = tuple;
+			
 			// Maybe here we have an anomaly
 			if (!oncePerWindow || (oncePerWindow && !this.alreadySendThisWindow)) {
 				// If we are in normal mode, send
@@ -224,21 +227,19 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 					alreadySendThisWindow = true;
 					double anomalyScore = calcAnomalyScore(sensorValue, mean, standardDeviation, interval);
 					transferTuple(tuple, anomalyScore, mean, standardDeviation);
-					sentTuple = true;
 				}
 				lastWindowWithAnomaly = true;
 			}
+			
+			// At least until now we have anomalies - send a heartbeat
+			Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
+			sendPunctuation(beat);
+			
 		} else if (reportEndOfAnomalyWindows && prevLastWindowWithAnomaly && !lastWindowWithAnomaly
 				&& !alreadySendThisWindow) {
 			alreadySendThisWindow = true;
 			double anomalyScore = 0;
-			transferTuple(tuple, anomalyScore, mean, standardDeviation);
-			sentTuple = true;
-		}
-
-		if (!sentTuple) {
-			Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
-			sendPunctuation(beat);
+			transferTuple(this.lastAnomaly, anomalyScore, mean, standardDeviation);
 		}
 	}
 
