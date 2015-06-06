@@ -17,16 +17,19 @@ package de.uniol.inf.is.odysseus.relational_interval;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
-public class RelationalRelativeNumericChangeDetectPO extends
-		AbstractRelationalNumericChangeDetectPO {
+/**
+ * This change detect operator checks for relative change within a window.
+ * 
+ * @author Tobias Brandt
+ *
+ */
+public class RelationalRelativeNumericChangeDetectPO extends AbstractRelationalNumericChangeDetectPO {
 
-	public RelationalRelativeNumericChangeDetectPO(int[] comparePositions,
-			double tolerance) {
+	public RelationalRelativeNumericChangeDetectPO(int[] comparePositions, double tolerance) {
 		super(comparePositions, tolerance);
 	}
 
-	public RelationalRelativeNumericChangeDetectPO(
-			RelationalRelativeNumericChangeDetectPO pipe) {
+	public RelationalRelativeNumericChangeDetectPO(RelationalRelativeNumericChangeDetectPO pipe) {
 		super(pipe);
 	}
 
@@ -39,9 +42,9 @@ public class RelationalRelativeNumericChangeDetectPO extends
 				if (Math.abs(1 - b.doubleValue() / a.doubleValue()) > tolerance) {
 					return true;
 				}
-			}else{
+			} else {
 				// Need special handling if last value is 0 (0.1 * 0 is 0)
-				if (b.doubleValue() != 0){
+				if (b.doubleValue() != 0) {
 					return true;
 				}
 			}
