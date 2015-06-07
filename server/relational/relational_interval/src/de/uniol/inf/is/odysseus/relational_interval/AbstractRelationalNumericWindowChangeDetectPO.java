@@ -84,7 +84,7 @@ public class AbstractRelationalNumericWindowChangeDetectPO extends AbstractRelat
 
 			if (((Number) tuple.getAttribute(dimension)).doubleValue() <= ((Number) minTuple.getAttribute(dimension))
 					.doubleValue()) {
-				// The current tuple is smaller or equals, take this as minValue
+				// The current tuple is smaller or equal, take this as minValue
 				// for this dimension
 				minValues.put(dimension, tuple);
 				minTuple = tuple;
@@ -96,7 +96,7 @@ public class AbstractRelationalNumericWindowChangeDetectPO extends AbstractRelat
 
 			if (((Number) tuple.getAttribute(dimension)).doubleValue() >= ((Number) maxTuple.getAttribute(dimension))
 					.doubleValue()) {
-				// The current tuple is smaller or equals, take this as minValue
+				// The current tuple is smaller or equal, take this as minValue
 				// for this dimension
 				maxValues.put(dimension, tuple);
 				maxTuple = tuple;
@@ -104,7 +104,9 @@ public class AbstractRelationalNumericWindowChangeDetectPO extends AbstractRelat
 
 			if (areDifferent(tuple, minTuple) || areDifferent(tuple, maxTuple)) {
 				areSignificantlyDifferent = true;
-				break;
+				// We have to go on with the loop, because this tuple may be the
+				// smallest or biggest tuple in another dimension and we have to
+				// know that
 			}
 		}
 
