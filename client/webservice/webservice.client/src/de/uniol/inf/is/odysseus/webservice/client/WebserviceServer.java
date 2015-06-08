@@ -67,19 +67,71 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
+     * @param username
+     * @param password
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringResponse
+     */
+    @WebMethod
+    @WebResult(name = "securitytoken", targetNamespace = "")
+    @RequestWrapper(localName = "login2", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.Login2")
+    @ResponseWrapper(localName = "login2Response", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.Login2Response")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/login2Request", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/login2Response")
+    public StringResponse login2(
+        @WebParam(name = "username", targetNamespace = "")
+        String username,
+        @WebParam(name = "password", targetNamespace = "")
+        String password);
+
+    /**
+     * 
+     * @param port
+     * @param parserID
+     * @param query
+     * @param context
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.SdfDatatypeListResponse
+     *     returns de.uniol.inf.is.odysseus.webservice.client.SdfSchemaResponse
+     * @throws InvalidUserDataException_Exception
+     * @throws DetermineOutputSchemaException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "determineOutputSchema", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.DetermineOutputSchema")
+    @ResponseWrapper(localName = "determineOutputSchemaResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.DetermineOutputSchemaResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/determineOutputSchemaRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/determineOutputSchemaResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/determineOutputSchema/Fault/InvalidUserDataException"),
+        @FaultAction(className = DetermineOutputSchemaException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/determineOutputSchema/Fault/DetermineOutputSchemaException")
+    })
+    public SdfSchemaResponse determineOutputSchema(
+        @WebParam(name = "query", targetNamespace = "")
+        String query,
+        @WebParam(name = "parserID", targetNamespace = "")
+        String parserID,
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "port", targetNamespace = "")
+        int port,
+        @WebParam(name = "context", targetNamespace = "")
+        Object context)
+        throws DetermineOutputSchemaException_Exception, InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getRegisteredDatatypes", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredDatatypes")
-    @ResponseWrapper(localName = "getRegisteredDatatypesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredDatatypesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredDatatypesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredDatatypesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredDatatypes/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "reloadStoredQueries", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ReloadStoredQueries")
+    @ResponseWrapper(localName = "reloadStoredQueriesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ReloadStoredQueriesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/reloadStoredQueriesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/reloadStoredQueriesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/reloadStoredQueries/Fault/InvalidUserDataException")
     })
-    public SdfDatatypeListResponse getRegisteredDatatypes(
+    public Response reloadStoredQueries(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -87,22 +139,65 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
-     * @param datamodel
+     * @param name
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
+     *     returns de.uniol.inf.is.odysseus.webservice.client.LogicalOperatorInformationResponse
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getRegisteredAggregateFunctions", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredAggregateFunctions")
-    @ResponseWrapper(localName = "getRegisteredAggregateFunctionsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredAggregateFunctionsResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredAggregateFunctionsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredAggregateFunctionsResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredAggregateFunctions/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "getOperatorInformation", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOperatorInformation")
+    @ResponseWrapper(localName = "getOperatorInformationResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOperatorInformationResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorInformationRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorInformationResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorInformation/Fault/InvalidUserDataException")
     })
-    public StringListResponse getRegisteredAggregateFunctions(
-        @WebParam(name = "datamodel", targetNamespace = "")
-        String datamodel,
+    public LogicalOperatorInformationResponse getOperatorInformation(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param name
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.QueryResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getLogicalQueryByName", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryByName")
+    @ResponseWrapper(localName = "getLogicalQueryByNameResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryByNameResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryByNameRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryByNameResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryByName/Fault/InvalidUserDataException")
+    })
+    public QueryResponse getLogicalQueryByName(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "name", targetNamespace = "")
+        String name)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "startAllClosedQueries", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartAllClosedQueries")
+    @ResponseWrapper(localName = "startAllClosedQueriesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartAllClosedQueriesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startAllClosedQueriesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startAllClosedQueriesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startAllClosedQueries/Fault/InvalidUserDataException")
+    })
+    public Response startAllClosedQueries(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -112,17 +207,17 @@ import javax.xml.ws.ResponseWrapper;
      * 
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StoredProcedureListResponse
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringResponse
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getStoredProcedures", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetStoredProcedures")
-    @ResponseWrapper(localName = "getStoredProceduresResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetStoredProceduresResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStoredProceduresRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStoredProceduresResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStoredProcedures/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "getCurrentSchedulerID", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetCurrentSchedulerID")
+    @ResponseWrapper(localName = "getCurrentSchedulerIDResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetCurrentSchedulerIDResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getCurrentSchedulerIDRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getCurrentSchedulerIDResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getCurrentSchedulerID/Fault/InvalidUserDataException")
     })
-    public StoredProcedureListResponse getStoredProcedures(
+    public StringResponse getCurrentSchedulerID(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -130,19 +225,86 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
+     * @param storedprocedure
+     * @param name
      * @param securitytoken
      * @return
-     *     returns java.util.List<de.uniol.inf.is.odysseus.webservice.client.ViewInformationWS>
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getStreamsAndViews", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetStreamsAndViews")
-    @ResponseWrapper(localName = "getStreamsAndViewsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetStreamsAndViewsResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStreamsAndViewsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStreamsAndViewsResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStreamsAndViews/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "addStoredProcedure", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.AddStoredProcedure")
+    @ResponseWrapper(localName = "addStoredProcedureResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.AddStoredProcedureResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addStoredProcedureRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addStoredProcedureResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addStoredProcedure/Fault/InvalidUserDataException")
     })
-    public List<ViewInformationWS> getStreamsAndViews(
+    public Response addStoredProcedure(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "storedprocedure", targetNamespace = "")
+        StoredProcedure storedprocedure,
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.util.List<de.uniol.inf.is.odysseus.webservice.client.QueryState>
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getQueryStates", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryStates")
+    @ResponseWrapper(localName = "getQueryStatesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryStatesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryStatesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryStatesResponse")
+    public List<QueryState> getQueryStates(
+        @WebParam(name = "arg0", targetNamespace = "")
+        List<Integer> arg0);
+
+    /**
+     * 
+     * @param name
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "removeStoredProcedure", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveStoredProcedure")
+    @ResponseWrapper(localName = "removeStoredProcedureResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveStoredProcedureResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeStoredProcedureRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeStoredProcedureResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeStoredProcedure/Fault/InvalidUserDataException")
+    })
+    public Response removeStoredProcedure(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryParser
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringMapStringListResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getQueryParserTokens", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryParserTokens")
+    @ResponseWrapper(localName = "getQueryParserTokensResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryParserTokensResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserTokensRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserTokensResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserTokens/Fault/InvalidUserDataException")
+    })
+    public StringMapStringListResponse getQueryParserTokens(
+        @WebParam(name = "queryParser", targetNamespace = "")
+        String queryParser,
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -173,19 +335,22 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
+     * @param name
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
+     *     returns de.uniol.inf.is.odysseus.webservice.client.BooleanResponse
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getOperatorNames", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOperatorNames")
-    @ResponseWrapper(localName = "getOperatorNamesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOperatorNamesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorNamesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorNamesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorNames/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "containsStoredProcedures", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsStoredProcedures")
+    @ResponseWrapper(localName = "containsStoredProceduresResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsStoredProceduresResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsStoredProceduresRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsStoredProceduresResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsStoredProcedures/Fault/InvalidUserDataException")
     })
-    public StringListResponse getOperatorNames(
+    public BooleanResponse containsStoredProcedures(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -215,17 +380,148 @@ import javax.xml.ws.ResponseWrapper;
      * 
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringResponse
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StoredProcedureListResponse
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getCurrentSchedulerID", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetCurrentSchedulerID")
-    @ResponseWrapper(localName = "getCurrentSchedulerIDResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetCurrentSchedulerIDResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getCurrentSchedulerIDRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getCurrentSchedulerIDResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getCurrentSchedulerID/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "getStoredProcedures", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetStoredProcedures")
+    @ResponseWrapper(localName = "getStoredProceduresResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetStoredProceduresResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStoredProceduresRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStoredProceduresResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStoredProcedures/Fault/InvalidUserDataException")
     })
-    public StringResponse getCurrentSchedulerID(
+    public StoredProcedureListResponse getStoredProcedures(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryParser
+     * @param hint
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getQueryParserSuggestions", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryParserSuggestions")
+    @ResponseWrapper(localName = "getQueryParserSuggestionsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryParserSuggestionsResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserSuggestionsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserSuggestionsResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserSuggestions/Fault/InvalidUserDataException")
+    })
+    public StringListResponse getQueryParserSuggestions(
+        @WebParam(name = "queryParser", targetNamespace = "")
+        String queryParser,
+        @WebParam(name = "hint", targetNamespace = "")
+        String hint,
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.IntegerCollectionResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getLogicalQueryIds", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryIds")
+    @ResponseWrapper(localName = "getLogicalQueryIdsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryIdsResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryIdsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryIdsResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryIds/Fault/InvalidUserDataException")
+    })
+    public IntegerCollectionResponse getLogicalQueryIds(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param id
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.QueryResponse
+     * @throws QueryNotExistsException_Exception
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getLogicalQueryById", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryById")
+    @ResponseWrapper(localName = "getLogicalQueryByIdResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryByIdResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryByIdRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryByIdResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryById/Fault/InvalidUserDataException"),
+        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryById/Fault/QueryNotExistsException")
+    })
+    public QueryResponse getLogicalQueryById(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "id", targetNamespace = "")
+        String id)
+        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.SdfDatatypeListResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getRegisteredDatatypes", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredDatatypes")
+    @ResponseWrapper(localName = "getRegisteredDatatypesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredDatatypesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredDatatypesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredDatatypesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredDatatypes/Fault/InvalidUserDataException")
+    })
+    public SdfDatatypeListResponse getRegisteredDatatypes(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSupportedQueryParsers", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetSupportedQueryParsers")
+    @ResponseWrapper(localName = "getSupportedQueryParsersResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetSupportedQueryParsersResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSupportedQueryParsersRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSupportedQueryParsersResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSupportedQueryParsers/Fault/InvalidUserDataException")
+    })
+    public StringListResponse getSupportedQueryParsers(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getOperatorNames", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOperatorNames")
+    @ResponseWrapper(localName = "getOperatorNamesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOperatorNamesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorNamesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorNamesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorNames/Fault/InvalidUserDataException")
+    })
+    public StringListResponse getOperatorNames(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -273,31 +569,6 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
-     * @param id
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.QueryResponse
-     * @throws InvalidUserDataException_Exception
-     * @throws QueryNotExistsException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getLogicalQueryById", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryById")
-    @ResponseWrapper(localName = "getLogicalQueryByIdResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryByIdResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryByIdRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryByIdResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryById/Fault/InvalidUserDataException"),
-        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryById/Fault/QueryNotExistsException")
-    })
-    public QueryResponse getLogicalQueryById(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "id", targetNamespace = "")
-        String id)
-        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
-    ;
-
-    /**
-     * 
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
@@ -305,57 +576,16 @@ import javax.xml.ws.ResponseWrapper;
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSupportedQueryParsers", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetSupportedQueryParsers")
-    @ResponseWrapper(localName = "getSupportedQueryParsersResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetSupportedQueryParsersResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSupportedQueryParsersRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSupportedQueryParsersResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSupportedQueryParsers/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "getRegisteredSchedulingStrategies", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredSchedulingStrategies")
+    @ResponseWrapper(localName = "getRegisteredSchedulingStrategiesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredSchedulingStrategiesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredSchedulingStrategiesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredSchedulingStrategiesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredSchedulingStrategies/Fault/InvalidUserDataException")
     })
-    public StringListResponse getSupportedQueryParsers(
+    public StringListResponse getRegisteredSchedulingStrategies(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
     ;
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.IntegerCollectionResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getLogicalQueryIds", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryIds")
-    @ResponseWrapper(localName = "getLogicalQueryIdsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryIdsResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryIdsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryIdsResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryIds/Fault/InvalidUserDataException")
-    })
-    public IntegerCollectionResponse getLogicalQueryIds(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param username
-     * @param tenantname
-     * @param password
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringResponse
-     */
-    @WebMethod
-    @WebResult(name = "securitytoken", targetNamespace = "")
-    @RequestWrapper(localName = "login", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.Login")
-    @ResponseWrapper(localName = "loginResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.LoginResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/loginRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/loginResponse")
-    public StringResponse login(
-        @WebParam(name = "username", targetNamespace = "")
-        String username,
-        @WebParam(name = "password", targetNamespace = "")
-        String password,
-        @WebParam(name = "tenantname", targetNamespace = "")
-        String tenantname);
 
     /**
      * 
@@ -372,6 +602,46 @@ import javax.xml.ws.ResponseWrapper;
         @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSinks/Fault/InvalidUserDataException")
     })
     public List<SinkInformationWS> getSinks(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getRegisteredBufferPlacementStrategiesIDs", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredBufferPlacementStrategiesIDs")
+    @ResponseWrapper(localName = "getRegisteredBufferPlacementStrategiesIDsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredBufferPlacementStrategiesIDsResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredBufferPlacementStrategiesIDsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredBufferPlacementStrategiesIDsResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredBufferPlacementStrategiesIDs/Fault/InvalidUserDataException")
+    })
+    public StringListResponse getRegisteredBufferPlacementStrategiesIDs(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getQueryBuildConfigurationNames", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryBuildConfigurationNames")
+    @ResponseWrapper(localName = "getQueryBuildConfigurationNamesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryBuildConfigurationNamesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryBuildConfigurationNamesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryBuildConfigurationNamesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryBuildConfigurationNames/Fault/InvalidUserDataException")
+    })
+    public StringListResponse getQueryBuildConfigurationNames(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -399,6 +669,7 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
+     * @param datamodel
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
@@ -406,12 +677,14 @@ import javax.xml.ws.ResponseWrapper;
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getRegisteredSchedulingStrategies", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredSchedulingStrategies")
-    @ResponseWrapper(localName = "getRegisteredSchedulingStrategiesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredSchedulingStrategiesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredSchedulingStrategiesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredSchedulingStrategiesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredSchedulingStrategies/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "getRegisteredAggregateFunctions", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredAggregateFunctions")
+    @ResponseWrapper(localName = "getRegisteredAggregateFunctionsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredAggregateFunctionsResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredAggregateFunctionsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredAggregateFunctionsResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredAggregateFunctions/Fault/InvalidUserDataException")
     })
-    public StringListResponse getRegisteredSchedulingStrategies(
+    public StringListResponse getRegisteredAggregateFunctions(
+        @WebParam(name = "datamodel", targetNamespace = "")
+        String datamodel,
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -419,22 +692,19 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
-     * @param name
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     *     returns de.uniol.inf.is.odysseus.webservice.client.SourceListResponse
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "removeStoredProcedure", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveStoredProcedure")
-    @ResponseWrapper(localName = "removeStoredProcedureResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveStoredProcedureResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeStoredProcedureRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeStoredProcedureResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeStoredProcedure/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "getSources", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetSources")
+    @ResponseWrapper(localName = "getSourcesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetSourcesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSourcesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSourcesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSources/Fault/InvalidUserDataException")
     })
-    public Response removeStoredProcedure(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
+    public SourceListResponse getSources(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -442,28 +712,47 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
-     * @param storedprocedure
-     * @param name
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     *     returns java.util.List<de.uniol.inf.is.odysseus.webservice.client.ViewInformationWS>
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "addStoredProcedure", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.AddStoredProcedure")
-    @ResponseWrapper(localName = "addStoredProcedureResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.AddStoredProcedureResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addStoredProcedureRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addStoredProcedureResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addStoredProcedure/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "getStreamsAndViews", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetStreamsAndViews")
+    @ResponseWrapper(localName = "getStreamsAndViewsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetStreamsAndViewsResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStreamsAndViewsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStreamsAndViewsResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getStreamsAndViews/Fault/InvalidUserDataException")
     })
-    public Response addStoredProcedure(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "storedprocedure", targetNamespace = "")
-        StoredProcedure storedprocedure,
+    public List<ViewInformationWS> getStreamsAndViews(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param id
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.QueryResponse
+     * @throws QueryNotExistsException_Exception
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getLogicalQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQuery")
+    @ResponseWrapper(localName = "getLogicalQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQuery/Fault/InvalidUserDataException"),
+        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQuery/Fault/QueryNotExistsException")
+    })
+    public QueryResponse getLogicalQuery(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "id", targetNamespace = "")
+        String id)
+        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
     ;
 
     /**
@@ -488,22 +777,189 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
+     * @param queryID
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.SourceListResponse
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     * @throws QueryNotExistsException_Exception
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSources", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetSources")
-    @ResponseWrapper(localName = "getSourcesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetSourcesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSourcesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSourcesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getSources/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "resumeQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ResumeQuery")
+    @ResponseWrapper(localName = "resumeQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ResumeQueryResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/resumeQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/resumeQueryResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/resumeQuery/Fault/InvalidUserDataException"),
+        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/resumeQuery/Fault/QueryNotExistsException")
     })
-    public SourceListResponse getSources(
+    public Response resumeQuery(
         @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
+        String securitytoken,
+        @WebParam(name = "queryID", targetNamespace = "")
+        int queryID)
+        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
+    ;
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.QueryState
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getQueryState", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryState")
+    @ResponseWrapper(localName = "getQueryStateResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryStateResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryStateRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryStateResponse")
+    public QueryState getQueryState(
+        @WebParam(name = "arg0", targetNamespace = "")
+        int arg0);
+
+    /**
+     * 
+     * @param scheduler
+     * @param schedulerStrategy
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "setScheduler", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.SetScheduler")
+    @ResponseWrapper(localName = "setSchedulerResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.SetSchedulerResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/setSchedulerRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/setSchedulerResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/setScheduler/Fault/InvalidUserDataException")
+    })
+    public Response setScheduler(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "scheduler", targetNamespace = "")
+        String scheduler,
+        @WebParam(name = "scheduler_strategy", targetNamespace = "")
+        String schedulerStrategy)
         throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryID
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     * @throws QueryNotExistsException_Exception
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "removeQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveQuery")
+    @ResponseWrapper(localName = "removeQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveQueryResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeQueryResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeQuery/Fault/InvalidUserDataException"),
+        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeQuery/Fault/QueryNotExistsException")
+    })
+    public Response removeQuery(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "queryID", targetNamespace = "")
+        int queryID)
+        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryID
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     * @throws QueryNotExistsException_Exception
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "startQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartQuery")
+    @ResponseWrapper(localName = "startQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartQueryResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startQueryResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startQuery/Fault/InvalidUserDataException"),
+        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startQuery/Fault/QueryNotExistsException")
+    })
+    public Response startQuery(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "queryID", targetNamespace = "")
+        int queryID)
+        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryID
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     * @throws QueryNotExistsException_Exception
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "stopQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StopQuery")
+    @ResponseWrapper(localName = "stopQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StopQueryResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopQueryResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopQuery/Fault/InvalidUserDataException"),
+        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopQuery/Fault/QueryNotExistsException")
+    })
+    public Response stopQuery(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "queryID", targetNamespace = "")
+        int queryID)
+        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
+    ;
+
+    /**
+     * 
+     * @param username
+     * @param tenantname
+     * @param password
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringResponse
+     */
+    @WebMethod
+    @WebResult(name = "securitytoken", targetNamespace = "")
+    @RequestWrapper(localName = "login", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.Login")
+    @ResponseWrapper(localName = "loginResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.LoginResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/loginRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/loginResponse")
+    public StringResponse login(
+        @WebParam(name = "username", targetNamespace = "")
+        String username,
+        @WebParam(name = "password", targetNamespace = "")
+        String password,
+        @WebParam(name = "tenantname", targetNamespace = "")
+        String tenantname);
+
+    /**
+     * 
+     * @param queryID
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     * @throws QueryNotExistsException_Exception
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "suspendQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.SuspendQuery")
+    @ResponseWrapper(localName = "suspendQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.SuspendQueryResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/suspendQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/suspendQueryResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/suspendQuery/Fault/InvalidUserDataException"),
+        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/suspendQuery/Fault/QueryNotExistsException")
+    })
+    public Response suspendQuery(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "queryID", targetNamespace = "")
+        int queryID)
+        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
     ;
 
     /**
@@ -542,400 +998,34 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
-     * @param queryID
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws InvalidUserDataException_Exception
-     * @throws QueryNotExistsException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "removeQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveQuery")
-    @ResponseWrapper(localName = "removeQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveQueryResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeQueryResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeQuery/Fault/InvalidUserDataException"),
-        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeQuery/Fault/QueryNotExistsException")
-    })
-    public Response removeQuery(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "queryID", targetNamespace = "")
-        int queryID)
-        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
-    ;
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getQueryBuildConfigurationNames", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryBuildConfigurationNames")
-    @ResponseWrapper(localName = "getQueryBuildConfigurationNamesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryBuildConfigurationNamesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryBuildConfigurationNamesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryBuildConfigurationNamesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryBuildConfigurationNames/Fault/InvalidUserDataException")
-    })
-    public StringListResponse getQueryBuildConfigurationNames(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param rootPort
-     * @param nullValues
-     * @param maxPort
-     * @param minPort
-     * @param queryId
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.ConnectionInformationResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getConnectionInformationWithPorts", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithPorts")
-    @ResponseWrapper(localName = "getConnectionInformationWithPortsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithPortsResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithPortsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithPortsResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithPorts/Fault/InvalidUserDataException")
-    })
-    public ConnectionInformationResponse getConnectionInformationWithPorts(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "queryId", targetNamespace = "")
-        int queryId,
-        @WebParam(name = "rootPort", targetNamespace = "")
-        int rootPort,
-        @WebParam(name = "minPort", targetNamespace = "")
-        int minPort,
-        @WebParam(name = "maxPort", targetNamespace = "")
-        int maxPort,
-        @WebParam(name = "nullValues", targetNamespace = "")
-        boolean nullValues)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getRegisteredBufferPlacementStrategiesIDs", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredBufferPlacementStrategiesIDs")
-    @ResponseWrapper(localName = "getRegisteredBufferPlacementStrategiesIDsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetRegisteredBufferPlacementStrategiesIDsResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredBufferPlacementStrategiesIDsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredBufferPlacementStrategiesIDsResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getRegisteredBufferPlacementStrategiesIDs/Fault/InvalidUserDataException")
-    })
-    public StringListResponse getRegisteredBufferPlacementStrategiesIDs(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param sslClientAuthentication
-     * @param nullValues
-     * @param queryId
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.ConnectionInformationResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getConnectionInformationWithSSL", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithSSL")
-    @ResponseWrapper(localName = "getConnectionInformationWithSSLResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithSSLResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithSSLRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithSSLResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithSSL/Fault/InvalidUserDataException")
-    })
-    public ConnectionInformationResponse getConnectionInformationWithSSL(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "queryId", targetNamespace = "")
-        int queryId,
-        @WebParam(name = "sslClientAuthentication", targetNamespace = "")
-        boolean sslClientAuthentication,
-        @WebParam(name = "nullValues", targetNamespace = "")
-        boolean nullValues)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param port
-     * @param queryId
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.SdfSchemaResponse
-     * @throws InvalidUserDataException_Exception
-     * @throws QueryNotExistsException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getOutputSchemaByQueryIdAndPort", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOutputSchemaByQueryIdAndPort")
-    @ResponseWrapper(localName = "getOutputSchemaByQueryIdAndPortResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOutputSchemaByQueryIdAndPortResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaByQueryIdAndPortRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaByQueryIdAndPortResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaByQueryIdAndPort/Fault/InvalidUserDataException"),
-        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaByQueryIdAndPort/Fault/QueryNotExistsException")
-    })
-    public SdfSchemaResponse getOutputSchemaByQueryIdAndPort(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "queryId", targetNamespace = "")
-        int queryId,
-        @WebParam(name = "port", targetNamespace = "")
-        int port)
-        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
-    ;
-
-    /**
-     * 
-     * @param nullValues
-     * @param withMetadata
-     * @param queryId
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.ConnectionInformationResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getConnectionInformationWithMetadata", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithMetadata")
-    @ResponseWrapper(localName = "getConnectionInformationWithMetadataResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithMetadataResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithMetadataRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithMetadataResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithMetadata/Fault/InvalidUserDataException")
-    })
-    public ConnectionInformationResponse getConnectionInformationWithMetadata(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "queryId", targetNamespace = "")
-        int queryId,
-        @WebParam(name = "nullValues", targetNamespace = "")
-        boolean nullValues,
-        @WebParam(name = "withMetadata", targetNamespace = "")
-        boolean withMetadata)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param ri
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.BooleanResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "containsViewOrStreamByResource", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsViewOrStreamByResource")
-    @ResponseWrapper(localName = "containsViewOrStreamByResourceResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsViewOrStreamByResourceResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByResourceRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByResourceResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByResource/Fault/InvalidUserDataException")
-    })
-    public BooleanResponse containsViewOrStreamByResource(
-        @WebParam(name = "ri", targetNamespace = "")
-        ResourceInformation ri,
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryParser
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringMapStringListResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getQueryParserTokens", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryParserTokens")
-    @ResponseWrapper(localName = "getQueryParserTokensResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryParserTokensResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserTokensRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserTokensResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserTokens/Fault/InvalidUserDataException")
-    })
-    public StringMapStringListResponse getQueryParserTokens(
-        @WebParam(name = "queryParser", targetNamespace = "")
-        String queryParser,
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryParser
-     * @param hint
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getQueryParserSuggestions", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryParserSuggestions")
-    @ResponseWrapper(localName = "getQueryParserSuggestionsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryParserSuggestionsResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserSuggestionsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserSuggestionsResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryParserSuggestions/Fault/InvalidUserDataException")
-    })
-    public StringListResponse getQueryParserSuggestions(
-        @WebParam(name = "queryParser", targetNamespace = "")
-        String queryParser,
-        @WebParam(name = "hint", targetNamespace = "")
-        String hint,
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "startExecution", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartExecution")
-    @ResponseWrapper(localName = "startExecutionResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartExecutionResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startExecutionRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startExecutionResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startExecution/Fault/InvalidUserDataException")
-    })
-    public Response startExecution(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param sourcename
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.SdfSchemaResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getOutputSchemaBySource", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOutputSchemaBySource")
-    @ResponseWrapper(localName = "getOutputSchemaBySourceResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOutputSchemaBySourceResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaBySourceRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaBySourceResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaBySource/Fault/InvalidUserDataException")
-    })
-    public SdfSchemaResponse getOutputSchemaBySource(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "sourcename", targetNamespace = "")
-        String sourcename)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryID
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.SimpleGraph
-     * @throws InvalidUserDataException_Exception
-     * @throws QueryNotExistsException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getLogicalQueryPlan", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryPlan")
-    @ResponseWrapper(localName = "getLogicalQueryPlanResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryPlanResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryPlanRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryPlanResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryPlan/Fault/InvalidUserDataException"),
-        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryPlan/Fault/QueryNotExistsException")
-    })
-    public SimpleGraph getLogicalQueryPlan(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "queryID", targetNamespace = "")
-        Integer queryID)
-        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
-    ;
-
-    /**
-     * 
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.Response
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "isValidSession", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.IsValidSession")
-    @ResponseWrapper(localName = "isValidSessionResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.IsValidSessionResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/isValidSessionRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/isValidSessionResponse")
-    public Response isValidSession(
+    @RequestWrapper(localName = "logout", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.Logout")
+    @ResponseWrapper(localName = "logoutResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.LogoutResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/logoutRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/logoutResponse")
+    public Response logout(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken);
 
     /**
      * 
-     * @param id
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.QueryResponse
-     * @throws InvalidUserDataException_Exception
-     * @throws QueryNotExistsException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getLogicalQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQuery")
-    @ResponseWrapper(localName = "getLogicalQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQuery/Fault/InvalidUserDataException"),
-        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQuery/Fault/QueryNotExistsException")
-    })
-    public QueryResponse getLogicalQuery(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "id", targetNamespace = "")
-        String id)
-        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
-    ;
-
-    /**
-     * 
-     * @param arg0
-     * @return
-     *     returns java.util.List<de.uniol.inf.is.odysseus.webservice.client.QueryState>
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getQueryStates", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryStates")
-    @ResponseWrapper(localName = "getQueryStatesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryStatesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryStatesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryStatesResponse")
-    public List<QueryState> getQueryStates(
-        @WebParam(name = "arg0", targetNamespace = "")
-        List<Integer> arg0);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "startAllClosedQueries", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartAllClosedQueries")
-    @ResponseWrapper(localName = "startAllClosedQueriesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartAllClosedQueriesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startAllClosedQueriesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startAllClosedQueriesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startAllClosedQueries/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "getTransportValues", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetTransportValues")
+    @ResponseWrapper(localName = "getTransportValuesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetTransportValuesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getTransportValuesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getTransportValuesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getTransportValues/Fault/InvalidUserDataException")
     })
-    public Response startAllClosedQueries(
+    public StringListResponse getTransportValues(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -950,40 +1040,15 @@ import javax.xml.ws.ResponseWrapper;
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getInstalledSources", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInstalledSources")
-    @ResponseWrapper(localName = "getInstalledSourcesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInstalledSourcesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledSourcesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledSourcesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledSources/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "getProtocolValues", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetProtocolValues")
+    @ResponseWrapper(localName = "getProtocolValuesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetProtocolValuesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getProtocolValuesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getProtocolValuesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getProtocolValues/Fault/InvalidUserDataException")
     })
-    public StringListResponse getInstalledSources(
+    public StringListResponse getProtocolValues(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryID
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.SimpleGraph
-     * @throws InvalidUserDataException_Exception
-     * @throws QueryNotExistsException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPlanByQueryID", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetPlanByQueryID")
-    @ResponseWrapper(localName = "getPlanByQueryIDResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetPlanByQueryIDResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanByQueryIDRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanByQueryIDResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanByQueryID/Fault/InvalidUserDataException"),
-        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanByQueryID/Fault/QueryNotExistsException")
-    })
-    public SimpleGraph getPlanByQueryID(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "queryID", targetNamespace = "")
-        Integer queryID)
-        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
     ;
 
     /**
@@ -995,37 +1060,14 @@ import javax.xml.ws.ResponseWrapper;
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getInstalledQueries", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInstalledQueries")
-    @ResponseWrapper(localName = "getInstalledQueriesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInstalledQueriesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledQueriesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledQueriesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledQueries/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "getWindowTypes", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetWindowTypes")
+    @ResponseWrapper(localName = "getWindowTypesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetWindowTypesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getWindowTypesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getWindowTypesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getWindowTypes/Fault/InvalidUserDataException")
     })
-    public StringListResponse getInstalledQueries(
+    public StringListResponse getWindowTypes(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param name
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.QueryResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getLogicalQueryByName", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryByName")
-    @ResponseWrapper(localName = "getLogicalQueryByNameResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryByNameResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryByNameRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryByNameResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryByName/Fault/InvalidUserDataException")
-    })
-    public QueryResponse getLogicalQueryByName(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "name", targetNamespace = "")
-        String name)
         throws InvalidUserDataException_Exception
     ;
 
@@ -1057,12 +1099,228 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getInstalledQueries", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInstalledQueries")
+    @ResponseWrapper(localName = "getInstalledQueriesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInstalledQueriesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledQueriesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledQueriesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledQueries/Fault/InvalidUserDataException")
+    })
+    public StringListResponse getInstalledQueries(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "startExecution", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartExecution")
+    @ResponseWrapper(localName = "startExecutionResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartExecutionResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startExecutionRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startExecutionResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startExecution/Fault/InvalidUserDataException")
+    })
+    public Response startExecution(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getInstalledSources", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInstalledSources")
+    @ResponseWrapper(localName = "getInstalledSourcesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInstalledSourcesResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledSourcesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledSourcesResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInstalledSources/Fault/InvalidUserDataException")
+    })
+    public StringListResponse getInstalledSources(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryID
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.SimpleGraph
+     * @throws QueryNotExistsException_Exception
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getLogicalQueryPlan", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryPlan")
+    @ResponseWrapper(localName = "getLogicalQueryPlanResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetLogicalQueryPlanResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryPlanRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryPlanResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryPlan/Fault/InvalidUserDataException"),
+        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getLogicalQueryPlan/Fault/QueryNotExistsException")
+    })
+    public SimpleGraph getLogicalQueryPlan(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "queryID", targetNamespace = "")
+        Integer queryID)
+        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryID
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.SimpleGraph
+     * @throws QueryNotExistsException_Exception
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPlanByQueryID", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetPlanByQueryID")
+    @ResponseWrapper(localName = "getPlanByQueryIDResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetPlanByQueryIDResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanByQueryIDRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanByQueryIDResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanByQueryID/Fault/InvalidUserDataException"),
+        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanByQueryID/Fault/QueryNotExistsException")
+    })
+    public SimpleGraph getPlanByQueryID(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "queryID", targetNamespace = "")
+        Integer queryID)
+        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "isValidSession", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.IsValidSession")
+    @ResponseWrapper(localName = "isValidSessionResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.IsValidSessionResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/isValidSessionRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/isValidSessionResponse")
+    public Response isValidSession(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken);
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.StringResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getInfos", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInfos")
+    @ResponseWrapper(localName = "getInfosResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInfosResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInfosRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInfosResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInfos/Fault/InvalidUserDataException")
+    })
+    public StringResponse getInfos(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param query
+     * @param context
+     * @param parser
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.IntegerCollectionResponse
+     * @throws InvalidUserDataException_Exception
+     * @throws CreateQueryException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "addQuery2", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.AddQuery2")
+    @ResponseWrapper(localName = "addQuery2Response", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.AddQuery2Response")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addQuery2Request", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addQuery2Response", fault = {
+        @FaultAction(className = CreateQueryException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addQuery2/Fault/CreateQueryException"),
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addQuery2/Fault/InvalidUserDataException")
+    })
+    public IntegerCollectionResponse addQuery2(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "parser", targetNamespace = "")
+        String parser,
+        @WebParam(name = "query", targetNamespace = "")
+        String query,
+        @WebParam(name = "context", targetNamespace = "")
+        Object context)
+        throws CreateQueryException_Exception, InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.SimpleGraph
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPlan", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetPlan")
+    @ResponseWrapper(localName = "getPlanResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetPlanResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlan/Fault/InvalidUserDataException")
+    })
+    public SimpleGraph getPlan(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "stopExecution", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StopExecution")
+    @ResponseWrapper(localName = "stopExecutionResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StopExecutionResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopExecutionRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopExecutionResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopExecution/Fault/InvalidUserDataException")
+    })
+    public Response stopExecution(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
      * @param queryId
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.SdfSchemaResponse
-     * @throws InvalidUserDataException_Exception
      * @throws QueryNotExistsException_Exception
+     * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -1082,6 +1340,29 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
+     * @param sourcename
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.SdfSchemaResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getOutputSchemaBySource", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOutputSchemaBySource")
+    @ResponseWrapper(localName = "getOutputSchemaBySourceResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOutputSchemaBySourceResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaBySourceRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaBySourceResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaBySource/Fault/InvalidUserDataException")
+    })
+    public SdfSchemaResponse getOutputSchemaBySource(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "sourcename", targetNamespace = "")
+        String sourcename)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.OperatorBuilderListResponse
@@ -1095,118 +1376,6 @@ import javax.xml.ws.ResponseWrapper;
         @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorBuilderList/Fault/InvalidUserDataException")
     })
     public OperatorBuilderListResponse getOperatorBuilderList(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param name
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.LogicalOperatorResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "removeSinkByName", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveSinkByName")
-    @ResponseWrapper(localName = "removeSinkByNameResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveSinkByNameResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeSinkByNameRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeSinkByNameResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeSinkByName/Fault/InvalidUserDataException")
-    })
-    public LogicalOperatorResponse removeSinkByName(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param ri
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "removeViewOrStreamByResource", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveViewOrStreamByResource")
-    @ResponseWrapper(localName = "removeViewOrStreamByResourceResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveViewOrStreamByResourceResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeViewOrStreamByResourceRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeViewOrStreamByResourceResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeViewOrStreamByResource/Fault/InvalidUserDataException")
-    })
-    public Response removeViewOrStreamByResource(
-        @WebParam(name = "ri", targetNamespace = "")
-        ResourceInformation ri,
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param name
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.BooleanResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "containsViewOrStreamByName", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsViewOrStreamByName")
-    @ResponseWrapper(localName = "containsViewOrStreamByNameResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsViewOrStreamByNameResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByNameRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByNameResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByName/Fault/InvalidUserDataException")
-    })
-    public BooleanResponse containsViewOrStreamByName(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "reloadStoredQueries", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ReloadStoredQueries")
-    @ResponseWrapper(localName = "reloadStoredQueriesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ReloadStoredQueriesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/reloadStoredQueriesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/reloadStoredQueriesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/reloadStoredQueries/Fault/InvalidUserDataException")
-    })
-    public Response reloadStoredQueries(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param name
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.LogicalOperatorInformationResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getOperatorInformation", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOperatorInformation")
-    @ResponseWrapper(localName = "getOperatorInformationResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOperatorInformationResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorInformationRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorInformationResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOperatorInformation/Fault/InvalidUserDataException")
-    })
-    public LogicalOperatorInformationResponse getOperatorInformation(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken)
         throws InvalidUserDataException_Exception
@@ -1260,36 +1429,25 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
-     * @param port
-     * @param parserID
-     * @param query
-     * @param context
+     * @param name
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.SdfSchemaResponse
+     *     returns de.uniol.inf.is.odysseus.webservice.client.LogicalOperatorResponse
      * @throws InvalidUserDataException_Exception
-     * @throws DetermineOutputSchemaException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "determineOutputSchema", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.DetermineOutputSchema")
-    @ResponseWrapper(localName = "determineOutputSchemaResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.DetermineOutputSchemaResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/determineOutputSchemaRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/determineOutputSchemaResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/determineOutputSchema/Fault/InvalidUserDataException"),
-        @FaultAction(className = DetermineOutputSchemaException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/determineOutputSchema/Fault/DetermineOutputSchemaException")
+    @RequestWrapper(localName = "removeSinkByName", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveSinkByName")
+    @ResponseWrapper(localName = "removeSinkByNameResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveSinkByNameResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeSinkByNameRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeSinkByNameResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeSinkByName/Fault/InvalidUserDataException")
     })
-    public SdfSchemaResponse determineOutputSchema(
-        @WebParam(name = "query", targetNamespace = "")
-        String query,
-        @WebParam(name = "parserID", targetNamespace = "")
-        String parserID,
+    public LogicalOperatorResponse removeSinkByName(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
         @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "port", targetNamespace = "")
-        int port,
-        @WebParam(name = "context", targetNamespace = "")
-        Object context)
-        throws DetermineOutputSchemaException_Exception, InvalidUserDataException_Exception
+        String securitytoken)
+        throws InvalidUserDataException_Exception
     ;
 
     /**
@@ -1302,12 +1460,12 @@ import javax.xml.ws.ResponseWrapper;
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "containsStoredProcedures", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsStoredProcedures")
-    @ResponseWrapper(localName = "containsStoredProceduresResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsStoredProceduresResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsStoredProceduresRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsStoredProceduresResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsStoredProcedures/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "containsViewOrStreamByName", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsViewOrStreamByName")
+    @ResponseWrapper(localName = "containsViewOrStreamByNameResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsViewOrStreamByNameResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByNameRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByNameResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByName/Fault/InvalidUserDataException")
     })
-    public BooleanResponse containsStoredProcedures(
+    public BooleanResponse containsViewOrStreamByName(
         @WebParam(name = "name", targetNamespace = "")
         String name,
         @WebParam(name = "securitytoken", targetNamespace = "")
@@ -1317,326 +1475,168 @@ import javax.xml.ws.ResponseWrapper;
 
     /**
      * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getProtocolValues", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetProtocolValues")
-    @ResponseWrapper(localName = "getProtocolValuesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetProtocolValuesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getProtocolValuesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getProtocolValuesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getProtocolValues/Fault/InvalidUserDataException")
-    })
-    public StringListResponse getProtocolValues(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getTransportValues", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetTransportValues")
-    @ResponseWrapper(localName = "getTransportValuesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetTransportValuesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getTransportValuesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getTransportValuesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getTransportValues/Fault/InvalidUserDataException")
-    })
-    public StringListResponse getTransportValues(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringListResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getWindowTypes", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetWindowTypes")
-    @ResponseWrapper(localName = "getWindowTypesResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetWindowTypesResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getWindowTypesRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getWindowTypesResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getWindowTypes/Fault/InvalidUserDataException")
-    })
-    public StringListResponse getWindowTypes(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
+     * @param ri
      * @param securitytoken
      * @return
      *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "logout", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.Logout")
-    @ResponseWrapper(localName = "logoutResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.LogoutResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/logoutRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/logoutResponse")
-    public Response logout(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken);
-
-    /**
-     * 
-     * @param query
-     * @param context
-     * @param parser
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.IntegerCollectionResponse
-     * @throws CreateQueryException_Exception
      * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "addQuery2", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.AddQuery2")
-    @ResponseWrapper(localName = "addQuery2Response", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.AddQuery2Response")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addQuery2Request", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addQuery2Response", fault = {
-        @FaultAction(className = CreateQueryException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addQuery2/Fault/CreateQueryException"),
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/addQuery2/Fault/InvalidUserDataException")
+    @RequestWrapper(localName = "removeViewOrStreamByResource", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveViewOrStreamByResource")
+    @ResponseWrapper(localName = "removeViewOrStreamByResourceResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.RemoveViewOrStreamByResourceResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeViewOrStreamByResourceRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeViewOrStreamByResourceResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/removeViewOrStreamByResource/Fault/InvalidUserDataException")
     })
-    public IntegerCollectionResponse addQuery2(
+    public Response removeViewOrStreamByResource(
+        @WebParam(name = "ri", targetNamespace = "")
+        ResourceInformation ri,
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param ri
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.BooleanResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "containsViewOrStreamByResource", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsViewOrStreamByResource")
+    @ResponseWrapper(localName = "containsViewOrStreamByResourceResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ContainsViewOrStreamByResourceResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByResourceRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByResourceResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/containsViewOrStreamByResource/Fault/InvalidUserDataException")
+    })
+    public BooleanResponse containsViewOrStreamByResource(
+        @WebParam(name = "ri", targetNamespace = "")
+        ResourceInformation ri,
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken)
+        throws InvalidUserDataException_Exception
+    ;
+
+    /**
+     * 
+     * @param sslClientAuthentication
+     * @param nullValues
+     * @param queryId
+     * @param securitytoken
+     * @return
+     *     returns de.uniol.inf.is.odysseus.webservice.client.ConnectionInformationResponse
+     * @throws InvalidUserDataException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getConnectionInformationWithSSL", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithSSL")
+    @ResponseWrapper(localName = "getConnectionInformationWithSSLResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithSSLResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithSSLRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithSSLResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithSSL/Fault/InvalidUserDataException")
+    })
+    public ConnectionInformationResponse getConnectionInformationWithSSL(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken,
-        @WebParam(name = "parser", targetNamespace = "")
-        String parser,
-        @WebParam(name = "query", targetNamespace = "")
-        String query,
-        @WebParam(name = "context", targetNamespace = "")
-        Object context)
-        throws CreateQueryException_Exception, InvalidUserDataException_Exception
+        @WebParam(name = "queryId", targetNamespace = "")
+        int queryId,
+        @WebParam(name = "sslClientAuthentication", targetNamespace = "")
+        boolean sslClientAuthentication,
+        @WebParam(name = "nullValues", targetNamespace = "")
+        boolean nullValues)
+        throws InvalidUserDataException_Exception
     ;
 
     /**
      * 
-     * @param arg0
+     * @param rootPort
+     * @param nullValues
+     * @param maxPort
+     * @param minPort
+     * @param queryId
+     * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.QueryState
+     *     returns de.uniol.inf.is.odysseus.webservice.client.ConnectionInformationResponse
+     * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getQueryState", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryState")
-    @ResponseWrapper(localName = "getQueryStateResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetQueryStateResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryStateRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getQueryStateResponse")
-    public QueryState getQueryState(
-        @WebParam(name = "arg0", targetNamespace = "")
-        int arg0);
+    @RequestWrapper(localName = "getConnectionInformationWithPorts", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithPorts")
+    @ResponseWrapper(localName = "getConnectionInformationWithPortsResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithPortsResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithPortsRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithPortsResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithPorts/Fault/InvalidUserDataException")
+    })
+    public ConnectionInformationResponse getConnectionInformationWithPorts(
+        @WebParam(name = "securitytoken", targetNamespace = "")
+        String securitytoken,
+        @WebParam(name = "queryId", targetNamespace = "")
+        int queryId,
+        @WebParam(name = "rootPort", targetNamespace = "")
+        int rootPort,
+        @WebParam(name = "minPort", targetNamespace = "")
+        int minPort,
+        @WebParam(name = "maxPort", targetNamespace = "")
+        int maxPort,
+        @WebParam(name = "nullValues", targetNamespace = "")
+        boolean nullValues)
+        throws InvalidUserDataException_Exception
+    ;
 
     /**
      * 
-     * @param queryID
+     * @param port
+     * @param queryId
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws InvalidUserDataException_Exception
+     *     returns de.uniol.inf.is.odysseus.webservice.client.SdfSchemaResponse
      * @throws QueryNotExistsException_Exception
+     * @throws InvalidUserDataException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "startQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartQuery")
-    @ResponseWrapper(localName = "startQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StartQueryResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startQueryResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startQuery/Fault/InvalidUserDataException"),
-        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/startQuery/Fault/QueryNotExistsException")
+    @RequestWrapper(localName = "getOutputSchemaByQueryIdAndPort", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOutputSchemaByQueryIdAndPort")
+    @ResponseWrapper(localName = "getOutputSchemaByQueryIdAndPortResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetOutputSchemaByQueryIdAndPortResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaByQueryIdAndPortRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaByQueryIdAndPortResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaByQueryIdAndPort/Fault/InvalidUserDataException"),
+        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getOutputSchemaByQueryIdAndPort/Fault/QueryNotExistsException")
     })
-    public Response startQuery(
+    public SdfSchemaResponse getOutputSchemaByQueryIdAndPort(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken,
-        @WebParam(name = "queryID", targetNamespace = "")
-        int queryID)
+        @WebParam(name = "queryId", targetNamespace = "")
+        int queryId,
+        @WebParam(name = "port", targetNamespace = "")
+        int port)
         throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
     ;
 
     /**
      * 
-     * @param queryID
+     * @param nullValues
+     * @param withMetadata
+     * @param queryId
      * @param securitytoken
      * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
+     *     returns de.uniol.inf.is.odysseus.webservice.client.ConnectionInformationResponse
      * @throws InvalidUserDataException_Exception
-     * @throws QueryNotExistsException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "suspendQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.SuspendQuery")
-    @ResponseWrapper(localName = "suspendQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.SuspendQueryResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/suspendQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/suspendQueryResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/suspendQuery/Fault/InvalidUserDataException"),
-        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/suspendQuery/Fault/QueryNotExistsException")
+    @RequestWrapper(localName = "getConnectionInformationWithMetadata", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithMetadata")
+    @ResponseWrapper(localName = "getConnectionInformationWithMetadataResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetConnectionInformationWithMetadataResponse")
+    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithMetadataRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithMetadataResponse", fault = {
+        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getConnectionInformationWithMetadata/Fault/InvalidUserDataException")
     })
-    public Response suspendQuery(
+    public ConnectionInformationResponse getConnectionInformationWithMetadata(
         @WebParam(name = "securitytoken", targetNamespace = "")
         String securitytoken,
-        @WebParam(name = "queryID", targetNamespace = "")
-        int queryID)
-        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryID
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws InvalidUserDataException_Exception
-     * @throws QueryNotExistsException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "resumeQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ResumeQuery")
-    @ResponseWrapper(localName = "resumeQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.ResumeQueryResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/resumeQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/resumeQueryResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/resumeQuery/Fault/InvalidUserDataException"),
-        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/resumeQuery/Fault/QueryNotExistsException")
-    })
-    public Response resumeQuery(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "queryID", targetNamespace = "")
-        int queryID)
-        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
-    ;
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringResponse
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getInfos", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInfos")
-    @ResponseWrapper(localName = "getInfosResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetInfosResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInfosRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInfosResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getInfos/Fault/InvalidUserDataException")
-    })
-    public StringResponse getInfos(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryID
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws InvalidUserDataException_Exception
-     * @throws QueryNotExistsException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "stopQuery", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StopQuery")
-    @ResponseWrapper(localName = "stopQueryResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StopQueryResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopQueryRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopQueryResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopQuery/Fault/InvalidUserDataException"),
-        @FaultAction(className = QueryNotExistsException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopQuery/Fault/QueryNotExistsException")
-    })
-    public Response stopQuery(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "queryID", targetNamespace = "")
-        int queryID)
-        throws InvalidUserDataException_Exception, QueryNotExistsException_Exception
-    ;
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "stopExecution", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StopExecution")
-    @ResponseWrapper(localName = "stopExecutionResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.StopExecutionResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopExecutionRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopExecutionResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/stopExecution/Fault/InvalidUserDataException")
-    })
-    public Response stopExecution(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param scheduler
-     * @param schedulerStrategy
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.Response
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "setScheduler", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.SetScheduler")
-    @ResponseWrapper(localName = "setSchedulerResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.SetSchedulerResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/setSchedulerRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/setSchedulerResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/setScheduler/Fault/InvalidUserDataException")
-    })
-    public Response setScheduler(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken,
-        @WebParam(name = "scheduler", targetNamespace = "")
-        String scheduler,
-        @WebParam(name = "scheduler_strategy", targetNamespace = "")
-        String schedulerStrategy)
-        throws InvalidUserDataException_Exception
-    ;
-
-    /**
-     * 
-     * @param username
-     * @param password
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.StringResponse
-     */
-    @WebMethod
-    @WebResult(name = "securitytoken", targetNamespace = "")
-    @RequestWrapper(localName = "login2", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.Login2")
-    @ResponseWrapper(localName = "login2Response", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.Login2Response")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/login2Request", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/login2Response")
-    public StringResponse login2(
-        @WebParam(name = "username", targetNamespace = "")
-        String username,
-        @WebParam(name = "password", targetNamespace = "")
-        String password);
-
-    /**
-     * 
-     * @param securitytoken
-     * @return
-     *     returns de.uniol.inf.is.odysseus.webservice.client.SimpleGraph
-     * @throws InvalidUserDataException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPlan", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetPlan")
-    @ResponseWrapper(localName = "getPlanResponse", targetNamespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", className = "de.uniol.inf.is.odysseus.webservice.client.GetPlanResponse")
-    @Action(input = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanRequest", output = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlanResponse", fault = {
-        @FaultAction(className = InvalidUserDataException_Exception.class, value = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/WebserviceServer/getPlan/Fault/InvalidUserDataException")
-    })
-    public SimpleGraph getPlan(
-        @WebParam(name = "securitytoken", targetNamespace = "")
-        String securitytoken)
+        @WebParam(name = "queryId", targetNamespace = "")
+        int queryId,
+        @WebParam(name = "nullValues", targetNamespace = "")
+        boolean nullValues,
+        @WebParam(name = "withMetadata", targetNamespace = "")
+        boolean withMetadata)
         throws InvalidUserDataException_Exception
     ;
 
