@@ -142,16 +142,4 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 		sendPunctuation(punctuation);
 	}
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-     * ()
-     */
-    @Override
-    public final AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
-        return new EMPO<T>(this);
-    }
-
 }

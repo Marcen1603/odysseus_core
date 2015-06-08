@@ -239,8 +239,8 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                 }
 
                 try {
-                    this.expressions[i].bindMetaAttribute(restrictedObject.getMetadata());
-                    this.expressions[i].bindAdditionalContent(restrictedObject.getAdditionalContent());
+//                    this.expressions[i].bindMetaAttribute(restrictedObject.getMetadata());
+//                    this.expressions[i].bindAdditionalContent(restrictedObject.getAdditionalContent());
                     this.expressions[i].bindVariables(positions, meta, values);
                     final Object expr = this.expressions[i].getValue();
                     if (expr == null) {
@@ -299,15 +299,6 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
 
     public LinkedList<ProbabilisticTuple<T>> preProcess(final ProbabilisticTuple<T> object) {
         return null;
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final ProbabilisticMapPO<T> clone() {
-        return new ProbabilisticMapPO<T>(this);
     }
 
     /**

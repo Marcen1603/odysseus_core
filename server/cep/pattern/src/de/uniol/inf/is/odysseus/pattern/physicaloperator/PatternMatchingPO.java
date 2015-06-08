@@ -343,9 +343,9 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 				Object[] values = findExpressionValues(objectChoices,
 						returnAttrMappings.get(expr));
 				if (values != null) {
-					expr.bindMetaAttribute(currentObj.getEvent().getMetadata());
-					expr.bindAdditionalContent(currentObj.getEvent()
-							.getAdditionalContent());
+//					expr.bindMetaAttribute(currentObj.getEvent().getMetadata());
+//					expr.bindAdditionalContent(currentObj.getEvent()
+//							.getAdditionalContent());
 					expr.bindVariables(values);
 					Object exprValue = expr.getValue();
 					outputVal.setAttribute(i, exprValue);
@@ -409,9 +409,9 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 		Object[] values = findExpressionValues(eventObjectSet, entry.getValue());
 		SDFExpression expression = entry.getKey();
 		if (values != null) {
-			expression.bindMetaAttribute(object.getEvent().getMetadata());
-			expression.bindAdditionalContent(object.getEvent()
-					.getAdditionalContent());
+//			expression.bindMetaAttribute(object.getEvent().getMetadata());
+//			expression.bindAdditionalContent(object.getEvent()
+//					.getAdditionalContent());
 			expression.bindVariables(values);
 		}
 

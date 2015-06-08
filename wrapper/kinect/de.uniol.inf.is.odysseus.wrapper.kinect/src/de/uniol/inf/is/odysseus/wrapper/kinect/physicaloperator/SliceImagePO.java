@@ -140,11 +140,6 @@ public class SliceImagePO
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
 	}
-	
-	@Override
-	public AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> clone() {
-		return new SliceImagePO(this);
-	}
 
 	public Rectangle getRectangle() {
 		return rectangle;

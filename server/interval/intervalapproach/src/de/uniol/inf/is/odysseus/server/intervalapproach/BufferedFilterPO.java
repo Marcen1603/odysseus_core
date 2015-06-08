@@ -131,9 +131,4 @@ public class BufferedFilterPO<K extends ITimeInterval, R extends IStreamObject<K
 	}
 
 
-	@Override
-	public BufferedFilterPO<K, R> clone() {
-		return new BufferedFilterPO<K, R>(this);
-	}
-
 }

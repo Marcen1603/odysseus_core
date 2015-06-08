@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.physicaloperator.ReplicationMergePO;
 import de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.logicaloperator.RecoveryMergeAO;
 
@@ -98,13 +97,6 @@ public class RecoveryMergePO<T extends IStreamObject<? extends ITimeInterval>>
 		initSortedPorts(mergePO.mSortedPorts);
 		this.mPortToUse = mergePO.mPortToUse;
 		this.mReplicaRecovered = mergePO.mReplicaRecovered;
-	}
-
-	@Override
-	public AbstractPipe<T, T> clone() {
-
-		return new RecoveryMergePO<T>(this);
-
 	}
 
 	@Override

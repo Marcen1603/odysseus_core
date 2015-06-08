@@ -172,18 +172,6 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-	 * ()
-	 */
-	@Override
-	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		return new TrainRecSysModelPO<M, U, I, P>(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */

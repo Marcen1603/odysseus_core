@@ -53,12 +53,7 @@ public class MetadataUpdatePO<M extends IClone, T extends IStreamObject<? extend
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// Punctuations cannot be send, update PO may change timestamps
 	}
-	
-	@Override
-	public MetadataUpdatePO<M, T> clone() {
-		return new MetadataUpdatePO<M,T>(this);
-	}
-	
+		
 	@Override
 	public String toString(){
 		return super.toString() + " updateFac: " + this.metadataFactory.getClass();

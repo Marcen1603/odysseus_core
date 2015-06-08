@@ -66,12 +66,7 @@ public class DataratePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
 	}
-	
-	@Override
-	protected DataratePO<T> clone() throws CloneNotSupportedException {
-		return new DataratePO<T>(this);
-	}
-	
+		
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if( !(ipo instanceof DataratePO)) {

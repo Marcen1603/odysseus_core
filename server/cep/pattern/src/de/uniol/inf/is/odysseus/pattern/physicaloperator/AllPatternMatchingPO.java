@@ -62,11 +62,6 @@ public class AllPatternMatchingPO<T extends ITimeInterval> extends PatternMatchi
 	public String toString(){
 		return super.toString() + " type: " + type + " eventTypes: " + eventTypes.toString(); 
 	}
-
-	@Override
-	public AllPatternMatchingPO<T> clone() {
-		return new AllPatternMatchingPO<T>(this);
-	}
 	
 	@Override
 	public void process_internal(Tuple<T> event, int port) {

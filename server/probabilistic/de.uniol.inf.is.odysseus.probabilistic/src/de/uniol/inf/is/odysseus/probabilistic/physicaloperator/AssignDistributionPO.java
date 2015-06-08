@@ -132,16 +132,4 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
 	}
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-     * ()
-     */
-    @Override
-    public final AbstractPipe<Tuple<T>, ProbabilisticTuple<T>> clone() {
-        return new AssignDistributionPO<T>(this);
-    }
-
 }

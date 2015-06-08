@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractEnrichPO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IConnectionForWebservices;
@@ -177,11 +176,6 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	@Override
 	protected void internal_process_close() {
 		connection.closeConnection();
-	}
-
-	@Override
-	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		return new WSEnrichPO<M>(this);
 	}
 
 	/**

@@ -170,12 +170,6 @@ public class HeatMapPO<K extends ITimeInterval, T extends IStreamObject<K>> exte
 		
 	}
 	
-	@Override
-	public HeatMapPO<K, T> clone() {
-		return new HeatMapPO<K, T>(this);
-	}
-	
-
 	public IHeartbeatGenerationStrategy<T> getHeartbeatGenerationStrategy() {
 		return heartbeatGenerationStrategy;
 	}

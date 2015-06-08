@@ -211,11 +211,6 @@ public class FrequentItemsetAprioriPO<M extends ITimeInterval> extends AbstractP
 		debug("  purging: "+(System.currentTimeMillis()-startStep));
 		return candidates;
 	}
-
-	@Override
-	public FrequentItemsetAprioriPO<M> clone() {
-		return new FrequentItemsetAprioriPO<M>(this);
-	}
 	
 	
 	private void debug(String str){

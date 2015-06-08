@@ -67,9 +67,4 @@ public class DatarateCalcPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 		sendPunctuation(punctuation);
 	}
 
-	@Override
-	public AbstractPipe<R, Document<?>> clone() {
-		return new DatarateCalcPO<R>(this);
-	}
-
 }

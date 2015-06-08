@@ -171,11 +171,4 @@ public class ScriptPO<M extends IMetaAttribute, T extends Tuple<M>> extends Abst
         this.transfer(ret);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ScriptPO<M, T> clone() {
-        return new ScriptPO<>(this);
-    }
 }

@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 public class UnboundedWindowTIPO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractNonBlockingWindowTIPO<T> {
 
@@ -36,9 +35,5 @@ public class UnboundedWindowTIPO<T extends IStreamObject<? extends ITimeInterval
 		return PointInTime.getInfinityTime();
 	}
 	
-	@Override
-	public AbstractPipe<T, T> clone() {
-		return new UnboundedWindowTIPO<T>(this);
-	}
 
 }

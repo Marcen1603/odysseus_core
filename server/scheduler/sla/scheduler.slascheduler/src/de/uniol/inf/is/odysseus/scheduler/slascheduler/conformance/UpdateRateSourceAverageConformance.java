@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
@@ -151,14 +150,6 @@ public class UpdateRateSourceAverageConformance<R extends IStreamObject<?>, W ex
 	public double predictConformance() {
 		// TODO Auto-generated method stub
 		return this.getConformance();
-	}
-
-	/**
-	 * copy object
-	 */
-	@Override
-	public AbstractPipe<R, W> clone() {
-		return new UpdateRateSourceAverageConformance<R, W>(this);
 	}
 
 	@Override

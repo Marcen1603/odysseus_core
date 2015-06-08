@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
  * A window that can be initialized with one or two predicates
@@ -161,10 +160,6 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 
 	}
 
-	@Override
-	public AbstractPipe<T, T> clone() {
-		throw new RuntimeException("Not implemented yet!");
-	}
 
 
 

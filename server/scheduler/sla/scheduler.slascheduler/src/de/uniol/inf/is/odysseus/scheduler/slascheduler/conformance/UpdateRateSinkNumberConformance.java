@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.ServiceLevel;
@@ -244,10 +243,6 @@ public class UpdateRateSinkNumberConformance<R extends IStreamObject<?>, W exten
 		}
 	}
 
-	@Override
-	public AbstractPipe<R, W> clone() {
-		return new UpdateRateSinkNumberConformance<R, W>(this);
-	}
 
 	@Override
 	public OutputMode getOutputMode() {

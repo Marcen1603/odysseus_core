@@ -176,8 +176,4 @@ public class FaceDetectorPO
 		this.transfer(tuple);
 	}
 
-	@Override
-	public AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> clone() {
-		return new FaceDetectorPO(this);
-	}
 }

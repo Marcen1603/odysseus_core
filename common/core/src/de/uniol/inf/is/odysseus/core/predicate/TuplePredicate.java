@@ -137,8 +137,8 @@ public class TuplePredicate {
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(this.attributePositions[i]);
 		}
-		this.expression.bindMetaAttribute(input.getMetadata());
-		this.expression.bindAdditionalContent(input.getAdditionalContent());
+//		this.expression.bindMetaAttribute(input.getMetadata());
+//		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
@@ -156,7 +156,7 @@ public class TuplePredicate {
 
 		// FIXME Merge meta data
 		// this.expression.bindMetaAttribute();
-		this.expression.bindAdditionalContent(additionalContent);
+//		this.expression.bindAdditionalContent(additionalContent);
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
@@ -171,8 +171,8 @@ public class TuplePredicate {
 				values[i] = additional.getAttribute(neededAttributes.get(i).getURI());
 			}
 		}
-		this.expression.bindMetaAttribute(input.getMetadata());
-		this.expression.bindAdditionalContent(input.getAdditionalContent());
+//		this.expression.bindMetaAttribute(input.getMetadata());
+//		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}

@@ -126,13 +126,6 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	@Override
-	public AbstractPipe<T, T> clone() {
-
-		return new ReplicationMergePO<T>(this);
-
-	}
-
-	@Override
 	public OutputMode getOutputMode() {
 
 		return OutputMode.INPUT;

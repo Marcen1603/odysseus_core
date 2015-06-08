@@ -54,11 +54,6 @@ public class AssociativeStoragePO<T extends Tuple<?>> extends AbstractPipe<T,T> 
     }
 
     @Override
-    public AbstractPipe<T,T> clone() {
-        return new AssociativeStoragePO<T>(this);
-    }
-
-    @Override
     protected void process_close() {
         super.process_close();
     }

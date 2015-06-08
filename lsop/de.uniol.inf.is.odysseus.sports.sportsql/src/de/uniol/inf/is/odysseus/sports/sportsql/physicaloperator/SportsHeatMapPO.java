@@ -161,11 +161,6 @@ public class SportsHeatMapPO<T extends Tuple<?>> extends AbstractPipe<T, Tuple> 
 		sendPunctuation(punctuation);
 	}
 
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public AbstractPipe<T, T> clone() {
-		return new SportsHeatMapPO(this);
-	}
 
 	/** Write the object to a Base64 string. */
 	private static String toString(Serializable o) throws IOException {

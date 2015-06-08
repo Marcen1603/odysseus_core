@@ -59,10 +59,6 @@ public class TimeSplitTIPO<T extends IStreamObject<? extends ITimeInterval>>
 		//	sendPunctuation(punctuation);
 	}
 	
-	@Override
-	public AbstractPipe<T, T> clone() {
-		return new TimeSplitTIPO<T>(size);
-	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override

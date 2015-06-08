@@ -120,16 +120,4 @@ public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<Pr
 		sendPunctuation(punctuation);
 	}
 	
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-     * ()
-     */
-    @Override
-    public final AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
-        return new LinearRegressionPO<T>(this);
-    }
-
 }

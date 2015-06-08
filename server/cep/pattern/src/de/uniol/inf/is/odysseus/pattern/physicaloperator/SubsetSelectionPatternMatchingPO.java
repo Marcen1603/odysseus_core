@@ -54,11 +54,6 @@ public class SubsetSelectionPatternMatchingPO<T extends ITimeInterval> extends B
 	public String toString(){
 		return super.toString() + " type: " + type + " eventTypes: " + eventTypes.toString(); 
 	}
-
-	@Override
-	public SubsetSelectionPatternMatchingPO<T> clone() {
-		return new SubsetSelectionPatternMatchingPO<T>(this);
-	}
 	
 	@Override
 	public void process_internal(Tuple<T> event, int port) {

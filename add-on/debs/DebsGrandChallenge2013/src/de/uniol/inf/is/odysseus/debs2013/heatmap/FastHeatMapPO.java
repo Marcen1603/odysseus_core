@@ -180,13 +180,7 @@ public class FastHeatMapPO<K extends ITimeInterval, T extends IStreamObject<K>> 
 	@Override
 	public void process_open() throws OpenFailedException{
 		
-	}
-	
-	@Override
-	public FastHeatMapPO<K, T> clone() {
-		return new FastHeatMapPO<K, T>(this);
-	}
-	
+	}	
 
 	public IHeartbeatGenerationStrategy<T> getHeartbeatGenerationStrategy() {
 		return heartbeatGenerationStrategy;

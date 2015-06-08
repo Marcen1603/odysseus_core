@@ -124,8 +124,8 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         }
         final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
 
-        probabilisticExpression.bindMetaAttribute(input.getMetadata());
-        probabilisticExpression.bindAdditionalContent(input.getAdditionalContent());
+//        probabilisticExpression.bindMetaAttribute(input.getMetadata());
+//        probabilisticExpression.bindAdditionalContent(input.getAdditionalContent());
         probabilisticExpression.bindVariables(this.attributePositions, meta, values);
 
         final Object expr = probabilisticExpression.getValue();
@@ -156,8 +156,8 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         }
         final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
 
-        probabilisticExpression.bindMetaAttribute(input.getMetadata());
-        probabilisticExpression.bindAdditionalContent(input.getAdditionalContent());
+//        probabilisticExpression.bindMetaAttribute(input.getMetadata());
+//        probabilisticExpression.bindAdditionalContent(input.getAdditionalContent());
         probabilisticExpression.bindVariables(this.attributePositions, meta, values);
 
         final Object expr = probabilisticExpression.getValue();
@@ -226,7 +226,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         additionalContent.putAll(right.getAdditionalContent());
 
         final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
-        probabilisticExpression.bindAdditionalContent(additionalContent);
+//        probabilisticExpression.bindAdditionalContent(additionalContent);
         probabilisticExpression.bindVariables(positions, meta, values);
         final Object expr = probabilisticExpression.getValue();
         if (probabilisticExpression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
@@ -267,7 +267,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 
         final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
 
-        probabilisticExpression.bindAdditionalContent(additionalContent);
+//        probabilisticExpression.bindAdditionalContent(additionalContent);
         probabilisticExpression.bindVariables(positions, meta, values);
 
         final Object expr = probabilisticExpression.getValue();
@@ -327,8 +327,8 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
                 values[i] = additional.getAttribute(this.neededAttributes.get(i).getURI());
             }
         }
-        this.expression.bindMetaAttribute(input.getMetadata());
-        this.expression.bindAdditionalContent(input.getAdditionalContent());
+//        this.expression.bindMetaAttribute(input.getMetadata());
+//        this.expression.bindAdditionalContent(input.getAdditionalContent());
         this.expression.bindVariables(values);
         return (Boolean) this.expression.getValue();
     }

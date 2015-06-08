@@ -263,12 +263,6 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		}
 	}
 
-	//
-	@Override
-	public FrequentItemsetFPGrowthPO<M> clone() {
-		return new FrequentItemsetFPGrowthPO<M>(this);
-	}
-
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {		
 //		processLock.lock();

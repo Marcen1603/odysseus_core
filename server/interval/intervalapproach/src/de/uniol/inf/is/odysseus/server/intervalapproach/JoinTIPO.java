@@ -357,11 +357,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public JoinTIPO<K, T> clone() {
-		return new JoinTIPO<K, T>(this);
-	}
-
-	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (punctuation.isHeartbeat()) {
 			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());

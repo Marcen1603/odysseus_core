@@ -139,11 +139,6 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 	}
 
 	@Override
-	public EnrichPO<T, M> clone() {
-		return new EnrichPO<T, M>(this);
-	}
-
-	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
 	}

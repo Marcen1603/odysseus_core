@@ -138,11 +138,6 @@ public class ContextEnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple
     }
 
     @Override
-    public ContextEnrichPO<M> clone() {
-        return new ContextEnrichPO<M>(this);
-    }
-
-    @Override
     public OutputMode getOutputMode() {
         return OutputMode.MODIFIED_INPUT;
     }

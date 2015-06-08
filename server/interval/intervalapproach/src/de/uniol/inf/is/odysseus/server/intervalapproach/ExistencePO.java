@@ -297,11 +297,6 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public ExistencePO<K, T> clone() {
-		return new ExistencePO<K, T>(this);
-	}
-
-	@Override
 	public synchronized void processPunctuation(IPunctuation punctuation,
 			int port) {
 		if (punctuation.isHeartbeat()) {

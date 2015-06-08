@@ -179,10 +179,5 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public ClusteringKMeansPO<M> clone() {
-		return new ClusteringKMeansPO<M>(this);
-	}	
 	
 }

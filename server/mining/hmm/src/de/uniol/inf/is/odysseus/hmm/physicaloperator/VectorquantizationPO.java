@@ -91,9 +91,4 @@ public class VectorquantizationPO<M extends ITimeInterval> extends AbstractPipe<
 		sendPunctuation(punctuation);
 	}
 	
-	@Override
-	public VectorquantizationPO<M> clone() {
-		return new VectorquantizationPO<M>(this);
-	}
-
 }

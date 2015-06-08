@@ -61,10 +61,4 @@ public class RelationalDistinctPO<R extends Tuple<? extends ITimeInterval>>
 
 	}
 
-	@Override
-	public AbstractPipe<R, R> clone() {
-		// TODO: Implement me!
-		throw new RuntimeException("Not implemented!");
-	}
-
 }

@@ -110,11 +110,6 @@ public class FaceRecognizerPO extends AbstractPipe<Tuple<? extends ITimeInterval
 		sendPunctuation(punctuation);
 	}
 	
-	@Override
-	public AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> clone() {
-		return new FaceRecognizerPO(this);
-	}
-
 	private IplImage normalizeImage(BufferedImage img) {
 		IplImage originalImage = IplImage.create(img.getWidth(), img.getHeight(), IPL_DEPTH_8U, 3);
 		originalImage.copyFrom(img);

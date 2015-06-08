@@ -115,11 +115,6 @@ public class SentimentAnalysisPO<M extends ITimeInterval> extends AbstractPipe<T
 	}
 
 	@Override
-	public SentimentAnalysisPO<M> clone() {
-		return new SentimentAnalysisPO<M>(this);
-	}
-
-	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}

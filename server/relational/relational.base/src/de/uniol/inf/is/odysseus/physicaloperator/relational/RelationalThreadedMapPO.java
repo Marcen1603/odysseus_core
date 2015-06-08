@@ -135,8 +135,8 @@ public class RelationalThreadedMapPO<T extends IMetaAttribute> extends AbstractP
                 }
 
                 try {
-                    this.expressions[i].getExpression().bindMetaAttribute(object.getMetadata());
-                    this.expressions[i].getExpression().bindAdditionalContent(object.getAdditionalContent());
+//                    this.expressions[i].getExpression().bindMetaAttribute(object.getMetadata());
+//                    this.expressions[i].getExpression().bindAdditionalContent(object.getAdditionalContent());
                     this.expressions[i].getExpression().bindVariables(values);
                     results[i] = threadPool.submit(this.expressions[i]);
                 } catch (Exception e) {
@@ -179,11 +179,6 @@ public class RelationalThreadedMapPO<T extends IMetaAttribute> extends AbstractP
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
 	}
-
-    @Override
-    public RelationalThreadedMapPO<T> clone() {
-        return new RelationalThreadedMapPO<T>(this);
-    }
 
     @Override
     @SuppressWarnings({ "rawtypes" })

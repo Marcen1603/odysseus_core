@@ -101,12 +101,7 @@ public class PredictRatingPO<M extends ITimeInterval, U, I> extends
 		transfer(tuple);
 
 	}
-
-	@Override
-	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		return new PredictRatingPO<M, U, I>(this);
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.sports.sportsql.parser;
 
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

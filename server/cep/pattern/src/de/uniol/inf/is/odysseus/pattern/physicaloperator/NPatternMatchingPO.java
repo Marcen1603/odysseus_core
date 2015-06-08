@@ -45,11 +45,6 @@ public class NPatternMatchingPO<T extends ITimeInterval> extends BufferedPattern
 	public String toString() {
 		return super.toString() + " type: " + type + " eventTypes: " + eventTypes.toString(); 
 	}
-
-	@Override
-	public NPatternMatchingPO<T> clone() {
-		return new NPatternMatchingPO<T>(this);
-	}
 	
 	@Override
 	public void process_internal(Tuple<T> event, int port) {

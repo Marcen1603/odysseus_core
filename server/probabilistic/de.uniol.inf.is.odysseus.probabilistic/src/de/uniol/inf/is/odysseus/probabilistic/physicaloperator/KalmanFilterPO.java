@@ -35,7 +35,6 @@ import org.apache.commons.math3_patch.filter.KalmanFilterPatched;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -235,18 +234,18 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 
     private void update(final ProbabilisticTuple<T> object, final VarHelper[] variables, final SDFExpression expression, final double[][] ref) {
         final Object[] values = new Object[variables.length];
-        final IMetaAttribute[] meta = new IMetaAttribute[variables.length];
+//        final IMetaAttribute[] meta = new IMetaAttribute[variables.length];
         for (int j = 0; j < variables.length; ++j) {
             final ProbabilisticTuple<T> obj = this.getObject(object, variables[j]);
             if (obj != null) {
                 values[j] = obj.getAttribute(variables[j].pos);
-                meta[j] = obj.getMetadata();
+//                meta[j] = obj.getMetadata();
             }
         }
         try {
-            expression.bindMetaAttribute(object.getMetadata());
-            expression.bindAdditionalContent(object.getAdditionalContent());
-            expression.bindVariables(meta, values);
+//            expression.bindMetaAttribute(object.getMetadata());
+//            expression.bindAdditionalContent(object.getAdditionalContent());
+            expression.bindVariables(values);
             final double[][] out = expression.getValue();
             for (int i = 0; i < ref.length; i++) {
                 System.arraycopy(out[i], 0, ref[i], 0, out[i].length);
@@ -429,14 +428,6 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
         else {
             return new VarHelper(schema.indexOf(curAttribute), 0);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
-        return new KalmanFilterPO<>(this);
     }
 
 }

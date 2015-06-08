@@ -78,8 +78,4 @@ public class DistinctTIPO<T extends IStreamObject<? extends ITimeInterval>> exte
         this.area = area;
     }
 
-    @Override
-    public DistinctTIPO<T> clone() {
-        return new DistinctTIPO<>(this);
-    }
 }

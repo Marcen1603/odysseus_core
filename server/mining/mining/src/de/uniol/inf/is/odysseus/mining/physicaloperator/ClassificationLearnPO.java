@@ -139,9 +139,4 @@ public class ClassificationLearnPO<M extends ITimeInterval> extends AbstractPipe
 		sweepArea.clear();
 	}
 
-	@Override
-	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		return new ClassificationLearnPO<M>(this);
-	}
-
 }

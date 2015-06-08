@@ -54,9 +54,4 @@ public class TopPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 		sendPunctuation(punctuation);
 	}
 
-	@Override
-	public AbstractPipe<R, R> clone() {
-		return new TopPO<R>(this);
-	}
-
 }

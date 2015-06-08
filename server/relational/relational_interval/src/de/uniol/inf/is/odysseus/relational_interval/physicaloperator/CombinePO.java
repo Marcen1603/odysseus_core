@@ -55,11 +55,6 @@ public class CombinePO<M extends ITimeInterval> extends
 	}
 
 	@Override
-	protected CombinePO<M> clone() {
-		return new CombinePO<M>(this);
-	}
-
-	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}

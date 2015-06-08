@@ -82,6 +82,7 @@ public class GroupedHistoryStore<T extends IStreamObject<? extends IMetaAttribut
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		@SuppressWarnings("rawtypes")
 		GroupedHistoryStore other = (GroupedHistoryStore) obj;
 		if (groupProcessor == null) {
 			if (other.groupProcessor != null)

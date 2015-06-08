@@ -15,11 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.mep;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -41,10 +37,6 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 
 	private static final long serialVersionUID = 3805396798229438499L;
 	private IExpression<?>[] arguments;
-	@Deprecated
-	private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
-	@Deprecated
-	private IMetaAttribute[] metaAttribute = new IMetaAttribute[1];
 	private TimeUnit baseTimeUnit = TimeUnit.MILLISECONDS;
 	private final String symbol;
 	private final int arity;
@@ -205,28 +197,6 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	}
 
 	@Override
-	final public Map<String, Serializable> getAdditionalContents() {
-		return additionalContent;
-	}
-
-	@Override
-	final public Serializable getAdditionalContent(String name) {
-		return additionalContent.get(name);
-	}
-
-	@Override
-	@Deprecated
-	final public IMetaAttribute[] getMetaAttributeContainer() {
-		return metaAttribute;
-	}
-
-	@Override
-	@Deprecated
-	final public IMetaAttribute getMetaAttribute() {
-		return metaAttribute[0];
-	}
-
-	@Override
 	public List<ISession> getSessions() {
 		return sessions;
 	}
@@ -239,10 +209,6 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	@SuppressWarnings("unchecked")
 	final protected <S> S getInputValue(int argumentPos) {
 		return (S) arguments[argumentPos].getValue();
-	}
-
-	final protected IMetaAttribute getInputMetadata(int argumentPos) {
-		return ((Variable) arguments[argumentPos]).getMetadata();
 	}
 
 	final protected int getInputPosition(int argumentPos) {
@@ -260,30 +226,6 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 	}
 
-	@Override
-	public void propagateAdditionalContentReference(
-			final Map<String, Serializable> additionalContent) {
-		this.additionalContent = additionalContent;
-		final IExpression<?>[] arguments = this.getArguments();
-		for (final IExpression<?> arg : arguments) {
-			if (arg instanceof AbstractFunction) {
-				((AbstractFunction<?>) arg)
-						.propagateAdditionalContentReference(additionalContent);
-			}
-		}
-	}
-
-	@Override
-	public void propagateMetadataReference(final IMetaAttribute[] metaAttribute) {
-		this.metaAttribute = metaAttribute;
-		final IExpression<?>[] arguments = this.getArguments();
-		for (final IExpression<?> arg : arguments) {
-			if (arg instanceof AbstractFunction) {
-				((AbstractFunction<?>) arg)
-						.propagateMetadataReference(metaAttribute);
-			}
-		}
-	}
 
 	@Override
 	public void propagateSessionReference(final List<ISession> sessions) {

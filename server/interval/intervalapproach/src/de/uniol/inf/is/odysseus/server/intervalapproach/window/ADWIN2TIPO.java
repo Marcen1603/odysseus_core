@@ -103,11 +103,6 @@ public class ADWIN2TIPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, 
         throw new RuntimeException("Not implemented yet!");
     }
 
-    @Override
-    public AbstractPipe<T, T> clone() {
-        return new ADWIN2TIPO<>(this);
-    }
-
     private void setInput() {
     }
 

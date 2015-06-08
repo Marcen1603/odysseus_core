@@ -84,18 +84,6 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 		sendPunctuation(punctuation);
 	}
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-     * ()
-     */
-    @Override
-    public final AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
-        return new SamplePO<T>(this);
-    }
-
     /**
      * Samples from the given dimension from the given distribution mixture.
      * 

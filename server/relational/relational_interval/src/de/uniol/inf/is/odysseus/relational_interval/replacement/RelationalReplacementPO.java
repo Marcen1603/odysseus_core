@@ -98,10 +98,4 @@ public class RelationalReplacementPO
 		sendPunctuation(punctuation);
 	}
 
-
-	@Override
-	public RelationalReplacementPO clone() {
-		return new RelationalReplacementPO(this);
-	}
-
 }

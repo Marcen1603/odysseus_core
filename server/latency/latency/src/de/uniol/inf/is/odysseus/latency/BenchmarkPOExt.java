@@ -99,11 +99,6 @@ public class BenchmarkPOExt<R extends IStreamObject<? extends ILatency>> extends
 		return OutputMode.INPUT;
 	}
 
-	@Override
-	public BenchmarkPOExt<R> clone() {
-		return new BenchmarkPOExt<R>(this);
-	}
-
 	private void processData(long endTime){
 		
 		waitProcessingTime(endTime);

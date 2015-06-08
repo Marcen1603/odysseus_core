@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
  */
 public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 		ITemporalSweepArea<T>, Serializable {
-	
+
 	private static final long serialVersionUID = 1054820871977159904L;
 
 	// elements get stored in a linked list instead of a priority queue
@@ -72,31 +72,37 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 
 		@Override
 		public boolean hasNext() {
-			if (this.currentElement != null) {
-				return true;
-			}
-			switch (order) {
-			case LeftRight:
-				while (it.hasNext()) {
-					T next = it.next();
-					if (queryPredicate.evaluate(element, next)) {
-						this.currentElement = next;
-						return true;
-					}
+			try {
+				if (this.currentElement != null) {
+					return true;
 				}
-				break;
-			case RightLeft:
-				while (it.hasNext()) {
-					T next = it.next();
-					if (queryPredicate.evaluate(next, element)) {
-						this.currentElement = next;
-						return true;
+				switch (order) {
+				case LeftRight:
+					while (it.hasNext()) {
+						T next = it.next();
+						if (queryPredicate.evaluate(element, next)) {
+							this.currentElement = next;
+							return true;
+						}
+
 					}
+					break;
+				case RightLeft:
+					while (it.hasNext()) {
+						T next = it.next();
+						if (queryPredicate.evaluate(next, element)) {
+							this.currentElement = next;
+							return true;
+						}
+					}
+					break;
 				}
-				break;
+			} catch (NullPointerException e) {
+				// ignore null pointer could be when value in attribute is null
 			}
 			this.currentElement = null;
 			return false;
+
 		}
 
 		@Override
@@ -124,7 +130,8 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 		elements = new FastArrayList<>();
 	}
 
-	public AbstractSweepArea(IFastList<T> elements, Comparator<? super T> comparator) {
+	public AbstractSweepArea(IFastList<T> elements,
+			Comparator<? super T> comparator) {
 		this.elements = elements;
 		this.comparator = comparator;
 		// this.saSupervisor = new SweepAreaSupervisor(this, 20000);
@@ -132,7 +139,8 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 	}
 
 	@SuppressWarnings("unchecked")
-	public AbstractSweepArea(AbstractSweepArea<T> area) throws InstantiationException, IllegalAccessException {
+	public AbstractSweepArea(AbstractSweepArea<T> area)
+			throws InstantiationException, IllegalAccessException {
 		this.elements = area.elements.getClass().newInstance();
 		this.elements.addAll(area.elements);
 		this.getElements().addAll(area.getElements());
@@ -281,15 +289,15 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 		return this.getElements().remove(element);
 	}
 
-    @Override
-    public T peek() {
-        return this.getElements().get(getElements().size() - 1);
-    }
+	@Override
+	public T peek() {
+		return this.getElements().get(getElements().size() - 1);
+	}
 
-    @Override
-    public T poll() {
-        return this.getElements().remove(getElements().size() - 1);
-    }
+	@Override
+	public T poll() {
+		return this.getElements().remove(getElements().size() - 1);
+	}
 
 	/**
 	 * This method inserts a multiple elements into the sweep area.

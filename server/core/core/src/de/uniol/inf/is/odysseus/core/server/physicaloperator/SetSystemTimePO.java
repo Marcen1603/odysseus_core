@@ -85,12 +85,6 @@ public class SetSystemTimePO<T extends IStreamObject<?>> extends AbstractPipe<T,
 	}
 
 	@Override
-	public AbstractPipe<T, T> clone() 
-	{
-		return new SetSystemTimePO<T>(this);
-	}
-
-	@Override
 	public OutputMode getOutputMode() 
 	{
 		return OutputMode.INPUT;

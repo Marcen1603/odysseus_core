@@ -137,12 +137,6 @@ public class ChangeCorrelatePO<K extends IMetaAttribute, R extends IStreamObject
 		sendPunctuation(pointInTime);
 	}
 
-	
-	@Override
-	public AbstractPipe<R, R> clone() {
-		return new ChangeCorrelatePO<K, R>(this);
-	}
-
 	public IDataMergeFunction<R, K> getDataMerge() {
 		return dataMerge;
 	}

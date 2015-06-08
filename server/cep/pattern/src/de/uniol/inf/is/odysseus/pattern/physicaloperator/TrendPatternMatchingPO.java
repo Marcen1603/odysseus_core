@@ -62,11 +62,6 @@ public class TrendPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 	}
 
 	@Override
-	public TrendPatternMatchingPO<T> clone() {
-		return new TrendPatternMatchingPO<T>(this);
-	}
-	
-	@Override
 	public void process_internal(Tuple<T> event, int port) {
 		String eventType = inputTypeNames.get(port);
 		SDFSchema schema = inputSchemas.get(port);

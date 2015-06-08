@@ -27,10 +27,6 @@ public class MergePO extends AbstractPipe<IStreamObject<?>,IStreamObject<?>> {
 
 	private int curPort = 0;
 
-	@Override
-	public MergePO clone() {
-		return new MergePO();
-	}
 
 	@Override
 	public OutputMode getOutputMode() {

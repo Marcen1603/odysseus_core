@@ -124,8 +124,4 @@ public class SortTIPO<T extends IStreamObject<? extends ITimeInterval>> extends 
         return this.ascending;
     }
 
-    @Override
-    public SortTIPO<T> clone() {
-        return new SortTIPO<>(this);
-    }
 }

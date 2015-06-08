@@ -135,16 +135,4 @@ public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		return this.transferFunction;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-	 * ()
-	 */
-	@Override
-	public AssureOrderPO<K, T> clone() {
-		return new AssureOrderPO<K, T>(this);
-	}
-
 }

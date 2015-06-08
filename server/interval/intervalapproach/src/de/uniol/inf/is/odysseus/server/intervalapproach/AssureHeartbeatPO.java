@@ -190,10 +190,6 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 		this.allowOutofOrder = allowOutofOrder;
 	}
 
-	@Override
-	public AbstractPipe<R, R> clone() {
-		throw new IllegalArgumentException("Clone not supported");
-	}
 	/**
 	 * @param startTimerAfterFirstElement
 	 */

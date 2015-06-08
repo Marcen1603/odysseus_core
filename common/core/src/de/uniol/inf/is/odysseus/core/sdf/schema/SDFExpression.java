@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -43,12 +42,6 @@ public class SDFExpression implements Serializable, IClone {
 	// Für P2P als transient gekennzeichnet
 	transient ArrayList<Variable> variableArrayList = new ArrayList<Variable>();
 
-	/** The additional content */
-	private Map<String, Serializable> additionalContent;
-
-	/** The meta attributes */
-	@Deprecated
-	private IMetaAttribute[] metaAttribute;
 	private int varCounter;
 	private IExpression<?> expression;
 
@@ -115,7 +108,6 @@ public class SDFExpression implements Serializable, IClone {
 		this.expressionString = expressionString;
 	}
 
-	@SuppressWarnings("deprecation")
 	private void init(IExpression<?> expre, String value,
 			IAttributeResolver attributeResolver,
 			IExpressionParser expressionParser) {
@@ -169,14 +161,8 @@ public class SDFExpression implements Serializable, IClone {
 		}
 		if (this.expression instanceof IFunction) {
 			IFunction<?> function = (IFunction<?>) expression;
-			function.propagateAdditionalContentReference(function
-					.getAdditionalContents());
-			function.propagateMetadataReference(function
-					.getMetaAttributeContainer());
 			function.propagateSessionReference(sessions);
 			setSessions(function.getSessions());
-			setAdditionalContent(function.getAdditionalContents());
-			setMetaAttribute(function.getMetaAttributeContainer());
 		}
 	}
 
@@ -252,19 +238,6 @@ public class SDFExpression implements Serializable, IClone {
 		this.value = object;
 	}
 
-	/**
-	 * Get the additional content under the given name (key)
-	 * 
-	 * @param name
-	 *            The name (key) of the additional content
-	 * @return The additional content under that name or <code>null</code> if no
-	 *         additional content under that name exists
-	 */
-	@Deprecated
-	public Serializable getAdditionalContent(String name) {
-		return this.additionalContent.get(name);
-	}
-
 	@SuppressWarnings("unchecked")
 	public <T> T getValue() {
 		return (T) this.value;
@@ -301,45 +274,6 @@ public class SDFExpression implements Serializable, IClone {
 
 		setValue(expression.getValue());
 	}
-
-	@Deprecated
-	public void bindVariables(IMetaAttribute[] metadata, Object... values) {
-		if (expression instanceof Constant) {
-			return;
-		}
-
-		if (values.length != variableArrayList.size()) {
-			throw new IllegalArgumentException(
-					"illegal variable bindings in expression");
-		}
-
-		for (int i = 0; i < values.length; ++i) {
-			Variable variable = variableArrayList.get(i);
-			variable.bind(values[i], metadata[i], -1);
-		}
-
-		setValue(expression.getValue());
-	}
-
-	@Deprecated
-	public void bindVariables(int[] positions, IMetaAttribute[] metadata,
-			Object... values) {
-		if (expression instanceof Constant) {
-			return;
-		}
-
-		if (values.length != variableArrayList.size()) {
-			throw new IllegalArgumentException(
-					"illegal variable bindings in expression");
-		}
-
-		for (int i = 0; i < values.length; ++i) {
-			Variable variable = variableArrayList.get(i);
-			variable.bind(values[i], metadata[i], positions[i]);
-		}
-
-		//setValue(expression.getValue());
-	}
 	
 	public void bindVariables(int[] positions, 	Object... values) {
 		if (expression instanceof Constant) {
@@ -357,40 +291,6 @@ public class SDFExpression implements Serializable, IClone {
 		}
 
 		setValue(expression.getValue());
-	}
-
-	/**
-	 * Bind the additional content to this expression
-	 * 
-	 * @param additionalContent
-	 *            The additional content to bind
-	 */
-	@Deprecated
-	public void bindAdditionalContent(
-			Map<String, Serializable> additionalContent) {
-		if ((getMEPExpression() instanceof Constant)
-				|| (getMEPExpression() instanceof Variable)) {
-			return;
-		}
-
-		this.additionalContent.clear();
-		this.additionalContent.putAll(additionalContent);
-	}
-
-	/**
-	 * Bind the meta attribute to this expression
-	 * 
-	 * @param metaAttribute
-	 *            The meta attributes to bind
-	 */
-	@Deprecated
-	public void bindMetaAttribute(IMetaAttribute metaAttribute) {
-		if ((getMEPExpression() instanceof Constant)
-				|| (getMEPExpression() instanceof Variable)) {
-			return;
-		}
-
-		this.metaAttribute[0] = metaAttribute;
 	}
 
 	public ArrayList<Variable> getVariables() {
@@ -456,27 +356,6 @@ public class SDFExpression implements Serializable, IClone {
 	 */
 	public String getExpressionString() {
 		return expressionString;
-	}
-
-	/**
-	 * Set the additional content
-	 * 
-	 * @param additionalContent
-	 *            The additional content
-	 */
-	private void setAdditionalContent(
-			Map<String, Serializable> additionalContent) {
-		this.additionalContent = additionalContent;
-	}
-
-	/**
-	 * Set the meta attribute
-	 * 
-	 * @param metaAttribute
-	 *            The meta attribute
-	 */
-	private void setMetaAttribute(IMetaAttribute[] metaAttribute) {
-		this.metaAttribute = metaAttribute;
 	}
 
 	public boolean isAlwaysTrue() {

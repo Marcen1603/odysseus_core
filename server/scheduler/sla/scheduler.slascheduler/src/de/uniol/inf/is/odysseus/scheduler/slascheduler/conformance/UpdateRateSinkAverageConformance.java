@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
@@ -239,13 +238,6 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 		}
 	}
 
-	/**
-	 * copy object
-	 */
-	@Override
-	public AbstractPipe<R, W> clone() {
-		return new UpdateRateSinkAverageConformance<R, W>(this);
-	}
 
 	@Override
 	public OutputMode getOutputMode() {

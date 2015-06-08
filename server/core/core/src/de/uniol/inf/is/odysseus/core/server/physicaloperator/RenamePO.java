@@ -55,9 +55,4 @@ public class RenamePO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 		sendPunctuation(punctuation);
 	}
 	
-	@Override
-	public AbstractPipe<R, R> clone() {
-		return new RenamePO<R>(this);
-	}
-
 }

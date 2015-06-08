@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		extends AbstractPartitionedWindowTIPO<T> implements IStatefulPO {
@@ -64,12 +63,5 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 			}
 		}
 	}
-	
-
-	@Override
-	public AbstractPipe<T, T> clone() {
-		throw new IllegalArgumentException("Currently not implemented!");
-	}
-
 
 }

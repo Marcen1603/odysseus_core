@@ -78,11 +78,6 @@ class MetadataCreationPO<M extends IMetaAttribute, In extends IStreamObject<M>>
 	}
 
 	@Override
-	public MetadataCreationPO<M, In> clone() {
-		return new MetadataCreationPO<M, In>(this);
-	}
-
-	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof MetadataCreationPO)) {
 			return false;

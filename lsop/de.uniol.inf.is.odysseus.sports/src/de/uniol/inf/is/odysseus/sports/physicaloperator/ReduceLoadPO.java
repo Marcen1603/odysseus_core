@@ -238,12 +238,4 @@ public class ReduceLoadPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 		else this.transfer(object, 1);
 	}
 	
-	@Override
-	/**
-	 * Clone Operator.
-	 */
-	public AbstractPipe<T, T> clone() {
-		return new ReduceLoadPO<T>(this);
-	}
-
 }

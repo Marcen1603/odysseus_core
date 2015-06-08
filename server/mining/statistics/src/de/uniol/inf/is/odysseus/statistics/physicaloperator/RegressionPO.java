@@ -131,9 +131,5 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 		sendPunctuation(punctuation);
 	}
 	
-	@Override
-	public RegressionPO<M, R> clone() {
-		return new RegressionPO<M, R>(this);
-	}
 
 }

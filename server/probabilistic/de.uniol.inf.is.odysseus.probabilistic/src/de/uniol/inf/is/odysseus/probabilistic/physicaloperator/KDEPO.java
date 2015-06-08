@@ -160,14 +160,6 @@ public class KDEPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTu
 		sendPunctuation(punctuation);
 	}
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
-        return new KDEPO<T>(this);
-    }
-
     private static class Parameter {
 
         private double sumA;

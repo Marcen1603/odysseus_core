@@ -101,18 +101,18 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 		synchronized (this.expressions) {
 			for (int i = 0; i < this.expressions.length; ++i) {
 				Object[] values = new Object[this.variables[i].length];
-				IMetaAttribute[] meta = new IMetaAttribute[this.variables[i].length];
+//				IMetaAttribute[] meta = new IMetaAttribute[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					if (object != null) {
 						values[j] = object.getAttribute(removePoint(this.variables[i][j]));
-						meta[j] = object.getMetadata();
+//						meta[j] = object.getMetadata();
 					}
 				}
 
 				try {
-					this.expressions[i].bindMetaAttribute(object.getMetadata());
-					this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
-					this.expressions[i].bindVariables(meta, values);
+//					this.expressions[i].bindMetaAttribute(object.getMetadata());
+//					this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
+					this.expressions[i].bindVariables(values);
 					Object expr = this.expressions[i].getValue();
 
 					outputVal.setAttribute(this.expressionStrings.get(i)[0], expr);
@@ -177,11 +177,6 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-	}
-
-	@Override
-	public KeyValueMapPO<K, T> clone() {
-		return new KeyValueMapPO<>(this);
 	}
 
 	@Override

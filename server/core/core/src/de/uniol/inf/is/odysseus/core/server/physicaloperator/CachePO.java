@@ -77,11 +77,6 @@ public class CachePO<R extends IStreamObject<IMetaAttribute>> extends AbstractPi
 			cache.clear();
 		}
 	}
-
-	@Override
-	public AbstractPipe<R, R> clone() {
-		return new CachePO<R>(this);
-	}
 	
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {

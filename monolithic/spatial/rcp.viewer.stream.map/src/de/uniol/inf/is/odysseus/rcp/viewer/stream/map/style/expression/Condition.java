@@ -62,12 +62,11 @@ public abstract class Condition<T>{
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	public T eval(Tuple<?> tuple) {
 		T eval = null;
 		if (tuple != null && exp != null){
 			for (Entry<Integer,Variable> element : this.variables) {
-				element.getValue().bind(tuple.getAttribute(element.getKey()), tuple.getMetadata(), element.getKey());
+				element.getValue().bind(tuple.getAttribute(element.getKey()), element.getKey());
 			}
 			eval = getValue(this.exp.getValue());
 		}

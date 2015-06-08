@@ -86,10 +86,6 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 		return true;
 	}
 
-	@Override
-	public TimeStampOrderValidatorTIPO<K, T> clone() {
-		return new TimeStampOrderValidatorTIPO<K, T>(this);
-	}
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {

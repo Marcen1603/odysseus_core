@@ -68,10 +68,5 @@ public class UserDefinedOperatorPO<R  extends IStreamObject<?>,W  extends IStrea
 		sendPunctuation(punctuation);
 	}
 
-	@Override
-	public AbstractPipe<R, W> clone() {
-		return new UserDefinedOperatorPO<R, W>(this);
-	}
-
 	
 }

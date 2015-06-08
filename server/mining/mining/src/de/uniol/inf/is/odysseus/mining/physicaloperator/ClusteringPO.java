@@ -139,9 +139,4 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 		// transferFunction.sendPunctuation(punctuation);
 	}
 
-	@Override
-	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		return new ClusteringPO<M>(this);
-	}
-
 }

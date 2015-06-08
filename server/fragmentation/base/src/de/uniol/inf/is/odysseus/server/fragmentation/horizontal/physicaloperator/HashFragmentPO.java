@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
 /**
@@ -67,14 +66,6 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
 			
 		}
 			
-	}
-
-
-	@Override
-	public AbstractPipe<T, T> clone() {
-
-		throw new IllegalArgumentException("Currently not implemented");
-		
 	}
 
 	@Override

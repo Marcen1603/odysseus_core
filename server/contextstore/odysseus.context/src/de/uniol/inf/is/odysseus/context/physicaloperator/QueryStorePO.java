@@ -140,11 +140,6 @@ public class QueryStorePO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
     }
 
     @Override
-    public QueryStorePO<M> clone() {
-        return new QueryStorePO<M>(this);
-    }
-
-    @Override
     public OutputMode getOutputMode() {
         return OutputMode.MODIFIED_INPUT;
     }

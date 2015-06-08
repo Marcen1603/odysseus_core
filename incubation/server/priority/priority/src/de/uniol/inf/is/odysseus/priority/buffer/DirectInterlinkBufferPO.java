@@ -61,9 +61,4 @@ public class DirectInterlinkBufferPO<T extends IStreamObject<? extends IPriority
 		}
 	}
 
-	@Override
-	public DirectInterlinkBufferPO<T> clone() {
-		return new DirectInterlinkBufferPO<T>(this);
-	}
-
 }

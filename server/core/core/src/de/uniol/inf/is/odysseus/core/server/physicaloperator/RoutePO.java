@@ -123,11 +123,6 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 	}
 
 	@Override
-	public RoutePO<T> clone() {
-		return new RoutePO<T>(this);
-	}
-
-	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof RoutePO)) {
 			return false;

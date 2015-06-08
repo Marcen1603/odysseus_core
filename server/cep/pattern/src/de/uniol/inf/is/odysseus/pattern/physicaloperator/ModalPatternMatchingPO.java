@@ -37,11 +37,6 @@ public class ModalPatternMatchingPO<T extends ITimeInterval> extends BufferedPat
 	public String toString() {
 		return super.toString() + " type: " + type + " eventTypes: " + eventTypes.toString(); 
 	}
-
-	@Override
-	public ModalPatternMatchingPO<T> clone() {
-		return new ModalPatternMatchingPO<T>(this);
-	}
 	
 	@Override
 	public void process_internal(Tuple<T> event, int port) {

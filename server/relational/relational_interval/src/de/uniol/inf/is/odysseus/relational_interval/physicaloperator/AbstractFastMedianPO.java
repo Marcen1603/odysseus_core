@@ -121,11 +121,6 @@ abstract public class AbstractFastMedianPO<T extends Comparable<T>>
 	}
 
 	@Override
-	public AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> clone() {
-		throw new IllegalArgumentException("Not implemented");
-	}
-
-	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof AbstractFastMedianPO)) {
 			return false;

@@ -79,10 +79,4 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 			return applicationTimeUnit.toMillis(time);
 		}
 	}
-
-	@Override
-	public AbstractPipe<R, R> clone() {
-		return new SyncWithSystemTimePO<R>(this);
-	}
-
 }

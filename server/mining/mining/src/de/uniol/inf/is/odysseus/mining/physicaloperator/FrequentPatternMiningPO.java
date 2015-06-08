@@ -109,11 +109,6 @@ public class FrequentPatternMiningPO<M extends ITimeInterval> extends AbstractPi
 	}
 
 	@Override
-	public FrequentPatternMiningPO<M> clone() {
-		return new FrequentPatternMiningPO<>(this);
-	}
-
-	@Override
 	protected void process_open() throws OpenFailedException {
 		this.metamergeFunction.init();
 	}

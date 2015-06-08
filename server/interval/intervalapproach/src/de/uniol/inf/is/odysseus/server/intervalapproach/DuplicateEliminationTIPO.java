@@ -150,12 +150,6 @@ public class DuplicateEliminationTIPO<T extends IStreamObject<? extends ITimeInt
 	}
 	
 	@Override
-	public DuplicateEliminationTIPO<T> clone() {
-		return new DuplicateEliminationTIPO<T>(this);
-	}
-
-	
-	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof DuplicateEliminationTIPO)) {
 			return false;

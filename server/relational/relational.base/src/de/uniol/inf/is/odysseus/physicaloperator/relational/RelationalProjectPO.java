@@ -66,12 +66,6 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
 	}
-
-	@Override
-	public RelationalProjectPO<T> clone() {
-		return new RelationalProjectPO<T>(this);
-	}
-
 	
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {

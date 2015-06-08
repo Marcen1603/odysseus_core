@@ -124,11 +124,4 @@ public class JavaPO<M extends IMetaAttribute, T extends Tuple<M>> extends Abstra
         this.transfer(ret);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public JavaPO<M, T> clone() {
-        return new JavaPO<>(this);
-    }
 }

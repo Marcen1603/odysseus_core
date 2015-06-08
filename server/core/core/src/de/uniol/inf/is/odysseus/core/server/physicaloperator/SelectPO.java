@@ -96,11 +96,6 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 		this.predicate.init();
 	}
 
-	@Override
-	public SelectPO<T> clone() {
-        return new SelectPO<>(this);
-	}
-
 	// /* (non-Javadoc)
 	// * @see java.lang.Object#hashCode()
 	// */

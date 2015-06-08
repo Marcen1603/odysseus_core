@@ -35,11 +35,6 @@ public class AbsencePatternMatchingPO<T extends ITimeInterval> extends PatternMa
 	public String toString(){
 		return super.toString() + " type: " + type + " eventTypes: " + eventTypes.toString(); 
 	}
-
-	@Override
-	public AbsencePatternMatchingPO<T> clone() {
-		return new AbsencePatternMatchingPO<T>(this);
-	}
 	
 	@Override
 	public void process_internal(Tuple<T> event, int port) {

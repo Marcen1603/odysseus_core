@@ -45,10 +45,4 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITi
 				* windowAdvance + windowSize);
 	}
 
-	@Override
-	public SlidingAdvanceTimeWindowTIPO<T> clone() {
-		return new SlidingAdvanceTimeWindowTIPO<T>(this);
-	}
-	
-
 }

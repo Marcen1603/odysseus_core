@@ -150,11 +150,6 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		}
 	}
 
-	@Override
-	public ChangeDetectPO<R> clone() {
-		return new ChangeDetectPO<R>(this);
-	}
-
 	public IHeartbeatGenerationStrategy<R> getHeartbeatGenerationStrategy() {
 		return heartbeatGenerationStrategy;
 	}

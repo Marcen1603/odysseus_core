@@ -62,9 +62,5 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 		sendPunctuation(punctuation);
 	}
 
-	@Override
-	public TupleToKeyValuePO<M> clone() {
-		return new TupleToKeyValuePO<M>(this);
-	}
 
 }

@@ -117,11 +117,6 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 			BrokerTopologyRegistry.unregister(domain);
 		}
 	}
-
-	@Override
-	public AbstractPipe<T, T> clone() {
-		return new SubscribePO<T>(this);
-	}
 	
 	private void initPredicates(List<IPredicate<? super T>> predicates) {
 		this.predicates = new ArrayList<IPredicate<? super T>>(

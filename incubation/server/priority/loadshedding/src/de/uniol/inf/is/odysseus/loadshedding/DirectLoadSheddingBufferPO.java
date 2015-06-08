@@ -84,9 +84,5 @@ extends DirectInterlinkBufferPO<T> {
 		this.weight = weight;
 	}	
 	
-	@Override
-	public DirectLoadSheddingBufferPO<T> clone(){
-		return new DirectLoadSheddingBufferPO<T>(this);
-	}
 	
 }

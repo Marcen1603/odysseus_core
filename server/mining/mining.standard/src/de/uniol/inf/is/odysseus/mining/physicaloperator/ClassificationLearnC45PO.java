@@ -401,9 +401,4 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 		return entropy;
 	}
 
-	@Override
-	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		return new ClassificationLearnC45PO<>(this);
-	}
-
 }

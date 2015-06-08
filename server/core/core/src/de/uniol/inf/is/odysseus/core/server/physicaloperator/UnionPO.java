@@ -55,11 +55,6 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	}
 
 	@Override
-	public UnionPO<R> clone() {
-		return new UnionPO<R>(this);
-	}
-
-	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}

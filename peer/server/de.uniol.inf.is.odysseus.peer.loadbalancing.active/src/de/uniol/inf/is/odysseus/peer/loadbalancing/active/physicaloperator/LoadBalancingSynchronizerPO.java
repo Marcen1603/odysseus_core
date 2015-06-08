@@ -154,13 +154,6 @@ public class LoadBalancingSynchronizerPO<T extends IStreamObject<? extends ITime
 
 	}
 
-	@Override
-	public AbstractPipe<T, T> clone() {
-
-		return new LoadBalancingSynchronizerPO<T>(this);
-
-	}
-
 	/**
 	 * Adds a new listener.
 	 * 

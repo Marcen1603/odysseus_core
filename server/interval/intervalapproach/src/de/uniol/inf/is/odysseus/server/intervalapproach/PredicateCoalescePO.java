@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
@@ -92,11 +91,6 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 			createHeartbeat(object.getMetadata().getStart());
 		}
 
-	}
-
-	@Override
-	public AbstractPipe<IStreamObject<? extends M>, IStreamObject<M>> clone() {
-		throw new RuntimeException("Sorry, currently not implemented!");
 	}
 
 	@SuppressWarnings("rawtypes")

@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
@@ -128,11 +127,6 @@ public class UpdateRateSourceSingleConformance<R extends IStreamObject<?>, W ext
 	public double predictConformance() {
 		// TODO Auto-generated method stub
 		return this.getConformance();
-	}
-
-	@Override
-	public AbstractPipe<R, W> clone() {
-		return new UpdateRateSourceSingleConformance<R, W>(this);
 	}
 
 	@Override

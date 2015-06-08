@@ -15,11 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.relational.base.predicate;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -129,8 +126,8 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = getValue(input, i);
 		}
-		this.expression.bindMetaAttribute(input.getMetadata());
-		this.expression.bindAdditionalContent(input.getAdditionalContent());
+//		this.expression.bindMetaAttribute(input.getMetadata());
+//		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
@@ -154,13 +151,13 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 			Tuple<?> r = fromRightChannel[i] ? right : left;
 			values[i] = getValue(r,i);
 		}
-		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
-		additionalContent.putAll(left.getAdditionalContent());
-		additionalContent.putAll(right.getAdditionalContent());
+//		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+//		additionalContent.putAll(left.getAdditionalContent());
+//		additionalContent.putAll(right.getAdditionalContent());
 
 		// FIXME Merge meta data
 		// this.expression.bindMetaAttribute();
-		this.expression.bindAdditionalContent(additionalContent);
+//		this.expression.bindAdditionalContent(additionalContent);
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
@@ -177,8 +174,8 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 						.getURI());
 			}
 		}
-		this.expression.bindMetaAttribute(input.getMetadata());
-		this.expression.bindAdditionalContent(input.getAdditionalContent());
+//		this.expression.bindMetaAttribute(input.getMetadata());
+//		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}

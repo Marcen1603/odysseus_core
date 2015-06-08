@@ -36,10 +36,4 @@ public class TimeshiftPO<M extends ITimeInterval> extends AbstractPipe<AbstractS
 		// TODO: handle punctations
 		//sendPunctuation(punctuation);
 	}
-	
-	@Override
-	public TimeshiftPO<M> clone() {
-		return new TimeshiftPO<M>(this);
-	}
-
 }

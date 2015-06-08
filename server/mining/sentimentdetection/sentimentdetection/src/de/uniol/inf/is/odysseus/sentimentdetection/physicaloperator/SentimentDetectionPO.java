@@ -138,10 +138,6 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 		this.maxBufferSize = senti.maxBufferSize;
 	}
 
-	@Override
-	public SentimentDetectionPO<T> clone() {
-		return new SentimentDetectionPO<T>(this);
-	}
 
 	@Override
 	public OutputMode getOutputMode() {

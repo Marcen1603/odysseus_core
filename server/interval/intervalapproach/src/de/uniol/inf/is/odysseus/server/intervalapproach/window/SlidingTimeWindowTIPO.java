@@ -39,10 +39,5 @@ public class SlidingTimeWindowTIPO<T extends IStreamObject<ITimeInterval>> exten
 	protected PointInTime calcWindowEnd(ITimeInterval time) {
 		return time.getStart().sum(windowSize);
 	}
-
-	@Override
-	public SlidingTimeWindowTIPO<T> clone() {
-		return new SlidingTimeWindowTIPO<T>(this);
-	}
 	
 }

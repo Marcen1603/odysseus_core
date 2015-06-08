@@ -29,11 +29,6 @@ public class PostPrioritizationPO<K extends IPriority, T extends IStreamObject<?
 	}
 
 	@Override
-	public PostPrioritizationPO<K, T> clone() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}

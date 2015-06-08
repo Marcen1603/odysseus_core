@@ -42,11 +42,6 @@ public class FilterPO<T extends IStreamObject<?>> extends SelectPO<T> implements
 			getHeartbeatGenerationStrategy().generateHeartbeat(object, this);
 		}
 	}
-	
-	@Override
-	public FilterPO<T> clone() {
-		return new FilterPO<T>(this);
-	}
 
 	
 	@Override

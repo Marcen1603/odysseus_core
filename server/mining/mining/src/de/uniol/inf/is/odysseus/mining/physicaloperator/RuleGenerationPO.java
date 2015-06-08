@@ -225,15 +225,6 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 		// processData(punctuation.getTime());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone ()
-	 */
-	@Override
-	public RuleGenerationPO<M> clone() {
-		return new RuleGenerationPO<M>(this);
-	}
 
 	/*
 	 * (non-Javadoc)

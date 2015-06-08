@@ -245,8 +245,8 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
                 }
 
                 try {
-                    this.expressions[i].bindMetaAttribute(object.getMetadata());
-                    this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
+//                    this.expressions[i].bindMetaAttribute(object.getMetadata());
+//                    this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
                     this.expressions[i].bindVariables(values);
                     final Object expr = this.expressions[i].getValue();
                     outputVal.setAttribute(i, expr);
@@ -270,14 +270,6 @@ public class GeneratorPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>,
         if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
             this.transfer.transfer(outputVal);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-        return new GeneratorPO<M>(this);
     }
 
     /**

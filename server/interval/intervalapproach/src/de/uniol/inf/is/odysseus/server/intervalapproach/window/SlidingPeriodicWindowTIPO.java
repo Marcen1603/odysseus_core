@@ -60,11 +60,6 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 	}
 
 	@Override
-	public SlidingPeriodicWindowTIPO<R> clone() {
-		return new SlidingPeriodicWindowTIPO<R>(this);
-	}
-
-	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}

@@ -126,11 +126,6 @@ public class BenchmarkPO<R extends IStreamObject<?>> extends
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-
-	@Override
-	public BenchmarkPO<R> clone() {
-		return new BenchmarkPO<R>(this);
-	}
 	
 	public double getSelectivity() {
 		return selectivity;

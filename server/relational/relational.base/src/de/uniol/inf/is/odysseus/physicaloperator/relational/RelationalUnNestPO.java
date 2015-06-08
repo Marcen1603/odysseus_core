@@ -60,17 +60,6 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
 
     /*
      * (non-Javadoc)
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-     * ()
-     */
-    @Override
-    public RelationalUnNestPO<T> clone() {
-        return new RelationalUnNestPO<T>(this);
-    }
-
-    /*
-     * (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
      * getOutputMode()
      */

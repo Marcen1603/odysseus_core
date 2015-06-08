@@ -98,9 +98,4 @@ public class VectorquantizationOrientationPO<M extends ITimeInterval> extends
 		sendPunctuation(punctuation);
 	}
 
-	@Override
-	public VectorquantizationOrientationPO<M> clone() {
-		return new VectorquantizationOrientationPO<M>(this);
-	}
-
 }

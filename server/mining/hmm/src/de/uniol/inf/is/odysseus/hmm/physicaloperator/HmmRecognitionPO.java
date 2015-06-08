@@ -165,9 +165,4 @@ public class HmmRecognitionPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		// //TODO alle Dateien einlesen und Gestenobjekt initialisieren
 	}
 
-	@Override
-	public HmmRecognitionPO<M> clone() {
-		return new HmmRecognitionPO<M>(this);
-	}
-
 }

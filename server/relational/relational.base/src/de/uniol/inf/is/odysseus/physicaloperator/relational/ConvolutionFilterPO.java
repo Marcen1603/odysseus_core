@@ -161,11 +161,6 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 		return weighted;
 	}
 
-	@Override
-	public ConvolutionFilterPO<M> clone() {
-		return new ConvolutionFilterPO<M>(this);
-	}
-
 	/**
 	 * @param relationalGroupProcessor
 	 */

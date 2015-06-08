@@ -87,11 +87,6 @@ public class ClassificationEvaluatePO<M extends ITimeInterval> extends AbstractP
 	}
 	
 	@Override
-	public ClassificationEvaluatePO<M> clone() {
-		return new ClassificationEvaluatePO<M>(this);
-	}
-
-	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}

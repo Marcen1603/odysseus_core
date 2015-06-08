@@ -67,7 +67,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
 				values[i] = input.getAttribute(this.attributePositions[i].getE2());
 			}
 		}
-		this.expression.bindAdditionalContent(input.getAdditionalContent());
+//		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
@@ -83,7 +83,7 @@ public class TypeSafeRelationalPredicate extends RelationalPredicate{
         additionalContent.putAll(left.getAdditionalContent());
         additionalContent.putAll(right.getAdditionalContent());
         
-        this.expression.bindAdditionalContent(additionalContent);
+//        this.expression.bindAdditionalContent(additionalContent);
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}

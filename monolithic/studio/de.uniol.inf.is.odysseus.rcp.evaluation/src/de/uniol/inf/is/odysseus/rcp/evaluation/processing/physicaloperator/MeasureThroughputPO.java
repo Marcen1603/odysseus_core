@@ -102,11 +102,6 @@ public class MeasureThroughputPO<T extends IStreamObject<? extends IMetaAttribut
 	}
 
 	@Override
-	public MeasureThroughputPO<T> clone() {
-		return new MeasureThroughputPO<T>(this);
-	}
-
-	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (ipo instanceof MeasureThroughputPO) {
 			return this.getSubscribedToSource().containsAll(((MeasureThroughputPO<?>) ipo).getSubscribedToSource());

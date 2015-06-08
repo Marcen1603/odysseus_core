@@ -15,12 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.core.mep;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -58,30 +55,6 @@ public interface IFunction<T> extends IExpression<T> {
 	 * @return the argument, could be null
 	 */
 	public IExpression<?> getArgument(int argumentPosition);
-	
-    /**
-     * Get the additional content if present
-     * @return The additional content
-     */
-	@Deprecated
-    public Map<String, Serializable> getAdditionalContents();
-    
-    /**
-     * Get the additional content if present
-     * @param name The name (key) of the additional content
-     * @return The additional content at the given name
-     */
-    @Deprecated
-    public Serializable getAdditionalContent(String name);
-    
-    /**
-     * Get the meta attribute of the tuple if present
-     * @return The meta attribute
-     */
-    @Deprecated
-    public IMetaAttribute getMetaAttribute();
-	@Deprecated
-    public IMetaAttribute[] getMetaAttributeContainer();
 	
 	/**
 	 * Get the sessions assigned to this function
@@ -145,18 +118,6 @@ public interface IFunction<T> extends IExpression<T> {
 	public boolean optimizeConstantParameter();
 
 	public void setBasetimeUnit(TimeUnit baseTimeUnit);
-
-    /**
-     * @param additionalContents
-     */
-	@Deprecated
-    void propagateAdditionalContentReference(Map<String, Serializable> additionalContents);
-
-    /**
-     * @param metaAttributeContainer
-     */
-    @Deprecated
-    void propagateMetadataReference(IMetaAttribute[] metaAttributeContainer);
 
 	void propagateSessionReference(List<ISession> sessions);
 

@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimestampToPayloadPO;
 
 public class RelationalTimestampToPayloadPO extends
@@ -62,11 +61,6 @@ public class RelationalTimestampToPayloadPO extends
 		sendPunctuation(punctuation);
 	}
 	
-	@Override
-	public AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> clone() {
-		return new RelationalTimestampToPayloadPO(this);
-	}
-
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof RelationalTimestampToPayloadPO)){

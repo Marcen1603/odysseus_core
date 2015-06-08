@@ -63,15 +63,5 @@ public class RelationalExistenceToPayloadPO extends ExistenceToPayloadPO<IProbab
 		sendPunctuation(punctuation);
 	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-     * ()
-     */
-    @Override
-    public final RelationalExistenceToPayloadPO clone() {
-        return new RelationalExistenceToPayloadPO(this);
-    }
 
 }

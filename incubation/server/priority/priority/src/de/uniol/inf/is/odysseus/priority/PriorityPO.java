@@ -99,11 +99,6 @@ public class PriorityPO<K extends IPriority, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public PriorityPO<K, T> clone() {
-		throw new RuntimeException("Clone Not implemented yet");
-	}
-
-	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof PriorityPO)) {
 			return false;

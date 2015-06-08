@@ -159,8 +159,4 @@ public class KeyPerformanceIndicatorsPO<M extends ITimeInterval> extends Abstrac
 	public void processPunctuation(IPunctuation punctuation, int port) {
 	}
 
-	@Override
-    public KeyPerformanceIndicatorsPO<M> clone() {
-        return new KeyPerformanceIndicatorsPO<M>(this);
-    }
 }

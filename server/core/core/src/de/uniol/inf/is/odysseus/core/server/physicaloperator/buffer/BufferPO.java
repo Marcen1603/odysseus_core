@@ -166,11 +166,6 @@ public class BufferPO<T extends IStreamObject<?>> extends
 		return this.buffer.isEmpty();
 	}
 
-	@Override
-	public BufferPO<T> clone() {
-		return new BufferPO<T>(this);
-	}
-
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {

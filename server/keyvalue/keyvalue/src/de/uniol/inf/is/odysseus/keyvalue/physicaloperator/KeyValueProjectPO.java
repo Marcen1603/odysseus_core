@@ -52,9 +52,4 @@ public class KeyValueProjectPO<T extends KeyValueObject<?>> extends AbstractPipe
 		sendPunctuation(punctuation);
 	}
 
-	@Override
-	public AbstractPipe<T, T> clone() {
-		return new KeyValueProjectPO<T>(this);
-	}
-
 }

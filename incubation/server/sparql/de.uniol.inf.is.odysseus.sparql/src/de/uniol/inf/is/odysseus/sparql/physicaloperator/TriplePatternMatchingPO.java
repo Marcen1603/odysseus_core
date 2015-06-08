@@ -174,11 +174,6 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	}
 	
 	@Override
-	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		return new TriplePatternMatchingPO(this);
-	}
-	
-	@Override
 	public String toString(){
 		return "TriplePatternMatchingPO (" + this.hashCode() + "): " + this.predicate;
 	}

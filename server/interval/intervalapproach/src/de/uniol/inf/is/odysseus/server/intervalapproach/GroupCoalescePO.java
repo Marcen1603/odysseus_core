@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
@@ -112,11 +111,6 @@ public class GroupCoalescePO<M extends ITimeInterval> extends
 		}else{
 			super.processPunctuation(punctuation, port);
 		}
-	}
-
-	@Override
-	public AbstractPipe<IStreamObject<? extends M>, IStreamObject<M>> clone() {
-		throw new RuntimeException("Sorry, currently not implemented!");
 	}
 	
 	public void setCreateOnHeartbeat(boolean createOnHeartbeat) {

@@ -52,11 +52,6 @@ public class CalcLatencyPO<T extends IStreamObject<? extends ILatency>> extends
 
 
 	@Override
-	public CalcLatencyPO<T> clone() {
-		return new CalcLatencyPO<T>(this);
-	}
-
-	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof CalcLatencyPO)) {
 			return false;

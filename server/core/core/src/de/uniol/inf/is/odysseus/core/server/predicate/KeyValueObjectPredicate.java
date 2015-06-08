@@ -64,7 +64,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
         for (int i = 0; i < values.length; ++i) {
             values[i] = input.getAttribute(this.neededAttributes.get(i).getURI());
         }
-        this.expression.bindAdditionalContent(input.getAdditionalContent());
+//        this.expression.bindAdditionalContent(input.getAdditionalContent());
         this.expression.bindVariables(values);
         return ((Boolean) this.expression.getValue()).booleanValue();
     }
@@ -86,7 +86,7 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
         additionalContent.putAll(left.getAdditionalContent());
         additionalContent.putAll(right.getAdditionalContent());
 
-        this.expression.bindAdditionalContent(additionalContent);
+//        this.expression.bindAdditionalContent(additionalContent);
         this.expression.bindVariables(values);
         return ((Boolean) this.expression.getValue()).booleanValue();
     }

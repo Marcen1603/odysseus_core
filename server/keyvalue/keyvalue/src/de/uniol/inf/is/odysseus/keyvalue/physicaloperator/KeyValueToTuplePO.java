@@ -97,11 +97,6 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 	}
 	
 	@Override
-	public AbstractPipe<KeyValueObject<M>, Tuple<M>> clone() {
-		return new KeyValueToTuplePO<M>(this);
-	}
-
-	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof KeyValueToTuplePO<?>)) {
 			return false;

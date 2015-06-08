@@ -142,11 +142,6 @@ public class FeatureExtractionPO<M extends ITimeInterval> extends AbstractPipe<T
 		handLeftY = 0;
 	}
 
-	@Override
-	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		return new FeatureExtractionPO<M>(this);
-	}
-
 	public static void setCurrentCoordsAsLastValidPoint() {
 		lastValidCoordinate = new CoordinatesCalculator(handLeftX, handLeftY);
 	}

@@ -143,11 +143,6 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		// }
 	}
 
-	@Override
-	public ClassificationPO<M> clone() {
-		return new ClassificationPO<M>(this);
-	}
-
 	public boolean isOneClassifier() {
 		return oneClassifier;
 	}

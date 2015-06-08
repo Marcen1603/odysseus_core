@@ -51,7 +51,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 	public Object evaluate(Tuple<T> object, List<ISession> sessions, LinkedList<Tuple<T>> history ){
 
 		Object[] values = new Object[this.variables.length];
-		IMetaAttribute[] meta = new IMetaAttribute[this.variables.length];
+//		IMetaAttribute[] meta = new IMetaAttribute[this.variables.length];
 		for (int j = 0; j < this.variables.length; ++j) {
 			Tuple<T> obj = determineObjectForExpression(object,
 					history, j);
@@ -61,14 +61,14 @@ public class RelationalExpression<T extends IMetaAttribute> extends SDFExpressio
 				}else{
 					values[j] = obj.getMetadata().getValue(variables[j].getSchema(), variables[j].getPos());
 				}
-				meta[j] = obj.getMetadata();
+				///meta[j] = obj.getMetadata();
 			}
 		}
 		
-		bindMetaAttribute(object.getMetadata());
-		bindAdditionalContent(object
-				.getAdditionalContent());
-		bindVariables(meta, values);
+//		bindMetaAttribute(object.getMetadata());
+//		bindAdditionalContent(object
+//				.getAdditionalContent());
+		bindVariables(values);
 		setSessions(sessions);
 		
 		return getValue();

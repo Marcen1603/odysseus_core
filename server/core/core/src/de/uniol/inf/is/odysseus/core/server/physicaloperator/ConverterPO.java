@@ -70,9 +70,4 @@ public class ConverterPO<R extends IStreamObject<IMetaAttribute>, W extends IStr
 	}
 
 
-	@Override
-	public AbstractPipe<R, W> clone() {
-		return new ConverterPO<>(this);
-	}
-
 }

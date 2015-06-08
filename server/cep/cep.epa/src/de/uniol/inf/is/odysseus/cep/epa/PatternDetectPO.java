@@ -728,9 +728,4 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 		return Collections.unmodifiableList(smInstances.get(sm));
 	}
 
-	@Override
-	public PatternDetectPO<R, W> clone() {
-		return new PatternDetectPO<R, W>(this);
-	}
-
 }

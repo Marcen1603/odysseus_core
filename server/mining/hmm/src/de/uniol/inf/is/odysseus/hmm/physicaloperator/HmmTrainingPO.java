@@ -47,11 +47,6 @@ public class HmmTrainingPO<M extends ITimeInterval> extends	AbstractPipe<Tuple<M
 	}
 
 	@Override
-	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
-		return null;
-	}
-
-	@Override
 	protected void process_open() {
 		// initialize default values
 		tracked = true;

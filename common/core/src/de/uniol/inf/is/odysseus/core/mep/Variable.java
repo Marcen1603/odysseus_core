@@ -21,7 +21,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
@@ -40,11 +39,7 @@ public class Variable implements IExpression<Object> {
 	 * The bounded value, could be null
 	 */
 	private Object value;
-	/**
-	 * The metadata for this object, could be null
-	 */
-	@Deprecated
-	private IMetaAttribute metadata;
+
 	/** The position in the schema. */
 	private int position;
 	/**
@@ -102,12 +97,6 @@ public class Variable implements IExpression<Object> {
 	 * @param value
 	 *            The value to bind
 	 */
-	@Deprecated
-	public void bind(Object value, IMetaAttribute metadata, int position) {
-		this.value = value;
-		this.metadata = metadata;
-		this.position = position;
-	}
 
 	public void bind(Object value, int position) {
 		this.value = value;
@@ -118,11 +107,6 @@ public class Variable implements IExpression<Object> {
 	@Override
 	public Object getValue() {
 		return this.value;
-	}
-
-	@Deprecated
-	public IMetaAttribute getMetadata() {
-		return metadata;
 	}
 
 	public int getPosition() {
@@ -182,13 +166,6 @@ public class Variable implements IExpression<Object> {
 		return true;
 	}
 
-	// public boolean isArray() {
-	// if(arrayIndex != null) {
-	// return true;
-	// } else {
-	// return false;
-	// }
-	// }
 
 	@Override
 	public boolean isFunction() {

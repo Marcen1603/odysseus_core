@@ -127,9 +127,4 @@ public class BenchmarkResultPO<M extends ILatency> extends
 	public void processPunctuation(IPunctuation punctuation, int port) {
 	}
 
-	@Override
-	public BenchmarkResultPO<M> clone() {
-		return new BenchmarkResultPO<M>(this);
-	}
-
 }

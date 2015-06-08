@@ -133,11 +133,6 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 		return tuplePrice;
 	}
 
-	@Override
-	public AbstractPipe<T, T> clone() {
-		return new TupleCostCalculationPipe<T>(this);
-	}
-
 	/**
 	 * 
 	 * @return the calculationType

@@ -166,8 +166,8 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
                     positions[j] = this.variables[i][j].getPos();
                 }
 
-                expression.bindMetaAttribute(outputVal.getMetadata());
-                expression.bindAdditionalContent(outputVal.getAdditionalContent());
+//                expression.bindMetaAttribute(outputVal.getMetadata());
+//                expression.bindAdditionalContent(outputVal.getAdditionalContent());
                 expression.bindVariables(positions, meta, values);
 
                 final Object expr = expression.getValue();
@@ -247,17 +247,6 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
         return this.predicate;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-     * ()
-     */
-    @Override
-    public final ProbabilisticSelectPO<T> clone() {
-        return new ProbabilisticSelectPO<T>(this);
-    }
 
     /*
      * (non-Javadoc)

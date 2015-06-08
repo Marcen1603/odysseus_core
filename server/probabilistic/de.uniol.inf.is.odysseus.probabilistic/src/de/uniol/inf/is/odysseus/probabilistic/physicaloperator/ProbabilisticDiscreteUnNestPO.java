@@ -60,15 +60,6 @@ public class ProbabilisticDiscreteUnNestPO<T extends IProbabilisticTimeInterval>
      * {@inheritDoc}
      */
     @Override
-    public final ProbabilisticDiscreteUnNestPO<T> clone() {
-        return new ProbabilisticDiscreteUnNestPO<T>(this);
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
     public final OutputMode getOutputMode() {
         return OutputMode.NEW_ELEMENT;
     }

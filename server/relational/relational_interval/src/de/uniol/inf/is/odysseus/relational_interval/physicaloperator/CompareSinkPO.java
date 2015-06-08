@@ -127,9 +127,5 @@ public class CompareSinkPO
 		}
 	}
 
-	@Override
-	public AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> clone() {
-		throw new IllegalArgumentException("Not implemented!");
-	}
 
 }

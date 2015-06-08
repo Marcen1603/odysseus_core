@@ -520,5 +520,9 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	public boolean hasInput() {
 		return delegateSink.hasInput();
 	}
+	
+	protected final AbstractPipe<R,W> clone(){
+		throw new IllegalArgumentException("Do not clone physical operators!");
+	}
 
 }

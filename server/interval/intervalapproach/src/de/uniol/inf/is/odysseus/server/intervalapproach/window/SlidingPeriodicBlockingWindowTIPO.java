@@ -75,11 +75,6 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 	}
 
 	@Override
-	public SlidingPeriodicBlockingWindowTIPO<R> clone() {
-		return new SlidingPeriodicBlockingWindowTIPO<R>(this);
-	}
-
-	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}

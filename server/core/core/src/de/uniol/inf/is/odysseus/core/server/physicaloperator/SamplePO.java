@@ -80,9 +80,4 @@ public class SamplePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 		sendPunctuation(punctuation);
 	}
 	
-	@Override
-	public AbstractPipe<T, T> clone() {
-		return new SamplePO<T>(this);
-	}
-
 }

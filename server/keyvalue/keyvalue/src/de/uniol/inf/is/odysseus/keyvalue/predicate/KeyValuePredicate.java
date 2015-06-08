@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.keyvalue.predicate;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +46,7 @@ public class KeyValuePredicate<T extends KeyValueObject<?>> extends AbstractPred
 			values[i] = input.getAttribute(neededAttributes.get(i).getURI());
 		}
 //		this.expression.bindMetaAttribute(input.getMetadata());
-		this.expression.bindAdditionalContent(input.getAdditionalContent());
+//		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}
@@ -61,11 +60,11 @@ public class KeyValuePredicate<T extends KeyValueObject<?>> extends AbstractPred
 				values[i] = right.getAttribute(neededAttributes.get(i).getURI());
 			}
 		}
-		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
-        additionalContent.putAll(left.getAdditionalContent());
-        additionalContent.putAll(right.getAdditionalContent());
+//		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+//        additionalContent.putAll(left.getAdditionalContent());
+//        additionalContent.putAll(right.getAdditionalContent());
         
-        this.expression.bindAdditionalContent(additionalContent);
+//        this.expression.bindAdditionalContent(additionalContent);
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}

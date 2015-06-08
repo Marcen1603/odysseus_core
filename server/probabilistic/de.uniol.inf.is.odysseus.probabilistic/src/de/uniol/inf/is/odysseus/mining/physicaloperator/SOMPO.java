@@ -129,14 +129,6 @@ public class SOMPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 		sendPunctuation(punctuation);
 	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final SOMPO<R> clone() {
-        return new SOMPO<>(this);
-    }
-
     private Node getNode(final int x, final int y, final int z) {
         return null;
     }

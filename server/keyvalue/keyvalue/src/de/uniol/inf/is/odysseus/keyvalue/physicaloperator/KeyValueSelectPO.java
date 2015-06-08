@@ -75,11 +75,6 @@ public class KeyValueSelectPO<T extends KeyValueObject<?>> extends AbstractPipe<
 	}
 	
 	@Override
-	public KeyValueSelectPO<T> clone() {
-		return new KeyValueSelectPO<T>(this);
-	}
-
-	@Override
 	public String toString(){
 		return super.toString() + " predicate: " + this.getPredicate().toString(); 
 	}
