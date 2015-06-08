@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.condition.datatypes.DeviationInformation;
 import de.uniol.inf.is.odysseus.condition.enums.TrainingMode;
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupPr
  */
 @SuppressWarnings("rawtypes")
 public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
-
+	
 	private String valueAttributeName;
 	private double manualStandardDeviation;
 	private double manualMean;
@@ -43,9 +42,9 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	private TrainingMode trainingMode;
 	
 	// For save backup management
-	private UUID uniqueId;
+	private String uniqueId;
 
-	// Ports
+	// Ports for input and output
 	private static final int DATA_PORT = 0;
 	private static final int BACKUP_PORT = 1;
 
@@ -63,7 +62,8 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		this.valueAttributeName = ao.getNameOfValue();
 		this.tuplesToLearn = ao.getTuplesToLearn();
 		this.exactCalculation = ao.isExactCalculation();
-
+		this.uniqueId = ao.getUniqueBackupId();
+		
 		if (this.trainingMode.equals(TrainingMode.MANUAL)) {
 			this.manualMean = ao.getManualMean();
 			this.manualStandardDeviation = ao.getManualStandardDeviation();
@@ -71,7 +71,6 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	}
 	
 	private void init() {
-		this.uniqueId = UUID.randomUUID();
 		this.deviationInfo = new HashMap<Long, DeviationInformation>();
 		this.tupleMap = new HashMap<Long, List<T>>();
 	}
@@ -92,51 +91,47 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		if (port == DATA_PORT) {
 			// Learn the deviation with a now incoming tuple
 			processStandardTuple(tuple, info, gId);
+			
+			// Transfer learn information (whole deviation information) to port
+			// 1 to back it up
+			Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(11, false);
+			output.setMetadata(tuple.getMetadata());
+			output.setAttribute(0, gId);
+			output.setAttribute(1, uniqueId.toString());
+			
+			output.setAttribute(2, info.mean);
+			output.setAttribute(3, info.standardDeviation);
+
+			output.setAttribute(4, info.n);
+			output.setAttribute(5, info.m2);
+
+			output.setAttribute(6, info.k);
+			output.setAttribute(7, info.sumWindow);
+			output.setAttribute(8, info.sumWindowSqr);
+
+			output.setAttribute(9, info.sum1);
+			output.setAttribute(10, info.sum2);
+			transfer(output, BACKUP_PORT);
 		} else if (port == BACKUP_PORT) {
 			// Update the deviation information with the info from an external
 			// operator, e.g. a backup database connection
 			info = updateInfo(tuple, info, gId);
 		}
-
-		// Transfer learn information (whole deviation information) to port
-		// 1 to back it up
-		Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(11, false);
-		output.setMetadata(tuple.getMetadata());
-		output.setAttribute(0, gId);
-		output.setAttribute(1, uniqueId.toString());
-		
-		output.setAttribute(2, info.mean);
-		output.setAttribute(3, info.standardDeviation);
-
-		output.setAttribute(4, info.n);
-		output.setAttribute(5, info.m2);
-
-		output.setAttribute(6, info.k);
-		output.setAttribute(7, info.sumWindow);
-		output.setAttribute(8, info.sumWindowSqr);
-
-		output.setAttribute(9, info.sum1);
-		output.setAttribute(10, info.sum2);
-		transfer(output, BACKUP_PORT);
-
 	}
 
 	private DeviationInformation updateInfo(T infoTuple, DeviationInformation info, Long gId) {
-		info.mean = getValue(infoTuple, BACKUP_PORT, "mean", Long.class);
-		info.standardDeviation = getValue(infoTuple, BACKUP_PORT, "standardDeviation", Long.class);
+		info.mean = getValue(infoTuple, BACKUP_PORT, "mean", Double.class);
+		info.standardDeviation = getValue(infoTuple, BACKUP_PORT, "standardDeviation", Double.class);
 
-		// Add instead of just set the values, because maybe we already got some
-		// tuples in the data port to learn when we start getting the backup
-		// from the database
-		info.n += getValue(infoTuple, BACKUP_PORT, "n", Long.class);
-		info.m2 += getValue(infoTuple, BACKUP_PORT, "m2", Double.class);
+		info.n = Math.round(getValue(infoTuple, BACKUP_PORT, "n", Double.class));
+		info.m2 = getValue(infoTuple, BACKUP_PORT, "m2", Double.class);
 
-		info.k += getValue(infoTuple, BACKUP_PORT, "k", Double.class);
-		info.sumWindow += getValue(infoTuple, BACKUP_PORT, "sumWindow", Double.class);
-		info.sumWindowSqr += getValue(infoTuple, BACKUP_PORT, "sumWindowSqr", Double.class);
+		info.k = getValue(infoTuple, BACKUP_PORT, "k", Double.class);
+		info.sumWindow = getValue(infoTuple, BACKUP_PORT, "sumWindow", Double.class);
+		info.sumWindowSqr = getValue(infoTuple, BACKUP_PORT, "sumWindowSqr", Double.class);
 
-		info.sum1 += getValue(infoTuple, BACKUP_PORT, "sum1", Double.class);
-		info.sum2 += getValue(infoTuple, BACKUP_PORT, "sum2", Double.class);
+		info.sum1 = getValue(infoTuple, BACKUP_PORT, "sum1", Double.class);
+		info.sum2 = getValue(infoTuple, BACKUP_PORT, "sum2", Double.class);
 
 		return info;
 	}

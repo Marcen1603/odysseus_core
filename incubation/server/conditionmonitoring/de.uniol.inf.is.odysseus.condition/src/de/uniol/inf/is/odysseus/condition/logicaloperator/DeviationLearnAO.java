@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DEVIATIONLEARN", doc = "Learns the mean and the standard deviation of a single value and writes it into the output.", category = { LogicalOperatorCategory.PROCESSING })
-public class DeviationLearnAO extends UnaryLogicalOp {
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 1, name = "DEVIATIONLEARN", doc = "Learns the mean and the standard deviation of a single value and writes it into the output.", category = { LogicalOperatorCategory.PROCESSING })
+public class DeviationLearnAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 4859491963759169252L;
 
@@ -37,11 +37,13 @@ public class DeviationLearnAO extends UnaryLogicalOp {
 	private long tuplesToLearn;
 	private TrainingMode trainingMode;
 	private String nameOfValue;
+	private String uniqueBackupId;
 
 	public DeviationLearnAO() {
 		this.trainingMode = TrainingMode.ONLINE;
 		this.nameOfValue = "value";
 		this.exactCalculation = true;
+		this.uniqueBackupId = "deviationLearn_" + this.nameOfValue + "_" + this.trainingMode;
 	}
 
 	public DeviationLearnAO(DeviationLearnAO ao) {
@@ -53,6 +55,7 @@ public class DeviationLearnAO extends UnaryLogicalOp {
 		this.tuplesToLearn = ao.getTuplesToLearn();
 		this.trainingMode = ao.getTrainingMode();
 		this.nameOfValue = ao.getNameOfValue();
+		this.uniqueBackupId = ao.getUniqueBackupId();
 	}
 
 	public List<SDFAttribute> getGroupingAttributes() {
@@ -127,6 +130,15 @@ public class DeviationLearnAO extends UnaryLogicalOp {
 		this.nameOfValue = nameOfValue;
 	}
 
+	public String getUniqueBackupId() {
+		return uniqueBackupId;
+	}
+
+	@Parameter(type = StringParameter.class, name = "uniqueBackupId", optional = true, doc = "A unique ID for this operator to save and read backup data.")
+	public void setUniqueBackupId(String uniqueBackupId) {
+		this.uniqueBackupId = uniqueBackupId;
+	}
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new DeviationLearnAO(this);
@@ -146,13 +158,13 @@ public class DeviationLearnAO extends UnaryLogicalOp {
 			outputAttributes.add(meanValue);
 			outputAttributes.add(standardDeviation);
 
-			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema());
+			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema(DATA_PORT));
 			this.setOutputSchema(port, outputSchema);
 			return getOutputSchema(DATA_PORT);
 		} else if (port == BACKUP_PORT) {
 			// Backup-Information
 			SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);
-			SDFAttribute uuid = new SDFAttribute(null, "uuid", SDFDatatype.STRING, null, null, null);
+			SDFAttribute uuid = new SDFAttribute(null, "backupId", SDFDatatype.STRING, null, null, null);
 			
 			SDFAttribute meanValue = new SDFAttribute(null, "mean", SDFDatatype.LONG, null, null, null);
 			SDFAttribute stdDeviationValue = new SDFAttribute(null, "standardDeviation", SDFDatatype.LONG, null, null, null);
@@ -184,7 +196,7 @@ public class DeviationLearnAO extends UnaryLogicalOp {
 			outputAttributes.add(sum1Value);
 			outputAttributes.add(sum2Value);
 			
-			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema());
+			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema(BACKUP_PORT));
 			this.setOutputSchema(port, outputSchema);
 			return getOutputSchema(BACKUP_PORT);
 		}
