@@ -15,14 +15,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
+
 
 public final class OdysseusRCPConfiguration {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusRCPConfiguration.class);
 	
-	private static final String ODYSSEUS_HOME_ENV = "ODYSSEUS_HOME";
-	public static final String ODYSSEUS_DEFAULT_HOME_DIR = determineOdysseusDefaultHome();
-	public static final String ODYSSEUS_HOME_DIR = determineOdysseusHome();
+	public static final String ODYSSEUS_HOME_DIR = OdysseusBaseConfiguration.homeDir;
 	public static final String ODYSSEUS_RCP_CONFIGURATION_FILE = ODYSSEUS_HOME_DIR + "odysseusRCP.conf";
 
 	private static final Properties properties = new Properties();
@@ -32,35 +32,6 @@ public final class OdysseusRCPConfiguration {
 		// no instance allowed
 	}
 	
-	private static String determineOdysseusDefaultHome() {
-		return String.format("%s" + File.separator + "%sodysseus" + File.separator, System.getProperty("user.home"), getDot(System.getProperty("os.name")));
-	}
-	
-	private static String getDot(String os) {
-		os = os.toLowerCase();
-		if ((os.indexOf("win") >= 0)) {
-			return "";
-		} else if ((os.indexOf("mac") >= 0)) {
-			return ".";
-		} else if ((os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0)) {
-			return ".";
-		} else {
-			return "";
-		}
-	}
-
-	private static String determineOdysseusHome() {
-		try {
-			String homeDir = System.getenv(ODYSSEUS_HOME_ENV);
-			if (Strings.isNullOrEmpty(homeDir)) {
-				return ODYSSEUS_DEFAULT_HOME_DIR;
-			}
-			return homeDir;
-		} catch (Exception e) {
-			return ODYSSEUS_DEFAULT_HOME_DIR;
-		}
-	}
-
 	private static void loadConfiguration() {
 		try {
 			

@@ -25,6 +25,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -43,27 +44,16 @@ public class OdysseusConfiguration {
 
 	static Properties props = new Properties();
 
-	// TODO: Make Platform specific homedir
-	private static String odysseusDefaultHome = String.format("%s"
-			+ File.separator + "%sodysseus" + File.separator,
-			System.getProperty("user.home"),
-			getDot(System.getProperty("os.name")));
-	private static String homeDir;
-
-	static {
+	static{
 		try {
-			homeDir = System.getProperty("ODYSSEUS_HOME");
-			if (homeDir == null || homeDir.length() == 0) {
-				homeDir = System.getenv("ODYSSEUS_HOME");
-			}			
-			if (homeDir == null || homeDir.length() == 0) {
-				homeDir = odysseusDefaultHome;
-			}
-			loadProperties(homeDir, "odysseus.conf", props);
-		} catch (Exception e) {
+			loadProperties(OdysseusBaseConfiguration.homeDir, "odysseus.conf", props);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
 
 	private static void loadProperties(String odysseusHome, String filename,
 			Properties properties) throws IOException, FileNotFoundException {
@@ -244,7 +234,7 @@ public class OdysseusConfiguration {
 	}
 
 	public static String getFileProperty(String key, String tenantName) {
-		String home = odysseusDefaultHome;
+		String home = getHomeDir();
 		if(!home.endsWith(File.separator)){
 			home = home + File.separator;
 		}
@@ -256,7 +246,7 @@ public class OdysseusConfiguration {
 	}
 
 	public static String getFileProperty(String key) {
-		String home = odysseusDefaultHome;
+		String home = getHomeDir();
 		if(!home.endsWith(File.separator)){
 			home = home + File.separator;
 		}
@@ -317,7 +307,7 @@ public class OdysseusConfiguration {
 				if (UserManagementProvider.getUsermanagement(true).hasPermission(
 						caller, ConfigurationPermission.SAVE_PARAM,
 						ConfigurationPermission.objectURI)) {
-					savePropertyFile(homeDir);
+					savePropertyFile(getHomeDir());
 				} else {
 					throw new PermissionException(
 							"User "
@@ -333,32 +323,9 @@ public class OdysseusConfiguration {
 	}
 
 	public static String getHomeDir() {
-		return homeDir;
+		return OdysseusBaseConfiguration.homeDir;
 	}
 
-	/**
-	 * Returns a dot on specific operating systems: unix,linux, and mac.
-	 * 
-	 */
-	private static String getDot(String os) {
-		os = os.toLowerCase();
-		if ((os.indexOf("win") >= 0)) {
-			// Windows
-			getLogger().trace("OS: Windows");
-			return "";
-		} else if ((os.indexOf("mac") >= 0)) {
-			// Macintosh
-			getLogger().trace("OS: MacOS");
-			return ".";
-		} else if ((os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0)) {
-			// Unix
-			getLogger().trace("OS: Unix/Linux");
-			return ".";
-		} else {
-			// All other
-			getLogger().error("OS: not Supported");
-			return "";
-		}
-	}
+
 
 }
