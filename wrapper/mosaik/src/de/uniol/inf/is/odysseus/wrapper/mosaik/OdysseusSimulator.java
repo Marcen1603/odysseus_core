@@ -12,13 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
-
 public class OdysseusSimulator {
 
 	static Logger LOG = LoggerFactory.getLogger(OdysseusSimulator.class);
 	
-	private AbstractProtocolHandler<?> pHandler;
+	private MosaikProtocolHandler<?> pHandler;
 	private long time;
 	@SuppressWarnings("unused")
 	private String sid;
@@ -36,7 +34,7 @@ public class OdysseusSimulator {
             + "            'attrs': []" + "        }"
             + "    }" + "}").replace("'", "\""));
 
-	public OdysseusSimulator(AbstractProtocolHandler<?> pHandler, String name) {
+	public OdysseusSimulator(MosaikProtocolHandler<?> pHandler, String name) {
 		this.pHandler = pHandler;
 	}
 
@@ -53,6 +51,7 @@ public class OdysseusSimulator {
             entities.add(entity);
         }
         this.idCounter += num;
+//		this.pHandler.sendRequest = true;
         return entities;
 	}
 
@@ -75,7 +74,11 @@ public class OdysseusSimulator {
 	public long step(long arg0, Map<String, Object> input) throws Exception {
 		String[] inputString = new String[1];
 		input.put("timestamp", time);
-		inputString[0] = new ObjectMapper().writeValueAsString(input);
+		if(this.pHandler.cleanStrings) {
+			inputString[0] = new ObjectMapper().writeValueAsString(input).replace("_", "-");
+		} else {
+			inputString[0] = new ObjectMapper().writeValueAsString(input);
+		}
 		pHandler.process(inputString);
 		time += stepSize;
 		return time;

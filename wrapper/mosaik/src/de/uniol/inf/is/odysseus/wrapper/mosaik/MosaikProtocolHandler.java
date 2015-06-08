@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -43,6 +44,9 @@ public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> ext
     protected ByteArrayOutputStream dividedMsgByteArray;
     protected int dividedSize = 0;
     protected int alreadyRead = 0;
+    
+    protected boolean cleanStrings = false;
+    static final protected String CLEANSTRINGS = "cleanStrings";
 	
     static final JSONParser parser = new JSONParser();
 	
@@ -52,6 +56,9 @@ public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> ext
 
 	public MosaikProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
+        if (optionsMap.containsKey(CLEANSTRINGS)) {
+            this.setCleanStrings(Boolean.parseBoolean(optionsMap.get(CLEANSTRINGS)));
+        }
 		this.sim = new OdysseusSimulator(this, "Odysseus");
 	}
 
@@ -118,64 +125,77 @@ public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> ext
 				if(messageByteArray.length == size) {
 					//handle complete message
 					final String messageSring = new String(messageByteArray, "UTF-8");
+//					System.out.println(messageSring);
 					final JSONArray payload = (JSONArray) parser.parse(messageSring);
 			        
 					// Expand payload
 					final int msgType = ((Number) payload.get(0)).intValue();
 					if (msgType != REQ) {
-						throw new IOException("Expected message type 0, got " + msgType);
-					}
-					int msgId = ((Number) payload.get(1)).intValue();
-					final JSONArray call = (JSONArray) payload.get(2);
-
-					// Set request data
-					String method = (String) call.get(0);
-					JSONArray args = (JSONArray) call.get(1);
-					JSONObject kwargs = (JSONObject) call.get(2);
-
-					Object result;	  
-					boolean stop = false;
-					switch (method) {
-					case "init":
-						final String sid = (String) args.get(0);
-						result = this.sim.init(sid, kwargs);
-						break;
-					case "create":
-						final int num = ((Number) args.get(0)).intValue();
-						final String model = (String) args.get(1);
-						result = this.sim.create(num, model, kwargs);
-						break;
-					case "step":
-						final long time = ((Number) args.get(0)).longValue();
-						final JSONObject inputs = (JSONObject) args.get(1);
-						result = this.sim.step(time, inputs);
-						break;
-					case "get_data":
-						final JSONObject outputs = (JSONObject) args.get(0);
-						result = this.sim.getData(outputs);
-						break;
-					case "stop":
-						stop = true;
-						result = null;
-						this.close();
-						getTransfer().transfer(null);
-						break;
-					default:
-						throw new RuntimeException("Unkown method: " + method);
-					}
-
-					if(!stop) {
-						//send response
-						final JSONArray reply = new JSONArray();
-						reply.add(SUCCESS);
-						reply.add(msgId);
-						reply.add(result);
-						ByteArrayOutputStream sendData = new ByteArrayOutputStream();
-						ByteBuffer sendHeader = ByteBuffer.allocate(4);
-						sendHeader.putInt(0, reply.toString().length());
-						sendData.write(sendHeader.array());
-						sendData.write(reply.toString().getBytes());
-						getTransportHandler().send(sendData.toByteArray());
+						if(msgType == SUCCESS) {
+							//should be checked
+//							int msgId = ((Number) payload.get(1)).intValue();
+							
+							@SuppressWarnings("unused")
+							Map<String, Object> response = (JSONObject) payload.get(2);
+//							System.out.println(response);
+						} else if (msgType == ERROR) { 
+							throw new IOException("Received error message from mosaik (message type 2).");
+						} else {
+							throw new IOException("Expected message type 0, got " + msgType);
+						}
+					} else {
+						int msgId = ((Number) payload.get(1)).intValue();
+						final JSONArray call = (JSONArray) payload.get(2);
+	
+						// Set request data
+						String method = (String) call.get(0);
+						JSONArray args = (JSONArray) call.get(1);
+						JSONObject kwargs = (JSONObject) call.get(2);
+	
+						Object result;	  
+						boolean stop = false;
+						switch (method) {
+						case "init":
+							final String sid = (String) args.get(0);
+							result = this.sim.init(sid, kwargs);
+							break;
+						case "create":
+							final int num = ((Number) args.get(0)).intValue();
+							final String model = (String) args.get(1);
+							result = this.sim.create(num, model, kwargs);
+							break;
+						case "step":
+							final long time = ((Number) args.get(0)).longValue();
+							final JSONObject inputs = (JSONObject) args.get(1);
+							result = this.sim.step(time, inputs);
+							break;
+						case "get_data":
+							final JSONObject outputs = (JSONObject) args.get(0);
+							result = this.sim.getData(outputs);
+							break;
+						case "stop":
+							stop = true;
+							result = null;
+							this.close();
+							getTransfer().transfer(null);
+							break;
+						default:
+							throw new RuntimeException("Unkown method: " + method);
+						}
+	
+						if(!stop) {
+							//send response
+							final JSONArray reply = new JSONArray();
+							reply.add(SUCCESS);
+							reply.add(msgId);
+							reply.add(result);
+							ByteArrayOutputStream sendData = new ByteArrayOutputStream();
+							ByteBuffer sendHeader = ByteBuffer.allocate(4);
+							sendHeader.putInt(0, reply.toString().length());
+							sendData.write(sendHeader.array());
+							sendData.write(reply.toString().getBytes());
+							getTransportHandler().send(sendData.toByteArray());
+						}
 					}
 				} else if(messageByteArray.length > size) {
 		            throw new IOException("Unexpected message");
@@ -200,5 +220,13 @@ public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> ext
 		// the datahandler was already checked in the
 		// isSemanticallyEqual-Method of AbstracProtocolHandler
 		return true;
+	}
+	
+	public boolean cleanString() {
+		return this.cleanStrings;
+	}
+	
+	protected void setCleanStrings(boolean cleanStrings) {
+		this.cleanStrings = cleanStrings;
 	}
 }
