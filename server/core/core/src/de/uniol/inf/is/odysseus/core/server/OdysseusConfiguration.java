@@ -46,7 +46,7 @@ public class OdysseusConfiguration {
 
 	static{
 		try {
-			loadProperties(OdysseusBaseConfiguration.homeDir, "odysseus.conf", props);
+			loadProperties(OdysseusBaseConfiguration.getHomeDir(), "odysseus.conf", props);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -323,7 +323,7 @@ public class OdysseusConfiguration {
 	}
 
 	public static String getHomeDir() {
-		return OdysseusBaseConfiguration.homeDir;
+		return OdysseusBaseConfiguration.getHomeDir();
 	}
 
 

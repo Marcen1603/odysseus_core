@@ -15,7 +15,7 @@ public class OdysseusBaseConfiguration {
 			+ File.separator + "%sodysseus" + File.separator,
 			System.getProperty("user.home"),
 			getDot(System.getProperty("os.name")));
-	public static String homeDir;
+	private static String homeDir;
 
 	static {
 		homeDir = System.getProperty("ODYSSEUS_HOME");
@@ -27,6 +27,10 @@ public class OdysseusBaseConfiguration {
 		}
 	}
 
+	public static String getHomeDir(){
+		return homeDir;
+	}
+	
 	/**
 	 * Returns a dot on specific operating systems: unix,linux, and mac.
 	 * 

@@ -22,8 +22,7 @@ public final class OdysseusRCPConfiguration {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusRCPConfiguration.class);
 	
-	public static final String ODYSSEUS_HOME_DIR = OdysseusBaseConfiguration.homeDir;
-	public static final String ODYSSEUS_RCP_CONFIGURATION_FILE = ODYSSEUS_HOME_DIR + "odysseusRCP.conf";
+	public static final String ODYSSEUS_RCP_CONFIGURATION_FILE = OdysseusBaseConfiguration.getHomeDir() + "odysseusRCP.conf";
 
 	private static final Properties properties = new Properties();
 	private static boolean isFirstLoaded = false;
