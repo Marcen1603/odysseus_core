@@ -132,6 +132,12 @@ public class CSVFileSink extends AbstractSenderAO {
 	public void writeMetadata(Boolean value) {
 		addOption(AbstractCSVHandler.CSV_WRITE_METADATA, Boolean.toString(value));
 	}
+	
+
+	@Parameter(type = BooleanParameter.class, name = FileHandler.CREATEDIR, optional = true, doc = "Create dir if not exists.")
+	public void createDir(Boolean value){
+		addOption(FileHandler.CREATEDIR, Boolean.toString(value));
+	}
 		
 	@Override
 	public String getProtocolHandler() {
