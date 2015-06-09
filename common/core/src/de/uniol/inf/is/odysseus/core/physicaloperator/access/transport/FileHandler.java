@@ -229,7 +229,7 @@ public class FileHandler extends AbstractFileHandler {
 	}
 
 	private void processPunctuation(NewFilenamePunctuation punctuation) {
-		if (this.filename != punctuation.getFilename()) {
+		if (!this.filename.equals(punctuation.getFilename())) {
 			try {
 				synchronized (this) {
 					this.processOutClose();
