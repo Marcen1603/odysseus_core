@@ -241,7 +241,7 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                 try {
 //                    this.expressions[i].bindMetaAttribute(restrictedObject.getMetadata());
 //                    this.expressions[i].bindAdditionalContent(restrictedObject.getAdditionalContent());
-                    this.expressions[i].bindVariables(positions, meta, values);
+                    this.expressions[i].bindVariables(positions, values);
                     final Object expr = this.expressions[i].getValue();
                     if (expr == null) {
                         nullValueOccured = true;

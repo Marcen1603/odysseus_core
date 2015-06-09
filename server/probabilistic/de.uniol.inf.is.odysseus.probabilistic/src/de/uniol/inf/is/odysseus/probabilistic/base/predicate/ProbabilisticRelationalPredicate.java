@@ -227,7 +227,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 
         final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
 //        probabilisticExpression.bindAdditionalContent(additionalContent);
-        probabilisticExpression.bindVariables(positions, meta, values);
+        probabilisticExpression.bindVariables(positions, values);
         final Object expr = probabilisticExpression.getValue();
         if (probabilisticExpression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
             final ProbabilisticBooleanResult result = (ProbabilisticBooleanResult) expr;
@@ -268,7 +268,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
         final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
 
 //        probabilisticExpression.bindAdditionalContent(additionalContent);
-        probabilisticExpression.bindVariables(positions, meta, values);
+        probabilisticExpression.bindVariables(positions, values);
 
         final Object expr = probabilisticExpression.getValue();
         if (this.expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {

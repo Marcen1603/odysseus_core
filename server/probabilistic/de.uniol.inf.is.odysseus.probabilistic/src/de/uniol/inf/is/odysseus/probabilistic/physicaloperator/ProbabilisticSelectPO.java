@@ -168,7 +168,7 @@ public class ProbabilisticSelectPO<T extends IMetaAttribute> extends AbstractPip
 
 //                expression.bindMetaAttribute(outputVal.getMetadata());
 //                expression.bindAdditionalContent(outputVal.getAdditionalContent());
-                expression.bindVariables(positions, meta, values);
+                expression.bindVariables(positions, values);
 
                 final Object expr = expression.getValue();
                 if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
