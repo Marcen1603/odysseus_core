@@ -1,9 +1,15 @@
 package de.uniol.inf.is.odysseus.mep.functions;
 
+import java.io.Serializable;
+
+import javax.sql.rowset.serial.SerialArray;
+
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.IStatefulFunction;
 
-public class CounterFunction2 extends AbstractFunction<Long> {
+public class CounterFunction2 extends AbstractFunction<Long> implements IStatefulFunction{
 
 	private static final long serialVersionUID = 7678906904911837795L;
 	private Long lastValue = 0L;
@@ -35,4 +41,20 @@ public class CounterFunction2 extends AbstractFunction<Long> {
 		return lastValue;
 	}
 
+	@Override
+	public Serializable getState() {
+		Pair<Long,Boolean> state = new Pair<>();
+		state.setE1(lastValue);
+		state.setE2(init);
+		return state;
+	}
+	
+	@Override
+	public void setState(Serializable state) {
+		@SuppressWarnings("unchecked")
+		Pair<Long,Boolean> p = (Pair<Long,Boolean>) state;
+		this.lastValue = p.getE1();
+		this.init = p.getE2();
+	}
+	
 }

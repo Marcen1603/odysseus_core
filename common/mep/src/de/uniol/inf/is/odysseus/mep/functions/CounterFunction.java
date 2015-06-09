@@ -1,9 +1,12 @@
 package de.uniol.inf.is.odysseus.mep.functions;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.IStatefulFunction;
 
-public class CounterFunction extends AbstractFunction<Long> {
+public class CounterFunction extends AbstractFunction<Long> implements IStatefulFunction{
 
 	private static final long serialVersionUID = 7678906904911837795L;
 	private Long lastValue = 0L;
@@ -15,6 +18,16 @@ public class CounterFunction extends AbstractFunction<Long> {
 	@Override
 	public Long getValue() {
 		return lastValue++;
+	}
+	
+	@Override
+	public Serializable getState() {
+		return lastValue;
+	}
+	
+	@Override
+	public void setState(Serializable state) {
+		this.lastValue = (Long) state;
 	}
 
 }
