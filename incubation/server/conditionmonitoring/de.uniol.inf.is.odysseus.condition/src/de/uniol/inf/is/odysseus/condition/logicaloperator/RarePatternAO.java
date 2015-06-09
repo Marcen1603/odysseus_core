@@ -9,12 +9,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
  * 
@@ -26,25 +27,31 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
  * @author Tobias Brandt
  *
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "RarePattern", doc = "Searches for rare pattern in a stream of (discrete) states", category = { LogicalOperatorCategory.PROCESSING })
-public class RarePatternAO extends UnaryLogicalOp {
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 1, name = "RarePattern", doc = "Searches for rare pattern in a stream of (discrete) states", category = { LogicalOperatorCategory.PROCESSING })
+public class RarePatternAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = -7990417520941357348L;
+
+	private static final int DATA_PORT = 0;
+	private static final int BACKUP_PORT = 1;
 
 	private int depth;
 	private double minRelativeFrequency;
 	private boolean firstTupleIsRoot;
+	private String uniqueBackupId;
 
 	public RarePatternAO() {
 		this.depth = 2;
 		this.minRelativeFrequency = 0.3;
 		this.firstTupleIsRoot = false;
+		this.uniqueBackupId = "rarePattern_" + depth;
 	}
 
 	public RarePatternAO(RarePatternAO ao) {
 		this.depth = ao.getDepth();
 		this.minRelativeFrequency = ao.getMinRelativeFrequency();
 		this.firstTupleIsRoot = ao.isFirstTupleIsRoot();
+		this.uniqueBackupId = ao.getUniqueBackupId();
 	}
 
 	@Parameter(type = IntegerParameter.class, name = "treeDepth", optional = true, doc = "The depth of the tree. Default is 2.")
@@ -61,6 +68,11 @@ public class RarePatternAO extends UnaryLogicalOp {
 	public void setFirstTupleIsRoot(boolean firstTupleIsRoot) {
 		this.firstTupleIsRoot = firstTupleIsRoot;
 	}
+	
+	@Parameter(type = StringParameter.class, name = "uniqueBackupId", optional = true, doc = "A unique ID for this operator to save and read backup data.")
+	public void setUniqueBackupId(String uniqueBackupId) {
+		this.uniqueBackupId = uniqueBackupId;
+	}
 
 	public int getDepth() {
 		return depth;
@@ -69,11 +81,15 @@ public class RarePatternAO extends UnaryLogicalOp {
 	public double getMinRelativeFrequency() {
 		return minRelativeFrequency;
 	}
-	
+
 	public boolean isFirstTupleIsRoot() {
 		return firstTupleIsRoot;
 	}
 
+	public String getUniqueBackupId() {
+		return uniqueBackupId;
+	}
+	
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new RarePatternAO(this);
@@ -81,20 +97,33 @@ public class RarePatternAO extends UnaryLogicalOp {
 
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
-		// add the anomaly-score to the attributes and keep the old attributes
-		SDFSchema inSchema = getInputSchema(0);
-		SDFAttribute anomalyScore = new SDFAttribute(null, "anomalyScore", SDFDatatype.DOUBLE, null, null, null);
-		SDFAttribute pathProbability = new SDFAttribute(null, "pathProbability", SDFDatatype.DOUBLE, null, null, null);
-		SDFAttribute path = new SDFAttribute(null, "path", SDFDatatype.DOUBLE, null, null, null);
-		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
-		outputAttributes.addAll(inSchema.getAttributes());
-		outputAttributes.add(anomalyScore);
-		outputAttributes.add(pathProbability);
-		outputAttributes.add(path);
-		SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
-		setOutputSchema(outSchema);
+		if (pos == DATA_PORT) {
+			// add the anomaly-score to the attributes and keep the old
+			// attributes
+			SDFSchema inSchema = getInputSchema(DATA_PORT);
+			SDFAttribute anomalyScore = new SDFAttribute(null, "anomalyScore", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute pathProbability = new SDFAttribute(null, "pathProbability", SDFDatatype.DOUBLE, null, null,
+					null);
+			SDFAttribute path = new SDFAttribute(null, "path", SDFDatatype.DOUBLE, null, null, null);
+			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+			outputAttributes.addAll(inSchema.getAttributes());
+			outputAttributes.add(anomalyScore);
+			outputAttributes.add(pathProbability);
+			outputAttributes.add(path);
+			SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
+			setOutputSchema(DATA_PORT, outSchema);
+		} else if (pos == BACKUP_PORT) {
+			SDFSchema inSchema = getInputSchema(DATA_PORT);
+			SDFAttribute tree = new SDFAttribute(null, "tree", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute backupId = new SDFAttribute(null, "backupId", SDFDatatype.DOUBLE, null, null, null);
+			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+			outputAttributes.add(tree);
+			outputAttributes.add(backupId);
+			SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
+			setOutputSchema(BACKUP_PORT, outSchema);
+		}
 
-		return getOutputSchema();
+		return getOutputSchema(pos);
 	}
 
 }

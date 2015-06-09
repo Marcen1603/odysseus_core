@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.condition.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import com.google.gson.Gson;
 
 import de.uniol.inf.is.odysseus.condition.datatypes.CounterNode;
 import de.uniol.inf.is.odysseus.condition.logicaloperator.RarePatternAO;
@@ -13,65 +16,130 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 /**
  * This operator searches for rare patterns in data. It's especially designed to
  * find rare state sequences. E.g. if state "b" nearly always follows state "a",
- * but very seldom a "c" follows "a". This operator should find the seldom pattern
- * "a" -> "c".
+ * but very seldom a "c" follows "a". This operator should find the seldom
+ * pattern "a" -> "c".
  * 
  * @author Tobias Brandt
  */
 @SuppressWarnings("rawtypes")
 public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
 
-	private CounterNode<T> root;
+	private CounterNode root;
 	private int depthCounter;
 	private int maxDepth;
-	private CounterNode<T> currentNode;
+	private CounterNode currentNode;
 	private double minRelativeFrequency;
-	
+
 	private boolean firstTupleIsRoot;
 	private boolean firstTuple;
 
+	private static final int DATA_PORT = 0;
+	private static final int BACKUP_PORT = 1;
+
+	private static final String BACKUP_ATTRIBUTE_TREE = "tree";
+	private static final String BACKUP_ATTRIBUTE_ID = "backupId";
+	private Gson gson;
+	private String uniqueBackupId;
+
 	public RarePatternPO(RarePatternAO ao) {
-		this.root = new CounterNode<T>(null);
+		this.root = new CounterNode(null);
 		this.maxDepth = ao.getDepth();
 		this.minRelativeFrequency = ao.getMinRelativeFrequency();
 		this.firstTuple = true;
 		this.firstTupleIsRoot = ao.isFirstTupleIsRoot();
+		this.gson = new Gson();
+		this.uniqueBackupId = ao.getUniqueBackupId();
 	}
 
 	@Override
 	protected void process_next(T tuple, int port) {
 
-		if (firstTuple && firstTupleIsRoot) {
-			root.setObject(tuple);
-			firstTuple = false;
-		}
-		
-		if (firstTupleIsRoot && root.getObject().equals(tuple)) {
-			// Start from the root again
-			depthCounter = 0;
-		}
-		
-		// Put the tuple into the tree
-		if (depthCounter == 0) {
-			// Start again from root
-			currentNode = root.addChild(tuple);
-			depthCounter++;
-		} else {
-			currentNode = currentNode.addChild(tuple);
-			depthCounter++;
-			if (depthCounter >= maxDepth) {
+		if (port == DATA_PORT) {
+			if (firstTuple && firstTupleIsRoot) {
+				root.setObject(tuple.getAttributes());
+				firstTuple = false;
+			}
+
+			if (firstTupleIsRoot && Arrays.equals(root.getObject(), tuple.getAttributes())) {
+				// Start from the root again
 				depthCounter = 0;
 			}
-		}
 
-		double relativeFrequencyOfPath = currentNode.calcRelativeFrequencyPath();
-		if (relativeFrequencyOfPath < minRelativeFrequency) {
-			// In this case, it was a seldom pattern
-			String path = getPath(currentNode);
-			Tuple newTuple = tuple.append(1.0 - relativeFrequencyOfPath).append(relativeFrequencyOfPath).append(path);
-			transfer(newTuple);
-			return;
+			// Put the tuple into the tree
+			if (depthCounter == 0) {
+				// Start again from root
+				currentNode = root.addChild(tuple.getAttributes());
+				depthCounter++;
+			} else {
+				currentNode = currentNode.addChild(tuple.getAttributes());
+				depthCounter++;
+				if (depthCounter >= maxDepth) {
+					depthCounter = 0;
+				}
+			}
+
+			// Backup the tree
+			String tree = gson.toJson(root);
+			// Transfer learned tree to backup
+			Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(2, false);
+			output.setMetadata(tuple.getMetadata());
+			output.setAttribute(0, tree);
+			output.setAttribute(1, this.uniqueBackupId);
+			transfer(output, BACKUP_PORT);
+
+			double relativeFrequencyOfPath = currentNode.calcRelativeFrequencyPath();
+			if (relativeFrequencyOfPath < minRelativeFrequency) {
+				// In this case, it was a seldom pattern
+				String path = getPath(currentNode);
+				Tuple newTuple = tuple.append(1.0 - relativeFrequencyOfPath).append(relativeFrequencyOfPath)
+						.append(path);
+				transfer(newTuple);
+				return;
+			}
+		} else if (port == BACKUP_PORT) {
+			// Get backup data
+			String backupId = getBackupString(tuple, BACKUP_ATTRIBUTE_ID);
+			// Check, if this data is meant for this operator
+			if (backupId.equals(this.uniqueBackupId)) {
+				String treeJson = getBackupString(tuple, BACKUP_ATTRIBUTE_TREE);
+				if (!treeJson.isEmpty()) {
+					CounterNode newRoot = gson.fromJson(treeJson, CounterNode.class);
+					setParents(newRoot);
+					this.root = newRoot;
+				}
+			}
 		}
+	}
+
+	/**
+	 * As the parents can't be serialized, they will be set again recursively
+	 * 
+	 * @param root
+	 *            The root to start with
+	 */
+	private void setParents(CounterNode root) {
+		for (CounterNode node : root.getChildren()) {
+			node.setParent(root);
+			setParents(node);
+		}
+	}
+
+	/**
+	 * Searches for the backup string and returns it
+	 * 
+	 * @param tuple
+	 *            The tuple that holds the backup string
+	 * @param attribute
+	 *            The attribute to search for
+	 * @return the string from the backup tuple
+	 */
+	private String getBackupString(T tuple, String attribute) {
+		int valueIndex = getInputSchema(BACKUP_PORT).findAttributeIndex(attribute);
+		if (valueIndex >= 0) {
+			String treeJson = tuple.getAttribute(valueIndex);
+			return treeJson;
+		}
+		return "";
 	}
 
 	/**

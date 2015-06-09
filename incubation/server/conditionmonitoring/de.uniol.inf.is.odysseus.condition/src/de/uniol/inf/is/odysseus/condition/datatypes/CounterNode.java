@@ -1,9 +1,8 @@
 package de.uniol.inf.is.odysseus.condition.datatypes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * This is a tree data structure which saves the given objects as children and
@@ -16,12 +15,12 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
  *            The datatype you want to save in the tree, e.g. Tuple, String,
  *            etc.
  */
-public class CounterNode<T> {
+public class CounterNode {
 
 	private long count;
-	private T object;
-	private CounterNode<T> parent;
-	private List<CounterNode<T>> children;
+	private Object[] object;
+	private transient CounterNode parent;
+	private List<CounterNode> children;
 
 	/**
 	 * Creates a new node in the tree (or a new tree at all).
@@ -30,9 +29,9 @@ public class CounterNode<T> {
 	 *            The parent of this node. If it's the root, just set the parent
 	 *            to null.
 	 */
-	public CounterNode(CounterNode<T> parent) {
+	public CounterNode(CounterNode parent) {
 		this.parent = parent;
-		children = new ArrayList<CounterNode<T>>();
+		children = new ArrayList<CounterNode>();
 		this.count = 1;
 	}
 
@@ -46,9 +45,9 @@ public class CounterNode<T> {
 	 * @return The child node (either the new child or the child which already
 	 *         existed)
 	 */
-	public CounterNode<T> addChild(T object) {
+	public CounterNode addChild(Object[] object) {
 
-		CounterNode<T> child = new CounterNode<T>(this);
+		CounterNode child = new CounterNode(this);
 		child.setObject(object);
 
 		if (children.contains(child)) {
@@ -71,7 +70,7 @@ public class CounterNode<T> {
 	 *            search for.
 	 * @return The child, if it exists.
 	 */
-	public CounterNode<T> getChild(T object) {
+	public CounterNode getChild(Object[] object) {
 		if (children.contains(object)) {
 			// There is already a child with this object
 			return children.get(children.indexOf(object));
@@ -92,7 +91,7 @@ public class CounterNode<T> {
 	 */
 	public double calcRelativeFrequencyPath() {
 		double relativeFrequency = 1;
-		CounterNode<T> currentNode = this;
+		CounterNode currentNode = this;
 		// The second check is needed to avoid that we use the root
 		while (currentNode != null && currentNode.getParent() != null) {
 			relativeFrequency *= currentNode.calcRelativeFrequencyToSiblings();
@@ -119,7 +118,7 @@ public class CounterNode<T> {
 			// As the root does not count (cause the case "root" never occurs)
 			// we have to sum the counts of all children of the root
 			double subTreeCount = 0;
-			for (CounterNode<T> child : this.getParent().getChildren()) {
+			for (CounterNode child : this.getParent().getChildren()) {
 				subTreeCount += child.getCount();
 				return this.getCount() / subTreeCount;
 			}
@@ -131,11 +130,11 @@ public class CounterNode<T> {
 	 * 
 	 * @return The object which specifies this node
 	 */
-	public T getObject() {
+	public Object[] getObject() {
 		return object;
 	}
 
-	public void setObject(T object) {
+	public void setObject(Object[] object) {
 		this.object = object;
 	}
 
@@ -152,15 +151,23 @@ public class CounterNode<T> {
 	 * 
 	 * @return The parent node of this node
 	 */
-	public CounterNode<T> getParent() {
+	public CounterNode getParent() {
 		return parent;
+	}
+	
+	/**
+	 * Set the parent of this node
+	 * @param parent The new parent of this node
+	 */
+	public void setParent(CounterNode parent) {
+		this.parent = parent;
 	}
 
 	/**
 	 * 
 	 * @return The children of this node
 	 */
-	public List<CounterNode<T>> getChildren() {
+	public List<CounterNode> getChildren() {
 		return children;
 	}
 
@@ -168,11 +175,10 @@ public class CounterNode<T> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((object == null) ? 0 : object.hashCode());
+		result = prime * result + Arrays.hashCode(object);
 		return result;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -182,31 +188,23 @@ public class CounterNode<T> {
 		if (getClass() != obj.getClass())
 			return false;
 		CounterNode other = (CounterNode) obj;
-		if (object == null) {
-			if (other.object != null)
-				return false;
-		} else if (!object.equals(other.object))
+		if (!Arrays.equals(object, other.object))
 			return false;
 		return true;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public String toString() {
-
-		String result = "";
-		if (object instanceof Tuple) {
-			result = "(";
-			Tuple objectTuple = (Tuple) object;
-			Object[] attributes = objectTuple.getAttributes();
-			for (int i = 0; i < attributes.length; i++) {
-				result += attributes[i];
+		String result = "(" + count + " | [";
+		boolean first = true;
+		for(Object o : object) {
+			if (!first) {
+				result += ",";
+				first = false;
 			}
-			result += " | " + this.calcRelativeFrequencyToSiblings() + ")";
-		} else {
-			result = "(" + object + ")";
+			result += o.toString();
 		}
-
+		result += "])";
 		return result;
 	}
 

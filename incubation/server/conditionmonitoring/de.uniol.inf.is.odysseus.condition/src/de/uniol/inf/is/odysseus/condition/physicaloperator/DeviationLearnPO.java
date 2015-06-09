@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupPr
  */
 @SuppressWarnings("rawtypes")
 public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
-	
+
 	private String valueAttributeName;
 	private double manualStandardDeviation;
 	private double manualMean;
@@ -40,7 +40,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	private Map<Long, List<T>> tupleMap;
 	private boolean exactCalculation;
 	private TrainingMode trainingMode;
-	
+
 	// For save backup management
 	private String uniqueId;
 
@@ -63,13 +63,13 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		this.tuplesToLearn = ao.getTuplesToLearn();
 		this.exactCalculation = ao.isExactCalculation();
 		this.uniqueId = ao.getUniqueBackupId();
-		
+
 		if (this.trainingMode.equals(TrainingMode.MANUAL)) {
 			this.manualMean = ao.getManualMean();
 			this.manualStandardDeviation = ao.getManualStandardDeviation();
 		}
 	}
-	
+
 	private void init() {
 		this.deviationInfo = new HashMap<Long, DeviationInformation>();
 		this.tupleMap = new HashMap<Long, List<T>>();
@@ -91,14 +91,14 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		if (port == DATA_PORT) {
 			// Learn the deviation with a now incoming tuple
 			processStandardTuple(tuple, info, gId);
-			
+
 			// Transfer learn information (whole deviation information) to port
 			// 1 to back it up
 			Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(11, false);
 			output.setMetadata(tuple.getMetadata());
 			output.setAttribute(0, gId);
 			output.setAttribute(1, uniqueId.toString());
-			
+
 			output.setAttribute(2, info.mean);
 			output.setAttribute(3, info.standardDeviation);
 
@@ -120,19 +120,22 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	}
 
 	private DeviationInformation updateInfo(T infoTuple, DeviationInformation info, Long gId) {
-		info.mean = getValue(infoTuple, BACKUP_PORT, "mean", Double.class);
-		info.standardDeviation = getValue(infoTuple, BACKUP_PORT, "standardDeviation", Double.class);
+		// Only use the data if it's from this operator
+		String tupleBackupId = getValue(infoTuple, BACKUP_PORT, "backupId", String.class);
+		if (tupleBackupId.equals(this.uniqueId)) {
+			info.mean = getValue(infoTuple, BACKUP_PORT, "mean", Double.class);
+			info.standardDeviation = getValue(infoTuple, BACKUP_PORT, "standardDeviation", Double.class);
 
-		info.n = Math.round(getValue(infoTuple, BACKUP_PORT, "n", Double.class));
-		info.m2 = getValue(infoTuple, BACKUP_PORT, "m2", Double.class);
+			info.n = Math.round(getValue(infoTuple, BACKUP_PORT, "n", Double.class));
+			info.m2 = getValue(infoTuple, BACKUP_PORT, "m2", Double.class);
 
-		info.k = getValue(infoTuple, BACKUP_PORT, "k", Double.class);
-		info.sumWindow = getValue(infoTuple, BACKUP_PORT, "sumWindow", Double.class);
-		info.sumWindowSqr = getValue(infoTuple, BACKUP_PORT, "sumWindowSqr", Double.class);
+			info.k = getValue(infoTuple, BACKUP_PORT, "k", Double.class);
+			info.sumWindow = getValue(infoTuple, BACKUP_PORT, "sumWindow", Double.class);
+			info.sumWindowSqr = getValue(infoTuple, BACKUP_PORT, "sumWindowSqr", Double.class);
 
-		info.sum1 = getValue(infoTuple, BACKUP_PORT, "sum1", Double.class);
-		info.sum2 = getValue(infoTuple, BACKUP_PORT, "sum2", Double.class);
-
+			info.sum1 = getValue(infoTuple, BACKUP_PORT, "sum1", Double.class);
+			info.sum2 = getValue(infoTuple, BACKUP_PORT, "sum2", Double.class);
+		}
 		return info;
 	}
 
@@ -362,7 +365,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	 * @return The double value in the tuple
 	 */
 	protected double getValue(T tuple) {
-		int valueIndex = getInputSchema(0).findAttributeIndex(valueAttributeName);
+		int valueIndex = getInputSchema(DATA_PORT).findAttributeIndex(valueAttributeName);
 		if (valueIndex >= 0) {
 			double sensorValue = tuple.getAttribute(valueIndex);
 			return sensorValue;
