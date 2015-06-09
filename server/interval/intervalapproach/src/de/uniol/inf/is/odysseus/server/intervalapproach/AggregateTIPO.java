@@ -228,8 +228,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		}
 		// Send information to transfer area that no more elements will be
 		// delivered on port 0, so all data can be written
-		if (debug){
-			System.err.println(this+" done");
+		if (debug) {
+			System.err.println(this + " done");
 		}
 		transferArea.done(0);
 	}
@@ -277,7 +277,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		// somehow similar to a logical port for every group
 
 		if (debug) {
-			System.err.println(this+" READ "+object);
+			System.err.println(this + " READ " + object);
 		}
 
 		IGroupProcessor<R, W> g = getGroupProcessor();
@@ -338,32 +338,30 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			// then group etc.
 			// for group groupID use the existings results derived from updating
 			// sweep area
+
+			if (existingResults != null) {
+				produceResults(existingResults, groupID);
+			}
+
 			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 					.entrySet()) {
 
 				AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = entry
 						.getValue();
 
-				if (groupID != entry.getKey()) {
 
-					// /System.err.println(entry.getValue());
-					Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
-							.getValue().extractElementsBefore(timestamp);
-					if (debug) {
-						System.err.println("AREA FOR GROUP " + entry.getKey());
-						// System.err.println(entry.getValue().getSweepAreaAsString());
-					}
-					produceResults(results, entry.getKey());
-				} else {
-					if (existingResults != null) {
-						produceResults(existingResults, groupID);
-					}
+				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
+						.getValue().extractElementsBefore(timestamp);
+				if (debug) {
+					System.err.println("AREA FOR GROUP " + entry.getKey());
 				}
+				produceResults(results, entry.getKey());
+
 				if (createAdditionalOutput) {
-					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = updateSA(
+					List<PairMap<SDFSchema, AggregateFunction, W, Q>> addResults = updateSA(
 							entry.getValue(), timestamp);
-					if (results.size() > 0) {
-						produceResults(results, entry.getKey());
+					if (addResults.size() > 0) {
+						produceResults(addResults, entry.getKey());
 					}
 				}
 
