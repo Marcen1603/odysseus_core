@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.net.UnknownHostException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -84,6 +85,12 @@ public interface ITransportHandler {
      * @throws IOException
      */
     void send(byte[] message) throws IOException;
+    
+    /**
+     * Send punctuations to transport handler
+     * @param punctuation
+     */
+    void processPunctuation(IPunctuation punctuation);
     
     /**
      * If the transport handler needs to know the schema, it will be called here

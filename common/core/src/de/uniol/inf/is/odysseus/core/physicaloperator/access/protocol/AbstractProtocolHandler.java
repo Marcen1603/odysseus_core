@@ -129,7 +129,7 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
 	public void onConnect(ITransportHandler caller) {
 	}
 
-	@Override
+	@Override 
 	public void onDisonnect(ITransportHandler caller) {
 	}
 	
@@ -204,7 +204,7 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     
     @Override
     public void writePunctuation(IPunctuation punctuation) throws IOException {
-    	// do noting
+    	getTransportHandler().processPunctuation(punctuation);
     }
     
     /**

@@ -110,24 +110,6 @@ public class SVMProtocolHandler<T extends Tuple<?>> extends
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void onConnect(ITransportHandler caller) {
-
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
 	public T getNext() throws IOException {
 		String line = super.getNextLine(reader);
 		if (line != null) {

@@ -60,21 +60,23 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 	}
 
 	@Override
-	public void send(byte[] message) throws IOException {
+	public synchronized void send(byte[] message) throws IOException {
 		if (writeDelaySize > 0) {
 			int msgL = message.length;
-			// Would message plus current buffer content exceed buffers capacity?
-			if (msgL + writeBuffer.position() > writeDelaySize){
-				
+			// Would message plus current buffer content exceed buffers
+			// capacity?
+			if (msgL + writeBuffer.position() > writeDelaySize) {
+
 				dumpBuffer();
-				// To avoid double writes, write content only if message does not
+				// To avoid double writes, write content only if message
+				// does not
 				// fit into buffer
-				if (msgL > writeDelaySize){
+				if (msgL > writeDelaySize) {
 					out.write(message);
-				}else{
+				} else {
 					writeBuffer.put(message);
 				}
-			}else{
+			} else {
 				writeBuffer.put(message);
 			}
 		} else {
@@ -89,8 +91,6 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 		out.write(copy);
 		writeBuffer.clear();
 	}
-	
-
 
 	@Override
 	public InputStream getInputStream() {
@@ -109,14 +109,15 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 	}
 
 	@Override
-	public void processOutClose() throws IOException {
+	public synchronized void processOutClose() throws IOException {
 		fireOnDisconnect();
-		
+
 		if (writeDelaySize > 0)
 			dumpBuffer();
-		
+
 		out.flush();
 		out.close();
+		out = null;
 	}
 
 }

@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	protected char delimiter;
@@ -83,17 +82,6 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 		}
 	}
 	
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public T getNext() throws IOException {

@@ -26,18 +26,17 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class FileHandler extends AbstractFileHandler {
 
-	public static final String FILENAME = "filename";
 	public static final String PRELOAD = "preload";
 	public static final String CREATEDIR = "createdir";
 	public static final String DELAYOPENIN = "delayopenin";
 	public static final String DELAYOPENOUT = "delayopenout";
 	public static final String NAME = "File";
 
-	
 	private boolean createDir = false;
 	private boolean preload = false;
 	private boolean delayOpenIn = false;
@@ -47,87 +46,74 @@ public class FileHandler extends AbstractFileHandler {
 		super();
 	}
 
-	public FileHandler(IProtocolHandler<?> protocolHandler, OptionMap options) 
-	{
+	public FileHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
-		preload = options.getBoolean(PRELOAD, false); 
+		preload = options.getBoolean(PRELOAD, false);
 		createDir = options.getBoolean(CREATEDIR, false);
-		delayOpenIn  = options.getBoolean(DELAYOPENIN, false);
+		delayOpenIn = options.getBoolean(DELAYOPENIN, false);
 		delayOpenOut = options.getBoolean(DELAYOPENOUT, false);
-		
+
 		if (preload && delayOpenIn)
-			throw new IllegalArgumentException("Can't specify preload and delayOpenIn at the same time!");
+			throw new IllegalArgumentException(
+					"Can't specify preload and delayOpenIn at the same time!");
 	}
 
 	@Override
-	public void processInOpen() throws IOException 
-	{
-		try 
-		{
-			if (!preload) 
-			{
+	public void processInOpen() throws IOException {
+		try {
+			if (!preload) {
 				if (!delayOpenIn)
 					in = new FileInputStream(new File(filename));
 				else
-					in = createDelayInputStream(new File(filename));					
-			} 
-			else 
-			{	
+					in = createDelayInputStream(new File(filename));
+			} else {
 				in = createPreloadInputStream();
 			}
-			
-			fireOnConnect();			
-		}
-		catch (Exception e) 
-		{
+
+			fireOnConnect();
+		} catch (Exception e) {
 			fireOnDisconnect();
 			throw e;
-		}			
+		}
 	}
 
-	private InputStream createDelayInputStream(File file) 
-	{
-		return new InputStream() 
-		{
-			private InputStream stream = null;			
-			
-			@Override public int read() throws IOException 
-			{
+	private InputStream createDelayInputStream(File file) {
+		return new InputStream() {
+			private InputStream stream = null;
+
+			@Override
+			public int read() throws IOException {
 				return stream.read();
 			}
 
-			@Override public int read(byte[] bytes, int off, int len) throws IOException 
-			{
-				return stream.read(bytes, off, len);			
+			@Override
+			public int read(byte[] bytes, int off, int len) throws IOException {
+				return stream.read(bytes, off, len);
 			}
 
-			@Override public int available() throws IOException 
-			{
-				try
-				{
+			@Override
+			public int available() throws IOException {
+				try {
 					if (stream == null)
-						stream = new FileInputStream(new File(filename));					
-				}
-				catch (FileNotFoundException e)
-				{
+						stream = new FileInputStream(new File(filename));
+				} catch (FileNotFoundException e) {
 					return 0;
 				}
-				
+
 				return stream.available();
 			}
 
-			@Override public void close() throws IOException 
-			{
+			@Override
+			public void close() throws IOException {
 				super.close();
-				
+
 				if (stream != null)
 					stream.close();
 			}
 		};
 	}
 
-	private InputStream createPreloadInputStream() throws IOException 
-	{
+	private InputStream createPreloadInputStream() throws IOException {
 		FileInputStream fis = new FileInputStream(filename);
 		FileChannel channel = fis.getChannel();
 		long size = channel.size();
@@ -140,7 +126,7 @@ public class FileHandler extends AbstractFileHandler {
 			buffers[i].rewind();
 		}
 		fis.close();
-		
+
 		return new InputStream() {
 			private int current = 0;
 
@@ -184,48 +170,44 @@ public class FileHandler extends AbstractFileHandler {
 		};
 	}
 
-	private OutputStream createOutputStream(File file) throws IOException
-	{
-		if (createDir)
-		{
-			File parentFile = file.getParentFile(); 
+	private OutputStream createOutputStream(File file) throws IOException {
+		if (createDir) {
+			File parentFile = file.getParentFile();
 			if (!parentFile.exists())
 				if (!parentFile.mkdirs())
-					throw new IOException("Could not create directory for " + filename);
+					throw new IOException("Could not create directory for "
+							+ filename);
 		}
 
 		return new FileOutputStream(file, append);
 	}
-	
-	private OutputStream createDelayOutputStream(final File file) 
-	{
-		return new OutputStream() 
-		{
+
+	private OutputStream createDelayOutputStream(final File file) {
+		return new OutputStream() {
 			private OutputStream stream = null;
 
-			@Override public void close() throws IOException 
-			{
+			@Override
+			public void close() throws IOException {
 				super.close();
-				
+
 				if (stream != null)
 					stream.close();
 			}
 
-			@Override public void write(int val) throws IOException 
-			{
+			@Override
+			public void write(int val) throws IOException {
 				if (stream == null)
 					stream = createOutputStream(file);
-				
+
 				stream.write(val);
 			}
 		};
-	}	
-	
+	}
+
 	@Override
-	public void processOutOpen() throws IOException 
-	{
+	public synchronized void processOutOpen() throws IOException {
 		final File file = new File(filename);
-		
+
 		try {
 			if (!delayOpenOut)
 				out = createOutputStream(file);
@@ -235,6 +217,31 @@ public class FileHandler extends AbstractFileHandler {
 		} catch (Exception e) {
 			fireOnDisconnect();
 			throw e;
+		}
+	}
+
+	@Override
+	public void processPunctuation(IPunctuation punctuation) {
+		if (punctuation instanceof NewFilenamePunctuation) {
+			processPunctuation((NewFilenamePunctuation) punctuation);
+		}
+		super.processPunctuation(punctuation);
+	}
+
+	private void processPunctuation(NewFilenamePunctuation punctuation) {
+		if (this.filename != punctuation.getFilename()) {
+			try {
+				synchronized (this) {
+					this.processOutClose();
+					this.filename = punctuation.getFilename();
+					this.processOutOpen();
+				}
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 	}
 
@@ -249,26 +256,26 @@ public class FileHandler extends AbstractFileHandler {
 		return NAME;
 	}
 
-    @Override
-    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
-    	if(!(o instanceof FileHandler)) {
-    		return false;
-    	}
-    	FileHandler other = (FileHandler)o;
-    	if(this.append != other.append) {
-    		return false;
-    	} else if(this.preload != other.preload) {
-    		return false;
-    	} else if(!this.filename.equals(other.filename)) {
-    		return false;
-    	} else if (createDir != other.createDir) {
-    		return false;
-    	} else if (delayOpenIn != other.delayOpenIn) {
-    		return false;
-    	} else if (delayOpenOut != other.delayOpenOut) {
-    		return false;
-    	}
-    	
-    	return true;
-    }
+	@Override
+	public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+		if (!(o instanceof FileHandler)) {
+			return false;
+		}
+		FileHandler other = (FileHandler) o;
+		if (this.append != other.append) {
+			return false;
+		} else if (this.preload != other.preload) {
+			return false;
+		} else if (!this.filename.equals(other.filename)) {
+			return false;
+		} else if (createDir != other.createDir) {
+			return false;
+		} else if (delayOpenIn != other.delayOpenIn) {
+			return false;
+		} else if (delayOpenOut != other.delayOpenOut) {
+			return false;
+		}
+
+		return true;
+	}
 }

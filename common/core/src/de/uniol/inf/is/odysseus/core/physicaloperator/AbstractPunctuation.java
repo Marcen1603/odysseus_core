@@ -58,6 +58,11 @@ abstract public class AbstractPunctuation implements
 	}
 	
 	@Override
+	public String toString() {
+		return this.getClass()+" "+getTime();
+	}
+	
+	@Override
 	abstract public AbstractPunctuation clone();
 
 	@Override

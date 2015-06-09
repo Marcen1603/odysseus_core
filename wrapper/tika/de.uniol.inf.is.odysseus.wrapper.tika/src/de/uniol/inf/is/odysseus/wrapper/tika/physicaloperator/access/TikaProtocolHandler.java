@@ -113,15 +113,6 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
      * {@inheritDoc}
      */
     @Override
-    public void onConnect(final ITransportHandler caller) {
-        // empty function
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
     public KeyValueObject<? extends IMetaAttribute> getNext() throws IOException {
         final String line = super.getNextLine(reader);
 
@@ -191,14 +182,6 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
 
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void onDisonnect(final ITransportHandler caller) {
-        // empty function
-    }
 
     /**
      * 

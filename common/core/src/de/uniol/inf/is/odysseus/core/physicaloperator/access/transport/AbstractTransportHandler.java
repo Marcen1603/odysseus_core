@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -139,6 +140,9 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		delegate.fireOnDisconnect(this);
 	}
 	
-
+	@Override
+	public void processPunctuation(IPunctuation punctuation) {
+		// Default: Nothing to do
+	}
 
 }

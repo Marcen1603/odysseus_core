@@ -56,6 +56,7 @@ import com.google.protobuf.Descriptors.FieldDescriptor;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandlerDelegate;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -333,6 +334,11 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	public boolean isSemanticallyEqual(ITransportHandler other) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	public void processPunctuation(IPunctuation punctuation) {
+		// Nothing to do
 	}
 
 }
