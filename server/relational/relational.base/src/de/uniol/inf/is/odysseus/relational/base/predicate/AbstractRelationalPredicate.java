@@ -143,7 +143,9 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
                     pos = rightSchema.indexOf(curAttribute);
                     if (pos == -1) {
                     	metaPos = rightSchema.indexOfMetaAttribute(curAttribute);
-                        throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + rightSchema);
+                    	if (metaPos == null){
+                    		throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + rightSchema);
+                    	}
                     }
                 }
                 this.fromRightChannel[i] = true;
