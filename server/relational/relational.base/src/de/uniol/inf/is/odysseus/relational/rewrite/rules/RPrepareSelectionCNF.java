@@ -24,8 +24,8 @@ public class RPrepareSelectionCNF extends AbstractRewriteRule<SelectAO> {
 		SDFExpression originalSDFExpression = ((RelationalPredicate) sel
 				.getPredicate()).getExpression();
 		IExpression<?> expressionInCNF = ExpressionOptimizer
-				.toConjunctiveNormalForm(originalSDFExpression
-						.getMEPExpression());
+				.toConjunctiveNormalForm(ExpressionOptimizer.optimize(originalSDFExpression
+						.getMEPExpression()));
 		if(!originalSDFExpression.getMEPExpression().equals(expressionInCNF)) {
 			RelationalPredicate predicate = new RelationalPredicate(new SDFExpression(
 					expressionInCNF, originalSDFExpression.getAttributeResolver(),

@@ -26,10 +26,12 @@ public class ROptimizeJoinPredicate extends AbstractRewriteRule<JoinAO> {
 		IExpression<?> optimizedExpression = ExpressionOptimizer
 				.optimize(originalSDFExpression.getMEPExpression());
 		if(!originalSDFExpression.getMEPExpression().equals(optimizedExpression)) {
-			join.setPredicate(new RelationalPredicate(new SDFExpression(
-					optimizedExpression, originalSDFExpression
-							.getAttributeResolver(), originalSDFExpression
-							.getExpressionParser())));
+			RelationalPredicate predicate = new RelationalPredicate(new SDFExpression(
+					optimizedExpression, originalSDFExpression.getAttributeResolver(),
+					originalSDFExpression.getExpressionParser()));
+			join.setPredicate(predicate);
+			predicate.init(join.getInputSchema(0), join.getInputSchema(1), true);
+			
 			RestructParameterInfoUtil.updatePredicateParameterInfo(
 					join.getParameterInfos(), join.getPredicate());
 			update(join);
