@@ -199,6 +199,10 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 	@Override
 	public M getMetadataInstance() throws InstantiationException,
 			IllegalAccessException {
+		if( this.metadataInitializer == null ) {
+			return null;
+		}
+			
 		return this.metadataInitializer.getMetadataInstance();
 	}
 
