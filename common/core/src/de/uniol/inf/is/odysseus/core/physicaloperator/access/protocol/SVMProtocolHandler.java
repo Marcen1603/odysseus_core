@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
  * Protocol handler for SVM formated data.
