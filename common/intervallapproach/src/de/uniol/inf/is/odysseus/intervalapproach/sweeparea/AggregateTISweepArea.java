@@ -69,7 +69,7 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 	}
 
 	public PointInTime calcMinTs() {
-		if (elements.size() > 0) {
+		if (elements.size() >= 0) {
 			return elements.get(0).getMetadata().getStart();
 		} else {
 			// // DEBUG: REMOVE AGAIN
@@ -103,9 +103,15 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 
 	public void insert(T value) {
 		synchronized (elements) {
-			elements.add(value);
-			// TODO: Maybe, this could be optimized. But mostly the collections are very small ...
-			Collections.sort(elements, comp);
+			int pos = Collections.binarySearch(elements, value, comp);
+			if (pos < 0){
+				elements.add((-(pos) - 1), value);
+			}else{
+				elements.add(pos,value);
+			}			
+//			elements.add(value);
+//			// TODO: Maybe, this could be optimized. But mostly the collections are very small ...
+//			Collections.sort(elements, comp);
 		}
 	}
 
