@@ -62,8 +62,11 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private String standardDeviationAttributeName = "standardDeviation";
 	private String meanAttributeName = "mean";
 
-	// Testing purposes
-	PointInTime lastTuple;
+	// timeSensitive for punctuations (for interval analysis)
+	private T lastDataTuple;
+	private boolean isTimeSensitive;
+	// The last time we send a tuples based on a punctuation
+	private PointInTime lastTimePunctuationBasedTuple;
 
 	public DeviationAnomalyDetectionPO(DeviationAnomalyDetectionAO ao, IGroupProcessor<T, T> groupProcessor) {
 		this.interval = ao.getInterval();
@@ -87,6 +90,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		this.maxRelativeChange = ao.getMaxRelativeChange();
 		this.startToDeliver = false;
 		this.hadLittleChange = false;
+
+		this.isTimeSensitive = ao.isTimeSensitive();
 	}
 
 	@Override
@@ -115,13 +120,13 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 		if (port == DATA_PORT && startToDeliver) {
 			// Process data
-			lastTuple = tuple.getMetadata().getStart();
+			lastDataTuple = tuple;
 			double sensorValue = getValue(tuple);
 			processTuple(gId, sensorValue, tuple, info);
 		} else if (port == DATA_PORT && deliverUnlearnedTuples) {
 			// We don't have an anomaly as we don't know the deviation. But the
 			// user wants to get such tuples, so there it is.
-			transferTuple(tuple, 0.0, getValue(tuple), 0.0);
+			transferTuple(tuple, 0.0, 0.0, getValue(tuple), 0.0);
 		} else if (port == LEARN_PORT) {
 			// Update deviation information
 			int stdDevIndex = getInputSchema(LEARN_PORT).findAttributeIndex(standardDeviationAttributeName);
@@ -213,7 +218,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		if (isAnomaly(sensorValue, standardDeviation, mean)) {
 			// Save the last anomaly
 			this.lastAnomaly = tuple;
-			
+
 			// Maybe here we have an anomaly
 			if (!oncePerWindow || (oncePerWindow && !this.alreadySendThisWindow)) {
 				// If we are in normal mode, send
@@ -226,25 +231,32 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 					// anomaly, we have to check this
 					alreadySendThisWindow = true;
 					double anomalyScore = calcAnomalyScore(sensorValue, mean, standardDeviation, interval);
-					transferTuple(tuple, anomalyScore, mean, standardDeviation);
+					transferTuple(tuple, 0, anomalyScore, mean, standardDeviation);
 				}
 				lastWindowWithAnomaly = true;
 			}
-			
+
 			// At least until now we have anomalies - send a heartbeat
 			Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
 			sendPunctuation(beat);
-			
+
 		} else if (reportEndOfAnomalyWindows && prevLastWindowWithAnomaly && !lastWindowWithAnomaly
 				&& !alreadySendThisWindow) {
+			// Anomal phase is over
 			alreadySendThisWindow = true;
 			double anomalyScore = 0;
-			transferTuple(this.lastAnomaly, anomalyScore, mean, standardDeviation);
+			transferTuple(this.lastAnomaly, 0, anomalyScore, mean, standardDeviation);
 		}
+
+		// At least until now we have anomalies - send a heartbeat
+		Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
+		sendPunctuation(beat);
 	}
 
-	private void transferTuple(Tuple originalTuple, double anomalyScore, double mean, double standardDeviation) {
-		Tuple newTuple = originalTuple.append(anomalyScore).append(mean).append(standardDeviation);
+	private void transferTuple(Tuple originalTuple, double punctuationDuration, double anomalyScore, double mean,
+			double standardDeviation) {
+		Tuple newTuple = originalTuple.append(anomalyScore).append(punctuationDuration).append(mean)
+				.append(standardDeviation);
 		transfer(newTuple);
 	}
 
@@ -312,23 +324,36 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
-		// boolean timePunctuationSensitive = true;
-		// DeviationInformation info = this.deviationInfo.get(0l);
-		//
-		// if (timePunctuationSensitive && info != null) {
-		// PointInTime time = punctuation.getTime().minus(lastTuple);
-		// if (time.getMainPoint() > info.mean) {
-		// // The next tuple takes longer than normal (if we look for
-		// // durations)
-		// if (isAnomaly(time.getMainPoint(), info.standardDeviation,
-		// info.mean)) {
-		// // Here we have an anomaly which did not really occur, cause
-		// // the source stopped sending
-		// // System.out.println("This would be a new anomaly.");
-		// }
-		// }
-		// }
-		// sendPunctuation(punctuation);
+		if (this.isTimeSensitive && port == DATA_PORT) {
+			// TODO All groups
+			DeviationInformation info = this.deviationInfo.get(0l);
+
+			if (this.isTimeSensitive
+					&& info != null
+					&& lastDataTuple != null
+					&& (this.lastTimePunctuationBasedTuple == null || punctuation.getTime()
+							.minus(lastTimePunctuationBasedTuple).compareTo(new PointInTime(info.mean)) > 0)) {
+				PointInTime time = punctuation.getTime().minus(lastDataTuple.getMetadata().getStart());
+				if (time.getMainPoint() > info.mean) {
+					// The next tuple takes longer than normal (if we look for
+					// durations)
+					if (isAnomaly(time.getMainPoint(), info.standardDeviation, info.mean)) {
+						// Here we have an anomaly which did not really occur,
+						// cause the source stopped sending
+						this.lastTimePunctuationBasedTuple = punctuation.getTime();
+
+						Tuple lastTuple = (Tuple) this.lastDataTuple;
+						Tuple tuple = lastTuple.append(time.getMainPoint());
+						tuple.setMetadata("start", punctuation.getTime());
+						double anomalyScore = calcAnomalyScore(time.getMainPoint(), info.mean, info.standardDeviation,
+								interval);
+						transferTuple(tuple, time.getMainPoint(), anomalyScore, info.mean, info.standardDeviation);
+					}
+				}
+			}
+		}
+
+		sendPunctuation(punctuation);
 	}
 
 	@Override

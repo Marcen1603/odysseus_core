@@ -89,7 +89,7 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 		return tuplesToLearn;
 	}
 
-	@Parameter(type = LongParameter.class, name = "tuplesToLearn", optional = true)
+	@Parameter(type = LongParameter.class, name = "tuplesToLearn", optional = true, doc = "The number of tuples that will be used to learn the operator if 'tupleBased' is the choosen trainingMode.")
 	public void setTuplesToLearn(long tuplesToLearn) {
 		this.tuplesToLearn = tuplesToLearn;
 	}

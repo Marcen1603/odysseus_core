@@ -195,7 +195,7 @@ public class CounterNode {
 
 	@Override
 	public String toString() {
-		String result = "(" + count + " | [";
+		String result = "(";
 		boolean first = true;
 		for(Object o : object) {
 			if (!first) {
@@ -204,7 +204,7 @@ public class CounterNode {
 			}
 			result += o.toString();
 		}
-		result += "])";
+		result += " | " + calcRelativeFrequencyToSiblings() + ")";
 		return result;
 	}
 

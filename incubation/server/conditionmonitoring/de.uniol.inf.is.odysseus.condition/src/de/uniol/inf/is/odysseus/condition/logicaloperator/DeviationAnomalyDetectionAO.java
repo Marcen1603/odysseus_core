@@ -35,6 +35,8 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 	private boolean onlyOnChange;
 	private boolean reportEndOfAnomalies;
 	private boolean deliverUnlearnedTuples;
+	
+	private boolean isTimeSensitive;
 
 	public DeviationAnomalyDetectionAO() {
 		this.interval = 3.0;
@@ -43,6 +45,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.deliverUnlearnedTuples = false;
 		this.tuplesToWait = 0;
 		this.maxRelativeChange = 0;
+		this.isTimeSensitive = false;
 	}
 
 	public DeviationAnomalyDetectionAO(DeviationAnomalyDetectionAO ao) {
@@ -58,6 +61,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.deliverUnlearnedTuples = ao.isDeliverUnlearnedTuples();
 		this.tuplesToWait = ao.getTuplesToWait();
 		this.maxRelativeChange = ao.getMaxRelativeChange();
+		this.isTimeSensitive = ao.isTimeSensitive();
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "interval", optional = true, doc = "Defines, how many standard deviations are allowed for a tuple to be different from the mean. 3.0 is the default value. Choose a smaller value to get more anomalies.")
@@ -110,6 +114,11 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.maxRelativeChange = maxRelativeChange;
 	}
 
+	@Parameter(name = "timeSensitive", type = BooleanParameter.class, optional = true, doc = "If you do an interval analysis and want to check if the duration since the last tuple is checked when a punctuation arrives, you can use this option. Assumes, that the attribute which is analysed is the time between two tuples. Default is false.")
+	public void setTimeSensitive(boolean isTimeSensitive) {
+		this.isTimeSensitive = isTimeSensitive;
+	}
+
 	public double getInterval() {
 		return this.interval;
 	}
@@ -149,6 +158,10 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 	public double getMaxRelativeChange() {
 		return maxRelativeChange;
 	}
+	
+	public boolean isTimeSensitive() {
+		return isTimeSensitive;
+	}
 
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
@@ -160,6 +173,10 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 				null);
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		outputAttributes.addAll(inSchema.getAttributes());
+		if (this.isTimeSensitive) {
+			SDFAttribute punctuationDuration = new SDFAttribute(null, "punctuationDuration", SDFDatatype.DOUBLE, null, null, null);
+			outputAttributes.add(punctuationDuration);
+		}
 		outputAttributes.add(anomalyScore);
 		outputAttributes.add(meanValue);
 		outputAttributes.add(standardDeviation);
