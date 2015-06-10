@@ -492,9 +492,13 @@ public class StreamTableEditor implements IStreamEditorType {
 			public void update(ViewerCell cell) {
 				try {
 					Tuple<?> tuple = (Tuple<?>) cell.getElement();
-					Object metadata = tuple.getMetadata().getValue(metaschemaIndex, metaAttributeIndex);
-					if (metadata != null) {
-						cell.setText(metadata.toString());
+					if( tuple.getMetadata() != null ) {
+						Object metadata = tuple.getMetadata().getValue(metaschemaIndex, metaAttributeIndex);
+						if (metadata != null) {
+							cell.setText(metadata.toString());
+						} else {
+							cell.setText("<null>");
+						}
 					} else {
 						cell.setText("<null>");
 					}
