@@ -13,6 +13,7 @@ public class MultithreadedPreParserKeywordProvider implements
 	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = new HashMap<String, Class<? extends IPreParserKeyword>>();
 		keywords.put(MultithreadedPreParserKeyword.KEYWORD, MultithreadedPreParserKeyword.class);
+		keywords.put(MultithreadedOperatorPreParserKeyword.KEYWORD, MultithreadedOperatorPreParserKeyword.class);
 		return keywords;
 	}
 

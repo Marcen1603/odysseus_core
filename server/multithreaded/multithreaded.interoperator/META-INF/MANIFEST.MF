@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.multithreaded.interoperator.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.multithreaded.keyword,
+ de.uniol.inf.is.odysseus.multithreaded.parameter,
  de.uniol.inf.is.odysseus.multithreaded.transform,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator,

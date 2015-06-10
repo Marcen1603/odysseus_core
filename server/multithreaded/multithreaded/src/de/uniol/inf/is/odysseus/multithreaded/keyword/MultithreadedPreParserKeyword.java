@@ -8,15 +8,16 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter.HandlerParameterPair;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.multithreaded.autodetect.PerformanceDetectionHelper;
 import de.uniol.inf.is.odysseus.multithreaded.transform.IParallelizationPreTransformationHandler;
 import de.uniol.inf.is.odysseus.multithreaded.transform.registry.ParallelizationPreTransformationHandlerRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class MultithreadedPreParserKeyword extends AbstractPreParserKeyword {
@@ -64,14 +65,35 @@ public class MultithreadedPreParserKeyword extends AbstractPreParserKeyword {
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 
 		String[] splitted = parameter.trim().split(" ");
-
+		
+		
 		IParallelizationPreTransformationHandler handler = ParallelizationPreTransformationHandlerRegistry
 				.getPreTransformationHandlerByType(splitted[0]);
 		if (handler != null) {
-			PreTransformationHandlerParameter preTransformationHandlerParameter = handler
+			PreTransformationHandlerParameter newHandlerParameter = handler
 					.createHandlerParameter(degreeOfParallelization);
-
-			settings.add(preTransformationHandlerParameter);
+			
+			boolean parameterAlreadyAdded = false;
+			for( IQueryBuildSetting<?> setting : settings ) {
+				if( setting.getClass().equals(PreTransformationHandlerParameter.class)) {
+					PreTransformationHandlerParameter existingHandlerParameter = (PreTransformationHandlerParameter) setting;
+					for (HandlerParameterPair newPair : newHandlerParameter.getPairs()) {
+						for (HandlerParameterPair existingPair : existingHandlerParameter.getPairs()) {
+							if (newPair.name.equalsIgnoreCase(existingPair.name)){
+								LOG.warn("Duplicate definition for multithreaded keyword. Please use this keyword only once. Only first occurrence is considered.");
+								return null;
+							}
+						}
+						existingHandlerParameter.add(newPair.name, newPair.parameters);
+					}
+					parameterAlreadyAdded = true;
+					break;
+				}
+			}
+			
+			if(!parameterAlreadyAdded){
+				settings.add(newHandlerParameter);
+			}
 		} else {
 			throw new OdysseusScriptException();
 		}

@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisi
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.multithreaded.keyword.ParallelizationParameter;
+import de.uniol.inf.is.odysseus.multithreaded.parameter.MultithreadedOperatorParameter;
 import de.uniol.inf.is.odysseus.multithreaded.transform.AbstractParallelizationPreTransformationHandler;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
@@ -66,12 +67,19 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 				}
 			}
 
+			List<String> operatorIds = new ArrayList<String>();
+			MultithreadedOperatorParameter multithreadedOperatorParameter = config
+					.get(MultithreadedOperatorParameter.class);
+			if (multithreadedOperatorParameter != null){
+				operatorIds.addAll(multithreadedOperatorParameter
+						.getOperatorIds());				
+			}
+
 			// Transform Plan
 			// TODO do it more dynamically for different operators and plans,
 			// maybe different rules and so on
 			ILogicalOperator logicalPlan = query.getLogicalPlan();
 			if (logicalPlan instanceof TopAO) {
-				// get last operator of the plan
 				Set<Class<? extends ILogicalOperator>> set = new HashSet<>();
 				set.add(AggregateAO.class);
 				set.add(JoinAO.class);
@@ -82,10 +90,12 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 
 				for (ILogicalOperator operatorForTransformation : collVisitor
 						.getResult()) {
-					if (operatorForTransformation instanceof AggregateAO) {
-						transformAggregateOperator((AggregateAO) operatorForTransformation);
-					} else if (operatorForTransformation instanceof JoinAO) {
-						transformJoinOperator((JoinAO) operatorForTransformation);
+					if (operatorIds.contains(operatorForTransformation.getUniqueIdentifier()) || operatorIds.isEmpty()){
+						if (operatorForTransformation instanceof AggregateAO) {
+							transformAggregateOperator((AggregateAO) operatorForTransformation);
+						} else if (operatorForTransformation instanceof JoinAO) {
+							transformJoinOperator((JoinAO) operatorForTransformation);
+						}						
 					}
 				}
 
@@ -144,18 +154,20 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 				buffer.setThreaded(true);
 				buffer.setMaxBufferSize(10000000);
 
-				AggregateAO newPartialAggregate = aggregateOperator.clone();
-				newPartialAggregate.setName(aggregateOperator.getName() + "_"
+				AggregateAO newAggregateOperator = aggregateOperator.clone();
+				newAggregateOperator.setName(aggregateOperator.getName() + "_"
 						+ i);
+				newAggregateOperator.setUniqueIdentifier(aggregateOperator
+						.getUniqueIdentifier() + "_" + i);
 
 				buffer.subscribeToSource(fragment, 0, i,
 						fragment.getOutputSchema());
 
-				newPartialAggregate.subscribeToSource(buffer, 0, 0,
+				newAggregateOperator.subscribeToSource(buffer, 0, 0,
 						buffer.getOutputSchema());
 
-				union.subscribeToSource(newPartialAggregate, i, 0,
-						newPartialAggregate.getOutputSchema());
+				union.subscribeToSource(newAggregateOperator, i, 0,
+						newAggregateOperator.getOutputSchema());
 			}
 
 			for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
@@ -175,8 +187,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 				.getSubscribedToSource());
 
 		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		downstreamOperatorSubscriptions.addAll(joinOperator
-				.getSubscriptions());
+		downstreamOperatorSubscriptions.addAll(joinOperator.getSubscriptions());
 
 		// remove subscriptions
 		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
@@ -190,6 +201,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 			target.unsubscribeFromSource(downstreamOperatorSubscription);
 		}
 
+		// TODO Prädikate können auch anders aufgebaut sein
 		List<SDFAttribute> attributes = joinOperator.getPredicate()
 				.getAttributes();
 		int numberOfFragments = 0;
@@ -236,8 +248,10 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 
 		int bufferCounter = 0;
 		for (int i = 0; i < degreeOfParallelization; i++) {
-			JoinAO newJoin = joinOperator.clone();
-			newJoin.setName(joinOperator.getName() + "_" + i);
+			JoinAO newJoinOperator = joinOperator.clone();
+			newJoinOperator.setName(joinOperator.getName() + "_" + i);
+			newJoinOperator.setUniqueIdentifier(joinOperator.getUniqueIdentifier()
+					+ "_" + i);
 
 			for (Pair<HashFragmentAO, Integer> pair : fragmentsSinkInPorts) {
 				BufferAO buffer = new BufferAO();
@@ -249,11 +263,11 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 				buffer.subscribeToSource(pair.getE1(), 0, i, pair.getE1()
 						.getOutputSchema());
 
-				newJoin.subscribeToSource(buffer, pair.getE2(), 0,
+				newJoinOperator.subscribeToSource(buffer, pair.getE2(), 0,
 						buffer.getOutputSchema());
 
-				union.subscribeToSource(newJoin, i, 0,
-						newJoin.getOutputSchema());
+				union.subscribeToSource(newJoinOperator, i, 0,
+						newJoinOperator.getOutputSchema());
 			}
 		}
 
