@@ -22,6 +22,10 @@ public class MetadataInitializerAdapter<M extends IMetaAttribute, T extends IStr
 	@Override
 	public M getMetadataInstance() throws InstantiationException,
 			IllegalAccessException {
+		if( type == null ) {
+			return null;
+		}
+		
 		return (M) type.getClass().newInstance();
 	}
 
