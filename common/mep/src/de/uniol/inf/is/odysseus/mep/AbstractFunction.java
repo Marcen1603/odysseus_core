@@ -62,8 +62,13 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		this(symbol, arity, acceptedTypes, returnType,
 				optimizeConstantParameter, 9, 9);
 	}
+	
 
-	private AbstractFunction(String symbol, int arity,
+    public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType, int timeComplexity, int spaceComplexity) {
+        this(symbol, arity, acceptedTypes, returnType, true, timeComplexity, spaceComplexity);
+    }
+    
+	public AbstractFunction(String symbol, int arity,
 			SDFDatatype[][] acceptedTypes, 
 			SDFDatatype returnType, boolean optimizeConstantParameter,
 			int timeComplexity, int spaceComplexity) {
