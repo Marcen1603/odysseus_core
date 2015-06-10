@@ -11,7 +11,9 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.multithreaded.transform,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator,
- org.osgi.framework;version="1.3.0"
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
-Service-Component: OSGI-INF/InterOperatorParallelizationPreTransformationHandler.xml
+Service-Component: OSGI-INF/InterOperatorParallelizationPreTransformationHandler.xml,OSGI-INF/JoinMultithreadedTransformationStrategy.xml, OSGI-INF/MultithreadedTransformationStrategyRegistry.xml,OSGI-INF/AggregateMultithreadedTransformationStrategy.xml,
+ OSGI-INF/GroupedAggregateMultithreadedTransformationStrategy.xml
