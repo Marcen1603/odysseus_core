@@ -45,6 +45,7 @@ public class MainFrame extends JFrame
 	private JMenuBar menuBar;
 	
 	private JFileChooser sceneFileChooser;
+	private JFileChooser sceneDirectoryChooser;
 	
 	/**
 	 * Create the frame.
@@ -73,6 +74,10 @@ public class MainFrame extends JFrame
 					return file.isDirectory() || FilenameUtils.getExtension(file.getName()).equals("xml");
 				}
 			});		
+		
+		sceneDirectoryChooser = new JFileChooser();
+		sceneDirectoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		sceneDirectoryChooser.setAcceptAllFileFilterUsed(false);		
 		
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -104,6 +109,11 @@ public class MainFrame extends JFrame
 		startPlaybackSessionMenu.add(playbackSessionFromSceneMenu);
 		
 		JMenuItem playbackSessionFromDirectoryMenu = new JMenuItem("From directory...");
+		playbackSessionFromDirectoryMenu.addActionListener(
+			new ActionListener() 
+			{
+				public void actionPerformed(ActionEvent arg0) { startPlaybackFromDirectoryItemClick(); }
+			});
 		startPlaybackSessionMenu.add(playbackSessionFromDirectoryMenu);
 		playbackSessionFromSceneMenu.addActionListener(	new ActionListener() 
 											{
@@ -209,6 +219,25 @@ public class MainFrame extends JFrame
 											 {
 												 public void actionPerformed(ActionEvent arg0) { getCurrentSession().startLiveViewBtnClick(); }
 											 });
+	}
+
+	protected void startPlaybackFromDirectoryItemClick() 
+	{
+		try 
+		{
+			if (sceneDirectoryChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+			{
+				System.out.println(sceneDirectoryChooser.getCurrentDirectory());
+				System.out.println(sceneDirectoryChooser.getSelectedFile().getAbsolutePath());
+				
+				PlaybackScene scene = (PlaybackScene) PlaybackScene.fromDirectory(sceneDirectoryChooser.getSelectedFile().getAbsolutePath(), "New Scene");
+				
+				PlaybackSession playbackSession = new PlaybackSession(scene);
+				Application.getMainFrame().addSession(playbackSession);
+			}
+		} catch (IOException e) {
+			Application.showException(e);
+		}		
 	}
 
 	protected void toggleFullScreen() 

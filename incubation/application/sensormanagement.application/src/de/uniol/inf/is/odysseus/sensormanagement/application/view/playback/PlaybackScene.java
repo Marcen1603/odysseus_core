@@ -66,6 +66,9 @@ public class PlaybackScene extends Scene
 
 	public static PlaybackScene fromDirectory(String path, String sceneName)
 	{
+		if (!path.endsWith(File.separator))
+			path += File.separator;
+		
 		File dir = new File(path);
 		File[] directoryListing = dir.listFiles();
 		if (directoryListing == null) return null; 
