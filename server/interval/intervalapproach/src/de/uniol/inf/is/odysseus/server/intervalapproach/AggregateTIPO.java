@@ -281,7 +281,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		}
 
 		IGroupProcessor<R, W> g = getGroupProcessor();
-//		synchronized (g) {
+		synchronized (g) {
 			// Determine group ID from input object
 			Long groupID = g.getGroupID(object);
 
@@ -308,7 +308,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				System.err.println(sa);
 			}
 			createOutput(results, groupID, object.getMetadata().getStart());
-//		}
+		}
 	}
 
 	private void createOutput(
@@ -333,7 +333,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 		PointInTime border = timestamp;
 		IGroupProcessor<R, W> g = getGroupProcessor();
-//		synchronized (g) {
+		synchronized (g) {
 			// Keep group order in output --> so first create output of group 1,
 			// then group etc.
 			// for group groupID use the existings results derived from updating
@@ -382,7 +382,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				System.err.println("CREATE OUTPUT " + border);
 				transferArea.dump();
 			}
-//		}
+		}
 
 	}
 
