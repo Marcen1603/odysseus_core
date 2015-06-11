@@ -241,10 +241,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="de.uniol.inf.is.odysseus.client.starter.OdysseusStudioApplication"
-            name="Odysseus Client Platform">
+            name="Odysseus Studio 2">
          <property
                name="appName"
-               value="Odysseus Client Platform">
+               value="Odysseus Studio 2">
          </property>
          <property
                name="preferenceCustomization"
