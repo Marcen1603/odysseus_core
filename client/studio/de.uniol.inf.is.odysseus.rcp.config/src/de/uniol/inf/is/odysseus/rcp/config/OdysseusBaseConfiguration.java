@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.config;
+package de.uniol.inf.is.odysseus.rcp.config;
 
 import java.io.File;
 
@@ -6,12 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Basis configuration things (attention a clone of this file is placed
- * under de.uniol.inf.is.odysseus.rcp.config, so any change need to be 
- * done there two!)
- * 
- * @author Marco Grawunder
- *
+ * To remove dependencies: This class is copied from the core bundle!
+ * Do not modify here.
  */
 public class OdysseusBaseConfiguration {
 	

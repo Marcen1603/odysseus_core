@@ -15,8 +15,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
-
 
 public final class OdysseusRCPConfiguration {
 
