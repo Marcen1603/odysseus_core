@@ -21,14 +21,24 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 
 	@Override
 	public int evaluateCompatibility(ILogicalOperator operator) {
-		// TODO Auto-generated method stub
+		if (operator instanceof AggregateAO) {
+			AggregateAO aggregateOperator = (AggregateAO) operator;
+			if (!aggregateOperator.getGroupingAttributes().isEmpty()) {
+				// only if the given operator has a grouping, this strategy
+				// works
+				return 100;
+			}
+		}
+		// if operator is no aggregation or has no grouping, this strategy is
+		// incompatible
 		return 0;
 	}
 
 	@Override
-	public boolean transform(ILogicalOperator operator, int degreeOfParallelization) {
+	public boolean transform(ILogicalOperator operator,
+			int degreeOfParallelization) {
 		AggregateAO aggregateOperator = (AggregateAO) operator;
-		
+
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 		upstreamOperatorSubscriptions.addAll(aggregateOperator
 				.getSubscribedToSource());

@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.multithreaded.interoperator.transform;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -87,9 +89,30 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 						if (operatorIds.contains(operatorForTransformation
 								.getUniqueIdentifier())
 								|| operatorIds.isEmpty()) {
-							List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = MultithreadedTransformationStrategyRegistry.getStrategiesForOperator(operatorForTransformation.getClass());
-							if (!strategiesForOperator.isEmpty()){
-								strategiesForOperator.get(0).transform(operatorForTransformation, degreeOfParallelization);
+							List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = MultithreadedTransformationStrategyRegistry
+									.getStrategiesForOperator(operatorForTransformation
+											.getClass());
+							if (!strategiesForOperator.isEmpty()) {
+								// evaluate compatibility of the different
+								// strategies
+								List<FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>>> strategiesWithCompatibility = new ArrayList<FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>>>();
+								for (IMultithreadedTransformationStrategy<? extends ILogicalOperator> strategy : strategiesForOperator) {
+									FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategyWithCompatibility = new FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>>(
+											strategy.evaluateCompatibility(operatorForTransformation),
+											strategy);
+									strategiesWithCompatibility
+											.add(strategyWithCompatibility);
+								}
+								Collections.sort(strategiesWithCompatibility,
+										Collections.reverseOrder());
+								if (strategiesWithCompatibility.get(0).getE1() > 0) {
+									strategiesWithCompatibility
+											.get(0)
+											.getE2()
+											.transform(
+													operatorForTransformation,
+													degreeOfParallelization);
+								}
 							}
 						}
 					}

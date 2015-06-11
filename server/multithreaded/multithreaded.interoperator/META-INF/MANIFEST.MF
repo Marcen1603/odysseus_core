@@ -6,6 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.multithreaded.interoperator.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.mep.functions.bool,
+ de.uniol.inf.is.odysseus.mep.functions.compare,
+ de.uniol.inf.is.odysseus.multithreaded.helper,
  de.uniol.inf.is.odysseus.multithreaded.keyword,
  de.uniol.inf.is.odysseus.multithreaded.parameter,
  de.uniol.inf.is.odysseus.multithreaded.transform,
