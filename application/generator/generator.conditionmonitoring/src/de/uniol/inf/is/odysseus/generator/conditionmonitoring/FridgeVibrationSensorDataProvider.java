@@ -36,7 +36,7 @@ public class FridgeVibrationSensorDataProvider extends AbstractDataGenerator {
 		Thread.sleep(sleepTime);
 		
 		motorOnTuples = 60 + (int) (Math.random() * 20);
-		motorOffTuples = 200 + (int) (Math.random() * 10);
+		motorOffTuples = 250 + (int) (Math.random() * 10);
 
 		double value = 0;
 

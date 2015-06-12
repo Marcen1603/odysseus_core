@@ -37,13 +37,10 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private Map<Long, List<T>> tupleMap;
 	private boolean exactCalculation;
 
-	private boolean oncePerWindow;
-	private boolean alreadySendThisWindow;
-
-	private boolean onlyOnChange;
-	private boolean lastWindowWithAnomaly;
-	private boolean prevLastWindowWithAnomaly;
-	private boolean foundAnomaly;
+	private boolean windowChecking;
+	private Map<Long, Boolean> lastWindowWithAnomaly;
+	private boolean onlyOnStart;
+	private Map<Long, Boolean> sendEnd;
 
 	// For groups that did not occur before
 	private boolean deliverUnlearnedTuples;
@@ -51,20 +48,21 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	// Parameters to avoid early false-positives
 	private int tuplesToWait;
 	private double maxRelativeChange;
-	private boolean startToDeliver;
-	private boolean hadLittleChange;
+	private Map<Long, Boolean> startToDeliver;
+	private Map<Long, Boolean> hadLittleChange;
 
 	// If true, sends a tuple with anomaly score = 0, if the last window had an
 	// anomaly, but this one didn't
 	private boolean reportEndOfAnomalyWindows;
-	private T lastAnomaly;
+	private Map<Long, T> lastAnomalies;
 
 	private String standardDeviationAttributeName = "standardDeviation";
 	private String meanAttributeName = "mean";
 
 	// timeSensitive for punctuations (for interval analysis)
-	private T lastDataTuple;
+	private Map<Long, T> lastDataTuples;
 	private boolean isTimeSensitive;
+	
 	// The last time we send a tuples based on a punctuation
 	private PointInTime lastTimePunctuationBasedTuple;
 
@@ -74,24 +72,25 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		this.valueAttributeName = ao.getNameOfValue();
 		this.deviationInfo = new HashMap<Long, DeviationInformation>();
 
-		this.oncePerWindow = ao.isWindowChecking();
-		this.alreadySendThisWindow = false;
+		this.windowChecking = ao.isWindowChecking();
 		this.tupleMap = new HashMap<Long, List<T>>();
 
-		this.onlyOnChange = ao.isOnlyOnChange();
-		this.lastWindowWithAnomaly = false;
-		this.prevLastWindowWithAnomaly = false;
-		this.foundAnomaly = false;
+		this.lastWindowWithAnomaly = new HashMap<Long, Boolean>();
 
 		this.reportEndOfAnomalyWindows = ao.isReportEndOfAnomalyWindows();
+		this.lastAnomalies = new HashMap<Long, T>();
 		this.deliverUnlearnedTuples = ao.isDeliverUnlearnedTuples();
 
 		this.tuplesToWait = ao.getTuplesToWait();
 		this.maxRelativeChange = ao.getMaxRelativeChange();
-		this.startToDeliver = false;
-		this.hadLittleChange = false;
+		this.startToDeliver = new HashMap<Long, Boolean>();
+		this.hadLittleChange = new HashMap<Long, Boolean>();
 
 		this.isTimeSensitive = ao.isTimeSensitive();
+		this.lastDataTuples = new HashMap<Long, T>();
+
+		this.onlyOnStart = ao.isOnlyOnChange();
+		this.sendEnd = new HashMap<Long, Boolean>();
 	}
 
 	@Override
@@ -106,21 +105,26 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		// different contexts)
 		Long gId = groupProcessor.getGroupID(tuple);
 		DeviationInformation info = this.deviationInfo.get(gId);
-
+		
 		if (info == null) {
+			// First occurrence of this group
 			info = new DeviationInformation();
 			this.deviationInfo.put(gId, info);
+			this.sendEnd.put(gId, true);
+			this.startToDeliver.put(gId, false);
+			this.hadLittleChange.put(gId, false);
+			this.lastWindowWithAnomaly.put(gId, false);
 		}
 
-		if (!(this.maxRelativeChange > 0) || (this.maxRelativeChange > 0 && hadLittleChange)) {
+		if (!(this.maxRelativeChange > 0) || (this.maxRelativeChange > 0 && hadLittleChange.get(gId))) {
 			if (info.counter > this.tuplesToWait) {
-				this.startToDeliver = true;
+				this.startToDeliver.put(gId, true);
 			}
 		}
 
-		if (port == DATA_PORT && startToDeliver) {
+		if (port == DATA_PORT && startToDeliver.get(gId)) {
 			// Process data
-			lastDataTuple = tuple;
+			lastDataTuples.put(gId, tuple);
 			double sensorValue = getValue(tuple);
 			processTuple(gId, sensorValue, tuple, info);
 		} else if (port == DATA_PORT && deliverUnlearnedTuples) {
@@ -141,7 +145,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			double newMean = info.mean;
 			if (this.maxRelativeChange > 0 && oldMean != 0
 					&& (Math.abs(oldMean - newMean) / oldMean) < this.maxRelativeChange) {
-				this.hadLittleChange = true;
+				this.hadLittleChange.put(gId, true);
 			}
 
 			// Count, how many updates this information got
@@ -158,24 +162,52 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * @param start
 	 *            Start timestamp from the newest tuple
 	 */
-	private void removeOldValues(List<T> tuples, PointInTime start, DeviationInformation info, boolean exactCalculation) {
-		boolean removedSomething = false;
+	private void removeOldValues(List<T> tuples, PointInTime start, DeviationInformation info, boolean exactCalculation, Long gId) {
+		boolean skippedSomething = false;
+		boolean needToSendEndOfAnomalies = this.lastWindowWithAnomaly.get(gId);
+		
+		T lastAnomaly = lastAnomalies.get(gId);
+		
 		Iterator<T> iter = tuples.iterator();
 		while (iter.hasNext()) {
 			T next = iter.next();
 			if (next.getMetadata().getEnd().beforeOrEquals(start)) {
-				iter.remove();
-				removedSomething = true;
+				if (lastAnomaly != null
+						&& next.getMetadata().getStart().before(lastAnomaly.getMetadata().getStart())) {
+					// These are the tuples which were in the same window before
+					// the first anomaly occurred
+					iter.remove();
+				} else if (this.windowChecking && this.lastWindowWithAnomaly.get(gId)
+						&& next.getMetadata().getStart().beforeOrEquals(lastAnomaly.getMetadata().getEnd())) {
+					// This tuple belongs to a window which had an anomaly. But
+					// only send this further, if the next window has an
+					// anomaly, too. Hence, do not delete them now.
+					skippedSomething = true;
+				} else {
+					this.lastWindowWithAnomaly.put(gId, false);
+					if (skippedSomething) {
+						// We have to start from the beginning cause the
+						// condition for the first if statement changed
+						iter = tuples.iterator();
+						skippedSomething = false;
+						continue;
+					} else if (needToSendEndOfAnomalies) {
+						// This is the first tuple which was no anomaly and
+						// there won't be anomalies in the next window, hence we
+						// have to report the end of the anomalies
+						needToSendEndOfAnomalies = false;
+						this.sendEnd.put(gId, true);
+						if (this.reportEndOfAnomalyWindows) {
+							transferTuple(next, 0.0, 0.0, info.mean, info.standardDeviation);
+						}
+					}
+					// If we will remove the tuple from the window, we can send
+					// a heartbeat, that we are at least at this timestamp
+					Heartbeat beat = Heartbeat.createNewHeartbeat(next.getMetadata().getStart());
+					sendPunctuation(beat);
+					iter.remove();
+				}
 			}
-		}
-		if (removedSomething) {
-			if (this.oncePerWindow && this.alreadySendThisWindow) {
-				// We delete something, the last tumbling window is history
-				this.alreadySendThisWindow = false;
-			}
-			prevLastWindowWithAnomaly = lastWindowWithAnomaly;
-			lastWindowWithAnomaly = foundAnomaly;
-			foundAnomaly = false;
 		}
 	}
 
@@ -202,64 +234,114 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		double mean = info.mean;
 		double standardDeviation = info.standardDeviation;
 
-		if (this.oncePerWindow) {
-			// OK, we have a window (for checking, not for training)
-			// This window should be a tumbling one (that would be good, not
-			// necessary) e.g. 1 minute
-			List<T> tuples = tupleMap.get(gId);
+		List<T> tuples = null;
+		if (this.windowChecking) {
+			tuples = tupleMap.get(gId);
 			if (tuples == null) {
 				tuples = new ArrayList<T>();
 				tupleMap.put(gId, tuples);
 			}
-			tuples.add(tuple);
-			removeOldValues(tuples, tuple.getMetadata().getStart(), info, exactCalculation);
+			removeOldValues(tuples, tuple.getMetadata().getStart(), info, exactCalculation, gId);
 		}
 
 		if (isAnomaly(sensorValue, standardDeviation, mean)) {
-			// Save the last anomaly
-			this.lastAnomaly = tuple;
 
-			// Maybe here we have an anomaly
-			if (!oncePerWindow || (oncePerWindow && !this.alreadySendThisWindow)) {
-				// If we are in normal mode, send
-				// If not (oncePerWindow) only send if we did not already send
-				// this window
-				foundAnomaly = true;
-
-				if (!onlyOnChange || (onlyOnChange && !lastWindowWithAnomaly)) {
-					// If we only want to send if the last window had no
-					// anomaly, we have to check this
-					alreadySendThisWindow = true;
-					double anomalyScore = calcAnomalyScore(sensorValue, mean, standardDeviation, interval);
-					transferTuple(tuple, 0, anomalyScore, mean, standardDeviation);
+			if (this.windowChecking) {
+				if (this.lastWindowWithAnomaly.get(gId)) {
+					// Do not send the first tuples, only if they are in the
+					// middle
+					sendWindow(tuples, info);
 				}
-				lastWindowWithAnomaly = true;
+				this.lastWindowWithAnomaly.put(gId, true);
+				this.lastAnomalies.put(gId, tuple);
 			}
 
-			// At least until now we have anomalies - send a heartbeat
+			double anomalyScore = calcAnomalyScore(sensorValue, mean, standardDeviation, interval);
+			sendAnomaly(tuple, 0.0, anomalyScore, mean, standardDeviation);
+		} else if (this.windowChecking) {
+			// OK, we have a window (for checking, not for training)
+			// This window should be a tumbling one (that would be good, not
+			// necessary) e.g. 1 minute
+			tuples.add(tuple);
+		} else {
+			// If we don't save tuples in a window, we can send the current
+			// timestamp
 			Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
 			sendPunctuation(beat);
-
-		} else if (reportEndOfAnomalyWindows && prevLastWindowWithAnomaly && !lastWindowWithAnomaly
-				&& !alreadySendThisWindow) {
-			// Anomal phase is over
-			alreadySendThisWindow = true;
-			double anomalyScore = 0;
-			transferTuple(this.lastAnomaly, 0, anomalyScore, mean, standardDeviation);
 		}
 
-		// At least until now we have anomalies - send a heartbeat
-		Heartbeat beat = Heartbeat.createNewHeartbeat(tuple.getMetadata().getStart());
-		sendPunctuation(beat);
 	}
 
+	private void sendAnomaly(T tuple, double punctuationDuration, double anomalyScore, double mean,
+			double standardDeviation) {
+		Long gId = this.groupProcessor.getGroupID(tuple);
+		if (!this.onlyOnStart || (this.onlyOnStart && this.sendEnd.get(gId))) {
+			this.sendEnd.put(gId, false);
+			transferTuple(tuple, punctuationDuration, anomalyScore, mean, standardDeviation);
+		}
+	}
+
+	private void sendWindow(List<T> tuples, DeviationInformation info) {
+		Iterator<T> iter = tuples.iterator();
+		while (iter.hasNext()) {
+			T next = iter.next();
+			Long gId = this.groupProcessor.getGroupID(next);
+			T lastAnomaly = this.lastAnomalies.get(gId);
+			if (lastAnomaly != null
+					&& next.getMetadata().getStart().before(lastAnomaly.getMetadata().getStart())) {
+				iter.remove();
+				continue;
+			}
+			double sensorValue = getValue(next);
+			double anomalyScore = calcAnomalyScore(sensorValue, info.mean, info.standardDeviation, interval);
+			// We need to avoid tuples with zero anomalyScore cause that would
+			// mean that this is the end of the anomalies
+			if (anomalyScore == 0.0) {
+				anomalyScore += Double.MIN_VALUE;
+			}
+			sendAnomaly(next, 0.0, anomalyScore, info.mean, info.standardDeviation);
+			iter.remove();
+		}
+	}
+
+	/**
+	 * Transfers a tuple to the next operator and appends the given information
+	 * 
+	 * @param originalTuple
+	 *            The tuple which needs to be enriched
+	 * @param punctuationDuration
+	 *            Necessary if "isTimeSensitive" is active. If not, you can put
+	 *            anything in here, it won't be used.
+	 * @param anomalyScore
+	 *            Enrich the tuple with this anomaly score
+	 * @param mean
+	 *            Enrich the tuple with this mean
+	 * @param standardDeviation
+	 *            Enrich the tuple with this standard deviation
+	 */
 	private void transferTuple(Tuple originalTuple, double punctuationDuration, double anomalyScore, double mean,
 			double standardDeviation) {
-		Tuple newTuple = originalTuple.append(anomalyScore).append(punctuationDuration).append(mean)
-				.append(standardDeviation);
+		Tuple newTuple = null;
+		if (this.isTimeSensitive) {
+			newTuple = originalTuple.append(punctuationDuration).append(anomalyScore).append(mean)
+					.append(standardDeviation);
+		} else {
+			newTuple = originalTuple.append(anomalyScore).append(mean).append(standardDeviation);
+		}
 		transfer(newTuple);
 	}
 
+	/**
+	 * Checks, if the given value is an anomaly with the interval set by the ao
+	 * 
+	 * @param sensorValue
+	 *            The value which we won't to know about if it's an anomaly
+	 * @param standardDeviation
+	 *            The standard deviation if the distribution
+	 * @param mean
+	 *            The mean of the distribution
+	 * @return True, if it's an anomaly, false, if not
+	 */
 	private boolean isAnomaly(double sensorValue, double standardDeviation, double mean) {
 		if (sensorValue < mean - (interval * standardDeviation) || sensorValue > mean + (interval * standardDeviation)) {
 			return true;
@@ -321,33 +403,35 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		return 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
 		if (this.isTimeSensitive && port == DATA_PORT) {
-			// TODO All groups
-			DeviationInformation info = this.deviationInfo.get(0l);
+			for (Long groupId : deviationInfo.keySet()) {
+				DeviationInformation info = this.deviationInfo.get(groupId);
+				T lastDataTuple = this.lastDataTuples.get(groupId);
+				if (this.isTimeSensitive
+						&& info != null
+						&& lastDataTuple != null
+						&& (this.lastTimePunctuationBasedTuple == null || punctuation.getTime()
+								.minus(lastTimePunctuationBasedTuple).compareTo(new PointInTime(info.mean)) > 0)) {
+					PointInTime time = punctuation.getTime().minus(lastDataTuple.getMetadata().getStart());
+					if (time.getMainPoint() > info.mean) {
+						// The next tuple takes longer than normal (if we look
+						// for durations)
+						if (isAnomaly(time.getMainPoint(), info.standardDeviation, info.mean)) {
+							// Here we have an anomaly which did not really
+							// occur, cause the source stopped sending
+							this.lastTimePunctuationBasedTuple = punctuation.getTime();
 
-			if (this.isTimeSensitive
-					&& info != null
-					&& lastDataTuple != null
-					&& (this.lastTimePunctuationBasedTuple == null || punctuation.getTime()
-							.minus(lastTimePunctuationBasedTuple).compareTo(new PointInTime(info.mean)) > 0)) {
-				PointInTime time = punctuation.getTime().minus(lastDataTuple.getMetadata().getStart());
-				if (time.getMainPoint() > info.mean) {
-					// The next tuple takes longer than normal (if we look for
-					// durations)
-					if (isAnomaly(time.getMainPoint(), info.standardDeviation, info.mean)) {
-						// Here we have an anomaly which did not really occur,
-						// cause the source stopped sending
-						this.lastTimePunctuationBasedTuple = punctuation.getTime();
-
-						Tuple lastTuple = (Tuple) this.lastDataTuple;
-						Tuple tuple = lastTuple.append(time.getMainPoint());
-						tuple.setMetadata("start", punctuation.getTime());
-						double anomalyScore = calcAnomalyScore(time.getMainPoint(), info.mean, info.standardDeviation,
-								interval);
-						transferTuple(tuple, time.getMainPoint(), anomalyScore, info.mean, info.standardDeviation);
+							Tuple lastTuple = (Tuple) lastDataTuple;
+							Tuple tuple = new Tuple(lastTuple);
+							tuple.setMetadata("start", punctuation.getTime());
+							double anomalyScore = calcAnomalyScore(time.getMainPoint(), info.mean,
+									info.standardDeviation, interval);
+							transferTuple(tuple, time.getMainPoint(), anomalyScore, info.mean, info.standardDeviation);
+						}
 					}
 				}
 			}

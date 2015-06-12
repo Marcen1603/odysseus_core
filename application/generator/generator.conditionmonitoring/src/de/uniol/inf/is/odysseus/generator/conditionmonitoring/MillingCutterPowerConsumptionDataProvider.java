@@ -27,17 +27,16 @@ public class MillingCutterPowerConsumptionDataProvider extends AbstractDataGener
 	private int phase;
 	private int[] phases;
 
-	private int standbyMinLength = 100;
-	private int standbyMaxLength = 500;
-
+	private int standbyMinLength = 50;
+	private int standbyMaxLength = 100;
 	// Counts, how many pieces the milling cutter produced
 	private int productionCouter;
 
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
-		Thread.sleep(10);
+		Thread.sleep(50);
 		double value = 0;
-		if (counter > phases[phase]) {
+		if (counter >= phases[phase]) {
 			phase = (phase + 1) % phases.length;
 			counter = 0;
 
@@ -84,6 +83,10 @@ public class MillingCutterPowerConsumptionDataProvider extends AbstractDataGener
 				productionCouter++;
 			}
 		}
+	
+		if (phase == 2 && counter >= 12 && counter <= 15) {
+			value = 20;
+		}
 
 		counter++;
 
@@ -104,11 +107,11 @@ public class MillingCutterPowerConsumptionDataProvider extends AbstractDataGener
 	protected void process_init() {
 		phases = new int[4];
 		// Cutter is off
-		phases[0] = 200;
+		phases[0] = 70;
 		// Cutter is on
-		phases[1] = 60;
-		phases[2] = 70;
-		phases[3] = 30;
+		phases[1] = 25;
+		phases[2] = 25;
+		phases[3] = 25;
 
 		// Low standby consumption
 		standbyGenerator = new ConstantValueGenerator(new RandomErrorModel(new JitterNoise(1.0)), standbyConsumption);

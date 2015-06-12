@@ -32,7 +32,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 	private double maxRelativeChange;
 	
 	private boolean windowChecking;
-	private boolean onlyOnChange;
+	private boolean onlyFirstAnomaly;
 	private boolean reportEndOfAnomalies;
 	private boolean deliverUnlearnedTuples;
 	
@@ -41,6 +41,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 	public DeviationAnomalyDetectionAO() {
 		this.interval = 3.0;
 		this.nameOfValue = "value";
+		this.windowChecking = false;
 		this.reportEndOfAnomalies = false;
 		this.deliverUnlearnedTuples = false;
 		this.tuplesToWait = 0;
@@ -56,7 +57,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		}
 		this.fastGrouping = ao.isFastGrouping();
 		this.windowChecking = ao.isWindowChecking();
-		this.onlyOnChange = ao.isOnlyOnChange();
+		this.onlyFirstAnomaly = ao.isOnlyOnChange();
 		this.reportEndOfAnomalies = ao.isReportEndOfAnomalyWindows();
 		this.deliverUnlearnedTuples = ao.isDeliverUnlearnedTuples();
 		this.tuplesToWait = ao.getTuplesToWait();
@@ -84,17 +85,17 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.fastGrouping = fastGrouping;
 	}
 
-	@Parameter(name = "windowChecking", type = BooleanParameter.class, optional = true, doc = "If true, it's checked if the last (tumbling) window had an anomaly. Only sends anomaly-tuple once per window.")
+	@Parameter(name = "windowChecking", type = BooleanParameter.class, optional = true, doc = "If true, it's checked if the last (tumbling) window had an anomaly. If two following windows have at least one anomaly per window, all non-anomaly tuples between the two anomalies will be send, too. AnomalyScore for the non-anomaly tuples between the anomalies is Double.MINVALUE.")
 	public void setWindowChecking(boolean windowChecking) {
 		this.windowChecking = windowChecking;
 	}
 
-	@Parameter(name = "onlyOnChange", type = BooleanParameter.class, optional = true, doc = "If you use windowChecking and set this option true, then an anomaly tuple is only send, if the last window had no anomaly.")
+	@Parameter(name = "onlyFirstAnomaly", type = BooleanParameter.class, optional = true, doc = "If you use windowChecking and set this option true, then an anomaly tuple is only send, if the last window had no anomaly. You get exalctly one tuple at the beginning of an anomal phase.")
 	public void setOnlyOnChange(boolean onlyOnChange) {
-		this.onlyOnChange = onlyOnChange;
+		this.onlyFirstAnomaly = onlyOnChange;
 	}
 
-	@Parameter(name = "reportEndOfAnomalies", type = BooleanParameter.class, optional = true, doc = "If you use windowChecking and set this option true, then a tuple with anomaly score = 0 is send, if the last window had an anomyly, but the current has not.")
+	@Parameter(name = "reportEndOfAnomalies", type = BooleanParameter.class, optional = true, doc = "If you use windowChecking and set this option true, then a tuple with anomaly score = 0 is send, if the last window had an anomaly, but the current has not.")
 	public void setReportEndOfAnomalyWindows(boolean reportEndOfAnomalyWindows) {
 		this.reportEndOfAnomalies = reportEndOfAnomalyWindows;
 	}
@@ -114,7 +115,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.maxRelativeChange = maxRelativeChange;
 	}
 
-	@Parameter(name = "timeSensitive", type = BooleanParameter.class, optional = true, doc = "If you do an interval analysis and want to check if the duration since the last tuple is checked when a punctuation arrives, you can use this option. Assumes, that the attribute which is analysed is the time between two tuples. Default is false.")
+	@Parameter(name = "timeSensitive", type = BooleanParameter.class, optional = true, doc = "If you do an interval analysis and want to check if the duration since the last tuple when a punctuation arrives, you can use this option. Assumes, that the attribute which is analysed is the time between two tuples. Only sends a tuple, if the time between the last sent anomaly-tuple based on punctuations and the next anomaly-tuple based on punctuations is an anomaly itself. Does the check for all groups. Default is false.")
 	public void setTimeSensitive(boolean isTimeSensitive) {
 		this.isTimeSensitive = isTimeSensitive;
 	}
@@ -140,7 +141,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 	}
 
 	public boolean isOnlyOnChange() {
-		return onlyOnChange;
+		return onlyFirstAnomaly;
 	}
 	
 	public boolean isReportEndOfAnomalyWindows() {
