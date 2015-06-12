@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.condition.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.condition.datatypes.DeviationInformation;
 import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationSequenceAnalysisAO;
@@ -18,7 +18,7 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 	// private static final int LEARN_PORT_CURVE = 2;
 
 	// For analysis
-	private List<DeviationInformation> deviationInfo;
+	private Map<Long, DeviationInformation> deviationInfo;
 	private double interval;
 	private int lastCounter;
 	private double totalSum;
@@ -34,7 +34,7 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 	private String valueAttributeName;
 
 	public DeviationSequenceAnalysisPO(DeviationSequenceAnalysisAO ao) {
-		deviationInfo = new ArrayList<DeviationInformation>();
+		deviationInfo = new HashMap<Long, DeviationInformation>();
 
 		this.interval = ao.getInterval();
 
@@ -142,17 +142,13 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 
 		int valueIndex = getInputSchema(LEARN_PORT_SINGLE_TUPLE).findAttributeIndex(tupleGroupAttributeName);
 		if (valueIndex >= 0) {
-			int tupleCount = tuple.getAttribute(valueIndex);
-			if (tupleCount >= deviationInfo.size()) {
+			long tupleCount = tuple.getAttribute(valueIndex);
+			info = deviationInfo.get(tupleCount);
+			if (info == null) {
 				info = new DeviationInformation();
-				deviationInfo.add(tupleCount, info);
-			} else {
-				info = deviationInfo.get(tupleCount);
-				if (info == null) {
-					info = new DeviationInformation();
-					deviationInfo.add(info);
-				}
+				deviationInfo.put(tupleCount, info);
 			}
+			
 			int meanIndex = getInputSchema(1).findAttributeIndex(meanAttributeName);
 			int stdDevIndex = getInputSchema(1).findAttributeIndex(standardDeviationAttributeName);
 			if (meanIndex >= 0 && stdDevIndex >= 0) {

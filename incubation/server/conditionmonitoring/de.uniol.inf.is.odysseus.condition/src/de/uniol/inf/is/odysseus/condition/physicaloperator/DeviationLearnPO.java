@@ -13,9 +13,9 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupProcessor;
 
 /**
  * This operator learns the mean and the standard deviation of an (number)
@@ -35,7 +35,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	private double manualStandardDeviation;
 	private double manualMean;
 	private long tuplesToLearn;
-	private IGroupProcessor<T, T> groupProcessor;
+	protected IGroupProcessor<T, T> groupProcessor;
 	private Map<Long, DeviationInformation> deviationInfo;
 	private Map<Long, List<T>> tupleMap;
 	private boolean exactCalculation;
@@ -48,9 +48,9 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	private static final int DATA_PORT = 0;
 	private static final int BACKUP_PORT = 1;
 
-	public DeviationLearnPO(TrainingMode trainingMode, String attributeName) {
+	public DeviationLearnPO(TrainingMode trainingMode, String attributeName, IGroupProcessor<T, T> groupProcessor) {
 		init();
-		this.groupProcessor = (IGroupProcessor<T, T>) new NoGroupProcessor<T, T>();
+		this.groupProcessor = groupProcessor;
 		this.valueAttributeName = attributeName;
 		this.trainingMode = trainingMode;
 	}
@@ -73,6 +73,13 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	private void init() {
 		this.deviationInfo = new HashMap<Long, DeviationInformation>();
 		this.tupleMap = new HashMap<Long, List<T>>();
+	}
+
+	@Override
+	protected void process_open() throws OpenFailedException {
+		if (groupProcessor != null) {
+			groupProcessor.init();
+		}
 	}
 
 	@Override

@@ -1,54 +1,48 @@
 package de.uniol.inf.is.odysseus.condition.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.condition.datatypes.DeviationInformation;
 import de.uniol.inf.is.odysseus.condition.enums.TrainingMode;
 import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationSequenceLearnAO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 
 public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterval> extends
 		DeviationLearnPO<Tuple<ITimeInterval>, ITimeInterval> {
 
-	private List<DeviationInformation> deviationInfo;
-	private String counterAttributeName = "counter";
+	private Map<Long, DeviationInformation> deviationInfos;
 
-	private int learnedCurves;
-	private int lastCurveCounter;
-	private int curvesToLearn;
+	private int learnedSequence;
+	private long lastSequenceCounter;
+	private int sequencesToLearn;
 
-	public DeviationSequenceLearnPO(DeviationSequenceLearnAO ao) {
-		super(TrainingMode.ONLINE, "");
-		this.deviationInfo = new ArrayList<DeviationInformation>();
-		this.curvesToLearn = ao.getCurvesToLearn();
+	public DeviationSequenceLearnPO(DeviationSequenceLearnAO ao, IGroupProcessor<Tuple<ITimeInterval>, Tuple<ITimeInterval>> groupProcessor) {
+		super(TrainingMode.ONLINE, "", groupProcessor);
+		this.deviationInfos = new HashMap<Long, DeviationInformation>();
+		this.sequencesToLearn = ao.getCurvesToLearn();
 	}
 
 	@Override
 	protected void process_next(Tuple<ITimeInterval> tuple, int port) {
 		// Get the counter from the curveCounter before this operator
-		int curveTupleCounter = getCounter(tuple);
+		long sequenceTupleCounter = this.groupProcessor.getGroupID(tuple);
 
-		if (curveTupleCounter < lastCurveCounter && (learnedCurves <= curvesToLearn || curvesToLearn == 0)) {
+		if (sequenceTupleCounter < lastSequenceCounter && (learnedSequence <= sequencesToLearn || sequencesToLearn == 0)) {
 			// We are in the next curve
-			learnedCurves++;
+			learnedSequence++;
 		}
 
-		lastCurveCounter = curveTupleCounter;
+		lastSequenceCounter = sequenceTupleCounter;
 
-		if (learnedCurves <= curvesToLearn || curvesToLearn == 0) {
-			// Curve tuples
-			DeviationInformation info = null;
-			if (curveTupleCounter >= deviationInfo.size()) {
+		if (learnedSequence <= sequencesToLearn || sequencesToLearn == 0) {
+			// Sequence tuples
+			DeviationInformation info = this.deviationInfos.get(sequenceTupleCounter);
+			if (info == null) {
 				info = new DeviationInformation();
-				deviationInfo.add(curveTupleCounter, info);
-			} else {
-				info = deviationInfo.get(curveTupleCounter);
-				if (info == null) {
-					info = new DeviationInformation();
-					deviationInfo.add(info);
-				}
+				this.deviationInfos.put(sequenceTupleCounter, info);
 			}
 
 			double value = getValue(tuple);
@@ -58,20 +52,11 @@ public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterva
 			// (counter, mean, and std dev)
 			Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(3, false);
 			output.setMetadata(tuple.getMetadata());
-			output.setAttribute(0, curveTupleCounter);
+			output.setAttribute(0, sequenceTupleCounter);
 			output.setAttribute(1, info.mean);
 			output.setAttribute(2, info.standardDeviation);
 			transfer(output);
 		}
-	}
-
-	private int getCounter(Tuple<ITimeInterval> tuple) {
-		int counterIndex = getInputSchema(0).findAttributeIndex(counterAttributeName);
-		if (counterIndex >= 0) {
-			int counter = tuple.getAttribute(counterIndex);
-			return counter;
-		}
-		return 0;
 	}
 
 }

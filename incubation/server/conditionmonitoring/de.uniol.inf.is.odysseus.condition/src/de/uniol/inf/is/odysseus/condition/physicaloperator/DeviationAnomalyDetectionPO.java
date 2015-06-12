@@ -95,7 +95,9 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		groupProcessor.init();
+		if (groupProcessor != null) {
+			groupProcessor.init();
+		}
 	}
 
 	@Override

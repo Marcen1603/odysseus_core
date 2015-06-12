@@ -12,7 +12,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DEVIATIONSEQUENCELEARN", doc = "Learns deviation of (each point of a) sequence", category = { LogicalOperatorCategory.PROCESSING })
@@ -21,18 +23,21 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 4139317638350922577L;
 
 	private String valueAttributeName;
-	private String counterAttributeName;
 	private int sequencesToLearn;
+	
+	private List<SDFAttribute> groupingAttributes;
+	private boolean fastGrouping;
 
 	public DeviationSequenceLearnAO() {
 		this.valueAttributeName = "value";
-		this.counterAttributeName = "counter";
 		this.sequencesToLearn = 0;
 	}
 	
 	public DeviationSequenceLearnAO(DeviationSequenceLearnAO ao) {
 		this.valueAttributeName = ao.getValueAttributeName();
 		this.sequencesToLearn = ao.getCurvesToLearn();
+		this.fastGrouping = ao.isFastGrouping();
+		this.groupingAttributes = ao.getGroupingAttributes();
 	}
 	
 	@Parameter(type = StringParameter.class, name = "parameterAttribute", optional = true, doc = "Name of the attribute which should be analysed")
@@ -43,15 +48,6 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 	public String getValueAttributeName() {
 		return valueAttributeName;
 	}
-	
-	@Parameter(type = StringParameter.class, name = "counterAttribute", optional = true, doc = "Name of the attribute which holds the counter (of each tuple in the sequence)")
-	public void setCounterAttributeName(String counterAttributeName) {
-		this.counterAttributeName = counterAttributeName;
-	}
-	
-	public String getCounterAttributeName() {
-		return counterAttributeName;
-	}
 
 	@Parameter(type = IntegerParameter.class, name = "sequencesToLearn", optional = true, doc = "THe number of (correct) curves to learn from. The first x sequences will define the perfect sequence the others are compared to. If set to 0, the operator will not stop to learn (learn infinity sequences). Default is 0.")
 	public void setSequencesToLearn(int sequencesToLearn) {
@@ -60,6 +56,24 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 
 	public int getCurvesToLearn() {
 		return sequencesToLearn;
+	}
+	
+	public boolean isFastGrouping() {
+		return fastGrouping;
+	}
+
+	@Parameter(name = "fastGrouping", type = BooleanParameter.class, optional = true, doc = "Use hash code instead of tuple compare to create group. Potentially unsafe!")
+	public void setFastGrouping(boolean fastGrouping) {
+		this.fastGrouping = fastGrouping;
+	}
+	
+	public List<SDFAttribute> getGroupingAttributes() {
+		return groupingAttributes;
+	}
+
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	public void setGroupingAttributes(List<SDFAttribute> groupingAttributes) {
+		this.groupingAttributes = groupingAttributes;
 	}
 
 	@Override
@@ -73,12 +87,12 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 		// Transfer the mean and the standard deviation to the next operator
 		
 		// The number of the tuple in the sequence
-		SDFAttribute number = new SDFAttribute(null, "number", SDFDatatype.INTEGER, null, null, null);
+		SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);
 		SDFAttribute meanValue = new SDFAttribute(null, "mean", SDFDatatype.DOUBLE, null, null, null);
 		SDFAttribute standardDeviation = new SDFAttribute(null, "standardDeviation", SDFDatatype.DOUBLE, null, null,
 				null);
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
-		outputAttributes.add(number);
+		outputAttributes.add(groupId);
 		outputAttributes.add(meanValue);
 		outputAttributes.add(standardDeviation);
 
