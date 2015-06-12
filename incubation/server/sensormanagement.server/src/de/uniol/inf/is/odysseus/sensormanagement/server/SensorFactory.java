@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.sensormanagement.server;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -7,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorType;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.ServerInstance;
+import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
 
 public class SensorFactory 
 {
@@ -302,41 +306,72 @@ public class SensorFactory
 		if (instance == null)
 		{
 			instance = new SensorFactory();
+			
+			// TODO: Allow adding sensor types when uninitialized only within this package
+			instance.initialized = true;
 			instance.addSensorType(getLMS1xx());
 			instance.addSensorType(getIntegratedCamera());
 			instance.addSensorType(getBaslerCamera());			
 			instance.addSensorType(getOptrisCamera());
 			instance.addSensorType(getGPS());
 			instance.addSensorType(getDummy());
+			instance.initialized = false;
 		}				
 		
 		return instance;
 	}
 
+	private Boolean initialized = false;
 	private String loggingDirectory;
 	
 	private SensorFactory() 
 	{
-		loggingDirectory = "C:/test/records/";
 	}
 	
 	// *************************************************************************************	
 	
+	private ServerInstance serverInstance = new ServerInstance();
+	
 	private Map<String, SensorType> sensorTypes = new HashMap<>();
 	private List<Sensor> sensors = new LinkedList<>();
 	
+	public void init(String loggingDirectory) 
+	{
+		this.loggingDirectory = loggingDirectory;
+		
+		initialized = true;
+	}			
+	
+	private void saveServerInstance()
+	{
+		try 
+		{
+			XmlMarshalHelper.toXmlFile(serverInstance, new File(loggingDirectory + "serverInstance.xml"));
+		} 
+		catch (IOException e) 
+		{
+			throw new RuntimeException("Could not save server instance file", e);
+		}
+	}
+	
 	public void addSensorType(SensorType e)
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		sensorTypes.put(e.name.toLowerCase(), e);
 	}
 	
 	public SensorType getSensorType(String name)
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		return sensorTypes.get(name.toLowerCase());
 	}
 	
 	public List<String> getSensorTypes()
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		List<String> idList = new ArrayList<String>(sensorTypes.size());
 		
 		for (String s : sensorTypes.keySet())
@@ -347,6 +382,8 @@ public class SensorFactory
 	
 	public List<String> getSensorIds()
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		List<String> idList = new ArrayList<String>(sensors.size());
 		
 		for (Sensor s : sensors)
@@ -357,6 +394,8 @@ public class SensorFactory
 	
 	public Sensor getSensorById(String id)
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		for (Sensor s : sensors)
 			if (s.config.id.equals(id))
 				return s;
@@ -366,57 +405,84 @@ public class SensorFactory
 	
 	private Sensor getSensorByIdException(String id)
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		Sensor s = getSensorById(id);
 		if (s == null)
 			throw new RuntimeException("Sensor with id \"" + id + "\" does not exist!");
 		return s;
 	}
 	
-	public Sensor addSensor(ISession session, SensorModel2 sensor)
+	public Sensor addSensor(ISession session, SensorModel sensor)
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		if (getSensorById(sensor.id) != null)
 			throw new RuntimeException("Sensor with id \"" + sensor.id + "\" already exists!");
 
 		Sensor s = new Sensor(sensor, session);
 		sensors.add(s);
+		
+		serverInstance.sensors.add(sensor);
+		saveServerInstance();
+		
 		return s;
 	}
 
-	public void modifySensor(ISession session, String id, SensorModel2 newInfo)
+	public void modifySensor(ISession session, String id, SensorModel newInfo)
 	{
-		Sensor s = getSensorByIdException(id);
-		s.modify(session, newInfo);
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
+		throw new RuntimeException("Not implemented yet!");
+/*		Sensor s = getSensorByIdException(id);
+		s.modify(session, newInfo);*/
 	}	
 	
 	public void removeSensor(ISession session, String id)
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		Sensor s = getSensorByIdException(id);
 		s.remove(session);
 		sensors.remove(s);
+		
+		if (!serverInstance.recordingSet.contains(s.config))
+			serverInstance.sensors.remove(s.config);
+		
+		saveServerInstance();
 	}
 
 	public void startLogging(ISession session, String sensorId) 
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		Sensor s = getSensorByIdException(sensorId);
 		s.startLogging(session, loggingDirectory);
+		
+		serverInstance.recordingSet.add(s.config);
 	}
 
 	public void stopLogging(ISession session, String sensorId) 
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		Sensor s = getSensorByIdException(sensorId);
 		s.stopLogging(session);		
 	}
 	
 	public String startLiveView(ISession session, String sensorId, String targetHost, int targetPort) 
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		Sensor s = getSensorByIdException(sensorId);
 		return s.startLiveView(session, targetHost, targetPort);
 	}
 
 	public void stopLiveView(ISession session, String sensorId) 
 	{
+		if (!initialized) throw new RuntimeException("Sensor management service has not been initialized yet.");
+		
 		Sensor s = getSensorByIdException(sensorId);
 		s.stopLiveView(session);		
 	}	
-	
 }

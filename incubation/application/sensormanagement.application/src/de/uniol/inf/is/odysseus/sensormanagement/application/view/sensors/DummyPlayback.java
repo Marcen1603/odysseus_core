@@ -2,12 +2,13 @@ package de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Event;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 public class DummyPlayback extends TextFilePlayback 
 {
-	public DummyPlayback(LogMetaData logMetaData) 
+	public DummyPlayback(SensorModel sensorModel, LogMetaData logMetaData) 
 	{
-		super(logMetaData);
+		super(sensorModel, logMetaData);
 	}
 
 	@Override

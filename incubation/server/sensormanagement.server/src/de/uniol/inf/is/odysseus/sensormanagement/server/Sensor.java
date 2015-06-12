@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorType;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.StringUtils;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
@@ -17,7 +17,7 @@ public class Sensor
 {
 	private final static IServerExecutor executor = ExecutorServiceBinding.getExecutor();
 	
-	SensorModel2 config;
+	SensorModel config;
 	SensorType type;
 	
 	boolean isLogging;
@@ -65,9 +65,9 @@ public class Sensor
 		}
 	}
 	
-	public Sensor(SensorModel2 sensor, ISession session) 
+	public Sensor(SensorModel sensor, ISession session) 
 	{
-		config = new SensorModel2(sensor);
+		config = sensor;
 		if (config.id == null) config.generateId();
 		
 		type = SensorFactory.getInstance().getSensorType(sensor.type);
@@ -106,7 +106,7 @@ public class Sensor
 		}
 	}
 	
-	public void modify(ISession caller, SensorModel2 newSensorInfo)
+	public void modify(ISession caller, SensorModel newSensorInfo)
 	{
 		if (!config.id.equals(newSensorInfo.id))
 		{

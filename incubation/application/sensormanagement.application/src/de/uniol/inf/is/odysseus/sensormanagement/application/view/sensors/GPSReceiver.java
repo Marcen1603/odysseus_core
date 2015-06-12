@@ -35,6 +35,7 @@ public class GPSReceiver extends UdpLiveReceiver
    			listener.sensorDataReceived(getSensorModel(), e);
    		}
     		
-   		Application.getMainFrame().getCurrentSession().getMap().sensorDataReceived(getSensorModel(), e);
+   		if (Application.getMainFrame().getCurrentSession().getMap() != null)
+   			Application.getMainFrame().getCurrentSession().getMap().sensorDataReceived(getSensorModel(), e);
 	}
 }

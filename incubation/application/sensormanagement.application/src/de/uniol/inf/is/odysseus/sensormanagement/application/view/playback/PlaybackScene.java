@@ -10,33 +10,27 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.TimeInterval;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.View;
 
 @XmlRootElement(name = "playbackscene")
 @XmlAccessorType (XmlAccessType.FIELD)
 public class PlaybackScene extends Scene
 {
 	@XmlElement(name = "interval") 	
-	private final List<TimeInterval> intervalList;
+	private List<TimeInterval> intervalList;
 	
-	@XmlElement(name = "file")		
-	private final List<String> fileList;
-
 	@XmlElement(name = "view") 	
-	private final List<View> viewList;	
+	private List<View> viewList;	
 	
 	public PlaybackScene()
 	{		
-		this("","",null,null,null,null);
+		this("","",null,null,null);
 	}
 
-	public PlaybackScene(String path, String name, String mapImage, List<TimeInterval> intervalList, List<String> fileList, List<View> viewList)
+	public PlaybackScene(String path, String name, String mapImage, List<TimeInterval> intervalList, List<View> viewList)
 	{		
-		super(path, name, mapImage);
+		super(path, name, mapImage, null);
 		
 		this.intervalList = intervalList != null ? intervalList : new ArrayList<TimeInterval>();
-		this.fileList = fileList != null ? fileList : new ArrayList<String>();
 		this.viewList = viewList != null ? viewList : new ArrayList<View>();
 		
 		checkIntervals();
@@ -52,11 +46,6 @@ public class PlaybackScene extends Scene
 		return intervalList;
 	}
 	
-	public List<String> getFileList() 
-	{
-		return fileList;
-	}
-
 	@Override
 	public void onUnmarshalling(File xmlFile) 
 	{
@@ -64,27 +53,12 @@ public class PlaybackScene extends Scene
 		checkIntervals();
 	}
 
-	public static PlaybackScene fromDirectory(String path, String sceneName)
+	public static Scene fromInstanceFile(File instanceFile, String sceneName)
 	{
-		if (!path.endsWith(File.separator))
-			path += File.separator;
+		ArrayList<String> instanceFiles = new ArrayList<>();
+		instanceFiles.add(instanceFile.getName());
 		
-		File dir = new File(path);
-		File[] directoryListing = dir.listFiles();
-		if (directoryListing == null) return null; 
-		
-		List<String> fileList = new ArrayList<>();
-		for (File child : directoryListing) 
-		{
-			String videoFileName = child.getName();
-			if (!child.isFile()) 
-				continue;
-			
-			if (videoFileName.endsWith("cfg"))
-				fileList.add(child.getName());
-		}
-		
-		return new PlaybackScene(path, sceneName, null, null, fileList, null);
+		return new Scene(instanceFile.getParent() + File.separator, sceneName, null, instanceFiles);
 	}
 	
 }

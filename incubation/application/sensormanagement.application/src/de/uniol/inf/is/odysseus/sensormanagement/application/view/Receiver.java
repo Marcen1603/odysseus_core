@@ -4,19 +4,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 public abstract class Receiver 
 {	
-	final private SensorModel2 sensorModel;
+	final private SensorModel sensorModel;
 	
 	private boolean running = false;	
 	protected List<ReceiverListener> listenerList = new ArrayList<ReceiverListener>();		
 	
 	public boolean 		isRunning() { return running; }
-	public SensorModel2	getSensorModel() { return sensorModel;  }
+	public SensorModel	getSensorModel() { return sensorModel;  }
 
-	public Receiver(SensorModel2 sensorModel)
+	public Receiver(SensorModel sensorModel)
 	{
 		this.sensorModel = sensorModel;
 	}		

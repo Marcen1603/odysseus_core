@@ -17,7 +17,7 @@ import de.jaret.util.ui.timebars.strategy.IIntervalSelectionStrategy;
 import de.jaret.util.ui.timebars.swing.TimeBarViewer;
 import de.jaret.util.ui.timebars.swing.renderer.DefaultTitleRenderer;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.Utilities;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 
 public class PlaybackTimeBar extends TimeBarViewer
@@ -228,15 +228,15 @@ public class PlaybackTimeBar extends TimeBarViewer
 	
 	public class SensorRow extends DefaultTimeBarRowModel
 	{
-		private SensorModel2 sensorInfo;
+		private SensorModel sensorInfo;
 
-		SensorRow(SensorModel2 sensorInfo)
+		SensorRow(SensorModel sensorInfo)
 		{
 			super(new DefaultRowHeader(sensorInfo.displayName + " (" + sensorInfo.type + ")"));
 			this.sensorInfo = sensorInfo;
 		}
 		
-		public SensorModel2 getSensorInfo() { return sensorInfo; }
+		public SensorModel getSensorInfo() { return sensorInfo; }
 	}
 
 	public class PlaybackInterval extends EventInterval
@@ -257,7 +257,7 @@ public class PlaybackTimeBar extends TimeBarViewer
 	}
 	
 	
-	public void addSensorRecording(SensorModel2 sensorInfo, PlaybackReceiver recv)
+	public void addSensorRecording(SensorModel sensorInfo, PlaybackReceiver recv)
 	{
 		DefaultTimeBarModel model = (DefaultTimeBarModel) getModel();
 

@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewException;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackReceiver;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.VideoLogMetaData;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 public class VideoPlayback extends PlaybackReceiver 
 {
@@ -24,9 +25,9 @@ public class VideoPlayback extends PlaybackReceiver
 	private int					currentFrame;
 	private boolean 			rotate180;
 
-	public VideoPlayback(LogMetaData logMetaData) 
+	public VideoPlayback(SensorModel sensorModel, LogMetaData logMetaData) 
 	{
-		super(logMetaData);
+		super(sensorModel, logMetaData);
 	}
 
 	@Override protected void onStart()

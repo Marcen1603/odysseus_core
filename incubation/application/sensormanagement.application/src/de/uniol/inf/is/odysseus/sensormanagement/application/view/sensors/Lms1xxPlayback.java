@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Event;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.lms1xx.physicaloperator.access.LMS1xxProtocolHandler;
 
@@ -9,9 +10,9 @@ public class Lms1xxPlayback extends TextFilePlayback
 {
 	static final double timeOffset = 3.24f; // TODO: This is a hack to correct a time difference for the LMS scanners
 	
-	public Lms1xxPlayback(LogMetaData logMetaData) 
+	public Lms1xxPlayback(SensorModel sensorModel, LogMetaData logMetaData) 
 	{
-		super(logMetaData);
+		super(sensorModel, logMetaData);
 	}
 	
 	@Override public Event parseLine(String line)

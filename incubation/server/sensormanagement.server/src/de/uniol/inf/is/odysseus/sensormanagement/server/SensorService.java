@@ -44,13 +44,12 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception.InvalidUserDataException;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
 
 
 @WebService
 @SOAPBinding(style = Style.DOCUMENT)
-//@XmlSeeAlso({ SensorSchema.class, SensorAttribute.class, StringResponse.class })
 public class SensorService 
 {
 	@SuppressWarnings("unused")
@@ -65,12 +64,20 @@ public class SensorService
 		
 		return session;
 	}	
+
+	public void initService(@WebParam(name = "securityToken") String securityToken, 
+							@WebParam(name = "loggingDirectory") String loggingDirectory) throws InvalidUserDataException
+	{
+		loginWithSecurityToken(securityToken);		
+		SensorFactory.getInstance().init(loggingDirectory);
+	}
+	
 	
 	public String addSensor(@WebParam(name = "securityToken") String securityToken, 
 						@WebParam(name = "sensorXml") String sensorXml) throws InvalidUserDataException
 	{
 		ISession session = loginWithSecurityToken(securityToken);		
-		return SensorFactory.getInstance().addSensor(session, XmlMarshalHelper.fromXml(sensorXml, SensorModel2.class)).config.id;
+		return SensorFactory.getInstance().addSensor(session, XmlMarshalHelper.fromXml(sensorXml, SensorModel.class)).config.id;
 	}
 
 	public void modifySensor(@WebParam(name = "securityToken") String securityToken, 
@@ -78,7 +85,7 @@ public class SensorService
 							@WebParam(name = "sensorXml") String sensorXml) throws InvalidUserDataException
 	{
 		ISession session = loginWithSecurityToken(securityToken);		
-		SensorFactory.getInstance().modifySensor(session, sensorId, XmlMarshalHelper.fromXml(sensorXml, SensorModel2.class));
+		SensorFactory.getInstance().modifySensor(session, sensorId, XmlMarshalHelper.fromXml(sensorXml, SensorModel.class));
 	}
 	
 	@WebResult(name = "sensorIds")

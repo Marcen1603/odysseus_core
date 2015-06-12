@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.sensormanagement.application.view;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.RemoteSensor;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 public class SensorConfig 
 {
@@ -16,7 +16,7 @@ public class SensorConfig
 	}
 	
 	private State 					state;
-	private SensorModel2			sensorInfo;
+	private SensorModel			sensorInfo;
 	private RemoteSensor 				originalSensor;
 	private DefaultMutableTreeNode 	node;	
 	
@@ -27,12 +27,12 @@ public class SensorConfig
 		
 		if (originalSensor != null)
 		{
-			this.sensorInfo = new SensorModel2(originalSensor.getSensorModel2());
+			this.sensorInfo = new SensorModel(originalSensor.getSensorModel2());
 			state = State.ExistingUnchangedSensor;
 		}
 		else
 		{
-			this.sensorInfo = new SensorModel2();
+			this.sensorInfo = new SensorModel();
 			state = State.NewSensor;
 		}
 	}
@@ -48,7 +48,7 @@ public class SensorConfig
 		return originalSensor;
 	}	
 	
-	public SensorModel2 getSensorInfo() 
+	public SensorModel getSensorInfo() 
 	{
 		return sensorInfo;
 	}

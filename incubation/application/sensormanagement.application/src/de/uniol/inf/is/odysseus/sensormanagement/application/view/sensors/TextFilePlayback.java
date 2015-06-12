@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewException;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackReceiver;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.TextLogMetaData;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 public abstract class TextFilePlayback extends PlaybackReceiver 
 {
@@ -18,9 +19,9 @@ public abstract class TextFilePlayback extends PlaybackReceiver
 	private BufferedReader 		rawFile;	
 	private double 				lastEventTime = -1;
 	
-	public TextFilePlayback(LogMetaData logMetaData) 
+	public TextFilePlayback(SensorModel sensorModel, LogMetaData logMetaData) 
 	{
-		super(logMetaData);
+		super(sensorModel, logMetaData);
 	}
 
 	@Override protected void onStart()

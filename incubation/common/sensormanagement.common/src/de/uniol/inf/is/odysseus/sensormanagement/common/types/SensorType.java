@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.MapXmlAdapter;
 
-@XmlRootElement(name = "sensor")
+@XmlRootElement(name = "sensortype")
 public class SensorType
 {
 	public final String name;

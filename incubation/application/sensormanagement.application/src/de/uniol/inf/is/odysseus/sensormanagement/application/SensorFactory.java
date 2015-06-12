@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.Receiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackReceiver;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.DummyPlayback;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.DummyReceiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.GPSPlayback;
@@ -21,6 +22,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.VideoR
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.VideoVisualization;
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.RemoteSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 
 public class SensorFactory 
@@ -73,11 +75,11 @@ public class SensorFactory
 			this.visualizationClass = visualizationClass;
 		}
 		
-		public PlaybackReceiver createPlayback(LogMetaData logMetaData)		
+		public PlaybackReceiver createPlayback(SensorModel sensorModel, LogMetaData logMetaData)		
 		{
 			try 
 			{
-				return playbackClass.getDeclaredConstructor(LogMetaData.class).newInstance(logMetaData);
+				return playbackClass.getDeclaredConstructor(SensorModel.class, LogMetaData.class).newInstance(sensorModel, logMetaData);
 			} 
 			catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) 
 			{

@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.WsClient;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorType;
 
 public abstract class SensorClient implements ILoggable
@@ -32,6 +32,7 @@ public abstract class SensorClient implements ILoggable
 		this.odysseusSession = session;
 				
 		sensorClient = new WsSensorClient(wsdlLocation + ";http://server.sensormanagement.odysseus.is.inf.uniol.de/;SensorServiceService");
+		sensorClient.init(session, "C:/test/records");
 		
 		List<String> sensorIds = sensorClient.getSensorIds(odysseusSession);
 		sensors = new ArrayList<RemoteSensor>(sensorIds.size());
@@ -77,7 +78,7 @@ public abstract class SensorClient implements ILoggable
 			onSensorAdded(sensor);
 	}	
 	
-	public void updateSensor(RemoteSensor sensor, SensorModel2 newSensorInfo)
+	public void updateSensor(RemoteSensor sensor, SensorModel newSensorInfo)
 	{
 		sensor.setSensorModel2(newSensorInfo);
 		sensorClient.modifySensor(odysseusSession, sensor.getId(), newSensorInfo);

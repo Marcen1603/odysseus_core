@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.Receiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSession;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Sample;
 
@@ -151,7 +151,7 @@ public class Lms1xxVisualization extends Visualization implements KeyListener
     }	
 	
 	@Override
-	public void sensorDataReceived(SensorModel2 source, Event event) 
+	public void sensorDataReceived(SensorModel source, Event event) 
 	{
 		if (event == null || event.getEventObject() == null)
 		{

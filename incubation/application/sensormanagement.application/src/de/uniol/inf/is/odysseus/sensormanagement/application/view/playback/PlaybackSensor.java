@@ -16,11 +16,11 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewEntity;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewException;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.TreeCellRenderer;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 public class PlaybackSensor extends ViewEntity implements ReceiverListener
 {
-	private SensorModel2 sensorInfo;		
+	private SensorModel sensorInfo;		
 	private SensorFactoryEntry sensorEntry;
 	private Visualization visualization;
 	private TreeSet<PlaybackReceiver> playbackReceivers;
@@ -31,11 +31,11 @@ public class PlaybackSensor extends ViewEntity implements ReceiverListener
 	
 	public Visualization 				getVisualization() 	{ return visualization; }
 	public TreeSet<PlaybackReceiver> 	getReceivers() 		{ return playbackReceivers; }
-	public SensorModel2					getSensorInfo()		{ return sensorInfo; }
+	public SensorModel					getSensorInfo()		{ return sensorInfo; }
 	public double	 	 				getStartTime() 		{ return startTime; }
 	public double		 				getEndTime() 		{ return endTime; }
 	
-	public PlaybackSensor(PlaybackSession session, SensorModel2 sensorInfo) throws ViewException 
+	public PlaybackSensor(PlaybackSession session, SensorModel sensorInfo) throws ViewException 
 	{
 		super(session, session.getTreeRoot());
 		
@@ -174,7 +174,7 @@ public class PlaybackSensor extends ViewEntity implements ReceiverListener
 			return TreeCellRenderer.sensorIconPause;
 	}
 	
-	@Override public void sensorDataReceived(SensorModel2 source, Event event) 
+	@Override public void sensorDataReceived(SensorModel source, Event event) 
 	{
 		if (visualization != null) visualization.sensorDataReceived(source, event);
 		

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.sensormanagement.application.view.scene;
+package de.uniol.inf.is.odysseus.sensormanagement.application.view.playback;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
 
 public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
@@ -25,7 +25,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 	private String 			loggingDirectory;
 	private String			fileNameBase;
 	private long			logfileSizeLimit;	
-	private SensorModel2	sensorModel;
+	private SensorModel	sensorModel;
 	
 	private boolean 		logSetUp;	
 	private LogMetaData 	logMetaData;
@@ -43,7 +43,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 		options.checkRequiredException("sensorxml");
 		options.checkRequiredException("directory");
 		
-		sensorModel = XmlMarshalHelper.fromXml(options.get("sensorxml"), SensorModel2.class);
+		sensorModel = XmlMarshalHelper.fromXml(options.get("sensorxml"), SensorModel.class);
 		
 		loggingDirectory = options.get("directory");
 		logfileSizeLimit = options.getLong("sizelimit", Long.MAX_VALUE);		
@@ -87,7 +87,7 @@ public abstract class LoggerProtocolHandler extends AbstractProtocolHandler<Tupl
 			logMetaData = startLoggingInternal(object);
 			logMetaData.startTime = firstTimeStamp;
 			logMetaData.endTime = 0;
-			logMetaData.sensor = sensorModel;
+			logMetaData.sensorId = sensorModel.id;
 			
 			XmlMarshalHelper.toXmlFile(logMetaData, new File(logMetaDataFileName));
 		}

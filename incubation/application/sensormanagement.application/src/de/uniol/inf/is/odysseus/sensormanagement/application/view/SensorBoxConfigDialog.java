@@ -591,7 +591,11 @@ public class SensorBoxConfigDialog extends JDialog
 		}
 		
 		sensorNameEdit.setText(sensor.getSensorInfo().displayName);
-		sensorPositionEdit.setText(sensor.getSensorInfo().position.toString());
+		
+		if (sensor.getSensorInfo().position != null)
+			sensorPositionEdit.setText(sensor.getSensorInfo().position.toString());
+		else
+			sensorPositionEdit.setText("");
 
 		String type = sensor.getSensorInfo().type;
 		if (type != null)

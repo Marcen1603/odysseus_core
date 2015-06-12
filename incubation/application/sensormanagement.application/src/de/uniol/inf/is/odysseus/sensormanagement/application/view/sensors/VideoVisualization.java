@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSession;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.Utilities;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 public class VideoVisualization extends Visualization
 {
@@ -57,7 +57,7 @@ public class VideoVisualization extends Visualization
        }	
 	
 	@Override
-	public void sensorDataReceived(SensorModel2 source, Event event) 
+	public void sensorDataReceived(SensorModel source, Event event) 
 	{
    		this.event = event;
         repaint();

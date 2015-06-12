@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.sensormanagement.client.InvalidUserDataException_Exception;
 import de.uniol.inf.is.odysseus.sensormanagement.client.SensorService;
 import de.uniol.inf.is.odysseus.sensormanagement.client.SensorServiceService;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorType;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
 
@@ -78,7 +78,16 @@ public class WsSensorClient
 		return server;
 	}
 
-	public String addSensor(ISession caller, SensorModel2 sensor)
+	public void init(ISession caller, String loggingDirectory)
+	{
+		try	{
+			server.initService(caller.getToken(), loggingDirectory);
+		} catch (InvalidUserDataException_Exception e) {
+			throw new PlanManagementException(e);				
+		}
+	}	
+	
+	public String addSensor(ISession caller, SensorModel sensor)
 	{
 		try	{
 			return server.addSensor(caller.getToken(), XmlMarshalHelper.toXml(sensor));
@@ -96,7 +105,7 @@ public class WsSensorClient
 		}
 	}	
 
-	public void modifySensor(ISession caller, String sensorId, SensorModel2 sensor)
+	public void modifySensor(ISession caller, String sensorId, SensorModel sensor)
 	{
 		try {
 			server.modifySensor(caller.getToken(), sensorId, XmlMarshalHelper.toXml(sensor));
@@ -114,11 +123,11 @@ public class WsSensorClient
 		}
 	}	
 	
-	public SensorModel2 getSensorById(ISession caller, String sensorId) 
+	public SensorModel getSensorById(ISession caller, String sensorId) 
 	{
 		try {
 			String sensorXml = server.getSensorById(caller.getToken(), sensorId);
-			return XmlMarshalHelper.fromXml(sensorXml, SensorModel2.class);
+			return XmlMarshalHelper.fromXml(sensorXml, SensorModel.class);
 		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);				
 		}	

@@ -29,12 +29,13 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
 import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory;
 import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory.SensorFactoryEntry;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.TimeInterval;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.Utilities;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.TextLogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.VideoLogMetaData;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.ServerInstance;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
 
 public class PlaybackSession extends Session
@@ -142,7 +143,7 @@ public class PlaybackSession extends Session
         getPresentationPanel().add(timeBar, BorderLayout.SOUTH);		
 	}
 	
-	public PlaybackSession(PlaybackScene scene) throws IOException
+	public PlaybackSession(Scene scene) throws IOException
 	{
 		super(scene);
 		
@@ -170,54 +171,75 @@ public class PlaybackSession extends Session
 										  1.4023966022596202E9)); // 10.06.2014 12:36:42.259
 						*/
 
-		for (String file : scene.getFileList())
+		for (String file : scene.getInstanceFileList())
 		{
-			// TODO: Get list of all LogMetaData classes			
-			@SuppressWarnings("rawtypes")
-			Class[] logClasses = new Class[]{LogMetaData.class, VideoLogMetaData.class, TextLogMetaData.class};
-			LogMetaData logMetaData = (LogMetaData) XmlMarshalHelper.fromXmlFile(new File(scene.getPath() + file), logClasses);
+			File serverInstanceFile = new File(scene.getPath() + file);
+			ServerInstance serverInstance = XmlMarshalHelper.fromXmlFile(serverInstanceFile, ServerInstance.class);
 			
-			SensorFactoryEntry sensorEntry = SensorFactory.getInstance().getSensorType(logMetaData.sensor.type);
-			
-			PlaybackReceiver recv = sensorEntry.createPlayback(logMetaData);
-		
-			PlaybackSensor ps = getPlaybackSensor(logMetaData.sensor);
-			if (ps == null)
+			for (SensorModel sensor : serverInstance.sensors)
 			{
-				ps = new PlaybackSensor(this, logMetaData.sensor);
+				PlaybackSensor ps = new PlaybackSensor(this, sensor);
 				playbackSensors.add(ps);
 			}
 			
-			ps.addReceiver(recv);
-			timeBar.addSensorRecording(ps.getSensorInfo(), recv);
-			
-			if (startTime == -1 || startTime > recv.getStartTime()) startTime = recv.getStartTime();
-			if (endTime   == -1 || endTime   < recv.getEndTime())   endTime   = recv.getEndTime();			
-		}
+			File dir = serverInstanceFile.getParentFile();
+			File[] directoryListing = dir.listFiles();
+			if (directoryListing != null)
+			{
+				for (File child : directoryListing) 
+				{
+					String fileName = child.getName();
+					if (!child.isFile() || !fileName.endsWith("cfg")) 
+						continue;
+
+					@SuppressWarnings("rawtypes")
+					Class[] logClasses = new Class[]{LogMetaData.class, VideoLogMetaData.class, TextLogMetaData.class};
+					LogMetaData logMetaData = (LogMetaData) XmlMarshalHelper.fromXmlFile(child, logClasses);
+					
+					PlaybackSensor ps = getPlaybackSensor(logMetaData.sensorId);
+					if (ps == null)
+						Application.showException(new RuntimeException("Unknown sensor " + logMetaData.sensorId));
+					
+					SensorFactoryEntry sensorEntry = SensorFactory.getInstance().getSensorType(ps.getSensorInfo().type);					
+					PlaybackReceiver recv = sensorEntry.createPlayback(ps.getSensorInfo(), logMetaData);
+										
+					ps.addReceiver(recv);
+					timeBar.addSensorRecording(ps.getSensorInfo(), recv);
+					
+					if (startTime == -1 || startTime > recv.getStartTime()) startTime = recv.getStartTime();
+					if (endTime   == -1 || endTime   < recv.getEndTime())   endTime   = recv.getEndTime();								
+				}
+			}			
+		}		
 				
-		for (TimeInterval interval : scene.getTimeIntervalList())
+		if (scene instanceof PlaybackScene)
 		{
-			TimeBarMarkerImpl m;
-			
-	        m = new JumpMarker(interval.startTime);
-	        m.setDescription("Start");
-	        timeBar.addMarker(m);
-	        
-	        m = new JumpMarker(interval.endTime);
-	        m.setDescription("End");
-	        timeBar.addMarker(m);
+			PlaybackScene playbackScene = (PlaybackScene) scene; 
+
+			for (TimeInterval interval : playbackScene.getTimeIntervalList())
+			{
+				TimeBarMarkerImpl m;
+				
+		        m = new JumpMarker(interval.startTime);
+		        m.setDescription("Start");
+		        timeBar.addMarker(m);
+		        
+		        m = new JumpMarker(interval.endTime);
+		        m.setDescription("End");
+		        timeBar.addMarker(m);
+			}
 		}
 		
 		getTreeModel().nodeStructureChanged(getTreeRoot());
 		goToStart();
 	}
 	
-	private PlaybackSensor getPlaybackSensor(SensorModel2 sensorInfo)
+	private PlaybackSensor getPlaybackSensor(String id)
 	{
 		for (PlaybackSensor ps : playbackSensors)
 		{
-			SensorModel2 listSensor = ps.getSensorInfo();
-			if (listSensor.type.equals(sensorInfo.type) && listSensor.id.equals(sensorInfo.id))
+			SensorModel listSensor = ps.getSensorInfo();
+			if (listSensor.id.equals(id))
 				return ps;
 		}
 		
@@ -393,20 +415,24 @@ public class PlaybackSession extends Session
 		{
 			// TODO: Better implementation of jump markers, maybe only keep track of next jumpmarker
 			// and refresh after every marker / jumpToTime-call ?
-			List<TimeInterval> list = ((PlaybackScene) getScene()).getTimeIntervalList();
-			Iterator<TimeInterval> iter = list.iterator();
-			while (iter.hasNext())
+			
+			if (getScene() instanceof PlaybackScene)
 			{
-				TimeInterval m = iter.next();
-				
-				// passed over a jumpTimer-end
-				if (previousNow < m.endTime && m.endTime < now)
+				List<TimeInterval> list = ((PlaybackScene) getScene()).getTimeIntervalList();
+				Iterator<TimeInterval> iter = list.iterator();
+				while (iter.hasNext())
 				{
-					if (iter.hasNext())
-						jumpToTime(iter.next().startTime);
-					else
-						jumpToTime(list.get(0).startTime);
-					break;
+					TimeInterval m = iter.next();
+					
+					// passed over a jumpTimer-end
+					if (previousNow < m.endTime && m.endTime < now)
+					{
+						if (iter.hasNext())
+							jumpToTime(iter.next().startTime);
+						else
+							jumpToTime(list.get(0).startTime);
+						break;
+					}
 				}
 			}
 			

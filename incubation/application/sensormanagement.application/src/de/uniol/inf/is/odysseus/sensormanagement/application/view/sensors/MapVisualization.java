@@ -19,14 +19,14 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.Event;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Receiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Measurement;
 
 public class MapVisualization extends Visualization
 {
 	private static final long serialVersionUID = 3745022811236756800L;
 
-	private Map<SensorModel2, Event> currentEvents = new ConcurrentHashMap<>();
+	private Map<SensorModel, Event> currentEvents = new ConcurrentHashMap<>();
 	private final BufferedImage mapImage;
 	
 	public MapVisualization(Session session, String displayName, String mapImageFileName) throws IOException 
@@ -74,9 +74,9 @@ public class MapVisualization extends Visualization
                 
 		graphics.drawImage(mapImage, mapX, mapY, mapW, mapH, this);
     	
-    	for (Entry<SensorModel2, Event> entry : currentEvents.entrySet())
+    	for (Entry<SensorModel, Event> entry : currentEvents.entrySet())
     	{
-    		SensorModel2 sensor = entry.getKey();
+    		SensorModel sensor = entry.getKey();
     		Event event  = entry.getValue();    		
     	
     		if (event.getTimeStamp() > session.getNow()) continue;
@@ -163,7 +163,7 @@ public class MapVisualization extends Visualization
     	}
     }
 	
-	@Override public void sensorDataReceived(SensorModel2 source, Event event) 
+	@Override public void sensorDataReceived(SensorModel source, Event event) 
 	{
 		if (event != null)
 			currentEvents.put(source, event);

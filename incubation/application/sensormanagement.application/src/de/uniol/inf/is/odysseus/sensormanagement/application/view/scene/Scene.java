@@ -2,9 +2,12 @@ package de.uniol.inf.is.odysseus.sensormanagement.application.view.scene;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -22,16 +25,20 @@ public class Scene implements XmlMarshalHelperHandler
 	private final String name;
 	private final String mapImage;
 	
+	@XmlElement(name = "serverInstance")		
+	public final List<String> instanceFiles;	
+	
 	public Scene()
 	{		
-		this("", "", "");
+		this(null, null, null, null);
 	}
 
-	public Scene(String path, String name, String mapImage)
+	public Scene(String path, String name, String mapImage, List<String> instanceFiles)
 	{		
 		this.path = path;
 		this.name = name;
 		this.mapImage = mapImage;
+		this.instanceFiles = instanceFiles == null ? new ArrayList<String>() : instanceFiles;
 	}	
 	
 	public String getPath() {
@@ -45,6 +52,10 @@ public class Scene implements XmlMarshalHelperHandler
 	public String getMapImage() {
 		return mapImage;
 	}
+
+	public List<String> getInstanceFileList() {
+		return instanceFiles;
+	}		
 	
 	@Override
 	public void onUnmarshalling(File xmlFile) 
@@ -60,5 +71,5 @@ public class Scene implements XmlMarshalHelperHandler
 	public static Scene fromFile(File file) throws IOException
 	{
 		return (Scene) XmlMarshalHelper.fromXmlFile(file, new Class[]{Scene.class, PlaybackScene.class});
-	}	
+	}
 }

@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.Event;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Receiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.ReceiverListener;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 public abstract class PlaybackReceiver extends Receiver
 {
@@ -17,9 +18,9 @@ public abstract class PlaybackReceiver extends Receiver
 	public double getStartTime()	{ return startTime; }
 	public double getEndTime()	{ return endTime;   }	
 	
-	public PlaybackReceiver(LogMetaData logMetaData)
+	public PlaybackReceiver(SensorModel sensorModel, LogMetaData logMetaData)
 	{
-		super(logMetaData.sensor);
+		super(sensorModel);
 		
 		this.logMetaData = logMetaData;
 		

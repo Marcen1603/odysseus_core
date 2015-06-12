@@ -3,22 +3,22 @@ package de.uniol.inf.is.odysseus.sensormanagement.client.executor;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel2;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.NetUtilities;
 
 @SuppressWarnings(value = { "all" })
 public class RemoteSensor implements ILoggable 
 {
-	private SensorModel2 sensor;
+	private SensorModel sensor;
 	private SensorClient client;
 	
 	public String getId() { return sensor.id; }
 	public SensorClient getClient() { return client; }
-	public SensorModel2 getSensorModel2() { return sensor; }
+	public SensorModel getSensorModel2() { return sensor; }
 	
-	public void setSensorModel2(SensorModel2 sensor) { this.sensor = sensor; }
+	public void setSensorModel2(SensorModel sensor) { this.sensor = sensor; }
 	
-	public RemoteSensor(SensorClient client, SensorModel2 sensor) 
+	public RemoteSensor(SensorClient client, SensorModel sensor) 
 	{
 		this.sensor = sensor;
 		this.client = client;
