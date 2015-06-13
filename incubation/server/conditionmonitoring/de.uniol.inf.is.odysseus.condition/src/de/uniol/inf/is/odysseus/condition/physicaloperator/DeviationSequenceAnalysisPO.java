@@ -8,7 +8,9 @@ import de.uniol.inf.is.odysseus.condition.logicaloperator.DeviationSequenceAnaly
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 
 @SuppressWarnings("rawtypes")
 public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
@@ -20,30 +22,37 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 	// For analysis
 	private Map<Long, DeviationInformation> deviationInfo;
 	private double interval;
-	private int lastCounter;
+	private long lastCounter;
 	private double totalSum;
 	private double meanSum;
 
 	// Learn attributes
-	private String tupleGroupAttributeName;
 	private String meanAttributeName;
 	private String standardDeviationAttributeName;
 
 	// Data attributes
-	private String tupleCountAttribute;
 	private String valueAttributeName;
 
-	public DeviationSequenceAnalysisPO(DeviationSequenceAnalysisAO ao) {
+	protected IGroupProcessor<T, T> groupProcessor;
+
+	public DeviationSequenceAnalysisPO(DeviationSequenceAnalysisAO ao, IGroupProcessor<T, T> groupProcessor) {
 		deviationInfo = new HashMap<Long, DeviationInformation>();
 
 		this.interval = ao.getInterval();
 
-		this.tupleGroupAttributeName = ao.getTupleGroupAttributeName();
 		this.meanAttributeName = ao.getMeanAttributeName();
 		this.standardDeviationAttributeName = ao.getStandardDeviationAttributeName();
 
-		this.tupleCountAttribute = ao.getTupleCountAttribute();
 		this.valueAttributeName = ao.getValueAttributeName();
+
+		this.groupProcessor = groupProcessor;
+	}
+
+	@Override
+	protected void process_open() throws OpenFailedException {
+		if (groupProcessor != null) {
+			groupProcessor.init();
+		}
 	}
 
 	@Override
@@ -51,15 +60,18 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 
 		if (port == DATA_PORT) {
 			// Process data
-			int counter = getCounter(tuple);
-			if (counter >= deviationInfo.size()) {
-				// We don't have information about this yet
+			long sequenceCounter = this.groupProcessor.getGroupID(tuple);
+			DeviationInformation info = deviationInfo.get(sequenceCounter);
+			if (info == null) {
+				// We don't have information about this yet, hence, we can't
+				// say anything. (Probably we did not get any deviation
+				// information yet)
 				return;
 			}
 
-			if (lastCounter > counter) {
-				// A new curve starts, the last one is finished
-				// We can now send the info about the last curve
+			if (lastCounter > sequenceCounter) {
+				// A new sequence starts, the last one is finished
+				// We can now send the info about the last sequence
 				double totalDifference = Math.abs(totalSum - meanSum);
 
 				Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(6, false);
@@ -70,7 +82,7 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 				output.setAttribute(3, totalDifference / meanSum);
 				output.setAttribute(4, lastCounter);
 				output.setAttribute(5, totalSum / lastCounter);
-				
+
 				transfer(output, 1);
 
 				totalDifference = 0;
@@ -78,15 +90,7 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 				meanSum = 0;
 			}
 
-			lastCounter = counter;
-
-			DeviationInformation info = deviationInfo.get(counter);
-			if (info == null) {
-				// We don't have information about this, hence, we can't
-				// say anything. (Probably we did not get any deviation
-				// information yet)
-				return;
-			}
+			lastCounter = sequenceCounter;
 
 			totalSum += getValue(tuple);
 			meanSum += info.mean;
@@ -102,15 +106,6 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 			// Update deviation information
 			updateDeviationInfo(tuple);
 		}
-	}
-
-	private int getCounter(T tuple) {
-		int counterIndex = getInputSchema(DATA_PORT).findAttributeIndex(tupleCountAttribute);
-		if (counterIndex >= 0) {
-			int counter = tuple.getAttribute(counterIndex);
-			return counter;
-		}
-		return 0;
 	}
 
 	private boolean isAnomaly(double sensorValue, double standardDeviation, double mean) {
@@ -137,27 +132,31 @@ public class DeviationSequenceAnalysisPO<T extends Tuple<M>, M extends ITimeInte
 		return 0;
 	}
 
+	/**
+	 * Updates the deviation info that belongs to the given tuple
+	 * 
+	 * @param tuple
+	 *            The tuple with which the deviation info should be updated
+	 * @return The updated deviation info
+	 */
 	private DeviationInformation updateDeviationInfo(T tuple) {
-		DeviationInformation info = null;
-
-		int valueIndex = getInputSchema(LEARN_PORT_SINGLE_TUPLE).findAttributeIndex(tupleGroupAttributeName);
-		if (valueIndex >= 0) {
-			long tupleCount = tuple.getAttribute(valueIndex);
-			info = deviationInfo.get(tupleCount);
-			if (info == null) {
-				info = new DeviationInformation();
-				deviationInfo.put(tupleCount, info);
-			}
-			
-			int meanIndex = getInputSchema(1).findAttributeIndex(meanAttributeName);
-			int stdDevIndex = getInputSchema(1).findAttributeIndex(standardDeviationAttributeName);
-			if (meanIndex >= 0 && stdDevIndex >= 0) {
-				double mean = tuple.getAttribute(meanIndex);
-				double stdDev = tuple.getAttribute(stdDevIndex);
-				info.mean = mean;
-				info.standardDeviation = stdDev;
-			}
+		long gId = this.groupProcessor.getGroupID(tuple);
+		DeviationInformation info = this.deviationInfo.get(gId);
+		if (info == null) {
+			info = new DeviationInformation();
+			deviationInfo.put(gId, info);
 		}
+
+		int meanIndex = getInputSchema(LEARN_PORT_SINGLE_TUPLE).findAttributeIndex(meanAttributeName);
+		int stdDevIndex = getInputSchema(LEARN_PORT_SINGLE_TUPLE).findAttributeIndex(standardDeviationAttributeName);
+		if (meanIndex >= 0 && stdDevIndex >= 0) {
+			double mean = tuple.getAttribute(meanIndex);
+			double stdDev = tuple.getAttribute(stdDevIndex);
+			info.mean = mean;
+			info.standardDeviation = stdDev;
+
+		}
+		deviationInfo.put(gId, info);
 		return info;
 	}
 

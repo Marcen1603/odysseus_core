@@ -19,12 +19,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DEVIATIONSEQUENCELEARN", doc = "Learns deviation of (each point of a) sequence", category = { LogicalOperatorCategory.PROCESSING })
 public class DeviationSequenceLearnAO extends UnaryLogicalOp {
-	
+
 	private static final long serialVersionUID = 4139317638350922577L;
+
+	public static final int DATA_OUT = 0;
+	public static final int LEARN_OUT = 1;
 
 	private String valueAttributeName;
 	private int sequencesToLearn;
-	
+
 	private List<SDFAttribute> groupingAttributes;
 	private boolean fastGrouping;
 
@@ -32,14 +35,14 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 		this.valueAttributeName = "value";
 		this.sequencesToLearn = 0;
 	}
-	
+
 	public DeviationSequenceLearnAO(DeviationSequenceLearnAO ao) {
 		this.valueAttributeName = ao.getValueAttributeName();
 		this.sequencesToLearn = ao.getCurvesToLearn();
 		this.fastGrouping = ao.isFastGrouping();
 		this.groupingAttributes = ao.getGroupingAttributes();
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = "parameterAttribute", optional = true, doc = "Name of the attribute which should be analysed")
 	public void setValueAttributeName(String valueAttributeName) {
 		this.valueAttributeName = valueAttributeName;
@@ -57,7 +60,7 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 	public int getCurvesToLearn() {
 		return sequencesToLearn;
 	}
-	
+
 	public boolean isFastGrouping() {
 		return fastGrouping;
 	}
@@ -66,7 +69,7 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 	public void setFastGrouping(boolean fastGrouping) {
 		this.fastGrouping = fastGrouping;
 	}
-	
+
 	public List<SDFAttribute> getGroupingAttributes() {
 		return groupingAttributes;
 	}
@@ -80,26 +83,36 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 	public AbstractLogicalOperator clone() {
 		return new DeviationSequenceLearnAO(this);
 	}
-	
+
 	@Override
-	public SDFSchema getOutputSchemaIntern(int pos) {
+	public SDFSchema getOutputSchemaIntern(int port) {
+		if (port == DATA_OUT) {
+			SDFSchema inSchema = getInputSchema(0);
+			SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);
+			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+			outputAttributes.add(groupId);
+			outputAttributes.addAll(inSchema.getAttributes());
+			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema());
+			this.setOutputSchema(DATA_OUT, outputSchema);
+			return getOutputSchema(DATA_OUT);
+		} else {
+			// Transfer the mean and the standard deviation to the next operator
 
-		// Transfer the mean and the standard deviation to the next operator
-		
-		// The number of the tuple in the sequence
-		SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);
-		SDFAttribute meanValue = new SDFAttribute(null, "mean", SDFDatatype.DOUBLE, null, null, null);
-		SDFAttribute standardDeviation = new SDFAttribute(null, "standardDeviation", SDFDatatype.DOUBLE, null, null,
-				null);
-		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
-		outputAttributes.add(groupId);
-		outputAttributes.add(meanValue);
-		outputAttributes.add(standardDeviation);
+			// The number of the tuple in the sequence
+			SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);
+			SDFAttribute meanValue = new SDFAttribute(null, "mean", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute standardDeviation = new SDFAttribute(null, "standardDeviation", SDFDatatype.DOUBLE, null,
+					null, null);
+			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+			outputAttributes.add(groupId);
+			outputAttributes.add(meanValue);
+			outputAttributes.add(standardDeviation);
 
-		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema());
-		this.setOutputSchema(outputSchema);
+			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema());
+			this.setOutputSchema(LEARN_OUT, outputSchema);
 
-		return getOutputSchema();
+			return getOutputSchema(LEARN_OUT);
+		}
 	}
 
 }

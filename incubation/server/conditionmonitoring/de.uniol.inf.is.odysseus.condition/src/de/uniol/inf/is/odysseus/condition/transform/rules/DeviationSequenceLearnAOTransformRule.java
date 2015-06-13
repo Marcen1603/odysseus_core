@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class DeviationCurveLearnAOTransformRule extends AbstractTransformationRule<DeviationSequenceLearnAO> {
+public class DeviationSequenceLearnAOTransformRule extends AbstractTransformationRule<DeviationSequenceLearnAO> {
 
 	@Override
 	public void execute(DeviationSequenceLearnAO operator, TransformationConfiguration config) throws RuleException {

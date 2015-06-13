@@ -12,7 +12,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "DEVIATIONSEQUENCEANOMALYDETECTION", doc = "Searches for anomalies in a sequence in comparison to the learned sequences. The data port is 0, the port with learn data is 1.", category = { LogicalOperatorCategory.PROCESSING })
@@ -20,7 +22,8 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 2247550004872347984L;
 
-	private static final int DATA_PORT = 0;
+	private static final int DATA_IN_PORT = 0;
+	// private static final int LEARN_IN_PORT = 1;
 
 	private double interval;
 
@@ -30,8 +33,10 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 	private String standardDeviationAttributeName;
 
 	// Data port
-	private String tupleCountDataAttribute;
 	private String valueAttributeName;
+
+	private List<SDFAttribute> groupingAttributes;
+	private boolean fastGrouping;
 
 	public DeviationSequenceAnalysisAO() {
 		this.interval = 3.0;
@@ -44,8 +49,10 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 		this.meanAttributeName = ao.getMeanAttributeName();
 		this.standardDeviationAttributeName = ao.getStandardDeviationAttributeName();
 
-		this.tupleCountDataAttribute = ao.getTupleCountAttribute();
 		this.valueAttributeName = ao.getValueAttributeName();
+
+		this.fastGrouping = ao.isFastGrouping();
+		this.groupingAttributes = ao.getGroupingAttributes();
 	}
 
 	public double getInterval() {
@@ -84,15 +91,6 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 		this.standardDeviationAttributeName = standardDeviationAttributeName;
 	}
 
-	public String getTupleCountAttribute() {
-		return tupleCountDataAttribute;
-	}
-
-	@Parameter(type = StringParameter.class, name = "tupleCountDataAttribute", optional = true, doc = "The attribute name on the data port that gives the group count (the counter that gives each tuple in the sequence a number)")
-	public void setTupleCountAttribute(String tupleCountAttribute) {
-		this.tupleCountDataAttribute = tupleCountAttribute;
-	}
-
 	public String getValueAttributeName() {
 		return valueAttributeName;
 	}
@@ -100,6 +98,24 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 	@Parameter(type = StringParameter.class, name = "valueDataAttribute", optional = true, doc = "Name of the attribute which should be analysed")
 	public void setValueAttributeName(String valueAttributeName) {
 		this.valueAttributeName = valueAttributeName;
+	}
+
+	public boolean isFastGrouping() {
+		return fastGrouping;
+	}
+
+	@Parameter(name = "fastGrouping", type = BooleanParameter.class, optional = true, doc = "Use hash code instead of tuple compare to create group. Potentially unsafe!")
+	public void setFastGrouping(boolean fastGrouping) {
+		this.fastGrouping = fastGrouping;
+	}
+
+	public List<SDFAttribute> getGroupingAttributes() {
+		return groupingAttributes;
+	}
+
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	public void setGroupingAttributes(List<SDFAttribute> groupingAttributes) {
+		this.groupingAttributes = groupingAttributes;
 	}
 
 	@Override
@@ -114,7 +130,7 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 
 			// add the anomaly-score to the attributes and keep the old
 			// attributes
-			SDFSchema inSchema = getInputSchema(DATA_PORT);
+			SDFSchema inSchema = getInputSchema(DATA_IN_PORT);
 			SDFAttribute anomalyScore = new SDFAttribute(null, "anomalyScore", SDFDatatype.DOUBLE, null, null, null);
 			SDFAttribute meanValue = new SDFAttribute(null, "mean", SDFDatatype.DOUBLE, null, null, null);
 			SDFAttribute standardDeviation = new SDFAttribute(null, "standardDeviation", SDFDatatype.DOUBLE, null,
@@ -132,13 +148,16 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 			// The port for information about a whole sequence
 			// add the anomaly-score to the attributes and keep the old
 			// attributes
-			SDFSchema inSchema = getInputSchema(DATA_PORT);
+			SDFSchema inSchema = getInputSchema(DATA_IN_PORT);
 			SDFAttribute totalSum = new SDFAttribute(null, "totalSum", SDFDatatype.DOUBLE, null, null, null);
 			SDFAttribute meanSum = new SDFAttribute(null, "meanSum", SDFDatatype.DOUBLE, null, null, null);
-			SDFAttribute totalDifference = new SDFAttribute(null, "absoluteDifference", SDFDatatype.DOUBLE, null, null, null);
-			SDFAttribute relativeDifference = new SDFAttribute(null, "relativeDifference", SDFDatatype.DOUBLE, null, null, null);
-			SDFAttribute numberOfTuples = new SDFAttribute(null, "numberOfTuples", SDFDatatype.INTEGER, null, null, null);
-			SDFAttribute averageTupleValue = new SDFAttribute(null, "averageTupleValue", SDFDatatype.INTEGER, null, null, null);
+			SDFAttribute totalDifference = new SDFAttribute(null, "absoluteDifference", SDFDatatype.DOUBLE, null, null,
+					null);
+			SDFAttribute relativeDifference = new SDFAttribute(null, "relativeDifference", SDFDatatype.DOUBLE, null,
+					null, null);
+			SDFAttribute numberOfTuples = new SDFAttribute(null, "numberOfTuples", SDFDatatype.LONG, null, null, null);
+			SDFAttribute averageTupleValue = new SDFAttribute(null, "averageTupleValue", SDFDatatype.INTEGER, null,
+					null, null);
 			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 			outputAttributes.add(totalSum);
 			outputAttributes.add(meanSum);
