@@ -76,7 +76,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				lockInput.unlock();
 				lockOutput.lock();
 				Iterator<IStreamable> outIter = outputBuffer.iterator();
-				while (outIter.hasNext()) {
+				while (outIter.hasNext() && !terminate) {
 					transferNext(outIter.next());
 					outIter.remove();
 				}
@@ -156,6 +156,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	@Override
 	protected void process_close() {
+		runner.terminate = true;
 		lockOutput.lock();
 		if (drainAtClose) {
 			drainBuffers();
@@ -163,10 +164,6 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			inputBuffer.clear();
 			outputBuffer.clear();
 		}
-		runner.terminate = true;
-//		synchronized (this) {
-//			this.notifyAll();
-//		}
 		lockOutput.unlock();
 	}
 
