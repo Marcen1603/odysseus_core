@@ -69,7 +69,7 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 	}
 
 	public PointInTime calcMinTs() {
-		if (elements.size() >= 0) {
+		if (elements.size() > 0) {
 			return elements.get(0).getMetadata().getStart();
 		} else {
 			// // DEBUG: REMOVE AGAIN
