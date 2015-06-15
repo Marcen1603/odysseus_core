@@ -28,6 +28,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -37,7 +39,10 @@ import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 public class IfController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(IfController.class);
-
+	private static final InfoService INFO = InfoServiceFactory
+			.getInfoService(IfController.class);
+	
+	
 	private static final String PARAMETER_KEY = "#";
 
 	public static final String DEFINE_KEY = "DEFINE";
@@ -184,7 +189,10 @@ public class IfController {
 				for (SDFAttribute attribute : attributes) {
 					String name = attribute.getAttributeName().toUpperCase();
 					if (!replacementMap.containsKey(name)) {
-						throw new OdysseusScriptException("Replacementkey " + name + " not known in #IF-statement");
+						INFO.warning("Replacementkey " + name + " not known in #IF-statement");
+						//throw new OdysseusScriptException("Replacementkey " + name + " not known in #IF-statement");
+						inIfClause.push((Boolean) false);
+						return false;
 					}
 
 					values.add(replacementMap.get(name));
