@@ -69,6 +69,7 @@ public class ColorGridConfigurer extends
 		return dashboardPart;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void createPartControl(Composite parent) {
 		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
@@ -420,6 +421,8 @@ public class ColorGridConfigurer extends
             {// Scale Image
                 toolkit.createLabel(group, "Scale Image");
                 final Text minXText = toolkit.createText(group, String.format("%10.3f%n",this.getDashboardPart().getImageScale()));
+                toolkit.createLabel(group, "");
+
                 minXText.addModifyListener(new ModifyListener() {
                     /**
                      * {@inheritDoc}
@@ -429,7 +432,7 @@ public class ColorGridConfigurer extends
                         final String text = minXText.getText();
                         if (!"".equals(text)) {
                             try {
-                                ColorGridConfigurer.this.dashboardPart.setImageScale(Double.parseDouble(text));
+                                ColorGridConfigurer.this.dashboardPart.setImageScale(Double.parseDouble(text.trim()));
                                 fireListener();
                             }
                             catch (final NumberFormatException ex) {
@@ -439,6 +442,56 @@ public class ColorGridConfigurer extends
                     }
                 });
             }
+			{// Height
+				toolkit.createLabel(group, "Offset x");
+				final Text numberCellsX = toolkit.createText(group,  String.format("%10d%n",
+						 this.getDashboardPart().getBackgroundImageOffsetX()));
+				toolkit.createLabel(group, "");
+				numberCellsX.addModifyListener(new ModifyListener() {
+					/**
+					 * {@inheritDoc}
+					 */
+					@Override
+					public void modifyText(final ModifyEvent e) {
+						final String text = numberCellsX.getText();
+						if (!"".equals(text)) {
+							try {
+								ColorGridConfigurer.this.dashboardPart
+										.setBackgroundImageOffsetX(Integer.parseInt(text.trim()));
+								fireListener();
+
+							} catch (final NumberFormatException ex) {
+								// Empty block
+							}
+						}
+					}
+				});
+			}
+			{// Number cells y
+				toolkit.createLabel(group, "Offset y");
+				final Text numberCellsY = toolkit.createText(group, String.format("%10d%n",
+						+ this.getDashboardPart().getBackgroundImageOffsetY()));
+				toolkit.createLabel(group, "");
+				numberCellsY.addModifyListener(new ModifyListener() {
+					/**
+					 * {@inheritDoc}
+					 */
+					@Override
+					public void modifyText(final ModifyEvent e) {
+						final String text = numberCellsY.getText();
+						if (!"".equals(text)) {
+							try {
+								ColorGridConfigurer.this.dashboardPart
+										.setBackgroundImageOffsetY(Integer.parseInt(text.trim()));
+								fireListener();
+
+							} catch (final NumberFormatException ex) {
+								// Empty block
+							}
+						}
+					}
+				});
+			}
 			{// Foregroundcolor
 				toolkit.createLabel(group, "Base Color");
 

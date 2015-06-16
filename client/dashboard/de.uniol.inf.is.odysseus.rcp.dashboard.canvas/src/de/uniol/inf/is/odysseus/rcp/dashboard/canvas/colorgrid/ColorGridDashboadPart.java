@@ -32,6 +32,8 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
     private final static String BACKGROUND_ALPHA = "backgroundAlpha";
     private final static String BACKGROUND_IMAGE = "backgroundImage";
     private final static String BACKGROUND_SCALE = "backgroundImageScale";
+    private final static String BACKGROUND_X = "backgroundX";
+    private final static String BACKGROUND_Y = "backgroundY";
     private final static String COLOR = "color";
 	
 	private int width = 600;
@@ -59,6 +61,8 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 	private int leftButtonLastY;
 	private int backgroundAlpha;
 	private double imageScale;
+	private int backgroundImageOffsetX = 0;
+	private int backgroundImageOffsetY = 0;
 
 	private RGB getColor(final Number value) {
 		final RGB rgb = color;
@@ -82,12 +86,12 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 
         if (this.image != null) {
         	if (imageScale == 1.0){
-        		this.getGC().drawImage(this.image, 0, 0);
+        		this.getGC().drawImage(this.image, backgroundImageOffsetX, backgroundImageOffsetY);
         	}else{
         		Rectangle b = image.getBounds();
         		int newW = new Double(b.width*imageScale).intValue();
         		int newH = new Double(b.height*imageScale).intValue();
-        		this.getGC().drawImage(this.image, 0, 0,b.width,b.height,0,0,newW,newH); 
+        		this.getGC().drawImage(this.image, 0, 0,b.width,b.height,backgroundImageOffsetX,backgroundImageOffsetY,newW,newH); 
         	}
         }
                 
@@ -132,6 +136,8 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
         color = RGB.valueOf(saved.get(COLOR) != null ? saved.get(COLOR) : "0,0,0");
         imagePath = saved.get(BACKGROUND_IMAGE);
         imageScale = Double.valueOf(saved.get(BACKGROUND_SCALE)!=null?saved.get(BACKGROUND_SCALE):"1");
+        backgroundImageOffsetX = Integer.valueOf(saved.get(BACKGROUND_X) != null ? saved.get(BACKGROUND_X) : "0");
+        backgroundImageOffsetY = Integer.valueOf(saved.get(BACKGROUND_Y) != null ? saved.get(BACKGROUND_Y) : "0");
     }
 
     /**
@@ -154,6 +160,8 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
         toSaveMap.put(COLOR, String.valueOf(color));
         toSaveMap.put(BACKGROUND_IMAGE, String.valueOf(imagePath));
         toSaveMap.put(BACKGROUND_SCALE, String.valueOf(imageScale));
+        toSaveMap.put(BACKGROUND_X, String.valueOf(backgroundImageOffsetX));
+        toSaveMap.put(BACKGROUND_Y, String.valueOf(backgroundImageOffsetY));
         return toSaveMap;
     }
 	
@@ -347,5 +355,23 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 	
 	public double getImageScale() {
 		return imageScale;
+	}
+
+	public void setBackgroundImageOffsetX(int x) {
+		backgroundImageOffsetX = x;
+		invalidateImage();
+	}
+	
+	public int getBackgroundImageOffsetX() {
+		return backgroundImageOffsetX;
+	}
+	
+	public void setBackgroundImageOffsetY(int y) {
+		backgroundImageOffsetY = y;
+		invalidateImage();
+	}
+
+	public int getBackgroundImageOffsetY() {
+		return backgroundImageOffsetY;
 	}
 }
