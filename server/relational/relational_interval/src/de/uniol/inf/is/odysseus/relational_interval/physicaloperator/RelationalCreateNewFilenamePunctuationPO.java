@@ -33,7 +33,7 @@ public class RelationalCreateNewFilenamePunctuationPO<R extends Tuple<? extends 
 		return OutputMode.INPUT;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void process_next(R object, int port) {
 		R output = object;
