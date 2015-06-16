@@ -63,8 +63,4 @@ limitations under the License.
          id="de.uniol.inf.is.odysseus.memstore.feature"
          version="0.0.0"/>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.memstore.feature"
-         version="0.0.0"/>
-
 </feature>
