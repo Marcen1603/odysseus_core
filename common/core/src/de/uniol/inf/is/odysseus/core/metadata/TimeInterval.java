@@ -100,34 +100,46 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		this.start = start;
 		this.end = end;
 	}
-	
+
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
 		@SuppressWarnings("rawtypes")
 		Tuple t = new Tuple(2, false);
-		t.setAttribute(0, start.getMainPoint());
-		t.setAttribute(1, end.getMainPoint());
+		t.setAttribute(0, start.isInfinite() ? null : start.getMainPoint());
+		t.setAttribute(1, end.isInfinite() ? null : end.getMainPoint());
 		values.add(t);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <K> K getValue(int subtype, int index) {
 		switch (index) {
 		case 0:
-			return (K) (Long) start.point;
+			return (K) (Long) (start.isInfinite()?null:start.point);
 		case 1:
-			return (K) (Long) end.point;
+			return (K) (Long) (end.isInfinite()?null:end.point);
 		}
 		return null;
 	}
 
 	@Override
 	public void writeValue(Tuple<?> value) {
-		this.start = new PointInTime((long)value.getAttribute(0));
-		this.end = new PointInTime((long)value.getAttribute(1));
+		Object v1 = value.getAttribute(0);
+		Object v2 = value.getAttribute(1);
+		
+		if (v1 != null){
+			this.start = new PointInTime((long)v1);
+		}else{
+			this.start = PointInTime.INFINITY;
+		}
+		if (v2 != null){
+			this.end = new PointInTime((long)v2);
+		}else{
+			this.end = PointInTime.INFINITY;
+		}
+		
 	}
-	
+
 	@Override
 	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
 		return new TimeIntervalInlineMetadataMergeFunction();
