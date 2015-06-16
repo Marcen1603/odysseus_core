@@ -60,12 +60,13 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *
  */
 public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
-		implements PaintListener, MouseListener, MouseMoveListener, MouseTrackListener {
+		implements PaintListener, MouseListener, MouseMoveListener,
+		MouseTrackListener {
 	private final static String MAX_ELEMENTS = "maxElements";
 	private final static String REPAINT_DELAY = "repaintDelay";
 
 	private Cursor cursor = null;
-	
+
 	private Canvas canvas;
 	private final Queue<IStreamObject<?>> queue = new ConcurrentLinkedQueue<>();
 	private CanvasUpdater updater;
@@ -132,6 +133,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 	public void paintControl(final PaintEvent e) {
 		try {
 			Point s = this.getCanvas().getSize();
+//			double zoom = 1.5;
 			Image bufferImage = new Image(Display.getCurrent(), s.x, s.y);
 			this.gc = new GC(bufferImage);
 			this.gc.setTextAntialias(SWT.ON);
@@ -141,6 +143,12 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 			this.gc.dispose();
 			this.gc = null;
 			e.gc.drawImage(bufferImage, leftTop.x, leftTop.y);
+//			e.gc.drawImage(bufferImage, leftTop.x, leftTop.y, bufferImage
+//					.getBounds().width, bufferImage.getBounds().height,
+//					leftTop.x, leftTop.y, new Double(
+//							bufferImage.getBounds().width * zoom).intValue(),
+//					new Double(bufferImage.getBounds().height * zoom)
+//							.intValue());
 			bufferImage.dispose();
 		} catch (Exception e2) {
 			throw e2;
@@ -820,28 +828,28 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 	@Override
 	public void mouseEnter(MouseEvent e) {
 	}
-	
+
 	@Override
 	public void mouseExit(MouseEvent e) {
 	}
-	
+
 	@Override
 	public void mouseHover(MouseEvent e) {
 	}
-	
-	protected void setMoveCursor(){
-		if (cursor != null){
+
+	protected void setMoveCursor() {
+		if (cursor != null) {
 			cursor.dispose();
 		}
 		cursor = new Cursor(this.getCanvas().getDisplay(), SWT.CURSOR_HAND);
 		this.getCanvas().getParent().setCursor(cursor);
 	}
-	
+
 	protected void setDefaultCursor() {
-		if (cursor != null){
+		if (cursor != null) {
 			cursor.dispose();
 		}
 		cursor = new Cursor(this.getCanvas().getDisplay(), SWT.CURSOR_ARROW);
-		this.getCanvas().getParent().setCursor(cursor);		
+		this.getCanvas().getParent().setCursor(cursor);
 	}
 }
