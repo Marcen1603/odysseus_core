@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorgrid;
 
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -15,7 +13,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.AbstractCanvasDashboardPart
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.CIELCH;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
-public class ColorGridDashboadPart extends AbstractCanvasDashboardPart implements MouseListener, MouseMoveListener{
+public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 
 	private int width = 600;
 	private int height = 600;
@@ -115,6 +113,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart implement
 			leftTop = new Point(leftTop.x+(e.x-leftButtonLastX), leftTop.y + (e.y-leftButtonLastY) );
 			leftButtonLastX = e.x;
 			leftButtonLastY = e.y;
+			this.getCanvas().redraw();
 		}
 	}
 

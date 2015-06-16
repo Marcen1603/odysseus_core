@@ -25,6 +25,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -59,7 +61,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  *
  */
 public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
-		implements PaintListener, MouseListener, MouseMoveListener {
+		implements PaintListener, MouseListener, MouseMoveListener, MouseTrackListener {
 	private final static String MAX_ELEMENTS = "maxElements";
 	private final static String REPAINT_DELAY = "repaintDelay";
 
@@ -91,6 +93,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 
 		canvas.addMouseListener(this);
 		canvas.addMouseMoveListener(this);
+		canvas.addMouseTrackListener(this);
 
 		parent.layout();
 		this.updater = new CanvasUpdater(this.canvas, repaintDelay);
@@ -813,6 +816,18 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 
 	@Override
 	public void mouseUp(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEnter(MouseEvent e) {
+	}
+	
+	@Override
+	public void mouseExit(MouseEvent e) {
+	}
+	
+	@Override
+	public void mouseHover(MouseEvent e) {
 	}
 	
 	protected void setMoveCursor(){
