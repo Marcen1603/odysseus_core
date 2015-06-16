@@ -69,7 +69,6 @@ public class ColorGridConfigurer extends
 		return dashboardPart;
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void createPartControl(Composite parent) {
 		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
@@ -420,7 +419,7 @@ public class ColorGridConfigurer extends
 			}
             {// Scale Image
                 toolkit.createLabel(group, "Scale Image");
-                final Text minXText = toolkit.createText(group, String.format("%10.3f%n",this.getDashboardPart().getImageScale()));
+                final Text minXText = toolkit.createText(group, "  "+this.getDashboardPart().getImageScale());
                 toolkit.createLabel(group, "");
 
                 minXText.addModifyListener(new ModifyListener() {

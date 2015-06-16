@@ -132,7 +132,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 	@Override
 	public void paintControl(final PaintEvent e) {
 		try {
-			Point s = this.getCanvas().getSize();
+			Point s = getSize();
 //			double zoom = 1.5;
 			Image bufferImage = new Image(Display.getCurrent(), s.x, s.y);
 			this.gc = new GC(bufferImage);
@@ -155,8 +155,14 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 		}
 	}
 
+	protected Point getSize() {
+		return this.getCanvas().getSize();
+	}
+
 	public abstract void doPaint();
 
+	
+	
 	/**
 	 * {@inheritDoc}
 	 */

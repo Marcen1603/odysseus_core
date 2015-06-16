@@ -63,6 +63,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 	private double imageScale;
 	private int backgroundImageOffsetX = 0;
 	private int backgroundImageOffsetY = 0;
+	private Point size;
 
 	private RGB getColor(final Number value) {
 		final RGB rgb = color;
@@ -102,8 +103,9 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 				if (grid[x][y] != null){
 					if (maxDuration > 0 && grid[x][y].getMetadata().getStart().getMainPoint()
 							+ maxDuration < maxTime) {
-						fillRectangle(x * boxWidth, y * boxWidth, boxWidth,
-								boxHeight, backgroundColor);
+						// No need to delete, images is painted anyway ...
+						//	fillRectangle(x * boxWidth, y * boxWidth, boxWidth,
+                        // boxHeight, backgroundColor);
 						grid[x][y] = null;
 					} else {
 						Number v = grid[x][y].getAttribute(value_pos);
@@ -116,6 +118,14 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 		}
 	}
 
+	@Override
+	protected Point getSize() {
+		if (size == null){
+			size = new Point(width*boxWidth, height*boxHeight);
+		}
+		return size;
+	}
+	
     /**
      * 
      * {@inheritDoc}
@@ -226,6 +236,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 
 	public void setWidth(int width) {
 		this.width = width;
+		size = null;
 	}
 
 	public int getHeight() {
@@ -234,6 +245,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 
 	public void setHeight(int height) {
 		this.height = height;
+		size = null;
 	}
 
 	public int getXpos() {
@@ -266,6 +278,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 
 	public void setBoxWidth(int boxWidth) {
 		this.boxWidth = boxWidth;
+		size = null;
 	}
 
 	public int getBoxHeight() {
@@ -274,6 +287,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 
 	public void setBoxHeight(int boxHeight) {
 		this.boxHeight = boxHeight;
+		size = null;
 	}
 
 	public String getImagePath() {
