@@ -14,8 +14,9 @@ public class TElasticSearchSinkAORule extends AbstractTNoSQLSinkAORule<ElasticSe
         return ElasticSearchSinkAO.class;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected Class<? extends AbstractNoSQLSinkPO<?>> getPhysicalOperatorClass() {
-        return ElasticSearchSinkPO.class;
+        return (Class<? extends AbstractNoSQLSinkPO<?>>) ElasticSearchSinkPO.class;
     }
 }

@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.server.nosql.base.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
-import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -60,11 +58,7 @@ abstract class AbstractTNoSQLAORule<L extends AbstractNoSQLAO, P extends IPhysic
 
 	@Override
 	public boolean isExecutable(L operator, TransformationConfiguration config) {
-		// All NoSQL operator currently require key value objects?
-		// Distinguish between sources (do not have an input schema and sinks with schema and type)
-		return (operator.isSourceOperator() || ((operator.getInputSchema(0).getType() == KeyValueObject.class || operator
-				.getInputSchema(0).getType() == NestedKeyValueObject.class)
-				&& operator.isAllPhysicalInputSet()));
+		return (operator.isSourceOperator() || operator.isAllPhysicalInputSet());
 	}
 
 	@Override

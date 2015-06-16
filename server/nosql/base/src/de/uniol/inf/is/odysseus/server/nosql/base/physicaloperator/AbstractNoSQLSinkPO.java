@@ -79,7 +79,7 @@ public abstract class AbstractNoSQLSinkPO<E extends IStreamObject<?>> extends Ab
     protected abstract void process_next_tuple_to_write(List<E> elementsToWrite);
 
     private class BatchSizeTimerTaskImpl implements BatchSizeTimerTask<E> {
-
+    	
         @Override
         public void onTimerRings(List<E> elements) {
             process_next_tuple_to_write(elements);

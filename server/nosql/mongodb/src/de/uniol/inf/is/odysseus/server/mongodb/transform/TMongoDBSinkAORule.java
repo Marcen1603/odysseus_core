@@ -13,8 +13,9 @@ public class TMongoDBSinkAORule extends AbstractTNoSQLSinkAORule<MongoDBSinkAO> 
         return MongoDBSinkAO.class;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected Class<? extends AbstractNoSQLSinkPO<?>> getPhysicalOperatorClass() {
-        return MongoDBSinkPO.class;
+        return (Class<? extends AbstractNoSQLSinkPO<?>>) MongoDBSinkPO.class;
     }
 }

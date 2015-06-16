@@ -4,6 +4,8 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
+
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.server.mongodb.connectionwrapper.MongoDBConnectionWrapper;
 import de.uniol.inf.is.odysseus.server.mongodb.logicaloperator.MongoDBSinkAO;
 import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQLJsonSinkPO;
@@ -15,7 +17,7 @@ import java.util.List;
 /**
  * Default Port: 27017
  */
-public class MongoDBSinkPO extends AbstractNoSQLJsonSinkPO {
+public class MongoDBSinkPO<T extends IStreamObject<?>> extends AbstractNoSQLJsonSinkPO<T> {
 
 	private String mongoDBName;
 	private String collectionName;
