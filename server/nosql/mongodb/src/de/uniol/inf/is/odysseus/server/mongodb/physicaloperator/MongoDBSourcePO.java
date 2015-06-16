@@ -1,20 +1,22 @@
 package de.uniol.inf.is.odysseus.server.mongodb.physicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
+
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.server.mongodb.connectionwrapper.MongoDBConnectionWrapper;
 import de.uniol.inf.is.odysseus.server.mongodb.logicaloperator.MongoDBSourceAO;
 import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.AbstractNoSQLJsonSourcePO;
 import de.uniol.inf.is.odysseus.server.nosql.base.util.connection.NoSQLConnectionWrapper;
 
-import java.util.ArrayList;
-import java.util.List;
 
-
-public class MongoDBSourcePO extends AbstractNoSQLJsonSourcePO {
+public class MongoDBSourcePO<M extends IMetaAttribute> extends AbstractNoSQLJsonSourcePO<M> {
 
     private String mongoDBName;
     private String collectionName;

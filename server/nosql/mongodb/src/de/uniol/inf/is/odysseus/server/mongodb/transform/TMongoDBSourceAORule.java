@@ -13,8 +13,9 @@ public class TMongoDBSourceAORule extends AbstractTNoSQLSourceAORule<MongoDBSour
         return MongoDBSourceAO.class;
     }
 
-    @Override
-    protected Class<? extends AbstractNoSQLSourcePO<?>> getPhysicalOperatorClass() {
-        return MongoDBSourcePO.class;
+    @SuppressWarnings("unchecked")
+	@Override
+    protected Class<? extends AbstractNoSQLSourcePO<?,?>> getPhysicalOperatorClass() {
+        return (Class<? extends AbstractNoSQLSourcePO<?, ?>>) MongoDBSourcePO.class;
     }
 }

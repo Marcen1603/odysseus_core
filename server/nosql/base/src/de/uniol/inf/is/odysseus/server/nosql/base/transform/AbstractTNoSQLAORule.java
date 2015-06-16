@@ -1,10 +1,16 @@
 package de.uniol.inf.is.odysseus.server.nosql.base.transform;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLAO;
+import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSourceAO;
 import de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator.IPhysicalNoSQLOperator;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -49,6 +55,29 @@ abstract class AbstractTNoSQLAORule<L extends AbstractNoSQLAO, P extends IPhysic
 			physicalOperator = (P) physicalOperatorClass
 					.getDeclaredConstructor(logicalOperatorClass).newInstance(
 							logicalOperator);
+			
+			
+			if (physicalOperator instanceof IMetadataInitializer && logicalOperator instanceof AbstractNoSQLSourceAO) {
+				AbstractNoSQLSourceAO operator = (AbstractNoSQLSourceAO) logicalOperator;
+				// New: do no create meta data creation and update
+				if (!config.hasOption("NO_METADATA") ) {
+									
+					IMetaAttribute type = operator.getLocalMetaAttribute();
+					if (type == null) {
+						type = MetadataRegistry.getMetadataType(config
+								.getDefaultMetaTypeSet());
+					}
+					((IMetadataInitializer<?,?>) physicalOperator).setMetadataType(type);
+					
+					TimestampAO tsAO = getTimestampAOAsFather(logicalOperator);
+					Class<? extends IMetaAttribute> toC = ITimeInterval.class;
+					if (MetadataRegistry.contains(type.getClasses(),toC) &&  tsAO == null ) {
+						tsAO = insertTimestampAO(logicalOperator, operator.getDateFormat());
+					}
+
+				}
+			}
+			
 		} catch (Exception e) {
 			throw new RuleException(e);
 		}

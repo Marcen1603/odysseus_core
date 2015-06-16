@@ -1,11 +1,18 @@
 package de.uniol.inf.is.odysseus.server.nosql.base.physicaloperator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.server.nosql.base.logicaloperator.AbstractNoSQLSourceAO;
-
-import java.util.*;
 
 /**
  *  The AbstractNoSQLJsonSourcePO transforms the JSON strings which are read from the NoSQL database into KeyValue objects.
@@ -13,8 +20,11 @@ import java.util.*;
  *  For NoSQL databases which save their data in JSON Format it is recommended to use the
  *  AbstractNoSQLJsonSourcePO instead of AbstractNoSQLSourcePO.
  */
-public abstract class AbstractNoSQLJsonSourcePO extends AbstractNoSQLSourcePO<KeyValueObject<?>> {
+public abstract class AbstractNoSQLJsonSourcePO<M extends IMetaAttribute> extends AbstractNoSQLSourcePO<M, KeyValueObject<M>> {
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(AbstractNoSQLJsonSourcePO.class);
+	
     protected static Gson gson = new Gson();
 
     public AbstractNoSQLJsonSourcePO(AbstractNoSQLSourceAO abstractNoSQLSourceAO) {
@@ -23,11 +33,11 @@ public abstract class AbstractNoSQLJsonSourcePO extends AbstractNoSQLSourcePO<Ke
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-    protected final List<KeyValueObject<?>> process_transfer_tuples(int maxElementCount) {
+    protected final List<KeyValueObject<M>> process_transfer_tuples(int maxElementCount) {
 
         List<String> strings = process_transfer_jsons(maxElementCount);
 
-        List<KeyValueObject<?>> keyValueObjects = new ArrayList<>();
+        List<KeyValueObject<M>> keyValueObjects = new ArrayList<>();
 
         //noinspection MismatchedQueryAndUpdateOfCollection
         Map<String, Object> map = new HashMap<>();
@@ -38,6 +48,16 @@ public abstract class AbstractNoSQLJsonSourcePO extends AbstractNoSQLSourcePO<Ke
 			Map<String, Object> jsonMap = gson.fromJson(string, map.getClass());
 
             KeyValueObject keyValueObject = new KeyValueObject(jsonMap);
+    		M meta = null;
+    		try {
+    			meta = getMetadataInstance();
+    		} catch (InstantiationException | IllegalAccessException e1) {
+    			LOG.error("Error creating meta data",e1);
+                // BAD Bad bad idea, this line kills your screen with popups!!!
+    			// sendError("Error creating meta data",e1);
+    		}
+    		keyValueObject.setMetadata(meta);
+    		updateMetadata(keyValueObject);
             keyValueObjects.add(keyValueObject);
         }
 

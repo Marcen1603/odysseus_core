@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  *  The AbstractNoSQLAO is the superclass for all logical operators in the NoSQL context.
  *  The parameters host, port, user and password will be set here and are needed in all logical operators in the NoSQL context.
  */
-public abstract class AbstractNoSQLAO extends AbstractLogicalOperator {
+public abstract class AbstractNoSQLAO extends AbstractLogicalOperator{
 
 	private static final long serialVersionUID = -1402629936641429743L;
 	
@@ -18,6 +18,7 @@ public abstract class AbstractNoSQLAO extends AbstractLogicalOperator {
     private String user;
     private String password;
     private String database;
+
 
     public AbstractNoSQLAO() {
         super();
@@ -72,7 +73,7 @@ public abstract class AbstractNoSQLAO extends AbstractLogicalOperator {
     public void setPassword(String password) {
         this.password = password;
     }
-
+    
     public String getUser() {
         return user;
     }
@@ -92,4 +93,5 @@ public abstract class AbstractNoSQLAO extends AbstractLogicalOperator {
     public String getDatabase() {
 		return database;
 	}
+    
 }
