@@ -15,9 +15,9 @@ Import-Package: com.google.common.base,
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0"
-Service-Component: OSGI-INF/MultithreadedPreParserKeywordProvider.xml,
+Service-Component: OSGI-INF/ParallelizationPreParserKeywordProvider.xml,
  OSGI-INF/ParallelizationPreTransformationHandlerRegistry.xml
-Export-Package: de.uniol.inf.is.odysseus.multithreaded.helper,
+Export-Package: de.uniol.inf.is.odysseus.multithreaded.autodetect,
+ de.uniol.inf.is.odysseus.multithreaded.helper,
  de.uniol.inf.is.odysseus.multithreaded.keyword,
- de.uniol.inf.is.odysseus.multithreaded.parameter,
  de.uniol.inf.is.odysseus.multithreaded.transform

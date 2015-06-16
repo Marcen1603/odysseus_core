@@ -16,21 +16,35 @@ public class MultithreadedTransformationStrategyRegistry {
 	private static Logger LOG = LoggerFactory
 			.getLogger(MultithreadedTransformationStrategyRegistry.class);
 
-	private static Map<Class<? extends ILogicalOperator>, List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>>> strategies = new HashMap<Class<? extends ILogicalOperator>, List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>>>();
+	// strategies for logical operator
+	private static Map<Class<? extends ILogicalOperator>, List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>>> strategiesForLogicalOperator = new HashMap<Class<? extends ILogicalOperator>, List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>>>();
+
+	// strategies by name
+	private static Map<String, IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategiesByName = new HashMap<String, IMultithreadedTransformationStrategy<? extends ILogicalOperator>>();
 
 	public static void registerStrategy(
 			IMultithreadedTransformationStrategy<?> multithreadedTransformationStrategy) {
 		LOG.debug("Register new MultithreadedTransformationStrategy "
 				+ multithreadedTransformationStrategy.getName());
+
+		// strategies by logical operator
 		Class<? extends ILogicalOperator> operatorType = multithreadedTransformationStrategy
 				.getOperatorType();
-		if (strategies.containsKey(operatorType)) {
-			strategies.get(operatorType).add(
+		if (strategiesForLogicalOperator.containsKey(operatorType)) {
+			strategiesForLogicalOperator.get(operatorType).add(
 					multithreadedTransformationStrategy);
 		} else {
 			List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = new ArrayList<IMultithreadedTransformationStrategy<? extends ILogicalOperator>>();
 			strategiesForOperator.add(multithreadedTransformationStrategy);
-			strategies.put(operatorType, strategiesForOperator);
+			strategiesForLogicalOperator.put(operatorType,
+					strategiesForOperator);
+		}
+
+		// strategies by name
+		if (!strategiesByName.containsKey(multithreadedTransformationStrategy
+				.getName().toLowerCase())) {
+			strategiesByName.put(multithreadedTransformationStrategy.getName()
+					.toLowerCase(), multithreadedTransformationStrategy);
 		}
 	}
 
@@ -38,32 +52,59 @@ public class MultithreadedTransformationStrategyRegistry {
 			IMultithreadedTransformationStrategy<?> multithreadedTransformationStrategy) {
 		LOG.debug("Remove MultithreadedTransformationStrategy "
 				+ multithreadedTransformationStrategy.getName());
+
+		// strategies by logical operator
 		Class<? extends ILogicalOperator> operatorType = multithreadedTransformationStrategy
 				.getOperatorType();
-		if (strategies.containsKey(operatorType)) {
-			List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = strategies
+		if (strategiesForLogicalOperator.containsKey(operatorType)) {
+			List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = strategiesForLogicalOperator
 					.get(operatorType);
 			strategiesForOperator.remove(multithreadedTransformationStrategy);
 			if (strategiesForOperator.isEmpty()) {
-				strategies.remove(operatorType);
+				strategiesForLogicalOperator.remove(operatorType);
 			}
+		}
+
+		// strategies by name
+		if (strategiesByName.containsKey(multithreadedTransformationStrategy
+				.getName().toLowerCase())) {
+			strategiesByName.remove(multithreadedTransformationStrategy)
+					.getName().toLowerCase();
 		}
 	}
 
 	public static List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>> getStrategiesForOperator(
 			Class<? extends ILogicalOperator> operatorType) {
-		if (!strategies.containsKey(operatorType)) {
+		if (!strategiesForLogicalOperator.containsKey(operatorType)) {
 			LOG.error("MultithreadedTransformationStrategy for OperatorName "
 					+ operatorType.getName() + " does not exist");
 			return null;
 		} else {
-			return strategies.get(operatorType);
+			return strategiesForLogicalOperator.get(operatorType);
 		}
+	}
+
+	public static IMultithreadedTransformationStrategy<? extends ILogicalOperator> getStrategiesByName(
+			String name) {
+		if (strategiesByName.containsKey(name.toLowerCase())) {
+			return strategiesByName.get(name.toLowerCase());
+		}
+		return null;
 	}
 
 	public static List<Class<? extends ILogicalOperator>> getValidTypes() {
 		List<Class<? extends ILogicalOperator>> validTypes = new ArrayList<Class<? extends ILogicalOperator>>();
-		validTypes.addAll(strategies.keySet());
+		validTypes.addAll(strategiesForLogicalOperator.keySet());
 		return validTypes;
+	}
+
+	public static List<String> getValidStrategyNames() {
+		List<String> validNames = new ArrayList<String>();
+		validNames.addAll(strategiesByName.keySet());
+		return validNames;
+	}
+
+	public static boolean isValidStrategyName(String name) {
+		return strategiesByName.containsKey(name.toLowerCase());
 	}
 }

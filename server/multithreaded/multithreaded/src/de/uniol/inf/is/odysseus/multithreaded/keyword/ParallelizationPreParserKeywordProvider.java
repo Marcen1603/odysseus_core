@@ -6,14 +6,13 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
-public class MultithreadedPreParserKeywordProvider implements
+public class ParallelizationPreParserKeywordProvider implements
 		IPreParserKeywordProvider {
 
 	@Override
 	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
 		Map<String, Class<? extends IPreParserKeyword>> keywords = new HashMap<String, Class<? extends IPreParserKeyword>>();
-		keywords.put(MultithreadedPreParserKeyword.KEYWORD, MultithreadedPreParserKeyword.class);
-		keywords.put(MultithreadedOperatorPreParserKeyword.KEYWORD, MultithreadedOperatorPreParserKeyword.class);
+		keywords.put(ParallelizationPreParserKeyword.KEYWORD, ParallelizationPreParserKeyword.class);
 		return keywords;
 	}
 

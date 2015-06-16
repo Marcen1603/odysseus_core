@@ -20,14 +20,14 @@ import de.uniol.inf.is.odysseus.multithreaded.transform.registry.Parallelization
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class MultithreadedPreParserKeyword extends AbstractPreParserKeyword {
+public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 
-	public static final String KEYWORD = "MULTITHREADED";
+	public static final String KEYWORD = "PARALLELIZATION";
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(MultithreadedPreParserKeyword.class);
+			.getLogger(ParallelizationPreParserKeyword.class);
 	private static final int ATTRIBUTE_COUNT = 2;
-	private static final String PATTERN = "<Parallelization-Type> <Degree of parallelization, or AUTO>";
+	private static final String PATTERN = "<Parallelization-Type> <Degree of parallelization or AUTO>";
 
 	private int degreeOfParallelization = 0;
 
@@ -39,20 +39,30 @@ public class MultithreadedPreParserKeyword extends AbstractPreParserKeyword {
 					+ " are missing");
 		}
 
+		// split of parameters on whitespaces
 		String[] splitted = parameter.trim().split(" ");
 
+		// check correkt attribute count
 		if (splitted.length != ATTRIBUTE_COUNT) {
 			throw new OdysseusScriptException(KEYWORD + " needs "
 					+ ATTRIBUTE_COUNT + " attributes: " + PATTERN + "!");
 		} else {
+			// check if parallelization type exists
 			String parallelizationType = splitted[0];
 			if (!isValidType(parallelizationType)) {
-				throw new OdysseusScriptException("");
+				throw new OdysseusScriptException(
+						"ParallelizationPreTransformationHandler with name "
+								+ splitted[0]
+								+ " not exists. Valid values are: "
+								+ ParallelizationPreTransformationHandlerRegistry
+										.getValidTypes());
 			}
 
+			// validate degree of parallelization
 			String degreeOfParallelization = splitted[1];
 			if (!isValidDegree(degreeOfParallelization)) {
-				throw new OdysseusScriptException("");
+				throw new OdysseusScriptException(
+						"Value for degreeOfParallelization is not valid. Only positive integer values > 2 or constant AUTO is allowed.");
 			}
 		}
 
@@ -64,47 +74,61 @@ public class MultithreadedPreParserKeyword extends AbstractPreParserKeyword {
 			throws OdysseusScriptException {
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 
+		// split of parameters on whitespaces
 		String[] splitted = parameter.trim().split(" ");
-		
-		
+
+		// get IParallelizationPreTransformationHandler by name
 		IParallelizationPreTransformationHandler handler = ParallelizationPreTransformationHandlerRegistry
 				.getPreTransformationHandlerByType(splitted[0]);
 		if (handler != null) {
+			// if handler exists
 			PreTransformationHandlerParameter newHandlerParameter = handler
 					.createHandlerParameter(degreeOfParallelization);
-			
+
 			boolean parameterAlreadyAdded = false;
-			for( IQueryBuildSetting<?> setting : settings ) {
-				if( setting.getClass().equals(PreTransformationHandlerParameter.class)) {
+			
+			for (IQueryBuildSetting<?> setting : settings) {
+				if (setting.getClass().equals(
+						PreTransformationHandlerParameter.class)) {
 					PreTransformationHandlerParameter existingHandlerParameter = (PreTransformationHandlerParameter) setting;
-					for (HandlerParameterPair newPair : newHandlerParameter.getPairs()) {
-						for (HandlerParameterPair existingPair : existingHandlerParameter.getPairs()) {
-							if (newPair.name.equalsIgnoreCase(existingPair.name)){
-								LOG.warn("Duplicate definition for multithreaded keyword. Please use this keyword only once. Only first occurrence is considered.");
-								return null;
+					for (HandlerParameterPair newPair : newHandlerParameter
+							.getPairs()) {
+						// check if parameter already exists
+						for (HandlerParameterPair existingPair : existingHandlerParameter
+								.getPairs()) {
+							if (newPair.name
+									.equalsIgnoreCase(existingPair.name)) {
+								throw new OdysseusScriptException(
+										"Duplicate definition for " + KEYWORD
+												+ " keyword is not allowed");
 							}
 						}
-						existingHandlerParameter.add(newPair.name, newPair.parameters);
+						existingHandlerParameter.add(newPair.name,
+								newPair.parameters);
 					}
 					parameterAlreadyAdded = true;
 					break;
 				}
 			}
-			
-			if(!parameterAlreadyAdded){
+
+			if (!parameterAlreadyAdded) {
 				settings.add(newHandlerParameter);
 			}
 		} else {
-			throw new OdysseusScriptException();
+			throw new OdysseusScriptException(
+					"ParallelizationPreTransformationHandler with name "
+							+ splitted[0]
+							+ " not exists. Valid values are: "
+							+ ParallelizationPreTransformationHandlerRegistry
+									.getValidTypes());
 		}
 
 		return null;
 	}
 
 	private boolean isValidType(String parallelizationType) {
-		return ParallelizationPreTransformationHandlerRegistry
-				.getValidTypes().contains(
-						parallelizationType.toLowerCase()) ? true : false;
+		return ParallelizationPreTransformationHandlerRegistry.getValidTypes()
+				.contains(parallelizationType.toLowerCase()) ? true : false;
 	}
 
 	private boolean isValidDegree(String degreeOfParallelization)
@@ -128,7 +152,8 @@ public class MultithreadedPreParserKeyword extends AbstractPreParserKeyword {
 				int availableCores = PerformanceDetectionHelper
 						.getNumberOfCores();
 				if (availableCores <= 1) {
-					throw new OdysseusScriptException("");
+					throw new OdysseusScriptException(
+							"AUTO detection of parallelization degree is not possible, because there is only on core detected.");
 				}
 
 				LOG.info("Number of detected cores is " + availableCores
