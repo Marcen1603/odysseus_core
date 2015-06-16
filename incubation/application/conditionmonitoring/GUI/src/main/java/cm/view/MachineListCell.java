@@ -1,6 +1,6 @@
 package cm.view;
 
-import cm.model.Machine;
+import cm.model.Collection;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * Created by Tobi on 15.03.2015.
  */
-public class MachineListCell extends ListCell<Machine> {
+public class MachineListCell extends ListCell<Collection> {
 
     private Parent root;
 
@@ -37,18 +37,18 @@ public class MachineListCell extends ListCell<Machine> {
     }
 
     @Override
-    public void updateItem(Machine item, boolean empty) {
+    public void updateItem(Collection item, boolean empty) {
         super.updateItem(item, empty);
 
         if (empty) {
             setText(null);
             setGraphic(null);
         } else {
-            Machine machine = getListView().getItems().get(super.getIndex());
-            machineName.setText(machine.getName());
-            machineState.setText(machine.getState());
+            Collection collection = getListView().getItems().get(super.getIndex());
+            machineName.setText(collection.getName());
+            machineState.setText(collection.getState());
 
-            if (machine.getState().equals(Machine.BAD_STATE)) {
+            if (collection.getState().equals(Collection.BAD_STATE)) {
                 machineBackground.setStyle("-fx-background-color: red");
             } else {
                 machineBackground.setStyle("-fx-background-color: greenyellow");

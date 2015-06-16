@@ -1,9 +1,15 @@
 package cm.model;
 
+import cm.communication.dto.SocketInfo;
+import cm.communication.socket.SocketReceiver;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Tobi on 15.03.2015.
  */
-public class Machine {
+public class Collection {
 
     public static final String OK_STATE = "OK";
     public static final String BAD_STATE = "BAD";
@@ -11,11 +17,13 @@ public class Machine {
     private int id;
     private String name;
     private String state;
+    private List<SocketInfo> connections;
 
-    public Machine(int id, String name, String state) {
+    public Collection(int id, String name, String state) {
         this.id = id;
         this.name = name;
         this.state = state;
+        this.connections = new ArrayList<>();
     }
 
     public int getId() {
@@ -42,14 +50,22 @@ public class Machine {
         this.state = state;
     }
 
+    public void addConnection(SocketInfo connection) {
+        this.connections.add(connection);
+    }
+
+    public List<SocketInfo> getConnections() {
+        return connections;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Machine machine = (Machine) o;
+        Collection collection = (Collection) o;
 
-        return id == machine.id;
+        return id == collection.id;
 
     }
 

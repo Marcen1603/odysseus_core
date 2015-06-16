@@ -8,13 +8,13 @@ import javafx.beans.property.SimpleDoubleProperty;
  */
 public class Sensor {
 
-    private Machine machine;
+    private Collection collection;
     private String name;
     private SimpleDoubleProperty currentValuePropery;
     private String status;
 
-    public Sensor(Machine machine, String name, double currentValuePropery, String status) {
-        this.machine = machine;
+    public Sensor(Collection collection, String name, double currentValuePropery, String status) {
+        this.collection = collection;
         this.name = name;
         this.currentValuePropery = new SimpleDoubleProperty(currentValuePropery);
         this.status = status;
@@ -44,11 +44,11 @@ public class Sensor {
         this.status = status;
     }
 
-    public Machine getMachine() {
-        return machine;
+    public Collection getCollection() {
+        return collection;
     }
 
-    public void setMachine(Machine machine) {
-        this.machine = machine;
+    public void setCollection(Collection collection) {
+        this.collection = collection;
     }
 }

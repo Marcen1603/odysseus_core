@@ -1,31 +1,36 @@
 package cm.model;
 
+import cm.communication.socket.SocketReceiver;
+
+import java.util.Map;
+
 /**
- * Created by Tobi on 03.04.2015.
+ * @author Tobias
+ * @since 03.04.2015.
  */
 public class MachineEvent {
 
-    Machine machine;
-    String description;
+    private SocketReceiver connection;
+    private Map<String, String> attributes;
 
-    public MachineEvent(Machine machine, String description) {
-        this.machine = machine;
-        this.description = description;
+    public MachineEvent(SocketReceiver connection, Map<String, String> attributes) {
+        this.connection = connection;
+        this.attributes = attributes;
     }
 
-    public Machine getMachine() {
-        return machine;
+    public SocketReceiver getConnection() {
+        return connection;
     }
 
-    public void setMachine(Machine machine) {
-        this.machine = machine;
+    public void setConnection(SocketReceiver connection) {
+        this.connection = connection;
     }
 
-    public String getDescription() {
-        return description;
+    public Map<String, String> getAttributes() {
+        return attributes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
     }
 }

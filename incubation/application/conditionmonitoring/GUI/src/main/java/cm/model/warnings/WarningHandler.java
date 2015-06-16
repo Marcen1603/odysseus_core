@@ -1,10 +1,13 @@
 package cm.model.warnings;
 
+import cm.communication.dto.SocketInfo;
+import cm.communication.socket.SocketReceiver;
 import cm.data.DataHandler;
-import cm.model.Machine;
+import cm.model.Collection;
 import cm.model.MachineEvent;
 import cm.model.MessageHandler;
-import com.google.gson.Gson;
+
+import java.util.Map;
 
 /**
  * @author Tobias
@@ -12,13 +15,10 @@ import com.google.gson.Gson;
  */
 public class WarningHandler extends MessageHandler {
 
-    public static void handleMessage(String message) {
-        Gson gson = new Gson();
-        Warning warning = gson.fromJson(message, Warning.class);
-        Machine machine = DataHandler.getInstance().getMachine(warning.getMachineId());
-        MachineEvent machineEvent = new MachineEvent(machine, warning.getDescription());
+    public static void handleMessage(Map<String, String> message, SocketReceiver connection) {
+        // TODO Look for correct collection
+        MachineEvent machineEvent = new MachineEvent(connection, message);
         DataHandler.getInstance().addMachineEvent(machineEvent);
-        System.out.println("Warning(" + warning.getLevel() + ") " + warning.getMachineId() + ", " + warning.getSensorId() + ", " + warning.getDescription());
     }
 
 }

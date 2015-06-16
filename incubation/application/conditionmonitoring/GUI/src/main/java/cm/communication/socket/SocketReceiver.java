@@ -12,7 +12,9 @@ import com.google.gson.Gson;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tobias
@@ -21,10 +23,13 @@ import java.util.List;
 public class SocketReceiver {
 
     private SocketInfo socketInfo;
+    private Thread socketReceiverThread;
 
     public SocketReceiver(SocketInfo socketInfo) {
         this.socketInfo = socketInfo;
-        new SocketReceiveThread(socketInfo).start();
+        this.socketReceiverThread = new SocketReceiveThread(socketInfo);
+        this.socketReceiverThread.setDaemon(true); // To stop the thread when the user closes the main window
+        this.socketReceiverThread.start();
     }
 
     class SocketReceiveThread extends Thread {
@@ -40,7 +45,7 @@ public class SocketReceiver {
                 Socket socket = new Socket(socketInfo.getIp(), socketInfo.getPort());
                 DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
                 while (!isInterrupted()) {
-                    dataInputStream.readInt();
+                    int firstInt = dataInputStream.readInt();
                     List<Object> values = new ArrayList<Object>();
 
                     for (AttributeInformation info : socketInfo.getSchema()) {
@@ -57,12 +62,14 @@ public class SocketReceiver {
                         }
                     }
                     QueryResults results = new QueryResults(values);
-                    Gson gson = new Gson();
-                    Message message = gson.fromJson(results.getValues().get(0).toString(), Message.class);
-                    switch (message.getMessageType()) {
-                        case WARNING:
-                            WarningHandler.handleMessage(message.getMessageContent());
+
+                    Map<String, String> valueMap = new HashMap<>();
+                    for (int i = 0; i < results.getValues().size(); i++) {
+                        Object o = results.getValues().get(i);
+                        String name = socketInfo.getSchema().get(i).getName();
+                        valueMap.put(name, o.toString());
                     }
+                    WarningHandler.handleMessage(valueMap, SocketReceiver.this);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -70,4 +77,11 @@ public class SocketReceiver {
         }
     }
 
+    public SocketInfo getSocketInfo() {
+        return socketInfo;
+    }
+
+    public Thread getSocketReceiverThread() {
+        return socketReceiverThread;
+    }
 }

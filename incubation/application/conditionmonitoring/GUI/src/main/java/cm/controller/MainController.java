@@ -1,12 +1,8 @@
 package cm.controller;
 
-import cm.communication.dto.SocketInfo;
-import cm.communication.rest.RestException;
-import cm.communication.rest.RestService;
-import cm.communication.socket.SocketReceiver;
 import cm.controller.listeners.MachineListViewListener;
 import cm.data.DataHandler;
-import cm.model.Machine;
+import cm.model.Collection;
 import cm.model.MachineEvent;
 import cm.model.Sensor;
 import cm.view.MachineEventListCell;
@@ -16,14 +12,23 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 public class MainController {
 
     @FXML
-    ListView<Machine> machineList;
+    ListView<Collection> machineList;
 
     @FXML
     ListView<MachineEvent> machineEventList;
@@ -34,14 +39,15 @@ public class MainController {
     Label machineStatus;
     @FXML
     Label machinePrediction;
-
     @FXML
-    TextArea queryField;
-
+    Button newCollectionButton;
 
     @FXML
     ListView<MachineEvent> machineEvents;
-    @FXML ListView<Sensor> sensorsList;
+    @FXML
+    ListView<Sensor> sensorsList;
+
+    @FXML Button addConnectionButton;
 
     ObservableList<Sensor> observableSensorList = FXCollections.observableArrayList();
 
@@ -53,24 +59,17 @@ public class MainController {
     private void initialize() {
 
         // Create a few machines
-        Machine machine1 = new Machine(0, "Wind Turbine Herakles", Machine.OK_STATE);
-        Machine machine2 = new Machine(1, "Car", Machine.BAD_STATE);
+        Collection collection1 = new Collection(0, "Wind Turbine Herakles", Collection.OK_STATE);
+        Collection collection2 = new Collection(1, "Car", Collection.BAD_STATE);
 
-        DataHandler.getInstance().addMachine(machine1);
-        DataHandler.getInstance().addMachine(machine2);
+        DataHandler.getInstance().addCollection(collection1);
+        DataHandler.getInstance().addCollection(collection2);
 
-        machineList.setItems(DataHandler.getInstance().getObservableMachineList());
+        machineList.setItems(DataHandler.getInstance().getObservableCollectionList());
 
         machineList.setCellFactory(listView -> new MachineListCell());
 
-        // Create a few events
-        MachineEvent event1 = new MachineEvent(machine1, "Temperature unexpected high");
-        MachineEvent event2 = new MachineEvent(machine2, "Bearing will fail soon");
-
-        DataHandler.getInstance().addMachineEvent(event1);
-        DataHandler.getInstance().addMachineEvent(event2);
-
-        machineEventList.setItems(DataHandler.getInstance().getObservableMachineEventList());
+        machineEventList.setItems(DataHandler.getInstance().getObservableEventList());
 
         machineEventList.setCellFactory(listView -> new MachineEventListCell());
 
@@ -78,50 +77,57 @@ public class MainController {
         machineList.getSelectionModel().selectedItemProperty().addListener(new MachineListViewListener(this));
 
         // Add a few sensors
-        Sensor temperatureSensor = new Sensor(machine1, "Temperature Sensor", 25.0, "OK");
+        Sensor temperatureSensor = new Sensor(collection1, "Temperature Sensor", 25.0, "OK");
         observableSensorList.add(temperatureSensor);
         sensorsList.setItems(observableSensorList);
 
         sensorsList.setCellFactory(listView -> new SensorListCell());
-
-        String conditionQL = "#PARSER ConditionQL\n" +
-                "#DOREWRITE false\n" +
-                "#RUNQUERY\n" +
-                "\n" +
-                "{\n" +
-                "\t\"msgType\"\t:\t\"ANOMALYDETECTION\",\n" +
-                "\t\"algorithm\"\t:\t{\n" +
-                "\t\t\t\t\t\t\"algorithm\"\t:\t\"VALUEAREA\",\n" +
-                "\t\t\t\t\t\t\"parameters\":\t{\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t\"minValue\"\t:\t\"20\",\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t\"maxValue\"\t:\t\"25\"\n" +
-                "\t\t\t\t\t\t\t\t\t\t\t}\n" +
-                "\t\t\t\t\t},\n" +
-                "\t\"stream\"\t:\t{\n" +
-                "\t\t\t\t\t\t\"streamName\"\t:\t\"tempSensor\"\n" +
-                "\t\t\t\t\t}\n" +
-                "}";
-
-        queryField.setText(conditionQL);
     }
 
-    public void updateMachineView(Machine machine) {
-        machineName.setText(machine.getName());
-        machineStatus.setText(machine.getState());
-        machineEvents.setItems(DataHandler.getInstance().getMachineEvents(machine));
+    public void updateMachineView(Collection collection) {
+        machineName.setText(collection.getName());
+        machineStatus.setText(collection.getState());
+        machineEvents.setItems(DataHandler.getInstance().getCollectionEvents(collection));
         machineEvents.setCellFactory(listView -> new MachineEventListCell());
     }
 
-    public void sendRequest(ActionEvent actionEvent) {
-        String conditionQL = queryField.getText();
 
+
+    private void openNewCollectionWindow() {
+        Parent root;
         try {
-            String token = RestService.login("127.0.0.1", "System", "manager");
-            SocketInfo socketInfo = RestService.runQuery("127.0.0.1", token, conditionQL);
-            System.out.println("SocketInfo: " + socketInfo.getIp() + ":" + socketInfo.getPort() + ", Schema: " + socketInfo.getSchema());
-            SocketReceiver receiver = new SocketReceiver(socketInfo);
-        } catch (RestException e) {
+            InputStream inputStream = getClass().getResource("../bundles/Language_en.properties").openStream();
+            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
+            root = FXMLLoader.load(getClass().getResource("../view/addCollection.fxml"), bundle);
+            Stage stage = new Stage();
+            stage.setTitle(bundle.getString("newCollectionTitle"));
+            stage.setScene(new Scene(root, 450, 450));
+            stage.show();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void openNewConnectionWindow() {
+        Parent root;
+        try {
+            InputStream inputStream = getClass().getResource("../bundles/Language_en.properties").openStream();
+            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
+            root = FXMLLoader.load(getClass().getResource("../view/addConnection.fxml"), bundle);
+            Stage stage = new Stage();
+            stage.setTitle(bundle.getString("newConnectionTitle"));
+            stage.setScene(new Scene(root, 450, 450));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void openAddCollection(ActionEvent actionEvent) {
+        openNewCollectionWindow();
+    }
+
+    public void openAddConnection(ActionEvent actionEvent) {
+        openNewConnectionWindow();
     }
 }

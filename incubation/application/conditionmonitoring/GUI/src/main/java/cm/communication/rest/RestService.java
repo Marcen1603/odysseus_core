@@ -13,7 +13,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.TreeMap;
 
 /**
  * @author Tobias
@@ -41,7 +40,7 @@ public class RestService {
     private static final int SERVICE_PORT = 9679;
     public static final String RESOURCE_PATH_LOGIN = "login";
     public static final String RESOURCE_PATH_ADD_QUERY = "addQuery";
-    public static final String RESOURCE_PATH_CREATE_SOCKET = "createSocket";
+    public static final String RESOURCE_PATH_CREATE_SOCKET = "createMultiSocket";
     public static final String RESOURCE_PATH_START_QUERY = "startQuery";
     public static final String RESOURCE_CONDITIONQL = "conditionQL";
 
@@ -74,52 +73,73 @@ public class RestService {
         }
     }
 
-    public static SocketInfo runQuery(String ip, String token, String query) throws RestException {
+    public static List<SocketInfo> runQuery(String ip, String token, String query) throws RestException {
         String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CORE;
         ClientResource crAddQuery = new ClientResource(hostURL + "/" + RESOURCE_PATH_ADD_QUERY);
         ClientResource crCreateSocket = new ClientResource(hostURL + "/" + RESOURCE_PATH_CREATE_SOCKET);
 
         Gson gson = new Gson();
 
+        // Add query
+        AddQueryRequestDTO addQueryRequestDTO = new AddQueryRequestDTO(token, query, "OdysseusScript", "");
+        Representation addQueryRepresentation = crAddQuery.post(addQueryRequestDTO);
+        GenericResponseDTO<Collection<Double>> queryIds = null;
         try {
-            // Add query
-            AddQueryRequestDTO addQueryRequestDTO = new AddQueryRequestDTO(token, query, "OdysseusScript", "");
-            Representation addQueryRepresentation = crAddQuery.post(addQueryRequestDTO);
-            GenericResponseDTO<Collection<Double>> queryIds = gson.fromJson(addQueryRepresentation.getText(), GenericResponseDTO.class);
-
+            queryIds = gson.fromJson(addQueryRepresentation.getText(), GenericResponseDTO.class);
             // Create socket
             int queryId = queryIds.getValue().iterator().next().intValue();
+            return getResultsFromQuery(ip, token, queryId);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static List<SocketInfo> getResultsFromQuery(String ip, String token, int queryId) throws RestException {
+        String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CORE;
+        ClientResource crCreateSocket = new ClientResource(hostURL + "/" + RESOURCE_PATH_CREATE_SOCKET);
+
+        Gson gson = new Gson();
+        List<SocketInfo> infos = new ArrayList<>();
+
+        try {
             CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryId, 0);
             Representation createSocketRepresentation = crCreateSocket.post(createSocketRequestDTO);
-            GenericResponseDTO<LinkedTreeMap> socketInfoWrapper = gson.fromJson(createSocketRepresentation.getText(), GenericResponseDTO.class);
+            GenericResponseDTO<List<LinkedTreeMap>> socketInfoWrapper = gson.fromJson(createSocketRepresentation.getText(), GenericResponseDTO.class);
 
-            String socketIp = (String) socketInfoWrapper.getValue().get("ip");
-            int socketPort = ((Double) socketInfoWrapper.getValue().get("port")).intValue();
-            List<AttributeInformation> socketSchema = new ArrayList<AttributeInformation>();
-            ArrayList schemaListMap = (ArrayList) socketInfoWrapper.getValue().get("schema");
-            LinkedTreeMap schemaMap = (LinkedTreeMap) schemaListMap.get(0);
-            String name = "";
-            String dataType = "";
-            for (Object key : schemaMap.keySet()) {
-                String value = (String) schemaMap.get(key);
-                if (key.equals("name"))
-                    name = value;
-                else
-                    dataType = value;
+            for (LinkedTreeMap map : socketInfoWrapper.getValue()) {
+                String socketIp = (String) map.get("ip");
+                int socketPort = ((Double) map.get("port")).intValue();
+                List<AttributeInformation> socketSchema = new ArrayList<AttributeInformation>();
+                ArrayList schemaListMap = (ArrayList) map.get("schema");
+                for (int i = 0; i < schemaListMap.size(); i++) {
+                    LinkedTreeMap schemaMap = (LinkedTreeMap) schemaListMap.get(i);
+                    String name = "";
+                    String dataType = "";
+                    for (Object key : schemaMap.keySet()) {
+                        String value = (String) schemaMap.get(key);
+                        if (key.equals("name"))
+                            name = value;
+                        else
+                            dataType = value;
 
-                if (!name.isEmpty() && !dataType.isEmpty()) {
-                    AttributeInformation info = new AttributeInformation(name, dataType);
-                    socketSchema.add(info);
-                    name = "";
-                    dataType = "";
+                        if (!name.isEmpty() && !dataType.isEmpty()) {
+                            AttributeInformation info = new AttributeInformation(name, dataType);
+                            socketSchema.add(info);
+                            name = "";
+                            dataType = "";
+                        }
+                    }
                 }
+                infos.add(new SocketInfo(socketIp, socketPort, socketSchema));
             }
-            return new SocketInfo(socketIp, socketPort, socketSchema);
         } catch (IOException ex) {
             throw new RestException(ex.toString());
         } finally {
-            crAddQuery.release();
             crCreateSocket.release();
         }
+
+        return infos;
+
     }
 }
