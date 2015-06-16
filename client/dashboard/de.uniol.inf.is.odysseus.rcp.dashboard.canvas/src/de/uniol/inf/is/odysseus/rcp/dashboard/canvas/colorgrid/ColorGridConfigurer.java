@@ -241,8 +241,8 @@ public class ColorGridConfigurer extends
 			}
 			{// Max Duration
 				toolkit.createLabel(group, "Max Duration (ms)");
-				final Text maxElementsText = toolkit.createText(group, ""
-						+ this.getDashboardPart().getMaxDuration());
+				final Text maxElementsText = toolkit.createText(group, String.format("%15d%n",
+						this.getDashboardPart().getMaxDuration()));
 				maxElementsText.addModifyListener(new ModifyListener() {
 					/**
 					 * {@inheritDoc}
@@ -417,6 +417,28 @@ public class ColorGridConfigurer extends
 					}
 				});
 			}
+            {// Scale Image
+                toolkit.createLabel(group, "Scale Image");
+                final Text minXText = toolkit.createText(group, String.format("%10.3f%n",this.getDashboardPart().getImageScale()));
+                minXText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
+                    @Override
+                    public void modifyText(final ModifyEvent e) {
+                        final String text = minXText.getText();
+                        if (!"".equals(text)) {
+                            try {
+                                ColorGridConfigurer.this.dashboardPart.setImageScale(Double.parseDouble(text));
+                                fireListener();
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
+                        }
+                    }
+                });
+            }
 			{// Foregroundcolor
 				toolkit.createLabel(group, "Base Color");
 
