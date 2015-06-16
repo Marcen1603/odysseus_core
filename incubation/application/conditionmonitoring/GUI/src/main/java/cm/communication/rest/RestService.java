@@ -131,7 +131,7 @@ public class RestService {
                         }
                     }
                 }
-                infos.add(new SocketInfo(socketIp, socketPort, socketSchema));
+                infos.add(new SocketInfo(socketIp, socketPort, socketSchema, ""));
             }
         } catch (IOException ex) {
             throw new RestException(ex.toString());

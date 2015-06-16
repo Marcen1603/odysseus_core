@@ -4,11 +4,12 @@ import cm.controller.MainController;
 import cm.model.Collection;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 
 /**
  * Created by Tobi on 03.04.2015.
  */
-public class MachineListViewListener implements ChangeListener<Collection> {
+public class MachineListViewListener implements ListChangeListener<Collection> {
 
     MainController mainController;
 
@@ -17,8 +18,8 @@ public class MachineListViewListener implements ChangeListener<Collection> {
     }
 
     @Override
-    public void changed(ObservableValue<? extends Collection> observable, Collection oldValue, Collection newValue) {
+    public void onChanged(Change<? extends Collection> c) {
         // Here I have to update the right side
-        mainController.updateMachineView(newValue);
+        mainController.updateMachineView(c.getList().get(0));
     }
 }

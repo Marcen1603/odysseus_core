@@ -9,6 +9,7 @@ import cm.view.MachineEventListCell;
 import cm.view.MachineListCell;
 import cm.view.SensorListCell;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -58,27 +59,15 @@ public class MainController {
     @FXML
     private void initialize() {
 
-        // Create a few machines
-        Collection collection1 = new Collection(0, "Wind Turbine Herakles", Collection.OK_STATE);
-        Collection collection2 = new Collection(1, "Car", Collection.BAD_STATE);
-
-        DataHandler.getInstance().addCollection(collection1);
-        DataHandler.getInstance().addCollection(collection2);
-
         machineList.setItems(DataHandler.getInstance().getObservableCollectionList());
-
         machineList.setCellFactory(listView -> new MachineListCell());
-
         machineEventList.setItems(DataHandler.getInstance().getObservableEventList());
-
         machineEventList.setCellFactory(listView -> new MachineEventListCell());
 
         // To react to clicks on the listView of machines
-        machineList.getSelectionModel().selectedItemProperty().addListener(new MachineListViewListener(this));
+        machineList.getSelectionModel().getSelectedItems().addListener(new MachineListViewListener(this));
 
         // Add a few sensors
-        Sensor temperatureSensor = new Sensor(collection1, "Temperature Sensor", 25.0, "OK");
-        observableSensorList.add(temperatureSensor);
         sensorsList.setItems(observableSensorList);
 
         sensorsList.setCellFactory(listView -> new SensorListCell());
@@ -90,8 +79,6 @@ public class MainController {
         machineEvents.setItems(DataHandler.getInstance().getCollectionEvents(collection));
         machineEvents.setCellFactory(listView -> new MachineEventListCell());
     }
-
-
 
     private void openNewCollectionWindow() {
         Parent root;

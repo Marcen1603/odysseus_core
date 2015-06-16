@@ -59,7 +59,7 @@ public class NewConnectionController {
         for (ConnectionListCell listCell : connectionListCells) {
             if (listCell.isCellSelected()) {
                 SocketInfo socketInfo = listCell.getSocketInfo();
-                System.out.println("SocketInfo: " + socketInfo.getIp() + ":" + socketInfo.getPort() + ", Schema: " + socketInfo.getSchema());
+                socketInfo.setName(listCell.getNameOfConnection());
                 SocketReceiver receiver = new SocketReceiver(socketInfo);
                 ConnectionHandler.getInstance().addConnection(receiver);
             }

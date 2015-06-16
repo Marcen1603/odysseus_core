@@ -6,18 +6,18 @@ public class SocketInfo {
 	private String ip;
 	private int port;
 	private List<AttributeInformation> schema;
-	
+	private String name;
+
 	public SocketInfo(){
 		
 	}
 	
-	public SocketInfo(String ip, int port, List<AttributeInformation> schema) {
+	public SocketInfo(String ip, int port, List<AttributeInformation> schema, String name) {
 		this.ip = ip;
 		this.port = port;
 		this.schema = schema;
+		this.name = name;
 	}
-	
-	
 
 	public List<AttributeInformation> getSchema() {
 		return schema;
@@ -43,6 +43,14 @@ public class SocketInfo {
 		this.port = port;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -52,7 +60,8 @@ public class SocketInfo {
 
 		if (port != that.port) return false;
 		if (ip != null ? !ip.equals(that.ip) : that.ip != null) return false;
-		return !(schema != null ? !schema.equals(that.schema) : that.schema != null);
+		if (schema != null ? !schema.equals(that.schema) : that.schema != null) return false;
+		return !(name != null ? !name.equals(that.name) : that.name != null);
 
 	}
 
@@ -61,6 +70,7 @@ public class SocketInfo {
 		int result = ip != null ? ip.hashCode() : 0;
 		result = 31 * result + port;
 		result = 31 * result + (schema != null ? schema.hashCode() : 0);
+		result = 31 * result + (name != null ? name.hashCode() : 0);
 		return result;
 	}
 }

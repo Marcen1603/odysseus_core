@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
 
 import java.io.IOException;
 
@@ -23,6 +24,8 @@ public class ConnectionListCell extends ListCell<SocketInfo> {
     CheckBox newConnectionCheck;
     @FXML
     Label newConnectionAttributes;
+    @FXML
+    TextField newConnectionName;
 
     private SocketInfo socketInfo;
 
@@ -59,5 +62,11 @@ public class ConnectionListCell extends ListCell<SocketInfo> {
 
     public boolean isCellSelected() {
         return newConnectionCheck.isSelected();
+    }
+
+    public String getNameOfConnection() {
+        if (newConnectionName != null)
+            return newConnectionName.getText();
+        return "";
     }
 }

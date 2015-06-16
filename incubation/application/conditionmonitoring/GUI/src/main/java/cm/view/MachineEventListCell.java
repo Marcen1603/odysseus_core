@@ -63,6 +63,9 @@ public class MachineEventListCell extends ListCell<MachineEvent> {
 
             String color = getColor(anomalyScore);
             machineEventColorBar.setStyle(color + " " + "-fx-effect: innershadow(gaussian, black, 4, 0.4, 0, 0)");
+
+            machineEventMachineNameLabel.setText(item.getConnection().getSocketInfo().getName());
+
             setGraphic(root);
         }
     }
