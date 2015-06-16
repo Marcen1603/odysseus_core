@@ -29,6 +29,12 @@ public class GroupedHistoryStore<T extends IStreamObject<? extends IMetaAttribut
 		}
 	}
 
+	public void determineMaxHistoryElement(
+			IProvidesMaxHistoryElements expression) {
+		maxHistoryElements = expression.getMaxHistoryElements();
+	}
+
+	
 	public void init() {
 		IGroupProcessor<T, T> g = this.groupProcessor;
 		synchronized (g) {
