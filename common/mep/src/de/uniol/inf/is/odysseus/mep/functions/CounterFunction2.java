@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.mep.functions;
 
 import java.io.Serializable;
 
-import javax.sql.rowset.serial.SerialArray;
-
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
