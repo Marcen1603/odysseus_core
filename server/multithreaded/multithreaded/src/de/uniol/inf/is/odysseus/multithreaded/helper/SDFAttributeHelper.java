@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.multithreaded.helper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
@@ -14,7 +17,17 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class SDFAttributeHelper {
 
-	public static boolean hasSDFAttributesInEqualPredicate(JoinAO joinOperator) {
+	private boolean fragmentationIsPossible = true;
+	private static SDFAttributeHelper instance;
+
+	public static SDFAttributeHelper getInstance() {
+		if (instance == null){
+			instance = new SDFAttributeHelper();
+		}
+		return instance;
+	}
+
+	public boolean validateStructureOfPredicate(JoinAO joinOperator) {
 		IPredicate<?> predicate = joinOperator.getPredicate();
 		if (predicate instanceof RelationalPredicate) {
 			RelationalPredicate relPredicate = (RelationalPredicate) predicate;
@@ -22,38 +35,82 @@ public class SDFAttributeHelper {
 					.getMEPExpression();
 			IAttributeResolver resolver = relPredicate.getExpression()
 					.getAttributeResolver();
-			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-			attributes.addAll(getSDFAttributesForEqualPredicates(attributes,
-					expression, resolver, joinOperator));
-			if (attributes.size() >= 2) {
+			Map<String, List<SDFAttribute>> attributes = new HashMap<String, List<SDFAttribute>>();
+			attributes = getSDFAttributesFromEqualPredicates(attributes,
+					expression, resolver, joinOperator);
+			// if fragmentation is not possible, remove all collected attributes
+			if (!fragmentationIsPossible) {
+				attributes.clear();
+			} else {
+				// if fragmentation is possible, we need to remove
+				// duplicate attributes for each input stream
+				for (String sourceName : attributes.keySet()) {
+					List<SDFAttribute> arrayList = attributes.get(sourceName);
+					HashSet<SDFAttribute> hashSet = new HashSet<SDFAttribute>(arrayList);
+					arrayList.clear();
+					arrayList.addAll(hashSet);
+				}
+			}
+
+			fragmentationIsPossible = true;
+			// check if at least two attributes exists, one for each input
+			// stream
+			if (attributes.keySet().size() >= 2) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public static List<SDFAttribute> getSDFAttributesForEqualPredicates(
-			List<SDFAttribute> attributes, IExpression<?> expression,
-			IAttributeResolver resolver, JoinAO joinOperator) {
+	public Map<String, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(Map<String, List<SDFAttribute>> attributes, JoinAO joinOperator){
+		IPredicate<?> predicate = joinOperator.getPredicate();
+		if (predicate instanceof RelationalPredicate) {
+			RelationalPredicate relPredicate = (RelationalPredicate) predicate;
+			IExpression<?> expression = relPredicate.getExpression()
+					.getMEPExpression();
+			IAttributeResolver resolver = relPredicate.getExpression()
+					.getAttributeResolver();
+			attributes = getSDFAttributesFromEqualPredicates(attributes, expression,
+							resolver, joinOperator);
+			if (!fragmentationIsPossible) {
+				attributes.clear();
+			} else {
+				// if fragmentation is possible, we need to remove
+				// duplicate attributes for each input stream
+				for (String sourceName : attributes.keySet()) {
+					List<SDFAttribute> arrayList = attributes.get(sourceName);
+					HashSet<SDFAttribute> hashSet = new HashSet<SDFAttribute>(arrayList);
+					arrayList.clear();
+					arrayList.addAll(hashSet);
+				}
+			}
+		}
+		fragmentationIsPossible = true;
+		return attributes;
+		
+	}
+	
+	
+	
+	private Map<String, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(
+			Map<String, List<SDFAttribute>> attributes,
+			IExpression<?> expression, IAttributeResolver resolver,
+			JoinAO joinOperator) {
 		String symbol = expression.toFunction().getSymbol();
 
-		if ((expression.isFunction())
-				&& (symbol.equalsIgnoreCase("xor")
-						|| symbol.equalsIgnoreCase("||") || symbol
-							.equalsIgnoreCase("&&"))) {
-			// TODO check if all functions are okay
+		if (expression.isFunction() && (symbol.equalsIgnoreCase("&&"))) {
 
 			IBinaryOperator<?> binaryOperator = (IBinaryOperator<?>) expression;
 			IExpression<?> argument1 = binaryOperator.getArgument(0);
 			if (argument1.isFunction()) {
 				// recursive call
-				getSDFAttributesForEqualPredicates(attributes, argument1,
+				getSDFAttributesFromEqualPredicates(attributes, argument1,
 						resolver, joinOperator);
 			}
 			IExpression<?> argument2 = binaryOperator.getArgument(1);
 			if (argument2.isFunction()) {
 				// recursive call
-				getSDFAttributesForEqualPredicates(attributes, argument2,
+				getSDFAttributesFromEqualPredicates(attributes, argument2,
 						resolver, joinOperator);
 			}
 		} else if ((expression.isFunction())
@@ -75,13 +132,27 @@ public class SDFAttributeHelper {
 						.contains(attribute2.getSourceName()))
 						&& (baseSourceNamesRight.contains(attribute1
 								.getSourceName()) || baseSourceNamesRight
-								.contains(attribute2.getSourceName()))){
-					// we need to check if each input stream has an fragmentation
+								.contains(attribute2.getSourceName()))) {
+					// we need to check if each input stream has an
+					// fragmentation
 					// attribute
-					attributes.add(attribute1);
-					attributes.add(attribute2);					
+					if (!attributes.containsKey(attribute1.getSourceName())) {
+						attributes.put(attribute1.getSourceName(),
+								new ArrayList<SDFAttribute>());
+					}
+					attributes.get(attribute1.getSourceName()).add(attribute1);
+
+					if (!attributes.containsKey(attribute2.getSourceName())) {
+						attributes.put(attribute2.getSourceName(),
+								new ArrayList<SDFAttribute>());
+					}
+					attributes.get(attribute2.getSourceName()).add(attribute2);
+				} else {
+					fragmentationIsPossible = false;
 				}
 			}
+		} else {
+			fragmentationIsPossible = false;
 		}
 
 		return attributes;

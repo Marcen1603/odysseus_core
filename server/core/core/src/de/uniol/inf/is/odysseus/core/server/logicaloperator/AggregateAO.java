@@ -130,6 +130,17 @@ public class AggregateAO extends UnaryLogicalOp {
 			}
 		}
 	}
+	
+	/**
+	 * Removes all existing aggregations (needed for renaming of attributes)
+	 * Author: Chris Tönjes-Deye
+	 */
+	public void clearAggregations(){
+		aggregationItems.clear();
+		outputAttributList.clear();
+		aggregations.clear();
+		outAttributeToAggregation.clear();
+	}
 
 	@GetParameter(name = AGGREGATIONS)
 	public Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> getAggregations() {
