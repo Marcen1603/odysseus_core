@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorgrid;
 
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.graphics.Point;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -10,7 +15,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.AbstractCanvasDashboardPart
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.CIELCH;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
-public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
+public class ColorGridDashboadPart extends AbstractCanvasDashboardPart implements MouseListener, MouseMoveListener{
 
 	private int width = 600;
 	private int height = 600;
@@ -26,6 +31,9 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 
 	@SuppressWarnings("unchecked")
 	private Tuple<? extends ITimeInterval>[][] grid = new Tuple[width][height];
+	private boolean leftButtonPressed;
+	private int leftButtonLastX;
+	private int leftButtonLastY;
 
 	private RGB getColor(final Number value) {
 		final RGB rgb = color;
@@ -77,22 +85,38 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	public void securityPunctuationElementReceived(
 			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
+	
+	@Override
+	public void mouseMove(MouseEvent e) {
+		moveLeftTop(e);
+	}
 
-	// Now correctly in super class
-//	@Override
-//	public void paintControl(PaintEvent e) {
-//		// TODO: use clipping from e
-//		Point s = this.getCanvas().getSize();
-//		Image bufferImage = new Image(Display.getCurrent(), s.x, s.y);
-//		gc = new GC(bufferImage);
-//		gc.setTextAntialias(SWT.ON);
-//		gc.setAdvanced(true);
-//		gc.setAntialias(SWT.ON);
-//		doPaint();
-//		gc.dispose();
-//		gc = null;
-//		e.gc.drawImage(bufferImage, 0, 0);
-//		bufferImage.dispose();
-//	}
+	@Override
+	public void mouseDown(MouseEvent e) {
+		if (e.button == 1){
+			leftButtonPressed = true;
+			leftButtonLastX = e.x;
+			leftButtonLastY = e.y;
+			setMoveCursor();
+		}
+	}
+
+	@Override
+	public void mouseUp(MouseEvent e) {
+		if (e.button == 1){
+			moveLeftTop(e);
+			leftButtonPressed = false;
+			setDefaultCursor();
+		}		
+	}
+
+	private void moveLeftTop(MouseEvent e) {
+		if (leftButtonPressed){
+			leftTop = new Point(leftTop.x+(e.x-leftButtonLastX), leftTop.y + (e.y-leftButtonLastY) );
+			leftButtonLastX = e.x;
+			leftButtonLastY = e.y;
+		}
+	}
+
 
 }
