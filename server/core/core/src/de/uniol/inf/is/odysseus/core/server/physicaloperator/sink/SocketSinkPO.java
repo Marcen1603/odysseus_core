@@ -101,7 +101,10 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 			subscription = s.get(0);
 		} else {
 			Objects.requireNonNull(subscription);
-			setInputPortCount(getMaxPort()+1);
+			// getMaxPort delivers the highest port number
+			// +1 --> next port
+			// +1 --> Number of ports
+			setInputPortCount(getMaxPort()+2);
 			subscription.getTarget().connectSink(this, port,
 					subscription.getSourceOutPort(), subscription.getSchema());
 		}
@@ -200,8 +203,4 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		listener.removeSessionId(securityToken);
 	}
 
-	@Override
-	public void setInputPortCount(int ports) {
-		super.setInputPortCount(ports);
-	}
 }
