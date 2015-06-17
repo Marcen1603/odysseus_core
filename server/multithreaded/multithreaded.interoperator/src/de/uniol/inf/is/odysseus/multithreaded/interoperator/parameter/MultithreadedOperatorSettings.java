@@ -65,8 +65,7 @@ public class MultithreadedOperatorSettings {
 						"Selected strategy "
 								+ this.getMultithreadingStrategy()
 								+ " is not compatible with the selected fragmentationType "
-								+ FragmentationTypeHelper
-										.getShortClassName(getFragementationType()));
+								+ getFragementationType().getSimpleName());
 			}
 		} else {
 			// get preferred fragmentation type for strategy

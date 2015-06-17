@@ -50,6 +50,24 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 		downstreamOperatorSubscriptions.addAll(aggregateOperator
 				.getSubscriptions());
 
+		// create fragment operator
+		AbstractFragmentAO fragmentAO;
+		List<SDFAttribute> groupingAttributes = aggregateOperator
+				.getGroupingAttributes();
+		try {
+			fragmentAO = createFragmentAO(
+					settingsForOperator.getFragementationType(),
+					settingsForOperator.getDegreeOfParallelization(), "", groupingAttributes,
+					null, null);
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		if (fragmentAO == null) {
+			return false;
+		}
+
 		// remove subscriptions
 		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
 			ILogicalOperator target = upstreamOperatorSubscription.getTarget();
@@ -62,20 +80,13 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 			target.unsubscribeFromSource(downstreamOperatorSubscription);
 		}
 
-		List<SDFAttribute> groupingAttributes = aggregateOperator
-				.getGroupingAttributes();
+		
 		if (!groupingAttributes.isEmpty()) {
-			// Fragment operator
-			HashFragmentAO fragment = new HashFragmentAO();
-			fragment.setAttributes(groupingAttributes);
-			fragment.setNumberOfFragments(settingsForOperator.getDegreeOfParallelization());
-			fragment.setName("Hash Fragment");
-
 			// subscribe new operator
 			for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
 				aggregateOperator
 						.unsubscribeFromSource(upstreamOperatorSubscription);
-				fragment.subscribeToSource(upstreamOperatorSubscription
+				fragmentAO.subscribeToSource(upstreamOperatorSubscription
 						.getTarget(), upstreamOperatorSubscription
 						.getSinkInPort(), upstreamOperatorSubscription
 						.getSourceOutPort(), upstreamOperatorSubscription
@@ -85,7 +96,8 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 			UnionAO union = new UnionAO();
 			union.setName("Union");
 
-			for (int i = 0; i < settingsForOperator.getDegreeOfParallelization(); i++) {
+			for (int i = 0; i < settingsForOperator
+					.getDegreeOfParallelization(); i++) {
 				BufferAO buffer = new BufferAO();
 				buffer.setName("Buffer_" + i);
 				buffer.setThreaded(true);
@@ -97,9 +109,10 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 						+ i);
 				newAggregateOperator.setUniqueIdentifier(aggregateOperator
 						.getUniqueIdentifier() + "_" + i);
+				newAggregateOperator.setDrainAtClose(true);
 
-				buffer.subscribeToSource(fragment, 0, i,
-						fragment.getOutputSchema());
+				buffer.subscribeToSource(fragmentAO, 0, i,
+						fragmentAO.getOutputSchema());
 
 				newAggregateOperator.subscribeToSource(buffer, 0, 0,
 						buffer.getOutputSchema());

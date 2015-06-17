@@ -32,16 +32,18 @@ public class AggregateMultithreadedTransformationStrategy extends
 				// if aggregation has no grouping this strategy works good
 
 				boolean everyAggregationHasOnlyOneInputAttribut = true;
-				List<AggregateItem> existingAggregationItems = aggregateOperator.getAggregationItems();
+				List<AggregateItem> existingAggregationItems = aggregateOperator
+						.getAggregationItems();
 				for (AggregateItem aggregateItem : existingAggregationItems) {
-					if (aggregateItem.inAttributes.size() > 1){
+					if (aggregateItem.inAttributes.size() > 1) {
 						everyAggregationHasOnlyOneInputAttribut = false;
 					}
 				}
-				
-				if (everyAggregationHasOnlyOneInputAttribut){
-					// Only aggregations with one input attribute are allowed for partial aggregates
-					return 100;					
+
+				if (everyAggregationHasOnlyOneInputAttribut) {
+					// Only aggregations with one input attribute are allowed
+					// for partial aggregates
+					return 100;
 				}
 			} else {
 				// if the aggregation has an grouping, there is might be a
@@ -66,6 +68,22 @@ public class AggregateMultithreadedTransformationStrategy extends
 		downstreamOperatorSubscriptions.addAll(aggregateOperator
 				.getSubscriptions());
 
+		// create fragment operator
+		AbstractFragmentAO fragmentAO;
+		try {
+			fragmentAO = createFragmentAO(
+					settingsForOperator.getFragementationType(),
+					settingsForOperator.getDegreeOfParallelization(), "", null,
+					null, null);
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		if (fragmentAO == null) {
+			return false;
+		}
+
 		// remove subscriptions
 		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
 			ILogicalOperator target = upstreamOperatorSubscription.getTarget();
@@ -78,48 +96,50 @@ public class AggregateMultithreadedTransformationStrategy extends
 			target.unsubscribeFromSource(downstreamOperatorSubscription);
 		}
 
-		// round robin fragmentation, because there is no aggregate grouping
-		RoundRobinFragmentAO fragment = new RoundRobinFragmentAO();
-		fragment.setNumberOfFragments(settingsForOperator.getDegreeOfParallelization());
-		fragment.setName("Round Robin Fragment");
-
 		// subscribe new operator
 		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
 			aggregateOperator
 					.unsubscribeFromSource(upstreamOperatorSubscription);
-			fragment.subscribeToSource(
+			fragmentAO.subscribeToSource(
 					upstreamOperatorSubscription.getTarget(),
 					upstreamOperatorSubscription.getSinkInPort(),
 					upstreamOperatorSubscription.getSourceOutPort(),
 					upstreamOperatorSubscription.getTarget().getOutputSchema());
 		}
-		
+
 		// Renaming of input and output attributes for partial aggregates
-		List<AggregateItem> existingAggregationItems = aggregateOperator.getAggregationItems();
+		List<AggregateItem> existingAggregationItems = aggregateOperator
+				.getAggregationItems();
 		List<AggregateItem> renamedPAAggregationItems = new ArrayList<AggregateItem>();
 		List<AggregateItem> renamedCombineAggregationItems = new ArrayList<AggregateItem>();
-		
+
 		for (AggregateItem aggregateItem : existingAggregationItems) {
 			SDFAttribute attr = aggregateItem.outAttribute;
-						
+
 			// output attributes
-			String newPAAttributeName = "pa_"+attr.getAttributeName();
-			SDFAttribute outAttribute = new SDFAttribute(attr.getSourceName(), newPAAttributeName, SDFDatatype.PARTIAL_AGGREGATE, null, attr.getDtConstraints(), null);
-			AggregateItem newOutItem = new AggregateItem(aggregateItem.aggregateFunction.toString(), aggregateItem.inAttributes, outAttribute);
+			String newPAAttributeName = "pa_" + attr.getAttributeName();
+			SDFAttribute outAttribute = new SDFAttribute(attr.getSourceName(),
+					newPAAttributeName, SDFDatatype.PARTIAL_AGGREGATE, null,
+					attr.getDtConstraints(), null);
+			AggregateItem newOutItem = new AggregateItem(
+					aggregateItem.aggregateFunction.toString(),
+					aggregateItem.inAttributes, outAttribute);
 			renamedPAAggregationItems.add(newOutItem);
-			
+
 			// input attributes
 			List<SDFAttribute> inAttributes = new ArrayList<SDFAttribute>();
-			SDFAttribute inAttribute = outAttribute.clone(); 
+			SDFAttribute inAttribute = outAttribute.clone();
 			inAttributes.add(inAttribute);
-			
-			AggregateItem newInItem = new AggregateItem(aggregateItem.aggregateFunction.toString(), inAttributes, aggregateItem.outAttribute);
+
+			AggregateItem newInItem = new AggregateItem(
+					aggregateItem.aggregateFunction.toString(), inAttributes,
+					aggregateItem.outAttribute);
 			renamedCombineAggregationItems.add(newInItem);
 		}
-		
+
 		// create union operator for merging fragmented datastreams
-				UnionAO union = new UnionAO();
-				union.setName("Union");
+		UnionAO union = new UnionAO();
+		union.setName("Union");
 
 		// for each degree of parallelization
 		for (int i = 0; i < settingsForOperator.getDegreeOfParallelization(); i++) {
@@ -138,11 +158,17 @@ public class AggregateMultithreadedTransformationStrategy extends
 					.getUniqueIdentifier() + "_pa_" + i);
 			newAggregateOperator.setOutputPA(true); // enable partial aggregates
 			newAggregateOperator.clearAggregations();
-			newAggregateOperator.setAggregationItems(renamedPAAggregationItems); // use renamed output name of attributes
+			newAggregateOperator.setAggregationItems(renamedPAAggregationItems); // use
+																					// renamed
+																					// output
+																					// name
+																					// of
+																					// attributes
 			newAggregateOperator.setDrainAtClose(true);
-			
+
 			// subscribe buffer to fragment
-			buffer.subscribeToSource(fragment, 0, i, fragment.getOutputSchema());
+			buffer.subscribeToSource(fragmentAO, 0, i,
+					fragmentAO.getOutputSchema());
 
 			// subscribe new aggregate operator to buffer
 			newAggregateOperator.subscribeToSource(buffer, 0, 0,
@@ -161,14 +187,17 @@ public class AggregateMultithreadedTransformationStrategy extends
 				.getUniqueIdentifier() + "_combinePA");
 
 		combinePAAggregateOperator.clearAggregations();
-		combinePAAggregateOperator.setAggregationItems(renamedCombineAggregationItems);
+		combinePAAggregateOperator
+				.setAggregationItems(renamedCombineAggregationItems);
 		combinePAAggregateOperator.setDrainAtClose(true);
-		
-		// subscribe aggregate operator for combining partial aggregates to union
+
+		// subscribe aggregate operator for combining partial aggregates to
+		// union
 		combinePAAggregateOperator.subscribeToSource(union, 0, 0,
 				union.getOutputSchema());
 
-		// remove old subscription and subscribe new aggregate operator to existing downstream operators
+		// remove old subscription and subscribe new aggregate operator to
+		// existing downstream operators
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
 			aggregateOperator.unsubscribeSink(downstreamOperatorSubscription);
 			downstreamOperatorSubscription.getTarget().subscribeToSource(

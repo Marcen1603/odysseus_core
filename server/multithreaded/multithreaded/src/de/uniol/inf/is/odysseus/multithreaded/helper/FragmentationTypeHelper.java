@@ -39,20 +39,12 @@ public class FragmentationTypeHelper {
 		// TODO first try. should be more dynamically if new fragmentation types
 		// are added
 		Map<String, Class<? extends AbstractFragmentAO>> fragmentTypes = new HashMap<String, Class<? extends AbstractFragmentAO>>();
-		fragmentTypes.put(getShortClassName(HashFragmentAO.class),
+		fragmentTypes.put(HashFragmentAO.class.getSimpleName(),
 				HashFragmentAO.class);
-		fragmentTypes.put(getShortClassName(RangeFragmentAO.class),
+		fragmentTypes.put(RangeFragmentAO.class.getSimpleName(),
 				RangeFragmentAO.class);
-		fragmentTypes.put(getShortClassName(RoundRobinFragmentAO.class),
+		fragmentTypes.put(RoundRobinFragmentAO.class.getSimpleName(),
 				RoundRobinFragmentAO.class);
 		return fragmentTypes;
 	}
-
-	public static String getShortClassName(
-			Class<? extends AbstractFragmentAO> fragmentAO) {
-		String simpleName = fragmentAO.getSimpleName();
-		return simpleName.substring(0, simpleName.lastIndexOf('.') + 1)
-				.toLowerCase();
-	}
-
 }

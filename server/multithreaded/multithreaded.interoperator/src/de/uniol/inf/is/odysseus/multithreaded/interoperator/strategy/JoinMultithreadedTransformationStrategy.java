@@ -70,12 +70,11 @@ public class JoinMultithreadedTransformationStrategy extends
 		}
 
 		Map<String, List<SDFAttribute>> attributes = new HashMap<String, List<SDFAttribute>>();
-
 		attributes = SDFAttributeHelper.getInstance()
 				.getSDFAttributesFromEqualPredicates(attributes, joinOperator);
 
 		int numberOfFragments = 0;
-		List<Pair<HashFragmentAO, Integer>> fragmentsSinkInPorts = new ArrayList<Pair<HashFragmentAO, Integer>>();
+		List<Pair<AbstractFragmentAO, Integer>> fragmentsSinkInPorts = new ArrayList<Pair<AbstractFragmentAO, Integer>>();
 
 		for (String sourceName : attributes.keySet()) {
 			for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
@@ -87,19 +86,31 @@ public class JoinMultithreadedTransformationStrategy extends
 					// from
 					// this subscription, create fragment operator
 					// Fragment operator
-					HashFragmentAO fragment = new HashFragmentAO();
-					fragment.setAttributes(attributesForSource);
-					fragment.setNumberOfFragments(settingsForOperator.getDegreeOfParallelization());
-					fragment.setName("Hash Fragment_" + numberOfFragments);
+					AbstractFragmentAO fragmentAO;
+					try {
+						fragmentAO = createFragmentAO(
+								settingsForOperator.getFragementationType(),
+								settingsForOperator
+										.getDegreeOfParallelization(),
+								numberOfFragments + "", attributesForSource,
+								null, null);
+					} catch (InstantiationException | IllegalAccessException e) {
+						e.printStackTrace();
+						return false;
+					}
 
-					Pair<HashFragmentAO, Integer> pair = new Pair<HashFragmentAO, Integer>();
-					pair.setE1(fragment);
+					if (fragmentAO == null) {
+						return false;
+					}
+
+					Pair<AbstractFragmentAO, Integer> pair = new Pair<AbstractFragmentAO, Integer>();
+					pair.setE1(fragmentAO);
 					pair.setE2(upstreamOperatorSubscription.getSinkInPort());
 					fragmentsSinkInPorts.add(pair);
 
 					joinOperator
 							.unsubscribeFromSource(upstreamOperatorSubscription);
-					fragment.subscribeToSource(upstreamOperatorSubscription
+					fragmentAO.subscribeToSource(upstreamOperatorSubscription
 							.getTarget(), 0, upstreamOperatorSubscription
 							.getSourceOutPort(), upstreamOperatorSubscription
 							.getTarget().getOutputSchema());
@@ -120,7 +131,7 @@ public class JoinMultithreadedTransformationStrategy extends
 			newJoinOperator.setUniqueIdentifier(joinOperator
 					.getUniqueIdentifier() + "_" + i);
 
-			for (Pair<HashFragmentAO, Integer> pair : fragmentsSinkInPorts) {
+			for (Pair<AbstractFragmentAO, Integer> pair : fragmentsSinkInPorts) {
 				BufferAO buffer = new BufferAO();
 				buffer.setName("Buffer_" + bufferCounter);
 				buffer.setThreaded(true);
