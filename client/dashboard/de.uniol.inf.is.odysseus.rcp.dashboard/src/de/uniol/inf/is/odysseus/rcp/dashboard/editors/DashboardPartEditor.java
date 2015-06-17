@@ -56,16 +56,18 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.windows.ContextMapEditorWindow;
 
-public class DashboardPartEditor extends EditorPart implements IDashboardPartListener, IConfigurerListener {
+public class DashboardPartEditor extends EditorPart implements
+		IDashboardPartListener, IConfigurerListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartEditor.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(DashboardPartEditor.class);
 	private static final IDashboardPartHandler DASHBOARD_PART_HANDLER = new XMLDashboardPartHandler();
 
 	private FileEditorInput input;
 	private IDashboardPart dashboardPart;
 	private DashboardPartController dashboardPartController;
 	private boolean dirty;
-	
+
 	private TabFolder tabFolder;
 
 	private DashboardPartEditorToolBar dashboardPartToolBar;
@@ -79,21 +81,23 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tabFolder.setLayout(new GridLayout());
 
-		Composite presentationTab = createTabComposite(tabFolder, "Presentation");
+		Composite presentationTab = createTabComposite(tabFolder,
+				"Presentation");
 		Composite settingsTab = createTabComposite(tabFolder, "Settings");
-		
+
 		try {
 			createPresentationTabContent(presentationTab);
-		} catch( Exception ex ) {
-			for( Control ctrl : presentationTab.getChildren() ) {
-				if( !ctrl.isDisposed() ) {
+		} catch (Exception ex) {
+			for (Control ctrl : presentationTab.getChildren()) {
+				if (!ctrl.isDisposed()) {
 					ctrl.dispose();
 				}
 			}
 			Label l = new Label(presentationTab, SWT.NONE);
 			l.setText("Cannot show the dashboard part, since there are errors during creation.\nPlease fix the issue and reopen the dashboard part again.\n\nFollowing errors are occured:");
-			
-			Text errorText = new Text(presentationTab, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER);
+
+			Text errorText = new Text(presentationTab, SWT.MULTI | SWT.V_SCROLL
+					| SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER);
 			errorText.setText(generateExceptionStatement(ex));
 			errorText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		}
@@ -102,22 +106,24 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 
 	private static String generateExceptionStatement(Exception ex) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		Throwable t = ex;
-		sb.append(t.getClass().getSimpleName()).append(": ").append(t.getMessage()).append("\n");
-		
+		sb.append(t.getClass().getSimpleName()).append(": ")
+				.append(t.getMessage()).append("\n");
+
 		int index = 1;
 		t = t.getCause();
-		
-		while( t != null ) {
-			for( int i = 0; i < index; i++ ) {
+
+		while (t != null) {
+			for (int i = 0; i < index; i++) {
 				sb.append("\t");
 			}
-			sb.append(t.getClass().getSimpleName()).append(": ").append(t.getMessage()).append("\n");
-			t = t.getCause(); 
+			sb.append(t.getClass().getSimpleName()).append(": ")
+					.append(t.getMessage()).append("\n");
+			t = t.getCause();
 			index++;
 		}
-		
+
 		return sb.toString();
 	}
 
@@ -126,7 +132,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		dashboardPartController.stop();
 
 		dashboardPart.dispose();
-		
+
 		configurer.removeListener(this);
 		configurer.dispose();
 
@@ -141,8 +147,9 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 			setDirty(false);
 
 		} catch (DashboardHandlerException e) {
-			LOG.error("Could not save DashboardPart to file {}.", input.getFile().getName(), e);
-		} 
+			LOG.error("Could not save DashboardPart to file {}.", input
+					.getFile().getName(), e);
+		}
 	}
 
 	@Override
@@ -154,23 +161,30 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		return dashboardPartController;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
 	 */
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {	
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		Object dbAdapter = dashboardPart.getAdapter(adapter);
-		if(dbAdapter!=null){
+		if (dbAdapter != null) {
 			return dbAdapter;
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
 		if (!(input instanceof FileEditorInput)) {
-			LOG.error("Could not open editor because input is from type {} instead of {}!", input.getClass(), FileEditorInput.class);
-			throw new PartInitException("Input is from type " + input.getClass() + " instead of " + FileEditorInput.class + "!");
+			LOG.error(
+					"Could not open editor because input is from type {} instead of {}!",
+					input.getClass(), FileEditorInput.class);
+			throw new PartInitException("Input is from type "
+					+ input.getClass() + " instead of " + FileEditorInput.class
+					+ "!");
 		}
 		this.input = (FileEditorInput) input;
 
@@ -179,16 +193,21 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		setPartName(this.input.getFile().getName());
 
 		try {
-			dashboardPart = DASHBOARD_PART_HANDLER.load(this.input.getFile(), this);
+			dashboardPart = DASHBOARD_PART_HANDLER.load(this.input.getFile(),
+					this);
 			dashboardPart.addListener(this);
 			dashboardPartController = new DashboardPartController(dashboardPart);
 		} catch (DashboardHandlerException e) {
-			LOG.error("Could not load DashboardPart for editor from file {}!", this.input.getFile().getName(), e);
-			throw new PartInitException("Could not load DashboardPart from file " + this.input.getFile().getName(), e);
+			LOG.error("Could not load DashboardPart for editor from file {}!",
+					this.input.getFile().getName(), e);
+			throw new PartInitException(
+					"Could not load DashboardPart from file "
+							+ this.input.getFile().getName(), e);
 		} catch (FileNotFoundException ex) {
 			LOG.error("Could not load corresponding query file!", ex);
-			throw new PartInitException("Could not load corresponding query file!", ex);
-		} 
+			throw new PartInitException(
+					"Could not load corresponding query file!", ex);
+		}
 	}
 
 	@Override
@@ -218,18 +237,24 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		if (tabFolder != null) {
 			tabFolder.setFocus();
 		}
+		if (dashboardPart != null) {
+			dashboardPart.setFocus();
+		}
 	}
 
 	public void setPartNameSuffix(String partNameSuffix) {
 		if (Strings.isNullOrEmpty(partNameSuffix)) {
 			super.setPartName(this.input.getFile().getName());
 		} else {
-			super.setPartName(this.input.getFile().getName() + " [" + partNameSuffix + "]");
+			super.setPartName(this.input.getFile().getName() + " ["
+					+ partNameSuffix + "]");
 		}
 	}
 
-	private void createPresentationTabContent(Composite presentationTab) throws Exception {
-		dashboardPartToolBar = new DashboardPartEditorToolBar(presentationTab, this);
+	private void createPresentationTabContent(Composite presentationTab)
+			throws Exception {
+		dashboardPartToolBar = new DashboardPartEditorToolBar(presentationTab,
+				this);
 
 		final Composite comp = new Composite(presentationTab, SWT.NONE);
 		comp.setLayout(new GridLayout());
@@ -237,55 +262,64 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		comp.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		try {
-			dashboardPart.createPartControl(comp, dashboardPartToolBar.getToolBar());			
+			dashboardPart.createPartControl(comp,
+					dashboardPartToolBar.getToolBar());
 			dashboardPartController.start();
 		} catch (final Exception ex) {
 			dashboardPartToolBar.setStatusToStopped();
 			LOG.error("Could not open dashboard part", ex);
 			throw ex;
 		}
-	}	
+	}
 
 	@SuppressWarnings("unchecked")
 	private void createSettingsTabContent(final Composite settingsTab) {
 		settingsTab.setLayout(new GridLayout(1, false));
 		settingsTab.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		Optional<String> optName = DashboardPartRegistry.getRegistrationName(dashboardPart.getClass());
-		if( optName.isPresent() ) {
+
+		Optional<String> optName = DashboardPartRegistry
+				.getRegistrationName(dashboardPart.getClass());
+		if (optName.isPresent()) {
 			String name = optName.get();
-			
+
 			try {
-				configurer = (IDashboardPartConfigurer<IDashboardPart>) DashboardPartRegistry.createDashboardPartConfigurer(name);
+				configurer = (IDashboardPartConfigurer<IDashboardPart>) DashboardPartRegistry
+						.createDashboardPartConfigurer(name);
 				configurer.addListener(this);
-				configurer.init(dashboardPart, dashboardPartController.getQueryRoots());
-				
+				configurer.init(dashboardPart,
+						dashboardPartController.getQueryRoots());
+
 				configurer.createPartControl(settingsTab);
-				
+
 			} catch (InstantiationException e) {
 				LOG.error("Could not create configurer", e);
 			}
 		}
-		
+
 		Button contextMapButton = new Button(settingsTab, SWT.PUSH);
 		contextMapButton.setText("Context");
 		contextMapButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ContextMapEditorWindow wnd = new ContextMapEditorWindow(settingsTab.getShell(), dashboardPart, dashboardPart.getClass().getSimpleName());
-				if( wnd.open() == Window.OK) {
+				ContextMapEditorWindow wnd = new ContextMapEditorWindow(
+						settingsTab.getShell(), dashboardPart, dashboardPart
+								.getClass().getSimpleName());
+				if (wnd.open() == Window.OK) {
 					setDirty(true);
 				}
 			}
 		});
 	}
 
-	private static Composite createTabComposite(TabFolder tabFolder, String title) {
+	private static Composite createTabComposite(TabFolder tabFolder,
+			String title) {
 		final TabItem presentationTab = new TabItem(tabFolder, SWT.NULL);
 		presentationTab.setText(title);
 
-		final Composite presentationTabComposite = new Composite(tabFolder, SWT.NONE);
-		presentationTabComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		final Composite presentationTabComposite = new Composite(tabFolder,
+				SWT.NONE);
+		presentationTabComposite
+				.setLayoutData(new GridData(GridData.FILL_BOTH));
 		presentationTabComposite.setLayout(new GridLayout());
 
 		presentationTab.setControl(presentationTabComposite);
@@ -300,11 +334,11 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 
 	@Override
 	public void configChanged(IDashboardPartConfigurer<?> sender) {
-		setDirty(true);		
+		setDirty(true);
 	}
 
 	public IDashboardPart getDashboardPart() {
 		return dashboardPart;
 	}
-	
+
 }

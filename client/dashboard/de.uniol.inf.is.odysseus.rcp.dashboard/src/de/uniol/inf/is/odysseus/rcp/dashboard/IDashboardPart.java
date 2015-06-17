@@ -41,6 +41,7 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	public void onLoad(Map<String, String> saved);
 	public void onLoadXML( Document document, Element xmlElement );
 	public void createPartControl(Composite parent, ToolBar toolbar);
+	public void setFocus();
 	public void dispose();
 
 	public Map<String, String> onSave();

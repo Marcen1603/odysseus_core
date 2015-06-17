@@ -68,6 +68,10 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	}
 
 	@Override
+	public void setFocus() {
+	}
+	
+	@Override
 	public void onLoad(Map<String, String> saved) {
 	}
 	

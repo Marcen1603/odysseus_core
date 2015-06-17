@@ -252,6 +252,11 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 			setMoveCursor();
 		}
 	}
+	
+	@Override
+	public void setFocus() {
+		getCanvas().setFocus();
+	}
 
 	@Override
 	public void mouseUp(MouseEvent e) {
