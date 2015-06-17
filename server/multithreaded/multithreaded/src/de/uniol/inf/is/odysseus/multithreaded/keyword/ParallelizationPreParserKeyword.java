@@ -24,12 +24,15 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "PARALLELIZATION";
 
+	public static final int AUTO_BUFFER_SIZE = 10000000;
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ParallelizationPreParserKeyword.class);
-	private static final int ATTRIBUTE_COUNT = 2;
-	private static final String PATTERN = "<Parallelization-Type> <Degree of parallelization or AUTO>";
+	private static final int MIN_ATTRIBUTE_COUNT = 2;
+	private static final String PATTERN = "<Parallelization-Type> <Degree of parallelization or AUTO> <Buffersize or AUTO (optional)>";
 
-	private int degreeOfParallelization = 0;
+	private int globalDegreeOfParallelization = 0;
+	private int globalBufferSize = 0;
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
@@ -43,9 +46,9 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 		String[] splitted = parameter.trim().split(" ");
 
 		// check correkt attribute count
-		if (splitted.length != ATTRIBUTE_COUNT) {
-			throw new OdysseusScriptException(KEYWORD + " needs "
-					+ ATTRIBUTE_COUNT + " attributes: " + PATTERN + "!");
+		if (splitted.length < MIN_ATTRIBUTE_COUNT) {
+			throw new OdysseusScriptException(KEYWORD + " needs at least "
+					+ MIN_ATTRIBUTE_COUNT + " attributes: " + PATTERN + "!");
 		} else {
 			// check if parallelization type exists
 			String parallelizationType = splitted[0];
@@ -64,8 +67,35 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 				throw new OdysseusScriptException(
 						"Value for degreeOfParallelization is not valid. Only positive integer values > 2 or constant AUTO is allowed.");
 			}
+
+			// validate buffersize if set
+			if (splitted.length == 3) {
+				String buffersizeString = splitted[2];
+				if (!isValidBuffersize(buffersizeString)) {
+					throw new OdysseusScriptException(
+							"Value for buffersize is not valid. Only positive integer values or AUTO is allowed.");
+				}
+			} else {
+				globalBufferSize = AUTO_BUFFER_SIZE;
+			}
 		}
 
+	}
+
+	private boolean isValidBuffersize(String buffersizeString) {
+		try {
+			globalBufferSize = Integer.parseInt(buffersizeString);
+			if (globalBufferSize < 1){
+				return false;
+			}
+		} catch (NumberFormatException e) {
+			if (buffersizeString.equalsIgnoreCase("AUTO")) {
+				globalBufferSize = AUTO_BUFFER_SIZE;
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -83,10 +113,11 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 		if (handler != null) {
 			// if handler exists
 			PreTransformationHandlerParameter newHandlerParameter = handler
-					.createHandlerParameter(degreeOfParallelization);
+					.createHandlerParameter(globalDegreeOfParallelization,
+							globalBufferSize);
 
 			boolean parameterAlreadyAdded = false;
-			
+
 			for (IQueryBuildSetting<?> setting : settings) {
 				if (setting.getClass().equals(
 						PreTransformationHandlerParameter.class)) {
@@ -138,8 +169,8 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 
 			// degree need to be greater than 1,
 			if (integerDegree > 1) {
-				this.degreeOfParallelization = integerDegree;
-				if (this.degreeOfParallelization > PerformanceDetectionHelper
+				this.globalDegreeOfParallelization = integerDegree;
+				if (this.globalDegreeOfParallelization > PerformanceDetectionHelper
 						.getNumberOfCores()) {
 					LOG.warn("Degree of parallelization is greater than available cores");
 				}
@@ -158,7 +189,7 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 
 				LOG.info("Number of detected cores is " + availableCores
 						+ ". Degree of parallelization is set to this value.");
-				this.degreeOfParallelization = availableCores;
+				this.globalDegreeOfParallelization = availableCores;
 				return true;
 			}
 		}

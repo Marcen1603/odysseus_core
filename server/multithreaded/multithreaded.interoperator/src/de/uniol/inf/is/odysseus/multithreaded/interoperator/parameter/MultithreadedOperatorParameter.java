@@ -33,7 +33,7 @@ public class MultithreadedOperatorParameter extends Setting<Map<String, Multithr
 
 	public void addSettingsForOperator(String operatorId, MultithreadedOperatorSettings settings){
 		if (!settingsForOperatorExists(operatorId)){
-			super.getValue().put(operatorId, settings);			
+			super.getValue().put(operatorId.toLowerCase(), settings);			
 		} else {
 			throw new IllegalArgumentException("Multiple operator settings for id: "+operatorId);
 		}

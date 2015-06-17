@@ -14,6 +14,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.multithreaded.helper.SDFAttributeHelper;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
 public class JoinMultithreadedTransformationStrategy extends
@@ -45,7 +47,7 @@ public class JoinMultithreadedTransformationStrategy extends
 
 	@Override
 	public boolean transform(ILogicalOperator operator,
-			int degreeOfParallelization) {
+			MultithreadedOperatorSettings settingsForOperator) {
 		JoinAO joinOperator = (JoinAO) operator;
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
@@ -87,7 +89,7 @@ public class JoinMultithreadedTransformationStrategy extends
 					// Fragment operator
 					HashFragmentAO fragment = new HashFragmentAO();
 					fragment.setAttributes(attributesForSource);
-					fragment.setNumberOfFragments(degreeOfParallelization);
+					fragment.setNumberOfFragments(settingsForOperator.getDegreeOfParallelization());
 					fragment.setName("Hash Fragment_" + numberOfFragments);
 
 					Pair<HashFragmentAO, Integer> pair = new Pair<HashFragmentAO, Integer>();
@@ -112,7 +114,7 @@ public class JoinMultithreadedTransformationStrategy extends
 		union.setName("Union");
 
 		int bufferCounter = 0;
-		for (int i = 0; i < degreeOfParallelization; i++) {
+		for (int i = 0; i < settingsForOperator.getDegreeOfParallelization(); i++) {
 			JoinAO newJoinOperator = joinOperator.clone();
 			newJoinOperator.setName(joinOperator.getName() + "_" + i);
 			newJoinOperator.setUniqueIdentifier(joinOperator
@@ -146,5 +148,17 @@ public class JoinMultithreadedTransformationStrategy extends
 		}
 
 		return true;
+	}
+
+	@Override
+	public List<Class<? extends AbstractFragmentAO>> getAllowedFragmentationTypes() {
+		List<Class<? extends AbstractFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractFragmentAO>>();
+		allowedFragmentTypes.add(HashFragmentAO.class);
+		return allowedFragmentTypes;
+	}
+
+	@Override
+	public Class<? extends AbstractFragmentAO> getPreferredFragmentationType() {
+		return HashFragmentAO.class;
 	}
 }

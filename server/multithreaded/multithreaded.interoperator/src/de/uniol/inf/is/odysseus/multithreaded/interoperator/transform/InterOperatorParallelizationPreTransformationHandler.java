@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisi
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorParameter;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy.IMultithreadedTransformationStrategy;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy.registry.MultithreadedTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.multithreaded.keyword.ParallelizationParameter;
@@ -28,9 +29,10 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 
 	private static final String HANDLER_NAME = "InterOperatorParallelizationPreTransformationHandler";
 	private final String TYPE = "INTER_OPERATOR";
-	private final int MIN_PARAMETER_COUNT = 1;
+	private final int PARAMETER_COUNT = 2;
 
-	private int degreeOfParallelization = 0;
+	private int globalDegreeOfParallelization = 0;
+	private int globalBufferSize = 0;
 
 	@Override
 	public String getName() {
@@ -42,7 +44,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 	public void preTransform(IServerExecutor executor, ISession caller,
 			ILogicalQuery query, QueryBuildConfiguration config,
 			List<Pair<String, String>> handlerParameters, Context context) {
-		if (handlerParameters.size() < MIN_PARAMETER_COUNT) {
+		if (handlerParameters.size() != PARAMETER_COUNT) {
 			throw new IllegalArgumentException();
 		} else {
 			// Determine parameters
@@ -50,12 +52,19 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 				ParallelizationParameter parameter = ParallelizationParameter
 						.getParameterByName(pair.getE1());
 				switch (parameter) {
-				case DEGREE_OF_PARALLELIZATION:
+				case GLOBAL_DEGREE_OF_PARALLELIZATION:
 					try {
-						degreeOfParallelization = Integer
-								.parseInt(pair.getE2());
-					} catch (Exception e) {
-						throw new IllegalAccessError();
+						globalDegreeOfParallelization = Integer.parseInt(pair
+								.getE2());
+					} catch (NumberFormatException e) {
+						throw new IllegalArgumentException();
+					}
+					break;
+				case GLOBAL_BUFFERSIZE:
+					try {
+						globalBufferSize = Integer.parseInt(pair.getE2());
+					} catch (NumberFormatException e) {
+						throw new IllegalArgumentException();
 					}
 					break;
 				default:
@@ -86,39 +95,104 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 
 					for (ILogicalOperator operatorForTransformation : collVisitor
 							.getResult()) {
-						if (operatorIds.contains(operatorForTransformation
-								.getUniqueIdentifier())
-								|| operatorIds.isEmpty()) {
-							List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = MultithreadedTransformationStrategyRegistry
-									.getStrategiesForOperator(operatorForTransformation
-											.getClass());
-							if (!strategiesForOperator.isEmpty()) {
-								// evaluate compatibility of the different
-								// strategies
-								List<FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>>> strategiesWithCompatibility = new ArrayList<FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>>>();
-								for (IMultithreadedTransformationStrategy<? extends ILogicalOperator> strategy : strategiesForOperator) {
-									FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategyWithCompatibility = new FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>>(
-											strategy.evaluateCompatibility(operatorForTransformation),
-											strategy);
-									strategiesWithCompatibility
-											.add(strategyWithCompatibility);
+						// operator has no custom settings or no settings are
+						// available, then choose best strategy and transform
+						if (operatorForTransformation.getUniqueIdentifier() == null
+								|| operatorIds.isEmpty()
+								|| !operatorIds
+										.contains(operatorForTransformation
+												.getUniqueIdentifier()
+												.toLowerCase())) {
+							IMultithreadedTransformationStrategy<? extends ILogicalOperator> bestStrategy = getBestStrategy(operatorForTransformation);
+							MultithreadedOperatorSettings settings = MultithreadedOperatorSettings
+									.createDefaultSettings(bestStrategy,
+											globalDegreeOfParallelization,
+											globalBufferSize);
+							bestStrategy.transform(operatorForTransformation,
+									settings);
+						} else if (operatorIds
+								.contains(operatorForTransformation
+								// if custom settings for operator are available
+										.getUniqueIdentifier().toLowerCase())) {
+							MultithreadedOperatorSettings settingsForOperator = multithreadedOperatorParameter
+									.getSettingsForOperator(operatorForTransformation
+											.getUniqueIdentifier());
+							if (settingsForOperator.hasMultithreadingStrategy()) {
+								IMultithreadedTransformationStrategy<? extends ILogicalOperator> selectedStrategy = MultithreadedTransformationStrategyRegistry
+										.getStrategiesByName(settingsForOperator
+												.getMultithreadingStrategy());
+								settingsForOperator
+										.doPostCalculationsForSettings(
+												selectedStrategy,
+												globalDegreeOfParallelization,
+												globalBufferSize);
+
+								if (selectedStrategy.getOperatorType() == operatorForTransformation
+										.getClass()) {
+									int compatibility = selectedStrategy
+											.evaluateCompatibility(operatorForTransformation);
+									if (compatibility > 0) {
+										selectedStrategy.transform(
+												operatorForTransformation,
+												settingsForOperator);
+									} else {
+										throw new IllegalArgumentException(
+												"Strategy "
+														+ selectedStrategy
+																.getName()
+														+ " is not compatible with selected operator with id "
+														+ operatorForTransformation
+																.getUniqueIdentifier());
+									}
+								} else {
+									throw new IllegalArgumentException(
+											"Strategy with name "
+													+ settingsForOperator
+															.getMultithreadingStrategy()
+													+ " is not compatible with Operator of type "
+													+ operatorForTransformation
+															.getClass());
 								}
-								Collections.sort(strategiesWithCompatibility,
-										Collections.reverseOrder());
-								if (strategiesWithCompatibility.get(0).getE1() > 0) {
-									strategiesWithCompatibility
-											.get(0)
-											.getE2()
-											.transform(
-													operatorForTransformation,
-													degreeOfParallelization);
-								}
+
+							} else {
+								IMultithreadedTransformationStrategy<? extends ILogicalOperator> bestStrategy = getBestStrategy(operatorForTransformation);
+								settingsForOperator
+										.doPostCalculationsForSettings(
+												bestStrategy,
+												globalDegreeOfParallelization,
+												globalBufferSize);
+								bestStrategy.transform(
+										operatorForTransformation,
+										settingsForOperator);
 							}
 						}
 					}
 				}
 			}
 		}
+	}
+
+	private IMultithreadedTransformationStrategy<? extends ILogicalOperator> getBestStrategy(
+			ILogicalOperator operatorForTransformation) {
+		List<IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = MultithreadedTransformationStrategyRegistry
+				.getStrategiesForOperator(operatorForTransformation.getClass());
+		if (!strategiesForOperator.isEmpty()) {
+			// evaluate compatibility of the different
+			// strategies
+			List<FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>>> strategiesWithCompatibility = new ArrayList<FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>>>();
+			for (IMultithreadedTransformationStrategy<? extends ILogicalOperator> strategy : strategiesForOperator) {
+				FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>> strategyWithCompatibility = new FESortedPair<Integer, IMultithreadedTransformationStrategy<? extends ILogicalOperator>>(
+						strategy.evaluateCompatibility(operatorForTransformation),
+						strategy);
+				strategiesWithCompatibility.add(strategyWithCompatibility);
+			}
+			Collections.sort(strategiesWithCompatibility,
+					Collections.reverseOrder());
+			if (strategiesWithCompatibility.get(0).getE1() > 0) {
+				return strategiesWithCompatibility.get(0).getE2();
+			}
+		}
+		return null;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -9,6 +10,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
 public class GroupedAggregateMultithreadedTransformationStrategy extends
@@ -36,7 +39,7 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 
 	@Override
 	public boolean transform(ILogicalOperator operator,
-			int degreeOfParallelization) {
+			MultithreadedOperatorSettings settingsForOperator) {
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
@@ -65,7 +68,7 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 			// Fragment operator
 			HashFragmentAO fragment = new HashFragmentAO();
 			fragment.setAttributes(groupingAttributes);
-			fragment.setNumberOfFragments(degreeOfParallelization);
+			fragment.setNumberOfFragments(settingsForOperator.getDegreeOfParallelization());
 			fragment.setName("Hash Fragment");
 
 			// subscribe new operator
@@ -82,7 +85,7 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 			UnionAO union = new UnionAO();
 			union.setName("Union");
 
-			for (int i = 0; i < degreeOfParallelization; i++) {
+			for (int i = 0; i < settingsForOperator.getDegreeOfParallelization(); i++) {
 				BufferAO buffer = new BufferAO();
 				buffer.setName("Buffer_" + i);
 				buffer.setThreaded(true);
@@ -115,6 +118,18 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public List<Class<? extends AbstractFragmentAO>> getAllowedFragmentationTypes() {
+		List<Class<? extends AbstractFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractFragmentAO>>();
+		allowedFragmentTypes.add(HashFragmentAO.class);
+		return allowedFragmentTypes;
+	}
+
+	@Override
+	public Class<? extends AbstractFragmentAO> getPreferredFragmentationType() {
+		return HashFragmentAO.class;
 	}
 
 }

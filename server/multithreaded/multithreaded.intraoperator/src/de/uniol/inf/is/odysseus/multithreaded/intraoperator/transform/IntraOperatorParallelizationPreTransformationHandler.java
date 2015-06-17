@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.multithreaded.transform.AbstractParallelizationPreTransformationHandler;
@@ -25,13 +24,6 @@ public class IntraOperatorParallelizationPreTransformationHandler extends Abstra
 	@Override
 	public String getName() {
 		return HANDLER_NAME;
-	}
-
-	@Override
-	public PreTransformationHandlerParameter createHandlerParameter(
-			int degreeOfParallelization) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	@Override

@@ -12,6 +12,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
 
 public class AggregateMultithreadedTransformationStrategy extends
@@ -53,7 +55,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 
 	@Override
 	public boolean transform(ILogicalOperator operator,
-			int degreeOfParallelization) {
+			MultithreadedOperatorSettings settingsForOperator) {
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
@@ -78,7 +80,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 
 		// round robin fragmentation, because there is no aggregate grouping
 		RoundRobinFragmentAO fragment = new RoundRobinFragmentAO();
-		fragment.setNumberOfFragments(degreeOfParallelization);
+		fragment.setNumberOfFragments(settingsForOperator.getDegreeOfParallelization());
 		fragment.setName("Round Robin Fragment");
 
 		// subscribe new operator
@@ -120,7 +122,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 				union.setName("Union");
 
 		// for each degree of parallelization
-		for (int i = 0; i < degreeOfParallelization; i++) {
+		for (int i = 0; i < settingsForOperator.getDegreeOfParallelization(); i++) {
 			// create buffer
 			BufferAO buffer = new BufferAO();
 			buffer.setName("Buffer_" + i);
@@ -175,6 +177,18 @@ public class AggregateMultithreadedTransformationStrategy extends
 		}
 
 		return true;
+	}
+
+	@Override
+	public List<Class<? extends AbstractFragmentAO>> getAllowedFragmentationTypes() {
+		List<Class<? extends AbstractFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractFragmentAO>>();
+		allowedFragmentTypes.add(RoundRobinFragmentAO.class);
+		return allowedFragmentTypes;
+	}
+
+	@Override
+	public Class<? extends AbstractFragmentAO> getPreferredFragmentationType() {
+		return RoundRobinFragmentAO.class;
 	}
 
 }

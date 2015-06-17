@@ -41,7 +41,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 	}
 
 	public enum BufferSizeConstants {
-		USERDEFINED, AUTO;
+		USERDEFINED, GLOBAL, AUTO;
 
 		public static BufferSizeConstants getConstantByName(String name) {
 			for (BufferSizeConstants parameter : BufferSizeConstants.values()) {
@@ -61,7 +61,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 	private static final int MAX_ATTRIBUTE_COUNT = 5;
 	private static final String PATTERN = "<1..n Unique operator Ids> "
 			+ "<degree of parallelization or GLOBAL or AUTO> "
-			+ "<buffer-size or AUTO>" + "<multithreading-strategy (optional)> "
+			+ "<buffer-size or GLOBAL or AUTO>" + "<multithreading-strategy (optional)> "
 			+ "<fragmentation-type e.g. round robin (optional)> ";
 
 	@Override
