@@ -139,6 +139,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 			newAggregateOperator.setOutputPA(true); // enable partial aggregates
 			newAggregateOperator.clearAggregations();
 			newAggregateOperator.setAggregationItems(renamedPAAggregationItems); // use renamed output name of attributes
+			newAggregateOperator.setDrainAtClose(true);
 			
 			// subscribe buffer to fragment
 			buffer.subscribeToSource(fragment, 0, i, fragment.getOutputSchema());
@@ -161,6 +162,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 
 		combinePAAggregateOperator.clearAggregations();
 		combinePAAggregateOperator.setAggregationItems(renamedCombineAggregationItems);
+		combinePAAggregateOperator.setDrainAtClose(true);
 		
 		// subscribe aggregate operator for combining partial aggregates to union
 		combinePAAggregateOperator.subscribeToSource(union, 0, 0,
