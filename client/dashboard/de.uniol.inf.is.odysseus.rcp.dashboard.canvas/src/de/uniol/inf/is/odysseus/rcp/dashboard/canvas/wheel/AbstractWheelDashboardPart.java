@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Rectangle;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -99,7 +100,7 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
      * {@inheritDoc}
      */
     @Override
-    public void doPaint() {
+    public void doPaint(final PaintEvent e) {
         if (this.isAutoadjust()) {
             this.adjust();
         }

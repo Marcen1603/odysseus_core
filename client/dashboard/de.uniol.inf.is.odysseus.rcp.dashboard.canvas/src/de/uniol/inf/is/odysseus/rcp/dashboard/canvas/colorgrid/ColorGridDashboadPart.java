@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -72,7 +73,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 				+ value.doubleValue()).toCIELab().toXYZ().toRGB();
 	}
 	
-	public void doPaint() {
+	public void doPaint(final PaintEvent e) {
 		
 		
 		

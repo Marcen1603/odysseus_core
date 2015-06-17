@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Rectangle;
@@ -67,7 +68,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
      * {@inheritDoc}
      */
     @Override
-    public void doPaint() {
+    public void doPaint(final PaintEvent e) {
         if (this.isAutoadjust()) {
             this.adjust();
         }

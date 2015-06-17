@@ -24,6 +24,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
+import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.widgets.Display;
@@ -78,7 +79,7 @@ public class VoronoiDashboardPart extends AbstractCanvasDashboardPart {
      * {@inheritDoc}
      */
     @Override
-    public void doPaint() {
+    public void doPaint(final PaintEvent event) {
         if (this.isAutoadjust()) {
             this.adjust();
         }

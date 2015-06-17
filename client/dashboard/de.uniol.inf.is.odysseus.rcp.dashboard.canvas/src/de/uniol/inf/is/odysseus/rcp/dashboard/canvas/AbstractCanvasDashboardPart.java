@@ -141,7 +141,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 			this.gc.setTextAntialias(SWT.ON);
 			this.gc.setAdvanced(true);
 			this.gc.setAntialias(SWT.ON);
-			this.doPaint();
+			this.doPaint(e);
 			this.gc.dispose();
 			this.gc = null;
 			e.gc.drawImage(bufferImage, leftTop.x, leftTop.y);
@@ -161,7 +161,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 		return this.getCanvas().getSize();
 	}
 
-	public abstract void doPaint();
+	public abstract void doPaint(final PaintEvent e);
 
 	
 	

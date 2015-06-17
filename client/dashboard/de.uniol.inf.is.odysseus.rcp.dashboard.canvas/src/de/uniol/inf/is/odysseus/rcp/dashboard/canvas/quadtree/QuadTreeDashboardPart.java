@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
+import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -80,7 +81,7 @@ public class QuadTreeDashboardPart extends AbstractCanvasDashboardPart {
      * {@inheritDoc}
      */
     @Override
-    public void doPaint() {
+    public void doPaint(final PaintEvent e) {
         if (this.isAutoadjust()) {
             this.adjust();
         }

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -82,7 +83,7 @@ public class ColorChartDashboardPart extends AbstractCanvasDashboardPart {
      * {@inheritDoc}
      */
     @Override
-    public void doPaint() {
+    public void doPaint(final PaintEvent e) {
         if ((this.image == null) && (this.imagePath != null) && (Paths.get(this.imagePath).toFile().exists())) {
             this.image = new Image(this.getCanvas().getDisplay(), this.imagePath);
         }
