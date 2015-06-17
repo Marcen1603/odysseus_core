@@ -2,9 +2,10 @@ package cm.data;
 
 import cm.communication.dto.SocketInfo;
 import cm.communication.socket.SocketReceiver;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * @author Tobias
@@ -13,11 +14,12 @@ import java.util.List;
 public class ConnectionHandler {
 
     private static ConnectionHandler instance;
-    private List<SocketReceiver> connections;
-
+    private ObservableList<SocketReceiver> connections;
+    private ObservableList<SocketInfo> socketInfos;
 
     private ConnectionHandler() {
-        connections = new ArrayList<>();
+        connections = FXCollections.observableArrayList();
+        socketInfos = FXCollections.observableArrayList();
     }
 
     public static ConnectionHandler getInstance() {
@@ -29,9 +31,29 @@ public class ConnectionHandler {
 
     public void addConnection(SocketReceiver info) {
         connections.add(info);
+        socketInfos.add(info.getSocketInfo());
     }
 
-    public List<SocketReceiver> getConnections() {
-        return this.connections;
+    public void removeConnection(SocketInfo info) {
+        Iterator<SocketReceiver> iter = connections.iterator();
+        while (iter.hasNext()) {
+            SocketReceiver receiver = iter.next();
+            if (receiver.getSocketInfo().equals(info)) {
+                receiver.stopReceiver();
+                iter.remove();
+            }
+        }
+
+        Iterator<SocketInfo> infoIter = socketInfos.iterator();
+        while(infoIter.hasNext()) {
+            SocketInfo socketInfo = infoIter.next();
+            if (socketInfo.equals(info)) {
+                iter.remove();
+            }
+        }
+    }
+
+    public ObservableList<SocketInfo> getSocketInfos() {
+        return this.socketInfos;
     }
 }

@@ -81,7 +81,7 @@ public class SocketReceiver {
         return socketInfo;
     }
 
-    public Thread getSocketReceiverThread() {
-        return socketReceiverThread;
+    public void stopReceiver() {
+        this.socketReceiverThread.interrupt();
     }
 }

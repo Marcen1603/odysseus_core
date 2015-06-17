@@ -10,8 +10,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,9 @@ public class NewConnectionController {
 
     @FXML
     ListView<SocketInfo> socketInfoList;
+
+    @FXML
+    Button connectionWindowAddButton;
 
     public void sendRequest(ActionEvent actionEvent) {
         String queryIdString = queryIdField.getText();
@@ -64,5 +69,7 @@ public class NewConnectionController {
                 ConnectionHandler.getInstance().addConnection(receiver);
             }
         }
+        Stage stage = (Stage) connectionWindowAddButton.getScene().getWindow();
+        stage.close();
     }
 }

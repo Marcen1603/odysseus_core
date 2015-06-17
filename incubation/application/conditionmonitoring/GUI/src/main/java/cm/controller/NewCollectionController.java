@@ -22,7 +22,6 @@ import java.util.List;
  */
 public class NewCollectionController {
 
-    ObservableList<SocketInfo> observableSocketList = FXCollections.observableArrayList();
     List<ConnectionListCell> connectionListCells = new ArrayList<>();
 
     @FXML
@@ -33,11 +32,7 @@ public class NewCollectionController {
 
     @FXML
     private void initialize() {
-        for (SocketReceiver receiver : ConnectionHandler.getInstance().getConnections()) {
-            observableSocketList.add(receiver.getSocketInfo());
-        }
-
-        newCollectionConnectionList.setItems(observableSocketList);
+        newCollectionConnectionList.setItems(ConnectionHandler.getInstance().getSocketInfos());
         newCollectionConnectionList.setCellFactory(listView -> {
             ConnectionListCell listCell = new ConnectionListCell();
             connectionListCells.add(listCell);

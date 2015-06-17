@@ -45,7 +45,6 @@ public class MachineEventListCell extends ListCell<MachineEvent> {
             setGraphic(null);
         } else {
             MachineEvent event = getListView().getItems().get(super.getIndex());
-            //machineEventMachineNameLabel.setText(event.getCollection().getName());
 
             Double anomalyScore = 0.0;
             String eventDescription = "";

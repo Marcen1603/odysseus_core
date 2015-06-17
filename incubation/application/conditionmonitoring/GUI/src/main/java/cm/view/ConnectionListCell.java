@@ -43,16 +43,20 @@ public class ConnectionListCell extends ListCell<SocketInfo> {
 
     @Override
     public void updateItem(SocketInfo info, boolean empty) {
-        if (info == null)
-            return;
-        this.socketInfo = info;
         super.updateItem(info, empty);
+        if (empty || info == null) {
+            setText(null);
+            setGraphic(null);
+            return;
+        }
 
+        this.socketInfo = info;
         String attributes = "";
         for (AttributeInformation attributeInformation : info.getSchema()) {
             attributes += attributeInformation.getName() + ": " + attributeInformation.getDataType() + "\n";
         }
         newConnectionAttributes.setText(attributes);
+        newConnectionName.setText(info.getName());
         setGraphic(root);
     }
 
