@@ -136,8 +136,18 @@ public class AggregateAO extends UnaryLogicalOp {
 	 * Author: Chris Tönjes-Deye
 	 */
 	public void clearAggregations(){
+		// only remove outputAttributes that are related to an aggregation
+		ArrayList<Pair<SDFAttribute, Boolean>> copyOfOutputAttributeList = new ArrayList<Pair<SDFAttribute, Boolean>>(outputAttributList);
+		for (AggregateItem aggregateItem : aggregationItems) {
+			for (int i = 0; i < copyOfOutputAttributeList.size(); i++) {
+				Pair<SDFAttribute, Boolean> pair = copyOfOutputAttributeList.get(i);
+				if (pair.getE1().equals(aggregateItem.outAttribute)){
+					outputAttributList.remove(pair);
+				}
+			}
+		}
+		// remove aggregations
 		aggregationItems.clear();
-		outputAttributList.clear();
 		aggregations.clear();
 		outAttributeToAggregation.clear();
 	}
