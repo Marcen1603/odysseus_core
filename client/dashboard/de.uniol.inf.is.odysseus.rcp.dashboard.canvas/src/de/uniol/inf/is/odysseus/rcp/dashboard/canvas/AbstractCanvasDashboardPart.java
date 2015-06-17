@@ -135,7 +135,6 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 	public void paintControl(final PaintEvent e) {
 		try {
 			Point s = getSize();
-//			double zoom = 1.5;
 			Image bufferImage = new Image(Display.getCurrent(), s.x, s.y);
 			this.gc = new GC(bufferImage);
 			this.gc.setTextAntialias(SWT.ON);
@@ -144,7 +143,12 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 			this.doPaint(e);
 			this.gc.dispose();
 			this.gc = null;
-			e.gc.drawImage(bufferImage, leftTop.x, leftTop.y);
+			//e.gc.drawImage(bufferImage, leftTop.x, leftTop.y);
+			// TODO: clipping
+			int width =  bufferImage.getBounds().width;
+			int height = bufferImage.getBounds().height;
+			e.gc.drawImage(bufferImage,0,0, s.x, s.y, leftTop.x, leftTop.y, width,height);
+					
 //			e.gc.drawImage(bufferImage, leftTop.x, leftTop.y, bufferImage
 //					.getBounds().width, bufferImage.getBounds().height,
 //					leftTop.x, leftTop.y, new Double(

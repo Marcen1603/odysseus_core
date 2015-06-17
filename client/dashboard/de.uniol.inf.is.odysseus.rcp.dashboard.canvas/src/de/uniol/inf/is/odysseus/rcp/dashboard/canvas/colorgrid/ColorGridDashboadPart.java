@@ -75,10 +75,6 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	
 	public void doPaint(final PaintEvent e) {
 		
-		
-		
-		// TODO: Check if is currently redrawing
-
 		final RGB background = this.getBackgroundColor();
 		this.setAlpha(getBackgroundAlpha());
 		this.fill(background);
