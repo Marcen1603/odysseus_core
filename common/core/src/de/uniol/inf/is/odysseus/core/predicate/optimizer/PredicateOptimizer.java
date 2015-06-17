@@ -29,6 +29,8 @@ import de.uniol.inf.is.odysseus.core.predicate.OrPredicate;
  *
  */
 public class PredicateOptimizer {
+    private static final int MAX_ITERATION = 100;
+
     private static List<IPredicateOptimizerRule<?>> RULES = new ArrayList<>();
     static {
         RULES.add(new ReduceAndRule());
@@ -81,11 +83,13 @@ public class PredicateOptimizer {
             }
             IPredicate<?> expr = predicate;
             String tmpExpr = "";
-            while (!expr.toString().equals(tmpExpr)) {
+            int i = 0;
+            while ((!expr.toString().equals(tmpExpr)) && (i < MAX_ITERATION)) {
                 tmpExpr = expr.toString();
                 for (IPredicateOptimizerRule<?> rule : RULES) {
                     expr = rule.executeRule(expr);
                 }
+                i++;
             }
             return expr;
         }

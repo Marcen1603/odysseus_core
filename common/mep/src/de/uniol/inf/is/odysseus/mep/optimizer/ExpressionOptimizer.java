@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
  *
  */
 public final class ExpressionOptimizer {
+    private static final int MAX_ITERATION = 100;
     private static List<IExpressionOptimizerRule<?>> RULES = new ArrayList<>();
     static {
         RULES.add(new ReduceAndRule());
@@ -73,11 +74,13 @@ public final class ExpressionOptimizer {
             }
             IExpression<?> expr = expression;
             String tmpExpr = "";
-            while (!expr.toString().equals(tmpExpr)) {
+            int i = 0;
+            while ((!expr.toString().equals(tmpExpr)) && (i < MAX_ITERATION)) {
                 tmpExpr = expr.toString();
                 for (IExpressionOptimizerRule<?> rule : RULES) {
                     expr = rule.executeRule(expr);
                 }
+                i++;
             }
             return expr;
         }
@@ -109,10 +112,10 @@ public final class ExpressionOptimizer {
         IExpression<?> cnf = conjunctiveNormalFormRule.executeRule(expression);
         return optimize(cnf);
     }
-    
-    public static IExpression<?> sortByStringExpressions(IExpression<?> expression){
-    	SortByStringExpressionRule rules = new SortByStringExpressionRule();
-    	IExpression<?> res = rules.executeRule(expression);
-    	return res;
+
+    public static IExpression<?> sortByStringExpressions(IExpression<?> expression) {
+        SortByStringExpressionRule rules = new SortByStringExpressionRule();
+        IExpression<?> res = rules.executeRule(expression);
+        return res;
     }
 }
