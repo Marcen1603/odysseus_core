@@ -3,7 +3,7 @@
 #ADDQUERY
 DROP STREAM bid if exists;
 #ADDQUERY
-ATTACH STREAM bid (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) FILE '${BUNDLE-ROOT}/ODY-987/nexmark_bid2.csv' AS SimpleCSV;
+ATTACH STREAM bid (timestamp STARTTIMESTAMP,	auction INTEGER, bidder INTEGER, datetime LONG,	price DOUBLE) FILE '${BUNDLE-ROOT}/jira/ODY-987/nexmark_bid2.csv' AS SimpleCSV;
 
 
 #ADDQUERY

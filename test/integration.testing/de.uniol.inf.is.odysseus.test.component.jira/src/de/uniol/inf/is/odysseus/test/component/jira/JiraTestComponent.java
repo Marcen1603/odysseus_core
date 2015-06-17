@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.component.jira;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.test.component.AbstractQueryExpectedOutputTestComponent;
@@ -52,13 +50,7 @@ public class JiraTestComponent extends AbstractQueryExpectedOutputTestComponent<
      */
     @Override
     public List<ExpectedOutputTestSet> createTestSets(BasicTestContext context) {
-        try {
-            return TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(new URL(context.getDataRootPath() + "jira/"), "TUPLE");
-        }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return TestSetFactory.createExpectedOutputTestSetsFromBundleRoot(context.getDataRootPath(), "TUPLE");
     }
 
 }
