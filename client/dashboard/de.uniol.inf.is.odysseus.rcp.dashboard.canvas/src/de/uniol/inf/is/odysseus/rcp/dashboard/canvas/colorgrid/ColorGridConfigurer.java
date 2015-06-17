@@ -44,11 +44,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 public class ColorGridConfigurer extends
-		AbstractDashboardPartConfigurer<ColorGridDashboadPart> {
+		AbstractDashboardPartConfigurer<ColorGridDashboadPart>{
 
 	ColorGridDashboadPart dashboardPart;
 	private SDFSchema[] schemas;
-
+	Text zoomText;
+	
 	@Override
 	public void init(ColorGridDashboadPart dashboardPartToConfigure,
 			Collection<IPhysicalOperator> roots) {
@@ -68,6 +69,8 @@ public class ColorGridConfigurer extends
 	public ColorGridDashboadPart getDashboardPart() {
 		return dashboardPart;
 	}
+	
+	
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -432,6 +435,30 @@ public class ColorGridConfigurer extends
                         if (!"".equals(text)) {
                             try {
                                 ColorGridConfigurer.this.dashboardPart.setImageScale(Double.parseDouble(text.trim()));
+                                fireListener();
+                            }
+                            catch (final NumberFormatException ex) {
+                                // Empty block
+                            }
+                        }
+                    }
+                });
+            }
+            {// Scale Image
+                toolkit.createLabel(group, "Zoom");
+                zoomText = toolkit.createText(group, "  "+this.getDashboardPart().getZoom());
+                toolkit.createLabel(group, "");
+
+                zoomText.addModifyListener(new ModifyListener() {
+                    /**
+                     * {@inheritDoc}
+                     */
+                    @Override
+                    public void modifyText(final ModifyEvent e) {
+                        final String text = zoomText.getText();
+                        if (!"".equals(text)) {
+                            try {
+                                ColorGridConfigurer.this.dashboardPart.setZoom(Double.parseDouble(text.trim()));
                                 fireListener();
                             }
                             catch (final NumberFormatException ex) {

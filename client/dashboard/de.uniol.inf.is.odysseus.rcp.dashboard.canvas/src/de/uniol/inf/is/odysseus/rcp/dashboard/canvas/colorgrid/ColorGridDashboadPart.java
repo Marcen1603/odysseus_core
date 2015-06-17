@@ -18,24 +18,24 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.AbstractCanvasDashboardPart
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.CIELCH;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
-public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
+public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 
-    private final static String X_POS = "xPos";
-    private final static String Y_POS = "yPos";
-    private final static String VALUE_POS = "valuePos";
-    private final static String CELL_WIDTH = "cellWidth";
-    private final static String CELL_HEIGHT = "cellHeight";
-    private final static String COUNT_X = "countX";
-    private final static String COUNT_Y = "countY";
-    private final static String DURATION = "duration";
-    private final static String BACKGROUND_COLOR = "backgroundColor";
-    private final static String BACKGROUND_ALPHA = "backgroundAlpha";
-    private final static String BACKGROUND_IMAGE = "backgroundImage";
-    private final static String BACKGROUND_SCALE = "backgroundImageScale";
-    private final static String BACKGROUND_X = "backgroundX";
-    private final static String BACKGROUND_Y = "backgroundY";
-    private final static String COLOR = "color";
-	
+	private final static String X_POS = "xPos";
+	private final static String Y_POS = "yPos";
+	private final static String VALUE_POS = "valuePos";
+	private final static String CELL_WIDTH = "cellWidth";
+	private final static String CELL_HEIGHT = "cellHeight";
+	private final static String COUNT_X = "countX";
+	private final static String COUNT_Y = "countY";
+	private final static String DURATION = "duration";
+	private final static String BACKGROUND_COLOR = "backgroundColor";
+	private final static String BACKGROUND_ALPHA = "backgroundAlpha";
+	private final static String BACKGROUND_IMAGE = "backgroundImage";
+	private final static String BACKGROUND_SCALE = "backgroundImageScale";
+	private final static String BACKGROUND_X = "backgroundX";
+	private final static String BACKGROUND_Y = "backgroundY";
+	private final static String COLOR = "color";
+
 	private int width = 600;
 	private int height = 600;
 	private int xpos = 0;
@@ -43,15 +43,15 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 	private int value_pos = 2;
 	private int boxWidth = 2;
 	private int boxHeight = 2;
-
+	private double zoom = 1.2;
 
 	private String imagePath;
-    private Image image;
-    
-    private long maxDuration = 1000*60*60*24;
-	
+	private Image image;
+
+	private long maxDuration = 1000 * 60 * 60 * 24;
+
 	private long maxTime;
-    private RGB backgroundColor = new RGB(255, 255, 255);
+	private RGB backgroundColor = new RGB(255, 255, 255);
 	private RGB color = new RGB(0, 255, 0);
 
 	@SuppressWarnings("unchecked")
@@ -71,46 +71,61 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 		return new CIELCH(colorspace.L, colorspace.C, colorspace.H
 				+ value.doubleValue()).toCIELab().toXYZ().toRGB();
 	}
-
+	
 	public void doPaint() {
 		
+		
+		
 		// TODO: Check if is currently redrawing
-		
-        final RGB background = this.getBackgroundColor();
-        this.setAlpha(getBackgroundAlpha());
-        this.fill(background);
-        this.setAlpha(255);
-		
-        if ((this.image == null) && (this.imagePath != null)) {
-        	this.image = new Image(this.getCanvas().getDisplay(),this.getImageFile().getLocation().toOSString());
-        }
 
-        if (this.image != null) {
-        	if (imageScale == 1.0){
-        		this.getGC().drawImage(this.image, backgroundImageOffsetX, backgroundImageOffsetY);
-        	}else{
-        		Rectangle b = image.getBounds();
-        		int newW = new Double(b.width*imageScale).intValue();
-        		int newH = new Double(b.height*imageScale).intValue();
-        		this.getGC().drawImage(this.image, 0, 0,b.width,b.height,backgroundImageOffsetX,backgroundImageOffsetY,newW,newH); 
-        	}
-        }
-                
+		final RGB background = this.getBackgroundColor();
+		this.setAlpha(getBackgroundAlpha());
+		this.fill(background);
+		this.setAlpha(255);
+
+		if ((this.image == null) && (this.imagePath != null)) {
+			this.image = new Image(this.getCanvas().getDisplay(), this
+					.getImageFile().getLocation().toOSString());
+		}
+
+		if (this.image != null) {
+
+			if (imageScale == 1.0 && zoom == 1.0) {
+				this.getGC().drawImage(this.image, backgroundImageOffsetX,
+						backgroundImageOffsetY);
+			} else {
+				Rectangle b = image.getBounds();
+				int newX = new Double(backgroundImageOffsetX * zoom).intValue();
+				int newY = new Double(backgroundImageOffsetY * zoom).intValue();
+				int newW = new Double(b.width * imageScale * zoom).intValue();
+				int newH = new Double(b.height * imageScale * zoom).intValue();
+				this.getGC().drawImage(this.image, 0, 0, b.width, b.height,
+						newX, newY, newW, newH);
+			}
+		}
+
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 
 				// todo clear older values
-				if (grid[x][y] != null){
-					if (maxDuration > 0 && grid[x][y].getMetadata().getStart().getMainPoint()
-							+ maxDuration < maxTime) {
+				if (grid[x][y] != null) {
+					if (maxDuration > 0
+							&& grid[x][y].getMetadata().getStart()
+									.getMainPoint()
+									+ maxDuration < maxTime) {
 						// No need to delete, images is painted anyway ...
-						//	fillRectangle(x * boxWidth, y * boxWidth, boxWidth,
-                        // boxHeight, backgroundColor);
+						// fillRectangle(x * boxWidth, y * boxWidth, boxWidth,
+						// boxHeight, backgroundColor);
 						grid[x][y] = null;
 					} else {
 						Number v = grid[x][y].getAttribute(value_pos);
-						fillRectangle(x * boxWidth, y * boxWidth, boxWidth,
-								boxHeight, getColor(v));
+						int draw_x = new Double(x * boxWidth * zoom).intValue();
+						int draw_y = new Double(y * boxWidth * zoom).intValue();
+						int draw_width = new Double(boxWidth * zoom).intValue();
+						int draw_height = new Double(boxHeight * zoom)
+								.intValue();
+						fillRectangle(draw_x, draw_y, draw_height, draw_width,
+								getColor(v));
 					}
 				}
 			}
@@ -118,64 +133,90 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 		}
 	}
 
+
 	@Override
 	protected Point getSize() {
-		if (size == null){
-			size = new Point(width*boxWidth, height*boxHeight);
+		if (size == null) {
+			Double newWidth = width * boxWidth * zoom;
+			Double newHeight = height * boxHeight * zoom;
+			Double imgWidth = image != null ? image.getBounds().width
+					* imageScale * zoom : 0.0;
+			Double imgHeight = image != null ? image.getBounds().height
+					* imageScale * zoom : 0.0;
+			int w = Math.max(newWidth.intValue(), imgWidth.intValue());
+			int h = Math.max(newHeight.intValue(), imgHeight.intValue());
+			size = new Point(w, h);
 		}
 		return size;
 	}
-	
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public void onLoad(Map<String, String> saved) {
-        super.onLoad(saved);
-        xpos = Integer.valueOf(saved.get(X_POS) != null ? saved.get(X_POS) : "0");
-        ypos = Integer.valueOf(saved.get(Y_POS) != null ? saved.get(Y_POS) : "1");
-        value_pos = Integer.valueOf(saved.get(VALUE_POS) != null ? saved.get(VALUE_POS) : "2");
-        boxWidth = Integer.valueOf(saved.get(CELL_WIDTH) != null ? saved.get(CELL_WIDTH) : "2");
-        boxHeight = Integer.valueOf(saved.get(CELL_HEIGHT) != null ? saved.get(CELL_HEIGHT) : "2");
-        width = Integer.valueOf(saved.get(COUNT_X) != null ? saved.get(COUNT_X) : "600");
-        height = Integer.valueOf(saved.get(COUNT_Y) != null ? saved.get(COUNT_Y) : "600");
-        maxDuration = Long.valueOf(saved.get(DURATION) != null ? saved.get(DURATION) : "-1");
-        backgroundColor = RGB.valueOf(saved.get(BACKGROUND_COLOR) != null ? saved.get(BACKGROUND_COLOR) : "255,0,0");
-        backgroundAlpha = Integer.valueOf(saved.get(BACKGROUND_ALPHA) != null ? saved.get(BACKGROUND_ALPHA) : "255");
-        color = RGB.valueOf(saved.get(COLOR) != null ? saved.get(COLOR) : "0,0,0");
-        imagePath = saved.get(BACKGROUND_IMAGE);
-        imageScale = Double.valueOf(saved.get(BACKGROUND_SCALE)!=null?saved.get(BACKGROUND_SCALE):"1");
-        backgroundImageOffsetX = Integer.valueOf(saved.get(BACKGROUND_X) != null ? saved.get(BACKGROUND_X) : "0");
-        backgroundImageOffsetY = Integer.valueOf(saved.get(BACKGROUND_Y) != null ? saved.get(BACKGROUND_Y) : "0");
-    }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public Map<String, String> onSave() {
-        Map<String, String> toSaveMap = super.onSave();
-        toSaveMap.put(X_POS, String.valueOf(xpos));
-        toSaveMap.put(Y_POS, String.valueOf(ypos));
-        toSaveMap.put(VALUE_POS, String.valueOf(value_pos));
-        toSaveMap.put(CELL_WIDTH, String.valueOf(boxWidth));
-        toSaveMap.put(CELL_HEIGHT, String.valueOf(boxHeight));
-        toSaveMap.put(COUNT_X, String.valueOf(width));
-        toSaveMap.put(COUNT_Y, String.valueOf(height));
-        toSaveMap.put(DURATION, String.valueOf(maxDuration));
-        toSaveMap.put(BACKGROUND_COLOR, String.valueOf(backgroundColor));
-        toSaveMap.put(BACKGROUND_ALPHA, String.valueOf(backgroundAlpha));
-        toSaveMap.put(COLOR, String.valueOf(color));
-        toSaveMap.put(BACKGROUND_IMAGE, String.valueOf(imagePath));
-        toSaveMap.put(BACKGROUND_SCALE, String.valueOf(imageScale));
-        toSaveMap.put(BACKGROUND_X, String.valueOf(backgroundImageOffsetX));
-        toSaveMap.put(BACKGROUND_Y, String.valueOf(backgroundImageOffsetY));
-        return toSaveMap;
-    }
-	
-	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onLoad(Map<String, String> saved) {
+		super.onLoad(saved);
+		xpos = Integer.valueOf(saved.get(X_POS) != null ? saved.get(X_POS)
+				: "0");
+		ypos = Integer.valueOf(saved.get(Y_POS) != null ? saved.get(Y_POS)
+				: "1");
+		value_pos = Integer.valueOf(saved.get(VALUE_POS) != null ? saved
+				.get(VALUE_POS) : "2");
+		boxWidth = Integer.valueOf(saved.get(CELL_WIDTH) != null ? saved
+				.get(CELL_WIDTH) : "2");
+		boxHeight = Integer.valueOf(saved.get(CELL_HEIGHT) != null ? saved
+				.get(CELL_HEIGHT) : "2");
+		width = Integer.valueOf(saved.get(COUNT_X) != null ? saved.get(COUNT_X)
+				: "600");
+		height = Integer.valueOf(saved.get(COUNT_Y) != null ? saved
+				.get(COUNT_Y) : "600");
+		maxDuration = Long.valueOf(saved.get(DURATION) != null ? saved
+				.get(DURATION) : "-1");
+		backgroundColor = RGB
+				.valueOf(saved.get(BACKGROUND_COLOR) != null ? saved
+						.get(BACKGROUND_COLOR) : "255,0,0");
+		backgroundAlpha = Integer
+				.valueOf(saved.get(BACKGROUND_ALPHA) != null ? saved
+						.get(BACKGROUND_ALPHA) : "255");
+		color = RGB.valueOf(saved.get(COLOR) != null ? saved.get(COLOR)
+				: "0,0,0");
+		imagePath = saved.get(BACKGROUND_IMAGE);
+		imageScale = Double.valueOf(saved.get(BACKGROUND_SCALE) != null ? saved
+				.get(BACKGROUND_SCALE) : "1");
+		backgroundImageOffsetX = Integer
+				.valueOf(saved.get(BACKGROUND_X) != null ? saved
+						.get(BACKGROUND_X) : "0");
+		backgroundImageOffsetY = Integer
+				.valueOf(saved.get(BACKGROUND_Y) != null ? saved
+						.get(BACKGROUND_Y) : "0");
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, String> onSave() {
+		Map<String, String> toSaveMap = super.onSave();
+		toSaveMap.put(X_POS, String.valueOf(xpos));
+		toSaveMap.put(Y_POS, String.valueOf(ypos));
+		toSaveMap.put(VALUE_POS, String.valueOf(value_pos));
+		toSaveMap.put(CELL_WIDTH, String.valueOf(boxWidth));
+		toSaveMap.put(CELL_HEIGHT, String.valueOf(boxHeight));
+		toSaveMap.put(COUNT_X, String.valueOf(width));
+		toSaveMap.put(COUNT_Y, String.valueOf(height));
+		toSaveMap.put(DURATION, String.valueOf(maxDuration));
+		toSaveMap.put(BACKGROUND_COLOR, String.valueOf(backgroundColor));
+		toSaveMap.put(BACKGROUND_ALPHA, String.valueOf(backgroundAlpha));
+		toSaveMap.put(COLOR, String.valueOf(color));
+		toSaveMap.put(BACKGROUND_IMAGE, String.valueOf(imagePath));
+		toSaveMap.put(BACKGROUND_SCALE, String.valueOf(imageScale));
+		toSaveMap.put(BACKGROUND_X, String.valueOf(backgroundImageOffsetX));
+		toSaveMap.put(BACKGROUND_Y, String.valueOf(backgroundImageOffsetY));
+		return toSaveMap;
+	}
+
 	@Override
 	public void streamElementReceived(IPhysicalOperator operator,
 			IStreamObject<?> element, int port) {
@@ -196,7 +237,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 	public void securityPunctuationElementReceived(
 			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
-	
+
 	@Override
 	public void mouseMove(MouseEvent e) {
 		moveLeftTop(e);
@@ -204,7 +245,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 
 	@Override
 	public void mouseDown(MouseEvent e) {
-		if (e.button == 1){
+		if (e.button == 1) {
 			leftButtonPressed = true;
 			leftButtonLastX = e.x;
 			leftButtonLastY = e.y;
@@ -214,20 +255,32 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 
 	@Override
 	public void mouseUp(MouseEvent e) {
-		if (e.button == 1){
+		if (e.button == 1) {
 			moveLeftTop(e);
 			leftButtonPressed = false;
 			setDefaultCursor();
-		}		
+		}
 	}
 
 	private void moveLeftTop(MouseEvent e) {
-		if (leftButtonPressed){
-			leftTop = new Point(leftTop.x+(e.x-leftButtonLastX), leftTop.y + (e.y-leftButtonLastY) );
+		if (leftButtonPressed) {
+			leftTop = new Point(leftTop.x + (e.x - leftButtonLastX), leftTop.y
+					+ (e.y - leftButtonLastY));
 			leftButtonLastX = e.x;
 			leftButtonLastY = e.y;
 			this.getCanvas().redraw();
 		}
+	}
+
+	@Override
+	public void mouseScrolled(MouseEvent e) {
+		int size = e.count;
+		if (size < 0) {
+			zoom = zoom * 0.1;
+		} else {
+			zoom = zoom * 1.1;
+		}
+		dirty();
 	}
 
 	public int getWidth() {
@@ -296,25 +349,30 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath.replace('\\', '/');
-		invalidateImage();
+		dirty();
 	}
 
-	private void invalidateImage() {
-		if (this.image != null){
+	private void dirty() {
+		size = null;
+		invalidateImage2();
+	}
+
+	private void invalidateImage2() {
+		if (this.image != null) {
 			image.dispose();
 		}
 		this.image = null;
 	}
-	
+
 	private IResource getImageFile() {
 		if (getProject() == null) {
 			return null;
 		}
 		IResource file = getProject().findMember(imagePath);
-		
+
 		return file;
 	}
-	
+
 	public Image getImage() {
 		return image;
 	}
@@ -347,45 +405,54 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart{
 		backgroundColor = rgb;
 	}
 
-    /**
-     * @return the backgroundAlpha
-     */
-    public int getBackgroundAlpha() {
-        return backgroundAlpha;
-    }
+	/**
+	 * @return the backgroundAlpha
+	 */
+	public int getBackgroundAlpha() {
+		return backgroundAlpha;
+	}
 
-    /**
-     * @param backgroundAlpha
-     *            the backgroundAlpha to set
-     */
-    public void setBackgroundAlpha(int backgroundAlpha) {
-    	this.backgroundAlpha = backgroundAlpha;
-    }
-    
+	/**
+	 * @param backgroundAlpha
+	 *            the backgroundAlpha to set
+	 */
+	public void setBackgroundAlpha(int backgroundAlpha) {
+		this.backgroundAlpha = backgroundAlpha;
+	}
+
 	public void setImageScale(double scale) {
 		this.imageScale = scale;
-		invalidateImage();
+		dirty();
 	}
-	
+
 	public double getImageScale() {
 		return imageScale;
 	}
 
 	public void setBackgroundImageOffsetX(int x) {
 		backgroundImageOffsetX = x;
-		invalidateImage();
+		dirty();
 	}
-	
+
 	public int getBackgroundImageOffsetX() {
 		return backgroundImageOffsetX;
 	}
-	
+
 	public void setBackgroundImageOffsetY(int y) {
 		backgroundImageOffsetY = y;
-		invalidateImage();
+		dirty();
 	}
 
 	public int getBackgroundImageOffsetY() {
 		return backgroundImageOffsetY;
+	}
+	
+	public double getZoom() {
+		return zoom;
+	}
+	
+	public void setZoom(double zoom) {
+		this.zoom = zoom;
+		dirty();
 	}
 }
