@@ -84,4 +84,13 @@ public class FalsePredicate<T> extends AbstractPredicate<T> {
     public IPredicate<T> not() {
         return TruePredicate.getInstance();
     }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "false";
+    }
 }

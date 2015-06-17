@@ -50,6 +50,16 @@ public class NotPredicate<T> extends AbstractPredicate<T> {
     }
 
     /**
+     * Sets the predicate
+     * 
+     * @param child
+     *            The predicate of this negation
+     */
+    public void setChild(IPredicate<T> predicate) {
+        this.predicate = predicate;
+    }
+    
+    /**
      * 
      * {@inheritDoc}
      */
