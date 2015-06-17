@@ -95,7 +95,18 @@ public class RestService {
         return null;
     }
 
+    public static List<SocketInfo> getResultsFromQuery(String ip, String token, String queryName) throws RestException {
+        CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryName);
+        return getResultsFromQuery(ip, createSocketRequestDTO);
+    }
+
     public static List<SocketInfo> getResultsFromQuery(String ip, String token, int queryId) throws RestException {
+        CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryId);
+        return getResultsFromQuery(ip, createSocketRequestDTO);
+    }
+
+
+    public static List<SocketInfo> getResultsFromQuery(String ip, CreateSocketRequestDTO createSocketRequestDTO) throws RestException {
         String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CORE;
         ClientResource crCreateSocket = new ClientResource(hostURL + "/" + RESOURCE_PATH_CREATE_SOCKET);
 
@@ -103,7 +114,7 @@ public class RestService {
         List<SocketInfo> infos = new ArrayList<>();
 
         try {
-            CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryId, 0);
+
             Representation createSocketRepresentation = crCreateSocket.post(createSocketRequestDTO);
             GenericResponseDTO<List<LinkedTreeMap>> socketInfoWrapper = gson.fromJson(createSocketRepresentation.getText(), GenericResponseDTO.class);
 
@@ -140,6 +151,5 @@ public class RestService {
         }
 
         return infos;
-
     }
 }

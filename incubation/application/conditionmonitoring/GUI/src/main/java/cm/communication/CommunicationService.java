@@ -28,7 +28,13 @@ public class CommunicationService {
                 connectionInformationListMap.put(connectionInformation, receiverList);
             }
             String token = RestService.login(connectionInformation.ip, "System", "manager");
-            List<SocketInfo> socketInfos = RestService.getResultsFromQuery(connectionInformation.ip, token, connectionInformation.queryId);
+            List<SocketInfo> socketInfos = null;
+            if (connectionInformation.useName) {
+                socketInfos = RestService.getResultsFromQuery(connectionInformation.ip, token, connectionInformation.queryName);
+            } else {
+                socketInfos = RestService.getResultsFromQuery(connectionInformation.ip, token, connectionInformation.queryId);
+            }
+
             for (SocketInfo socketInfo : socketInfos) {
                 SocketReceiver receiver = new SocketReceiver(socketInfo);
                 receiverList.add(receiver);
