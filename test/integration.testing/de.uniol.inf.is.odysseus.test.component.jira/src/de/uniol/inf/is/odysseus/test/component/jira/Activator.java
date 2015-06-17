@@ -9,7 +9,11 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
 
     // The shared instance
-    public static BundleContext context;
+    private static BundleContext context;
+
+    static BundleContext getContext() {
+        return context;
+    }
 
     /**
      * The constructor
