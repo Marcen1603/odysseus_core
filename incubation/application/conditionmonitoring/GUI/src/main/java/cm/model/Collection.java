@@ -7,31 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Tobi on 15.03.2015.
+ * @author Tobias
+ * @since 15.03.2015.
  */
 public class Collection {
 
     public static final String OK_STATE = "OK";
     public static final String BAD_STATE = "BAD";
 
-    private int id;
     private String name;
     private String state;
     private List<SocketInfo> connections;
 
-    public Collection(int id, String name, String state) {
-        this.id = id;
+    public Collection(String name, String state) {
         this.name = name;
         this.state = state;
         this.connections = new ArrayList<>();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -56,21 +47,5 @@ public class Collection {
 
     public List<SocketInfo> getConnections() {
         return connections;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Collection collection = (Collection) o;
-
-        return id == collection.id;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
     }
 }

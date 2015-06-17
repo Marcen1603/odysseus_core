@@ -2,6 +2,7 @@ package cm.data;
 
 import cm.communication.dto.SocketInfo;
 import cm.communication.socket.SocketReceiver;
+import cm.configuration.ConnectionInformation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -32,6 +33,11 @@ public class ConnectionHandler {
     public void addConnection(SocketReceiver info) {
         connections.add(info);
         socketInfos.add(info.getSocketInfo());
+    }
+
+    public SocketReceiver getConnection(ConnectionInformation connectionInformation) {
+        //socketInfos.stream().filter(o -> o.getIp().equals(connectionInformation.ip) && o.g)
+        return null;
     }
 
     public void removeConnection(SocketInfo info) {

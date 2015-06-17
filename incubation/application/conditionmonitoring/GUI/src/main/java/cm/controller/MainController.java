@@ -24,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -32,6 +33,13 @@ import java.io.InputStream;
 import java.util.*;
 
 public class MainController {
+
+
+    // Overview tab
+    @FXML
+    Pane overviewInclude;
+    @FXML
+    OverviewController overviewIncludeController;
 
     @FXML
     ListView<Collection> machineList;
@@ -142,15 +150,16 @@ public class MainController {
 
     /**
      * Removes the selected connections
+     *
      * @param actionEvent
      */
     public void removeConnections(ActionEvent actionEvent) {
         Iterator<ConnectionListCell> iterator = connectionListCells.iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             ConnectionListCell listCell = iterator.next();
             if (listCell.isCellSelected()) {
                 ConnectionHandler.getInstance().removeConnection(listCell.getSocketInfo());
- 
+
                 iterator.remove();
             }
         }
@@ -158,6 +167,7 @@ public class MainController {
 
     /**
      * Saves the names of the connections
+     *
      * @param actionEvent
      */
     public void saveConnectionChanges(ActionEvent actionEvent) {
@@ -165,5 +175,9 @@ public class MainController {
             if (listCell.getSocketInfo() != null)
                 listCell.getSocketInfo().setName(listCell.getNameOfConnection());
         }
+    }
+
+    public OverviewController getOverviewController() {
+        return overviewIncludeController;
     }
 }

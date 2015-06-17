@@ -42,13 +42,6 @@ public class DataHandler {
         Platform.runLater(() -> observableEventList.add(0, event));
     }
 
-    public Collection getCollection(int id) {
-        List<Collection> collections = observableCollectionList.stream().filter(m -> m.getId() == id).collect(Collectors.toList());
-        if (!collections.isEmpty())
-            return collections.get(0);
-        return null;
-    }
-
     public ObservableList<MachineEvent> getCollectionEvents(Collection collection) {
         List<MachineEvent> events = new ArrayList<>();
         for (MachineEvent event : observableEventList) {
