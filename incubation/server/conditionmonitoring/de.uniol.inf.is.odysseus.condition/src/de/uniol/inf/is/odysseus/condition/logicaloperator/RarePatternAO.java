@@ -104,7 +104,7 @@ public class RarePatternAO extends BinaryLogicalOp {
 			SDFAttribute anomalyScore = new SDFAttribute(null, "anomalyScore", SDFDatatype.DOUBLE, null, null, null);
 			SDFAttribute pathProbability = new SDFAttribute(null, "pathProbability", SDFDatatype.DOUBLE, null, null,
 					null);
-			SDFAttribute path = new SDFAttribute(null, "path", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute path = new SDFAttribute(null, "path", SDFDatatype.STRING, null, null, null);
 			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 			outputAttributes.addAll(inSchema.getAttributes());
 			outputAttributes.add(anomalyScore);
@@ -114,7 +114,7 @@ public class RarePatternAO extends BinaryLogicalOp {
 			setOutputSchema(DATA_PORT, outSchema);
 		} else if (pos == BACKUP_PORT) {
 			SDFSchema inSchema = getInputSchema(DATA_PORT);
-			SDFAttribute tree = new SDFAttribute(null, "tree", SDFDatatype.DOUBLE, null, null, null);
+			SDFAttribute tree = new SDFAttribute(null, "tree", SDFDatatype.STRING, null, null, null);
 			SDFAttribute backupId = new SDFAttribute(null, "backupId", SDFDatatype.DOUBLE, null, null, null);
 			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 			outputAttributes.add(tree);
