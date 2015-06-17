@@ -143,11 +143,11 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 			this.doPaint(e);
 			this.gc.dispose();
 			this.gc = null;
-			//e.gc.drawImage(bufferImage, leftTop.x, leftTop.y);
+			e.gc.drawImage(bufferImage, leftTop.x, leftTop.y);
 			// TODO: clipping
-			int width =  bufferImage.getBounds().width;
-			int height = bufferImage.getBounds().height;
-			e.gc.drawImage(bufferImage,0,0, s.x, s.y, leftTop.x, leftTop.y, width,height);
+			//int width =  bufferImage.getBounds().width;
+			//int height = bufferImage.getBounds().height;
+			//e.gc.drawImage(bufferImage,0,0, s.x, s.y, leftTop.x, leftTop.y, width,height);
 					
 //			e.gc.drawImage(bufferImage, leftTop.x, leftTop.y, bufferImage
 //					.getBounds().width, bufferImage.getBounds().height,
