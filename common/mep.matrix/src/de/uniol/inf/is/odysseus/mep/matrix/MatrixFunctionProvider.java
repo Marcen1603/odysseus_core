@@ -115,6 +115,7 @@ public class MatrixFunctionProvider implements IFunctionProvider {
         functions.add(new ToStringMatrixFunction());
         functions.add(new ToStringVectorFunction());
         functions.add(new VectorFromStringFunction());
+        functions.add(new VectorFromStringRangeFunction());
 
         // Read functions
         functions.add(new ReadMatrixFunction());

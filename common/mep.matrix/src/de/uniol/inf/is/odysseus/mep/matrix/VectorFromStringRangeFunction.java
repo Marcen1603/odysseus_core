@@ -22,40 +22,29 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * @author Henrik Surm
  * 
  */
-public class VectorFromStringFunction extends AbstractReadFunction<double[]> {
+public class VectorFromStringRangeFunction extends AbstractReadFunction<double[]> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3550190318743371997L;
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFDatatype.STRING }, 
-			{ SDFDatatype.STRING }
+			{ SDFDatatype.STRING }, 		// Line
+			{ SDFDatatype.STRING },			// Delimiter
+			SDFDatatype.DISCRETE_NUMBERS,	// Start index
+			SDFDatatype.DISCRETE_NUMBERS	// Number of values to read (0 = read all) 
 		};
 
-	public VectorFromStringFunction() {
-		super("vectorFromString", 2, accTypes, SDFDatatype.VECTOR_DOUBLE);
+	public VectorFromStringRangeFunction() {
+		super("vectorFromString", 4, accTypes, SDFDatatype.VECTOR_DOUBLE);
 	}
 
 	@Override
 	public double[] getValue() {
 		String line = getInputValue(0);
 		String delimiter = getInputValue(1);
-		return vectorFromString(line, delimiter, 0, 0);
-	}
-
-	public static double[] vectorFromString(String line, String delimiter, int start, int count)
-	{
-		String[] parts = line.split(delimiter);
-		
-		if (count == 0)
-			count = parts.length - start;
-		
-		double[] values = new double[count];
-		
-		for (int i=0;i<count;i++)
-			values[i] = Double.parseDouble(parts[start+i]);
-		
-		return values;
+		int start = getNumericalInputValue(2).intValue();
+		int count = getNumericalInputValue(3).intValue();
+		return VectorFromStringFunction.vectorFromString(line, delimiter, start, count);
 	}
 }
