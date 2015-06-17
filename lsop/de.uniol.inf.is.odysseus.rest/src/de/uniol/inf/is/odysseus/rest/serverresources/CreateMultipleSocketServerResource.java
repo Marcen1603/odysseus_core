@@ -15,11 +15,17 @@ public class CreateMultipleSocketServerResource extends AbstractSessionServerRes
 	public static final String PATH = "createMultiSocket";
 
 	@Post
-	public GenericResponseDTO<List<SocketInfo>> addQuery(CreateSocketRequestDTO ceateSocketRequestDTO) {
-		ISession session = this.loginWithToken(ceateSocketRequestDTO.getToken());
-		int sourceOutputPort = 0;
-		List<SocketInfo> infos = SocketService.getInstance().getMultipleConnectionInformation(session,
-				ceateSocketRequestDTO.getQueryId(), sourceOutputPort);
+	public GenericResponseDTO<List<SocketInfo>> addQuery(CreateSocketRequestDTO createSocketRequestDTO) {
+		ISession session = this.loginWithToken(createSocketRequestDTO.getToken());
+		List<SocketInfo> infos = null;
+		if (createSocketRequestDTO.isUseName()) {
+			infos = SocketService.getInstance().getMultipleConnectionInformation(session,
+					createSocketRequestDTO.getQueryName());
+		} else {
+			infos = SocketService.getInstance().getMultipleConnectionInformation(session,
+					createSocketRequestDTO.getQueryId());
+		}
+
 		return new GenericResponseDTO<List<SocketInfo>>(infos);
 	}
 
