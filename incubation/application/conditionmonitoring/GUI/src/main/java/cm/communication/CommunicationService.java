@@ -18,7 +18,8 @@ import java.util.Map;
  */
 public class CommunicationService {
 
-    static Map<ConnectionInformation, List<SocketReceiver>> connectionInformationListMap = new HashMap<>();
+    private static Map<ConnectionInformation, List<SocketReceiver>> connectionInformationListMap = new HashMap<>();
+    private static String token;
 
     public static void establishConnection(ConnectionInformation connectionInformation) {
         try {
@@ -49,4 +50,11 @@ public class CommunicationService {
         return connectionInformationListMap.get(connectionInformation);
     }
 
+    public static String getToken() {
+        return token;
+    }
+
+    public static void setToken(String token) {
+        CommunicationService.token = token;
+    }
 }
