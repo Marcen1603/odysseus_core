@@ -44,18 +44,20 @@ public class Main extends Application {
 
 
         // Get configurations from Odysseus
+        Configuration config = null;
         List<ConfigurationDescription> descriptions = RestService.getConfigurations("127.0.0.1", "System", "manager");
         if (descriptions != null) {
             descriptions.stream().forEach(listElement -> System.out.println(listElement.getId() + ", " + listElement.getName() + ", " + listElement.getDescription()));
+            config = RestService.runConfiguration("127.0.0.1", "System", "manager", descriptions.get(0).getId());
         }
+
+        if (config == null)
+            return;
 
         // -----------------------------
         // Create GUI from configuration
         // -----------------------------
 
-        String content = new String(Files.readAllBytes(Paths.get("D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\GUIConfigs\\config1.txt")));
-        Gson gson = new Gson();
-        Configuration config = gson.fromJson(content, Configuration.class);
 
         // Build GUI from this configuration
         // ---------------------------------

@@ -1,6 +1,7 @@
 package cm.communication.rest;
 
 import cm.communication.dto.*;
+import cm.configuration.Configuration;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
@@ -43,6 +44,7 @@ public class RestService {
     public static final String RESOURCE_PATH_CREATE_SOCKET = "createMultiSocket";
     public static final String RESOURCE_PATH_START_QUERY = "startQuery";
     public static final String RESOURCE_PATH_GET_CONFIGURATIONS = "CMGetConfigurationList";
+    public static final String RESOURCE_PATH_RUN_CONFIGURATION = "RunConfiguration";
 
 
     /**
@@ -123,8 +125,8 @@ public class RestService {
                 int socketPort = ((Double) map.get("port")).intValue();
                 List<AttributeInformation> socketSchema = new ArrayList<AttributeInformation>();
                 ArrayList schemaListMap = (ArrayList) map.get("schema");
-                for (int i = 0; i < schemaListMap.size(); i++) {
-                    LinkedTreeMap schemaMap = (LinkedTreeMap) schemaListMap.get(i);
+                for (Object aSchemaListMap : schemaListMap) {
+                    LinkedTreeMap schemaMap = (LinkedTreeMap) aSchemaListMap;
                     String name = "";
                     String dataType = "";
                     for (Object key : schemaMap.keySet()) {
@@ -168,4 +170,23 @@ public class RestService {
         }
         return null;
     }
+
+    public static Configuration runConfiguration(String ip, String username, String password, int configurationId) throws RestException {
+        String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CONDITION;
+        ClientResource crRunConfigs = new ClientResource(hostURL + "/" + RESOURCE_PATH_RUN_CONFIGURATION);
+        String token = login(ip, username, password);
+        RunConfigurationRequestDTO runConfigurationRequestDTO = new RunConfigurationRequestDTO();
+        runConfigurationRequestDTO.setConfigurationId(configurationId);
+        runConfigurationRequestDTO.setToken(token);
+        Representation runConfigRepresentation = crRunConfigs.post(runConfigurationRequestDTO);
+        Gson gson = new Gson();
+        try {
+            Configuration configuration = gson.fromJson(runConfigRepresentation.getText(), Configuration.class);
+            return configuration;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

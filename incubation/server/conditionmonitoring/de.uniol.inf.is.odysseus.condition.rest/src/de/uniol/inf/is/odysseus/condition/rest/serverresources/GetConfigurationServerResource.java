@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.condition.rest.serverresources;
 
 import org.restlet.resource.Post;
 
+import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConfigurationDescription;
 import de.uniol.inf.is.odysseus.condition.rest.dto.request.GetCMConfigurationListRequestDTO;
 import de.uniol.inf.is.odysseus.condition.rest.dto.response.CMConfigurationListResponseDTO;
-import de.uniol.inf.is.odysseus.condition.rest.dto.response.ConfigurationDescription;
 import de.uniol.inf.is.odysseus.rest.serverresources.AbstractSessionServerResource;
 
 public class GetConfigurationServerResource extends AbstractSessionServerResource {

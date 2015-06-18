@@ -16,13 +16,7 @@ public class OverviewController {
 
     @FXML
     private void initialize() {
-        SimpleMetroArcGauge gauge1 = new SimpleMetroArcGauge();
-        SimpleMetroArcGauge gauge2 = new SimpleMetroArcGauge();
-        SimpleMetroArcGauge gauge3 = new SimpleMetroArcGauge();
 
-        overviewFlowPane.getChildren().add(gauge1);
-        overviewFlowPane.getChildren().add(gauge2);
-        overviewFlowPane.getChildren().add(gauge3);
     }
 
     public void addGauge(VisualizationInformation visualizationInformation) {
@@ -30,7 +24,6 @@ public class OverviewController {
         gauge.setMinValue(visualizationInformation.minValue);
         gauge.setMaxValue(visualizationInformation.maxValue);
         gauge.setValue(1);
-
         overviewFlowPane.getChildren().add(gauge);
     }
 }

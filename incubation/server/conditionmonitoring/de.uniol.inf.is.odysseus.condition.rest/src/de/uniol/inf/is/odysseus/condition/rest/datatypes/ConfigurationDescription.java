@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.condition.rest.dto.response;
+package de.uniol.inf.is.odysseus.condition.rest.datatypes;
 
 public class ConfigurationDescription {
 

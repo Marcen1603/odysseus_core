@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.condition.rest.dto.response;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConfigurationDescription;
+
 public class CMConfigurationListResponseDTO {
 	
 	private List<ConfigurationDescription> configurations;
