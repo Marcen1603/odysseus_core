@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.multithreaded.transform.AbstractParallelizationP
 public class InterOperatorParallelizationPreTransformationHandler extends
 		AbstractParallelizationPreTransformationHandler {
 
-	private static final String HANDLER_NAME = "InterOperatorParallelizationPreTransformationHandler";
+	public static final String HANDLER_NAME = "InterOperatorParallelizationPreTransformationHandler";
 	private final String TYPE = "INTER_OPERATOR";
 	private final int PARAMETER_COUNT = 2;
 

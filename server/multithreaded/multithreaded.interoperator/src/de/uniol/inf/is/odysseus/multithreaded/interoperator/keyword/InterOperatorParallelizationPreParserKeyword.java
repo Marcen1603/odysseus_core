@@ -12,6 +12,8 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter.HandlerParameterPair;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.multithreaded.autodetect.PerformanceDetectionHelper;
@@ -19,6 +21,7 @@ import de.uniol.inf.is.odysseus.multithreaded.helper.FragmentationTypeHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorParameter;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy.registry.MultithreadedTransformationStrategyRegistry;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.transform.InterOperatorParallelizationPreTransformationHandler;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -81,14 +84,13 @@ public class InterOperatorParallelizationPreParserKeyword extends
 					+ MIN_ATTRIBUTE_COUNT + " and maximum "
 					+ MAX_ATTRIBUTE_COUNT + "attributes: " + PATTERN + "!");
 		}
-
 	}
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
 			String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
-		
+
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 
 		// split parameters on whitespaces
@@ -174,6 +176,28 @@ public class InterOperatorParallelizationPreParserKeyword extends
 						"Value for fragmentation type is not valid");
 			}
 
+		}
+
+		// check if #PARALLELIZATION keyword exists and type is set to
+		// inter-operator
+		boolean parallelizationHandlerExists = false;
+
+		for (IQueryBuildSetting<?> setting : settings) {
+			if (setting.getClass().equals(
+					PreTransformationHandlerParameter.class)) {
+				PreTransformationHandlerParameter existingHandlerParameter = (PreTransformationHandlerParameter) setting;
+				for (HandlerParameterPair handlerParameterPair : existingHandlerParameter
+						.getPairs()) {
+					if (handlerParameterPair.name
+							.equalsIgnoreCase(InterOperatorParallelizationPreTransformationHandler.HANDLER_NAME)) {
+						parallelizationHandlerExists = true;
+					}
+				}
+
+			}
+		}
+		if (!parallelizationHandlerExists) {
+			throw new OdysseusScriptException("#PARALLELIZATION keyword is missing or placed after #INTEROPERATORPARALLELIZATION keyword.");
 		}
 
 		// get parameter from settings or create new one if not exists
