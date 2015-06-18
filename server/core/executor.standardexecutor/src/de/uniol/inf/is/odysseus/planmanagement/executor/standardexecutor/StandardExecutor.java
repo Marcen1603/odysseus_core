@@ -313,9 +313,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 									handlerParameters, context);
 						} catch (Throwable t) {
 							throw new QueryParseException(
-									"PreTransformationHandler called '"
-											+ handlerName
-											+ "' throwed an exception", t);
+									handlerName + " throwed an exception. Message: "+ t.getMessage(), t);
 						}
 					} catch (InstantiationException | IllegalAccessException e) {
 						throw new QueryParseException(

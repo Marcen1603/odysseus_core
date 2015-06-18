@@ -25,7 +25,7 @@ public class MultithreadedOperatorSettings {
 			IMultithreadedTransformationStrategy<? extends ILogicalOperator> strategy,
 			int globalDegreeOfParallelization, int globalBufferSize) {
 		MultithreadedOperatorSettings settings = new MultithreadedOperatorSettings();
-		
+
 		settings.doPostCalculationsForSettings(strategy,
 				globalDegreeOfParallelization, globalBufferSize);
 		return settings;
@@ -61,11 +61,10 @@ public class MultithreadedOperatorSettings {
 				}
 			}
 			if (!fragmentationTypeIsAllowed) {
-				throw new IllegalArgumentException(
-						"Selected strategy "
-								+ this.getMultithreadingStrategy()
-								+ " is not compatible with the selected fragmentationType "
-								+ getFragementationType().getSimpleName());
+				throw new IllegalArgumentException("Selected strategy "
+						+ this.getMultithreadingStrategy()
+						+ " is not compatible with the selected fragmentationType "
+						+ getFragementationType().getSimpleName());
 			}
 		} else {
 			// get preferred fragmentation type for strategy
