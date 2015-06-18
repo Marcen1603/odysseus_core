@@ -29,6 +29,7 @@ public class TopKAO extends AbstractLogicalOperator {
 	private List<SDFAttribute> groupingAttributes;
 	private boolean fastGrouping = false;
 	private boolean tieWithTimestamp = false;
+	private boolean triggerByPunctuation = false;
 	
 	public TopKAO() {
 	}
@@ -94,7 +95,7 @@ public class TopKAO extends AbstractLogicalOperator {
 	/**
 	 * @param suppressDuplicates the suppressDuplicates to set
 	 */
-	@Parameter(name="suppressDuplicates", optional = true, type = BooleanParameter.class, doc ="If set to true (defaul), output is only generated when a new top k set is available")
+	@Parameter(name="suppressDuplicates", optional = true, type = BooleanParameter.class, doc ="If set to true (default), output is only generated when a new top k set is available")
 	public void setSuppressDuplicates(boolean suppressDuplicates) {
 		this.suppressDuplicates = suppressDuplicates;
 	}
@@ -139,6 +140,24 @@ public class TopKAO extends AbstractLogicalOperator {
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new TopKAO(this);
+	}
+
+	/**
+	 * @return triggerByPunctuation
+	 */
+	public boolean isTriggerByPunctuation() {
+		return triggerByPunctuation;
+	}
+	
+	/**
+	 * If triggerByPunctuation is set, the operator waits for a punctuation of
+	 * type TuplePunctuation that holds the grouping attributes as tuple. If
+	 * such a punctuation arrives, the top-K of this group is output. If this
+	 * attribute is unset, the top-K set is output by every tuple that arrives.
+	 */
+	@Parameter(name="triggerByPunctuation", optional = true, type = BooleanParameter.class, doc ="If set to true, output is only generated when punctuation arrives.")
+	public void setTriggerByPunctuation(boolean triggerByPunctuation) {
+		this.triggerByPunctuation = triggerByPunctuation;
 	}
 
 }

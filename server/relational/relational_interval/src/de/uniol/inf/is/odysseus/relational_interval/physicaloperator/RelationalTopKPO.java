@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.TuplePunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -99,10 +100,12 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 
 	private boolean suppressDuplicates;
 	private boolean orderByTimestamp = true;
+	
+	private boolean triggerByPunctuation = false;
 
 	public RelationalTopKPO(SDFSchema inputSchema,
 			SDFExpression scoringFunction, int k, boolean descending,
-			boolean suppressDuplicates, IGroupProcessor<T, T> groupProcessor) {
+			boolean suppressDuplicates, IGroupProcessor<T, T> groupProcessor, boolean triggerByPunctuation) {
 		super();
 		this.expression = new RelationalExpression<M>(scoringFunction);
 		expression.initVars(inputSchema);
@@ -116,6 +119,7 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		}
 		this.suppressDuplicates = suppressDuplicates;
 		this.groupProcessor = groupProcessor;
+		this.triggerByPunctuation = triggerByPunctuation;
 	}
 
 	@Override
@@ -146,7 +150,9 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 
 		addObject(calcScore(object), topK);
 
-		produceResult(object, topK, gId);
+		if(!triggerByPunctuation) {
+			produceResult(object, topK, gId);
+		}
 	}
 
 	@Override
@@ -159,6 +165,15 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO: how to handle punctuations
 		// sendPunctuation(punctuation);
+		if(triggerByPunctuation && punctuation instanceof TuplePunctuation) {
+			@SuppressWarnings("unchecked")
+			T object = ((TuplePunctuation<T,M>) punctuation).getTuple();
+			Long gId = groupProcessor.getGroupID(object);
+			ArrayList<SerializablePair<Double, T>> topK = topKMap.get(gId);
+			if(topK != null) {
+				produceResult(object, topK, gId);
+			}
+		}
 	}
 
 	private void cleanUp(PointInTime start,
@@ -195,7 +210,8 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 	private void produceResult(T object,
 			ArrayList<SerializablePair<Double, T>> topK, Long groupID) {
 		// Produce result
-		T result = (T) new Tuple(2, false);
+		T groupingPart = groupProcessor.getGroupingPart(object);
+		T result = (T) new Tuple(2 + groupingPart.getAttributes().length, false);
 		Iterator<SerializablePair<Double, T>> iter = topK.iterator();
 		List<T> resultList = new LinkedList<T>();
 		for (int i = 0; i < k && iter.hasNext(); i++) {
@@ -210,6 +226,9 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 			lastResultMap.put(groupID, new LinkedList<T>(resultList));
 			result.setAttribute(0, resultList);
 			result.setAttribute(1, object);
+			for(int i = 0; i < groupingPart.getAttributes().length; ++i) {
+				result.setAttribute(i+2, groupingPart.getAttributes()[i]);
+			}
 			M meta = (M) object.getMetadata().clone();
 			result.setMetadata(meta);
 			transfer(result);
