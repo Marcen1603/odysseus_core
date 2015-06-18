@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="popup:de.uniol.inf.is.odysseus.rcp.views.query.QueryView"
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.query.QueryView?after=Show Query Plan">
+         <command
+               commandId="de.uniol.inf.is.odysseus.query.transformation.viewer.commands.ExportQueryCommand"
+               id="de.uniol.inf.is.odysseus.query.transformation.viewer.commands.ExportQueryCommand">
+         </command>
+    
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.query.transformation.viewer.commands.ExportQueryCommand"
+            id="de.uniol.inf.is.odysseus.query.transformation.viewer.commands.ExportQueryCommand"
+            name="Export Query Neu">
+      </command>
+   </extension>
+</plugin>
