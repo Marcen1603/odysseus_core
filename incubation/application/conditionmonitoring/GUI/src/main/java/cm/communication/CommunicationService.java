@@ -20,6 +20,7 @@ public class CommunicationService {
 
     private static Map<ConnectionInformation, List<SocketReceiver>> connectionInformationListMap = new HashMap<>();
     private static String token;
+    private static String loginIp;
 
     public static void establishConnection(ConnectionInformation connectionInformation) {
         try {
@@ -56,5 +57,13 @@ public class CommunicationService {
 
     public static void setToken(String token) {
         CommunicationService.token = token;
+    }
+
+    public static String getLoginIp() {
+        return loginIp;
+    }
+
+    public static void setLoginIp(String loginIp) {
+        CommunicationService.loginIp = loginIp;
     }
 }

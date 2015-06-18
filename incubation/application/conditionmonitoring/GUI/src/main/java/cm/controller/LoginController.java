@@ -33,6 +33,7 @@ public class LoginController {
     PasswordField loginPassword;
 
     public void login(ActionEvent actionEvent) {
+        CommunicationService.setLoginIp(loginIp.getText());
         try {
             String token = RestService.login(loginIp.getText(), loginUserName.getText(), loginPassword.getText());
             CommunicationService.setToken(token);
@@ -48,6 +49,7 @@ public class LoginController {
         } catch (RestException e) {
             // Login was not successful, stay on this view
         } catch (IOException e) {
+            // Loading the next view was not successful
             e.printStackTrace();
         }
     }

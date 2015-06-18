@@ -156,10 +156,14 @@ public class RestService {
     }
 
     public static List<ConfigurationDescription> getConfigurations(String ip, String username, String password) throws RestException {
+        String token = login(ip, username, password);
+        return getConfigurations(ip, token);
+    }
+
+    public static List<ConfigurationDescription> getConfigurations(String ip, String token) throws RestException {
         try {
             String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CONDITION;
             ClientResource crGetConfigs = new ClientResource(hostURL + "/" + RESOURCE_PATH_GET_CONFIGURATIONS);
-            String token = login(ip, username, password);
             GetCMConfigurationListRequestDTO requestDTO = new GetCMConfigurationListRequestDTO(token);
             Representation getConfigurationsRepresentation = crGetConfigs.post(requestDTO);
             Gson gson = new Gson();
