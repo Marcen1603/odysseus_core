@@ -36,7 +36,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	private final static String BACKGROUND_X = "backgroundX";
 	private final static String BACKGROUND_Y = "backgroundY";
 	private final static String COLOR = "color";
-	
+
 	private int width = 600;
 	private int height = 600;
 	private int xpos = 0;
@@ -72,9 +72,9 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 		return new CIELCH(colorspace.L, colorspace.C, colorspace.H
 				+ value.doubleValue()).toCIELab().toXYZ().toRGB();
 	}
-	
+
 	public void doPaint(final PaintEvent e) {
-		
+
 		final RGB background = this.getBackgroundColor();
 		this.setAlpha(getBackgroundAlpha());
 		this.fill(background);
@@ -105,21 +105,21 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 			for (int y = 0; y < height; y++) {
 
 				if (grid[x][y] != null) {
+					int draw_x = new Double(x * boxWidth * zoom).intValue();
+					int draw_y = new Double(y * boxWidth * zoom).intValue();
+					int draw_width = new Double(boxWidth * zoom).intValue();
+					int draw_height = new Double(boxHeight * zoom).intValue();
+
 					if (maxDuration > 0
 							&& grid[x][y].getMetadata().getStart()
 									.getMainPoint()
 									+ maxDuration < maxTime) {
-						// ??
-						fillRectangle(x * boxWidth, y * boxWidth, boxWidth,
-						 boxHeight, backgroundColor);
+						// TODO: Make option
+//						fillRectangle(draw_x, draw_y, draw_height, draw_width,
+//								backgroundColor);
 						grid[x][y] = null;
 					} else {
 						Number v = grid[x][y].getAttribute(value_pos);
-						int draw_x = new Double(x * boxWidth * zoom).intValue();
-						int draw_y = new Double(y * boxWidth * zoom).intValue();
-						int draw_width = new Double(boxWidth * zoom).intValue();
-						int draw_height = new Double(boxHeight * zoom)
-								.intValue();
 						fillRectangle(draw_x, draw_y, draw_height, draw_width,
 								getColor(v));
 					}
@@ -128,7 +128,6 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 
 		}
 	}
-
 
 	@Override
 	protected Point getSize() {
@@ -248,7 +247,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 			setMoveCursor();
 		}
 	}
-	
+
 	@Override
 	public void setFocus() {
 		getCanvas().setFocus();
@@ -447,11 +446,11 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	public int getBackgroundImageOffsetY() {
 		return backgroundImageOffsetY;
 	}
-	
+
 	public double getZoom() {
 		return zoom;
 	}
-	
+
 	public void setZoom(double zoom) {
 		this.zoom = zoom;
 		dirty();
