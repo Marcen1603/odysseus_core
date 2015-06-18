@@ -97,12 +97,18 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 							.getResult()) {
 						// operator has no custom settings or no settings are
 						// available, then choose best strategy and transform
-						if (operatorForTransformation.getUniqueIdentifier() == null
-								|| operatorIds.isEmpty()
-								|| !operatorIds
+						if (!operatorIds.isEmpty()
+								&& (operatorForTransformation
+										.getUniqueIdentifier() == null || !operatorIds
 										.contains(operatorForTransformation
 												.getUniqueIdentifier()
-												.toLowerCase())) {
+												.toLowerCase()))) {
+							// if we have an set of operatorIds, only this
+							// operators should be transformed. If then the id
+							// of the given operator is null or not in the set
+							// of operatorIds, no transformation is done
+							continue;
+						} else if (operatorIds.isEmpty()) {
 							IMultithreadedTransformationStrategy<? extends ILogicalOperator> bestStrategy = getBestStrategy(operatorForTransformation);
 							MultithreadedOperatorSettings settings = MultithreadedOperatorSettings
 									.createDefaultSettings(bestStrategy,
@@ -112,8 +118,9 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 									settings);
 						} else if (operatorIds
 								.contains(operatorForTransformation
-								// if custom settings for operator are available
 										.getUniqueIdentifier().toLowerCase())) {
+							// if custom settings for operator
+							// are available
 							MultithreadedOperatorSettings settingsForOperator = multithreadedOperatorParameter
 									.getSettingsForOperator(operatorForTransformation
 											.getUniqueIdentifier());
