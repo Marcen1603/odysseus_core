@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RangeFragmentAO;
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
 
 public abstract class AbstractMultithreadedTransformationStrategy<T extends ILogicalOperator>
 		implements IMultithreadedTransformationStrategy<T> {
@@ -30,11 +29,8 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 		fragmentAO.setNumberOfFragments(degreeOfParallelization);
 		
 
-		if (fragmentAO instanceof RoundRobinFragmentAO){
-			fragmentAO.setName("Round Robin Fragment");
-		} else if (fragmentAO instanceof HashFragmentAO) {
+		if (fragmentAO instanceof HashFragmentAO) {
 			HashFragmentAO hashFragmentAO = (HashFragmentAO) fragmentAO;
-			hashFragmentAO.setName("Hash Fragment");
 			if (hashAttributes != null && !hashAttributes.isEmpty()) {
 				hashFragmentAO.setAttributes(hashAttributes);
 			} else {
@@ -43,7 +39,6 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 			}
 		} else if (fragmentAO instanceof RangeFragmentAO) {
 			RangeFragmentAO rangeFragmentAO = (RangeFragmentAO) fragmentAO;
-			rangeFragmentAO.setName("RangeFragment");
 			if (rangeAttributeString != null && rangeRanges != null
 					&& !rangeAttributeString.isEmpty()
 					&& !rangeRanges.isEmpty()) {
@@ -51,7 +46,7 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 				rangeFragmentAO.setAttribute(rangeAttributeString);
 			}
 		}
-		
+		// set postfix
 		fragmentAO.setName(fragmentAO.getName()+namePostfix);
 
 		return fragmentAO;

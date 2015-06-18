@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.ShuffleFragmentAO;
 
 public class AggregateMultithreadedTransformationStrategy extends
 		AbstractMultithreadedTransformationStrategy<AggregateAO> {
@@ -214,6 +215,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 	public List<Class<? extends AbstractFragmentAO>> getAllowedFragmentationTypes() {
 		List<Class<? extends AbstractFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractFragmentAO>>();
 		allowedFragmentTypes.add(RoundRobinFragmentAO.class);
+		allowedFragmentTypes.add(ShuffleFragmentAO.class);
 		return allowedFragmentTypes;
 	}
 

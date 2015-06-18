@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RangeFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.ShuffleFragmentAO;
 
 public class FragmentationTypeHelper {
 
@@ -45,6 +46,8 @@ public class FragmentationTypeHelper {
 				RangeFragmentAO.class);
 		fragmentTypes.put(RoundRobinFragmentAO.class.getSimpleName(),
 				RoundRobinFragmentAO.class);
+		fragmentTypes.put(ShuffleFragmentAO.class.getSimpleName(),
+				ShuffleFragmentAO.class);
 		return fragmentTypes;
 	}
 }
