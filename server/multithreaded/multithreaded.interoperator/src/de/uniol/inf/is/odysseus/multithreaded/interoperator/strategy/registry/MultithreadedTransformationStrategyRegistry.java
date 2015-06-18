@@ -68,8 +68,8 @@ public class MultithreadedTransformationStrategyRegistry {
 		// strategies by name
 		if (strategiesByName.containsKey(multithreadedTransformationStrategy
 				.getName().toLowerCase())) {
-			strategiesByName.remove(multithreadedTransformationStrategy)
-					.getName().toLowerCase();
+			strategiesByName.remove(multithreadedTransformationStrategy
+					.getName().toLowerCase());
 		}
 	}
 
