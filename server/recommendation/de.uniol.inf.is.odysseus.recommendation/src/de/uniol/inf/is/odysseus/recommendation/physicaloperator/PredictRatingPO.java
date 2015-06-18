@@ -112,7 +112,7 @@ public class PredictRatingPO<M extends ITimeInterval, U, I> extends
 	@Override
 	public void processPunctuation(final IPunctuation punctuation,
 			final int port) {
-		// TODO: nothing to do?
+		sendPunctuation(punctuation, port);
 	}
 
 }

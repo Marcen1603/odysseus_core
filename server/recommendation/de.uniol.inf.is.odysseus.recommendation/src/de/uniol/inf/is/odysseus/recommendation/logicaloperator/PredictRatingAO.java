@@ -49,6 +49,7 @@ public class PredictRatingAO extends AbstractLogicalOperator {
 	public final static String DEFAULT_MODEL_ATTRIBUTE_NAME = TrainRecSysModelAO.MODEL_ATTRIBUTE_NAME;
 
 	public final static String PREDICTED_RATING_ATTRIBUTE_NAME = "predicted_rating";
+	public static final String USER_ATTRIBUTE_NAME = "user";
 
 	/**
 	 * Default constructor.
@@ -141,11 +142,11 @@ public class PredictRatingAO extends AbstractLogicalOperator {
 				.getAttributes()) {
 			if (!oldAttribute.equals(modelAttribute)) {
 				attributes
-				.add(new SDFAttribute(null, oldAttribute
-						.getAttributeName(),
-						oldAttribute.getDatatype(), oldAttribute
-						.getUnit(), oldAttribute
-						.getDtConstraints()));
+						.add(new SDFAttribute(null, oldAttribute
+								.getAttributeName(),
+								oldAttribute.getDatatype(), oldAttribute
+										.getUnit(), oldAttribute
+										.getDtConstraints()));
 			}
 		}
 
@@ -154,13 +155,14 @@ public class PredictRatingAO extends AbstractLogicalOperator {
 				SDFDatatype.DOUBLE, null, null, null);
 		attributes.add(attributeId);
 
-		final SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema(port));
+		final SDFSchema outSchema = SDFSchemaFactory.createNewWithAttributes(
+				attributes, getInputSchema(port));
 		return outSchema;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
 	 * #clone()

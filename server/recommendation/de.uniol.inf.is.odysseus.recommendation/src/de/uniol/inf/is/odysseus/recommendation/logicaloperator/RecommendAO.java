@@ -38,11 +38,13 @@ public class RecommendAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 2338847266214065142L;
 
 	public final String DEFAULT_PREDICTED_RATING_ATTRIBUTE_NAME = PredictRatingAO.PREDICTED_RATING_ATTRIBUTE_NAME;
+	public final String DEFAULT_USER_ATTRIBUTE_NAME = PredictRatingAO.USER_ATTRIBUTE_NAME;
 
 	/**
-	 * These attributes store the user, item and rating.
+	 * These attributes store the user and pred. rating.
 	 */
 	private SDFAttribute predictedRatingAttribute = null;
+	private SDFAttribute userAttribute = null;
 
 	/**
 	 * max. number of recommendations
@@ -69,6 +71,7 @@ public class RecommendAO extends UnaryLogicalOp {
 		this.topN = op.topN;
 		this.minRating = op.minRating;
 		this.predictedRatingAttribute = op.predictedRatingAttribute;
+		this.userAttribute = op.userAttribute;
 	}
 
 	/**
@@ -86,6 +89,22 @@ public class RecommendAO extends UnaryLogicalOp {
 	public void setPredictedRatingAttribute(
 			final SDFAttribute predictedRatingAttribute) {
 		this.predictedRatingAttribute = predictedRatingAttribute;
+	}
+
+	/**
+	 * @return the userAttribute
+	 */
+	public SDFAttribute getUserAttribute() {
+		return this.userAttribute;
+	}
+
+	/**
+	 * @param userAttribute
+	 *            the userAttribute to set
+	 */
+	@Parameter(name = "user", type = ResolvedSDFAttributeParameter.class, doc = "The attribute with the user IDs.", optional = true)
+	public void setUserAttribute(final SDFAttribute userAttribute) {
+		this.userAttribute = userAttribute;
 	}
 
 	/**
@@ -122,7 +141,7 @@ public class RecommendAO extends UnaryLogicalOp {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
 	 * #clone()

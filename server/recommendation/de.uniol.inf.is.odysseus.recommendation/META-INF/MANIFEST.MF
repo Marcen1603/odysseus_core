@@ -18,7 +18,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  com.google.guava;bundle-version="12.0.0",
  de.uniol.inf.is.odysseus.mep,
- de.uniol.inf.is.odysseus.relational.base
+ de.uniol.inf.is.odysseus.relational.base,
+ de.uniol.inf.is.odysseus.relational_interval
 Service-Component: OSGI-INF/RecommendationRuleService.xml,OSGI-INF/Datatypes.xml, OSGI-INF/RecommendationLearnerRegistry.xml
 Export-Package: de.uniol.inf.is.odysseus.machine_learning.learner;uses:="de.uniol.inf.is.odysseus.machine_learning.model",
  de.uniol.inf.is.odysseus.machine_learning.model,

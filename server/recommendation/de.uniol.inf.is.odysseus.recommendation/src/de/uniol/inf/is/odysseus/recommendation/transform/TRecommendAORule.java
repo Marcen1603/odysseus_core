@@ -15,6 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.recommendation.transform;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -40,7 +43,7 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
 	 * java.lang.Object)
@@ -69,6 +72,18 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 			topKAo.setDescending(true);
 			topKAo.setK(operator.getTopN());
 			topKAo.setScoringFunction(scoringFunction);
+
+			SDFAttribute userAttribute = operator.getUserAttribute();
+			if (userAttribute == null) {
+				userAttribute = FindAttributeHelper.findAttributeByName(
+						operator, operator.DEFAULT_USER_ATTRIBUTE_NAME);
+			}
+			final List<SDFAttribute> groupingAttributes = new ArrayList<>();
+			groupingAttributes.add(userAttribute);
+			topKAo.setGroupingAttributes(groupingAttributes);
+
+			topKAo.setTriggerByPunctuation(true);
+
 			RestructHelper.insertOperatorBefore(topKAo, operator);
 			// RestructHelper.replace(operator, topKAo);
 			insert(topKAo);
@@ -94,7 +109,7 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
 	 * .Object, java.lang.Object)
@@ -107,7 +122,7 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
 	 */
 	@Override

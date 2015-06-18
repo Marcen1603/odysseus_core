@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.recommendation.physicaloperator;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.TuplePunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_model.RecommendationCandidates;
 import de.uniol.inf.is.odysseus.recommendation.util.TupleSchemaHelper;
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.recommendation.util.TupleSchemaHelper;
  *
  */
 public class RecommendationCandidatesPO<M extends ITimeInterval, U, I> extends
-AbstractPipe<Tuple<M>, Tuple<M>> {
+		AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	/**
 	 * @author Cornelius Ludmann
@@ -108,6 +109,18 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 			tuple.setMetadata(metadata);
 			transfer(tuple);
 		}
+		final int rii = this.tupleSchemaHelper
+				.getPos(RecommCandTupleSchema.RATED_ITEMS_INFO);
+		this.tupleSchemaHelper.getPos(RecommCandTupleSchema.USER);
+		final int[] restr = new int[object.getAttributes().length - 1];
+		for (int i = 0, j = 0; i < object.getAttributes().length; ++i) {
+			if (i != rii) {
+				restr[j] = i;
+				++j;
+			}
+		}
+		sendPunctuation(new TuplePunctuation<Tuple<M>, M>(object
+				.getMetadata().getStart(), object.restrict(restr, true)));
 	}
 
 	/*
@@ -120,7 +133,6 @@ AbstractPipe<Tuple<M>, Tuple<M>> {
 	@Override
 	public void processPunctuation(final IPunctuation punctuation,
 			final int port) {
-		// TODO Auto-generated method stub
-
+		sendPunctuation(punctuation, port);
 	}
 }
