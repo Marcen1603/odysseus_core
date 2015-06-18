@@ -36,7 +36,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	private final static String BACKGROUND_X = "backgroundX";
 	private final static String BACKGROUND_Y = "backgroundY";
 	private final static String COLOR = "color";
-
+	
 	private int width = 600;
 	private int height = 600;
 	private int xpos = 0;
@@ -104,15 +104,14 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 
-				// todo clear older values
 				if (grid[x][y] != null) {
 					if (maxDuration > 0
 							&& grid[x][y].getMetadata().getStart()
 									.getMainPoint()
 									+ maxDuration < maxTime) {
-						// No need to delete, images is painted anyway ...
-						// fillRectangle(x * boxWidth, y * boxWidth, boxWidth,
-						// boxHeight, backgroundColor);
+						// ??
+						fillRectangle(x * boxWidth, y * boxWidth, boxWidth,
+						 boxHeight, backgroundColor);
 						grid[x][y] = null;
 					} else {
 						Number v = grid[x][y].getAttribute(value_pos);

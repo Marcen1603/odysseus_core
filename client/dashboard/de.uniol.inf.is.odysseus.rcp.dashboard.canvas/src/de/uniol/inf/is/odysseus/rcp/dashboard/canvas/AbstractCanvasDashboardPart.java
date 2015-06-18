@@ -98,6 +98,19 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 		canvas.addMouseWheelListener(this);
 
 		parent.layout();
+		restartUpdater();
+	}
+
+	protected void restartUpdater() {
+		if (updater != null){
+			updater.terminate();
+			try {
+				updater.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		this.updater = new CanvasUpdater(this.canvas, repaintDelay);
 		this.updater.start();
 	}
@@ -867,5 +880,14 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 		}
 		cursor = new Cursor(this.getCanvas().getDisplay(), SWT.CURSOR_ARROW);
 		this.getCanvas().getParent().setCursor(cursor);
+	}
+	
+	public void setRepaintDelay(long repaintDelay) {
+		this.repaintDelay = repaintDelay;
+		restartUpdater();
+	}
+	
+	public long getRepaintDelay() {
+		return repaintDelay;
 	}
 }

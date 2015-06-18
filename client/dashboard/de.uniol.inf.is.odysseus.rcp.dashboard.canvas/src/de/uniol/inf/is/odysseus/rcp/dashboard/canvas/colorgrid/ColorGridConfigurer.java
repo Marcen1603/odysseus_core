@@ -156,7 +156,7 @@ public class ColorGridConfigurer extends
 					 */
 					@Override
 					public void modifyText(final ModifyEvent e) {
-						final String text = boxWidth.getText();
+						final String text = boxWidth.getText().trim();
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart
@@ -180,7 +180,7 @@ public class ColorGridConfigurer extends
 					 */
 					@Override
 					public void modifyText(final ModifyEvent e) {
-						final String text = boxHeight.getText();
+						final String text = boxHeight.getText().trim();
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart
@@ -204,7 +204,7 @@ public class ColorGridConfigurer extends
 					 */
 					@Override
 					public void modifyText(final ModifyEvent e) {
-						final String text = numberCellsX.getText();
+						final String text = numberCellsX.getText().trim();
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart
@@ -228,7 +228,7 @@ public class ColorGridConfigurer extends
 					 */
 					@Override
 					public void modifyText(final ModifyEvent e) {
-						final String text = numberCellsY.getText();
+						final String text = numberCellsY.getText().trim();
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart
@@ -252,11 +252,35 @@ public class ColorGridConfigurer extends
 					 */
 					@Override
 					public void modifyText(final ModifyEvent e) {
-						final String text = maxElementsText.getText();
+						final String text = maxElementsText.getText().trim();
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart
 										.setMaxDuration(Integer.parseInt(text));
+								fireListener();
+
+							} catch (final NumberFormatException ex) {
+								// Empty block
+							}
+						}
+					}
+				});
+			}
+			{// UpdateThread
+				toolkit.createLabel(group, "Repaint Delay (sec)");
+				final Text repaintRate = toolkit.createText(group, String.format("%15d%n",
+						this.getDashboardPart().getRepaintDelay()/1000));
+				repaintRate.addModifyListener(new ModifyListener() {
+					/**
+					 * {@inheritDoc}
+					 */
+					@Override
+					public void modifyText(final ModifyEvent e) {
+						final String text = repaintRate.getText().trim();
+						if (!"".equals(text)) {
+							try {
+								ColorGridConfigurer.this.dashboardPart
+										.setRepaintDelay(Integer.parseInt(text)*1000);
 								fireListener();
 
 							} catch (final NumberFormatException ex) {
@@ -431,7 +455,7 @@ public class ColorGridConfigurer extends
                      */
                     @Override
                     public void modifyText(final ModifyEvent e) {
-                        final String text = minXText.getText();
+                        final String text = minXText.getText().trim();
                         if (!"".equals(text)) {
                             try {
                                 ColorGridConfigurer.this.dashboardPart.setImageScale(Double.parseDouble(text.trim()));
@@ -455,7 +479,7 @@ public class ColorGridConfigurer extends
                      */
                     @Override
                     public void modifyText(final ModifyEvent e) {
-                        final String text = zoomText.getText();
+                        final String text = zoomText.getText().trim();
                         if (!"".equals(text)) {
                             try {
                                 ColorGridConfigurer.this.dashboardPart.setZoom(Double.parseDouble(text.trim()));
@@ -479,7 +503,7 @@ public class ColorGridConfigurer extends
 					 */
 					@Override
 					public void modifyText(final ModifyEvent e) {
-						final String text = numberCellsX.getText();
+						final String text = numberCellsX.getText().trim();
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart
@@ -504,7 +528,7 @@ public class ColorGridConfigurer extends
 					 */
 					@Override
 					public void modifyText(final ModifyEvent e) {
-						final String text = numberCellsY.getText();
+						final String text = numberCellsY.getText().trim();
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart

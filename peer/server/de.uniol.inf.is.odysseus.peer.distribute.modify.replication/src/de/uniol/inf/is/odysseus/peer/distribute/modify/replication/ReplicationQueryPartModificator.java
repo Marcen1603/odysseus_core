@@ -25,9 +25,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.modification.ModificationHelper;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperator.ReplicationMergeAO;
 import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.rule.ReplicationRuleHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
+import de.uniol.inf.is.odysseus.server.replication.logicaloperator.ReplicationMergeAO;
 
 /**
  * A modifier of {@link ILogicalQueryPart}s, which replicates query parts and

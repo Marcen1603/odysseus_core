@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.peer.recovery.strategy.activestandby.logicalope
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperator.ReplicationMergeAO;
+import de.uniol.inf.is.odysseus.server.replication.logicaloperator.ReplicationMergeAO;
 
 /**
  * The recovery merge operator is an extension of the replication merge

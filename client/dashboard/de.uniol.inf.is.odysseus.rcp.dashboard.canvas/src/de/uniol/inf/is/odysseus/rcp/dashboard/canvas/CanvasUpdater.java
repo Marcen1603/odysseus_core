@@ -36,13 +36,15 @@ public class CanvasUpdater extends Thread {
         this.setDaemon(true);
         this.delay = delay;
     }
+    
+    boolean stop = false;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void run() {
-        while (!this.isInterrupted()) {
+        while (!stop && !this.isInterrupted()) {
             if (!this.canvas.isDisposed()) {
                 this.canvas.getDisplay().asyncExec(new Runnable() {
                     @Override
@@ -61,5 +63,9 @@ public class CanvasUpdater extends Thread {
                 }
             }
         }
+    }
+    
+    public void terminate(){
+    	stop = true;
     }
 }

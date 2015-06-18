@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.modify.replication.physicaloperator;
+package de.uniol.inf.is.odysseus.server.replication.physicaloperator;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.peer.distribute.modify.replication.logicaloperator.ReplicationMergeAO;
+import de.uniol.inf.is.odysseus.server.replication.logicaloperator.ReplicationMergeAO;
 
 /**
  * A {@link ReplicationMergePO} can be used to realize a
