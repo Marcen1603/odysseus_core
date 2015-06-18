@@ -4,12 +4,16 @@ import cm.communication.CommunicationService;
 import cm.communication.dto.ConfigurationDescription;
 import cm.communication.rest.RestException;
 import cm.communication.rest.RestService;
+import cm.configuration.Configuration;
+import cm.configuration.ConfigurationService;
 import cm.view.ConfigurationDescriptionListCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 
 import java.util.List;
 
@@ -19,6 +23,8 @@ import java.util.List;
  */
 public class ConfigChooseController {
 
+    @FXML
+    Parent root;
     @FXML
     ListView<ConfigurationDescription> availableConfigs;
 
@@ -40,7 +46,9 @@ public class ConfigChooseController {
     public void openConfiguration(ActionEvent actionEvent) {
         ConfigurationDescription config = availableConfigs.getSelectionModel().getSelectedItem();
         try {
-            RestService.runConfiguration(CommunicationService.getLoginIp(), CommunicationService.getToken(), config.getId());
+            Configuration configuration = RestService.runConfiguration(CommunicationService.getLoginIp(), CommunicationService.getToken(), config.getId());
+            Stage stage = (Stage) root.getScene().getWindow();
+            ConfigurationService.getInstance().loadConfiguration(configuration, stage);
         } catch (RestException e) {
             e.printStackTrace();
         }
