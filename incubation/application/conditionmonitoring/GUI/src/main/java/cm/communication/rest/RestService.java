@@ -176,9 +176,13 @@ public class RestService {
     }
 
     public static Configuration runConfiguration(String ip, String username, String password, int configurationId) throws RestException {
+        String token = login(ip, username, password);
+        return runConfiguration(ip, token, configurationId);
+    }
+
+    public static Configuration runConfiguration(String ip, String token, int configurationId) throws RestException {
         String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CONDITION;
         ClientResource crRunConfigs = new ClientResource(hostURL + "/" + RESOURCE_PATH_RUN_CONFIGURATION);
-        String token = login(ip, username, password);
         RunConfigurationRequestDTO runConfigurationRequestDTO = new RunConfigurationRequestDTO();
         runConfigurationRequestDTO.setConfigurationId(configurationId);
         runConfigurationRequestDTO.setToken(token);

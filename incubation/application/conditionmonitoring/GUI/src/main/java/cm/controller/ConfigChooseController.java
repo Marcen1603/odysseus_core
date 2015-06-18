@@ -38,5 +38,12 @@ public class ConfigChooseController {
     }
 
     public void openConfiguration(ActionEvent actionEvent) {
+        ConfigurationDescription config = availableConfigs.getSelectionModel().getSelectedItem();
+        try {
+            RestService.runConfiguration(CommunicationService.getLoginIp(), CommunicationService.getToken(), config.getId());
+        } catch (RestException e) {
+            e.printStackTrace();
+        }
+
     }
 }
