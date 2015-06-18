@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -112,6 +113,8 @@ public final class DashboardPartUtil {
 		Group group = new Group(comp, SWT.NONE);
 		group.setText(title != null ? title : "");
 		
+		// FIXME: check boxes (buttons) are not in the group but below
+		
 		List<Button> buttons = Lists.newArrayList();
 		for( String item : items ) {
 			buttons.add(createCheckBox(comp, item, false));
@@ -119,13 +122,61 @@ public final class DashboardPartUtil {
 		return buttons;
 	}
 	
-	public static List<Button> createAttributeMultiSelector( Composite comp, String title, Collection<SDFAttribute> attributes ) {
-		return createMultiCheckBox(comp, title, Lists.newArrayList(determineAttributeNames(attributes)));
+	/**
+	 * Creates a list control which allows to select multiple values.
+	 * 
+	 * @param comp the parent control
+	 * @param values the values of the list
+	 * @param selection 
+	 * @return the list
+	 */
+	private static org.eclipse.swt.widgets.List createMultiSelectList(Composite comp, ArrayList<String> values, String[] selection) {
+		org.eclipse.swt.widgets.List list = new org.eclipse.swt.widgets.List(comp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+		int index = 0;
+		for(String s : values) {
+			list.add(s);
+			if(selection != null && selection.length > 0) {
+				for(String sel : selection) {
+					if(s.equals(sel)) {
+						list.select(index);
+					}
+				}
+			}
+			++index;
+		}
+		if(selection == null || selection.length == 0) {
+			list.selectAll();
+		}
+		return list;
 	}
 	
-	public static List<Button> createAttributeMultiSelector( Composite comp, String title, SDFSchema schema ) {
-		return createAttributeMultiSelector(comp, title, schema.getAttributes());
+	public static org.eclipse.swt.widgets.List createAttributeMultiSelector(Composite comp, Collection<SDFAttribute> attributes, String[] selection) {
+		//return createMultiCheckBox(comp, title, Lists.newArrayList(determineAttributeNames(attributes)));
+		return createMultiSelectList(comp, Lists.newArrayList(determineAttributeNames(attributes)), selection);
 	}
+
+	public static org.eclipse.swt.widgets.List createAttributeMultiSelector( Composite comp, SDFSchema schema, String[] selection ) {
+		return createAttributeMultiSelector(comp, schema.getAttributes(), selection);
+	}
+	
+	public static void updateAttributeMultiSelector(org.eclipse.swt.widgets.List list, Collection<SDFAttribute> attributes) {
+		updateMultiSelectList(list, Lists.newArrayList(determineAttributeNames(attributes)));
+	}
+	
+	public static void updateAttributeMultiSelector(org.eclipse.swt.widgets.List list, SDFSchema schema) {
+		updateAttributeMultiSelector(list, schema.getAttributes());
+	}
+
+	private static void updateMultiSelectList(org.eclipse.swt.widgets.List list,
+			ArrayList<String> values) {
+		list.removeAll();
+		for(String s : values) {
+			list.add(s);
+		}
+		list.selectAll();		
+	}
+
+
 	
 	public static Button createRadioButton( Composite comp, String title ) {
 		Button radio = new Button(comp, SWT.RADIO);

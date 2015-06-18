@@ -73,6 +73,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	private String attributeList = "*";
 	private int maxData = 10;
 	private String title = "";
+	private String operatorName = "";
 	
 	
 	public String getAttributeList() {
@@ -97,6 +98,22 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	
+	/**
+	 * The name of the root operator (configuration parameter) in case of two ore more root operators.
+	 * 
+	 * @return the operatorName
+	 */
+	public String getOperatorName() {
+		return operatorName;
+	}
+
+	/**
+	 * @param operatorName the operatorName to set
+	 */
+	public void setOperatorName(String operatorName) {
+		this.operatorName = operatorName;
 	}
 
 	@Override
@@ -161,6 +178,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		attributeList = saved.get("Attributes");
 		maxData = Integer.valueOf(saved.get("MaxData"));
 		title = saved.get("Title");
+		operatorName = saved.get("Operator");
 	}
 
 	@Override
@@ -169,18 +187,16 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		toSaveMap.put("Attributes", attributeList);
 		toSaveMap.put("MaxData", String.valueOf(maxData));
 		toSaveMap.put("Title", title);
+		toSaveMap.put("Operator", operatorName);
 		return toSaveMap;
 	}
 
 	@Override
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
 		super.onStart(physicalRoots);
+		
+		operator = determinePyhsicalRoot(physicalRoots);
 
-		if (physicalRoots.size() > 1) {
-			LOG.warn("Table DashboardPart only supports one query!");
-		}
-
-		operator = physicalRoots.iterator().next();
 		positions = determinePositions(operator.getOutputSchema(), attributes);
 		refreshAttributesList( operator.getOutputSchema() ); // if attributes was = "*"
 		
@@ -211,6 +227,21 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		tableComposite.layout();
 	}
 
+	/**
+	 * @param physicalRoots
+	 * @return
+	 */
+	 private IPhysicalOperator determinePyhsicalRoot(
+			Collection<IPhysicalOperator> physicalRoots) {
+		for(IPhysicalOperator p : physicalRoots) {
+			if(p.getName().equals(getOperatorName())) {
+				return p;
+			}
+		}
+		LOG.info("Select first physical root.");
+		return physicalRoots.iterator().next();
+	}
+
 	private void deleteColumns() {
 		disposeAllColumns(tableViewer.getTable());
 	}
@@ -231,7 +262,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
-		if( element != null ) {
+		if( element != null && senderOperator.equals(operator)) {
 			synchronized( data ) {
 				data.add(0, (Tuple<?>) element);
 				if (data.size() > maxData) {
@@ -265,7 +296,10 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		}
 	}
 
-	private static String[] determineAttributes(final String attributeList) {
+	public static String[] determineAttributes(final String attributeList) {
+		if(attributeList == null || attributeList.trim().equals("")) {
+			return new String[0];
+		}
 		if (attributeList.trim().equalsIgnoreCase("*")) {
 			return new String[0];
 		}
@@ -286,7 +320,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 				if( optPosition.isPresent() ) {
 					positions[i] = optPosition.get();
 				} else {
-					throw new RuntimeException("Could not position of " + attributes2[i]);
+					throw new RuntimeException("Could not find position of " + attributes2[i]);
 				}
 			}	
 		} else {
