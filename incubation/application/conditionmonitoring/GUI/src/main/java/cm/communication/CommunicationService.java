@@ -40,7 +40,7 @@ public class CommunicationService {
                 receiverList.add(receiver);
                 ConnectionHandler.getInstance().addConnection(receiver);
             }
-        } catch (RestException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

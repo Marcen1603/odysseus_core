@@ -42,7 +42,7 @@ public class RestService {
     public static final String RESOURCE_PATH_ADD_QUERY = "addQuery";
     public static final String RESOURCE_PATH_CREATE_SOCKET = "createMultiSocket";
     public static final String RESOURCE_PATH_START_QUERY = "startQuery";
-    public static final String RESOURCE_CONDITIONQL = "conditionQL";
+    public static final String RESOURCE_PATH_GET_CONFIGURATIONS = "CMGetConfigurationList";
 
 
     /**
@@ -151,5 +151,21 @@ public class RestService {
         }
 
         return infos;
+    }
+
+    public static List<ConfigurationDescription> getConfigurations(String ip, String username, String password) throws RestException {
+        try {
+            String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CONDITION;
+            ClientResource crGetConfigs = new ClientResource(hostURL + "/" + RESOURCE_PATH_GET_CONFIGURATIONS);
+            String token = login(ip, username, password);
+            GetCMConfigurationListRequestDTO requestDTO = new GetCMConfigurationListRequestDTO(token);
+            Representation getConfigurationsRepresentation = crGetConfigs.post(requestDTO);
+            Gson gson = new Gson();
+            CMConfigurationListResponseDTO responseDTO = gson.fromJson(getConfigurationsRepresentation.getText(), CMConfigurationListResponseDTO.class);
+            return responseDTO.getConfigurations();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

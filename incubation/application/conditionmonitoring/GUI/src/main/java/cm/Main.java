@@ -1,6 +1,8 @@
 package cm;
 
 import cm.communication.CommunicationService;
+import cm.communication.dto.ConfigurationDescription;
+import cm.communication.rest.RestService;
 import cm.communication.socket.SocketReceiver;
 import cm.configuration.*;
 import cm.controller.MainController;
@@ -39,6 +41,13 @@ public class Main extends Application {
         primaryStage.setTitle("Condition Monitoring");
         primaryStage.setScene(new Scene(root, 600, 500));
         primaryStage.show();
+
+
+        // Get configurations from Odysseus
+        List<ConfigurationDescription> descriptions = RestService.getConfigurations("127.0.0.1", "System", "manager");
+        if (descriptions != null) {
+            descriptions.stream().forEach(listElement -> System.out.println(listElement.getId() + ", " + listElement.getName() + ", " + listElement.getDescription()));
+        }
 
         // -----------------------------
         // Create GUI from configuration
