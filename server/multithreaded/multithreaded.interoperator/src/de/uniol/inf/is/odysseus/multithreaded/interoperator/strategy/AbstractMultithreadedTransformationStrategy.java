@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RangeFragmentAO;
@@ -17,6 +18,13 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 		ParameterizedType parameterizedType = (ParameterizedType) getClass()
 				.getGenericSuperclass();
 		return (Class<T>) parameterizedType.getActualTypeArguments()[0];
+	}
+	
+	protected boolean areSettingsValid(MultithreadedOperatorSettings settingsForOperator){
+		if (settingsForOperator.getDegreeOfParallelization() == 1){
+			return false;
+		}
+		return true;
 	}
 
 	protected AbstractFragmentAO createFragmentAO(

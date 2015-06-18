@@ -59,6 +59,10 @@ public class AggregateMultithreadedTransformationStrategy extends
 	@Override
 	public boolean transform(ILogicalOperator operator,
 			MultithreadedOperatorSettings settingsForOperator) {
+		if (!super.areSettingsValid(settingsForOperator)){
+			return false;
+		}
+		
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();

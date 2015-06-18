@@ -48,6 +48,10 @@ public class JoinMultithreadedTransformationStrategy extends
 	@Override
 	public boolean transform(ILogicalOperator operator,
 			MultithreadedOperatorSettings settingsForOperator) {
+		if (!super.areSettingsValid(settingsForOperator)){
+			return false;
+		}
+		
 		JoinAO joinOperator = (JoinAO) operator;
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();

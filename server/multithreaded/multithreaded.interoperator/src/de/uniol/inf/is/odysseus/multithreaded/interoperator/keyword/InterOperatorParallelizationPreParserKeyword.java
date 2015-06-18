@@ -88,6 +88,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
 			String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
+		
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 
 		// split parameters on whitespaces
@@ -108,9 +109,9 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		try {
 			int degreeOfParallelization = Integer
 					.parseInt(degreeOfParallelizationString);
-			if (degreeOfParallelization <= 1) {
+			if (degreeOfParallelization < 1) {
 				throw new OdysseusScriptException(
-						"Value for degreeOfParallelization is not valid. Only positive integer values > 2 or constant AUTO is allowed.");
+						"Value for degreeOfParallelization is not valid. Only positive integer values >= 1 or constant AUTO is allowed.");
 			}
 			if (degreeOfParallelization > PerformanceDetectionHelper
 					.getNumberOfCores()) {

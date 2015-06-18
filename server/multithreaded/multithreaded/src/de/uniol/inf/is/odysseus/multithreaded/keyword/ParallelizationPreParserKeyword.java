@@ -65,7 +65,7 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 			String degreeOfParallelization = splitted[1];
 			if (!isValidDegree(degreeOfParallelization)) {
 				throw new OdysseusScriptException(
-						"Value for degreeOfParallelization is not valid. Only positive integer values > 2 or constant AUTO is allowed.");
+						"Value for degreeOfParallelization is not valid. Only positive integer values >= 1 or constant AUTO is allowed.");
 			}
 
 			// validate buffersize if set
@@ -167,8 +167,8 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 		try {
 			int integerDegree = Integer.parseInt(degreeOfParallelization);
 
-			// degree need to be greater than 1,
-			if (integerDegree > 1) {
+			// degree need to be greater eq 1,
+			if (integerDegree >= 1) {
 				this.globalDegreeOfParallelization = integerDegree;
 				if (this.globalDegreeOfParallelization > PerformanceDetectionHelper
 						.getNumberOfCores()) {
