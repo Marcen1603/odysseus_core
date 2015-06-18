@@ -61,7 +61,8 @@ public class InterOperatorParallelizationPreParserKeyword extends
 	private static final int MAX_ATTRIBUTE_COUNT = 5;
 	private static final String PATTERN = "<1..n Unique operator Ids> "
 			+ "<degree of parallelization or GLOBAL or AUTO> "
-			+ "<buffer-size or GLOBAL or AUTO>" + "<multithreading-strategy (optional)> "
+			+ "<buffer-size or GLOBAL or AUTO>"
+			+ "<multithreading-strategy (optional)> "
 			+ "<fragmentation-type e.g. round robin (optional)> ";
 
 	@Override
@@ -107,6 +108,10 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		try {
 			int degreeOfParallelization = Integer
 					.parseInt(degreeOfParallelizationString);
+			if (degreeOfParallelization <= 1) {
+				throw new OdysseusScriptException(
+						"Value for degreeOfParallelization is not valid. Only positive integer values > 2 or constant AUTO is allowed.");
+			}
 			if (degreeOfParallelization > PerformanceDetectionHelper
 					.getNumberOfCores()) {
 				LOG.warn("Degree of parallelization is greater than available cores");
@@ -134,8 +139,10 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			operatorSettings.setBufferSize(buffersize);
 		} catch (NumberFormatException e) {
 			LOG.debug("Buffersize is no integer. Try to determine constant value");
-			BufferSizeConstants buffersizeConstant = BufferSizeConstants.getConstantByName(buffersizeString);
-			if (buffersizeConstant != null && buffersizeConstant != BufferSizeConstants.USERDEFINED){
+			BufferSizeConstants buffersizeConstant = BufferSizeConstants
+					.getConstantByName(buffersizeString);
+			if (buffersizeConstant != null
+					&& buffersizeConstant != BufferSizeConstants.USERDEFINED) {
 				operatorSettings.setBufferSizeConstant(buffersizeConstant);
 			} else {
 				throw new OdysseusScriptException(
@@ -188,7 +195,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 								+ operatorId);
 			}
 		}
-		
+
 		// add settings for each operatorId
 		mtOperatorParameter.addSettingsForOperators(operatorIds,
 				operatorSettings);
