@@ -35,11 +35,6 @@ public class ConnectionHandler {
         socketInfos.add(info.getSocketInfo());
     }
 
-    public SocketReceiver getConnection(ConnectionInformation connectionInformation) {
-        //socketInfos.stream().filter(o -> o.getIp().equals(connectionInformation.ip) && o.g)
-        return null;
-    }
-
     public void removeConnection(SocketInfo info) {
         Iterator<SocketReceiver> iter = connections.iterator();
         while (iter.hasNext()) {
@@ -54,7 +49,7 @@ public class ConnectionHandler {
         while(infoIter.hasNext()) {
             SocketInfo socketInfo = infoIter.next();
             if (socketInfo.equals(info)) {
-                iter.remove();
+                infoIter.remove();
             }
         }
     }

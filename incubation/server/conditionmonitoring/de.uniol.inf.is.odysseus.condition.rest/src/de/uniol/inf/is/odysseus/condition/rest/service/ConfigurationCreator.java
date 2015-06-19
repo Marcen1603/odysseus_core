@@ -62,7 +62,7 @@ public class ConfigurationCreator {
         visualizationInformation.attribute = "LOF";
         visualizationInformation.visualizationType = VisualizationType.GAUGE;
         visualizationInformation.minValue = 0.0;
-        visualizationInformation.maxValue = 1.0;
+        visualizationInformation.maxValue = 10.0;
 
         visualizations.add(visualizationInformation);
         clientConfig.visualizationInformation = visualizations;

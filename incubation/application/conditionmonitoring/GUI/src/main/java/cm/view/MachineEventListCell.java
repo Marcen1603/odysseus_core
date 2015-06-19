@@ -1,6 +1,6 @@
 package cm.view;
 
-import cm.model.MachineEvent;
+import cm.model.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Tobias
  * @since 03.04.2015.
  */
-public class MachineEventListCell extends ListCell<MachineEvent> {
+public class MachineEventListCell extends ListCell<Event> {
 
     private Parent root;
 
@@ -37,14 +37,14 @@ public class MachineEventListCell extends ListCell<MachineEvent> {
     }
 
     @Override
-    public void updateItem(MachineEvent item, boolean empty) {
+    public void updateItem(Event item, boolean empty) {
         super.updateItem(item, empty);
 
         if (empty) {
             setText(null);
             setGraphic(null);
         } else {
-            MachineEvent event = getListView().getItems().get(super.getIndex());
+            Event event = getListView().getItems().get(super.getIndex());
 
             Double anomalyScore = 0.0;
             String eventDescription = "";

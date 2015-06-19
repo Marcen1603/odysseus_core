@@ -1,19 +1,17 @@
 package cm.controller;
 
 import cm.communication.dto.SocketInfo;
-import cm.communication.socket.SocketReceiver;
 import cm.controller.listeners.MachineListViewListener;
 import cm.data.ConnectionHandler;
 import cm.data.DataHandler;
 import cm.model.Collection;
-import cm.model.MachineEvent;
+import cm.model.Event;
 import cm.model.Sensor;
 import cm.view.ConnectionListCell;
 import cm.view.MachineEventListCell;
 import cm.view.MachineListCell;
 import cm.view.SensorListCell;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,11 +20,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +41,7 @@ public class MainController {
     ListView<Collection> machineList;
 
     @FXML
-    ListView<MachineEvent> machineEventList;
+    ListView<Event> machineEventList;
 
     @FXML
     Label machineName;
@@ -57,7 +53,7 @@ public class MainController {
     Button newCollectionButton;
 
     @FXML
-    ListView<MachineEvent> machineEvents;
+    ListView<Event> machineEvents;
     @FXML
     ListView<Sensor> sensorsList;
 

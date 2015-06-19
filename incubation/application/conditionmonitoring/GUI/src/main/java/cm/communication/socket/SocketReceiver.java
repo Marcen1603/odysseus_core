@@ -5,9 +5,8 @@ import cm.communication.dto.SocketInfo;
 import cm.communication.transformStrategies.ITransformStrategy;
 import cm.communication.transformStrategies.QueryResults;
 import cm.communication.transformStrategies.TransformStrategyFactory;
-import cm.model.Message;
-import cm.model.warnings.WarningHandler;
-import com.google.gson.Gson;
+import cm.data.DataHandler;
+import cm.model.Event;
 
 import java.io.*;
 import java.net.Socket;
@@ -69,7 +68,7 @@ public class SocketReceiver {
                         String name = socketInfo.getSchema().get(i).getName();
                         valueMap.put(name, o.toString());
                     }
-                    WarningHandler.handleMessage(valueMap, SocketReceiver.this);
+                    DataHandler.getInstance().addEvent(new Event(SocketReceiver.this, valueMap));
                 }
             } catch (IOException e) {
                 e.printStackTrace();

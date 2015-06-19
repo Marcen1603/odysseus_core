@@ -1,13 +1,15 @@
 package de.uniol.inf.is.odysseus.condition.rest.datatypes;
 
-import java.util.Map;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.rest.socket.AttributeInformation;
 
 public class ConnectionInformation {
 	public String ip;
 	public int queryId;
 	public String queryName;
 	public boolean useName;
-	public Map<String, String> attributes;
+	public List<AttributeInformation> attributes;
 
 	@Override
 	public boolean equals(Object o) {

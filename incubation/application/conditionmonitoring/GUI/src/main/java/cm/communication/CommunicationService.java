@@ -29,12 +29,12 @@ public class CommunicationService {
                 receiverList = new ArrayList<>();
                 connectionInformationListMap.put(connectionInformation, receiverList);
             }
-            String token = RestService.login(connectionInformation.ip, "System", "manager");
+            String token = RestService.login(connectionInformation.getIp(), "System", "manager");
             List<SocketInfo> socketInfos = null;
-            if (connectionInformation.useName) {
-                socketInfos = RestService.getResultsFromQuery(connectionInformation.ip, token, connectionInformation.queryName);
+            if (connectionInformation.isUseName()) {
+                socketInfos = RestService.getResultsFromQuery(connectionInformation.getIp(), token, connectionInformation.getQueryName());
             } else {
-                socketInfos = RestService.getResultsFromQuery(connectionInformation.ip, token, connectionInformation.queryId);
+                socketInfos = RestService.getResultsFromQuery(connectionInformation.getIp(), token, connectionInformation.getQueryId());
             }
 
             for (SocketInfo socketInfo : socketInfos) {

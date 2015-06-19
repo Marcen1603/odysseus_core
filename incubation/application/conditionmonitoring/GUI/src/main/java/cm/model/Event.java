@@ -8,12 +8,12 @@ import java.util.Map;
  * @author Tobias
  * @since 03.04.2015.
  */
-public class MachineEvent {
+public class Event {
 
     private SocketReceiver connection;
     private Map<String, String> attributes;
 
-    public MachineEvent(SocketReceiver connection, Map<String, String> attributes) {
+    public Event(SocketReceiver connection, Map<String, String> attributes) {
         this.connection = connection;
         this.attributes = attributes;
     }
