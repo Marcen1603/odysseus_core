@@ -453,12 +453,13 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		int to = -1;
 
 		for (int linenr = 0; linenr < textToParse.length; linenr++) {
+			String line = textToParse[linenr].trim();
 			
 			if( !ifController.canExecuteNextLine(replacements)) {
 				continue;
-			}
+			}	
+			replacements.parse(line);
 			
-			String line = textToParse[linenr].trim();
 			if (line.startsWith(SINGLE_LINE_COMMENT_KEY)) {
 				text.add(line);
 				continue;
@@ -488,14 +489,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					}
 //					Map<String, Serializable> repl = getReplacements(Arrays.copyOf(textToParse, from - 1), context);
 					String variable = parts[0].trim();
-					String fromStr = parts[1].trim();
-					if (fromStr.startsWith(REPLACEMENT_START_KEY) && fromStr.endsWith(REPLACEMENT_END_KEY)) {
-						fromStr = replacements.use(fromStr);
-					}
-					String toStr = parts[3].trim();
-					if (toStr.startsWith(REPLACEMENT_START_KEY) && toStr.endsWith(REPLACEMENT_END_KEY)) {
-						toStr = replacements.use(toStr);
-					}
+					String fromStr = replacements.use(parts[1].trim());
+					String toStr = replacements.use(parts[3].trim());
 
 					String offsetVariable = "";
 					int offsetValue = 0;
