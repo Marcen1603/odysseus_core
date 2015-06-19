@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.predicate.optimizer.PredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
@@ -73,6 +74,7 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 										.getExpressionParser());
 						join.setPredicate(new RelationalPredicate(sdfExpression));
 					}
+                    join.setPredicate(PredicateOptimizer.optimize(join.getPredicate()));
 				}
 				RestructParameterInfoUtil.updatePredicateParameterInfo(
 						join.getParameterInfos(), join.getPredicate());

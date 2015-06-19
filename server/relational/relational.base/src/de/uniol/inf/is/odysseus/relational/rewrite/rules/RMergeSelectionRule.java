@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.predicate.optimizer.PredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPredicateOptimizer;
@@ -58,6 +59,8 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
                             SDFExpression sdfExpression = new SDFExpression(cnf, relationalPredicate.getExpression().getAttributeResolver(), relationalPredicate.getExpression().getExpressionParser());
                             operator.setPredicate(new RelationalPredicate(sdfExpression));
                         }
+                        operator.setPredicate(PredicateOptimizer.optimize(operator.getPredicate()));
+
                     }
 				} else {
 					operator.setPredicate(sel.getPredicate());
