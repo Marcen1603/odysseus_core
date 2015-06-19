@@ -119,10 +119,25 @@ public class SDFAttributeHelper {
 			final IExpression<?> arg1 = eq.getArgument(0);
 			final IExpression<?> arg2 = eq.getArgument(1);
 			if ((arg1.isVariable()) && (arg2.isVariable())) {
-				SDFAttribute attribute1 = resolver
+				SDFAttribute attr1 = resolver
 						.getAttribute(((Variable) arg1).getIdentifier());
-				SDFAttribute attribute2 = resolver
+				
+				SDFAttribute attribute1 = joinOperator.getInputSchema(0).findAttribute(attr1.getURI());
+				
+				if (attribute1 == null){
+					attribute1 = joinOperator.getInputSchema(1).findAttribute(attr1.getURI());
+					System.err.println("found in 1");
+				}
+				
+				SDFAttribute attr2 = resolver
 						.getAttribute(((Variable) arg2).getIdentifier());
+
+				SDFAttribute attribute2 = joinOperator.getInputSchema(0).findAttribute(attr2.getURI());
+				if (attribute2 == null){
+					attribute2 = joinOperator.getInputSchema(1).findAttribute(attr2.getURI());
+				}
+				
+				
 				List<String> baseSourceNamesLeft = joinOperator.getInputSchema(
 						0).getBaseSourceNames();
 				List<String> baseSourceNamesRight = joinOperator
