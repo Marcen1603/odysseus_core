@@ -53,7 +53,7 @@ public class JoinMultithreadedTransformationStrategy extends
 		}
 		
 		JoinAO joinOperator = (JoinAO) operator;
-
+		
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 		upstreamOperatorSubscriptions.addAll(joinOperator
 				.getSubscribedToSource());
@@ -73,19 +73,18 @@ public class JoinMultithreadedTransformationStrategy extends
 			target.unsubscribeFromSource(downstreamOperatorSubscription);
 		}
 
-		Map<String, List<SDFAttribute>> attributes = new HashMap<String, List<SDFAttribute>>();
+		Map<Integer, List<SDFAttribute>> attributes = new HashMap<Integer, List<SDFAttribute>>();
 		attributes = SDFAttributeHelper.getInstance()
 				.getSDFAttributesFromEqualPredicates(attributes, joinOperator);
 
 		int numberOfFragments = 0;
 		List<Pair<AbstractFragmentAO, Integer>> fragmentsSinkInPorts = new ArrayList<Pair<AbstractFragmentAO, Integer>>();
 
-		for (String sourceName : attributes.keySet()) {
+		for (Integer inputPort : attributes.keySet()) {
 			for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
-				if (upstreamOperatorSubscription.getSchema()
-						.getBaseSourceNames().contains(sourceName)) {
+				if (upstreamOperatorSubscription.getSinkInPort() == inputPort) {
 					List<SDFAttribute> attributesForSource = attributes
-							.get(sourceName);
+							.get(inputPort);
 					// if join predicate attribute references on the source
 					// from
 					// this subscription, create fragment operator

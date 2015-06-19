@@ -21,7 +21,7 @@ public class SDFAttributeHelper {
 	private static SDFAttributeHelper instance;
 
 	public static SDFAttributeHelper getInstance() {
-		if (instance == null){
+		if (instance == null) {
 			instance = new SDFAttributeHelper();
 		}
 		return instance;
@@ -35,7 +35,7 @@ public class SDFAttributeHelper {
 					.getMEPExpression();
 			IAttributeResolver resolver = relPredicate.getExpression()
 					.getAttributeResolver();
-			Map<String, List<SDFAttribute>> attributes = new HashMap<String, List<SDFAttribute>>();
+			Map<Integer, List<SDFAttribute>> attributes = new HashMap<Integer, List<SDFAttribute>>();
 			attributes = getSDFAttributesFromEqualPredicates(attributes,
 					expression, resolver, joinOperator);
 			// if fragmentation is not possible, remove all collected attributes
@@ -44,9 +44,10 @@ public class SDFAttributeHelper {
 			} else {
 				// if fragmentation is possible, we need to remove
 				// duplicate attributes for each input stream
-				for (String sourceName : attributes.keySet()) {
-					List<SDFAttribute> arrayList = attributes.get(sourceName);
-					HashSet<SDFAttribute> hashSet = new HashSet<SDFAttribute>(arrayList);
+				for (Integer inputPort : attributes.keySet()) {
+					List<SDFAttribute> arrayList = attributes.get(inputPort);
+					HashSet<SDFAttribute> hashSet = new HashSet<SDFAttribute>(
+							arrayList);
 					arrayList.clear();
 					arrayList.addAll(hashSet);
 				}
@@ -62,7 +63,8 @@ public class SDFAttributeHelper {
 		return false;
 	}
 
-	public Map<String, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(Map<String, List<SDFAttribute>> attributes, JoinAO joinOperator){
+	public Map<Integer, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(
+			Map<Integer, List<SDFAttribute>> attributes, JoinAO joinOperator) {
 		IPredicate<?> predicate = joinOperator.getPredicate();
 		if (predicate instanceof RelationalPredicate) {
 			RelationalPredicate relPredicate = (RelationalPredicate) predicate;
@@ -70,16 +72,17 @@ public class SDFAttributeHelper {
 					.getMEPExpression();
 			IAttributeResolver resolver = relPredicate.getExpression()
 					.getAttributeResolver();
-			attributes = getSDFAttributesFromEqualPredicates(attributes, expression,
-							resolver, joinOperator);
+			attributes = getSDFAttributesFromEqualPredicates(attributes,
+					expression, resolver, joinOperator);
 			if (!fragmentationIsPossible) {
 				attributes.clear();
 			} else {
 				// if fragmentation is possible, we need to remove
 				// duplicate attributes for each input stream
-				for (String sourceName : attributes.keySet()) {
-					List<SDFAttribute> arrayList = attributes.get(sourceName);
-					HashSet<SDFAttribute> hashSet = new HashSet<SDFAttribute>(arrayList);
+				for (Integer inputPort : attributes.keySet()) {
+					List<SDFAttribute> arrayList = attributes.get(inputPort);
+					HashSet<SDFAttribute> hashSet = new HashSet<SDFAttribute>(
+							arrayList);
 					arrayList.clear();
 					arrayList.addAll(hashSet);
 				}
@@ -87,13 +90,11 @@ public class SDFAttributeHelper {
 		}
 		fragmentationIsPossible = true;
 		return attributes;
-		
+
 	}
-	
-	
-	
-	private Map<String, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(
-			Map<String, List<SDFAttribute>> attributes,
+
+	private Map<Integer, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(
+			Map<Integer, List<SDFAttribute>> attributes,
 			IExpression<?> expression, IAttributeResolver resolver,
 			JoinAO joinOperator) {
 		String symbol = expression.toFunction().getSymbol();
@@ -119,51 +120,45 @@ public class SDFAttributeHelper {
 			final IExpression<?> arg1 = eq.getArgument(0);
 			final IExpression<?> arg2 = eq.getArgument(1);
 			if ((arg1.isVariable()) && (arg2.isVariable())) {
-				SDFAttribute attr1 = resolver
-						.getAttribute(((Variable) arg1).getIdentifier());
+				// Attribute 1
+				SDFAttribute attr1 = resolver.getAttribute(((Variable) arg1)
+						.getIdentifier());
 				
-				SDFAttribute attribute1 = joinOperator.getInputSchema(0).findAttribute(attr1.getURI());
-				
-				if (attribute1 == null){
-					attribute1 = joinOperator.getInputSchema(1).findAttribute(attr1.getURI());
-					System.err.println("found in 1");
+				int attribute1port = -1;
+				if (joinOperator.getInputSchema(0)
+						.findAttribute(attr1.getURI()) != null) {
+					attribute1port = 0;
+				} else if (joinOperator.getInputSchema(1)
+						.findAttribute(attr1.getURI()) != null){
+					attribute1port = 1;
 				}
-				
-				SDFAttribute attr2 = resolver
-						.getAttribute(((Variable) arg2).getIdentifier());
 
-				SDFAttribute attribute2 = joinOperator.getInputSchema(0).findAttribute(attr2.getURI());
-				if (attribute2 == null){
-					attribute2 = joinOperator.getInputSchema(1).findAttribute(attr2.getURI());
+				// Attribute 2
+				SDFAttribute attr2 = resolver.getAttribute(((Variable) arg2)
+						.getIdentifier());
+				
+				int attribute2port = -1;
+				if (joinOperator.getInputSchema(0)
+						.findAttribute(attr2.getURI()) != null) {
+					attribute2port = 0;
+				} else if (joinOperator.getInputSchema(1)
+						.findAttribute(attr2.getURI()) != null){
+					attribute2port = 1;
 				}
-				
-				
-				List<String> baseSourceNamesLeft = joinOperator.getInputSchema(
-						0).getBaseSourceNames();
-				List<String> baseSourceNamesRight = joinOperator
-						.getInputSchema(1).getBaseSourceNames();
 
-				if ((baseSourceNamesLeft.contains(attribute1.getSourceName()) || baseSourceNamesLeft
-						.contains(attribute2.getSourceName()))
-						&& (baseSourceNamesRight.contains(attribute1
-								.getSourceName()) || baseSourceNamesRight
-								.contains(attribute2.getSourceName()))) {
-					// we need to check if each input stream has an
-					// fragmentation
-					// attribute
-					if (!attributes.containsKey(attribute1.getSourceName())) {
-						attributes.put(attribute1.getSourceName(),
+				// save attributes in combination with input port
+				if (attribute1port > -1 && attribute2port > -1){
+					if (!attributes.containsKey(attribute1port)) {
+						attributes.put(attribute1port,
 								new ArrayList<SDFAttribute>());
 					}
-					attributes.get(attribute1.getSourceName()).add(attribute1);
-
-					if (!attributes.containsKey(attribute2.getSourceName())) {
-						attributes.put(attribute2.getSourceName(),
+					attributes.get(attribute1port).add(attr1);
+				
+					if (!attributes.containsKey(attribute2port)) {
+						attributes.put(attribute2port,
 								new ArrayList<SDFAttribute>());
 					}
-					attributes.get(attribute2.getSourceName()).add(attribute2);
-				} else {
-					fragmentationIsPossible = false;
+					attributes.get(attribute2port).add(attr2);
 				}
 			}
 		} else {
