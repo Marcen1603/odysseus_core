@@ -180,28 +180,33 @@ public class IfController {
 			if (optionalIf.isPresent()) {
 				LOG.trace("Found #IF: Line {}: {}", this.currentLine, currentLine);
 				
-				String stringExpression = optionalIf.get();
-				SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
-
-				List<SDFAttribute> attributes = expression.getAllAttributes();
-				List<Object> values = Lists.newArrayList();
-				Map<String, Serializable> replacementMap = replacements.toMap();
-				for (SDFAttribute attribute : attributes) {
-					String name = attribute.getAttributeName().toUpperCase();
-					if (!replacementMap.containsKey(name)) {
-						INFO.warning("Replacementkey " + name + " not known in #IF-statement");
-						//throw new OdysseusScriptException("Replacementkey " + name + " not known in #IF-statement");
-						inIfClause.push((Boolean) false);
-						return false;
+				if( canExecuteNow() ) {
+					String stringExpression = optionalIf.get();
+					SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
+					
+					List<SDFAttribute> attributes = expression.getAllAttributes();
+					List<Object> values = Lists.newArrayList();
+					Map<String, Serializable> replacementMap = replacements.toMap();
+					for (SDFAttribute attribute : attributes) {
+						String name = attribute.getAttributeName().toUpperCase();
+						if (!replacementMap.containsKey(name)) {
+							INFO.warning("Replacementkey " + name + " not known in #IF-statement");
+							//throw new OdysseusScriptException("Replacementkey " + name + " not known in #IF-statement");
+							inIfClause.push(false);
+							return false;
+						}
+						
+						values.add(replacementMap.get(name));
 					}
-
-					values.add(replacementMap.get(name));
+					
+					expression.bindVariables(values.toArray());
+					
+					inIfClause.push((Boolean) expression.getValue());
+					LOG.trace("Stack: {}", inIfClause);
+				} else {
+					inIfClause.push(false);
 				}
-
-				expression.bindVariables(values.toArray());
-
-				inIfClause.push((Boolean) expression.getValue());
-				LOG.trace("Stack: {}", inIfClause);
+				
 				return false;
 			}
 
