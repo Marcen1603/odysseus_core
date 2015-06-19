@@ -312,8 +312,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 							handler.preTransform(this, user, query, parameters,
 									handlerParameters, context);
 						} catch (Throwable t) {
-							throw new QueryParseException(
-									handlerName + " throwed an exception. Message: "+ t.getMessage(), t);
+							throw new QueryParseException(handlerName
+									+ " throwed an exception. Message: "
+									+ t.getMessage(), t);
 						}
 					} catch (InstantiationException | IllegalAccessException e) {
 						throw new QueryParseException(
@@ -984,10 +985,12 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 						}
 						for (Entry<IOperatorOwner, Resource> id : p
 								.getUniqueIds().entrySet()) {
-
-							getDataDictionary(caller).removeOperator(
-									id.getValue());
-							toRemove.add(id.getKey());
+							// In case of shutdown, dictionary can be gone ...
+							if (getDataDictionary(caller) != null) {
+								getDataDictionary(caller).removeOperator(
+										id.getValue());
+								toRemove.add(id.getKey());
+							}
 						}
 					} else { // Remove ids from query sharing with this removed
 								// query
@@ -1129,7 +1132,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		executionPlanLock.unlock();
 		return started;
 	}
-	
+
 	@Override
 	public void stopAllQueries(ISession user) {
 		executionPlanLock.lock();
@@ -1139,7 +1142,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			}
 		}
 		executionPlanLock.unlock();
-		
+
 	}
 
 	private void validateUserRight(IPhysicalQuery query, ISession caller,
