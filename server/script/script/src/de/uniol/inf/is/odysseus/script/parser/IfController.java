@@ -138,11 +138,13 @@ public class IfController {
 			Optional<String> optionalIfDef = determineIfDef(currentLine);
 			if (optionalIfDef.isPresent()) {
 				LOG.trace("Found #IFDEF: Line {}: {}", this.currentLine, currentLine);
-
-				Boolean value = defined.contains(optionalIfDef.get());
-				inIfClause.push(value);
-				LOG.trace("Stack: {}", inIfClause);
-
+				
+				if( canExecuteNow() ) {
+					Boolean value = defined.contains(optionalIfDef.get());
+					inIfClause.push(value);
+					LOG.trace("Stack: {}", inIfClause);
+				}
+				
 				return false;
 			}
 
@@ -150,29 +152,37 @@ public class IfController {
 			if (optionalIfNDef.isPresent()) {
 				LOG.trace("Found #IFNDEF: Line {}: {}", this.currentLine, currentLine);
 
-				Boolean value = defined.contains(optionalIfNDef.get());
-				inIfClause.push(!value);
-				LOG.trace("Stack: {}", inIfClause);
-
+				if( canExecuteNow() ) {
+					Boolean value = defined.contains(optionalIfNDef.get());
+					inIfClause.push(!value);
+					LOG.trace("Stack: {}", inIfClause);
+				}
+				
 				return false;
 			}
 
 			Optional<String> optionalSrcDef = determineIfSrcDef(currentLine);
 			if (optionalSrcDef.isPresent()) {
-				Boolean value = existsSource(optionalSrcDef.get(), caller);
-				inIfClause.push(value);
-				LOG.trace("Stack: {}", inIfClause);
-
+				
+				if( canExecuteNow() ) {
+					Boolean value = existsSource(optionalSrcDef.get(), caller);
+					inIfClause.push(value);
+					LOG.trace("Stack: {}", inIfClause);
+				}
+				
 				return false;
 			}
 
 			Optional<String> optionalSrcNotDef = determineIfSrcNDef(currentLine);
 			if (optionalSrcNotDef.isPresent()) {
 				LOG.trace("Found #IFSRCDEF: Line {}: {}", this.currentLine, currentLine);
-				Boolean value = existsSource(optionalSrcNotDef.get(), caller);
-				inIfClause.push(!value);
-				LOG.trace("Stack: {}", inIfClause);
-
+				
+				if( canExecuteNow() ) {
+					Boolean value = existsSource(optionalSrcNotDef.get(), caller);
+					inIfClause.push(!value);
+					LOG.trace("Stack: {}", inIfClause);
+				}
+				
 				return false;
 			}
 
@@ -180,28 +190,31 @@ public class IfController {
 			if (optionalIf.isPresent()) {
 				LOG.trace("Found #IF: Line {}: {}", this.currentLine, currentLine);
 				
-				String stringExpression = optionalIf.get();
-				SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
-
-				List<SDFAttribute> attributes = expression.getAllAttributes();
-				List<Object> values = Lists.newArrayList();
-				Map<String, Serializable> replacementMap = replacements.toMap();
-				for (SDFAttribute attribute : attributes) {
-					String name = attribute.getAttributeName().toUpperCase();
-					if (!replacementMap.containsKey(name)) {
-						INFO.warning("Replacementkey " + name + " not known in #IF-statement");
-						//throw new OdysseusScriptException("Replacementkey " + name + " not known in #IF-statement");
-						inIfClause.push((Boolean) false);
-						return false;
+				if( canExecuteNow() ) {
+					String stringExpression = optionalIf.get();
+					SDFExpression expression = new SDFExpression(stringExpression, MEP.getInstance());
+	
+					List<SDFAttribute> attributes = expression.getAllAttributes();
+					List<Object> values = Lists.newArrayList();
+					Map<String, Serializable> replacementMap = replacements.toMap();
+					for (SDFAttribute attribute : attributes) {
+						String name = attribute.getAttributeName().toUpperCase();
+						if (!replacementMap.containsKey(name)) {
+							INFO.warning("Replacementkey " + name + " not known in #IF-statement");
+							//throw new OdysseusScriptException("Replacementkey " + name + " not known in #IF-statement");
+							inIfClause.push(false);
+							return false;
+						}
+	
+						values.add(replacementMap.get(name));
 					}
-
-					values.add(replacementMap.get(name));
+	
+					expression.bindVariables(values.toArray());
+	
+					inIfClause.push((Boolean) expression.getValue());
+					LOG.trace("Stack: {}", inIfClause);
 				}
-
-				expression.bindVariables(values.toArray());
-
-				inIfClause.push((Boolean) expression.getValue());
-				LOG.trace("Stack: {}", inIfClause);
+				
 				return false;
 			}
 
