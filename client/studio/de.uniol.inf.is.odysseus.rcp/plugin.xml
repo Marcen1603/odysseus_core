@@ -514,6 +514,7 @@
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand"
                icon="icons/graph.png"
+               id="Show Query Plan"
                label="Show Query Plan"
                style="push">
          </command>
