@@ -38,7 +38,11 @@ public class TRelationalChangeDetectAORule extends AbstractRelationalIntervalTra
 	public void execute(ChangeDetectAO operator, TransformationConfiguration config) throws RuleException {
 		RelationalChangeDetectPO po = null;
 		if (operator.getTolerance() == 0) {
-			po = new RelationalChangeDetectPO(operator.getComparePositions());
+			if (operator.getComparePositions() != null){
+				po = new RelationalChangeDetectPO(operator.getComparePositions());
+			}else if (operator.getComparePositions2() != null){
+				po = new RelationalChangeDetectPO(operator.getComparePositions2());
+			}
 		} else {
 			if (operator.isRelativeTolerance()) {
 				if (!operator.isUseBaseValue() && !operator.isUseWindow()) {

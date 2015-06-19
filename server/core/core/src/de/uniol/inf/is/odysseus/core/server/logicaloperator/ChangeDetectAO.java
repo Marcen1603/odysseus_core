@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -33,13 +34,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 
 /**
  * This operator can reduce traffic. It lets an event pass if its different than
- * the last event, if specified, numeric values can have a tolerance band (relative or absolute defined), 
- * e.i. only if the new values lies outside this band, it is send (aka known as deadband or histerese band)
+ * the last event, if specified, numeric values can have a tolerance band
+ * (relative or absolute defined), e.i. only if the new values lies outside this
+ * band, it is send (aka known as deadband or histerese band)
  * 
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(name = "CHANGEDETECT", minInputPorts = 1, maxInputPorts = 1, doc="This operator can reduce traffic. It lets an event pass if its different than the last event, if specified, numeric values can have a tolerance band (relative or absolute defined) e.i. only if the new values lies outside this band, it is send (aka known as deadband or histerese band)", category={LogicalOperatorCategory.PATTERN})
+@LogicalOperator(name = "CHANGEDETECT", minInputPorts = 1, maxInputPorts = 1, doc = "This operator can reduce traffic. It lets an event pass if its different than the last event, if specified, numeric values can have a tolerance band (relative or absolute defined) e.i. only if the new values lies outside this band, it is send (aka known as deadband or histerese band)", category = { LogicalOperatorCategory.PATTERN })
 public class ChangeDetectAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9042464546094886480L;
@@ -77,13 +79,13 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	public void setAttr(List<SDFAttribute> outputSchema) {
 		this.attributes = outputSchema;
 	}
-	
+
 	public List<SDFAttribute> getAttr() {
 		return this.attributes;
 	}
-		
+
 	@Parameter(type = IntegerParameter.class, name = "heartbeatrate", optional = true)
-	public void setHeartbeatRate(int rate){
+	public void setHeartbeatRate(int rate) {
 		this.rate = rate;
 	}
 
@@ -95,57 +97,58 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		return deliverFirstElement;
 	}
 
-	public boolean isSendLastOfSameObjects(){
+	public boolean isSendLastOfSameObjects() {
 		return sendLastOfSameObjects;
 	}
-	
-	@Parameter(type = BooleanParameter.class, name = "SendLastOfSameObjects", optional = true, doc ="If set to false (default), in a group of same objects, the first is send. If set to true, the last one is send.")
+
+	@Parameter(type = BooleanParameter.class, name = "SendLastOfSameObjects", optional = true, doc = "If set to false (default), in a group of same objects, the first is send. If set to true, the last one is send.")
 	public void setSendLastOfSameObjects(boolean sendLastOfSameObjects) {
 		this.sendLastOfSameObjects = sendLastOfSameObjects;
 	}
-	
+
 	@Parameter(type = BooleanParameter.class, name = "deliverFirstElement", optional = true)
 	public void setDeliverFirstElement(boolean deliverFirstElement) {
 		this.deliverFirstElement = deliverFirstElement;
 	}
-	
+
 	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
 	public void setGroupingAttributes(List<SDFAttribute> attributes) {
 		this.groupingAttributes = attributes;
 	}
-	
+
 	public List<SDFAttribute> getGroupingAttributes() {
 		return groupingAttributes;
 	}
 
-	
 	@Parameter(type = DoubleParameter.class, name = "tolerance", optional = true)
 	public void setTolerance(double tolerance) {
 		this.tolerance = tolerance;
 	}
-	
+
 	public double getTolerance() {
 		return tolerance;
 	}
-	
+
 	@Parameter(type = BooleanParameter.class, name = "relativeTolerance", optional = true)
 	public void setRelativeTolerance(boolean isRelativeTolerance) {
 		this.isRelativeTolerance = isRelativeTolerance;
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = "suppressCountAttribute", optional = true)
-	public void setSuppressCountAttribute(String name){
-		this.suppressCountAttribute = new SDFAttribute(null,name,SDFDatatype.INTEGER, null, null, null);
+	public void setSuppressCountAttribute(String name) {
+		this.suppressCountAttribute = new SDFAttribute(null, name,
+				SDFDatatype.INTEGER, null, null, null);
 	}
-	
+
 	public String getSuppressCountAttribute() {
-		return suppressCountAttribute != null ? suppressCountAttribute.getAttributeName() : null;
+		return suppressCountAttribute != null ? suppressCountAttribute
+				.getAttributeName() : null;
 	}
-	
+
 	public SDFAttribute getSuppressCountAttributeValue() {
 		return suppressCountAttribute;
 	}
-	
+
 	public boolean isRelativeTolerance() {
 		return isRelativeTolerance;
 	}
@@ -188,37 +191,73 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 			int[] ret = new int[attributes.size()];
 			int i = 0;
 			for (SDFAttribute a : attributes) {
+				int pos = inputSchema.indexOf(a);
+				// Could be, if a metadata attribute is contained
+				if (pos == -1) {
+					return null;
+				}
 				ret[i++] = inputSchema.indexOf(a);
 			}
 			return ret;
-		} 
+		}
+		return null;
+	}
+
+	public List<Pair<Integer, Integer>> getComparePositions2() {
+		if (attributes.size() > 0) {
+
+			List<Pair<Integer, Integer>> ret = new ArrayList<Pair<Integer, Integer>>();
+			SDFSchema inputSchema = getInputSchema();
+			for (SDFAttribute a : attributes) {
+				int pos = inputSchema.indexOf(a);
+				if (pos > 0) {
+					ret.add(new Pair<Integer, Integer>(-1, pos));
+				} else {
+					ret.add(inputSchema.indexOfMetaAttribute(a));
+				}
+			}
+			return ret;
+		}
 		return null;
 	}
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		if (suppressCountAttribute == null){
+		if (suppressCountAttribute == null) {
 			return super.getOutputSchemaIntern(pos);
 		}
 		SDFSchema inputSchema = getInputSchema();
-		List<SDFAttribute> attributes = new ArrayList<>(inputSchema.getAttributes());
+		List<SDFAttribute> attributes = new ArrayList<>(
+				inputSchema.getAttributes());
 		attributes.add(suppressCountAttribute);
-		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);
-		
+		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(
+				attributes, inputSchema);
+
 		return outputSchema;
 	}
-	
+
 	@Override
 	public boolean isValid() {
 		boolean isValid = true;
 		if (hasAttributes()) {
 			int[] comPos = getComparePositions();
-			for (int c : comPos) {
-				if (c == -1) {
-					addError("Not all attributes in input found!");
-					isValid = false;
+			if (comPos != null) {
+				for (int c : comPos) {
+					if (c == -1) {
+						addError("Not all attributes in input found!");
+						isValid = false;
+					}
+				}
+			}else{
+				List<Pair<Integer, Integer>> pos = getComparePositions2();
+				for (Pair<Integer,Integer> p:pos){
+					if (p.getE2() == -1){
+						addError("Not all attributes in input found!");
+						isValid = false;
+					}
 				}
 			}
+			
 		}
 		return isValid && super.isValid();
 	}
