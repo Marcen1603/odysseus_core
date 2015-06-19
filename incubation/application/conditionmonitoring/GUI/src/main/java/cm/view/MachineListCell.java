@@ -46,14 +46,7 @@ public class MachineListCell extends ListCell<Collection> {
         } else {
             Collection collection = getListView().getItems().get(super.getIndex());
             machineName.setText(collection.getName());
-            machineState.setText(collection.getState());
-
-            if (collection.getState().equals(Collection.BAD_STATE)) {
-                machineBackground.setStyle("-fx-background-color: red");
-            } else {
-                machineBackground.setStyle("-fx-background-color: greenyellow");
-            }
-
+            machineBackground.setStyle("-fx-background-color: greenyellow");
             setGraphic(root);
         }
     }

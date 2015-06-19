@@ -88,20 +88,10 @@ public class MainController {
         // Show the sensors
         sensorsList.setItems(observableSensorList);
         sensorsList.setCellFactory(listView -> new SensorListCell());
-
-        // Connections tab
-        // ---------------
-        mainConnectionList.setItems(ConnectionHandler.getInstance().getSocketInfos());
-        mainConnectionList.setCellFactory(listView -> {
-            ConnectionListCell listCell = new ConnectionListCell();
-            connectionListCells.add(listCell);
-            return listCell;
-        });
     }
 
     public void updateMachineView(Collection collection) {
         machineName.setText(collection.getName());
-        machineStatus.setText(collection.getState());
         machineEvents.setItems(DataHandler.getInstance().getCollectionEvents(collection));
         machineEvents.setCellFactory(listView -> new MachineEventListCell());
     }

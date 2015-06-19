@@ -57,7 +57,7 @@ public class ConfigurationService {
             }
             // Create all collections
             for (CollectionInformation collectionInfo : configuration.collections) {
-                Collection collection = new Collection(collectionInfo.name, Collection.OK_STATE);
+                Collection collection = new Collection(collectionInfo.name);
                 for (ConnectionInformation conInfo : collectionInfo.connectionInformation) {
                     List<SocketReceiver> socketReceivers = CommunicationService.getSocketReceivers(conInfo);
                     for (SocketReceiver receiver : socketReceivers) {

@@ -61,14 +61,16 @@ public class RestService {
         ClientResource cr = new ClientResource(hostURL);
         LoginRequestDTO req = new LoginRequestDTO(username, password, "");
 
-        Representation t = cr.post(req);
         try {
+            Representation t = cr.post(req);
             Type resultDataType = new TypeToken<GenericResponseDTO<String>>() {
             }.getType();
             Gson gson = new Gson();
             GenericResponseDTO<String> resp = gson.fromJson(t.getText(), resultDataType);
             return resp.getValue();
         } catch (IOException ex) {
+            throw new RestException(ex.toString());
+        } catch (Exception ex) {
             throw new RestException(ex.toString());
         } finally {
             cr.release();

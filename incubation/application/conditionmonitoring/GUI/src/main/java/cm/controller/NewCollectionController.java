@@ -42,7 +42,7 @@ public class NewCollectionController {
 
     public void addCollection(ActionEvent actionEvent) {
         String name = newCollectionName.getText();
-        Collection collection = new Collection(name, Collection.OK_STATE);
+        Collection collection = new Collection(name);
         DataHandler.getInstance().addCollection(collection);
 
         for (ConnectionListCell listCell : connectionListCells) {

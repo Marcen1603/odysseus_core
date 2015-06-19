@@ -12,16 +12,11 @@ import java.util.List;
  */
 public class Collection {
 
-    public static final String OK_STATE = "OK";
-    public static final String BAD_STATE = "BAD";
-
     private String name;
-    private String state;
     private List<SocketInfo> connections;
 
-    public Collection(String name, String state) {
+    public Collection(String name) {
         this.name = name;
-        this.state = state;
         this.connections = new ArrayList<>();
     }
 
@@ -31,14 +26,6 @@ public class Collection {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
     }
 
     public void addConnection(SocketInfo connection) {
