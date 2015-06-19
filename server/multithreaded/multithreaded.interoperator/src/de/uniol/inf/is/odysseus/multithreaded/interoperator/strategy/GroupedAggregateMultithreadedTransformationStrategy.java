@@ -106,7 +106,7 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 				buffer.setName("Buffer_" + i);
 				buffer.setThreaded(true);
 				buffer.setMaxBufferSize(10000000);
-				buffer.setDrainAtClose(true);
+				buffer.setDrainAtClose(false);
 
 				AggregateAO newAggregateOperator = aggregateOperator.clone();
 				newAggregateOperator.setName(aggregateOperator.getName() + "_"

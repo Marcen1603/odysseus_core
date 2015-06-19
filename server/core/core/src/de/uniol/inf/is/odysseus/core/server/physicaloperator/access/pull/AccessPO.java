@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
  * This class represents all sources that need to be scheduled to deliver input
  * (pull). For all sources that push their data use ReceivePO
  * 
+ * 
  * @author Marco Grawunder
  * 
  * @param <R>
@@ -46,13 +49,16 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
  *            The Output that is written by this operator.
  */
 public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
-		extends AbstractIterableSource<W> implements IMetadataInitializer<M, W>, ICommandProvider {
+		extends AbstractIterableSource<W> implements
+		IMetadataInitializer<M, W>, ICommandProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessPO.class);
 
 	private boolean isDone = false;
 	private final long maxTimeToWaitForNewEventMS;
 	private long lastTransfer = 0;
+
+	final private AtomicBoolean isClosing = new AtomicBoolean(false);
 
 	private IProtocolHandler<W> protocolHandler;
 
@@ -94,7 +100,7 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 
 		// TODO: We should think about propagate done ... maybe its better
 		// to send a punctuation??
-		tryPropagateDone();
+		// tryPropagateDone();
 		return false;
 	}
 
@@ -104,14 +110,14 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 		return false;
 	}
 
-	private void tryPropagateDone() {
-		try {
-			propagateDone();
-		} catch (Throwable throwable) {
-			LOG.error("Exception during propagating done", throwable);
-			sendError("Exception during propagating done", throwable);
-		}
-	}
+	// private void tryPropagateDone() {
+	// try {
+	// propagateDone();
+	// } catch (Throwable throwable) {
+	// LOG.error("Exception during propagating done", throwable);
+	// sendError("Exception during propagating done", throwable);
+	// }
+	// }
 
 	@Override
 	public synchronized void transferNext() {
@@ -120,8 +126,8 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 		try {
 			meta = getMetadataInstance();
 		} catch (InstantiationException | IllegalAccessException e1) {
-			LOG.error("Error creating meta data",e1);
-            // BAD Bad bad idea, this line kills your screen with popups!!!
+			LOG.error("Error creating meta data", e1);
+			// BAD Bad bad idea, this line kills your screen with popups!!!
 			// sendError("Error creating meta data",e1);
 		}
 
@@ -130,8 +136,11 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 			try {
 				toTransfer = protocolHandler.getNext();
 				if (toTransfer == null) {
-					isDone = true;
-					propagateDone();
+					// When close is called, do not call propagate done!
+					if (!isClosing.get()) {
+						isDone = true;
+						propagateDone();
+					}
 				} else {
 					if (maxTimeToWaitForNewEventMS > 0) {
 						lastTransfer = System.currentTimeMillis();
@@ -143,7 +152,7 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 			} catch (Exception e) {
 				LOG.error("Error Reading from input", e);
 				// BAD Bad bad idea, this line kills your screen with popups!!!
-			//	sendError("Error Reading from input", e);
+				// sendError("Error Reading from input", e);
 			}
 		}
 	}
@@ -164,10 +173,12 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 				throw new OpenFailedException(e);
 			}
 		}
+		isClosing.set(false);
 	}
 
 	@Override
 	protected void process_close() {
+		isClosing.set(true);
 		try {
 			if (isOpen()) {
 				protocolHandler.close();
@@ -175,11 +186,6 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public AbstractSource<W> clone() {
-		throw new RuntimeException("Clone Not implemented yet");
 	}
 
 	@Override
@@ -199,10 +205,10 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 	@Override
 	public M getMetadataInstance() throws InstantiationException,
 			IllegalAccessException {
-		if( this.metadataInitializer == null ) {
+		if (this.metadataInitializer == null) {
 			return null;
 		}
-			
+
 		return this.metadataInitializer.getMetadataInstance();
 	}
 
@@ -220,35 +226,33 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 	@Override
 	public Command getCommandByName(String commandName, SDFSchema schema) {
 		int delimiter = commandName.indexOf('.');
-		if (delimiter != -1)
-		{
+		if (delimiter != -1) {
 			// Command is for transport, protocol, ... handler
 			String target = commandName.substring(0, delimiter);
-			String newCommandName = commandName.substring(delimiter+1);
-			
-			if (target.equalsIgnoreCase("transport"))
-			{
-				ITransportHandler transportHandler = ((AbstractProtocolHandler<W>) protocolHandler).getTransportHandler();
+			String newCommandName = commandName.substring(delimiter + 1);
+
+			if (target.equalsIgnoreCase("transport")) {
+				ITransportHandler transportHandler = ((AbstractProtocolHandler<W>) protocolHandler)
+						.getTransportHandler();
 				if (transportHandler instanceof ICommandProvider)
-					return ((ICommandProvider) transportHandler).getCommandByName(newCommandName, schema);
+					return ((ICommandProvider) transportHandler)
+							.getCommandByName(newCommandName, schema);
 				else
-					throw new UnsupportedOperationException("transport handler doesn't implement ICommandProvider");
-			}
-			else
-			if (target.equalsIgnoreCase("protocol"))
-			{
+					throw new UnsupportedOperationException(
+							"transport handler doesn't implement ICommandProvider");
+			} else if (target.equalsIgnoreCase("protocol")) {
 				if (protocolHandler instanceof ICommandProvider)
-					return ((ICommandProvider) protocolHandler).getCommandByName(newCommandName, schema);
+					return ((ICommandProvider) protocolHandler)
+							.getCommandByName(newCommandName, schema);
 				else
-					throw new UnsupportedOperationException("protocol handler doesn't implement ICommandProvider");
-			}
-			else
-				throw new IllegalArgumentException("Unknown target \"" + target + "\" in \"" + commandName + "\"");				
-		}
-		else
-		{
+					throw new UnsupportedOperationException(
+							"protocol handler doesn't implement ICommandProvider");
+			} else
+				throw new IllegalArgumentException("Unknown target \"" + target
+						+ "\" in \"" + commandName + "\"");
+		} else {
 			// Command is for this Operator!
 			return null;
-		}	
-	}	
+		}
+	}
 }

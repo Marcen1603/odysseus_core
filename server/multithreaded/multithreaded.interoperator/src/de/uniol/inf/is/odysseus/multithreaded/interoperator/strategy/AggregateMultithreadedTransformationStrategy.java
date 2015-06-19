@@ -153,7 +153,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 			buffer.setName("Buffer_" + i);
 			buffer.setThreaded(true);
 			buffer.setMaxBufferSize(10000000);
-			buffer.setDrainAtClose(true);
+			buffer.setDrainAtClose(false);
 
 			// create new aggregate operator from existing operator
 			AggregateAO newAggregateOperator = aggregateOperator.clone();
