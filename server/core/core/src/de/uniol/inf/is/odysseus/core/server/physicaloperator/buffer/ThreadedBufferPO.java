@@ -203,8 +203,6 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	}
 
 	private void drainBuffers() {
-		RuntimeException e = new RuntimeException();
-		e.printStackTrace();
 		// drain buffer at done/close
 		// Copy everything from inputBuffer to outputBuffer
 		runner.terminate();
