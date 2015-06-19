@@ -55,6 +55,21 @@ public class InputStatementParser {
 			String line = textLine.trim();
 			boolean foundReplacement = false;
 			for (String INPUT_KEY : INPUT_KEYS) {
+				// Hack to allow inputs based on #define
+				if (line.toLowerCase().startsWith("#define")){
+					String[] lineParts = line.split(" ", 3);
+					if (lineParts.length == 3){
+						final String value;
+						if (lineParts[2].startsWith("${")){
+							value =  replacements.use(lineParts[2]);
+						}else{
+							value = lineParts[2];
+						}
+						
+						replacements.put(lineParts[1], value);
+					}
+				}
+				
 				if (line.toLowerCase().startsWith(INPUT_KEY.toLowerCase())) {
 					foundReplacement = true;
 					line = replacements.use(line);
