@@ -16,9 +16,13 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part;
 
 import java.util.Collection;
+import java.util.Formatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -27,6 +31,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
@@ -35,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
@@ -206,10 +212,10 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 			final int finalI = i;
 
-			final TableViewerColumn fileNameColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-			fileNameColumn.getColumn().setText(attributes[i]);
-			tableColumnLayout.setColumnData(fileNameColumn.getColumn(), new ColumnWeightData(5, 25, true));
-			fileNameColumn.setLabelProvider(new CellLabelProvider() {
+			final TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+			tableViewerColumn.getColumn().setText(attributes[i]);
+			tableColumnLayout.setColumnData(tableViewerColumn.getColumn(), new ColumnWeightData(5, 25, true));
+			tableViewerColumn.setLabelProvider(new CellLabelProvider() {
 				@Override
 				public void update(ViewerCell cell) {
 					final Tuple<?> tuple = (Tuple<?>) cell.getElement();
@@ -278,13 +284,97 @@ public class TableDashboardPart extends AbstractDashboardPart {
 						synchronized( data ) {
 							if (!tableViewer.getTable().isDisposed()) {
 								tableViewer.refresh();
+								
+								Table table = tableViewer.getTable();
+								TableItem[] items = table.getItems();
+								
+								
+								for(int i = 0; i < data.size(); ++i) {
+									Tuple<?> tuple = data.get(i);
+									Object[] attributes = tuple.getAttributes();
+									for(int j = 0; j< attributes.length; ++j) {
+										
+										if(attributes[j] instanceof List) {
+											String attr = formatListAttributeToString((List<?>)attributes[j]);
+											if(attr == null)
+												items[i].setText(j, items[i].getText(j).substring(1, items[i].getText(j).length()-1).replaceAll(", ", "\r\n").replaceAll("\\|", "\t"));
+											else {
+												items[i].setText(j, attr);
+											}
+											items[i].setFont(j, SWTFontUtils.getMonospacedFont());
+										}
+										
+									}
+								}
 							}
+							
 							refreshing = false;
 						}
 					}
 				});
 			}
 		}
+	}
+	
+	private static String formatListAttributeToString(List<?> list) {
+		StringBuilder sb = new StringBuilder();
+		Formatter formatter = new Formatter(sb);
+		
+		@SuppressWarnings("unchecked")
+		int[] maxLengths = getMaxLenghts((List<Tuple<?>>) list);
+		
+		for(int i = 0; i < list.size(); ++i) {
+			if(list.get(i) instanceof Tuple) {
+				Tuple<?> tuple = (Tuple<?>) list.get(i);
+				Object[] attributes = tuple.getAttributes();
+				for(int j = 0; j < attributes.length; ++j) {
+					Object attr = attributes[j];
+					formatter.format("%1$" + maxLengths[j] +"s", attr);
+					if(j < attributes.length -1) {
+						sb.append("\t");
+					}
+				}
+				if(i < list.size() -1) {
+					sb.append("\r\n");
+				}
+			} else {
+				formatter.close();
+				return null;
+			}
+		}
+		formatter.close();
+		return sb.toString();
+		
+	}
+
+	/**
+	 * Returns the max length of the attributes of all tuples in the list.
+	 * 
+	 * @param list A list of tuples with attributes.
+	 * @return an array int[i] that hat the highest length of the attributes with index i of all tuples in the list.
+	 */
+	private static int[] getMaxLenghts(List<Tuple<?>> list) {
+		if(list == null || list.size() == 0) {
+			return new int[0];
+		}
+		Tuple<?> t = list.get(0);
+		if(t == null) {
+			return new int[0];
+		}
+		int[] maxLengths = new int[t.getAttributes().length];
+		for(Tuple<?> tuple : list) {
+			Object[] attributes = tuple.getAttributes();
+			if(attributes.length > maxLengths.length) {
+				LOG.warn("length missmatch in list of tuples");
+				return new int[0];
+			}
+			for(int i = 0; i < attributes.length; ++i) {
+				if(maxLengths[i] < attributes[i].toString().length()) {
+					maxLengths[i] = attributes[i].toString().length();
+				}
+			}
+		}
+		return maxLengths;
 	}
 
 	private void refreshAttributesList(SDFSchema outputSchema) {
@@ -339,6 +429,211 @@ public class TableDashboardPart extends AbstractDashboardPart {
 			}
 		}
 		return Optional.absent();
+	}
+	
+	
+	/** {@link SWT} font related utility methods.
+	 * https://bugs.eclipse.org/bugs/attachment.cgi?id=238603
+	 *  */
+	private static class SWTFontUtils {
+	    /** Cache: mapping from SWT devices to their monospaced fonts. */
+	    private static final Map<Device, Font> MONOSPACED_FONTS = new HashMap<>();
+
+	    /** Constructor for the {@link SWTFontUtils} class. */
+	    private SWTFontUtils() {
+	        // Static class.
+	    }
+
+	    /**
+	     * Returns the monospaced font for the current display. The font will
+	     * automatically be disposed once the display is disposed.
+	     *
+	     * <p>This method is thread safe.</p>
+	     *
+	     * @return The monospaced font for the current display.
+	     * @throws IllegalStateException If the method is not invoked from a SWT
+	     *      UI thread.
+	     */
+	    public static Font getMonospacedFont() {
+	        synchronized (MONOSPACED_FONTS) {
+	            // Get current display.
+	            Display display = Display.getCurrent();
+	            if (display == null) {
+	                String msg = "Must be invoked for a SWT UI thread.";
+	                throw new IllegalStateException(msg);
+	            }
+
+	            // Forward request.
+	            return getMonospacedFont(display);
+	        }
+	    }
+
+	    /**
+	     * Creates a monospaced font for the given display. The font will
+	     * automatically be disposed once the display is disposed.
+	     *
+	     * <p>This method is thread safe.</p>
+	     *
+	     * @param display The display for which to create a monospaced font.
+	     * @return A monospaced font for the given display.
+	     */
+	    public static Font getMonospacedFont(final Display display) {
+	        synchronized (MONOSPACED_FONTS) {
+	            // Based on class 'org.eclipse.jface.resource.FontRegistry' and
+	            // resources 'org.eclipse.jface.resource/jfacefonts*.properties'
+	            // from 'org.eclipse.jface' plug-in (version 3.9.1).
+
+	            // Use cache if possible.
+	            Font cachedFont = MONOSPACED_FONTS.get(display);
+	            if (cachedFont != null) return cachedFont;
+
+	            // Get operating system and windowing system names.
+	            String os = System.getProperty("os.name");
+	            String ws = SWT.getPlatform();
+	            os = StringUtils.deleteWhitespace(os).toLowerCase(Locale.US);
+	            ws = StringUtils.deleteWhitespace(ws).toLowerCase(Locale.US);
+
+	            // Get names to check, in order from specific to generic.
+	            String[] names = {os + "_" + ws, os, ""};
+
+	            // Get font data texts for platform.
+	            String[] fontDataTxts = null;
+	            for (String name: names) {
+	                if (name.equals("aix")) {
+	                    fontDataTxts = new String[] {"adobe-courier|normal|12"};
+	                    break;
+
+	                } else if (name.equals("hp-ux")) {
+	                    fontDataTxts = new String[] {"adobe-courier|normal|14"};
+	                    break;
+
+	                } else if (name.equals("linux_gtk")) {
+	                    fontDataTxts = new String[] {"Monospace|normal|10"};
+	                    break;
+
+	                } else if (name.equals("linux")) {
+	                    fontDataTxts = new String[] {"adobe-courier|normal|12"};
+	                    break;
+
+	                } else if (name.equals("macosx")) {
+	                    fontDataTxts = new String[] {"Monaco|normal|11",
+	                                                 "Courier|normal|12",
+	                                                 "Courier New|normal|12"};
+	                    break;
+
+	                } else if (name.equals("sunos") || name.equals("solaris")) {
+	                    fontDataTxts = new String[] {"adobe-courier|normal|12"};
+	                    break;
+
+	                } else if (name.equals("windows98")) {
+	                    fontDataTxts = new String[] {"Courier New|normal|10",
+	                                                 "Courier|normal|10",
+	                                                 "Lucida Console|normal|9"};
+	                    break;
+
+	                } else if (name.equals("windowsnt")) {
+	                    fontDataTxts = new String[] {"Courier New|normal|10",
+	                                                 "Courier|normal|10",
+	                                                 "Lucida Console|normal|9"};
+	                    break;
+
+	                } else if (name.equals("windows2000")) {
+	                    fontDataTxts = new String[] {"Courier New|normal|10",
+	                                                 "Courier|normal|10",
+	                                                 "Lucida Console|normal|9"};
+	                    break;
+
+	                } else if (name.equals("windowsxp")) {
+	                    fontDataTxts = new String[] {"Courier New|normal|10",
+	                                                 "Courier|normal|10",
+	                                                 "Lucida Console|normal|9"};
+	                    break;
+
+	                } else if (name.equals("windowsvista")) {
+	                    fontDataTxts = new String[] {"Consolas|normal|10",
+	                                                 "Courier New|normal|10"};
+	                    break;
+
+	                } else if (name.equals("windows7")) {
+	                    fontDataTxts = new String[] {"Consolas|normal|10",
+	                                                 "Courier New|normal|10"};
+	                    break;
+
+	                } else if (name.equals("windows8")) {
+	                    fontDataTxts = new String[] {"Consolas|normal|10",
+	                                                 "Courier New|normal|10"};
+	                    break;
+
+	                } else if (name.equals("")) {
+	                    fontDataTxts = new String[] {"Courier New|normal|10",
+	                                                 "Courier|normal|10",
+	                                                 "b&h-lucidabright|normal|9"};
+	                    break;
+	                }
+	            }
+	            if (fontDataTxts == null) {
+	                // Can't happen, but silences a warning.
+//	                throw new AssertionError();
+	            }
+
+	            // Convert texts to font data.
+	            FontData[] fontDatas = new FontData[fontDataTxts.length];
+	            for (int i = 0; i < fontDatas.length; i++) {
+	                // Find splitters.
+	                String txt = fontDataTxts[i];
+	                int bar2 = txt.lastIndexOf('|');
+//	                Assert.assertTrue(bar2 != -1);
+	                int bar1 = txt.lastIndexOf('|', bar2 - 1);
+//	                Assert.assertTrue(bar1 != -1);
+
+	                // Get font name.
+	                String name = txt.substring(0, bar1);
+//	                Assert.assertTrue(name.length() > 0);
+
+	                // Get font style.
+	                String[] styles = txt.substring(bar1 + 1, bar2).split(",");
+	                int style = 0;
+	                for (String s: styles) {
+	                    if (s.equals("normal")) {
+	                        style |= SWT.NORMAL;
+	                    } else if (s.equals("bold")) {
+	                        style |= SWT.BOLD;
+	                    } else if (s.equals("italic")) {
+	                        style |= SWT.ITALIC;
+	                    } else {
+	                        throw new RuntimeException("Invalid style: " + s);
+	                    }
+	                }
+
+	                // Get font height.
+	                int height = Integer.parseInt(txt.substring(bar2 + 1));
+
+	                // Create and add font date.
+	                fontDatas[i] = new FontData(name, height, style);
+	            }
+
+	            // Create font.
+	            final Font font = new Font(display, fontDatas);
+
+	            // Register dispose callback, to dispose of the font once the
+	            // display is disposed.
+	            display.disposeExec(new Runnable() {
+	                @Override
+	                public void run() {
+	                    synchronized (MONOSPACED_FONTS) {
+	                        MONOSPACED_FONTS.remove(display);
+	                        font.dispose();
+	                    }
+	                }
+	            });
+
+	            // Add to cache.
+	            MONOSPACED_FONTS.put(display, font);
+
+	            // Return the new font.
+	            return font;
+	        }
+	    }
 	}
 
 }
