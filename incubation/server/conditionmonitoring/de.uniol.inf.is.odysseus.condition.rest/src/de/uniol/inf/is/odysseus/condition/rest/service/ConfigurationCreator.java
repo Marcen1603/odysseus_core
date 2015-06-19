@@ -62,9 +62,15 @@ public class ConfigurationCreator {
         visualizationInformation.attribute = "LOF";
         visualizationInformation.visualizationType = VisualizationType.GAUGE;
         visualizationInformation.minValue = 0.0;
-        visualizationInformation.maxValue = 10.0;
+        visualizationInformation.maxValue = 25.0;
+        
+        VisualizationInformation areaChart1 = new VisualizationInformation();
+        areaChart1.connectionInformation = con1;
+        areaChart1.attribute = "LOF";
+        areaChart1.visualizationType = VisualizationType.AREACHART;
 
         visualizations.add(visualizationInformation);
+        visualizations.add(areaChart1);
         clientConfig.visualizationInformation = visualizations;
 
         // Server Configuration

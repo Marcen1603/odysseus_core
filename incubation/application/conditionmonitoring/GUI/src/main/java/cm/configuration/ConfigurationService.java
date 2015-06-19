@@ -69,11 +69,14 @@ public class ConfigurationService {
 
             // Create all visualizations
 
-            // 1. Gauges
             OverviewController overviewController = mainController.getOverviewController();
 
             for (VisualizationInformation visualizationInfo : configuration.visualizationInformation) {
-                overviewController.addGauge(visualizationInfo);
+                if (visualizationInfo.getVisualizationType().equals(VisualizationType.GAUGE))
+                    overviewController.addGauge(visualizationInfo);
+                else if (visualizationInfo.getVisualizationType().equals(VisualizationType.AREACHART)) {
+                    overviewController.addAreaChart(visualizationInfo);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
