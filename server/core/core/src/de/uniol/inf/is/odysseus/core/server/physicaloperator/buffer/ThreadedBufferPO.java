@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -39,6 +40,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	Runner runner;
 	private boolean drainAtClose;
+	private AtomicBoolean isClosing;
 
 	class Runner extends Thread {
 
@@ -60,7 +62,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 					try {
 						if (inputBuffer.isEmpty()) {
 							wait(1000);
-							if (terminate){
+							if (terminate) {
 								continue;
 							}
 						}
@@ -148,6 +150,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		elementsRead = 0;
 		inputBuffer.clear();
 		outputBuffer.clear();
+		this.isClosing = new AtomicBoolean(false);
 		// Create new thread and start
 		runner = new Runner("ThreadedBuffer " + getName());
 		runner.setDaemon(true);
@@ -156,22 +159,26 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	@Override
 	protected void process_close() {
-		runner.terminate = true;
+		this.isClosing.set(true);
+		runner.terminate();
 		lockOutput.lock();
 		if (drainAtClose) {
 			drainBuffers();
-		}else{
+		} else {
 			inputBuffer.clear();
 			outputBuffer.clear();
 		}
 		lockOutput.unlock();
+		isClosing.set(false);
 	}
 
 	protected void process_done(int port) {
-		lockOutput.lock();
-		drainBuffers();
-		lockOutput.unlock();
-		done = true;
+		if (!isClosing.get()) {
+			lockOutput.lock();
+			drainBuffers();
+			lockOutput.unlock();
+			done = true;
+		}
 	}
 
 	@Override
@@ -196,12 +203,14 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	}
 
 	private void drainBuffers() {
+		RuntimeException e = new RuntimeException();
+		e.printStackTrace();
 		// drain buffer at done/close
 		// Copy everything from inputBuffer to outputBuffer
 		runner.terminate();
-//		synchronized (this) {
-//			this.notifyAll();
-//		}
+		// synchronized (this) {
+		// this.notifyAll();
+		// }
 		lockInput.lock();
 		outputBuffer.addAll(inputBuffer);
 		inputBuffer.clear();

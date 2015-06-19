@@ -76,7 +76,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	private PrintWriter dumpOut;
 	private boolean dumpMemory;
 
-	private Map<Long,StringBuffer> currentInputStringMap = new HashMap<>();
+	private Map<Long, StringBuffer> currentInputStringMap = new HashMap<>();
 
 	// private Map<String, String> optionsMap;
 
@@ -233,8 +233,11 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 				return false;
 			}
 		} catch (Exception e) {
-			LOG.error("Could not determine hasNext()", e);
-			isDone = true;
+			if (!e.getMessage().equalsIgnoreCase("Stream closed")) {
+				LOG.error("Could not determine hasNext()", e);
+				
+			}
+			// DO NOT SET DONE, this is no normal processing!
 			return false;
 		}
 		return true;
@@ -347,17 +350,18 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public synchronized void process(long callerId, ByteBuffer message) {
-		
+
 		String strMsg = bb_to_str(message);
 		StringBuffer currentInputString = currentInputStringMap.get(callerId);
-		String data = currentInputString != null? currentInputString + strMsg:strMsg;
+		String data = currentInputString != null ? currentInputString + strMsg
+				: strMsg;
 
 		currentInputString = new StringBuffer();
 		currentInputStringMap.put(callerId, currentInputString);
 
-		for (char s: data.toCharArray()){
-			if (s == '\n' || s == '\r'){
-				if (currentInputString.length() > 0){
+		for (char s : data.toCharArray()) {
+			if (s == '\n' || s == '\r') {
+				if (currentInputString.length() > 0) {
 					if (!firstLineSkipped && !readFirstLine) {
 						firstLineSkipped = true;
 						continue;
@@ -367,17 +371,16 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 					}
 				}
 				currentInputString = new StringBuffer();
-			}else{
+			} else {
 				currentInputString.append(s);
 			}
 		}
-		if (currentInputString.length() > 0){
+		if (currentInputString.length() > 0) {
 			currentInputStringMap.put(callerId, currentInputString);
-		}else{
+		} else {
 			currentInputStringMap.remove(callerId);
 		}
 
-		
 	}
 
 	protected void process(String token) {
