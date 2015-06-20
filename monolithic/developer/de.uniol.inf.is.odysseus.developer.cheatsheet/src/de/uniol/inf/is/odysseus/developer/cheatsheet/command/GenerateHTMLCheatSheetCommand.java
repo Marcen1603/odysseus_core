@@ -15,10 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.developer.cheatsheet.command;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,9 +61,8 @@ import de.uniol.inf.is.odysseus.script.parser.ReplacementProviderManager;
  *          | Christian Kuka $
  * 
  */
-public class GenerateCheatSheetCommand extends AbstractHandler {
-    static final Logger LOG = LoggerFactory.getLogger(GenerateCheatSheetCommand.class);
-    private static final String PDFLATEX_CMD = "/usr/bin/pdflatex";
+public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
+    static final Logger LOG = LoggerFactory.getLogger(GenerateHTMLCheatSheetCommand.class);
 
     @Override
     public Object execute(final ExecutionEvent event) throws ExecutionException {
@@ -73,7 +70,6 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
 
             @Override
             public void run() {
-                final String cmd = (System.getProperty("latex") != null) ? System.getProperty("latex") : PDFLATEX_CMD;
                 final Shell shell;
                 if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell() != null) {
                     shell = new Shell(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
@@ -84,13 +80,13 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
                 try {
                     final FileDialog dialog = new FileDialog(shell, SWT.SAVE);
 
-                    dialog.setFilterNames(new String[] { "Tex Files (*.tex)" });
-                    dialog.setFilterExtensions(new String[] { "*.tex" });
+                    dialog.setFilterNames(new String[] { "HTML Files (*.html)" });
+                    dialog.setFilterExtensions(new String[] { "*.html" });
                     dialog.setText("Select file..");
                     final String file = dialog.open();
                     if (file != null) {
                         final StringBuilder builder = new StringBuilder();
-                        GenerateCheatSheetCommand.build(builder);
+                        GenerateHTMLCheatSheetCommand.build(builder);
                         Path path = (new File(file)).toPath();
                         Path directory = path.getParent();
                         if (!Files.exists(directory)) {
@@ -101,30 +97,10 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
                                 print.println(builder.toString());
                             }
                         }
-                        final String[] env = new String[] {};
-                        if ((new File(cmd)).exists()) {
-                            GenerateCheatSheetCommand.LOG.info("Executing '{} -synctex=1 -interaction nonstopmode -output-directory {} {}'",
-                                    new Object[] { cmd, directory.toString(), path.toString() });
-                            final Process process = Runtime.getRuntime().exec(cmd + " -synctex=1 -interaction nonstopmode -output-directory " + directory + " " + file, env);
-                            try {
-                                process.waitFor();
-                                final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                                String line;
-                                while ((line = reader.readLine()) != null) {
-                                    GenerateCheatSheetCommand.LOG.error(line);
-                                }
-                            }
-                            catch (final InterruptedException e) {
-                                GenerateCheatSheetCommand.LOG.error(e.getMessage(), e);
-                            }
-                        }
-                        else {
-                            GenerateCheatSheetCommand.LOG.warn("Unable to execute {} to generate cheatsheet PDF", cmd);
-                        }
                     }
                 }
                 catch (final Exception e) {
-                    GenerateCheatSheetCommand.LOG.error(e.getMessage(), e);
+                    GenerateHTMLCheatSheetCommand.LOG.error(e.getMessage(), e);
                 }
             }
         });
@@ -132,104 +108,56 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
     }
 
     static void build(final StringBuilder builder) {
-        builder.append("\\documentclass[10pt,landscape]{article}\n\n");
-        builder.append("\\usepackage{multicol}\n");
-        builder.append("\\usepackage{calc}\n");
-        builder.append("\\usepackage{ifthen}\n");
-        builder.append("\\usepackage[landscape]{geometry}\n");
-        builder.append("\\usepackage{textcomp}\n");
-        builder.append("\\usepackage[english]{babel}\n");
-        builder.append("\\usepackage[svgnames]{xcolor}\n");
-        builder.append("\\usepackage{ifxetex,ifluatex}\n");
-        builder.append("\\ifxetex\n");
-        builder.append("  \\usepackage{fontspec,xltxtra,xunicode}\n");
-        builder.append("  \\defaultfontfeatures{Mapping=tex-text, Scale=MatchLowercase, Ligatures=TeX}\n");
-        builder.append("  \\setmainfont[Numbers={OldStyle}]{Linux Libertine O}\n");
-        builder.append("\\else\n");
-        builder.append("  \\ifluatex\n");
-        builder.append("    \\usepackage{fontspec}\n");
-        builder.append("  \\else\n");
-        builder.append("    \\usepackage[utf8]{inputenc}\n");
-        builder.append("  \\fi\n");
-        builder.append("\\fi\n");
-        builder.append("\\ifxetex\n");
-        builder.append("  \\usepackage[setpagesize=false,unicode=false,xetex]{hyperref}\n");
-        builder.append("\\else\n");
-        builder.append("  \\usepackage[unicode=true]{hyperref}\n");
-        builder.append("\\fi\n\n");
+        builder.append("<!DOCTYPE html>\n");
+        builder.append("<html xmlns='http://www.w3.org/1999/xhtml'>\n\n");
+        builder.append("<head>\n");
+        builder.append("<meta http-equiv='content-type' content='text/html; charset=utf-8' />\n");
+        builder.append("<title>Odysseus Cheat Sheet</title>\n\n");
 
-        builder.append("\\definecolor{uniolblue}{rgb}{0.0, 0.31765, 0.61961}\n");
+        builder.append("<meta http-equiv='X-UA-Compatible' content='IE=edge'>\n");
+        builder.append("<meta name='viewport' content='width=device-width, initial-scale=1'>\n");
+        builder.append("<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>\n");
+        builder.append("<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css'>\n");
+        builder.append("<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'></script>\n");
 
-        builder.append("\\ifthenelse{\\lengthtest { \\paperwidth = 11in}}\n");
-        builder.append("{ \\geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }\n");
-        builder.append("{\\ifthenelse{ \\lengthtest{ \\paperwidth = 297mm}}\n");
-        builder.append("    {\\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }\n");
-        builder.append("    {\\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }\n");
-        builder.append("}\n");
+        builder.append("</head>\n");
+        builder.append("<body>\n");
 
-        builder.append("\\pagestyle{empty}\n");
-        builder.append("\\makeatletter\n");
-        builder.append("\\renewcommand{\\section}{\\@startsection{section}{1}{0mm}%\n");
-        builder.append("  {-1ex plus -.5ex minus -.2ex}%\n");
-        builder.append("  {0.5ex plus .2ex}%\n");
-        builder.append("  {\\normalfont\\large\\bfseries}}\n");
-        builder.append("\\renewcommand{\\subsection}{\\@startsection{subsection}{2}{0mm}%\n");
-        builder.append("  {-1explus -.5ex minus -.2ex}%\n");
-        builder.append("  {0.5ex plus .2ex}%\n");
-        builder.append("  {\\normalfont\\normalsize\\bfseries}}\n");
-        builder.append("\\renewcommand{\\subsubsection}{\\@startsection{subsubsection}{3}{0mm}%\n");
-        builder.append("  {-1ex plus -.5ex minus -.2ex}%\n");
-        builder.append("  {1ex plus .2ex}%\n");
-        builder.append("  {\\normalfont\\small\\bfseries}}\n");
-        builder.append("\\makeatother\n");
-        builder.append("\\setcounter{secnumdepth}{0}\n");
-        builder.append("\\setlength{\\parindent}{0pt}\n");
-        builder.append("\\setlength{\\parskip}{0pt plus 0.5ex}\n\n");
+        builder.append("<div class='container'>\n");
+        builder.append("<header><h1>Odysseus Cheat Sheet</h1></header>\n");
+        builder.append("<article>\n");
+        GenerateHTMLCheatSheetCommand.buildPQLGrammar(builder);
+        GenerateHTMLCheatSheetCommand.buildPQLOperators(builder);
+        GenerateHTMLCheatSheetCommand.buildAggregationFunctions(builder);
+        GenerateHTMLCheatSheetCommand.buildMEPFunctions(builder);
+        GenerateHTMLCheatSheetCommand.buildMetadatas(builder);
+        GenerateHTMLCheatSheetCommand.buildDatatypes(builder);
+        GenerateHTMLCheatSheetCommand.buildHandlers(builder);
+        GenerateHTMLCheatSheetCommand.buildScheduling(builder);
+        GenerateHTMLCheatSheetCommand.buildBufferPlacementStrategies(builder);
+        GenerateHTMLCheatSheetCommand.buildOdysseusScript(builder);
 
-        builder.append("\\clubpenalty = 10000\n");
-        builder.append("\\widowpenalty = 10000\n");
-        builder.append("\\displaywidowpenalty = 10000\n\n");
+        GenerateHTMLCheatSheetCommand.buildSample(builder);
+        builder.append("</article>\n");
+        builder.append("</div>\n");
 
-        builder.append("\\begin{document}\n");
+        builder.append("<footer class='footer'>\n");
+        builder.append("<div class='container'>\n");
+        builder.append("<p>Copyright &copy; ").append(Calendar.getInstance().get(Calendar.YEAR)).append(" ODYSSEUS Team</p>\n");
+        builder.append("<p><a href='http://odysseus.informatik.uni-oldenburg.de'>http://odysseus.informatik.uni-oldenburg.de</a><br/>\n");
+        builder.append("Wiki: <a href='http://wiki.odysseus.informatik.uni-oldenburg.de'>http://wiki.odysseus.informatik.uni-oldenburg.de</a><br/>\n");
+        builder.append("Forum: <a href='http://forum.odysseus.informatik.uni-oldenburg.de'>http://forum.odysseus.informatik.uni-oldenburg.de</a></p>\n");
+        builder.append("</div>\n");
+        builder.append("</footer>\n");
+        builder.append("<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>\n");
 
-        builder.append("\\raggedright\n");
-        builder.append("\\footnotesize\n");
-        builder.append("\\begin{multicols}{2}\n");
-        builder.append("\\setlength{\\premulticols}{1pt}\n");
-        builder.append("\\setlength{\\postmulticols}{1pt}\n");
-        builder.append("\\setlength{\\multicolsep}{1pt}\n");
-        builder.append("\\setlength{\\columnsep}{2pt}\n\n");
-
-        builder.append("\\begin{center}\n");
-        builder.append("\\textcolor{uniolblue}{\\huge{\\textbf{Odysseus\\ Cheat Sheet}}} \\\\\n");
-        builder.append("\\end{center}\n\n");
-
-        builder.append("\\newlength{\\MyLen}\n");
-        builder.append("\\settowidth{\\MyLen}{\\texttt{letterpaper}/\\texttt{a4paper} \\ }\n\n");
-        GenerateCheatSheetCommand.buildPQLGrammar(builder);
-        GenerateCheatSheetCommand.buildPQLOperators(builder);
-        GenerateCheatSheetCommand.buildAggregationFunctions(builder);
-        GenerateCheatSheetCommand.buildMEPFunctions(builder);
-        GenerateCheatSheetCommand.buildMetadatas(builder);
-        GenerateCheatSheetCommand.buildDatatypes(builder);
-        GenerateCheatSheetCommand.buildHandlers(builder);
-        GenerateCheatSheetCommand.buildScheduling(builder);
-        GenerateCheatSheetCommand.buildBufferPlacementStrategies(builder);
-        GenerateCheatSheetCommand.buildOdysseusScript(builder);
-
-        GenerateCheatSheetCommand.buildSample(builder);
-        builder.append("\\rule{0.3\\linewidth}{0.25pt}\n");
-        builder.append("\\scriptsize\n\n");
-        builder.append("Copyright \\copyright\\ ").append(Calendar.getInstance().get(Calendar.YEAR)).append(" ODYSSEUS Team\n\n");
-        builder.append("\\href{http://odysseus.informatik.uni-oldenburg.de}{http://odysseus.informatik.uni-oldenburg.de}\n\n");
-        builder.append("Wiki: \\href{http://wiki.odysseus.informatik.uni-oldenburg.de}{http://wiki.odysseus.informatik.uni-oldenburg.de}\n\n");
-        builder.append("Forum: \\href{http://forum.odysseus.informatik.uni-oldenburg.de}{http://forum.odysseus.informatik.uni-oldenburg.de}\n\n");
-        builder.append("\\end{multicols}\n");
-        builder.append("\\end{document}\n");
+        builder.append("</body>\n");
+        builder.append("</html>\n");
     }
 
     private static void buildDatatypes(final StringBuilder builder) {
-        builder.append("\\section{Datatypes}\n");
+        builder.append("<h2>Datatypes</h2>\n");
+        builder.append("<ul>\n");
         if (Activator.getExecutor() != null) {
             List<SDFDatatype> datatypes = new ArrayList<>(Activator.getExecutor().getRegisteredDatatypes(Activator.getSession()));
             Collections.sort(datatypes, new Comparator<SDFDatatype>() {
@@ -240,59 +168,68 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
                 }
             });
             for (final SDFDatatype datatype : datatypes) {
-                builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(datatype.getQualName().toUpperCase())).append("}\\\\\n");
+                builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(datatype.getQualName().toUpperCase())).append("</li>\n");
             }
         }
+        builder.append("</ul>\n");
     }
 
     private static void buildMetadatas(final StringBuilder builder) {
-        builder.append("\\section{Metadata}\n");
+        builder.append("<h2>Metadata</h2>\n");
+        builder.append("<ul>\n");
         if (Activator.getExecutor() != null) {
             List<String> metadatas = new ArrayList<>(MetadataRegistry.getNames());
             Collections.sort(metadatas);
             for (final String metadata : metadatas) {
-                builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(metadata.toUpperCase())).append("}\\\\\n");
+                builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(metadata.toUpperCase())).append("</li>\n");
             }
         }
+        builder.append("</ul>\n");
     }
 
     private static void buildScheduling(final StringBuilder builder) {
-        builder.append("\\section{Scheduling}\n");
-        GenerateCheatSheetCommand.buildSchedulers(builder);
-        GenerateCheatSheetCommand.buildSchedulingStrategies(builder);
+        builder.append("<h2>Scheduling</h2>\n");
+        GenerateHTMLCheatSheetCommand.buildSchedulers(builder);
+        GenerateHTMLCheatSheetCommand.buildSchedulingStrategies(builder);
     }
 
     private static void buildSchedulers(final StringBuilder builder) {
-        builder.append("\\subsection{Schedulers}\n");
+        builder.append("<h3>Schedulers</h3>\n");
+        builder.append("<ul>\n");
         if (Activator.getExecutor() != null) {
             List<String> schedulers = new ArrayList<>(Activator.getExecutor().getRegisteredSchedulers(Activator.getSession()));
             Collections.sort(schedulers);
             for (final String scheduler : schedulers) {
-                builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(scheduler.toUpperCase())).append("}\\\\\n");
+                builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(scheduler.toUpperCase())).append("</li>\n");
             }
         }
+        builder.append("</ul>\n");
     }
 
     private static void buildSchedulingStrategies(final StringBuilder builder) {
-        builder.append("\\subsection{Scheduling Strategies}\n");
+        builder.append("<h3>Scheduling Strategies</h3>\n");
+        builder.append("<ul>\n");
         if (Activator.getExecutor() != null) {
             List<String> schedulingStrategies = new ArrayList<>(Activator.getExecutor().getRegisteredSchedulingStrategies(Activator.getSession()));
             Collections.sort(schedulingStrategies);
             for (final String schedulingStrategy : schedulingStrategies) {
-                builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(schedulingStrategy.toUpperCase())).append("}\\\\\n");
+                builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(schedulingStrategy.toUpperCase())).append("</li>\n");
             }
         }
+        builder.append("</ul>\n");
     }
 
     private static void buildBufferPlacementStrategies(final StringBuilder builder) {
-        builder.append("\\section{Buffer Placement Strategies}\n");
+        builder.append("<h2>Buffer Placement Strategies</h2>\n");
+        builder.append("<ul>\n");
         if (Activator.getExecutor() != null) {
             List<String> bufferPlacementStrategies = new ArrayList<>(Activator.getExecutor().getRegisteredBufferPlacementStrategiesIDs(Activator.getSession()));
             Collections.sort(bufferPlacementStrategies);
             for (final String bufferPlacementStrategy : bufferPlacementStrategies) {
-                builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(bufferPlacementStrategy.toUpperCase())).append("}\\\\\n");
+                builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(bufferPlacementStrategy.toUpperCase())).append("</li>\n");
             }
         }
+        builder.append("</ul>\n");
     }
 
     private static void buildPQLOperators(final StringBuilder builder) {
@@ -313,7 +250,7 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
             List<String> sortedCategories = new ArrayList<>(categories.keySet());
             Collections.sort(sortedCategories);
             for (String category : sortedCategories) {
-                builder.append("\\section{").append(category.substring(0, 1).toUpperCase()).append(category.substring(1).toLowerCase()).append(" Operators}\n");
+                builder.append("<h2>").append(category.substring(0, 1).toUpperCase()).append(category.substring(1).toLowerCase()).append(" Operators</h2>\n");
 
                 Collections.sort(categories.get(category), new Comparator<LogicalOperatorInformation>() {
 
@@ -324,65 +261,63 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
 
                 });
                 for (final LogicalOperatorInformation operator : categories.get(category)) {
-                    builder.append("\\subsection{").append(GenerateCheatSheetCommand.sanitize(operator.getOperatorName().toUpperCase()));
+                    builder.append("<h3>").append(GenerateHTMLCheatSheetCommand.sanitize(operator.getOperatorName().toUpperCase()));
                     if (operator.isDeprecated()) {
-                        builder.append(" \\textit{(Deprecated)}");
+                        builder.append(" <i>(Deprecated)</i>");
                     }
-                    builder.append("}\n");
-                    builder.append(GenerateCheatSheetCommand.sanitize(operator.getDoc())).append("\n");
+                    builder.append("</h3>\n");
+                    builder.append("<p>").append(GenerateHTMLCheatSheetCommand.sanitize(operator.getDoc())).append("</p>\n");
                     String len = "";
                     for (final LogicalParameterInformation parameter : operator.getParameters()) {
                         if (parameter.getName().length() > len.length()) {
-                            len = GenerateCheatSheetCommand.sanitize(parameter.getName());
+                            len = GenerateHTMLCheatSheetCommand.sanitize(parameter.getName());
                         }
                     }
-                    builder.append("\\settowidth{\\MyLen}{\\texttt{").append(len).append("} }\n");
-                    builder.append("\\begin{tabular}{@{}p{\\the\\MyLen}@{}p{\\linewidth-\\the\\MyLen}@{}}\n");
-
+                    builder.append("<dl>\n");
                     for (final LogicalParameterInformation parameter : operator.getParameters()) {
                         if ((!parameter.getName().equalsIgnoreCase("NAME")) && (!parameter.getName().equalsIgnoreCase("ID")) && (!parameter.getName().equalsIgnoreCase("DESTINATION"))) {
                             if (!parameter.getDoc().equalsIgnoreCase("No description")) {
-                                builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(parameter.getName())).append("}  & ")
-                                        .append(GenerateCheatSheetCommand.sanitize(parameter.getDoc())).append(" \\\\\n");
+                                builder.append("<dt>").append(GenerateHTMLCheatSheetCommand.sanitize(parameter.getName())).append("</dt><dd>")
+                                        .append(GenerateHTMLCheatSheetCommand.sanitize(parameter.getDoc())).append("</dd>\n");
                             }
                             else {
-                                builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(parameter.getName())).append("}  & -- \\\\\n");
+                                builder.append("<dt>").append(GenerateHTMLCheatSheetCommand.sanitize(parameter.getName())).append("</dt><dd> -- </dd>\n");
                             }
                         }
                     }
 
-                    builder.append("\\end{tabular}\n");
+                    builder.append("</dl>\n");
                 }
             }
         }
     }
 
     private static void buildAggregationFunctions(final StringBuilder builder) {
-        builder.append("\\section{Aggregates}\n");
-        builder.append("\\subsection{Example}\n");
-        builder.append("\\begin{verbatim}\n");
+        builder.append("<h2>Aggregates</h2>\n");
+        builder.append("<h3>Example</h3>\n");
+        builder.append("<pre class='brush: pql'>\n");
         builder.append("aggregate = AGGREGATE({',\n");
         builder.append("            group_by = ['y'],\n");
         builder.append("            aggregations=[\n");
         builder.append("              ['SUM', 'x', 'sum_x', 'double']\n");
         builder.append("             ]\n");
         builder.append("            }, input)\n");
-        builder.append("\\end{verbatim}\n\n");
+        builder.append("</pre>\n\n");
 
-        builder.append("\\subsection{Functions}\n");
+        builder.append("<h3>Functions</h3>\n");
 
         final List<String> functions = new ArrayList<>(AggregateFunctionBuilderRegistry.getFunctionNames(Tuple.class));
         Collections.sort(functions);
-        builder.append("\\begin{multicols}{2}\n");
+        builder.append("<table class='table  table-striped'>\n");
         for (final String function : functions) {
-            builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(function.toUpperCase())).append("}\\\\\n");
+            builder.append("<tr><td>").append(GenerateHTMLCheatSheetCommand.sanitize(function.toUpperCase())).append("</td></tr>\n");
         }
-        builder.append("\\end{multicols}\n\n");
+        builder.append("</table>\n\n");
 
     }
 
     private static void buildMEPFunctions(final StringBuilder builder) {
-        builder.append("\\section{Functions}\n");
+        builder.append("<h2>Functions</h2>\n");
         final List<FunctionSignature> functionSignatures = new ArrayList<>(MEP.getFunctions());
         Collections.sort(functionSignatures, new Comparator<FunctionSignature>() {
 
@@ -416,13 +351,14 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
         final List<String> packages = new ArrayList<>(functions.keySet());
         Collections.sort(packages);
         for (final String packageName : packages) {
-            builder.append("\\subsection{").append(packageName).append("}\n");
+            builder.append("<h3>").append(packageName).append("</h3>\n");
             String len = "";
             for (final IFunction<?> function : functions.get(packageName)) {
                 if (function.getSymbol().length() > len.length()) {
-                    len = GenerateCheatSheetCommand.sanitize(function.getSymbol());
+                    len = GenerateHTMLCheatSheetCommand.sanitize(function.getSymbol());
                 }
             }
+            builder.append("<table class='table  table-striped'>\n");
             for (final IFunction<?> function : functions.get(packageName)) {
                 final String name = function.getSymbol();
                 final String returnType = function.getReturnType().getQualName();
@@ -432,15 +368,18 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
                     if (i > 0) {
                         sb.append(", ");
                     }
-                    sb.append(GenerateCheatSheetCommand.concatDatatypes(function.getAcceptedTypes(i)));
+                    sb.append(GenerateHTMLCheatSheetCommand.concatDatatypes(function.getAcceptedTypes(i)));
                 }
 
-                builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(name)).append("(\\textit{").append(GenerateCheatSheetCommand.sanitize(sb.toString())).append("})}");
-                builder.append(" $\\rightarrow$ ").append(GenerateCheatSheetCommand.sanitize(returnType)).append("\\\\\n");
+                builder.append("<tr><td>").append(GenerateHTMLCheatSheetCommand.sanitize(name)).append("</td><td>").append(GenerateHTMLCheatSheetCommand.sanitize(sb.toString())).append("</td>");
+                builder.append("<td>").append(GenerateHTMLCheatSheetCommand.sanitize(returnType)).append("</td></tr>\n");
             }
+            builder.append("</table>\n");
+
         }
 
-        builder.append("\\section{Symbols}\n");
+        builder.append("<h2>Symbols</h2>\n");
+        builder.append("<table class='table  table-striped'>\n");
         for (final IFunction<?> symbol : symbols) {
             final String name = symbol.getSymbol();
             final String returnType = symbol.getReturnType().getQualName();
@@ -449,81 +388,85 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
                 if (i > 0) {
                     sb.append(", ");
                 }
-                sb.append(GenerateCheatSheetCommand.concatDatatypes(symbol.getAcceptedTypes(i)));
+                sb.append(GenerateHTMLCheatSheetCommand.concatDatatypes(symbol.getAcceptedTypes(i)));
             }
 
-            builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(name)).append("(\\textit{").append(GenerateCheatSheetCommand.sanitize(sb.toString())).append("})}");
-            builder.append(" $\\rightarrow$ ").append(GenerateCheatSheetCommand.sanitize(returnType)).append("\\\\\n");
+            builder.append("<tr><td>").append(GenerateHTMLCheatSheetCommand.sanitize(name)).append("</td><td>").append(GenerateHTMLCheatSheetCommand.sanitize(sb.toString())).append("</td>");
+            builder.append("<td>").append(GenerateHTMLCheatSheetCommand.sanitize(returnType)).append("</td></tr>\n");
         }
+        builder.append("</table>\n");
+
     }
 
     private static void buildHandlers(final StringBuilder builder) {
-        builder.append("\\section{Handlers}\n");
-        GenerateCheatSheetCommand.buildDataHandlers(builder);
-        GenerateCheatSheetCommand.buildProtocolHandlers(builder);
-        GenerateCheatSheetCommand.buildTransportHandlers(builder);
+        builder.append("<h2>Handlers</h2>\n");
+        GenerateHTMLCheatSheetCommand.buildDataHandlers(builder);
+        GenerateHTMLCheatSheetCommand.buildProtocolHandlers(builder);
+        GenerateHTMLCheatSheetCommand.buildTransportHandlers(builder);
     }
 
     private static void buildDataHandlers(final StringBuilder builder) {
-        builder.append("\\subsection{Data Handlers}\n");
+        builder.append("<h3>Data Handlers</h3>\n");
         final List<String> datas = new ArrayList<>(DataHandlerRegistry.getHandlerNames());
         Collections.sort(datas);
-        builder.append("\\begin{multicols}{2}\n");
+        builder.append("<ul>\n");
         for (final String data : datas) {
-            builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(data.toUpperCase())).append("}\\\\\n");
+            builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(data.toUpperCase())).append("</li>\n");
         }
-        builder.append("\\end{multicols}\n\n");
+        builder.append("</ul>\n\n");
     }
 
     private static void buildProtocolHandlers(final StringBuilder builder) {
-        builder.append("\\subsection{Protocol Handlers}\n");
+        builder.append("<h3>Protocol Handlers</h3>\n");
         final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.getHandlerNames());
         Collections.sort(protocols);
-        builder.append("\\begin{multicols}{2}\n");
+        builder.append("<ul>\n");
         for (final String protocol : protocols) {
-            builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(protocol.toUpperCase())).append("}\\\\\n");
+            builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(protocol.toUpperCase())).append("</li>\n");
         }
-        builder.append("\\end{multicols}\n\n");
+        builder.append("</ul>\n\n");
     }
 
     private static void buildTransportHandlers(final StringBuilder builder) {
-        builder.append("\\subsection{Transport Handlers}\n");
+        builder.append("<h3>Transport Handlers</h3>\n");
         final List<String> transports = new ArrayList<>(TransportHandlerRegistry.getHandlerNames());
         Collections.sort(transports);
-        builder.append("\\begin{multicols}{2}\n");
+        builder.append("<ul>\n");
         for (final String transport : transports) {
-            builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(transport.toUpperCase())).append("}\\\\\n");
+            builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(transport.toUpperCase())).append("</li>\n");
         }
-        builder.append("\\end{multicols}\n\n");
+        builder.append("</ul>\n\n");
     }
 
     private static void buildOdysseusScript(final StringBuilder builder) {
-        builder.append("\\section{Odysseus Script}\n");
+        builder.append("<h2>Odysseus Script</h2>\n");
 
-        builder.append("\\subsection{Commands}\n");
+        builder.append("<h3>Commands</h3>\n");
         final OdysseusScriptParser parser = new OdysseusScriptParser();
         final List<String> commands = new ArrayList<>(parser.getKeywordNames());
         Collections.sort(commands);
-        builder.append("\\begin{multicols}{2}\n");
+        builder.append("<ul>\n");
         for (final String command : commands) {
-            builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(command.toUpperCase())).append("}\\\\\n");
+            builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(command.toUpperCase())).append("</li>\n");
         }
-        builder.append("\\end{multicols}\n\n");
+        builder.append("</ul>\n\n");
 
-        builder.append("\\subsection{Constants}\n");
+        builder.append("<h3>Constants</h3>\n");
         final List<String> constants = new ArrayList<>();
         for (final String key : ReplacementProviderManager.generateProviderMap().keySet()) {
             constants.add(key.substring(1));
         }
         Collections.sort(constants);
+        builder.append("<ul>\n");
         for (final String constant : constants) {
-            builder.append("\\texttt{").append(GenerateCheatSheetCommand.sanitize(constant.toUpperCase())).append("}\\\\\n");
+            builder.append("<li>").append(GenerateHTMLCheatSheetCommand.sanitize(constant.toUpperCase())).append("</li>\n");
         }
+        builder.append("</ul>\n\n");
     }
 
     private static void buildSample(final StringBuilder builder) {
-        builder.append("\\section{Sample Odysseus\\ query}\n");
-        builder.append("\\begin{verbatim}\n");
+        builder.append("<h2>Sample Odysseus query</h2>\n");
+        builder.append("<pre class='brush: pql'>\n");
         builder.append("#PARSER PQL\n");
         builder.append("#ADDQUERY\n\n");
         builder.append("input = ACCESS({source='source',\n");
@@ -536,47 +479,45 @@ public class GenerateCheatSheetCommand extends AbstractHandler {
         builder.append("        schema=[['value','Double']]\n");
         builder.append("})\n");
         builder.append("output = MAP({expressions = ['value + 3']}, input)\n");
-        builder.append("\\end{verbatim}\n\n");
+        builder.append("</pre>\n\n");
     }
 
     private static void buildPQLGrammar(final StringBuilder builder) {
-        builder.append("\\section{Full Grammar of PQL}\n");
-        builder.append("\\settowidth{\\MyLen}{\\texttt{PARAMETERVALUE} }\n");
-        builder.append("\\begin{tabular}{@{}p{\\the\\MyLen}@{}p{\\linewidth-\\the\\MyLen}@{}}\n");
-        builder.append("\\texttt{QUERY}           & \\texttt{= ").append(sanitize("(STREAM | VIEW | SOURCE)+")).append("}\\\\\n");
-        builder.append("\\texttt{STREAM}          & \\texttt{= ").append(sanitize("STREAM \"=\" OPERATOR")).append("}\\\\\n");
-        builder.append("\\texttt{VIEW}            & \\texttt{= ").append(sanitize("VIEWNAME \":=\" OPERATOR")).append("}\\\\\n");
-        builder.append("\\texttt{SOURCE}          & \\texttt{= ").append(sanitize("SOURCENAME \"::=\" OPERATOR")).append("}\\\\\n");
-        builder.append("\\texttt{OPERATOR}        & \\texttt{= ").append(sanitize("QUERY | [OUTPUTPORT \":\"] OPERATORTYPE \"(\" (PARAMETERLIST [ \",\" OPERATORLIST ] | OPERATORLIST) \")\""))
-                .append("}\\\\\n");
-        builder.append("\\texttt{OPERATORLIST}    & \\texttt{= ").append(sanitize("[ OPERATOR (\",\" OPERATOR)* ]")).append("}\\\\\n");
-        builder.append("\\texttt{PARAMETERLIST}   & \\texttt{= ").append(sanitize("\"{\" PARAMETER (\",\" PARAMETER)* \"}\"")).append("}\\\\\n");
-        builder.append("\\texttt{PARAMETER}       & \\texttt{= ").append(sanitize("NAME \"=\" PARAMETERVALUE")).append("}\\\\\n");
-        builder.append("\\texttt{PARAMETERVALUE}  & \\texttt{= ").append(sanitize("LONG | DOUBLE | STRING | PREDICATE | LIST | MAP")).append("}\\\\\n");
-        builder.append("\\texttt{LIST}            & \\texttt{= ").append(sanitize("\"[\" [PARAMETERVALUE (\",\" PARAMETERVALUE)*] \"]\"")).append("}\\\\\n");
-        builder.append("\\texttt{MAP}             & \\texttt{= ").append(sanitize("\"[\" [MAPENTRY (\",\" MAPENTRY*] \"]\"")).append("}\\\\\n");
-        builder.append("\\texttt{MAPENTRY}        & \\texttt{= ").append(sanitize("PARAMETERVALUE \"=\" PARAMETERVALUE")).append("}\\\\\n");
-        builder.append("\\texttt{STRING}          & \\texttt{= ").append(sanitize("\"'\" [~']* \"'\"")).append("}\\\\\n");
-        builder.append("\\texttt{PREDICATE}       & \\texttt{= ").append(sanitize("PREDICATETYPE \"(\" STRING \")\"")).append("}\\\\\n");
-        builder.append("\\end{tabular}\n");
+        builder.append("<h2>Full Grammar of PQL</h2>\n");
+        builder.append("<table class='table  table-striped'>\n");
+        builder.append("<tr><td>QUERY           </td><td> <b>=</b> ").append(sanitize("(STREAM | VIEW | SOURCE)+")).append("</td></tr>\n");
+        builder.append("<tr><td>STREAM          </td><td> <b>=</b> ").append(sanitize("STREAM \"=\" OPERATOR")).append("</td></tr>\n");
+        builder.append("<tr><td>VIEW            </td><td> <b>=</b> ").append(sanitize("VIEWNAME \":=\" OPERATOR")).append("</td></tr>\n");
+        builder.append("<tr><td>SOURCE          </td><td> <b>=</b> ").append(sanitize("SOURCENAME \"::=\" OPERATOR")).append("</td></tr>\n");
+        builder.append("<tr><td>OPERATOR        </td><td> <b>=</b> ").append(sanitize("QUERY | [OUTPUTPORT \":\"] OPERATORTYPE \"(\" (PARAMETERLIST [ \",\" OPERATORLIST ] | OPERATORLIST) \")\""))
+                .append("</td></tr>\n");
+        builder.append("<tr><td>OPERATORLIST    </td><td> <b>=</b> ").append(sanitize("[ OPERATOR (\",\" OPERATOR)* ]")).append("</td></tr>\n");
+        builder.append("<tr><td>PARAMETERLIST   </td><td> <b>=</b> ").append(sanitize("\"{\" PARAMETER (\",\" PARAMETER)* \"}\"")).append("</td></tr>\n");
+        builder.append("<tr><td>PARAMETER       </td><td> <b>=</b> ").append(sanitize("NAME \"=\" PARAMETERVALUE")).append("</td></tr>\n");
+        builder.append("<tr><td>PARAMETERVALUE  </td><td> <b>=</b> ").append(sanitize("LONG | DOUBLE | STRING | PREDICATE | LIST | MAP")).append("</td></tr>\n");
+        builder.append("<tr><td>LIST            </td><td> <b>=</b> ").append(sanitize("\"[\" [PARAMETERVALUE (\",\" PARAMETERVALUE)*] \"]\"")).append("</td></tr>\n");
+        builder.append("<tr><td>MAP             </td><td> <b>=</b> ").append(sanitize("\"[\" [MAPENTRY (\",\" MAPENTRY*] \"]\"")).append("</td></tr>\n");
+        builder.append("<tr><td>MAPENTRY        </td><td> <b>=</b> ").append(sanitize("PARAMETERVALUE \"=\" PARAMETERVALUE")).append("</td></tr>\n");
+        builder.append("<tr><td>STRING          </td><td> <b>=</b> ").append(sanitize("\"'\" [~']* \"'\"")).append("</td></tr>\n");
+        builder.append("<tr><td>PREDICATE       </td><td> <b>=</b> ").append(sanitize("PREDICATETYPE \"(\" STRING \")\"")).append("</td></tr>\n");
+        builder.append("</table>\n");
     }
 
     private static String sanitize(final String string) {
         String result = string;
 
-        result = result.replace("\\", "\\textbackslash{}");
-        result = result.replace("{", "\\{");
-        result = result.replace("}", "\\}");
-        result = result.replace("$", "\\$");
-        result = result.replace("&", "\\&");
-        result = result.replace("#", "\\#");
-        result = result.replace("^", "\\textasciicircum{}");
-        result = result.replace("_", "\\_");
-        result = result.replace("~", "\\textasciitilde{}");
-        result = result.replace("%", "\\%");
-        result = result.replace("<", "\\textless{}");
-        result = result.replace(">", "\\textgreater{}");
-        result = result.replace("|", "\\textbar{}");
+        result = result.replace("\\", "&bsol;");
+        result = result.replace("{", "&lcub;");
+        result = result.replace("}", "&rcub;");
+        result = result.replace("$", "&dollar;");
+        result = result.replace("&", "&amp;");
+        result = result.replace("#", "&num;");
+        result = result.replace("^", "&caret;");
+        result = result.replace("~", "&tilde;");
+        result = result.replace("%", "&percnt;");
+        result = result.replace("<", "&lt;");
+        result = result.replace(">", "&gt;");
+        result = result.replace("|", "&verbar;");
 
         return result;
     }

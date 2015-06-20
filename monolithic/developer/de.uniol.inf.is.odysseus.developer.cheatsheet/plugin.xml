@@ -5,10 +5,16 @@
               <extension
          point="org.eclipse.ui.commands">
               <command
-            defaultHandler="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GenerateCheatSheetCommand"
-            id="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GenerateCheatSheetCommand"
-            name="Generate Cheat Sheet">
-      </command>     
+            defaultHandler="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GeneratePDFCheatSheetCommand"
+            id="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GeneratePDFCheatSheetCommand"
+            name="Generate Cheat Sheet (PDF)">   
+               </command>     
+            
+              <command
+            defaultHandler="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GenerateHTMLCheatSheetCommand"
+            id="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GenerateHTMLCheatSheetCommand"
+            name="Generate Cheat Sheet (HTML)">
+          </command>     
        </extension>
       
            <extension
@@ -17,8 +23,13 @@
             allPopups="false"
             locationURI="menu:help">
          <command
-               commandId="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GenerateCheatSheetCommand"
-               label="Generate Cheat Sheet"
+               commandId="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GeneratePDFCheatSheetCommand"
+               label="Generate Cheat Sheet (PDF)"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.developer.cheatsheet.command.GenerateHTMLCheatSheetCommand"
+               label="Generate Cheat Sheet (HTML)"
                style="push">
          </command>
       </menuContribution>
