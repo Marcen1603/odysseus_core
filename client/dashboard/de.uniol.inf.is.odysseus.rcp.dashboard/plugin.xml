@@ -151,19 +151,29 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="de.uniol.inf.is.odysseus.rcp.dashboard.perspectives.DashboardPerspective"
-            icon="icons/layout.png"
+            icon="icons/layout.gif"
             id="de.uniol.inf.is.odysseus.rcp.dashboard.perspectives.DashboardPerspective"
             name="Dashboard Designer">
       </perspective>
    </extension>
    <extension
          point="org.eclipse.ui.views">
-      <view
+      <view     
+            category="Odysseus"
             allowMultiple="true"
             class="de.uniol.inf.is.odysseus.rcp.dashboard.views.DashboardPartView"
             icon="icons/gear_shrink.png"
             id="de.uniol.inf.is.odysseus.rcp.views.DashboardPartView"
             name="Dashboard Part View"
+            restorable="true">
+      </view>
+      <view
+            category="Odysseus"
+            allowMultiple="true"
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.views.dashboardpart.DashboardPartView"
+            icon="icons/gear.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.dashboardpart.DashboardPartView"
+            name="Dashboard Parts"
             restorable="true">
       </view>
    </extension>
