@@ -18,6 +18,9 @@ public class MultithreadedOperatorSettings {
 	private int bufferSize = 0;
 
 	private String multithreadingStrategy = "";
+	
+	private String startParallelizationId;
+	private String endParallelizationId;
 
 	private Class<? extends AbstractFragmentAO> fragementationType;
 
@@ -70,7 +73,6 @@ public class MultithreadedOperatorSettings {
 			// get preferred fragmentation type for strategy
 			setFragementationType(strategy.getPreferredFragmentationType());
 		}
-
 	}
 
 	public DegreeOfParalleizationConstants getDegreeConstant() {
@@ -147,6 +149,22 @@ public class MultithreadedOperatorSettings {
 
 	public boolean hasMultithreadingStrategy() {
 		return !multithreadingStrategy.isEmpty();
+	}
+
+	public String getEndParallelizationId() {
+		return endParallelizationId;
+	}
+
+	public void setEndParallelizationId(String endParallelizationId) {
+		this.endParallelizationId = endParallelizationId;
+	}
+
+	public String getStartParallelizationId() {
+		return startParallelizationId;
+	}
+
+	public void setStartParallelizationId(String startParallelizationId) {
+		this.startParallelizationId = startParallelizationId;
 	}
 
 }

@@ -62,7 +62,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			.getLogger(InterOperatorParallelizationPreParserKeyword.class);
 	private static final int MIN_ATTRIBUTE_COUNT = 3;
 	private static final int MAX_ATTRIBUTE_COUNT = 5;
-	private static final String PATTERN = "<1..n Unique operator Ids> "
+	private static final String PATTERN = "<1..n Unique operator Ids or Operator-Pairs (startId:endId)> "
 			+ "<degree of parallelization or GLOBAL or AUTO> "
 			+ "<buffer-size or GLOBAL or AUTO>"
 			+ "<multithreading-strategy (optional)> "
@@ -93,91 +93,122 @@ public class InterOperatorParallelizationPreParserKeyword extends
 
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 
+		checkIfParallelizationKeywordExists(settings);
+
 		// split parameters on whitespaces
 		String[] keywordParameter = parameter.trim().split(" ");
 
+		List<MultithreadedOperatorSettings> operatorSettings = createOperatorSettingsFromIds(keywordParameter);
+
+		for (MultithreadedOperatorSettings operatorSetting : operatorSettings) {
+
+			addParallelizationDegree(keywordParameter, operatorSetting);
+
+			addBufferSize(keywordParameter, operatorSetting);
+
+			addStrategy(keywordParameter, operatorSetting);
+
+			addFragmentationType(keywordParameter, operatorSetting);
+		}
+
+		MultithreadedOperatorParameter mtOperatorParameter = getMultithreadedOperatorParameter(settings);
+
+		addSettingsToParameter(operatorSettings, mtOperatorParameter);
+
+		return null;
+	}
+
+	private List<MultithreadedOperatorSettings> createOperatorSettingsFromIds(
+			String[] keywordParameter) throws OdysseusScriptException {
 		// create operator settings
-		MultithreadedOperatorSettings operatorSettings = new MultithreadedOperatorSettings();
+		List<MultithreadedOperatorSettings> operatorSettings = new ArrayList<MultithreadedOperatorSettings>();
 
 		// 1. parameter: operatorId's
-		String[] splittedOperatorIDs = keywordParameter[0].trim().split(",");
-		List<String> operatorIds = new ArrayList<String>(
-				Arrays.asList(splittedOperatorIDs));
-		LOG.debug("Multithreading for operators with id: "
-				+ operatorIds.toString());
+		if (keywordParameter[0].contains("(")
+				&& keywordParameter[0].contains(")")) {
+			String[] splittedOperatorIDs = keywordParameter[0].trim()
+					.split(",");
+			for (int i = 0; i < splittedOperatorIDs.length; i++) {
+				String currentId = splittedOperatorIDs[i].trim();
+				if (currentId.startsWith("(") && currentId.endsWith(")")) {
+					// we have an id pair, split it on :
+					currentId = currentId.substring(1, currentId.length()-1);
+					String[] currentIdPair = currentId.split(":");
+					if (currentIdPair.length == 2) {
+						MultithreadedOperatorSettings settingsForId = new MultithreadedOperatorSettings();
+						settingsForId
+								.setStartParallelizationId(currentIdPair[0]);
+						settingsForId.setEndParallelizationId(currentIdPair[1]);
+						operatorSettings.add(settingsForId);
+					} else {
+						throw new OdysseusScriptException(
+								"Definition of ids has an invalid structure");
+					}
+				} else if (!currentId.contains("(") && !currentId.contains(")")) {
+					// we have an single id
+					MultithreadedOperatorSettings settingsForId = new MultithreadedOperatorSettings();
+					settingsForId.setStartParallelizationId(currentId);
+					operatorSettings.add(settingsForId);
+				} else {
+					throw new OdysseusScriptException(
+							"Definition of ids has an invalid structure");
+				}
+			}
 
-		// 2. parameter: degree of parallelization for defined operators
-		String degreeOfParallelizationString = keywordParameter[1];
-		try {
-			int degreeOfParallelization = Integer
-					.parseInt(degreeOfParallelizationString);
-			if (degreeOfParallelization < 1) {
+		} else if (!keywordParameter[0].contains("(")
+				&& !keywordParameter[0].contains(")")) {
+			String[] splittedOperatorIDs = keywordParameter[0].trim()
+					.split(",");
+			for (String operatorId : Arrays.asList(splittedOperatorIDs)) {
+				MultithreadedOperatorSettings settingsForId = new MultithreadedOperatorSettings();
+				settingsForId.setStartParallelizationId(operatorId);
+				operatorSettings.add(settingsForId);
+			}
+		} else {
+			throw new OdysseusScriptException(
+					"Definition of ids has an invalid structure");
+		}
+		return operatorSettings;
+	}
+
+	private void addSettingsToParameter(
+			List<MultithreadedOperatorSettings> operatorSettings,
+			MultithreadedOperatorParameter mtOperatorParameter)
+			throws OdysseusScriptException {
+		// check if settings for one of the given operatorIds already exists
+		for (MultithreadedOperatorSettings operatorSetting : operatorSettings) {
+			if (mtOperatorParameter.getOperatorIds().contains(
+					operatorSetting.getStartParallelizationId())) {
 				throw new OdysseusScriptException(
-						"Value for degreeOfParallelization is not valid. Only positive integer values >= 1 or constant AUTO is allowed.");
-			}
-			if (degreeOfParallelization > PerformanceDetectionHelper
-					.getNumberOfCores()) {
-				LOG.warn("Degree of parallelization is greater than available cores");
-			}
-			operatorSettings
-					.setDegreeOfParallelization(degreeOfParallelization);
-		} catch (NumberFormatException e) {
-			LOG.debug("Degree is no integer. Try to determine constant value");
-			DegreeOfParalleizationConstants degreeOfParalleizationConstant = DegreeOfParalleizationConstants
-					.getConstantByName(degreeOfParallelizationString);
-			if (degreeOfParalleizationConstant != null
-					&& degreeOfParalleizationConstant != DegreeOfParalleizationConstants.USERDEFINED) {
-				operatorSettings
-						.setDegreeConstant(degreeOfParalleizationConstant);
+						"Multiple definition for operator with id: "
+								+ operatorSetting.getStartParallelizationId());
 			} else {
-				throw new OdysseusScriptException(
-						"DegreeOfParallelization is not an integer or an valid constant: ");
+				mtOperatorParameter.addSettingsForOperator(
+						operatorSetting.getStartParallelizationId(),
+						operatorSetting);
 			}
 		}
+	}
 
-		// 3. parameter: buffer-size
-		String buffersizeString = keywordParameter[2];
-		try {
-			int buffersize = Integer.parseInt(buffersizeString);
-			operatorSettings.setBufferSize(buffersize);
-		} catch (NumberFormatException e) {
-			LOG.debug("Buffersize is no integer. Try to determine constant value");
-			BufferSizeConstants buffersizeConstant = BufferSizeConstants
-					.getConstantByName(buffersizeString);
-			if (buffersizeConstant != null
-					&& buffersizeConstant != BufferSizeConstants.USERDEFINED) {
-				operatorSettings.setBufferSizeConstant(buffersizeConstant);
-			} else {
-				throw new OdysseusScriptException(
-						"Buffersize is not an integer or an valid constant: ");
+	private MultithreadedOperatorParameter getMultithreadedOperatorParameter(
+			List<IQueryBuildSetting<?>> settings) {
+		// get parameter from settings or create new one if not exists
+		MultithreadedOperatorParameter mtOperatorParameter = null;
+		for (IQueryBuildSetting<?> setting : settings) {
+			if (setting.getClass().equals(MultithreadedOperatorParameter.class)) {
+				mtOperatorParameter = (MultithreadedOperatorParameter) setting;
 			}
 		}
-
-		// 4. parameter (optional): multithreading-strategy
-		if (keywordParameter.length >= 4) {
-			String strategyName = keywordParameter[3];
-			if (MultithreadedTransformationStrategyRegistry
-					.isValidStrategyName(strategyName)) {
-				operatorSettings.setMultithreadingStrategy(strategyName);
-			} else {
-				throw new OdysseusScriptException(
-						"Value for Tranformation strategy is not valid");
-			}
+		if (mtOperatorParameter == null) {
+			mtOperatorParameter = new MultithreadedOperatorParameter();
+			settings.add(mtOperatorParameter);
 		}
+		return mtOperatorParameter;
+	}
 
-		// 5. parameter (optional): fragmentation-type
-		if (keywordParameter.length == 5) {
-			String dataFragmentation = keywordParameter[4];
-			if (FragmentationTypeHelper
-					.isValidFragmentationType(dataFragmentation)) {
-				operatorSettings.setFragementationType(dataFragmentation);
-			} else {
-				throw new OdysseusScriptException(
-						"Value for fragmentation type is not valid");
-			}
-
-		}
-
+	private void checkIfParallelizationKeywordExists(
+			List<IQueryBuildSetting<?>> settings)
+			throws OdysseusScriptException {
 		// check if #PARALLELIZATION keyword exists and type is set to
 		// inter-operator
 		boolean parallelizationHandlerExists = false;
@@ -197,34 +228,95 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			}
 		}
 		if (!parallelizationHandlerExists) {
-			throw new OdysseusScriptException("#PARALLELIZATION keyword is missing or placed after #INTEROPERATORPARALLELIZATION keyword.");
+			throw new OdysseusScriptException(
+					"#PARALLELIZATION keyword is missing or placed after #INTEROPERATORPARALLELIZATION keyword.");
 		}
+	}
 
-		// get parameter from settings or create new one if not exists
-		MultithreadedOperatorParameter mtOperatorParameter = null;
-		for (IQueryBuildSetting<?> setting : settings) {
-			if (setting.getClass().equals(MultithreadedOperatorParameter.class)) {
-				mtOperatorParameter = (MultithreadedOperatorParameter) setting;
-			}
-		}
-		if (mtOperatorParameter == null) {
-			mtOperatorParameter = new MultithreadedOperatorParameter();
-			settings.add(mtOperatorParameter);
-		}
-
-		// check if settings for one of the given operatorIds already exists
-		for (String operatorId : operatorIds) {
-			if (mtOperatorParameter.getOperatorIds().contains(operatorId)) {
+	private void addFragmentationType(String[] keywordParameter,
+			MultithreadedOperatorSettings operatorSetting)
+			throws OdysseusScriptException {
+		// 5. parameter (optional): fragmentation-type
+		if (keywordParameter.length == 5) {
+			String dataFragmentation = keywordParameter[4];
+			if (FragmentationTypeHelper
+					.isValidFragmentationType(dataFragmentation)) {
+				operatorSetting.setFragementationType(dataFragmentation);
+			} else {
 				throw new OdysseusScriptException(
-						"Multiple definition for operator with id: "
-								+ operatorId);
+						"Value for fragmentation type is not valid");
+			}
+
+		}
+	}
+
+	private void addStrategy(String[] keywordParameter,
+			MultithreadedOperatorSettings operatorSetting)
+			throws OdysseusScriptException {
+		// 4. parameter (optional): multithreading-strategy
+		if (keywordParameter.length >= 4) {
+			String strategyName = keywordParameter[3];
+			if (MultithreadedTransformationStrategyRegistry
+					.isValidStrategyName(strategyName)) {
+				operatorSetting.setMultithreadingStrategy(strategyName);
+			} else {
+				throw new OdysseusScriptException(
+						"Value for Tranformation strategy is not valid");
 			}
 		}
+	}
 
-		// add settings for each operatorId
-		mtOperatorParameter.addSettingsForOperators(operatorIds,
-				operatorSettings);
+	private void addBufferSize(String[] keywordParameter,
+			MultithreadedOperatorSettings operatorSetting)
+			throws OdysseusScriptException {
+		// 3. parameter: buffer-size
+		String buffersizeString = keywordParameter[2];
+		try {
+			int buffersize = Integer.parseInt(buffersizeString);
+			operatorSetting.setBufferSize(buffersize);
+		} catch (NumberFormatException e) {
+			LOG.debug("Buffersize is no integer. Try to determine constant value");
+			BufferSizeConstants buffersizeConstant = BufferSizeConstants
+					.getConstantByName(buffersizeString);
+			if (buffersizeConstant != null
+					&& buffersizeConstant != BufferSizeConstants.USERDEFINED) {
+				operatorSetting.setBufferSizeConstant(buffersizeConstant);
+			} else {
+				throw new OdysseusScriptException(
+						"Buffersize is not an integer or an valid constant: ");
+			}
+		}
+	}
 
-		return null;
+	private void addParallelizationDegree(String[] keywordParameter,
+			MultithreadedOperatorSettings operatorSetting)
+			throws OdysseusScriptException {
+		// 2. parameter: degree of parallelization for defined operators
+		String degreeOfParallelizationString = keywordParameter[1];
+		try {
+			int degreeOfParallelization = Integer
+					.parseInt(degreeOfParallelizationString);
+			if (degreeOfParallelization < 1) {
+				throw new OdysseusScriptException(
+						"Value for degreeOfParallelization is not valid. Only positive integer values >= 1 or constant AUTO is allowed.");
+			}
+			if (degreeOfParallelization > PerformanceDetectionHelper
+					.getNumberOfCores()) {
+				LOG.warn("Degree of parallelization is greater than available cores");
+			}
+			operatorSetting.setDegreeOfParallelization(degreeOfParallelization);
+		} catch (NumberFormatException e) {
+			LOG.debug("Degree is no integer. Try to determine constant value");
+			DegreeOfParalleizationConstants degreeOfParalleizationConstant = DegreeOfParalleizationConstants
+					.getConstantByName(degreeOfParallelizationString);
+			if (degreeOfParalleizationConstant != null
+					&& degreeOfParalleizationConstant != DegreeOfParalleizationConstants.USERDEFINED) {
+				operatorSetting
+						.setDegreeConstant(degreeOfParalleizationConstant);
+			} else {
+				throw new OdysseusScriptException(
+						"DegreeOfParallelization is not an integer or an valid constant: ");
+			}
+		}
 	}
 }
