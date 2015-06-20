@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.IStatefulFunction;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class SDFAttributeHelper {
@@ -115,7 +116,7 @@ public class SDFAttributeHelper {
 						resolver, joinOperator);
 			}
 		} else if ((expression.isFunction())
-				&& (expression.toFunction().getSymbol().equalsIgnoreCase("="))) {
+				&& (symbol.equalsIgnoreCase("="))) {
 			final IBinaryOperator<?> eq = (IBinaryOperator<?>) expression;
 			final IExpression<?> arg1 = eq.getArgument(0);
 			final IExpression<?> arg2 = eq.getArgument(1);
@@ -166,5 +167,23 @@ public class SDFAttributeHelper {
 		}
 
 		return attributes;
+	}
+	
+	public static boolean expressionContainsStatefulFunction(
+			IExpression<?> mepExpression) {
+		if (mepExpression.isFunction()) {
+			if (mepExpression instanceof IStatefulFunction) {
+				return true;
+			} else {
+				final IBinaryOperator<?> binaryOperator = (IBinaryOperator<?>) mepExpression;
+				if (expressionContainsStatefulFunction(binaryOperator
+						.getArgument(0))
+						|| expressionContainsStatefulFunction(binaryOperator
+								.getArgument(0))) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

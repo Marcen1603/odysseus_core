@@ -21,6 +21,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.Iterator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -38,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
  * 
  */
 @LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "JOIN", doc = "Operator to combine two datastreams based on the predicate", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Join+operator", category = { LogicalOperatorCategory.BASE })
-public class JoinAO extends BinaryLogicalOp implements IHasPredicate {
+public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulAO {
 
 	private static final long serialVersionUID = 3710951139395164614L;
 

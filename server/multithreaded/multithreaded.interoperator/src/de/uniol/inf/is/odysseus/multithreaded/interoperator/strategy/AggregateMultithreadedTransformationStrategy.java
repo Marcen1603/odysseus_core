@@ -63,6 +63,8 @@ public class AggregateMultithreadedTransformationStrategy extends
 			return false;
 		}
 		
+		checkIfWayToEndPointIsValid(operator, settingsForOperator, false);
+		
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();

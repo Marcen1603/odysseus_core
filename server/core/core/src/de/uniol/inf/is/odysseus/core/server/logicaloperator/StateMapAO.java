@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -28,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Marco Grawunder
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "STATEMAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: StateMap can use history information. To access the last n.th version of an attribute use \"__last_n.\" Mind the two \"_\" at the beginning!", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/StateMap+operator", category = { LogicalOperatorCategory.BASE })
-public class StateMapAO extends MapAO {
+public class StateMapAO extends MapAO implements IStatefulAO{
 
 	private static final long serialVersionUID = 1695948732660010522L;
 	private boolean allowNull = false;

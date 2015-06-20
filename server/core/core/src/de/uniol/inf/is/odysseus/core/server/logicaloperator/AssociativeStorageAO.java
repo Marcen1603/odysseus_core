@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -23,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * 
  */
 @LogicalOperator(name = "ASSOCIATIVESTORAGE", minInputPorts = 1, maxInputPorts = 1, doc = "This operator stores streaming data in an associative storage", category = { LogicalOperatorCategory.ADVANCED })
-public class AssociativeStorageAO extends AbstractLogicalOperator {
+public class AssociativeStorageAO extends AbstractLogicalOperator implements IStatefulAO{
     /**
      * 
      */

@@ -52,6 +52,8 @@ public class JoinMultithreadedTransformationStrategy extends
 			return false;
 		}
 		
+		checkIfWayToEndPointIsValid(operator, settingsForOperator, true);
+		
 		JoinAO joinOperator = (JoinAO) operator;
 		
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();

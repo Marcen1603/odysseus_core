@@ -40,10 +40,12 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 	@Override
 	public boolean transform(ILogicalOperator operator,
 			MultithreadedOperatorSettings settingsForOperator) {
-		if (!super.areSettingsValid(settingsForOperator)){
+		if (!super.areSettingsValid(settingsForOperator)) {
 			return false;
 		}
-		
+
+		checkIfWayToEndPointIsValid(operator, settingsForOperator, true);
+
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
@@ -61,8 +63,8 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 		try {
 			fragmentAO = createFragmentAO(
 					settingsForOperator.getFragementationType(),
-					settingsForOperator.getDegreeOfParallelization(), "", groupingAttributes,
-					null, null);
+					settingsForOperator.getDegreeOfParallelization(), "",
+					groupingAttributes, null, null);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 			return false;
@@ -84,7 +86,6 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 			target.unsubscribeFromSource(downstreamOperatorSubscription);
 		}
 
-		
 		if (!groupingAttributes.isEmpty()) {
 			// subscribe new operator
 			for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {

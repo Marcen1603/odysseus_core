@@ -8,11 +8,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
-public class AggregateReplicationTransformationStrategy extends AbstractMultithreadedTransformationStrategy<AggregateAO>{
+public class ReplicationTransformationStrategy extends AbstractMultithreadedTransformationStrategy<AggregateAO>{
 
 	@Override
 	public String getName() {
-		return "AggregateReplicationTransformationStrategy";
+		return "ReplicationTransformationStrategy";
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 @LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "PREDICATEWINDOW", category = { LogicalOperatorCategory.BASE }, doc = "This is a predicated based window, set start and end condition with predicates.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/PredicateWindow", hidden = true)
-public class PredicateWindowAO extends AbstractWindowAO {
+public class PredicateWindowAO extends AbstractWindowAO implements IStatefulAO{
 
 	private static final long serialVersionUID = 8834015972527486443L;
 

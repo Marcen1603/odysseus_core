@@ -19,6 +19,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -29,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  */
 @LogicalOperator(minInputPorts = 2, maxInputPorts = Integer.MAX_VALUE, name = "UNION", doc = "Merges different input streams. (Typically preserves input order. Depending on the processing model)", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Union+operator", category = {
         LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET })
-public class UnionAO extends BinaryLogicalOp {
+public class UnionAO extends BinaryLogicalOp implements IStatefulAO{
 
 	private static final long serialVersionUID = 2828756253165671692L;
 
