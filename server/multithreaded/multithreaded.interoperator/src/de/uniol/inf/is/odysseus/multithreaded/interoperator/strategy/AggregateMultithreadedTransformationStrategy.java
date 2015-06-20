@@ -59,21 +59,12 @@ public class AggregateMultithreadedTransformationStrategy extends
 	@Override
 	public boolean transform(ILogicalOperator operator,
 			MultithreadedOperatorSettings settingsForOperator) {
-		if (!super.areSettingsValid(settingsForOperator)){
+		if (!super.areSettingsValid(settingsForOperator)) {
 			return false;
 		}
-		
 		checkIfWayToEndPointIsValid(operator, settingsForOperator, false);
-		
+
 		AggregateAO aggregateOperator = (AggregateAO) operator;
-
-		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		upstreamOperatorSubscriptions.addAll(aggregateOperator
-				.getSubscribedToSource());
-
-		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		downstreamOperatorSubscriptions.addAll(aggregateOperator
-				.getSubscriptions());
 
 		// create fragment operator
 		AbstractFragmentAO fragmentAO;
@@ -91,17 +82,9 @@ public class AggregateMultithreadedTransformationStrategy extends
 			return false;
 		}
 
-		// remove subscriptions
-		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
-			ILogicalOperator target = upstreamOperatorSubscription.getTarget();
-			target.unsubscribeSink(upstreamOperatorSubscription);
-		}
-
-		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			ILogicalOperator target = downstreamOperatorSubscription
-					.getTarget();
-			target.unsubscribeFromSource(downstreamOperatorSubscription);
-		}
+		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		upstreamOperatorSubscriptions.addAll(aggregateOperator
+				.getSubscribedToSource());
 
 		// subscribe new operator
 		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
@@ -181,9 +164,20 @@ public class AggregateMultithreadedTransformationStrategy extends
 			newAggregateOperator.subscribeToSource(buffer, 0, 0,
 					buffer.getOutputSchema());
 
-			// subscribe union to new aggregate operator
-			union.subscribeToSource(newAggregateOperator, i, 0,
-					newAggregateOperator.getOutputSchema());
+			if (settingsForOperator.getEndParallelizationId() != null
+					&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
+				List<AbstractFragmentAO> fragments = new ArrayList<AbstractFragmentAO>();
+				fragments.add(fragmentAO);
+				ILogicalOperator lastParallelizedOperator = doPostParallelization(
+						aggregateOperator, newAggregateOperator,
+						settingsForOperator.getEndParallelizationId(), i, true,
+						fragments);
+				union.subscribeToSource(lastParallelizedOperator, i, 0,
+						lastParallelizedOperator.getOutputSchema());
+			} else {
+				union.subscribeToSource(newAggregateOperator, i, 0,
+						newAggregateOperator.getOutputSchema());
+			}
 		}
 
 		// create aggregate operator for combining partial aggregates
@@ -203,10 +197,27 @@ public class AggregateMultithreadedTransformationStrategy extends
 		combinePAAggregateOperator.subscribeToSource(union, 0, 0,
 				union.getOutputSchema());
 
+		
+		// get the last operator that need to be parallelized. if no end id is
+		// set, the given operator for transformation is selected
+		ILogicalOperator lastOperatorForParallelization = null;
+		if (settingsForOperator.getEndParallelizationId() != null
+				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
+			lastOperatorForParallelization = findOperatorWithId(
+					settingsForOperator.getEndParallelizationId(),
+					aggregateOperator);
+		} else {
+			lastOperatorForParallelization = aggregateOperator;
+		}
+
+		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		downstreamOperatorSubscriptions.addAll(lastOperatorForParallelization
+				.getSubscriptions());
+
 		// remove old subscription and subscribe new aggregate operator to
 		// existing downstream operators
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			aggregateOperator.unsubscribeSink(downstreamOperatorSubscription);
+			lastOperatorForParallelization.unsubscribeSink(downstreamOperatorSubscription);
 			downstreamOperatorSubscription.getTarget().subscribeToSource(
 					combinePAAggregateOperator,
 					downstreamOperatorSubscription.getSinkInPort(),

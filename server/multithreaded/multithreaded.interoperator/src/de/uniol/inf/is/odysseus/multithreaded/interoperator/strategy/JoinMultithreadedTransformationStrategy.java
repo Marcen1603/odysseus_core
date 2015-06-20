@@ -48,32 +48,12 @@ public class JoinMultithreadedTransformationStrategy extends
 	@Override
 	public boolean transform(ILogicalOperator operator,
 			MultithreadedOperatorSettings settingsForOperator) {
-		if (!super.areSettingsValid(settingsForOperator)){
+		if (!super.areSettingsValid(settingsForOperator)) {
 			return false;
 		}
-		
 		checkIfWayToEndPointIsValid(operator, settingsForOperator, true);
-		
+
 		JoinAO joinOperator = (JoinAO) operator;
-		
-		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		upstreamOperatorSubscriptions.addAll(joinOperator
-				.getSubscribedToSource());
-
-		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		downstreamOperatorSubscriptions.addAll(joinOperator.getSubscriptions());
-
-		// remove subscriptions
-		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
-			ILogicalOperator target = upstreamOperatorSubscription.getTarget();
-			target.unsubscribeSink(upstreamOperatorSubscription);
-		}
-
-		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			ILogicalOperator target = downstreamOperatorSubscription
-					.getTarget();
-			target.unsubscribeFromSource(downstreamOperatorSubscription);
-		}
 
 		Map<Integer, List<SDFAttribute>> attributes = new HashMap<Integer, List<SDFAttribute>>();
 		attributes = SDFAttributeHelper.getInstance()
@@ -81,6 +61,11 @@ public class JoinMultithreadedTransformationStrategy extends
 
 		int numberOfFragments = 0;
 		List<Pair<AbstractFragmentAO, Integer>> fragmentsSinkInPorts = new ArrayList<Pair<AbstractFragmentAO, Integer>>();
+		List<AbstractFragmentAO> fragments = new ArrayList<AbstractFragmentAO>(); 
+		
+		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		upstreamOperatorSubscriptions.addAll(joinOperator
+				.getSubscribedToSource());
 
 		for (Integer inputPort : attributes.keySet()) {
 			for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
@@ -112,6 +97,7 @@ public class JoinMultithreadedTransformationStrategy extends
 					pair.setE1(fragmentAO);
 					pair.setE2(upstreamOperatorSubscription.getSinkInPort());
 					fragmentsSinkInPorts.add(pair);
+					fragments.add(fragmentAO);
 
 					joinOperator
 							.unsubscribeFromSource(upstreamOperatorSubscription);
@@ -149,14 +135,41 @@ public class JoinMultithreadedTransformationStrategy extends
 
 				newJoinOperator.subscribeToSource(buffer, pair.getE2(), 0,
 						buffer.getOutputSchema());
-
+				
+			}
+			
+			if (settingsForOperator.getEndParallelizationId() != null
+					&& !settingsForOperator.getEndParallelizationId()
+					.isEmpty()) {
+				ILogicalOperator lastParallelizedOperator = doPostParallelization(
+						joinOperator, newJoinOperator,
+						settingsForOperator.getEndParallelizationId(), i,
+						true, fragments);
+				union.subscribeToSource(lastParallelizedOperator, i, 0,
+						lastParallelizedOperator.getOutputSchema());
+			} else {
 				union.subscribeToSource(newJoinOperator, i, 0,
 						newJoinOperator.getOutputSchema());
 			}
 		}
 
+		// get the last operator that need to be parallelized. if no end id is
+		// set, the given operator for transformation is selected
+		ILogicalOperator lastOperatorForParallelization = null;
+		if (settingsForOperator.getEndParallelizationId() != null
+				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
+			lastOperatorForParallelization = findOperatorWithId(
+					settingsForOperator.getEndParallelizationId(),
+					joinOperator);
+		} else {
+			lastOperatorForParallelization = joinOperator;
+		}
+
+		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		downstreamOperatorSubscriptions.addAll(lastOperatorForParallelization.getSubscriptions());
+
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			joinOperator.unsubscribeSink(downstreamOperatorSubscription);
+			lastOperatorForParallelization.unsubscribeSink(downstreamOperatorSubscription);
 			downstreamOperatorSubscription.getTarget().subscribeToSource(union,
 					downstreamOperatorSubscription.getSinkInPort(),
 					downstreamOperatorSubscription.getSourceOutPort(),

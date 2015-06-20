@@ -32,9 +32,10 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 				.getGenericSuperclass();
 		return (Class<T>) parameterizedType.getActualTypeArguments()[0];
 	}
-	
-	protected boolean areSettingsValid(MultithreadedOperatorSettings settingsForOperator){
-		if (settingsForOperator.getDegreeOfParallelization() == 1){
+
+	protected boolean areSettingsValid(
+			MultithreadedOperatorSettings settingsForOperator) {
+		if (settingsForOperator.getDegreeOfParallelization() == 1) {
 			return false;
 		}
 		return true;
@@ -48,7 +49,6 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 			IllegalAccessException {
 		AbstractFragmentAO fragmentAO = fragmentClass.newInstance();
 		fragmentAO.setNumberOfFragments(degreeOfParallelization);
-		
 
 		if (fragmentAO instanceof HashFragmentAO) {
 			HashFragmentAO hashFragmentAO = (HashFragmentAO) fragmentAO;
@@ -68,7 +68,7 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 			}
 		}
 		// set postfix
-		fragmentAO.setName(fragmentAO.getName()+namePostfix);
+		fragmentAO.setName(fragmentAO.getName() + namePostfix);
 
 		return fragmentAO;
 	}
@@ -95,12 +95,13 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 		walker.prefixWalk(logicalOperator, idVisitor);
 		return idVisitor.getResult().get(endParallelizationId);
 	}
-	
+
 	protected void checkIfWayToEndPointIsValid(
 			ILogicalOperator operatorForTransformation,
 			MultithreadedOperatorSettings settingsForOperator,
 			boolean aggregatesWithGroupingAllowed) {
-		if (!settingsForOperator.getEndParallelizationId().isEmpty()) {
+		if (settingsForOperator.getEndParallelizationId() != null
+				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
 			ILogicalOperator endOperator = findOperatorWithId(
 					settingsForOperator.getEndParallelizationId(),
 					operatorForTransformation);
@@ -115,11 +116,12 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 					if (currentOperator instanceof IStatefulAO) {
 						if (currentOperator instanceof AggregateAO) {
 							AggregateAO aggregateOperator = (AggregateAO) currentOperator;
-							if (!aggregateOperator.getGroupingAttributes()
-									.isEmpty()
-									&& !aggregatesWithGroupingAllowed) {
+							if ((!aggregateOperator.getGroupingAttributes()
+									.isEmpty() && !aggregatesWithGroupingAllowed)
+									|| aggregateOperator
+											.getGroupingAttributes().isEmpty()) {
 								throw new IllegalArgumentException(
-										"No aggregations with grouping allowed between start and end of parallelization");
+										"No aggregations allowed between start and end of parallelization for this strategy");
 							}
 						} else {
 							// stateful operators are not allowed
@@ -133,7 +135,8 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 							RelationalPredicate relPredicate = (RelationalPredicate) predicate;
 							IExpression<?> expression = relPredicate
 									.getExpression().getMEPExpression();
-							if (SDFAttributeHelper.expressionContainsStatefulFunction(expression)) {
+							if (SDFAttributeHelper
+									.expressionContainsStatefulFunction(expression)) {
 								// stateful functions not allowed
 								throw new IllegalArgumentException(
 										"No operators with stateful functions allowed between start and end of parallelization");
@@ -146,7 +149,8 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 						for (SDFExpression sdfExpression : expressionList) {
 							IExpression<?> mepExpression = sdfExpression
 									.getMEPExpression();
-							if (SDFAttributeHelper.expressionContainsStatefulFunction(mepExpression)) {
+							if (SDFAttributeHelper
+									.expressionContainsStatefulFunction(mepExpression)) {
 								// stateful functions not allowed
 								throw new IllegalArgumentException(
 										"No operators with stateful functions allowed between start and end of parallelization");
@@ -167,17 +171,82 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 						}
 					}
 
-					if (currentOperator.getUniqueIdentifier() != null){
-						if (currentOperator.getUniqueIdentifier().equalsIgnoreCase(
-								settingsForOperator.getEndParallelizationId())) {
+					if (currentOperator.getUniqueIdentifier() != null) {
+						if (currentOperator.getUniqueIdentifier()
+								.equalsIgnoreCase(
+										settingsForOperator
+												.getEndParallelizationId())) {
 							// all operators including end operator are valid,
 							// validation successful
 							return;
-						}						
+						}
 					}
 					currentOperator = getNextOperator(currentOperator);
 				}
 			}
 		}
+	}
+
+	protected ILogicalOperator doPostParallelization(
+			ILogicalOperator existingOperator, ILogicalOperator newOperator,
+			String endOperatorId, int iteration,
+			boolean modificationOfFragmentAttributesAllowed,
+			List<AbstractFragmentAO> fragments) {
+
+		ILogicalOperator lastClonedOperator = newOperator;
+		ILogicalOperator currentExistingOperator = getNextOperator(existingOperator);
+		while (currentExistingOperator != null) {
+
+			ILogicalOperator currentClonedOperator = currentExistingOperator
+					.clone();
+			currentClonedOperator.setName(currentClonedOperator.getName() + "_"
+					+ iteration);
+			currentClonedOperator.setUniqueIdentifier(currentClonedOperator
+					.getUniqueIdentifier() + "_" + iteration);
+			currentClonedOperator.subscribeToSource(lastClonedOperator, 0, 0,
+					lastClonedOperator.getOutputSchema());
+			// TODO maybe the existing operator has more than one input stream
+
+			// TODO does it make sense to add the attributes to fragmentation?
+			if (currentExistingOperator instanceof AggregateAO) {
+				AggregateAO aggregateOperator = (AggregateAO) currentExistingOperator;
+				if (modificationOfFragmentAttributesAllowed) {
+					for (AbstractFragmentAO fragment : fragments) {
+						if (fragment instanceof HashFragmentAO) {
+							HashFragmentAO hashFragment = (HashFragmentAO) fragment;
+
+							// check if the attributes exists in input schema
+							boolean fragmentSupportsAttributes = true;
+							for (SDFAttribute groupingAttribute : aggregateOperator
+									.getGroupingAttributes()) {
+								SDFAttribute findAttribute = hashFragment
+										.getInputSchema().findAttribute(
+												groupingAttribute.getURI());
+								if (findAttribute == null) {
+									fragmentSupportsAttributes = false;
+								}
+							}
+
+							if (fragmentSupportsAttributes) {
+								hashFragment.setAttributes(aggregateOperator
+										.getGroupingAttributes());
+							}
+						}
+					}
+				}
+			}
+
+			// if end operator is reached, break look and return last cloned
+			// operator
+			lastClonedOperator = currentClonedOperator;
+			if (currentExistingOperator.getUniqueIdentifier() != null) {
+				if (currentExistingOperator.getUniqueIdentifier()
+						.equalsIgnoreCase(endOperatorId)) {
+					break;
+				}
+			}
+			currentExistingOperator = getNextOperator(currentExistingOperator);
+		}
+		return lastClonedOperator;
 	}
 }
