@@ -27,7 +27,7 @@ public class EventListCell extends ListCell<Event> {
     public EventListCell() {
         super();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("machineEvent.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("event.fxml"));
         fxmlLoader.setController(this);
         try {
             root = fxmlLoader.load();

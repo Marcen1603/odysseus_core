@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
@@ -19,6 +20,8 @@ import java.util.*;
 
 public class MainController{
 
+    @FXML
+    TabPane mainTabPane;
 
     // Overview tab
     @FXML
@@ -61,10 +64,23 @@ public class MainController{
         // Events tab
         // ----------
         collectionEventList.setItems(DataHandler.getInstance().getObservableEventList());
-        collectionEventList.setCellFactory(listView -> new EventListCell());
+        collectionEventList.setCellFactory(listView -> {
+            // Select the first cell to not show an empty collection
+            if (collectionList.getItems().size() > 0 && collectionList.getSelectionModel().getSelectedItems().isEmpty()) {
+                collectionList.getSelectionModel().select(0);
+            }
+            return new EventListCell();
+        });
+
+        if (collectionList.getItems().size() > 0) {
+            collectionList.getSelectionModel().select(0);
+        }
     }
 
     public void updateCollectionView(Collection collection) {
+        // For the first click from the overview if the UI was not loaded before
+        if (collection == null)
+            return;
         // Just update the existing viewElements
         collectionName.setText(collection.getName());
         eventList.setItems(DataHandler.getInstance().getCollectionEvents(collection));
@@ -94,6 +110,14 @@ public class MainController{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void switchToCollection(Collection collection) {
+        // Switch to collection tab
+        mainTabPane.getSelectionModel().select(1);
+
+        // Select the right collection
+        collectionList.getSelectionModel().select(collection);
     }
 
 

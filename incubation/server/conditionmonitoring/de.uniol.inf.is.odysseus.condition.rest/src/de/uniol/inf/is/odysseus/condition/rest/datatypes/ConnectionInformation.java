@@ -5,11 +5,52 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.rest.socket.AttributeInformation;
 
 public class ConnectionInformation {
-	public String ip;
-	public int queryId;
-	public String queryName;
-	public boolean useName;
-	public List<AttributeInformation> attributes;
+
+	private String ip;
+	private int queryId;
+	private String queryName;
+	private boolean useName;
+	private List<AttributeInformation> attributes;
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public int getQueryId() {
+		return queryId;
+	}
+
+	public void setQueryId(int queryId) {
+		this.queryId = queryId;
+	}
+
+	public String getQueryName() {
+		return queryName;
+	}
+
+	public void setQueryName(String queryName) {
+		this.queryName = queryName;
+	}
+
+	public boolean isUseName() {
+		return useName;
+	}
+
+	public void setUseName(boolean useName) {
+		this.useName = useName;
+	}
+
+	public List<AttributeInformation> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(List<AttributeInformation> attributes) {
+		this.attributes = attributes;
+	}
 
 	@Override
 	public boolean equals(Object o) {

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.condition.rest.dto.response;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConnectionInformation;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.VisualizationInformation;
@@ -11,40 +12,45 @@ import de.uniol.inf.is.odysseus.condition.rest.datatypes.VisualizationInformatio
  * @since 17.06.2015.
  */
 public class CollectionInformation {
-    private String name;
-    private List<ConnectionInformation> connectionInformation;
-    private List<VisualizationInformation> visualizationInformation;
-    
-    public CollectionInformation() {
-    	this.connectionInformation = new ArrayList<>();
-    	this.visualizationInformation = new ArrayList<VisualizationInformation>();
-    }
+	private String name;
+	private List<ConnectionInformation> connectionInformation;
+	private List<VisualizationInformation> visualizationInformation;
+	private UUID identifier = UUID.randomUUID();
 
-    public String getName() {
-        return name;
-    }
+	public CollectionInformation() {
+		this.connectionInformation = new ArrayList<>();
+		this.visualizationInformation = new ArrayList<VisualizationInformation>();
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public List<ConnectionInformation> getConnectionInformation() {
-        return connectionInformation;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setConnectionInformation(List<ConnectionInformation> connectionInformation) {
-        this.connectionInformation = connectionInformation;
-    }
+	public List<ConnectionInformation> getConnectionInformation() {
+		return connectionInformation;
+	}
 
-    public List<VisualizationInformation> getVisualizationInformation() {
-        return visualizationInformation;
-    }
+	public void setConnectionInformation(List<ConnectionInformation> connectionInformation) {
+		this.connectionInformation = connectionInformation;
+	}
 
-    public void setVisualizationInformation(List<VisualizationInformation> visualizationInformation) {
-        this.visualizationInformation = visualizationInformation;
-    }
-    
-    public void addVisualizationInformation(VisualizationInformation visualizationInformation) {
-    	this.visualizationInformation.add(visualizationInformation);
-    }
+	public List<VisualizationInformation> getVisualizationInformation() {
+		return visualizationInformation;
+	}
+
+	public void setVisualizationInformation(List<VisualizationInformation> visualizationInformation) {
+		this.visualizationInformation = visualizationInformation;
+	}
+
+	public void addVisualizationInformation(VisualizationInformation visualizationInformation) {
+		this.visualizationInformation.add(visualizationInformation);
+	}
+
+	public UUID getIdentifier() {
+		return identifier;
+	}
 }

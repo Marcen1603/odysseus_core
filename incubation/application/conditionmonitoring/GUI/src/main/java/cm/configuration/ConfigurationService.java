@@ -28,6 +28,8 @@ public class ConfigurationService {
 
     private static ConfigurationService instance;
 
+    private MainController mainController;
+
     private ConfigurationService() {
 
     }
@@ -47,6 +49,7 @@ public class ConfigurationService {
 
             Parent root = loader.load();
             MainController mainController = loader.getController();
+            this.mainController = mainController;
             stage.setTitle("Condition Monitoring");
             stage.setScene(new Scene(root, 600, 500));
 
@@ -62,7 +65,7 @@ public class ConfigurationService {
             // Create all collections
             // ----------------------
             for (CollectionInformation collectionInfo : configuration.collections) {
-                Collection collection = new Collection(collectionInfo.getName());
+                Collection collection = new Collection(collectionInfo.getName(), collectionInfo.getIdentifier());
 
                 // Connections
                 for (ConnectionInformation conInfo : collectionInfo.getConnectionInformation()) {
@@ -103,5 +106,9 @@ public class ConfigurationService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public MainController getMainController() {
+        return mainController;
     }
 }

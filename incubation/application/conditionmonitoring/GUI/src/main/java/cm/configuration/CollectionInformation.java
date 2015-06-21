@@ -1,6 +1,8 @@
 package cm.configuration;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Tobias
@@ -10,6 +12,12 @@ public class CollectionInformation {
     private String name;
     private List<ConnectionInformation> connectionInformation;
     private List<VisualizationInformation> visualizationInformation;
+    private UUID identifier = UUID.randomUUID();
+
+    public CollectionInformation() {
+        this.connectionInformation = new ArrayList<>();
+        this.visualizationInformation = new ArrayList<>();
+    }
 
     public String getName() {
         return name;
@@ -34,4 +42,13 @@ public class CollectionInformation {
     public void setVisualizationInformation(List<VisualizationInformation> visualizationInformation) {
         this.visualizationInformation = visualizationInformation;
     }
+
+    public void addVisualizationInformation(VisualizationInformation visualizationInformation) {
+        this.visualizationInformation.add(visualizationInformation);
+    }
+
+    public UUID getIdentifier() {
+        return identifier;
+    }
 }
+

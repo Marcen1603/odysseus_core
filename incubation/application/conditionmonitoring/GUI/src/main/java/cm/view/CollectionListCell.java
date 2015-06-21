@@ -27,7 +27,7 @@ public class CollectionListCell extends ListCell<Collection> {
     public CollectionListCell() {
         super();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("machineListCell.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("collectionListCell.fxml"));
         fxmlLoader.setController(this);
         try {
             root = fxmlLoader.load();

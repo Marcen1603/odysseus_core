@@ -28,9 +28,9 @@ public class ConfigurationCreator {
         List<ConnectionInformation> connectionInformation = new ArrayList<>();
 
         ConnectionInformation con1 = new ConnectionInformation();
-        con1.ip = "127.0.0.1";
-        con1.queryName = "cohort1";
-        con1.useName = true;
+        con1.setIp("127.0.0.1");
+        con1.setQueryName("cohort1");
+        con1.setUseName(true);
 
         connectionInformation.add(con1);
         clientConfig.connectionInformation = connectionInformation;
@@ -39,16 +39,16 @@ public class ConfigurationCreator {
         List<VisualizationInformation> visualizations = new ArrayList<>();
 
         VisualizationInformation gauge = new VisualizationInformation();
-        gauge.connectionInformation = con1;
-        gauge.attribute = "LOF";
-        gauge.visualizationType = VisualizationType.GAUGE;
-        gauge.minValue = 0.0;
-        gauge.maxValue = 25.0;
+        gauge.setConnectionInformation(con1);
+        gauge.setAttribute("LOF");
+        gauge.setVisualizationType(VisualizationType.GAUGE);
+        gauge.setMinValue(0.0);
+        gauge.setMaxValue(25.0);
         
         VisualizationInformation areaChart1 = new VisualizationInformation();
-        areaChart1.connectionInformation = con1;
-        areaChart1.attribute = "LOF";
-        areaChart1.visualizationType = VisualizationType.AREACHART;
+        areaChart1.setConnectionInformation(con1);
+        areaChart1.setAttribute("LOF");
+        areaChart1.setVisualizationType(VisualizationType.AREACHART);
 
         visualizations.add(gauge);
         visualizations.add(areaChart1);
@@ -63,6 +63,8 @@ public class ConfigurationCreator {
         connectionInformationList.add(con1);
         collectionInformation.setConnectionInformation(connectionInformationList);
         collectionInformation.addVisualizationInformation(gauge);
+        // Add a link from this overview to a specific collection
+        gauge.setCollectionLink(collectionInformation.getIdentifier());
 
         CollectionInformation collectionInformation2 = new CollectionInformation();
         collectionInformation2.setName("Machine2");

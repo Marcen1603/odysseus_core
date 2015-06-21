@@ -1,26 +1,20 @@
 package cm.configuration;
 
+import java.util.UUID;
+
 /**
  * @author Tobias
  * @since 17.06.2015.
  */
 public class VisualizationInformation {
+
     private ConnectionInformation connectionInformation;
     private String attribute;
     private VisualizationType visualizationType;
     private double minValue;
     private double maxValue;
-
-    public VisualizationInformation() {
-    }
-
-    public VisualizationInformation(ConnectionInformation connectionInformation, String attribute, VisualizationType visualizationType, double minValue, double maxValue) {
-        this.connectionInformation = connectionInformation;
-        this.attribute = attribute;
-        this.visualizationType = visualizationType;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-    }
+    private String title;
+    private UUID collectionLink;
 
     public ConnectionInformation getConnectionInformation() {
         return connectionInformation;
@@ -60,5 +54,21 @@ public class VisualizationInformation {
 
     public void setMaxValue(double maxValue) {
         this.maxValue = maxValue;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public UUID getCollectionLink() {
+        return collectionLink;
+    }
+
+    public void setCollectionLink(UUID collectionLink) {
+        this.collectionLink = collectionLink;
     }
 }

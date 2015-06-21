@@ -8,7 +8,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.net.Socket;
 import java.util.*;
 
 /**
@@ -40,6 +39,13 @@ public class DataHandler {
 
     public void addCollection(Collection collection) {
         Platform.runLater(() -> observableCollectionList.add(collection));
+    }
+
+    public Collection getCollection(UUID identifier) {
+        Optional<Collection> result = observableCollectionList.stream().filter(collection -> collection.getIdentifier().equals(identifier)).findFirst();
+        if (result.isPresent())
+            return result.get();
+        return null;
     }
 
     public void addEvent(Event event) {

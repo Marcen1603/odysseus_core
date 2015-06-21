@@ -5,6 +5,7 @@ import cm.communication.socket.SocketReceiver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Tobias
@@ -14,8 +15,9 @@ public class Collection {
 
     private String name;
     private List<SocketInfo> connections;
+    private UUID identifier;
 
-    public Collection(String name) {
+    public Collection(String name, UUID identifier) {
         this.name = name;
         this.connections = new ArrayList<>();
     }
@@ -34,5 +36,13 @@ public class Collection {
 
     public List<SocketInfo> getConnections() {
         return connections;
+    }
+
+    public UUID getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(UUID identifier) {
+        this.identifier = identifier;
     }
 }
