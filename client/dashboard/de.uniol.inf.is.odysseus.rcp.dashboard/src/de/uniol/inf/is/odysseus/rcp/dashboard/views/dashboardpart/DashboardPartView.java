@@ -54,9 +54,9 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
  *
  */
 public class DashboardPartView extends ViewPart {
+    public static final String VIEW_ID = DashboardPlugIn.VIEW_DASHBOARDPARTVIEW_ID;
 
     private static final Logger LOG = LoggerFactory.getLogger(DashboardPartView.class);
-
     private TreeViewer viewer;
 
     @Override

@@ -41,6 +41,11 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 
 	public static final String ADD_DASHBOARD_PART_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.AddDashboardPart";
 
+    public static final String WIZARD_DASHBOARDPART_ID = "de.uniol.inf.is.odysseus.rcp.dashboard.wizards.NewDashboardPartWizard";
+    public static final String WIZARD_DASHBOARD_ID = "de.uniol.inf.is.odysseus.rcp.dashboard.wizards.NewDashboardWizard";
+
+    public static final String VIEW_DASHBOARDPARTVIEW_ID = "de.uniol.inf.is.odysseus.rcp.dashboard.views.dashboardpart.DashboardPartView";
+
 	private static DashboardPartExtensionPointResolver extensionResolver;
 
 	private static DashboardPlugIn plugin;	

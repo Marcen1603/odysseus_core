@@ -20,6 +20,9 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
+import de.uniol.inf.is.odysseus.rcp.dashboard.views.dashboardpart.DashboardPartView;
+
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * @version $Id$
@@ -35,8 +38,13 @@ public class DashboardPerspective implements IPerspectiveFactory {
         topLeft.addView(ProjectExplorer.VIEW_ID);
 
         IFolderLayout right = layout.createFolder("right", IPageLayout.RIGHT, 0.75f, editorArea);
+        right.addView(DashboardPartView.VIEW_ID);
 
+        @SuppressWarnings("unused")
         IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.60f, editorArea);
+
+        layout.addNewWizardShortcut(DashboardPlugIn.WIZARD_DASHBOARD_ID);
+        layout.addNewWizardShortcut(DashboardPlugIn.WIZARD_DASHBOARDPART_ID);
 
     }
 }

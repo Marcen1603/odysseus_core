@@ -172,7 +172,7 @@
             allowMultiple="true"
             class="de.uniol.inf.is.odysseus.rcp.dashboard.views.dashboardpart.DashboardPartView"
             icon="icons/gear.png"
-            id="de.uniol.inf.is.odysseus.rcp.views.dashboardpart.DashboardPartView"
+            id="de.uniol.inf.is.odysseus.rcp.dashboard.views.dashboardpart.DashboardPartView"
             name="Dashboard Parts"
             restorable="true">
       </view>
