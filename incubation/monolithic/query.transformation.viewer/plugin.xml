@@ -19,7 +19,7 @@
       <command
             defaultHandler="de.uniol.inf.is.odysseus.query.transformation.viewer.commands.ExportQueryCommand"
             id="de.uniol.inf.is.odysseus.query.transformation.viewer.commands.ExportQueryCommand"
-            name="Export Query Neu">
+            name="Export Query">
       </command>
    </extension>
 </plugin>

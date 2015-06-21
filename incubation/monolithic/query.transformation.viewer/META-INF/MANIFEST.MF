@@ -5,7 +5,8 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.transformation.viewer;single
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.viewer.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.eclipse.jface.dialogs,
+Import-Package: de.uniol.inf.is.odysseus.query.transformation.compiler,
+ org.eclipse.jface.dialogs,
  org.eclipse.swt,
  org.eclipse.swt.events,
  org.eclipse.swt.graphics,
@@ -19,3 +20,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.rcp.viewer;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j,
  org.eclipse.ui;bundle-version="3.7.0"
 Export-Package: de.uniol.inf.is.odysseus.query.transformation.viewer.commands
+Service-Component: OSGI-INF/TransformationCompiler.xml

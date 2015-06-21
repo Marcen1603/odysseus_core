@@ -5,7 +5,14 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.transformation
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.osgi.framework;version="1.3.0"
-Require-Bundle: de.uniol.inf.is.odysseus.slf4j
-Service-Component: OSGI-INF/QueryTransformationOperatorRegistry.xml,
- OSGI-INF/SelectTransformationOperator.xml
+Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
+ de.uniol.inf.is.odysseus.core.server.util,
+ org.osgi.framework;version="1.3.0"
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.core
+Service-Component: OSGI-INF/QueryTransformationOperatorRegistry.xml,OSGI-INF/SelectTransformationOperator.xml,OSGI-INF/QueryTransformationMainstructureRegistry.xml,
+ OSGI-INF/JavaTransformationMainstructure.xml, OSGI-INF/ExecutorServiceBinding.xml
+Export-Package: de.uniol.inf.is.odysseus.query.transformation.compiler

@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.query.transformation.viewer.gui.ExportQueryDialog;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.commands.AbstractQueryCommand;
@@ -25,12 +24,17 @@ public class ExportQueryCommand extends AbstractQueryCommand {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		List<Object> selections = SelectionProvider.getSelection(event);
-		List<String> texts = new ArrayList<>();				
+	//	List<String> texts = new ArrayList<>();				
 		for (Object selection : selections) {
 			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if (executor != null) {
-				int id = (Integer)selection;
+				int queryId = (Integer)selection;
 		
+				ExportQueryDialog transformationDialog = new ExportQueryDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), queryId);
+				transformationDialog.open();
+				
+				/*
+				
 				ILogicalQuery query = executor.getLogicalQueryById(id, OdysseusRCPPlugIn.getActiveSession());
 				
 				ILogicalOperator logicalPlan = query.getLogicalPlan();
@@ -49,10 +53,9 @@ public class ExportQueryCommand extends AbstractQueryCommand {
 			
 
 				//LogicalPlan an eigenes Bundel übergeben 
-				ExportQueryDialog ddd = new ExportQueryDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 			
-				ddd.open();
-				texts.add(queryText);				
+				texts.add(queryText);	
+				*/			
 			} else {
 				LOG.error("Executor is not set");
 			}						
