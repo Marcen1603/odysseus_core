@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
@@ -55,7 +56,8 @@ public class SocketService extends Observable {
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 		IPhysicalOperator rootOperator = getRootOperator(queryId, outputOperator);
-		List<SocketInfo> infos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, rootOperator);
+		List<SocketInfo> infos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, rootOperator,
+				false);
 		if (!infos.isEmpty()) {
 			return infos.get(0);
 		}
@@ -66,7 +68,7 @@ public class SocketService extends Observable {
 	public SocketInfo getConnectionInformation(ISession session, int queryId, IPhysicalOperator operator) {
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
-		List<SocketInfo> infos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator);
+		List<SocketInfo> infos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, false);
 		if (!infos.isEmpty()) {
 			return infos.get(0);
 		}
@@ -83,13 +85,14 @@ public class SocketService extends Observable {
 	 *            The name of the query you want to get the socket connection to
 	 * @return A list with information about the created sockets
 	 */
-	public List<SocketInfo> getMultipleConnectionInformation(ISession session, String queryName) {
+	public List<SocketInfo> getMultipleConnectionInformation(ISession session, String queryName, boolean withMetaData) {
 		List<IPhysicalOperator> rootOperators = getRootOperators(queryName);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 		List<SocketInfo> allInfos = new ArrayList<SocketInfo>();
 		for (IPhysicalOperator root : rootOperators) {
-			List<SocketInfo> partInfos = getConnectionInformationWithPorts(session, queryName, minPort, maxPort, root);
+			List<SocketInfo> partInfos = getConnectionInformationWithPorts(session, queryName, minPort, maxPort, root,
+					withMetaData);
 			allInfos.addAll(partInfos);
 		}
 		return allInfos;
@@ -105,22 +108,24 @@ public class SocketService extends Observable {
 	 *            The id of the query you want to get the socket connection to
 	 * @return A list with information about the created sockets
 	 */
-	public List<SocketInfo> getMultipleConnectionInformation(ISession session, int queryId) {
+	public List<SocketInfo> getMultipleConnectionInformation(ISession session, int queryId, boolean withMetaData) {
 		List<IPhysicalOperator> rootOperators = getRootOperators(queryId);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 		List<SocketInfo> allInfos = new ArrayList<SocketInfo>();
 		for (IPhysicalOperator root : rootOperators) {
-			List<SocketInfo> partInfos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, root);
+			List<SocketInfo> partInfos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, root,
+					withMetaData);
 			allInfos.addAll(partInfos);
 		}
 		return allInfos;
 	}
 
-	public List<SocketInfo> getMultipleConnectionInformation(ISession session, int queryId, IPhysicalOperator operator) {
+	public List<SocketInfo> getMultipleConnectionInformation(ISession session, int queryId, IPhysicalOperator operator,
+			boolean withMetaData) {
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
-		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator);
+		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, withMetaData);
 	}
 
 	/**
@@ -160,7 +165,7 @@ public class SocketService extends Observable {
 	 *         have multiple outputs and hence multiple sockets)
 	 */
 	private List<SocketInfo> getConnectionInformationWithPorts(ISession session, String queryName, int minPort,
-			int maxPort, IPhysicalOperator operator) {
+			int maxPort, IPhysicalOperator operator, boolean withMetaData) {
 		// Check, if we have a map for this operator
 		Map<Integer, SocketSinkPO> mapForPort = null;
 		Map<IPhysicalOperator, Map<Integer, SocketSinkPO>> mapForOp = socketSinkMap.get(queryName);
@@ -172,12 +177,12 @@ public class SocketService extends Observable {
 
 		// Check, if we have a map for this output port for this operator
 		if (mapForPort == null) {
-			mapForPort = addSocketSink(queryName, minPort, maxPort, operator, session.getToken());
+			mapForPort = addSocketSink(queryName, minPort, maxPort, operator, session.getToken(), withMetaData);
 			mapForOp.put(operator, mapForPort);
 			socketSinkMap.put(queryName, mapForOp);
 		}
 
-		return getConnectionInformationWithPorts(mapForPort, operator);
+		return getConnectionInformationWithPorts(mapForPort, operator, withMetaData);
 	}
 
 	/**
@@ -199,7 +204,7 @@ public class SocketService extends Observable {
 	 *         have multiple outputs and hence multiple sockets)
 	 */
 	private List<SocketInfo> getConnectionInformationWithPorts(ISession session, int queryId, int minPort, int maxPort,
-			IPhysicalOperator operator) {
+			IPhysicalOperator operator, boolean withMetaData) {
 
 		// Check, if we have a map for this operator
 		Map<Integer, SocketSinkPO> mapForPort = null;
@@ -212,15 +217,15 @@ public class SocketService extends Observable {
 
 		// Check, if we have a map for this output port for this operator
 		if (mapForPort == null) {
-			mapForPort = addSocketSink(queryId, minPort, maxPort, operator, session.getToken());
+			mapForPort = addSocketSink(queryId, minPort, maxPort, operator, session.getToken(), withMetaData);
 			mapForOp.put(operator, mapForPort);
 			socketSinkMap.put(queryId, mapForOp);
 		}
-		return getConnectionInformationWithPorts(mapForPort, operator);
+		return getConnectionInformationWithPorts(mapForPort, operator, withMetaData);
 	}
 
 	private List<SocketInfo> getConnectionInformationWithPorts(Map<Integer, SocketSinkPO> mapForPort,
-			IPhysicalOperator operator) {
+			IPhysicalOperator operator, boolean withMetaData) {
 		try {
 			if (this.address == null) {
 
@@ -242,7 +247,7 @@ public class SocketService extends Observable {
 			List<SocketInfo> socketInfos = new ArrayList<SocketInfo>(mapForPort.keySet().size());
 			for (int serverPort : mapForPort.keySet()) {
 				SocketInfo socketInfo = new SocketInfo(InetAddress.getLocalHost().getHostAddress(), serverPort,
-						this.getAttributeInformationList(operator));
+						this.getAttributeInformationList(operator, withMetaData));
 				socketInfos.add(socketInfo);
 			}
 
@@ -257,15 +262,25 @@ public class SocketService extends Observable {
 		}
 	}
 
-	private List<AttributeInformation> getAttributeInformationList(IPhysicalOperator operator) {
+	private List<AttributeInformation> getAttributeInformationList(IPhysicalOperator operator, boolean withMetaData) {
+		// Data output
 		SDFSchema outputSchema = operator.getOutputSchema();
-
 		List<SDFAttribute> attibuteList = outputSchema.getAttributes();
-
 		ArrayList<AttributeInformation> attributeInformationList = new ArrayList<AttributeInformation>();
 		for (SDFAttribute sdfAttribute : attibuteList) {
 			attributeInformationList.add(new AttributeInformation(sdfAttribute.getAttributeName(), sdfAttribute
 					.getDatatype().getQualName()));
+		}
+
+		// MetaData output
+		if (withMetaData && operator instanceof AbstractPipe) {
+//			SDFMetaAttributeList metaSchema = ((AbstractPipe) operator).getMetaAttributeSchema();
+//			for (SDFAttribute sdfAttribute : metaSchema.getAttributes()) {
+//				attributeInformationList.add(new AttributeInformation(sdfAttribute.getAttributeName(), sdfAttribute
+//						.getDatatype().getQualName()));
+//			}
+//			attributeInformationList.add(new AttributeInformation("start", "Long"));
+//			attributeInformationList.add(new AttributeInformation("end", "Long"));
 		}
 
 		return attributeInformationList;
@@ -310,22 +325,22 @@ public class SocketService extends Observable {
 	}
 
 	private Map<Integer, SocketSinkPO> addSocketSink(int queryId, int minPort, int maxPort, IPhysicalOperator root,
-			String token) {
+			String token, boolean withMetaData) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
 		IPhysicalQuery query = plan.getQueryById(queryId);
-		return addSocketSink(query, minPort, maxPort, root, token);
+		return addSocketSink(query, minPort, maxPort, root, token, withMetaData);
 	}
 
 	private Map<Integer, SocketSinkPO> addSocketSink(String queryName, int minPort, int maxPort,
-			IPhysicalOperator root, String token) {
+			IPhysicalOperator root, String token, boolean withMetaData) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan();
 		IPhysicalQuery query = plan.getQueryByName(queryName);
-		return addSocketSink(query, minPort, maxPort, root, token);
+		return addSocketSink(query, minPort, maxPort, root, token, withMetaData);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Map<Integer, SocketSinkPO> addSocketSink(IPhysicalQuery query, int minPort, int maxPort,
-			IPhysicalOperator root, String token) {
+			IPhysicalOperator root, String token, boolean withMetaData) {
 		if (!(root instanceof ISource)) {
 			// E.g. a MongoDBSinkPO is no ISource and can't be processed here
 			return new HashMap<Integer, SocketSinkPO>();
@@ -338,7 +353,7 @@ public class SocketService extends Observable {
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(handler);
 			int serverPort = getNextFreePort(minPort, maxPort);
 			SocketSinkPO sink = new SocketSinkPO(serverPort, "", new NioByteBufferSinkStreamHandlerBuilder(), true,
-					false, false, objectHandler, false, false);
+					false, false, objectHandler, false, withMetaData);
 
 			rootAsSource.subscribeSink((ISink) sink, 0, outputPort, root.getOutputSchema(outputPort), true, 0);
 			sink.startListening();
