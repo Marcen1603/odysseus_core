@@ -80,14 +80,12 @@ public class ConfigurationService {
                     OverviewController overviewController = mainController.getOverviewIncludeControllerForCollection(collection);
                     for (VisualizationInformation visualizationInformation : collectionInfo.getVisualizationInformation()) {
                         if (visualizationInformation.getVisualizationType().equals(VisualizationType.GAUGE)) {
-                            overviewController.addGauge(createGauge(visualizationInformation), visualizationInformation);
+                            overviewController.addGauge(visualizationInformation);
                         } else if (visualizationInformation.getVisualizationType().equals(VisualizationType.AREACHART)) {
                             overviewController.addAreaChart(visualizationInformation);
                         }
                     }
                 }
-
-
                 DataHandler.getInstance().addCollection(collection);
             }
 
@@ -97,7 +95,7 @@ public class ConfigurationService {
 
             for (VisualizationInformation visualizationInfo : configuration.visualizationInformation) {
                 if (visualizationInfo.getVisualizationType().equals(VisualizationType.GAUGE))
-                    overviewController.addGauge(createGauge(visualizationInfo), visualizationInfo);
+                    overviewController.addGauge(visualizationInfo);
                 else if (visualizationInfo.getVisualizationType().equals(VisualizationType.AREACHART)) {
                     overviewController.addAreaChart(visualizationInfo);
                 }
@@ -106,28 +104,4 @@ public class ConfigurationService {
             e.printStackTrace();
         }
     }
-
-    private SimpleMetroArcGauge createGauge(VisualizationInformation visualizationInformation) {
-        // Value
-        SimpleMetroArcGauge gauge = new SimpleMetroArcGauge();
-        gauge.setMinValue(visualizationInformation.getMinValue());
-        gauge.setMaxValue(visualizationInformation.getMaxValue());
-        gauge.setValue(0);
-
-        // Style
-        String colorSchemeClass = "colorscheme-green-to-red-10";
-        gauge.getStyleClass().add(colorSchemeClass);
-
-        for (int i = 0; i < 10; i++) {
-            Segment segment = new PercentSegment(gauge, i * 10, (i + 1) * 10);
-            gauge.segments().add(segment);
-        }
-
-        String animatedStyle = "-fxx-animated: YES;";
-        gauge.setStyle(animatedStyle);
-
-        return gauge;
-    }
-
-
 }

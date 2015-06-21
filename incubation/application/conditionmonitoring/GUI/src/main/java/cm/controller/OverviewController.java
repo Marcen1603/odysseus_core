@@ -3,6 +3,7 @@ package cm.controller;
 import cm.communication.CommunicationService;
 import cm.communication.socket.SocketReceiver;
 import cm.configuration.VisualizationInformation;
+import cm.configuration.VisualizationType;
 import cm.data.DataHandler;
 import cm.model.Event;
 import javafx.fxml.FXML;
@@ -22,30 +23,50 @@ import java.util.*;
  */
 public class OverviewController implements Observer {
 
-    private Map<SocketReceiver, SimpleMetroArcGauge> socketMap;
-    private Map<SimpleMetroArcGauge, VisualizationInformation> informationMap;
-    private AreaChart chart;
-    private XYChart.Series series;
-    private int counter;
+    private static final int NUMBER_OF_SEGMENTS = 10;
+
+    private Map<SocketReceiver, List<VisualizationInformation>> visualizationInformationMap;
+    private Map<VisualizationInformation, XYChart.Series> seriesMap;
+    private Map<VisualizationInformation, SimpleMetroArcGauge> gaugeMap;
+    private Map<VisualizationInformation, Integer> counterMap;
 
     @FXML
     FlowPane overviewFlowPane;
 
     @FXML
     private void initialize() {
-        socketMap = new HashMap<>();
-        informationMap = new HashMap<>();
+        visualizationInformationMap = new HashMap<>();
+        seriesMap = new HashMap<>();
+        gaugeMap = new HashMap<>();
+        counterMap = new HashMap<>();
     }
 
-    public void addGauge(SimpleMetroArcGauge gauge, VisualizationInformation visualizationInformation) {
-        List<SocketReceiver> receivers = CommunicationService.getSocketReceivers(visualizationInformation.getConnectionInformation());
-        for (SocketReceiver receiver : receivers) {
-            DataHandler.getInstance().addObserverForConnection(receiver, this);
-            socketMap.put(receiver, gauge);
+    public void addGauge(VisualizationInformation visualizationInformation) {
+
+        // Create gauge
+        // Value
+        SimpleMetroArcGauge gauge = new SimpleMetroArcGauge();
+        gauge.setMinValue(visualizationInformation.getMinValue());
+        gauge.setMaxValue(visualizationInformation.getMaxValue());
+        gauge.setValue(0);
+
+        // Style
+        String colorSchemeClass = "colorscheme-green-to-red-10";
+        gauge.getStyleClass().add(colorSchemeClass);
+
+        for (int i = 0; i < NUMBER_OF_SEGMENTS; i++) {
+            Segment segment = new PercentSegment(gauge, i * 100 / NUMBER_OF_SEGMENTS, (i + 1) * (100 / NUMBER_OF_SEGMENTS));
+            gauge.segments().add(segment);
         }
 
+        String animatedStyle = "-fxx-animated: YES;";
+        gauge.setStyle(animatedStyle);
+
+        // Data Connection
+        addConnection(visualizationInformation);
+
         overviewFlowPane.getChildren().add(gauge);
-        informationMap.put(gauge, visualizationInformation);
+        gaugeMap.put(visualizationInformation, gauge);
     }
 
     public void addAreaChart(VisualizationInformation visualizationInformation) {
@@ -58,29 +79,48 @@ public class OverviewController implements Observer {
         ac.setTitle("Chart");
 
         XYChart.Series streamData = new XYChart.Series();
-        series = streamData;
         streamData.setName(visualizationInformation.getAttribute());
-        counter = 1;
+        seriesMap.put(visualizationInformation, streamData);
+        counterMap.put(visualizationInformation, 0);
+
+        // Data Connection
+        addConnection(visualizationInformation);
 
         ac.getData().addAll(streamData);
-        chart = ac;
         overviewFlowPane.getChildren().add(ac);
+    }
+
+    private void addConnection(VisualizationInformation visualizationInformation) {
+        List<SocketReceiver> receivers = CommunicationService.getSocketReceivers(visualizationInformation.getConnectionInformation());
+        for (SocketReceiver receiver : receivers) {
+            DataHandler.getInstance().addObserverForConnection(receiver, this);
+            List<VisualizationInformation> visualizationInformationList = visualizationInformationMap.get(receiver);
+            if (visualizationInformationList == null) {
+                visualizationInformationList = new ArrayList<>();
+                visualizationInformationMap.put(receiver, visualizationInformationList);
+            }
+            visualizationInformationList.add(visualizationInformation);
+        }
     }
 
     @Override
     public void update(Observable o, Object obj) {
         if (obj instanceof Event) {
             Event event = (Event) obj;
-            for (SocketReceiver receiver : socketMap.keySet()) {
-                if (receiver.equals(event.getConnection())) {
-                    SimpleMetroArcGauge gauge = socketMap.get(receiver);
-                    VisualizationInformation visualizationInformation = informationMap.get(gauge);
-                    String attribute = event.getAttributes().get(visualizationInformation.getAttribute());
-                    if (attribute != null) {
-                        double value = Double.parseDouble(attribute);
+
+            List<VisualizationInformation> visualizationInformation = visualizationInformationMap.get(event.getConnection());
+            for (VisualizationInformation visualInfo : visualizationInformation) {
+                String attribute = event.getAttributes().get(visualInfo.getAttribute());
+                if (attribute != null) {
+                    double value = Double.parseDouble(attribute);
+                    if (visualInfo.getVisualizationType().equals(VisualizationType.GAUGE) && gaugeMap.get(visualInfo) != null) {
+                        SimpleMetroArcGauge gauge = gaugeMap.get(visualInfo);
                         gauge.setValue(value);
-                        if (series != null)
-                            series.getData().add(new XYChart.Data<>(counter++, value));
+                    } else if (visualInfo.getVisualizationType().equals(VisualizationType.AREACHART) && seriesMap.get(visualInfo) != null) {
+                        XYChart.Series series = seriesMap.get(visualInfo);
+                        int counter = counterMap.get(visualInfo);
+                        series.getData().add(new XYChart.Data<>(counter++, value));
+                        counterMap.put(visualInfo, counter);
                     }
                 }
             }

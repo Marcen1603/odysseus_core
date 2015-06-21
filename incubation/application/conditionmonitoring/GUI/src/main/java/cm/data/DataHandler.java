@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.net.Socket;
 import java.util.*;
 
 /**
@@ -20,11 +21,15 @@ public class DataHandler {
     private ObservableList<Event> observableEventList;
     private ObservableList<Collection> observableCollectionList;
     private Map<SocketReceiver, List<Observer>> observerMap;
+    private Map<Collection, ObservableList<Event>> collectionEventsMap;
+    private Map<SocketInfo, List<Collection>> socketColletionsMap;
 
     private DataHandler() {
         this.observableEventList = FXCollections.observableArrayList();
         this.observableCollectionList = FXCollections.observableArrayList();
         this.observerMap = new HashMap<>();
+        this.collectionEventsMap = new HashMap<>();
+        this.socketColletionsMap = new HashMap<>();
     }
 
     public static DataHandler getInstance() {
@@ -41,23 +46,49 @@ public class DataHandler {
         // Add the new element at the top of the list to show it on the top of the ListView
         Platform.runLater(() -> {
             observableEventList.add(0, event);
+
             // Notify observers
             List<Observer> observers = this.observerMap.get(event.getConnection());
             if (observers != null)
                 observers.stream().forEach(observer -> observer.update(null, event));
+
+            // Add to lists for collections
+            List<Collection> collections = socketColletionsMap.get(event.getConnection().getSocketInfo());
+            if (collections != null) {
+                for (Collection collection : collections) {
+                    ObservableList<Event> events = collectionEventsMap.get(collection);
+                    if (events != null) {
+                        events.add(0, event);
+                    }
+                }
+            }
         });
     }
 
     public ObservableList<Event> getCollectionEvents(Collection collection) {
-        List<Event> events = new ArrayList<>();
-        for (Event event : observableEventList) {
-            for (SocketInfo connection : collection.getConnections()) {
-                if (event.getConnection().getSocketInfo().equals(connection)) {
-                    events.add(event);
+        ObservableList<Event> collectionEvents = collectionEventsMap.get(collection);
+        if (collectionEvents == null) {
+            collectionEvents = FXCollections.observableArrayList();
+            for (Event event : observableEventList) {
+                for (SocketInfo connection : collection.getConnections()) {
+                    if (event.getConnection().getSocketInfo().equals(connection)) {
+                        // This event belongs to the collection
+                        collectionEvents.add(event);
+
+                        // Save, that the collection belongs to this connection (to make it faster to find it when new data arrives)
+                        List<Collection> connectionCollections = socketColletionsMap.get(connection);
+                        if (connectionCollections == null) {
+                            connectionCollections = new ArrayList<>();
+                            socketColletionsMap.put(connection, connectionCollections);
+                        }
+                        if (!connectionCollections.contains(collection))
+                            connectionCollections.add(collection);
+                    }
                 }
             }
+            collectionEventsMap.put(collection, collectionEvents);
         }
-        return FXCollections.observableList(events);
+        return collectionEvents;
     }
 
     public ObservableList<Event> getObservableEventList() {
