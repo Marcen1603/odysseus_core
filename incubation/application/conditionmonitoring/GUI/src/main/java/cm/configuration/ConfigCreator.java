@@ -31,16 +31,16 @@ public class ConfigCreator {
         List<CollectionInformation> collections = new ArrayList<>();
 
         CollectionInformation collectionInformation = new CollectionInformation();
-        collectionInformation.name = "Machine1";
+        collectionInformation.setName("Machine1");
         List<ConnectionInformation> connectionInformationList = new ArrayList<>();
         connectionInformationList.add(con1);
-        collectionInformation.connectionInformation = connectionInformationList;
+        collectionInformation.setConnectionInformation(connectionInformationList);
 
         CollectionInformation collectionInformation2 = new CollectionInformation();
-        collectionInformation2.name = "Machine2";
+        collectionInformation2.setName("Machine2");
         List<ConnectionInformation> connectionInformationList2 = new ArrayList<>();
         connectionInformationList2.add(con1);
-        collectionInformation2.connectionInformation = connectionInformationList2;
+        collectionInformation2.setConnectionInformation(connectionInformationList2);
 
         collections.add(collectionInformation);
         collections.add(collectionInformation2);

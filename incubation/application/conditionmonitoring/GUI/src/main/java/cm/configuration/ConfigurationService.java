@@ -52,13 +52,15 @@ public class ConfigurationService {
             // -----------------------------
 
             // Establish all connections
+            // -------------------------
             for (ConnectionInformation conInformation : configuration.connectionInformation) {
                 CommunicationService.establishConnection(conInformation);
             }
             // Create all collections
+            // ----------------------
             for (CollectionInformation collectionInfo : configuration.collections) {
-                Collection collection = new Collection(collectionInfo.name);
-                for (ConnectionInformation conInfo : collectionInfo.connectionInformation) {
+                Collection collection = new Collection(collectionInfo.getName());
+                for (ConnectionInformation conInfo : collectionInfo.getConnectionInformation()) {
                     List<SocketReceiver> socketReceivers = CommunicationService.getSocketReceivers(conInfo);
                     for (SocketReceiver receiver : socketReceivers) {
                         collection.addConnection(receiver.getSocketInfo());
@@ -68,7 +70,7 @@ public class ConfigurationService {
             }
 
             // Create all visualizations
-
+            // -------------------------
             OverviewController overviewController = mainController.getOverviewController();
 
             for (VisualizationInformation visualizationInfo : configuration.visualizationInformation) {
