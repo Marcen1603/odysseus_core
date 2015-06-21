@@ -10,6 +10,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import jfxtras.labs.scene.control.gauge.linear.SimpleMetroArcGauge;
+import jfxtras.labs.scene.control.gauge.linear.elements.PercentSegment;
+import jfxtras.labs.scene.control.gauge.linear.elements.Segment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,18 +57,37 @@ public class ConfigurationService {
             // Establish all connections
             // -------------------------
             for (ConnectionInformation conInformation : configuration.connectionInformation) {
-                CommunicationService.establishConnection(conInformation);
+                CommunicationService.establishConnection(CommunicationService.getToken(), conInformation);
             }
             // Create all collections
             // ----------------------
             for (CollectionInformation collectionInfo : configuration.collections) {
                 Collection collection = new Collection(collectionInfo.getName());
+
+                // Connections
                 for (ConnectionInformation conInfo : collectionInfo.getConnectionInformation()) {
                     List<SocketReceiver> socketReceivers = CommunicationService.getSocketReceivers(conInfo);
                     for (SocketReceiver receiver : socketReceivers) {
                         collection.addConnection(receiver.getSocketInfo());
                     }
                 }
+
+                // Visualizations
+                mainController.addCollection(collection);
+
+                if (collectionInfo.getVisualizationInformation() != null) {
+                    // Get the overviewController for this collection
+                    OverviewController overviewController = mainController.getOverviewIncludeControllerForCollection(collection);
+                    for (VisualizationInformation visualizationInformation : collectionInfo.getVisualizationInformation()) {
+                        if (visualizationInformation.getVisualizationType().equals(VisualizationType.GAUGE)) {
+                            overviewController.addGauge(createGauge(visualizationInformation), visualizationInformation);
+                        } else if (visualizationInformation.getVisualizationType().equals(VisualizationType.AREACHART)) {
+                            overviewController.addAreaChart(visualizationInformation);
+                        }
+                    }
+                }
+
+
                 DataHandler.getInstance().addCollection(collection);
             }
 
@@ -75,7 +97,7 @@ public class ConfigurationService {
 
             for (VisualizationInformation visualizationInfo : configuration.visualizationInformation) {
                 if (visualizationInfo.getVisualizationType().equals(VisualizationType.GAUGE))
-                    overviewController.addGauge(visualizationInfo);
+                    overviewController.addGauge(createGauge(visualizationInfo), visualizationInfo);
                 else if (visualizationInfo.getVisualizationType().equals(VisualizationType.AREACHART)) {
                     overviewController.addAreaChart(visualizationInfo);
                 }
@@ -84,4 +106,28 @@ public class ConfigurationService {
             e.printStackTrace();
         }
     }
+
+    private SimpleMetroArcGauge createGauge(VisualizationInformation visualizationInformation) {
+        // Value
+        SimpleMetroArcGauge gauge = new SimpleMetroArcGauge();
+        gauge.setMinValue(visualizationInformation.getMinValue());
+        gauge.setMaxValue(visualizationInformation.getMaxValue());
+        gauge.setValue(0);
+
+        // Style
+        String colorSchemeClass = "colorscheme-green-to-red-10";
+        gauge.getStyleClass().add(colorSchemeClass);
+
+        for (int i = 0; i < 10; i++) {
+            Segment segment = new PercentSegment(gauge, i * 10, (i + 1) * 10);
+            gauge.segments().add(segment);
+        }
+
+        String animatedStyle = "-fxx-animated: YES;";
+        gauge.setStyle(animatedStyle);
+
+        return gauge;
+    }
+
+
 }

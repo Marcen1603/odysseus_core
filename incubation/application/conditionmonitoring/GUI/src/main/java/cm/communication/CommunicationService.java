@@ -22,14 +22,13 @@ public class CommunicationService {
     private static String token;
     private static String loginIp;
 
-    public static void establishConnection(ConnectionInformation connectionInformation) {
+    public static void establishConnection(String token, ConnectionInformation connectionInformation) {
         try {
             List<SocketReceiver> receiverList = connectionInformationListMap.get(connectionInformation);
             if (receiverList == null) {
                 receiverList = new ArrayList<>();
                 connectionInformationListMap.put(connectionInformation, receiverList);
             }
-            String token = RestService.login(connectionInformation.getIp(), "System", "manager");
             List<SocketInfo> socketInfos = null;
             if (connectionInformation.isUseName()) {
                 socketInfos = RestService.getResultsFromQuery(connectionInformation.getIp(), token, connectionInformation.getQueryName());

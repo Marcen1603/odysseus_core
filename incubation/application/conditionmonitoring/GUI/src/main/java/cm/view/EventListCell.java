@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Tobias
  * @since 03.04.2015.
  */
-public class MachineEventListCell extends ListCell<Event> {
+public class EventListCell extends ListCell<Event> {
 
     private Parent root;
 
@@ -24,7 +24,7 @@ public class MachineEventListCell extends ListCell<Event> {
     @FXML Label machineEventAnomalyScore;
     @FXML Pane machineEventColorBar;
 
-    public MachineEventListCell() {
+    public EventListCell() {
         super();
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("machineEvent.fxml"));

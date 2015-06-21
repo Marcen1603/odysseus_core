@@ -35,34 +35,14 @@ public class OverviewController implements Observer {
     private void initialize() {
         socketMap = new HashMap<>();
         informationMap = new HashMap<>();
-
     }
 
-    public void addGauge(VisualizationInformation visualizationInformation) {
-
-        // Value
-        SimpleMetroArcGauge gauge = new SimpleMetroArcGauge();
-        gauge.setMinValue(visualizationInformation.getMinValue());
-        gauge.setMaxValue(visualizationInformation.getMaxValue());
-        gauge.setValue(0);
-
+    public void addGauge(SimpleMetroArcGauge gauge, VisualizationInformation visualizationInformation) {
         List<SocketReceiver> receivers = CommunicationService.getSocketReceivers(visualizationInformation.getConnectionInformation());
         for (SocketReceiver receiver : receivers) {
             DataHandler.getInstance().addObserverForConnection(receiver, this);
             socketMap.put(receiver, gauge);
         }
-
-        // Style
-        String colorSchemeClass = "colorscheme-green-to-red-10";
-        gauge.getStyleClass().add(colorSchemeClass);
-
-        for (int i = 0; i < 10; i++) {
-            Segment segment = new PercentSegment(gauge, i * 10, (i + 1) * 10);
-            gauge.segments().add(segment);
-        }
-
-        String animatedStyle = "-fxx-animated: YES;";
-        gauge.setStyle(animatedStyle);
 
         overviewFlowPane.getChildren().add(gauge);
         informationMap.put(gauge, visualizationInformation);
@@ -74,15 +54,15 @@ public class OverviewController implements Observer {
         xAxis.setAutoRanging(true);
         yAxis.setAutoRanging(true);
         final AreaChart<Number, Number> ac =
-                new AreaChart<Number, Number>(xAxis, yAxis);
+                new AreaChart<>(xAxis, yAxis);
         ac.setTitle("Chart");
 
-        XYChart.Series seriesMay = new XYChart.Series();
-        series = seriesMay;
-        seriesMay.setName(visualizationInformation.getAttribute());
+        XYChart.Series streamData = new XYChart.Series();
+        series = streamData;
+        streamData.setName(visualizationInformation.getAttribute());
         counter = 1;
 
-        ac.getData().addAll(seriesMay);
+        ac.getData().addAll(streamData);
         chart = ac;
         overviewFlowPane.getChildren().add(ac);
     }

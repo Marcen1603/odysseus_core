@@ -35,43 +35,47 @@ public class ConfigurationCreator {
         connectionInformation.add(con1);
         clientConfig.connectionInformation = connectionInformation;
 
-        // Collections
-        List<CollectionInformation> collections = new ArrayList<>();
-
-        CollectionInformation collectionInformation = new CollectionInformation();
-        collectionInformation.name = "Machine1";
-        List<ConnectionInformation> connectionInformationList = new ArrayList<>();
-        connectionInformationList.add(con1);
-        collectionInformation.connectionInformation = connectionInformationList;
-
-        CollectionInformation collectionInformation2 = new CollectionInformation();
-        collectionInformation2.name = "Machine2";
-        List<ConnectionInformation> connectionInformationList2 = new ArrayList<>();
-        connectionInformationList2.add(con1);
-        collectionInformation2.connectionInformation = connectionInformationList2;
-
-        collections.add(collectionInformation);
-        collections.add(collectionInformation2);
-        clientConfig.collections = collections;
-
         // Visualizations
         List<VisualizationInformation> visualizations = new ArrayList<>();
 
-        VisualizationInformation visualizationInformation = new VisualizationInformation();
-        visualizationInformation.connectionInformation = con1;
-        visualizationInformation.attribute = "LOF";
-        visualizationInformation.visualizationType = VisualizationType.GAUGE;
-        visualizationInformation.minValue = 0.0;
-        visualizationInformation.maxValue = 25.0;
+        VisualizationInformation gauge = new VisualizationInformation();
+        gauge.connectionInformation = con1;
+        gauge.attribute = "LOF";
+        gauge.visualizationType = VisualizationType.GAUGE;
+        gauge.minValue = 0.0;
+        gauge.maxValue = 25.0;
         
         VisualizationInformation areaChart1 = new VisualizationInformation();
         areaChart1.connectionInformation = con1;
         areaChart1.attribute = "LOF";
         areaChart1.visualizationType = VisualizationType.AREACHART;
 
-        visualizations.add(visualizationInformation);
+        visualizations.add(gauge);
         visualizations.add(areaChart1);
         clientConfig.visualizationInformation = visualizations;
+        
+        // Collections
+        List<CollectionInformation> collections = new ArrayList<>();
+
+        CollectionInformation collectionInformation = new CollectionInformation();
+        collectionInformation.setName("Machine1");
+        List<ConnectionInformation> connectionInformationList = new ArrayList<>();
+        connectionInformationList.add(con1);
+        collectionInformation.setConnectionInformation(connectionInformationList);
+        collectionInformation.addVisualizationInformation(gauge);
+
+        CollectionInformation collectionInformation2 = new CollectionInformation();
+        collectionInformation2.setName("Machine2");
+        List<ConnectionInformation> connectionInformationList2 = new ArrayList<>();
+        connectionInformationList2.add(con1);
+        collectionInformation2.setConnectionInformation(connectionInformationList2);
+        collectionInformation2.addVisualizationInformation(areaChart1);
+
+        collections.add(collectionInformation);
+        collections.add(collectionInformation2);
+        clientConfig.collections = collections;
+
+        
 
         // Server Configuration
         // --------------------

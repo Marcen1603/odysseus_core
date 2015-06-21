@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * Created by Tobi on 15.03.2015.
  */
-public class MachineListCell extends ListCell<Collection> {
+public class CollectionListCell extends ListCell<Collection> {
 
     private Parent root;
 
@@ -24,7 +24,7 @@ public class MachineListCell extends ListCell<Collection> {
     @FXML
     AnchorPane machineBackground;
 
-    public MachineListCell() {
+    public CollectionListCell() {
         super();
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("machineListCell.fxml"));

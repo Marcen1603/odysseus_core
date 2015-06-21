@@ -1,19 +1,23 @@
 package cm.controller;
 
-import cm.communication.dto.SocketInfo;
-import cm.controller.listeners.MachineListViewListener;
+import cm.controller.listeners.CollectionListViewListener;
 import cm.data.DataHandler;
 import cm.model.Collection;
 import cm.model.Event;
-import cm.view.MachineEventListCell;
-import cm.view.MachineListCell;
+import cm.view.EventListCell;
+import cm.view.CollectionListCell;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 
-public class MainController {
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+
+public class MainController{
 
 
     // Overview tab
@@ -22,57 +26,82 @@ public class MainController {
     @FXML
     OverviewController overviewIncludeController;
 
+    // Collections tab
     @FXML
-    ListView<Collection> machineList;
+    ListView<Collection> collectionList;
+    @FXML
+    ListView<Event> collectionEventList;
+    @FXML
+    Label collectionName;
+    @FXML
+    Pane collectionOverviewPane;
 
-    @FXML
-    ListView<Event> machineEventList;
+    private Map<Collection, Parent> overviewPaneMap;
+    private Map<Collection, OverviewController> overviewControllerMap;
 
+    // Events tab
     @FXML
-    Label machineName;
-    @FXML
-    Label machineStatus;
-    @FXML
-    Label machinePrediction;
-    @FXML
-    Button newCollectionButton;
-
-    @FXML
-    ListView<Event> machineEvents;
-
-    // Connections tab
-    @FXML
-    Button addConnectionButton;
-    @FXML
-    ListView<SocketInfo> mainConnectionList;
+    ListView<Event> eventList;
 
     public MainController() {
-
+        overviewPaneMap = new HashMap<>();
+        overviewControllerMap = new HashMap<>();
     }
 
     @FXML
     private void initialize() {
 
-        // Events tab
-        // ----------
-        machineEventList.setItems(DataHandler.getInstance().getObservableEventList());
-        machineEventList.setCellFactory(listView -> new MachineEventListCell());
-
         // Collections tab
         // ---------------
-        machineList.setItems(DataHandler.getInstance().getObservableCollectionList());
-        machineList.setCellFactory(listView -> new MachineListCell());
+        collectionList.setItems(DataHandler.getInstance().getObservableCollectionList());
+        collectionList.setCellFactory(listView -> new CollectionListCell());
         // To react to clicks on the listView of collections
-        machineList.getSelectionModel().getSelectedItems().addListener(new MachineListViewListener(this));
+        collectionList.getSelectionModel().getSelectedItems().addListener(new CollectionListViewListener(this));
+
+        // Events tab
+        // ----------
+        collectionEventList.setItems(DataHandler.getInstance().getObservableEventList());
+        collectionEventList.setCellFactory(listView -> new EventListCell());
     }
 
-    public void updateMachineView(Collection collection) {
-        machineName.setText(collection.getName());
-        machineEvents.setItems(DataHandler.getInstance().getCollectionEvents(collection));
-        machineEvents.setCellFactory(listView -> new MachineEventListCell());
+    public void updateCollectionView(Collection collection) {
+        // Just update the existing viewElements
+        collectionName.setText(collection.getName());
+        eventList.setItems(DataHandler.getInstance().getCollectionEvents(collection));
+        eventList.setCellFactory(listView -> new EventListCell());
+
+        // Load the correct viewElement (overview)
+        if (overviewPaneMap.get(collection) != null) {
+            // We have a pane for this collection
+            if (collectionOverviewPane.getChildren().size() > 0) {
+                collectionOverviewPane.getChildren().remove(0);
+            }
+            collectionOverviewPane.getChildren().add(overviewPaneMap.get(collection));
+        }
     }
+
+    public void addCollection(Collection collection) {
+        try {
+            InputStream inputStream = getClass().getResource("../bundles/Language_en.properties").openStream();
+            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/overview.fxml"), bundle);
+
+            Parent root = loader.load();
+            OverviewController overviewController = loader.getController();
+
+            overviewPaneMap.put(collection, root);
+            overviewControllerMap.put(collection, overviewController);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public OverviewController getOverviewController() {
         return overviewIncludeController;
+    }
+
+    public OverviewController getOverviewIncludeControllerForCollection(Collection collection) {
+        return overviewControllerMap.get(collection);
     }
 }
