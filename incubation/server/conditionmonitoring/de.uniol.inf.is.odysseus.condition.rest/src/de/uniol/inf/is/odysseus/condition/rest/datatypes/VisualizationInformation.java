@@ -4,11 +4,9 @@ import java.util.UUID;
 
 public class VisualizationInformation {
 	
+	private VisualizationType visualizationType;
 	private ConnectionInformation connectionInformation;
 	private String attribute;
-	private VisualizationType visualizationType;
-	private double minValue;
-	private double maxValue;
 	private String title;
 	private UUID collectionLink;
 
@@ -34,22 +32,6 @@ public class VisualizationInformation {
 
 	public void setVisualizationType(VisualizationType visualizationType) {
 		this.visualizationType = visualizationType;
-	}
-
-	public double getMinValue() {
-		return minValue;
-	}
-
-	public void setMinValue(double minValue) {
-		this.minValue = minValue;
-	}
-
-	public double getMaxValue() {
-		return maxValue;
-	}
-
-	public void setMaxValue(double maxValue) {
-		this.maxValue = maxValue;
 	}
 
 	public String getTitle() {

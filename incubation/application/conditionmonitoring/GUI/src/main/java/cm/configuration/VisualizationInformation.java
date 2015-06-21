@@ -2,73 +2,51 @@ package cm.configuration;
 
 import java.util.UUID;
 
-/**
- * @author Tobias
- * @since 17.06.2015.
- */
 public class VisualizationInformation {
+	
+	private VisualizationType visualizationType;
+	private ConnectionInformation connectionInformation;
+	private String attribute;
+	private String title;
+	private UUID collectionLink;
 
-    private ConnectionInformation connectionInformation;
-    private String attribute;
-    private VisualizationType visualizationType;
-    private double minValue;
-    private double maxValue;
-    private String title;
-    private UUID collectionLink;
+	public ConnectionInformation getConnectionInformation() {
+		return connectionInformation;
+	}
 
-    public ConnectionInformation getConnectionInformation() {
-        return connectionInformation;
-    }
+	public void setConnectionInformation(ConnectionInformation connectionInformation) {
+		this.connectionInformation = connectionInformation;
+	}
 
-    public void setConnectionInformation(ConnectionInformation connectionInformation) {
-        this.connectionInformation = connectionInformation;
-    }
+	public String getAttribute() {
+		return attribute;
+	}
 
-    public String getAttribute() {
-        return attribute;
-    }
+	public void setAttribute(String attribute) {
+		this.attribute = attribute;
+	}
 
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
-    }
+	public VisualizationType getVisualizationType() {
+		return visualizationType;
+	}
 
-    public VisualizationType getVisualizationType() {
-        return visualizationType;
-    }
+	public void setVisualizationType(VisualizationType visualizationType) {
+		this.visualizationType = visualizationType;
+	}
 
-    public void setVisualizationType(VisualizationType visualizationType) {
-        this.visualizationType = visualizationType;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public double getMinValue() {
-        return minValue;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public void setMinValue(double minValue) {
-        this.minValue = minValue;
-    }
+	public UUID getCollectionLink() {
+		return collectionLink;
+	}
 
-    public double getMaxValue() {
-        return maxValue;
-    }
-
-    public void setMaxValue(double maxValue) {
-        this.maxValue = maxValue;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public UUID getCollectionLink() {
-        return collectionLink;
-    }
-
-    public void setCollectionLink(UUID collectionLink) {
-        this.collectionLink = collectionLink;
-    }
+	public void setCollectionLink(UUID collectionLink) {
+		this.collectionLink = collectionLink;
+	}
 }

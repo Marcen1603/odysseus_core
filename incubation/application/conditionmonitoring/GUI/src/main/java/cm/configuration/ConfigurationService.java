@@ -59,12 +59,12 @@ public class ConfigurationService {
 
             // Establish all connections
             // -------------------------
-            for (ConnectionInformation conInformation : configuration.connectionInformation) {
+            for (ConnectionInformation conInformation : configuration.getConnectionInformation()) {
                 CommunicationService.establishConnection(CommunicationService.getToken(), conInformation);
             }
             // Create all collections
             // ----------------------
-            for (CollectionInformation collectionInfo : configuration.collections) {
+            for (CollectionInformation collectionInfo : configuration.getCollections()) {
                 Collection collection = new Collection(collectionInfo.getName(), collectionInfo.getIdentifier());
 
                 // Connections
@@ -78,31 +78,23 @@ public class ConfigurationService {
                 // Visualizations
                 mainController.addCollection(collection);
 
-                if (collectionInfo.getVisualizationInformation() != null) {
-                    // Get the overviewController for this collection
-                    OverviewController overviewController = mainController.getOverviewIncludeControllerForCollection(collection);
-                    for (VisualizationInformation visualizationInformation : collectionInfo.getVisualizationInformation()) {
-                        if (visualizationInformation.getVisualizationType().equals(VisualizationType.GAUGE)) {
-                            overviewController.addGauge(visualizationInformation);
-                        } else if (visualizationInformation.getVisualizationType().equals(VisualizationType.AREACHART)) {
-                            overviewController.addAreaChart(visualizationInformation);
-                        }
-                    }
+                if (collectionInfo.getGaugeVisualizationInformation() != null) {
+                    OverviewController overviewController = mainController.getOverviewControllerForCollection(collection);
+                    collectionInfo.getGaugeVisualizationInformation().forEach(overviewController::addGauge);
                 }
+                if (collectionInfo.getAreaChartVisualizationInformation() != null) {
+                    OverviewController overviewController = mainController.getOverviewControllerForCollection(collection);
+                    collectionInfo.getAreaChartVisualizationInformation().forEach(overviewController::addAreaChart);
+                }
+
                 DataHandler.getInstance().addCollection(collection);
             }
 
             // Create all visualizations
             // -------------------------
             OverviewController overviewController = mainController.getOverviewController();
-
-            for (VisualizationInformation visualizationInfo : configuration.visualizationInformation) {
-                if (visualizationInfo.getVisualizationType().equals(VisualizationType.GAUGE))
-                    overviewController.addGauge(visualizationInfo);
-                else if (visualizationInfo.getVisualizationType().equals(VisualizationType.AREACHART)) {
-                    overviewController.addAreaChart(visualizationInfo);
-                }
-            }
+            configuration.getGaugeVisualizationInformation().forEach(overviewController::addGauge);
+            configuration.getAreaChartVisualizationInformation().forEach(overviewController::addAreaChart);
         } catch (IOException e) {
             e.printStackTrace();
         }

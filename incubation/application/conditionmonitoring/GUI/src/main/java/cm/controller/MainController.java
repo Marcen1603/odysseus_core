@@ -125,7 +125,7 @@ public class MainController{
         return overviewIncludeController;
     }
 
-    public OverviewController getOverviewIncludeControllerForCollection(Collection collection) {
+    public OverviewController getOverviewControllerForCollection(Collection collection) {
         return overviewControllerMap.get(collection);
     }
 }

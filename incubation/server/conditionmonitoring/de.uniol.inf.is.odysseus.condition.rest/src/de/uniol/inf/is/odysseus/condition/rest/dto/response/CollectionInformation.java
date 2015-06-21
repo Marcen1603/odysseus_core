@@ -4,53 +4,69 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import de.uniol.inf.is.odysseus.condition.rest.datatypes.AreaChartVisualizationInformation;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConnectionInformation;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.VisualizationInformation;
+import de.uniol.inf.is.odysseus.condition.rest.datatypes.GaugeVisualizationInformation;
 
 /**
  * @author Tobias
  * @since 17.06.2015.
  */
 public class CollectionInformation {
+	
 	private String name;
-	private List<ConnectionInformation> connectionInformation;
-	private List<VisualizationInformation> visualizationInformation;
-	private UUID identifier = UUID.randomUUID();
+    private List<ConnectionInformation> connectionInformation;
+    private List<GaugeVisualizationInformation> gaugeVisualizationInformation;
+    private List<AreaChartVisualizationInformation> areaChartVisualizationInformation;
+    private UUID identifier = UUID.randomUUID();
 
-	public CollectionInformation() {
-		this.connectionInformation = new ArrayList<>();
-		this.visualizationInformation = new ArrayList<VisualizationInformation>();
-	}
+    public CollectionInformation() {
+        this.connectionInformation = new ArrayList<>();
+        this.gaugeVisualizationInformation = new ArrayList<>();
+        this.areaChartVisualizationInformation = new ArrayList<>();
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public List<ConnectionInformation> getConnectionInformation() {
-		return connectionInformation;
-	}
+    public List<ConnectionInformation> getConnectionInformation() {
+        return connectionInformation;
+    }
 
-	public void setConnectionInformation(List<ConnectionInformation> connectionInformation) {
-		this.connectionInformation = connectionInformation;
-	}
+    public void setConnectionInformation(List<ConnectionInformation> connectionInformation) {
+        this.connectionInformation = connectionInformation;
+    }
 
-	public List<VisualizationInformation> getVisualizationInformation() {
-		return visualizationInformation;
-	}
+    public List<GaugeVisualizationInformation> getGaugeVisualizationInformation() {
+        return gaugeVisualizationInformation;
+    }
 
-	public void setVisualizationInformation(List<VisualizationInformation> visualizationInformation) {
-		this.visualizationInformation = visualizationInformation;
-	}
+    public void setGaugeVisualizationInformation(List<GaugeVisualizationInformation> gaugeVisualizationInformation) {
+        this.gaugeVisualizationInformation = gaugeVisualizationInformation;
+    }
+    
+    public void addGaugeVisualizationInformation(GaugeVisualizationInformation info) {
+    	this.gaugeVisualizationInformation.add(info);
+    }
 
-	public void addVisualizationInformation(VisualizationInformation visualizationInformation) {
-		this.visualizationInformation.add(visualizationInformation);
-	}
+    public List<AreaChartVisualizationInformation> getAreaChartVisualizationInformation() {
+        return areaChartVisualizationInformation;
+    }
 
-	public UUID getIdentifier() {
-		return identifier;
-	}
+    public void setAreaChartVisualizationInformation(List<AreaChartVisualizationInformation> areaChartVisualizationInformation) {
+        this.areaChartVisualizationInformation = areaChartVisualizationInformation;
+    }
+    
+    public void addAreaChartVisualizationInformation(AreaChartVisualizationInformation info) {
+    	this.areaChartVisualizationInformation.add(info);
+    }
+
+    public UUID getIdentifier() {
+        return identifier;
+    }
 }

@@ -3,9 +3,7 @@ package cm.controller;
 import cm.Main;
 import cm.communication.CommunicationService;
 import cm.communication.socket.SocketReceiver;
-import cm.configuration.ConfigurationService;
-import cm.configuration.VisualizationInformation;
-import cm.configuration.VisualizationType;
+import cm.configuration.*;
 import cm.data.DataHandler;
 import cm.model.*;
 import javafx.fxml.FXML;
@@ -43,7 +41,7 @@ public class OverviewController implements Observer {
         counterMap = new HashMap<>();
     }
 
-    public void addGauge(VisualizationInformation visualizationInformation) {
+    public void addGauge(GaugeVisualizationInformation visualizationInformation) {
 
         // Create gauge
         // Value
@@ -90,17 +88,24 @@ public class OverviewController implements Observer {
         gaugeMap.put(visualizationInformation, gauge);
     }
 
-    public void addAreaChart(VisualizationInformation visualizationInformation) {
+    public void addAreaChart(AreaChartVisualizationInformation visualizationInformation) {
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
         xAxis.setAutoRanging(true);
         yAxis.setAutoRanging(true);
         final AreaChart<Number, Number> ac =
                 new AreaChart<>(xAxis, yAxis);
-        ac.setTitle("Chart");
+        ac.setTitle(visualizationInformation.getTitle());
+        xAxis.setForceZeroInRange(false);
+
+        if (visualizationInformation.getMaxElements() > 0) {
+            // If we regularly delete elements animation does not look good
+            ac.setAnimated(false);
+        }
 
         XYChart.Series streamData = new XYChart.Series();
         streamData.setName(visualizationInformation.getAttribute());
+
         seriesMap.put(visualizationInformation, streamData);
         counterMap.put(visualizationInformation, 0);
 
@@ -140,9 +145,13 @@ public class OverviewController implements Observer {
                         String colorSchemeClass = "colorscheme-green-to-red-10";
                         gauge.getStyleClass().add(colorSchemeClass);
                     } else if (visualInfo.getVisualizationType().equals(VisualizationType.AREACHART) && seriesMap.get(visualInfo) != null) {
+                        AreaChartVisualizationInformation areaChartVisualizationInformation = (AreaChartVisualizationInformation) visualInfo;
                         XYChart.Series series = seriesMap.get(visualInfo);
                         int counter = counterMap.get(visualInfo);
                         series.getData().add(new XYChart.Data<>(counter++, value));
+                        if (areaChartVisualizationInformation.getMaxElements() > 0 && series.getData().size() > areaChartVisualizationInformation.getMaxElements()) {
+                            series.getData().remove(0);
+                        }
                         counterMap.put(visualInfo, counter);
                     }
                 }

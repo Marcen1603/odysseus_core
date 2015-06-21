@@ -11,12 +11,14 @@ import java.util.UUID;
 public class CollectionInformation {
     private String name;
     private List<ConnectionInformation> connectionInformation;
-    private List<VisualizationInformation> visualizationInformation;
+    private List<GaugeVisualizationInformation> gaugeVisualizationInformation;
+    private List<AreaChartVisualizationInformation> areaChartVisualizationInformation;
     private UUID identifier = UUID.randomUUID();
 
     public CollectionInformation() {
         this.connectionInformation = new ArrayList<>();
-        this.visualizationInformation = new ArrayList<>();
+        this.gaugeVisualizationInformation = new ArrayList<>();
+        this.areaChartVisualizationInformation = new ArrayList<>();
     }
 
     public String getName() {
@@ -35,16 +37,20 @@ public class CollectionInformation {
         this.connectionInformation = connectionInformation;
     }
 
-    public List<VisualizationInformation> getVisualizationInformation() {
-        return visualizationInformation;
+    public List<GaugeVisualizationInformation> getGaugeVisualizationInformation() {
+        return gaugeVisualizationInformation;
     }
 
-    public void setVisualizationInformation(List<VisualizationInformation> visualizationInformation) {
-        this.visualizationInformation = visualizationInformation;
+    public void setGaugeVisualizationInformation(List<GaugeVisualizationInformation> gaugeVisualizationInformation) {
+        this.gaugeVisualizationInformation = gaugeVisualizationInformation;
     }
 
-    public void addVisualizationInformation(VisualizationInformation visualizationInformation) {
-        this.visualizationInformation.add(visualizationInformation);
+    public List<AreaChartVisualizationInformation> getAreaChartVisualizationInformation() {
+        return areaChartVisualizationInformation;
+    }
+
+    public void setAreaChartVisualizationInformation(List<AreaChartVisualizationInformation> areaChartVisualizationInformation) {
+        this.areaChartVisualizationInformation = areaChartVisualizationInformation;
     }
 
     public UUID getIdentifier() {
