@@ -6,12 +6,21 @@ package de.uniol.inf.is.odysseus.rcp.views.access;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -25,8 +34,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
@@ -36,6 +50,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
  * 
  */
 public class TransportsView extends ViewPart {
+    private static final Logger LOG = LoggerFactory.getLogger(TransportsView.class);
 
     TableViewer tableViewer;
 
@@ -59,6 +74,30 @@ public class TransportsView extends ViewPart {
             public int compare(final Viewer viewer, final Object e1, final Object e2) {
                 return TransportsView.this.compareElements(e1, e2);
             }
+        });
+        this.tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+            @Override
+            public void doubleClick(DoubleClickEvent event) {
+
+                if (event.getSelection().isEmpty()) {
+                    return;
+                }
+                if (event.getSelection() instanceof IStructuredSelection) {
+                    IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                    for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
+                        try {
+                            insertSelection((String) iterator.next());
+                        }
+                        catch (BadLocationException e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+
+                    }
+                }
+
+            }
+
         });
         this.createColumns(this.tableViewer, tableColumnLayout);
         refresh();
@@ -137,5 +176,20 @@ public class TransportsView extends ViewPart {
             result = c1.compareTo(c2);
         }
         return table.getSortDirection() == SWT.UP ? result : -result;
+    }
+    
+    private void insertSelection(String element) throws BadLocationException {
+        IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+        if (editor instanceof ITextEditor) {
+            ISelectionProvider selectionProvider = ((ITextEditor) editor).getSelectionProvider();
+            ISelection selection = selectionProvider.getSelection();
+            final IDocumentProvider documentProvider = ((ITextEditor) editor).getDocumentProvider();
+            final IDocument document = documentProvider.getDocument(editor.getEditorInput());
+            if (selection instanceof ITextSelection) {
+                ITextSelection textSelection = (ITextSelection) selection;
+                document.replace(textSelection.getOffset(), 0, element);
+
+            }
+        }
     }
 }
