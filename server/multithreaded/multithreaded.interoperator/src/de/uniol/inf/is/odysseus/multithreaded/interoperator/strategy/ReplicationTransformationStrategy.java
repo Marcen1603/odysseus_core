@@ -44,4 +44,12 @@ public class ReplicationTransformationStrategy extends AbstractMultithreadedTran
 		return true;
 	}
 
+	@Override
+	protected void doStrategySpecificPostParallelization(
+			ILogicalOperator parallelizedOperator,
+			ILogicalOperator currentExistingOperator,
+			ILogicalOperator currentClonedOperator, int iteration) {
+		// no strategy specific modifications
+	}
+
 }

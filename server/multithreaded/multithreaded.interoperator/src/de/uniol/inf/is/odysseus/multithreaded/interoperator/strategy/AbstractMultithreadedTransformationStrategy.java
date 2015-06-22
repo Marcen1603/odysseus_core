@@ -207,6 +207,8 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 					lastClonedOperator.getOutputSchema());
 			// TODO maybe the existing operator has more than one input stream
 
+			doStrategySpecificPostParallelization(newOperator, currentExistingOperator, currentClonedOperator, iteration);
+			
 			// TODO does it make sense to add the attributes to fragmentation?
 			if (currentExistingOperator instanceof AggregateAO) {
 				AggregateAO aggregateOperator = (AggregateAO) currentExistingOperator;
@@ -236,7 +238,7 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 				}
 			}
 
-			// if end operator is reached, break look and return last cloned
+			// if end operator is reached, break loop and return last cloned
 			// operator
 			lastClonedOperator = currentClonedOperator;
 			if (currentExistingOperator.getUniqueIdentifier() != null) {
@@ -249,4 +251,9 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 		}
 		return lastClonedOperator;
 	}
+
+	protected abstract void doStrategySpecificPostParallelization(
+			ILogicalOperator parallelizedOperator,
+			ILogicalOperator currentExistingOperator,
+			ILogicalOperator currentClonedOperator, int iteration);
 }

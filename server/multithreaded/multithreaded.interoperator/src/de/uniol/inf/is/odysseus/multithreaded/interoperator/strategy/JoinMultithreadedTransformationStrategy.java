@@ -190,4 +190,12 @@ public class JoinMultithreadedTransformationStrategy extends
 	public Class<? extends AbstractFragmentAO> getPreferredFragmentationType() {
 		return HashFragmentAO.class;
 	}
+
+	@Override
+	protected void doStrategySpecificPostParallelization(
+			ILogicalOperator parallelizedOperator,
+			ILogicalOperator currentExistingOperator,
+			ILogicalOperator currentClonedOperator, int iteration) {
+		// no strategy specific modifications
+	}
 }

@@ -6,12 +6,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
@@ -107,7 +114,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 			SDFAttribute attr = aggregateItem.outAttribute;
 
 			// output attributes
-			String newPAAttributeName = "pa_" + attr.getAttributeName();
+			String newPAAttributeName = "pa_" + attr.getQualName();
 			SDFAttribute outAttribute = new SDFAttribute(attr.getSourceName(),
 					newPAAttributeName, SDFDatatype.PARTIAL_AGGREGATE, null,
 					attr.getDtConstraints(), null);
@@ -186,7 +193,6 @@ public class AggregateMultithreadedTransformationStrategy extends
 				+ "_combinePA");
 		combinePAAggregateOperator.setUniqueIdentifier(aggregateOperator
 				.getUniqueIdentifier() + "_combinePA");
-
 		combinePAAggregateOperator.clearAggregations();
 		combinePAAggregateOperator
 				.setAggregationItems(renamedCombineAggregationItems);
@@ -197,7 +203,6 @@ public class AggregateMultithreadedTransformationStrategy extends
 		combinePAAggregateOperator.subscribeToSource(union, 0, 0,
 				union.getOutputSchema());
 
-		
 		// get the last operator that need to be parallelized. if no end id is
 		// set, the given operator for transformation is selected
 		ILogicalOperator lastOperatorForParallelization = null;
@@ -217,7 +222,8 @@ public class AggregateMultithreadedTransformationStrategy extends
 		// remove old subscription and subscribe new aggregate operator to
 		// existing downstream operators
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			lastOperatorForParallelization.unsubscribeSink(downstreamOperatorSubscription);
+			lastOperatorForParallelization
+					.unsubscribeSink(downstreamOperatorSubscription);
 			downstreamOperatorSubscription.getTarget().subscribeToSource(
 					combinePAAggregateOperator,
 					downstreamOperatorSubscription.getSinkInPort(),
@@ -239,6 +245,38 @@ public class AggregateMultithreadedTransformationStrategy extends
 	@Override
 	public Class<? extends AbstractFragmentAO> getPreferredFragmentationType() {
 		return RoundRobinFragmentAO.class;
+	}
+
+	@Override
+	protected void doStrategySpecificPostParallelization(
+			ILogicalOperator parallelizedOperator,
+			ILogicalOperator currentExistingOperator,
+			ILogicalOperator currentClonedOperator, int iteration) {
+		if (currentClonedOperator instanceof MapAO) {
+			// map removes partial aggregates, so we need to add these
+			// attributes to the map
+			MapAO mapOperator = (MapAO) currentClonedOperator;
+			// the parallelized operator is always in the type of the strategy
+			if (parallelizedOperator instanceof AggregateAO) {
+				AggregateAO aggregateOperator = (AggregateAO) parallelizedOperator;
+				List<AggregateItem> aggregationItems = aggregateOperator
+						.getAggregationItems();
+				List<NamedExpression> expressions = mapOperator
+						.getExpressions();
+				IAttributeResolver attributeResolver = new DirectAttributeResolver(
+						aggregateOperator.getOutputSchema());
+				for (AggregateItem aggregateItem : aggregationItems) {
+					NamedExpression namedExpression = new NamedExpression("",
+							new SDFExpression(null,
+									aggregateItem.outAttribute.getURI(),
+									attributeResolver, MEP.getInstance(),
+									AggregateFunctionBuilderRegistry
+											.getAggregatePattern()));
+					expressions.add(namedExpression);
+				}
+				mapOperator.setExpressions(expressions);
+			}
+		}
 	}
 
 }
