@@ -57,7 +57,13 @@ public class MainController{
         // Collections tab
         // ---------------
         collectionList.setItems(DataHandler.getInstance().getObservableCollectionList());
-        collectionList.setCellFactory(listView -> new CollectionListCell());
+        collectionList.setCellFactory(listView -> {
+            // Select the first cell to not show an empty collection
+            if (collectionList.getItems().size() > 0 && collectionList.getSelectionModel().getSelectedItems().isEmpty()) {
+                collectionList.getSelectionModel().select(0);
+            }
+            return new CollectionListCell();
+        });
         // To react to clicks on the listView of collections
         collectionList.getSelectionModel().getSelectedItems().addListener(new CollectionListViewListener(this));
 
@@ -74,13 +80,7 @@ public class MainController{
         // Just update the existing viewElements
         collectionName.setText(collection.getName());
         collectionEventList.setItems(DataHandler.getInstance().getCollectionEvents(collection));
-        collectionEventList.setCellFactory(listView -> {
-            // Select the first cell to not show an empty collection
-            if (collectionList.getItems().size() > 0 && collectionList.getSelectionModel().getSelectedItems().isEmpty()) {
-                collectionList.getSelectionModel().select(0);
-            }
-            return new EventListCell();
-        });
+        collectionEventList.setCellFactory(listView -> new EventListCell());
 
         // Load the correct viewElement (overview)
         if (overviewPaneMap.get(collection) != null) {

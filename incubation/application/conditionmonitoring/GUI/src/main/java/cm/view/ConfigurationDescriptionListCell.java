@@ -18,8 +18,6 @@ public class ConfigurationDescriptionListCell extends ListCell<ConfigurationDesc
     private Parent root;
 
     @FXML
-    Label configId;
-    @FXML
     Label configName;
     @FXML
     Label configDescription;
@@ -44,7 +42,6 @@ public class ConfigurationDescriptionListCell extends ListCell<ConfigurationDesc
             return;
         }
 
-        this.configId.setText("" + config.getId());
         this.configName.setText(config.getName());
         this.configDescription.setText(config.getDescription());
         setGraphic(root);

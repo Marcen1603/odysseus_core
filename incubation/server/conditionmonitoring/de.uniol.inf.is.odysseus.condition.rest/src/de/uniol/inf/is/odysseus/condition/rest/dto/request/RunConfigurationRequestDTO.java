@@ -1,15 +1,17 @@
 package de.uniol.inf.is.odysseus.condition.rest.dto.request;
 
+import java.util.UUID;
+
 public class RunConfigurationRequestDTO {
 
-	int configurationId;
-	String token;
+	private UUID configurationId;
+	private String token;
 
-	public int getConfigurationId() {
+	public UUID getConfigurationId() {
 		return configurationId;
 	}
 
-	public void setConfigurationId(int configurationId) {
+	public void setConfigurationId(UUID configurationId) {
 		this.configurationId = configurationId;
 	}
 

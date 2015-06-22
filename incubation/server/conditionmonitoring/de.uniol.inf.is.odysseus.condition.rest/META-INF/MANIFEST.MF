@@ -7,6 +7,8 @@ Bundle-Activator: de.uniol.inf.is.odysseus.condition.rest.Activator
 Bundle-Vendor: Brandt
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.gson,
+ com.mongodb,
+ com.mongodb.util,
  de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement.executor,

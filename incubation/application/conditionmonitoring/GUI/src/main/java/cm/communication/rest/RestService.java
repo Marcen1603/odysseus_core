@@ -14,6 +14,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Tobias
@@ -177,12 +178,12 @@ public class RestService {
         return null;
     }
 
-    public static Configuration runConfiguration(String ip, String username, String password, int configurationId) throws RestException {
+    public static Configuration runConfiguration(String ip, String username, String password, UUID configurationId) throws RestException {
         String token = login(ip, username, password);
         return runConfiguration(ip, token, configurationId);
     }
 
-    public static Configuration runConfiguration(String ip, String token, int configurationId) throws RestException {
+    public static Configuration runConfiguration(String ip, String token, UUID configurationId) throws RestException {
         String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CONDITION;
         ClientResource crRunConfigs = new ClientResource(hostURL + "/" + RESOURCE_PATH_RUN_CONFIGURATION);
         RunConfigurationRequestDTO runConfigurationRequestDTO = new RunConfigurationRequestDTO();

@@ -1,8 +1,17 @@
 package de.uniol.inf.is.odysseus.condition.rest.service;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gson.Gson;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
 
 import de.uniol.inf.is.odysseus.condition.rest.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.Configuration;
@@ -13,6 +22,35 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class ConfigurationService {
+
+	public static List<Configuration> getAvailableConfigurations() {
+		List<Configuration> configs = new ArrayList<>();
+		try {
+			MongoClient mongoClient = new MongoClient("127.0.0.1:27017");
+			DBCollection mongoDBCollection = mongoClient.getDB("odysseus").getCollection("conditionConfigurations");
+
+			// Read from this collection
+			DBCursor dbCursor;
+			dbCursor = mongoDBCollection.find();
+			List<String> jsons = new ArrayList<>();
+
+			for (DBObject dbObj : dbCursor) {
+				jsons.add(dbObj.toString());
+			}
+			
+			for (String json : jsons) {
+				Gson gson = new Gson();
+				Configuration config = gson.fromJson(json, Configuration.class);
+				configs.add(config);
+			}
+			return configs;
+
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public static void runConfiguration(Configuration config, ISession session) {
 		runServerConfiguration(config.getServerConfiguration(), session);

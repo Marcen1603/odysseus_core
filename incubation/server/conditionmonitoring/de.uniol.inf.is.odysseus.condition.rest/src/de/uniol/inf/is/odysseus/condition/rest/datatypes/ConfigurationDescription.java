@@ -1,24 +1,26 @@
 package de.uniol.inf.is.odysseus.condition.rest.datatypes;
 
+import java.util.UUID;
+
 public class ConfigurationDescription {
 
-	private int id;
+	private UUID identifier;
 	private String name;
 	private String description;
 
-	public ConfigurationDescription(int id, String name, String description) {
+	public ConfigurationDescription(UUID identifier, String name, String description) {
 		super();
-		this.id = id;
+		this.identifier = identifier;
 		this.name = name;
 		this.description = description;
 	}
 
-	public int getId() {
-		return id;
+	public UUID getIdentifier() {
+		return identifier;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setIdentifier(UUID identifier) {
+		this.identifier = identifier;
 	}
 
 	public String getName() {

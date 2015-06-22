@@ -46,7 +46,7 @@ public class ConfigChooseController {
     public void openConfiguration(ActionEvent actionEvent) {
         ConfigurationDescription config = availableConfigs.getSelectionModel().getSelectedItem();
         try {
-            Configuration configuration = RestService.runConfiguration(CommunicationService.getLoginIp(), CommunicationService.getToken(), config.getId());
+            Configuration configuration = RestService.runConfiguration(CommunicationService.getLoginIp(), CommunicationService.getToken(), config.getIdentifier());
             Stage stage = (Stage) root.getScene().getWindow();
             ConfigurationService.getInstance().loadConfiguration(configuration, stage);
         } catch (RestException e) {
