@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
@@ -144,8 +145,8 @@ public class AggregateMultithreadedTransformationStrategy extends
 			BufferAO buffer = new BufferAO();
 			buffer.setName("Buffer_" + i);
 			buffer.setThreaded(true);
-			buffer.setMaxBufferSize(10000000);
-			buffer.setDrainAtClose(false);
+			buffer.setMaxBufferSize(settingsForOperator.getBufferSize());
+			buffer.setDrainAtClose(true);
 
 			// create new aggregate operator from existing operator
 			AggregateAO newAggregateOperator = aggregateOperator.clone();
@@ -177,7 +178,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 				fragments.add(fragmentAO);
 				ILogicalOperator lastParallelizedOperator = doPostParallelization(
 						aggregateOperator, newAggregateOperator,
-						settingsForOperator.getEndParallelizationId(), i, true,
+						settingsForOperator.getEndParallelizationId(), i,
 						fragments);
 				union.subscribeToSource(lastParallelizedOperator, i, 0,
 						lastParallelizedOperator.getOutputSchema());
@@ -208,7 +209,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 		ILogicalOperator lastOperatorForParallelization = null;
 		if (settingsForOperator.getEndParallelizationId() != null
 				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
-			lastOperatorForParallelization = findOperatorWithId(
+			lastOperatorForParallelization = LogicalGraphHelper.findDownstreamOperatorWithId(
 					settingsForOperator.getEndParallelizationId(),
 					aggregateOperator);
 		} else {
@@ -251,7 +252,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 	protected void doStrategySpecificPostParallelization(
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration) {
+			ILogicalOperator currentClonedOperator, int iteration, List<AbstractFragmentAO> fragments) {
 		if (currentClonedOperator instanceof MapAO) {
 			// map removes partial aggregates, so we need to add these
 			// attributes to the map

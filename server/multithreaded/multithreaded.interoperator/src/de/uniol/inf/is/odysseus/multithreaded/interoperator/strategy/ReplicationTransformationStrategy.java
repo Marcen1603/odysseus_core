@@ -48,7 +48,7 @@ public class ReplicationTransformationStrategy extends AbstractMultithreadedTran
 	protected void doStrategySpecificPostParallelization(
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration) {
+			ILogicalOperator currentClonedOperator, int iteration, List<AbstractFragmentAO> fragments) {
 		// no strategy specific modifications
 	}
 

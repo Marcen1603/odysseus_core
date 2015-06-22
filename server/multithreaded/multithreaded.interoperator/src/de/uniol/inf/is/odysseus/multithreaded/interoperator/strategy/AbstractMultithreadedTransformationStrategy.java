@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
@@ -11,12 +13,12 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.util.GenericDownstreamGraphWalker;
-import de.uniol.inf.is.odysseus.core.server.util.OperatorIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.multithreaded.helper.SDFAttributeHelper;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
@@ -86,30 +88,32 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected ILogicalOperator findOperatorWithId(String endParallelizationId,
-			ILogicalOperator logicalOperator) {
-		OperatorIdLogicalGraphVisitor<ILogicalOperator> idVisitor = new OperatorIdLogicalGraphVisitor<ILogicalOperator>(
-				endParallelizationId);
-		GenericDownstreamGraphWalker walker = new GenericDownstreamGraphWalker();
-		walker.prefixWalk(logicalOperator, idVisitor);
-		return idVisitor.getResult().get(endParallelizationId);
-	}
-
 	protected void checkIfWayToEndPointIsValid(
 			ILogicalOperator operatorForTransformation,
 			MultithreadedOperatorSettings settingsForOperator,
 			boolean aggregatesWithGroupingAllowed) {
 		if (settingsForOperator.getEndParallelizationId() != null
 				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
-			ILogicalOperator endOperator = findOperatorWithId(
-					settingsForOperator.getEndParallelizationId(),
-					operatorForTransformation);
+			ILogicalOperator endOperator = LogicalGraphHelper
+					.findDownstreamOperatorWithId(
+							settingsForOperator.getEndParallelizationId(),
+							operatorForTransformation);
 			if (endOperator == null) {
 				// end operator id is invalid
-				throw new IllegalArgumentException("End operator with id"
-						+ settingsForOperator.getEndParallelizationId()
-						+ " does not exist.");
+				ILogicalOperator upstreamOperator = LogicalGraphHelper
+						.findUpstreamOperatorWithId(
+								settingsForOperator.getEndParallelizationId(),
+								operatorForTransformation);
+				if (upstreamOperator != null) {
+					throw new IllegalArgumentException("End operator with id "
+							+ settingsForOperator.getEndParallelizationId()
+							+ " need to be on downstream and not upstream.");
+				} else {
+					throw new IllegalArgumentException("End operator with id"
+							+ settingsForOperator.getEndParallelizationId()
+							+ " does not exist.");
+				}
+
 			} else {
 				ILogicalOperator currentOperator = getNextOperator(operatorForTransformation);
 				while (currentOperator != null) {
@@ -190,11 +194,12 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 	protected ILogicalOperator doPostParallelization(
 			ILogicalOperator existingOperator, ILogicalOperator newOperator,
 			String endOperatorId, int iteration,
-			boolean modificationOfFragmentAttributesAllowed,
 			List<AbstractFragmentAO> fragments) {
 
 		ILogicalOperator lastClonedOperator = newOperator;
 		ILogicalOperator currentExistingOperator = getNextOperator(existingOperator);
+		ILogicalOperator lastExistingOperator = existingOperator;
+
 		while (currentExistingOperator != null) {
 
 			ILogicalOperator currentClonedOperator = currentExistingOperator
@@ -203,40 +208,33 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 					+ iteration);
 			currentClonedOperator.setUniqueIdentifier(currentClonedOperator
 					.getUniqueIdentifier() + "_" + iteration);
-			currentClonedOperator.subscribeToSource(lastClonedOperator, 0, 0,
-					lastClonedOperator.getOutputSchema());
-			// TODO maybe the existing operator has more than one input stream
 
-			doStrategySpecificPostParallelization(newOperator, currentExistingOperator, currentClonedOperator, iteration);
-			
-			// TODO does it make sense to add the attributes to fragmentation?
-			if (currentExistingOperator instanceof AggregateAO) {
-				AggregateAO aggregateOperator = (AggregateAO) currentExistingOperator;
-				if (modificationOfFragmentAttributesAllowed) {
-					for (AbstractFragmentAO fragment : fragments) {
-						if (fragment instanceof HashFragmentAO) {
-							HashFragmentAO hashFragment = (HashFragmentAO) fragment;
+			CopyOnWriteArrayList<LogicalSubscription> operatorSourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+			operatorSourceSubscriptions.addAll(currentExistingOperator
+					.getSubscribedToSource());
+			for (LogicalSubscription sourceSubscription : operatorSourceSubscriptions) {
+				if (sourceSubscription.getTarget().equals(lastExistingOperator)) {
+					// if target of subscription is last existing operator, set
+					// new cloned one
+					currentClonedOperator.subscribeToSource(lastClonedOperator,
+							sourceSubscription.getSinkInPort(),
+							sourceSubscription.getSourceOutPort(),
+							lastClonedOperator.getOutputSchema());
+				} else {
+					// else connect new copied operator to target
+					int newSourceOutPort = calculateNewSourceOutPort(
+							sourceSubscription, iteration);
 
-							// check if the attributes exists in input schema
-							boolean fragmentSupportsAttributes = true;
-							for (SDFAttribute groupingAttribute : aggregateOperator
-									.getGroupingAttributes()) {
-								SDFAttribute findAttribute = hashFragment
-										.getInputSchema().findAttribute(
-												groupingAttribute.getURI());
-								if (findAttribute == null) {
-									fragmentSupportsAttributes = false;
-								}
-							}
-
-							if (fragmentSupportsAttributes) {
-								hashFragment.setAttributes(aggregateOperator
-										.getGroupingAttributes());
-							}
-						}
-					}
+					currentClonedOperator.subscribeToSource(sourceSubscription
+							.getTarget(), sourceSubscription.getSinkInPort(),
+							newSourceOutPort, sourceSubscription.getTarget()
+									.getOutputSchema());
 				}
 			}
+
+			doStrategySpecificPostParallelization(newOperator,
+					currentExistingOperator, currentClonedOperator, iteration,
+					fragments);
 
 			// if end operator is reached, break loop and return last cloned
 			// operator
@@ -247,13 +245,28 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 					break;
 				}
 			}
+			lastExistingOperator = currentExistingOperator;
 			currentExistingOperator = getNextOperator(currentExistingOperator);
 		}
 		return lastClonedOperator;
 	}
 
+	private int calculateNewSourceOutPort(
+			LogicalSubscription sourceSubscription, int iteration) {
+		Map<Integer, SDFSchema> outputSchemaMap = sourceSubscription
+				.getTarget().getOutputSchemaMap();
+		int newSourceOutPort = outputSchemaMap.size() + iteration;
+		// if this source out port is already in use, try another one
+		while (outputSchemaMap.containsKey(newSourceOutPort)) {
+			newSourceOutPort++;
+		}
+
+		return newSourceOutPort;
+	}
+
 	protected abstract void doStrategySpecificPostParallelization(
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration);
+			ILogicalOperator currentClonedOperator, int iteration,
+			List<AbstractFragmentAO> fragments);
 }

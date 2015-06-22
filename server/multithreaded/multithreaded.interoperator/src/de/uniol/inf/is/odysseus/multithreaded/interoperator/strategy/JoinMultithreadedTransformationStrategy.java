@@ -10,10 +10,12 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.multithreaded.helper.SDFAttributeHelper;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
@@ -61,8 +63,8 @@ public class JoinMultithreadedTransformationStrategy extends
 
 		int numberOfFragments = 0;
 		List<Pair<AbstractFragmentAO, Integer>> fragmentsSinkInPorts = new ArrayList<Pair<AbstractFragmentAO, Integer>>();
-		List<AbstractFragmentAO> fragments = new ArrayList<AbstractFragmentAO>(); 
-		
+		List<AbstractFragmentAO> fragments = new ArrayList<AbstractFragmentAO>();
+
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 		upstreamOperatorSubscriptions.addAll(joinOperator
 				.getSubscribedToSource());
@@ -126,8 +128,8 @@ public class JoinMultithreadedTransformationStrategy extends
 				BufferAO buffer = new BufferAO();
 				buffer.setName("Buffer_" + bufferCounter);
 				buffer.setThreaded(true);
-				buffer.setMaxBufferSize(10000000);
-				buffer.setDrainAtClose(false);
+				buffer.setMaxBufferSize(settingsForOperator.getBufferSize());
+				buffer.setDrainAtClose(true);
 				bufferCounter++;
 
 				buffer.subscribeToSource(pair.getE1(), 0, i, pair.getE1()
@@ -135,16 +137,15 @@ public class JoinMultithreadedTransformationStrategy extends
 
 				newJoinOperator.subscribeToSource(buffer, pair.getE2(), 0,
 						buffer.getOutputSchema());
-				
+
 			}
-			
+
 			if (settingsForOperator.getEndParallelizationId() != null
-					&& !settingsForOperator.getEndParallelizationId()
-					.isEmpty()) {
+					&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
 				ILogicalOperator lastParallelizedOperator = doPostParallelization(
 						joinOperator, newJoinOperator,
 						settingsForOperator.getEndParallelizationId(), i,
-						true, fragments);
+						fragments);
 				union.subscribeToSource(lastParallelizedOperator, i, 0,
 						lastParallelizedOperator.getOutputSchema());
 			} else {
@@ -158,18 +159,21 @@ public class JoinMultithreadedTransformationStrategy extends
 		ILogicalOperator lastOperatorForParallelization = null;
 		if (settingsForOperator.getEndParallelizationId() != null
 				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
-			lastOperatorForParallelization = findOperatorWithId(
-					settingsForOperator.getEndParallelizationId(),
-					joinOperator);
+			lastOperatorForParallelization = LogicalGraphHelper
+					.findDownstreamOperatorWithId(
+							settingsForOperator.getEndParallelizationId(),
+							joinOperator);
 		} else {
 			lastOperatorForParallelization = joinOperator;
 		}
 
 		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		downstreamOperatorSubscriptions.addAll(lastOperatorForParallelization.getSubscriptions());
+		downstreamOperatorSubscriptions.addAll(lastOperatorForParallelization
+				.getSubscriptions());
 
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			lastOperatorForParallelization.unsubscribeSink(downstreamOperatorSubscription);
+			lastOperatorForParallelization
+					.unsubscribeSink(downstreamOperatorSubscription);
 			downstreamOperatorSubscription.getTarget().subscribeToSource(union,
 					downstreamOperatorSubscription.getSinkInPort(),
 					downstreamOperatorSubscription.getSourceOutPort(),
@@ -195,7 +199,29 @@ public class JoinMultithreadedTransformationStrategy extends
 	protected void doStrategySpecificPostParallelization(
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration) {
-		// no strategy specific modifications
+			ILogicalOperator currentClonedOperator, int iteration,
+			List<AbstractFragmentAO> fragments) {
+		// check if grouping attributes of aggregation already exists in
+		// hashFragment, if not throw exception
+		if (currentExistingOperator instanceof AggregateAO) {
+			AggregateAO aggregateOperator = (AggregateAO) currentExistingOperator;
+
+			List<SDFAttribute> groupingAttributes = aggregateOperator
+					.getGroupingAttributes();
+			for (SDFAttribute sdfAttribute : groupingAttributes) {
+				boolean attributeFound = false;
+				for (AbstractFragmentAO fragment : fragments) {
+					if (fragment instanceof HashFragmentAO) {
+						HashFragmentAO hashFragment = (HashFragmentAO) fragment;
+						if (hashFragment.getAttributes().contains(sdfAttribute)){
+							attributeFound = true;
+						}
+					}
+				}
+				if (!attributeFound){
+					throw new IllegalArgumentException("");
+				}
+			}
+		}
 	}
 }

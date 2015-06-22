@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
@@ -46,7 +47,6 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 		}
 		checkIfWayToEndPointIsValid(operator, settingsForOperator, true);
 
-		
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		// create fragment operator
@@ -67,14 +67,12 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 			return false;
 		}
 
-		
-		
 		if (!groupingAttributes.isEmpty()) {
 			// subscribe new operator
 			CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 			upstreamOperatorSubscriptions.addAll(aggregateOperator
 					.getSubscribedToSource());
-			
+
 			for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
 				aggregateOperator
 						.unsubscribeFromSource(upstreamOperatorSubscription);
@@ -93,8 +91,8 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 				BufferAO buffer = new BufferAO();
 				buffer.setName("Buffer_" + i);
 				buffer.setThreaded(true);
-				buffer.setMaxBufferSize(10000000);
-				buffer.setDrainAtClose(false);
+				buffer.setMaxBufferSize(settingsForOperator.getBufferSize());
+				buffer.setDrainAtClose(true);
 
 				AggregateAO newAggregateOperator = aggregateOperator.clone();
 				newAggregateOperator.setName(aggregateOperator.getName() + "_"
@@ -117,7 +115,7 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 					ILogicalOperator lastParallelizedOperator = doPostParallelization(
 							aggregateOperator, newAggregateOperator,
 							settingsForOperator.getEndParallelizationId(), i,
-							true, fragments);
+							fragments);
 					union.subscribeToSource(lastParallelizedOperator, i, 0,
 							lastParallelizedOperator.getOutputSchema());
 				} else {
@@ -125,26 +123,30 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 							newAggregateOperator.getOutputSchema());
 				}
 			}
-			
-			// get the last operator that need to be parallelized. if no end id is set, the given operator for transformation is selected
+
+			// get the last operator that need to be parallelized. if no end id
+			// is set, the given operator for transformation is selected
 			ILogicalOperator lastOperatorForParallelization = null;
 			if (settingsForOperator.getEndParallelizationId() != null
-					&& !settingsForOperator.getEndParallelizationId()
-							.isEmpty()) {
-				lastOperatorForParallelization = findOperatorWithId(settingsForOperator.getEndParallelizationId(), aggregateOperator);
+					&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
+				lastOperatorForParallelization = LogicalGraphHelper
+						.findDownstreamOperatorWithId(
+								settingsForOperator.getEndParallelizationId(),
+								aggregateOperator);
 			} else {
 				lastOperatorForParallelization = aggregateOperator;
 			}
 
-			// remove subscriptions to sink from this operator and connect the union 
+			// remove subscriptions to sink from this operator and connect the
+			// union
 			CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-			downstreamOperatorSubscriptions.addAll(lastOperatorForParallelization
-					.getSubscriptions());
-			
+			downstreamOperatorSubscriptions
+					.addAll(lastOperatorForParallelization.getSubscriptions());
+
 			for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
 				lastOperatorForParallelization
 						.unsubscribeSink(downstreamOperatorSubscription);
-				
+
 				downstreamOperatorSubscription.getTarget().subscribeToSource(
 						union, downstreamOperatorSubscription.getSinkInPort(),
 						downstreamOperatorSubscription.getSourceOutPort(),
@@ -170,8 +172,36 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 	protected void doStrategySpecificPostParallelization(
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration) {
-		// no strategy specific modifications
+			ILogicalOperator currentClonedOperator, int iteration,
+			List<AbstractFragmentAO> fragments) {
+		// we know, that both aggregations have a grouping, so add the grouping
+		// attributes of this operator also to fragmentation
+		if (currentExistingOperator instanceof AggregateAO) {
+			AggregateAO aggregateOperator = (AggregateAO) currentExistingOperator;
+			for (AbstractFragmentAO fragment : fragments) {
+				if (fragment instanceof HashFragmentAO) {
+					HashFragmentAO hashFragment = (HashFragmentAO) fragment;
+
+					// check if the attributes exists in input schema
+					boolean fragmentSupportsAttributes = true;
+					for (SDFAttribute groupingAttribute : aggregateOperator
+							.getGroupingAttributes()) {
+						SDFAttribute findAttribute = hashFragment
+								.getInputSchema().findAttribute(
+										groupingAttribute.getURI());
+						if (findAttribute == null) {
+							fragmentSupportsAttributes = false;
+							break;
+						}
+					}
+
+					if (fragmentSupportsAttributes) {
+						hashFragment.setAttributes(aggregateOperator
+								.getGroupingAttributes());
+					}
+				}
+			}
+		}
 	}
 
 }
