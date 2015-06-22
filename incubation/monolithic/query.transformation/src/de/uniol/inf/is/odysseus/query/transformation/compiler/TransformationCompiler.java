@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.query.transformation.QueryTransformationHelper;
 import de.uniol.inf.is.odysseus.query.transformation.filewriter.FileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.operator.java.ITransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.registry.QueryTransformationOperatorRegistry;
+import de.uniol.inf.is.odysseus.query.transformation.shell.commands.ExecuteShellComand;
 
 public class TransformationCompiler {
 
@@ -28,16 +29,14 @@ private static FileWrite testWrite;
 		
 	ILogicalQuery queryTopAo = ExecutorServiceBinding.getExecutor().getLogicalQueryById(parameter.getQueryId(), QueryTransformationHelper.getActiveSession());
 
-	
 	CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(queryTopAo);
 	GenericGraphWalker walker = new GenericGraphWalker();
 	walker.prefixWalk(queryTopAo.getLogicalPlan(), copyVisitor);
 	
 	ILogicalOperator savedPlan = copyVisitor.getResult();
 	
-	
-	
-	testWrite = new FileWrite("TestFile.txt",parameter);
+
+	testWrite = new FileWrite("TestFile.java",parameter);
 	testWrite.createFile();
 	
 	
@@ -46,6 +45,9 @@ private static FileWrite testWrite;
 	walkThroughLogicalPlan(savedPlan,parameter);
 	
 	testWrite.writeBottom();
+	
+	
+	ExecuteShellComand.compileJavaProgram(parameter.getTempDirectory());
 	}
 
 	
