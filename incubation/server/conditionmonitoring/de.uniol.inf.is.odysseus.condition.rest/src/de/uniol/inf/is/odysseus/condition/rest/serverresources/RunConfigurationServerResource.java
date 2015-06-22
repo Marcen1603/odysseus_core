@@ -29,6 +29,10 @@ public class RunConfigurationServerResource extends AbstractSessionServerResourc
 			Gson gson = new Gson();
 			config = gson.fromJson(content, Configuration.class);
 			ConfigurationService.runConfiguration(config, session);
+//			SDFSchema out = ExecutorServiceBinding.getExecutor().getOutputSchema(4, session);
+//			Map<Integer, SDFSchema> outputSchemaMap = ExecutorServiceBinding.getExecutor().getLogicalQueryByName("cohort1", session).getLogicalPlan().getOutputSchemaMap();
+//			System.out.println(out);
+//			System.out.println(outputSchemaMap);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

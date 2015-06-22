@@ -9,11 +9,13 @@ import java.util.UUID;
  * @since 17.06.2015.
  */
 public class CollectionInformation {
+
     private String name;
     private List<ConnectionInformation> connectionInformation;
     private List<GaugeVisualizationInformation> gaugeVisualizationInformation;
     private List<AreaChartVisualizationInformation> areaChartVisualizationInformation;
-    private UUID identifier = UUID.randomUUID();
+    private UUID identifier;
+    private CollectionColoringInformation collectionColoringInformation;
 
     public CollectionInformation() {
         this.connectionInformation = new ArrayList<>();
@@ -45,16 +47,32 @@ public class CollectionInformation {
         this.gaugeVisualizationInformation = gaugeVisualizationInformation;
     }
 
+    public void addGaugeVisualizationInformation(GaugeVisualizationInformation info) {
+        this.gaugeVisualizationInformation.add(info);
+    }
+
     public List<AreaChartVisualizationInformation> getAreaChartVisualizationInformation() {
         return areaChartVisualizationInformation;
     }
 
-    public void setAreaChartVisualizationInformation(List<AreaChartVisualizationInformation> areaChartVisualizationInformation) {
+    public void setAreaChartVisualizationInformation(
+            List<AreaChartVisualizationInformation> areaChartVisualizationInformation) {
         this.areaChartVisualizationInformation = areaChartVisualizationInformation;
+    }
+
+    public void addAreaChartVisualizationInformation(AreaChartVisualizationInformation info) {
+        this.areaChartVisualizationInformation.add(info);
     }
 
     public UUID getIdentifier() {
         return identifier;
     }
-}
 
+    public CollectionColoringInformation getCollectionColoringInformation() {
+        return collectionColoringInformation;
+    }
+
+    public void setCollectionColoringInformation(CollectionColoringInformation collectionColoringInformation) {
+        this.collectionColoringInformation = collectionColoringInformation;
+    }
+}

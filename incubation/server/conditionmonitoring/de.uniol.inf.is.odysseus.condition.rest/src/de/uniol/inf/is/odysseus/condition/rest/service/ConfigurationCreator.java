@@ -7,11 +7,11 @@ import com.google.gson.Gson;
 
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.AreaChartVisualizationInformation;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.ClientConfiguration;
+import de.uniol.inf.is.odysseus.condition.rest.datatypes.CollectionColoringInformation;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.Configuration;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConnectionInformation;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.GaugeVisualizationInformation;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.ServerConfiguration;
-import de.uniol.inf.is.odysseus.condition.rest.datatypes.VisualizationType;
 import de.uniol.inf.is.odysseus.condition.rest.dto.response.CollectionInformation;
 
 public class ConfigurationCreator {
@@ -21,11 +21,13 @@ public class ConfigurationCreator {
 		
 		Configuration config = new Configuration();
         
+		// --------------------
 		// Client Configuration
 		// --------------------		
 		ClientConfiguration clientConfig = new ClientConfiguration();
 
         // Connections to the right queries
+		// --------------------------------
         List<ConnectionInformation> connectionInformation = new ArrayList<>();
 
         ConnectionInformation con1 = new ConnectionInformation();
@@ -37,13 +39,13 @@ public class ConfigurationCreator {
         clientConfig.setConnectionInformation(connectionInformation);
 
         // Visualizations
+        // --------------
         List<GaugeVisualizationInformation> gaugeVisualizations = new ArrayList<>();
         List<AreaChartVisualizationInformation> areaChartVisualizationInformations = new ArrayList<>();
 
         GaugeVisualizationInformation gauge = new GaugeVisualizationInformation();
         gauge.setConnectionInformation(con1);
         gauge.setAttribute("LOF");
-        gauge.setVisualizationType(VisualizationType.GAUGE);
         gauge.setMinValue(0.0);
         gauge.setMaxValue(25.0);
         gauge.setTitle("LOF Value");
@@ -51,23 +53,28 @@ public class ConfigurationCreator {
         AreaChartVisualizationInformation areaChartOverview = new AreaChartVisualizationInformation();
         areaChartOverview.setConnectionInformation(con1);
         areaChartOverview.setAttribute("LOF");
-        areaChartOverview.setVisualizationType(VisualizationType.AREACHART);
         areaChartOverview.setMaxElements(50);
         areaChartOverview.setTitle("LOF Chart");
+        
+        AreaChartVisualizationInformation areaChartDeviationOverview = new AreaChartVisualizationInformation();
+        areaChartDeviationOverview.setConnectionInformation(con1);
+        areaChartDeviationOverview.setAttribute("anomalyScore");
+        areaChartDeviationOverview.setTitle("Deviation Chart");
         
         AreaChartVisualizationInformation areaChartCollection = new AreaChartVisualizationInformation();
         areaChartCollection.setConnectionInformation(con1);
         areaChartCollection.setAttribute("LOF");
-        areaChartCollection.setVisualizationType(VisualizationType.AREACHART);
         areaChartCollection.setTitle("LOF Chart");
         
         // For the overview
         gaugeVisualizations.add(gauge);
         areaChartVisualizationInformations.add(areaChartOverview);
+        areaChartVisualizationInformations.add(areaChartDeviationOverview);
         clientConfig.setGaugeVisualizationInformation(gaugeVisualizations);
         clientConfig.setAreaChartVisualizationInformation(areaChartVisualizationInformations);
         
         // Collections
+        // -----------
         List<CollectionInformation> collections = new ArrayList<>();
 
         CollectionInformation collectionInformation = new CollectionInformation();
@@ -76,6 +83,13 @@ public class ConfigurationCreator {
         connectionInformationList.add(con1);
         collectionInformation.setConnectionInformation(connectionInformationList);
         collectionInformation.addGaugeVisualizationInformation(gauge);
+        // Define, how it should be colored
+        CollectionColoringInformation coloring1 = new CollectionColoringInformation();
+        coloring1.setConnectionInformation(con1);
+        coloring1.setAttribute("LOF");
+        coloring1.setMaxValue(25);
+        coloring1.setMinValue(0);
+        collectionInformation.setCollectionColoringInformation(coloring1);
         // Add a link from this overview to a specific collection
         gauge.setCollectionLink(collectionInformation.getIdentifier());
 
@@ -92,8 +106,7 @@ public class ConfigurationCreator {
         collections.add(collectionInformation2);
         clientConfig.setCollections(collections);
 
-        
-
+        // --------------------
         // Server Configuration
         // --------------------
         ServerConfiguration serverConfig = new ServerConfiguration();

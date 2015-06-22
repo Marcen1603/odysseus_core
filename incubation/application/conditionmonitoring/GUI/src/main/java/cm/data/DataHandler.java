@@ -75,22 +75,25 @@ public class DataHandler {
         ObservableList<Event> collectionEvents = collectionEventsMap.get(collection);
         if (collectionEvents == null) {
             collectionEvents = FXCollections.observableArrayList();
-            for (Event event : observableEventList) {
-                for (SocketInfo connection : collection.getConnections()) {
+            // The collection has the normal connections and the connection for the color
+            List<SocketInfo> connections = new ArrayList<>();
+            connections.addAll(collection.getConnections());
+            connections.add(collection.getColorConnection());
+            for (SocketInfo connection : connections) {
+                for (Event event : observableEventList) {
                     if (event.getConnection().getSocketInfo().equals(connection)) {
                         // This event belongs to the collection
                         collectionEvents.add(event);
-
-                        // Save, that the collection belongs to this connection (to make it faster to find it when new data arrives)
-                        List<Collection> connectionCollections = socketColletionsMap.get(connection);
-                        if (connectionCollections == null) {
-                            connectionCollections = new ArrayList<>();
-                            socketColletionsMap.put(connection, connectionCollections);
-                        }
-                        if (!connectionCollections.contains(collection))
-                            connectionCollections.add(collection);
                     }
                 }
+                // Save, that the collection belongs to this connection (to make it faster to find it when new data arrives)
+                List<Collection> connectionCollections = socketColletionsMap.get(connection);
+                if (connectionCollections == null) {
+                    connectionCollections = new ArrayList<>();
+                    socketColletionsMap.put(connection, connectionCollections);
+                }
+                if (!connectionCollections.contains(collection))
+                    connectionCollections.add(collection);
             }
             collectionEventsMap.put(collection, collectionEvents);
         }

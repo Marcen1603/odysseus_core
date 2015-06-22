@@ -80,8 +80,10 @@ public class OverviewController implements Observer {
         // Click listener to get to the linked collection (if there is one)
         if (visualizationInformation.getCollectionLink() != null) {
             MainController mainController = ConfigurationService.getInstance().getMainController();
-            cm.model.Collection collection = DataHandler.getInstance().getCollection(visualizationInformation.getCollectionLink());
-            gauge.setOnMouseClicked(event -> mainController.switchToCollection(collection));
+            gauge.setOnMouseClicked(event -> {
+                cm.model.Collection collection = DataHandler.getInstance().getCollection(visualizationInformation.getCollectionLink());
+                mainController.switchToCollection(collection);
+            });
         }
 
         overviewFlowPane.getChildren().add(gauge);
@@ -139,12 +141,12 @@ public class OverviewController implements Observer {
                 String attribute = event.getAttributes().get(visualInfo.getAttribute());
                 if (attribute != null) {
                     double value = Double.parseDouble(attribute);
-                    if (visualInfo.getVisualizationType().equals(VisualizationType.GAUGE) && gaugeMap.get(visualInfo) != null) {
+                    if (visualInfo instanceof GaugeVisualizationInformation && gaugeMap.get(visualInfo) != null) {
                         SimpleMetroArcGauge gauge = gaugeMap.get(visualInfo);
                         gauge.setValue(value);
                         String colorSchemeClass = "colorscheme-green-to-red-10";
                         gauge.getStyleClass().add(colorSchemeClass);
-                    } else if (visualInfo.getVisualizationType().equals(VisualizationType.AREACHART) && seriesMap.get(visualInfo) != null) {
+                    } else if (visualInfo instanceof AreaChartVisualizationInformation && seriesMap.get(visualInfo) != null) {
                         AreaChartVisualizationInformation areaChartVisualizationInformation = (AreaChartVisualizationInformation) visualInfo;
                         XYChart.Series series = seriesMap.get(visualInfo);
                         int counter = counterMap.get(visualInfo);

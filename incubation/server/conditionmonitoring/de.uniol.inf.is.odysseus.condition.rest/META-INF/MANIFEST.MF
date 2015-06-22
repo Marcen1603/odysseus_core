@@ -8,7 +8,10 @@ Bundle-Vendor: Brandt
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.gson,
  de.uniol.inf.is.odysseus.core.collection,
+ de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.planmanagement.query,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.server.usermanagement,
  de.uniol.inf.is.odysseus.core.usermanagement,

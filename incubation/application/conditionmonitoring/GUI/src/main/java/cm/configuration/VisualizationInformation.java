@@ -3,8 +3,7 @@ package cm.configuration;
 import java.util.UUID;
 
 public class VisualizationInformation {
-	
-	private VisualizationType visualizationType;
+
 	private ConnectionInformation connectionInformation;
 	private String attribute;
 	private String title;
@@ -24,14 +23,6 @@ public class VisualizationInformation {
 
 	public void setAttribute(String attribute) {
 		this.attribute = attribute;
-	}
-
-	public VisualizationType getVisualizationType() {
-		return visualizationType;
-	}
-
-	public void setVisualizationType(VisualizationType visualizationType) {
-		this.visualizationType = visualizationType;
 	}
 
 	public String getTitle() {

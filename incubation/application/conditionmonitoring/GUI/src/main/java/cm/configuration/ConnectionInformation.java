@@ -1,7 +1,6 @@
 package cm.configuration;
 
 import cm.communication.dto.AttributeInformation;
-import cm.communication.dto.SocketInfo;
 
 import java.util.List;
 
@@ -10,13 +9,12 @@ import java.util.List;
  * @since 17.06.2015.
  */
 public class ConnectionInformation {
+
     private String ip;
     private int queryId;
     private String queryName;
     private boolean useName;
     private List<AttributeInformation> attributes;
-    private SocketInfo socketInfo;
-
 
     public String getIp() {
         return ip;
@@ -58,23 +56,19 @@ public class ConnectionInformation {
         this.attributes = attributes;
     }
 
-    public SocketInfo getSocketInfo() {
-        return socketInfo;
-    }
-
-    public void setSocketInfo(SocketInfo socketInfo) {
-        this.socketInfo = socketInfo;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         ConnectionInformation that = (ConnectionInformation) o;
 
-        if (queryId != that.queryId) return false;
-        if (ip != null ? !ip.equals(that.ip) : that.ip != null) return false;
+        if (queryId != that.queryId)
+            return false;
+        if (ip != null ? !ip.equals(that.ip) : that.ip != null)
+            return false;
         return !(attributes != null ? !attributes.equals(that.attributes) : that.attributes != null);
 
     }

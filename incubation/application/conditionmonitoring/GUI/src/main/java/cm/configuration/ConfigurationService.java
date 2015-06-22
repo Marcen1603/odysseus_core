@@ -1,6 +1,7 @@
 package cm.configuration;
 
 import cm.communication.CommunicationService;
+import cm.communication.dto.AttributeInformation;
 import cm.communication.socket.SocketReceiver;
 import cm.controller.MainController;
 import cm.controller.OverviewController;
@@ -10,9 +11,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import jfxtras.labs.scene.control.gauge.linear.SimpleMetroArcGauge;
-import jfxtras.labs.scene.control.gauge.linear.elements.PercentSegment;
-import jfxtras.labs.scene.control.gauge.linear.elements.Segment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,10 +60,26 @@ public class ConfigurationService {
             for (ConnectionInformation conInformation : configuration.getConnectionInformation()) {
                 CommunicationService.establishConnection(CommunicationService.getToken(), conInformation);
             }
+
             // Create all collections
             // ----------------------
             for (CollectionInformation collectionInfo : configuration.getCollections()) {
                 Collection collection = new Collection(collectionInfo.getName(), collectionInfo.getIdentifier());
+                if (collectionInfo.getCollectionColoringInformation() != null) {
+                    List<SocketReceiver> socketReceivers = CommunicationService.getSocketReceivers(collectionInfo.getCollectionColoringInformation().getConnectionInformation());
+                    // As we can't distinguish between multiple outputs of one query, we have to do this awkward search (which hopefully, but not necessarily finds what we need)
+                    for (SocketReceiver receiver : socketReceivers) {
+                        for (AttributeInformation attributeInformation : receiver.getSocketInfo().getSchema()) {
+                            if (attributeInformation.getName().equals(collectionInfo.getCollectionColoringInformation().getAttribute())) {
+                                collection.setColorConnection(receiver.getSocketInfo());
+                                collection.setColorAttribute(collectionInfo.getCollectionColoringInformation().getAttribute());
+                                collection.setMinValue(collectionInfo.getCollectionColoringInformation().getMinValue());
+                                collection.setMaxValue(collectionInfo.getCollectionColoringInformation().getMaxValue());
+                            }
+                        }
+
+                    }
+                }
 
                 // Connections
                 for (ConnectionInformation conInfo : collectionInfo.getConnectionInformation()) {

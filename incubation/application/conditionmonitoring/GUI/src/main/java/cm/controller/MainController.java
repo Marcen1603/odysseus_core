@@ -63,18 +63,8 @@ public class MainController{
 
         // Events tab
         // ----------
-        collectionEventList.setItems(DataHandler.getInstance().getObservableEventList());
-        collectionEventList.setCellFactory(listView -> {
-            // Select the first cell to not show an empty collection
-            if (collectionList.getItems().size() > 0 && collectionList.getSelectionModel().getSelectedItems().isEmpty()) {
-                collectionList.getSelectionModel().select(0);
-            }
-            return new EventListCell();
-        });
-
-        if (collectionList.getItems().size() > 0) {
-            collectionList.getSelectionModel().select(0);
-        }
+        eventList.setItems(DataHandler.getInstance().getObservableEventList());
+        eventList.setCellFactory(listView -> new EventListCell());
     }
 
     public void updateCollectionView(Collection collection) {
@@ -83,8 +73,14 @@ public class MainController{
             return;
         // Just update the existing viewElements
         collectionName.setText(collection.getName());
-        eventList.setItems(DataHandler.getInstance().getCollectionEvents(collection));
-        eventList.setCellFactory(listView -> new EventListCell());
+        collectionEventList.setItems(DataHandler.getInstance().getCollectionEvents(collection));
+        collectionEventList.setCellFactory(listView -> {
+            // Select the first cell to not show an empty collection
+            if (collectionList.getItems().size() > 0 && collectionList.getSelectionModel().getSelectedItems().isEmpty()) {
+                collectionList.getSelectionModel().select(0);
+            }
+            return new EventListCell();
+        });
 
         // Load the correct viewElement (overview)
         if (overviewPaneMap.get(collection) != null) {
@@ -101,10 +97,10 @@ public class MainController{
             InputStream inputStream = getClass().getResource("../bundles/Language_en.properties").openStream();
             ResourceBundle bundle = new PropertyResourceBundle(inputStream);
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/overview.fxml"), bundle);
-
             Parent root = loader.load();
-            OverviewController overviewController = loader.getController();
 
+            // Overview
+            OverviewController overviewController = loader.getController();
             overviewPaneMap.put(collection, root);
             overviewControllerMap.put(collection, overviewController);
         } catch (IOException e) {

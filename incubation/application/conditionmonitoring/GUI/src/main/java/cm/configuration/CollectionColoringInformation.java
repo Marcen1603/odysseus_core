@@ -1,13 +1,11 @@
-package de.uniol.inf.is.odysseus.condition.rest.datatypes;
+package cm.configuration;
 
-import java.util.UUID;
+public class CollectionColoringInformation {
 
-public class VisualizationInformation {
-	
 	private ConnectionInformation connectionInformation;
 	private String attribute;
-	private String title;
-	private UUID collectionLink;
+	private double minValue;
+	private double maxValue;
 
 	public ConnectionInformation getConnectionInformation() {
 		return connectionInformation;
@@ -25,19 +23,20 @@ public class VisualizationInformation {
 		this.attribute = attribute;
 	}
 
-	public String getTitle() {
-		return title;
+	public double getMinValue() {
+		return minValue;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setMinValue(double minValue) {
+		this.minValue = minValue;
 	}
 
-	public UUID getCollectionLink() {
-		return collectionLink;
+	public double getMaxValue() {
+		return maxValue;
 	}
 
-	public void setCollectionLink(UUID collectionLink) {
-		this.collectionLink = collectionLink;
+	public void setMaxValue(double maxValue) {
+		this.maxValue = maxValue;
 	}
+
 }

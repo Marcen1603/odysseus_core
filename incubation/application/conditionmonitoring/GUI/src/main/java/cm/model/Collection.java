@@ -17,9 +17,16 @@ public class Collection {
     private List<SocketInfo> connections;
     private UUID identifier;
 
+    // For the background color
+    private SocketInfo colorConnection;
+    private String colorAttribute;
+    private double minValue;
+    private double maxValue;
+
     public Collection(String name, UUID identifier) {
         this.name = name;
         this.connections = new ArrayList<>();
+        this.identifier = identifier;
     }
 
     public String getName() {
@@ -44,5 +51,37 @@ public class Collection {
 
     public void setIdentifier(UUID identifier) {
         this.identifier = identifier;
+    }
+
+    public SocketInfo getColorConnection() {
+        return colorConnection;
+    }
+
+    public void setColorConnection(SocketInfo colorConnection) {
+        this.colorConnection = colorConnection;
+    }
+
+    public String getColorAttribute() {
+        return colorAttribute;
+    }
+
+    public void setColorAttribute(String colorAttribute) {
+        this.colorAttribute = colorAttribute;
+    }
+
+    public double getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(double minValue) {
+        this.minValue = minValue;
+    }
+
+    public double getMaxValue() {
+        return maxValue;
+    }
+
+    public void setMaxValue(double maxValue) {
+        this.maxValue = maxValue;
     }
 }
