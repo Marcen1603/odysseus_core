@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
@@ -11,18 +10,11 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.multithreaded.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RangeFragmentAO;
@@ -118,8 +110,8 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 							+ settingsForOperator.getEndParallelizationId()
 							+ " does not exist.");
 				}
-
 			} else {
+				
 				ILogicalOperator currentOperator = getNextOperator(operatorForTransformation);
 				while (currentOperator != null) {
 
@@ -128,69 +120,18 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 					// validation if stateful operators or stateful functions
 					// exists is only needed if semantic correctness is needed
 					if (currentOperator instanceof IStatefulAO) {
-						if (currentOperator instanceof AggregateAO) {
-							AggregateAO aggregateOperator = (AggregateAO) currentOperator;
-							if ((!aggregateOperator.getGroupingAttributes()
-									.isEmpty() && !aggregatesWithGroupingAllowed)
-									|| aggregateOperator
-											.getGroupingAttributes().isEmpty()) {
-								if (settingsForOperator
-										.isAssureSemanticCorrectness()) {
-									throw new IllegalArgumentException(
-											"No aggregations allowed between start "
-											+ "and end of parallelization for this strategy");
-								} else {
-									possibleSemanticChange = true;
-								}
-							}
-						} else {
-							if (settingsForOperator
-									.isAssureSemanticCorrectness()) {
-								throw new IllegalArgumentException(
-										"No stateful operators allowed between start "
-										+ "and end of parallelization");
-							} else {
-								possibleSemanticChange = true;
-							}
-						}
+						possibleSemanticChange = LogicalGraphHelper.validateStatefulAO(
+								settingsForOperator.isAssureSemanticCorrectness(),
+								aggregatesWithGroupingAllowed, currentOperator,
+								possibleSemanticChange);
 					} else if (currentOperator instanceof SelectAO) {
-						SelectAO selectOperator = (SelectAO) currentOperator;
-						IPredicate<?> predicate = selectOperator.getPredicate();
-						if (predicate instanceof RelationalPredicate) {
-							RelationalPredicate relPredicate = (RelationalPredicate) predicate;
-							IExpression<?> expression = relPredicate
-									.getExpression().getMEPExpression();
-							if (SDFAttributeHelper
-									.expressionContainsStatefulFunction(expression)) {
-								if (settingsForOperator
-										.isAssureSemanticCorrectness()) {
-									throw new IllegalArgumentException(
-											"No operators with stateful functions allowed "
-											+ "between start and end of parallelization");
-								} else {
-									possibleSemanticChange = true;
-								}
-							}
-						}
+						possibleSemanticChange = LogicalGraphHelper.validateSelectAO(
+								settingsForOperator.isAssureSemanticCorrectness(), currentOperator,
+								possibleSemanticChange);
 					} else if (currentOperator instanceof MapAO) {
-						MapAO mapOperator = (MapAO) currentOperator;
-						List<SDFExpression> expressionList = mapOperator
-								.getExpressionList();
-						for (SDFExpression sdfExpression : expressionList) {
-							IExpression<?> mepExpression = sdfExpression
-									.getMEPExpression();
-							if (SDFAttributeHelper
-									.expressionContainsStatefulFunction(mepExpression)) {
-								if (settingsForOperator
-										.isAssureSemanticCorrectness()) {
-									throw new IllegalArgumentException(
-											"No operators with stateful functions allowed "
-											+ "between start and end of parallelization");
-								} else {
-									possibleSemanticChange = true;
-								}
-							}
-						}
+						possibleSemanticChange = LogicalGraphHelper.validateMapAO(
+								settingsForOperator.isAssureSemanticCorrectness(), currentOperator,
+								possibleSemanticChange);
 					}
 
 					// if parameter with id is reached, parallelization is done
@@ -253,7 +194,7 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 							lastClonedOperator.getOutputSchema());
 				} else {
 					// else connect new copied operator to target
-					int newSourceOutPort = calculateNewSourceOutPort(
+					int newSourceOutPort = LogicalGraphHelper.calculateNewSourceOutPort(
 							sourceSubscription, iteration);
 
 					currentClonedOperator.subscribeToSource(sourceSubscription
@@ -280,19 +221,6 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 			currentExistingOperator = getNextOperator(currentExistingOperator);
 		}
 		return lastClonedOperator;
-	}
-
-	private int calculateNewSourceOutPort(
-			LogicalSubscription sourceSubscription, int iteration) {
-		Map<Integer, SDFSchema> outputSchemaMap = sourceSubscription
-				.getTarget().getOutputSchemaMap();
-		int newSourceOutPort = outputSchemaMap.size() + iteration;
-		// if this source out port is already in use, try another one
-		while (outputSchemaMap.containsKey(newSourceOutPort)) {
-			newSourceOutPort++;
-		}
-
-		return newSourceOutPort;
 	}
 
 	protected abstract void doStrategySpecificPostParallelization(

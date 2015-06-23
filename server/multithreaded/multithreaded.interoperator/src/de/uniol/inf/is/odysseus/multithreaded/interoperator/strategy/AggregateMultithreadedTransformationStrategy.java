@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.ShuffleFragmentAO;
@@ -57,10 +58,10 @@ public class AggregateMultithreadedTransformationStrategy extends
 	}
 
 	@Override
-	public boolean transform(ILogicalOperator operator,
+	public TransformationResult transform(ILogicalOperator operator,
 			MultithreadedOperatorSettings settingsForOperator) {
 		if (!super.areSettingsValid(settingsForOperator)) {
-			return false;
+			return null;
 		}
 		if (settingsForOperator.getEndParallelizationId() != null
 				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
@@ -78,11 +79,11 @@ public class AggregateMultithreadedTransformationStrategy extends
 					null, null);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 
 		if (fragmentAO == null) {
-			return false;
+			return null;
 		}
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
@@ -203,7 +204,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 					combinePAAggregateOperator.getOutputSchema());
 		}
 
-		return true;
+		return new TransformationResult();
 	}
 
 	@Override

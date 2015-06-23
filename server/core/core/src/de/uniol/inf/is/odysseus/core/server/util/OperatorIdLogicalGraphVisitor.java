@@ -32,9 +32,11 @@ public class OperatorIdLogicalGraphVisitor<T extends ILogicalOperator>
 	@Override
 	public void nodeAction(T node) {
 		if (node.getUniqueIdentifier() != null){
-			if (operatorIds.contains(node.getUniqueIdentifier())) {
-				idsWithOperator.put(node.getUniqueIdentifier(), node);
-			}			
+			for (String id : operatorIds) {
+				if (id.equalsIgnoreCase(node.getUniqueIdentifier())){
+					idsWithOperator.put(node.getUniqueIdentifier(), node);					
+				}
+			}		
 		}
 	}
 

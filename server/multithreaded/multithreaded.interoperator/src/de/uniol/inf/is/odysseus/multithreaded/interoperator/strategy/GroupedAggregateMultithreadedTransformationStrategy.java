@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
@@ -44,11 +45,11 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 	}
 
 	@Override
-	public boolean transform(ILogicalOperator operator,
+	public TransformationResult transform(ILogicalOperator operator,
 			MultithreadedOperatorSettings settingsForOperator) {
 		// validate settings and way to end point
 		if (!super.areSettingsValid(settingsForOperator)) {
-			return false;
+			return null;
 		}
 		checkIfWayToEndPointIsValid(operator, settingsForOperator, true);
 
@@ -65,11 +66,11 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 					groupingAttributes, null, null);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 
 		if (fragmentAO == null) {
-			return false;
+			return null;
 		}
 
 		if (!groupingAttributes.isEmpty()) {
@@ -158,7 +159,7 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 						union.getOutputSchema());
 			}
 		}
-		return false;
+		return new TransformationResult();
 	}
 
 	@Override

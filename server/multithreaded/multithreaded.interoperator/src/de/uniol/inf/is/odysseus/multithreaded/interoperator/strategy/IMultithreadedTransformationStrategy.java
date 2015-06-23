@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
 public interface IMultithreadedTransformationStrategy<T extends ILogicalOperator> {
@@ -18,5 +19,5 @@ public interface IMultithreadedTransformationStrategy<T extends ILogicalOperator
 	
 	int evaluateCompatibility(ILogicalOperator operator);
 	
-	boolean transform(ILogicalOperator operator, MultithreadedOperatorSettings settingsForOperator);
+	TransformationResult transform(ILogicalOperator operator, MultithreadedOperatorSettings settingsForOperator);
 }
