@@ -6,15 +6,20 @@ import cm.communication.socket.SocketReceiver;
 import cm.configuration.*;
 import cm.data.DataHandler;
 import cm.model.*;
+import cm.view.GaugeElement;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import jfxtras.labs.scene.control.gauge.linear.SimpleMetroArcGauge;
 import jfxtras.labs.scene.control.gauge.linear.elements.PercentSegment;
 import jfxtras.labs.scene.control.gauge.linear.elements.Segment;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -27,7 +32,7 @@ public class OverviewController implements Observer {
 
     private Map<SocketReceiver, List<VisualizationInformation>> visualizationInformationMap;
     private Map<VisualizationInformation, XYChart.Series> seriesMap;
-    private Map<VisualizationInformation, SimpleMetroArcGauge> gaugeMap;
+    private Map<VisualizationInformation, GaugeElement> gaugeMap;
     private Map<VisualizationInformation, Integer> counterMap;
 
     @FXML
@@ -43,51 +48,13 @@ public class OverviewController implements Observer {
 
     public void addGauge(GaugeVisualizationInformation visualizationInformation) {
 
-        // Create gauge
-        // Value
-        SimpleMetroArcGauge gauge = new SimpleMetroArcGauge();
-        gauge.setMinValue(visualizationInformation.getMinValue());
-        gauge.setMaxValue(visualizationInformation.getMaxValue());
-        gauge.setValue(0);
-
-        // Style
-        gauge.segments().clear();
-        for (int i = 0; i < NUMBER_OF_SEGMENTS; i++) {
-            Segment segment = new PercentSegment(gauge, i * 100 / NUMBER_OF_SEGMENTS, (i + 1) * (100 / NUMBER_OF_SEGMENTS));
-            gauge.segments().add(segment);
-        }
-
-//        String colorSchemeClass = "colorscheme-green-to-red-10";
-//        gauge.getStyleClass().add(colorSchemeClass);
-
-        // As the colorSchema does not work, just set the colors manually
-        String animatedStyle = "-fxx-animated: YES;";
-        String segments = "-fxx-segment0-color: #97b329;\n" +
-                "    -fxx-segment1-color: #aacc2a;\n" +
-                "    -fxx-segment2-color: #d4ea35;\n" +
-                "    -fxx-segment3-color: #f2de31;\n" +
-                "    -fxx-segment4-color: #fccb2e;\n" +
-                "    -fxx-segment5-color: #f3a429;\n" +
-                "    -fxx-segment6-color: #f18c23;\n" +
-                "    -fxx-segment7-color: #f65821;\n" +
-                "    -fxx-segment8-color: #f3351f;\n" +
-                "    -fxx-segment9-color: #f61319;";
-        gauge.setStyle(animatedStyle + "\n" + segments);
+        GaugeElement gaugeElem = new GaugeElement(visualizationInformation);
+        overviewFlowPane.getChildren().add(gaugeElem);
 
         // Data Connection
         addConnection(visualizationInformation);
 
-        // Click listener to get to the linked collection (if there is one)
-        if (visualizationInformation.getCollectionLink() != null) {
-            MainController mainController = ConfigurationService.getInstance().getMainController();
-            gauge.setOnMouseClicked(event -> {
-                cm.model.Collection collection = DataHandler.getInstance().getCollection(visualizationInformation.getCollectionLink());
-                mainController.switchToCollection(collection);
-            });
-        }
-
-        overviewFlowPane.getChildren().add(gauge);
-        gaugeMap.put(visualizationInformation, gauge);
+        gaugeMap.put(visualizationInformation, gaugeElem);
     }
 
     public void addAreaChart(AreaChartVisualizationInformation visualizationInformation) {
@@ -116,6 +83,20 @@ public class OverviewController implements Observer {
 
         ac.getData().addAll(streamData);
         overviewFlowPane.getChildren().add(ac);
+
+        // Click listener to get to the linked collection (if there is one)
+        addClicklistener(ac, visualizationInformation);
+    }
+
+    private void addClicklistener(Node node, VisualizationInformation visualizationInformation) {
+        // Click listener to get to the linked collection (if there is one)
+        if (visualizationInformation.getCollectionLink() != null) {
+            MainController mainController = ConfigurationService.getInstance().getMainController();
+            node.setOnMouseClicked(event -> {
+                cm.model.Collection collection = DataHandler.getInstance().getCollection(visualizationInformation.getCollectionLink());
+                mainController.switchToCollection(collection);
+            });
+        }
     }
 
     private void addConnection(VisualizationInformation visualizationInformation) {
@@ -142,10 +123,8 @@ public class OverviewController implements Observer {
                 if (attribute != null) {
                     double value = Double.parseDouble(attribute);
                     if (visualInfo instanceof GaugeVisualizationInformation && gaugeMap.get(visualInfo) != null) {
-                        SimpleMetroArcGauge gauge = gaugeMap.get(visualInfo);
+                        GaugeElement gauge = gaugeMap.get(visualInfo);
                         gauge.setValue(value);
-                        String colorSchemeClass = "colorscheme-green-to-red-10";
-                        gauge.getStyleClass().add(colorSchemeClass);
                     } else if (visualInfo instanceof AreaChartVisualizationInformation && seriesMap.get(visualInfo) != null) {
                         AreaChartVisualizationInformation areaChartVisualizationInformation = (AreaChartVisualizationInformation) visualInfo;
                         XYChart.Series series = seriesMap.get(visualInfo);
