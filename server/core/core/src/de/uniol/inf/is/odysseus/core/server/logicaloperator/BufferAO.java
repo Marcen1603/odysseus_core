@@ -48,7 +48,7 @@ public class BufferAO extends UnaryLogicalOp {
 	 */
 	private long maxBufferSize = -1;
 
-	private boolean drainAtClose = true;
+	private boolean drainAtClose = false;
 	
 	public BufferAO(BufferAO ao) {
 		super(ao);
@@ -102,7 +102,7 @@ public class BufferAO extends UnaryLogicalOp {
 		return threaded;
 	}
 		
-	@Parameter(type = BooleanParameter.class, optional= true, doc ="If set to false (default is true), this buffer will not be emptied at close!")
+	@Parameter(type = BooleanParameter.class, optional= true, doc ="If set to true (default is false), this buffer be emptied when calling close. Remark: Could lead to longer termination time!")
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
 	}

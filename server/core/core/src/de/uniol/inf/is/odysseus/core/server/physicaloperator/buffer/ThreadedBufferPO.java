@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
@@ -27,6 +30,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		extends AbstractPipe<R, R> implements IPhysicalOperatorKeyValueProvider {
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ThreadedBufferPO.class);
+	
 	private long elementsRead;
 	private long puncRead;
 
@@ -159,8 +165,12 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	@Override
 	protected void process_close() {
+		LOG.debug("Closing ...."+this.getName());
 		this.isClosing.set(true);
 		runner.terminate();
+		synchronized(runner){
+			runner.notify();
+		}
 		lockOutput.lock();
 		if (drainAtClose) {
 			drainBuffers();
@@ -170,6 +180,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		}
 		lockOutput.unlock();
 		isClosing.set(false);
+		LOG.debug("Closing .... done");
 	}
 
 	protected void process_done(int port) {
@@ -203,12 +214,12 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	}
 
 	private void drainBuffers() {
-		// drain buffer at done/close
+		LOG.debug("Draining ....");
+
+		// drain buffer (typically at done/close)
 		// Copy everything from inputBuffer to outputBuffer
 		runner.terminate();
-		// synchronized (this) {
-		// this.notifyAll();
-		// }
+		
 		lockInput.lock();
 		outputBuffer.addAll(inputBuffer);
 		inputBuffer.clear();
@@ -217,6 +228,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			transferNext(outputBuffer.get(i));
 		}
 		outputBuffer.clear();
+		LOG.debug("Draining .... done");
 	}
 
 	@Override

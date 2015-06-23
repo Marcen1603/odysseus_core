@@ -43,6 +43,8 @@ public class TUnionTIPORule extends AbstractIntervalTransformationRule<UnionAO> 
 				unionPO.setOutputSchema(unionAO.getOutputSchema(i), i);
 			}
 		}
+		
+		unionPO.setDrainAtClose(unionAO.isDrainAtClose());
 	}
 
 	@Override

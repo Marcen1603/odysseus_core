@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 /**
  * Logical combine operator implementation
  * 
- * The combine operator combines attibutes of incoming tuples. Tuples on output
+ * The combine operator combines attributes of incoming tuples. Tuples on output
  * port n will contain the nth attributes of incoming tuples.
  * 
  * @author Dennis Nowak

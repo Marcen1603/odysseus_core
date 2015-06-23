@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 
 /**
  * @author Marco Grawunder
@@ -34,7 +36,9 @@ public class UnionAO extends BinaryLogicalOp implements IStatefulAO{
 
 	private static final long serialVersionUID = 2828756253165671692L;
 
-	protected boolean useInputPortAsOutputPort = false; 
+	protected boolean useInputPortAsOutputPort = false;
+
+	private boolean drainAtClose = false; 
 		
 	/**
 	 * @param unionPO
@@ -70,6 +74,16 @@ public class UnionAO extends BinaryLogicalOp implements IStatefulAO{
 			return getInputSchema(LEFT);
 		}
 	}
+	
+	@Parameter(type = BooleanParameter.class, optional= true, doc ="If set to true (default is false), this buffer be emptied when calling close. Remark: Could lead to longer termination time!")
+	public void setDrainAtClose(boolean drainAtClose) {
+		this.drainAtClose  = drainAtClose;
+	}
+
+	public boolean isDrainAtClose() {
+		return drainAtClose;
+	}
+
 
 //	@Override
 //	public boolean isValid() {
