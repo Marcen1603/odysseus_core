@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -27,6 +29,9 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 
 public abstract class AbstractMultithreadedTransformationStrategy<T extends ILogicalOperator>
 		implements IMultithreadedTransformationStrategy<T> {
+
+	final private InfoService INFO_SERVICE = InfoServiceFactory
+			.getInfoService(AbstractMultithreadedTransformationStrategy.class);
 
 	@SuppressWarnings("unchecked")
 	public Class<T> getOperatorType() {
@@ -117,6 +122,11 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 			} else {
 				ILogicalOperator currentOperator = getNextOperator(operatorForTransformation);
 				while (currentOperator != null) {
+
+					boolean possibleSemanticChange = false;
+
+					// validation if stateful operators or stateful functions
+					// exists is only needed if semantic correctness is needed
 					if (currentOperator instanceof IStatefulAO) {
 						if (currentOperator instanceof AggregateAO) {
 							AggregateAO aggregateOperator = (AggregateAO) currentOperator;
@@ -124,13 +134,24 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 									.isEmpty() && !aggregatesWithGroupingAllowed)
 									|| aggregateOperator
 											.getGroupingAttributes().isEmpty()) {
-								throw new IllegalArgumentException(
-										"No aggregations allowed between start and end of parallelization for this strategy");
+								if (settingsForOperator
+										.isAssureSemanticCorrectness()) {
+									throw new IllegalArgumentException(
+											"No aggregations allowed between start "
+											+ "and end of parallelization for this strategy");
+								} else {
+									possibleSemanticChange = true;
+								}
 							}
 						} else {
-							// stateful operators are not allowed
-							throw new IllegalArgumentException(
-									"No stateful operators allowed between start and end of parallelization");
+							if (settingsForOperator
+									.isAssureSemanticCorrectness()) {
+								throw new IllegalArgumentException(
+										"No stateful operators allowed between start "
+										+ "and end of parallelization");
+							} else {
+								possibleSemanticChange = true;
+							}
 						}
 					} else if (currentOperator instanceof SelectAO) {
 						SelectAO selectOperator = (SelectAO) currentOperator;
@@ -141,9 +162,14 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 									.getExpression().getMEPExpression();
 							if (SDFAttributeHelper
 									.expressionContainsStatefulFunction(expression)) {
-								// stateful functions not allowed
-								throw new IllegalArgumentException(
-										"No operators with stateful functions allowed between start and end of parallelization");
+								if (settingsForOperator
+										.isAssureSemanticCorrectness()) {
+									throw new IllegalArgumentException(
+											"No operators with stateful functions allowed "
+											+ "between start and end of parallelization");
+								} else {
+									possibleSemanticChange = true;
+								}
 							}
 						}
 					} else if (currentOperator instanceof MapAO) {
@@ -155,36 +181,40 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 									.getMEPExpression();
 							if (SDFAttributeHelper
 									.expressionContainsStatefulFunction(mepExpression)) {
-								// stateful functions not allowed
-								throw new IllegalArgumentException(
-										"No operators with stateful functions allowed between start and end of parallelization");
+								if (settingsForOperator
+										.isAssureSemanticCorrectness()) {
+									throw new IllegalArgumentException(
+											"No operators with stateful functions allowed "
+											+ "between start and end of parallelization");
+								} else {
+									possibleSemanticChange = true;
+								}
 							}
-						}
-					} else if (currentOperator.isSinkOperator()) {
-						if (currentOperator.getUniqueIdentifier()
-								.equalsIgnoreCase(
-										settingsForOperator
-												.getEndParallelizationId())) {
-							// sink operators must not be parallelized, abort
-							throw new IllegalArgumentException(
-									"Sink operator for end of parallelization is not allowed");
-						} else {
-							// sink is reached but operator not found, abort
-							throw new IllegalArgumentException(
-									"Sink reached, but operator not found. Parallelization with defined endpoint not possible.");
 						}
 					}
 
+					// if parameter with id is reached, parallelization is done
 					if (currentOperator.getUniqueIdentifier() != null) {
 						if (currentOperator.getUniqueIdentifier()
 								.equalsIgnoreCase(
 										settingsForOperator
 												.getEndParallelizationId())) {
-							// all operators including end operator are valid,
-							// validation successful
-							return;
+							if (possibleSemanticChange
+									&& !settingsForOperator
+											.isAssureSemanticCorrectness()){
+								INFO_SERVICE.info("Parallelization between start and end id possibly "
+										+ "results in a semantic change of the given plan.");
+							}
+
+								// all operators including end operator are
+								// valid,
+								// validation successful
+								return;
 						}
 					}
+
+					// if end operator is not reached, we need to get the next
+					// operator
 					currentOperator = getNextOperator(currentOperator);
 				}
 			}
@@ -194,7 +224,8 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 	protected ILogicalOperator doPostParallelization(
 			ILogicalOperator existingOperator, ILogicalOperator newOperator,
 			String endOperatorId, int iteration,
-			List<AbstractFragmentAO> fragments) {
+			List<AbstractFragmentAO> fragments,
+			MultithreadedOperatorSettings settingsForOperator) {
 
 		ILogicalOperator lastClonedOperator = newOperator;
 		ILogicalOperator currentExistingOperator = getNextOperator(existingOperator);
@@ -234,7 +265,7 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 
 			doStrategySpecificPostParallelization(newOperator,
 					currentExistingOperator, currentClonedOperator, iteration,
-					fragments);
+					fragments, settingsForOperator);
 
 			// if end operator is reached, break loop and return last cloned
 			// operator
@@ -268,5 +299,6 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
 			ILogicalOperator currentClonedOperator, int iteration,
-			List<AbstractFragmentAO> fragments);
+			List<AbstractFragmentAO> fragments,
+			MultithreadedOperatorSettings settingsForOperator);
 }

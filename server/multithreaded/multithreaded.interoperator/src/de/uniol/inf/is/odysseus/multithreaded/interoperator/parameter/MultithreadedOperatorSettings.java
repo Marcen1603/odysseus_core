@@ -21,6 +21,8 @@ public class MultithreadedOperatorSettings {
 	
 	private String startParallelizationId;
 	private String endParallelizationId;
+	
+	private boolean assureSemanticCorrectness = false;
 
 	private Class<? extends AbstractFragmentAO> fragementationType;
 
@@ -165,6 +167,14 @@ public class MultithreadedOperatorSettings {
 
 	public void setStartParallelizationId(String startParallelizationId) {
 		this.startParallelizationId = startParallelizationId;
+	}
+
+	public boolean isAssureSemanticCorrectness() {
+		return assureSemanticCorrectness;
+	}
+
+	public void setAssureSemanticCorrectness(boolean assureSemanticCorrectness) {
+		this.assureSemanticCorrectness = assureSemanticCorrectness;
 	}
 
 }

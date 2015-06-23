@@ -8,7 +8,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
-public class ReplicationTransformationStrategy extends AbstractMultithreadedTransformationStrategy<AggregateAO>{
+public class ReplicationTransformationStrategy extends
+		AbstractMultithreadedTransformationStrategy<AggregateAO> {
 
 	@Override
 	public String getName() {
@@ -35,12 +36,10 @@ public class ReplicationTransformationStrategy extends AbstractMultithreadedTran
 	@Override
 	public boolean transform(ILogicalOperator operator,
 			MultithreadedOperatorSettings settingsForOperator) {
-		if (!super.areSettingsValid(settingsForOperator)){
+		if (!super.areSettingsValid(settingsForOperator)) {
 			return false;
 		}
-		
-		
-		
+
 		return true;
 	}
 
@@ -48,7 +47,9 @@ public class ReplicationTransformationStrategy extends AbstractMultithreadedTran
 	protected void doStrategySpecificPostParallelization(
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration, List<AbstractFragmentAO> fragments) {
+			ILogicalOperator currentClonedOperator, int iteration,
+			List<AbstractFragmentAO> fragments,
+			MultithreadedOperatorSettings settingsForOperator) {
 		// no strategy specific modifications
 	}
 

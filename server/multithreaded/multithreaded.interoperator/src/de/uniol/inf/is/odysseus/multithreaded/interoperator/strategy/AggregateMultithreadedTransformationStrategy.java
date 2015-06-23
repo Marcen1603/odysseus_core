@@ -6,20 +6,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
-import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
@@ -70,7 +62,10 @@ public class AggregateMultithreadedTransformationStrategy extends
 		if (!super.areSettingsValid(settingsForOperator)) {
 			return false;
 		}
-		checkIfWayToEndPointIsValid(operator, settingsForOperator, false);
+		if (settingsForOperator.getEndParallelizationId() != null
+				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
+			throw new IllegalArgumentException("Definition of Endpoint for strategy "+this.getName()+" is not allowed");
+		}
 
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
@@ -172,20 +167,9 @@ public class AggregateMultithreadedTransformationStrategy extends
 			newAggregateOperator.subscribeToSource(buffer, 0, 0,
 					buffer.getOutputSchema());
 
-			if (settingsForOperator.getEndParallelizationId() != null
-					&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
-				List<AbstractFragmentAO> fragments = new ArrayList<AbstractFragmentAO>();
-				fragments.add(fragmentAO);
-				ILogicalOperator lastParallelizedOperator = doPostParallelization(
-						aggregateOperator, newAggregateOperator,
-						settingsForOperator.getEndParallelizationId(), i,
-						fragments);
-				union.subscribeToSource(lastParallelizedOperator, i, 0,
-						lastParallelizedOperator.getOutputSchema());
-			} else {
-				union.subscribeToSource(newAggregateOperator, i, 0,
-						newAggregateOperator.getOutputSchema());
-			}
+			union.subscribeToSource(newAggregateOperator, i, 0,
+					newAggregateOperator.getOutputSchema());
+
 		}
 
 		// create aggregate operator for combining partial aggregates
@@ -204,27 +188,14 @@ public class AggregateMultithreadedTransformationStrategy extends
 		combinePAAggregateOperator.subscribeToSource(union, 0, 0,
 				union.getOutputSchema());
 
-		// get the last operator that need to be parallelized. if no end id is
-		// set, the given operator for transformation is selected
-		ILogicalOperator lastOperatorForParallelization = null;
-		if (settingsForOperator.getEndParallelizationId() != null
-				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
-			lastOperatorForParallelization = LogicalGraphHelper.findDownstreamOperatorWithId(
-					settingsForOperator.getEndParallelizationId(),
-					aggregateOperator);
-		} else {
-			lastOperatorForParallelization = aggregateOperator;
-		}
-
 		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		downstreamOperatorSubscriptions.addAll(lastOperatorForParallelization
+		downstreamOperatorSubscriptions.addAll(aggregateOperator
 				.getSubscriptions());
 
 		// remove old subscription and subscribe new aggregate operator to
 		// existing downstream operators
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			lastOperatorForParallelization
-					.unsubscribeSink(downstreamOperatorSubscription);
+			aggregateOperator.unsubscribeSink(downstreamOperatorSubscription);
 			downstreamOperatorSubscription.getTarget().subscribeToSource(
 					combinePAAggregateOperator,
 					downstreamOperatorSubscription.getSinkInPort(),
@@ -252,32 +223,9 @@ public class AggregateMultithreadedTransformationStrategy extends
 	protected void doStrategySpecificPostParallelization(
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration, List<AbstractFragmentAO> fragments) {
-		if (currentClonedOperator instanceof MapAO) {
-			// map removes partial aggregates, so we need to add these
-			// attributes to the map
-			MapAO mapOperator = (MapAO) currentClonedOperator;
-			// the parallelized operator is always in the type of the strategy
-			if (parallelizedOperator instanceof AggregateAO) {
-				AggregateAO aggregateOperator = (AggregateAO) parallelizedOperator;
-				List<AggregateItem> aggregationItems = aggregateOperator
-						.getAggregationItems();
-				List<NamedExpression> expressions = mapOperator
-						.getExpressions();
-				IAttributeResolver attributeResolver = new DirectAttributeResolver(
-						aggregateOperator.getOutputSchema());
-				for (AggregateItem aggregateItem : aggregationItems) {
-					NamedExpression namedExpression = new NamedExpression("",
-							new SDFExpression(null,
-									aggregateItem.outAttribute.getURI(),
-									attributeResolver, MEP.getInstance(),
-									AggregateFunctionBuilderRegistry
-											.getAggregatePattern()));
-					expressions.add(namedExpression);
-				}
-				mapOperator.setExpressions(expressions);
-			}
-		}
+			ILogicalOperator currentClonedOperator, int iteration,
+			List<AbstractFragmentAO> fragments, MultithreadedOperatorSettings settingsForOperator) {
+		// no operation needed, because post parallelization is not allowed for this strategy 
 	}
 
 }

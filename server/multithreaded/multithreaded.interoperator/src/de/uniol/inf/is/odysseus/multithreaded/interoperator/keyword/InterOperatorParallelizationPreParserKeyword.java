@@ -135,10 +135,25 @@ public class InterOperatorParallelizationPreParserKeyword extends
 					currentId = currentId.substring(1, currentId.length()-1);
 					String[] currentIdPair = currentId.split(":");
 					if (currentIdPair.length == 2) {
+						// (StartParallelizationId:EndParallelizationId)
 						MultithreadedOperatorSettings settingsForId = new MultithreadedOperatorSettings();
 						settingsForId
 								.setStartParallelizationId(currentIdPair[0]);
 						settingsForId.setEndParallelizationId(currentIdPair[1]);
+						operatorSettings.add(settingsForId);
+					} else if (currentIdPair.length == 3){
+						// (StartParallelizationId:EndParallelizationId:AssureSemanticCorrectness)
+						MultithreadedOperatorSettings settingsForId = new MultithreadedOperatorSettings();
+						settingsForId
+								.setStartParallelizationId(currentIdPair[0]);
+						settingsForId.setEndParallelizationId(currentIdPair[1]);
+						
+						if (!currentIdPair[2].equalsIgnoreCase("true") && !currentIdPair[2].equalsIgnoreCase("false")){
+							throw new OdysseusScriptException(
+									"Value for AssureSemanticCorrectness is invalid. Valid values are: true or false");
+						} else {
+							settingsForId.setAssureSemanticCorrectness(Boolean.parseBoolean(currentIdPair[2]));							
+						}
 						operatorSettings.add(settingsForId);
 					} else {
 						throw new OdysseusScriptException(
