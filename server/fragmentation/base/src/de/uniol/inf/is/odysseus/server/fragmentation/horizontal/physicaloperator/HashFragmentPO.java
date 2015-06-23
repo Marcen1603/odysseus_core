@@ -6,6 +6,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
@@ -114,5 +115,37 @@ public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
 		return indices != null;
 
 	}
-
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof HashFragmentPO)){
+			return false;
+		}
+		
+		@SuppressWarnings("unchecked")
+		HashFragmentPO<T> po = (HashFragmentPO<T>) ipo;
+		if (po.optimizeDistribution != this.optimizeDistribution){
+			return false;
+		}
+		
+		if (this.indices != null && po.indices == null){
+			return false;
+		}
+		
+		if (this.indices == null && po.indices != null){
+			return false;
+		}
+		if (this.indices != null && po.indices != null){
+			if (this.indices.length != po.indices.length){
+				return false;
+			}
+			for (int i=0;i<this.indices.length;i++){
+				if (this.indices[i] != po.indices[i]){
+					return false;
+				}
+			}
+		}
+		
+		return super.isSemanticallyEqual(ipo);
+	}
 }

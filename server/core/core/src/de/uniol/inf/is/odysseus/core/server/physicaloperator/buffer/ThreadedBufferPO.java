@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -247,4 +248,23 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		this.drainAtClose = drainAtClose;
 	}
 
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof ThreadedBufferPO)){
+			return false;
+		}
+
+		@SuppressWarnings("unchecked")
+		ThreadedBufferPO<R> po = (ThreadedBufferPO<R>) ipo;
+		if (this.drainAtClose != po.drainAtClose){
+			return false;
+		}
+		
+		if (this.limit != po.limit){
+			return false;
+		}
+		
+		return super.isSemanticallyEqual(ipo);
+	}
+	
 }

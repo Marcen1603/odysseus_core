@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -152,6 +153,22 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 		}
 		b.append("]");
 		return b.toString();
+	}
+	
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof AbstractFragmentPO)){
+			return false;
+		}
+		
+		@SuppressWarnings("unchecked")
+		AbstractFragmentPO<T> other = (AbstractFragmentPO<T>) ipo;
+		
+		if (this.numFragments != other.numFragments){
+			return false;
+		}
+		
+		return super.isSemanticallyEqual(ipo);
 	}
 	
 }
