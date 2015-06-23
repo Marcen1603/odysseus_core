@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import jfxtras.labs.scene.control.gauge.linear.SimpleMetroArcGauge;
@@ -27,8 +28,6 @@ import java.util.*;
  * @since 17.06.2015.
  */
 public class OverviewController implements Observer {
-
-    private static final int NUMBER_OF_SEGMENTS = 10;
 
     private Map<SocketReceiver, List<VisualizationInformation>> visualizationInformationMap;
     private Map<VisualizationInformation, XYChart.Series> seriesMap;
