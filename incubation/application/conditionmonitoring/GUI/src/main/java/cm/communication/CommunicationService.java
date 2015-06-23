@@ -33,7 +33,7 @@ public class CommunicationService {
             if (connectionInformation.isUseName()) {
                 socketInfos = RestService.getResultsFromQuery(connectionInformation.getIp(), token, connectionInformation.getQueryName());
             } else {
-                socketInfos = RestService.getResultsFromQuery(connectionInformation.getIp(), token, connectionInformation.getQueryId());
+                socketInfos = RestService.getResultsFromQuery(connectionInformation.getIp(), token, connectionInformation.getQueryId(),connectionInformation.getQueryName());
             }
 
             for (SocketInfo socketInfo : socketInfos) {

@@ -1,5 +1,7 @@
 package cm.view;
 
+import cm.data.ConnectionHandler;
+import cm.data.DataHandler;
 import cm.model.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +21,7 @@ public class EventListCell extends ListCell<Event> {
 
     private Parent root;
 
-    @FXML Label machineEventMachineNameLabel;
+    @FXML Label eventConnectionName;
     @FXML Label machineEventEventDescriptionLabel;
     @FXML Label machineEventAnomalyScore;
     @FXML Pane machineEventColorBar;
@@ -58,12 +60,13 @@ public class EventListCell extends ListCell<Event> {
             }
 
             machineEventEventDescriptionLabel.setText(eventDescription);
-            machineEventAnomalyScore.setText(anomalyScore.toString());
+            machineEventAnomalyScore.setText("Anomaly Score: " + anomalyScore.toString());
 
             String color = getColor(anomalyScore);
             machineEventColorBar.setStyle(color + " " + "-fx-effect: innershadow(gaussian, black, 4, 0.4, 0, 0)");
 
-            machineEventMachineNameLabel.setText(item.getConnection().getSocketInfo().getName());
+            eventConnectionName.setText(item.getConnection().getSocketInfo().getQueryName());
+
 
             setGraphic(root);
         }

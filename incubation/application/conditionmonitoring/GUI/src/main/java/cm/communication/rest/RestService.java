@@ -93,7 +93,7 @@ public class RestService {
             queryIds = gson.fromJson(addQueryRepresentation.getText(), GenericResponseDTO.class);
             // Create socket
             int queryId = queryIds.getValue().iterator().next().intValue();
-            return getResultsFromQuery(ip, token, queryId);
+            return getResultsFromQuery(ip, token, queryId, "");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -105,8 +105,9 @@ public class RestService {
         return getResultsFromQuery(ip, createSocketRequestDTO);
     }
 
-    public static List<SocketInfo> getResultsFromQuery(String ip, String token, int queryId) throws RestException {
+    public static List<SocketInfo> getResultsFromQuery(String ip, String token, int queryId, String queryName) throws RestException {
         CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryId);
+        createSocketRequestDTO.setQueryName(queryName);
         return getResultsFromQuery(ip, createSocketRequestDTO);
     }
 
@@ -147,7 +148,7 @@ public class RestService {
                         }
                     }
                 }
-                infos.add(new SocketInfo(socketIp, socketPort, socketSchema, ""));
+                infos.add(new SocketInfo(socketIp, socketPort, socketSchema, createSocketRequestDTO.getQueryName()));
             }
         } catch (IOException ex) {
             throw new RestException(ex.toString());
