@@ -56,6 +56,14 @@ public class ConfigurationCreator {
 		gauge.setMinValue(0.0);
 		gauge.setMaxValue(25.0);
 		gauge.setTitle("LOF Value");
+		
+		GaugeVisualizationInformation devGauge = new GaugeVisualizationInformation();
+		devGauge.setConnectionInformation(con1);
+		devGauge.setAttribute("anomalyScore");
+		devGauge.setMinValue(0.0);
+		devGauge.setMaxValue(1.0);
+		devGauge.setStretch(true);
+		devGauge.setTitle("Anomaly Score");
 
 		AreaChartVisualizationInformation areaChartOverview = new AreaChartVisualizationInformation();
 		areaChartOverview.setConnectionInformation(con1);
@@ -75,6 +83,7 @@ public class ConfigurationCreator {
 
 		// For the overview
 		gaugeVisualizations.add(gauge);
+		gaugeVisualizations.add(devGauge);
 		areaChartVisualizationInformations.add(areaChartOverview);
 		areaChartVisualizationInformations.add(areaChartDeviationOverview);
 		clientConfig.setGaugeVisualizationInformation(gaugeVisualizations);

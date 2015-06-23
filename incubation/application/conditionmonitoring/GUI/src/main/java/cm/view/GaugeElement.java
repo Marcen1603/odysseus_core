@@ -21,6 +21,7 @@ import java.io.IOException;
  */
 public class GaugeElement extends VBox {
 
+    private final static double strechFactor = 100;
     private Parent root;
     private static final int NUMBER_OF_SEGMENTS = 10;
 
@@ -49,8 +50,13 @@ public class GaugeElement extends VBox {
     private void initialize() {
         gaugeTitle.setText(visualizationInformation.getTitle());
 
-        gauge.setMinValue(visualizationInformation.getMinValue());
-        gauge.setMaxValue(visualizationInformation.getMaxValue());
+        if (visualizationInformation.isStretch()) {
+            gauge.setMinValue(visualizationInformation.getMinValue() * strechFactor);
+            gauge.setMaxValue(visualizationInformation.getMaxValue() * strechFactor);
+        } else {
+            gauge.setMinValue(visualizationInformation.getMinValue());
+            gauge.setMaxValue(visualizationInformation.getMaxValue());
+        }
         gauge.setValue(0);
 
         // Style
@@ -82,7 +88,12 @@ public class GaugeElement extends VBox {
     }
 
     public void setValue(double value) {
-        gauge.setValue(value);
+        if (visualizationInformation.isStretch()) {
+            double stretchedValue = value * strechFactor;
+            gauge.setValue(stretchedValue);
+        } else {
+            gauge.setValue(value);
+        }
     }
 
     public void addClickListener() {

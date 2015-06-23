@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.mongodb.DBCollection;
@@ -37,7 +38,7 @@ public class ConfigurationService {
 			for (DBObject dbObj : dbCursor) {
 				jsons.add(dbObj.toString());
 			}
-			
+
 			for (String json : jsons) {
 				Gson gson = new Gson();
 				Configuration config = gson.fromJson(json, Configuration.class);
@@ -45,6 +46,34 @@ public class ConfigurationService {
 			}
 			return configs;
 
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static Configuration getConfiguration(UUID identifier) {
+		try {
+			MongoClient mongoClient = new MongoClient("127.0.0.1:27017");
+			DBCollection mongoDBCollection = mongoClient.getDB("odysseus").getCollection("conditionConfigurations");
+
+			// Read from this collection
+			DBCursor dbCursor;
+			dbCursor = mongoDBCollection.find();
+			List<String> jsons = new ArrayList<>();
+
+			for (DBObject dbObj : dbCursor) {
+				jsons.add(dbObj.toString());
+			}
+
+			for (String json : jsons) {
+				Gson gson = new Gson();
+				Configuration config = gson.fromJson(json, Configuration.class);
+				if (config.getIdentifier().equals(identifier)) {
+					return config;
+				}
+			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
