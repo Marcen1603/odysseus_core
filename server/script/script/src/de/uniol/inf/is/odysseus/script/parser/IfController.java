@@ -54,6 +54,8 @@ public class IfController {
 
 	public static final String SRCDEF_KEY = "IFSRCDEF";
 	public static final String SRCNDEF_KEY = "IFSRCNDEF";
+	public static final String QUERY_DEF_KEY = "IFQDEF";
+	public static final String QUERY_NDEF_KEY = "IFQNDEF";
 
 	public static final String IF_KEY = "IF";
 
@@ -175,6 +177,23 @@ public class IfController {
 
 				return false;
 			}
+			
+			
+			Optional<String> optionalQDef = determineIfQDef(currentLine);
+			if (optionalQDef.isPresent()) {
+				Boolean value = existsQuery(optionalQDef.get(), caller);
+				inIfClause.push(value);
+				LOG.trace("Stack: {}", inIfClause);
+
+				return false;
+			}
+
+			Optional<String> optionalQNotDef = determineIfQNDef(currentLine);
+			if (optionalQNotDef.isPresent()) {
+				Boolean value = existsQuery(optionalQNotDef.get(), caller);
+				inIfClause.push(!value);
+				return false;
+			}
 
 			Optional<String> optionalIf = determineIf(currentLine);
 			if (optionalIf.isPresent()) {
@@ -249,6 +268,12 @@ public class IfController {
 		return Activator.getExecutor().containsViewOrStream(new Resource(caller.getUser(), sourceName), caller);
 	}
 
+	private static boolean existsQuery(String queryName, ISession caller) {
+		// TODO: Query Name within user context!!
+		return Activator.getExecutor().getLogicalQueryByName(queryName , caller) != null;
+		///return Activator.getExecutor().getLogicalQueryByName(new Resource(caller.getUser(), queryName).toString(), caller) != null;
+	}
+	
 	private static boolean determineElse(String trim) {
 		return hasPreParserKeyword(PARAMETER_KEY + ELSE_KEY, trim);
 	}
@@ -279,6 +304,14 @@ public class IfController {
 
 	private static Optional<String> determineIfSrcNDef(String textLine) throws OdysseusScriptException {
 		return determineReplacement(PARAMETER_KEY + SRCNDEF_KEY, textLine);
+	}
+	
+	private static Optional<String> determineIfQDef(String textLine)throws OdysseusScriptException {
+		return determineReplacement(PARAMETER_KEY + QUERY_DEF_KEY, textLine);
+	}
+
+	private static Optional<String> determineIfQNDef(String textLine)throws OdysseusScriptException {
+		return determineReplacement(PARAMETER_KEY + QUERY_NDEF_KEY, textLine);
 	}
 
 	private static Optional<String> determinePrint(String textLine) {
