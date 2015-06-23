@@ -129,7 +129,7 @@ public class JoinMultithreadedTransformationStrategy extends
 				buffer.setName("Buffer_" + bufferCounter);
 				buffer.setThreaded(true);
 				buffer.setMaxBufferSize(settingsForOperator.getBufferSize());
-				buffer.setDrainAtClose(true);
+				buffer.setDrainAtClose(false);
 				bufferCounter++;
 
 				buffer.subscribeToSource(pair.getE1(), 0, i, pair.getE1()
