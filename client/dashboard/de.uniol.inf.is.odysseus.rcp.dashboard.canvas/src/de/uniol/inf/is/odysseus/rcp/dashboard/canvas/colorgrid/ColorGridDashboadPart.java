@@ -36,6 +36,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	private final static String BACKGROUND_X = "backgroundX";
 	private final static String BACKGROUND_Y = "backgroundY";
 	private final static String COLOR = "color";
+	private final static String ZOOM = "zoom";
 
 	private int width = 600;
 	private int height = 600;
@@ -44,8 +45,12 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	private int value_pos = 2;
 	private int boxWidth = 2;
 	private int boxHeight = 2;
-	private double zoom = 1.2;
+	private double zoom = 1;
+	// TODO: Zoom
+	private double maxZoom = 3;
+	private double minZoom = 0.5;
 
+	
 	private String imagePath;
 	private Image image;
 
@@ -115,13 +120,16 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 									.getMainPoint()
 									+ maxDuration < maxTime) {
 						// TODO: Make option
-//						fillRectangle(draw_x, draw_y, draw_height, draw_width,
-//								backgroundColor);
+						// fillRectangle(draw_x, draw_y, draw_height,
+						// draw_width,
+						// backgroundColor);
 						grid[x][y] = null;
 					} else {
 						Number v = grid[x][y].getAttribute(value_pos);
-						fillRectangle(draw_x, draw_y, draw_height, draw_width,
-								getColor(v));
+						if (v.doubleValue() > 0){
+							fillRectangle(draw_x, draw_y, draw_height, draw_width,
+									getColor(v));
+						}
 					}
 				}
 			}
@@ -185,6 +193,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 		backgroundImageOffsetY = Integer
 				.valueOf(saved.get(BACKGROUND_Y) != null ? saved
 						.get(BACKGROUND_Y) : "0");
+		zoom = Double.valueOf(saved.get(ZOOM) != null ? saved.get(ZOOM) : "1");
 	}
 
 	/**
@@ -209,6 +218,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 		toSaveMap.put(BACKGROUND_SCALE, String.valueOf(imageScale));
 		toSaveMap.put(BACKGROUND_X, String.valueOf(backgroundImageOffsetX));
 		toSaveMap.put(BACKGROUND_Y, String.valueOf(backgroundImageOffsetY));
+		toSaveMap.put(ZOOM, String.valueOf(zoom));
 		return toSaveMap;
 	}
 
@@ -264,7 +274,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 
 	private void moveLeftTop(MouseEvent e) {
 		if (leftButtonPressed) {
-			leftTop = new Point(leftTop.x + (e.x - leftButtonLastX), leftTop.y
+			setLeftTop(getOffsetX() + (e.x - leftButtonLastX), getOffsetY()
 					+ (e.y - leftButtonLastY));
 			leftButtonLastX = e.x;
 			leftButtonLastY = e.y;
@@ -276,11 +286,10 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	public void mouseScrolled(MouseEvent e) {
 		int size = e.count;
 		if (size < 0) {
-			zoom = zoom * 0.1;
+				setZoom(zoom * 0.1);
 		} else {
-			zoom = zoom * 1.1;
+			setZoom(zoom * 1.1);
 		}
-		dirty();
 	}
 
 	public int getWidth() {
@@ -352,12 +361,13 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 		dirty();
 	}
 
-	private void dirty() {
+	@Override
+	protected void dirty() {
 		size = null;
-		invalidateImage2();
+		invalidateImage();
 	}
 
-	private void invalidateImage2() {
+	private void invalidateImage() {
 		if (this.image != null) {
 			image.dispose();
 		}
@@ -452,7 +462,16 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	}
 
 	public void setZoom(double zoom) {
-		this.zoom = zoom;
+		if (zoom < minZoom){
+			this.zoom = minZoom;
+		}else if (zoom > maxZoom){
+			this.zoom = maxZoom;
+		}else{
+			this.zoom = zoom;
+		}
 		dirty();
+		fireChanged();
+		this.getCanvas().redraw();
 	}
+
 }

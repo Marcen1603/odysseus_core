@@ -15,11 +15,15 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.canvas;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import javax.swing.event.ChangeListener;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -55,6 +59,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
+ * @author Marco Grawunder
  * @version $Id: AbstractCanvasDashboardPart.java |
  *          AbstractCanvasDashboardPart.java | AbstractCanvasDashboardPart.java
  *          $
@@ -65,6 +70,8 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 		MouseTrackListener, MouseWheelListener {
 	private final static String MAX_ELEMENTS = "maxElements";
 	private final static String REPAINT_DELAY = "repaintDelay";
+	private final static String LEFT_OFFSET_X = "leftOffsetX";
+	private final static String LEFT_OFFSET_Y = "leftOffsetY";
 
 	private Cursor cursor = null;
 
@@ -75,7 +82,9 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 	private int maxElements = 100;
 	private long repaintDelay = 1000;
 	protected Color backgroundColor;
-	protected Point leftTop = new Point(0, 0);
+	private Point leftTop = new Point(0, 0);
+
+	List<ChangeListener> listener = new ArrayList<>();
 
 	/**
 	 * {@inheritDoc}
@@ -102,12 +111,11 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 	}
 
 	protected void restartUpdater() {
-		if (updater != null){
+		if (updater != null) {
 			updater.terminate();
 			try {
 				updater.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -158,16 +166,17 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 			this.gc = null;
 			e.gc.drawImage(bufferImage, leftTop.x, leftTop.y);
 			// TODO: clipping
-			//int width =  bufferImage.getBounds().width;
-			//int height = bufferImage.getBounds().height;
-			//e.gc.drawImage(bufferImage,0,0, s.x, s.y, leftTop.x, leftTop.y, width,height);
-					
-//			e.gc.drawImage(bufferImage, leftTop.x, leftTop.y, bufferImage
-//					.getBounds().width, bufferImage.getBounds().height,
-//					leftTop.x, leftTop.y, new Double(
-//							bufferImage.getBounds().width * zoom).intValue(),
-//					new Double(bufferImage.getBounds().height * zoom)
-//							.intValue());
+			// int width = bufferImage.getBounds().width;
+			// int height = bufferImage.getBounds().height;
+			// e.gc.drawImage(bufferImage,0,0, s.x, s.y, leftTop.x, leftTop.y,
+			// width,height);
+
+			// e.gc.drawImage(bufferImage, leftTop.x, leftTop.y, bufferImage
+			// .getBounds().width, bufferImage.getBounds().height,
+			// leftTop.x, leftTop.y, new Double(
+			// bufferImage.getBounds().width * zoom).intValue(),
+			// new Double(bufferImage.getBounds().height * zoom)
+			// .intValue());
 			bufferImage.dispose();
 		} catch (Exception e2) {
 			throw e2;
@@ -180,8 +189,6 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 
 	public abstract void doPaint(final PaintEvent e);
 
-	
-	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -206,6 +213,9 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 				.get(MAX_ELEMENTS) : "1000");
 		repaintDelay = Long.valueOf(saved.get(REPAINT_DELAY) != null ? saved
 				.get(REPAINT_DELAY) : "1000");
+		int x = Integer.valueOf(saved.get(LEFT_OFFSET_X) != null? saved.get(LEFT_OFFSET_X):"0");
+		int y = Integer.valueOf(saved.get(LEFT_OFFSET_Y) != null? saved.get(LEFT_OFFSET_Y):"0");
+		leftTop = new Point(x, y);
 	}
 
 	/**
@@ -217,6 +227,8 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 		Map<String, String> toSaveMap = Maps.newHashMap();
 		toSaveMap.put(MAX_ELEMENTS, String.valueOf(maxElements));
 		toSaveMap.put(REPAINT_DELAY, String.valueOf(repaintDelay));
+		toSaveMap.put(LEFT_OFFSET_X, String.valueOf(leftTop.x));
+		toSaveMap.put(LEFT_OFFSET_Y, String.valueOf(leftTop.y));
 		return toSaveMap;
 	}
 
@@ -834,6 +846,34 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 		return fontSize;
 	}
 
+	protected void setLeftTop(int x, int y) {
+		this.leftTop = new Point(x, y);
+		fireChanged();
+	}
+
+	public int getOffsetX() {
+		return leftTop.x;
+	}
+
+	public void setOffsetX(int x) {
+		leftTop.x = x;
+		dirty();
+		fireChanged();
+	}
+
+	public int getOffsetY() {
+		return leftTop.y;
+	}
+
+	public void setOffsetY(int y) {
+		leftTop.y = y;
+		dirty();
+		fireChanged();
+	}
+
+	protected void dirty() {
+	}
+
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 	}
@@ -849,7 +889,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 	@Override
 	public void mouseUp(MouseEvent e) {
 	}
-	
+
 	@Override
 	public void mouseScrolled(MouseEvent e) {
 	}
@@ -881,13 +921,28 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 		cursor = new Cursor(this.getCanvas().getDisplay(), SWT.CURSOR_ARROW);
 		this.getCanvas().getParent().setCursor(cursor);
 	}
-	
+
 	public void setRepaintDelay(long repaintDelay) {
 		this.repaintDelay = repaintDelay;
 		restartUpdater();
 	}
-	
+
 	public long getRepaintDelay() {
 		return repaintDelay;
 	}
+
+	public void addChangeListner(ChangeListener l) {
+		this.listener.add(l);
+	}
+
+	public void removeChangeListener(ChangeListener l) {
+		this.listener.remove(l);
+	}
+
+	protected void fireChanged() {
+		for (ChangeListener l : listener) {
+			l.stateChanged(null);
+		}
+	}
+
 }

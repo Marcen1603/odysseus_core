@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorgrid;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
@@ -44,12 +47,16 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
 
 public class ColorGridConfigurer extends
-		AbstractDashboardPartConfigurer<ColorGridDashboadPart>{
+		AbstractDashboardPartConfigurer<ColorGridDashboadPart> implements
+		ChangeListener {
 
 	ColorGridDashboadPart dashboardPart;
 	private SDFSchema[] schemas;
 	Text zoomText;
-	
+	private Text offsetX;
+	private Text offsetY;
+	private boolean reactOnModify = true;
+
 	@Override
 	public void init(ColorGridDashboadPart dashboardPartToConfigure,
 			Collection<IPhysicalOperator> roots) {
@@ -64,13 +71,12 @@ public class ColorGridConfigurer extends
 			final IPhysicalOperator sink = iter.next();
 			this.schemas[i] = sink.getOutputSchema();
 		}
+		this.dashboardPart.addChangeListner(this);
 	}
 
 	public ColorGridDashboadPart getDashboardPart() {
 		return dashboardPart;
 	}
-	
-	
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -244,8 +250,9 @@ public class ColorGridConfigurer extends
 			}
 			{// Max Duration
 				toolkit.createLabel(group, "Max Duration (ms)");
-				final Text maxElementsText = toolkit.createText(group, String.format("%15d%n",
-						this.getDashboardPart().getMaxDuration()));
+				final Text maxElementsText = toolkit.createText(group, String
+						.format("%15d%n", this.getDashboardPart()
+								.getMaxDuration()));
 				maxElementsText.addModifyListener(new ModifyListener() {
 					/**
 					 * {@inheritDoc}
@@ -268,8 +275,9 @@ public class ColorGridConfigurer extends
 			}
 			{// UpdateThread
 				toolkit.createLabel(group, "Repaint Delay (sec)");
-				final Text repaintRate = toolkit.createText(group, String.format("%15d%n",
-						this.getDashboardPart().getRepaintDelay()/1000));
+				final Text repaintRate = toolkit.createText(group, String
+						.format("%15d%n", this.getDashboardPart()
+								.getRepaintDelay() / 1000));
 				repaintRate.addModifyListener(new ModifyListener() {
 					/**
 					 * {@inheritDoc}
@@ -280,7 +288,7 @@ public class ColorGridConfigurer extends
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart
-										.setRepaintDelay(Integer.parseInt(text)*1000);
+										.setRepaintDelay(Integer.parseInt(text) * 1000);
 								fireListener();
 
 							} catch (final NumberFormatException ex) {
@@ -392,15 +400,16 @@ public class ColorGridConfigurer extends
 								new WorkbenchLabelProvider(),
 								new WorkbenchContentProvider());
 						dialog.setInput(getDashboardPart().getProject());
-						
+
 						dialog.addFilter(new ViewerFilter() {
 							@Override
-							public boolean select(Viewer viewer, Object parentElement, Object element) {
+							public boolean select(Viewer viewer,
+									Object parentElement, Object element) {
 								if (element instanceof IFile) {
 									IFile res = (IFile) element;
 									if (validFileResouce(res)) {
 										return true;
-									} 
+									}
 									return false;
 								}
 								return true;
@@ -412,8 +421,10 @@ public class ColorGridConfigurer extends
 							public IStatus validate(Object[] selection) {
 								dialog.getOkButton().setEnabled(false);
 								if (selection.length <= 0) {
-									return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, "You have to choose at least one image");
-								} 
+									return new Status(IStatus.ERROR,
+											PlatformUI.PLUGIN_ID,
+											"You have to choose at least one image");
+								}
 								Object sel = selection[0];
 								if (sel instanceof IFile) {
 									IFile file = (IFile) sel;
@@ -422,7 +433,9 @@ public class ColorGridConfigurer extends
 										return Status.OK_STATUS;
 									}
 								}
-								return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, "You can only choose images");
+								return new Status(IStatus.ERROR,
+										PlatformUI.PLUGIN_ID,
+										"You can only choose images");
 							}
 						});
 
@@ -431,71 +444,50 @@ public class ColorGridConfigurer extends
 						if (dialog.open() == Window.OK) {
 							for (Object o : dialog.getResult()) {
 								IResource resource = (IResource) o;
-								String filename = resource.getProjectRelativePath().toOSString();
+								String filename = resource
+										.getProjectRelativePath().toOSString();
 								imageText.setText(filename);
 								ColorGridConfigurer.this.getDashboardPart()
 										.setImagePath(filename);
-								
+
 							}
-						}	
-						
-						
+						}
+
 						fireListener();
 					}
 				});
 			}
-            {// Scale Image
-                toolkit.createLabel(group, "Scale Image");
-                final Text minXText = toolkit.createText(group, "  "+this.getDashboardPart().getImageScale());
-                toolkit.createLabel(group, "");
+			{// Scale Image
+				toolkit.createLabel(group, "Scale Image");
+				final Text minXText = toolkit.createText(group, "  "
+						+ this.getDashboardPart().getImageScale());
+				toolkit.createLabel(group, "");
 
-                minXText.addModifyListener(new ModifyListener() {
-                    /**
-                     * {@inheritDoc}
-                     */
-                    @Override
-                    public void modifyText(final ModifyEvent e) {
-                        final String text = minXText.getText().trim();
-                        if (!"".equals(text)) {
-                            try {
-                                ColorGridConfigurer.this.dashboardPart.setImageScale(Double.parseDouble(text.trim()));
-                                fireListener();
-                            }
-                            catch (final NumberFormatException ex) {
-                                // Empty block
-                            }
-                        }
-                    }
-                });
-            }
-            {// Scale Image
-                toolkit.createLabel(group, "Zoom");
-                zoomText = toolkit.createText(group, "  "+this.getDashboardPart().getZoom());
-                toolkit.createLabel(group, "");
-
-                zoomText.addModifyListener(new ModifyListener() {
-                    /**
-                     * {@inheritDoc}
-                     */
-                    @Override
-                    public void modifyText(final ModifyEvent e) {
-                        final String text = zoomText.getText().trim();
-                        if (!"".equals(text)) {
-                            try {
-                                ColorGridConfigurer.this.dashboardPart.setZoom(Double.parseDouble(text.trim()));
-                                fireListener();
-                            }
-                            catch (final NumberFormatException ex) {
-                                // Empty block
-                            }
-                        }
-                    }
-                });
-            }
-			{// Height
-				toolkit.createLabel(group, "Offset x");
-				final Text numberCellsX = toolkit.createText(group,  String.format("%10d%n",
-						 this.getDashboardPart().getBackgroundImageOffsetX()));
+				minXText.addModifyListener(new ModifyListener() {
+					/**
+					 * {@inheritDoc}
+					 */
+					@Override
+					public void modifyText(final ModifyEvent e) {
+						final String text = minXText.getText().trim();
+						if (!"".equals(text)) {
+							try {
+								ColorGridConfigurer.this.dashboardPart
+										.setImageScale(Double.parseDouble(text
+												.trim()));
+								fireListener();
+							} catch (final NumberFormatException ex) {
+								// Empty block
+							}
+						}
+					}
+				});
+			}
+			{
+				toolkit.createLabel(group, "Background Image Offset x");
+				final Text numberCellsX = toolkit.createText(group, String
+						.format("%10d%n", this.getDashboardPart()
+								.getBackgroundImageOffsetX()));
 				toolkit.createLabel(group, "");
 				numberCellsX.addModifyListener(new ModifyListener() {
 					/**
@@ -507,7 +499,8 @@ public class ColorGridConfigurer extends
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart
-										.setBackgroundImageOffsetX(Integer.parseInt(text.trim()));
+										.setBackgroundImageOffsetX(Integer
+												.parseInt(text.trim()));
 								fireListener();
 
 							} catch (final NumberFormatException ex) {
@@ -517,10 +510,11 @@ public class ColorGridConfigurer extends
 					}
 				});
 			}
-			{// Number cells y
-				toolkit.createLabel(group, "Offset y");
-				final Text numberCellsY = toolkit.createText(group, String.format("%10d%n",
-						+ this.getDashboardPart().getBackgroundImageOffsetY()));
+			{
+				toolkit.createLabel(group, "Background Image Offset y");
+				final Text numberCellsY = toolkit.createText(group, String
+						.format("%10d%n", +this.getDashboardPart()
+								.getBackgroundImageOffsetY()));
 				toolkit.createLabel(group, "");
 				numberCellsY.addModifyListener(new ModifyListener() {
 					/**
@@ -532,7 +526,8 @@ public class ColorGridConfigurer extends
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart
-										.setBackgroundImageOffsetY(Integer.parseInt(text.trim()));
+										.setBackgroundImageOffsetY(Integer
+												.parseInt(text.trim()));
 								fireListener();
 
 							} catch (final NumberFormatException ex) {
@@ -542,6 +537,91 @@ public class ColorGridConfigurer extends
 					}
 				});
 			}
+			{// Scale Image
+				toolkit.createLabel(group, "Zoom");
+				zoomText = toolkit.createText(group, "  "
+						+ this.getDashboardPart().getZoom());
+				toolkit.createLabel(group, "");
+
+				zoomText.addModifyListener(new ModifyListener() {
+					/**
+					 * {@inheritDoc}
+					 */
+					@Override
+					public void modifyText(final ModifyEvent e) {
+						if (reactOnModify) {
+							final String text = zoomText.getText().trim();
+							if (!"".equals(text)) {
+								try {
+									ColorGridConfigurer.this.dashboardPart
+											.setZoom(Double.parseDouble(text
+													.trim()));
+									fireListener();
+								} catch (final NumberFormatException ex) {
+									// Empty block
+								}
+							}
+						}
+					}
+				});
+			}
+			{
+				toolkit.createLabel(group, "Offset x");
+				offsetX = toolkit.createText(group, String.format("%10d%n",
+						this.getDashboardPart().getOffsetX()));
+				toolkit.createLabel(group, "");
+				offsetX.addModifyListener(new ModifyListener() {
+					/**
+					 * {@inheritDoc}
+					 */
+					@Override
+					public void modifyText(final ModifyEvent e) {
+						if (reactOnModify) {
+							final String text = offsetX.getText().trim();
+							if (!"".equals(text)) {
+								try {
+									ColorGridConfigurer.this.dashboardPart
+											.setOffsetX(Integer.parseInt(text
+													.trim()));
+									fireListener();
+
+								} catch (final NumberFormatException ex) {
+									// Empty block
+								}
+							}
+						}
+					}
+				});
+			}
+			{
+				toolkit.createLabel(group, "Offset y");
+				offsetY = toolkit.createText(group, String.format("%10d%n",
+						+this.getDashboardPart().getOffsetY()));
+				toolkit.createLabel(group, "");
+				offsetY.addModifyListener(new ModifyListener() {
+					/**
+					 * {@inheritDoc}
+					 */
+					@Override
+					public void modifyText(final ModifyEvent e) {
+						if (reactOnModify) {
+							final String text = offsetY.getText().trim();
+							if (!"".equals(text)) {
+								try {
+									ColorGridConfigurer.this.dashboardPart
+											.setOffsetY(Integer.parseInt(text
+													.trim()));
+									fireListener();
+
+								} catch (final NumberFormatException ex) {
+									// Empty block
+								}
+							}
+						}
+					}
+				});
+			}
+
 			{// Foregroundcolor
 				toolkit.createLabel(group, "Base Color");
 
@@ -594,7 +674,7 @@ public class ColorGridConfigurer extends
 		composite.setBackground(composite.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 	}
-	
+
 	private boolean validFileResouce(IFile file) {
 		String[] extensions = { "png", "gif", "jpg", "jpeg" };
 		for (String ext : extensions) {
@@ -607,8 +687,17 @@ public class ColorGridConfigurer extends
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		getDashboardPart().removeChangeListener(this);
 	}
 
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		reactOnModify = false;
+		zoomText.setText(String.valueOf(getDashboardPart().getZoom()));
+		offsetX.setText(String.valueOf(getDashboardPart().getOffsetX()));
+		offsetY.setText(String.valueOf(getDashboardPart().getOffsetY()));
+		reactOnModify = true;
+		fireListener();
+	}
 }
+
