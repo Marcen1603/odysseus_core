@@ -89,7 +89,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
 				|| PlanModificationEventType.QUERY_RESUME.equals(eventArgs
 						.getEventType())
 				|| PlanModificationEventType.QUERY_PARTIAL.equals(eventArgs
-								.getEventType())) {
+						.getEventType())) {
 			Optional<IQueryViewData> optData = view.getData(queryID);
 			if (optData.isPresent()) {
 				PhysicalQueryViewData data = (PhysicalQueryViewData) optData
@@ -123,12 +123,14 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
 
 		IServerExecutor executor = PhysicalQueryViewDataProviderPlugIn
 				.getServerExecutor();
-		Collection<IPhysicalQuery> queries = executor.getExecutionPlan()
-				.getQueries();
-		for (IPhysicalQuery query : queries) {
-			view.addData(create(query));
+		if (executor != null) {
+			Collection<IPhysicalQuery> queries = executor.getExecutionPlan()
+					.getQueries();
+			for (IPhysicalQuery query : queries) {
+				view.addData(create(query));
+			}
+			view.refreshTable();
 		}
-		view.refreshTable();
 	}
 
 	private void executeCommand(String cmdID) {
@@ -190,6 +192,7 @@ public class PhysicalQueryViewDataProvider implements IQueryViewDataProvider,
 		return new PhysicalQueryViewData(query.getID(),
 				query.getState().name(), query.getPriority(), query
 						.getLogicalQuery().getParserId(), getQueryUser(query),
-				query.getLogicalQuery().getQueryText(), query.getName(), query.getQueryStartTS());
+				query.getLogicalQuery().getQueryText(), query.getName(),
+				query.getQueryStartTS());
 	}
 }
