@@ -53,8 +53,7 @@ public class TFrequentPatternMiningAORule extends AbstractTransformationRule<Fre
 	public void execute(FrequentPatternMiningAO operator, TransformationConfiguration config) throws RuleException {
 
 		IMetadataMergeFunction<?> metaDataMerge = MetadataRegistry
-				.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames(),
-						operator.getInputSchema(1).getMetaAttributeNames());
+				.getMergeFunction(operator.getInputSchema(0).getMetaAttributeNames());
 	
 
 		IFrequentPatternMiner<ITimeInterval> fpm = MiningAlgorithmRegistry.getInstance().getFrequentPatternMiner(operator.getLearner());
