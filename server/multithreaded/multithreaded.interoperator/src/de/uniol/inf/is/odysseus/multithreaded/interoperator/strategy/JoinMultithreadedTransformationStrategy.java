@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -61,6 +62,9 @@ public class JoinMultithreadedTransformationStrategy extends
 		}
 		checkIfWayToEndPointIsValid(operator, settingsForOperator, true);
 
+		TransformationResult transformationResult = new TransformationResult();
+		transformationResult.setAllowsModificationAfterUnion(true);
+		
 		JoinAO joinOperator = (JoinAO) operator;
 
 		Map<Integer, List<SDFAttribute>> attributes = new HashMap<Integer, List<SDFAttribute>>();
@@ -96,10 +100,10 @@ public class JoinMultithreadedTransformationStrategy extends
 						e.printStackTrace();
 						return null;
 					}
-
 					if (fragmentAO == null) {
 						return null;
 					}
+					transformationResult.addFragmentOperator(fragmentAO);
 
 					Pair<AbstractFragmentAO, Integer> pair = new Pair<AbstractFragmentAO, Integer>();
 					pair.setE1(fragmentAO);
@@ -122,6 +126,8 @@ public class JoinMultithreadedTransformationStrategy extends
 
 		UnionAO union = new UnionAO();
 		union.setName("Union");
+		union.setUniqueIdentifier(UUID.randomUUID().toString());
+		transformationResult.setUnionOperator(union);
 
 		int bufferCounter = 0;
 		for (int i = 0; i < settingsForOperator.getDegreeOfParallelization(); i++) {
@@ -186,7 +192,7 @@ public class JoinMultithreadedTransformationStrategy extends
 					union.getOutputSchema());
 		}
 
-		return new TransformationResult();
+		return transformationResult;
 	}
 
 	@Override

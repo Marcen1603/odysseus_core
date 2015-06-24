@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -68,6 +69,9 @@ public class AggregateMultithreadedTransformationStrategy extends
 			throw new IllegalArgumentException("Definition of Endpoint for strategy "+this.getName()+" is not allowed");
 		}
 
+		TransformationResult transformationResult = new TransformationResult();
+		transformationResult.setAllowsModificationAfterUnion(false);
+		
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		// create fragment operator
@@ -85,6 +89,8 @@ public class AggregateMultithreadedTransformationStrategy extends
 		if (fragmentAO == null) {
 			return null;
 		}
+		transformationResult.addFragmentOperator(fragmentAO);
+		
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 		upstreamOperatorSubscriptions.addAll(aggregateOperator
@@ -134,6 +140,8 @@ public class AggregateMultithreadedTransformationStrategy extends
 		// create union operator for merging fragmented datastreams
 		UnionAO union = new UnionAO();
 		union.setName("Union");
+		union.setUniqueIdentifier(UUID.randomUUID().toString());
+		transformationResult.setUnionOperator(union);
 
 		// for each degree of parallelization
 		for (int i = 0; i < settingsForOperator.getDegreeOfParallelization(); i++) {
@@ -143,6 +151,7 @@ public class AggregateMultithreadedTransformationStrategy extends
 			buffer.setThreaded(true);
 			buffer.setMaxBufferSize(settingsForOperator.getBufferSize());
 			buffer.setDrainAtClose(false);
+			
 
 			// create new aggregate operator from existing operator
 			AggregateAO newAggregateOperator = aggregateOperator.clone();
@@ -204,7 +213,8 @@ public class AggregateMultithreadedTransformationStrategy extends
 					combinePAAggregateOperator.getOutputSchema());
 		}
 
-		return new TransformationResult();
+		
+		return transformationResult;
 	}
 
 	@Override

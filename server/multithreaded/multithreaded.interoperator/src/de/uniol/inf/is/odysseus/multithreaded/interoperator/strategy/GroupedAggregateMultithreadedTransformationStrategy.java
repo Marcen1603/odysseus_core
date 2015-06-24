@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
@@ -53,6 +54,9 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 		}
 		checkIfWayToEndPointIsValid(operator, settingsForOperator, true);
 
+		TransformationResult transformationResult = new TransformationResult();
+		transformationResult.setAllowsModificationAfterUnion(true);
+		
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		// create fragment operator
@@ -72,6 +76,7 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 		if (fragmentAO == null) {
 			return null;
 		}
+		transformationResult.addFragmentOperator(fragmentAO);
 
 		if (!groupingAttributes.isEmpty()) {
 			// subscribe new operator
@@ -91,6 +96,8 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 
 			UnionAO union = new UnionAO();
 			union.setName("Union");
+			union.setUniqueIdentifier(UUID.randomUUID().toString());
+			transformationResult.setUnionOperator(union);
 
 			for (int i = 0; i < settingsForOperator
 					.getDegreeOfParallelization(); i++) {
@@ -159,7 +166,7 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 						union.getOutputSchema());
 			}
 		}
-		return new TransformationResult();
+		return transformationResult;
 	}
 
 	@Override

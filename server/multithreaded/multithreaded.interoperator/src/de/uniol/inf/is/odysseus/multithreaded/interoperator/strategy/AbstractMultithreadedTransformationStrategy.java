@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
@@ -48,6 +49,8 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 			IllegalAccessException {
 		AbstractFragmentAO fragmentAO = fragmentClass.newInstance();
 		fragmentAO.setNumberOfFragments(degreeOfParallelization);
+		fragmentAO.setName(fragmentAO.getName() + namePostfix); // set postfix
+		fragmentAO.setUniqueIdentifier(UUID.randomUUID().toString());
 
 		if (fragmentAO instanceof HashFragmentAO) {
 			HashFragmentAO hashFragmentAO = (HashFragmentAO) fragmentAO;
@@ -66,8 +69,6 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 				rangeFragmentAO.setAttribute(rangeAttributeString);
 			}
 		}
-		// set postfix
-		fragmentAO.setName(fragmentAO.getName() + namePostfix);
 
 		return fragmentAO;
 	}
