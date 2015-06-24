@@ -140,6 +140,8 @@ public class MessageXMLParser {
 	private void readMessageAttributes(Node node, Message message) {
 		// <Message PGN="123" Name="AnyMessage" Length="8"> Length = bytes
 		NamedNodeMap attributes = node.getAttributes();
+		if(attributes == null)
+			System.out.println("WGHAT");
 		int numAttrs = attributes.getLength();
 		Attr attr;
 		for (int i = 0; i < numAttrs; i++) {

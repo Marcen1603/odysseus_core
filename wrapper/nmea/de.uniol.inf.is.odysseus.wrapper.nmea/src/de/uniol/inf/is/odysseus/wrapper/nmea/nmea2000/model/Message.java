@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.nmea2000.model;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.BitSet;
 import java.util.Map;
 
