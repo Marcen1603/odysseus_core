@@ -3,25 +3,21 @@ package cm.controller;
 import cm.controller.listeners.CollectionListViewListener;
 import cm.data.DataHandler;
 import cm.model.Collection;
-import cm.model.Event;
-import cm.view.EventListCell;
 import cm.view.CollectionListCell;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 public class MainController {
 
@@ -38,20 +34,14 @@ public class MainController {
     @FXML
     ListView<Collection> collectionList;
     @FXML
-    ListView<Event> collectionEventList;
-    @FXML
     Label collectionName;
     @FXML
     Pane collectionOverviewPane;
+    @FXML
+    EventListController eventsCollectionIncludeController;
 
     private Map<Collection, Parent> overviewPaneMap;
     private Map<Collection, OverviewController> overviewControllerMap;
-
-    // Events tab
-    @FXML
-    ListView<Event> eventList;
-    @FXML
-    public TextField eventsFilterField;
 
     public MainController() {
         overviewPaneMap = new HashMap<>();
@@ -73,74 +63,6 @@ public class MainController {
         });
         // To react to clicks on the listView of collections
         collectionList.getSelectionModel().getSelectedItems().addListener(new CollectionListViewListener(this));
-
-        // Events tab
-        // ----------
-        eventList.setItems(DataHandler.getInstance().getObservableEventList());
-        eventList.setCellFactory(listView -> new EventListCell());
-        eventsFilterField.textProperty().addListener(event -> {
-            if (eventsFilterField.getText().length() > 0) {
-                ObservableList<Event> filteredEventList = DataHandler.getInstance().getObservableEventList().filtered(event1 -> {
-
-                    String filterText = eventsFilterField.getText();
-
-                    // Search for events which match the filter
-                    if (event1.getConnection().getSocketInfo().getQueryName().toLowerCase().contains(filterText.toLowerCase()))
-                        return true;
-
-                    for (String key : event1.getAttributes().keySet()) {
-                        if (key.toLowerCase().contains(filterText.toLowerCase()))
-                            return true;
-                    }
-
-                    for (String attribute : event1.getAttributes().values()) {
-                        if (attribute.toLowerCase().contains(filterText.toLowerCase())) {
-                            return true;
-                        }
-                    }
-
-                    String specialFilter = "";
-                    List<String> filterList = new ArrayList<String>();
-                    filterList.add(">");
-                    filterList.add("<");
-                    filterList.add("=");
-
-                    for (String filter : filterList) {
-                        if (filterText.contains(filter)) {
-                            specialFilter = filter;
-                            break;
-                        }
-                    }
-
-                    if (!specialFilter.isEmpty()) {
-                        String trimFilterText = filterText.trim().replace(" ", "");
-                        String key = trimFilterText.substring(0, trimFilterText.indexOf(specialFilter));
-                        String valueString = trimFilterText.substring(trimFilterText.indexOf(specialFilter) + specialFilter.length(), trimFilterText.length());
-                        if (!valueString.isEmpty()) {
-                            double value = Double.parseDouble(valueString);
-                            String attributeValueString = event1.getAttributes().get(key);
-                            if (attributeValueString != null && !attributeValueString.isEmpty()) {
-                                double attributeValue = Double.parseDouble(attributeValueString);
-                                switch (specialFilter) {
-                                    case ">":
-                                        return attributeValue > value;
-                                    case "<":
-                                        return attributeValue < value;
-                                    case "=":
-                                        return attributeValue == value;
-                                }
-
-                            }
-                        }
-                    }
-
-                    return false;
-                });
-                eventList.setItems(filteredEventList);
-            } else {
-                eventList.setItems(DataHandler.getInstance().getObservableEventList());
-            }
-        });
     }
 
     public void updateCollectionView(Collection collection) {
@@ -149,8 +71,9 @@ public class MainController {
             return;
         // Just update the existing viewElements
         collectionName.setText(collection.getName());
-        collectionEventList.setItems(DataHandler.getInstance().getCollectionEvents(collection));
-        collectionEventList.setCellFactory(listView -> new EventListCell());
+        eventsCollectionIncludeController.setItems(DataHandler.getInstance().getCollectionEvents(collection));
+        //collectionEventList.setItems(DataHandler.getInstance().getCollectionEvents(collection));
+        //collectionEventList.setCellFactory(listView -> new EventListCell());
 
         // Load the correct viewElement (overview)
         if (overviewPaneMap.get(collection) != null) {
