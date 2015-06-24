@@ -338,8 +338,13 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 				ParameterQueryName queryName = parameters
 						.get(ParameterQueryName.class);
+				
+				
 				if (queryName != null && queryName.getValue() != null
 						&& queryName.getValue().length() > 0) {
+					if (getExecutionPlan().getQueryByName(queryName.getValue())!=null){
+						throw new PlanManagementException("Query with name "+queryName.getValue()+" already defined.");
+					}
 					query.setName(queryName.getValue());
 				}
 
