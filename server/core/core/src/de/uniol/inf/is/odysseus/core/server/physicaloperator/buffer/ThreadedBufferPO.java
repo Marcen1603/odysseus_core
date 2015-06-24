@@ -65,10 +65,10 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		public void run() {
 			started = true;
 			while (!terminate) {
-				synchronized (this) {
+				synchronized (runner) {
 					try {
 						if (inputBuffer.isEmpty()) {
-							wait(1000);
+							runner.wait(100);
 							if (terminate) {
 								continue;
 							}
@@ -135,16 +135,16 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 	}
 
 	private void addObjectToBuffer(IStreamable object) {
-		synchronized (this) {
+		synchronized (runner) {
 			if (limit > 0) {
 				while (getElementsStored1() > limit) {
 					try {
-						wait(1000);
+						runner.wait(100);
 					} catch (InterruptedException e) {
 					}
 				}
 			}
-			notifyAll();
+			runner.notifyAll();
 		}
 		lockInput.lock();
 		inputBuffer.add(object);
@@ -206,8 +206,8 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		} else {
 			transfer((R) element);
 			if (limit > 0) {
-				synchronized (this) {
-					notifyAll();
+				synchronized (runner) {
+					runner.notifyAll();
 				}
 			}
 		}
