@@ -12,24 +12,34 @@ public abstract class AbstractParallelizationPreTransformationHandler implements
 
 	@Override
 	public PreTransformationHandlerParameter createHandlerParameter(
-			int globalDegreeOfParallelization, int globalBufferSize) {
+			int globalDegreeOfParallelization, int globalBufferSize, boolean allowCleanup) {
 		PreTransformationHandlerParameter preTransformationHandlerParameter = new PreTransformationHandlerParameter();
 
+		// create parameter for global value (degree of parallelization)
+		List<Pair<String, String>> parameters = new ArrayList<Pair<String, String>>();
 		Pair<String, String> degreeParameter = new Pair<String, String>();
 		degreeParameter
 				.setE1(ParallelizationParameter.GLOBAL_DEGREE_OF_PARALLELIZATION
 						.name());
 		degreeParameter.setE2(String.valueOf(globalDegreeOfParallelization));
+		parameters.add(degreeParameter);
 
+		// create parameter for global value (buffersize)
 		Pair<String, String> buffersizeParameter = new Pair<String, String>();
 		buffersizeParameter
 				.setE1(ParallelizationParameter.GLOBAL_BUFFERSIZE
 						.name());
 		buffersizeParameter.setE2(String.valueOf(globalBufferSize));
-
-		List<Pair<String, String>> parameters = new ArrayList<Pair<String, String>>();
-		parameters.add(degreeParameter);
 		parameters.add(buffersizeParameter);
+		
+		// create parameter for global value (allow cleanup)
+		Pair<String, String> cleanupParameter = new Pair<String, String>();
+		cleanupParameter
+				.setE1(ParallelizationParameter.GLOBAL_OPTIMIZATION
+						.name());
+		cleanupParameter.setE2(String.valueOf(allowCleanup));
+		parameters.add(cleanupParameter);
+		
 
 		preTransformationHandlerParameter.add(getName(), parameters);
 

@@ -37,12 +37,15 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 
 	public static final String HANDLER_NAME = "InterOperatorParallelizationPreTransformationHandler";
 	private final String TYPE = "INTER_OPERATOR";
-	private final int PARAMETER_COUNT = 2;
+	private final int PARAMETER_COUNT = 3;
 
 	private int globalDegreeOfParallelization = 0;
 	private int globalBufferSize = 0;
+	private boolean optimizationAllowed;
+
 	private MultithreadedOperatorParameter multithreadedOperatorParameter;
 	private List<String> operatorIds = new ArrayList<String>();
+
 
 	@Override
 	public String getName() {
@@ -66,10 +69,12 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 
 		// do transformations
 		List<TransformationResult> transformationResults = new ArrayList<TransformationResult>();
-			transformationResults = doTransformations(query, logicalPlan,
-					transformationResults);
-		
+		transformationResults = doTransformations(query, logicalPlan,
+				transformationResults);
 
+		// if all transformations are done, we try to optimize the
+		// transformed plan (remove union, fragment combinations if
+		// possible)
 		doPostOptimization(logicalPlan, transformationResults);
 	}
 
@@ -91,19 +96,14 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 								.getOperatorIds().isEmpty())) {
 					// if no operator specific parameters are set, each operator
 					// which has an compatible strategy is parallelized
-					transformationResults.addAll(doAutomaticTransformation(
-							logicalPlan));
+					transformationResults
+							.addAll(doAutomaticTransformation(logicalPlan));
 				} else if (multithreadedOperatorParameter != null
 						&& !multithreadedOperatorParameter.getOperatorIds()
 								.isEmpty()) {
-					transformationResults.addAll(doCustomTransformation(
-							logicalPlan));
+					transformationResults
+							.addAll(doCustomTransformation(logicalPlan));
 				}
-			}
-			// if all transformations are done, we try to optimize the
-			// transformed plan (remove union, fragment combinations if
-			// possible)
-			if (!transformationResults.isEmpty()) {
 			}
 		} catch (Exception e) {
 			// if something went wrong, revert plan and throw exception
@@ -115,13 +115,17 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 
 	private void doPostOptimization(ILogicalOperator logicalPlan,
 			List<TransformationResult> transformationResults) {
-		if (transformationResults.isEmpty()
-				|| transformationResults.size() == 1) {
-			INFO_SERVICE
-					.info("Optimization of plan is not needed, because no or only one strategy has been processed");
-			return;
+		if (optimizationAllowed){
+			if (transformationResults.isEmpty()
+					|| transformationResults.size() == 1) {
+				INFO_SERVICE
+				.info("Optimization of plan is not needed, because no or only one strategy has been processed");
+				return;
+			} else {
+				
+			}	
 		} else {
-			
+			INFO_SERVICE.info("Optimization of plan is disabled");
 		}
 
 	}
@@ -131,7 +135,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 			ILogicalOperator logicalPlan) {
 
 		List<TransformationResult> transformationResults = new ArrayList<TransformationResult>();
-		
+
 		// create graph walker with id visitor, returns a map with the id and
 		// the corresponding operator
 		OperatorIdLogicalGraphVisitor<ILogicalOperator> operatorIdVisitor = new OperatorIdLogicalGraphVisitor<ILogicalOperator>(
@@ -209,7 +213,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List<TransformationResult> doAutomaticTransformation(
 			ILogicalOperator logicalPlan) {
-		
+
 		List<TransformationResult> transformationResults = new ArrayList<TransformationResult>();
 
 		// get all strategies which are for an specific logical operator
@@ -275,6 +279,9 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 					} catch (NumberFormatException e) {
 						throw new IllegalArgumentException();
 					}
+					break;
+				case GLOBAL_OPTIMIZATION:
+					optimizationAllowed = Boolean.parseBoolean(pair.getE2());
 					break;
 				default:
 					break;

@@ -29,10 +29,13 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ParallelizationPreParserKeyword.class);
 	private static final int MIN_ATTRIBUTE_COUNT = 2;
-	private static final String PATTERN = "<Parallelization-Type> <Degree of parallelization or AUTO> <Buffersize or AUTO (optional)>";
+	private static final int MAX_ATTRIBUTE_COUNT = 4;
+
+	private static final String PATTERN = "<Parallelization-Type> <Degree of parallelization or AUTO> <Buffersize or AUTO (optional)> <Allow optimization (default true)>";
 
 	private int globalDegreeOfParallelization = 0;
-	private int globalBufferSize = 0;
+	private int globalBufferSize = AUTO_BUFFER_SIZE;
+	private boolean allowOptimization = true;
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
@@ -46,9 +49,11 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 		String[] splitted = parameter.trim().split(" ");
 
 		// check correkt attribute count
-		if (splitted.length < MIN_ATTRIBUTE_COUNT) {
+		if (splitted.length < MIN_ATTRIBUTE_COUNT
+				|| splitted.length > MAX_ATTRIBUTE_COUNT) {
 			throw new OdysseusScriptException(KEYWORD + " needs at least "
-					+ MIN_ATTRIBUTE_COUNT + " attributes: " + PATTERN + "!");
+					+ MIN_ATTRIBUTE_COUNT + " and maximal "
+					+ MAX_ATTRIBUTE_COUNT + " attributes: " + PATTERN + "!");
 		} else {
 			// check if parallelization type exists
 			String parallelizationType = splitted[0];
@@ -69,14 +74,24 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 			}
 
 			// validate buffersize if set
-			if (splitted.length == 3) {
+			if (splitted.length >= 3) {
 				String buffersizeString = splitted[2];
 				if (!isValidBuffersize(buffersizeString)) {
 					throw new OdysseusScriptException(
 							"Value for buffersize is not valid. Only positive integer values or AUTO is allowed.");
 				}
-			} else {
-				globalBufferSize = AUTO_BUFFER_SIZE;
+			}
+
+			// validate optimization selection
+			if (splitted.length == 4) {
+				String optimizationString = splitted[3];
+				if (!optimizationString.equalsIgnoreCase("true")
+						&& !optimizationString.equalsIgnoreCase("false")) {
+					throw new OdysseusScriptException(
+							"Value for alowOptimization is invalid. Valid values are true or false.");
+				} else {
+					allowOptimization = Boolean.parseBoolean(optimizationString);
+				}
 			}
 		}
 
@@ -85,7 +100,7 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 	private boolean isValidBuffersize(String buffersizeString) {
 		try {
 			globalBufferSize = Integer.parseInt(buffersizeString);
-			if (globalBufferSize < 1){
+			if (globalBufferSize < 1) {
 				return false;
 			}
 		} catch (NumberFormatException e) {
@@ -114,7 +129,7 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 			// if handler exists
 			PreTransformationHandlerParameter newHandlerParameter = handler
 					.createHandlerParameter(globalDegreeOfParallelization,
-							globalBufferSize);
+							globalBufferSize, allowOptimization);
 
 			boolean parameterAlreadyAdded = false;
 
