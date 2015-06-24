@@ -2,12 +2,15 @@ package de.uniol.inf.is.odysseus.multithreaded.interoperator.transform;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
 public class TransformationResult {
 
+	private UUID uniqueIdentifier = UUID.randomUUID();
+	
 	private List<AbstractFragmentAO> fragmentOperators = new ArrayList<AbstractFragmentAO>();
 	private UnionAO unionOperator;
 
@@ -42,5 +45,16 @@ public class TransformationResult {
 
 	public void addFragmentOperator(AbstractFragmentAO fragmentOperator) {
 		this.fragmentOperators.add(fragmentOperator);
+	}
+
+	public UUID getUniqueIdentifier() {
+		return uniqueIdentifier;
+	}
+
+	public boolean validate() {
+		if (!fragmentOperators.isEmpty() && unionOperator != null){
+			return true;
+		}
+		return false;
 	}
 }

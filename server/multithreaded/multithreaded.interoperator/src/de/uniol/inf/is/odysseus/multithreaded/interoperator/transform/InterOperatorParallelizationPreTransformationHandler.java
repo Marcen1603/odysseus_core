@@ -10,8 +10,6 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -32,9 +30,6 @@ import de.uniol.inf.is.odysseus.multithreaded.transform.AbstractParallelizationP
 public class InterOperatorParallelizationPreTransformationHandler extends
 		AbstractParallelizationPreTransformationHandler {
 
-	final private InfoService INFO_SERVICE = InfoServiceFactory
-			.getInfoService(InterOperatorParallelizationPreTransformationHandler.class);
-
 	public static final String HANDLER_NAME = "InterOperatorParallelizationPreTransformationHandler";
 	private final String TYPE = "INTER_OPERATOR";
 	private final int PARAMETER_COUNT = 3;
@@ -45,7 +40,6 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 
 	private MultithreadedOperatorParameter multithreadedOperatorParameter;
 	private List<String> operatorIds = new ArrayList<String>();
-
 
 	@Override
 	public String getName() {
@@ -75,7 +69,8 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 		// if all transformations are done, we try to optimize the
 		// transformed plan (remove union, fragment combinations if
 		// possible)
-		doPostOptimization(logicalPlan, transformationResults);
+		PostOptimizationHandler.doPostOptimization(logicalPlan,
+				transformationResults, optimizationAllowed);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -111,23 +106,6 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 			throw e;
 		}
 		return transformationResults;
-	}
-
-	private void doPostOptimization(ILogicalOperator logicalPlan,
-			List<TransformationResult> transformationResults) {
-		if (optimizationAllowed){
-			if (transformationResults.isEmpty()
-					|| transformationResults.size() == 1) {
-				INFO_SERVICE
-				.info("Optimization of plan is not needed, because no or only one strategy has been processed");
-				return;
-			} else {
-				
-			}	
-		} else {
-			INFO_SERVICE.info("Optimization of plan is disabled");
-		}
-
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
