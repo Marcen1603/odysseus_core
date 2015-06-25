@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -73,19 +72,6 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 		return fragmentAO;
 	}
 
-	protected ILogicalOperator getNextOperator(ILogicalOperator currentOperator) {
-		List<LogicalSubscription> subscriptions = new ArrayList<LogicalSubscription>(
-				currentOperator.getSubscriptions());
-		if (subscriptions.size() > 1) {
-			// splits between operators are not allowed. If there is more than
-			// on subscription, parallelization is not possible
-			throw new IllegalArgumentException(
-					"Splits between start and end operator are not allowed");
-		} else {
-			return subscriptions.get(0).getTarget();
-		}
-	}
-
 	protected void checkIfWayToEndPointIsValid(
 			ILogicalOperator operatorForTransformation,
 			MultithreadedOperatorSettings settingsForOperator,
@@ -113,7 +99,7 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 				}
 			} else {
 				
-				ILogicalOperator currentOperator = getNextOperator(operatorForTransformation);
+				ILogicalOperator currentOperator = LogicalGraphHelper.getNextOperator(operatorForTransformation);
 				while (currentOperator != null) {
 
 					boolean possibleSemanticChange = false;
@@ -157,7 +143,7 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 
 					// if end operator is not reached, we need to get the next
 					// operator
-					currentOperator = getNextOperator(currentOperator);
+					currentOperator = LogicalGraphHelper.getNextOperator(currentOperator);
 				}
 			}
 		}
@@ -170,7 +156,7 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 			MultithreadedOperatorSettings settingsForOperator) {
 
 		ILogicalOperator lastClonedOperator = newOperator;
-		ILogicalOperator currentExistingOperator = getNextOperator(existingOperator);
+		ILogicalOperator currentExistingOperator = LogicalGraphHelper.getNextOperator(existingOperator);
 		ILogicalOperator lastExistingOperator = existingOperator;
 
 		while (currentExistingOperator != null) {
@@ -219,7 +205,7 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 				}
 			}
 			lastExistingOperator = currentExistingOperator;
-			currentExistingOperator = getNextOperator(currentExistingOperator);
+			currentExistingOperator = LogicalGraphHelper.getNextOperator(currentExistingOperator);
 		}
 		return lastClonedOperator;
 	}

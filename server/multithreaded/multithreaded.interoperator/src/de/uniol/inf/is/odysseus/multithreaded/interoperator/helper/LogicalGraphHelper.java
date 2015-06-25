@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.multithreaded.interoperator.helper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -127,5 +128,18 @@ public class LogicalGraphHelper {
 			}
 		}
 		return possibleSemanticChange;
+	}
+	
+	public static ILogicalOperator getNextOperator(ILogicalOperator currentOperator) {
+		List<LogicalSubscription> subscriptions = new ArrayList<LogicalSubscription>(
+				currentOperator.getSubscriptions());
+		if (subscriptions.size() > 1) {
+			// splits between operators are not allowed. If there is more than
+			// on subscription, parallelization is not possible
+			throw new IllegalArgumentException(
+					"Splits between start and end operator are not allowed");
+		} else {
+			return subscriptions.get(0).getTarget();
+		}
 	}
 }
