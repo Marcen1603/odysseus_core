@@ -62,8 +62,8 @@ private static FileWrite testWrite;
 	
 			
 			if(opTrans != null ){
-				System.out.println(opTrans.getCode());
-				testWrite.writeBody(opTrans.getCode());
+				System.out.println(opTrans.getCode(topAO));
+				testWrite.writeBody(opTrans.getCode(topAO));
 			}
 		}
 	
@@ -72,8 +72,8 @@ private static FileWrite testWrite;
 			ITransformationOperator opTrans = QueryTransformationOperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getTarget().getClass().getSimpleName());
 			
 			if(opTrans != null ){
-				System.out.println(opTrans.getCode());
-				testWrite.writeBody(opTrans.getCode());
+				System.out.println(opTrans.getCode(operator.getTarget()));
+				testWrite.writeBody(opTrans.getCode(operator.getTarget()));
 			}
 				
 			for(LogicalSubscription  operator2 : operator.getTarget().getSubscribedToSource()){

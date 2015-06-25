@@ -10,7 +10,7 @@ public class ExecuteShellComand {
 		
 	Process p;
 	try {
-		p = Runtime.getRuntime().exec("javac "+tempDirectory+"\\TestFile2.java");
+		p = Runtime.getRuntime().exec("javac "+tempDirectory+"\\TestFile.java");
 		p.waitFor();
 		
 		
