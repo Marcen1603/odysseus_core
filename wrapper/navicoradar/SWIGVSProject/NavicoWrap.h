@@ -11,6 +11,7 @@
 #include "MastRadarTypes.h"
 #include <iostream>
 
+#define NUM_OF_SAMPLES 1024 
 
 /*
 class minSpoke
@@ -138,7 +139,8 @@ public:
 	virtual void onCat240SpokeUpdate(void *buffer, long size);
 	virtual void onTargetUpdate(void *buffer, long size);
 	virtual void onTargetUpdateTTM(std::string TTMmessage); //Testing
-	
+	virtual void onPictureUpdate(void *buffer, long size);
+
 	void setCat240Out();
 	void delCat240Out();
 	bool setAntennaHeight(int HeightInMm);
@@ -245,7 +247,9 @@ private:
 	Navico::Protocol::tMultiRadarClient*       m_pMultiRadar;
 	// Target Tracking protocol manager
 	Navico::Protocol::NRP::tTargetTrackingClient* m_pTargetTrackingClient;
-
+	Navico::Image::tPPIController* m_pPPIController;
+	uint8_t *m_pPPIImage;
+	Navico::tRadarColourLookUpTableNavico gNavicoLUT; 
 };
 
 #endif

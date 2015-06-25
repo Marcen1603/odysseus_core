@@ -8,5 +8,6 @@
 
 package de.uniol.inf.is.odysseus.wrapper.navicoradar.SWIG;
 
-public class NavicoRadarJava implements NavicoRadarJavaConstants {
+public interface NavicoRadarJavaConstants {
+  public final static int NUM_OF_SAMPLES = NavicoRadarJavaJNI.NUM_OF_SAMPLES_get();
 }

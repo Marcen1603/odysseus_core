@@ -8,5 +8,5 @@
 
 package de.uniol.inf.is.odysseus.wrapper.navicoradar.SWIG;
 
-public class NavicoRadarJava {
+public class NavicoRadarJava implements NavicoRadarJavaConstants {
 }

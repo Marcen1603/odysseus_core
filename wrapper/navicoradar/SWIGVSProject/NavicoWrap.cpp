@@ -37,6 +37,7 @@ NavicoRadarWrapper::NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMete
 	initState = noinitRadar;
 	myRadarLockState = 0;
 	m_pMultiRadar = NULL;
+	m_pPPIImage = NULL;
 	m_pImageClient = new NRP::tImageClient();
 	m_pTargetTrackingClient = new NRP::tTargetTrackingClient();
 	
@@ -81,6 +82,7 @@ NavicoRadarWrapper::NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMete
 	while (false == retB) retB = m_pMultiRadar->QueryRadars();
 	retB = false;
 	std::cout << "Navico Radar: Multi Radar Query succesful"<<std::endl;
+
 	if (m_pImageClient) {
 		numberOfRadars = tMultiRadarClient::GetInstance()->GetRadars(radarList, cMaxRadars);
 
@@ -258,8 +260,7 @@ NavicoRadarWrapper::NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMete
 		//}
 	} else {
 		throw exception("RADAR ERROR: No Imageclient Instance created");
-	}
-
+	}	
 }
 
 
@@ -323,7 +324,21 @@ bool NavicoRadarWrapper::cancelAll()
 
 
 void NavicoRadarWrapper::UpdateSpoke(const NRP::Spoke::t9174Spoke *pSpoke) {
-		uint32_t azimuth;
+	
+	if (!m_pPPIImage)
+	{
+		m_pPPIImage = new uint8_t[ (2*NUM_OF_SAMPLES)*(2*NUM_OF_SAMPLES)*sizeof(Navico::tColor) ]; 
+		m_pPPIController = new Navico::Image::tPPIController(); 
+ 
+		m_pPPIController->SetFrameBuffer((intptr_t)m_pPPIImage,(2*NUM_OF_SAMPLES), (2*NUM_OF_SAMPLES), &gNavicoLUT,(2 * NUM_OF_SAMPLES) / 2, (2 * NUM_OF_SAMPLES) / 2 ); 
+		m_pPPIController->SetTrailsTime(300);
+		m_pPPIController->SetRangeInterpolation(Navico::Image::tPPIRangeInterpolation::eRangeInterpolationPeak);
+	}
+
+	m_pPPIController->Process( pSpoke ); 
+	onPictureUpdate(m_pPPIImage, ((2*NUM_OF_SAMPLES)*(2*NUM_OF_SAMPLES)*sizeof(Navico::tColor)));
+	
+	uint32_t azimuth;
 		uint32_t startAzimuth;
 		uint32_t stopAzimuth;
 		uint32_t halfBeamWidth = 29; //Beamwidth = 5,2° +- 10% ca 2,6 /360 *4096 = ca, 29.5
@@ -691,3 +706,4 @@ void NavicoRadarWrapper::onSpokeUpdate(void *buffer, long size){}
 void NavicoRadarWrapper::onCat240SpokeUpdate(void *buffer, long size){}
 void NavicoRadarWrapper::onTargetUpdate(void *buffer, long size){}
 void NavicoRadarWrapper::onTargetUpdateTTM(std::string TTMmessage){}
+void NavicoRadarWrapper::onPictureUpdate(void *buffer, long size){}

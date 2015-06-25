@@ -20,12 +20,13 @@ public:
     virtual void onCat240SpokeUpdate(void *buffer, long size);
     virtual void onTargetUpdate(void *buffer, long size);
     virtual void onTargetUpdateTTM(std::string TTMmessage);
+    virtual void onPictureUpdate(void *buffer, long size);
 public:
     bool swig_overrides(int n) {
-      return (n < 4 ? swig_override[n] : false);
+      return (n < 5 ? swig_override[n] : false);
     }
 protected:
-    bool swig_override[4];
+    bool swig_override[5];
 };
 
 

@@ -91,6 +91,10 @@ public class NavicoRadarWrapper {
     if (getClass() == NavicoRadarWrapper.class) NavicoRadarJavaJNI.NavicoRadarWrapper_onTargetUpdateTTM(swigCPtr, this, TTMmessage); else NavicoRadarJavaJNI.NavicoRadarWrapper_onTargetUpdateTTMSwigExplicitNavicoRadarWrapper(swigCPtr, this, TTMmessage);
   }
 
+  public void onPictureUpdate(java.nio.ByteBuffer buffer) {
+    if (getClass() == NavicoRadarWrapper.class) NavicoRadarJavaJNI.NavicoRadarWrapper_onPictureUpdate(swigCPtr, this, buffer); else NavicoRadarJavaJNI.NavicoRadarWrapper_onPictureUpdateSwigExplicitNavicoRadarWrapper(swigCPtr, this, buffer);
+  }
+
   public void setCat240Out() {
     NavicoRadarJavaJNI.NavicoRadarWrapper_setCat240Out(swigCPtr, this);
   }

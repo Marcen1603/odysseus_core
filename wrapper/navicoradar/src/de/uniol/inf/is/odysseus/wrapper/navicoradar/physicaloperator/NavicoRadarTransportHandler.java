@@ -1,8 +1,17 @@
 package de.uniol.inf.is.odysseus.wrapper.navicoradar.physicaloperator;
 
 
+import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,10 +86,14 @@ public class NavicoRadarTransportHandler extends AbstractPushTransportHandler im
 				@Override public void onTargetUpdateTTM(String ttmMessage) 
 				{
 					NavicoRadarTransportHandler.this.onTargetUpdateTTM(ttmMessage);
-			}
+				}
 				@Override public void onTargetUpdate(ByteBuffer buffer) 
 				{
 					NavicoRadarTransportHandler.this.onTargetUpdate(buffer);
+				}
+				@Override public void onPictureUpdate(ByteBuffer buffer) 
+				{
+					NavicoRadarTransportHandler.this.onPictureUpdate(buffer);
 				}
 			};
 			
@@ -120,6 +133,78 @@ public class NavicoRadarTransportHandler extends AbstractPushTransportHandler im
 		tuple.setAttribute(0, "Test cat240spoke");
 		tuple.setAttribute(1, new ByteBufferWrapper(cat240spoke));
 		fireProcess(tuple);
+	}
+	
+    private static class ImageCanvas extends JComponent 
+    {
+		private static final long serialVersionUID = 5812513904485519080L;
+		private BufferedImage image;
+
+        public void update(BufferedImage image) 
+        {
+            this.image = image;
+            this.repaint();
+        }
+
+        @Override
+		public void paint(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+            AffineTransform tx = new AffineTransform();
+            if (image != null) {
+                double scalex = ((double) this.getWidth()) / ((double) this.image.getWidth());
+                double scaley = ((double) this.getHeight()) / ((double) this.image.getHeight());
+                tx.scale(scalex, scaley);
+                g2.setTransform(tx);
+                g2.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), this);
+            }
+            g2.finalize();
+        }
+    }		
+	
+	int numPictures = 0;
+	JFrame frame;
+	ImageCanvas canvas;
+	BufferedImage img;
+	protected void onPictureUpdate(ByteBuffer picture) 
+	{
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
+		tuple.setAttribute(0, "Test picture");
+		tuple.setAttribute(1, new ByteBufferWrapper(picture));
+		fireProcess(tuple);
+		
+		if (frame == null)
+		{
+			img = new BufferedImage(2048, 2048, BufferedImage.TYPE_INT_ARGB);
+			frame = new JFrame();
+			canvas = new ImageCanvas();
+		
+			frame.setSize(700, 700);
+			frame.add(canvas, BorderLayout.CENTER);
+			frame.setVisible(true);
+		}
+		
+		if (numPictures % 100 == 0)
+		{
+			for (int y=0; y<2048; y++)
+			for (int x=0; x<2048; x++)
+			{
+				img.setRGB(x, y, picture.getInt());
+			}
+			
+	
+	        canvas.update(img);
+		}
+
+/*		String fileName = "E:\\radarimages\\image" + numPictures++ + ".raw" ;
+		try {
+			if (numPictures > 4000)
+				Files.copy(new ByteBufferBackedInputStream(picture), new File(fileName).toPath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+        
+        numPictures++;
 	}
 	
 	@Override public void processInClose() throws IOException 

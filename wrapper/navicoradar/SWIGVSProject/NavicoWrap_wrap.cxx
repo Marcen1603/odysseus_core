@@ -615,7 +615,7 @@ namespace Swig {
 namespace Swig {
   namespace {
     jclass jclass_NavicoRadarJavaJNI = NULL;
-    jmethodID director_methids[4];
+    jmethodID director_methids[5];
   }
 }
 
@@ -782,6 +782,34 @@ void SwigDirector_NavicoRadarWrapper::onTargetUpdateTTM(std::string TTMmessage) 
   if (swigjobj) jenv->DeleteLocalRef(swigjobj);
 }
 
+void SwigDirector_NavicoRadarWrapper::onPictureUpdate(void *buffer, long size) {
+  JNIEnvWrapper swigjnienv(this) ;
+  JNIEnv * jenv = swigjnienv.getJNIEnv() ;
+  jobject swigjobj = (jobject) NULL ;
+  jobject jbuffer = 0 ;
+  
+  if (!swig_override[4]) {
+    NavicoRadarWrapper::onPictureUpdate(buffer,size);
+    return;
+  }
+  swigjobj = swig_get_self(jenv);
+  if (swigjobj && jenv->IsSameObject(swigjobj, NULL) == JNI_FALSE) {
+    {
+      jbuffer = (jenv)->NewDirectByteBuffer(buffer, size); 
+    }
+    jenv->CallStaticVoidMethod(Swig::jclass_NavicoRadarJavaJNI, Swig::director_methids[4], swigjobj, jbuffer);
+    jthrowable swigerror = jenv->ExceptionOccurred();
+    if (swigerror) {
+      jenv->ExceptionClear();
+      throw Swig::DirectorException(jenv, swigerror);
+    }
+    
+  } else {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null upcall object in NavicoRadarWrapper::onPictureUpdate ");
+  }
+  if (swigjobj) jenv->DeleteLocalRef(swigjobj);
+}
+
 void SwigDirector_NavicoRadarWrapper::swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global) {
   static struct {
     const char *mname;
@@ -799,6 +827,9 @@ void SwigDirector_NavicoRadarWrapper::swig_connect_director(JNIEnv *jenv, jobjec
     },
     {
       "onTargetUpdateTTM", "(Ljava/lang/String;)V", NULL 
+    },
+    {
+      "onPictureUpdate", "(Ljava/nio/ByteBuffer;)V", NULL 
     }
   };
   
@@ -811,7 +842,7 @@ void SwigDirector_NavicoRadarWrapper::swig_connect_director(JNIEnv *jenv, jobjec
       baseclass = (jclass) jenv->NewGlobalRef(baseclass);
     }
     bool derived = (jenv->IsSameObject(baseclass, jcls) ? false : true);
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 5; ++i) {
       if (!methods[i].base_methid) {
         methods[i].base_methid = jenv->GetMethodID(baseclass, methods[i].mname, methods[i].mdesc);
         if (!methods[i].base_methid) return;
@@ -831,6 +862,18 @@ void SwigDirector_NavicoRadarWrapper::swig_connect_director(JNIEnv *jenv, jobjec
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+SWIGEXPORT jint JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_NavicoRadarJavaJNI_NUM_1OF_1SAMPLES_1get(JNIEnv *jenv, jclass jcls) {
+  jint jresult = 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  result = (int)(1024);
+  jresult = (jint)result; 
+  return jresult;
+}
+
 
 SWIGEXPORT jlong JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_NavicoRadarJavaJNI_new_1NavicoRadarWrapper(JNIEnv *jenv, jclass jcls, jint jarg1, jint jarg2, jstring jarg3, jlong jarg4, jint jarg5) {
   jlong jresult = 0 ;
@@ -1107,6 +1150,40 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_N
 }
 
 
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_NavicoRadarJavaJNI_NavicoRadarWrapper_1onPictureUpdate(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2) {
+  NavicoRadarWrapper *arg1 = (NavicoRadarWrapper *) 0 ;
+  void *arg2 = (void *) 0 ;
+  long arg3 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(NavicoRadarWrapper **)&jarg1; 
+  {
+    arg2 = jenv->GetDirectBufferAddress(jarg2); 
+    arg3 = (long)(jenv->GetDirectBufferCapacity(jarg2)); 
+  }
+  (arg1)->onPictureUpdate(arg2,arg3);
+}
+
+
+SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_NavicoRadarJavaJNI_NavicoRadarWrapper_1onPictureUpdateSwigExplicitNavicoRadarWrapper(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jobject jarg2) {
+  NavicoRadarWrapper *arg1 = (NavicoRadarWrapper *) 0 ;
+  void *arg2 = (void *) 0 ;
+  long arg3 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(NavicoRadarWrapper **)&jarg1; 
+  {
+    arg2 = jenv->GetDirectBufferAddress(jarg2); 
+    arg3 = (long)(jenv->GetDirectBufferCapacity(jarg2)); 
+  }
+  (arg1)->NavicoRadarWrapper::onPictureUpdate(arg2,arg3);
+}
+
+
 SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_NavicoRadarJavaJNI_NavicoRadarWrapper_1setCat240Out(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
   NavicoRadarWrapper *arg1 = (NavicoRadarWrapper *) 0 ;
   
@@ -1283,7 +1360,7 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_N
   static struct {
     const char *method;
     const char *signature;
-  } methods[4] = {
+  } methods[5] = {
     {
       "SwigDirector_NavicoRadarWrapper_onSpokeUpdate", "(Lde/uniol/inf/is/odysseus/wrapper/navicoradar/SWIG/NavicoRadarWrapper;Ljava/nio/ByteBuffer;)V" 
     },
@@ -1295,6 +1372,9 @@ SWIGEXPORT void JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_N
     },
     {
       "SwigDirector_NavicoRadarWrapper_onTargetUpdateTTM", "(Lde/uniol/inf/is/odysseus/wrapper/navicoradar/SWIG/NavicoRadarWrapper;Ljava/lang/String;)V" 
+    },
+    {
+      "SwigDirector_NavicoRadarWrapper_onPictureUpdate", "(Lde/uniol/inf/is/odysseus/wrapper/navicoradar/SWIG/NavicoRadarWrapper;Ljava/nio/ByteBuffer;)V" 
     }
   };
   Swig::jclass_NavicoRadarJavaJNI = (jclass) jenv->NewGlobalRef(jcls);
