@@ -79,6 +79,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.ExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -253,7 +254,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 						.getDefaultMetaTypeSet());
 		List<IExecutorCommand> commands = getCompiler().translateQuery(
 				queryStr, parameters.getParserID(), user,
-				getDataDictionary(user), context, metaAttribute);
+				getDataDictionary(user), context, metaAttribute, this);
 		LOG.trace("Number of commands: " + commands.size());
 		LOG.debug("Translation done.");
 		annotateQueries(commands, queryStr, user, parameters);
@@ -800,7 +801,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		context.put("tempQuery", true);
 		// FIXME: Add metaAttribute
 		List<IExecutorCommand> commands = getCompiler().translateQuery(query,
-				parserID, user, getDataDictionary(user), context, null);
+				parserID, user, getDataDictionary(user), context, null, this);
 		context.remove("tempQuery");
 		if (commands.size() != 1) {
 			throw new IllegalArgumentException(

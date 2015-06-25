@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
@@ -49,7 +50,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
         static final private InfoService infoService = InfoServiceFactory.getInfoService("PQLParser");
   static private ILogicalOperator createOperator(String identifier, Map < String, Object > parameters, List < InputOperatorItem > inputOps)
   {
-    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser(), getDataDictionary(), getContext());
+    IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(identifier.toUpperCase(), getUser(), getDataDictionary(), getContext(), getServerExecutor());
     builder.setMetaAttribute(getMetaAttribute());
     List < ILogicalOperator > inputOperators = new ArrayList < ILogicalOperator > ();
     for (int i = 0; i < inputOps.size(); ++i)
@@ -110,6 +111,18 @@ public class PQLParserImpl implements PQLParserImplConstants {
   static public void setDataDictionary(IDataDictionary dataDictionary)
   {
     dd = dataDictionary;
+  }
+
+  static IServerExecutor serverExecutor;
+
+  static public void setServerExecutor(IServerExecutor executor)
+  {
+    serverExecutor = executor;
+  }
+
+  static IServerExecutor getServerExecutor()
+  {
+    return serverExecutor;
   }
 
   static public IDataDictionary getDataDictionary()
@@ -652,57 +665,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_11() {
-    if (jj_scan_token(INTEGER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_10() {
-    if (jj_scan_token(FLOAT)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_8() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_10()) {
-    jj_scanpos = xsp;
-    if (jj_3R_11()) {
-    jj_scanpos = xsp;
-    if (jj_3R_12()) {
-    jj_scanpos = xsp;
-    if (jj_3R_13()) {
-    jj_scanpos = xsp;
-    if (jj_3_2()) {
-    jj_scanpos = xsp;
-    if (jj_3R_14()) {
-    jj_scanpos = xsp;
-    if (jj_3R_15()) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_15() {
-    if (jj_3R_17()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_14() {
-    if (jj_3R_16()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_9() {
-    if (jj_scan_token(25)) return true;
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_16() {
     if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(24)) return true;
@@ -762,6 +724,57 @@ public class PQLParserImpl implements PQLParserImplConstants {
     xsp = jj_scanpos;
     if (jj_3R_7()) jj_scanpos = xsp;
     if (jj_scan_token(28)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_10() {
+    if (jj_scan_token(FLOAT)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_8() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_10()) {
+    jj_scanpos = xsp;
+    if (jj_3R_11()) {
+    jj_scanpos = xsp;
+    if (jj_3R_12()) {
+    jj_scanpos = xsp;
+    if (jj_3R_13()) {
+    jj_scanpos = xsp;
+    if (jj_3_2()) {
+    jj_scanpos = xsp;
+    if (jj_3R_14()) {
+    jj_scanpos = xsp;
+    if (jj_3R_15()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_15() {
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14() {
+    if (jj_3R_16()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_9() {
+    if (jj_scan_token(25)) return true;
+    if (jj_3R_8()) return true;
     return false;
   }
 

@@ -24,6 +24,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -73,6 +74,10 @@ public interface IParameter<T> extends Serializable {
 	void setDataDictionary(IDataDictionary dd);
 
 	IDataDictionary getDataDictionary();
+	
+	void setServerExecutor(IServerExecutor serverExecutor);
+
+	IServerExecutor getServerExecutor();
 
 	void setContext(Context context);
 
@@ -93,4 +98,5 @@ public interface IParameter<T> extends Serializable {
 	boolean arePossibleValuesDynamic();
 
 	void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic);
+
 }

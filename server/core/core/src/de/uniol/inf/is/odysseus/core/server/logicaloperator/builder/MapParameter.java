@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 
 public class MapParameter<K, V> extends AbstractParameter<Map<K, V>> {
@@ -51,6 +53,7 @@ public class MapParameter<K, V> extends AbstractParameter<Map<K, V>> {
 			for (Entry<?, ?> e : ((Map<?, ?>) inputValue).entrySet()) {
 				keyParameter.setInputValue(e.getKey());
 				keyParameter.setAttributeResolver(getAttributeResolver());
+				keyParameter.setServerExecutor(getServerExecutor());
 				keyParameter.setDataDictionary(getDataDictionary());
 				if (!keyParameter.validate()) {
 					throw new RuntimeException(keyParameter.getErrors().get(0));

@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
@@ -691,7 +692,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	@Override
-	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException {
+	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException {
 		List<IExecutorCommand> executorCommands = new ArrayList<>();
 		try {
 			List<?> results = parseAndExecute(query, user, null, context);

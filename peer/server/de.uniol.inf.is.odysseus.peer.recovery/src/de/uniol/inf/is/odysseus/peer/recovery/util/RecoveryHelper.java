@@ -631,8 +631,9 @@ public class RecoveryHelper {
 		List<ILogicalQuery> queries = Lists.newArrayList();
 
 		try {
-			// FIXME: add metadata!
-			cmds = cPQLParser.get().parse(pql, RecoveryCommunicator.getActiveSession(), DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()), Context.empty(),null);
+			// FIXME: add metadata! add executor
+			
+			cmds = cPQLParser.get().parse(pql, RecoveryCommunicator.getActiveSession(), DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()), Context.empty(),null, null);
 
 		} catch (QueryParseException e) {
 
@@ -675,7 +676,7 @@ public class RecoveryHelper {
 
 		TransformationConfiguration trafoConfig = new TransformationConfiguration(ITimeInterval.class.getName());
 		trafoConfig.setVirtualTransformation(true);
-		List<IPhysicalQuery> physicalQueries = cExecutor.get().getCompiler().translateAndTransformQuery(pql, "PQL", RecoveryCommunicator.getActiveSession(), DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()), trafoConfig, Context.empty());
+		List<IPhysicalQuery> physicalQueries = cExecutor.get().getCompiler().translateAndTransformQuery(pql, "PQL", RecoveryCommunicator.getActiveSession(), DataDictionaryProvider.getDataDictionary(RecoveryCommunicator.getActiveSession().getTenant()), trafoConfig, Context.empty(),cExecutor.get());
 		return physicalQueries;
 	}
 

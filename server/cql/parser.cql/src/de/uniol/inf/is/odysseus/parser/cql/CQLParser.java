@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateSinkCommand;
@@ -139,7 +140,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public synchronized List<IExecutorCommand> parse(String query,
-			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
+			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute, IServerExecutor executor)
 			throws QueryParseException {
 		// HACK: replace deprecated strings
 		query = query.replace("Now()", "TimeInterval.start");

@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -74,7 +75,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	@Override
 	public List<IExecutorCommand> parse(String text, ISession user,
-			IDataDictionary dd, Context context, IMetaAttribute metaAttribute) throws QueryParseException {
+			IDataDictionary dd, Context context, IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException {
 		return parse(text, user, dd, true, false);
 	}
 

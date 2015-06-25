@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpressionParseException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -43,6 +44,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private T value;
 	private IAttributeResolver resolver;
 	private IDataDictionary dd;
+	private IServerExecutor serverExecutor;
 	private ISession caller;
 	private Context context;
 	private final List<String> errors;
@@ -238,6 +240,16 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	@Override
 	public void setDataDictionary(IDataDictionary dd) {
 		this.dd = dd;
+	}
+	
+	@Override
+	public void setServerExecutor(IServerExecutor serverExecutor) {
+		this.serverExecutor = serverExecutor;
+	}
+	
+	@Override
+	public IServerExecutor getServerExecutor() {
+		return serverExecutor;
 	}
 
 	@Override

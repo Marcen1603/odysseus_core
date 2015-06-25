@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 
 /**
  * This Operator can be used to append a subquery to an existing 
- * phyiscal plan
+ * physical plan
  * 
  * @author Marco Grawunder
  *

@@ -257,7 +257,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		System.err.println(message.getPqlStatement());
 		// FIX-ME: Add metaAttribute
 		IMetaAttribute metaAttribute = null;
-		List<IExecutorCommand> queries = compiler.translateQuery(message.getPqlStatement(), "PQL", session, getDataDictionary(), Context.empty(), metaAttribute);
+		List<IExecutorCommand> queries = compiler.translateQuery(message.getPqlStatement(), "PQL", session, getDataDictionary(), Context.empty(), metaAttribute, executor);
 		
 		for (IExecutorCommand q : queries) {
 

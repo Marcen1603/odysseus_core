@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -52,6 +53,8 @@ public interface IOperatorBuilder extends Serializable {
 
 	void setDataDictionary(IDataDictionary dataDictionary);
 
+	void setServerExecutor(IServerExecutor executor);
+
 	void setMetaAttribute(IMetaAttribute metaAttribute);
 
 	void setContext(Context context);
@@ -65,5 +68,6 @@ public interface IOperatorBuilder extends Serializable {
     public String getUrl();
 
 	public String[] getCategories();
+
 
 }

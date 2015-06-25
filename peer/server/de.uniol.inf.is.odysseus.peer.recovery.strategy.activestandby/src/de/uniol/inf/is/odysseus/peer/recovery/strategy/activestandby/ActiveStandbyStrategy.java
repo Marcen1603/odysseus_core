@@ -267,7 +267,7 @@ public class ActiveStandbyStrategy implements IRecoveryStrategy {
 			String pql = infoMap.get(queryId).pql;
 			// FIXME: add metadata!
 			List<IExecutorCommand> cmds = cPQLParser.get().parse(pql, session,
-					datadict, Context.empty(),null);
+					datadict, Context.empty(),null,null);
 			for (IExecutorCommand cmd : cmds) {
 				if (CreateQueryCommand.class.isInstance(cmd)) {
 					Collection<JxtaSenderAO> senders = findSender(((CreateQueryCommand) cmd)

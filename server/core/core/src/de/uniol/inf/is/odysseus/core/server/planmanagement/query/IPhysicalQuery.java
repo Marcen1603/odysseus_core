@@ -118,7 +118,9 @@ public interface IPhysicalQuery extends IMonitoringDataProvider,
 	Set<IPhysicalOperator> getSharedOperators(IPhysicalQuery otherQuery);
 
 	Set<IPhysicalOperator> getAllOperators();
-
+	
+	IPhysicalOperator getOperator(String name);
+	
 	void start(IQueryStarter queryListener) throws OpenFailedException;
 
 	void stop();

@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -61,12 +62,14 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	}
 
 	private IDataDictionary dataDictionary;
+	private IServerExecutor executor;
 	private Context context;
 	private IMetaAttribute metaAttribute;
 
 	private String name;
 	private String doc;
 	private String url;
+
 
 	public AbstractOperatorBuilder(String name, int minPortCount,
 			int maxPortCount) {
@@ -176,6 +179,15 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	}
 	
 	@Override
+	public void setServerExecutor(IServerExecutor executor) {
+		this.executor = executor;
+	}
+	
+	protected IServerExecutor getServerExecutor(){
+		return executor;
+	}
+	
+	@Override
 	public void setMetaAttribute(IMetaAttribute metaAttribute) {
 		this.metaAttribute = metaAttribute;
 	}
@@ -221,6 +233,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 			parameter.setAttributeResolver(attributeResolver);
 			parameter.setDataDictionary(getDataDictionary());
+			parameter.setServerExecutor(getServerExecutor());
 			parameter.setContext(getContext());
 			parameter.setCaller(getCaller());
 			if (!parameter.validate()) {

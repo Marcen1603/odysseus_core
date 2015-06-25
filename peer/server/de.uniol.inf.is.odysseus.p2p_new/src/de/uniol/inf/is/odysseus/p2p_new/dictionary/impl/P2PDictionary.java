@@ -356,9 +356,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			try {
 				LOG.debug("Parsing with pql-Parser");
-				// FIX-ME: Add metaAttribute
+				// FIX-ME: Add metaAttribute, add executor
 				IMetaAttribute metaAttribute = null;
-				List<IExecutorCommand> commands = PQLParserService.getParser().parse(pqlText, SessionManagementService.getActiveSession(), getDataDictionary(), Context.empty(),metaAttribute);
+				List<IExecutorCommand> commands = PQLParserService.getParser().parse(pqlText, SessionManagementService.getActiveSession(), getDataDictionary(), Context.empty(),metaAttribute,null);
 				ILogicalQuery query = null;
 
 				for (IExecutorCommand cmd : commands) {

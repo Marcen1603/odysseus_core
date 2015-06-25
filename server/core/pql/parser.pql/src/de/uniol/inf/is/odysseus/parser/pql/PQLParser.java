@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
@@ -43,26 +44,22 @@ public class PQLParser implements IQueryParser {
 
 	private PQLParserImpl parser;
 
-	// private User user;
-	//
-	// private IDataDictionary dataDictionary;
-
 	private static Map<String, IParameter<?>> queryParameters = new HashMap<String, IParameter<?>>();
 
 	@Override
 	public String getLanguage() {
 		return "PQL";
 	}
-
+	
 	@Override
 	public synchronized List<IExecutorCommand> parse(String query,
-			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
+			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute, IServerExecutor executor)
 			throws QueryParseException {
-		return parse(new StringReader(query), user, dd, context, metaAttribute);
+		return parse(new StringReader(query), user, dd, context, metaAttribute, executor);
 	}
 
 	private synchronized List<IExecutorCommand> parse(Reader reader,
-			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute)
+			ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute, IServerExecutor executor)
 			throws QueryParseException {
 		// this.user = user;
 		// this.dataDictionary = dd;
@@ -70,6 +67,8 @@ public class PQLParser implements IQueryParser {
 		PQLParserImpl.setDataDictionary(dd);
 		PQLParserImpl.setContext(context);
 		PQLParserImpl.setMetaAttribute(metaAttribute);
+		PQLParserImpl.setServerExecutor(executor);
+		
 		boolean updateQueryId = true;
 		if (context != null && context.containsKey("tempQuery")) {
 			updateQueryId = !(Boolean) context.get("tempQuery");

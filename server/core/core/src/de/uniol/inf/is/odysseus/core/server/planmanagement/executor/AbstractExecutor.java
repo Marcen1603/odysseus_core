@@ -1234,7 +1234,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public List<IExecutorCommand> translateQuery(String queries, String parser,
 			ISession currentUser, Context context, IMetaAttribute metaAttribute) {
 		return getCompiler().translateQuery(queries, parser, currentUser,
-				getDataDictionary(currentUser), context, metaAttribute);
+				getDataDictionary(currentUser), context, metaAttribute, this);
 	}
 
 	@Override
@@ -1356,7 +1356,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			ISession caller) {
 		IOperatorBuilder builder = OperatorBuilderFactory
 				.createOperatorBuilder(name, caller, getDataDictionary(caller),
-						Context.empty());
+						Context.empty(), this);
 		LogicalOperatorInformation loi = new LogicalOperatorInformation();
 		loi.setOperatorName(builder.getName());
 		LogicalOperator annotation = builder.getOperatorClass().getAnnotation(

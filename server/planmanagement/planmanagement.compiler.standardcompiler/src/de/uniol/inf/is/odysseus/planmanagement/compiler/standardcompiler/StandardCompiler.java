@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PlanGenerationConfiguration;
@@ -250,10 +251,10 @@ public class StandardCompiler implements ICompiler {
 	@Override
 	public List<IExecutorCommand> translateQuery(String query, String parserID,
 			ISession user, IDataDictionary dd, Context context,
-			IMetaAttribute metaAttribute) throws QueryParseException {
+			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
 			return this.parserList.get(parserID).parse(query, user, dd,
-					context, metaAttribute);
+					context, metaAttribute, executor);
 		}
 
 		throw new QueryParseException("Parser with ID " + parserID
@@ -352,12 +353,12 @@ public class StandardCompiler implements ICompiler {
 	public List<IPhysicalQuery> translateAndTransformQuery(String query,
 			String parserID, ISession user, IDataDictionary dd,
 			TransformationConfiguration transformationConfiguration,
-			Context context) throws QueryParseException,
+			Context context, IServerExecutor executor) throws QueryParseException,
 			TransformationException {
 		IMetaAttribute metaAttribute = MetadataRegistry
 				.getMetadataType(transformationConfiguration.getDefaultMetaTypeSet());
 		List<IExecutorCommand> translate = translateQuery(query, parserID,
-				user, dd, context, metaAttribute);
+				user, dd, context, metaAttribute, executor);
 		List<IPhysicalQuery> translated = new ArrayList<IPhysicalQuery>();
 		for (IExecutorCommand q : translate) {
 			if (q instanceof CreateQueryCommand) {

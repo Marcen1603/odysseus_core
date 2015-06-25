@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -31,7 +32,7 @@ public class ConditionQLParser implements IQueryParser {
 
 	@Override
 	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context,
-			IMetaAttribute metaAttribute) throws QueryParseException {
+			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException {
 
 		ConditionQLQuery conditionQLQuery = ConditionQLParserRegistry.createConditionQLQuery(query);
 		IConditionQLParser parser = ConditionQLParserRegistry.getConditionQLParser(conditionQLQuery.getAlgorithm().getAlgorithm());

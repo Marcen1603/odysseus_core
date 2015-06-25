@@ -494,6 +494,17 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 		return ops1;
 	}
+		
+	@Override
+	public IPhysicalOperator getOperator(String name) {
+		Set<IPhysicalOperator> allOps = this.getAllOperators();
+		for (IPhysicalOperator p:allOps){
+			if (p.getName().equals(name)){
+				return p;
+			}
+		}
+		return null;
+	}
 
 	/*
 	 * (non-Javadoc)

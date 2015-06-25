@@ -112,7 +112,7 @@ public class Helper {
 	public static List<ILogicalQuery> getLogicalQuery(String pqlStatement) {
 		// FIXME: set metaAttribute
 		final IMetaAttribute metaAttribute = null;
-		List<IExecutorCommand> commands = executor.getCompiler().translateQuery(pqlStatement, "PQL", getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()), Context.empty(), metaAttribute);
+		List<IExecutorCommand> commands = executor.getCompiler().translateQuery(pqlStatement, "PQL", getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()), Context.empty(), metaAttribute, executor);
 		List<ILogicalQuery> list = Lists.newArrayList();
 		for (IExecutorCommand q : commands) {
 

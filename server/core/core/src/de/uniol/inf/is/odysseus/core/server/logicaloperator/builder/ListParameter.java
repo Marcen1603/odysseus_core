@@ -50,6 +50,7 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 				singleParameter.setInputValue(o);
 				singleParameter.setAttributeResolver(getAttributeResolver());
 				singleParameter.setDataDictionary(getDataDictionary());
+				singleParameter.setServerExecutor(getServerExecutor());
 				if (!singleParameter.validate()) {
 					throw new ValidationException("", singleParameter.getErrors());
 				}
