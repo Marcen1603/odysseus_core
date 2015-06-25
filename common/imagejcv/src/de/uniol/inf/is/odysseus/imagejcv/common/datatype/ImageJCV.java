@@ -7,6 +7,8 @@ import static org.bytedeco.javacpp.opencv_core.cvSize;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_BGR2GRAY;
 import static org.bytedeco.javacpp.opencv_imgproc.cvCvtColor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
@@ -18,7 +20,6 @@ import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 
 /**
  * @author Kristian Bruns, Henrik Surm
@@ -89,11 +90,13 @@ public class ImageJCV implements IClone, Cloneable
 	{
 		if (image != null)
 		{
+			System.out.println("Release enter");
 			cvReleaseImageHeader(image);
 			image = null;		
 			
 			ByteBufferCache.putBuffer(imageData);
 			imageData = null;
+			System.out.println("Release leave");
 		}			
 	}
 	
@@ -108,9 +111,14 @@ public class ImageJCV implements IClone, Cloneable
 		buffer.putInt(index, value);
 	}
 	
-	public void writeData(ByteBuffer buffer) {
-		byte[] bytes = ObjectByteConverter.objectToBytes(image);
-		buffer.put(bytes);
+	public void writeData(ByteBuffer buffer) 
+	{
+		buffer.putInt(width);
+		buffer.putInt(height);
+		buffer.putInt(depth);
+		buffer.putInt(numChannels);
+		
+		buffer.put(image.getByteBuffer());
 	}
 	
 	@Override
@@ -145,18 +153,11 @@ public class ImageJCV implements IClone, Cloneable
 	{
 		return toGrayscaleImage(false);
 	}
-
 	
 	public void fill(int value) {
 		throw new UnsupportedOperationException("Currently not implemented");
 	}
-	
-	public ImageJCV(ByteBuffer buffer) {
-		throw new UnsupportedOperationException("Not implemented yet!");
-/*		this.image = (IplImage) ObjectByteConverter.bytesToObject(buffer.array());
-		ImageGC.onCreateImage();*/
-	}	
-	
+		
 	public ImageJCV(double[][] data) 
 	{
 		throw new UnsupportedOperationException("Noch nicht überarbeitet!");
@@ -184,6 +185,45 @@ public class ImageJCV implements IClone, Cloneable
 		}
 		else
 			imageData.put(iplImage.getByteBuffer());
+	}
+	
+	
+	public static ImageJCV fromStream(InputStream inputStream) throws IOException 
+	{
+		throw new UnsupportedOperationException("Not implemented yet!");
+		
+/*		DataInputStream stream = new DataInputStream(inputStream);
+		ImageJCV result = new ImageJCV(stream.readInt(), stream.readInt(), stream.readInt(), stream.readInt());
+
+		// Doesn't work for direct byte buffers
+		stream.read(result.getImageData().array(), 16, result.getImage().imageSize());
+
+		return result;*/
+	}
+	
+	public static ImageJCV fromBuffer(ByteBuffer buffer) 
+	{
+		ImageJCV result = new ImageJCV(buffer.getInt(), buffer.getInt(), buffer.getInt(), buffer.getInt());
+		
+		buffer.position(buffer.limit());
+		
+//		result.getImageData().rewind();
+		
+		int size = 0; //result.getImage().imageSize();
+		for (int i=0;i<size;i++)
+		{
+			result.getImageData().put((byte) 0xFF);
+		}
+		
+//		result.getImageData().position(result.getImageData().limit());
+		
+/*		int oldLimit = buffer.limit();
+		buffer.limit(buffer.position() + result.getImage().imageSize());
+		result.getImageData().rewind();
+		result.getImageData().put(buffer);
+		buffer.limit(oldLimit);*/
+		
+		return result;
 	}	
 }
 
