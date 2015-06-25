@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +26,12 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class InterOperatorParallelizationPreParserKeyword extends
 		AbstractPreParserKeyword {
+
+	private static final String PATTERN_PAIRS = "((([a-zA-Z0-9]+)|([(][a-zA-Z0-9]+([:][a-zA-Z0-9]+)+[)]))[,])"
+			+ "*(([a-zA-Z0-9]+)|([(][a-zA-Z0-9]+([:][a-zA-Z0-9]+)+[)]))";
+	private static final String PATTERN_WITH_ATTRIBUTESNAMES = "([(][a-zA-Z0-9]+[=]"+PATTERN_PAIRS+"[)])([\\s][(][a-zA-Z0-9]+[=]"+PATTERN_PAIRS+"[)])*";
+	private static final String PATTERN_WITHOUT_ATTRIBUTENAMES = "("+PATTERN_PAIRS+")([\\s]"+PATTERN_PAIRS+")*";
+	private static final String PATTERN_COMPLETE = PATTERN_WITH_ATTRIBUTESNAMES+"|"+PATTERN_WITHOUT_ATTRIBUTENAMES;
 
 	public enum DegreeOfParalleizationConstants {
 		USERDEFINED, GLOBAL, AUTO;
@@ -76,6 +81,11 @@ public class InterOperatorParallelizationPreParserKeyword extends
 					+ " are missing");
 		}
 
+		//Pattern.compile(PATTERN_COMPLETE);
+		if (!parameter.matches(PATTERN_COMPLETE)){
+			throw new OdysseusScriptException("Parameters don't matches pattern");
+		}
+		
 		String[] splitted = parameter.trim().split(" ");
 
 		if (splitted.length < MIN_ATTRIBUTE_COUNT
@@ -132,7 +142,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 				String currentId = splittedOperatorIDs[i].trim();
 				if (currentId.startsWith("(") && currentId.endsWith(")")) {
 					// we have an id pair, split it on :
-					currentId = currentId.substring(1, currentId.length()-1);
+					currentId = currentId.substring(1, currentId.length() - 1);
 					String[] currentIdPair = currentId.split(":");
 					if (currentIdPair.length == 2) {
 						// (StartParallelizationId:EndParallelizationId)
@@ -141,18 +151,20 @@ public class InterOperatorParallelizationPreParserKeyword extends
 								.setStartParallelizationId(currentIdPair[0]);
 						settingsForId.setEndParallelizationId(currentIdPair[1]);
 						operatorSettings.add(settingsForId);
-					} else if (currentIdPair.length == 3){
+					} else if (currentIdPair.length == 3) {
 						// (StartParallelizationId:EndParallelizationId:AssureSemanticCorrectness)
 						MultithreadedOperatorSettings settingsForId = new MultithreadedOperatorSettings();
 						settingsForId
 								.setStartParallelizationId(currentIdPair[0]);
 						settingsForId.setEndParallelizationId(currentIdPair[1]);
-						
-						if (!currentIdPair[2].equalsIgnoreCase("true") && !currentIdPair[2].equalsIgnoreCase("false")){
+
+						if (!currentIdPair[2].equalsIgnoreCase("true")
+								&& !currentIdPair[2].equalsIgnoreCase("false")) {
 							throw new OdysseusScriptException(
 									"Value for AssureSemanticCorrectness is invalid. Valid values are: true or false");
 						} else {
-							settingsForId.setAssureSemanticCorrectness(Boolean.parseBoolean(currentIdPair[2]));							
+							settingsForId.setAssureSemanticCorrectness(Boolean
+									.parseBoolean(currentIdPair[2]));
 						}
 						operatorSettings.add(settingsForId);
 					} else {
