@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.util.GenericDownstreamGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.GenericUpstreamGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.OperatorIdLogicalGraphVisitor;
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.multithreaded.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class LogicalGraphHelper {
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ILogicalOperator findDownstreamOperatorWithId(
 			String endParallelizationId, ILogicalOperator logicalOperator) {
@@ -40,7 +41,7 @@ public class LogicalGraphHelper {
 		walker.prefixWalk(logicalOperator, idVisitor);
 		return idVisitor.getResult().get(endParallelizationId);
 	}
-	
+
 	public static int calculateNewSourceOutPort(
 			LogicalSubscription sourceSubscription, int iteration) {
 		Map<Integer, SDFSchema> outputSchemaMap = sourceSubscription
@@ -53,30 +54,27 @@ public class LogicalGraphHelper {
 
 		return newSourceOutPort;
 	}
-	
-	public static boolean validateStatefulAO(
-			boolean assureSemanticCorrectness,
+
+	public static boolean validateStatefulAO(boolean assureSemanticCorrectness,
 			boolean aggregatesWithGroupingAllowed,
 			ILogicalOperator currentOperator, boolean possibleSemanticChange) {
 		if (currentOperator instanceof AggregateAO) {
 			AggregateAO aggregateOperator = (AggregateAO) currentOperator;
-			if ((!aggregateOperator.getGroupingAttributes()
-					.isEmpty() && !aggregatesWithGroupingAllowed)
-					|| aggregateOperator
-							.getGroupingAttributes().isEmpty()) {
+			if ((!aggregateOperator.getGroupingAttributes().isEmpty() && !aggregatesWithGroupingAllowed)
+					|| aggregateOperator.getGroupingAttributes().isEmpty()) {
 				if (assureSemanticCorrectness) {
 					throw new IllegalArgumentException(
 							"No aggregations allowed between start "
-							+ "and end of parallelization for this strategy");
+									+ "and end of parallelization for this strategy");
 				} else {
 					possibleSemanticChange = true;
 				}
 			}
-		} else {
+		} else if (!(currentOperator instanceof UnionAO)){
 			if (assureSemanticCorrectness) {
 				throw new IllegalArgumentException(
 						"No stateful operators allowed between start "
-						+ "and end of parallelization");
+								+ "and end of parallelization");
 			} else {
 				possibleSemanticChange = true;
 			}
@@ -84,21 +82,20 @@ public class LogicalGraphHelper {
 		return possibleSemanticChange;
 	}
 
-	public static boolean validateSelectAO(
-			boolean assureSemanticCorrectness,
+	public static boolean validateSelectAO(boolean assureSemanticCorrectness,
 			ILogicalOperator currentOperator, boolean possibleSemanticChange) {
 		SelectAO selectOperator = (SelectAO) currentOperator;
 		IPredicate<?> predicate = selectOperator.getPredicate();
 		if (predicate instanceof RelationalPredicate) {
 			RelationalPredicate relPredicate = (RelationalPredicate) predicate;
-			IExpression<?> expression = relPredicate
-					.getExpression().getMEPExpression();
+			IExpression<?> expression = relPredicate.getExpression()
+					.getMEPExpression();
 			if (SDFAttributeHelper
 					.expressionContainsStatefulFunction(expression)) {
 				if (assureSemanticCorrectness) {
 					throw new IllegalArgumentException(
 							"No operators with stateful functions allowed "
-							+ "between start and end of parallelization");
+									+ "between start and end of parallelization");
 				} else {
 					possibleSemanticChange = true;
 				}
@@ -107,21 +104,18 @@ public class LogicalGraphHelper {
 		return possibleSemanticChange;
 	}
 
-	public static boolean validateMapAO(
-			boolean assureSemanticCorrectness,
+	public static boolean validateMapAO(boolean assureSemanticCorrectness,
 			ILogicalOperator currentOperator, boolean possibleSemanticChange) {
 		MapAO mapOperator = (MapAO) currentOperator;
-		List<SDFExpression> expressionList = mapOperator
-				.getExpressionList();
+		List<SDFExpression> expressionList = mapOperator.getExpressionList();
 		for (SDFExpression sdfExpression : expressionList) {
-			IExpression<?> mepExpression = sdfExpression
-					.getMEPExpression();
+			IExpression<?> mepExpression = sdfExpression.getMEPExpression();
 			if (SDFAttributeHelper
 					.expressionContainsStatefulFunction(mepExpression)) {
 				if (assureSemanticCorrectness) {
 					throw new IllegalArgumentException(
 							"No operators with stateful functions allowed "
-							+ "between start and end of parallelization");
+									+ "between start and end of parallelization");
 				} else {
 					possibleSemanticChange = true;
 				}
@@ -129,8 +123,9 @@ public class LogicalGraphHelper {
 		}
 		return possibleSemanticChange;
 	}
-	
-	public static ILogicalOperator getNextOperator(ILogicalOperator currentOperator) {
+
+	public static ILogicalOperator getNextOperator(
+			ILogicalOperator currentOperator) {
 		List<LogicalSubscription> subscriptions = new ArrayList<LogicalSubscription>(
 				currentOperator.getSubscriptions());
 		if (subscriptions.size() > 1) {

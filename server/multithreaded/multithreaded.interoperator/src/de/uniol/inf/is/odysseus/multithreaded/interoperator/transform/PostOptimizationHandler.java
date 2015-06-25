@@ -8,12 +8,18 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.multithreaded.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
@@ -69,17 +75,23 @@ public class PostOptimizationHandler {
 					unionOperator.getSubscribedToSource());
 
 			int iteration = 0;
+			List<ILogicalOperator> unionsOnPath = new ArrayList<ILogicalOperator>();
+
 			for (LogicalSubscription unionSourceSubscription : unionSourceSubscriptions) {
 				ILogicalOperator unionSourceOperator = unionSourceSubscription
 						.getTarget();
 
+				// collect operators for splitting
 				ILogicalOperator currentNewOperator = null;
 				ILogicalOperator lastNewOperator = unionSourceOperator;
-
 				ILogicalOperator lastOperator = unionOperator;
 				ILogicalOperator currentOperator = LogicalGraphHelper
 						.getNextOperator(unionOperator);
+
+				// walk through graph and clone operators
 				while (currentOperator != null) {
+					// if fragment operator is reached, connect last cloned
+					// operator with operator after buffer
 					if (currentOperator instanceof AbstractFragmentAO
 							&& currentOperator.getUniqueIdentifier() != null) {
 						if (currentOperator.getUniqueIdentifier()
@@ -93,16 +105,54 @@ public class PostOptimizationHandler {
 						}
 					}
 
-					currentNewOperator = cloneOperator(iteration,
-							currentOperator);
+					// do some validations
+					if (currentOperator instanceof MapAO) {
+						LogicalGraphHelper.validateMapAO(true, currentOperator,
+								false);
+					}
+					if (currentOperator instanceof SelectAO) {
+						LogicalGraphHelper.validateSelectAO(true,
+								currentOperator, false);
+					}
+					if (currentOperator instanceof IStatefulAO) {
+						LogicalGraphHelper.validateStatefulAO(true, false,
+								currentOperator, false);
+						if (currentOperator instanceof AggregateAO
+								&& fragmentOperator instanceof HashFragmentAO) {
+							// check if attributes of aggregation are equal to attributes of fragmentation
+							List<AbstractFragmentAO> fragmentAOs = new ArrayList<AbstractFragmentAO>();
+							fragmentAOs.add((HashFragmentAO) fragmentOperator);
+							SDFAttributeHelper.checkIfAttributesAreEqual(
+									(AggregateAO) currentOperator, iteration,
+									fragmentAOs, true);
+						}
+					}
 
-					connectNewOperators(iteration, currentNewOperator,
-							lastNewOperator, lastOperator, currentOperator);
+					// union operators are only connected in first iteration,
+					// because otherwise we get duplicate elements if it is
+					// connected with each fragment
+					if (!(currentOperator instanceof UnionAO)
+							|| (currentOperator instanceof UnionAO && iteration == 0)) {
+						// clone existing operator and change uuid and name
+						currentNewOperator = cloneOperator(iteration,
+								currentOperator);
 
-					// prepare for next iteration
-					lastNewOperator = currentNewOperator;
+						// connect new operator with last operator
+						connectNewOperators(iteration, currentNewOperator,
+								lastNewOperator, lastOperator, currentOperator);
 
-					lastOperator = currentOperator;
+						// we need to remember union operators on path between
+						// start and end
+						if (currentOperator instanceof UnionAO) {
+
+							unionsOnPath.add(currentOperator);
+						}
+
+						// prepare for next iteration
+						lastNewOperator = currentNewOperator;
+						lastOperator = currentOperator;
+					}
+
 					currentOperator = LogicalGraphHelper
 							.getNextOperator(currentOperator);
 				}
@@ -111,6 +161,14 @@ public class PostOptimizationHandler {
 			// remove old subscriptions from fragment and union operator
 			unionOperator.unsubscribeFromAllSources();
 			fragmentOperator.unsubscribeFromAllSinks();
+
+			// we need to remove the subscriptions from all union operators
+			// found between start and endpoint of optimization
+			for (ILogicalOperator unionOnPath : unionsOnPath) {
+				unionOnPath.unsubscribeFromAllSinks();
+				unionOnPath.unsubscribeFromAllSources();
+			}
+
 		} catch (Exception e) {
 			// if something went wrong, revert plan
 			query.setLogicalPlan(savedPlan, true);
@@ -411,12 +469,16 @@ public class PostOptimizationHandler {
 									.getFragmentOperators().get(0)
 									.getUniqueIdentifier())) {
 				return true;
-			} else if (element.getStartOperator().getUniqueIdentifier()
-					.equals(otherTransformationResult.getUnionOperator().getUniqueIdentifier())
+			} else if (element
+					.getStartOperator()
+					.getUniqueIdentifier()
+					.equals(otherTransformationResult.getUnionOperator()
+							.getUniqueIdentifier())
 					&& element
 							.getEndOperator()
 							.getUniqueIdentifier()
-							.equals(currentTransformationResult.getFragmentOperators().get(0)
+							.equals(currentTransformationResult
+									.getFragmentOperators().get(0)
 									.getUniqueIdentifier())) {
 				return true;
 			}

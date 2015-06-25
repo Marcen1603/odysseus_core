@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
+import de.uniol.inf.is.odysseus.multithreaded.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.transform.TransformationResult;
@@ -21,10 +20,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 
 public class GroupedAggregateMultithreadedTransformationStrategy extends
 		AbstractMultithreadedTransformationStrategy<AggregateAO> {
-
-	final private InfoService INFO_SERVICE = InfoServiceFactory
-			.getInfoService(GroupedAggregateMultithreadedTransformationStrategy.class);
-
+	
 	@Override
 	public String getName() {
 		return "GroupedAggregateMultithreadedTransformationStrategy";
@@ -56,7 +52,7 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 
 		TransformationResult transformationResult = new TransformationResult();
 		transformationResult.setAllowsModificationAfterUnion(true);
-		
+
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		// create fragment operator
@@ -189,32 +185,8 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 			List<AbstractFragmentAO> fragments,
 			MultithreadedOperatorSettings settingsForOperator) {
 		if (currentExistingOperator instanceof AggregateAO) {
-			AggregateAO aggregateOperator = (AggregateAO) currentExistingOperator;
-
-			List<SDFAttribute> groupingAttributes = aggregateOperator
-					.getGroupingAttributes();
-			for (SDFAttribute sdfAttribute : groupingAttributes) {
-				boolean attributeFound = false;
-				for (AbstractFragmentAO fragment : fragments) {
-					if (fragment instanceof HashFragmentAO) {
-						HashFragmentAO hashFragment = (HashFragmentAO) fragment;
-						if (hashFragment.getAttributes().contains(sdfAttribute)) {
-							attributeFound = true;
-						}
-					}
-				}
-				if (!attributeFound) {
-					if (settingsForOperator.isAssureSemanticCorrectness()) {
-						throw new IllegalArgumentException(
-								"Hash Fragment does not contain grouping attribute of aggregate operator. "
-										+ "Semantic changes for parallelization are not allowed.");
-					} else {
-						INFO_SERVICE
-								.info("Hash Fragment does not contain grouping attribute of aggregate operator. "
-										+ "Semantic change is possible");
-					}
-				}
-			}
+			SDFAttributeHelper.checkIfAttributesAreEqual((AggregateAO) currentExistingOperator, iteration,
+					fragments, settingsForOperator.isAssureSemanticCorrectness());
 		}
 	}
 

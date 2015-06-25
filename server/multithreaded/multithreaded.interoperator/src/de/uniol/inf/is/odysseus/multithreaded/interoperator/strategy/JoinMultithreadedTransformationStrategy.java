@@ -8,8 +8,6 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -26,9 +24,6 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 
 public class JoinMultithreadedTransformationStrategy extends
 		AbstractMultithreadedTransformationStrategy<JoinAO> {
-
-	final private InfoService INFO_SERVICE = InfoServiceFactory
-			.getInfoService(JoinMultithreadedTransformationStrategy.class);
 
 	@Override
 	public String getName() {
@@ -64,7 +59,7 @@ public class JoinMultithreadedTransformationStrategy extends
 
 		TransformationResult transformationResult = new TransformationResult();
 		transformationResult.setAllowsModificationAfterUnion(true);
-		
+
 		JoinAO joinOperator = (JoinAO) operator;
 
 		Map<Integer, List<SDFAttribute>> attributes = new HashMap<Integer, List<SDFAttribute>>();
@@ -215,32 +210,8 @@ public class JoinMultithreadedTransformationStrategy extends
 			List<AbstractFragmentAO> fragments,
 			MultithreadedOperatorSettings settingsForOperator) {
 		if (currentExistingOperator instanceof AggregateAO) {
-			AggregateAO aggregateOperator = (AggregateAO) currentExistingOperator;
-
-			List<SDFAttribute> groupingAttributes = aggregateOperator
-					.getGroupingAttributes();
-			for (SDFAttribute sdfAttribute : groupingAttributes) {
-				boolean attributeFound = false;
-				for (AbstractFragmentAO fragment : fragments) {
-					if (fragment instanceof HashFragmentAO) {
-						HashFragmentAO hashFragment = (HashFragmentAO) fragment;
-						if (hashFragment.getAttributes().contains(sdfAttribute)) {
-							attributeFound = true;
-						}
-					}
-				}
-				if (!attributeFound) {
-					if (settingsForOperator.isAssureSemanticCorrectness()) {
-						throw new IllegalArgumentException(
-								"Hash Fragment does not contain grouping attribute of aggregate operator. "
-										+ "Semantic changes for parallelization are not allowed.");
-					} else {
-						INFO_SERVICE
-								.info("Hash Fragment does not contain grouping attribute of aggregate operator. "
-										+ "Semantic change is possible");
-					}
-				}
-			}
+			SDFAttributeHelper.checkIfAttributesAreEqual((AggregateAO) currentExistingOperator, iteration,
+					fragments, settingsForOperator.isAssureSemanticCorrectness());
 		}
 	}
 }
