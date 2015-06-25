@@ -333,7 +333,10 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public void write(T object) throws IOException {
-		writer.write(object.toString());
+		if (writer == null)
+			getTransportHandler().send(object.toString().getBytes("UTF-8"));
+		else
+			writer.write(object.toString());
 	}
 
 	private static String bb_to_str(ByteBuffer buffer) {
