@@ -331,7 +331,7 @@ public class PostOptimizationHandler {
 			List<PostOptimizationElement> postOptimizationElements,
 			TransformationResult currentTransformationResult,
 			TransformationResult otherTransformationResult) {
-		if (!postOptimizationElementAlreadyExists(postOptimizationElements,
+		if (!doPostOptimizationElementAlreadyExists(postOptimizationElements,
 				currentTransformationResult, otherTransformationResult)) {
 			PostOptimizationElement postOptimizationElement = createOrderedMatchingPair(
 					currentTransformationResult, otherTransformationResult);
@@ -394,7 +394,7 @@ public class PostOptimizationHandler {
 		return postOptimizationElement;
 	}
 
-	private static boolean postOptimizationElementAlreadyExists(
+	private static boolean doPostOptimizationElementAlreadyExists(
 			List<PostOptimizationElement> postOptimizationElements,
 			TransformationResult currentTransformationResult,
 			TransformationResult otherTransformationResult) {
