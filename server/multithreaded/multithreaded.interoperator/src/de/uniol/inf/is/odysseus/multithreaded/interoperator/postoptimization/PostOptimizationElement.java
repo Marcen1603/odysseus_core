@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.multithreaded.interoperator.transform;
+package de.uniol.inf.is.odysseus.multithreaded.interoperator.postoptimization;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;

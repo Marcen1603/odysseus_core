@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.util.OperatorIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorParameter;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.MultithreadedOperatorSettings;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.postoptimization.PostOptimizationHandler;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy.IMultithreadedTransformationStrategy;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy.registry.MultithreadedTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.multithreaded.keyword.ParallelizationParameter;

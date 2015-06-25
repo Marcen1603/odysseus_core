@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.multithreaded.interoperator.transform;
+package de.uniol.inf.is.odysseus.multithreaded.interoperator.postoptimization;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.multithreaded.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
+import de.uniol.inf.is.odysseus.multithreaded.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
