@@ -26,12 +26,12 @@ public class SensorFactory
 				+ "               transport='TCPClient',\n"
 				+ "               protocol='LMS1xx',\n"
 				+ "               dataHandler='KeyValueObject',\n"
-				+ "               options=[%(optionsEx) ['rawData','true']]})\n";
+				+ "               options=[%(optionsEx) ['rawData','true'], ['ignoretimestamp', 'true']]})\n";
 
 		String logQuery = 
 				  "#PARSER PQL\n"		
 				+ "#RUNQUERY\n"			
-				+ "raw = KEYVALUETOTUPLE({schema=[['RAWDATA','String']], type='Tuple', keepinput='false'}, %(sourceName))"
+				+ "raw = KEYVALUETOTUPLE({schema=[['TIMESTAMP', 'Long'], ['RAWDATA', 'String']], type='Tuple', keepinput='false'}, %(sourceName))"
 				+ "%(sinkName) = SENDER({sink='%(sinkName)',\n"
 				+ "			             wrapper='GenericPush',\n"
 				+ "                      transport='none',\n"
@@ -346,7 +346,7 @@ public class SensorFactory
 	{
 		try 
 		{
-			XmlMarshalHelper.toXmlFile(serverInstance, new File(loggingDirectory + "serverInstance.xml"));
+			XmlMarshalHelper.toXmlFile(serverInstance, new File(loggingDirectory + "/serverInstance.xml"));
 		} 
 		catch (IOException e) 
 		{

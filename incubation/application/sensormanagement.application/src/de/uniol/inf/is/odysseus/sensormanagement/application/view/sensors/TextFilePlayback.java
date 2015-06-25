@@ -59,7 +59,7 @@ public abstract class TextFilePlayback extends PlaybackReceiver
 	// TODO: This method is public for testing purposes
 	final public Event getNextEvent() throws IOException
 	{
-		if (rawFile == null) throw new ViewException("videoFile == null");
+		if (rawFile == null) throw new ViewException("rawFile == null");
 		
 		String nextLine;
 		Event ev = null;
