@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.Receiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackReceiver;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.DummyPlayback;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.DummyReceiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.GPSPlayback;
