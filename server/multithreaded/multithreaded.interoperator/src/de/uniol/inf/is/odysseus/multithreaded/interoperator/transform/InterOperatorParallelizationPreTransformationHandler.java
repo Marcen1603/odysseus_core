@@ -69,7 +69,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 		// if all transformations are done, we try to optimize the
 		// transformed plan (remove union, fragment combinations if
 		// possible)
-		PostOptimizationHandler.doPostOptimization(logicalPlan,
+		PostOptimizationHandler.doPostOptimization(logicalPlan, query,
 				transformationResults, optimizationAllowed);
 	}
 

@@ -9,8 +9,11 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
+import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
@@ -21,136 +24,176 @@ public class PostOptimizationHandler {
 			.getInfoService(PostOptimizationHandler.class);
 
 	public static void doPostOptimization(ILogicalOperator logicalPlan,
+			ILogicalQuery query,
 			List<TransformationResult> transformationResults,
 			boolean optimizationAllowed) {
 
-		List<PostOptimizationElement> matchingTransformations;
-		matchingTransformations = prepareOptimizations(transformationResults,
+		List<PostOptimizationElement> postOptimizationElements;
+		postOptimizationElements = prepareOptimizations(transformationResults,
 				optimizationAllowed);
 
-		if (matchingTransformations != null
-				&& !matchingTransformations.isEmpty()) {
+		if (postOptimizationElements != null
+				&& !postOptimizationElements.isEmpty()) {
 			// iterate through post optimizations
-			for (PostOptimizationElement element : matchingTransformations) {
-				ILogicalOperator unionOperator = element.getStartOperator();
-				ILogicalOperator fragmentOperator = element.getEndOperator();
-				CopyOnWriteArrayList<LogicalSubscription> unionSourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>(
-						unionOperator.getSubscribedToSource());
-
-				int iteration = 0;
-				for (LogicalSubscription unionSourceSubscription : unionSourceSubscriptions) {
-					ILogicalOperator unionSourceOperator = unionSourceSubscription
-							.getTarget();
-
-					ILogicalOperator currentNewOperator = null;
-					ILogicalOperator lastNewOperator = unionSourceOperator;
-
-					ILogicalOperator lastOperator = unionOperator;
-					ILogicalOperator currentOperator = LogicalGraphHelper
-							.getNextOperator(unionOperator);
-					while (currentOperator != null) {
-						if (currentOperator instanceof AbstractFragmentAO
-								&& currentOperator.getUniqueIdentifier() != null) {
-							if (currentOperator.getUniqueIdentifier()
-									.equalsIgnoreCase(
-											fragmentOperator
-													.getUniqueIdentifier())) {
-								// end fragment operator reached
-								List<LogicalSubscription> fragmentedOperatorSubscritpions = new ArrayList<LogicalSubscription>(
-										currentOperator.getSubscriptions());
-								ILogicalOperator bufferOperator = fragmentedOperatorSubscritpions
-										.get(iteration).getTarget();
-								// we know, that a fragmentation is
-								// followed by a buffer operator
-								if (bufferOperator instanceof BufferAO) {
-									List<LogicalSubscription> bufferSubscritpions = new ArrayList<LogicalSubscription>(
-											bufferOperator.getSubscriptions());
-									if (bufferSubscritpions.size() == 1) {
-										ILogicalOperator destinationOperator = bufferSubscritpions
-												.get(0).getTarget();
-
-										// remove existing
-										// subscriptions
-										destinationOperator
-												.unsubscribeFromAllSources();
-										lastNewOperator
-												.unsubscribeFromAllSinks();
-
-										// connect last new Operator
-										// to destination operator
-										destinationOperator.subscribeToSource(
-												lastNewOperator, 0, 0,
-												lastNewOperator
-														.getOutputSchema());
-									}
-								}
-								break;
-							}
-						}
-
-						// clone existing operator
-						currentNewOperator = currentOperator.clone();
-						currentNewOperator.setName(currentNewOperator.getName()
-								+ "_" + iteration);
-						if (currentNewOperator.getUniqueIdentifier() != null) {
-							currentNewOperator
-									.setUniqueIdentifier(currentNewOperator
-											.getUniqueIdentifier()
-											+ "_"
-											+ iteration);
-
-						}
-
-						// connect current new operator to last
-						// created operator
-						CopyOnWriteArrayList<LogicalSubscription> operatorSourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-						operatorSourceSubscriptions.addAll(currentOperator
-								.getSubscribedToSource());
-						for (LogicalSubscription sourceSubscription : operatorSourceSubscriptions) {
-							if (sourceSubscription.getTarget().equals(
-									lastOperator)) {
-								// if target of subscription is last
-								// existing operator, set
-								// new cloned one
-								currentNewOperator.subscribeToSource(
-										lastNewOperator,
-										sourceSubscription.getSinkInPort(),
-										sourceSubscription.getSourceOutPort(),
-										lastNewOperator.getOutputSchema());
-							} else {
-								// else connect new copied operator
-								// to target
-								int newSourceOutPort = LogicalGraphHelper
-										.calculateNewSourceOutPort(
-												sourceSubscription, iteration);
-
-								currentNewOperator.subscribeToSource(
-										sourceSubscription.getTarget(),
-										sourceSubscription.getSinkInPort(),
-										newSourceOutPort, sourceSubscription
-												.getTarget().getOutputSchema());
-							}
-						}
-
-						// prepare for next iteration
-						lastNewOperator = currentNewOperator;
-
-						lastOperator = currentOperator;
-						currentOperator = LogicalGraphHelper
-								.getNextOperator(currentOperator);
-					}
-
-					iteration++;
+			int processedOptimizationsCounter = 0;
+			for (PostOptimizationElement element : postOptimizationElements) {
+				boolean optimizationSuccessful = processOptimization(
+						logicalPlan, query, element);
+				if (optimizationSuccessful) {
+					processedOptimizationsCounter++;
 				}
-				unionOperator.unsubscribeFromAllSources();
-				fragmentOperator.unsubscribeFromAllSinks();
 			}
+			INFO_SERVICE.info(processedOptimizationsCounter
+					+ " optimizations are processed.");
 		} else {
 			INFO_SERVICE
 					.info("Optimization not possible, because there are no fragmentations found, that can be combined.");
 			return;
 		}
 
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static boolean processOptimization(ILogicalOperator logicalPlan,
+			ILogicalQuery query, PostOptimizationElement element) {
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
+				query);
+		GenericGraphWalker copyWalker = new GenericGraphWalker();
+		copyWalker.prefixWalk(logicalPlan, copyVisitor);
+		ILogicalOperator savedPlan = copyVisitor.getResult();
+
+		try {
+			ILogicalOperator unionOperator = element.getStartOperator();
+			ILogicalOperator fragmentOperator = element.getEndOperator();
+			CopyOnWriteArrayList<LogicalSubscription> unionSourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>(
+					unionOperator.getSubscribedToSource());
+
+			int iteration = 0;
+			for (LogicalSubscription unionSourceSubscription : unionSourceSubscriptions) {
+				ILogicalOperator unionSourceOperator = unionSourceSubscription
+						.getTarget();
+
+				ILogicalOperator currentNewOperator = null;
+				ILogicalOperator lastNewOperator = unionSourceOperator;
+
+				ILogicalOperator lastOperator = unionOperator;
+				ILogicalOperator currentOperator = LogicalGraphHelper
+						.getNextOperator(unionOperator);
+				while (currentOperator != null) {
+					if (currentOperator instanceof AbstractFragmentAO
+							&& currentOperator.getUniqueIdentifier() != null) {
+						if (currentOperator.getUniqueIdentifier()
+								.equalsIgnoreCase(
+										fragmentOperator.getUniqueIdentifier())) {
+							doFinalConnection(iteration, lastNewOperator,
+									currentOperator);
+							break;
+						} else {
+							throw new Exception("");
+						}
+					}
+
+					currentNewOperator = cloneOperator(iteration,
+							currentOperator);
+
+					connectNewOperators(iteration, currentNewOperator,
+							lastNewOperator, lastOperator, currentOperator);
+
+					// prepare for next iteration
+					lastNewOperator = currentNewOperator;
+
+					lastOperator = currentOperator;
+					currentOperator = LogicalGraphHelper
+							.getNextOperator(currentOperator);
+				}
+				iteration++;
+			}
+			// remove old subscriptions from fragment and union operator
+			unionOperator.unsubscribeFromAllSources();
+			fragmentOperator.unsubscribeFromAllSinks();
+		} catch (Exception e) {
+			// if something went wrong, revert plan
+			query.setLogicalPlan(savedPlan, true);
+			return false;
+		}
+		return true;
+	}
+
+	private static void connectNewOperators(int iteration,
+			ILogicalOperator currentNewOperator,
+			ILogicalOperator lastNewOperator, ILogicalOperator lastOperator,
+			ILogicalOperator currentOperator) {
+		// connect current new operator to last
+		// created operator
+		CopyOnWriteArrayList<LogicalSubscription> operatorSourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		operatorSourceSubscriptions.addAll(currentOperator
+				.getSubscribedToSource());
+		for (LogicalSubscription sourceSubscription : operatorSourceSubscriptions) {
+			if (sourceSubscription.getTarget().equals(lastOperator)) {
+				// if target of subscription is last
+				// existing operator, set
+				// new cloned one
+				currentNewOperator.subscribeToSource(lastNewOperator,
+						sourceSubscription.getSinkInPort(),
+						sourceSubscription.getSourceOutPort(),
+						lastNewOperator.getOutputSchema());
+			} else {
+				// else connect new copied operator
+				// to target
+				int newSourceOutPort = LogicalGraphHelper
+						.calculateNewSourceOutPort(sourceSubscription,
+								iteration);
+
+				currentNewOperator.subscribeToSource(
+						sourceSubscription.getTarget(),
+						sourceSubscription.getSinkInPort(), newSourceOutPort,
+						sourceSubscription.getTarget().getOutputSchema());
+			}
+		}
+	}
+
+	private static ILogicalOperator cloneOperator(int iteration,
+			ILogicalOperator currentOperator) {
+		ILogicalOperator currentNewOperator;
+		// clone existing operator
+		currentNewOperator = currentOperator.clone();
+		currentNewOperator.setName(currentNewOperator.getName() + "_"
+				+ iteration);
+		if (currentNewOperator.getUniqueIdentifier() != null) {
+			currentNewOperator.setUniqueIdentifier(currentNewOperator
+					.getUniqueIdentifier() + "_" + iteration);
+
+		}
+		return currentNewOperator;
+	}
+
+	private static void doFinalConnection(int iteration,
+			ILogicalOperator lastNewOperator, ILogicalOperator currentOperator) {
+		// end fragment operator reached
+		List<LogicalSubscription> fragmentedOperatorSubscritpions = new ArrayList<LogicalSubscription>(
+				currentOperator.getSubscriptions());
+		ILogicalOperator bufferOperator = fragmentedOperatorSubscritpions.get(
+				iteration).getTarget();
+		// we know, that a fragmentation is
+		// followed by a buffer operator
+		if (bufferOperator instanceof BufferAO) {
+			List<LogicalSubscription> bufferSubscritpions = new ArrayList<LogicalSubscription>(
+					bufferOperator.getSubscriptions());
+			if (bufferSubscritpions.size() == 1) {
+				ILogicalOperator destinationOperator = bufferSubscritpions.get(
+						0).getTarget();
+
+				// remove existing
+				// subscriptions
+				destinationOperator.unsubscribeFromAllSources();
+				lastNewOperator.unsubscribeFromAllSinks();
+
+				// connect last new Operator
+				// to destination operator
+				destinationOperator.subscribeToSource(lastNewOperator, 0, 0,
+						lastNewOperator.getOutputSchema());
+			}
+		}
 	}
 
 	private static List<PostOptimizationElement> prepareOptimizations(
@@ -189,16 +232,18 @@ public class PostOptimizationHandler {
 		return true;
 	}
 
-	/**
-	 * iterates over all existing fragmentations and check if equal
-	 * fragmentations exists. Only if one pair exists a post optimization is
-	 * possible
-	 * 
-	 * @param transformationResults
-	 */
 	private static List<PostOptimizationElement> createPostOptimizationElements(
 			List<TransformationResult> transformationResults) {
 		List<PostOptimizationElement> postOptimizationElements = new ArrayList<PostOptimizationElement>();
+		combineTransformationResults(transformationResults,
+				postOptimizationElements);
+
+		return postOptimizationElements;
+	}
+
+	private static void combineTransformationResults(
+			List<TransformationResult> transformationResults,
+			List<PostOptimizationElement> postOptimizationElements) {
 		for (TransformationResult currentTransformationResult : transformationResults) {
 			// only first fragmentation is needed, because for every
 			// strategy every fragmentation is from the same type
@@ -220,65 +265,66 @@ public class PostOptimizationHandler {
 						// check number of fragments and attributes (hash)
 						if (currentFragementAO.getNumberOfFragments() == otherFragmentAO
 								.getNumberOfFragments()) {
-							// check if it is a hash fragment, if so, we need to
-							// check if the attributes are equal
-							if (currentFragementAO instanceof HashFragmentAO) {
-								// we know that both fragment have the same type
-								// and we know that one is a hash fragment, so
-								// both can be casted
-								List<HashFragmentAO> thisFragmentations = new ArrayList<HashFragmentAO>();
-								for (AbstractFragmentAO fragmentAO : currentTransformationResult
-										.getFragmentOperators()) {
-									if (fragmentAO instanceof HashFragmentAO) {
-										thisFragmentations
-												.add((HashFragmentAO) fragmentAO);
-									}
-								}
-
-								List<HashFragmentAO> otherFragmentations = new ArrayList<HashFragmentAO>();
-								for (AbstractFragmentAO fragmentAO : otherTransformationResult
-										.getFragmentOperators()) {
-									if (fragmentAO instanceof HashFragmentAO) {
-										otherFragmentations
-												.add((HashFragmentAO) fragmentAO);
-									}
-								}
-
-								Pair<HashFragmentAO, HashFragmentAO> equalFragmentOperators = fragmentAttributesAreEqual(
-										thisFragmentations, otherFragmentations);
-
-								if (equalFragmentOperators == null) {
-									continue;
-								} else {
-									// remove all fragment operators that does
-									// not match
-									currentTransformationResult
-											.getFragmentOperators().clear();
-									currentTransformationResult
-											.addFragmentOperator(equalFragmentOperators
-													.getE1());
-
-									otherTransformationResult
-											.getFragmentOperators().clear();
-									otherTransformationResult
-											.addFragmentOperator(equalFragmentOperators
-													.getE2());
-								}
-
-							}
-
-							// check if pair already exists
-							addPostOptimizationElement(
+							processEqualFragementTypes(
 									postOptimizationElements,
 									currentTransformationResult,
+									currentFragementAO,
 									otherTransformationResult);
 						}
 					}
 				}
 			}
 		}
+	}
 
-		return postOptimizationElements;
+	private static void processEqualFragementTypes(
+			List<PostOptimizationElement> postOptimizationElements,
+			TransformationResult currentTransformationResult,
+			AbstractFragmentAO currentFragementAO,
+			TransformationResult otherTransformationResult) {
+		// check if it is a hash fragment, if so, we need to
+		// check if the attributes are equal
+		if (currentFragementAO instanceof HashFragmentAO) {
+			// we know that both fragment have the same type
+			// and we know that one is a hash fragment, so
+			// both can be casted
+			List<HashFragmentAO> thisFragmentations = new ArrayList<HashFragmentAO>();
+			for (AbstractFragmentAO fragmentAO : currentTransformationResult
+					.getFragmentOperators()) {
+				if (fragmentAO instanceof HashFragmentAO) {
+					thisFragmentations.add((HashFragmentAO) fragmentAO);
+				}
+			}
+
+			List<HashFragmentAO> otherFragmentations = new ArrayList<HashFragmentAO>();
+			for (AbstractFragmentAO fragmentAO : otherTransformationResult
+					.getFragmentOperators()) {
+				if (fragmentAO instanceof HashFragmentAO) {
+					otherFragmentations.add((HashFragmentAO) fragmentAO);
+				}
+			}
+
+			Pair<HashFragmentAO, HashFragmentAO> equalFragmentOperators = getFragmentOperatorsWithEqualAttributes(
+					thisFragmentations, otherFragmentations);
+
+			if (equalFragmentOperators == null) {
+				return;
+			} else {
+				// remove all fragment operators that does
+				// not match
+				currentTransformationResult.getFragmentOperators().clear();
+				currentTransformationResult
+						.addFragmentOperator(equalFragmentOperators.getE1());
+
+				otherTransformationResult.getFragmentOperators().clear();
+				otherTransformationResult
+						.addFragmentOperator(equalFragmentOperators.getE2());
+			}
+
+		}
+
+		addPostOptimizationElement(postOptimizationElements,
+				currentTransformationResult, otherTransformationResult);
 	}
 
 	private static void addPostOptimizationElement(
@@ -353,20 +399,24 @@ public class PostOptimizationHandler {
 			TransformationResult currentTransformationResult,
 			TransformationResult otherTransformationResult) {
 		for (PostOptimizationElement element : postOptimizationElements) {
-			if (element.getStartOperator().getUniqueIdentifier()
-					.equals(currentTransformationResult.getUniqueIdentifier())
+			if (element
+					.getStartOperator()
+					.getUniqueIdentifier()
+					.equals(currentTransformationResult.getUnionOperator()
+							.getUniqueIdentifier())
 					&& element
 							.getEndOperator()
 							.getUniqueIdentifier()
 							.equals(otherTransformationResult
+									.getFragmentOperators().get(0)
 									.getUniqueIdentifier())) {
 				return true;
 			} else if (element.getStartOperator().getUniqueIdentifier()
-					.equals(otherTransformationResult.getUniqueIdentifier())
+					.equals(otherTransformationResult.getUnionOperator().getUniqueIdentifier())
 					&& element
 							.getEndOperator()
 							.getUniqueIdentifier()
-							.equals(currentTransformationResult
+							.equals(currentTransformationResult.getFragmentOperators().get(0)
 									.getUniqueIdentifier())) {
 				return true;
 			}
@@ -374,7 +424,7 @@ public class PostOptimizationHandler {
 		return false;
 	}
 
-	private static Pair<HashFragmentAO, HashFragmentAO> fragmentAttributesAreEqual(
+	private static Pair<HashFragmentAO, HashFragmentAO> getFragmentOperatorsWithEqualAttributes(
 			List<HashFragmentAO> thisFragmentations,
 			List<HashFragmentAO> otherFragmentations) {
 		for (HashFragmentAO thisFragmentAO : thisFragmentations) {
