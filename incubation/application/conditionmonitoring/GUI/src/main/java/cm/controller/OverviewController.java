@@ -1,26 +1,21 @@
 package cm.controller;
 
-import cm.Main;
 import cm.communication.CommunicationService;
 import cm.communication.socket.SocketReceiver;
-import cm.configuration.*;
+import cm.configuration.AreaChartVisualizationInformation;
+import cm.configuration.ConfigurationService;
+import cm.configuration.GaugeVisualizationInformation;
+import cm.configuration.VisualizationInformation;
 import cm.data.DataHandler;
-import cm.model.*;
+import cm.model.Event;
 import cm.view.GaugeElement;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import jfxtras.labs.scene.control.gauge.linear.SimpleMetroArcGauge;
-import jfxtras.labs.scene.control.gauge.linear.elements.PercentSegment;
-import jfxtras.labs.scene.control.gauge.linear.elements.Segment;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -32,7 +27,7 @@ public class OverviewController implements Observer {
     private Map<SocketReceiver, List<VisualizationInformation>> visualizationInformationMap;
     private Map<VisualizationInformation, XYChart.Series> seriesMap;
     private Map<VisualizationInformation, GaugeElement> gaugeMap;
-    private Map<VisualizationInformation, Integer> counterMap;
+    private Map<VisualizationInformation, Long> counterMap;
 
     @FXML
     FlowPane overviewFlowPane;
@@ -66,6 +61,9 @@ public class OverviewController implements Observer {
         ac.setTitle(visualizationInformation.getTitle());
         xAxis.setForceZeroInRange(false);
 
+        // Show the little circle at each data point
+        ac.setCreateSymbols(visualizationInformation.isShowSymbols());
+
         if (visualizationInformation.getMaxElements() > 0) {
             // If we regularly delete elements animation does not look good
             ac.setAnimated(false);
@@ -75,7 +73,7 @@ public class OverviewController implements Observer {
         streamData.setName(visualizationInformation.getAttribute());
 
         seriesMap.put(visualizationInformation, streamData);
-        counterMap.put(visualizationInformation, 0);
+        counterMap.put(visualizationInformation, 0L);
 
         // Data Connection
         addConnection(visualizationInformation);
@@ -127,12 +125,21 @@ public class OverviewController implements Observer {
                     } else if (visualInfo instanceof AreaChartVisualizationInformation && seriesMap.get(visualInfo) != null) {
                         AreaChartVisualizationInformation areaChartVisualizationInformation = (AreaChartVisualizationInformation) visualInfo;
                         XYChart.Series series = seriesMap.get(visualInfo);
-                        int counter = counterMap.get(visualInfo);
-                        series.getData().add(new XYChart.Data<>(counter++, value));
+
+                        long timeAttribute = 0;
+                        if (((AreaChartVisualizationInformation) visualInfo).getTimeAttribute() != null && !((AreaChartVisualizationInformation) visualInfo).getTimeAttribute().isEmpty()) {
+                            String timeAttributeString = event.getAttributes().get(((AreaChartVisualizationInformation) visualInfo).getTimeAttribute());
+                            timeAttribute = Long.parseLong(timeAttributeString);
+                        } else {
+                            timeAttribute = counterMap.get(visualInfo);
+                            timeAttribute++;
+                            counterMap.put(visualInfo, timeAttribute);
+                        }
+
+                        series.getData().add(new XYChart.Data<>(timeAttribute, value));
                         if (areaChartVisualizationInformation.getMaxElements() > 0 && series.getData().size() > areaChartVisualizationInformation.getMaxElements()) {
                             series.getData().remove(0);
                         }
-                        counterMap.put(visualInfo, counter);
                     }
                 }
             }

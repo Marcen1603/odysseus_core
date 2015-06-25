@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.condition.rest.datatypes.Configuration;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.QueryInformation;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.ServerConfiguration;
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -95,6 +96,9 @@ public class ConfigurationService {
 							new Context());
 				} catch (QueryParseException e) {
 					e.printStackTrace();
+				} catch (PlanManagementException e) {
+					// Probably, the query with this name is already installed
+					e.printStackTrace();
 				}
 			}
 
@@ -104,6 +108,9 @@ public class ConfigurationService {
 					ExecutorServiceBinding.getExecutor().addQuery(source.getContent(), source.getParser(), session,
 							new Context());
 				} catch (QueryParseException e) {
+					e.printStackTrace();
+				} catch (PlanManagementException e) {
+					// Probably, the query with this name is already installed
 					e.printStackTrace();
 				}
 			}
@@ -115,6 +122,9 @@ public class ConfigurationService {
 					ExecutorServiceBinding.getExecutor().addQuery(content, query.getParser(), session, new Context());
 				} catch (QueryParseException e) {
 					e.printStackTrace();
+				} catch (PlanManagementException e) {
+					// Probably, the query with this name is already installed
+					e.printStackTrace();
 				}
 			}
 
@@ -124,6 +134,9 @@ public class ConfigurationService {
 					ExecutorServiceBinding.getExecutor().addQuery(query.getContent(), query.getParser(), session,
 							new Context());
 				} catch (QueryParseException e) {
+					e.printStackTrace();
+				} catch (PlanManagementException e) {
+					// Probably, the query with this name is already installed
 					e.printStackTrace();
 				}
 			}

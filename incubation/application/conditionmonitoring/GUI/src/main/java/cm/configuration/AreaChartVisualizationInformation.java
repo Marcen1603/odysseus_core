@@ -3,6 +3,8 @@ package cm.configuration;
 public class AreaChartVisualizationInformation extends VisualizationInformation {
 
 	private int maxElements;
+	private String timeAttribute;
+	private boolean showSymbols;
 
 	public int getMaxElements() {
 		return maxElements;
@@ -18,4 +20,29 @@ public class AreaChartVisualizationInformation extends VisualizationInformation 
 		this.maxElements = maxElements;
 	}
 
+	public String getTimeAttribute() {
+		return timeAttribute;
+	}
+
+	public void setTimeAttribute(String timeAttribute) {
+		this.timeAttribute = timeAttribute;
+	}
+
+	public boolean isShowSymbols() {
+		return showSymbols;
+	}
+
+	/**
+	 * If set to true, a small circle is plotted at every data point in the area
+	 * chart. If the density of data points is very high, this can hide the
+	 * actual data line. Therefore you can switch it off and on here. Default is
+	 * off.
+	 *
+	 * @param showSymbols
+	 */
+	public void setShowSymbols(boolean showSymbols) {
+		this.showSymbols = showSymbols;
+	}
+
 }
+

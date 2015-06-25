@@ -15,7 +15,6 @@ public class TransformStrategyFactory {
     }
 
     public ITransformStrategy getTransformStrategy(String dataType) {
-        // switch not working :-(
         if (dataType.equalsIgnoreCase("string")) {
             return new StringTransformStrategy();
         } else if (dataType.equalsIgnoreCase("integer")) {
@@ -36,7 +35,9 @@ public class TransformStrategyFactory {
             return new StartTimestampTransformStrategy();
         } else if (dataType.equalsIgnoreCase("endtimestamp")) {
             return new EndTimestampTransformStrategy();
-        } else {
+        } else if (dataType.equalsIgnoreCase("timestamp")) {
+            return new TimestampTransformStrategy();
+        }else {
             return null;
         }
     }

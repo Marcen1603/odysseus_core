@@ -19,12 +19,14 @@ public class RunConfigurationServerResource extends AbstractSessionServerResourc
 
 		Configuration config = ConfigurationService.getConfiguration(runRequest.getConfigurationId());
 		ConfigurationService.runConfiguration(config, session);
+		// TODO Set ip of the connections to the current IP of this Odysseus
 		return config.getClientConfiguration();
 		// SDFSchema out =
 		// ExecutorServiceBinding.getExecutor().getOutputSchema(4, session);
 		// Map<Integer, SDFSchema> outputSchemaMap =
 		// ExecutorServiceBinding.getExecutor().getLogicalQueryByName("cohort1",
 		// session).getLogicalPlan().getOutputSchemaMap();
+		
 		// System.out.println(out);
 		// System.out.println(outputSchemaMap);
 	}
