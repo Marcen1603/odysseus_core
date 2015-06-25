@@ -25,6 +25,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,6 +73,7 @@ public class LMS1xxProtocolHandler extends
 	public static final String USERNAME = "username";
 	public static final String PASSWORD = "password";
 	public static final String INIT_RAWDATA = "rawdata";
+	public static final String IGNORE_TIMESTAMP = "ignoretimestamp";
 
 	/** Key value parameter names. */
 	private final static String RAW_DATA = "RAWDATA";
@@ -101,11 +103,12 @@ public class LMS1xxProtocolHandler extends
 
 	private final Charset charset = Charset.forName("ASCII");
 
-	private ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
-	private String password = "client";
-	private String username = "client";
+	private ByteOrder byteOrder;
+	private String password;
+	private String username;
 	private ByteBuffer buffer;
-	private boolean addRawData = false;
+	private boolean addRawData;
+	private boolean ignoreTimestamp;
 
 	/**
      * 
@@ -131,21 +134,12 @@ public class LMS1xxProtocolHandler extends
 	
 	private void init_internal() {
 		this.buffer = ByteBuffer.allocateDirect(1024);
-		if (optionsMap.containsKey(LMS1xxProtocolHandler.BYTEORDER)) {
-			this.setByteOrder(optionsMap.get(LMS1xxProtocolHandler.BYTEORDER));
-		}
-		if (optionsMap.containsKey(LMS1xxProtocolHandler.USERNAME)) {
-			this.setUsername(optionsMap.get(LMS1xxProtocolHandler.USERNAME));
-		}
-		if (optionsMap.containsKey(LMS1xxProtocolHandler.PASSWORD)) {
-			this.setPassword(optionsMap.get(LMS1xxProtocolHandler.PASSWORD));
-		}
-		
-		if (optionsMap.containsKey(LMS1xxProtocolHandler.INIT_RAWDATA)) {
-			this.setAddRawData(Boolean.parseBoolean(optionsMap.get(LMS1xxProtocolHandler.INIT_RAWDATA)));
-		}		
+		setByteOrder(optionsMap.get(BYTEORDER, "BIG_ENDIAN"));
+		setUsername(optionsMap.get(USERNAME, "client"));
+		setPassword(optionsMap.get(PASSWORD, "client"));		
+		setAddRawData(optionsMap.getBoolean(INIT_RAWDATA, false));
+		setIgnoreTimestamp(optionsMap.getBoolean(IGNORE_TIMESTAMP, false));
 	}
-
 
 	/**
 	 * 
@@ -183,46 +177,28 @@ public class LMS1xxProtocolHandler extends
 			// {
 			try {
 				LMS1xxProtocolHandler.LOG.debug("Connected");
-				if (this.username.equalsIgnoreCase("maintainer")) {
-					this.send(LMS1xxConstants.SET_ACCESS_MODE_MAINTAINER_COMMAND
-							.getBytes(this.charset));
+				if (username.equalsIgnoreCase("maintainer")) {
+					send(LMS1xxConstants.SET_ACCESS_MODE_MAINTAINER_COMMAND.getBytes(this.charset));
 				} else if (this.username.equalsIgnoreCase("client")) {
-					this.send(LMS1xxConstants.SET_ACCESS_MODE_CLIENT_COMMAND
-							.getBytes(this.charset));
+					send(LMS1xxConstants.SET_ACCESS_MODE_CLIENT_COMMAND.getBytes(this.charset));
 				} else if (this.username.equalsIgnoreCase("service")) {
-					this.send(LMS1xxConstants.SET_ACCESS_MODE_SERVICE_COMMAND
-							.getBytes(this.charset));
+					send(LMS1xxConstants.SET_ACCESS_MODE_SERVICE_COMMAND.getBytes(this.charset));
 				}
-				Thread.sleep(1000);
-				final Calendar now = Calendar.getInstance(TimeZone
-						.getTimeZone("UTC"));
-
-				final StringBuilder timeString = new StringBuilder();
-				timeString.append(LMS1xxConstants.SET_DATETIME_COMMAND).append(
-						" ");
-				timeString.append("+").append(now.get(Calendar.YEAR))
-						.append(" ");
-				timeString.append("+").append((now.get(Calendar.MONTH) + 1))
-						.append(" ");
-				timeString.append("+").append(now.get(Calendar.DATE))
-						.append(" ");
-				timeString.append("+").append(now.get(Calendar.HOUR_OF_DAY))
-						.append(" ");
-				timeString.append("+").append(now.get(Calendar.MINUTE))
-						.append(" ");
-				timeString.append("+").append(now.get(Calendar.SECOND))
-						.append(" ");
-				timeString.append("+").append(now.get(Calendar.MILLISECOND));
-				this.send(timeString.toString().getBytes(this.charset));
-				Thread.sleep(1000);
-				this.send(LMS1xxConstants.RUN_COMMAND.getBytes(this.charset));
-				Thread.sleep(1000);
-				this.send(LMS1xxConstants.STOP_SCAN_COMMAND
-						.getBytes(this.charset));
-				Thread.sleep(1000);
-				this.send(LMS1xxConstants.START_SCAN_COMMAND
-						.getBytes(this.charset));
-			} catch (IOException | InterruptedException e) {
+				
+				TimeZone tz = TimeZone.getTimeZone("UTC");
+				Calendar now = Calendar.getInstance(tz);
+				SimpleDateFormat df = new SimpleDateFormat("+yyyy +M +d +h +m +s +S");
+				df.setTimeZone(tz);
+				String timeString = LMS1xxConstants.SET_DATETIME_COMMAND + " " + df.format(now.getTime());				
+				send(timeString.toString().getBytes(charset));								
+				
+				send(LMS1xxConstants.RUN_COMMAND.getBytes(charset));
+				
+				send(LMS1xxConstants.STOP_SCAN_COMMAND.getBytes(charset));
+				
+				send(LMS1xxConstants.START_SCAN_COMMAND.getBytes(charset));
+								
+			} catch (IOException e) {
 				LMS1xxProtocolHandler.LOG.error(e.getMessage(), e);
 			}
 		}
@@ -403,6 +379,22 @@ public class LMS1xxProtocolHandler extends
 			this.setByteOrder(ByteOrder.BIG_ENDIAN);
 		}
 	}
+	
+	public boolean doesAddRawData() {
+		return addRawData;
+	}
+
+	public void setAddRawData(boolean addRawData) {
+		this.addRawData = addRawData;
+	}
+	
+	public void setIgnoreTimestamp(boolean ignore) {
+		ignoreTimestamp  = ignore;
+	}
+	
+	public boolean getIgnoreTimestamp() {
+		return ignoreTimestamp;
+	}	
 
 	private KeyValueObject<? extends IMetaAttribute> parse()
 			throws LMS1xxReadErrorException, LMS1xxLoginException,
@@ -715,33 +707,47 @@ public class LMS1xxProtocolHandler extends
 		return event;
 	}
 
-	private KeyValueObject<? extends IMetaAttribute> parseLMS1xx(
-			final String message) throws LMS1xxLoginException,
-			LMS1xxUnknownMessageException {
+	private KeyValueObject<? extends IMetaAttribute> parseLMS1xx(final String message) 
+			throws LMS1xxLoginException,	LMS1xxUnknownMessageException 
+	{
 		final String[] data = message.split(" ");
-		if (message.startsWith(LMS1xxConstants.SRA)) {
-			if (LMS1xxConstants.LCM_STATE.equalsIgnoreCase(data[1])) {
+		if (message.startsWith(LMS1xxConstants.SRA)) 
+		{
+			if (LMS1xxConstants.LCM_STATE.equalsIgnoreCase(data[1])) 
+			{
 				final int dirtyness = Integer.parseInt(data[2]);
 				LMS1xxProtocolHandler.LOG.info("Dirtyness {} ", dirtyness);
 			}
-		} else if (message.startsWith(LMS1xxConstants.SEA)) {
-			LMS1xxProtocolHandler.LOG.debug("Receive message {} ({} byte)",
-					message, message.getBytes().length);
-		} else if (message.startsWith(LMS1xxConstants.SAN)) {
-			if (LMS1xxConstants.SET_ACCESS_MODE.equalsIgnoreCase(data[1])) {
+		} 
+		else if (message.startsWith(LMS1xxConstants.SEA)) 
+		{
+			LMS1xxProtocolHandler.LOG.debug("Receive message {} ({} byte)", message, message.getBytes().length);
+		} 
+		else if (message.startsWith(LMS1xxConstants.SAN)) 
+		{
+			if (LMS1xxConstants.SET_ACCESS_MODE.equalsIgnoreCase(data[1])) 
+			{
 				LMS1xxProtocolHandler.LOG.info("Login success {}", data[2]);
-			} else if (LMS1xxConstants.SET_DATETIME.equalsIgnoreCase(data[1])) {
-				LMS1xxProtocolHandler.LOG.info("Set date time success {}",
-						data[2]);
-			} else {
-				LMS1xxProtocolHandler.LOG.debug("Receive message {} ({} byte)",
-						message, message.getBytes().length);
+			} 
+			else if (LMS1xxConstants.SET_DATETIME.equalsIgnoreCase(data[1])) 
+			{
+				LMS1xxProtocolHandler.LOG.info("Set date time success {}", data[2]);
+			} 
+			else 
+			{
+				LMS1xxProtocolHandler.LOG.debug("Receive message {} ({} byte)", message, message.getBytes().length);
 			}
-		} else if (message.startsWith(LMS1xxConstants.SFA)) {
-			throw new LMS1xxLoginException(message);
-		} else if (message.startsWith(LMS1xxConstants.SSN)) {
-			if (LMS1xxConstants.LMD_SCANDATA.equalsIgnoreCase(data[1])) {
+		} 
+		else if (message.startsWith(LMS1xxConstants.SSN)) 
+		{
+			if (LMS1xxConstants.LMD_SCANDATA.equalsIgnoreCase(data[1]))
+			{
 				Measurement measurement = parseLMS1xxScanData(data);
+//				System.out.println("Timestamp diff = " + (measurement.getTimeStamp() - System.currentTimeMillis()));
+				
+				if (ignoreTimestamp)
+					measurement.setTimeStamp(System.currentTimeMillis());
+					
 				Map<String, Object> event = measurementToMap(measurement);
 				
 				if (addRawData)
@@ -749,9 +755,12 @@ public class LMS1xxProtocolHandler extends
 				
 				return new KeyValueObject<>(event);
 			}
-		} else {
-			throw new LMS1xxUnknownMessageException(message);
 		}
+		else if (message.startsWith(LMS1xxConstants.SFA)) 
+			throw new LMS1xxLoginException(message);
+		else
+			throw new LMS1xxUnknownMessageException(message);
+		
 		return null;
 	}
 
@@ -786,13 +795,4 @@ public class LMS1xxProtocolHandler extends
 		}
 		return true;
 	}
-
-	public boolean doesAddRawData() {
-		return addRawData;
-	}
-
-	public void setAddRawData(boolean addRawData) {
-		this.addRawData = addRawData;
-	}
-
 }
