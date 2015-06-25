@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.query.transformation.viewer.gui;
 
-import java.io.IOException;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -16,8 +14,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationCompiler;
-import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationCompilerParameter;
+import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.transformation.main.QueryTransformation;
 
 
 public class ExportQueryDialog extends Dialog {
@@ -120,12 +118,7 @@ public class ExportQueryDialog extends Dialog {
   
   
   private void saveInput(){
-	  TransformationCompilerParameter compilerParameter = new TransformationCompilerParameter(programLanguage.getText(),txtTempDirectory.getText(), txtTragetDirectory.getText(), queryId);
-	  try {
-		TransformationCompiler.transformQueryToStandaloneSystem(compilerParameter);
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	  TransformationParameter parameter = new TransformationParameter(programLanguage.getText(),txtTempDirectory.getText(), txtTragetDirectory.getText(), queryId);
+	  QueryTransformation.startQueryTransformation(parameter);
   }
 } 

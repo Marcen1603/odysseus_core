@@ -1,0 +1,34 @@
+package de.uniol.inf.is.odysseus.query.transformation.java.operator;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
+
+
+public class JavaSelectOperator extends AbstractTransformationOperator{
+	
+  private final String name =  new SelectAO().getClass().getSimpleName();
+  private final String targetPlatform = "Java";
+  
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getTargetPlatform() {
+		return targetPlatform;
+	}
+
+	@Override
+	public String getCode(ILogicalOperator operator) {
+		StringBuilder code = new StringBuilder();
+		code.append("Select selecttest = new Select();");
+		return code.toString();
+	}
+
+
+	
+	
+	
+}

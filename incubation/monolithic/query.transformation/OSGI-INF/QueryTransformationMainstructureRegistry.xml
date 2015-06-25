@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.query.transformation.mainstructure.registry.QueryTransformationMainstructureRegistry">
-   <implementation class="de.uniol.inf.is.odysseus.query.transformation.mainstructure.registry.QueryTransformationMainstructureRegistry"/>
-   <reference bind="registerMainstructure" cardinality="1..1" interface="de.uniol.inf.is.odysseus.query.transformation.mainstructure.ITransformationMainstructure" name="ITransformationMainstructure" policy="static"/>
-</scr:component>

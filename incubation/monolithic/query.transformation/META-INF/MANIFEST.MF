@@ -14,6 +14,10 @@ Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core
-Service-Component: OSGI-INF/QueryTransformationOperatorRegistry.xml,OSGI-INF/SelectTransformationOperator.xml,OSGI-INF/QueryTransformationMainstructureRegistry.xml,OSGI-INF/JavaTransformationMainstructure.xml, OSGI-INF/ExecutorServiceBinding.xml,
- OSGI-INF/ProjectTransformationOperator.xml
-Export-Package: de.uniol.inf.is.odysseus.query.transformation.compiler
+Service-Component: OSGI-INF/OperatorRegistry.xml, OSGI-INF/ExecutorServiceBinding.xml,
+ OSGI-INF/TargetPlatformRegistry.xml
+Export-Package: de.uniol.inf.is.odysseus.query.transformation.compiler,
+ de.uniol.inf.is.odysseus.query.transformation.main,
+ de.uniol.inf.is.odysseus.query.transformation.operator,
+ de.uniol.inf.is.odysseus.query.transformation.operator.registry,
+ de.uniol.inf.is.odysseus.query.transformation.target.platform
