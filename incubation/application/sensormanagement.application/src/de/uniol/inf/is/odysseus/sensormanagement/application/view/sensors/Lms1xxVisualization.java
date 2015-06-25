@@ -39,8 +39,13 @@ public class Lms1xxVisualization extends Visualization implements KeyListener
         setFocusable(true);
         addKeyListener(this);		
 	}
-	
+
 	public static void drawMeasurement(Graphics graphics, Measurement measurement, int translationX, int translationY, double rotation, int zoom)
+	{
+		drawMeasurement(graphics, measurement, translationX, translationY, rotation, zoom, Color.GREEN, Color.RED, Color.RED);
+	}
+	
+	public static void drawMeasurement(Graphics graphics, Measurement measurement, int translationX, int translationY, double rotation, int zoom, Color polygonColor, Color pointColor, Color lineColor)
 	{
 		if (zoom == 0.0) return;
 		
@@ -80,15 +85,24 @@ public class Lms1xxVisualization extends Visualization implements KeyListener
 	        tmpYPoints[index + 1] = translationY - yPoints.get(index);
 	    }
 	    
-	    graphics.setColor(Color.GREEN);
-//        graphics.fillPolygon(tmpXPoints, tmpYPoints, tmpXPoints.length);
+	    if (polygonColor != null)
+	    {
+	    	graphics.setColor(polygonColor);
+	    	graphics.fillPolygon(tmpXPoints, tmpYPoints, tmpXPoints.length);
+	    }
 
-        graphics.setColor(Color.RED);
-        for (int i = 1; i < tmpXPoints.length - 1; i++) 
-            graphics.drawRect(tmpXPoints[i], tmpYPoints[i], 1, 1);        
+	    if (pointColor != null)
+	    {
+	    	graphics.setColor(pointColor);
+	    	for (int i = 1; i < tmpXPoints.length - 1; i++) 
+	    		graphics.drawRect(tmpXPoints[i], tmpYPoints[i], 1, 1);
+	    }
         
-//        graphics.setColor(Color.RED);
-//	    graphics.drawPolyline(tmpXPoints, tmpYPoints, tmpXPoints.length);
+	    if (lineColor != null)
+	    {
+	    	graphics.setColor(lineColor);
+	    	graphics.drawPolyline(tmpXPoints, tmpYPoints, tmpXPoints.length);
+	    }
 	}
 	
     @Override

@@ -90,10 +90,10 @@ public abstract class Session extends JSplitPane
 			String mapImageFileName = scene.getPath() + scene.getMapImage();
 			try {
 				map = new MapVisualization(this, "Map", mapImageFileName);
+//				map.setDisplayConstraints("cell 0 0 2 2");
 			} catch (IOException e) {
 				throw new RuntimeException("Could not create map visualization", e);
 			}
-			map.setDisplayConstraints("cell 0 0 2 2");
 			addVisualization(map);
 		}
 	}
@@ -201,13 +201,10 @@ public abstract class Session extends JSplitPane
 		}
 	}		
 	
-/*	public void addVisualization(Visualization visualization)
-	{
-		addVisualization(visualization, null);
-	}*/
-	
 	public void addVisualization(Visualization visualization) 
-	{			
+	{		
+		if (visualizationList.contains(visualization)) return;
+		
 		boolean asFrame = false;
 //		asFrame = true;
 		if (asFrame)
@@ -237,14 +234,40 @@ public abstract class Session extends JSplitPane
 		visualizationList.add(visualization);
 	}
 	
+	public void updateVisualizationConstraints(Visualization visualization)
+	{
+		Object constraint = visualization.getDisplayConstraints();
+		if (visualizationList.contains(visualization))
+		{
+			if (presentationStyle == PresentationStyle.TILED)
+			{
+				viewTiledPanel.remove(visualization);
+				viewTiledPanel.add(visualization, constraint);
+				viewTiledPanel.revalidate();			
+			}
+		}
+		else
+			addVisualization(visualization);
+	}
+	
 	public void removeVisualization(Visualization visualization) 
 	{
+		if (!visualizationList.contains(visualization)) return;
+		
 		visualizationList.remove(visualization);
 		
 		Container c = visualization.getParent();
 		c.remove(visualization);
 		c.repaint();		
 	}		
+	
+	public void setMapConstraint(Object constraint) 
+	{
+		if (map == null)
+			throw new IllegalArgumentException("No map available. Cannot set constraints for map");
+		
+		map.setDisplayConstraints(constraint);
+	}	
 	
 	private class SessionTreeCellRenderer extends TreeCellRenderer
 	{

@@ -51,10 +51,6 @@ public class MapVisualization extends Visualization
         graphics.setColor(Color.BLACK);
         graphics.fillRect(0, 0, w, h);    	
 
-    	// Quit this function w/o having to comment everything to avoid warnings...
-    	// TODO: Do correct implementation of Map
-    	if (Math.abs(1+2)==3) return;        
-        
 		int mapW = mapImage.getWidth();
 		int mapH = mapImage.getHeight();
 		double ratio = (double)mapW / mapH;
@@ -68,12 +64,16 @@ public class MapVisualization extends Visualization
 			mapW = (int)(ratio * mapH);
 		}
 		
-		int mapX = 0; // (getWidth()  - mapW) / 2;
-		int mapY = 0; // (getHeight() - mapH) / 2;
-		double scale = getHeight() / 320.0; //(double)mapW / mapImage.getWidth();
+		int mapX = (getWidth()  - mapW) / 2;
+		int mapY = (getHeight() - mapH) / 2;
+		double scale = (double)mapW / mapImage.getWidth();
                 
 		graphics.drawImage(mapImage, mapX, mapY, mapW, mapH, this);
-    	
+
+    	// Quit this function w/o having to comment everything to avoid warnings...
+    	// TODO: Do correct implementation of Map
+//    	if (Math.abs(1+2)==3) return;        		
+		
     	for (Entry<SensorModel, Event> entry : currentEvents.entrySet())
     	{
     		SensorModel sensor = entry.getKey();
@@ -98,10 +98,74 @@ public class MapVisualization extends Visualization
     		if (position.length >= 2)
     			y = mapY + Integer.parseInt(position[1]) * scale;
     		
+    		
     		String ethAddr = ""; // sensor.getEthernetAddr()
-    		switch (ethAddr)
+    		
+    		switch (sensor.id)
     		{
-    			case "192.168.1.11":	// LMS 100
+    		// Aufnahmen aus BHV
+				case "LMS1xx_2039536063":	// LMS 100
+				{
+					// LMS 100
+					x = mapX + 190*scale;
+					y = mapY + 482*scale;
+					rot = Math.toRadians(17.0);
+					zoom = 550.0 / scale;
+					break;
+				}
+					
+				case "LMS1xx_1232438181":	// LMS 151
+	    		{
+	    			x = mapX + 172*scale;
+	    			y = mapY + 484*scale;
+	    			rot = Math.toRadians(40.0);
+	    			zoom = 700.0 / scale;
+	    			break;
+	    		}
+    		
+    		
+	    		case "192.168.1.30":	// Handy
+	    		{
+	    			x = mapX + 188*scale;
+	    			y = mapY + 487*scale;
+	    			rot = Math.toRadians(10.0);
+	    			angle = 60;
+	    			radius = 40.0 * scale;
+	    			break;    				
+	    		}
+	
+	    		case "192.168.1.31":	// IR
+	    		{
+	    			x = mapX + 780*scale;
+	    			y = mapY + 290*scale;
+	    			rot = Math.toRadians(150.0);
+	    			angle = 70;
+	    			radius = 40.0 * scale;
+	    			break;
+	    		}
+	
+	    		case "192.168.1.79":	// Basler AWI
+	    		{
+	    			x = mapX + 780*scale;
+	    			y = mapY + 290*scale;
+	    			rot = Math.toRadians(140.0);
+	    			angle = 90;
+	    			radius = 80.0 * scale;
+	    			break;
+	    		}    			    			
+	
+	    		case "192.168.1.78":	// Basler Mole
+	    		{
+	    			x = mapX + 178*scale;
+	    			y = mapY + 490*scale;
+	    			rot = Math.toRadians(65.0);
+	    			radius = 40.0 * scale;
+	    			angle = 58;
+	    			break;
+	    		}    		
+    		
+	    		// Vmtl Aufnahmen vom Offis-Tag Raum
+/*    			case "192.168.1.11":	// LMS 100
     			{
     				// LMS 100
     				x = mapX + 270*scale;
@@ -127,7 +191,7 @@ public class MapVisualization extends Visualization
 	    			rot = Math.toRadians(90.0);
 	    			zoom = 15.0 / scale;
 	    			break;
-	    		}	    		
+	    		}*/	    		
     		}
     		
     		if (position.length >= 3)
@@ -139,9 +203,8 @@ public class MapVisualization extends Visualization
 //				if (sensor.getEthernetAddr().equals("192.168.1.11"))
 				{
 					final BasicStroke solid = new BasicStroke();
-					graphics.setColor(scanColor);
 					graphics.setStroke(solid);
-					Lms1xxVisualization.drawMeasurement(graphics, (Measurement) event.getEventObject(), (int)x, (int)y, rot, (int)(zoom));
+					Lms1xxVisualization.drawMeasurement(graphics, (Measurement) event.getEventObject(), (int)x, (int)y, rot, (int)(zoom), null, null, scanColor);
 				}
 				
 				break;

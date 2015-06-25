@@ -297,16 +297,12 @@ public class MainFrame extends JFrame
 		LiveSession liveSession = new LiveSession(scene);
 		try
 		{
-			liveSession.addSensorBox("192.168.1.101:9669");
-			liveSession.addSensorBox("192.168.1.102:9669");
-			liveSession.addSensorBox("192.168.1.103:9669");
-			liveSession.addSensorBox("192.168.1.104:9669");
-			
 			liveSession.addSensorBox("192.168.1.2:9669");
-			liveSession.addSensorBox("192.168.1.3:9669");
-			liveSession.addSensorBox("127.0.0.1:9669");
+			liveSession.addSensorBox("192.168.2.2:9669");
+			liveSession.addSensorBox("192.168.3.2:9669");
+			liveSession.addSensorBox("192.168.4.2:9669");
 			
-			liveSession.addSensorBox("192.168.178.27:9669");
+			liveSession.addSensorBox("127.0.0.1:9669");
 			
 			addSession(liveSession);
 		}

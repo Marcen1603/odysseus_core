@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.TimeZone;
 
 import javax.swing.Timer;
@@ -228,6 +229,22 @@ public class PlaybackSession extends Session
 		        m.setDescription("End");
 		        timeBar.addMarker(m);
 			}
+			
+			for (View view : playbackScene.getViewList())
+			{
+				for (Entry<String, String> entry : view.constraintMap.entrySet())
+				{
+					String sensorId = entry.getKey();
+					String constraint = entry.getValue();
+					
+					if (sensorId.equals("Map"))
+					{
+						setMapConstraint(constraint);
+					}
+					else
+						getPlaybackSensor(sensorId).setConstraintString(constraint);
+				}
+			}			
 		}
 		
 		getTreeModel().nodeStructureChanged(getTreeRoot());

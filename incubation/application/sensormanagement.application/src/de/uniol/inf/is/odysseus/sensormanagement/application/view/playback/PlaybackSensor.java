@@ -25,15 +25,17 @@ public class PlaybackSensor extends ViewEntity implements ReceiverListener
 	private Visualization visualization;
 	private TreeSet<PlaybackReceiver> playbackReceivers;
 	private PlaybackReceiver currentReceiver = null;
+	private String constraintString = null;
 	
 	private double startTime = -1;
 	private double endTime = -1;
 	
-	public Visualization 				getVisualization() 	{ return visualization; }
-	public TreeSet<PlaybackReceiver> 	getReceivers() 		{ return playbackReceivers; }
-	public SensorModel					getSensorInfo()		{ return sensorInfo; }
-	public double	 	 				getStartTime() 		{ return startTime; }
-	public double		 				getEndTime() 		{ return endTime; }
+	public Visualization getVisualization() { return visualization; }
+	public TreeSet<PlaybackReceiver> getReceivers() { return playbackReceivers; }
+	public SensorModel getSensorInfo() { return sensorInfo; }
+	public double getStartTime() { return startTime; }
+	public double getEndTime() { return endTime; }
+	public String getConstraintString() { return constraintString; }
 	
 	public PlaybackSensor(PlaybackSession session, SensorModel sensorInfo) throws ViewException 
 	{
@@ -139,14 +141,8 @@ public class PlaybackSensor extends ViewEntity implements ReceiverListener
 	@Override public void startVisualization() 
 	{ 
 		if (visualization != null) return;
+		if ("disable".equals(constraintString)) return;
 
-		String constraintString = null;
-		
-/*		if (getSensorInfo().getEthernetAddr().equals("192.168.1.30")) { constraintString = "cell 3 0"; }
-		if (getSensorInfo().getEthernetAddr().equals("192.168.1.31")) { constraintString = "cell 3 1"; }
-		if (getSensorInfo().getEthernetAddr().equals("192.168.1.78")) { constraintString = "cell 2 0 1 2"; }
-		if (getSensorInfo().getEthernetAddr().equals("192.168.1.79")) { constraintString = "cell 0 2 4 1"; }*/
-		
 		visualization = sensorEntry.createVisualization(getSession(), getSensorInfo().displayName);
 		visualization.setDisplayConstraints(constraintString);
 		getSession().addVisualization(visualization);
@@ -160,6 +156,13 @@ public class PlaybackSensor extends ViewEntity implements ReceiverListener
 		visualization.remove();
 		visualization = null;
 		getSession().getTreeModel().nodeStructureChanged(getNode());
+	}
+	
+	public void setConstraintString(String constraintString)
+	{
+		this.constraintString = constraintString;
+		if (visualization != null)
+			visualization.setDisplayConstraints(constraintString);
 	}
 	
 	@Override public void treeDblClick()

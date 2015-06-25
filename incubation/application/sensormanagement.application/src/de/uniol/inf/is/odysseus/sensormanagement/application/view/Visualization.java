@@ -18,6 +18,7 @@ public abstract class Visualization extends JPanel implements ReceiverListener
 	public void setDisplayConstraints(Object displayConstraints) 
 	{
 		this.displayConstraints = displayConstraints;
+		session.updateVisualizationConstraints(this);
 	}
 
 	public Visualization(Session session, String displayName)

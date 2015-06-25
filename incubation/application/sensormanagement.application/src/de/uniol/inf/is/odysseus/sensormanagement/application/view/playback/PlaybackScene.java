@@ -46,6 +46,11 @@ public class PlaybackScene extends Scene
 		return intervalList;
 	}
 	
+	public List<View> getViewList() 
+	{
+		return viewList;
+	}	
+	
 	@Override
 	public void onUnmarshalling(File xmlFile) 
 	{
@@ -59,8 +64,7 @@ public class PlaybackScene extends Scene
 		instanceFiles.add(instanceFile.getName());
 		
 		return new Scene(instanceFile.getParent() + File.separator, sceneName, null, instanceFiles);
-	}
-	
+	}	
 }
 
 // MapVisualization Scenario BHV
