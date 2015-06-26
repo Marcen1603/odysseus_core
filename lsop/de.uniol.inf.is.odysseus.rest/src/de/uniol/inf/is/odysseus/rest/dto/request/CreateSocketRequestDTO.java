@@ -5,24 +5,27 @@ public class CreateSocketRequestDTO extends AbstractSessionRequestDTO {
 	private int rootPort;
 	private int queryId;
 	private String queryName;
-	private boolean useName;
+	private boolean useQueryName;
+	private String operatorName;
+	private int outputOperatorPort;
+	private boolean useOutputOperatorPort;
 
 	public CreateSocketRequestDTO() {
-		this.useName = false;
+		this.useQueryName = false;
 	}
 
 	public CreateSocketRequestDTO(String token, int queryId, int rootPort) {
 		super(token);
 		this.queryId = queryId;
 		this.rootPort = rootPort;
-		this.useName = false;
+		this.useQueryName = false;
 	}
 
 	public CreateSocketRequestDTO(String token, String queryName, int rootPort) {
 		super(token);
 		this.queryName = queryName;
 		this.rootPort = rootPort;
-		this.useName = true;
+		this.useQueryName = true;
 	}
 
 	public int getRootPort() {
@@ -49,12 +52,36 @@ public class CreateSocketRequestDTO extends AbstractSessionRequestDTO {
 		this.queryName = queryName;
 	}
 
-	public boolean isUseName() {
-		return useName;
+	public boolean isUseQueryName() {
+		return useQueryName;
 	}
 
-	public void setUseName(boolean useName) {
-		this.useName = useName;
+	public void setUseQueryName(boolean useName) {
+		this.useQueryName = useName;
+	}
+
+	public String getOperatorName() {
+		return operatorName;
+	}
+
+	public void setOperatorName(String operatorName) {
+		this.operatorName = operatorName;
+	}
+
+	public int getOutputOperatorPort() {
+		return outputOperatorPort;
+	}
+
+	public void setOutputOperatorPort(int outputOperatorPort) {
+		this.outputOperatorPort = outputOperatorPort;
+	}
+
+	public boolean isUseOutputOperatorPort() {
+		return useOutputOperatorPort;
+	}
+
+	public void setUseOutputOperatorPort(boolean useOutputOperatorPort) {
+		this.useOutputOperatorPort = useOutputOperatorPort;
 	}
 
 }
