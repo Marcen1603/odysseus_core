@@ -40,6 +40,8 @@ import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UpdatePermission;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -48,7 +50,9 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 public class FeatureUpdateUtility {
 
 	private static Logger LOG = LoggerFactory.getLogger(FeatureUpdateUtility.class);
-
+	private static final InfoService INFO = InfoServiceFactory
+			.getInfoService(FeatureUpdateUtility.class);
+	
 	private static URI REPOSITORY_LOC;
 
 	static {
@@ -171,6 +175,11 @@ public class FeatureUpdateUtility {
 			IProfileRegistry regProfile = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 			IProfile profileSelf = regProfile.getProfile(IProfileRegistry.SELF);
 
+			if (profileSelf == null){
+				INFO.warning("Could not create profile!");
+				return null;
+			}
+			
 			IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery();
 			IQueryResult<IInstallableUnit> allIUs = profileSelf.query(query, getDefaultMonitor());
 
