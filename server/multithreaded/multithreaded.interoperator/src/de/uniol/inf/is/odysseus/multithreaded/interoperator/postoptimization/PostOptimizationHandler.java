@@ -33,29 +33,43 @@ public class PostOptimizationHandler {
 			ILogicalQuery query,
 			List<TransformationResult> transformationResults,
 			boolean optimizationAllowed) {
+		// check if optimization is enabled (default)
+		if (!optimizationAllowed) {
+			INFO_SERVICE.info("Optimization of plan is disabled");
+			return;
+		}
+		//if there is no or only one, optimization doesn't make sense
+		if (transformationResults.isEmpty()
+				|| transformationResults.size() == 1) {
+			INFO_SERVICE
+					.info("Optimization of plan is not needed, because no or only one strategy has been processed");
+			return;
+		}
 
+		// prepare optimizations from transformation results
 		List<PostOptimizationElement> postOptimizationElements;
 		postOptimizationElements = prepareOptimizations(transformationResults,
 				optimizationAllowed);
 
-		if (postOptimizationElements != null
-				&& !postOptimizationElements.isEmpty()) {
-			// iterate through post optimizations
-			int processedOptimizationsCounter = 0;
-			for (PostOptimizationElement element : postOptimizationElements) {
-				boolean optimizationSuccessful = processOptimization(
-						logicalPlan, query, element);
-				if (optimizationSuccessful) {
-					processedOptimizationsCounter++;
-				}
-			}
-			INFO_SERVICE.info(processedOptimizationsCounter
-					+ " optimizations are processed.");
-		} else {
+		// check if there are valid optimizations available
+		if (postOptimizationElements == null
+				|| postOptimizationElements.isEmpty()) {
 			INFO_SERVICE
 					.info("Optimization not possible, because there are no fragmentations found, that can be combined.");
 			return;
 		}
+		
+		// iterate through post optimizations
+		int processedOptimizationsCounter = 0;
+		for (PostOptimizationElement element : postOptimizationElements) {
+			boolean optimizationSuccessful = processOptimization(logicalPlan,
+					query, element);
+			if (optimizationSuccessful) {
+				processedOptimizationsCounter++;
+			}
+		}
+		INFO_SERVICE.info(processedOptimizationsCounter
+				+ " optimizations are processed.");
 
 	}
 
@@ -99,8 +113,6 @@ public class PostOptimizationHandler {
 							doFinalConnection(iteration, lastNewOperator,
 									currentOperator);
 							break;
-						} else {
-							throw new Exception("");
 						}
 					}
 
@@ -218,8 +230,7 @@ public class PostOptimizationHandler {
 			List<LogicalSubscription> bufferSubscritpions = new ArrayList<LogicalSubscription>(
 					bufferOperator.getSubscriptions());
 			if (bufferSubscritpions.size() == 1) {
-				int sinkInPort = bufferSubscritpions.get(
-						0).getSinkInPort();
+				int sinkInPort = bufferSubscritpions.get(0).getSinkInPort();
 				ILogicalOperator destinationOperator = bufferSubscritpions.get(
 						0).getTarget();
 
@@ -231,8 +242,7 @@ public class PostOptimizationHandler {
 				// connect last new Operator
 				// to destination operator
 				destinationOperator.subscribeToSource(lastNewOperator,
-						sinkInPort, 0,
-						lastNewOperator.getOutputSchema());
+						sinkInPort, 0, lastNewOperator.getOutputSchema());
 			}
 		}
 	}
@@ -241,25 +251,15 @@ public class PostOptimizationHandler {
 			List<TransformationResult> transformationResults,
 			boolean optimizationAllowed) {
 		List<PostOptimizationElement> postOptimizationElements = new ArrayList<PostOptimizationElement>();
-		if (optimizationAllowed) {
-			if (!transformationResults.isEmpty()
-					&& transformationResults.size() > 1) {
-				if (validateTransformationResults(transformationResults)) {
-					postOptimizationElements = createPostOptimizationElements(transformationResults);
-				} else {
-					INFO_SERVICE
-							.warning("At least one transformation result is invalid");
-					return null;
-				}
-			} else {
-				INFO_SERVICE
-						.info("Optimization of plan is not needed, because no or only one strategy has been processed");
-				return null;
-			}
+
+		if (validateTransformationResults(transformationResults)) {
+			postOptimizationElements = createPostOptimizationElements(transformationResults);
 		} else {
-			INFO_SERVICE.info("Optimization of plan is disabled");
+			INFO_SERVICE
+					.warning("At least one transformation result is invalid");
 			return null;
 		}
+
 		return postOptimizationElements;
 	}
 
@@ -276,15 +276,6 @@ public class PostOptimizationHandler {
 	private static List<PostOptimizationElement> createPostOptimizationElements(
 			List<TransformationResult> transformationResults) {
 		List<PostOptimizationElement> postOptimizationElements = new ArrayList<PostOptimizationElement>();
-		combineTransformationResults(transformationResults,
-				postOptimizationElements);
-
-		return postOptimizationElements;
-	}
-
-	private static void combineTransformationResults(
-			List<TransformationResult> transformationResults,
-			List<PostOptimizationElement> postOptimizationElements) {
 		for (TransformationResult currentTransformationResult : transformationResults) {
 			// only first fragmentation is needed, because for every
 			// strategy every fragmentation is from the same type
@@ -316,6 +307,7 @@ public class PostOptimizationHandler {
 				}
 			}
 		}
+		return postOptimizationElements;
 	}
 
 	private static void processEqualFragementTypes(
@@ -439,7 +431,9 @@ public class PostOptimizationHandler {
 			List<PostOptimizationElement> postOptimizationElements,
 			TransformationResult currentTransformationResult,
 			TransformationResult otherTransformationResult) {
+		// for each existing post optimization element
 		for (PostOptimizationElement element : postOptimizationElements) {
+			// check first possible element combination
 			if (element
 					.getStartOperator()
 					.getUniqueIdentifier()
@@ -452,6 +446,7 @@ public class PostOptimizationHandler {
 									.getFragmentOperators().get(0)
 									.getUniqueIdentifier())) {
 				return true;
+			// and second possible element combination
 			} else if (element
 					.getStartOperator()
 					.getUniqueIdentifier()
