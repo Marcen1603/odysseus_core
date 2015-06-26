@@ -46,6 +46,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	final private IObjectHandler objectHandler;
 	final private boolean withMetadata;
 	private AbstractPhysicalSubscription<ISource<? extends IStreamObject<?>>> subscription;
+	private int serverPort;
 
 	public SocketSinkPO(int serverPort, String host,
 			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO,
@@ -64,6 +65,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		}
 		this.objectHandler = objectHandler;
 		this.withMetadata = withMetadata;
+		this.serverPort = serverPort;
 	}
 
 	public SocketSinkPO(IServerSocketProvider serverSocketProvider,
@@ -201,6 +203,10 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 
 	public void removeAllowedSessionId(String securityToken) {
 		listener.removeSessionId(securityToken);
+	}
+
+	public int getServerPort() {
+		return serverPort;
 	}
 
 }
