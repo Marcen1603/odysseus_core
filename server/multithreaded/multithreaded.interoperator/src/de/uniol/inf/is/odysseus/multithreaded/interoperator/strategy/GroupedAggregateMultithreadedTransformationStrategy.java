@@ -151,10 +151,11 @@ public class GroupedAggregateMultithreadedTransformationStrategy extends
 			CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 			downstreamOperatorSubscriptions
 					.addAll(lastOperatorForParallelization.getSubscriptions());
-
+			
+			lastOperatorForParallelization.unsubscribeFromAllSources();
+			lastOperatorForParallelization.unsubscribeFromAllSinks();
+			
 			for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-				lastOperatorForParallelization
-						.unsubscribeSink(downstreamOperatorSubscription);
 
 				downstreamOperatorSubscription.getTarget().subscribeToSource(
 						union, downstreamOperatorSubscription.getSinkInPort(),

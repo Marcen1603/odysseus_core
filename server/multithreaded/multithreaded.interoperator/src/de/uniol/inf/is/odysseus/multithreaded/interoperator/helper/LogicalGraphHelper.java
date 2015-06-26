@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.util.GenericDownstreamGraphWalker;
@@ -69,6 +70,10 @@ public class LogicalGraphHelper {
 					possibleSemanticChange = true;
 				}
 			}
+		} else if (currentOperator instanceof JoinAO){
+			// Join operators are never allowed between start and end point. 
+			throw new IllegalArgumentException(
+					"Join operators are not allowed between, start and end point");
 		} else {
 			if (assureSemanticCorrectness) {
 				throw new IllegalArgumentException(

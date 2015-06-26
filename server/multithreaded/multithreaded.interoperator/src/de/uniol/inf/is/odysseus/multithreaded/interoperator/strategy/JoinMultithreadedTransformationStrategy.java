@@ -178,9 +178,10 @@ public class JoinMultithreadedTransformationStrategy extends
 		downstreamOperatorSubscriptions.addAll(lastOperatorForParallelization
 				.getSubscriptions());
 
+		lastOperatorForParallelization.unsubscribeFromAllSources();
+		lastOperatorForParallelization.unsubscribeFromAllSinks();
+		
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			lastOperatorForParallelization
-					.unsubscribeSink(downstreamOperatorSubscription);
 			downstreamOperatorSubscription.getTarget().subscribeToSource(union,
 					downstreamOperatorSubscription.getSinkInPort(),
 					downstreamOperatorSubscription.getSourceOutPort(),

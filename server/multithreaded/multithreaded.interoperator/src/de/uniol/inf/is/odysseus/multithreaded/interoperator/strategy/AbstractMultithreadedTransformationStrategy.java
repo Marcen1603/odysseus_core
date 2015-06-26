@@ -98,8 +98,9 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 							+ " does not exist.");
 				}
 			} else {
-				
-				ILogicalOperator currentOperator = LogicalGraphHelper.getNextOperator(operatorForTransformation);
+
+				ILogicalOperator currentOperator = LogicalGraphHelper
+						.getNextOperator(operatorForTransformation);
 				while (currentOperator != null) {
 
 					boolean possibleSemanticChange = false;
@@ -107,18 +108,21 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 					// validation if stateful operators or stateful functions
 					// exists is only needed if semantic correctness is needed
 					if (currentOperator instanceof IStatefulAO) {
-						possibleSemanticChange = LogicalGraphHelper.validateStatefulAO(
-								settingsForOperator.isAssureSemanticCorrectness(),
-								aggregatesWithGroupingAllowed, currentOperator,
-								possibleSemanticChange);
+						possibleSemanticChange = LogicalGraphHelper
+								.validateStatefulAO(settingsForOperator
+										.isAssureSemanticCorrectness(),
+										aggregatesWithGroupingAllowed,
+										currentOperator, possibleSemanticChange);
 					} else if (currentOperator instanceof SelectAO) {
-						possibleSemanticChange = LogicalGraphHelper.validateSelectAO(
-								settingsForOperator.isAssureSemanticCorrectness(), currentOperator,
-								possibleSemanticChange);
+						possibleSemanticChange = LogicalGraphHelper
+								.validateSelectAO(settingsForOperator
+										.isAssureSemanticCorrectness(),
+										currentOperator, possibleSemanticChange);
 					} else if (currentOperator instanceof MapAO) {
-						possibleSemanticChange = LogicalGraphHelper.validateMapAO(
-								settingsForOperator.isAssureSemanticCorrectness(), currentOperator,
-								possibleSemanticChange);
+						possibleSemanticChange = LogicalGraphHelper
+								.validateMapAO(settingsForOperator
+										.isAssureSemanticCorrectness(),
+										currentOperator, possibleSemanticChange);
 					}
 
 					// if parameter with id is reached, parallelization is done
@@ -129,21 +133,23 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 												.getEndParallelizationId())) {
 							if (possibleSemanticChange
 									&& !settingsForOperator
-											.isAssureSemanticCorrectness()){
-								INFO_SERVICE.info("Parallelization between start and end id possibly "
-										+ "results in a semantic change of the given plan.");
+											.isAssureSemanticCorrectness()) {
+								INFO_SERVICE
+										.info("Parallelization between start and end id possibly "
+												+ "results in a semantic change of the given plan.");
 							}
 
-								// all operators including end operator are
-								// valid,
-								// validation successful
-								return;
+							// all operators including end operator are
+							// valid,
+							// validation successful
+							return;
 						}
 					}
 
 					// if end operator is not reached, we need to get the next
 					// operator
-					currentOperator = LogicalGraphHelper.getNextOperator(currentOperator);
+					currentOperator = LogicalGraphHelper
+							.getNextOperator(currentOperator);
 				}
 			}
 		}
@@ -156,7 +162,8 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 			MultithreadedOperatorSettings settingsForOperator) {
 
 		ILogicalOperator lastClonedOperator = newOperator;
-		ILogicalOperator currentExistingOperator = LogicalGraphHelper.getNextOperator(existingOperator);
+		ILogicalOperator currentExistingOperator = LogicalGraphHelper
+				.getNextOperator(existingOperator);
 		ILogicalOperator lastExistingOperator = existingOperator;
 
 		while (currentExistingOperator != null) {
@@ -181,8 +188,9 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 							lastClonedOperator.getOutputSchema());
 				} else {
 					// else connect new copied operator to target
-					int newSourceOutPort = LogicalGraphHelper.calculateNewSourceOutPort(
-							sourceSubscription, iteration);
+					int newSourceOutPort = LogicalGraphHelper
+							.calculateNewSourceOutPort(sourceSubscription,
+									iteration);
 
 					currentClonedOperator.subscribeToSource(sourceSubscription
 							.getTarget(), sourceSubscription.getSinkInPort(),
@@ -205,7 +213,8 @@ public abstract class AbstractMultithreadedTransformationStrategy<T extends ILog
 				}
 			}
 			lastExistingOperator = currentExistingOperator;
-			currentExistingOperator = LogicalGraphHelper.getNextOperator(currentExistingOperator);
+			currentExistingOperator = LogicalGraphHelper
+					.getNextOperator(currentExistingOperator);
 		}
 		return lastClonedOperator;
 	}

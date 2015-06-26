@@ -204,8 +204,10 @@ public class AggregateMultithreadedTransformationStrategy extends
 
 		// remove old subscription and subscribe new aggregate operator to
 		// existing downstream operators
+		aggregateOperator.unsubscribeFromAllSources();
+		aggregateOperator.unsubscribeFromAllSinks();
+		
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			aggregateOperator.unsubscribeSink(downstreamOperatorSubscription);
 			downstreamOperatorSubscription.getTarget().subscribeToSource(
 					combinePAAggregateOperator,
 					downstreamOperatorSubscription.getSinkInPort(),
