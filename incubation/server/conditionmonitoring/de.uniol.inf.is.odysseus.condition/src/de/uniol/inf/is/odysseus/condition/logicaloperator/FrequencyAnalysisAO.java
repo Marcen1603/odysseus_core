@@ -47,6 +47,7 @@ public class FrequencyAnalysisAO extends BinaryLogicalOp {
 	}
 
 	public FrequencyAnalysisAO(FrequencyAnalysisAO ao) {
+		super(ao);
 		this.toleranceNegative = ao.getToleranceNegative();
 		this.tolerancePositive = ao.getTolerancePositive();
 		this.deliverFirstElements = ao.isDeliverFirstElements();

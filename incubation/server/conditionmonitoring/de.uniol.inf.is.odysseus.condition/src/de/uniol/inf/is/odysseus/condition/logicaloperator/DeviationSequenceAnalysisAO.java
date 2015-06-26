@@ -43,6 +43,7 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 	}
 
 	public DeviationSequenceAnalysisAO(DeviationSequenceAnalysisAO ao) {
+		super(ao);
 		this.interval = ao.getInterval();
 
 		this.tupleCountLearnAttributeName = ao.getTupleGroupAttributeName();

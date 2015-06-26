@@ -47,6 +47,7 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 	}
 
 	public DeviationLearnAO(DeviationLearnAO ao) {
+		super(ao);
 		this.manualMean = ao.getManualMean();
 		this.manualStandardDeviation = ao.getManualStandardDeviation();
 		this.groupingAttributes = ao.getGroupingAttributes();

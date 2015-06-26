@@ -37,6 +37,7 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 	}
 
 	public DeviationSequenceLearnAO(DeviationSequenceLearnAO ao) {
+		super(ao);
 		this.valueAttributeName = ao.getValueAttributeName();
 		this.sequencesToLearn = ao.getCurvesToLearn();
 		this.fastGrouping = ao.isFastGrouping();

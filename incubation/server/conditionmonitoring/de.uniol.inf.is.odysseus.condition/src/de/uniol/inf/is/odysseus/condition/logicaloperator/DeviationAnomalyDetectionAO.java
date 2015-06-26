@@ -50,6 +50,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 	}
 
 	public DeviationAnomalyDetectionAO(DeviationAnomalyDetectionAO ao) {
+		super(ao);
 		this.setInterval(ao.getInterval());
 		this.setNameOfValue(ao.getNameOfValue());
 		if (ao.groupingAttributes != null) {

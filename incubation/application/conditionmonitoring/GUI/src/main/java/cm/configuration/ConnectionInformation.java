@@ -15,6 +15,9 @@ public class ConnectionInformation {
     private String queryName;
     private boolean useName;
     private List<AttributeInformation> attributes;
+    private String operatorName;
+    private int operatorOutputPort;
+    private boolean useOperatorOutputPort;
 
     public String getIp() {
         return ip;
@@ -56,28 +59,80 @@ public class ConnectionInformation {
         this.attributes = attributes;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public String getOperatorName() {
+        return operatorName;
+    }
 
-        ConnectionInformation that = (ConnectionInformation) o;
+    public void setOperatorName(String operatorName) {
+        this.operatorName = operatorName;
+    }
 
-        if (queryId != that.queryId) return false;
-        if (useName != that.useName) return false;
-        if (ip != null ? !ip.equals(that.ip) : that.ip != null) return false;
-        if (queryName != null ? !queryName.equals(that.queryName) : that.queryName != null) return false;
-        return !(attributes != null ? !attributes.equals(that.attributes) : that.attributes != null);
+    public int getOperatorOutputPort() {
+        return operatorOutputPort;
+    }
 
+    public void setOperatorOutputPort(int operatorOutputPort) {
+        this.operatorOutputPort = operatorOutputPort;
+    }
+
+    public boolean isUseOperatorOutputPort() {
+        return useOperatorOutputPort;
+    }
+
+    public void setUseOperatorOutputPort(boolean useOperatorOutputPort) {
+        this.useOperatorOutputPort = useOperatorOutputPort;
     }
 
     @Override
     public int hashCode() {
-        int result = ip != null ? ip.hashCode() : 0;
-        result = 31 * result + queryId;
-        result = 31 * result + (queryName != null ? queryName.hashCode() : 0);
-        result = 31 * result + (useName ? 1 : 0);
-        result = 31 * result + (attributes != null ? attributes.hashCode() : 0);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+        result = prime * result + ((ip == null) ? 0 : ip.hashCode());
+        result = prime * result + ((operatorName == null) ? 0 : operatorName.hashCode());
+        result = prime * result + operatorOutputPort;
+        result = prime * result + queryId;
+        result = prime * result + ((queryName == null) ? 0 : queryName.hashCode());
+        result = prime * result + (useName ? 1231 : 1237);
         return result;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ConnectionInformation other = (ConnectionInformation) obj;
+        if (attributes == null) {
+            if (other.attributes != null)
+                return false;
+        } else if (!attributes.equals(other.attributes))
+            return false;
+        if (ip == null) {
+            if (other.ip != null)
+                return false;
+        } else if (!ip.equals(other.ip))
+            return false;
+        if (operatorName == null) {
+            if (other.operatorName != null)
+                return false;
+        } else if (!operatorName.equals(other.operatorName))
+            return false;
+        if (operatorOutputPort != other.operatorOutputPort)
+            return false;
+        if (queryId != other.queryId)
+            return false;
+        if (queryName == null) {
+            if (other.queryName != null)
+                return false;
+        } else if (!queryName.equals(other.queryName))
+            return false;
+        if (useName != other.useName)
+            return false;
+        return true;
+    }
+
 }

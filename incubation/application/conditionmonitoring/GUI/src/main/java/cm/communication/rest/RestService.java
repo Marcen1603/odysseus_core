@@ -1,8 +1,10 @@
 package cm.communication.rest;
 
 import cm.communication.dto.*;
+import cm.communication.json.SocketInfoDeserializer;
 import cm.configuration.Configuration;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import org.restlet.representation.Representation;
@@ -11,10 +13,7 @@ import org.restlet.resource.ClientResource;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Tobias
@@ -78,7 +77,7 @@ public class RestService {
         }
     }
 
-    public static List<SocketInfo> runQuery(String ip, String token, String query) throws RestException {
+    public static Map<Integer, SocketInfo> runQuery(String ip, String token, String query) throws RestException {
         String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CORE;
         ClientResource crAddQuery = new ClientResource(hostURL + "/" + RESOURCE_PATH_ADD_QUERY);
         ClientResource crCreateSocket = new ClientResource(hostURL + "/" + RESOURCE_PATH_CREATE_SOCKET);
@@ -93,70 +92,59 @@ public class RestService {
             queryIds = gson.fromJson(addQueryRepresentation.getText(), GenericResponseDTO.class);
             // Create socket
             int queryId = queryIds.getValue().iterator().next().intValue();
-            return getResultsFromQuery(ip, token, queryId, "");
+            return getResultsFromQuery(ip, token, queryId);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static List<SocketInfo> getResultsFromQuery(String ip, String token, String queryName) throws RestException {
+    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, String queryName) throws RestException {
         CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryName);
         return getResultsFromQuery(ip, createSocketRequestDTO);
     }
 
-    public static List<SocketInfo> getResultsFromQuery(String ip, String token, int queryId, String queryName) throws RestException {
+    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, int queryId) throws RestException {
         CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryId);
-        createSocketRequestDTO.setQueryName(queryName);
+        return getResultsFromQuery(ip, createSocketRequestDTO);
+    }
+
+    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, String queryName, String operatorOutputName, int operatorOutputPort) throws RestException {
+        CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryName, operatorOutputName, operatorOutputPort);
+        return getResultsFromQuery(ip, createSocketRequestDTO);
+    }
+
+    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, int queryId, String operatorOutputName, int operatorOutputPort)
+            throws RestException {
+        CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryId, operatorOutputName, operatorOutputPort);
+        return getResultsFromQuery(ip, createSocketRequestDTO);
+    }
+
+    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, String queryName, String operatorOutputName) throws RestException {
+        CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryName, operatorOutputName);
+        return getResultsFromQuery(ip, createSocketRequestDTO);
+    }
+
+    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, int queryId, String operatorOutputName) throws RestException {
+        CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryId, operatorOutputName);
         return getResultsFromQuery(ip, createSocketRequestDTO);
     }
 
 
-    public static List<SocketInfo> getResultsFromQuery(String ip, CreateSocketRequestDTO createSocketRequestDTO) throws RestException {
+    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, CreateSocketRequestDTO createSocketRequestDTO) throws RestException {
         String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CORE;
         ClientResource crCreateSocket = new ClientResource(hostURL + "/" + RESOURCE_PATH_CREATE_SOCKET);
 
-        Gson gson = new Gson();
-        List<SocketInfo> infos = new ArrayList<>();
-
+        Gson gson = new GsonBuilder().registerTypeAdapter(SocketInfo.class, new SocketInfoDeserializer()).create();
         try {
-
             Representation createSocketRepresentation = crCreateSocket.post(createSocketRequestDTO);
-            GenericResponseDTO<List<LinkedTreeMap>> socketInfoWrapper = gson.fromJson(createSocketRepresentation.getText(), GenericResponseDTO.class);
-
-            for (LinkedTreeMap map : socketInfoWrapper.getValue()) {
-                String socketIp = (String) map.get("ip");
-                int socketPort = ((Double) map.get("port")).intValue();
-                List<AttributeInformation> socketSchema = new ArrayList<AttributeInformation>();
-                ArrayList schemaListMap = (ArrayList) map.get("schema");
-                for (Object aSchemaListMap : schemaListMap) {
-                    LinkedTreeMap schemaMap = (LinkedTreeMap) aSchemaListMap;
-                    String name = "";
-                    String dataType = "";
-                    for (Object key : schemaMap.keySet()) {
-                        String value = (String) schemaMap.get(key);
-                        if (key.equals("name"))
-                            name = value;
-                        else
-                            dataType = value;
-
-                        if (!name.isEmpty() && !dataType.isEmpty()) {
-                            AttributeInformation info = new AttributeInformation(name, dataType);
-                            socketSchema.add(info);
-                            name = "";
-                            dataType = "";
-                        }
-                    }
-                }
-                infos.add(new SocketInfo(socketIp, socketPort, socketSchema, createSocketRequestDTO.getQueryName()));
-            }
+            Type socketType = new TypeToken<HashMap<Integer, SocketInfo>>(){}.getType();
+            return gson.fromJson(createSocketRepresentation.getText(), socketType);
         } catch (IOException ex) {
             throw new RestException(ex.toString());
         } finally {
             crCreateSocket.release();
         }
-
-        return infos;
     }
 
     public static List<ConfigurationDescription> getConfigurations(String ip, String username, String password) throws RestException {

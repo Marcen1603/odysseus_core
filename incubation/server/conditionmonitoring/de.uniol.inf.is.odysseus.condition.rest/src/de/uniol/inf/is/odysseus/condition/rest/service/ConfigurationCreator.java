@@ -25,8 +25,8 @@ public class ConfigurationCreator {
 	public static void main(String[] args) {
 
 		Configuration config = new Configuration();
-		config.setName("Fridge");
-		config.setDescription("Fridge analysis.");
+		config.setName("Windpark Analysis");
+		config.setDescription("Cohort analysis of the wind power plants.");
 
 		// --------------------
 		// Client Configuration
@@ -37,31 +37,24 @@ public class ConfigurationCreator {
 		// --------------------------------
 		List<ConnectionInformation> connectionInformation = new ArrayList<>();
 
-		// The analysis of the durations
-		ConnectionInformation con1Fridge1 = new ConnectionInformation();
-		con1Fridge1.setIp("127.0.0.1");
-		con1Fridge1.setQueryName("fridgeIntervall");
-		con1Fridge1.setUseName(true);
-
-		ConnectionInformation con2Fridge1 = new ConnectionInformation();
-		con2Fridge1.setIp("127.0.0.1");
-		con2Fridge1.setQueryName("fridgeVibration");
-		con2Fridge1.setUseName(true);
+		ConnectionInformation conDeviation = new ConnectionInformation();
+		conDeviation.setIp("127.0.0.1");
+		conDeviation.setQueryName("cohort1");
+		conDeviation.setUseName(true);
+		conDeviation.setOperatorName("cohortDeviationOutput");
+		conDeviation.setOperatorOutputPort(0);
+		conDeviation.setUseOperatorOutputPort(true);
 		
-		ConnectionInformation con1Fridge2 = new ConnectionInformation();
-		con1Fridge2.setIp("127.0.0.1");
-		con1Fridge2.setQueryName("fridgeIntervall2");
-		con1Fridge2.setUseName(true);
+		ConnectionInformation conLOF = new ConnectionInformation();
+		conLOF.setIp("127.0.0.1");
+		conLOF.setQueryName("cohort1");
+		conLOF.setUseName(true);
+		conLOF.setOperatorName("cohortLOFOutput");
+		conLOF.setOperatorOutputPort(0);
+		conLOF.setUseOperatorOutputPort(true);
 
-		ConnectionInformation con2Fridge2 = new ConnectionInformation();
-		con2Fridge2.setIp("127.0.0.1");
-		con2Fridge2.setQueryName("fridgeVibration2");
-		con2Fridge2.setUseName(true);
-
-		connectionInformation.add(con1Fridge1);
-		connectionInformation.add(con2Fridge1);
-		connectionInformation.add(con1Fridge2);
-		connectionInformation.add(con2Fridge2);
+		connectionInformation.add(conDeviation);
+		connectionInformation.add(conLOF);
 		clientConfig.setConnectionInformation(connectionInformation);
 
 		// Visualizations
@@ -70,44 +63,41 @@ public class ConfigurationCreator {
 		List<AreaChartVisualizationInformation> areaChartVisualizationInformations = new ArrayList<>();
 
 		GaugeVisualizationInformation gauge = new GaugeVisualizationInformation();
-		gauge.setConnectionInformation(con1Fridge1);
-		gauge.setAttribute("anomalyScore");
+		gauge.setConnectionInformation(conLOF);
+		gauge.setAttribute("LOF");
 		gauge.setMinValue(0.0);
-		gauge.setMaxValue(1.0);
-		gauge.setStretch(true);
-		gauge.setTitle("Fridge One");
+		gauge.setMaxValue(25.0);
+		gauge.setTitle("LOF Value");
 		
-		GaugeVisualizationInformation gaugeFridge2 = new GaugeVisualizationInformation();
-		gaugeFridge2.setConnectionInformation(con1Fridge2);
-		gaugeFridge2.setAttribute("anomalyScore");
-		gaugeFridge2.setMinValue(0.0);
-		gaugeFridge2.setMaxValue(1.0);
-		gaugeFridge2.setStretch(true);
-		gaugeFridge2.setTitle("Fridge Two");
+		GaugeVisualizationInformation devGauge = new GaugeVisualizationInformation();
+		devGauge.setConnectionInformation(conLOF);
+		devGauge.setAttribute("anomalyScore");
+		devGauge.setMinValue(0.0);
+		devGauge.setMaxValue(1.0);
+		devGauge.setStretch(true);
+		devGauge.setTitle("Anomaly Score LOF");
 
 		AreaChartVisualizationInformation areaChartOverview = new AreaChartVisualizationInformation();
-		areaChartOverview.setConnectionInformation(con2Fridge1);
-		areaChartOverview.setAttribute("vibration");
-		areaChartOverview.setMaxElements(1000);
-		areaChartOverview.setTitle("Fridge One Vibration (Last 1000)");
-		areaChartOverview.setShowSymbols(false);
+		areaChartOverview.setConnectionInformation(conLOF);
+		areaChartOverview.setAttribute("LOF");
+		areaChartOverview.setMaxElements(50);
+		areaChartOverview.setTitle("LOF Chart");
 
-		AreaChartVisualizationInformation areaChartFullTime = new AreaChartVisualizationInformation();
-		areaChartFullTime.setConnectionInformation(con2Fridge1);
-		areaChartFullTime.setAttribute("vibration");
-		areaChartFullTime.setTitle("Fridge One Vibration (Full)");
-		areaChartFullTime.setTimeAttribute("start");
-		
-		AreaChartVisualizationInformation areaChartFullTimeFridge2 = new AreaChartVisualizationInformation();
-		areaChartFullTimeFridge2.setConnectionInformation(con2Fridge2);
-		areaChartFullTimeFridge2.setAttribute("vibration");
-		areaChartFullTimeFridge2.setTitle("Fridge Two Vibration (Full)");
+		AreaChartVisualizationInformation areaChartDeviationOverview = new AreaChartVisualizationInformation();
+		areaChartDeviationOverview.setConnectionInformation(conDeviation);
+		areaChartDeviationOverview.setAttribute("anomalyScore");
+		areaChartDeviationOverview.setTitle("Deviation Chart");
+
+		AreaChartVisualizationInformation areaChartCollection = new AreaChartVisualizationInformation();
+		areaChartCollection.setConnectionInformation(conLOF);
+		areaChartCollection.setAttribute("LOF");
+		areaChartCollection.setTitle("LOF Chart");
 
 		// For the overview
 		gaugeVisualizations.add(gauge);
-		gaugeVisualizations.add(gaugeFridge2);
+		gaugeVisualizations.add(devGauge);
 		areaChartVisualizationInformations.add(areaChartOverview);
-		areaChartVisualizationInformations.add(areaChartFullTime);
+		areaChartVisualizationInformations.add(areaChartDeviationOverview);
 		clientConfig.setGaugeVisualizationInformation(gaugeVisualizations);
 		clientConfig.setAreaChartVisualizationInformation(areaChartVisualizationInformations);
 
@@ -116,31 +106,29 @@ public class ConfigurationCreator {
 		List<CollectionInformation> collections = new ArrayList<>();
 
 		CollectionInformation collectionInformation = new CollectionInformation();
-		collectionInformation.setName("Fridge One");
+		collectionInformation.setName("Machine1");
 		List<ConnectionInformation> connectionInformationList = new ArrayList<>();
-		connectionInformationList.add(con1Fridge1);
+		connectionInformationList.add(conDeviation);
 		collectionInformation.setConnectionInformation(connectionInformationList);
 		collectionInformation.addGaugeVisualizationInformation(gauge);
 		// Define, how it should be colored
 		CollectionColoringInformation coloring1 = new CollectionColoringInformation();
-		coloring1.setConnectionInformation(con1Fridge1);
-		coloring1.setAttribute("anomalyScore");
+		coloring1.setConnectionInformation(conDeviation);
+		coloring1.setAttribute("LOF");
+		coloring1.setMaxValue(25);
 		coloring1.setMinValue(0);
-		coloring1.setMaxValue(1);
 		collectionInformation.setCollectionColoringInformation(coloring1);
-		collectionInformation.addAreaChartVisualizationInformation(areaChartFullTime);
 		// Add a link from this overview to a specific collection
 		gauge.setCollectionLink(collectionInformation.getIdentifier());
 
 		CollectionInformation collectionInformation2 = new CollectionInformation();
-		collectionInformation2.setName("Fridge Two");
+		collectionInformation2.setName("Machine2");
 		List<ConnectionInformation> connectionInformationList2 = new ArrayList<>();
-		connectionInformationList2.add(con1Fridge2);
+		connectionInformationList2.add(conDeviation);
 		collectionInformation2.setConnectionInformation(connectionInformationList2);
-		collectionInformation2.addGaugeVisualizationInformation(gaugeFridge2);
-		collectionInformation2.addAreaChartVisualizationInformation(areaChartFullTimeFridge2);
+		collectionInformation2.addAreaChartVisualizationInformation(areaChartCollection);
 		// Link to collection
-		gaugeFridge2.setCollectionLink(collectionInformation2.getIdentifier());
+		areaChartCollection.setCollectionLink(collectionInformation2.getIdentifier());
 
 		collections.add(collectionInformation);
 		collections.add(collectionInformation2);
@@ -152,23 +140,11 @@ public class ConfigurationCreator {
 		ServerConfiguration serverConfig = new ServerConfiguration();
 		serverConfig
 				.addSourcePath(
-						"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\sources\\vibrationSensorSource.qry",
+						"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\sources\\windParkSource.qry",
 						"OdysseusScript");
 		serverConfig
 				.addQueryPath(
-						"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\analysis\\fridge\\fridgeVibration.qry",
-						"OdysseusScript");
-		serverConfig
-				.addQueryPath(
-						"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\analysis\\fridge\\fridgeVibrationIntervallAnalysis.qry",
-						"OdysseusScript");
-		serverConfig
-				.addQueryPath(
-						"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\analysis\\fridge\\fridgeVibration2.qry",
-						"OdysseusScript");
-		serverConfig
-				.addQueryPath(
-						"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\analysis\\fridge\\fridgeVibrationIntervallAnalysis2.qry",
+						"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\analysis\\cohortAnalysis.qry",
 						"OdysseusScript");
 
 		// Put these to the big config

@@ -1,7 +1,6 @@
 package cm.communication;
 
 import cm.communication.dto.SocketInfo;
-import cm.communication.rest.RestException;
 import cm.communication.rest.RestService;
 import cm.communication.socket.SocketReceiver;
 import cm.configuration.ConnectionInformation;
@@ -29,14 +28,38 @@ public class CommunicationService {
                 receiverList = new ArrayList<>();
                 connectionInformationListMap.put(connectionInformation, receiverList);
             }
-            List<SocketInfo> socketInfos = null;
+            Map<Integer, SocketInfo> socketInfos;
+            String ip = connectionInformation.getIp();
             if (connectionInformation.isUseName()) {
-                socketInfos = RestService.getResultsFromQuery(connectionInformation.getIp(), token, connectionInformation.getQueryName());
+                if (connectionInformation.getOperatorName() != null && !connectionInformation.getOperatorName().isEmpty() && connectionInformation
+                        .isUseOperatorOutputPort()) {
+                    // We know exactly which output we need
+                    socketInfos = RestService.getResultsFromQuery(ip, token, connectionInformation.getQueryName(), connectionInformation.getOperatorName(),
+                            connectionInformation.getOperatorOutputPort());
+                } else if (connectionInformation.getOperatorName() != null && !connectionInformation.getOperatorName().isEmpty()) {
+                    // We know the output operator, but not the output port
+                    socketInfos = RestService.getResultsFromQuery(ip, token, connectionInformation.getQueryName(), connectionInformation.getOperatorName());
+                } else {
+                    // We only know the query
+                    socketInfos = RestService.getResultsFromQuery(connectionInformation.getIp(), token, connectionInformation.getQueryName());
+                }
             } else {
-                socketInfos = RestService.getResultsFromQuery(connectionInformation.getIp(), token, connectionInformation.getQueryId(),connectionInformation.getQueryName());
+                if (connectionInformation.getOperatorName() != null && !connectionInformation.getOperatorName().isEmpty() && connectionInformation
+                        .isUseOperatorOutputPort()) {
+                    // We know exactly which output we need
+                    socketInfos = RestService.getResultsFromQuery(ip, token, connectionInformation.getQueryId(), connectionInformation.getOperatorName(),
+                            connectionInformation.getOperatorOutputPort());
+                } else if (connectionInformation.getOperatorName() != null && !connectionInformation.getOperatorName().isEmpty()) {
+                    // We know the output operator, but not the output port
+                    socketInfos = RestService.getResultsFromQuery(ip, token, connectionInformation.getQueryId(), connectionInformation.getOperatorName());
+                } else {
+                    // We only know the query
+                    socketInfos = RestService.getResultsFromQuery(connectionInformation.getIp(), token, connectionInformation.getQueryId());
+                }
             }
 
-            for (SocketInfo socketInfo : socketInfos) {
+            for (int operatorOutputPort : socketInfos.keySet()) {
+                SocketInfo socketInfo = socketInfos.get(operatorOutputPort);
                 SocketReceiver receiver = new SocketReceiver(socketInfo);
                 receiverList.add(receiver);
                 ConnectionHandler.getInstance().addConnection(receiver);

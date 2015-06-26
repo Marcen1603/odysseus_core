@@ -38,6 +38,7 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp implements IHasP
 	}
 
 	public ValueAreaAnomalyDetectionAO(ValueAreaAnomalyDetectionAO ao) {
+		super(ao);
 		this.minValue = ao.getMinValue();
 		this.maxValue = ao.getMaxValue();
 		this.sendAllAnomalies = ao.sendAllAnomalies();

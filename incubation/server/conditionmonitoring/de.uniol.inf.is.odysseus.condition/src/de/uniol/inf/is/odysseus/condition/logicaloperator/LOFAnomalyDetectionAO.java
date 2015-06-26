@@ -41,6 +41,7 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 	}
 
 	public LOFAnomalyDetectionAO(LOFAnomalyDetectionAO ao) {
+		super(ao);
 		this.k = ao.getNumberOfNeighbors();
 		this.lofAnomalyValue = ao.getLOFAnomalyValue();
 		this.nameOfValue = ao.getNameOfValue();
