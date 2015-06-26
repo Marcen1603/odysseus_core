@@ -143,13 +143,13 @@ public class LiveSession extends Session
 		{ 
 			if (visualization != null) return;
 				
-			SensorFactoryEntry entry = SensorFactory.getInstance().getSensorType(sensor.getSensorModel2().type);
+			SensorFactoryEntry entry = SensorFactory.getInstance().getSensorType(sensor.getSensorModel().type);
 			
 			// TODO: When can this happen?
 			// TODO: Use better exception type
-			if (entry == null) throw new RuntimeException("Unknown sensor type: " + sensor.getSensorModel2().type);
+			if (entry == null) throw new RuntimeException("Unknown sensor type: " + sensor.getSensorModel().type);
 			
-			visualization = entry.createVisualization(LiveSession.this, sensor.getSensorModel2().displayName);
+			visualization = entry.createVisualization(LiveSession.this, sensor.getSensorModel().displayName);
 			receiver = entry.createReceiver(sensor);			
 			
 			try
@@ -197,7 +197,7 @@ public class LiveSession extends Session
 
 		@Override public String getDisplayName() 
 		{			
-			return (sensor != null) ? sensor.getSensorModel2().displayName : "";
+			return (sensor != null) ? sensor.getSensorModel().displayName : "";
 		}
 	}
 	

@@ -23,7 +23,9 @@ public class Scene implements XmlMarshalHelperHandler
 	private String path;
 	
 	private final String name;
-	private final String mapImage;
+	
+	@XmlElement(name = "map")
+	private final List<DisplayMap> maps;	
 	
 	@XmlElement(name = "serverInstance")		
 	public final List<String> instanceFiles;	
@@ -33,11 +35,11 @@ public class Scene implements XmlMarshalHelperHandler
 		this(null, null, null, null);
 	}
 
-	public Scene(String path, String name, String mapImage, List<String> instanceFiles)
+	public Scene(String path, String name, List<DisplayMap> maps, List<String> instanceFiles)
 	{		
 		this.path = path;
 		this.name = name;
-		this.mapImage = mapImage;
+		this.maps = maps == null ? new ArrayList<DisplayMap>() : maps;
 		this.instanceFiles = instanceFiles == null ? new ArrayList<String>() : instanceFiles;
 	}	
 	
@@ -49,8 +51,8 @@ public class Scene implements XmlMarshalHelperHandler
 		return name;
 	}
 
-	public String getMapImage() {
-		return mapImage;
+	public List<DisplayMap> getMapList() {
+		return maps;
 	}
 
 	public List<String> getInstanceFileList() {

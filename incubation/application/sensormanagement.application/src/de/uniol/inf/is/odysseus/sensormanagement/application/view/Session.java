@@ -85,12 +85,11 @@ public abstract class Session extends JSplitPane
 		
 		setPresentationStyle(PresentationStyle.TILED);
 		
-		if (scene.getMapImage() != null)
+		// TODO: Support more than one map
+		if (!scene.getMapList().isEmpty())
 		{
-			String mapImageFileName = scene.getPath() + scene.getMapImage();
 			try {
-				map = new MapVisualization(this, "Map", mapImageFileName);
-//				map.setDisplayConstraints("cell 0 0 2 2");
+				map = new MapVisualization(this, scene.getMapList().get(0));
 			} catch (IOException e) {
 				throw new RuntimeException("Could not create map visualization", e);
 			}

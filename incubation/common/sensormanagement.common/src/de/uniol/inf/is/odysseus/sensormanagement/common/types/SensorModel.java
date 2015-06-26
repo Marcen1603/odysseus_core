@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.position.Position;
-import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.MapXmlAdapter;
+import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.SimpleMapXmlAdapter;
 
 @XmlRootElement(name = "sensor")
 public class SensorModel 
@@ -18,7 +18,7 @@ public class SensorModel
 	public String type;
 	public String displayName;
 	
-	@XmlJavaTypeAdapter(MapXmlAdapter.class)
+	@XmlJavaTypeAdapter(SimpleMapXmlAdapter.class)
 	public Map<String, String> options = new HashMap<>();
 	public Position position;
 			

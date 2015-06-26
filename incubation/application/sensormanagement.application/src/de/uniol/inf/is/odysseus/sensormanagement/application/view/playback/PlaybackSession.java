@@ -183,6 +183,8 @@ public class PlaybackSession extends Session
 				playbackSensors.add(ps);
 			}
 			
+			System.out.println(XmlMarshalHelper.toXml(serverInstance));
+			
 			File dir = serverInstanceFile.getParentFile();
 			File[] directoryListing = dir.listFiles();
 			if (directoryListing != null)

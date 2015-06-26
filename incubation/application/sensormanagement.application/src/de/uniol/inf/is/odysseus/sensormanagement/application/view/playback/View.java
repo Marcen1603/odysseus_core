@@ -9,14 +9,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.MapXmlAdapter;
+import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.SimpleMapXmlAdapter;
 
 @XmlRootElement(name = "view")
 @XmlAccessorType (XmlAccessType.FIELD)
 public class View extends TimeInterval
 {
 	@XmlElement(name = "constraints")
-	@XmlJavaTypeAdapter(MapXmlAdapter.class)
+	@XmlJavaTypeAdapter(SimpleMapXmlAdapter.class)
 	final Map<String, String> constraintMap;
 	
 	public View()

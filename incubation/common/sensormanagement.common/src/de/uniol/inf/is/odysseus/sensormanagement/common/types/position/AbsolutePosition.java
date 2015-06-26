@@ -10,7 +10,7 @@ public class AbsolutePosition extends Position
 {
 	protected AbsolutePosition() {}
 	
-	double longitude, latitude, altitude, orientation;
+	public double longitude, latitude, altitude, orientation;
 	
 	public AbsolutePosition(double longitude, double latitude, double altitude, double orientation)
 	{

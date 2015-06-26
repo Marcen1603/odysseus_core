@@ -18,7 +18,8 @@ public class XmlMarshalHelper
     	JAXBContext context = JAXBContext.newInstance(classes);
 		Marshaller xmlMarshaller = context.createMarshaller();
 		xmlMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
+		xmlMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "");
+		
 		return xmlMarshaller;
 	}	
 

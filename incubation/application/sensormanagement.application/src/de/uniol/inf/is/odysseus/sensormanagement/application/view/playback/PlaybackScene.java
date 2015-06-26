@@ -2,14 +2,19 @@ package de.uniol.inf.is.odysseus.sensormanagement.application.view.playback;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.DisplayMap;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
+import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.StringMapMapXmlAdapter;
 
 @XmlRootElement(name = "playbackscene")
 @XmlAccessorType (XmlAccessType.FIELD)
@@ -21,17 +26,22 @@ public class PlaybackScene extends Scene
 	@XmlElement(name = "view") 	
 	private List<View> viewList;	
 	
+	@XmlJavaTypeAdapter(StringMapMapXmlAdapter.class)
+	@XmlElement(name = "displayInfo")
+	Map<String, Map<String, String>> displayInfoMap = new HashMap<>();	
+	
 	public PlaybackScene()
 	{		
-		this("","",null,null,null);
+		this("","",null,null,null, null);
 	}
 
-	public PlaybackScene(String path, String name, String mapImage, List<TimeInterval> intervalList, List<View> viewList)
+	public PlaybackScene(String path, String name, List<DisplayMap> maps, List<TimeInterval> intervalList, List<View> viewList, Map<String, Map<String, String>> displayInfoMap)
 	{		
-		super(path, name, mapImage, null);
+		super(path, name, maps, null);
 		
 		this.intervalList = intervalList != null ? intervalList : new ArrayList<TimeInterval>();
 		this.viewList = viewList != null ? viewList : new ArrayList<View>();
+		this.displayInfoMap = displayInfoMap != null ? displayInfoMap : new HashMap<String, Map<String, String>>();
 		
 		checkIntervals();
 	}	
@@ -50,6 +60,11 @@ public class PlaybackScene extends Scene
 	{
 		return viewList;
 	}	
+	
+	public Map<String, Map<String, String>> getDisplayInfoMap()
+	{
+		return displayInfoMap;
+	}
 	
 	@Override
 	public void onUnmarshalling(File xmlFile) 

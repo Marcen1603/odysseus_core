@@ -14,9 +14,9 @@ public class RemoteSensor implements ILoggable
 	
 	public String getId() { return sensor.id; }
 	public SensorClient getClient() { return client; }
-	public SensorModel getSensorModel2() { return sensor; }
+	public SensorModel getSensorModel() { return sensor; }
 	
-	public void setSensorModel2(SensorModel sensor) { this.sensor = sensor; }
+	public void setSensorModel(SensorModel sensor) { this.sensor = sensor; }
 	
 	public RemoteSensor(SensorClient client, SensorModel sensor) 
 	{

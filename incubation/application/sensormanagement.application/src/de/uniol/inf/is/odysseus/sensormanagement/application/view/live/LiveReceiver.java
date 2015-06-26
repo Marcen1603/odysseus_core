@@ -13,7 +13,7 @@ public abstract class LiveReceiver extends Receiver
 
 	public LiveReceiver(RemoteSensor sensor) 
 	{
-		super(sensor.getSensorModel2());
+		super(sensor.getSensorModel());
 		
 		this.sensor = sensor;
 	}

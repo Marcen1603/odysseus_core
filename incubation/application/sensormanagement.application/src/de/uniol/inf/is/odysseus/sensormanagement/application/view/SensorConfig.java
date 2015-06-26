@@ -27,7 +27,7 @@ public class SensorConfig
 		
 		if (originalSensor != null)
 		{
-			this.sensorInfo = new SensorModel(originalSensor.getSensorModel2());
+			this.sensorInfo = new SensorModel(originalSensor.getSensorModel());
 			state = State.ExistingUnchangedSensor;
 		}
 		else

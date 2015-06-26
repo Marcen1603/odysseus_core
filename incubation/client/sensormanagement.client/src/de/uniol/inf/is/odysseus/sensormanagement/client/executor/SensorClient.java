@@ -71,7 +71,7 @@ public abstract class SensorClient implements ILoggable
 
 	public void addSensor(RemoteSensor sensor)
 	{
-		sensor.getSensorModel2().id = sensorClient.addSensor(odysseusSession, sensor.getSensorModel2());
+		sensor.getSensorModel().id = sensorClient.addSensor(odysseusSession, sensor.getSensorModel());
 		sensors.add(sensor);	
 		
 		if (isInitialized())
@@ -80,7 +80,7 @@ public abstract class SensorClient implements ILoggable
 	
 	public void updateSensor(RemoteSensor sensor, SensorModel newSensorInfo)
 	{
-		sensor.setSensorModel2(newSensorInfo);
+		sensor.setSensorModel(newSensorInfo);
 		sensorClient.modifySensor(odysseusSession, sensor.getId(), newSensorInfo);
 		
 		if (isInitialized())

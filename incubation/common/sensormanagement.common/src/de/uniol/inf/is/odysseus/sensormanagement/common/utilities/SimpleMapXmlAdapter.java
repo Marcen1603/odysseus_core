@@ -24,9 +24,9 @@ class MapElements
     }
 }
 
-public class MapXmlAdapter extends XmlAdapter<MapElements[], Map<String, String>> 
+public class SimpleMapXmlAdapter extends XmlAdapter<MapElements[], Map<String, String>> 
 {
-    public MapXmlAdapter() {
+    public SimpleMapXmlAdapter() {
     }
 
     public MapElements[] marshal(Map<String, String> map) 

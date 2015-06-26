@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.MapXmlAdapter;
+import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.SimpleMapXmlAdapter;
 
 @XmlRootElement(name = "sensortype")
 public class SensorType
@@ -16,7 +16,7 @@ public class SensorType
 	public final String liveViewQueryText;
 	public final String liveViewUrl;
 	
-	@XmlJavaTypeAdapter(MapXmlAdapter.class)
+	@XmlJavaTypeAdapter(SimpleMapXmlAdapter.class)
 	public final Map<String, String> optionsInformation;	
 	
 	public SensorType()
