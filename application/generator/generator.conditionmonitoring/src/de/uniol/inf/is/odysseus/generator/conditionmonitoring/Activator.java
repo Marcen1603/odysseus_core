@@ -60,31 +60,36 @@ public class Activator implements BundleActivator {
 		TemperatureDataProvider tempProvider = new TemperatureDataProvider();
 		StreamServer tempServer = new StreamServer(53212, tempProvider);
 		tempServer.start();
-		
+
 		// Create a manual data provider
 		ManualDataProvider manualProvider = new ManualDataProvider();
 		StreamServer manualServer = new StreamServer(53213, manualProvider);
 		manualServer.start();
-		
+
 		// Create a fridge vibration data provider
 		FridgeVibrationSensorDataProvider fridgeProvider = new FridgeVibrationSensorDataProvider();
 		StreamServer fridgeServer = new StreamServer(53214, fridgeProvider);
 		fridgeServer.start();
-		
+
 		// Create a slow temperature data provider
 		SlowTemperatureDataProvider slowTempProvider = new SlowTemperatureDataProvider();
 		StreamServer slowTempServer = new StreamServer(53215, slowTempProvider);
 		slowTempServer.start();
 
-		// Create a data provider for the milling cutter 
+		// Create a data provider for the milling cutter
 		MillingCutterPowerConsumptionDataProvider millingCutterProvider = new MillingCutterPowerConsumptionDataProvider();
 		StreamServer millingCutterServer = new StreamServer(53216, millingCutterProvider);
 		millingCutterServer.start();
-		
+
+		// And another fridge
+		FridgeVibrationSensorDataProvider fridgeProvider2 = new FridgeVibrationSensorDataProvider();
+		StreamServer fridgeServer2 = new StreamServer(53217, fridgeProvider2);
+		fridgeServer2.start();
+
 		// Listen for commands
 		while (true) {
 			sc = new Scanner(System.in);
-			while(sc.hasNextLine()) {
+			while (sc.hasNextLine()) {
 				String command = sc.nextLine();
 				if (command.equalsIgnoreCase("stopfirst")) {
 					// Wind power plant
@@ -106,19 +111,26 @@ public class Activator implements BundleActivator {
 					// Fridge
 					fridgeProvider.resume();
 					System.out.println("Resumed fridge");
+				} else if (command.equalsIgnoreCase("pauseFridge2")) {
+					// Fridge 2
+					fridgeProvider2.pause();
+				} else if (command.equalsIgnoreCase("resumeFridge2")) {
+					// Fridge 2
+					fridgeProvider2.resume();
 				} else {
+
 					double newValue = 0;
 					try {
 						newValue = Double.parseDouble(command);
 					} catch (Exception e) {
 						System.out.println("Could not parse command.");
 					}
-					
+
 					manualProvider.sendNewValue(newValue);
 				}
 				Thread.sleep(10);
 			}
-			
+
 		}
 	}
 
