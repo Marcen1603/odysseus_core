@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIBindings;
 import de.uniol.inf.is.odysseus.query.transformation.operator.IOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.registry.OperatorRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.AbstractTargetPlatform;
@@ -30,12 +31,15 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			TransformationParameter parameter) {
 		// TODO Auto-generated method stub
 		
-		
+		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
 		testWrite = new JavaFileWrite("TestFile.java",parameter);
 		try {
 			testWrite.createFile();
 			
 			testWrite.writeClassTop();
+			
+			testWrite.writeBody(javaEmulateOSGIBindings.getCodeForDataHandlerRegistry());
+			
 			
 			walkThroughLogicalPlan(query,parameter);
 			
@@ -59,8 +63,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		}else{
 			System.out.println("Operator-Name: "+topAO.getName()+" "+ topAO.getClass().getSimpleName());
 			IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), topAO.getClass().getSimpleName());
-	
-			
+
+		
 			if(opTrans != null ){
 				System.out.println(opTrans.getCode(topAO));
 				testWrite.writeBody(opTrans.getCode(topAO));

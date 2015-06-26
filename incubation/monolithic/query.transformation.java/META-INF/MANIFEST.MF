@@ -10,6 +10,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.query.transformation,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.slf4j
-Service-Component: OSGI-INF/JavaSelectOperator.xml,
- OSGI-INF/JavaProjectOperator.xml,
- OSGI-INF/JavaTargetPlatform.xml
+Service-Component: OSGI-INF/JavaSelectOperator.xml,OSGI-INF/JavaProjectOperator.xml,OSGI-INF/JavaTargetPlatform.xml,
+ OSGI-INF/JavaCSVFileSourceOperator.xml
