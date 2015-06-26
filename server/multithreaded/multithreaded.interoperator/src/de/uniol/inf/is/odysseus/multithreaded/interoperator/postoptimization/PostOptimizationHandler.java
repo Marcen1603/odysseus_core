@@ -218,17 +218,20 @@ public class PostOptimizationHandler {
 			List<LogicalSubscription> bufferSubscritpions = new ArrayList<LogicalSubscription>(
 					bufferOperator.getSubscriptions());
 			if (bufferSubscritpions.size() == 1) {
+				int sinkInPort = bufferSubscritpions.get(
+						0).getSinkInPort();
 				ILogicalOperator destinationOperator = bufferSubscritpions.get(
 						0).getTarget();
 
-				// remove existing
-				// subscriptions
-				destinationOperator.unsubscribeFromAllSources();
+				// remove existing subscriptions
+				destinationOperator.unsubscribeFromSource(bufferSubscritpions
+						.get(0));
 				lastNewOperator.unsubscribeFromAllSinks();
 
 				// connect last new Operator
 				// to destination operator
-				destinationOperator.subscribeToSource(lastNewOperator, 0, 0,
+				destinationOperator.subscribeToSource(lastNewOperator,
+						sinkInPort, 0,
 						lastNewOperator.getOutputSchema());
 			}
 		}
