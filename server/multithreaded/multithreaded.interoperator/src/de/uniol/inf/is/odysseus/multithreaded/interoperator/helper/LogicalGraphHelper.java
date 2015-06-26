@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.util.GenericDownstreamGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.GenericUpstreamGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.OperatorIdLogicalGraphVisitor;
@@ -70,7 +69,7 @@ public class LogicalGraphHelper {
 					possibleSemanticChange = true;
 				}
 			}
-		} else if (!(currentOperator instanceof UnionAO)){
+		} else {
 			if (assureSemanticCorrectness) {
 				throw new IllegalArgumentException(
 						"No stateful operators allowed between start "

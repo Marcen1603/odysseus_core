@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.multithreaded.helper.SDFAttributeHelper;
@@ -76,7 +75,6 @@ public class PostOptimizationHandler {
 					unionOperator.getSubscribedToSource());
 
 			int iteration = 0;
-			List<ILogicalOperator> unionsOnPath = new ArrayList<ILogicalOperator>();
 
 			for (LogicalSubscription unionSourceSubscription : unionSourceSubscriptions) {
 				ILogicalOperator unionSourceOperator = unionSourceSubscription
@@ -120,7 +118,8 @@ public class PostOptimizationHandler {
 								currentOperator, false);
 						if (currentOperator instanceof AggregateAO
 								&& fragmentOperator instanceof HashFragmentAO) {
-							// check if attributes of aggregation are equal to attributes of fragmentation
+							// check if attributes of aggregation are equal to
+							// attributes of fragmentation
 							List<AbstractFragmentAO> fragmentAOs = new ArrayList<AbstractFragmentAO>();
 							fragmentAOs.add((HashFragmentAO) fragmentOperator);
 							SDFAttributeHelper.checkIfAttributesAreEqual(
@@ -129,30 +128,17 @@ public class PostOptimizationHandler {
 						}
 					}
 
-					// union operators are only connected in first iteration,
-					// because otherwise we get duplicate elements if it is
-					// connected with each fragment
-					if (!(currentOperator instanceof UnionAO)
-							|| (currentOperator instanceof UnionAO && iteration == 0)) {
-						// clone existing operator and change uuid and name
-						currentNewOperator = cloneOperator(iteration,
-								currentOperator);
+					// clone existing operator and change uuid and name
+					currentNewOperator = cloneOperator(iteration,
+							currentOperator);
 
-						// connect new operator with last operator
-						connectNewOperators(iteration, currentNewOperator,
-								lastNewOperator, lastOperator, currentOperator);
+					// connect new operator with last operator
+					connectNewOperators(iteration, currentNewOperator,
+							lastNewOperator, lastOperator, currentOperator);
 
-						// we need to remember union operators on path between
-						// start and end
-						if (currentOperator instanceof UnionAO) {
-
-							unionsOnPath.add(currentOperator);
-						}
-
-						// prepare for next iteration
-						lastNewOperator = currentNewOperator;
-						lastOperator = currentOperator;
-					}
+					// prepare for next iteration
+					lastNewOperator = currentNewOperator;
+					lastOperator = currentOperator;
 
 					currentOperator = LogicalGraphHelper
 							.getNextOperator(currentOperator);
@@ -162,13 +148,6 @@ public class PostOptimizationHandler {
 			// remove old subscriptions from fragment and union operator
 			unionOperator.unsubscribeFromAllSources();
 			fragmentOperator.unsubscribeFromAllSinks();
-
-			// we need to remove the subscriptions from all union operators
-			// found between start and endpoint of optimization
-			for (ILogicalOperator unionOnPath : unionsOnPath) {
-				unionOnPath.unsubscribeFromAllSinks();
-				unionOnPath.unsubscribeFromAllSources();
-			}
 
 		} catch (Exception e) {
 			// if something went wrong, revert plan
