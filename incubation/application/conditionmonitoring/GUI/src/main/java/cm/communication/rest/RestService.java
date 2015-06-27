@@ -77,7 +77,7 @@ public class RestService {
         }
     }
 
-    public static Map<Integer, SocketInfo> runQuery(String ip, String token, String query) throws RestException {
+    public static Map<String, Map<Integer, SocketInfo>> runQuery(String ip, String token, String query) throws RestException {
         String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CORE;
         ClientResource crAddQuery = new ClientResource(hostURL + "/" + RESOURCE_PATH_ADD_QUERY);
         ClientResource crCreateSocket = new ClientResource(hostURL + "/" + RESOURCE_PATH_CREATE_SOCKET);
@@ -99,46 +99,46 @@ public class RestService {
         return null;
     }
 
-    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, String queryName) throws RestException {
+    public static Map<String, Map<Integer, SocketInfo>> getResultsFromQuery(String ip, String token, String queryName) throws RestException {
         CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryName);
         return getResultsFromQuery(ip, createSocketRequestDTO);
     }
 
-    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, int queryId) throws RestException {
+    public static Map<String, Map<Integer, SocketInfo>> getResultsFromQuery(String ip, String token, int queryId) throws RestException {
         CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryId);
         return getResultsFromQuery(ip, createSocketRequestDTO);
     }
 
-    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, String queryName, String operatorOutputName, int operatorOutputPort) throws RestException {
+    public static Map<String, Map<Integer, SocketInfo>> getResultsFromQuery(String ip, String token, String queryName, String operatorOutputName, int operatorOutputPort) throws RestException {
         CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryName, operatorOutputName, operatorOutputPort);
         return getResultsFromQuery(ip, createSocketRequestDTO);
     }
 
-    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, int queryId, String operatorOutputName, int operatorOutputPort)
+    public static Map<String, Map<Integer, SocketInfo>> getResultsFromQuery(String ip, String token, int queryId, String operatorOutputName, int operatorOutputPort)
             throws RestException {
         CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryId, operatorOutputName, operatorOutputPort);
         return getResultsFromQuery(ip, createSocketRequestDTO);
     }
 
-    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, String queryName, String operatorOutputName) throws RestException {
+    public static Map<String, Map<Integer, SocketInfo>> getResultsFromQuery(String ip, String token, String queryName, String operatorOutputName) throws RestException {
         CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryName, operatorOutputName);
         return getResultsFromQuery(ip, createSocketRequestDTO);
     }
 
-    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, String token, int queryId, String operatorOutputName) throws RestException {
+    public static Map<String, Map<Integer, SocketInfo>> getResultsFromQuery(String ip, String token, int queryId, String operatorOutputName) throws RestException {
         CreateSocketRequestDTO createSocketRequestDTO = new CreateSocketRequestDTO(token, queryId, operatorOutputName);
         return getResultsFromQuery(ip, createSocketRequestDTO);
     }
 
 
-    public static Map<Integer, SocketInfo> getResultsFromQuery(String ip, CreateSocketRequestDTO createSocketRequestDTO) throws RestException {
+    public static Map<String, Map<Integer, SocketInfo>> getResultsFromQuery(String ip, CreateSocketRequestDTO createSocketRequestDTO) throws RestException {
         String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CORE;
         ClientResource crCreateSocket = new ClientResource(hostURL + "/" + RESOURCE_PATH_CREATE_SOCKET);
 
         Gson gson = new GsonBuilder().registerTypeAdapter(SocketInfo.class, new SocketInfoDeserializer()).create();
         try {
             Representation createSocketRepresentation = crCreateSocket.post(createSocketRequestDTO);
-            Type socketType = new TypeToken<HashMap<Integer, SocketInfo>>(){}.getType();
+            Type socketType = new TypeToken<HashMap<String, HashMap<Integer, SocketInfo>>>(){}.getType();
             return gson.fromJson(createSocketRepresentation.getText(), socketType);
         } catch (IOException ex) {
             throw new RestException(ex.toString());

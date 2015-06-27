@@ -28,7 +28,7 @@ public class CommunicationService {
                 receiverList = new ArrayList<>();
                 connectionInformationListMap.put(connectionInformation, receiverList);
             }
-            Map<Integer, SocketInfo> socketInfos;
+            Map<String, Map<Integer, SocketInfo>> socketInfos;
             String ip = connectionInformation.getIp();
             if (connectionInformation.isUseName()) {
                 if (connectionInformation.getOperatorName() != null && !connectionInformation.getOperatorName().isEmpty() && connectionInformation
@@ -58,11 +58,15 @@ public class CommunicationService {
                 }
             }
 
-            for (int operatorOutputPort : socketInfos.keySet()) {
-                SocketInfo socketInfo = socketInfos.get(operatorOutputPort);
-                SocketReceiver receiver = new SocketReceiver(socketInfo);
-                receiverList.add(receiver);
-                ConnectionHandler.getInstance().addConnection(receiver);
+            // Add connection for every info we got
+            for (String operatorName : socketInfos.keySet()) {
+                Map<Integer, SocketInfo> singleSocketInfos = socketInfos.get(operatorName);
+                for (int operatorOutputPort : singleSocketInfos.keySet()) {
+                    SocketInfo socketInfo = singleSocketInfos.get(operatorOutputPort);
+                    SocketReceiver receiver = new SocketReceiver(socketInfo);
+                    receiverList.add(receiver);
+                    ConnectionHandler.getInstance().addConnection(receiver);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

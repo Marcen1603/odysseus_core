@@ -66,8 +66,11 @@ public class ConfigurationService {
             for (CollectionInformation collectionInfo : configuration.getCollections()) {
                 Collection collection = new Collection(collectionInfo.getName(), collectionInfo.getIdentifier());
                 if (collectionInfo.getCollectionColoringInformation() != null) {
-                    List<SocketReceiver> socketReceivers = CommunicationService.getSocketReceivers(collectionInfo.getCollectionColoringInformation().getConnectionInformation());
-                    // As we can't distinguish between multiple outputs of one query, we have to do this awkward search (which hopefully, but not necessarily finds what we need)
+                    List<SocketReceiver> socketReceivers = CommunicationService.getSocketReceivers(collectionInfo.getCollectionColoringInformation()
+                            .getConnectionInformation());
+                    // If the connection information is used with enough information (operatorname and outputport), we get only one socketreceiver.
+                    // Therefore, the correct connection will be used. If we get more than one receiver, we have to search and need a bit luck, that the
+                    // given attribute is used only once in all output schemas. 
                     for (SocketReceiver receiver : socketReceivers) {
                         for (AttributeInformation attributeInformation : receiver.getSocketInfo().getSchema()) {
                             if (attributeInformation.getName().equals(collectionInfo.getCollectionColoringInformation().getAttribute())) {
