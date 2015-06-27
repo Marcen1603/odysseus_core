@@ -153,8 +153,24 @@ public class PreParserKeywordParameterHelper {
 		} else {
 			doParsingWithoutParameterNames(split, result);
 		}
+		// we need to check if all mandatory parameters are set
+		checkIfAllMandatoryParametersAreSet(result);
 
 		return result;
+	}
+
+	private void checkIfAllMandatoryParametersAreSet(
+			Map<IKeywordParameter, String> result) {
+		for (IKeywordParameter keywordParameter : positionMap.values()) {
+			if (!keywordParameter.isOptional()) {
+				// if parameter is mandatory
+				if (!result.containsKey(keywordParameter)) {
+					// if this mandatory parameter does not exists
+					throw new IllegalArgumentException("Mandatory parameter "
+							+ keywordParameter.getName() + " is missing.");
+				}
+			}
+		}
 	}
 
 	private void doParsingWithoutParameterNames(String[] splittedParameters,
@@ -167,11 +183,27 @@ public class PreParserKeywordParameterHelper {
 	private void doParsingWithParameterNames(String[] splittedParameters,
 			Map<IKeywordParameter, String> result) {
 		for (int i = 0; i < splittedParameters.length; i++) {
-			String[] keyValue = splittedParameters[i].trim().split("=");
-			if (keyValue.length == 2) {
-				String key = keyValue[0].trim().toLowerCase();
-				String value = keyValue[1].trim();
-				result.put(nameMap.get(key), value);
+			// remove surrounding brackets
+			String keyValueString = splittedParameters[i].substring(1,
+					splittedParameters[i].length() - 1);
+
+			// split key and value on =
+			String[] keyValueArray = keyValueString.trim().split("=");
+			if (keyValueArray.length == 2) {
+				String key = keyValueArray[0].trim().toLowerCase();
+				String value = keyValueArray[1].trim();
+				if (!nameMap.containsKey(key)) {
+					throw new IllegalArgumentException("Parameter " + key
+							+ " does not exists. Pattern: "
+							+ getLongParameterPattern());
+				} else {
+					IKeywordParameter keywordParameter = nameMap.get(key);
+					if (result.containsKey(keywordParameter)) {
+						throw new IllegalArgumentException(
+								"Duplicate definition for parameter " + key);
+					}
+					result.put(nameMap.get(key), value);
+				}
 			}
 		}
 	}
