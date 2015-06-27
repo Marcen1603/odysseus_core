@@ -28,6 +28,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest.ExecutorServiceBinding;
 
+/**
+ * This service creates sockets for outputs. The sockets (SocketSinkPO) get
+ * stored to use them multiple times if necessary.
+ * 
+ * @author Thore, Tobias Brandt
+ *
+ */
 public class SocketService extends Observable {
 
 	// QueryId, OutputOperator, OperatorOutputPort
@@ -50,7 +57,18 @@ public class SocketService extends Observable {
 		return SocketService.instance;
 	}
 
-	// Legacy support
+	/**
+	 * Legacy support for old versions. Returns a SocketInformation of the first
+	 * output port from the given operator.
+	 * 
+	 * @param session
+	 *            Session to create a socket
+	 * @param queryId
+	 *            Id of the query
+	 * @param outputOperator
+	 *            The operator you want to send the output via a socket
+	 * @return SocketInformation about the socket
+	 */
 	public SocketInfo getConnectionInformation(ISession session, int queryId, int outputOperator) {
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
@@ -59,7 +77,18 @@ public class SocketService extends Observable {
 		return info;
 	}
 
-	// Legacy support
+	/**
+	 * Legacy support for old versions. Returns a SocketInformation of the first
+	 * output port from the given operator.
+	 * 
+	 * @param session
+	 *            Session to create a socket
+	 * @param queryId
+	 *            Id of the query
+	 * @param operator
+	 *            The operator you want to send the output via a socket
+	 * @return SocketInformation about the socket
+	 */
 	public SocketInfo getConnectionInformation(ISession session, int queryId, IPhysicalOperator operator) {
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
@@ -75,32 +104,77 @@ public class SocketService extends Observable {
 	 *            The session (for the user/right management)
 	 * @param queryName
 	 *            The name of the query you want to get the socket connection to
-	 * @return A list with information about the created sockets
+	 * @param withMetaData
+	 *            If you want to send the metadata via the socket. Not working
+	 *            now.
+	 * @return The outer map has the name of the operator as key, the inner map
+	 *         the output port of the operator
 	 */
-	public Map<Integer, SocketInfo> getMultipleConnectionInformation(ISession session, String queryName,
+	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, String queryName,
 			boolean withMetaData) {
 		List<IPhysicalOperator> rootOperators = getRootOperators(queryName);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
-		Map<Integer, SocketInfo> allInfos = new HashMap<>();
+		Map<String, Map<Integer, SocketInfo>> allInfos = new HashMap<>();
 		for (IPhysicalOperator root : rootOperators) {
 			Map<Integer, SocketInfo> partInfos = getConnectionInformationWithPorts(session, queryName, minPort, maxPort,
 					root, withMetaData);
-			allInfos.putAll(partInfos);
+			allInfos.put(root.getName(), partInfos);
 		}
 		return allInfos;
 	}
 
-	public Map<Integer, SocketInfo> getMultipleConnectionInformation(ISession session, String queryName,
+	/**
+	 * Creates sockets for all output ports of the given operator in the given
+	 * query and returns the information needed to connect to this socket
+	 * 
+	 * @param session
+	 *            The session (for the user/right management)
+	 * @param queryName
+	 *            The name of the query you want to get the socket connection to
+	 * @param operatorName
+	 *            The name of the operator you want the output from. Make sure
+	 *            that the name is set in the operator.
+	 * @param withMetaData
+	 *            If you want to send the metadata via the socket. Not working
+	 *            now.
+	 * @return The outer map has the name of the operator as key, the inner map
+	 *         the output port of the operator
+	 */
+	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, String queryName,
 			String operatorName, boolean withMetaData) {
 		IPhysicalOperator rootOperator = getRootOperator(queryName, operatorName);
+		if (rootOperator == null) {
+			return new HashMap<String, Map<Integer, SocketInfo>>();
+		}
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+
 		Map<Integer, SocketInfo> infos = getConnectionInformationWithPorts(session, queryName, minPort, maxPort,
 				rootOperator, withMetaData);
-		return infos;
+		Map<String, Map<Integer, SocketInfo>> output = new HashMap<>();
+		output.put(rootOperator.getName(), infos);
+		return output;
 	}
 
+	/**
+	 * Creates a socket for the given output port of the given operator in the
+	 * given query and returns the information needed to connect to this socket
+	 * 
+	 * @param session
+	 *            The session (for the user/right management)
+	 * @param queryName
+	 *            The name of the query you want to get the socket connection to
+	 * @param operatorName
+	 *            The name of the operator you want the output from. Make sure
+	 *            that the name is set in the operator.
+	 * @param operatorOutputPort
+	 *            The output port of the operator you want to get the socket for
+	 * @param withMetaData
+	 *            If you want to send the metadata via the socket. Not working
+	 *            now.
+	 * @return The Socket Information
+	 */
 	public SocketInfo getConnectionInformation(ISession session, String queryName, String operatorName,
 			int operatorOutputPort, boolean withMetaData) {
 		IPhysicalOperator rootOperator = getRootOperator(queryName, operatorName);
@@ -119,32 +193,70 @@ public class SocketService extends Observable {
 	 *            The session (for the user/right management)
 	 * @param queryId
 	 *            The id of the query you want to get the socket connection to
-	 * @return A list with information about the created sockets
+	 * @param withMetaData
+	 *            If you want to send the metadata via the socket. Not working
+	 *            now.
+	 * @return The outer map has the name of the operator as key, the inner map
+	 *         the output port of the operator
 	 */
-	public Map<Integer, SocketInfo> getMultipleConnectionInformation(ISession session, int queryId,
+	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, int queryId,
 			boolean withMetaData) {
 		List<IPhysicalOperator> rootOperators = getRootOperators(queryId);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
-		Map<Integer, SocketInfo> allInfos = new HashMap<>();
+		Map<String, Map<Integer, SocketInfo>> allInfos = new HashMap<>();
 		for (IPhysicalOperator root : rootOperators) {
 			Map<Integer, SocketInfo> partInfos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort,
 					root, withMetaData);
-			allInfos.putAll(partInfos);
+			allInfos.put(root.getName(), partInfos);
 		}
 		return allInfos;
 	}
 
-	public Map<Integer, SocketInfo> getMultipleConnectionInformation(ISession session, int queryId, String operatorName,
+	/**
+	 * Creates sockets for all output ports of the given operator in the given
+	 * query and returns the information needed to connect to this socket
+	 * 
+	 * @param session
+	 *            The session (for the user/right management)
+	 * @param queryId
+	 *            The id of the query you want to get the socket connection to
+	 * @param operatorName
+	 *            The name of the operator you want the output from. Make sure
+	 *            that the name is set in the operator.
+	 * @param withMetaData
+	 *            If you want to send the metadata via the socket. Not working
+	 *            now.
+	 * @return The outer map has the name of the operator as key, the inner map
+	 *         the output port of the operator
+	 */
+	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, int queryId, String operatorName,
 			boolean withMetaData) {
 		IPhysicalOperator rootOperator = getRootOperator(queryId, operatorName);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 		Map<Integer, SocketInfo> socketInfos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort,
 				rootOperator, withMetaData);
-		return socketInfos;
+		Map<String, Map<Integer, SocketInfo>> output = new HashMap<>();
+		output.put(rootOperator.getName(), socketInfos);
+		return output;
 	}
 
+	/**
+	 * Creates a socket for the given output port of the given operator in the
+	 * given query and returns the information needed to connect to this socket
+	 * 
+	 * @param session
+	 *            The session (for the user/right management)
+	 * @param queryId
+	 *            The id of the query you want to get the socket connection to
+	 * @param operatorOutputPort
+	 *            The output port of the operator you want to get the socket for
+	 * @param withMetaData
+	 *            If you want to send the metadata via the socket. Not working
+	 *            now.
+	 * @return A list with information about the created sockets
+	 */
 	public SocketInfo getConnectionInformation(ISession session, int queryId, String operatorName,
 			int operatorOutputPort, boolean withMetaData) {
 		IPhysicalOperator rootOperator = getRootOperator(queryId, operatorName);
@@ -155,6 +267,21 @@ public class SocketService extends Observable {
 		return socketInfo;
 	}
 
+	/**
+	 * Creates a socket for the given output port of the given operator in the
+	 * given query and returns the information needed to connect to this socket
+	 * 
+	 * @param session
+	 *            The session (for the user/rights management)
+	 * @param queryId
+	 *            The id of the query you want to get the socket connection to
+	 * @param operator
+	 *            The operator you want to get the sockets for
+	 * @param withMetaData
+	 *            If you want to send the metadata via the socket. Not working
+	 *            now.
+	 * @return A map with information about the created sockets
+	 */
 	public Map<Integer, SocketInfo> getMultipleConnectionInformation(ISession session, int queryId,
 			IPhysicalOperator operator, boolean withMetaData) {
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
@@ -228,7 +355,7 @@ public class SocketService extends Observable {
 	 * @param operator
 	 *            The operator where you want to have the socket connection
 	 *            information for
-	 * @return A list with all socket information available (one operator can
+	 * @return A map with all socket information available (one operator can
 	 *         have multiple outputs and hence multiple sockets)
 	 */
 	private Map<Integer, SocketInfo> getConnectionInformationWithPorts(ISession session, int queryId, int minPort,
@@ -352,6 +479,15 @@ public class SocketService extends Observable {
 		return query.getRoots();
 	}
 
+	/**
+	 * 
+	 * @param queryId
+	 *            The id of the query you want to search in
+	 * @param operatorName
+	 *            The name of the operator you want to get
+	 * @return The operator with the given name in the query or null, if such an
+	 *         operator is not found
+	 */
 	private IPhysicalOperator getRootOperator(int queryId, String operatorName) {
 		List<IPhysicalOperator> allOps = getRootOperators(queryId);
 		for (IPhysicalOperator op : allOps) {
@@ -359,7 +495,6 @@ public class SocketService extends Observable {
 				return op;
 			}
 		}
-
 		return null;
 	}
 
@@ -378,7 +513,7 @@ public class SocketService extends Observable {
 			if (op.getUniqueIds().containsValue(operatorName)) {
 				return op;
 			}
-			
+
 		}
 
 		return null;
