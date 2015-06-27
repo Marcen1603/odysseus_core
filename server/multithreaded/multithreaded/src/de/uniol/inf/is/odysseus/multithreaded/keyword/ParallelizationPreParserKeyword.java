@@ -1,97 +1,93 @@
 package de.uniol.inf.is.odysseus.multithreaded.keyword;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter.HandlerParameterPair;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.multithreaded.autodetect.PerformanceDetectionHelper;
+import de.uniol.inf.is.odysseus.multithreaded.keyword.helper.IKeywordParameter;
+import de.uniol.inf.is.odysseus.multithreaded.keyword.helper.PreParserKeywordParameterHelper;
 import de.uniol.inf.is.odysseus.multithreaded.transform.IParallelizationPreTransformationHandler;
 import de.uniol.inf.is.odysseus.multithreaded.transform.registry.ParallelizationPreTransformationHandlerRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
-
 	public static final String KEYWORD = "PARALLELIZATION";
-
 	public static final int AUTO_BUFFER_SIZE = 10000000;
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ParallelizationPreParserKeyword.class);
-	private static final int MIN_ATTRIBUTE_COUNT = 2;
-	private static final int MAX_ATTRIBUTE_COUNT = 4;
-
-	private static final String PATTERN = "<Parallelization-Type> <Degree of parallelization or AUTO> <Buffersize or AUTO (optional)> <Allow optimization (default true)>";
+	private static final InfoService INFO_SERVICE = InfoServiceFactory
+			.getInfoService(ParallelizationPreParserKeyword.class);
 
 	private int globalDegreeOfParallelization = 0;
 	private int globalBufferSize = AUTO_BUFFER_SIZE;
 	private boolean allowOptimization = true;
 
+	private PreParserKeywordParameterHelper parameterHelper;
+
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller, Context context) throws OdysseusScriptException {
-		if (Strings.isNullOrEmpty(parameter)) {
-			throw new OdysseusScriptException("Parameters for " + KEYWORD
-					+ " are missing");
+
+		List<IKeywordParameter> parameters = new ArrayList<IKeywordParameter>();
+		List<ParallelizationKeywordParameter> asList = Arrays
+				.asList(ParallelizationKeywordParameter.values());
+		for (ParallelizationKeywordParameter parallelizationKeywordParameter : asList) {
+			parameters.add(parallelizationKeywordParameter);
 		}
+
+		parameterHelper = PreParserKeywordParameterHelper
+				.newInstance(parameters);
+		parameterHelper.validateParameterString(parameter);
 
 		// split of parameters on whitespaces
 		String[] splitted = parameter.trim().split(" ");
 
-		// check correkt attribute count
-		if (splitted.length < MIN_ATTRIBUTE_COUNT
-				|| splitted.length > MAX_ATTRIBUTE_COUNT) {
-			throw new OdysseusScriptException(KEYWORD + " needs at least "
-					+ MIN_ATTRIBUTE_COUNT + " and maximal "
-					+ MAX_ATTRIBUTE_COUNT + " attributes: " + PATTERN + "!");
-		} else {
-			// check if parallelization type exists
-			String parallelizationType = splitted[0];
-			if (!isValidType(parallelizationType)) {
+		// check if parallelization type exists
+		String parallelizationType = splitted[0];
+		if (!isValidType(parallelizationType)) {
+			throw new OdysseusScriptException(
+					"ParallelizationPreTransformationHandler with name "
+							+ splitted[0]
+							+ " not exists. Valid values are: "
+							+ ParallelizationPreTransformationHandlerRegistry
+									.getValidTypes());
+		}
+
+		// validate degree of parallelization
+		String degreeOfParallelization = splitted[1];
+		if (!isValidDegree(degreeOfParallelization)) {
+			throw new OdysseusScriptException(
+					"Value for degreeOfParallelization is not valid. Only positive integer values >= 1 or constant AUTO is allowed.");
+		}
+
+		// validate buffersize if set
+		if (splitted.length >= 3) {
+			String buffersizeString = splitted[2];
+			if (!isValidBuffersize(buffersizeString)) {
 				throw new OdysseusScriptException(
-						"ParallelizationPreTransformationHandler with name "
-								+ splitted[0]
-								+ " not exists. Valid values are: "
-								+ ParallelizationPreTransformationHandlerRegistry
-										.getValidTypes());
+						"Value for buffersize is not valid. Only positive integer values or AUTO is allowed.");
 			}
+		}
 
-			// validate degree of parallelization
-			String degreeOfParallelization = splitted[1];
-			if (!isValidDegree(degreeOfParallelization)) {
+		// validate optimization selection
+		if (splitted.length == 4) {
+			String optimizationString = splitted[3];
+			if (!optimizationString.equalsIgnoreCase("true")
+					&& !optimizationString.equalsIgnoreCase("false")) {
 				throw new OdysseusScriptException(
-						"Value for degreeOfParallelization is not valid. Only positive integer values >= 1 or constant AUTO is allowed.");
-			}
-
-			// validate buffersize if set
-			if (splitted.length >= 3) {
-				String buffersizeString = splitted[2];
-				if (!isValidBuffersize(buffersizeString)) {
-					throw new OdysseusScriptException(
-							"Value for buffersize is not valid. Only positive integer values or AUTO is allowed.");
-				}
-			}
-
-			// validate optimization selection
-			if (splitted.length == 4) {
-				String optimizationString = splitted[3];
-				if (!optimizationString.equalsIgnoreCase("true")
-						&& !optimizationString.equalsIgnoreCase("false")) {
-					throw new OdysseusScriptException(
-							"Value for alowOptimization is invalid. Valid values are true or false.");
-				} else {
-					allowOptimization = Boolean.parseBoolean(optimizationString);
-				}
+						"Value for alowOptimization is invalid. Valid values are true or false.");
+			} else {
+				allowOptimization = Boolean.parseBoolean(optimizationString);
 			}
 		}
 
@@ -187,7 +183,8 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 				this.globalDegreeOfParallelization = integerDegree;
 				if (this.globalDegreeOfParallelization > PerformanceDetectionHelper
 						.getNumberOfCores()) {
-					LOG.warn("Degree of parallelization is greater than available cores");
+					INFO_SERVICE
+							.warning("Degree of parallelization is greater than available cores");
 				}
 
 				return true;
@@ -202,7 +199,8 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 							"AUTO detection of parallelization degree is not possible, because there is only on core detected.");
 				}
 
-				LOG.info("Number of detected cores is " + availableCores
+				INFO_SERVICE.info("Number of detected cores is "
+						+ availableCores
 						+ ". Degree of parallelization is set to this value.");
 				this.globalDegreeOfParallelization = availableCores;
 				return true;

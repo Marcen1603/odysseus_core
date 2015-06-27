@@ -31,7 +31,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			+ "*(([a-zA-Z0-9_]+)|([(][a-zA-Z0-9_]+([:][a-zA-Z0-9_]+)+[)]))";
 	private static final String PATTERN_WITH_ATTRIBUTESNAMES = "([(][a-zA-Z0-9_]+[=]"+PATTERN_PAIRS+"[)])([\\s][(][a-zA-Z0-9_]+[=]"+PATTERN_PAIRS+"[)])*";
 	private static final String PATTERN_WITHOUT_ATTRIBUTENAMES = "("+PATTERN_PAIRS+")([\\s]"+PATTERN_PAIRS+")*";
-	private static final String PATTERN_COMPLETE = PATTERN_WITH_ATTRIBUTESNAMES+"|"+PATTERN_WITHOUT_ATTRIBUTENAMES;
+	private static final String PATTERN_KEYWORD = PATTERN_WITH_ATTRIBUTESNAMES+"|"+PATTERN_WITHOUT_ATTRIBUTENAMES;
 
 	public enum DegreeOfParalleizationConstants {
 		USERDEFINED, GLOBAL, AUTO;
@@ -82,7 +82,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		}
 
 		//Pattern.compile(PATTERN_COMPLETE);
-		if (!parameter.matches(PATTERN_COMPLETE)){
+		if (!parameter.matches(PATTERN_KEYWORD)){
 			throw new OdysseusScriptException("Parameters don't matches pattern");
 		}
 		

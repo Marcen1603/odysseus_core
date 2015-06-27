@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
-import de.uniol.inf.is.odysseus.multithreaded.keyword.ParallelizationParameter;
+import de.uniol.inf.is.odysseus.multithreaded.keyword.ParallelizationKeywordParameter;
 
 public abstract class AbstractParallelizationPreTransformationHandler implements
 		IParallelizationPreTransformationHandler {
@@ -19,7 +19,7 @@ public abstract class AbstractParallelizationPreTransformationHandler implements
 		List<Pair<String, String>> parameters = new ArrayList<Pair<String, String>>();
 		Pair<String, String> degreeParameter = new Pair<String, String>();
 		degreeParameter
-				.setE1(ParallelizationParameter.GLOBAL_DEGREE_OF_PARALLELIZATION
+				.setE1(ParallelizationKeywordParameter.DEGREE_OF_PARALLELIZATION
 						.name());
 		degreeParameter.setE2(String.valueOf(globalDegreeOfParallelization));
 		parameters.add(degreeParameter);
@@ -27,7 +27,7 @@ public abstract class AbstractParallelizationPreTransformationHandler implements
 		// create parameter for global value (buffersize)
 		Pair<String, String> buffersizeParameter = new Pair<String, String>();
 		buffersizeParameter
-				.setE1(ParallelizationParameter.GLOBAL_BUFFERSIZE
+				.setE1(ParallelizationKeywordParameter.BUFFERSIZE
 						.name());
 		buffersizeParameter.setE2(String.valueOf(globalBufferSize));
 		parameters.add(buffersizeParameter);
@@ -35,7 +35,7 @@ public abstract class AbstractParallelizationPreTransformationHandler implements
 		// create parameter for global value (allow cleanup)
 		Pair<String, String> cleanupParameter = new Pair<String, String>();
 		cleanupParameter
-				.setE1(ParallelizationParameter.GLOBAL_OPTIMIZATION
+				.setE1(ParallelizationKeywordParameter.OPTIMIZATION
 						.name());
 		cleanupParameter.setE2(String.valueOf(allowCleanup));
 		parameters.add(cleanupParameter);

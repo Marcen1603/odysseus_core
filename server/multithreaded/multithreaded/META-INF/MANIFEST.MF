@@ -21,4 +21,5 @@ Service-Component: OSGI-INF/ParallelizationPreParserKeywordProvider.xml,
 Export-Package: de.uniol.inf.is.odysseus.multithreaded.autodetect,
  de.uniol.inf.is.odysseus.multithreaded.helper,
  de.uniol.inf.is.odysseus.multithreaded.keyword,
+ de.uniol.inf.is.odysseus.multithreaded.keyword.helper,
  de.uniol.inf.is.odysseus.multithreaded.transform

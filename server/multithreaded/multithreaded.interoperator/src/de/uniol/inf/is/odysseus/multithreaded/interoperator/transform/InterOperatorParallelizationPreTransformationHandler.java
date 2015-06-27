@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.multithreaded.interoperator.parameter.Multithrea
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.postoptimization.PostOptimizationHandler;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy.IMultithreadedTransformationStrategy;
 import de.uniol.inf.is.odysseus.multithreaded.interoperator.strategy.registry.MultithreadedTransformationStrategyRegistry;
-import de.uniol.inf.is.odysseus.multithreaded.keyword.ParallelizationParameter;
+import de.uniol.inf.is.odysseus.multithreaded.keyword.ParallelizationKeywordParameter;
 import de.uniol.inf.is.odysseus.multithreaded.transform.AbstractParallelizationPreTransformationHandler;
 
 public class InterOperatorParallelizationPreTransformationHandler extends
@@ -241,10 +241,10 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 		} else {
 			// Determine parameters
 			for (Pair<String, String> pair : handlerParameters) {
-				ParallelizationParameter parameter = ParallelizationParameter
+				ParallelizationKeywordParameter parameter = ParallelizationKeywordParameter
 						.getParameterByName(pair.getE1());
 				switch (parameter) {
-				case GLOBAL_DEGREE_OF_PARALLELIZATION:
+				case DEGREE_OF_PARALLELIZATION:
 					try {
 						globalDegreeOfParallelization = Integer.parseInt(pair
 								.getE2());
@@ -252,14 +252,14 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 						throw new IllegalArgumentException();
 					}
 					break;
-				case GLOBAL_BUFFERSIZE:
+				case BUFFERSIZE:
 					try {
 						globalBufferSize = Integer.parseInt(pair.getE2());
 					} catch (NumberFormatException e) {
 						throw new IllegalArgumentException();
 					}
 					break;
-				case GLOBAL_OPTIMIZATION:
+				case OPTIMIZATION:
 					optimizationAllowed = Boolean.parseBoolean(pair.getE2());
 					break;
 				default:
