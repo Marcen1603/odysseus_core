@@ -120,8 +120,8 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.server.nosql.mongodb.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.colors.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.multithreaded.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.condition.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.parallelization.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
