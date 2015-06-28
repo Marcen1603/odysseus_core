@@ -4,21 +4,43 @@ public class JavaEmulateOSGIBindings {
 	
 	public String getCodeForDataHandlerRegistry(){
 		
-		StringBuilder dataHandlerRegistry = new StringBuilder();
+		StringBuilder code = new StringBuilder();
 		
-		dataHandlerRegistry.append("DataHandlerRegistry dataHandlerRegistry = new DataHandlerRegistry();");
-		dataHandlerRegistry.append("\n");
-		dataHandlerRegistry.append("IDataHandler integerHandler = new IntegerHandler();");
-		dataHandlerRegistry.append("\n");
-		dataHandlerRegistry.append("IDataHandler stringHandler = new StringHandler();");
-		dataHandlerRegistry.append("\n");
-		dataHandlerRegistry.append("dataHandlerRegistry.registerDataHandler(integerHandler);");
-		dataHandlerRegistry.append("\n");
-		dataHandlerRegistry.append("dataHandlerRegistry.registerDataHandler(stringHandler);");
-		dataHandlerRegistry.append("\n");
+		code.append("\n");	
+		code.append("\n");
+		code.append("//DataHandler erstellen");
+		code.append("\n");
+		code.append("DataHandlerRegistry dataHandlerRegistry = new DataHandlerRegistry();");
+		code.append("\n");
+		code.append("IDataHandler integerHandler = new IntegerHandler();");
+		code.append("\n");
+		code.append("IDataHandler stringHandler = new StringHandler();");
+		code.append("\n");
+		code.append("IDataHandler tupleHandler = new TupleDataHandler();");
+		code.append("\n");
+		code.append("\n");
+     
+		code.append("dataHandlerRegistry.registerDataHandler(integerHandler);");
+		code.append("\n");
+		code.append("dataHandlerRegistry.registerDataHandler(stringHandler);");   
+		code.append("\n");
+		code.append("dataHandlerRegistry.registerDataHandler(tupleHandler);");
+		code.append("\n");		
+		code.append("\n");		
+		code.append("\n");
+    
+        
+		code.append("//ProtocolHandlerRegistry erstellen");
+		code.append("\n");
+		code.append("ProtocolHandlerRegistry protocolHandlerRegistry = new ProtocolHandlerRegistry();");
+		code.append("\n");
+		code.append("IProtocolHandler csvProtocolHandler = new SimpleCSVProtocolHandler();");
+		code.append("\n");
+		code.append("protocolHandlerRegistry.register(csvProtocolHandler);");
+		code.append("\n");
 		
-		
-		return dataHandlerRegistry.toString();
+	
+		return code.toString();
 	}
 
 

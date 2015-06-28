@@ -3,9 +3,13 @@ package de.uniol.inf.is.odysseus.query.transformation.java.filewriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
+import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.mainstructure.JavaMainstructure;
+
 
 public class JavaFileWrite {
 	
@@ -34,9 +38,18 @@ public class JavaFileWrite {
 		writer = new FileWriter(file); 
 	}
 	
+	public void writeImports(Set<String> importList) throws IOException{
+		//sort the imports for nice look
+		TreeSet<String> sortList = new TreeSet<String>( Collections.reverseOrder() );
+		sortList.addAll(importList);
+	
+		for(String imp : sortList){
+			 writer.write("import "+imp+";\n"); 
+		}
+	}
+	
 	
 	public void writeClassTop() throws IOException{
-		//Write imports
 		 writer.write(mainStructure.getClassTop()); 
 	}
 	

@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class TransformSDFSchema {
-	
 	
 	public static String getCodeForSDFSchema(SDFSchema schema){
 		
@@ -17,11 +17,11 @@ public class TransformSDFSchema {
 		sdfSchemaCode.append("\n");
 		sdfSchemaCode.append("\n");
 		sdfSchemaCode.append(TransformSDFAttribute.getCodeForSDFAttribute(schema.getAttributes(), schema.getURI()));
-		sdfSchemaCode.append("SDFSchema "+schema.getURI()+"SDFSchema = SDFSchemaFactory.createNewSchema("+schema.getURI()+", "+className+", sourceSchemaList);");
+		sdfSchemaCode.append("SDFSchema "+schema.getURI()+"SDFSchema = SDFSchemaFactory.createNewSchema(\""+schema.getURI()+"\", "+className+", "+schema.getURI()+"SDFAttributeList);");
 		sdfSchemaCode.append("\n");
 		sdfSchemaCode.append("\n");
 		
-		
+
 		return sdfSchemaCode.toString();
 	}
 	

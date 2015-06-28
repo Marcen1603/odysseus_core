@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.operator;
 
+import java.util.Set;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
@@ -25,6 +27,12 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 		StringBuilder code = new StringBuilder();
 		code.append("Select selecttest = new Select();");
 		return code.toString();
+	}
+
+	@Override
+	public Set<String> getNeededImports() {
+	
+		return null;
 	}
 
 

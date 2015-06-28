@@ -34,7 +34,7 @@ public class QueryTransformation {
 		
 		targetPlatform.convertQueryToStandaloneSystem(savedPlan, parameter);
 		
-		
+	
 
 	}
 

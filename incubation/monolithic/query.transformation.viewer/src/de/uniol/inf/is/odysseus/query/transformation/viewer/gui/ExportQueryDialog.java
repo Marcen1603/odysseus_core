@@ -49,6 +49,7 @@ public class ExportQueryDialog extends Dialog {
     programLanguage.select(0);
     
     txtTragetDirectory = new Text(container, SWT.BORDER);
+    txtTragetDirectory.setText("C:\\Users\\Marc\\Desktop\\target");
     txtTragetDirectory.setBounds(99, 22, 261, 21);
     
     Label lblTragetDirectory = new Label(container, SWT.NONE);
@@ -77,6 +78,7 @@ public class ExportQueryDialog extends Dialog {
     
     txtTempDirectory = new Text(container, SWT.BORDER);
     txtTempDirectory.setBounds(99, 59, 261, 21);
+    txtTempDirectory.setText("C:\\Users\\Marc\\Desktop\\tmp");
     
     Button btnChooseTempDirectory = new Button(container, SWT.NONE);
     btnChooseTempDirectory.setText("...");
