@@ -27,7 +27,12 @@ public class PhysicalOperatorParameter extends
 		} else {
 			throw new ParameterException("Unable to read values!");
 		}
-		setValue(findOperator(queryName, operatorName));
+		IPhysicalOperator op = findOperator(queryName, operatorName);
+		if (op == null) {
+			throw new ParameterException("Cannot find " + operatorName
+					+ " in query " + queryName);
+		}
+		setValue(op);
 	}
 
 	private IPhysicalOperator findOperator(String queryName, String opName) {
