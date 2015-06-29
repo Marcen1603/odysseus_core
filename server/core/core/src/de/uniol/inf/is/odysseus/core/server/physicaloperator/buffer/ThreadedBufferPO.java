@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * be scheduled but has an own thread for processing
  * 
  * @author Marco Grawunder
- *
+ * 
  * @param <R>
  */
 public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
@@ -33,7 +33,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(ThreadedBufferPO.class);
-	
+
 	private long elementsRead;
 	private long puncRead;
 
@@ -62,6 +62,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			this.terminate = true;
 		}
 
+		@Override
 		public void run() {
 			started = true;
 			while (!terminate) {
@@ -166,10 +167,10 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	@Override
 	protected void process_close() {
-		LOG.debug("Closing ...."+this.getName());
+		LOG.debug("Closing ...." + this.getName());
 		this.isClosing.set(true);
 		runner.terminate();
-		synchronized(runner){
+		synchronized (runner) {
 			runner.notify();
 		}
 		lockOutput.lock();
@@ -184,6 +185,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		LOG.debug("Closing .... done");
 	}
 
+	@Override
 	protected void process_done(int port) {
 		if (!isClosing.get()) {
 			lockOutput.lock();
@@ -220,7 +222,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		// drain buffer (typically at done/close)
 		// Copy everything from inputBuffer to outputBuffer
 		runner.terminate();
-		
+
 		lockInput.lock();
 		outputBuffer.addAll(inputBuffer);
 		inputBuffer.clear();
@@ -250,21 +252,21 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof ThreadedBufferPO)){
+		if (!(ipo instanceof ThreadedBufferPO)) {
 			return false;
 		}
 
 		@SuppressWarnings("unchecked")
 		ThreadedBufferPO<R> po = (ThreadedBufferPO<R>) ipo;
-		if (this.drainAtClose != po.drainAtClose){
+		if (this.drainAtClose != po.drainAtClose) {
 			return false;
 		}
-		
-		if (this.limit != po.limit){
+
+		if (this.limit != po.limit) {
 			return false;
 		}
-		
-		return super.isSemanticallyEqual(ipo);
+
+		return true;
 	}
-	
+
 }
