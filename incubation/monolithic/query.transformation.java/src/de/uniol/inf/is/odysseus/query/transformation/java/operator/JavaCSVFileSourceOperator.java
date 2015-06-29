@@ -29,13 +29,13 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 	@Override
 	public String getCode(ILogicalOperator operator) {
 		
-		int operatorId = OperatorToVariable.getVariable(operator);
+		String operatorVariable = OperatorToVariable.getVariable(operator);
 
 		CSVFileSource csvFileSource = (CSVFileSource) operator;
 		StringBuilder code = new StringBuilder();
 		
 		//generate code for SDFSchema
-		code.append(TransformSDFSchema.getCodeForSDFSchema(csvFileSource.getOutputSchema()));
+		code.append(TransformSDFSchema.getCodeForSDFSchema(csvFileSource.getOutputSchema(),operatorVariable));
 		
 		String filename = csvFileSource.getFilename();
 		String transportHandler = csvFileSource.getTransportHandler();
@@ -46,18 +46,21 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
 		
 		//generate code for options
-		code.append(TransformCSVParameter.getCodeForParameterInfo(csvFileSource.getParameterInfos()));
+		code.append(TransformCSVParameter.getCodeForParameterInfo(csvFileSource.getParameterInfos(),operatorVariable));
 		
 		
 		//setup transportHandler
-		code.append(TransformProtocolHandler.getCodeForProtocolHandler(protocolHandlerParameter));
+		code.append(TransformProtocolHandler.getCodeForProtocolHandler(protocolHandlerParameter, operatorVariable));
 	
 		
 		//now create the AccessPO
 		// TODO Katalog für die verwendeten Variablen erstellen z.B. für testAccess und cSVProtocolHandlerNeu
 		// teilweise werden diese in den anderen Operatoren benötigt
-		code.append("AccessPO testAccess = new AccessPO(cSVProtocolHandlerNeu,0);");
 		
+		
+		code.append("AccessPO "+operatorVariable+"PO = new AccessPO("+operatorVariable+"ProtocolHandler,0);");
+		code.append("\n");
+		code.append(operatorVariable+"PO.setOutputSchema("+operatorVariable+"SDFSchema);");
 		code.append("\n");
 		code.append("\n");
 		

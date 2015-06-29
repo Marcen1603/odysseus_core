@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class TransformSDFSchema {
 	
-	public static String getCodeForSDFSchema(SDFSchema schema){
+	public static String getCodeForSDFSchema(SDFSchema schema, String operatorVariable){
 		
 		String className = schema.getType().getSimpleName()+".class";
 	
@@ -13,11 +12,11 @@ public class TransformSDFSchema {
 		
 		sdfSchemaCode.append("\n");
 		sdfSchemaCode.append("\n");
-		sdfSchemaCode.append("//Create SDFSchema for "+schema.getURI());
+		sdfSchemaCode.append("//Create SDFSchema for "+operatorVariable);
 		sdfSchemaCode.append("\n");
 		sdfSchemaCode.append("\n");
-		sdfSchemaCode.append(TransformSDFAttribute.getCodeForSDFAttribute(schema.getAttributes(), schema.getURI()));
-		sdfSchemaCode.append("SDFSchema "+schema.getURI()+"SDFSchema = SDFSchemaFactory.createNewSchema(\""+schema.getURI()+"\", "+className+", "+schema.getURI()+"SDFAttributeList);");
+		sdfSchemaCode.append(TransformSDFAttribute.getCodeForSDFAttribute(schema.getAttributes(), operatorVariable));
+		sdfSchemaCode.append("SDFSchema "+operatorVariable+"SDFSchema = SDFSchemaFactory.createNewSchema(\""+schema.getURI()+"\", "+className+", "+operatorVariable+"SDFAttributeList);");
 		sdfSchemaCode.append("\n");
 		sdfSchemaCode.append("\n");
 		

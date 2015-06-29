@@ -65,6 +65,12 @@ public class JavaFileWrite {
 		 writer.close();
 	}
 	
+	public void writePackage() throws IOException{
+		 writer.write(mainStructure.getPackage()); 
+	}
+	
+	
+	
 	
 
 }

@@ -1,12 +1,20 @@
 package de.uniol.inf.is.odysseus.query.transformation.java;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.server.util.GenericUpstreamGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorToVariable;
@@ -25,6 +33,10 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	
 	private StringBuilder body;
 	
+	private ILogicalOperator rootOP;
+	
+	private List<ILogicalOperator> operatorList ;
+	
 	@Override
 	public String getTargetPlatformName() {
 		return targetPlatformName;
@@ -34,21 +46,35 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	@Override
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
 			TransformationParameter parameter) {
-		// TODO Auto-generated method stub
+	
+		operatorList = new ArrayList<ILogicalOperator>();
 		body = new StringBuilder();
+
+		FindSinksLogicalVisitor<ILogicalOperator> findSinksVisitor = new FindSinksLogicalVisitor<ILogicalOperator>();
+		GenericGraphWalker walker = new GenericGraphWalker();
+		walker.prefixWalk(query, findSinksVisitor);
+		
+		List<ILogicalOperator> sinkList = findSinksVisitor.getResult();
+		
+		
+		for(ILogicalOperator op : sinkList){
+			op.getName();
+		}
 		
 		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
 		testWrite = new JavaFileWrite("TestFile.java",parameter);
 		
 		addDefaultImport();
 		
-		walkThroughLogicalPlan(query,parameter);
+		walkTroughLogicalPlanNeu(query,parameter);
 		
 		
 		try {
 			
 			//create java file
 			testWrite.createFile();
+			
+			testWrite.writePackage();
 			
 			//write java imports
 			testWrite.writeImports(importList);
@@ -59,7 +85,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			//write body of main
 				testWrite.writeBody(javaEmulateOSGIBindings.getCodeForDataHandlerRegistry());
 				testWrite.writeBody(body.toString());
-				testWrite.writeBody(generateSubscription(query));
+				testWrite.writeBody(generateSubscription(operatorList));
 				testWrite.writeBody(startDataStream());
 			
 			
@@ -98,6 +124,9 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		importList.add("de.uniol.inf.is.odysseus.core.datahandler.StringHandler");
 		importList.add("de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler");
 		
+		importList.add("java.io.IOException");
+		importList.add("java.util.List");
+		
 	}
 	
 	
@@ -108,17 +137,49 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	 	TODO Weg von Quelle zur Senke 
 	 */
 
-	private String generateSubscription(ILogicalOperator query) {
+	private String generateSubscription(List<ILogicalOperator> operatorList) {
 		
 		StringBuilder code = new StringBuilder();
+		
+		for(ILogicalOperator op : operatorList){
+			
+		  String operatorVariable = OperatorToVariable.getVariable(op);
+		
+		   Collection<LogicalSubscription> subscriptionSourceList = op.getSubscribedToSource();
+		   Collection<LogicalSubscription> subscriptionSinkList = op.getSubscriptions();
+			
+		   if(!subscriptionSourceList.isEmpty()){
+			   for(LogicalSubscription sub : subscriptionSourceList){
+					  String targetOp =  OperatorToVariable.getVariable(sub.getTarget());
+					  if(!targetOp.equals("")){
+						  code.append("\n");
+							code.append("\n");
+							code.append(operatorVariable+"PO.subscribeToSource("+targetOp+"PO, 0, 0, "+targetOp+"PO.getOutputSchema());");
+							//	code.append(operatorVariable+"PO.subscribeSink("+targetOp+"PO, 0, 0, "+targetOp+"PO.getOutputSchema());");
+							code.append("\n");
+					//		code.append(operatorVariable+"PO.connectSink("+targetOp+"PO, 0, 0, "+targetOp+"PO.getOutputSchema());");
+					  }
+						
+				   }
+		   }
+		
+		   if(!subscriptionSinkList.isEmpty()){
+			   for(LogicalSubscription sub : subscriptionSinkList){
+				   String targetOp =  OperatorToVariable.getVariable(sub.getTarget());
+				   if(!targetOp.equals("")){
+						code.append("\n");
+					    code.append(operatorVariable+"PO.connectSink("+targetOp+"PO, 0, 0, "+targetOp+"PO.getOutputSchema());");
+						code.append("\n");
+				   }
+			   }
+			   
+		   }
+		}
+		
 		code.append("\n");
 		code.append("\n");
-		code.append("testAccess.subscribeSink(testProject, 0, 0, testAccess.getOutputSchema());");
 		code.append("\n");
-		code.append("testAccess.connectSink(testProject, 0, 0, testAccess.getOutputSchema());"); 
-		code.append("\n");
-		code.append("\n");
-		code.append("\n");
+		
 		return code.toString();
 	}
 	
@@ -138,14 +199,14 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		code.append("\n");
 		code.append("IOperatorOwner operatorOwner = new LogicalQuery();");
 		code.append("\n");
-		code.append("testAccess.open(operatorOwner);");
+		code.append(OperatorToVariable.getVariable(rootOP)+"PO.open(operatorOwner);");
 		code.append("\n");
 		code.append("\n");
 		code.append("\n");
 		code.append("\n");
 		code.append("while(true){");
 		code.append("\n");
-		code.append("testAccess.transferNext();");
+		code.append(OperatorToVariable.getVariable(rootOP)+"PO.transferNext();");
 		code.append("\n");
 		code.append("}");
 		code.append("\n");
@@ -154,45 +215,27 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		return code.toString();
 	}
 
-
-	//Test
-	private  void walkThroughLogicalPlan(ILogicalOperator topAO, TransformationParameter parameter){
-		
-		if(topAO instanceof TopAO){	
-		
-		}else{
-			System.out.println("Operator-Name: "+topAO.getName()+" "+ topAO.getClass().getSimpleName());
-			IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), topAO.getClass().getSimpleName());
-
-			
-			if(opTrans != null ){
-				OperatorToVariable.addOperator(topAO);
-				System.out.println(opTrans.getCode(topAO));
-				//testWrite.writeBody(opTrans.getCode(topAO));
-				
-				body.append(opTrans.getCode(topAO));
-				
-				importList.addAll(opTrans.getNeededImports());
-			}
-		}
 	
-		for(LogicalSubscription  operator : topAO.getSubscribedToSource()){
-			System.out.println("Operator-Name: "+operator.getTarget().getName()+" "+ operator.getTarget().getClass().getSimpleName());
-			IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getTarget().getClass().getSimpleName());
-			
-			if(opTrans != null ){
-				OperatorToVariable.addOperator(operator.getTarget());
-				System.out.println(opTrans.getCode(operator.getTarget()));
-				//testWrite.writeBody(opTrans.getCode(operator.getTarget()));
-				
-				body.append(opTrans.getCode(operator.getTarget()));
-			}
-				
-			for(LogicalSubscription  operator2 : operator.getTarget().getSubscribedToSource()){
-				walkThroughLogicalPlan(operator2.getTarget(),parameter);
-				
-			}
+	private void walkTroughLogicalPlanNeu(ILogicalOperator operator, TransformationParameter parameter){
+		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
+		
+		if(operator.getSubscribedToSource().isEmpty()){
+			this.rootOP = operator;
+		}
+		
+		IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getClass().getSimpleName());
+		if(opTrans != null ){
+			System.out.println(opTrans.getCode(operator));
+			OperatorToVariable.addOperator(operator);
+			body.append(opTrans.getCode(operator));
+			importList.addAll(opTrans.getNeededImports());
+			operatorList.add(operator);
+		}
+		
+		for(LogicalSubscription s:operator.getSubscribedToSource()){
+			walkTroughLogicalPlanNeu(s.getTarget(),parameter);
 		}
 	}
+
 
 }

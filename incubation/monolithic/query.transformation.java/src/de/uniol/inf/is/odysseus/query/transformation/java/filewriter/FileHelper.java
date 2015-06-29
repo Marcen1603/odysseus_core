@@ -5,17 +5,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class FileHelper {
-	private String fileName;
-	private String path;
+
 	private File file ;
 	private FileWriter writer;
 	
 	private String absolutePath;
 	
 	public FileHelper(String fileName, String path){
-		this.fileName = fileName;
-		this.path = path;
-		
 		StringBuilder tempBuild = new StringBuilder();
 		tempBuild.append(path);
 		tempBuild.append("\\");

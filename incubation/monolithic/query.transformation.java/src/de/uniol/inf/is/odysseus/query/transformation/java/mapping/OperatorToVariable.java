@@ -8,31 +8,27 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
 public class OperatorToVariable {
 	
-	private static Map<ILogicalOperator, Integer> operatorList  = new HashMap<ILogicalOperator, Integer>();
+	private static Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
 
 	private static int uniqueId = 0;
 
-
-	
 	public static void addOperator(ILogicalOperator operator){
 	
 		if(!operatorList.containsKey(operator)){
-			operatorList.put(operator, getUniqueId());
+			operatorList.put(operator, operator.getName().toLowerCase()+getUniqueId());
 		}
 	
 	}
 	
-	
-	public static int getVariable(ILogicalOperator operator){
+	public static String getVariable(ILogicalOperator operator){
 		if(operatorList.containsKey(operator)){
 			return operatorList.get(operator);
 		}else{
-			return 0;
+			return "";
 		}
 	}
-	
 
-	
+
 	synchronized static int getUniqueId()
 	{  
 		 return uniqueId++;

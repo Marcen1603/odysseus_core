@@ -16,14 +16,14 @@ public class TransformCSVParameter {
     
     */
 	
-	public static String getCodeForParameterInfo(Map<String, String> map){
+	public static String getCodeForParameterInfo(Map<String, String> map, String operatorVariable){
 		
 		StringBuilder code = new StringBuilder();
-		code.append("OptionMap csvOptions = new OptionMap();");
+		code.append("OptionMap "+operatorVariable+"ParameterInfo = new OptionMap();");
 		code.append("\n");
 		
 		if(map.containsKey("FILENAME")){
-			code.append("csvOptions.setOption(\"filename\","+ map.get("FILENAME").replace("'", "\"").replace("\\", "\\\\")+");");
+			code.append(operatorVariable+"ParameterInfo.setOption(\"filename\","+ map.get("FILENAME").replace("'", "\"").replace("\\", "\\\\")+");");
 			code.append("\n");
 		}
 		

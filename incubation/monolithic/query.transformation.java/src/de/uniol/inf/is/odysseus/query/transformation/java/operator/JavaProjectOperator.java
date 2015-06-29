@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorToVariable;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFSchema;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 
 
@@ -33,11 +35,15 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 		
 		*/
 		
-	
+		String operatorVariable = OperatorToVariable.getVariable(operator);
+		
+		
 		StringBuilder code = new StringBuilder();
 		code.append("\n");
-		code.append("RelationalProjectPO testProject = new RelationalProjectPO(new int[] {0});");
+		code.append(TransformSDFSchema.getCodeForSDFSchema(operator.getOutputSchema(),operatorVariable));
+		code.append("RelationalProjectPO "+operatorVariable+"PO = new RelationalProjectPO(new int[] {0});");
 		code.append("\n");
+		code.append(operatorVariable+"PO.setOutputSchema("+operatorVariable+"SDFSchema);");
 		code.append("\n");
 		return code.toString();
 	}

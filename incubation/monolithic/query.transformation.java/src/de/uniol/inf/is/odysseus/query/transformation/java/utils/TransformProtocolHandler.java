@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 
 public class TransformProtocolHandler {
@@ -13,7 +12,7 @@ public class TransformProtocolHandler {
         transportHandler.processInOpen();
 	 
 	 */
-	public static String getCodeForProtocolHandler(ProtocolHandlerParameter protocolHandlerParameter){
+	public static String getCodeForProtocolHandler(ProtocolHandlerParameter protocolHandlerParameter, String operatorVariable){
 		String wrapper = "";
 	
 		if(protocolHandlerParameter.getWrapper().equals("GenericPull")){
@@ -23,16 +22,17 @@ public class TransformProtocolHandler {
 			 
 		}
 	
+		
 		StringBuilder code = new StringBuilder();
 	
 		code.append("\n");
-		code.append("IProtocolHandler cSVProtocolHandlerNeu =  protocolHandlerRegistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection.IN, "+wrapper+", csvOptions,  dataHandlerRegistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\", sourceSchema));");
+		code.append("IProtocolHandler "+operatorVariable+"ProtocolHandler =  protocolHandlerRegistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection.IN, "+wrapper+", "+operatorVariable+"ParameterInfo"+",  dataHandlerRegistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\","+ operatorVariable+"SDFSchema));");
 		code.append("\n");
-		code.append("ITransportHandler transportHandler = new FileHandler(cSVProtocolHandlerNeu, csvOptions);");
+		code.append("ITransportHandler "+operatorVariable+"TransportHandler = new FileHandler("+operatorVariable+"ProtocolHandler, "+operatorVariable+"ParameterInfo);");
 		code.append("\n");
-		code.append("cSVProtocolHandlerNeu.setTransportHandler(transportHandler);");
+		code.append(operatorVariable+"ProtocolHandler.setTransportHandler("+operatorVariable+"TransportHandler);");
 		code.append("\n");
-		code.append("transportHandler.processInOpen();");
+		code.append(operatorVariable+"TransportHandler.processInOpen();");
 		
 		code.append("\n");
 		code.append("\n");
