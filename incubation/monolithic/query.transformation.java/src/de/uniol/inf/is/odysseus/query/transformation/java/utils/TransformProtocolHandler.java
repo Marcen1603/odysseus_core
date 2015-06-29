@@ -22,9 +22,7 @@ public class TransformProtocolHandler {
 			 
 		}
 	
-		
 		StringBuilder code = new StringBuilder();
-	
 		code.append("\n");
 		code.append("IProtocolHandler "+operatorVariable+"ProtocolHandler =  protocolHandlerRegistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection.IN, "+wrapper+", "+operatorVariable+"ParameterInfo"+",  dataHandlerRegistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\","+ operatorVariable+"SDFSchema));");
 		code.append("\n");
