@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.image.functions.ResizeImageFunction;
 import de.uniol.inf.is.odysseus.image.functions.RotateImageFunction;
 import de.uniol.inf.is.odysseus.image.functions.SetImageFunction;
 import de.uniol.inf.is.odysseus.image.functions.SubImageFunction;
+import de.uniol.inf.is.odysseus.image.functions.ToImageFromBufferFunction;
 import de.uniol.inf.is.odysseus.image.functions.ToImageFunction;
 import de.uniol.inf.is.odysseus.image.functions.ToImageMatrixFunction;
 import de.uniol.inf.is.odysseus.image.functions.ToMatrixFunction;
@@ -60,6 +61,8 @@ public class ImageFunctionProvider implements IFunctionProvider {
         functions.add(new SetImageFunction());
         functions.add(new GetImageFunction());
         functions.add(new CountFacesFunction());
+        functions.add(new ToImageFromBufferFunction());
+        
         ImageFunctionProvider.LOG.trace(String.format("Register functions: %s", functions));
         return functions;
     }

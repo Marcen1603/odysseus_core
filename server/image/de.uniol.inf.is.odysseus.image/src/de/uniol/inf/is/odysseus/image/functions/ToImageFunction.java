@@ -33,16 +33,10 @@ public class ToImageFunction extends AbstractFunction<Image> {
     private static final long serialVersionUID = -6078416764818576545L;
     private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
-    /**
- * 
- */
     public ToImageFunction() {
         super("toImage", 2, ToImageFunction.ACC_TYPES, SDFImageDatatype.IMAGE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Image getValue() {
         final int width = this.getNumericalInputValue(0).intValue();

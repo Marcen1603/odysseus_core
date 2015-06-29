@@ -7,6 +7,7 @@ import static org.bytedeco.javacpp.opencv_core.cvSize;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_BGR2GRAY;
 import static org.bytedeco.javacpp.opencv_imgproc.cvCvtColor;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -186,7 +187,14 @@ public class ImageJCV implements IClone, Cloneable
 		else
 			imageData.put(iplImage.getByteBuffer());
 	}
-	
+		
+	public static ImageJCV fromBufferedImage(BufferedImage bufferedImage)
+	{
+		ImageJCV result = new ImageJCV(bufferedImage.getWidth(), bufferedImage.getHeight());		
+		result.getImage().copyFrom(bufferedImage);
+		
+		return result;
+	}
 	
 	public static ImageJCV fromStream(InputStream inputStream) throws IOException 
 	{
