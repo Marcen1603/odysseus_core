@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.costmodel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -131,7 +132,7 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 	}
 
 	private static Optional<IHistogram> createEqualWidthHistogram(SDFAttribute attribute, ISampling sampler) {
-		List<Double> values = sampler.getSampledValues();
+		List<Double> values = new ArrayList<Double>(sampler.getSampledValues());
 		if( values.isEmpty() ) {
 			return Optional.absent();
 		}
