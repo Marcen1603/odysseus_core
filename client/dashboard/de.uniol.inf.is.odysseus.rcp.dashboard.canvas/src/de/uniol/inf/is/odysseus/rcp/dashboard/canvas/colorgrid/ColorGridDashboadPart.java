@@ -120,9 +120,8 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 									.getMainPoint()
 									+ maxDuration < maxTime) {
 						// TODO: Make option
-						// fillRectangle(draw_x, draw_y, draw_height,
-						// draw_width,
-						// backgroundColor);
+						fillRectangle(draw_x, draw_y, draw_height, draw_width,
+								backgroundColor);
 						grid[x][y] = null;
 					} else {
 						Number v = grid[x][y].getAttribute(value_pos);
