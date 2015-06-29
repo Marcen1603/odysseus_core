@@ -40,13 +40,14 @@ public class Application
 	
 	public static void showException(Exception e)
 	{
+		e.printStackTrace();
+		
 		String msg = e.getMessage();
 		
 		if (e.getCause() != null)
 			msg += "\nCaused by: " + e.getCause().getMessage();
 		
-		JOptionPane.showMessageDialog(view, msg, "Error", JOptionPane.ERROR_MESSAGE);
-		e.printStackTrace();
+		JOptionPane.showMessageDialog(view, msg, "Error", JOptionPane.ERROR_MESSAGE);		
 	}
 	
 	public static class ExceptionHandler implements Thread.UncaughtExceptionHandler 

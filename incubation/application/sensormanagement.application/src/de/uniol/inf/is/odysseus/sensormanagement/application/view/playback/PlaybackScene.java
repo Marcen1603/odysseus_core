@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.DisplayMap;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.DisplayMap;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.Scene;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.StringMapMapXmlAdapter;
 
 @XmlRootElement(name = "playbackscene")
@@ -24,7 +24,7 @@ public class PlaybackScene extends Scene
 	private List<TimeInterval> intervalList;
 	
 	@XmlElement(name = "view") 	
-	private List<View> viewList;	
+	private List<VisualizationConstraints> viewList;	
 	
 	@XmlJavaTypeAdapter(StringMapMapXmlAdapter.class)
 	@XmlElement(name = "displayInfo")
@@ -35,12 +35,12 @@ public class PlaybackScene extends Scene
 		this("","",null,null,null, null);
 	}
 
-	public PlaybackScene(String path, String name, List<DisplayMap> maps, List<TimeInterval> intervalList, List<View> viewList, Map<String, Map<String, String>> displayInfoMap)
+	public PlaybackScene(String path, String name, List<DisplayMap> maps, List<TimeInterval> intervalList, List<VisualizationConstraints> viewList, Map<String, Map<String, String>> displayInfoMap)
 	{		
 		super(path, name, maps, null);
 		
 		this.intervalList = intervalList != null ? intervalList : new ArrayList<TimeInterval>();
-		this.viewList = viewList != null ? viewList : new ArrayList<View>();
+		this.viewList = viewList != null ? viewList : new ArrayList<VisualizationConstraints>();
 		this.displayInfoMap = displayInfoMap != null ? displayInfoMap : new HashMap<String, Map<String, String>>();
 		
 		checkIntervals();
@@ -56,7 +56,7 @@ public class PlaybackScene extends Scene
 		return intervalList;
 	}
 	
-	public List<View> getViewList() 
+	public List<VisualizationConstraints> getViewList() 
 	{
 		return viewList;
 	}	

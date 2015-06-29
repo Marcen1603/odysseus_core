@@ -4,11 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,8 +15,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 
-import javax.swing.Timer;
-
 import de.jaret.util.date.Interval;
 import de.jaret.util.date.JaretDate;
 import de.jaret.util.ui.timebars.TimeBarMarker;
@@ -27,51 +22,29 @@ import de.jaret.util.ui.timebars.TimeBarMarkerImpl;
 import de.jaret.util.ui.timebars.model.ITimeBarChangeListener;
 import de.jaret.util.ui.timebars.model.TimeBarRow;
 import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
-import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory;
-import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory.SensorFactoryEntry;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.Scene;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.Playback;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackReceiver;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.Utilities;
-import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
-import de.uniol.inf.is.odysseus.sensormanagement.common.logging.TextLogMetaData;
-import de.uniol.inf.is.odysseus.sensormanagement.common.logging.VideoLogMetaData;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.ServerInstance;
-import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
+import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.SimpleCallbackListener;
 
 public class PlaybackSession extends Session
 {
 	private static final long serialVersionUID = 1L;
 	
-	private List<PlaybackSensor> playbackSensors = new ArrayList<>();
-
-	private Timer playbackTimer = null;
-	private double startTime = -1;
-	private double endTime = -1;
-	private double previousNow;
-	private double now;
-
-	private Object doStepSynchronization = new Object();
-	
+	private Playback playback;
+		
 	private PlaybackTimeBar 	timeBar;
 	private TimeBarMarkerImpl 	currentTimeMarker;
 	private boolean				currentTimeMarkerDragged;
-	
-	public double getStartTime() 	{ return startTime; }
-	public double getEndTime()		{ return endTime;	}
-	
-	@Override public double getNow() 
-	{ 
-		return now;
-	}
+	private List<ViewSensor>	viewSensors;
+			
+	@Override public double getNow() { return playback.getNow(); }
+	public Playback getPlayback() { return playback; }
 		
-	public static void printTimeInMillis(int y, int m, int d, int h, int min, int s)
-	{
-		Calendar c2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		c2.set(y, m, d, h, min, s);
-		System.out.println(Long.toString(c2.getTimeInMillis()));		
-	}
-	
 	private void setupTimeBar()
 	{
 		timeBar = new PlaybackTimeBar();
@@ -93,7 +66,7 @@ public class PlaybackSession extends Session
 						
 						try 
 						{
-							jumpToTime(Utilities.doubleTimeFromDate(marker.getDate().getDate()));						
+							playback.jumpToTime(Utilities.doubleTimeFromDate(marker.getDate().getDate()));						
 						} 
 						catch (IOException e) 
 						{
@@ -121,7 +94,7 @@ public class PlaybackSession extends Session
                             	try 
                             	{
                             		JaretDate date = timeBar.getDelegate().dateForCoord(ev.getX(), ev.getY());
-									jumpToTime(Utilities.doubleTimeFromDate(date.getDate()));
+									playback.jumpToTime(Utilities.doubleTimeFromDate(date.getDate()));
 									System.out.println("Date at cursor: " + date.toDisplayString() );
 								} 
                             	catch (IOException e) 
@@ -150,48 +123,37 @@ public class PlaybackSession extends Session
 		
 		setupTimeBar();
 		
-		for (String file : scene.getInstanceFileList())
+		playback = new Playback(scene);
+		
+		playback.beforeStepEvent.addListener(new SimpleCallbackListener<Playback, Playback.BeforeStepEventData>()
 		{
-			File serverInstanceFile = new File(scene.getPath() + file);
-			ServerInstance serverInstance = XmlMarshalHelper.fromXmlFile(serverInstanceFile, ServerInstance.class);
-			
-			for (SensorModel sensor : serverInstance.sensors)
-			{
-				PlaybackSensor ps = new PlaybackSensor(this, sensor);
-				playbackSensors.add(ps);
+			@Override public void raise(Playback source, Playback.BeforeStepEventData data) 
+			{ 
+				try {
+					onBeforeStepEvent(data.now, data.previousNow, data.timePassed);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} 
 			}
-			
-			System.out.println(XmlMarshalHelper.toXml(serverInstance));
-			
-			File dir = serverInstanceFile.getParentFile();
-			File[] directoryListing = dir.listFiles();
-			if (directoryListing != null)
-			{
-				for (File child : directoryListing) 
-				{
-					String fileName = child.getName();
-					if (!child.isFile() || !fileName.endsWith("cfg")) 
-						continue;
+		});
 
-					@SuppressWarnings("rawtypes")
-					Class[] logClasses = new Class[]{LogMetaData.class, VideoLogMetaData.class, TextLogMetaData.class};
-					LogMetaData logMetaData = (LogMetaData) XmlMarshalHelper.fromXmlFile(child, logClasses);
-					
-					PlaybackSensor ps = getPlaybackSensor(logMetaData.sensorId);
-					if (ps == null)
-						Application.showException(new RuntimeException("Unknown sensor " + logMetaData.sensorId));
-					
-					SensorFactoryEntry sensorEntry = SensorFactory.getInstance().getSensorType(ps.getSensorInfo().type);					
-					PlaybackReceiver recv = sensorEntry.createPlayback(ps.getSensorInfo(), logMetaData);
-										
-					ps.addReceiver(recv);
-					timeBar.addSensorRecording(ps.getSensorInfo(), recv);
-					
-					if (startTime == -1 || startTime > recv.getStartTime()) startTime = recv.getStartTime();
-					if (endTime   == -1 || endTime   < recv.getEndTime())   endTime   = recv.getEndTime();								
-				}
-			}			
-		}		
+		playback.onPlayStateChanged.addListener(new SimpleCallbackListener<PlaybackSensor, Object>()
+		{
+			@Override public void raise(PlaybackSensor source, Object obj) 
+			{
+				getTreeModel().nodeStructureChanged(getTreeRoot());
+			}
+		});
+		
+		
+		viewSensors = new ArrayList<ViewSensor>(playback.getPlaybackSensors().size());
+		for (PlaybackSensor ps : playback.getPlaybackSensors())
+		{
+			for (PlaybackReceiver recv : ps.getReceivers())
+				timeBar.addSensorRecording(ps.getSensorModel(), recv);
+			
+			viewSensors.add(new ViewSensor(this, ps));
+		}
 				
 		if (scene instanceof PlaybackScene)
 		{
@@ -210,7 +172,7 @@ public class PlaybackSession extends Session
 		        timeBar.addMarker(m);
 			}
 			
-			for (View view : playbackScene.getViewList())
+			for (VisualizationConstraints view : playbackScene.getViewList())
 			{
 				for (Entry<String, String> entry : view.constraintMap.entrySet())
 				{
@@ -222,25 +184,56 @@ public class PlaybackSession extends Session
 						setMapConstraint(constraint);
 					}
 					else
-						getPlaybackSensor(sensorId).setConstraintString(constraint);
+						getViewSensorById(sensorId).setConstraintString(constraint);
 				}
 			}			
 		}
 		
 		getTreeModel().nodeStructureChanged(getTreeRoot());
-		goToStart();
+		playback.goToStart();
 	}
-	
-	private PlaybackSensor getPlaybackSensor(String id)
+		
+	protected void onBeforeStepEvent(double now, double previousNow, double timePassed) throws IOException 
 	{
-		for (PlaybackSensor ps : playbackSensors)
+		// TODO: Better implementation of jump markers, maybe only keep track of next jumpmarker
+		// and refresh after every marker / jumpToTime-call ?
+		
+		if (getScene() instanceof PlaybackScene)
 		{
-			SensorModel listSensor = ps.getSensorInfo();
-			if (listSensor.id.equals(id))
-				return ps;
+			// Check time intervals if playback is running (timePassed == 0.0 happens when jumping in time. Ignore intervals then.)
+			if (timePassed != 0.0)
+			{
+				List<TimeInterval> list = ((PlaybackScene)getScene()).getTimeIntervalList();
+				Iterator<TimeInterval> iter = list.iterator();
+				while (iter.hasNext())
+				{
+					TimeInterval m = iter.next();
+						
+					// passed over a jumpTimer-end
+					if (previousNow < m.endTime && m.endTime < now)
+					{
+						if (iter.hasNext())
+							playback.jumpToTime(iter.next().startTime);
+						else
+							playback.jumpToTime(list.get(0).startTime);
+						break;
+					}
+				}
+			}
 		}
 		
-		return null;
+		if (this == Application.getMainFrame().getCurrentSession())
+		{
+			double fps = 0.0;
+			if (timePassed != 0.0)
+				fps = 1 / timePassed;
+			
+			String timeString = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(Utilities.dateFromDoubleTime(now));
+			Application.getMainFrame().setTitle(String.format("%s (Time since start = %.3fs) @ %.2f FPS", timeString, now - playback.getStartTime(), fps));
+		}
+		
+		if (!currentTimeMarkerDragged)
+			currentTimeMarker.setDate(new JaretDate(Utilities.dateFromDoubleTime(now)));				
 	}
 	
 	public void toggleFullscreen(boolean fullscreen)
@@ -250,72 +243,41 @@ public class PlaybackSession extends Session
 		timeBar.setVisible(!fullscreen);		
 	}
 	
-	public void goToStart() throws IOException
-	{
-		jumpToTime(startTime);
-	}
-
 	@Override public void remove() 
 	{
-		if (playbackTimer != null)
-		{
-			playbackTimer.stop();
-			playbackTimer = null;	
-		}
+		playback.stop();		
 		
-		for (PlaybackSensor ps : playbackSensors)
-			ps.stopVisualization();
+		for (ViewSensor vs : viewSensors)
+			vs.stopVisualization();
 	}
-	
-	public void jumpToTime(double time) throws IOException
-	{
-		synchronized( doStepSynchronization )
-		{
-			previousNow = time;
-			now = time;
-			for (PlaybackSensor ps : playbackSensors)
-				ps.nowChanged();
-			
-			if (!currentTimeMarkerDragged)
-				currentTimeMarker.setDate(new JaretDate(Utilities.dateFromDoubleTime(now)));
-			
-			doStep(0.0);
-		}
-	}	
 	
 	@Override
 	public void debugBtn(int code) 
 	{
 		try
 		{
-			for (PlaybackSensor ps : playbackSensors)
-			{
-				// TODO: For the presentation, do not show LMS visualizations
-	//			if (!ps.getSensorInfo().getType().equals("LMS1xx"))
-					ps.startVisualization();
-			}
+			for (ViewSensor vs : viewSensors)
+				vs.startVisualization();
 			
 			switch (code)
 			{
 				case 0:
 				{
-					playPauseButton();
+					playback.playPauseButton();
 					break;
 				}
 				
 				case 1:
 				{
-					jumpToTime(startTime);
+					playback.jumpToTime(playback.getStartTime());
 					break;
 				}
 				
 				case 2:
 				{
 					double timeStep = 0.02;
-					
-					doStep(timeStep);
-					previousNow = now;
-					now += timeStep;
+				
+					playback.step(timeStep);
 					break;
 				}			
 			}
@@ -326,130 +288,15 @@ public class PlaybackSession extends Session
 		}
 	}
 	
-	public void playPauseButton() 	
+	ViewSensor getViewSensorById(String id)
 	{
-		if (playbackTimer != null)
+		for (ViewSensor vs : viewSensors)
 		{
-			playbackTimer.stop();
-			playbackTimer = null;
+			if (vs.getPlaybackSensor().getSensorModel().id.equals(id))
+				return vs;
 		}
-		else
-		{		
-			double timeDelta = 0.01; //1.0 / 60.0;
-		    playbackTimer = new Timer((int) (timeDelta * 1000.0), 
-		    					new ActionListener() 
-		    					{
-		    						private long lastTime = System.nanoTime();
-		    	
-			      					@Override public void actionPerformed(ActionEvent evt) 
-			      					{
-			      						long timePassedInNano = System.nanoTime() - lastTime;
-			      						double timePassed = timePassedInNano / 1.0e9;
-//			      						double realTimePassed = timePassed;
-			      						if (timePassed > 0.1)
-			      							timePassed = 0.1;
-			      						
-			      						lastTime = System.nanoTime();
-			      						previousNow = now;
-			      						now += timePassed;
-			      						
-			      						if (!currentTimeMarkerDragged)
-			      							currentTimeMarker.setDate(new JaretDate(Utilities.dateFromDoubleTime(now)));
-			      						
-/*			      						String display = "Time since start = " + (now - startTime) + "\t(delta = " + timePassed * 1000.0 + "ms)";
-			      						if (realTimePassed > timePassed)
-			      							display += " CAP! real time passed = " + realTimePassed; 
-			      						
-			      						System.out.println(display);*/
-
-			      						try 
-			      						{
-											doStep(timePassed);
-										} 
-			      						catch (IOException e) 
-			      						{
-			      							Application.showException(e);
-			      							playbackTimer.stop();
-			      							playbackTimer = null;
-										} 
-			      					}
-		    					});
-		    playbackTimer.start();
-		    
-		    try
-		    {
-		    	doStep(timeDelta);
-		    }
-		    catch (Exception e)
-		    {
-				playbackTimer.stop();
-				playbackTimer = null;
-				Application.showException(e);
-		    }
-		}		
+		return null;
 	}
-	
-	public void stopButton()
-	{
-		if (playbackTimer != null)
-		{
-			playbackTimer.stop();
-			playbackTimer = null;			
-			try 
-			{
-				goToStart();
-			} 
-			catch (IOException e) 
-			{
-				Application.showException(e);			
-			}
-		}
-	}
-	
-	private void doStep(double timePassed) throws IOException 
-	{
-		synchronized( doStepSynchronization )
-		{
-			// TODO: Better implementation of jump markers, maybe only keep track of next jumpmarker
-			// and refresh after every marker / jumpToTime-call ?
-			
-			if (getScene() instanceof PlaybackScene)
-			{
-				List<TimeInterval> list = ((PlaybackScene) getScene()).getTimeIntervalList();
-				Iterator<TimeInterval> iter = list.iterator();
-				while (iter.hasNext())
-				{
-					TimeInterval m = iter.next();
-					
-					// passed over a jumpTimer-end
-					if (previousNow < m.endTime && m.endTime < now)
-					{
-						if (iter.hasNext())
-							jumpToTime(iter.next().startTime);
-						else
-							jumpToTime(list.get(0).startTime);
-						break;
-					}
-				}
-			}
-			
-			
-	//		System.out.println("Enter doStep at time " + (long)(now*1000.0));
-			
-			for (PlaybackSensor ps : playbackSensors)
-				ps.doEvent();
-			
-			if (Application.getMainFrame().getCurrentSession() == this)
-			{
-				double fps = 0.0;
-				if (timePassed != 0.0)
-					fps = 1 / timePassed;
-				
-				String timeString = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(Utilities.dateFromDoubleTime(now));
-				Application.getMainFrame().setTitle(String.format("%s (Time since start = %.3fs) @ %.2f FPS", timeString, now - startTime, fps));
-			}
-		}
-	}	
 
 	// TODO: Show line between two jumpMarkers in TimeBar
 	// TODO: Create whole new type LoopMarker which does all this 
@@ -470,4 +317,11 @@ public class PlaybackSession extends Session
 			return 10;
 		}
 	}
+	
+	public static void printTimeInMillis(int y, int m, int d, int h, int min, int s)
+	{
+		Calendar c2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		c2.set(y, m, d, h, min, s);
+		System.out.println(Long.toString(c2.getTimeInMillis()));		
+	}	
 }

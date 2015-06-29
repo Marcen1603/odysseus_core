@@ -14,15 +14,13 @@ import javax.swing.tree.TreePath;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory;
 import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory.SensorFactoryEntry;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.Receiver;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.Scene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.ChangeListener;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.Receiver;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.SensorBox;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.SensorBoxConfigDialog;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewEntity;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewException;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.TreeCellRenderer;
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.RemoteSensor;
 
@@ -154,7 +152,7 @@ public class LiveSession extends Session
 			
 			try
 			{
-				receiver.addListener(visualization);				
+				receiver.sensorDataReceived.addListener(visualization.getSensorDataListener());				
 				addVisualization(visualization);
 			}
 			catch (Exception e)
@@ -170,7 +168,7 @@ public class LiveSession extends Session
 		{ 
 			if (visualization == null) return;
 			
-			receiver.removeListener(visualization);
+			receiver.sensorDataReceived.removeListener(visualization.getSensorDataListener());
 			visualization.remove();
 			visualization = null;
 		}

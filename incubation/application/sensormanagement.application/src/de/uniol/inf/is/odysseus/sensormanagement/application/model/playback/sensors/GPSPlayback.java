@@ -1,0 +1,21 @@
+package de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.sensors;
+
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
+import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
+
+public class GPSPlayback extends TextFilePlayback 
+{
+	public GPSPlayback(SensorModel sensorModel, LogMetaData logMetaData) 
+	{
+		super(sensorModel, logMetaData);
+	}
+
+	@Override
+	public Event parseLine(String line) 
+	{
+   		double eventSecondsValid = 0; // TODO: 0, funktioniert sonst nicht. ??? // 80ms gültig, da alle 40ms ein neues Event kommt		
+   		double timestamp = Long.parseLong(line.split(",")[0]) / 1000.0;   		
+   		return new Event(getSensorModel(), line, timestamp, eventSecondsValid);		
+	}
+}

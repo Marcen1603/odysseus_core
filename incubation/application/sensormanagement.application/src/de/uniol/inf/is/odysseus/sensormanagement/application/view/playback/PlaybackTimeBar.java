@@ -16,6 +16,7 @@ import de.jaret.util.ui.timebars.model.TimeBarRow;
 import de.jaret.util.ui.timebars.strategy.IIntervalSelectionStrategy;
 import de.jaret.util.ui.timebars.swing.TimeBarViewer;
 import de.jaret.util.ui.timebars.swing.renderer.DefaultTitleRenderer;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackReceiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.Utilities;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 

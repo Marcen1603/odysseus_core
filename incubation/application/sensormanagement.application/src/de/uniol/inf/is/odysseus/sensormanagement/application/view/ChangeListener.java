@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.sensormanagement.application.view;
 
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.live.SensorBox;
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.RemoteSensor;
 
 public interface ChangeListener 

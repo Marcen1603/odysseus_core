@@ -19,10 +19,10 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.scene.Scene;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.sensors.MapVisualization;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.Scene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.JTreeItemClickListener;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.TreeCellRenderer;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.visualization.MapVisualization;
 
 public abstract class Session extends JSplitPane
 {	
