@@ -16,7 +16,7 @@ public class ToImageFromBufferFunction extends AbstractFunction<Image>
 	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {SDFDatatype.NUMBERS, SDFDatatype.NUMBERS, {SDFDatatype.BYTEBUFFER}};
 	
 	public ToImageFromBufferFunction() {
-		super("toImageCV", 3, ToImageFromBufferFunction.ACC_TYPES, SDFImageDatatype.IMAGE);
+		super("toImage", 3, ToImageFromBufferFunction.ACC_TYPES, SDFImageDatatype.IMAGE);
 	}
 	
 	// Creates an image with width and height given by the input values 0 and 1 and input given by input value 2 as a 32bpp bytebuffer.
