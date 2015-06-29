@@ -34,7 +34,6 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
 /**
  * This class represents all sources that need to be scheduled to deliver input
@@ -100,7 +99,7 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 
 		// TODO: We should think about propagate done ... maybe its better
 		// to send a punctuation??
-		// tryPropagateDone();
+		tryPropagateDone();
 		return false;
 	}
 
@@ -110,14 +109,14 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 		return false;
 	}
 
-	// private void tryPropagateDone() {
-	// try {
-	// propagateDone();
-	// } catch (Throwable throwable) {
-	// LOG.error("Exception during propagating done", throwable);
-	// sendError("Exception during propagating done", throwable);
-	// }
-	// }
+	private void tryPropagateDone() {
+		try {
+			propagateDone();
+		} catch (Throwable throwable) {
+			LOG.error("Exception during propagating done", throwable);
+			sendError("Exception during propagating done", throwable);
+		}
+	}
 
 	@Override
 	public synchronized void transferNext() {
