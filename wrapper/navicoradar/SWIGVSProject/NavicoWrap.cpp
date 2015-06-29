@@ -101,16 +101,16 @@ NavicoRadarWrapper::NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMete
 			ret = 0;
 			std::cout << "Navico Radar: Radar " << serNumbLock.c_str() << " Unlocked Succesfull"<<std::endl;
 		}
-		if (15 > RangeMeter) {
-			RangeMeter = 15;
+		if (15 > this->mRangeMeter) {
+			this->mRangeMeter = 15;
 		}
 
 		if (false == retB) retB = m_pImageClient->SetRange(this->mRangeMeter);
 		if(retB == false) std::cout << "Navico Radar: Radar Range Not set" <<std::endl;
-		else std::cout << "Navico Radar: Radar Range Set to "<< RangeMeter <<std::endl; retB = false;
+		else std::cout << "Navico Radar: Radar Range Set to "<< this->mRangeMeter <<std::endl; retB = false;
 		if (false == retB) retB = m_pImageClient->SetAntennaHeight(this->mAntennaHeight);
 		if(retB == false) std::cout << "Navico Radar: Radar Height Not Set" <<std::endl;
-		else std::cout << "Navico Radar: Radar Height Set to "<< mAntennaHeight/1000.0 <<std::endl; retB = false;
+		else std::cout << "Navico Radar: Radar Height Set to "<< this->mAntennaHeight/1000.0 <<"m" <<std::endl; retB = false;
 		
 		//m_pImageClient->SetGuardZoneEnable(0,1);
 		//m_pImageClient->SetGuardZoneSetup(0, getStartRangeMeter(), getEndRangeMeter(), getBearingDegree(), getWidthDegree());

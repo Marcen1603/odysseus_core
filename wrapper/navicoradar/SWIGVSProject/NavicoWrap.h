@@ -10,6 +10,7 @@
 #include <PPIController.h>
 #include "MastRadarTypes.h"
 #include <iostream>
+#include <RadarColourLookUpTable.h>
 
 #define NUM_OF_SAMPLES 1024 
 
@@ -249,7 +250,9 @@ private:
 	Navico::Protocol::NRP::tTargetTrackingClient* m_pTargetTrackingClient;
 	Navico::Image::tPPIController* m_pPPIController;
 	uint8_t *m_pPPIImage;
-	Navico::tRadarColourLookUpTableNavico gNavicoLUT; 
+	Navico::tRadarColourLookUpTableNavico gNavicoLUT;
+
+	
 };
 
 #endif
