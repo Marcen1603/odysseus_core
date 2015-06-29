@@ -150,28 +150,6 @@ public class PlaybackSession extends Session
 		
 		setupTimeBar();
 		
-/*		JumpMarker für erste BHV-Aufnahme
-        // Segelschiff
-		jumpMarkerList.add(new JumpMarker(1.4023903534281876E9,   // 10.06.2014 10:52:33.428
-										  1.4023904082014453E9)); // 10.06.2014 10:53:28.201
-		
-		// Kutter
-		jumpMarkerList.add(new JumpMarker(1.402391038327892E9,    // 10.06.2014 11:03:58.327
-										  1.402391073876045E9));  // 10.06.2014 11:04:33.876
-		
-		// Frachter
-		jumpMarkerList.add(new JumpMarker(1.4023937973471797E9,	  // 10.06.2014 11:49:57.347
-										  1.402393866163085E9));  // 10.06.2014 11:51:06.163
-		
-		// Fähre
-		jumpMarkerList.add(new JumpMarker(1.4023958638730824E9,   // 10.06.2014 12:24:23.873
-										  1.4023959430889094E9)); // 10.06.2014 12:25:43.088
-		
-		// Fähre + Handy
-		jumpMarkerList.add(new JumpMarker(1.4023964914624376E9,   // 10.06.2014 12:34:51.462
-										  1.4023966022596202E9)); // 10.06.2014 12:36:42.259
-						*/
-
 		for (String file : scene.getInstanceFileList())
 		{
 			File serverInstanceFile = new File(scene.getPath() + file);
