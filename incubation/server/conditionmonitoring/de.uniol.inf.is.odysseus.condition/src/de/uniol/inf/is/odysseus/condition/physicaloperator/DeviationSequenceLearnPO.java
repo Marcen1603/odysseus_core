@@ -64,7 +64,7 @@ public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterva
 			transfer(output, LEARN_OUT);
 		}
 
-		// GIve the next operator the data with our group id so that it's
+		// Give the next operator the data with our group id so that it's
 		// possible to map to the learned group id
 		Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(1, false);
 		output.setMetadata(tuple.getMetadata());

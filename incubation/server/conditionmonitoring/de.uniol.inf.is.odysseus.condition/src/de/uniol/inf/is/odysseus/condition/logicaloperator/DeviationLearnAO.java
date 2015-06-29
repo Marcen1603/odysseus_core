@@ -27,8 +27,11 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 
 	// Ports
 	private static final int DATA_PORT = 0;
-	private static final int BACKUP_PORT = 1;
+	private static final int OUT_INPUT_WITH_GROUP = 1;
+	private static final int BACKUP_PORT = 2;
 
+	private static final int DATA_INPUT_PORT = 0;
+	
 	private double manualMean;
 	private double manualStandardDeviation;
 	private List<SDFAttribute> groupingAttributes;
@@ -162,6 +165,15 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema(DATA_PORT));
 			this.setOutputSchema(port, outputSchema);
 			return getOutputSchema(DATA_PORT);
+		} else if (port == OUT_INPUT_WITH_GROUP) {
+			SDFSchema inSchema = getInputSchema(DATA_INPUT_PORT);
+			SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);
+			List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+			outputAttributes.add(groupId);
+			outputAttributes.addAll(inSchema.getAttributes());
+			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
+			this.setOutputSchema(OUT_INPUT_WITH_GROUP, outputSchema);
+			return getOutputSchema(OUT_INPUT_WITH_GROUP);
 		} else if (port == BACKUP_PORT) {
 			// Backup-Information
 			SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.condition.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
 @SuppressWarnings("rawtypes")
 public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
 
+	public static final int DATA_OUT = 1;
+	
 	private String valueAttributeName;
 	private double manualStandardDeviation;
 	private double manualMean;
@@ -46,7 +49,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 
 	// Ports for input and output
 	private static final int DATA_PORT = 0;
-	private static final int BACKUP_PORT = 1;
+	private static final int BACKUP_PORT = 2;
 
 	public DeviationLearnPO(TrainingMode trainingMode, String attributeName, IGroupProcessor<T, T> groupProcessor) {
 		init();
@@ -174,6 +177,13 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		output.setAttribute(1, info.mean);
 		output.setAttribute(2, info.standardDeviation);
 		transfer(output);
+		
+		// Transfer original data (with group) on port 1 (the next operator needs to map the groups identical)
+		Tuple<ITimeInterval> inputDataWithGroup = new Tuple<ITimeInterval>(1, false);
+		inputDataWithGroup.setMetadata(tuple.getMetadata());
+		inputDataWithGroup.setAttribute(0, gId);
+		inputDataWithGroup = inputDataWithGroup.appendList(Arrays.asList(tuple.getAttributes()), false);
+		transfer(inputDataWithGroup, DATA_OUT);
 	}
 
 	/**
@@ -357,8 +367,12 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		for (T tuple : tuples) {
 			info.sum2 += (getValue(tuple) - info.mean) * (getValue(tuple) - info.mean);
 		}
-
-		double variance = info.sum2 / (info.n - 1);
+		
+		double variance = 0;
+		if (info.sum2 != 0) {
+			// We have more than one value / not all values have the same value
+			variance = info.sum2 / (info.n - 1);
+		}
 		info.standardDeviation = Math.sqrt(variance);
 		return info;
 	}
