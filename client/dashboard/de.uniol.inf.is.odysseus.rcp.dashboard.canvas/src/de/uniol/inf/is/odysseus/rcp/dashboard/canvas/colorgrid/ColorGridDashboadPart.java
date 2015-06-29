@@ -50,7 +50,6 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	private double maxZoom = 3;
 	private double minZoom = 0.5;
 
-	
 	private String imagePath;
 	private Image image;
 
@@ -78,6 +77,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 				+ value.doubleValue()).toCIELab().toXYZ().toRGB();
 	}
 
+	@Override
 	public void doPaint(final PaintEvent e) {
 
 		final RGB background = this.getBackgroundColor();
@@ -126,9 +126,9 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 						grid[x][y] = null;
 					} else {
 						Number v = grid[x][y].getAttribute(value_pos);
-						if (v.doubleValue() > 0){
-							fillRectangle(draw_x, draw_y, draw_height, draw_width,
-									getColor(v));
+						if (v.doubleValue() > 0) {
+							fillRectangle(draw_x, draw_y, draw_height,
+									draw_width, getColor(v));
 						}
 					}
 				}
@@ -229,7 +229,10 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 		Tuple<? extends ITimeInterval> t = (Tuple<? extends ITimeInterval>) element;
 		int x = t.getAttribute(xpos);
 		int y = t.getAttribute(ypos);
-		grid[x][y] = t;
+		// Filter out elements not in grid!
+		if (x > 0 && x < width && y > 0 && y < height) {
+			grid[x][y] = t;
+		}
 		maxTime = t.getMetadata().getStart().getMainPoint();
 	}
 
@@ -286,7 +289,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	public void mouseScrolled(MouseEvent e) {
 		int size = e.count;
 		if (size < 0) {
-				setZoom(zoom * 0.1);
+			setZoom(zoom * 0.1);
 		} else {
 			setZoom(zoom * 1.1);
 		}
@@ -462,11 +465,11 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	}
 
 	public void setZoom(double zoom) {
-		if (zoom < minZoom){
+		if (zoom < minZoom) {
 			this.zoom = minZoom;
-		}else if (zoom > maxZoom){
+		} else if (zoom > maxZoom) {
 			this.zoom = maxZoom;
-		}else{
+		} else {
 			this.zoom = zoom;
 		}
 		dirty();
