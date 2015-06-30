@@ -785,7 +785,11 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			ISession session) {
 		// TODO: Check access rights
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
-		return pq.getRoots();
+		if (pq != null) {
+			return pq.getRoots();
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -820,7 +824,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		// For local processing, currently no session is needed
 		return getQueryState(queryID);
 	}
-	
+
 	@Override
 	public QueryState getQueryState(int queryID) {
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
@@ -832,7 +836,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		// For local processing, currently no session is needed
 		return getQueryState(queryName);
 	}
-	
+
 	@Override
 	public QueryState getQueryState(String queryID) {
 		IPhysicalQuery pq = executionPlan.getQueryByName(queryID);
@@ -853,7 +857,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		// For local processing, currently no session is needed
 		return getQueryStates(id);
 	}
-	
+
 	@Override
 	public List<QueryState> getQueryStates(List<Integer> id) {
 		List<QueryState> ret = new ArrayList<QueryState>();
@@ -1054,7 +1058,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void fireDataDictionaryEvent(IDataDictionary dd) {
 		synchronized (updateEventListener) {
 			List<IUpdateEventListener> list = dataDictEventListener.get(dd);
-			//LOG.trace("Fire to " + list);
+			// LOG.trace("Fire to " + list);
 			if (list != null) {
 				for (IUpdateEventListener l : list) {
 					l.eventOccured(IUpdateEventListener.DATADICTIONARY);
@@ -1066,7 +1070,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void fireGenericEvent(String type) {
 		synchronized (updateEventListener) {
 			List<IUpdateEventListener> list = updateEventListener.get(type);
-		//	LOG.trace("Fire " + type + " to " + list);
+			// LOG.trace("Fire " + type + " to " + list);
 			if (list != null) {
 				for (IUpdateEventListener l : list) {
 					l.eventOccured(type);
