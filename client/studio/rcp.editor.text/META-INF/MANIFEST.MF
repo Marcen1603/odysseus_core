@@ -22,6 +22,7 @@ Import-Package: org.eclipse.core.resources,
  org.eclipse.ui.views.contentoutline,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.rcp.editor.text,
+ de.uniol.inf.is.odysseus.rcp.editor.text.commands,
  de.uniol.inf.is.odysseus.rcp.editor.text.completion,
  de.uniol.inf.is.odysseus.rcp.editor.text.editors,
  de.uniol.inf.is.odysseus.rcp.editor.text.editors.coloring,
