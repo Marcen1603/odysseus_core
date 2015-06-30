@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.imagejcv.functions.*;
 
 /**
- * Functions that registrates imagejcv functions in ODYSSEUS.
+ * Functions that registers ImageJCV functions in ODYSSEUS.
  * 
  * @author Kristian Bruns
  */
@@ -49,7 +49,15 @@ public class ImageJCVFunctionProvider implements IFunctionProvider {
 		functions.add(new ToImageFunction());
 		functions.add(new ToImageMatrixFunction());
 		functions.add(new ToMatrixFunction());
-		functions.add(new ToImageFromBufferedImageFunction());
+		
+		// Try to add Image->ImagJCV conversion function
+		// To avoid tight coupling, this function will only be added if image and imagejcv features are present
+		try {
+			functions.add(new ToImageFromBufferedImageFunction());
+        } catch (NoClassDefFoundError e) {
+        	ImageJCVFunctionProvider.LOG.warn("Conversion function Image->ImageJCV requires image feature");
+        }
+		
 		ImageJCVFunctionProvider.LOG.trace(String.format("Register functions: %s", functions));
 		return functions;
 	}
