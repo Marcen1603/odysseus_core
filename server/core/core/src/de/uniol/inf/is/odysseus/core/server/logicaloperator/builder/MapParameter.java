@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
-
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 
 public class MapParameter<K, V> extends AbstractParameter<Map<K, V>> {
@@ -29,13 +27,16 @@ public class MapParameter<K, V> extends AbstractParameter<Map<K, V>> {
 	private IParameter<K> keyParameter;
 	private IParameter<V> valueParameter;
 
-	public MapParameter(String name, REQUIREMENT requirement, IParameter<K> keyParameter, IParameter<V> valueParameter) {
+	public MapParameter(String name, REQUIREMENT requirement,
+			IParameter<K> keyParameter, IParameter<V> valueParameter) {
 		super(name, requirement, USAGE.RECENT);
 		this.keyParameter = keyParameter;
 		this.valueParameter = valueParameter;
 	}
 
-	public MapParameter(String name, REQUIREMENT requirement, IParameter<K> keyParameter, IParameter<V> valueParameter, USAGE usage) {
+	public MapParameter(String name, REQUIREMENT requirement,
+			IParameter<K> keyParameter, IParameter<V> valueParameter,
+			USAGE usage) {
 		super(name, requirement, usage);
 		this.keyParameter = keyParameter;
 		this.valueParameter = valueParameter;
@@ -62,14 +63,17 @@ public class MapParameter<K, V> extends AbstractParameter<Map<K, V>> {
 				valueParameter.setAttributeResolver(getAttributeResolver());
 				valueParameter.setDataDictionary(getDataDictionary());
 				if (!valueParameter.validate()) {
-					throw new RuntimeException(valueParameter.getErrors().get(0));
+					throw new RuntimeException(valueParameter.getErrors()
+							.get(0));
 				}
 				map.put(keyParameter.getValue(), valueParameter.getValue());
 			}
 			setValue(map);
 
 		} catch (ClassCastException e) {
-			throw new IllegalArgumentException("wrong input for parameter " + getName() + ", Map expected, got " + inputValue.getClass().getSimpleName());
+			throw new IllegalArgumentException("wrong input for parameter "
+					+ getName() + ", Map expected, got "
+					+ inputValue.getClass().getSimpleName());
 		}
 	}
 
@@ -77,7 +81,8 @@ public class MapParameter<K, V> extends AbstractParameter<Map<K, V>> {
 	protected String getPQLStringInternal() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		Entry<?,?>[] entrySet = ((Map<?, ?>) inputValue).entrySet().toArray(new Entry<?,?>[0]);
+		Entry<?, ?>[] entrySet = ((Map<?, ?>) inputValue).entrySet().toArray(
+				new Entry<?, ?>[0]);
 		for (int i = 0; i < entrySet.length; i++) {
 			Entry<?, ?> e = entrySet[i];
 			keyParameter.setInputValue(e.getKey());
@@ -95,7 +100,7 @@ public class MapParameter<K, V> extends AbstractParameter<Map<K, V>> {
 			sb.append(keyParameter.getPQLString());
 			sb.append("=");
 			sb.append(valueParameter.getPQLString());
-			if( i < entrySet.length - 1 ) {
+			if (i < entrySet.length - 1) {
 				sb.append(",");
 			}
 		}
