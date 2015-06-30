@@ -2,29 +2,40 @@ package de.uniol.inf.is.odysseus.video;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.sensormanagement.server.logging.VideoLoggerProtocolHandler;
 
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
+	private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
 	static BundleContext getContext() {
 		return context;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext bundleContext) throws Exception {
+	private ServiceRegistration<?> videoLoggerService;
+
+	public void start(BundleContext bundleContext) throws Exception 
+	{
 		Activator.context = bundleContext;
+		
+		try {
+			videoLoggerService =  bundleContext.registerService(IProtocolHandler.class.getName(), new VideoLoggerProtocolHandler(), null);
+		} catch (NoClassDefFoundError e) {
+			LOG.warn("VideoLoggerProtocolHandler requires sensormanagement.server feature");
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext bundleContext) throws Exception {
-		Activator.context = null;
+	public void stop(BundleContext bundleContext) throws Exception 
+	{
+		if (videoLoggerService != null) context.ungetService(videoLoggerService.getReference());
+		
+		Activator.context = null;		 
 	}
 
 }

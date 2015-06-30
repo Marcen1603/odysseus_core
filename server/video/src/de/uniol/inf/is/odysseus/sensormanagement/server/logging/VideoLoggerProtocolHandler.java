@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameRecorder;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +28,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.common.logging.VideoLogMetaData
 public class VideoLoggerProtocolHandler extends LoggerProtocolHandler 
 {
 	public static final String NAME = "VideoLogger";
-	static final Runtime RUNTIME = Runtime.getRuntime();
-
-	Logger LOG = LoggerFactory.getLogger(VideoLoggerProtocolHandler.class);
+	public static final Logger LOG = LoggerFactory.getLogger(VideoLoggerProtocolHandler.class);
 
 	private FrameRecorder 		recorder = null;
 	private DataOutputStream 	syncFileStream = null;	
@@ -198,5 +198,16 @@ public class VideoLoggerProtocolHandler extends LoggerProtocolHandler
 			return false;
 		}*/
 		return true;
+	}
+
+	// Static method to register this handler as service, since it depends on an optional bundle
+	public static ServiceRegistration<?> registerService(BundleContext bundleContext) 
+	{
+		try {
+			return bundleContext.registerService(IProtocolHandler.class.getName(), new VideoLoggerProtocolHandler(), null);
+		} catch (NoClassDefFoundError e) {
+			LOG.warn("VideoLoggerProtocolHandler requires sensormanagement.server feature");
+			return null;
+		}
 	}
 }
