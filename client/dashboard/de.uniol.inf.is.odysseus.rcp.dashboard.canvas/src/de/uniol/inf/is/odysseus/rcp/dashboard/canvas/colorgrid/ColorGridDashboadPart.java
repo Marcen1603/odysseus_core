@@ -92,18 +92,13 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 
 		if (this.image != null) {
 
-			if (imageScale == 1.0 && zoom == 1.0) {
-				this.getGC().drawImage(this.image, backgroundImageOffsetX,
-						backgroundImageOffsetY);
-			} else {
-				Rectangle b = image.getBounds();
-				int newX = new Double(backgroundImageOffsetX * zoom).intValue();
-				int newY = new Double(backgroundImageOffsetY * zoom).intValue();
-				int newW = new Double(b.width * imageScale * zoom).intValue();
-				int newH = new Double(b.height * imageScale * zoom).intValue();
-				this.getGC().drawImage(this.image, 0, 0, b.width, b.height,
-						newX, newY, newW, newH);
-			}
+			Rectangle b = image.getBounds();
+			int newX = new Double(backgroundImageOffsetX * zoom).intValue();
+			int newY = new Double(backgroundImageOffsetY * zoom).intValue();
+			int newW = new Double(b.width * imageScale * zoom).intValue();
+			int newH = new Double(b.height * imageScale * zoom).intValue();
+			this.getGC().drawImage(this.image, 0, 0, b.width, b.height, newX,
+					newY, newW, newH);
 		}
 
 		for (int x = 0; x < width; x++) {
@@ -114,6 +109,15 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 					int draw_y = new Double(y * boxWidth * zoom).intValue();
 					int draw_width = new Double(boxWidth * zoom).intValue();
 					int draw_height = new Double(boxHeight * zoom).intValue();
+
+					// Do not draw out of screen points
+					if (draw_x - leftTop.x < 0) {
+						continue;
+					}
+
+					if (draw_y - leftTop.y < 0) {
+						continue;
+					}
 
 					if (maxDuration > 0
 							&& grid[x][y].getMetadata().getStart()

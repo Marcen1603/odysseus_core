@@ -63,7 +63,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
  * @version $Id: AbstractCanvasDashboardPart.java |
  *          AbstractCanvasDashboardPart.java | AbstractCanvasDashboardPart.java
  *          $
- *
+ * 
  */
 public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 		implements PaintListener, MouseListener, MouseMoveListener,
@@ -81,8 +81,9 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 	protected GC gc;
 	private int maxElements = 100;
 	private long repaintDelay = 1000;
+	private final static long minRepaintDelay = 100;
 	protected Color backgroundColor;
-	private Point leftTop = new Point(0, 0);
+	protected Point leftTop = new Point(0, 0);
 
 	List<ChangeListener> listener = new ArrayList<>();
 
@@ -165,6 +166,12 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 			this.gc.dispose();
 			this.gc = null;
 			e.gc.drawImage(bufferImage, leftTop.x, leftTop.y);
+			// System.err.println(-1 * leftTop.x + " " + -1 * leftTop.y + " "
+			// + (s.x - leftTop.x) + " " + (s.y - leftTop.y) + " " + 0
+			// + " " + 0 + " " + (s.x - leftTop.x) + " "
+			// + (s.y - leftTop.y));
+			// e.gc.drawImage(bufferImage, -1 * leftTop.x, -1 * leftTop.y, s.x
+			// - leftTop.x, s.y - leftTop.y, 0, 0, s.x, s.y);
 			// TODO: clipping
 			// int width = bufferImage.getBounds().width;
 			// int height = bufferImage.getBounds().height;
@@ -211,10 +218,12 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 	public void onLoad(Map<String, String> saved) {
 		maxElements = Integer.valueOf(saved.get(MAX_ELEMENTS) != null ? saved
 				.get(MAX_ELEMENTS) : "1000");
-		repaintDelay = Long.valueOf(saved.get(REPAINT_DELAY) != null ? saved
-				.get(REPAINT_DELAY) : "1000");
-		int x = Integer.valueOf(saved.get(LEFT_OFFSET_X) != null? saved.get(LEFT_OFFSET_X):"0");
-		int y = Integer.valueOf(saved.get(LEFT_OFFSET_Y) != null? saved.get(LEFT_OFFSET_Y):"0");
+		setRepaintDelay(Long.valueOf(saved.get(REPAINT_DELAY) != null ? saved
+				.get(REPAINT_DELAY) : "1000"));
+		int x = Integer.valueOf(saved.get(LEFT_OFFSET_X) != null ? saved
+				.get(LEFT_OFFSET_X) : "0");
+		int y = Integer.valueOf(saved.get(LEFT_OFFSET_Y) != null ? saved
+				.get(LEFT_OFFSET_Y) : "0");
 		leftTop = new Point(x, y);
 	}
 
@@ -923,7 +932,7 @@ public abstract class AbstractCanvasDashboardPart extends AbstractDashboardPart
 	}
 
 	public void setRepaintDelay(long repaintDelay) {
-		this.repaintDelay = repaintDelay;
+		this.repaintDelay = Math.max(minRepaintDelay, repaintDelay);
 		restartUpdater();
 	}
 

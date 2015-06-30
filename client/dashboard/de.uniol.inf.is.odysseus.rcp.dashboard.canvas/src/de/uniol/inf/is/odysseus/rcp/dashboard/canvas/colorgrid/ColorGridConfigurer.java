@@ -55,6 +55,7 @@ public class ColorGridConfigurer extends
 	Text zoomText;
 	private Text offsetX;
 	private Text offsetY;
+	Text repaintRate;
 	private boolean reactOnModify = true;
 
 	@Override
@@ -274,10 +275,9 @@ public class ColorGridConfigurer extends
 				});
 			}
 			{// UpdateThread
-				toolkit.createLabel(group, "Repaint Delay (sec)");
-				final Text repaintRate = toolkit.createText(group, String
-						.format("%15d%n", this.getDashboardPart()
-								.getRepaintDelay() / 1000));
+				toolkit.createLabel(group, "Repaint Delay (msec)");
+				repaintRate = toolkit.createText(group, String.format("%15d%n",
+						this.getDashboardPart().getRepaintDelay()));
 				repaintRate.addModifyListener(new ModifyListener() {
 					/**
 					 * {@inheritDoc}
@@ -288,7 +288,7 @@ public class ColorGridConfigurer extends
 						if (!"".equals(text)) {
 							try {
 								ColorGridConfigurer.this.dashboardPart
-										.setRepaintDelay(Integer.parseInt(text) * 1000);
+										.setRepaintDelay(Integer.parseInt(text));
 								fireListener();
 
 							} catch (final NumberFormatException ex) {
@@ -700,4 +700,3 @@ public class ColorGridConfigurer extends
 		fireListener();
 	}
 }
-

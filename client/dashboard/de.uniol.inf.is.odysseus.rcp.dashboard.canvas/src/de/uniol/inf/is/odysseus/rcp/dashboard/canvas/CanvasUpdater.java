@@ -20,52 +20,51 @@ import org.eclipse.swt.widgets.Canvas;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * @version $Id$
- *
+ * 
  */
 public class CanvasUpdater extends Thread {
-    final Canvas canvas;
-    final long delay;
-    
-    /**
-     * Class constructor.
-     *
-     */
-    public CanvasUpdater(final Canvas canvas, long delay) {
-        this.canvas = canvas;
-        this.setName("Canvas updater");
-        this.setDaemon(true);
-        this.delay = delay;
-    }
-    
-    boolean stop = false;
+	final Canvas canvas;
+	final long delay;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void run() {
-        while (!stop && !this.isInterrupted()) {
-            if (!this.canvas.isDisposed()) {
-                this.canvas.getDisplay().asyncExec(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!CanvasUpdater.this.canvas.isDisposed()) {
-                            CanvasUpdater.this.canvas.redraw();
-                        }
-                    }
-                });
+	/**
+	 * Class constructor.
+	 * 
+	 */
+	public CanvasUpdater(final Canvas canvas, long delay) {
+		this.canvas = canvas;
+		this.setName("Canvas updater");
+		this.setDaemon(true);
+		this.delay = delay;
+	}
 
-                try {
-                    Thread.sleep(delay);
-                }
-                catch (final InterruptedException e) {
-                    // Empty block
-                }
-            }
-        }
-    }
-    
-    public void terminate(){
-    	stop = true;
-    }
+	boolean stop = false;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void run() {
+		while (!stop && !this.isInterrupted()) {
+			if (this.canvas != null && !this.canvas.isDisposed()) {
+				this.canvas.getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (!CanvasUpdater.this.canvas.isDisposed()) {
+							CanvasUpdater.this.canvas.redraw();
+						}
+					}
+				});
+
+				try {
+					Thread.sleep(delay);
+				} catch (final InterruptedException e) {
+					// Empty block
+				}
+			}
+		}
+	}
+
+	public void terminate() {
+		stop = true;
+	}
 }
