@@ -85,6 +85,11 @@ public class Activator implements BundleActivator {
 		FridgeVibrationSensorDataProvider fridgeProvider2 = new FridgeVibrationSensorDataProvider();
 		StreamServer fridgeServer2 = new StreamServer(53217, fridgeProvider2);
 		fridgeServer2.start();
+		
+		// A context-vibration sensor
+		ContextVibrationDataProvider contextVibrationProvider = new ContextVibrationDataProvider();
+		StreamServer contextVibrationServer = new StreamServer(53218, contextVibrationProvider);
+		contextVibrationServer.start();
 
 		// Listen for commands
 		while (true) {
@@ -118,7 +123,6 @@ public class Activator implements BundleActivator {
 					// Fridge 2
 					fridgeProvider2.resume();
 				} else {
-
 					double newValue = 0;
 					try {
 						newValue = Double.parseDouble(command);
