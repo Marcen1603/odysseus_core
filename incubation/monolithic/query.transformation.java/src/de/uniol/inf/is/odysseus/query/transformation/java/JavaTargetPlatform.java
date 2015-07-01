@@ -7,14 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.core.server.util.GenericUpstreamGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorToVariable;
@@ -201,7 +197,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		code.append("\n");
 		code.append("\n");
 		code.append("\n");
-		code.append("while(true){");
+		code.append("while("+OperatorToVariable.getVariable(rootOP)+"PO.hasNext()){");
 		code.append("\n");
 		code.append(OperatorToVariable.getVariable(rootOP)+"PO.transferNext();");
 		code.append("\n");

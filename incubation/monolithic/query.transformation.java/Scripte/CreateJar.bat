@@ -2,15 +2,25 @@
 ::Odysseus Core
 cd %1\common\core
 %3
+xcopy %1\common\core\src\* %1\common\core\bin /s /e /c /y
 jar cvf OdysseusCore.jar *.properties lib/*.jar -C bin .
 xcopy /Y OdysseusCore.jar %2
 
 ::Odysseus Core Server 
 cd %1\server\core\core
+xcopy %1\server\core\core\src\* %1\server\core\core\bin /s /e /c /y
 jar cvf OdysseusServer.jar *.properties lib/*.jar -C bin .
 xcopy /Y OdysseusServer.jar %2
 
 ::server\relational\relational.base
 cd %1\server\relational\relational.base
+xcopy %1\server\relational\relational.base\src\* %1\server\relational\relational.base\bin /s /e /c /y
 jar cvf OdysseusRelational.jar *.properties lib/*.jar -C bin .
 xcopy /Y OdysseusRelational.jar %2
+
+::common\resources\de.uniol.inf.is.odysseus.slf4j
+cd %1\common\resources\de.uniol.inf.is.odysseus.slf4j
+xcopy %1\common\resources\de.uniol.inf.is.odysseus.slf4j\src\* %1\common\resources\de.uniol.inf.is.odysseus.slf4j\bin /s /e /c /y
+jar cvf OdysseusLogger.jar *.properties lib/*.jar -C bin .
+xcopy /Y OdysseusLogger.jar %2
+
