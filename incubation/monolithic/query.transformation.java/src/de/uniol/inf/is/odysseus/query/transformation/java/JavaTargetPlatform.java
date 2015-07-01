@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorToVariable;
+import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIBindings;
 import de.uniol.inf.is.odysseus.query.transformation.operator.IOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.registry.OperatorRegistry;
@@ -89,9 +90,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			//close file
 			testWrite.writeBottom();
 			
-
-			
-			//ExecuteShellComand.compileJavaProgram(parameter.getTempDirectory());	
+			ExecuteShellComand.compileJavaProgram(parameter.getTempDirectory());	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

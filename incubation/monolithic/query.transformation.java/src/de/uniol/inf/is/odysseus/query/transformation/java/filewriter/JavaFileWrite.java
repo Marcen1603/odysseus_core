@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.mainstructure.JavaMainstructure;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.GenerateAntBuildFile;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.UnZip;
 
 
@@ -54,6 +55,16 @@ public class JavaFileWrite {
 			createOdysseusJar.createOdysseusJar(parameter);
 		}
 		
+		//generate build.xml
+		GenerateAntBuildFile buildFileGenerator = new GenerateAntBuildFile();
+	
+		File buildFile = new File(path+"\\build.xml");
+		buildFile.createNewFile();
+		
+		FileWriter buildWriter = new FileWriter(buildFile); 
+		buildWriter.write(buildFileGenerator.getCodeForAntBuild(parameter));
+		buildWriter.flush();
+		buildWriter.close();
 	}
 	
 	public void writeImports(Set<String> importList) throws IOException{

@@ -11,7 +11,7 @@ public class ExecuteShellComand {
 	Process p;
 
 	try {
-		p = Runtime.getRuntime().exec("javac "+tempDirectory+"\\TestFile.java");
+		p = Runtime.getRuntime().exec("cmd /c ant -f "+tempDirectory);
 		p.waitFor();
 		
 		
