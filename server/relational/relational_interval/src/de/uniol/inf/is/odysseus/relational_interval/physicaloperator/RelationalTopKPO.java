@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
  * function
  * 
  * @author Marco Grawunder
- *
+ * 
  * @param <T>
  * @param <M>
  */
@@ -88,7 +88,6 @@ public class RelationalTopKPO<T extends Tuple<M>, M extends ITimeInterval>
 		}
 	}
 
-	// final private SDFExpression scoringFunction;
 	final private RelationalExpression<M> expression;
 	final private int k;
 	final private Map<Long, ArrayList<SerializablePair<Double, T>>> topKMap = new HashMap<Long, ArrayList<SerializablePair<Double, T>>>();

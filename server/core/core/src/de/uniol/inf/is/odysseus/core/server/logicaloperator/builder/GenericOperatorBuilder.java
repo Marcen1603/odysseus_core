@@ -36,27 +36,35 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 	private ILogicalOperator operator;
 	private Map<Parameter, Method> parameterAnnotationMap;
 
-    public GenericOperatorBuilder(Class<? extends ILogicalOperator> operatorClass, String name, Map<Parameter, Method> parameterMap, int minPortCount, int maxPortCount, String doc, String url,
-            String[] categories) {
-        super(name, minPortCount, maxPortCount, doc, url, categories);
+	public GenericOperatorBuilder(
+			Class<? extends ILogicalOperator> operatorClass, String name,
+			Map<Parameter, Method> parameterMap, int minPortCount,
+			int maxPortCount, String doc, String url, String[] categories) {
+		super(name, minPortCount, maxPortCount, doc, url, categories);
 		this.operatorClass = operatorClass;
 		this.parameterAnnotationMap = parameterMap;
 		initParameters();
 	}
 
 	public GenericOperatorBuilder(GenericOperatorBuilder builder) {
-        this(builder.operatorClass, builder.getName(), builder.parameterAnnotationMap, builder.getMinInputOperatorCount(), builder.getMaxInputOperatorCount(), builder.getDoc(), builder.getUrl(),
-                builder.getCategories());
+		this(builder.operatorClass, builder.getName(),
+				builder.parameterAnnotationMap, builder
+						.getMinInputOperatorCount(), builder
+						.getMaxInputOperatorCount(), builder.getDoc(), builder
+						.getUrl(), builder.getCategories());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initParameters() {
 		this.parameterMap = new HashMap<Method, IParameter<?>>();
-		for (Map.Entry<Parameter, Method> curParameterEntry : parameterAnnotationMap.entrySet()) {
+		for (Map.Entry<Parameter, Method> curParameterEntry : parameterAnnotationMap
+				.entrySet()) {
 			Parameter parameterAnnotation = curParameterEntry.getKey();
 			Method method = curParameterEntry.getValue();
-			Class<? extends IParameter> parameterType = parameterAnnotation.type();
-			Class<? extends IParameter> parameterKeyType = parameterAnnotation.keytype();
+			Class<? extends IParameter> parameterType = parameterAnnotation
+					.type();
+			Class<? extends IParameter> parameterKeyType = parameterAnnotation
+					.keytype();
 			IParameter<?> parameter;
 			try {
 				parameter = parameterType.newInstance();
@@ -66,50 +74,64 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 
 				String name = parameterAnnotation.name();
 				String doc = parameterAnnotation.doc();
-				String possibleValueMethod = parameterAnnotation.possibleValues();
-				boolean possibleValuesAreDynamic = parameterAnnotation.possibleValuesAreDynamic();
-				
+				String possibleValueMethod = parameterAnnotation
+						.possibleValues();
+				boolean possibleValuesAreDynamic = parameterAnnotation
+						.possibleValuesAreDynamic();
+
 				// remove 'set' from set method to get the property name,
 				// if no explicit name was set
-				name = (name.isEmpty() ? method.getName().substring(3) : name).toUpperCase();
+				name = (name.isEmpty() ? method.getName().substring(3) : name)
+						.toUpperCase();
 				parameter.setName(name);
 				parameter.setDoc(doc);
-				parameter.setPossibleValueMethod(possibleValueMethod);	
+				parameter.setPossibleValueMethod(possibleValueMethod);
 				parameter.setPossibleValuesAreDynamic(possibleValuesAreDynamic);
-				REQUIREMENT requirement = parameterAnnotation.optional() ? REQUIREMENT.OPTIONAL : REQUIREMENT.MANDATORY;
+				REQUIREMENT requirement = parameterAnnotation.optional() ? REQUIREMENT.OPTIONAL
+						: REQUIREMENT.MANDATORY;
 
 				parameter.setRequirement(requirement);
 
-				USAGE usage = parameterAnnotation.deprecated() ? USAGE.DEPRECATED : USAGE.RECENT;
+				USAGE usage = parameterAnnotation.deprecated() ? USAGE.DEPRECATED
+						: USAGE.RECENT;
 
 				parameter.setUsage(usage);
 
-//				if(parameterAnnotation.isList() && parameterAnnotation.isMap()){
-//					throw new IllegalParameterException("Parameter '" + name + "' can be either a list or a map");
-//				}
-				
+				// if(parameterAnnotation.isList() &&
+				// parameterAnnotation.isMap()){
+				// throw new IllegalParameterException("Parameter '" + name +
+				// "' can be either a list or a map");
+				// }
+
 				if (parameterAnnotation.isList()) {
-					if (!List.class.isAssignableFrom(method.getParameterTypes()[0])) {
-						if(!parameterAnnotation.isMap()){
-							throw new IllegalParameterException("Parameter '" + name + "' is incompatible to method '" + method.getName() + "'");
+					if (!List.class
+							.isAssignableFrom(method.getParameterTypes()[0])) {
+						if (!parameterAnnotation.isMap()) {
+							throw new IllegalParameterException("Parameter '"
+									+ name + "' is incompatible to method '"
+									+ method.getName() + "'");
 						}
-					}					
+					}
 					parameter = new ListParameter(parameter);
 					parameter.setDoc(doc);
-					parameter.setPossibleValueMethod(possibleValueMethod);	
-					parameter.setPossibleValuesAreDynamic(possibleValuesAreDynamic);
+					parameter.setPossibleValueMethod(possibleValueMethod);
+					parameter
+							.setPossibleValuesAreDynamic(possibleValuesAreDynamic);
 					parameter.setName(name);
 					parameter.setRequirement(requirement);
 				}
-				if(parameterAnnotation.isMap()){
-					if (!Map.class.isAssignableFrom(method.getParameterTypes()[0])) {
-						throw new IllegalParameterException("Parameter '" + name + "' is incompatible to method '" + method.getName() + "'");
+				if (parameterAnnotation.isMap()) {
+					if (!Map.class
+							.isAssignableFrom(method.getParameterTypes()[0])) {
+						throw new IllegalParameterException("Parameter '"
+								+ name + "' is incompatible to method '"
+								+ method.getName() + "'");
 					}
 					IParameter<?> keyParameter = parameterKeyType.newInstance();
 					keyParameter.setRequirement(requirement);
 					keyParameter.setUsage(usage);
 					keyParameter.setName(name);
-					parameter = new MapParameter(keyParameter, parameter);					
+					parameter = new MapParameter(keyParameter, parameter);
 					parameter.setName(name);
 					parameter.setRequirement(requirement);
 				}
@@ -123,22 +145,28 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static void createEnumParameter(Method method, IParameter<?> parameter) {
+	private static void createEnumParameter(Method method,
+			IParameter<?> parameter) {
 		Class<?>[] methodParameters = method.getParameterTypes();
-		if (methodParameters == null || methodParameters.length != 1 || !methodParameters[0].isEnum()) {
-			throw new IllegalParameterException("method '" + method.getName() + "' of class '" + method.getDeclaringClass().getSimpleName()
+		if (methodParameters == null || methodParameters.length != 1
+				|| !methodParameters[0].isEnum()) {
+			throw new IllegalParameterException("method '" + method.getName()
+					+ "' of class '"
+					+ method.getDeclaringClass().getSimpleName()
 					+ "' can't be written by an EnumParameter");
 		}
-		((EnumParameter) parameter).setEnum((Class<? extends Enum>) methodParameters[0]);
+		((EnumParameter) parameter)
+				.setEnum((Class<? extends Enum>) methodParameters[0]);
 	}
 
 	@Override
 	protected boolean internalValidation() {
+		ILogicalOperator op = null;
 		try {
 			if (this.operator != null) {
 				return true;
 			}
-			ILogicalOperator op = operatorClass.newInstance();
+			op = operatorClass.newInstance();
 			initOp(op);
 			boolean isValid = op.isValid();
 			if (isValid) {
@@ -152,7 +180,8 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 		} catch (Exception e) {
 			// TODO: REMOVE
 			// e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new RuntimeException("Error in operator " + op + " "
+					+ e.getMessage(), e);
 		}
 	}
 
@@ -161,16 +190,32 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 		return this.operator;
 	}
 
-	private void initOp(ILogicalOperator op) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private void initOp(ILogicalOperator op) throws IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException {
 		op.setMetadata(getMetaAttribute());
 		for (int i = 0; i < getInputOperatorCount(); ++i) {
 			ILogicalOperator inputOperator = getInputOperator(i);
-			op.subscribeToSource(inputOperator, i, getInputOperatorItem(i).outputPort, inputOperator.getOutputSchema(getInputOperatorItem(i).outputPort));
+			op.subscribeToSource(
+					inputOperator,
+					i,
+					getInputOperatorItem(i).outputPort,
+					inputOperator
+							.getOutputSchema(getInputOperatorItem(i).outputPort));
 		}
-		for (Map.Entry<Method, IParameter<?>> parameterEntry : parameterMap.entrySet()) {
+		for (Map.Entry<Method, IParameter<?>> parameterEntry : parameterMap
+				.entrySet()) {
 			IParameter<?> parameter = parameterEntry.getValue();
-			if (parameter.hasValue()) {
-				parameterEntry.getKey().invoke(op, parameter.getValue());
+			try {
+				if (parameter.hasValue()) {
+					parameterEntry.getKey().invoke(op, parameter.getValue());
+				}
+			} catch (Exception e) {
+				Throwable thr = e;
+				if (e instanceof InvocationTargetException) {
+					thr = e.getCause();
+				}
+				throw new IllegalParameterException("Error in parameter "
+						+ parameter.getName() + " " + thr.getMessage());
 			}
 		}
 		op.initialize();
@@ -181,11 +226,15 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 		return new GenericOperatorBuilder(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder#getOperatorClass()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder
+	 * #getOperatorClass()
 	 */
 	@Override
 	public Class<? extends ILogicalOperator> getOperatorClass() {
 		return this.operatorClass;
-	}	
+	}
 }
