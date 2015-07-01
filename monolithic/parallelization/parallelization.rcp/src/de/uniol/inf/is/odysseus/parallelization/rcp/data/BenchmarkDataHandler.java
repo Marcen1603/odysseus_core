@@ -27,6 +27,9 @@ public class BenchmarkDataHandler {
 	// Initialization data
 	private BenchmarkInitializationResult benchmarkInitializationResult;
 	
+	// Analysis data
+	private BenchmarkerConfiguration configuration;
+	
 	
 	public BenchmarkDataHandler(){
 		uniqueIdentifier = UUID.randomUUID();
@@ -109,5 +112,15 @@ public class BenchmarkDataHandler {
 	public void setBenchmarkInitializationResult(
 			BenchmarkInitializationResult benchmarkInitializationResult) {
 		this.benchmarkInitializationResult = benchmarkInitializationResult;
+	}
+
+
+	public BenchmarkerConfiguration getConfiguration() {
+		return configuration;
+	}
+
+
+	public void setConfiguration(BenchmarkerConfiguration configuration) {
+		this.configuration = configuration;
 	}
 }

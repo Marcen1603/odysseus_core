@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.parallelization.rcp.windows;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
+import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.rcp.threads.InitializeQueryThread;
 
 public class ParallelizationBenchmarkerWindow {
@@ -32,10 +34,16 @@ public class ParallelizationBenchmarkerWindow {
 	private final Shell parent;
 	private Shell window;
 	private Composite pageComposite;
-	private ProgressBar progressAnalyseQuery;
+	private ProgressBar progressInitializeQuery;
 	private UUID benchmarkProcessId;
 	private StrategySelectionTableViewer strategySelectionTableViewer;
 	private Composite buttonComposite;
+	private Text degreeText;
+	private Text buffersizeText;
+	private Label errorLabel;
+	private ProgressBar progressAnalyseQuery;
+	private Button startButton;
+	private Text numberOfElementsText;
 
 	public ParallelizationBenchmarkerWindow(Shell parent) {
 		this.parent = Preconditions.checkNotNull(parent,
@@ -44,8 +52,9 @@ public class ParallelizationBenchmarkerWindow {
 
 	public void show() {
 		createWindow(parent);
-		
-		InitializeQueryThread initializeQueryThread = new InitializeQueryThread(this, progressAnalyseQuery);
+
+		InitializeQueryThread initializeQueryThread = new InitializeQueryThread(
+				this, progressInitializeQuery);
 		initializeQueryThread.setName("AnalyseQueryThread");
 		initializeQueryThread.start();
 	}
@@ -70,23 +79,22 @@ public class ParallelizationBenchmarkerWindow {
 		pageComposite.setLayoutData(contentGridData);
 		GridLayout gridLayout = new GridLayout();
 		pageComposite.setLayout(gridLayout);
-		
+
 		createStartContent();
 		insertCancelButton();
 
 		window.pack();
 		window.setVisible(true);
 	}
-	
+
 	private void createStartContent() {
 		createLabel(pageComposite, "Initialize current query");
 
-		progressAnalyseQuery = new ProgressBar(pageComposite,
-				SWT.SMOOTH);
-		progressAnalyseQuery.setLayoutData(new GridData(
+		progressInitializeQuery = new ProgressBar(pageComposite, SWT.SMOOTH);
+		progressInitializeQuery.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
-		progressAnalyseQuery.setMinimum(0);
-		progressAnalyseQuery.setMaximum(100);
+		progressInitializeQuery.setMinimum(0);
+		progressInitializeQuery.setMaximum(100);
 
 		createLabel(
 				pageComposite,
@@ -94,73 +102,192 @@ public class ParallelizationBenchmarkerWindow {
 	}
 
 	public void createConfigContent() {
-		BenchmarkDataHandler data = BenchmarkDataHandler.getExistingInstance(benchmarkProcessId);
-		
+		BenchmarkDataHandler data = BenchmarkDataHandler
+				.getExistingInstance(benchmarkProcessId);
+
+		if (data.getBenchmarkInitializationResult().getStrategiesForOperator()
+				.isEmpty()) {
+			createErrorMessage(new Exception(
+					"Running Benchmark not possible. No operator for parallelization found. \n Maybe you need to add unique ids to operators you want to parallelize."));
+			return;
+		}
+
 		createLabel(pageComposite,
 				"Configure parallelization benchmark for selected query");
 
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.widthHint = 200;
-		
+
 		Composite configComposite = new Composite(pageComposite, SWT.NONE);
 		GridLayout gridLayout = new GridLayout(2, false);
-	    configComposite.setLayout(gridLayout);
+		configComposite.setLayout(gridLayout);
 
-	    Label degreeLabel = new Label(configComposite, SWT.NULL);
-	    degreeLabel.setText("Degrees (comma-seperated): ");
-	    Text degreeText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-	    degreeText.setText("2,4,8");
-	    degreeText.setLayoutData(gridData);
-	
-	    Label buffersizeLabel = new Label(configComposite, SWT.NULL);
-	    buffersizeLabel.setText("Buffersize: ");
-		Text buffersizeText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-	    buffersizeText.setText(String.valueOf(ParallelizationPreParserKeyword.AUTO_BUFFER_SIZE));
-	    buffersizeText.setLayoutData(gridData);
-		
-	    
-	    Button allowPostOptimization = new Button (pageComposite, SWT.CHECK);
-	    allowPostOptimization.setText("Allow post optimization");
-	    allowPostOptimization.setSelection(true);
+		Label degreeLabel = new Label(configComposite, SWT.NULL);
+		degreeLabel.setText("Degrees (comma-seperated): ");
+		degreeText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
+		degreeText.setText("2,4,8");
+		degreeText.setLayoutData(gridData);
 
-	    strategySelectionTableViewer = new StrategySelectionTableViewer(pageComposite, data);
-		
-	    Button startButton = new Button(buttonComposite, SWT.PUSH);
+		Label buffersizeLabel = new Label(configComposite, SWT.NULL);
+		buffersizeLabel.setText("Buffersize: ");
+		buffersizeText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
+		buffersizeText.setText(String
+				.valueOf(ParallelizationPreParserKeyword.AUTO_BUFFER_SIZE));
+		buffersizeText.setLayoutData(gridData);
+
+		Label numberOfElementsLabel = new Label(configComposite, SWT.NULL);
+		numberOfElementsLabel.setText("Number of elements for analyse: ");
+		numberOfElementsText = new Text(configComposite, SWT.SINGLE
+				| SWT.BORDER);
+		numberOfElementsText.setText(String.valueOf(10000));
+		numberOfElementsText.setLayoutData(gridData);
+
+		Button allowPostOptimization = new Button(pageComposite, SWT.CHECK);
+		allowPostOptimization.setText("Allow post optimization");
+		allowPostOptimization.setSelection(true);
+
+		createLabel(
+				pageComposite,
+				"Following strategies are possible for the selected query. Please select at least one strategy for "
+						+ "parallelization. \n If more than one strategy for one operator is compatible, each strategy is "
+						+ "benchmarked. Note that executing \n the benchmark depends one the number of combinations.");
+
+		strategySelectionTableViewer = new StrategySelectionTableViewer(
+				pageComposite, data);
+
+		startButton = new Button(buttonComposite, SWT.PUSH);
 		startButton.setText("Start Analyse");
 		startButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		startButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				List<StrategySelectionRow> selectedStratgies = strategySelectionTableViewer.getSelectedStratgies();
-				for (StrategySelectionRow strategySelectionRow : selectedStratgies) {
-					System.out.println(strategySelectionRow.getUniqueOperatorid());
+				clearError();
+				try {
+					List<StrategySelectionRow> selectedStratgies = strategySelectionTableViewer
+							.getSelectedStratgies();
+					validateConfiguration(selectedStratgies);
+					createConfiguration(selectedStratgies);
+
+					clearPageContent();
+					removeStartButton();
+					showAnalysisContent();
+				} catch (Exception ex) {
+					createErrorMessage(ex);
 				}
 			}
 		});
-	    
+
 		window.pack();
 		window.setVisible(true);
 	}
-	
+
+	protected void createConfiguration(
+			List<StrategySelectionRow> selectedStratgies) {
+		BenchmarkDataHandler data = BenchmarkDataHandler
+				.getExistingInstance(benchmarkProcessId);
+		BenchmarkerConfiguration configuration = new BenchmarkerConfiguration();
+		configuration.setSelectedStratgies(selectedStratgies);
+
+		List<Integer> degrees = new ArrayList<Integer>();
+		String degreeString = this.degreeText.getText();
+		String[] degreeValues = degreeString.trim().split(",");
+		for (int i = 0; i < degreeValues.length; i++) {
+			degrees.add(Integer.parseInt(degreeValues[i]));
+		}
+		configuration.setDegrees(degrees);
+
+		String buffersizeString = this.buffersizeText.getText();
+		configuration.setBuffersize(Integer.parseInt(buffersizeString));
+
+		String numberOfElementsString = this.numberOfElementsText.getText();
+		configuration.setNumberOfElements(Integer
+				.parseInt(numberOfElementsString));
+
+		data.setConfiguration(configuration);
+	}
+
+	protected void showAnalysisContent() {
+		createLabel(pageComposite, "Analyse parallelization of current query");
+
+		progressAnalyseQuery = new ProgressBar(pageComposite, SWT.SMOOTH);
+		progressAnalyseQuery.setLayoutData(new GridData(
+				GridData.FILL_HORIZONTAL));
+		progressAnalyseQuery.setMinimum(0);
+		progressAnalyseQuery.setMaximum(100);
+
+		window.pack();
+		window.setVisible(true);
+	}
+
+	protected void validateConfiguration(
+			List<StrategySelectionRow> selectedStratgies) {
+		// selected strategies
+		if (selectedStratgies.isEmpty()) {
+			throw new IllegalArgumentException("No strategy selected");
+		}
+
+		// degree values
+		String degreeString = this.degreeText.getText();
+		if (degreeString.isEmpty()) {
+			throw new IllegalArgumentException("No degree definied");
+		} else {
+			String[] degreeValues = degreeString.trim().split(",");
+			for (int i = 0; i < degreeValues.length; i++) {
+				Integer.parseInt(degreeValues[i]);
+			}
+		}
+
+		// buffersize
+		String buffersizeString = this.buffersizeText.getText();
+		if (buffersizeString.isEmpty()) {
+			throw new IllegalArgumentException("No buffersize definied");
+		} else {
+			Integer.parseInt(buffersizeString);
+		}
+
+		// number of elements
+		String numberOfElementsString = this.numberOfElementsText.getText();
+		if (numberOfElementsString.isEmpty()) {
+			throw new IllegalArgumentException("No number of elements definied");
+		} else {
+			Integer.parseInt(numberOfElementsString);
+		}
+
+	}
+
 	public void clearPageContent() {
 		Control[] children = pageComposite.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			children[i].dispose();
 		}
 	}
-	
-	public void createErrorMessage(Throwable ex){
-		Label createLabel = createLabel(
-				pageComposite,
-				"An error occured: "+ex.getMessage());
-		createLabel.setForeground(window.getDisplay().getSystemColor(SWT.COLOR_RED));
+
+	public void createErrorMessage(Throwable ex) {
+		errorLabel = createLabel(pageComposite,
+				"An error occured: " + ex.getMessage());
+		errorLabel.setForeground(window.getDisplay().getSystemColor(
+				SWT.COLOR_RED));
 		window.pack();
 		window.setVisible(true);
 	}
-	
-	
+
+	protected void removeStartButton() {
+		if (startButton != null) {
+			startButton.dispose();
+		}
+		startButton = null;
+	}
+
+	public void clearError() {
+		if (errorLabel != null) {
+			errorLabel.dispose();
+		}
+		errorLabel = null;
+	}
+
 	private static Label createLabel(Composite generalComposite, String string) {
-		Label label = new Label(generalComposite, SWT.NONE);
+		Label label = new Label(generalComposite, SWT.WRAP | SWT.BORDER
+				| SWT.LEFT);
 		label.setText(string);
 		return label;
 	}
@@ -168,7 +295,7 @@ public class ParallelizationBenchmarkerWindow {
 	private void insertCancelButton() {
 		buttonComposite = new Composite(window, SWT.NONE);
 		buttonComposite.setLayoutData(new GridData(SWT.BEGINNING));
-		buttonComposite.setLayout(new GridLayout());
+		buttonComposite.setLayout(new GridLayout(2, false));
 		Button closeButton = new Button(buttonComposite, SWT.PUSH);
 		closeButton.setText(CANCEL_BUTTON_TEXT);
 		closeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -185,5 +312,5 @@ public class ParallelizationBenchmarkerWindow {
 	public void setBenchmarkProcessId(UUID uniqueIdentifier) {
 		this.benchmarkProcessId = uniqueIdentifier;
 	}
-	
+
 }
