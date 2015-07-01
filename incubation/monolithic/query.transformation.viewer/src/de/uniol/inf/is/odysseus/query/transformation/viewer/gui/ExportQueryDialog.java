@@ -23,8 +23,10 @@ public class ExportQueryDialog extends Dialog {
 	private Button btnChooseTargetDirectory;
 	private Text txtTempDirectory;
 	private Combo programLanguage;
+	private  Button btnGenerateOdysseusJars;
 	
 	private int queryId;
+	private Text txtFOdysseusCode;
 	
   public ExportQueryDialog(Shell parentShell, int queryId) {
     super(parentShell);
@@ -38,11 +40,11 @@ public class ExportQueryDialog extends Dialog {
     container.setLayout(null);
     
     Label label = new Label(container, SWT.NONE);
-    label.setBounds(5, 101, 45, 15);
+    label.setBounds(5, 130, 45, 15);
     label.setText("Sprache:");
     
     programLanguage = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
-    programLanguage.setBounds(99, 98, 68, 23);
+    programLanguage.setBounds(99, 127, 68, 23);
     programLanguage.add("Java");
     programLanguage.add("C#");
     programLanguage.add("Python");
@@ -84,6 +86,22 @@ public class ExportQueryDialog extends Dialog {
     btnChooseTempDirectory.setText("...");
     btnChooseTempDirectory.setBounds(367, 57, 75, 25);
     
+    Label lblOdysseusCode = new Label(container, SWT.NONE);
+    lblOdysseusCode.setText("Odysseus Code");
+    lblOdysseusCode.setBounds(5, 98, 89, 15);
+    
+    txtFOdysseusCode = new Text(container, SWT.BORDER);
+    txtFOdysseusCode.setText("F:\\Studium\\odysseus");
+    txtFOdysseusCode.setBounds(99, 95, 261, 21);
+    
+    Button buttonOdysseusCore = new Button(container, SWT.NONE);
+    buttonOdysseusCore.setText("...");
+    buttonOdysseusCore.setBounds(367, 92, 75, 25);
+    
+     btnGenerateOdysseusJars = new Button(container, SWT.CHECK);
+    btnGenerateOdysseusJars.setBounds(193, 129, 167, 16);
+    btnGenerateOdysseusJars.setText("Generate Odysseus Jar's");
+    
     btnChooseTempDirectory.addSelectionListener(new SelectionAdapter() {
     	@Override
     	public void widgetSelected(SelectionEvent e) {
@@ -120,7 +138,8 @@ public class ExportQueryDialog extends Dialog {
   
   
   private void saveInput(){
-	  TransformationParameter parameter = new TransformationParameter(programLanguage.getText(),txtTempDirectory.getText(), txtTragetDirectory.getText(), queryId);
+	  
+	  TransformationParameter parameter = new TransformationParameter(programLanguage.getText(),txtTempDirectory.getText(), txtTragetDirectory.getText(), queryId, txtFOdysseusCode.getText(), btnGenerateOdysseusJars.getSelection());
 	  QueryTransformation.startQueryTransformation(parameter);
   }
 } 

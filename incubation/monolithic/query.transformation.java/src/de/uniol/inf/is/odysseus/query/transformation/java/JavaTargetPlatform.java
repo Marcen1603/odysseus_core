@@ -34,6 +34,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	private StringBuilder body;
 	
 	private ILogicalOperator rootOP;
+	private ILogicalOperator sinkOP;
 	
 	private List<ILogicalOperator> operatorList ;
 	
@@ -62,7 +63,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		}
 		
 		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
-		testWrite = new JavaFileWrite("TestFile.java",parameter);
+		testWrite = new JavaFileWrite("Main.java",parameter);
 		
 		addDefaultImport();
 		
@@ -111,12 +112,14 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	 */
 	private void addDefaultImport() {
 		
+		importList.add("java.io.IOException");
+		importList.add("java.util.List");
+		
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute");
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype");
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema");
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory");
 		importList.add("de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner");
-		importList.add("de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery");
 		
 		importList.add("de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry");
 		importList.add("de.uniol.inf.is.odysseus.core.datahandler.IDataHandler");
@@ -124,8 +127,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		importList.add("de.uniol.inf.is.odysseus.core.datahandler.StringHandler");
 		importList.add("de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler");
 		
-		importList.add("java.io.IOException");
-		importList.add("java.util.List");
+		importList.add("de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator");
+		importList.add("de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery");
 		
 	}
 	
@@ -146,7 +149,6 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		  String operatorVariable = OperatorToVariable.getVariable(op);
 		
 		   Collection<LogicalSubscription> subscriptionSourceList = op.getSubscribedToSource();
-		   Collection<LogicalSubscription> subscriptionSinkList = op.getSubscriptions();
 			
 		   if(!subscriptionSourceList.isEmpty()){
 			   for(LogicalSubscription sub : subscriptionSourceList){
@@ -155,25 +157,11 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 						  code.append("\n");
 							code.append("\n");
 							code.append(operatorVariable+"PO.subscribeToSource("+targetOp+"PO, 0, 0, "+targetOp+"PO.getOutputSchema());");
-							//	code.append(operatorVariable+"PO.subscribeSink("+targetOp+"PO, 0, 0, "+targetOp+"PO.getOutputSchema());");
 							code.append("\n");
-					//		code.append(operatorVariable+"PO.connectSink("+targetOp+"PO, 0, 0, "+targetOp+"PO.getOutputSchema());");
-					  }
-						
+					  }	
 				   }
 		   }
 		
-		   if(!subscriptionSinkList.isEmpty()){
-			   for(LogicalSubscription sub : subscriptionSinkList){
-				   String targetOp =  OperatorToVariable.getVariable(sub.getTarget());
-				   if(!targetOp.equals("")){
-						code.append("\n");
-					    code.append(operatorVariable+"PO.connectSink("+targetOp+"PO, 0, 0, "+targetOp+"PO.getOutputSchema());");
-						code.append("\n");
-				   }
-			   }
-			   
-		   }
 		}
 		
 		code.append("\n");
@@ -187,7 +175,11 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	/*
 	 * Test
 	 * 
-	 IOperatorOwner operatorOwner = new LogicalQuery();
+	 ArrayList<IPhysicalOperator> testList = new ArrayList<IPhysicalOperator>();
+	 testList.add(soccergame37PO);
+	 IOperatorOwner operatorOwner = new PhysicalQuery(testList);
+	 
+
 	   testAccess.open(operatorOwner); 
 	     while(true){
         	testAccess.transferNext();
@@ -197,9 +189,14 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		StringBuilder code = new StringBuilder();
 		code.append("\n");
 		code.append("\n");
-		code.append("IOperatorOwner operatorOwner = new LogicalQuery();");
+		code.append("ArrayList<IPhysicalOperator> physicalOperatorList = new ArrayList<IPhysicalOperator>();");
 		code.append("\n");
-		code.append(OperatorToVariable.getVariable(rootOP)+"PO.open(operatorOwner);");
+		code.append("physicalOperatorList.add("+OperatorToVariable.getVariable(rootOP)+"PO);");
+		code.append("\n");
+		code.append("IOperatorOwner operatorOwner = new PhysicalQuery(physicalOperatorList);");
+		code.append("\n");
+		//Open on sink op
+		code.append(OperatorToVariable.getVariable(sinkOP)+"PO.open(operatorOwner);");
 		code.append("\n");
 		code.append("\n");
 		code.append("\n");
@@ -221,6 +218,10 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 		if(operator.getSubscribedToSource().isEmpty()){
 			this.rootOP = operator;
+		}
+		
+		if(operator.isSinkOperator()){
+			this.sinkOP = operator;
 		}
 		
 		IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getClass().getSimpleName());

@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.mainstructure.JavaMainstructure;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.UnZip;
 
 
 public class JavaFileWrite {
@@ -18,24 +19,41 @@ public class JavaFileWrite {
 	private FileWriter writer;
 	private String path;
 	private JavaMainstructure mainStructure;
+	TransformationParameter parameter;
+	private CreateOdysseusJar createOdysseusJar;
 
 	public JavaFileWrite(String fileName, TransformationParameter parameter){
 		this.fileName = fileName;
 		this.path = parameter.getTempDirectory();
 		this.mainStructure = new JavaMainstructure();
+		this.parameter = parameter;
+		this.createOdysseusJar = new CreateOdysseusJar();
 	}
 	
 	public void createFile() throws IOException{
 		StringBuilder absolutePath = new StringBuilder();
 		absolutePath.append(path);
-		absolutePath.append("\\");
+		absolutePath.append("\\src\\main\\");
 		absolutePath.append(fileName);
 		
+		UnZip unZip = new UnZip();
+    	unZip.unZipIt(parameter.getOdysseusPath()+"\\incubation\\monolithic\\query.transformation.java\\templates\\"+"JavaProject.zip",parameter.getTempDirectory());
+		
+
 		file = new File(absolutePath.toString());
 		 // creates the file
 		// creates a FileWriter Object
 		file.createNewFile();
 		writer = new FileWriter(file); 
+		
+		//create lib directory
+		File dir = new File(path+"\\lib");
+		dir.mkdir();
+		
+		if(parameter.isGenerateOdysseusJar()){
+			createOdysseusJar.createOdysseusJar(parameter);
+		}
+		
 	}
 	
 	public void writeImports(Set<String> importList) throws IOException{

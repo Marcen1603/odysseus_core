@@ -33,7 +33,6 @@ public class QueryTransformation {
 		ITargetPlatform targetPlatform = TargetPlatformRegistry.getTargetPlatform(parameter.getProgramLanguage());
 		
 		targetPlatform.convertQueryToStandaloneSystem(savedPlan, parameter);
-		
 	
 
 	}
