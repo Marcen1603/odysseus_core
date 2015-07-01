@@ -11,9 +11,9 @@
             <command
                   commandId="de.uniol.inf.is.odysseus.parallelization.rcp.windows.InterOperatorParallelizationBenchmarkerWindow"
                   icon="icons/benchmarker.png"
-                  label="Open Inter Operator Parallelization Benchmarker"
+                  label="Open Parallelization Benchmarker"
                   style="push"
-                  tooltip="Open Inter Operator Parallelization Benchmarker">
+                  tooltip="Open Parallelization Benchmarker">
             </command>
          </toolbar>
       </menuContribution>
@@ -23,7 +23,7 @@
       <command
             defaultHandler="de.uniol.inf.is.odysseus.parallelization.rcp.commands.InterOperatorParallelizationBenchmarkerWindowHandler"
             id="de.uniol.inf.is.odysseus.parallelization.rcp.windows.InterOperatorParallelizationBenchmarkerWindow"
-            name="Open Inter Operator Parallelization Benchmarker">
+            name="Open Parallelization Benchmarker">
       </command>
    </extension>
 

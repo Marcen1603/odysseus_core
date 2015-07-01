@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.parallelization.rcp.windows;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -11,14 +14,17 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
+import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.threads.InitializeQueryThread;
 
-public class InterOperatorParallelizationBenchmarkerWindow {
+public class ParallelizationBenchmarkerWindow {
 
-	private static final String TITLE = "Analyse parallelization in current query";
+	private static final String TITLE = "Parallelization Benchmarker";
 	private static final int WINDOW_WIDTH = 500;
 	private static final int WINDOW_HEIGHT = 500;
 	private static final String CANCEL_BUTTON_TEXT = "Cancel";
@@ -27,8 +33,11 @@ public class InterOperatorParallelizationBenchmarkerWindow {
 	private Shell window;
 	private Composite pageComposite;
 	private ProgressBar progressAnalyseQuery;
+	private UUID benchmarkProcessId;
+	private StrategySelectionTableViewer strategySelectionTableViewer;
+	private Composite buttonComposite;
 
-	public InterOperatorParallelizationBenchmarkerWindow(Shell parent) {
+	public ParallelizationBenchmarkerWindow(Shell parent) {
 		this.parent = Preconditions.checkNotNull(parent,
 				"Parent shell must not be null!");
 	}
@@ -85,9 +94,50 @@ public class InterOperatorParallelizationBenchmarkerWindow {
 	}
 
 	public void createConfigContent() {
-		createLabel(pageComposite,
-				"Configure parallelization for current query");
+		BenchmarkDataHandler data = BenchmarkDataHandler.getExistingInstance(benchmarkProcessId);
 		
+		createLabel(pageComposite,
+				"Configure parallelization benchmark for selected query");
+
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.widthHint = 200;
+		
+		Composite configComposite = new Composite(pageComposite, SWT.NONE);
+		GridLayout gridLayout = new GridLayout(2, false);
+	    configComposite.setLayout(gridLayout);
+
+	    Label degreeLabel = new Label(configComposite, SWT.NULL);
+	    degreeLabel.setText("Degrees (comma-seperated): ");
+	    Text degreeText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
+	    degreeText.setText("2,4,8");
+	    degreeText.setLayoutData(gridData);
+	
+	    Label buffersizeLabel = new Label(configComposite, SWT.NULL);
+	    buffersizeLabel.setText("Buffersize: ");
+		Text buffersizeText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
+	    buffersizeText.setText(String.valueOf(ParallelizationPreParserKeyword.AUTO_BUFFER_SIZE));
+	    buffersizeText.setLayoutData(gridData);
+		
+	    
+	    Button allowPostOptimization = new Button (pageComposite, SWT.CHECK);
+	    allowPostOptimization.setText("Allow post optimization");
+	    allowPostOptimization.setSelection(true);
+
+	    strategySelectionTableViewer = new StrategySelectionTableViewer(pageComposite, data);
+		
+	    Button startButton = new Button(buttonComposite, SWT.PUSH);
+		startButton.setText("Start Analyse");
+		startButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		startButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				List<StrategySelectionRow> selectedStratgies = strategySelectionTableViewer.getSelectedStratgies();
+				for (StrategySelectionRow strategySelectionRow : selectedStratgies) {
+					System.out.println(strategySelectionRow.getUniqueOperatorid());
+				}
+			}
+		});
+	    
 		window.pack();
 		window.setVisible(true);
 	}
@@ -116,7 +166,7 @@ public class InterOperatorParallelizationBenchmarkerWindow {
 	}
 
 	private void insertCancelButton() {
-		Composite buttonComposite = new Composite(window, SWT.NONE);
+		buttonComposite = new Composite(window, SWT.NONE);
 		buttonComposite.setLayoutData(new GridData(SWT.BEGINNING));
 		buttonComposite.setLayout(new GridLayout());
 		Button closeButton = new Button(buttonComposite, SWT.PUSH);
@@ -130,6 +180,10 @@ public class InterOperatorParallelizationBenchmarkerWindow {
 				}
 			}
 		});
+	}
+
+	public void setBenchmarkProcessId(UUID uniqueIdentifier) {
+		this.benchmarkProcessId = uniqueIdentifier;
 	}
 	
 }

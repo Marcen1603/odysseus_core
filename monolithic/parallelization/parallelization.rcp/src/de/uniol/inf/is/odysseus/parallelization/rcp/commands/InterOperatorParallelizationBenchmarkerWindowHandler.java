@@ -5,14 +5,14 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.parallelization.rcp.windows.InterOperatorParallelizationBenchmarkerWindow;
+import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 
 public class InterOperatorParallelizationBenchmarkerWindowHandler extends
 		AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		InterOperatorParallelizationBenchmarkerWindow window = new InterOperatorParallelizationBenchmarkerWindow(
+		ParallelizationBenchmarkerWindow window = new ParallelizationBenchmarkerWindow(
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		window.show();
 

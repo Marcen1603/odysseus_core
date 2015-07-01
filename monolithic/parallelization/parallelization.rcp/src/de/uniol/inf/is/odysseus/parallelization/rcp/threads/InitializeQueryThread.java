@@ -24,7 +24,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
-import de.uniol.inf.is.odysseus.parallelization.rcp.windows.InterOperatorParallelizationBenchmarkerWindow;
+import de.uniol.inf.is.odysseus.parallelization.rcp.helper.BenchmarkHelper;
+import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
@@ -35,16 +36,16 @@ public class InitializeQueryThread extends Thread {
 	private static Logger LOG = LoggerFactory
 			.getLogger(InitializeQueryThread.class);
 
-	private final InterOperatorParallelizationBenchmarkerWindow window;
+	private final ParallelizationBenchmarkerWindow window;
 	private final ProgressBar progressInitializeQuery;
 	private static BenchmarkDataHandler benchmarkDataHandler;
 
 	private boolean errorOccoured = false;
 
 	public InitializeQueryThread(
-			InterOperatorParallelizationBenchmarkerWindow interOperatorParallelizationBenchmarkerWindow,
+			ParallelizationBenchmarkerWindow parallelizationBenchmarkerWindow,
 			ProgressBar progressAnalyseQuery) {
-		this.window = interOperatorParallelizationBenchmarkerWindow;
+		this.window = parallelizationBenchmarkerWindow;
 		this.progressInitializeQuery = progressAnalyseQuery;
 	}
 
@@ -52,28 +53,38 @@ public class InitializeQueryThread extends Thread {
 	public void run() {
 		LOG.debug("Initializing of current query started.");
 
-		// create data handler for benchmark
-		benchmarkDataHandler = BenchmarkDataHandler.getNewInstance();
-		
-		// get RCP data for query script
-		getWorkbenchData();
-		changeProgressBarSelection(20);
+		try {
+			// create data handler for benchmark
+			benchmarkDataHandler = BenchmarkDataHandler.getNewInstance();
+			window.setBenchmarkProcessId(benchmarkDataHandler
+					.getUniqueIdentifier());
 
-		// if we have this values, we could start executing the current query
-		if (benchmarkDataHandler.getSelection() != null) {
-			runSelectedQuery();
-		}
-		changeProgressBarSelection(50);
+			// get RCP data for query script
+			getWorkbenchData();
+			changeProgressBarSelection(20);
 
-		// if executing of query works, we can start analysing the logical plan
-		if (benchmarkDataHandler.getLogicalQuery() != null){
-			
-		} else {
-			createError(new Exception("Logical query not found"));
+			// if we have this values, we could start executing the current
+			// query
+			if (benchmarkDataHandler.getSelection() != null) {
+				runSelectedQuery();
+			}
+			changeProgressBarSelection(50);
+
+			// if executing of query works, we can start analysing the logical
+			// plan
+			if (benchmarkDataHandler.getLogicalQuery() != null) {
+				BenchmarkHelper.getPossibleParallelizationOptions(
+						benchmarkDataHandler.getLogicalQuery(),
+						benchmarkDataHandler.getUniqueIdentifier());
+			} else {
+				throw new Exception("Logical query not found");
+			}
+		} catch (Exception e) {
+			createError(e);
 		}
+
 		changeProgressBarSelection(100);
-		
-		
+
 		if (!errorOccoured) {
 			changeWindowOnSuccess();
 		}
@@ -97,7 +108,7 @@ public class InitializeQueryThread extends Thread {
 						.getSelection());
 			}
 		});
-		
+
 		// wait until values are found
 		int counter = 0;
 		while (benchmarkDataHandler.getSelection() == null) {
@@ -144,7 +155,7 @@ public class InitializeQueryThread extends Thread {
 		errorOccoured = true;
 	}
 
-	private void runSelectedQuery() {
+	private void runSelectedQuery() throws CoreException, IOException {
 		List<IFile> optFileToRun = getSelectedFiles();
 		if (!optFileToRun.isEmpty()) {
 			runFiles(optFileToRun);
@@ -186,41 +197,32 @@ public class InitializeQueryThread extends Thread {
 		return Optional.absent();
 	}
 
-	private void runFile(IFile fileToRun) {
+	private void runFile(IFile fileToRun) throws CoreException, IOException {
 		runFiles(Lists.newArrayList(fileToRun));
 	}
 
-	private void runFiles(List<IFile> filesToRun) {
-		try {
-			for (IFile file : filesToRun) {
-				execute(file);
-			}
-		} catch (Exception ex) {
-			createError(ex);
+	private void runFiles(List<IFile> filesToRun) throws CoreException, IOException {
+		for (IFile file : filesToRun) {
+			execute(file);
 		}
 	}
 
-	private void execute(final IFile scriptFile) {
-		try {
-			benchmarkDataHandler.setQueryFile(scriptFile);
-			String text = readLinesFromFile(scriptFile);
-			benchmarkDataHandler.setQueryString(text);
-			IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
-			Collection<Integer> queryIds = executor.addQuery(text,
-					"OdysseusScript", OdysseusRCPPlugIn.getActiveSession(),
-					ParserClientUtil.createRCPContext(scriptFile));
-			if (queryIds.size() > 0) {
-				Integer queryId = queryIds.iterator().next();
-				ILogicalQuery logicalQuery = executor.getLogicalQueryById(
-						queryId, OdysseusRCPPlugIn.getActiveSession());
-				benchmarkDataHandler.setLogicalQuery(logicalQuery);
-				executor.removeQuery(queryId,
-						OdysseusRCPPlugIn.getActiveSession());
-			}
-		} catch (final Throwable ex) {
-			createError(ex);
-		}
+	private void execute(final IFile scriptFile) throws CoreException, IOException {
 
+		benchmarkDataHandler.setQueryFile(scriptFile);
+		String text = readLinesFromFile(scriptFile);
+		benchmarkDataHandler.setQueryString(text);
+		IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
+		Collection<Integer> queryIds = executor.addQuery(text,
+				"OdysseusScript", OdysseusRCPPlugIn.getActiveSession(),
+				ParserClientUtil.createRCPContext(scriptFile));
+		if (queryIds.size() > 0) {
+			Integer queryId = queryIds.iterator().next();
+			ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryId,
+					OdysseusRCPPlugIn.getActiveSession());
+			benchmarkDataHandler.setLogicalQuery(logicalQuery);
+			executor.removeQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
+		}
 	}
 
 	private static String readLinesFromFile(IFile queryFile)
@@ -228,7 +230,7 @@ public class InitializeQueryThread extends Thread {
 		if (!queryFile.isSynchronized(IResource.DEPTH_ZERO)) {
 			queryFile.refreshLocal(IResource.DEPTH_ZERO, null);
 		}
-		
+
 		String lines = "";
 		BufferedReader br = new BufferedReader(new InputStreamReader(
 				queryFile.getContents()));

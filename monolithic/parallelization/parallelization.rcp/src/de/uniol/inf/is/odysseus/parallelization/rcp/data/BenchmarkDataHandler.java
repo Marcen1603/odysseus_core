@@ -24,6 +24,9 @@ public class BenchmarkDataHandler {
 	private String queryString; // contains no parallelization keywords
 	private ILogicalQuery logicalQuery;
 	
+	// Initialization data
+	private BenchmarkInitializationResult benchmarkInitializationResult;
+	
 	
 	public BenchmarkDataHandler(){
 		uniqueIdentifier = UUID.randomUUID();
@@ -44,7 +47,7 @@ public class BenchmarkDataHandler {
 		return instances.get(uniqueIdentifier);
 	}
 	
-	private UUID getUniqueIdentifier() {
+	public UUID getUniqueIdentifier() {
 		return uniqueIdentifier;
 	}
 
@@ -95,5 +98,16 @@ public class BenchmarkDataHandler {
 	
 	public String getQueryString(){
 		return queryString;
+	}
+
+
+	public BenchmarkInitializationResult getBenchmarkInitializationResult() {
+		return benchmarkInitializationResult;
+	}
+
+
+	public void setBenchmarkInitializationResult(
+			BenchmarkInitializationResult benchmarkInitializationResult) {
+		this.benchmarkInitializationResult = benchmarkInitializationResult;
 	}
 }
