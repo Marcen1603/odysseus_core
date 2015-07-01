@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.parallelization.rcp.threads.AnalyseQueryThread;
+import de.uniol.inf.is.odysseus.parallelization.rcp.threads.InitializeQueryThread;
 
 public class InterOperatorParallelizationBenchmarkerWindow {
 
@@ -36,9 +36,9 @@ public class InterOperatorParallelizationBenchmarkerWindow {
 	public void show() {
 		createWindow(parent);
 		
-		AnalyseQueryThread analyseQueryThread = new AnalyseQueryThread(this, progressAnalyseQuery);
-		analyseQueryThread.setName("AnalyseQueryThread");
-		analyseQueryThread.start();
+		InitializeQueryThread initializeQueryThread = new InitializeQueryThread(this, progressAnalyseQuery);
+		initializeQueryThread.setName("AnalyseQueryThread");
+		initializeQueryThread.start();
 	}
 
 	private void createWindow(Shell parent) {
@@ -70,7 +70,7 @@ public class InterOperatorParallelizationBenchmarkerWindow {
 	}
 	
 	private void createStartContent() {
-		createLabel(pageComposite, "Analysing current selected query");
+		createLabel(pageComposite, "Initialize current query");
 
 		progressAnalyseQuery = new ProgressBar(pageComposite,
 				SWT.SMOOTH);
@@ -97,6 +97,15 @@ public class InterOperatorParallelizationBenchmarkerWindow {
 		for (int i = 0; i < children.length; i++) {
 			children[i].dispose();
 		}
+	}
+	
+	public void createErrorMessage(Throwable ex){
+		Label createLabel = createLabel(
+				pageComposite,
+				"An error occured: "+ex.getMessage());
+		createLabel.setForeground(window.getDisplay().getSystemColor(SWT.COLOR_RED));
+		window.pack();
+		window.setVisible(true);
 	}
 	
 	

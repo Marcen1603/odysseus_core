@@ -7,6 +7,8 @@ Bundle-Activator: de.uniol.inf.is.odysseus.parallelization.rcp.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.base,
  com.google.common.collect,
+ de.uniol.inf.is.odysseus.parallelization.interoperator.keyword,
+ de.uniol.inf.is.odysseus.parallelization.keyword,
  de.uniol.inf.is.odysseus.rcp.editor.text,
  de.uniol.inf.is.odysseus.rcp.editor.text.editors,
  org.eclipse.core.commands,
