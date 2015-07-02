@@ -23,6 +23,8 @@ public class WindPowerPlantDataProvider extends AbstractDataGenerator {
 	private int sleepTime = 500;
 
 	private double factor = 1;
+	
+	private final double ANOMALY_PROBABILITY = 0.005;
 
 	public WindPowerPlantDataProvider(int plantId, PlantDataProvider plantDataProvider) {
 		this.plantId = plantId;
@@ -43,7 +45,12 @@ public class WindPowerPlantDataProvider extends AbstractDataGenerator {
 		tuple.addAttribute(plantDataProvider.getWindSpeed());
 
 		// The rotation speed
-		tuple.addAttribute(factor * plantDataProvider.getRotationSpeed());
+		double rotationSpeed = factor * plantDataProvider.getRotationSpeed();
+		double random = Math.random();
+		if (random < ANOMALY_PROBABILITY) {
+			rotationSpeed = 42;
+		}
+		tuple.addAttribute(rotationSpeed);
 		
 		List<DataTuple> dataTuplesList = new ArrayList<DataTuple>();
 		dataTuplesList.add(tuple);

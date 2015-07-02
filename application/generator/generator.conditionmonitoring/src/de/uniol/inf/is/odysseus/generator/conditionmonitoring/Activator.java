@@ -8,6 +8,11 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.generator.StreamServer;
+import de.uniol.inf.is.odysseus.generator.conditionmonitoring.substation.PipeDataProvider;
+import de.uniol.inf.is.odysseus.generator.conditionmonitoring.substation.PumpDataProvider;
+import de.uniol.inf.is.odysseus.generator.conditionmonitoring.substation.TransformerDataProvider;
+import de.uniol.inf.is.odysseus.generator.conditionmonitoring.substation.ValveDataProvider;
+import de.uniol.inf.is.odysseus.generator.conditionmonitoring.substation.model.OffshoreSubstationManager;
 
 public class Activator implements BundleActivator {
 
@@ -31,6 +36,15 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		boolean demo = true;
+		if (!demo) {
+			startTestInstance();
+		} else {
+			startWindparkDemonstration();
+		}
+	}
+
+	private void startTestInstance() throws Exception {
 		plantDataProvider = new PlantDataProvider();
 		windPowerPlantId = 0;
 
@@ -85,7 +99,7 @@ public class Activator implements BundleActivator {
 		FridgeVibrationSensorDataProvider fridgeProvider2 = new FridgeVibrationSensorDataProvider();
 		StreamServer fridgeServer2 = new StreamServer(53217, fridgeProvider2);
 		fridgeServer2.start();
-		
+
 		// A context-vibration sensor
 		ContextVibrationDataProvider contextVibrationProvider = new ContextVibrationDataProvider();
 		StreamServer contextVibrationServer = new StreamServer(53218, contextVibrationProvider);
@@ -134,8 +148,49 @@ public class Activator implements BundleActivator {
 				}
 				Thread.sleep(10);
 			}
-
 		}
+	}
+
+	private void startWindparkDemonstration() throws Exception {
+		OffshoreSubstationManager manager = new OffshoreSubstationManager();
+
+		// Pumps
+		PumpDataProvider pump1DataProvider = new PumpDataProvider(manager.getPump1());
+		StreamServer pump1StreamServer = new StreamServer(51000, pump1DataProvider);
+		pump1StreamServer.start();
+
+		PumpDataProvider pump2DataProvider = new PumpDataProvider(manager.getPump2());
+		StreamServer pump2StreamServer = new StreamServer(51001, pump2DataProvider);
+		pump2StreamServer.start();
+
+		PumpDataProvider pump3DataProvider = new PumpDataProvider(manager.getPump3());
+		StreamServer pump3StreamServer = new StreamServer(51002, pump3DataProvider);
+		pump3StreamServer.start();
+
+		// Valves
+		ValveDataProvider valve1DataProvider = new ValveDataProvider(manager.getValve1());
+		StreamServer valve1StreamServer = new StreamServer(51003, valve1DataProvider);
+		valve1StreamServer.start();
+
+		ValveDataProvider valve2DataProvider = new ValveDataProvider(manager.getValve2());
+		StreamServer valve2StreamServer = new StreamServer(51004, valve2DataProvider);
+		valve2StreamServer.start();
+
+		ValveDataProvider valve3DataProvider = new ValveDataProvider(manager.getValve3());
+		StreamServer valve3StreamServer = new StreamServer(51005, valve3DataProvider);
+		valve3StreamServer.start();
+
+		// Transformer
+		TransformerDataProvider transformerDataProvider = new TransformerDataProvider(manager.getTransformer1());
+		StreamServer transformerStreamServer = new StreamServer(51006, transformerDataProvider);
+		transformerStreamServer.start();
+		
+		// Pipe at the transformer
+		PipeDataProvider pipeDataProvider = new PipeDataProvider(manager.getBigPipeOut());
+		StreamServer pipeDataStreamServer = new StreamServer(51007, pipeDataProvider);
+		pipeDataStreamServer.start();
+		
+		manager.run();
 	}
 
 	/*

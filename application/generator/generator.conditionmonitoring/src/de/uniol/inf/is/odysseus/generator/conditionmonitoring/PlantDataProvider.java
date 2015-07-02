@@ -34,7 +34,7 @@ public class PlantDataProvider {
 		this.windSpeedGenerator.init();
 
 		// Start a timer to update the values synchronously
-		long delay = 5 * 100; // 0.5 seconds
+		long delay = 1 * 100; // 0.1 seconds
 		long period = delay;
 		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
