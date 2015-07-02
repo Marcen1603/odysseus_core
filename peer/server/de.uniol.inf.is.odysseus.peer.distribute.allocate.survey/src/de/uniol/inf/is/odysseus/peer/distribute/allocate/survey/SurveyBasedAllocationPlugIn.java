@@ -13,8 +13,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.Au
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisementInstanciator;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.BidProviderRegistry;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 
 public class SurveyBasedAllocationPlugIn implements BundleActivator {
 
@@ -22,7 +20,6 @@ public class SurveyBasedAllocationPlugIn implements BundleActivator {
 	
 	private static final String BID_PROVIDER_NAME = "peer.distribute.bidprovider";
 	
-	private static IBidProvider selectedBidProvider;
 	private static String selectedBidProviderName;
 	
 	@Override
@@ -39,13 +36,6 @@ public class SurveyBasedAllocationPlugIn implements BundleActivator {
 	
 	public static String getSelectedBidProviderName() {
 		return selectedBidProviderName;
-	}
-	
-	public static IBidProvider getSelectedBidProvider() {
-		if( selectedBidProvider == null ) {
-			selectedBidProvider = BidProviderRegistry.getInstance().get(SurveyBasedAllocationPlugIn.getSelectedBidProviderName());
-		}
-		return selectedBidProvider;
 	}
 	
 	private static String determineSelectedBidProviderName() {

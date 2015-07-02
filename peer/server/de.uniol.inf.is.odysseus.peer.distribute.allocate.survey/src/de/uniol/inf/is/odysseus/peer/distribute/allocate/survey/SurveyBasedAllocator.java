@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.BidProviderRegistry;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.force.ForceModel;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.AuctionSummary;
@@ -98,8 +99,9 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		int latencyWeight = determineLatencyWeight(allocatorParameters);
 		int bidWeight = determineBidWeight(allocatorParameters);
 		boolean isOwnBidUsed = isOwnBidUsed(allocatorParameters);
+		String bidProviderName = determineBidProviderName(allocatorParameters);
 
-		Map<ILogicalQueryPart, List<PeerID>> allocationMap = allocate(queryPartsToSurvey, config, isOwnBidUsed, latencyWeight, bidWeight);
+		Map<ILogicalQueryPart, List<PeerID>> allocationMap = allocate(queryPartsToSurvey, config, isOwnBidUsed, latencyWeight, bidWeight,bidProviderName);
 		allocationMapResult = transformToOriginalLogicalQueryParts(allocationMap, queryPartsCopyMap);
 
 		return determineAllocationResult(allocationMapResult);
@@ -157,10 +159,22 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		}
 		return 1;
 	}
-
+	
 	private static boolean isOwnBidUsed(List<String> allocatorParameters) {
 		return allocatorParameters.size() < 3 || !allocatorParameters.get(2).equalsIgnoreCase("notlocal");
 	}
+	
+
+	private static String determineBidProviderName(List<String> allocatorParameters) {
+		if(allocatorParameters.size() >= 4) {
+			String bidProviderName = allocatorParameters.get(4);
+			if(BidProviderRegistry.getInstance().contains(bidProviderName)) {
+				return bidProviderName;
+			}
+		}
+		return SurveyBasedAllocationPlugIn.getSelectedBidProviderName();
+	}
+
 
 	private static Map<ILogicalQueryPart, List<PeerID>> transformToOriginalLogicalQueryParts(Map<ILogicalQueryPart, List<PeerID>> allocationMapPeerID, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {
 		Map<ILogicalQueryPart, List<PeerID>> partMap = Maps.newHashMap();
@@ -173,7 +187,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return partMap;
 	}
 
-	private static Map<ILogicalQueryPart, List<PeerID>> allocate(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg, boolean ownBid, int latencyWeight, int bidWeight) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, List<PeerID>> allocate(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg, boolean ownBid, int latencyWeight, int bidWeight, String bidProviderName) throws QueryPartAllocationException {
 		QueryPartGraph partGraph = new QueryPartGraph(queryParts);
 
 		Collection<ILogicalOperator> operators = Lists.newArrayList();
@@ -183,12 +197,12 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 		Map<ILogicalOperator, DetailCost> logicalOperatorEstimationMap = Helper.determineOperatorCostEstimations(operators);
 
-		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(queryParts, logicalOperatorEstimationMap, transCfg);
-		Map<ILogicalQueryPart, List<PeerID>> destinationMap = determinePeerAssignment(auctions, partGraph, ownBid, latencyWeight, bidWeight, logicalOperatorEstimationMap);
+		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(queryParts, logicalOperatorEstimationMap, transCfg,bidProviderName);
+		Map<ILogicalQueryPart, List<PeerID>> destinationMap = determinePeerAssignment(auctions, partGraph, ownBid, latencyWeight, bidWeight, logicalOperatorEstimationMap,bidProviderName);
 		return destinationMap;
 	}
 
-	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(Collection<ILogicalQueryPart> queryParts, Map<ILogicalOperator, DetailCost> logicalOperatorEstimationMap, QueryBuildConfiguration transCfg) {
+	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(Collection<ILogicalQueryPart> queryParts, Map<ILogicalOperator, DetailCost> logicalOperatorEstimationMap, QueryBuildConfiguration transCfg, String bidProviderName) {
 		Preconditions.checkNotNull(queryParts, "Collection of query parts must not be null!");
 
 		List<AuctionSummary> auctions = Lists.newArrayList();
@@ -205,6 +219,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 			adv.setAuctionId(IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), true));
 			adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
 			adv.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
+			adv.setBidProviderName(bidProviderName);
 
 			Future<Collection<Bid>> bidsFuture = Communicator.getInstance().publishAuction(adv);
 			auctions.add(new AuctionSummary(adv, bidsFuture, queryPart));
@@ -215,9 +230,9 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return auctions;
 	}
 
-	private static Map<ILogicalQueryPart, List<PeerID>> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph, boolean ownBid, int latencyWeight, int bidWeight, Map<ILogicalOperator, DetailCost> logicalOperatorEstimationMap) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, List<PeerID>> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph, boolean ownBid, int latencyWeight, int bidWeight, Map<ILogicalOperator, DetailCost> logicalOperatorEstimationMap, String bidProviderName) throws QueryPartAllocationException {
 		try {
-			Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions, ownBid);
+			Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions, ownBid,bidProviderName);
 
 			Map<ILogicalOperator, Double> dataRateMap = createDataRateMap(logicalOperatorEstimationMap);
 			ForceModel model = new ForceModel(bidPlanMap, partGraph, dataRateMap, bidWeight, latencyWeight);
@@ -240,10 +255,10 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		});
 	}
 
-	private static Map<ILogicalQueryPart, Collection<Bid>> determineBidPlanMap(List<AuctionSummary> auctions, boolean ownBid) throws InterruptedException, ExecutionException, QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, Collection<Bid>> determineBidPlanMap(List<AuctionSummary> auctions, boolean ownBid, String bidProviderName) throws InterruptedException, ExecutionException, QueryPartAllocationException {
 		Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = Maps.newHashMap();
 
-		IBidProvider bidProvider = SurveyBasedAllocationPlugIn.getSelectedBidProvider();
+		IBidProvider bidProvider = BidProviderRegistry.getInstance().get(bidProviderName);
 		PeerID localPeerID = p2pNetworkManager.getLocalPeerID();
 
 		for (AuctionSummary auction : auctions) {

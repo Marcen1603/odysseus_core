@@ -30,7 +30,6 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DynamicStrategy.class);
-	private static final String NAME = "OdyLoad";
 	private Object threadManipulationLock = new Object();
 	private IPeerResourceUsageManager usageManager;
 	private IServerExecutor executor;
@@ -135,7 +134,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 
 	@Override
 	public String getName() {
-		return NAME;
+		return DynamicLoadBalancingConstants.STRATEGY_NAME;
 	}
 
 	private HashMap<Integer, IPhysicalQuery> getPhysicalQueries() {
@@ -163,9 +162,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 		LOG.info("Re-Allocation of queries triggered.");
 		
-		double cpuLoadToRemove = cpuUsage-MonitoringThread.CPU_THRESHOLD;
-		double memLoadToRemove = memUsage-MonitoringThread.MEM_THRESHOLD;
-		double netLoadToRemove = netUsage-MonitoringThread.NET_THRESHOLD;
+		double cpuLoadToRemove = DynamicLoadBalancingConstants.CPU_THRESHOLD;
+		double memLoadToRemove = DynamicLoadBalancingConstants.MEM_THRESHOLD;
+		double netLoadToRemove = DynamicLoadBalancingConstants.NET_THRESHOLD;
 		
 		QueryCostMap allQueries = generateCostMapForAllQueries();
 		IQuerySelectionStrategy greedySelector = new GreedyQuerySelector();

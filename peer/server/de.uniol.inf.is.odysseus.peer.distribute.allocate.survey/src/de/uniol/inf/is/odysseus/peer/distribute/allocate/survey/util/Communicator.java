@@ -20,10 +20,10 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.SurveyBasedAllocationPlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.BidProviderRegistry;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.jxta.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.peer.network.IAdvertisementDiscovererListener;
@@ -182,7 +182,16 @@ public class Communicator implements IAdvertisementDiscovererListener {
 
 			ILogicalQuery query = Helper.getLogicalQuery(adv.getPqlStatement()).get(0);
 
-			IBidProvider bidProvider = SurveyBasedAllocationPlugIn.getSelectedBidProvider();
+			String bidProviderName = adv.getBidProviderName();
+			
+			if(!BidProviderRegistry.getInstance().contains(bidProviderName)) {
+				LOG.debug("Offering no bid to auction {} of peer {}", adv.getAuctionId(), adv.getOwnerPeerId().toString());
+				LOG.error("Bid Provider {} not found.",adv.getBidProviderName());
+				return;
+			}
+			
+			IBidProvider bidProvider = BidProviderRegistry.getInstance().get(bidProviderName);
+			
 			Optional<Double> optBidValue = bidProvider.calculateBid(query, adv.getTransCfgName());
 
 			if (optBidValue.isPresent()) {

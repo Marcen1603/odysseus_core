@@ -32,6 +32,7 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 	private static final String PEER_ID_TAG = "peerId";
 	private static final String TRANSCFG_NAME_TAG = "transcfg";
 	private static final String AUCTION_ID_TAG = "auctionId";
+	private static final String BIDPROVIDER_NAME_TAG = "bidProviderName";
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG };
 	private static final Logger log = LoggerFactory.getLogger(AuctionQueryAdvertisement.class);
 	
@@ -39,6 +40,7 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 	private ID auctionId;
 	private String pqlStatement;
 	private String transCfgName;
+	private String bidProviderName;
 	private PeerID ownerPeerId;
 
 	public static String getAdvertisementType() {
@@ -67,6 +69,7 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 		this.transCfgName = adv.transCfgName;
 		this.ownerPeerId = adv.ownerPeerId;
 		this.auctionId = adv.auctionId;
+		this.bidProviderName = adv.bidProviderName;
 	}
 	
 	@Override
@@ -99,6 +102,7 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 		appendElement(doc, PEER_ID_TAG, ownerPeerId.toString());
 		appendElement(doc, AUCTION_ID_TAG, auctionId.toString());
 		appendElement(doc, TRANSCFG_NAME_TAG, transCfgName);
+		appendElement(doc, BIDPROVIDER_NAME_TAG, bidProviderName);
 
 		return doc;
 	}
@@ -119,6 +123,10 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 	
 	public String getTransCfgName() {
 		return transCfgName;
+	}
+	
+	public String getBidProviderName() {
+		return bidProviderName;
 	}
 	
 	public ID getAuctionId() {
@@ -149,6 +157,10 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 		this.auctionId = auctionId;
 	}	
 
+	public void setBidProviderName(String bidProviderName) {
+		this.bidProviderName = bidProviderName;
+	}
+	
 	private void determineFields(TextElement<?> root) {
 		final Enumeration<?> elements = root.getChildren();
 
@@ -164,6 +176,8 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 				setAuctionId(convertToID(elem.getTextValue()));
 			} else if (elem.getName().equals(TRANSCFG_NAME_TAG)) {
 				setTransCfgName(elem.getTextValue());
+			} else if (elem.getName().equals(BIDPROVIDER_NAME_TAG)) {
+				setBidProviderName(elem.getTextValue());
 			}
 		}
 	}

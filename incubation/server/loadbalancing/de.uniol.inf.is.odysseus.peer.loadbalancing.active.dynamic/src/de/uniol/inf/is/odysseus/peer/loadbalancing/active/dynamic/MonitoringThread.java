@@ -18,10 +18,6 @@ public class MonitoringThread extends Thread {
 	private static final Logger LOG = LoggerFactory.getLogger(MonitoringThread.class);
 	
 
-	public static final long UPDATE_INTERVAL = 10000;
-	public static final double CPU_THRESHOLD = 0.7;
-	public static final double MEM_THRESHOLD = 0.4;
-	public static final double NET_THRESHOLD = 0.7;
 	
 	private ArrayList<IMonitoringThreadListener> listenerList = new ArrayList<IMonitoringThreadListener>();
 	
@@ -68,7 +64,7 @@ public class MonitoringThread extends Thread {
 			LOG.info("MEM usage is {}",memUsage);
 			LOG.info("NET usage is {}",netUsage);
 			
-			if(cpuUsage>=CPU_THRESHOLD || memUsage>=MEM_THRESHOLD || netUsage>=NET_THRESHOLD) {
+			if(cpuUsage>=DynamicLoadBalancingConstants.CPU_THRESHOLD || memUsage>=DynamicLoadBalancingConstants.MEM_THRESHOLD || netUsage>=DynamicLoadBalancingConstants.NET_THRESHOLD) {
 				this.isActive = false;
 				ArrayList<IMonitoringThreadListener> copyOfListenerList =  new ArrayList<IMonitoringThreadListener>(listenerList);
 				for(IMonitoringThreadListener listener : copyOfListenerList) {
@@ -79,7 +75,7 @@ public class MonitoringThread extends Thread {
 				
 			//Wait for update interval.
 			try {
-				Thread.sleep(UPDATE_INTERVAL);
+				Thread.sleep(DynamicLoadBalancingConstants.UPDATE_INTERVAL);
 			}
 			catch (InterruptedException e) {
 				LOG.error(e.getMessage());

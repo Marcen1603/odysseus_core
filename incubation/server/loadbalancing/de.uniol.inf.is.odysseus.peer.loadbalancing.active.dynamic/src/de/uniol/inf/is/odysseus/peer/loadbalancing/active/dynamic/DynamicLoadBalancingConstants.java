@@ -3,7 +3,20 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
 public class DynamicLoadBalancingConstants {
 
 	
-	//In Costmodel Load is measured in %, we need it between 0 and 1
+			//Monitoring Thread Constants (Trigger)
+			public static final long UPDATE_INTERVAL = 10000;
+			public static final double CPU_THRESHOLD = 0.7;
+			public static final double MEM_THRESHOLD = 0.4;
+			public static final double NET_THRESHOLD = 0.7;
+	
+			
+			//Names
+			public static final String BID_PROVIDER_NAME = "OdyLoad";
+			public static final String STRATEGY_NAME = "OdyLoad";
+	
+			
+			//Load-Model weights and calculation factors
+			//In Costmodel Load is measured in %, we need it between 0 and 1
 			public static final double CPU_LOAD_COSTMODEL_FACTOR = 100.0;
 			
 			public static final double WEIGHT_SENDERS = 0.1;
