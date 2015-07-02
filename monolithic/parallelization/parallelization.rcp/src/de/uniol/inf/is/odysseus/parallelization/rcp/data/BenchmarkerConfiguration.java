@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.parallelization.rcp.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.StrategySelectionRow;
@@ -42,5 +43,23 @@ public class BenchmarkerConfiguration {
 	public void setNumberOfElements(Integer numberOfElements) {
 		this.numberOfElements = numberOfElements;
 	}
-
+	
+	public List<BenchmarkerExecution> getBenchmarkerExecutions(){
+		List<BenchmarkerExecution> executions = new ArrayList<BenchmarkerExecution>();
+		
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		executions.add(new BenchmarkerExecution());
+		
+		return executions;
+	}
 }

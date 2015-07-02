@@ -123,4 +123,15 @@ public class BenchmarkDataHandler {
 	public void setConfiguration(BenchmarkerConfiguration configuration) {
 		this.configuration = configuration;
 	}
+
+
+	public static void removeInstance(UUID processUid) {
+		if (instances.containsKey(processUid)){
+			instances.remove(processUid);
+		}
+	}
+	
+	public static void removeInstance(String processUid) {
+		removeInstance(UUID.fromString(processUid));
+	}
 }

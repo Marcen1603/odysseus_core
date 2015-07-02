@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerConfiguration;
+import de.uniol.inf.is.odysseus.parallelization.rcp.threads.AnalyseQueryThread;
 import de.uniol.inf.is.odysseus.parallelization.rcp.threads.InitializeQueryThread;
 
 public class ParallelizationBenchmarkerWindow {
@@ -44,6 +45,8 @@ public class ParallelizationBenchmarkerWindow {
 	private ProgressBar progressAnalyseQuery;
 	private Button startButton;
 	private Text numberOfElementsText;
+	private Text analysisProgressLog;
+	private AnalyseQueryThread analyseQueryThread;
 
 	public ParallelizationBenchmarkerWindow(Shell parent) {
 		this.parent = Preconditions.checkNotNull(parent,
@@ -55,7 +58,8 @@ public class ParallelizationBenchmarkerWindow {
 
 		InitializeQueryThread initializeQueryThread = new InitializeQueryThread(
 				this, progressInitializeQuery);
-		initializeQueryThread.setName("AnalyseQueryThread");
+		initializeQueryThread.setName("InitializeQueryThread");
+		initializeQueryThread.setDaemon(true);
 		initializeQueryThread.start();
 	}
 
@@ -166,11 +170,7 @@ public class ParallelizationBenchmarkerWindow {
 					List<StrategySelectionRow> selectedStratgies = strategySelectionTableViewer
 							.getSelectedStratgies();
 					validateConfiguration(selectedStratgies);
-					createConfiguration(selectedStratgies);
-
-					clearPageContent();
-					removeStartButton();
-					showAnalysisContent();
+					doParallelizationAnalysis(selectedStratgies);
 				} catch (Exception ex) {
 					createErrorMessage(ex);
 				}
@@ -179,6 +179,19 @@ public class ParallelizationBenchmarkerWindow {
 
 		window.pack();
 		window.setVisible(true);
+	}
+	
+	protected void doParallelizationAnalysis(List<StrategySelectionRow> selectedStratgies){
+		createConfiguration(selectedStratgies);
+
+		clearPageContent();
+		removeStartButton();
+		showAnalysisContent();
+		
+		analyseQueryThread = new AnalyseQueryThread(benchmarkProcessId, this);
+		analyseQueryThread.setName("AnalyseQueryThread");
+		analyseQueryThread.setDaemon(true);
+		analyseQueryThread.start();
 	}
 
 	protected void createConfiguration(
@@ -215,8 +228,23 @@ public class ParallelizationBenchmarkerWindow {
 		progressAnalyseQuery.setMinimum(0);
 		progressAnalyseQuery.setMaximum(100);
 
+		analysisProgressLog = new Text(pageComposite, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.READ_ONLY);
+	    GridData gridData = new GridData(GridData.FILL_BOTH);
+	    gridData.heightHint = 100;
+	    analysisProgressLog.setLayoutData(gridData);
+	    analysisProgressLog.setText("Analysis started... "+System.lineSeparator());
+		
 		window.pack();
 		window.setVisible(true);
+	}
+	
+	public void updateAnalysisProgress(int progressProcent, String progressString){
+		if (!progressString.isEmpty()){
+			analysisProgressLog.setText(analysisProgressLog.getText()+progressString+System.lineSeparator());			
+		}
+		if (progressProcent != 0 && progressProcent >= progressAnalyseQuery.getSelection()){
+			progressAnalyseQuery.setSelection(progressProcent);
+		}
 	}
 
 	protected void validateConfiguration(
@@ -252,7 +280,6 @@ public class ParallelizationBenchmarkerWindow {
 		} else {
 			Integer.parseInt(numberOfElementsString);
 		}
-
 	}
 
 	public void clearPageContent() {
@@ -302,6 +329,10 @@ public class ParallelizationBenchmarkerWindow {
 		closeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (analyseQueryThread != null){
+					// stop analyze if it is currently running
+					analyseQueryThread.interrupt();
+				}
 				if (!window.isDisposed()) {
 					window.dispose();
 				}
