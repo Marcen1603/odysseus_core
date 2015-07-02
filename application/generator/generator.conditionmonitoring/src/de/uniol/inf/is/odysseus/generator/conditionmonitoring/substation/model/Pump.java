@@ -12,7 +12,6 @@ public class Pump extends Observable {
 
 	private double lastInFlow;
 	private double lastOutFlow;
-
 	private Pipe inPipe;
 	private Pipe outPipe;
 
@@ -81,6 +80,14 @@ public class Pump extends Observable {
 
 	public double getLastOutFlow() {
 		return lastOutFlow;
+	}
+	
+	/**
+	 * In absolute values: mm/s from about 0 to 10
+	 * @return
+	 */
+	public double getCurrentVibration() {
+		return ((this.currentFlowRate / this.maxFlowRate) * 10) + Math.random();
 	}
 
 }

@@ -27,7 +27,7 @@ public class OffshoreSubstationManager implements Observer {
 	private Transformer transformer1;
 
 	public OffshoreSubstationManager() {
-		
+
 		// The northsea
 		Ocean ocean = new Ocean();
 
@@ -35,7 +35,7 @@ public class OffshoreSubstationManager implements Observer {
 		this.valve1 = new Valve();
 		this.valve2 = new Valve();
 		this.valve3 = new Valve();
-		
+
 		// Input (coming from the sea)
 		this.bigPipeIn = new Pipe(ocean, null, null);
 		this.smallPipeIn1 = new Pipe(this.bigPipeIn, null, this.valve1);
@@ -62,7 +62,7 @@ public class OffshoreSubstationManager implements Observer {
 		this.pump2.addObserver(this);
 		this.pump3.addObserver(this);
 
-		// Transformer to cool
+		// Transformer to be cooled
 		this.transformer1 = new Transformer(bigPipeOut);
 	}
 
@@ -122,10 +122,11 @@ public class OffshoreSubstationManager implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o == this.pump1) {
-			if (this.pump1.isRunning()) {
+			if (this.pump1.isRunning() && this.pump3.isRunning()) {
 				// Pump 1 was started successfully, we can now shut down pump 2
+				// The check for pump 3 is needed on startup of the whole system
 				this.pump2.shutDownPump();
-			} else {
+			} else if (!this.pump1.isRunning()) {
 				// Pump 1 is shut down
 				this.valve1.close();
 			}

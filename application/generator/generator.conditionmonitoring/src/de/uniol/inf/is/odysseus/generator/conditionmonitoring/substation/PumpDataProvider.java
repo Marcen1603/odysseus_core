@@ -26,6 +26,7 @@ public class PumpDataProvider extends AbstractDataGenerator {
 		tuple.addDouble(this.pump.getCurrentFlowRate());
 		tuple.addDouble(this.pump.getLastInFlow());
 		tuple.addDouble(this.pump.getLastOutFlow());
+		tuple.addDouble(this.pump.getCurrentVibration());
 
 		List<DataTuple> dataTuplesList = new ArrayList<DataTuple>();
 		dataTuplesList.add(tuple);
