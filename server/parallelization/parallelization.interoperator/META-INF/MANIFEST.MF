@@ -13,7 +13,7 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.parallelization.autodetect,
  de.uniol.inf.is.odysseus.parallelization.helper,
  de.uniol.inf.is.odysseus.parallelization.keyword,
- de.uniol.inf.is.odysseus.parallelization.keyword.helper,
+ de.uniol.inf.is.odysseus.parallelization.parameter,
  de.uniol.inf.is.odysseus.parallelization.transform,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.script.parser,
@@ -26,5 +26,6 @@ Service-Component: OSGI-INF/InterOperatorParallelizationPreTransformationHandler
  OSGI-INF/InterOperatorParallelizationKeywordProvider.xml
 Export-Package: de.uniol.inf.is.odysseus.parallelization.interoperator.helper,
  de.uniol.inf.is.odysseus.parallelization.interoperator.keyword,
+ de.uniol.inf.is.odysseus.parallelization.interoperator.parameter,
  de.uniol.inf.is.odysseus.parallelization.interoperator.strategy,
  de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry

@@ -49,6 +49,8 @@ public class ParallelizationBenchmarkerWindow {
 	private Text numberOfElementsText;
 	private Text analysisProgressLog;
 	private AnalyseQueryThread analyseQueryThread;
+	private Button closeButton;
+	private Button allowPostOptimizationButton;
 
 	public ParallelizationBenchmarkerWindow(Shell parent) {
 		this.parent = Preconditions.checkNotNull(parent,
@@ -148,9 +150,9 @@ public class ParallelizationBenchmarkerWindow {
 		numberOfElementsText.setText(String.valueOf(10000));
 		numberOfElementsText.setLayoutData(gridData);
 
-		Button allowPostOptimization = new Button(pageComposite, SWT.CHECK);
-		allowPostOptimization.setText("Allow post optimization");
-		allowPostOptimization.setSelection(true);
+		allowPostOptimizationButton = new Button(pageComposite, SWT.CHECK);
+		allowPostOptimizationButton.setText("Allow post optimization");
+		allowPostOptimizationButton.setSelection(true);
 
 		createLabel(
 				pageComposite,
@@ -218,6 +220,9 @@ public class ParallelizationBenchmarkerWindow {
 		configuration.setNumberOfElements(Integer
 				.parseInt(numberOfElementsString));
 
+		boolean allowPostOptimization = allowPostOptimizationButton.getSelection();
+		configuration.setAllowPostOptimization(allowPostOptimization);
+		
 		data.setConfiguration(configuration);
 	}
 
@@ -330,7 +335,7 @@ public class ParallelizationBenchmarkerWindow {
 		buttonComposite = new Composite(window, SWT.NONE);
 		buttonComposite.setLayoutData(new GridData(SWT.BEGINNING));
 		buttonComposite.setLayout(new GridLayout(2, false));
-		Button closeButton = new Button(buttonComposite, SWT.PUSH);
+		closeButton = new Button(buttonComposite, SWT.PUSH);
 		closeButton.setText(CANCEL_BUTTON_TEXT);
 		closeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		closeButton.addSelectionListener(new SelectionAdapter() {
@@ -349,6 +354,21 @@ public class ParallelizationBenchmarkerWindow {
 
 	public void setBenchmarkProcessId(UUID uniqueIdentifier) {
 		this.benchmarkProcessId = uniqueIdentifier;
+	}
+
+	public void showResult(String resultOdysseusScript) {
+		createLabel(pageComposite, "Result of parallelization benchmarker. Put this Snippet in your script.");
+		
+		Text analysisResultScript = new Text(pageComposite, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.READ_ONLY);
+	    GridData gridData = new GridData(GridData.FILL_BOTH);
+	    gridData.heightHint = 50;
+	    analysisResultScript.setLayoutData(gridData);
+	    analysisResultScript.setText(resultOdysseusScript);
+	    
+	    closeButton.setText("Done");
+	    
+	    window.pack();
+		window.setVisible(true);
 	}
 
 }

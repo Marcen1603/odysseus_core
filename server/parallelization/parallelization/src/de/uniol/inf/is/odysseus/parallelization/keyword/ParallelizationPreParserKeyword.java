@@ -14,8 +14,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
-import de.uniol.inf.is.odysseus.parallelization.keyword.helper.IKeywordParameter;
-import de.uniol.inf.is.odysseus.parallelization.keyword.helper.PreParserKeywordParameterHelper;
+import de.uniol.inf.is.odysseus.parallelization.parameter.IKeywordParameter;
+import de.uniol.inf.is.odysseus.parallelization.parameter.ParallelizationKeywordParameter;
+import de.uniol.inf.is.odysseus.parallelization.parameter.PreParserKeywordParameterHelper;
 import de.uniol.inf.is.odysseus.parallelization.transform.IParallelizationPreTransformationHandler;
 import de.uniol.inf.is.odysseus.parallelization.transform.registry.ParallelizationPreTransformationHandlerRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;

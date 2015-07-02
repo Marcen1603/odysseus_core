@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
-import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationKeywordParameter;
+import de.uniol.inf.is.odysseus.parallelization.parameter.ParallelizationKeywordParameter;
 
 public abstract class AbstractParallelizationPreTransformationHandler implements
 		IParallelizationPreTransformationHandler {

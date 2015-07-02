@@ -3,16 +3,21 @@ package de.uniol.inf.is.odysseus.parallelization.rcp.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorParameterBuilder;
+import de.uniol.inf.is.odysseus.parallelization.parameter.ParallizationKeywordParameterBuilder;
+
 public class BenchmarkerExecution {
 	private Integer degree;
 	private Integer buffersize;
 	private Integer numberOfElements;
+	private boolean allowPostOptmization;
 	private Map<String, BenchmarkExecutionElement> elements;
 
 	public BenchmarkerExecution(Integer degree, Integer buffersize,
-			Integer numberOfElements) {
+			boolean allowPostOptmization, Integer numberOfElements) {
 		this.degree = degree;
 		this.buffersize = buffersize;
+		this.allowPostOptmization = allowPostOptmization;
 		this.numberOfElements = numberOfElements;
 		this.elements = new HashMap<String, BenchmarkExecutionElement>();
 	}
@@ -20,14 +25,16 @@ public class BenchmarkerExecution {
 	public BenchmarkerExecution() {
 		this.elements = new HashMap<String, BenchmarkExecutionElement>();
 	}
-	
+
 	@Override
-	public BenchmarkerExecution clone(){
+	public BenchmarkerExecution clone() {
 		BenchmarkerExecution clone = new BenchmarkerExecution();
 		clone.degree = this.degree;
 		clone.buffersize = this.buffersize;
 		clone.numberOfElements = this.numberOfElements;
-		clone.elements = new HashMap<String, BenchmarkExecutionElement>(elements);
+		clone.elements = new HashMap<String, BenchmarkExecutionElement>(
+				elements);
+		clone.allowPostOptmization = this.allowPostOptmization;
 		return clone;
 	}
 
@@ -59,6 +66,14 @@ public class BenchmarkerExecution {
 		return elements;
 	}
 
+	public boolean isAllowPostOptmization() {
+		return allowPostOptmization;
+	}
+
+	public void setAllowPostOptmization(boolean allowPostOptmization) {
+		this.allowPostOptmization = allowPostOptmization;
+	}
+
 	public void addElement(String operatorId, BenchmarkExecutionElement element) {
 		if (!elements.containsKey(operatorId)) {
 			elements.put(operatorId, element);
@@ -66,6 +81,20 @@ public class BenchmarkerExecution {
 			throw new IllegalArgumentException(
 					"Duplicate execution element for operator id " + operatorId);
 		}
+	}
+
+	public String getOdysseusScript() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(ParallizationKeywordParameterBuilder
+				.buildInterOperatorKeywordWithParameters(degree, buffersize,
+						allowPostOptmization));
+		for (BenchmarkExecutionElement element : elements.values()) {
+			builder.append(ParallelOperatorParameterBuilder
+					.buildKeywordWithParameters(element.getUniqueOperatorid(),
+							degree, buffersize, element.getStrategy(),
+							element.getFragmentType()));
+		}
+		return builder.toString();
 	}
 
 }

@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.Parallel
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.InterOperatorParallelizationPreTransformationHandler;
-import de.uniol.inf.is.odysseus.parallelization.keyword.helper.IKeywordParameter;
-import de.uniol.inf.is.odysseus.parallelization.keyword.helper.PreParserKeywordParameterHelper;
+import de.uniol.inf.is.odysseus.parallelization.parameter.IKeywordParameter;
+import de.uniol.inf.is.odysseus.parallelization.parameter.PreParserKeywordParameterHelper;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 

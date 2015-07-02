@@ -13,6 +13,7 @@ public class BenchmarkerConfiguration {
 	private List<Integer> degrees;
 	private Integer buffersize;
 	private Integer numberOfElements;
+	private boolean allowPostOptimization;
 
 	public List<StrategySelectionRow> getSelectedStratgies() {
 		return selectedStratgies;
@@ -47,6 +48,14 @@ public class BenchmarkerConfiguration {
 		this.numberOfElements = numberOfElements;
 	}
 
+	public boolean isAllowPostOptimization() {
+		return allowPostOptimization;
+	}
+
+	public void setAllowPostOptimization(boolean allowPostOptimization) {
+		this.allowPostOptimization = allowPostOptimization;
+	}
+	
 	public List<BenchmarkerExecution> getBenchmarkerExecutions() {
 		// map rows to elements
 		Map<String, List<BenchmarkExecutionElement>> executionElements = new HashMap<String, List<BenchmarkExecutionElement>>();
@@ -75,6 +84,7 @@ public class BenchmarkerConfiguration {
 				clonedExecution.setDegree(degree);
 				clonedExecution.setBuffersize(buffersize);
 				clonedExecution.setNumberOfElements(numberOfElements);
+				clonedExecution.setAllowPostOptmization(allowPostOptimization);
 				executions.add(clonedExecution);
 			}
 		}
