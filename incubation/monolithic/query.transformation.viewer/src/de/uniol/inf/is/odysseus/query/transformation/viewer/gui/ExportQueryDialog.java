@@ -51,7 +51,7 @@ public class ExportQueryDialog extends Dialog {
     programLanguage.select(0);
     
     txtTragetDirectory = new Text(container, SWT.BORDER);
-    txtTragetDirectory.setText("C:\\Users\\Marc\\Desktop\\target");
+    txtTragetDirectory.setText("C:\\Users\\clude\\Desktop\\target");
     txtTragetDirectory.setBounds(99, 22, 261, 21);
     
     Label lblTragetDirectory = new Label(container, SWT.NONE);
@@ -80,7 +80,7 @@ public class ExportQueryDialog extends Dialog {
     
     txtTempDirectory = new Text(container, SWT.BORDER);
     txtTempDirectory.setBounds(99, 59, 261, 21);
-    txtTempDirectory.setText("C:\\Users\\Marc\\Desktop\\tmp");
+    txtTempDirectory.setText("C:\\Users\\clude\\Desktop\\tmp");
     
     Button btnChooseTempDirectory = new Button(container, SWT.NONE);
     btnChooseTempDirectory.setText("...");
@@ -91,7 +91,7 @@ public class ExportQueryDialog extends Dialog {
     lblOdysseusCode.setBounds(5, 98, 89, 15);
     
     txtFOdysseusCode = new Text(container, SWT.BORDER);
-    txtFOdysseusCode.setText("F:\\Studium\\odysseus");
+    txtFOdysseusCode.setText("C:\\Studium\\Masterarbeit\\odysseus");
     txtFOdysseusCode.setBounds(99, 95, 261, 21);
     
     Button buttonOdysseusCore = new Button(container, SWT.NONE);

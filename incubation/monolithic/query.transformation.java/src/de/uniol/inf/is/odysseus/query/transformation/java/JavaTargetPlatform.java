@@ -224,7 +224,10 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			System.out.println(opTrans.getCode(operator));
 			OperatorToVariable.addOperator(operator);
 			body.append(opTrans.getCode(operator));
-			importList.addAll(opTrans.getNeededImports());
+			
+			if(opTrans.getNeededImports()!=null){
+				importList.addAll(opTrans.getNeededImports());
+			}
 			operatorList.add(operator);
 		}
 		

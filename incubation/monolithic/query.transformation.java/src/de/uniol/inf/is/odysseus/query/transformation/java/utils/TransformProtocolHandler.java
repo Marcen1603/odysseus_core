@@ -21,7 +21,8 @@ public class TransformProtocolHandler {
 			 wrapper = "IAccessPattern.PUSH";
 			 
 		}
-	
+		
+		
 		StringBuilder code = new StringBuilder();
 		code.append("\n");
 		code.append("IProtocolHandler "+operatorVariable+"ProtocolHandler =  protocolHandlerRegistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection.IN, "+wrapper+", "+operatorVariable+"ParameterInfo"+",  dataHandlerRegistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\","+ operatorVariable+"SDFSchema));");

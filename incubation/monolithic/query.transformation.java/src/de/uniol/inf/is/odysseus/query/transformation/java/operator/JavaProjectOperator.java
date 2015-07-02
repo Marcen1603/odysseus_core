@@ -40,7 +40,7 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 		String operatorVariable = OperatorToVariable.getVariable(operator);
 		
 		ProjectAO projectAO = (ProjectAO)operator;
-		
+	
 		int[] restrictList = projectAO.determineRestrictList();
 		
 		String restrictListCode = TransformIntegerArray.getCodeForIntegerArray(restrictList);
