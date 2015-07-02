@@ -12,7 +12,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -233,6 +235,11 @@ public class ParallelizationBenchmarkerWindow {
 	    gridData.heightHint = 100;
 	    analysisProgressLog.setLayoutData(gridData);
 	    analysisProgressLog.setText("Analysis started... "+System.lineSeparator());
+	    analysisProgressLog.addListener(SWT.Modify, new Listener(){
+	        public void handleEvent(Event e){
+	        	analysisProgressLog.setTopIndex(analysisProgressLog.getLineCount() - 1);
+	        }
+	    });
 		
 		window.pack();
 		window.setVisible(true);
@@ -240,7 +247,7 @@ public class ParallelizationBenchmarkerWindow {
 	
 	public void updateAnalysisProgress(int progressProcent, String progressString){
 		if (!progressString.isEmpty()){
-			analysisProgressLog.setText(analysisProgressLog.getText()+progressString+System.lineSeparator());			
+			analysisProgressLog.setText(analysisProgressLog.getText()+progressString+System.lineSeparator());	
 		}
 		if (progressProcent != 0 && progressProcent >= progressAnalyseQuery.getSelection()){
 			progressAnalyseQuery.setSelection(progressProcent);
