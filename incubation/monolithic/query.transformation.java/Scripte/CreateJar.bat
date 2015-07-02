@@ -24,3 +24,16 @@ xcopy %1\common\resources\de.uniol.inf.is.odysseus.slf4j\src\* %1\common\resourc
 jar cvf OdysseusLogger.jar *.properties lib/*.jar -C bin .
 xcopy /Y OdysseusLogger.jar %2
 
+
+::server\relational\parser.pql.relational
+cd %1\server\relational\parser.pql.relational
+xcopy %1\server\relational\parser.pql.relational\src\* %1\server\relational\parser.pql.relational\bin /s /e /c /y
+jar cvf OdysseusParserPQLRelational.jar *.properties lib/*.jar -C bin .
+xcopy /Y OdysseusParserPQLRelational.jar %2
+
+::common\mep
+cd %1\common\mep
+xcopy %1\common\mep\src\* %1\common\mep\bin /s /e /c /y
+jar cvf OdysseusMEP.jar *.properties lib/*.jar -C bin .
+xcopy /Y OdysseusMEP.jar %2
+

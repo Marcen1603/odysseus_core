@@ -25,7 +25,7 @@ public class TransformProtocolHandler {
 		
 		StringBuilder code = new StringBuilder();
 		code.append("\n");
-		code.append("IProtocolHandler "+operatorVariable+"ProtocolHandler =  protocolHandlerRegistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection.IN, "+wrapper+", "+operatorVariable+"ParameterInfo"+",  dataHandlerRegistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\","+ operatorVariable+"SDFSchema));");
+		code.append("IProtocolHandler "+operatorVariable+"ProtocolHandler =  protocolhandlerregistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection.IN, "+wrapper+", "+operatorVariable+"ParameterInfo"+",  datahandlerregistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\","+ operatorVariable+"SDFSchema));");
 		code.append("\n");
 		code.append("ITransportHandler "+operatorVariable+"TransportHandler = new FileHandler("+operatorVariable+"ProtocolHandler, "+operatorVariable+"ParameterInfo);");
 		code.append("\n");

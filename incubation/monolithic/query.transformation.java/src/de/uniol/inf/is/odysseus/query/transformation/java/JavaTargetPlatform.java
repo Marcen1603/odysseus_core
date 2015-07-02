@@ -110,20 +110,30 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		importList.add("java.io.IOException");
 		importList.add("java.util.List");
 		
+		importList.add("de.uniol.inf.is.odysseus.mep.MEP");
+		
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute");
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype");
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema");
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory");
 		importList.add("de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner");
 		
-		importList.add("de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry");
-		importList.add("de.uniol.inf.is.odysseus.core.datahandler.IDataHandler");
-		importList.add("de.uniol.inf.is.odysseus.core.datahandler.IntegerHandler");
-		importList.add("de.uniol.inf.is.odysseus.core.datahandler.StringHandler");
-		importList.add("de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler");
+		importList.add("de.uniol.inf.is.odysseus.core.datahandler.*");
+		importList.add("de.uniol.inf.is.odysseus.core.objecthandler.*");
+		
+		importList.add("de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry");
+	
+		
+		importList.add("de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.*");
+		
+		importList.add("de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.*");
+	
 		
 		importList.add("de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator");
 		importList.add("de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery");
+
+		
+		
 		
 	}
 	
