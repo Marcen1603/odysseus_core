@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.parallelization.rcp.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorParameterBuilder;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorParallelizationKeywordParameterBuilder;
 import de.uniol.inf.is.odysseus.parallelization.parameter.ParallizationKeywordParameterBuilder;
 
 public class BenchmarkerExecution {
@@ -89,7 +89,7 @@ public class BenchmarkerExecution {
 				.buildInterOperatorKeywordWithParameters(degree, buffersize,
 						allowPostOptmization));
 		for (BenchmarkExecutionElement element : elements.values()) {
-			builder.append(ParallelOperatorParameterBuilder
+			builder.append(InterOperatorParallelizationKeywordParameterBuilder
 					.buildKeywordWithParameters(element.getUniqueOperatorid(),
 							degree, buffersize, element.getStrategy(),
 							element.getFragmentType()));
