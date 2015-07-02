@@ -64,7 +64,7 @@ public class JavaEmulateOSGIBindings {
 		code.append("\n");
 		
 		//test dynamic
-		//getCodeForOSGIBinds();
+		getCodeForOSGIBinds();
 		return code.toString();
 	}
 
@@ -111,8 +111,7 @@ public class JavaEmulateOSGIBindings {
 				
 				for(String xmlFile : xmlFileList){
 					//registry file
-					if(xmlFile.contains("Registry")){
-						
+				
 						File file = new File("C:\\Studium\\Masterarbeit\\odysseus\\"+bundle+"\\OSGI-INF\\"+xmlFile);
 						
 						JAXBContext jaxbContext;
@@ -132,11 +131,23 @@ public class JavaEmulateOSGIBindings {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					}else{
-					//handler to reg	
-						
-					}
+				
 				}
+			
+		}
+		
+		
+		for(Component cp : registryList){
+			
+			if(cp.getReference()!= null){
+				//registry
+				
+				
+			}else{
+				//handler
+				
+				
+			}
 			
 		}
 		

@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.model.osgi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -52,17 +55,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "implementation",
-    "reference"
+    "reference",
+    "service"
 })
 @XmlRootElement(name = "component")
 public class Component {
 
     @XmlElement(required = true)
     protected Component.Implementation implementation;
-    @XmlElement(required = true)
+    @XmlElement(required = false)
     protected Component.Reference reference;
     @XmlAttribute(name = "name")
     protected String name;
+    @XmlElement(required = false)
+    protected Component.Service service;
 
     /**
      * Gets the value of the implementation property.
@@ -136,6 +142,29 @@ public class Component {
         this.name = value;
     }
 
+    /**
+     * Gets the value of the service property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Component.Service }
+     *     
+     */
+    public Component.Service getService() {
+        return service;
+    }
+
+    /**
+     * Sets the value of the service property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Component.Service }
+     *     
+     */
+    public void setService(Component.Service value) {
+        this.service = value;
+    }
 
     /**
      * <p>Java class for anonymous complex type.
@@ -342,6 +371,96 @@ public class Component {
          */
         public void setUnbind(String value) {
             this.unbind = value;
+        }
+
+    }
+    
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+        "provide"
+    })
+    public static class Service {
+
+        protected List<Component.Service.Provide> provide;
+
+        /**
+         * Gets the value of the provide property.
+         * 
+         * <p>
+         * This accessor method returns a reference to the live list,
+         * not a snapshot. Therefore any modification you make to the
+         * returned list will be present inside the JAXB object.
+         * This is why there is not a <CODE>set</CODE> method for the provide property.
+         * 
+         * <p>
+         * For example, to add a new item, do as follows:
+         * <pre>
+         *    getProvide().add(newItem);
+         * </pre>
+         * 
+         * 
+         * <p>
+         * Objects of the following type(s) are allowed in the list
+         * {@link Component.Service.Provide }
+         * 
+         * 
+         */
+        public List<Component.Service.Provide> getProvide() {
+            if (provide == null) {
+                provide = new ArrayList<Component.Service.Provide>();
+            }
+            return this.provide;
+        }
+
+
+        /**
+         * <p>Java class for anonymous complex type.
+         * 
+         * <p>The following schema fragment specifies the expected content contained within this class.
+         * 
+         * <pre>
+         * &lt;complexType>
+         *   &lt;complexContent>
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+         *       &lt;attribute name="interface" type="{http://www.w3.org/2001/XMLSchema}string" />
+         *     &lt;/restriction>
+         *   &lt;/complexContent>
+         * &lt;/complexType>
+         * </pre>
+         * 
+         * 
+         */
+        @XmlAccessorType(XmlAccessType.FIELD)
+        @XmlType(name = "")
+        public static class Provide {
+
+            @XmlAttribute(name = "interface")
+            protected String _interface;
+
+            /**
+             * Gets the value of the interface property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public String getInterface() {
+                return _interface;
+            }
+
+            /**
+             * Sets the value of the interface property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setInterface(String value) {
+                this._interface = value;
+            }
+
         }
 
     }
