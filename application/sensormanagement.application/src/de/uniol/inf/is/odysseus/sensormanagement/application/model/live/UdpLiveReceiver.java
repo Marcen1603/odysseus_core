@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.RemoteSensor;
 
-public abstract class UdpLiveReceiver extends LiveReceiver
+public abstract class UdpLiveReceiver extends LiveSensor
 {	
 	private UdpClient liveReceiver;
 	private int readSize;

@@ -42,6 +42,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.live.LiveInstance;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.live.SensorConfig.State;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.JTreeItemClickListener;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.TreeCellRenderer;
@@ -53,7 +54,7 @@ public class SensorBoxConfigDialog extends JDialog
 {
 	private static final long serialVersionUID = 777778513810676189L;
 
-	SensorBox sensorBox;
+	LiveInstance sensorBox;
 	
 	private JTree boxTree;
 	private JPanel settingsPanel;
@@ -102,13 +103,13 @@ public class SensorBoxConfigDialog extends JDialog
 	 * @wbp.parser.constructor
 	 */	
 	@SuppressWarnings("unchecked")
-	public SensorBoxConfigDialog(LiveSession session, SensorBox sensorBox, RemoteSensor sensorToShow) 
+	public SensorBoxConfigDialog(LiveSession session, LiveInstance instance, RemoteSensor sensorToShow) 
 	{
 		super(Application.getMainFrame(), "", Dialog.ModalityType.DOCUMENT_MODAL);
-		String hostName = sensorBox != null ? sensorBox.getEthernetAddr() : "0.0.0.0:65535"; // For Window Builder Design time GUI generation
+		String hostName = instance != null ? instance.getEthernetAddr() : "0.0.0.0:65535"; // For Window Builder Design time GUI generation
 		setTitle("RemoteSensor box configuration: " + hostName);
 	
-		this.sensorBox = sensorBox;
+		this.sensorBox = instance;
 		
 		setBounds(100, 100, 623, 446);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -124,10 +125,10 @@ public class SensorBoxConfigDialog extends JDialog
 		splitPane.setLeftComponent(treePanel);
 		treePanel.setLayout(new BorderLayout(0, 0));
 
-		DefaultMutableTreeNode boxNode = new DefaultMutableTreeNode(sensorBox.getName());
+		DefaultMutableTreeNode boxNode = new DefaultMutableTreeNode(instance.getName());
 		
 		SensorConfig sensorConfigToShow = null;		
-		for (RemoteSensor sensor : sensorBox.getClient().getSensors())
+		for (RemoteSensor sensor : instance.getClient().getSensors())
 		{
 			DefaultMutableTreeNode sensorNode = new DefaultMutableTreeNode();
 			SensorConfig sensorConfig = new SensorConfig(sensor, sensorNode);
@@ -209,13 +210,13 @@ public class SensorBoxConfigDialog extends JDialog
 		sl_boxSettingsPanel.putConstraint(SpringLayout.WEST, boxEthernetAddrLabel, 10, SpringLayout.WEST, boxSettingsPanel);
 		boxSettingsPanel.add(boxEthernetAddrLabel);
 		
-		boxEthernetAddrEdit = new JTextField(sensorBox.getEthernetAddr());
+		boxEthernetAddrEdit = new JTextField(instance.getEthernetAddr());
 		sl_boxSettingsPanel.putConstraint(SpringLayout.NORTH, boxEthernetAddrLabel, 3, SpringLayout.NORTH, boxEthernetAddrEdit);
 		sl_boxSettingsPanel.putConstraint(SpringLayout.WEST, boxEthernetAddrEdit, 6, SpringLayout.EAST, boxEthernetAddrLabel);
 		boxEthernetAddrEdit.setColumns(10);
 		boxSettingsPanel.add(boxEthernetAddrEdit);
 		
-		boxPositionEdit = new JTextField(sensorBox.getPosition());
+		boxPositionEdit = new JTextField(instance.getPosition());
 		sl_boxSettingsPanel.putConstraint(SpringLayout.NORTH, boxPositionEdit, 6, SpringLayout.SOUTH, boxEthernetAddrEdit);
 		sl_boxSettingsPanel.putConstraint(SpringLayout.WEST, boxPositionEdit, 0, SpringLayout.WEST, boxEthernetAddrEdit);
 		boxPositionEdit.setColumns(10);
@@ -243,7 +244,7 @@ public class SensorBoxConfigDialog extends JDialog
 		sl_boxSettingsPanel.putConstraint(SpringLayout.WEST, boxNameLabel, 0, SpringLayout.WEST, boxEthernetAddrLabel);
 		boxSettingsPanel.add(boxNameLabel);
 		
-		boxNameEdit = new JTextField(sensorBox.getName());
+		boxNameEdit = new JTextField(instance.getName());
 		boxNameEdit.getDocument().addDocumentListener(	new DocumentListener()
 														{
 															public void insertUpdate(DocumentEvent ev) 	{ boxNameEditChanged(); }
@@ -336,7 +337,7 @@ public class SensorBoxConfigDialog extends JDialog
 		sensorTypeComboBox = new JComboBox();
 		DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
 		
-		for (SensorType type : sensorBox.getSensorTypes())
+		for (SensorType type : instance.getSensorTypes())
 			comboBoxModel.addElement(type);		
 		
 		sensorTypeComboBox.setModel(comboBoxModel);
@@ -368,7 +369,7 @@ public class SensorBoxConfigDialog extends JDialog
 		setVisible(true);
 	}
 
-	public SensorBoxConfigDialog(LiveSession session, SensorBox box) 
+	public SensorBoxConfigDialog(LiveSession session, LiveInstance box) 
 	{
 		this(session, box, null);
 	}

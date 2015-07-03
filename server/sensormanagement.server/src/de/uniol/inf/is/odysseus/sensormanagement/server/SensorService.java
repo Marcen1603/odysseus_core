@@ -65,11 +65,12 @@ public class SensorService
 		return session;
 	}	
 
-	public void initService(@WebParam(name = "securityToken") String securityToken, 
+	public void initService(@WebParam(name = "securityToken") String securityToken,
+							@WebParam(name = "name") String name,
 							@WebParam(name = "loggingDirectory") String loggingDirectory) throws InvalidUserDataException
 	{
 		loginWithSecurityToken(securityToken);		
-		SensorFactory.getInstance().init(loggingDirectory);
+		SensorFactory.getInstance().init(name, loggingDirectory);
 	}
 	
 	

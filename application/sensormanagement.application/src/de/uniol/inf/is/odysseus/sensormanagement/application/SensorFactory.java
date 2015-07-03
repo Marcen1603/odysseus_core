@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Receiver;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.live.sensors.DummyReceiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.live.sensors.GPSReceiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.live.sensors.Lms1xxReceiver;
@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.sens
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.sensors.VideoPlayback;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.visualization.AbstractMapRenderer;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.visualization.Lms1xxVisualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.visualization.TextVisualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.visualization.VideoVisualization;
@@ -32,12 +33,12 @@ public class SensorFactory
 		if (instance == null)
 		{
 			instance = new SensorFactory();
-			instance.addSensorType("LMS1xx",  new SensorFactoryEntry(Lms1xxPlayback.class, Lms1xxReceiver.class, Lms1xxVisualization.class));
-			instance.addSensorType("IntegratedCamera", new SensorFactoryEntry(VideoPlayback.class,  VideoReceiver.class,  VideoVisualization.class));
-			instance.addSensorType("BaslerCamera", new SensorFactoryEntry(VideoPlayback.class,  VideoReceiver.class,  VideoVisualization.class));			
-			instance.addSensorType("OptrisCamera", new SensorFactoryEntry(VideoPlayback.class,  VideoReceiver.class,  VideoVisualization.class));
-			instance.addSensorType("GPS", new SensorFactoryEntry(GPSPlayback.class,  GPSReceiver.class,  TextVisualization.class));
-			instance.addSensorType("Dummy", new SensorFactoryEntry(DummyPlayback.class,  DummyReceiver.class,  TextVisualization.class));
+			instance.addSensorType("LMS1xx",  new SensorFactoryEntry(Lms1xxPlayback.class, Lms1xxReceiver.class, Lms1xxVisualization.class, Lms1xxVisualization.MapRenderer.class));
+			instance.addSensorType("IntegratedCamera", new SensorFactoryEntry(VideoPlayback.class,  VideoReceiver.class,  VideoVisualization.class, VideoVisualization.MapRenderer.class));
+			instance.addSensorType("BaslerCamera", new SensorFactoryEntry(VideoPlayback.class,  VideoReceiver.class,  VideoVisualization.class, VideoVisualization.MapRenderer.class));			
+			instance.addSensorType("OptrisCamera", new SensorFactoryEntry(VideoPlayback.class,  VideoReceiver.class,  VideoVisualization.class, VideoVisualization.MapRenderer.class));
+			instance.addSensorType("GPS", new SensorFactoryEntry(GPSPlayback.class,  GPSReceiver.class,  TextVisualization.class, null));
+			instance.addSensorType("Dummy", new SensorFactoryEntry(DummyPlayback.class,  DummyReceiver.class,  TextVisualization.class, null));
 		}				
 		
 		return instance;
@@ -61,17 +62,20 @@ public class SensorFactory
 
 	public static class SensorFactoryEntry
 	{
-		private Class<? extends PlaybackReceiver> 	playbackClass;
-		private Class<? extends Receiver> 			receiverClass;
-		private Class<? extends Visualization> 		visualizationClass;
+		private Class<? extends PlaybackReceiver> playbackClass;
+		private Class<? extends AbstractSensor> sensorClass;
+		private Class<? extends Visualization> visualizationClass;
+		private Class<? extends AbstractMapRenderer> mapRendererClass;
 
 		public SensorFactoryEntry(Class<? extends PlaybackReceiver> playbackClass, 
-								  Class<? extends Receiver> receiverClass, 
-								  Class<? extends Visualization> visualizationClass) 
+								  Class<? extends AbstractSensor> sensorClass, 
+								  Class<? extends Visualization> visualizationClass,
+								  Class<? extends AbstractMapRenderer> mapRendererClass) 
 		{
 			this.playbackClass = playbackClass;
-			this.receiverClass = receiverClass;
+			this.sensorClass = sensorClass;
 			this.visualizationClass = visualizationClass;
+			this.mapRendererClass = mapRendererClass;
 		}
 		
 		public PlaybackReceiver createPlayback(SensorModel sensorModel, LogMetaData logMetaData)		
@@ -86,11 +90,11 @@ public class SensorFactory
 			}
 		}
 		
-		public Receiver createReceiver(RemoteSensor sensor)		
+		public AbstractSensor createSensor(RemoteSensor sensor)		
 		{
 			try 
 			{
-				return receiverClass.getDeclaredConstructor(RemoteSensor.class).newInstance(sensor);
+				return sensorClass.getDeclaredConstructor(RemoteSensor.class).newInstance(sensor);
 			} 
 			catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) 
 			{
@@ -103,6 +107,18 @@ public class SensorFactory
 			try 
 			{
 				return visualizationClass.getDeclaredConstructor(Session.class, String.class).newInstance(session, displayName);
+			} 
+			catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) 
+			{
+				throw new RuntimeException(e);
+			}
+		}
+
+		public AbstractMapRenderer createMapRenderer(Session session) 
+		{
+			try 
+			{
+				return mapRendererClass == null ? null : mapRendererClass.getDeclaredConstructor(Session.class).newInstance(session);
 			} 
 			catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) 
 			{

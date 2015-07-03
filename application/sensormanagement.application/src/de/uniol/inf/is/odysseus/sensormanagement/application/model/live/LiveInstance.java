@@ -1,45 +1,31 @@
-package de.uniol.inf.is.odysseus.sensormanagement.application.view.live;
+package de.uniol.inf.is.odysseus.sensormanagement.application.model.live;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.WsClient;
-import de.uniol.inf.is.odysseus.sensormanagement.application.view.ChangeListener;
+import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractInstance;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.ChangeListener;
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.ILoggable;
-import de.uniol.inf.is.odysseus.sensormanagement.client.executor.SensorClient;
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.RemoteSensor;
+import de.uniol.inf.is.odysseus.sensormanagement.client.executor.SensorClient;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorType;
 
-public class SensorBox implements ILoggable
+public class LiveInstance extends AbstractInstance implements ILoggable
 {
 	private SensorClient client;
 	
-	private String ethernetAddr;
-	private String position;
-	private String name;
-
-	protected List<ChangeListener> boxListeners = new ArrayList<>();
-
 	public SensorClient getClient() { return client; }
-	public String getPosition()	{ return position; }
-	public String getName() { return name; }	
-	public String getEthernetAddr() { return ethernetAddr; }
 	
-	public void setPosition(String position) { this.position = position;	}	
-
-	@Override public String toString() { return name + " @ " + getEthernetAddr(); }	
-	
-	public SensorBox(String ethernetAddr, String userName, String password) throws MalformedURLException
+	public LiveInstance(String instanceName, String ethernetAddr, String userName, String password) throws MalformedURLException
 	{
-		this.name = "Box";
-		this.ethernetAddr = ethernetAddr;
+		super("Box", ethernetAddr);
 		
 		WsClient odysseusClient = new WsClient();
-//		client.addUpdateEventListener(this, IUpdateEventListener.SCHEDULING, null);
-//		client.addUpdateEventListener(this, IUpdateEventListener.QUERY, null);
 		String url = "http://" + ethernetAddr + "/odysseus?wsdl;http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/;WebserviceServerService";
 		
 		ISession odysseusSession = odysseusClient.login(userName, password.getBytes(), "", url);
@@ -47,48 +33,34 @@ public class SensorBox implements ILoggable
 		
 		odysseusClient.reloadStoredQueries(odysseusSession);
 				
-		client = new SensorClient(odysseusClient, odysseusSession, "http://" + ethernetAddr + "/odysseus/sensormanagement?wsdl")
+		client = new SensorClient(instanceName, odysseusClient, odysseusSession, "http://" + ethernetAddr + "/odysseus/sensormanagement?wsdl")
 		{
-			@Override protected void onSensorAdded(RemoteSensor sensor) 
+			@Override protected void onSensorAdded(RemoteSensor remoteSensor) 
 			{
+				AbstractSensor sensor = SensorFactory.getInstance().getSensorType(remoteSensor.getSensorModel().type).createSensor(remoteSensor);
+				LiveInstance.this.getSensors().add(sensor);
+				
 				for (ChangeListener l : boxListeners)
-					l.onSensorAdded(sensor);
+					l.onSensorAdded(getSensorById(sensor.getSensorModel().id));
 			}
 
 			@Override protected void onSensorChanged(RemoteSensor sensor) 
 			{
 				for (ChangeListener l : boxListeners)
-					l.onSensorChanged(sensor);
+					l.onSensorChanged(getSensorById(sensor.getSensorModel().id));
 			}
 
 			@Override protected void onSensorRemoved(RemoteSensor sensor) 
 			{
 				for (ChangeListener l : boxListeners)
-					l.onSensorRemoved(sensor);
+					l.onSensorRemoved(getSensorById(sensor.getSensorModel().id));
 			}
 
 			@Override protected void onClientChanged() 
 			{
-				boxChanged();
+				instanceChanged();
 			}			
 		};
-	}
-	
-	protected void boxChanged() 
-	{
-		for (ChangeListener l : boxListeners)
-			l.onBoxChanged(SensorBox.this);
-	}
-	
-	public void addBoxListener(ChangeListener listener) 
-	{
-		boxListeners.add(listener);
-	}	
-	
-	public void setName(String name) 					
-	{ 
-		this.name = name;
-		boxChanged();
 	}
 	
 	@Override public void startLogging() 
@@ -105,6 +77,7 @@ public class SensorBox implements ILoggable
 	{
 		client.close();
 	}
+	
 	public List<SensorType> getSensorTypes() 
 	{
 		return client.getSensorTypes();

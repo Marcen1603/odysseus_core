@@ -45,9 +45,6 @@ public abstract class ViewEntity
 	public abstract void treeDblClick();
 	public abstract Icon getIcon();
 	
-	public abstract void startLogging();
-	public abstract void stopLogging();
-	
 	public abstract void startVisualization();
 	public abstract void stopVisualization();
 }

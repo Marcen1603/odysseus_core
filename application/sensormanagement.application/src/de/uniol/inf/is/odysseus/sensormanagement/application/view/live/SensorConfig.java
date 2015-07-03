@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.sensormanagement.application.view.live;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.live.LiveInstance;
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.RemoteSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
@@ -85,7 +86,7 @@ public class SensorConfig
 			state = State.ExistingUnchangedSensor;
 	}
 
-	public RemoteSensor createSensor(SensorBox sensorBox) 
+	public RemoteSensor createSensor(LiveInstance sensorBox) 
 	{
 		originalSensor = new RemoteSensor(sensorBox.getClient(), getSensorInfo()); 
 		return originalSensor;

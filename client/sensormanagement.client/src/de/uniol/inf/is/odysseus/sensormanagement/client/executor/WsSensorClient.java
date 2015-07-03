@@ -78,10 +78,10 @@ public class WsSensorClient
 		return server;
 	}
 
-	public void init(ISession caller, String loggingDirectory)
+	public void init(ISession caller, String name, String loggingDirectory)
 	{
 		try	{
-			server.initService(caller.getToken(), loggingDirectory);
+			server.initService(caller.getToken(), name, loggingDirectory);
 		} catch (InvalidUserDataException_Exception e) {
 			throw new PlanManagementException(e);				
 		}

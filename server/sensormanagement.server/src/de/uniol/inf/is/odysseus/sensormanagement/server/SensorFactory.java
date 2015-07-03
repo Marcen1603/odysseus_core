@@ -335,9 +335,11 @@ public class SensorFactory
 	private Map<String, SensorType> sensorTypes = new HashMap<>();
 	private List<Sensor> sensors = new LinkedList<>();
 	
-	public void init(String loggingDirectory) 
+	public void init(String name, String loggingDirectory) 
 	{
 		this.loggingDirectory = loggingDirectory;
+		
+		serverInstance.name = name;
 		
 		initialized = true;
 	}			

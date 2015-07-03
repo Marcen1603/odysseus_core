@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.sensormanagement.application.view.visualization;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.Arc2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -15,14 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.imageio.ImageIO;
 
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.DisplayMap;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Receiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.position.AbsolutePosition;
-import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Measurement;
 
 public class MapVisualization extends Visualization
 {
@@ -37,17 +34,25 @@ public class MapVisualization extends Visualization
 		super(session, "Map: " + map.name);
 
 		this.map = map;
-    	mapImage = ImageIO.read(new File(session.getScene().getPath() + map.imageFile));
+    	mapImage = ImageIO.read(new File(session.getSensorManager().getScene().getPath() + map.imageFile));
 	}
 
+	double distanceInMeter(double lat1, double lon1, double lat2, double lon2)
+	{
+		double l1,l2,g1,g2,dg;
+		l1 = Math.toRadians(lat1);
+		l2 = Math.toRadians(lat2);
+		g1 = Math.toRadians(lon1);
+		g2 = Math.toRadians(lon2);
+		dg = g2-g1;
+		return 1852.0f * 60.0f * Math.toDegrees(Math.acos(Math.sin(l1)*Math.sin(l2)+Math.cos(l1)*Math.cos(l2)*Math.cos(dg)));
+	}	
+	
     @Override
     public void paint(final Graphics g) 
     {
     	Graphics2D graphics = (Graphics2D)g;
     	graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);    	
-    	
-    	Color scanColor = Color.BLACK;
-    	Color cameraColor = Color.GRAY;
     	
        	int w = getWidth();
     	int h = getHeight();
@@ -70,122 +75,42 @@ public class MapVisualization extends Visualization
 		
 		int mapX = (getWidth()  - mapW) / 2;
 		int mapY = (getHeight() - mapH) / 2;
-		double scale = (double)mapW / mapImage.getWidth();
                 
 		graphics.drawImage(mapImage, mapX, mapY, mapW, mapH, this);
 
+    	double mapLongitudeDelta = map.rightPosition - map.leftPosition;
+    	double mapLatitudeDelta  = map.topPosition   - map.bottomPosition;		
+		
+    	double distWE = distanceInMeter(map.topPosition, map.rightPosition, map.topPosition, map.leftPosition);
+    	double distNS = distanceInMeter(map.topPosition, map.rightPosition, map.bottomPosition, map.rightPosition);
+    	
+    	double pixelPerMeter = (mapW / distWE + mapH / distNS) / 2;
+    	
     	for (Entry<SensorModel, Event> entry : currentEvents.entrySet())
     	{
     		SensorModel sensor = entry.getKey();
     		Event event  = entry.getValue();    		
     	
-    		if (event.getTimeStamp() > session.getNow()) continue;
-        	if (event.getTimeStamp() + event.getSecondsValid() < session.getNow()) 
-        		continue;    		
+    		AbstractMapRenderer mapRenderer = getSession().getViewSensor(sensor.id).getMapRenderer();
     		
+    		if (mapRenderer == null) return;
+    		if (event.getTimeStamp() > getSession().getNow()) continue;
+        	if (event.getTimeStamp() + event.getSecondsValid() < getSession().getNow()) continue;    		        	
+        
         	if (!(sensor.position instanceof AbsolutePosition)) continue;
         	AbsolutePosition pos = (AbsolutePosition) sensor.position;
-        	
-    		double x = mapX + 		 (pos.longitude - map.leftPosition)   / (map.rightPosition - map.leftPosition)   * mapW;
-    		double y = mapY + mapH - (pos.latitude  - map.bottomPosition) / (map.topPosition   - map.bottomPosition) * mapH;    		
-    		double rot = pos.orientation + 90.0;	// pos.orientation has 0° north, while rot is mathematics orientation with 0° east
-    		
-    		int angle = 0; 
-    		double radius = 0.0;
-    		double zoom = 0.0;
-    		
-    		switch (sensor.id)
-    		{
-    		// Aufnahmen aus BHV
-				case "LMS1xx_2039536063":	// LMS 100
-				{
-					// LMS 100
-/*					x = mapX + 190*scale;
-					y = mapY + 482*scale;
-					rot = Math.toRadians(17.0);*/
-					zoom = 550.0 / scale;
-					break;
-				}
-					
-				case "LMS1xx_1232438181":	// LMS 151
-	    		{
-/*	    			x = mapX + 172*scale;
-	    			y = mapY + 484*scale;
-	    			rot = Math.toRadians(40.0);*/
-	    			zoom = 700.0 / scale;
-	    			break;
-	    		}
-    		
-    		
-	    		case "IntegratedCamera_808930381":	// Handy
-	    		{
-/*	    			x = mapX + 188*scale;
-	    			y = mapY + 487*scale;
-	    			rot = Math.toRadians(10.0);*/
-	    			angle = 60;
-	    			radius = 40.0 * scale;
-	    			break;    				
-	    		}
-	
-	    		case "OptrisCamera_1405033410":	// IR
-	    		{
-/*	    			x = mapX + 780*scale;
-	    			y = mapY + 290*scale;
-	    			rot = Math.toRadians(150.0);*/
-	    			angle = 70;
-	    			radius = 40.0 * scale;
-	    			break;
-	    		}
-	
-	    		case "BaslerCamera_790104739":	// Basler AWI
-	    		{
-/*	    			x = mapX + 780*scale;
-	    			y = mapY + 290*scale;
-	    			rot = Math.toRadians(140.0);*/
-	    			angle = 90;
-	    			radius = 80.0 * scale;
-	    			break;
-	    		}    			    			
-	
-	    		case "BaslerCamera_80823122":	// Basler Mole
-	    		{
-/*	    			x = mapX + 178*scale;
-	    			y = mapY + 490*scale;
-	    			rot = Math.toRadians(65.0);*/
-	    			radius = 40.0 * scale;
-	    			angle = 58;
-	    			break;
-	    		}    		
-    		}
-    		    		
-			switch (sensor.type)
-			{
-				case "LMS1xx":
-				{
-					final BasicStroke solid = new BasicStroke();
-					graphics.setStroke(solid);
-					Lms1xxVisualization.drawMeasurement(graphics, (Measurement) event.getEventObject(), (int)x, (int)y, Math.toRadians(rot), (int)(zoom), null, null, scanColor);
-					break;
-				}				
-				
-				case "IntegratedCamera":
-				case "OptrisCamera":
-				case "BaslerCamera":
-				{
-					x -= radius;
-					y -= radius;
-					int startAngle = (int)rot - angle/2;
-					
-					Arc2D arc = new Arc2D.Double(x, y, 2*radius, 2*radius, startAngle, angle, Arc2D.PIE);
-					
-					final float dash1[] = {1.0f};
-				    final BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
-				    graphics.setStroke(dashed);				
-					graphics.setColor(cameraColor);				
-					graphics.draw(arc);
-					break;
-				}
-			}
+        	        	
+        	AbstractMapRenderer.Data data = new AbstractMapRenderer.Data();
+        	data.graphics = graphics;
+        	data.event = event;
+        	data.mapX = mapX;
+        	data.mapY = mapY;
+        	data.mapW = mapW;
+        	data.mapH = mapH;
+        	data.sensorX = mapX + 		 (pos.longitude - map.leftPosition)   / mapLongitudeDelta * mapW;
+        	data.sensorY = mapY + mapH - (pos.latitude  - map.bottomPosition) / mapLatitudeDelta  * mapH;
+        	data.pixelPerMeter = pixelPerMeter;
+       		mapRenderer.render(data);
     	}
     }
 	
@@ -199,8 +124,8 @@ public class MapVisualization extends Visualization
 		repaint();
 	}
 	
-	@Override public void listeningStarted(Receiver receiver) {}
-	@Override public void listeningStopped(Receiver receiver) 
+	@Override public void listeningStarted(AbstractSensor receiver) {}
+	@Override public void listeningStopped(AbstractSensor receiver) 
 	{
 		currentEvents.remove(receiver.getSensorModel());
 		repaint();

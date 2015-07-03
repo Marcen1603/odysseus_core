@@ -3,19 +3,19 @@ package de.uniol.inf.is.odysseus.sensormanagement.application.model.playback;
 import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Receiver;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
-public abstract class PlaybackReceiver extends Receiver
+public abstract class PlaybackReceiver extends AbstractSensor
 {
 	private double startTime;
 	private double endTime;
 	
 	protected LogMetaData logMetaData;	
 	
-	public double getStartTime()	{ return startTime; }
-	public double getEndTime()	{ return endTime;   }	
+	public double getStartTime() { return startTime; }
+	public double getEndTime() { return endTime; }	
 	
 	public PlaybackReceiver(SensorModel sensorModel, LogMetaData logMetaData)
 	{

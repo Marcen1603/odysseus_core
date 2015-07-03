@@ -26,13 +26,13 @@ public abstract class SensorClient implements ILoggable
 	public boolean isInitialized() { return initialized; }
 	public String getUserName()	{ return userName; }	
 	
-	public SensorClient(WsClient client, ISession session, String wsdlLocation) throws MalformedURLException
+	public SensorClient(String name, WsClient client, ISession session, String wsdlLocation) throws MalformedURLException
 	{
 		this.odysseusClient = client;
 		this.odysseusSession = session;
 				
 		sensorClient = new WsSensorClient(wsdlLocation + ";http://server.sensormanagement.odysseus.is.inf.uniol.de/;SensorServiceService");
-		sensorClient.init(session, "C:/test/records");
+		sensorClient.init(session, name, "C:/test/records");
 		
 		List<String> sensorIds = sensorClient.getSensorIds(odysseusSession);
 		sensors = new ArrayList<RemoteSensor>(sensorIds.size());

@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Receiver;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.CallbackListener;
 
@@ -13,14 +13,15 @@ public abstract class Visualization extends JPanel
 {	
 	private static final long serialVersionUID = 1L;
 	
-	private Object displayConstraints = null;
-	
-	protected String displayName;
-	protected Session session;
-	private CallbackListener<Receiver, Event> sensorDataListener;
+	private Object displayConstraints = null;	
+	private String displayName;	
+	private Session session;
+	private CallbackListener<AbstractSensor, Event> sensorDataListener;
 
 	public Object getDisplayConstraints() { return displayConstraints; }
-	public CallbackListener<Receiver, Event> getSensorDataListener() { return sensorDataListener; }
+	public CallbackListener<AbstractSensor, Event> getSensorDataListener() { return sensorDataListener; }
+	public Session getSession() { return session; }
+	public String getDisplayName() { return displayName; }
 	
 	public Visualization(Session session, String displayName)
 	{
@@ -31,19 +32,19 @@ public abstract class Visualization extends JPanel
 		
 		setPreferredSize(d);
 		
-		sensorDataListener = new CallbackListener<Receiver, Event>()
+		sensorDataListener = new CallbackListener<AbstractSensor, Event>()
 		{
-			@Override public void listeningStarted(Receiver sender) 
+			@Override public void listeningStarted(AbstractSensor sender) 
 			{
 				Visualization.this.listeningStarted(sender);
 			}
 			
-			@Override public void listeningStopped(Receiver sender) 
+			@Override public void listeningStopped(AbstractSensor sender) 
 			{
 				Visualization.this.listeningStopped(sender);
 			}
 			
-			@Override public void raise(Receiver sender, Event event) 
+			@Override public void raise(AbstractSensor sender, Event event) 
 			{
 				sensorDataReceived(event.getSource(), event);
 			}
@@ -61,7 +62,7 @@ public abstract class Visualization extends JPanel
 		session.updateVisualizationConstraints(this);
 	}
 	
-	abstract public void sensorDataReceived(SensorModel source, Event event);
-	abstract public void listeningStopped(Receiver sender);
-	abstract public void listeningStarted(Receiver sender);	
+	abstract protected void sensorDataReceived(SensorModel source, Event event);
+	abstract protected void listeningStopped(AbstractSensor sender);
+	abstract protected void listeningStarted(AbstractSensor sender);	
 }

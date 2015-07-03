@@ -5,19 +5,17 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory;
-import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory.SensorFactoryEntry;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Receiver;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.CallbackListener;
 
-public class PlaybackSensor extends Receiver
+public class PlaybackSensor extends AbstractSensor
 {
-	private Playback playback;
-	private SensorFactoryEntry sensorEntry;
+	private PlaybackSensorManager playback;
+	
 	private TreeSet<PlaybackReceiver> playbackReceivers;
-	private CallbackListener<Receiver, Event> receiverListener;
+	private CallbackListener<AbstractSensor, Event> receiverListener;
 	private PlaybackReceiver currentReceiver = null;
 	
 	private double startTime = -1;
@@ -25,20 +23,16 @@ public class PlaybackSensor extends Receiver
 	
 	public TreeSet<PlaybackReceiver> getReceivers() { return playbackReceivers; }
 	public double getStartTime() { return startTime; }
-	public double getEndTime() { return endTime; }
-	public SensorFactoryEntry getSensorEntry() { return sensorEntry; }
+	public double getEndTime() { return endTime; }	
 	
 	public boolean isPlaying() { return currentReceiver != null && currentReceiver.isRunning() && playback.getNow() > currentReceiver.getStartTime(); }	
 	
-	public PlaybackSensor(Playback playback, SensorModel sensorInfo) 
+	public PlaybackSensor(PlaybackSensorManager playback, SensorModel sensorModel) 
 	{			
-		super(sensorInfo);
-		
-		assert(sensorInfo != null);
+		super(sensorModel);
 		
 		this.playback = playback;
-		
-		sensorEntry = SensorFactory.getInstance().getSensorType(sensorInfo.type);
+				
 		playbackReceivers = new TreeSet<PlaybackReceiver>(
 				new Comparator<PlaybackReceiver>()
 				{
@@ -49,15 +43,15 @@ public class PlaybackSensor extends Receiver
 					
 				});
 		
-		receiverListener = new CallbackListener<Receiver, Event>()
+		receiverListener = new CallbackListener<AbstractSensor, Event>()
 		{
-			@Override public void raise(Receiver source, Event event) 
+			@Override public void raise(AbstractSensor source, Event event) 
 			{
 				PlaybackSensor.this.sensorDataReceived.raise(PlaybackSensor.this, event);
 			}
 			
-			@Override public void listeningStarted(Receiver receiver) {}
-			@Override public void listeningStopped(Receiver receiver) {}			
+			@Override public void listeningStarted(AbstractSensor receiver) {}
+			@Override public void listeningStopped(AbstractSensor receiver) {}			
 		};
 	}		
 

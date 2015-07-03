@@ -8,12 +8,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TimeZone;
+
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import de.jaret.util.date.Interval;
 import de.jaret.util.date.JaretDate;
@@ -22,11 +23,14 @@ import de.jaret.util.ui.timebars.TimeBarMarkerImpl;
 import de.jaret.util.ui.timebars.model.ITimeBarChangeListener;
 import de.jaret.util.ui.timebars.model.TimeBarRow;
 import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractInstance;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Scene;
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.Playback;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackReceiver;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackSensor;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackSensorManager;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewInstance;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.ViewSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.Utilities;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.SimpleCallbackListener;
@@ -35,16 +39,28 @@ public class PlaybackSession extends Session
 {
 	private static final long serialVersionUID = 1L;
 	
-	private Playback playback;
-		
 	private PlaybackTimeBar 	timeBar;
 	private TimeBarMarkerImpl 	currentTimeMarker;
 	private boolean				currentTimeMarkerDragged;
-	private List<ViewSensor>	viewSensors;
 			
-	@Override public double getNow() { return playback.getNow(); }
-	public Playback getPlayback() { return playback; }
-		
+	@Override public double getNow() { return getSensorManager().getNow(); }
+	@Override public PlaybackSensorManager getSensorManager() { return (PlaybackSensorManager) super.getSensorManager(); }
+
+	@Override protected PlaybackSensorManager createSensorManager(Scene scene) 
+	{
+		return new PlaybackSensorManager(scene);
+	}	
+	
+	@Override protected ViewSensor createViewSensor(Session session, AbstractSensor sensor, ViewInstance instance) 
+	{
+		return new PlaybackViewSensor(session, sensor, instance);
+	}
+	
+	@Override protected ViewInstance createViewInstance(Session session, String ethernetAddr, DefaultMutableTreeNode parentNode) 
+	{
+		return new PlaybackViewInstance(session, ethernetAddr, parentNode);
+	}	
+	
 	private void setupTimeBar()
 	{
 		timeBar = new PlaybackTimeBar();
@@ -66,7 +82,7 @@ public class PlaybackSession extends Session
 						
 						try 
 						{
-							playback.jumpToTime(Utilities.doubleTimeFromDate(marker.getDate().getDate()));						
+							getSensorManager().jumpToTime(Utilities.doubleTimeFromDate(marker.getDate().getDate()));						
 						} 
 						catch (IOException e) 
 						{
@@ -94,7 +110,7 @@ public class PlaybackSession extends Session
                             	try 
                             	{
                             		JaretDate date = timeBar.getDelegate().dateForCoord(ev.getX(), ev.getY());
-									playback.jumpToTime(Utilities.doubleTimeFromDate(date.getDate()));
+                            		getSensorManager().jumpToTime(Utilities.doubleTimeFromDate(date.getDate()));
 									System.out.println("Date at cursor: " + date.toDisplayString() );
 								} 
                             	catch (IOException e) 
@@ -123,11 +139,9 @@ public class PlaybackSession extends Session
 		
 		setupTimeBar();
 		
-		playback = new Playback(scene);
-		
-		playback.beforeStepEvent.addListener(new SimpleCallbackListener<Playback, Playback.BeforeStepEventData>()
+		getSensorManager().beforeStepEvent.addListener(new SimpleCallbackListener<PlaybackSensorManager, PlaybackSensorManager.BeforeStepEventData>()
 		{
-			@Override public void raise(Playback source, Playback.BeforeStepEventData data) 
+			@Override public void raise(PlaybackSensorManager source, PlaybackSensorManager.BeforeStepEventData data) 
 			{ 
 				try {
 					onBeforeStepEvent(data.now, data.previousNow, data.timePassed);
@@ -137,22 +151,22 @@ public class PlaybackSession extends Session
 			}
 		});
 
-		playback.onPlayStateChanged.addListener(new SimpleCallbackListener<PlaybackSensor, Object>()
+		getSensorManager().onPlayStateChanged.addListener(new SimpleCallbackListener<PlaybackSensor, Object>()
 		{
 			@Override public void raise(PlaybackSensor source, Object obj) 
 			{
 				getTreeModel().nodeStructureChanged(getTreeRoot());
 			}
-		});
+		});		
 		
-		
-		viewSensors = new ArrayList<ViewSensor>(playback.getPlaybackSensors().size());
-		for (PlaybackSensor ps : playback.getPlaybackSensors())
+		for (AbstractInstance instance : getSensorManager().getInstances())
 		{
-			for (PlaybackReceiver recv : ps.getReceivers())
-				timeBar.addSensorRecording(ps.getSensorModel(), recv);
-			
-			viewSensors.add(new ViewSensor(this, ps));
+			for (AbstractSensor dataSource : instance.getSensors())
+			{
+				PlaybackSensor ps = (PlaybackSensor) dataSource;
+				for (PlaybackReceiver recv : ps.getReceivers())
+					timeBar.addSensorRecording(ps.getSensorModel(), recv);
+			}
 		}
 				
 		if (scene instanceof PlaybackScene)
@@ -184,26 +198,26 @@ public class PlaybackSession extends Session
 						setMapConstraint(constraint);
 					}
 					else
-						getViewSensorById(sensorId).setConstraintString(constraint);
+						getViewSensor(sensorId).setConstraintString(constraint);
 				}
 			}			
 		}
 		
 		getTreeModel().nodeStructureChanged(getTreeRoot());
-		playback.goToStart();
-	}
-		
+		getSensorManager().goToStart();
+	}	
+	
 	protected void onBeforeStepEvent(double now, double previousNow, double timePassed) throws IOException 
 	{
 		// TODO: Better implementation of jump markers, maybe only keep track of next jumpmarker
 		// and refresh after every marker / jumpToTime-call ?
 		
-		if (getScene() instanceof PlaybackScene)
+		if (getSensorManager().getScene() instanceof PlaybackScene)
 		{
 			// Check time intervals if playback is running (timePassed == 0.0 happens when jumping in time. Ignore intervals then.)
 			if (timePassed != 0.0)
 			{
-				List<TimeInterval> list = ((PlaybackScene)getScene()).getTimeIntervalList();
+				List<TimeInterval> list = ((PlaybackScene)getSensorManager().getScene()).getTimeIntervalList();
 				Iterator<TimeInterval> iter = list.iterator();
 				while (iter.hasNext())
 				{
@@ -213,9 +227,9 @@ public class PlaybackSession extends Session
 					if (previousNow < m.endTime && m.endTime < now)
 					{
 						if (iter.hasNext())
-							playback.jumpToTime(iter.next().startTime);
+							getSensorManager().jumpToTime(iter.next().startTime);
 						else
-							playback.jumpToTime(list.get(0).startTime);
+							getSensorManager().jumpToTime(list.get(0).startTime);
 						break;
 					}
 				}
@@ -229,7 +243,7 @@ public class PlaybackSession extends Session
 				fps = 1 / timePassed;
 			
 			String timeString = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(Utilities.dateFromDoubleTime(now));
-			Application.getMainFrame().setTitle(String.format("%s (Time since start = %.3fs) @ %.2f FPS", timeString, now - playback.getStartTime(), fps));
+			Application.getMainFrame().setTitle(String.format("%s (Time since start = %.3fs) @ %.2f FPS", timeString, now - getSensorManager().getStartTime(), fps));
 		}
 		
 		if (!currentTimeMarkerDragged)
@@ -243,33 +257,29 @@ public class PlaybackSession extends Session
 		timeBar.setVisible(!fullscreen);		
 	}
 	
-	@Override public void remove() 
-	{
-		playback.stop();		
-		
-		for (ViewSensor vs : viewSensors)
-			vs.stopVisualization();
-	}
-	
 	@Override
 	public void debugBtn(int code) 
 	{
 		try
 		{
-			for (ViewSensor vs : viewSensors)
-				vs.startVisualization();
+			// TODO ?
+			for (AbstractInstance instance : getSensorManager().getInstances())
+				for (AbstractSensor sensor : instance.getSensors())
+				{
+					getViewSensor(sensor.getSensorModel().id).startVisualization();
+				}
 			
 			switch (code)
 			{
 				case 0:
 				{
-					playback.playPauseButton();
+					getSensorManager().playPauseButton();
 					break;
 				}
 				
 				case 1:
 				{
-					playback.jumpToTime(playback.getStartTime());
+					getSensorManager().jumpToTime(getSensorManager().getStartTime());
 					break;
 				}
 				
@@ -277,7 +287,7 @@ public class PlaybackSession extends Session
 				{
 					double timeStep = 0.02;
 				
-					playback.step(timeStep);
+					getSensorManager().step(timeStep);
 					break;
 				}			
 			}
@@ -288,16 +298,6 @@ public class PlaybackSession extends Session
 		}
 	}
 	
-	ViewSensor getViewSensorById(String id)
-	{
-		for (ViewSensor vs : viewSensors)
-		{
-			if (vs.getPlaybackSensor().getSensorModel().id.equals(id))
-				return vs;
-		}
-		return null;
-	}
-
 	// TODO: Show line between two jumpMarkers in TimeBar
 	// TODO: Create whole new type LoopMarker which does all this 
 	private static class JumpMarker extends TimeBarMarkerImpl
@@ -323,5 +323,6 @@ public class PlaybackSession extends Session
 		Calendar c2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		c2.set(y, m, d, h, min, s);
 		System.out.println(Long.toString(c2.getTimeInMillis()));		
-	}	
+	}
+		
 }

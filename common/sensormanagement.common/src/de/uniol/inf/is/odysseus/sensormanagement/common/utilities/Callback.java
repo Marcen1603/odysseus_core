@@ -8,7 +8,7 @@ public class Callback<Base, Type>
 	
 	public boolean addListener(CallbackListener<Base, Type> listener)
 	{
-		if (listeners.contains(listener)) return false;
+		if (listener == null || listeners.contains(listener)) return false;
 
 		listeners.add(listener);
 		return true;
@@ -16,7 +16,7 @@ public class Callback<Base, Type>
 	
 	public boolean removeListener(CallbackListener<Base, Type> listener)
 	{
-		if (!listeners.contains(listener)) return false;
+		if (listener == null || !listeners.contains(listener)) return false;
 		
 		listeners.remove(listener);
 		return true;

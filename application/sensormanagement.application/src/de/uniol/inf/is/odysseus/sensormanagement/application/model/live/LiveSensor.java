@@ -2,22 +2,22 @@ package de.uniol.inf.is.odysseus.sensormanagement.application.model.live;
 
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Receiver;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.RemoteSensor;
 
-public abstract class LiveReceiver extends Receiver 
+public abstract class LiveSensor extends AbstractSensor 
 {
 	private RemoteSensor sensor;
 	private String streamUrl;
 
-	public LiveReceiver(RemoteSensor sensor) 
+	public LiveSensor(RemoteSensor sensor) 
 	{
 		super(sensor.getSensorModel());
 		
 		this.sensor = sensor;
 	}
 	
-	public RemoteSensor getSensor()
+	public RemoteSensor getRemoteSensor()
 	{
 		return sensor;
 	}
@@ -29,7 +29,7 @@ public abstract class LiveReceiver extends Receiver
 	
 	@Override protected void onStop()
 	{
-		getSensor().stopLiveView();
+		getRemoteSensor().stopLiveView();
 	}
 
 	public String getStreamUrl()

@@ -4,15 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.Timer;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
 import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory;
 import de.uniol.inf.is.odysseus.sensormanagement.application.SensorFactory.SensorFactoryEntry;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractInstance;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Scene;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensorManager;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.LogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.TextLogMetaData;
 import de.uniol.inf.is.odysseus.sensormanagement.common.logging.VideoLogMetaData;
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.sensormanagement.common.types.ServerInstance;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.Callback;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.XmlMarshalHelper;
 
-public class Playback
+public class PlaybackSensorManager extends AbstractSensorManager
 {
 	private Object doStepSynchronization = new Object();
 	
@@ -29,8 +30,7 @@ public class Playback
 	private double endTime = -1;
 	private double previousNow;
 	private double now;
-
-	private List<PlaybackSensor> playbackSensors = new ArrayList<>();
+	
 	private Timer playbackTimer = null;	
 	
 	public class BeforeStepEventData
@@ -45,24 +45,36 @@ public class Playback
 		public double now, timePassed, previousNow;
 	}
 	
-	public Callback<Playback, BeforeStepEventData> beforeStepEvent = new Callback<>();
+	public Callback<PlaybackSensorManager, BeforeStepEventData> beforeStepEvent = new Callback<>();
 	public Callback<PlaybackSensor, Object> onPlayStateChanged = new Callback<>();
 	
-	public double getStartTime() 	{ return startTime; }
-	public double getEndTime()		{ return endTime;	}
-	public double getNow() { return now; }	
+	public double getStartTime() { return startTime; }
+	public double getEndTime() { return endTime; }
+	public double getNow() { return now; }
 	
-	public Playback(Scene scene) throws IOException
+	public PlaybackSensorManager(Scene scene)
 	{
+		super(scene);
+	}
+	
+	@Override public void start() throws IOException
+	{
+		Scene scene = getScene();
+		
 		for (String file : scene.getInstanceFileList())
 		{
 			File serverInstanceFile = new File(scene.getPath() + file);
 			ServerInstance serverInstance = XmlMarshalHelper.fromXmlFile(serverInstanceFile, ServerInstance.class);
 			
+			AbstractInstance instance = new AbstractInstance(serverInstance.name, serverInstance.ethernetAddr);
+			getInstances().add(instance);
+			onInstanceAdded.raise(this, instance);
+			
 			for (SensorModel sensor : serverInstance.sensors)
 			{
 				PlaybackSensor ps = new PlaybackSensor(this, sensor);
-				playbackSensors.add(ps);
+				instance.getSensors().add(ps);
+				onSensorAdded.raise(this, ps);
 			}
 			
 			System.out.println(XmlMarshalHelper.toXml(serverInstance));
@@ -81,7 +93,7 @@ public class Playback
 					Class[] logClasses = new Class[]{LogMetaData.class, VideoLogMetaData.class, TextLogMetaData.class};
 					LogMetaData logMetaData = (LogMetaData) XmlMarshalHelper.fromXmlFile(child, logClasses);
 					
-					PlaybackSensor ps = getPlaybackSensor(logMetaData.sensorId);
+					PlaybackSensor ps = (PlaybackSensor) getSensorById(logMetaData.sensorId);
 					if (ps == null)
 						Application.showException(new RuntimeException("Unknown sensor " + logMetaData.sensorId));
 					
@@ -96,18 +108,6 @@ public class Playback
 			}			
 		}	
 	}
-
-	public PlaybackSensor getPlaybackSensor(String id)
-	{
-		for (PlaybackSensor ps : playbackSensors)
-		{
-			SensorModel listSensor = ps.getSensorModel();
-			if (listSensor.id.equals(id))
-				return ps;
-		}
-		
-		return null;
-	}	
 	
 	public void goToStart() throws IOException
 	{
@@ -120,8 +120,9 @@ public class Playback
 		{
 			previousNow = time;
 			now = time;
-			for (PlaybackSensor ps : playbackSensors)
-				ps.nowChanged();
+			for (AbstractInstance instance : getInstances())
+				for (AbstractSensor sensor : instance.getSensors())
+					((PlaybackSensor) sensor).nowChanged();
 			
 			doStep(0.0);
 		}
@@ -219,8 +220,9 @@ public class Playback
 			
 	//		System.out.println("Enter doStep at time " + (long)(now*1000.0));
 			
-			for (PlaybackSensor ps : playbackSensors)
-				ps.doEvent();			
+			for (AbstractInstance instance : getInstances())
+				for (AbstractSensor sensor : instance.getSensors())
+					((PlaybackSensor) sensor).doEvent();			
 		}
 	}
 	
@@ -231,10 +233,5 @@ public class Playback
 			playbackTimer.stop();
 			playbackTimer = null;	
 		}		
-	}
-	
-	public List<PlaybackSensor> getPlaybackSensors() 
-	{
-		return playbackSensors;
 	}
 }

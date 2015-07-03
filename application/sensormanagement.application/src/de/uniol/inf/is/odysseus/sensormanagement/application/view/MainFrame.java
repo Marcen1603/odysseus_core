@@ -148,14 +148,14 @@ public class MainFrame extends JFrame
 		JButton startRecordingButton = new JButton("Start recording");
 		startRecordingButton.addActionListener(	new ActionListener() 
 												{
-													public void actionPerformed(ActionEvent arg0) { getCurrentSession().startLoggingButtonClick(); }
+													public void actionPerformed(ActionEvent arg0) { ((LiveSession) getCurrentSession()).startLoggingButtonClick(); }
 												});
 		toolBar.add(startRecordingButton);
 		
 		JButton stopRecordingButton = new JButton("Stop recording");
 		stopRecordingButton.addActionListener(	new ActionListener() 
 												{
-													public void actionPerformed(ActionEvent arg0) { getCurrentSession().stopLoggingButtonClick(); }
+													public void actionPerformed(ActionEvent arg0) { ((LiveSession) getCurrentSession()).stopLoggingButtonClick(); }
 												});		
 		toolBar.add(stopRecordingButton);
 		
@@ -293,22 +293,26 @@ public class MainFrame extends JFrame
 	}
 	
 	private void startLiveSession(Scene scene)
-	{
-		LiveSession liveSession = new LiveSession(scene);
+	{		
+		LiveSession liveSession = null;
+		
 		try
 		{
-			liveSession.addSensorBox("192.168.1.2:9669");
-			liveSession.addSensorBox("192.168.2.2:9669");
-			liveSession.addSensorBox("192.168.3.2:9669");
-			liveSession.addSensorBox("192.168.4.2:9669");
+			liveSession = new LiveSession(scene);
+			liveSession.addInstance("Sensorbox 1", "192.168.1.2:9669");
+			liveSession.addInstance("Sensorbox 2", "192.168.2.2:9669");
+			liveSession.addInstance("Sensorbox 3", "192.168.3.2:9669");
+			liveSession.addInstance("Sensorbox 4", "192.168.4.2:9669");
 			
-			liveSession.addSensorBox("127.0.0.1:9669");
+			liveSession.addInstance("Lokal", "127.0.0.1:9669");
 			
 			addSession(liveSession);
 		}
 		catch (Exception e)
 		{
-			liveSession.remove();
+			if (liveSession != null)
+				liveSession.remove();
+			
 			Application.showException(e);
 		}		
 	}

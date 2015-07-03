@@ -4,7 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Receiver;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackSensorManager;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSession;
@@ -29,8 +30,8 @@ public class TextVisualization extends Visualization
 		if (event == null || event.getEventObject() == null) return;
     	if (event.getSecondsValid() != 0.0)
     	{
-    		if (event.getTimeStamp() > session.getNow()) return;
-    		if (event.getTimeStamp() + event.getSecondsValid() < session.getNow())
+    		if (event.getTimeStamp() > getSession().getNow()) return;
+    		if (event.getTimeStamp() + event.getSecondsValid() < getSession().getNow())
     			return;
     	}
 		
@@ -41,8 +42,8 @@ public class TextVisualization extends Visualization
         	
 	    graphics.setColor(Color.WHITE);
 	    double timeStart = 0.0f;
-	    if (session instanceof PlaybackSession)
-	    	timeStart = ((PlaybackSession) session).getPlayback().getStartTime();
+	    if (getSession() instanceof PlaybackSession)
+	    	timeStart = ((PlaybackSensorManager) getSession().getSensorManager()).getStartTime();
 	    graphics.drawString(String.format("Time: %f", event.getTimeStamp()), 10, 15);
 	    graphics.drawString(String.format("Time since start: %.3fs", event.getTimeStamp() - timeStart), 10, 30);
 	    
@@ -63,6 +64,6 @@ public class TextVisualization extends Visualization
         repaint();
 	}
 	
-	@Override public void listeningStarted(Receiver receiver) {}
-	@Override public void listeningStopped(Receiver receiver) {}
+	@Override public void listeningStarted(AbstractSensor receiver) {}
+	@Override public void listeningStopped(AbstractSensor receiver) {}
 }

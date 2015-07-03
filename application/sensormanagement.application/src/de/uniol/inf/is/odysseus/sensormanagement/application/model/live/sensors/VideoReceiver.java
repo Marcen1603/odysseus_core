@@ -9,10 +9,10 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 
 import de.uniol.inf.is.odysseus.sensormanagement.application.Application;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.live.LiveReceiver;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.live.LiveSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.client.executor.RemoteSensor;
 
-public class VideoReceiver extends LiveReceiver
+public class VideoReceiver extends LiveSensor
 {
 	private FFmpegFrameGrabber capture;
 	private Thread thread;

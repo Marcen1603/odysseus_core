@@ -1,65 +1,54 @@
 package de.uniol.inf.is.odysseus.sensormanagement.application.view;
 
-import java.io.IOException;
-
 import javax.swing.Icon;
 
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Receiver;
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackSensor;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.TreeCellRenderer;
-import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.CallbackListener;
+import de.uniol.inf.is.odysseus.sensormanagement.application.view.visualization.AbstractMapRenderer;
 
 public class ViewSensor extends ViewEntity
 {
-	private PlaybackSensor playbackSensor;
-	private CallbackListener<Receiver, Event> listener;
+	private ViewInstance viewInstance;
+	private AbstractSensor sensor;
 	private Visualization visualization;
+	private AbstractMapRenderer mapRenderer;
 	private String constraintString = null;	
 	
 	public Visualization getVisualization() { return visualization; }
 	public String getConstraintString() { return constraintString; }
-	public Receiver getPlaybackSensor() { return playbackSensor; }
+	public AbstractSensor getSensor() { return sensor; }
+	public ViewInstance getViewInstance() { return viewInstance; }
+	public AbstractMapRenderer getMapRenderer() { return mapRenderer; }
 	
 	@Override public String getDisplayName() 
 	{ 
-		return playbackSensor != null && playbackSensor.getSensorModel() != null ? playbackSensor.getSensorModel().displayName : ""; 	
+		return sensor != null && sensor.getSensorModel() != null ? sensor.getSensorModel().displayName : ""; 	
 	}
 
 	@Override public Icon getIcon() 
 	{
-		return playbackSensor != null && playbackSensor.isPlaying() ? TreeCellRenderer.sensorIconPlay : TreeCellRenderer.sensorIconPause;
+		return TreeCellRenderer.sensorIconPause;
 	}
 	
-	public ViewSensor(Session session, PlaybackSensor playbackSensor) throws IOException 
+	public ViewSensor(Session session, AbstractSensor sensor, ViewInstance viewInstance) 
 	{
-		super(session, session.getTreeRoot());
+		// TODO: Add sensor to correct instance node
+		super(session, viewInstance.getNode());
 		
-		this.playbackSensor = playbackSensor;
-		
-		listener = new CallbackListener<Receiver, Event>()
-		{
-			@Override public void raise(Receiver source, Event event) 
-			{
-				onSensorDataReceived(source, event);
-			}
-
-			@Override public void listeningStarted(Receiver receiver) {}
-			@Override public void listeningStopped(Receiver receiver) {}			
-		};
-		
-		playbackSensor.sensorDataReceived.addListener(listener);
-	}
-	
-	@Override public void startLogging() { throw new ViewException("Cannot log a playback sensor"); }
-	@Override public void stopLogging()  { throw new ViewException("Cannot log a playback sensor"); }
-
-	protected void onSensorDataReceived(Receiver source, Event event) 
-	{
-		if (visualization != null) visualization.sensorDataReceived(event.getSource(), event);
+		this.sensor = sensor;
+		this.viewInstance = viewInstance;
+		this.mapRenderer = sensor.getSensorEntry().createMapRenderer(session);
 		
 		if (getSession().getMap() != null)
-			getSession().getMap().sensorDataReceived(event.getSource(), event);
+			sensor.sensorDataReceived.addListener(getSession().getMap().getSensorDataListener());				
+	}
+	
+	@Override public void remove()
+	{
+		if (getSession().getMap() != null)
+			sensor.sensorDataReceived.removeListener(getSession().getMap().getSensorDataListener());
+
+		super.remove();
 	}	
 	
 	@Override public void startVisualization() 
@@ -67,16 +56,29 @@ public class ViewSensor extends ViewEntity
 		if (visualization != null) return;
 		if ("disable".equals(constraintString)) return;
 
-		visualization = playbackSensor.getSensorEntry().createVisualization(getSession(), playbackSensor.getSensorModel().displayName);
-		visualization.setDisplayConstraints(constraintString);
-		getSession().addVisualization(visualization);
-		getSession().getTreeModel().nodeStructureChanged(getNode());
+		try
+		{
+			visualization = sensor.getSensorEntry().createVisualization(getSession(), sensor.getSensorModel().displayName);
+			visualization.setDisplayConstraints(constraintString);
+		
+			sensor.sensorDataReceived.addListener(visualization.getSensorDataListener());
+		
+			getSession().addVisualization(visualization);
+			getSession().getTreeModel().nodeStructureChanged(getNode());		
+		}
+		catch (Exception e)
+		{
+			visualization = null;
+			throw new ViewException("Error while starting visualization", e);
+		}
 	}
 	
 	@Override public void stopVisualization()  
 	{ 
 		if (visualization == null) return;
 
+		sensor.sensorDataReceived.removeListener(visualization.getSensorDataListener());
+		
 		visualization.remove();
 		visualization = null;
 		getSession().getTreeModel().nodeStructureChanged(getNode());

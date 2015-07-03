@@ -1,21 +1,23 @@
 package de.uniol.inf.is.odysseus.sensormanagement.application.view.visualization;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Receiver;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackSensorManager;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSession;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.position.AbsolutePosition;
 import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Sample;
 
@@ -25,29 +27,26 @@ public class Lms1xxVisualization extends Visualization implements KeyListener
 		
 	private final Map<String, Event> events = new ConcurrentHashMap<String, Event>();
 	private final Map<String, Double[]> settings = new ConcurrentHashMap<String, Double[]>();
-	private int zoom = 300;
+	private double pixelPerMeter;
 
 	public Lms1xxVisualization(Session session, String displayName)
 	{
 		super(session, displayName);
 		
-		if (session instanceof PlaybackSession)
-			zoom = 30;
-		else
-			zoom = 30;
+		pixelPerMeter = 33;
 		
         setFocusable(true);
         addKeyListener(this);		
 	}
 
-	public static void drawMeasurement(Graphics graphics, Measurement measurement, int translationX, int translationY, double rotation, int zoom)
+	public static void drawMeasurement(Graphics graphics, Measurement measurement, int translationX, int translationY, double rotation, double pixelPerMeter)
 	{
-		drawMeasurement(graphics, measurement, translationX, translationY, rotation, zoom, Color.GREEN, Color.RED, Color.RED);
+		drawMeasurement(graphics, measurement, translationX, translationY, rotation, pixelPerMeter, Color.GREEN, Color.RED, Color.RED);
 	}
 	
-	public static void drawMeasurement(Graphics graphics, Measurement measurement, int translationX, int translationY, double rotation, int zoom, Color polygonColor, Color pointColor, Color lineColor)
+	public static void drawMeasurement(Graphics graphics, Measurement measurement, int translationX, int translationY, double rotation, double pixelPerMeter, Color polygonColor, Color pointColor, Color lineColor)
 	{
-		if (zoom == 0.0) return;
+		if (pixelPerMeter == 0.0) return;
 		
 	    Sample[] samples = measurement.get16BitSamples();
 	
@@ -58,18 +57,16 @@ public class Lms1xxVisualization extends Visualization implements KeyListener
 	    
 	    for (int i = 0; i < samples.length; i++) 
 	    {
-	    	final double angle = samples[i].getAngle();
-	    	Point2D vector = new Point2D.Double(samples[i].getDist1() * Math.cos(angle), samples[i].getDist1() * Math.sin(angle));
-	            
-//	    	final Point2D vector = samples[i].getDist1Vector();
-	        final double x = vector.getX();
-	        final double y = vector.getY();	        
-	        vector.setLocation((x * Math.cos(rotation - rad45)) - (y * Math.sin(rotation - rad45)), 
-	        				   (x * Math.sin(rotation - rad45)) + (y * Math.cos(rotation - rad45)));
-	        vector.setLocation(vector.getX(), vector.getY());
-	        xPoints.add((int) vector.getX() / zoom);
-	        yPoints.add((int) vector.getY() / zoom);
+	    	double x1 = samples[i].getDist1() * Math.cos(samples[i].getAngle()) / 1000.0;
+	        double y1 = samples[i].getDist1() * Math.sin(samples[i].getAngle()) / 1000.0;
+	        
+	        double x2 = (x1 * Math.cos(rotation - rad45)) - (y1 * Math.sin(rotation - rad45)); 
+	        double y2 = (x1 * Math.sin(rotation - rad45)) + (y1 * Math.cos(rotation - rad45));
+	        
+	        xPoints.add((int)(x2 * pixelPerMeter));
+	        yPoints.add((int)(y2 * pixelPerMeter));	    
 	    }
+	    
 	    final int[] tmpXPoints = new int[xPoints.size() + 2];
 	    tmpXPoints[0] = translationX;
 	    tmpXPoints[xPoints.size() + 1] = translationX;
@@ -134,18 +131,18 @@ public class Lms1xxVisualization extends Visualization implements KeyListener
             	Event event = events.get(key);
             	if (event.getSecondsValid() != 0.0)
             	{
-            		if (event.getTimeStamp() > session.getNow()) continue;
-            		if (event.getTimeStamp() + event.getSecondsValid() < session.getNow())
+            		if (event.getTimeStamp() > getSession().getNow()) continue;
+            		if (event.getTimeStamp() + event.getSecondsValid() < getSession().getNow())
             			continue;
             	}
             	
                 Measurement measurement = (Measurement) event.getEventObject();
-                drawMeasurement(graphics, measurement, mx, my, rotation, zoom);
+                drawMeasurement(graphics, measurement, mx, my, rotation, pixelPerMeter);
                 
         	    graphics.setColor(Color.WHITE);
         	    double timeStart = 0.0f;
-        	    if (session instanceof PlaybackSession)
-        	    	timeStart = ((PlaybackSession) session).getPlayback().getStartTime();
+        	    if (getSession() instanceof PlaybackSession)
+        	    	timeStart = ((PlaybackSensorManager) getSession().getSensorManager()).getStartTime();
         	    
         	    graphics.drawString(String.format("Time: %f", event.getTimeStamp()), 10, 15);
         	    graphics.drawString(String.format("Time since start: %.3fs", event.getTimeStamp() - timeStart), 10, 30);
@@ -193,12 +190,12 @@ public class Lms1xxVisualization extends Visualization implements KeyListener
         switch (event.getKeyCode()) 
         {
         	case KeyEvent.VK_PAGE_UP:
-        		if (this.zoom > 1) 
-                	this.zoom--;
+        		if (this.pixelPerMeter > 1) 
+                	this.pixelPerMeter--;
         		break;
         		
             case KeyEvent.VK_PAGE_DOWN:
-            	this.zoom++;
+            	this.pixelPerMeter++;
             	break;
         }
     }
@@ -206,6 +203,27 @@ public class Lms1xxVisualization extends Visualization implements KeyListener
 	@Override public void keyReleased(KeyEvent arg0) {}
 	@Override public void keyTyped(KeyEvent arg0) {}
 
-	@Override public void listeningStopped(Receiver sender) {}
-	@Override public void listeningStarted(Receiver sender) {}
+	@Override public void listeningStopped(AbstractSensor sender) {}
+	@Override public void listeningStarted(AbstractSensor sender) {}
+	
+	public static class MapRenderer extends AbstractMapRenderer
+	{
+		public MapRenderer(Session session)
+		{
+			super(session);
+		}
+		
+		@Override public void render(Data data) 
+		{
+        	if (!(data.event.getSource().position instanceof AbsolutePosition)) return;
+        	AbsolutePosition pos = (AbsolutePosition) data.event.getSource().position;
+			
+			double rot = pos.orientation + 90.0;
+			
+			Color scanColor = Color.BLACK;
+			BasicStroke solid = new BasicStroke();
+			data.graphics.setStroke(solid);
+			Lms1xxVisualization.drawMeasurement(data.graphics, (Measurement) data.event.getEventObject(), (int)data.sensorX, (int)data.sensorY, Math.toRadians(rot), data.pixelPerMeter, null, null, scanColor);			
+		}
+	}
 }
