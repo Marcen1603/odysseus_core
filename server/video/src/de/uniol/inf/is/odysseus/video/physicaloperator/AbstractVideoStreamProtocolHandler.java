@@ -76,7 +76,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 	{
 		super(direction, access, dataHandler, options);
 
-		options.checkRequired("streamurl");
+		options.checkRequiredException("streamurl");
 
 		frameRate = options.getDouble("framerate", 0.0);
 		streamUrl = options.get("streamurl");
