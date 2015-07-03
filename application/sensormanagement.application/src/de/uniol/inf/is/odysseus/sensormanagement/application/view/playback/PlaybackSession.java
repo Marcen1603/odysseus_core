@@ -4,15 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.TimeZone;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -137,6 +137,14 @@ public class PlaybackSession extends Session
 	{
 		super(scene);
 		
+		addComponentListener(new ComponentListener()
+		{
+			@Override public void componentHidden(ComponentEvent arg0) {}
+			@Override public void componentMoved(ComponentEvent arg0) {}
+			@Override public void componentResized(ComponentEvent arg0) { onResize(); }
+			@Override public void componentShown(ComponentEvent arg0) {}
+		});		
+		
 		setupTimeBar();
 		
 		getSensorManager().beforeStepEvent.addListener(new SimpleCallbackListener<PlaybackSensorManager, PlaybackSensorManager.BeforeStepEventData>()
@@ -168,7 +176,7 @@ public class PlaybackSession extends Session
 					timeBar.addSensorRecording(ps.getSensorModel(), recv);
 			}
 		}
-				
+						
 		if (scene instanceof PlaybackScene)
 		{
 			PlaybackScene playbackScene = (PlaybackScene) scene; 
@@ -203,9 +211,21 @@ public class PlaybackSession extends Session
 			}			
 		}
 		
+		onResize(); 
 		getTreeModel().nodeStructureChanged(getTreeRoot());
 		getSensorManager().goToStart();
 	}	
+	
+	protected void onResize()
+	{
+		double startOffset = 5.0f;
+		double endOffset   = 5.0f;
+
+		double startTime = getSensorManager().getStartTime() - startOffset;
+		double endTime   = getSensorManager().getEndTime()   - endOffset;
+		timeBar.setStartDate(new JaretDate((long)(startTime*1000.0)));						
+		timeBar.setSecondsDisplayed((int)Math.ceil(endTime - startTime), true);		
+	}
 	
 	protected void onBeforeStepEvent(double now, double previousNow, double timePassed) throws IOException 
 	{
@@ -316,13 +336,6 @@ public class PlaybackSession extends Session
 		{
 			return 10;
 		}
-	}
-	
-	public static void printTimeInMillis(int y, int m, int d, int h, int min, int s)
-	{
-		Calendar c2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		c2.set(y, m, d, h, min, s);
-		System.out.println(Long.toString(c2.getTimeInMillis()));		
 	}
 		
 }

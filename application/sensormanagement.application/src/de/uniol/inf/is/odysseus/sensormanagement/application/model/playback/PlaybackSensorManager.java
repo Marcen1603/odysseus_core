@@ -95,7 +95,7 @@ public class PlaybackSensorManager extends AbstractSensorManager
 					
 					PlaybackSensor ps = (PlaybackSensor) getSensorById(logMetaData.sensorId);
 					if (ps == null)
-						Application.showException(new RuntimeException("Unknown sensor " + logMetaData.sensorId));
+						throw new RuntimeException("Unknown sensor " + logMetaData.sensorId);
 					
 					SensorFactoryEntry sensorEntry = SensorFactory.getInstance().getSensorType(ps.getSensorModel().type);					
 					PlaybackReceiver recv = sensorEntry.createPlayback(ps.getSensorModel(), logMetaData);

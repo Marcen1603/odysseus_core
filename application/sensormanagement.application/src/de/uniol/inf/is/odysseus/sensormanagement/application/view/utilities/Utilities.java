@@ -42,7 +42,8 @@ public class Utilities
 	public static String stringFromDoubleTime(double timeStamp)
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
-		return sdf.format(dateFromDoubleTime(timeStamp));		
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+		return sdf.format(dateFromDoubleTime(timeStamp)) + " UTC";		
 	}	
 
 	public static double doubleTimeFromDate(Date date)
@@ -102,5 +103,12 @@ public class Utilities
     	}
     	else		
     		graphics.drawImage(image.getBufferedImage(), x, y, observer);
+	}
+
+	public static void printTimeInMillis(int y, int m, int d, int h, int min, int s)
+	{
+		Calendar c2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		c2.set(y, m, d, h, min, s);
+		System.out.println(Long.toString(c2.getTimeInMillis()));		
 	}		
 }

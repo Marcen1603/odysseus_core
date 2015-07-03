@@ -287,30 +287,28 @@ public class PlaybackTimeBar extends TimeBarViewer
         
         model.rowDataChanged(row);
         
-        if (autoAdjustDisplayRange)
+/*        if (autoAdjustDisplayRange)
         {
-	        double startTime = Utilities.doubleTimeFromDate(getStartDate().getDate());
+	        double startTime = getStartDate().getDate().getTime() / 1000.0; // Utilities.doubleTimeFromDate(getStartDate().getDate());
 	        double endTime   = startTime + getSecondsDisplayed();
 	        
 			final double startOffset = 5.0f;
 			final double endOffset   = 5.0f;
 			
+			double offset = startOffset + endOffset;
 			if (startTime > recv.getStartTime())
 			{
-				double oldStartTime = startTime;			
-				startTime = recv.getStartTime();
-				
-				setStartDate(new JaretDate(Utilities.dateFromDoubleTime(startTime - startOffset)));						
-				setSecondsDisplayed(getSecondsDisplayed() + (int)Math.ceil(oldStartTime - startTime), true);
+				startTime = recv.getStartTime();				
+				setStartDate(new JaretDate(new Date((long)((startTime - startOffset)*1000.0)))); // Utilities.dateFromDoubleTime(startTime - startOffset)						
+				setSecondsDisplayed((int)Math.ceil(endTime - startTime + offset), true);
 			}
 			
 			if (endTime < recv.getEndTime())
 			{
 				endTime = recv.getEndTime();
-				
-				double secsDisplayed = endTime - startTime + startOffset + endOffset;
-				setSecondsDisplayed((int)Math.ceil(secsDisplayed), true);
+				System.out.println("endTime = " + endTime + " " + Utilities.stringFromDoubleTime(endTime));
+				setSecondsDisplayed((int)Math.ceil(endTime - startTime + offset), true);
 			}
-        }
+        }*/
 	}
 }
