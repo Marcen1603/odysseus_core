@@ -5,12 +5,14 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.transformation.java
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.java.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.parser.pql.relational,
+Import-Package: de.uniol.inf.is.odysseus.mep,
+ de.uniol.inf.is.odysseus.parser.pql.relational,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.packageadmin;version="1.2.0"
 Require-Bundle: de.uniol.inf.is.odysseus.query.transformation,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.slf4j
+ de.uniol.inf.is.odysseus.slf4j,
+ com.google.guava
 Service-Component: OSGI-INF/JavaSelectOperator.xml,OSGI-INF/JavaProjectOperator.xml,OSGI-INF/JavaTargetPlatform.xml,
  OSGI-INF/JavaCSVFileSourceOperator.xml

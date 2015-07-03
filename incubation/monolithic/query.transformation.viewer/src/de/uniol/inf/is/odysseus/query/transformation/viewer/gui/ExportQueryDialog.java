@@ -95,6 +95,17 @@ public class ExportQueryDialog extends Dialog {
     txtFOdysseusCode.setBounds(99, 95, 261, 21);
     
     Button buttonOdysseusCore = new Button(container, SWT.NONE);
+    buttonOdysseusCore.addSelectionListener(new SelectionAdapter() {
+    	@Override
+    	public void widgetSelected(SelectionEvent e) {
+    		
+    		DirectoryDialog dlg = new DirectoryDialog(btnChooseTargetDirectory.getShell(),  SWT.OPEN  );
+			dlg.setText("Open");
+			String path = dlg.open();
+			if (path == null) return;
+			txtFOdysseusCode.setText(path);
+    	}
+    });
     buttonOdysseusCore.setText("...");
     buttonOdysseusCore.setBounds(367, 92, 75, 25);
     

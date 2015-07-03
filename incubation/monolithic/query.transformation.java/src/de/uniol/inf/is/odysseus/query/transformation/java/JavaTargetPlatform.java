@@ -29,6 +29,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	private Set<String> importList = new HashSet<String>();
 	
 	private StringBuilder body;
+	private String osgiBinds;
 	
 	private ILogicalOperator rootOP;
 	private ILogicalOperator sinkOP;
@@ -60,12 +61,16 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		}
 		
 		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
+		
 		testWrite = new JavaFileWrite("Main.java",parameter);
 		
 		addDefaultImport();
 		
 		walkTroughLogicalPlanNeu(query,parameter);
 		
+		osgiBinds = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath());
+		
+		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
 		
 		try {
 			
@@ -81,7 +86,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			testWrite.writeClassTop();
 			
 			//write body of main
-				testWrite.writeBody(javaEmulateOSGIBindings.getCodeForDataHandlerRegistry());
+				testWrite.writeBody(osgiBinds);
 				testWrite.writeBody(body.toString());
 				testWrite.writeBody(generateSubscription(operatorList));
 				testWrite.writeBody(startDataStream());
@@ -111,7 +116,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		importList.add("java.util.List");
 		
 		importList.add("de.uniol.inf.is.odysseus.mep.MEP");
-		
+		importList.add("de.uniol.inf.is.odysseus.core.mep.IFunction");
+				
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute");
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype");
 		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema");

@@ -12,100 +12,30 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 
+import com.google.common.collect.ImmutableSet;
+
 import de.uniol.inf.is.odysseus.core.Activator;
+import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.mep.FunctionSignature;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.osgi.Component;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.osgi.ObjectFactory;
 
 
-
-
 public class JavaEmulateOSGIBindings {
 	
-	/*
-	 * TODO make it dynamic 
-	 */
-	public String getCodeForDataHandlerRegistry(){
-		
-		StringBuilder code = new StringBuilder();
-		
-		
 	
-		code.append("\n");	
-		code.append("\n");
-		code.append("//MEP registry erstellen");
-		code.append("\n");
-		code.append("MEP mepRegistry = MEP.getInstance();");
-		code.append("mepRegistry.registerFunction(new GreaterThanOperator());");
-		code.append("\n");	
-		code.append("\n");
-		
-		code.append("\n");	
-		code.append("\n");
-		code.append("//DataHandler erstellen");
-		code.append("\n");
-		code.append("DataHandlerRegistry dataHandlerRegistry = new DataHandlerRegistry();");
-		code.append("\n");
-		code.append("IDataHandler integerHandler = new IntegerHandler();");
-		code.append("\n");
-		code.append("IDataHandler stringHandler = new StringHandler();");
-		code.append("\n");
-		code.append("IDataHandler tupleHandler = new TupleDataHandler();");
-		code.append("\n");
-		code.append("\n");
-     
-		code.append("dataHandlerRegistry.registerDataHandler(integerHandler);");
-		code.append("\n");
-		code.append("dataHandlerRegistry.registerDataHandler(stringHandler);");   
-		code.append("\n");
-		code.append("dataHandlerRegistry.registerDataHandler(tupleHandler);");
-		code.append("\n");		
-		code.append("\n");		
-		code.append("\n");
-    
-        
-		code.append("//ProtocolHandlerRegistry erstellen");
-		code.append("\n");
-		code.append("ProtocolHandlerRegistry protocolHandlerRegistry = new ProtocolHandlerRegistry();");
-		code.append("\n");
-		code.append("IProtocolHandler csvProtocolHandler = new SimpleCSVProtocolHandler();");
-		code.append("\n");
-		code.append("protocolHandlerRegistry.register(csvProtocolHandler);");
-		code.append("\n");
-		
-		//test dynamic
-		return getCodeForOSGIBinds();
-		//return code.toString();
-	}
-
-
-	
-	/*
-	 * java code
-	 */
-	
-	/*
-	public static String DataHandlerRegistry(){
-		DataHandlerRegistry dataHandlerRegistry = new DataHandlerRegistry();
-    	
-        IDataHandler integerHandler = new IntegerHandler();
-        IDataHandler stringHandler = new StringHandler();
-        
-        
-        dataHandlerRegistry.registerDataHandler(integerHandler);
-        dataHandlerRegistry.registerDataHandler(stringHandler);
-	}
-	*/
-	
-	
+	private List<String> neededImportList  = new ArrayList<String>();
 	/*
 	 * dynamic
 	 */
 
-	public String getCodeForOSGIBinds(){
+	public String getCodeForOSGIBinds(String odysseusPath){
 		/*
 		 * TODO get all XML Files and bundles ?
 		 */
 		List<String> neededBundleList = new ArrayList<String>();
+		
 		neededBundleList.add("common\\core");
 		neededBundleList.add("common\\mep");
 		
@@ -116,14 +46,14 @@ public class JavaEmulateOSGIBindings {
 		List<Component> handlerList = new ArrayList<Component>();
 		
 		for(String bundle : neededBundleList){
-				File folder = new File("F:\\Studium\\odysseus\\"+bundle+"\\OSGI-INF");
+				File folder = new File(odysseusPath+"\\"+bundle+"\\OSGI-INF");
 			
 				List<String>  xmlFileList = getXMLFiles(folder);
 				
 				for(String xmlFile : xmlFileList){
 					//registry file
 				
-						File file = new File("F:\\Studium\\odysseus\\"+bundle+"\\OSGI-INF\\"+xmlFile);
+						File file = new File(odysseusPath+"\\"+bundle+"\\OSGI-INF\\"+xmlFile);
 						
 						JAXBContext jaxbContext;
 						try {
@@ -139,8 +69,6 @@ public class JavaEmulateOSGIBindings {
 								//handler
 								handlerList.add(osgi);
 							}
-					
-						
 						
 						} catch (JAXBException e) {
 							// TODO Auto-generated catch block
@@ -155,10 +83,12 @@ public class JavaEmulateOSGIBindings {
 		
 		//First create code for registry
 		for(Component cp : registryList){
-			Class stringClass;
+			Class<?> stringClass;
 			try {
 				if(cp.getName().equals("MEP")){
 					stringClass = loadClass(Activator.getBundleContext(), cp.getImplementation().getClazz(), "de.uniol.inf.is.odysseus.mep", null);
+				
+					
 				}else{
 					stringClass = Class.forName(cp.getImplementation().getClazz() );
 				}
@@ -172,13 +102,30 @@ public class JavaEmulateOSGIBindings {
 		
 		}
 		
+		//MEP Funktion
+		ImmutableSet<FunctionSignature>  mepFunktions = MEP.getFunctions();
+	
+		for(FunctionSignature function : mepFunktions){
+			
+			Class<?> classObject = MEP.getFunctionClass(function);
+			
+				neededImportList.add(classObject.getName());
+			
+				code.append("\n");
+				code.append("mep.registerFunction((IFunction<?>) new "+classObject.getSimpleName()+"());");
+				code.append("\n");
+			
+
+			function.getClass();
+		}
+		
 		code.append("\n");
 		code.append("\n");
 		
 		//code for handler add
 		for(Component cp : handlerList){
-			Class stringInterfaceClass;
-			Class implementationClass;
+			Class<?> stringInterfaceClass;
+			Class<?> implementationClass;
 	
 			try {
 				List<Component.Service.Provide> provides = cp.getService().getProvide();
@@ -204,8 +151,6 @@ public class JavaEmulateOSGIBindings {
 				e.printStackTrace();
 			}
 		}
-		
-		System.out.println(code.toString());
 		return code.toString();
 		
 	}
@@ -213,10 +158,8 @@ public class JavaEmulateOSGIBindings {
 	public List<String> getXMLFiles(File folder) {
 		List<String> xmlFileList = new ArrayList<String>();
 	    for (File fileEntry : folder.listFiles()) {
-	            System.out.println(fileEntry.getName());
 	            xmlFileList.add(fileEntry.getName());
 	    }
-	    
 	    return xmlFileList;
 	}
 	
@@ -231,12 +174,14 @@ public class JavaEmulateOSGIBindings {
 		return null;
 	}
 	
+	public List<String> getNeededImports(){
+		return neededImportList;
+	}
+	
 	public static Class<?> loadClass(BundleContext context, String className, String bundleSymbolicName, Version bundleVersion) throws ClassNotFoundException {
 		  for (Bundle bundle : context.getBundles()) {
 		   if (bundle.getSymbolicName() != null && bundle.getSymbolicName().equals(bundleSymbolicName)) {
-			
 		     return bundle.loadClass(className);
-		  
 		   }
 		  }
 		  throw new ClassNotFoundException("Could not load class " + className);

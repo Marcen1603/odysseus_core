@@ -37,3 +37,25 @@ xcopy %1\common\mep\src\* %1\common\mep\bin /s /e /c /y
 jar cvf OdysseusMEP.jar *.properties lib/*.jar -C bin .
 xcopy /Y OdysseusMEP.jar %2
 
+::common\mep.matrix
+cd %1\common\mep.matrix
+xcopy %1\common\mep.matrix\src\* %1\common\mep.matrix\bin /s /e /c /y
+jar cvf OdysseusMEPMatrix.jar *.properties lib/*.jar -C bin .
+xcopy /Y OdysseusMEPMatrix.jar %2
+
+
+::common\interval\datatype.interval
+cd %1\common\interval\datatype.interval
+xcopy %1\common\interval\datatype.interval\src\* %1\common\interval\datatype.interval\bin /s /e /c /y
+jar cvf OdysseusDatatypeInterval.jar *.properties lib/*.jar -C bin .
+xcopy /Y OdysseusDatatypeInterval.jar %2
+
+::server\memstore\de.uniol.inf.is.odysseus.memstore.mdastore
+cd %1\server\memstore\de.uniol.inf.is.odysseus.memstore.mdastore
+xcopy %1\server\memstore\de.uniol.inf.is.odysseus.memstore.mdastore\src\* %1\server\memstore\de.uniol.inf.is.odysseus.memstore.mdastore\bin /s /e /c /y
+jar cvf OdysseusMemstoreMdastore.jar *.properties lib/*.jar -C bin .
+xcopy /Y OdysseusMemstoreMdastore.jar %2
+
+
+
+
