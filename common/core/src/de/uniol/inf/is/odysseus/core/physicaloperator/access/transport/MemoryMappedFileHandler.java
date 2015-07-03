@@ -22,8 +22,6 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -40,7 +38,6 @@ public class MemoryMappedFileHandler extends AbstractPushTransportHandler
 	
 	private RandomAccessFile memoryMappedFile;
 	private MappedByteBuffer mapBuffer;
-	private Timer timer;
 	private Thread thread;
 	
 	public MemoryMappedFileHandler() 
@@ -61,7 +58,7 @@ public class MemoryMappedFileHandler extends AbstractPushTransportHandler
 		filename = options.get(FILENAME);
 	}
 
-    private void startTimer() {
+    private void startThread() {
     	thread = new Thread()
     	{
     		@Override public void run()
@@ -79,16 +76,6 @@ public class MemoryMappedFileHandler extends AbstractPushTransportHandler
     		}
     	};
     	thread.start();
-    	
-/*        timer = new Timer();
-        final TimerTask task = new TimerTask() 
-        {
-            @Override public void run() 
-            {
-            	MemoryMappedFileHandler.this.process();
-            }
-        };        
-        timer.schedule(task, 0, 1000);*/    	
     }
     
     protected void process() 
@@ -112,14 +99,11 @@ public class MemoryMappedFileHandler extends AbstractPushTransportHandler
     	}
 	}
 
-	private void stopTimer() {
-/*        timer.cancel();
-        timer.purge();
-        timer = null;*/
+	private void stopThread() 
+	{
 		try {
 			thread.join(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		thread = null;
@@ -145,12 +129,12 @@ public class MemoryMappedFileHandler extends AbstractPushTransportHandler
 	{
 		createFile();
 		fireOnConnect();
-		startTimer();
+		startThread();
 	}
 	
 	@Override public void processInClose() throws IOException
 	{
-		stopTimer();
+		stopThread();
 		memoryMappedFile.close();
 		fireOnDisconnect();
 	}

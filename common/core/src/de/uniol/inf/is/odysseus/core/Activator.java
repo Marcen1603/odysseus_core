@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.StringArra
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.TextProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.DirectoryWatcherTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.MemoryMappedFileHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TcpSocketHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TimerTransportHandler;
@@ -90,6 +91,7 @@ public class Activator implements BundleActivator {
 		TransportHandlerRegistry.register(new TimerTransportHandler());
         TransportHandlerRegistry.register(new DirectoryWatcherTransportHandler());
 		TransportHandlerRegistry.register(new NonBlockingTcpHandler());
+		TransportHandlerRegistry.register(new MemoryMappedFileHandler());
 		
 //		TransportHandlerRegistry.register(new NonBlockingTcpServerHandler());
 //		TransportHandlerRegistry.register(new NonBlockingTcpClientHandler());
