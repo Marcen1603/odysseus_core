@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.parallelization.rcp.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -21,7 +23,7 @@ public class BenchmarkDataHandler {
 
 	// query data
 	private IFile queryFile;
-	private String queryString; // contains no parallelization keywords
+	private List<String> queryStringArray = new ArrayList<String>();
 	private ILogicalQuery logicalQuery;
 	
 	// Initialization data
@@ -95,12 +97,12 @@ public class BenchmarkDataHandler {
 	}
 
 
-	public void setQueryString(String queryString) {
-		this.queryString = queryString;
+	public void addQueryString(String queryString) {
+		this.queryStringArray.add(queryString);
 	}
 	
-	public String getQueryString(){
-		return queryString;
+	public List<String> getQueryStringArray(){
+		return queryStringArray;
 	}
 
 

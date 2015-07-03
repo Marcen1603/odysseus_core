@@ -24,7 +24,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerConfiguration;
-import de.uniol.inf.is.odysseus.parallelization.rcp.threads.AnalyseQueryThread;
+import de.uniol.inf.is.odysseus.parallelization.rcp.threads.BenchmarkThread;
 import de.uniol.inf.is.odysseus.parallelization.rcp.threads.InitializeQueryThread;
 
 public class ParallelizationBenchmarkerWindow {
@@ -48,7 +48,7 @@ public class ParallelizationBenchmarkerWindow {
 	private Button startButton;
 	private Text numberOfElementsText;
 	private Text analysisProgressLog;
-	private AnalyseQueryThread analyseQueryThread;
+	private BenchmarkThread benchmarkThread;
 	private Button closeButton;
 	private Button allowPostOptimizationButton;
 
@@ -192,10 +192,10 @@ public class ParallelizationBenchmarkerWindow {
 		removeStartButton();
 		showAnalysisContent();
 		
-		analyseQueryThread = new AnalyseQueryThread(benchmarkProcessId, this);
-		analyseQueryThread.setName("AnalyseQueryThread");
-		analyseQueryThread.setDaemon(true);
-		analyseQueryThread.start();
+		benchmarkThread = new BenchmarkThread(benchmarkProcessId, this);
+		benchmarkThread.setName("BenchmarkThread");
+		benchmarkThread.setDaemon(true);
+		benchmarkThread.start();
 	}
 
 	protected void createConfiguration(
@@ -341,9 +341,9 @@ public class ParallelizationBenchmarkerWindow {
 		closeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (analyseQueryThread != null){
+				if (benchmarkThread != null){
 					// stop analyze if it is currently running
-					analyseQueryThread.interrupt();
+					benchmarkThread.interrupt();
 				}
 				if (!window.isDisposed()) {
 					window.dispose();

@@ -211,7 +211,6 @@ public class InitializeQueryThread extends Thread {
 
 		benchmarkDataHandler.setQueryFile(scriptFile);
 		String text = readLinesFromFile(scriptFile);
-		benchmarkDataHandler.setQueryString(text);
 		IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
 		Collection<Integer> queryIds = executor.addQuery(text,
 				"OdysseusScript", OdysseusRCPPlugIn.getActiveSession(),
@@ -246,6 +245,7 @@ public class InitializeQueryThread extends Thread {
 									"#"
 											+ ParallelizationPreParserKeyword.KEYWORD
 											+ " ")) {
+				benchmarkDataHandler.addQueryString(line+System.lineSeparator());
 				lines = lines + line;
 				lines = lines + System.lineSeparator();
 			}

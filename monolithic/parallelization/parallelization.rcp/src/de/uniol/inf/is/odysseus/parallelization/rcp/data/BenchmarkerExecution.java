@@ -12,6 +12,7 @@ public class BenchmarkerExecution {
 	private Integer numberOfElements;
 	private boolean allowPostOptmization;
 	private Map<String, BenchmarkExecutionElement> elements;
+	private long executionTime;
 
 	public BenchmarkerExecution(Integer degree, Integer buffersize,
 			boolean allowPostOptmization, Integer numberOfElements) {
@@ -95,6 +96,14 @@ public class BenchmarkerExecution {
 							element.getFragmentType()));
 		}
 		return builder.toString();
+	}
+
+	public long getExecutionTime() {
+		return executionTime;
+	}
+
+	public void setExecutionTime(long executionTime) {
+		this.executionTime = executionTime;
 	}
 
 }
