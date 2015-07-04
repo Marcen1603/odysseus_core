@@ -19,6 +19,7 @@ public class Transformer implements Observer {
 	private double temperature;
 	private List<Windturbine> windturbines;
 	private double maxEnergy;
+	private double lastTransformedEnergy;
 
 	public Transformer(Pipe coolPipe, double maxEnergy, List<Windturbine> windturbines) {
 		this.coolPipe = coolPipe;
@@ -40,7 +41,8 @@ public class Transformer implements Observer {
 
 	private void heatUp() {
 		double dif = MAX_TEMPERATURE - this.temperature;
-		this.temperature += (dif * HEATUP_DEGREE * (calcEnergyProduction() / maxEnergy));
+		this.lastTransformedEnergy = calcEnergyProduction();
+		this.temperature += (dif * HEATUP_DEGREE * (this.lastTransformedEnergy / maxEnergy));
 	}
 
 	private void coolDown(double amountOfWater) {
@@ -68,6 +70,14 @@ public class Transformer implements Observer {
 		}
 
 		return amount;
+	}
+
+	public double getLastTransformedEnergy() {
+		return lastTransformedEnergy;
+	}
+
+	public void setLastTransformedEnergy(double lastTransformedEnergy) {
+		this.lastTransformedEnergy = lastTransformedEnergy;
 	}
 
 }

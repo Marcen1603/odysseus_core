@@ -24,6 +24,7 @@ public class TransformerDataProvider extends AbstractDataGenerator {
 		// Make the tuple for the state
 		DataTuple tuple = new DataTuple();
 		tuple.addDouble(this.transformer.getTemperature());
+		tuple.addDouble(this.transformer.getLastTransformedEnergy());
 
 		List<DataTuple> dataTuplesList = new ArrayList<DataTuple>();
 		dataTuplesList.add(tuple);

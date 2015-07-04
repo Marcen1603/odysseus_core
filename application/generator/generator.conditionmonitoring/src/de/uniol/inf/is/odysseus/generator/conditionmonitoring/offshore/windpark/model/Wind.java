@@ -14,7 +14,7 @@ public class Wind {
 	private final static String DOWNTURN = "downturn";
 	private final static String STABLE = "stable";
 	
-	private final static double MAX_SPEED = 35;
+	private final static double MAX_SPEED = 30;
 
 	public Wind() {
 		// Start at about 10 m/s
