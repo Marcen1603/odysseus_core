@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.substatio
 public class ValveDataProvider extends AbstractDataGenerator implements Observer {
 
 	private Valve valve;
-	private long sleepTime = 1000;
+	private long sleepTime = 100;
 	private boolean changed;
 
 	public ValveDataProvider(Valve valve) {

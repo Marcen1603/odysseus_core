@@ -28,7 +28,8 @@ public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends 
 	private int depthCounter;
 	private int maxDepth;
 	private CounterNode currentNode;
-	private double minRelativeFrequency;
+	private double minRelativeFrequencyPath;
+	private double minRelativeFrequencyNode;
 
 	private boolean firstTupleIsRoot;
 	private boolean firstTuple;
@@ -44,7 +45,8 @@ public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends 
 	public RarePatternPO(RarePatternAO ao) {
 		this.root = new CounterNode(null);
 		this.maxDepth = ao.getDepth();
-		this.minRelativeFrequency = ao.getMinRelativeFrequency();
+		this.minRelativeFrequencyPath = ao.getMinRelativeFrequencyPath();
+		this.minRelativeFrequencyNode = ao.getMinRelativeFrequencyNode();
 		this.firstTuple = true;
 		this.firstTupleIsRoot = ao.isFirstTupleIsRoot();
 		this.gson = new Gson();
@@ -88,7 +90,8 @@ public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends 
 			transfer(output, BACKUP_PORT);
 
 			double relativeFrequencyOfPath = currentNode.calcRelativeFrequencyPath();
-			if (relativeFrequencyOfPath < minRelativeFrequency) {
+			boolean hasLowNode = currentNode.pathHasSeldomNode(this.minRelativeFrequencyNode);
+			if (relativeFrequencyOfPath < minRelativeFrequencyPath || hasLowNode) {
 				// In this case, it was a seldom pattern
 				String path = getPath(currentNode);
 				Tuple newTuple = tuple.append(1.0 - relativeFrequencyOfPath).append(relativeFrequencyOfPath)

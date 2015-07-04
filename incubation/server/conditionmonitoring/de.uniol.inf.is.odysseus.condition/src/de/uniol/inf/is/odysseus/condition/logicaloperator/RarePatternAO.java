@@ -27,7 +27,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Tobias Brandt
  *
  */
-@LogicalOperator(maxInputPorts = 2, minInputPorts = 1, name = "RarePattern", doc = "Searches for rare pattern in a stream of (discrete) states", category = { LogicalOperatorCategory.PROCESSING })
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 1, name = "RarePattern", doc = "Searches for rare pattern in a stream of (discrete) states", category = {
+		LogicalOperatorCategory.PROCESSING })
 public class RarePatternAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = -7990417520941357348L;
@@ -36,13 +37,15 @@ public class RarePatternAO extends BinaryLogicalOp {
 	private static final int BACKUP_PORT = 1;
 
 	private int depth;
-	private double minRelativeFrequency;
+	private double minRelativeFrequencyPath;
+	private double minRelativeFrequencyNode;
 	private boolean firstTupleIsRoot;
 	private String uniqueBackupId;
 
 	public RarePatternAO() {
 		this.depth = 2;
-		this.minRelativeFrequency = 0.3;
+		this.minRelativeFrequencyPath = 0.3;
+		this.minRelativeFrequencyNode = 0.3;
 		this.firstTupleIsRoot = false;
 		this.uniqueBackupId = "rarePattern_" + depth;
 	}
@@ -50,7 +53,7 @@ public class RarePatternAO extends BinaryLogicalOp {
 	public RarePatternAO(RarePatternAO ao) {
 		super(ao);
 		this.depth = ao.getDepth();
-		this.minRelativeFrequency = ao.getMinRelativeFrequency();
+		this.minRelativeFrequencyPath = ao.getMinRelativeFrequencyPath();
 		this.firstTupleIsRoot = ao.isFirstTupleIsRoot();
 		this.uniqueBackupId = ao.getUniqueBackupId();
 	}
@@ -60,16 +63,21 @@ public class RarePatternAO extends BinaryLogicalOp {
 		this.depth = depth;
 	}
 
-	@Parameter(type = DoubleParameter.class, name = "minRelativeFrequency", optional = true, doc = "The minimal relative frequency of that path. The default is 0.3 (which means 30%).")
-	public void setMinRelativeFrequency(double minRelativeFrequency) {
-		this.minRelativeFrequency = minRelativeFrequency;
+	@Parameter(type = DoubleParameter.class, name = "minRelativeFrequencyPath", optional = true, doc = "The minimal relative frequency of that path. The default is 0.3 (which means 30%).")
+	public void setMinRelativeFrequencyPath(double minRelativeFrequency) {
+		this.minRelativeFrequencyPath = minRelativeFrequency;
+	}
+
+	@Parameter(type = DoubleParameter.class, name = "minRelativeFrequencyNode", optional = true, doc = "The minimal relative frequency of all single nodes of the path. The default is 0.3 (which means 30%)")
+	public void setMinRelativeFrequencyNode(double minRelativeFrequencyNode) {
+		this.minRelativeFrequencyNode = minRelativeFrequencyNode;
 	}
 
 	@Parameter(type = BooleanParameter.class, name = "firstTupleIsRoot", optional = true, doc = "If true, tuples which are equal to the first tuple are always the root. It could be good to set the maxdepth higher than the expected number of states between two occurences of the root state.")
 	public void setFirstTupleIsRoot(boolean firstTupleIsRoot) {
 		this.firstTupleIsRoot = firstTupleIsRoot;
 	}
-	
+
 	@Parameter(type = StringParameter.class, name = "uniqueBackupId", optional = true, doc = "A unique ID for this operator to save and read backup data.")
 	public void setUniqueBackupId(String uniqueBackupId) {
 		this.uniqueBackupId = uniqueBackupId;
@@ -79,8 +87,8 @@ public class RarePatternAO extends BinaryLogicalOp {
 		return depth;
 	}
 
-	public double getMinRelativeFrequency() {
-		return minRelativeFrequency;
+	public double getMinRelativeFrequencyPath() {
+		return minRelativeFrequencyPath;
 	}
 
 	public boolean isFirstTupleIsRoot() {
@@ -90,7 +98,11 @@ public class RarePatternAO extends BinaryLogicalOp {
 	public String getUniqueBackupId() {
 		return uniqueBackupId;
 	}
-	
+
+	public double getMinRelativeFrequencyNode() {
+		return minRelativeFrequencyNode;
+	}
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new RarePatternAO(this);

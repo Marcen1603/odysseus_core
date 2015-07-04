@@ -101,6 +101,26 @@ public class CounterNode {
 	}
 
 	/**
+	 * Checks, if a node in the path to the root has a lower frequency than the
+	 * given minimal relative frequency.
+	 * 
+	 * @param minRelativeFrequencyNode
+	 *            The minimal allowed relative frequency
+	 * @return True, is there is a node with a lower relative frequency, false,
+	 *         if not
+	 */
+	public boolean pathHasSeldomNode(double minRelativeFrequencyNode) {
+		CounterNode currentNode = this;
+		while (currentNode != null && currentNode.getParent() != null) {
+			double relativeFrequency = currentNode.calcRelativeFrequencyToSiblings();
+			if (relativeFrequency < minRelativeFrequencyNode)
+				return true;
+			currentNode = currentNode.getParent();
+		}
+		return false;
+	}
+
+	/**
 	 * Calculates the relative frequency of this node in relation to the
 	 * siblings. If there are this node and two siblings (means, three children
 	 * of the parent) and every node has a count of 5, the parent count is 15.
@@ -154,10 +174,12 @@ public class CounterNode {
 	public CounterNode getParent() {
 		return parent;
 	}
-	
+
 	/**
 	 * Set the parent of this node
-	 * @param parent The new parent of this node
+	 * 
+	 * @param parent
+	 *            The new parent of this node
 	 */
 	public void setParent(CounterNode parent) {
 		this.parent = parent;
@@ -197,7 +219,7 @@ public class CounterNode {
 	public String toString() {
 		String result = "(";
 		boolean first = true;
-		for(Object o : object) {
+		for (Object o : object) {
 			if (!first) {
 				result += ",";
 				first = false;

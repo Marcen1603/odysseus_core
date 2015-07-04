@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.substatio
 public class PumpStateDataProvider extends AbstractDataGenerator implements Observer {
 
 	private Pump pump;
-	private long sleepTime = 1000;
+	private long sleepTime = 100;
 	private boolean isRunning;
 	private boolean changed;
 
