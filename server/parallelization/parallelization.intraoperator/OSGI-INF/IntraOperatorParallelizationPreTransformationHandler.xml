@@ -3,6 +3,6 @@
    <implementation class="de.uniol.inf.is.odysseus.parallelization.intraoperator.transform.IntraOperatorParallelizationPreTransformationHandler"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler"/>
-      <provide interface="de.uniol.inf.is.odysseus.parallelization.transform.IParallelizationPreTransformationHandler"/>
+      <provide interface="de.uniol.inf.is.odysseus.parallelization.transformationhandler.IParallelizationPreTransformationHandler"/>
    </service>
 </scr:component>

@@ -100,6 +100,15 @@ public class BenchmarkThread extends Thread {
 		executionThread.start();
 
 		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		executionThread.update(null, null);
+		
+		try {
 			// wait for the execution thread to finish. if its finish start next execution
 			executionThread.join();
 		} catch (InterruptedException e) {
