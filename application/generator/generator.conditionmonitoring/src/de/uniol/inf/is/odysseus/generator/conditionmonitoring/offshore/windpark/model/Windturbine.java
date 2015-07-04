@@ -43,10 +43,21 @@ public class Windturbine {
 					: wind.getWindSpeed();
 			this.rotationSpeed = MIN_ROTATION_SPEED + ((usefulWindSpeed - MIN_WINDSPEED)
 					* ((MAX_ROTATION_SPEED - MIN_ROTATION_SPEED) / (MAX_POWER_WINDSPEED - MIN_WINDSPEED)));
+			double random = Math.random();
+			if (random > 0.5) {
+				this.rotationSpeed += Math.random();
+			} else {
+				this.rotationSpeed -= Math.random();
+				if (this.rotationSpeed < 0) {
+					this.rotationSpeed = 0;
+				}
+			}
 		} else {
 			this.rotationSpeed = 0;
 		}
-		this.energyOutput = (this.rotationSpeed / MAX_ROTATION_SPEED) * MAX_POWER_OUTPUT;
+		this.energyOutput = ((this.rotationSpeed - MIN_ROTATION_SPEED) / (MAX_ROTATION_SPEED - MIN_ROTATION_SPEED)) * MAX_POWER_OUTPUT;
+		if (this.energyOutput < 0)
+			this.energyOutput = 0;
 	}
 
 	public double getRotationSpeed() {

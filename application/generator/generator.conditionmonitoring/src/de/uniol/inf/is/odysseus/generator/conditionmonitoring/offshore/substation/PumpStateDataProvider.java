@@ -2,31 +2,37 @@ package de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.substati
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.IDataGenerator;
 import de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.substation.model.Pump;
 
-public class PumpDataProvider extends AbstractDataGenerator {
+public class PumpStateDataProvider extends AbstractDataGenerator implements Observer {
 
 	private Pump pump;
 	private long sleepTime = 1000;
+	private boolean isRunning;
+	private boolean changed;
 
-	public PumpDataProvider(Pump pump) {
+	public PumpStateDataProvider(Pump pump) {
 		this.pump = pump;
+		this.pump.addObserver(this);
+		this.isRunning = this.pump.isRunning();
+		this.changed = true;
 	}
 
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
-		Thread.sleep(this.sleepTime);
+		while (!changed) {
+			Thread.sleep(this.sleepTime);
+		}
+		changed = false;
 
-		// Make the tuple for the state
 		DataTuple tuple = new DataTuple();
-		tuple.addDouble(this.pump.getCurrentFlowRate());
-		tuple.addDouble(this.pump.getLastInFlow());
-		tuple.addDouble(this.pump.getLastOutFlow());
-		tuple.addDouble(this.pump.getCurrentVibration());
+		tuple.addBoolean(isRunning);
 
 		List<DataTuple> dataTuplesList = new ArrayList<DataTuple>();
 		dataTuplesList.add(tuple);
@@ -47,7 +53,15 @@ public class PumpDataProvider extends AbstractDataGenerator {
 
 	@Override
 	public IDataGenerator newCleanInstance() {
-		return new PumpDataProvider(pump);
+		return new PumpStateDataProvider(pump);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (pump.isRunning() != this.isRunning) {
+			this.isRunning = pump.isRunning();
+			this.changed = true;
+		}
 	}
 
 }

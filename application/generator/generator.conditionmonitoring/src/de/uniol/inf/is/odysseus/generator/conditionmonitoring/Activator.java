@@ -10,6 +10,7 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.generator.StreamServer;
 import de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.substation.PipeDataProvider;
 import de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.substation.PumpDataProvider;
+import de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.substation.PumpStateDataProvider;
 import de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.substation.TransformerDataProvider;
 import de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.substation.ValveDataProvider;
 import de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.substation.model.OffshoreSubstationManager;
@@ -163,7 +164,7 @@ public class Activator implements BundleActivator {
 				windparkManager.getWindturbines());
 		StreamServer windturbineStreamServer = new StreamServer(52000, windturbineDataProvider);
 		windturbineStreamServer.start();
-		
+
 		// Substation
 		// ----------
 
@@ -179,6 +180,19 @@ public class Activator implements BundleActivator {
 		PumpDataProvider pump3DataProvider = new PumpDataProvider(substationManager.getPump3());
 		StreamServer pump3StreamServer = new StreamServer(51002, pump3DataProvider);
 		pump3StreamServer.start();
+
+		// States of pumps
+		PumpStateDataProvider pump1StateDataProvider = new PumpStateDataProvider(substationManager.getPump1());
+		StreamServer pump1StateStreamServer = new StreamServer(51010, pump1StateDataProvider);
+		pump1StateStreamServer.start();
+
+		PumpStateDataProvider pump2StateDataProvider = new PumpStateDataProvider(substationManager.getPump2());
+		StreamServer pump2StateStreamServer = new StreamServer(51011, pump2StateDataProvider);
+		pump2StateStreamServer.start();
+
+		PumpStateDataProvider pump3StateDataProvider = new PumpStateDataProvider(substationManager.getPump3());
+		StreamServer pump3StateStreamServer = new StreamServer(51012, pump3StateDataProvider);
+		pump3StateStreamServer.start();
 
 		// Valves
 		ValveDataProvider valve1DataProvider = new ValveDataProvider(substationManager.getValve1());
@@ -205,6 +219,8 @@ public class Activator implements BundleActivator {
 		pipeDataStreamServer.start();
 
 		substationManager.run();
+
+		// Listen to commands from the user
 	}
 
 	/*

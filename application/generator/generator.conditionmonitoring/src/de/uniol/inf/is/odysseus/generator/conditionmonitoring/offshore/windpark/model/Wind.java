@@ -13,6 +13,8 @@ public class Wind {
 	private final static String RISE = "rise";
 	private final static String DOWNTURN = "downturn";
 	private final static String STABLE = "stable";
+	
+	private final static double MAX_SPEED = 35;
 
 	public Wind() {
 		// Start at about 10 m/s
@@ -34,12 +36,19 @@ public class Wind {
 		if (periodCounter >= periodLength) {
 			// A new period (we decide, if the wind rises, falls or is stable)
 			double random = Math.random();
+			
+			
+			double prob = 0.75;
+			if (windSpeed > MAX_SPEED) {
+				// Higher probability to lower the speed
+				prob = 0.9;
+			}
 			if (random < 0.5) {
 				period = STABLE;
-			} else if (random < 0.75) {
-				period = RISE;
-			} else {
+			} else if (random < prob) {
 				period = DOWNTURN;
+			} else {
+				period = RISE;
 			}
 
 			periodCounter = 0;
@@ -58,7 +67,7 @@ public class Wind {
 					windSpeed = 0;
 				}
 			}
-		} else if (period.equals(RISE)) {
+		} else if (period.equals(DOWNTURN)) {
 			// Remove something
 			windSpeed -= amount;
 			if (windSpeed < 0)

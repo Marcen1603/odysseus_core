@@ -32,5 +32,7 @@ public class OffshoreWindparkManager {
 	public double getMaximumEnergyOutput() {
 		return NUMBER_WINDTURBINES * Windturbine.MAX_POWER_OUTPUT;
 	}
+	
+	
 
 }
