@@ -535,5 +535,13 @@ public class MEP implements IExpressionParser {
 		}
 		return null;
 	}
+	
+	public static Class<?> getFunctionClass(FunctionSignature signature) {
+		try {
+			return functionStore.getFunction(signature).getClass();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }
