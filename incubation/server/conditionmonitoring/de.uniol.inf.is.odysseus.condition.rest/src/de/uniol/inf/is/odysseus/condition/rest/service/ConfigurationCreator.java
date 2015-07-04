@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.condition.rest.datatypes.CollectionColoringInfor
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.Configuration;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConnectionInformation;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.GaugeVisualizationInformation;
+import de.uniol.inf.is.odysseus.condition.rest.datatypes.OverviewInformation;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.ServerConfiguration;
 import de.uniol.inf.is.odysseus.condition.rest.dto.response.CollectionInformation;
 
@@ -25,8 +26,9 @@ public class ConfigurationCreator {
 	public static void main(String[] args) {
 
 		Configuration config = new Configuration();
-		config.setName("Windpark Analysis");
-		config.setDescription("Cohort analysis of the wind power plants.");
+		config.setName("Offshore Windpark");
+		config.setDescription(
+				"Analysis of the offshore windpark with windturbines and transformer substation with its cooling system.");
 
 		// --------------------
 		// Client Configuration
@@ -37,115 +39,141 @@ public class ConfigurationCreator {
 		// --------------------------------
 		List<ConnectionInformation> connectionInformation = new ArrayList<>();
 
-		ConnectionInformation conDeviation = new ConnectionInformation();
-		conDeviation.setIp("127.0.0.1");
-		conDeviation.setQueryName("cohort1");
-		conDeviation.setUseName(true);
-		conDeviation.setOperatorName("cohortDeviationOutput");
-		conDeviation.setOperatorOutputPort(0);
-		conDeviation.setUseOperatorOutputPort(true);
-		
-		ConnectionInformation conLOF = new ConnectionInformation();
-		conLOF.setIp("127.0.0.1");
-		conLOF.setQueryName("cohort1");
-		conLOF.setUseName(true);
-		conLOF.setOperatorName("cohortLOFOutput");
-		conLOF.setOperatorOutputPort(0);
-		conLOF.setUseOperatorOutputPort(true);
+		// The temperature of the transformer
+		ConnectionInformation conTransformer = new ConnectionInformation();
+		conTransformer.setIp("127.0.0.1");
+		conTransformer.setQueryName("transformer");
+		conTransformer.setUseName(true);
+		conTransformer.setOperatorName("transformerOutput");
+		conTransformer.setOperatorOutputPort(0);
+		conTransformer.setUseOperatorOutputPort(true);
 
-		connectionInformation.add(conDeviation);
-		connectionInformation.add(conLOF);
+		// The throughput of the big cooling pipe
+		ConnectionInformation conBigPipeOut = new ConnectionInformation();
+		conBigPipeOut.setIp("127.0.0.1");
+		conBigPipeOut.setQueryName("bigPipeOutput");
+		conBigPipeOut.setUseName(true);
+		conBigPipeOut.setOperatorName("bigPipeOutOperator");
+		conBigPipeOut.setOperatorOutputPort(0);
+		conBigPipeOut.setUseOperatorOutputPort(true);
+
+		// The windspeed on the northsea
+		ConnectionInformation conWindspeed = new ConnectionInformation();
+		conWindspeed.setIp("127.0.0.1");
+		conWindspeed.setQueryName("windspeedQuery");
+		conWindspeed.setUseName(true);
+		conWindspeed.setOperatorName("windspeedOutput");
+		conWindspeed.setOperatorOutputPort(0);
+		conWindspeed.setUseOperatorOutputPort(true);
+
+		connectionInformation.add(conTransformer);
+		connectionInformation.add(conBigPipeOut);
+		connectionInformation.add(conWindspeed);
 		clientConfig.setConnectionInformation(connectionInformation);
+		
+		// Overview
+		// --------
+		OverviewInformation overviewInformation = new OverviewInformation();
+		clientConfig.setOverviewInformation(overviewInformation);
+		
+		List<ConnectionInformation> overviewConnections = new ArrayList<>();
+		overviewConnections.add(conWindspeed);
+		overviewInformation.setOverviewConnections(overviewConnections);
 
 		// Visualizations
 		// --------------
 		List<GaugeVisualizationInformation> gaugeVisualizations = new ArrayList<>();
-		List<AreaChartVisualizationInformation> areaChartVisualizationInformations = new ArrayList<>();
+		List<AreaChartVisualizationInformation> areaChartVisualizationInformation = new ArrayList<>();
 
-		GaugeVisualizationInformation gauge = new GaugeVisualizationInformation();
-		gauge.setConnectionInformation(conLOF);
-		gauge.setAttribute("LOF");
-		gauge.setMinValue(0.0);
-		gauge.setMaxValue(25.0);
-		gauge.setTitle("LOF Value");
-		
-		GaugeVisualizationInformation devGauge = new GaugeVisualizationInformation();
-		devGauge.setConnectionInformation(conLOF);
-		devGauge.setAttribute("anomalyScore");
-		devGauge.setMinValue(0.0);
-		devGauge.setMaxValue(1.0);
-		devGauge.setStretch(true);
-		devGauge.setTitle("Anomaly Score LOF");
+		// The temperature of the transformer
+		GaugeVisualizationInformation transformerTemperatureGauge = new GaugeVisualizationInformation();
+		transformerTemperatureGauge.setConnectionInformation(conTransformer);
+		transformerTemperatureGauge.setAttribute("temperature");
+		transformerTemperatureGauge.setMinValue(20.0);
+		transformerTemperatureGauge.setMaxValue(70.0);
+		transformerTemperatureGauge.setTitle("Transformer Temperature");
 
-		AreaChartVisualizationInformation areaChartOverview = new AreaChartVisualizationInformation();
-		areaChartOverview.setConnectionInformation(conLOF);
-		areaChartOverview.setAttribute("LOF");
-		areaChartOverview.setMaxElements(50);
-		areaChartOverview.setTitle("LOF Chart");
+		// GaugeVisualizationInformation devGauge = new
+		// GaugeVisualizationInformation();
+		// devGauge.setConnectionInformation(conLOF);
+		// devGauge.setAttribute("anomalyScore");
+		// devGauge.setMinValue(0.0);
+		// devGauge.setMaxValue(1.0);
+		// devGauge.setStretch(true);
+		// devGauge.setTitle("Anomaly Score LOF");
 
-		AreaChartVisualizationInformation areaChartDeviationOverview = new AreaChartVisualizationInformation();
-		areaChartDeviationOverview.setConnectionInformation(conDeviation);
-		areaChartDeviationOverview.setAttribute("anomalyScore");
-		areaChartDeviationOverview.setTitle("Deviation Chart");
+		// The cooling pipe of the transformer
+		AreaChartVisualizationInformation bigCoolingPipeThorughputAreaChart = new AreaChartVisualizationInformation();
+		bigCoolingPipeThorughputAreaChart.setConnectionInformation(conBigPipeOut);
+		bigCoolingPipeThorughputAreaChart.setAttribute("lastThroughput");
+		bigCoolingPipeThorughputAreaChart.setMaxElements(600);
+		bigCoolingPipeThorughputAreaChart.setTimeAttribute("start");
+		bigCoolingPipeThorughputAreaChart.setTitle("Cooling-pipe throughput in l/m");
 
-		AreaChartVisualizationInformation areaChartCollection = new AreaChartVisualizationInformation();
-		areaChartCollection.setConnectionInformation(conLOF);
-		areaChartCollection.setAttribute("LOF");
-		areaChartCollection.setTitle("LOF Chart");
+		// The windspeed on the northsea
+		AreaChartVisualizationInformation windspeedAreaChart = new AreaChartVisualizationInformation();
+		windspeedAreaChart.setConnectionInformation(conWindspeed);
+		windspeedAreaChart.setAttribute("windSpeed");
+		windspeedAreaChart.setMaxElements(600);
+		windspeedAreaChart.setTimeAttribute("start");
+		windspeedAreaChart.setTitle("Windspeed in m/s");
+
+		// Produced energy by the windpark
+		AreaChartVisualizationInformation energyOutputAreaChart = new AreaChartVisualizationInformation();
+		energyOutputAreaChart.setConnectionInformation(conTransformer);
+		energyOutputAreaChart.setAttribute("lastTransformedEnergy");
+		energyOutputAreaChart.setMaxElements(600);
+		energyOutputAreaChart.setTimeAttribute("start");
+		energyOutputAreaChart.setTitle("Produced energy in kW");
 
 		// For the overview
-		gaugeVisualizations.add(gauge);
-		gaugeVisualizations.add(devGauge);
-		areaChartVisualizationInformations.add(areaChartOverview);
-		areaChartVisualizationInformations.add(areaChartDeviationOverview);
-		clientConfig.setGaugeVisualizationInformation(gaugeVisualizations);
-		clientConfig.setAreaChartVisualizationInformation(areaChartVisualizationInformations);
+		gaugeVisualizations.add(transformerTemperatureGauge);
+		areaChartVisualizationInformation.add(bigCoolingPipeThorughputAreaChart);
+		areaChartVisualizationInformation.add(windspeedAreaChart);
+		areaChartVisualizationInformation.add(energyOutputAreaChart);
+		overviewInformation.setGaugeVisualizationInformation(gaugeVisualizations);
+		overviewInformation.setAreaChartVisualizationInformation(areaChartVisualizationInformation);
 
 		// Collections
 		// -----------
 		List<CollectionInformation> collections = new ArrayList<>();
 
-		CollectionInformation collectionInformation = new CollectionInformation();
-		collectionInformation.setName("Machine1");
-		List<ConnectionInformation> connectionInformationList = new ArrayList<>();
-		connectionInformationList.add(conDeviation);
-		collectionInformation.setConnectionInformation(connectionInformationList);
-		collectionInformation.addGaugeVisualizationInformation(gauge);
+		CollectionInformation transformerCollection = new CollectionInformation();
+		transformerCollection.setName("Transformer");
+		// List<ConnectionInformation> connectionInformationList = new
+		// ArrayList<>();
+		// connectionInformationList.add(conDeviation);
+		// collectionInformation.setConnectionInformation(connectionInformationList);
+		transformerCollection.addGaugeVisualizationInformation(transformerTemperatureGauge);
 		// Define, how it should be colored
-		CollectionColoringInformation coloring1 = new CollectionColoringInformation();
-		coloring1.setConnectionInformation(conDeviation);
-		coloring1.setAttribute("LOF");
-		coloring1.setMaxValue(25);
-		coloring1.setMinValue(0);
-		collectionInformation.setCollectionColoringInformation(coloring1);
+		CollectionColoringInformation transformerColoring = new CollectionColoringInformation();
+		transformerColoring.setConnectionInformation(conTransformer);
+		transformerColoring.setAttribute("temperature");
+		transformerColoring.setMinValue(20);
+		transformerColoring.setMaxValue(70);
+		transformerCollection.setCollectionColoringInformation(transformerColoring);
 		// Add a link from this overview to a specific collection
-		gauge.setCollectionLink(collectionInformation.getIdentifier());
+		transformerTemperatureGauge.setCollectionLink(transformerCollection.getIdentifier());
 
-		CollectionInformation collectionInformation2 = new CollectionInformation();
-		collectionInformation2.setName("Machine2");
-		List<ConnectionInformation> connectionInformationList2 = new ArrayList<>();
-		connectionInformationList2.add(conDeviation);
-		collectionInformation2.setConnectionInformation(connectionInformationList2);
-		collectionInformation2.addAreaChartVisualizationInformation(areaChartCollection);
-		// Link to collection
-		areaChartCollection.setCollectionLink(collectionInformation2.getIdentifier());
-
-		collections.add(collectionInformation);
-		collections.add(collectionInformation2);
+		collections.add(transformerCollection);
 		clientConfig.setCollections(collections);
 
 		// --------------------
 		// Server Configuration
 		// --------------------
 		ServerConfiguration serverConfig = new ServerConfiguration();
-		serverConfig
-				.addSourcePath(
-						"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\sources\\windParkSource.qry",
-						"OdysseusScript");
-		serverConfig
-				.addQueryPath(
-						"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\analysis\\cohortAnalysis.qry",
-						"OdysseusScript");
+		serverConfig.addSourcePath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\sources.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\transformer.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\bigPipeThroughput.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\windspeed.qry",
+				"OdysseusScript");
 
 		// Put these to the big config
 		config.setClientConfiguration(clientConfig);
@@ -177,4 +205,5 @@ public class ConfigurationCreator {
 		}
 
 	}
+
 }
