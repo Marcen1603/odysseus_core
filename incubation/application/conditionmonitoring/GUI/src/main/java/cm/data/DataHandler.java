@@ -16,6 +16,8 @@ import java.util.*;
  */
 public class DataHandler {
 
+    public static final int MAX_NUMBER_OF_EVENTS = 5000;
+
     private static DataHandler instance;
     private ObservableList<Event> observableEventList;
     private ObservableList<Collection> observableCollectionList;
@@ -53,6 +55,10 @@ public class DataHandler {
         Platform.runLater(() -> {
             observableEventList.add(0, event);
 
+            if (observableEventList.size() > MAX_NUMBER_OF_EVENTS) {
+                observableEventList.remove(observableEventList.size() - 1);
+            }
+
             // Notify observers
             List<Observer> observers = this.observerMap.get(event.getConnection());
             if (observers != null)
@@ -75,10 +81,9 @@ public class DataHandler {
         ObservableList<Event> collectionEvents = collectionEventsMap.get(collection);
         if (collectionEvents == null) {
             collectionEvents = FXCollections.observableArrayList();
-            // The collection has the normal connections and the connection for the color
+            // The collection has the normal connections
             List<SocketInfo> connections = new ArrayList<>();
             connections.addAll(collection.getConnections());
-            connections.add(collection.getColorConnection());
             for (SocketInfo connection : connections) {
                 for (Event event : observableEventList) {
                     if (event.getConnection().getSocketInfo().equals(connection)) {

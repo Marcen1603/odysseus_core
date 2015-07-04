@@ -10,8 +10,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -20,6 +22,11 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class MainController {
+
+    @FXML
+    AnchorPane overviewEventInclude;
+    @FXML
+    EventListController overviewEventIncludeController;
 
     @FXML
     TabPane mainTabPane;
@@ -99,6 +106,10 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void addOverviewEventList(Collection collection) {
+        overviewEventIncludeController.setItems(DataHandler.getInstance().getCollectionEvents(collection));
     }
 
     public void switchToCollection(Collection collection) {

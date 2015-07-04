@@ -1,7 +1,5 @@
 package cm.configuration;
 
-import cm.model.Collection;
-
 import java.util.List;
 
 /**
@@ -14,15 +12,11 @@ public class Configuration {
     // it has to connect to
     private List<ConnectionInformation> connectionInformation;
 
-    // Which of the attributes of the connections should be visualized with a
-    // gauge
-    private List<GaugeVisualizationInformation> gaugeVisualizationInformation;
-
-    // And which with a areaChart
-    private List<AreaChartVisualizationInformation> areaChartVisualizationInformation;
-
     // Which collections should be created
     private List<CollectionInformation> collections;
+
+    // For the event list in the overview
+    private OverviewInformation overviewInformation;
 
     public List<ConnectionInformation> getConnectionInformation() {
         return connectionInformation;
@@ -32,28 +26,19 @@ public class Configuration {
         this.connectionInformation = connectionInformation;
     }
 
-    public List<GaugeVisualizationInformation> getGaugeVisualizationInformation() {
-        return gaugeVisualizationInformation;
-    }
-
-    public void setGaugeVisualizationInformation(List<GaugeVisualizationInformation> gaugeVisualizationInformation) {
-        this.gaugeVisualizationInformation = gaugeVisualizationInformation;
-    }
-
-    public List<AreaChartVisualizationInformation> getAreaChartVisualizationInformation() {
-        return areaChartVisualizationInformation;
-    }
-
-    public void setAreaChartVisualizationInformation(
-            List<AreaChartVisualizationInformation> areaChartVisualizationInformation) {
-        this.areaChartVisualizationInformation = areaChartVisualizationInformation;
-    }
-
     public List<CollectionInformation> getCollections() {
         return collections;
     }
 
     public void setCollections(List<CollectionInformation> collections) {
         this.collections = collections;
+    }
+
+    public OverviewInformation getOverviewInformation() {
+        return overviewInformation;
+    }
+
+    public void setOverviewInformation(OverviewInformation overviewInformation) {
+        this.overviewInformation = overviewInformation;
     }
 }

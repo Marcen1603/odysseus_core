@@ -18,17 +18,22 @@ import java.util.List;
 public class EventListController {
 
     @FXML
-    ListView<Event> eventList;
-    @FXML
     public TextField eventsFilterField;
+    @FXML
+    ListView<Event> eventList;
+    private ObservableList<Event> listOfEvents;
 
     @FXML
     private void initialize() {
-        eventList.setItems(DataHandler.getInstance().getObservableEventList());
+
+        ObservableList<Event> events = this.listOfEvents != null ? this.listOfEvents : DataHandler.getInstance().getObservableEventList();
+        eventList.setItems(events);
+
         eventList.setCellFactory(listView -> new EventListCell());
         eventsFilterField.textProperty().addListener(event -> {
+            ObservableList<Event> correctEvents = this.listOfEvents != null ? this.listOfEvents : DataHandler.getInstance().getObservableEventList();
             if (eventsFilterField.getText().length() > 0) {
-                ObservableList<Event> filteredEventList = DataHandler.getInstance().getObservableEventList().filtered(event1 -> {
+                ObservableList<Event> filteredEventList = correctEvents.filtered(event1 -> {
 
                     String filterText = eventsFilterField.getText();
 
@@ -66,7 +71,8 @@ public class EventListController {
                         if (!specialFilter.isEmpty()) {
                             String trimFilterText = filterText.trim().replace(" ", "");
                             String key = trimFilterText.substring(0, trimFilterText.indexOf(specialFilter));
-                            String valueString = trimFilterText.substring(trimFilterText.indexOf(specialFilter) + specialFilter.length(), trimFilterText.length());
+                            String valueString = trimFilterText.substring(trimFilterText.indexOf(specialFilter) + specialFilter.length(), trimFilterText
+                                    .length());
                             if (!valueString.isEmpty()) {
                                 double value = Double.parseDouble(valueString);
                                 String attributeValueString = event1.getAttributes().get(key);
@@ -97,12 +103,14 @@ public class EventListController {
                 });
                 eventList.setItems(filteredEventList);
             } else {
-                eventList.setItems(DataHandler.getInstance().getObservableEventList());
+                ObservableList<Event> collEvents = this.listOfEvents != null ? this.listOfEvents : DataHandler.getInstance().getObservableEventList();
+                eventList.setItems(collEvents);
             }
         });
     }
 
     public void setItems(ObservableList<Event> items) {
+        this.listOfEvents = items;
         eventList.setItems(items);
     }
 }

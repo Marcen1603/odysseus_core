@@ -5,7 +5,6 @@ import cm.data.DataHandler;
 import cm.model.Collection;
 import cm.model.Event;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,14 +20,13 @@ import java.io.IOException;
  */
 public class CollectionListCell extends ListCell<Collection> implements ListChangeListener<Event> {
 
-    private Parent root;
-
     @FXML
-    Label machineName;
+    Label collectionName;
     @FXML
-    AnchorPane machineBackground;
+    AnchorPane collectionBackground;
 
     boolean alreadyListening = false;
+    private Parent root;
     private String colorAttribute = "";
     private double maxValue;
     private double minValue;
@@ -64,8 +62,8 @@ public class CollectionListCell extends ListCell<Collection> implements ListChan
                 alreadyListening = true;
             }
 
-            machineName.setText(collection.getName());
-            machineBackground.setStyle("-fx-background-color: greenyellow");
+            collectionName.setText(collection.getName());
+            collectionBackground.setStyle("-fx-background-color: greenyellow");
             setGraphic(root);
         }
     }
@@ -83,9 +81,11 @@ public class CollectionListCell extends ListCell<Collection> implements ListChan
                 double value = Double.parseDouble(valueString);
 
                 double segmentSize = (maxValue - minValue) / 10;
-                int segment = (int) (value / segmentSize);
+                int segment = 0;
+                if (segmentSize > 0)
+                    segment = (int) ((value - minValue) / segmentSize);
 
-                String color = "-fx-background-color: #97b329;";
+                String color = "-fx-background-color: #f61319;";
                 switch (segment) {
                     case 0:
                         color = "-fx-background-color: #97b329;";
@@ -118,7 +118,7 @@ public class CollectionListCell extends ListCell<Collection> implements ListChan
                         color = "-fx-background-color: #f61319;";
                         break;
                 }
-                machineBackground.setStyle(color);
+                collectionBackground.setStyle(color);
             }
         }
     }

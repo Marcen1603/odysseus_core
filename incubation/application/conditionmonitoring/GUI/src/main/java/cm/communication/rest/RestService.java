@@ -181,7 +181,8 @@ public class RestService {
         Representation runConfigRepresentation = crRunConfigs.post(runConfigurationRequestDTO);
         Gson gson = new Gson();
         try {
-            Configuration configuration = gson.fromJson(runConfigRepresentation.getText(), Configuration.class);
+            String config = runConfigRepresentation.getText();
+            Configuration configuration = gson.fromJson(config, Configuration.class);
             return configuration;
         } catch (IOException e) {
             e.printStackTrace();

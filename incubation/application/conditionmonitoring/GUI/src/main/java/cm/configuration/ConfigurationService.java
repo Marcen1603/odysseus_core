@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 /**
  * @author Tobias
@@ -107,11 +108,27 @@ public class ConfigurationService {
                 DataHandler.getInstance().addCollection(collection);
             }
 
-            // Create all visualizations
+            // Overview
             // -------------------------
-            OverviewController overviewController = mainController.getOverviewController();
-            configuration.getGaugeVisualizationInformation().forEach(overviewController::addGauge);
-            configuration.getAreaChartVisualizationInformation().forEach(overviewController::addAreaChart);
+            if (configuration.getOverviewInformation() != null) {
+                OverviewController overviewController = mainController.getOverviewController();
+                configuration.getOverviewInformation().getGaugeVisualizationInformation().forEach(overviewController::addGauge);
+                configuration.getOverviewInformation().getAreaChartVisualizationInformation().forEach(overviewController::addAreaChart);
+
+                // Overview has an event list which we can handle as a collection
+                if (configuration.getOverviewInformation().getOverviewConnections() != null) {
+                    Collection overviewCollection = new Collection("Overview", UUID.randomUUID());
+                    for (ConnectionInformation conInfo : configuration.getOverviewInformation().getOverviewConnections()) {
+                        List<SocketReceiver> socketReceivers = CommunicationService.getSocketReceivers(conInfo);
+                        for (SocketReceiver receiver : socketReceivers) {
+                            overviewCollection.addConnection(receiver.getSocketInfo());
+                        }
+                    }
+                    DataHandler.getInstance().addCollection(overviewCollection);
+                    mainController.addOverviewEventList(overviewCollection);
+                }
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
