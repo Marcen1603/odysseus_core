@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.parallelization.rcp.threads;
 
 import java.util.Collection;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -13,12 +15,15 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
-public class BenchmarkExecutionThread extends Thread {
+public class BenchmarkExecutionThread extends Thread implements Observer{
 	private static Logger LOG = LoggerFactory
 			.getLogger(BenchmarkThread.class);
 	private String queryString;
 	private BenchmarkerExecution benchmarkerExecution;
 	private BenchmarkDataHandler data;
+	private Collection<Integer> queryIds;
+	private long startTimeMillis;
+	private IExecutor executor;
 
 	public BenchmarkExecutionThread(String queryString, UUID processUid,
 			BenchmarkerExecution benchmarkerExecution) {
@@ -31,14 +36,19 @@ public class BenchmarkExecutionThread extends Thread {
 	public void run() {
 		LOG.debug("Executing benchmark query");
 
-		// start time
-		long startTimeMillis = System.currentTimeMillis();
+		startTimeMillis = System.currentTimeMillis();
 
-		// execute
-		IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
-		Collection<Integer> queryIds = executor.addQuery(this.queryString,
+		executor = OdysseusRCPEditorTextPlugIn.getExecutor();
+		queryIds = executor.addQuery(this.queryString,
 				"OdysseusScript", OdysseusRCPPlugIn.getActiveSession(),
 				ParserClientUtil.createRCPContext(data.getQueryFile()));
+		for (Integer queryID : queryIds) {
+			executor.startQuery(queryID, OdysseusRCPPlugIn.getActiveSession());
+		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
 		for (Integer queryId : queryIds) {
 			executor.removeQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
 		}

@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.postoptimization.P
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.parallelization.parameter.ParallelizationKeywordParameter;
-import de.uniol.inf.is.odysseus.parallelization.transform.AbstractParallelizationPreTransformationHandler;
+import de.uniol.inf.is.odysseus.parallelization.transformationhandler.AbstractParallelizationPreTransformationHandler;
 
 public class InterOperatorParallelizationPreTransformationHandler extends
 		AbstractParallelizationPreTransformationHandler {

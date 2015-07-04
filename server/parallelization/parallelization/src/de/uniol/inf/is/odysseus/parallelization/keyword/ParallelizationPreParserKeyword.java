@@ -17,8 +17,8 @@ import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionH
 import de.uniol.inf.is.odysseus.parallelization.parameter.IKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.parameter.ParallelizationKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.parameter.PreParserKeywordParameterHelper;
-import de.uniol.inf.is.odysseus.parallelization.transform.IParallelizationPreTransformationHandler;
-import de.uniol.inf.is.odysseus.parallelization.transform.registry.ParallelizationPreTransformationHandlerRegistry;
+import de.uniol.inf.is.odysseus.parallelization.transformationhandler.IParallelizationPreTransformationHandler;
+import de.uniol.inf.is.odysseus.parallelization.transformationhandler.registry.ParallelizationPreTransformationHandlerRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 

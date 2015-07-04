@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parallelization.transform.AbstractParallelizationPreTransformationHandler;
+import de.uniol.inf.is.odysseus.parallelization.transformationhandler.AbstractParallelizationPreTransformationHandler;
 
 public class IntraOperatorParallelizationPreTransformationHandler extends AbstractParallelizationPreTransformationHandler{
 
