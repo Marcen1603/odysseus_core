@@ -127,39 +127,39 @@ public class LogicalCostModel implements ILogicalCostModel {
 		}
 
 		double memCost = estimator.getMemory();
-		if (memCost < 0) {
-			LOG.error("Estimated memcost for operator {} is negative. Using default value.", visitingOperator);
+		if (memCost < 0 || Double.isNaN(memCost)) {
+			LOG.error("Estimated memcost for operator {} is negative or NaN. Using default value.", visitingOperator);
 			memCost = StandardLogicalOperatorEstimator.DEFAULT_MEMORY_COST_BYTES;
 		}
 
 		double datarate = estimator.getDatarate();
-		if (datarate < 0) {
-			LOG.error("Estimated datarate for operator {} is negative. Using default value.", visitingOperator);
+		if (datarate < 0 || Double.isNaN(datarate)) {
+			LOG.error("Estimated datarate for operator {} is negative or NaN. Using default value.", visitingOperator);
 			datarate = StandardLogicalOperatorEstimator.DEFAULT_DATARATE;
 		}
 		
 		Optional<Double> optCpuCost = knowledge.getCpuTime(visitingOperator.getClass().getSimpleName());
 		double cpuCost = optCpuCost.isPresent() ? ( optCpuCost.get() / 1000000000 ) : estimator.getCpu();
-		if (cpuCost < 0) {
-			LOG.error("Estimated cpucost for operator {} is negative. Using default value.", visitingOperator);
+		if (cpuCost < 0 || Double.isNaN(cpuCost)) {
+			LOG.error("Estimated cpucost for operator {} is negative or NaN. Using default value.", visitingOperator);
 			cpuCost = StandardLogicalOperatorEstimator.DEFAULT_CPU_COST;
 		}
 
 		double netCost = estimator.getNetwork();
-		if (netCost < 0) {
-			LOG.error("Estimated netcost for operator {} is negative. Using default value.", visitingOperator);
+		if (netCost < 0 || Double.isNaN(netCost)) {
+			LOG.error("Estimated netcost for operator {} is negative or NaN. Using default value.", visitingOperator);
 			netCost = StandardLogicalOperatorEstimator.DEFAULT_NETWORK_COST_BYTES;
 		}
 
 		double selectivity = estimator.getSelectivity();
-		if (selectivity < 0) {
-			LOG.error("Estimated selectivity for operator {} is negative. Using default value.", visitingOperator);
+		if (selectivity < 0 || Double.isNaN(selectivity)) {
+			LOG.error("Estimated selectivity for operator {} is negative or NaN. Using default value.", visitingOperator);
 			selectivity = StandardLogicalOperatorEstimator.DEFAULT_SELECTIVITY;
 		}
 
 		double windowSize = estimator.getWindowSize();
-		if (windowSize < 0) {
-			LOG.error("Estimated windowSize for operator {} is negative. Using default value.", visitingOperator);
+		if (windowSize < 0 || Double.isNaN(windowSize)) {
+			LOG.error("Estimated windowSize for operator {} is negative or NaN. Using default value.", visitingOperator);
 			windowSize = StandardLogicalOperatorEstimator.DEFAULT_WINDOW_SIZE;
 		}
 

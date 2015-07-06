@@ -83,14 +83,14 @@ public class QueryCostMap implements Cloneable {
 			return;
 		
 		QueryLoadInformation info = internalInformationMap.get(queryId);
-		internalInformationMap.remove(queryId);
+		internalInformationMap.remove(Integer.valueOf(queryId));
 		double cost = info.getIndividualMigrationCost();
 		
 		
 		if(internalCostMap.containsKey(cost)) {
 			List<Integer> queriesForCost = internalCostMap.get(cost);
 			if(queriesForCost.contains(queryId)) {
-				queriesForCost.remove(queryId);
+				queriesForCost.remove(Integer.valueOf(queryId));
 			}
 		}
 		

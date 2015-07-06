@@ -4,15 +4,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+
+import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -21,9 +28,14 @@ import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
 public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThreadListener {
@@ -35,6 +47,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	private IServerExecutor executor;
 	private static ISession activeSession;
 	private IPhysicalCostModel physicalCostModel;
+	private ILoadBalancingAllocator allocator;
+	private IPeerDictionary peerDictionary;
+	private IP2PNetworkManager networkManager;
 
 	private MonitoringThread monitoringThread = null;
 	
@@ -70,6 +85,26 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 	}
 	
+	public void bindPeerDictionary(IPeerDictionary serv) {
+		this.peerDictionary = serv;
+	}
+	
+	public void unbindPeerDictionary(IPeerDictionary serv) {
+		if(serv==peerDictionary) {
+			this.peerDictionary = null;
+		}
+	}
+	
+	public void bindNetworkManager(IP2PNetworkManager serv) {
+		this.networkManager = serv;
+	}
+	
+	public void unbindNetworkManager(IP2PNetworkManager serv) {
+		if(this.networkManager==serv) {
+			this.networkManager = null;
+		}
+	}
+	
 
 	/**
 	 * Gets currently active Session.
@@ -88,8 +123,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 
 	@Override
 	public void setAllocator(ILoadBalancingAllocator allocator) {
-		LOG.error("Setting of Allocator not implemented yet.");
-
+		this.allocator = allocator;
 	}
 
 	@Override
@@ -152,7 +186,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		return queries;
 	}
 
-	@SuppressWarnings("unused")
+	
 	@Override
 	public void triggerLoadBalancing(double cpuUsage, double memUsage, double netUsage) {
 		synchronized(threadManipulationLock) {
@@ -182,7 +216,38 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 			chosenResult = simulatedAnnealingResult;
 		}
 		
-		//TODO Allocate :)
+		if(allocator==null) {
+			LOG.error("No Allocator set.");
+			return;
+		}
+		
+		
+		List<ILogicalQueryPart> queryParts = new ArrayList<ILogicalQueryPart>();
+		
+		for (int queryId : chosenResult.getQueryIds()) {
+			ILogicalQuery query = executor.getLogicalQueryById(queryId, getActiveSession());
+			ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
+			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
+			queryParts.add(new LogicalQueryPart(operators));
+		}
+		
+		Collection<PeerID> knownRemotePeers = peerDictionary.getRemotePeerIDs();
+		
+		//TODO What if no Object in List?
+		int firstQueryId = chosenResult.getQueryIds().get(0);
+		
+		//Parameter Query is used to get Build Configuration...
+		ILogicalQuery query = executor.getLogicalQueryById(firstQueryId, getActiveSession());
+		
+		PeerID localPeerID = networkManager.getLocalPeerID();
+		
+		try {
+			allocator.allocate(queryParts, query, knownRemotePeers, localPeerID);
+		} catch (QueryPartAllocationException e) {
+			LOG.error("Could not allocate Query Parts: {}",e.getMessage());
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private QueryCostMap generateCostMapForAllQueries() {

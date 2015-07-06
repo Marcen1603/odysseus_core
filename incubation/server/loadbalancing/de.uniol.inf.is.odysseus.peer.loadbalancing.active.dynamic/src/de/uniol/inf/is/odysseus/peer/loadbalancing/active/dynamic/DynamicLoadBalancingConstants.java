@@ -13,6 +13,13 @@ public class DynamicLoadBalancingConstants {
 			//Names
 			public static final String BID_PROVIDER_NAME = "OdyLoad";
 			public static final String STRATEGY_NAME = "OdyLoad";
+			public static final String ALLOCATOR_NAME = "OdyLoad";
+			
+			
+			//Survey Allocator Parameters
+			public static final int SURVEY_LATENCY_WEIGHT = 0;
+			public static final int SURVEY_BID_WEIGHT = 1;
+			public static final String SURVEY_USE_OWN_BID = "false";
 	
 			
 			//Load-Model weights and calculation factors
@@ -25,5 +32,6 @@ public class DynamicLoadBalancingConstants {
 			
 			public static final double WEIGHT_GENERAL_COSTS = 0.3;
 			public static final double WEIGHT_INDIVIDUAL_COSTS = 0.7;
+			public static final String DEFAULT_QUERY_BUILD_CONFIG = "Standard";
 
 }

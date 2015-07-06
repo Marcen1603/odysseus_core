@@ -101,19 +101,15 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 		}
 
 		double memCost = estimator.getMemory();
-		if (memCost < 0) {
-			LOG.error("Estimated memcost for operator {} is negative. Using default value.", visitingOperator);
-			memCost = StandardPhysicalOperatorEstimator.DEFAULT_MEMORY_COST_BYTES;
-		}
-		if(Double.isNaN(memCost)) {
-			LOG.error("Estimated memcost for operator {} is NaN. Using default value.", visitingOperator);
+		if (memCost < 0 || Double.isNaN(memCost)) {
+			LOG.error("Estimated memcost for operator {} is negative or NaN. Using default value.", visitingOperator);
 			memCost = StandardPhysicalOperatorEstimator.DEFAULT_MEMORY_COST_BYTES;
 		}
 
 		Optional<Double> optDatarate = EstimatorHelper.getDatarateMetadata(visitingOperator);
 		double datarate = optDatarate.isPresent() ? optDatarate.get() : estimator.getDatarate();
-		if (datarate < 0) {
-			LOG.error("Estimated datarate for operator {} is negative. Using default value.", visitingOperator);
+		if (datarate < 0 || Double.isNaN(datarate)) {
+			LOG.error("Estimated datarate for operator {} is negative or NaN. Using default value.", visitingOperator);
 			datarate = StandardPhysicalOperatorEstimator.DEFAULT_DATARATE;
 		}
 
@@ -125,44 +121,27 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 			}
 		}
 		double cpuCost = optCpu.isPresent() ? optCpu.get() * datarate : estimator.getCpu();
-		if (cpuCost < 0) {
-			LOG.error("Estimated cpucost for operator {} is negative. Using default value.", visitingOperator);
-			cpuCost = StandardPhysicalOperatorEstimator.DEFAULT_CPU_COST * datarate;
-		}
-		if (Double.isNaN(cpuCost)) {
-			LOG.error("Estimated cpucost for operator {} is NaN. Using default value.", visitingOperator);
+		if (cpuCost < 0 || Double.isNaN(cpuCost)) {
+			LOG.error("Estimated cpucost for operator {} is negative or NaN. Using default value.", visitingOperator);
 			cpuCost = StandardPhysicalOperatorEstimator.DEFAULT_CPU_COST * datarate;
 		}
 
 		double netCost = estimator.getNetwork();
-		if (netCost < 0) {
-			LOG.error("Estimated netcost for operator {} is negative. Using default value.", visitingOperator);
-			netCost = StandardPhysicalOperatorEstimator.DEFAULT_NETWORK_COST_BYTES;
-		}
-		if (Double.isNaN(netCost)) {
-			LOG.error("Estimated netcost for operator {} is NaN. Using default value.", visitingOperator);
+		if (netCost < 0 || Double.isNaN(netCost)) {
+			LOG.error("Estimated netcost for operator {} is negative or NaN. Using default value.", visitingOperator);
 			netCost = StandardPhysicalOperatorEstimator.DEFAULT_NETWORK_COST_BYTES;
 		}
 
 		Optional<Double> optSelectivity = EstimatorHelper.getSelectivityMetadata(visitingOperator);
 		double selectivity = optSelectivity.isPresent() ? optSelectivity.get() : estimator.getSelectivity();
-		if (selectivity < 0) {
-			LOG.error("Estimated selectivity for operator {} is negative. Using default value.", visitingOperator);
-			selectivity = StandardPhysicalOperatorEstimator.DEFAULT_SELECTIVITY;
-		}
-		if (Double.isNaN(selectivity)) {
-			LOG.error("Estimated selectivity for operator {} is NaN. Using default value.", visitingOperator);
+		if (selectivity < 0 || Double.isNaN(selectivity)) {
+			LOG.error("Estimated selectivity for operator {} is negative or NaN. Using default value.", visitingOperator);
 			selectivity = StandardPhysicalOperatorEstimator.DEFAULT_SELECTIVITY;
 		}
 		
 		double windowSize = estimator.getWindowSize();
-		if (windowSize < 0) {
-			LOG.error("Estimated windowSize for operator {} is negative. Using default value.", visitingOperator);
-			windowSize = StandardPhysicalOperatorEstimator.DEFAULT_WINDOW_SIZE;
-		}
-		if(Double.isNaN(windowSize)) {
-
-			LOG.error("Estimated windowSize for operator {} is NaN. Using default value.", visitingOperator);
+		if (windowSize < 0 || Double.isNaN(windowSize)) {
+			LOG.error("Estimated windowSize for operator {} is negative or NaN. Using default value.", visitingOperator);
 			windowSize = StandardPhysicalOperatorEstimator.DEFAULT_WINDOW_SIZE;
 		}
 

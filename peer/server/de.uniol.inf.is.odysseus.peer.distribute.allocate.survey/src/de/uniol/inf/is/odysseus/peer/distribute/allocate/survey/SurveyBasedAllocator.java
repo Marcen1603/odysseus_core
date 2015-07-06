@@ -167,7 +167,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	private static String determineBidProviderName(List<String> allocatorParameters) {
 		if(allocatorParameters.size() >= 4) {
-			String bidProviderName = allocatorParameters.get(4);
+			String bidProviderName = allocatorParameters.get(3);
 			if(BidProviderRegistry.getInstance().contains(bidProviderName)) {
 				return bidProviderName;
 			}

@@ -7,4 +7,6 @@
    <reference bind="bindResourceUsageManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager" name="IPeerResourceUsageManager" policy="static" unbind="unbindResourceUsageManager"/>
    <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
    <reference bind="bindPhysicalCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel" name="IPhysicalCostModel" policy="static" unbind="unbindPhysicalCostModel"/>
+   <reference bind="bindNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindNetworkManager"/>
+   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
 </scr:component>
