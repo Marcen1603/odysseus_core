@@ -21,8 +21,6 @@ import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class BenchmarkExecutionThread extends Thread implements
 		IBenchmarkObserver {
-	private static final int MAXIMUM_EXECUTION_TIME = 8000;
-
 	private static Logger LOG = LoggerFactory.getLogger(BenchmarkThread.class);
 
 	private String queryString;
@@ -31,6 +29,7 @@ public class BenchmarkExecutionThread extends Thread implements
 	private Collection<Integer> queryIds;
 	private IExecutor executor;
 	private UUID observerUUID;
+	private long maximumExecutionTime;
 
 	public BenchmarkExecutionThread(String queryString, UUID processUid,
 			BenchmarkerExecution benchmarkerExecution) {
@@ -38,6 +37,7 @@ public class BenchmarkExecutionThread extends Thread implements
 		this.data = BenchmarkDataHandler.getExistingInstance(processUid);
 		this.benchmarkerExecution = benchmarkerExecution;
 		this.observerUUID = UUID.randomUUID();
+		this.maximumExecutionTime = data.getConfiguration().getMaximumExecutionTime();
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public class BenchmarkExecutionThread extends Thread implements
 			executor.startQuery(queryID, OdysseusRCPPlugIn.getActiveSession());
 		}
 		try {
-			Thread.sleep(MAXIMUM_EXECUTION_TIME);
-			benchmarkerExecution.setExecutionTime(MAXIMUM_EXECUTION_TIME);
+			Thread.sleep(maximumExecutionTime);
+			benchmarkerExecution.setExecutionTime(maximumExecutionTime);
 		} catch (InterruptedException e) {
 		} finally {
 			for (Integer queryId : queryIds) {

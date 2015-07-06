@@ -9,10 +9,14 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.windows.StrategySelectionRow
 
 public class BenchmarkerConfiguration {
 
+	public static final long DEFAULT_EXECUTION_TIME = 80000;
+	public static final int DEFAULT_NUMBER_OF_ELEMENTS = 20000;
+	
 	private List<StrategySelectionRow> selectedStratgies;
 	private List<Integer> degrees;
 	private Integer buffersize;
 	private Integer numberOfElements;
+	private Long maximumExecutionTime;
 	private boolean allowPostOptimization;
 
 	public List<StrategySelectionRow> getSelectedStratgies() {
@@ -129,5 +133,13 @@ public class BenchmarkerConfiguration {
 			int currentPosition) {
 		ArrayList<String> arrayList = new ArrayList<String>(executionElements.keySet());
 		return arrayList.get(currentPosition);
+	}
+
+	public Long getMaximumExecutionTime() {
+		return maximumExecutionTime;
+	}
+
+	public void setMaximumExecutionTime(Long maximumExecutionTime) {
+		this.maximumExecutionTime = maximumExecutionTime;
 	}
 }

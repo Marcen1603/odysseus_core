@@ -105,5 +105,16 @@ public class BenchmarkerExecution {
 	public void setExecutionTime(long executionTime) {
 		this.executionTime = executionTime;
 	}
+	
+	@Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append("Degree: "+degree);
+		builder.append(", Post optimization allowed: "+allowPostOptmization);
+		for (BenchmarkExecutionElement element : elements.values()) {
+			builder.append(", "+element.toString());
+		}
+		return builder.toString();
+	}
 
 }

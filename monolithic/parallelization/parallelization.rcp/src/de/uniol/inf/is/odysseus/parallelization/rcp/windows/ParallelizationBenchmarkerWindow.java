@@ -30,8 +30,8 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.threads.InitializeQueryThrea
 public class ParallelizationBenchmarkerWindow {
 
 	private static final String TITLE = "Parallelization Benchmarker";
-	private static final int WINDOW_WIDTH = 500;
-	private static final int WINDOW_HEIGHT = 500;
+	private static final int WINDOW_WIDTH = 1000;
+	private static final int WINDOW_HEIGHT = 600;
 	private static final String CANCEL_BUTTON_TEXT = "Cancel";
 
 	private final Shell parent;
@@ -51,6 +51,7 @@ public class ParallelizationBenchmarkerWindow {
 	private BenchmarkThread benchmarkThread;
 	private Button closeButton;
 	private Button allowPostOptimizationButton;
+	private Text maxExecutionTimeText;
 
 	public ParallelizationBenchmarkerWindow(Shell parent) {
 		this.parent = Preconditions.checkNotNull(parent,
@@ -83,7 +84,7 @@ public class ParallelizationBenchmarkerWindow {
 	private void createStartPage() {
 		pageComposite = new Composite(window, SWT.NONE);
 		GridData contentGridData = new GridData(GridData.FILL_BOTH);
-		contentGridData.widthHint = 600;
+		contentGridData.widthHint = WINDOW_WIDTH;
 		pageComposite.setLayoutData(contentGridData);
 		GridLayout gridLayout = new GridLayout();
 		pageComposite.setLayout(gridLayout);
@@ -147,8 +148,17 @@ public class ParallelizationBenchmarkerWindow {
 		numberOfElementsLabel.setText("Number of elements for analyse: ");
 		numberOfElementsText = new Text(configComposite, SWT.SINGLE
 				| SWT.BORDER);
-		numberOfElementsText.setText(String.valueOf(10000));
+		numberOfElementsText.setText(String
+				.valueOf(BenchmarkerConfiguration.DEFAULT_NUMBER_OF_ELEMENTS));
 		numberOfElementsText.setLayoutData(gridData);
+
+		Label maxExecutionTimeLabel = new Label(configComposite, SWT.NULL);
+		maxExecutionTimeLabel.setText("Maximum time for each analyse in ms: ");
+		maxExecutionTimeText = new Text(configComposite, SWT.SINGLE
+				| SWT.BORDER);
+		maxExecutionTimeText.setText(String
+				.valueOf(BenchmarkerConfiguration.DEFAULT_EXECUTION_TIME));
+		maxExecutionTimeText.setLayoutData(gridData);
 
 		allowPostOptimizationButton = new Button(pageComposite, SWT.CHECK);
 		allowPostOptimizationButton.setText("Allow post optimization");
@@ -184,14 +194,15 @@ public class ParallelizationBenchmarkerWindow {
 		window.pack();
 		window.setVisible(true);
 	}
-	
-	protected void doParallelizationAnalysis(List<StrategySelectionRow> selectedStratgies){
+
+	protected void doParallelizationAnalysis(
+			List<StrategySelectionRow> selectedStratgies) {
 		createConfiguration(selectedStratgies);
 
 		clearPageContent();
 		removeStartButton();
 		showAnalysisContent();
-		
+
 		benchmarkThread = new BenchmarkThread(benchmarkProcessId, this);
 		benchmarkThread.setName("BenchmarkThread");
 		benchmarkThread.setDaemon(true);
@@ -220,9 +231,14 @@ public class ParallelizationBenchmarkerWindow {
 		configuration.setNumberOfElements(Integer
 				.parseInt(numberOfElementsString));
 
-		boolean allowPostOptimization = allowPostOptimizationButton.getSelection();
+		String maxExecutionTimeString = this.maxExecutionTimeText.getText();
+		configuration.setMaximumExecutionTime(Long
+				.parseLong(maxExecutionTimeString));
+
+		boolean allowPostOptimization = allowPostOptimizationButton
+				.getSelection();
 		configuration.setAllowPostOptimization(allowPostOptimization);
-		
+
 		data.setConfiguration(configuration);
 	}
 
@@ -235,26 +251,32 @@ public class ParallelizationBenchmarkerWindow {
 		progressAnalyseQuery.setMinimum(0);
 		progressAnalyseQuery.setMaximum(100);
 
-		analysisProgressLog = new Text(pageComposite, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.READ_ONLY);
-	    GridData gridData = new GridData(GridData.FILL_BOTH);
-	    gridData.heightHint = 100;
-	    analysisProgressLog.setLayoutData(gridData);
-	    analysisProgressLog.setText("Analysis started... "+System.lineSeparator());
-	    analysisProgressLog.addListener(SWT.Modify, new Listener(){
-	        public void handleEvent(Event e){
-	        	analysisProgressLog.setTopIndex(analysisProgressLog.getLineCount() - 1);
-	        }
-	    });
-		
+		analysisProgressLog = new Text(pageComposite, SWT.MULTI | SWT.BORDER
+				| SWT.WRAP | SWT.V_SCROLL | SWT.READ_ONLY);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 300;
+		analysisProgressLog.setLayoutData(gridData);
+		analysisProgressLog.setText("Analysis started... "
+				+ System.lineSeparator());
+		analysisProgressLog.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event e) {
+				analysisProgressLog.setTopIndex(analysisProgressLog
+						.getLineCount() - 1);
+			}
+		});
+
 		window.pack();
 		window.setVisible(true);
 	}
-	
-	public void updateAnalysisProgress(int progressProcent, String progressString){
-		if (!progressString.isEmpty()){
-			analysisProgressLog.setText(analysisProgressLog.getText()+progressString+System.lineSeparator());	
+
+	public void updateAnalysisProgress(int progressProcent,
+			String progressString) {
+		if (!progressString.isEmpty()) {
+			analysisProgressLog.setText(analysisProgressLog.getText()
+					+ progressString + System.lineSeparator());
 		}
-		if (progressProcent != 0 && progressProcent >= progressAnalyseQuery.getSelection()){
+		if (progressProcent != 0
+				&& progressProcent >= progressAnalyseQuery.getSelection()) {
 			progressAnalyseQuery.setSelection(progressProcent);
 		}
 	}
@@ -290,7 +312,25 @@ public class ParallelizationBenchmarkerWindow {
 		if (numberOfElementsString.isEmpty()) {
 			throw new IllegalArgumentException("No number of elements definied");
 		} else {
-			Integer.parseInt(numberOfElementsString);
+			int value = Integer.parseInt(numberOfElementsString);
+			if (value < 1){
+				throw new IllegalArgumentException(
+						"Number of elements need to be greater than 0");
+			}
+			
+		}
+
+		// maximum execution time
+		String maxExecutionTimeString = this.maxExecutionTimeText.getText();
+		if (maxExecutionTimeString.isEmpty()) {
+			throw new IllegalArgumentException(
+					"No maximum execution time definied");
+		} else {
+			long value = Long.parseLong(maxExecutionTimeString);
+			if (value < 1000){
+				throw new IllegalArgumentException(
+						"Maximum execution need to be greater equal 1000");
+			}
 		}
 	}
 
@@ -341,7 +381,7 @@ public class ParallelizationBenchmarkerWindow {
 		closeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (benchmarkThread != null){
+				if (benchmarkThread != null) {
 					// stop analyze if it is currently running
 					benchmarkThread.interrupt();
 				}
@@ -357,17 +397,19 @@ public class ParallelizationBenchmarkerWindow {
 	}
 
 	public void showResult(String resultOdysseusScript) {
-		createLabel(pageComposite, "Result of parallelization benchmarker. Put this Snippet in your script.");
-		
-		Text analysisResultScript = new Text(pageComposite, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.READ_ONLY);
-	    GridData gridData = new GridData(GridData.FILL_BOTH);
-	    gridData.heightHint = 50;
-	    analysisResultScript.setLayoutData(gridData);
-	    analysisResultScript.setText(resultOdysseusScript);
-	    
-	    closeButton.setText("Done");
-	    
-	    window.pack();
+		createLabel(pageComposite,
+				"Result of parallelization benchmarker. Put this Snippet in your script.");
+
+		Text analysisResultScript = new Text(pageComposite, SWT.MULTI
+				| SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.READ_ONLY);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 100;
+		analysisResultScript.setLayoutData(gridData);
+		analysisResultScript.setText(resultOdysseusScript);
+
+		closeButton.setText("Done");
+
+		window.pack();
 		window.setVisible(true);
 	}
 

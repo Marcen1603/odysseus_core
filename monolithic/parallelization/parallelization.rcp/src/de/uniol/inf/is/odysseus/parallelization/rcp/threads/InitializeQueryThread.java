@@ -256,19 +256,19 @@ public class InitializeQueryThread extends Thread {
 
 	private static boolean isLineSupported(String line) {
 		// #PARALLELIZATION is not supported in benchmarker
-		if (!line.trim().startsWith(
+		if (line.trim().startsWith(
 				"#" + InterOperatorParallelizationPreParserKeyword.KEYWORD)) {
 			return false;
 		}
 
 		// #INTEROPERATORPARALLELIZATION is not supported in benchmarker
-		if (!line.trim().startsWith(
+		if (line.trim().startsWith(
 				"#" + ParallelizationPreParserKeyword.KEYWORD)) {
 			return false;
 		}
 
 		// PRETRANSFORMATION for benchmarking is also not supported
-		if (!line.trim().startsWith(
+		if (line.trim().startsWith(
 				"#" + PreTransformationHandlerPreParserKeyword.KEYWORD + " "+BenchmarkPreTransformationHandler.NAME)) {
 			return false;
 		}

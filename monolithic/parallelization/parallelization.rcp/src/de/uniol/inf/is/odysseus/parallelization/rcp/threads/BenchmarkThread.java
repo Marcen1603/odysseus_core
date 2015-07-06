@@ -13,9 +13,8 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBench
 public class BenchmarkThread extends Thread {
 
 	private static final String PRE_TRANSFORM_TOKEN = "#PRETRANSFORM BenchmarkPreTransformation";
-	
-	private static Logger LOG = LoggerFactory
-			.getLogger(BenchmarkThread.class);
+
+	private static Logger LOG = LoggerFactory.getLogger(BenchmarkThread.class);
 	private UUID processUid;
 	private BenchmarkDataHandler data;
 	private ParallelizationBenchmarkerWindow window;
@@ -39,7 +38,8 @@ public class BenchmarkThread extends Thread {
 
 		for (BenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
 			changeProgress(currentPercentage, "Executing analysis "
-					+ (executionCounter + 1) + " of " + numberOfExecutions);
+					+ (executionCounter + 1) + " of " + numberOfExecutions
+					+ ": " + benchmarkerExecution.toString());
 
 			executeAnalysis(benchmarkerExecution);
 			// if cancel button is pressed, we want to stop the analysis after
@@ -50,7 +50,21 @@ public class BenchmarkThread extends Thread {
 			}
 
 			currentPercentage = (int) (((executionCounter + 1) / (double) numberOfExecutions) * 100);
-			changeProgress(currentPercentage, "Completed in "+benchmarkerExecution.getExecutionTime() +" ms");
+			if (benchmarkerExecution.getExecutionTime() >= data
+					.getConfiguration().getMaximumExecutionTime()) {
+				changeProgress(
+						currentPercentage,
+						"Maximum execution time reached. Please restart benchmarker and adjust values "
+						+ "for maximum execution time or number of elements."+System.lineSeparator());
+			} else {
+				changeProgress(
+						currentPercentage,
+						"Done. "
+								+ data.getConfiguration().getNumberOfElements()
+								+ " elements in "
+								+ benchmarkerExecution.getExecutionTime()
+								+ " ms processed." + System.lineSeparator());
+			}
 			executionCounter++;
 
 		}
@@ -60,13 +74,15 @@ public class BenchmarkThread extends Thread {
 	}
 
 	private void evaluateResult(List<BenchmarkerExecution> benchmarkerExecutions) {
-		BenchmarkerExecution currentBestExecution = benchmarkerExecutions.get(0);
-		
+		BenchmarkerExecution currentBestExecution = benchmarkerExecutions
+				.get(0);
+
 		for (BenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
-			if (benchmarkerExecution.getExecutionTime() <= 0l){
+			if (benchmarkerExecution.getExecutionTime() <= 0l) {
 				continue;
 			} else {
-				if (benchmarkerExecution.getExecutionTime() < currentBestExecution.getExecutionTime()){
+				if (benchmarkerExecution.getExecutionTime() < currentBestExecution
+						.getExecutionTime()) {
 					currentBestExecution = benchmarkerExecution;
 				}
 			}
@@ -90,8 +106,8 @@ public class BenchmarkThread extends Thread {
 			builder.append(queryStringLine);
 			// put parallelization keywords directly after parser command
 			if (queryStringLine.trim().startsWith("#PARSER")) {
-				builder.append(PRE_TRANSFORM_TOKEN);
 				builder.append(benchmarkerExecution.getOdysseusScript());
+				builder.append(PRE_TRANSFORM_TOKEN);
 			}
 		}
 
@@ -103,7 +119,8 @@ public class BenchmarkThread extends Thread {
 		executionThread.start();
 
 		try {
-			// wait for the execution thread to finish. if its finish start next execution
+			// wait for the execution thread to finish. if its finish start next
+			// execution
 			executionThread.join();
 		} catch (InterruptedException e) {
 			// do nothing

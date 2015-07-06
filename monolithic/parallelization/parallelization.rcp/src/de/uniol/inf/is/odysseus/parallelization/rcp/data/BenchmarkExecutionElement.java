@@ -44,4 +44,14 @@ public class BenchmarkExecutionElement {
 		this.fragmentType = fragmentType;
 	}
 
+	@Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append("( OperatorId: "+uniqueOperatorid);
+		builder.append(", Strategy: "+strategy.getName());
+		builder.append(", Fragmentation: "+fragmentType.getSimpleName()+") ");
+		return builder.toString();
+	}
+	
 }
+
