@@ -17,7 +17,9 @@ package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 
@@ -207,6 +209,65 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			OBJECT, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP,
 			END_TIMESTAMP, TIMESTAMP, STRING };
 
+	static final List<SDFDatatype> types = new ArrayList<>();
+	static final Map<String, SDFDatatype> nameMap = new HashMap<>();
+	static{
+
+		types.add(SDFDatatype.OBJECT);
+		
+		types.add(SDFDatatype.TUPLE);
+		types.add(SDFDatatype.NTUPLE);
+		
+		types.add(SDFDatatype.DATE);
+		types.add(SDFDatatype.DOUBLE);
+		types.add(SDFDatatype.END_TIMESTAMP);
+		types.add(SDFDatatype.END_TIMESTAMP_STRING);
+		types.add(SDFDatatype.FLOAT);
+		types.add(SDFDatatype.INTEGER);
+		types.add(SDFDatatype.UNSIGNEDINT16);
+		types.add(SDFDatatype.LONG);
+		types.add(SDFDatatype.START_TIMESTAMP);
+		types.add(SDFDatatype.START_TIMESTAMP_STRING);
+		types.add(SDFDatatype.SHORT);
+		types.add(SDFDatatype.CHAR);
+		types.add(SDFDatatype.BYTE);
+		types.add(SDFDatatype.BITVECTOR);
+		types.add(SDFDatatype.BYTEBUFFER);
+		types.add(SDFDatatype.HEXSTRING);
+
+		types.add(SDFDatatype.LIST);
+		types.add(SDFDatatype.LIST_STRING);
+
+		types.add(SDFDatatype.LIST_LONG);
+		types.add(SDFDatatype.LIST_INTEGER);
+		types.add(SDFDatatype.LIST_BYTE);
+		types.add(SDFDatatype.LIST_CHAR);
+		types.add(SDFDatatype.LIST_FLOAT);
+		types.add(SDFDatatype.LIST_DOUBLE);
+		types.add(SDFDatatype.LIST_DATE);
+		types.add(SDFDatatype.LIST_BOOLEAN);
+		types.add(SDFDatatype.LIST_SHORT);
+
+		types.add(SDFDatatype.STRING);
+		types.add(SDFDatatype.DOCUMENT);
+		types.add(SDFDatatype.MV);
+		types.add(SDFDatatype.TIMESTAMP);
+		types.add(SDFDatatype.BOOLEAN);
+
+		types.add(SDFDatatype.VECTOR_DOUBLE);
+		types.add(SDFDatatype.MATRIX_DOUBLE);
+
+		types.add(SDFDatatype.PARTIAL_AGGREGATE);
+		types.add(SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE);
+		types.add(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
+		types.add(SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE);
+		types.add(SDFDatatype.LIST_PARTIAL_AGGREGATE);
+		
+		for (SDFDatatype t:types){
+			nameMap.put(t.getURI().toLowerCase(), t);
+		}
+	}
+	
 	private static final long serialVersionUID = 8585322290347489841L;
 
 	private final KindOfDatatype type;
@@ -295,60 +356,12 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public static List<SDFDatatype> getTypes() {
-		List<SDFDatatype> types = new ArrayList<>();
-
-		types.add(SDFDatatype.OBJECT);
-		
-		types.add(SDFDatatype.TUPLE);
-		types.add(SDFDatatype.NTUPLE);
-		
-		types.add(SDFDatatype.DATE);
-		types.add(SDFDatatype.DOUBLE);
-		types.add(SDFDatatype.END_TIMESTAMP);
-		types.add(SDFDatatype.END_TIMESTAMP_STRING);
-		types.add(SDFDatatype.FLOAT);
-		types.add(SDFDatatype.INTEGER);
-		types.add(SDFDatatype.UNSIGNEDINT16);
-		types.add(SDFDatatype.LONG);
-		types.add(SDFDatatype.START_TIMESTAMP);
-		types.add(SDFDatatype.START_TIMESTAMP_STRING);
-		types.add(SDFDatatype.SHORT);
-		types.add(SDFDatatype.CHAR);
-		types.add(SDFDatatype.BYTE);
-		types.add(SDFDatatype.BITVECTOR);
-		types.add(SDFDatatype.BYTEBUFFER);
-		types.add(SDFDatatype.HEXSTRING);
-
-		types.add(SDFDatatype.LIST);
-		types.add(SDFDatatype.LIST_STRING);
-
-		types.add(SDFDatatype.LIST_LONG);
-		types.add(SDFDatatype.LIST_INTEGER);
-		types.add(SDFDatatype.LIST_BYTE);
-		types.add(SDFDatatype.LIST_CHAR);
-		types.add(SDFDatatype.LIST_FLOAT);
-		types.add(SDFDatatype.LIST_DOUBLE);
-		types.add(SDFDatatype.LIST_DATE);
-		types.add(SDFDatatype.LIST_BOOLEAN);
-		types.add(SDFDatatype.LIST_SHORT);
-
-		types.add(SDFDatatype.STRING);
-		types.add(SDFDatatype.DOCUMENT);
-		types.add(SDFDatatype.MV);
-		types.add(SDFDatatype.TIMESTAMP);
-		types.add(SDFDatatype.BOOLEAN);
-
-		types.add(SDFDatatype.VECTOR_DOUBLE);
-		types.add(SDFDatatype.MATRIX_DOUBLE);
-
-		types.add(SDFDatatype.PARTIAL_AGGREGATE);
-		types.add(SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE);
-		types.add(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
-		types.add(SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE);
-		types.add(SDFDatatype.LIST_PARTIAL_AGGREGATE);
-
 		return types;
 	}
+	
+	public static SDFDatatype getType(String name) {
+		return nameMap.get(name.toLowerCase());
+	} 
 
 	@Override
 	// TODO: sp�ter wieder entfernen!!
