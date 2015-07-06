@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.parallelization.benchmark.transformationhandler.BenchmarkPreTransformationHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
@@ -30,6 +31,7 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
+import de.uniol.inf.is.odysseus.script.keyword.PreTransformationHandlerPreParserKeyword;
 
 public class InitializeQueryThread extends Thread {
 
@@ -201,13 +203,15 @@ public class InitializeQueryThread extends Thread {
 		runFiles(Lists.newArrayList(fileToRun));
 	}
 
-	private void runFiles(List<IFile> filesToRun) throws CoreException, IOException {
+	private void runFiles(List<IFile> filesToRun) throws CoreException,
+			IOException {
 		for (IFile file : filesToRun) {
 			execute(file);
 		}
 	}
 
-	private void execute(final IFile scriptFile) throws CoreException, IOException {
+	private void execute(final IFile scriptFile) throws CoreException,
+			IOException {
 
 		benchmarkDataHandler.setQueryFile(scriptFile);
 		String text = readLinesFromFile(scriptFile);
@@ -237,15 +241,9 @@ public class InitializeQueryThread extends Thread {
 		String line = br.readLine();
 		while (line != null) {
 			// Remove parallelization keywords
-			if (!line.trim().startsWith(
-					"#" + InterOperatorParallelizationPreParserKeyword.KEYWORD
-							+ " ")
-					&& !line.trim()
-							.startsWith(
-									"#"
-											+ ParallelizationPreParserKeyword.KEYWORD
-											+ " ")) {
-				benchmarkDataHandler.addQueryString(line+System.lineSeparator());
+			if (isLineSupported(line)) {
+				benchmarkDataHandler.addQueryString(line
+						+ System.lineSeparator());
 				lines = lines + line;
 				lines = lines + System.lineSeparator();
 			}
@@ -254,5 +252,27 @@ public class InitializeQueryThread extends Thread {
 		}
 		br.close();
 		return lines;
+	}
+
+	private static boolean isLineSupported(String line) {
+		// #PARALLELIZATION is not supported in benchmarker
+		if (!line.trim().startsWith(
+				"#" + InterOperatorParallelizationPreParserKeyword.KEYWORD)) {
+			return false;
+		}
+
+		// #INTEROPERATORPARALLELIZATION is not supported in benchmarker
+		if (!line.trim().startsWith(
+				"#" + ParallelizationPreParserKeyword.KEYWORD)) {
+			return false;
+		}
+
+		// PRETRANSFORMATION for benchmarking is also not supported
+		if (!line.trim().startsWith(
+				"#" + PreTransformationHandlerPreParserKeyword.KEYWORD + " "+BenchmarkPreTransformationHandler.NAME)) {
+			return false;
+		}
+
+		return true;
 	}
 }

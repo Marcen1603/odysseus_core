@@ -18,9 +18,11 @@ import de.uniol.inf.is.odysseus.parallelization.benchmark.logicaloperator.Observ
 public class BenchmarkPreTransformationHandler implements
 		IPreTransformationHandler {
 
+	public static String NAME = "BenchmarkPreTransformation";
+	
 	@Override
 	public String getName() {
-		return "BenchmarkPreTransformation";
+		return NAME;
 	}
 
 	@Override
