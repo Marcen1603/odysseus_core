@@ -38,8 +38,14 @@ public class EventListController {
                     String filterText = eventsFilterField.getText();
 
                     // Search for events which match the filter
-                    if (event1.getConnection().getSocketInfo().getQueryName().toLowerCase().contains(filterText.toLowerCase()))
+                    if (event1.getConnection().getSocketInfo().getConnectionName() != null && event1.getConnection().getSocketInfo().getConnectionName()
+                            .toLowerCase().contains(filterText.toLowerCase()))
                         return true;
+
+                    if (event1.getConnection().getSocketInfo().getDescription() != null && event1.getConnection().getSocketInfo().getDescription().toLowerCase()
+                            .contains(filterText.toLowerCase())) {
+                        return true;
+                    }
 
                     for (String key : event1.getAttributes().keySet()) {
                         if (key.toLowerCase().contains(filterText.toLowerCase()))

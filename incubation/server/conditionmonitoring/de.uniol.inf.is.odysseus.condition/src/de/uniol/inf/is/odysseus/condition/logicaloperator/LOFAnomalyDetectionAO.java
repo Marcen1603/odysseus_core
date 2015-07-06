@@ -37,7 +37,7 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.lofAnomalyValue = 1.5;
 		this.nameOfValue = "value";
 		this.ignoreEqual = false;
-		this.deliverFirstElement = true;
+		this.deliverFirstElement = false;
 	}
 
 	public LOFAnomalyDetectionAO(LOFAnomalyDetectionAO ao) {
@@ -56,7 +56,7 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.k = number;
 	}
 
-	@Parameter(type = DoubleParameter.class, name = "LOFVALUE", optional = true, doc = "The value from which the tuples are declared as anomalies. Values near 1 are normal, higher values are anomalies. Standard is 1.5.")
+	@Parameter(type = DoubleParameter.class, name = "LOFVALUE", optional = false, doc = "The value from which the tuples are declared as anomalies. Values near 1 are normal, higher values are anomalies. Standard is 1.5.")
 	public void setLOFAnomalyValue(double value) {
 		this.lofAnomalyValue = value;
 	}

@@ -23,6 +23,7 @@ public class EventListCell extends ListCell<Event> {
 
     @FXML Label eventConnectionName;
     @FXML Label machineEventEventDescriptionLabel;
+    @FXML Label machineEventAttributesLabel;
     @FXML Label machineEventAnomalyScore;
     @FXML Pane machineEventColorBar;
 
@@ -49,23 +50,24 @@ public class EventListCell extends ListCell<Event> {
             Event event = getListView().getItems().get(super.getIndex());
 
             Double anomalyScore = 0.0;
-            String eventDescription = "";
+            String eventAttributes = "";
             Map<String, String> attributes = event.getAttributes();
             for (String attributeName : attributes.keySet()) {
                 if (attributeName.equalsIgnoreCase("anomalyScore")) {
                     anomalyScore = Double.parseDouble(attributes.get(attributeName));
                 } else {
-                    eventDescription += attributeName + ": " + attributes.get(attributeName) + "\n";
+                    eventAttributes += attributeName + ": " + attributes.get(attributeName) + "\n";
                 }
             }
 
-            machineEventEventDescriptionLabel.setText(eventDescription);
+            machineEventEventDescriptionLabel.setText(item.getConnection().getSocketInfo().getDescription());
+            machineEventAttributesLabel.setText(eventAttributes);
             machineEventAnomalyScore.setText("Anomaly Score: " + anomalyScore.toString());
 
             String color = getColor(anomalyScore);
             machineEventColorBar.setStyle(color + " " + "-fx-effect: innershadow(gaussian, black, 4, 0.4, 0, 0)");
 
-            eventConnectionName.setText(item.getConnection().getSocketInfo().getQueryName());
+            eventConnectionName.setText(item.getConnection().getSocketInfo().getConnectionName());
 
 
             setGraphic(root);

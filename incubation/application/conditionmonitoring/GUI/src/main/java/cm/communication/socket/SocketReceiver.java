@@ -8,7 +8,8 @@ import cm.communication.transformStrategies.TransformStrategyFactory;
 import cm.data.DataHandler;
 import cm.model.Event;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +30,14 @@ public class SocketReceiver {
         this.socketReceiverThread = new SocketReceiveThread(socketInfo);
         this.socketReceiverThread.setDaemon(true); // To stop the thread when the user closes the main window
         this.socketReceiverThread.start();
+    }
+
+    public SocketInfo getSocketInfo() {
+        return socketInfo;
+    }
+
+    public void stopReceiver() {
+        this.socketReceiverThread.interrupt();
     }
 
     class SocketReceiveThread extends Thread {
@@ -74,13 +83,5 @@ public class SocketReceiver {
                 e.printStackTrace();
             }
         }
-    }
-
-    public SocketInfo getSocketInfo() {
-        return socketInfo;
-    }
-
-    public void stopReceiver() {
-        this.socketReceiverThread.interrupt();
     }
 }

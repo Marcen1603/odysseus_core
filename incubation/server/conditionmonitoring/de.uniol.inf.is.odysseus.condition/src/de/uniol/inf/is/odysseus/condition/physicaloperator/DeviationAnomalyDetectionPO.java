@@ -409,7 +409,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
-		if (this.isTimeSensitive && port == DATA_PORT) {
+		if (this.isTimeSensitive) {
 			for (Long groupId : deviationInfo.keySet()) {
 				DeviationInformation info = this.deviationInfo.get(groupId);
 				T lastDataTuple = this.lastDataTuples.get(groupId);

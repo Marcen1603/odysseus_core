@@ -63,6 +63,9 @@ public class CommunicationService {
                 Map<Integer, SocketInfo> singleSocketInfos = socketInfos.get(operatorName);
                 for (int operatorOutputPort : singleSocketInfos.keySet()) {
                     SocketInfo socketInfo = singleSocketInfos.get(operatorOutputPort);
+                    // Add additional information to socketInformation
+                    socketInfo.setConnectionName(connectionInformation.getName());
+                    socketInfo.setDescription(connectionInformation.getDescription());
                     SocketReceiver receiver = new SocketReceiver(socketInfo);
                     receiverList.add(receiver);
                     ConnectionHandler.getInstance().addConnection(receiver);

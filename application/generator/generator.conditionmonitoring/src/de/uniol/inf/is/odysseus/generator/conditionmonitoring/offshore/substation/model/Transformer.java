@@ -10,9 +10,9 @@ import de.uniol.inf.is.odysseus.generator.conditionmonitoring.offshore.windpark.
 
 public class Transformer implements Observer {
 
-	private static final double HEAT_INTERCHANGE_DEGREE = 0.05;
+	private static final double HEAT_INTERCHANGE_DEGREE = 0.1;
 	private static final double HEATUP_DEGREE = 0.02;
-	private static final double STANDARD_WATER_FLOW_LITRES = 1000;
+	private static final double STANDARD_WATER_FLOW_LITRES = 2000;
 	private static final double MAX_TEMPERATURE = 200;
 
 	private Pipe coolPipe;

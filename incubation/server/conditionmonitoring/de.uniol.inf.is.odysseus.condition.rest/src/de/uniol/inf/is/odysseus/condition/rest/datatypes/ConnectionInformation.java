@@ -6,6 +6,8 @@ import de.uniol.inf.is.odysseus.rest.socket.AttributeInformation;
 
 public class ConnectionInformation {
 
+	private String name;
+	private String description;
 	private String ip;
 	private int queryId;
 	private String queryName;
@@ -14,6 +16,22 @@ public class ConnectionInformation {
 	private String operatorName;
 	private int operatorOutputPort;
 	private boolean useOperatorOutputPort;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	public String getIp() {
 		return ip;
@@ -84,12 +102,15 @@ public class ConnectionInformation {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((ip == null) ? 0 : ip.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((operatorName == null) ? 0 : operatorName.hashCode());
 		result = prime * result + operatorOutputPort;
 		result = prime * result + queryId;
 		result = prime * result + ((queryName == null) ? 0 : queryName.hashCode());
 		result = prime * result + (useName ? 1231 : 1237);
+		result = prime * result + (useOperatorOutputPort ? 1231 : 1237);
 		return result;
 	}
 
@@ -107,10 +128,20 @@ public class ConnectionInformation {
 				return false;
 		} else if (!attributes.equals(other.attributes))
 			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
 		if (ip == null) {
 			if (other.ip != null)
 				return false;
 		} else if (!ip.equals(other.ip))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
 			return false;
 		if (operatorName == null) {
 			if (other.operatorName != null)
@@ -127,6 +158,8 @@ public class ConnectionInformation {
 		} else if (!queryName.equals(other.queryName))
 			return false;
 		if (useName != other.useName)
+			return false;
+		if (useOperatorOutputPort != other.useOperatorOutputPort)
 			return false;
 		return true;
 	}

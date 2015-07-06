@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupPro
 public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
 
 	public static final int DATA_OUT = 1;
-	
+
 	private String valueAttributeName;
 	private double manualStandardDeviation;
 	private double manualMean;
@@ -177,8 +177,9 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		output.setAttribute(1, info.mean);
 		output.setAttribute(2, info.standardDeviation);
 		transfer(output);
-		
-		// Transfer original data (with group) on port 1 (the next operator needs to map the groups identical)
+
+		// Transfer original data (with group) on port 1 (the next operator
+		// needs to map the groups identical)
 		Tuple<ITimeInterval> inputDataWithGroup = new Tuple<ITimeInterval>(1, false);
 		inputDataWithGroup.setMetadata(tuple.getMetadata());
 		inputDataWithGroup.setAttribute(0, gId);
@@ -229,7 +230,8 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 	 * @param start
 	 *            Start timestamp from the newest tuple
 	 */
-	private void removeOldValues(List<T> tuples, PointInTime start, DeviationInformation info, boolean exactCalculation) {
+	private void removeOldValues(List<T> tuples, PointInTime start, DeviationInformation info,
+			boolean exactCalculation) {
 		Iterator<T> iter = tuples.iterator();
 		while (iter.hasNext()) {
 			T next = iter.next();
@@ -367,7 +369,7 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		for (T tuple : tuples) {
 			info.sum2 += (getValue(tuple) - info.mean) * (getValue(tuple) - info.mean);
 		}
-		
+
 		double variance = 0;
 		if (info.sum2 != 0) {
 			// We have more than one value / not all values have the same value

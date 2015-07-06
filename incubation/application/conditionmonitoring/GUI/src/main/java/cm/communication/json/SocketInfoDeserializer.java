@@ -32,7 +32,7 @@ public class SocketInfoDeserializer implements JsonDeserializer<SocketInfo> {
             socketSchema.add(attributeInformation);
         }
 
-        SocketInfo socketInfo = new SocketInfo(ip, socketPort, socketSchema, "");
+        SocketInfo socketInfo = new SocketInfo(ip, socketPort, socketSchema);
         return socketInfo;
     }
 }

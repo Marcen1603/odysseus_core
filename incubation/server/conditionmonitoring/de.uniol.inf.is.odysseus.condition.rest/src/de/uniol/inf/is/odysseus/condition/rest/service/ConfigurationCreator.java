@@ -43,6 +43,7 @@ public class ConfigurationCreator {
 		// -------------
 		// The temperature of the transformer
 		ConnectionInformation conTransformer = new ConnectionInformation();
+		conTransformer.setName("Transformer temperature");
 		conTransformer.setIp("127.0.0.1");
 		conTransformer.setQueryName("transformer");
 		conTransformer.setUseName(true);
@@ -52,6 +53,7 @@ public class ConfigurationCreator {
 
 		// The throughput of the big cooling pipe
 		ConnectionInformation conBigPipeOut = new ConnectionInformation();
+		conBigPipeOut.setName("Big cooling pipe");
 		conBigPipeOut.setIp("127.0.0.1");
 		conBigPipeOut.setQueryName("bigPipeOutput");
 		conBigPipeOut.setUseName(true);
@@ -61,6 +63,7 @@ public class ConfigurationCreator {
 
 		// The windspeed on the northsea
 		ConnectionInformation conWindspeed = new ConnectionInformation();
+		conWindspeed.setName("Windspeed");
 		conWindspeed.setIp("127.0.0.1");
 		conWindspeed.setQueryName("windspeedQuery");
 		conWindspeed.setUseName(true);
@@ -72,6 +75,8 @@ public class ConfigurationCreator {
 		// -------
 		// The pattern analysis of the cooling system
 		ConnectionInformation conPumpPattern = new ConnectionInformation();
+		conPumpPattern.setName("Pumpswitch pattern");
+		conPumpPattern.setDescription("The pattern of closing / opening valves and starting / stopping is anomal.");
 		conPumpPattern.setIp("127.0.0.1");
 		conPumpPattern.setQueryName("pumpPatternAnalysis");
 		conPumpPattern.setUseName(true);
@@ -81,6 +86,8 @@ public class ConfigurationCreator {
 
 		// The temperature analysis of the transformer (valueArea)
 		ConnectionInformation conTempValueAreaAnalysis = new ConnectionInformation();
+		conTempValueAreaAnalysis.setName("Transformer temperature");
+		conTempValueAreaAnalysis.setDescription("The temperature of the transformer is too cold or too hot.");
 		conTempValueAreaAnalysis.setIp("127.0.0.1");
 		conTempValueAreaAnalysis.setQueryName("transformerTempAnalysis");
 		conTempValueAreaAnalysis.setUseName(true);
@@ -90,6 +97,8 @@ public class ConfigurationCreator {
 
 		// The temperature analysis of the transformer (valueArea)
 		ConnectionInformation conTempChangeAnalysis = new ConnectionInformation();
+		conTempChangeAnalysis.setName("Transformer temperature");
+		conTempChangeAnalysis.setDescription("The temperature of the transformer changed too quick.");
 		conTempChangeAnalysis.setIp("127.0.0.1");
 		conTempChangeAnalysis.setQueryName("transformerTempAnalysis");
 		conTempChangeAnalysis.setUseName(true);
@@ -99,12 +108,47 @@ public class ConfigurationCreator {
 
 		// The flow of the cooling pipe
 		ConnectionInformation conCoolingPipeValueArea = new ConnectionInformation();
+		conCoolingPipeValueArea.setName("Cooling pipe");
+		conCoolingPipeValueArea.setDescription("The amount of water in the cooling pipe is not ok.");
 		conCoolingPipeValueArea.setIp("127.0.0.1");
 		conCoolingPipeValueArea.setQueryName("coolingPipeThroughput");
 		conCoolingPipeValueArea.setUseName(true);
 		conCoolingPipeValueArea.setOperatorName("coolingPipeValue");
 		conCoolingPipeValueArea.setOperatorOutputPort(0);
 		conCoolingPipeValueArea.setUseOperatorOutputPort(true);
+
+		// Cohort analysis of the windturbines (Deviation)
+		ConnectionInformation conCohortDeviation = new ConnectionInformation();
+		conCohortDeviation.setName("Windturbines");
+		conCohortDeviation.setDescription("The amount of produced energy of one windtubine is different from the other turbines.");
+		conCohortDeviation.setIp("127.0.0.1");
+		conCohortDeviation.setQueryName("windturbineCohort");
+		conCohortDeviation.setUseName(true);
+		conCohortDeviation.setOperatorName("cohortDeviationOutput");
+		conCohortDeviation.setOperatorOutputPort(0);
+		conCohortDeviation.setUseOperatorOutputPort(true);
+
+		// Cohort analysis of the windturbines (LOF)
+		ConnectionInformation conCohortLOF = new ConnectionInformation();
+		conCohortLOF.setName("Windturbines");
+		conCohortLOF.setDescription("The amount of produced energy of one windtubine is different from the other turbines.");
+		conCohortLOF.setIp("127.0.0.1");
+		conCohortLOF.setQueryName("windturbineCohort");
+		conCohortLOF.setUseName(true);
+		conCohortLOF.setOperatorName("cohortLOFOutput");
+		conCohortLOF.setOperatorOutputPort(0);
+		conCohortLOF.setUseOperatorOutputPort(true);
+
+		// Interval analysis for pump switches
+		ConnectionInformation conIntervalPumpSwitch = new ConnectionInformation();
+		conIntervalPumpSwitch.setName("Pump switches");
+		conIntervalPumpSwitch.setDescription("The time between a pump switch is anomal.");
+		conIntervalPumpSwitch.setIp("127.0.0.1");
+		conIntervalPumpSwitch.setQueryName("pumpSwitchInterval");
+		conIntervalPumpSwitch.setUseName(true);
+		conIntervalPumpSwitch.setOperatorName("deviationIntervalOut");
+		conIntervalPumpSwitch.setOperatorOutputPort(0);
+		conIntervalPumpSwitch.setUseOperatorOutputPort(true);
 
 		connectionInformation.add(conTransformer);
 		connectionInformation.add(conBigPipeOut);
@@ -113,6 +157,9 @@ public class ConfigurationCreator {
 		connectionInformation.add(conTempValueAreaAnalysis);
 		connectionInformation.add(conTempChangeAnalysis);
 		connectionInformation.add(conCoolingPipeValueArea);
+		connectionInformation.add(conCohortDeviation);
+		connectionInformation.add(conCohortLOF);
+		connectionInformation.add(conIntervalPumpSwitch);
 		clientConfig.setConnectionInformation(connectionInformation);
 
 		// Overview
@@ -125,6 +172,9 @@ public class ConfigurationCreator {
 		overviewConnections.add(conTempValueAreaAnalysis);
 		overviewConnections.add(conTempChangeAnalysis);
 		overviewConnections.add(conCoolingPipeValueArea);
+		overviewConnections.add(conCohortDeviation);
+		overviewConnections.add(conCohortLOF);
+		overviewConnections.add(conIntervalPumpSwitch);
 		overviewInformation.setOverviewConnections(overviewConnections);
 
 		// Visualizations
@@ -196,6 +246,8 @@ public class ConfigurationCreator {
 		coolingSystemCollection.addAreaChartVisualizationInformation(bigCoolingPipeThorughputAreaChart);
 		List<ConnectionInformation> coolingSystemConnections = new ArrayList<>();
 		coolingSystemConnections.add(conPumpPattern);
+		coolingSystemConnections.add(conIntervalPumpSwitch);
+		coolingSystemConnections.add(conCoolingPipeValueArea);
 		// Link
 		bigCoolingPipeThorughputAreaChart.setCollectionLink(coolingSystemCollection.getIdentifier());
 
@@ -227,6 +279,12 @@ public class ConfigurationCreator {
 				"OdysseusScript");
 		serverConfig.addQueryPath(
 				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\coolingPipeFlowAnalysis.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\windturbineCohortAnalysis.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pumpSwitchIntervalAnalysis.qry",
 				"OdysseusScript");
 
 		// Put these to the big config

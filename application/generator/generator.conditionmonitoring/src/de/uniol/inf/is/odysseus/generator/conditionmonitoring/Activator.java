@@ -226,6 +226,7 @@ public class Activator implements BundleActivator {
 			sc = new Scanner(System.in);
 			while (sc.hasNextLine()) {
 				String command = sc.nextLine();
+				// Valve 2
 				if (command.equalsIgnoreCase("switchValve2")) {
 					if (substationManager.getValve2().isOpen()) {
 						substationManager.getValve2().close();
@@ -234,6 +235,7 @@ public class Activator implements BundleActivator {
 						substationManager.getValve2().open();
 						System.out.println("Opened valve 2");
 					}
+					// Pump 1
 				} else if (command.equalsIgnoreCase("defectPump1")) {
 					substationManager.getPump1().setDefect(true);
 					System.out.println("Ooops, Pump 1 is now defect");
@@ -241,7 +243,23 @@ public class Activator implements BundleActivator {
 					substationManager.getPump1().setDefect(false);
 					System.out.println("Repaired Pump 1");
 				}
-				Thread.sleep(10);
+				// Windturbine 0
+				else if (command.equalsIgnoreCase("defectTurbine0")) {
+					windparkManager.getWindturbines().get(0).setDefect(true);
+					System.out.println("Windturbine 0 is now defect");
+				} else if (command.equalsIgnoreCase("repairTurbine0")) {
+					windparkManager.getWindturbines().get(0).setDefect(false);
+					System.out.println("Windturbine 0 was repaired");
+				}
+				// Last windturbine
+				else if (command.equalsIgnoreCase("defectLastTurbine")) {
+					windparkManager.getWindturbines().get(windparkManager.getWindturbines().size() - 1).setDefect(true);
+					System.out.println("Last windturbine is now defect");
+				} else if (command.equalsIgnoreCase("repairLastTurbine")) {
+					windparkManager.getWindturbines().get(windparkManager.getWindturbines().size() - 1)
+							.setDefect(false);
+					System.out.println("Last windturbine was repaired");
+				}
 			}
 		}
 	}
