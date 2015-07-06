@@ -98,7 +98,7 @@ public class ConfigurationCreator {
 		// The temperature analysis of the transformer (valueArea)
 		ConnectionInformation conTempChangeAnalysis = new ConnectionInformation();
 		conTempChangeAnalysis.setName("Transformer temperature");
-		conTempChangeAnalysis.setDescription("The temperature of the transformer changed too quick.");
+		conTempChangeAnalysis.setDescription("The temperature of the transformer changed too quickly.");
 		conTempChangeAnalysis.setIp("127.0.0.1");
 		conTempChangeAnalysis.setQueryName("transformerTempAnalysis");
 		conTempChangeAnalysis.setUseName(true);

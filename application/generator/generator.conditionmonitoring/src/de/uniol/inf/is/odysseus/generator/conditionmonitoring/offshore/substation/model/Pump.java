@@ -30,7 +30,7 @@ public class Pump extends Observable {
 			return;
 		}
 		// Start pump
-		final int neededSteps = 10;
+		final int neededSteps = 20;
 		long startUpDelay = 0; // 0 seconds
 		long stepDelay = 5 * 100; // 0.5 seconds
 		final Timer startUpTimer = new Timer();
@@ -50,7 +50,7 @@ public class Pump extends Observable {
 
 	public void shutDownPump() {
 		// Start pump
-		final int neededSteps = 10;
+		final int neededSteps = 20;
 		long startUpDelay = 0; // 0 seconds
 		long stepDelay = 5 * 100; // 0.5 seconds
 		final Timer shutDownTimer = new Timer();

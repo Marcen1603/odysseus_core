@@ -62,7 +62,10 @@ public class EventListCell extends ListCell<Event> {
 
             machineEventEventDescriptionLabel.setText(item.getConnection().getSocketInfo().getDescription());
             machineEventAttributesLabel.setText(eventAttributes);
-            machineEventAnomalyScore.setText("Anomaly Score: " + anomalyScore.toString());
+            if (anomalyScore > 0)
+                machineEventAnomalyScore.setText("Anomaly Score: " + anomalyScore.toString());
+            else
+                machineEventAnomalyScore.setText("");
 
             String color = getColor(anomalyScore);
             machineEventColorBar.setStyle(color + " " + "-fx-effect: innershadow(gaussian, black, 4, 0.4, 0, 0)");
