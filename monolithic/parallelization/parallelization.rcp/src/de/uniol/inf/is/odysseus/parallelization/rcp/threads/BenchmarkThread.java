@@ -12,6 +12,8 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBench
 
 public class BenchmarkThread extends Thread {
 
+	private static final String PRE_TRANSFORM_TOKEN = "#PRETRANSFORM BenchmarkPreTransformation";
+	
 	private static Logger LOG = LoggerFactory
 			.getLogger(BenchmarkThread.class);
 	private UUID processUid;
@@ -88,6 +90,7 @@ public class BenchmarkThread extends Thread {
 			builder.append(queryStringLine);
 			// put parallelization keywords directly after parser command
 			if (queryStringLine.trim().startsWith("#PARSER")) {
+				builder.append(PRE_TRANSFORM_TOKEN);
 				builder.append(benchmarkerExecution.getOdysseusScript());
 			}
 		}
@@ -99,15 +102,6 @@ public class BenchmarkThread extends Thread {
 		executionThread.setDaemon(true);
 		executionThread.start();
 
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		executionThread.update(null, null);
-		
 		try {
 			// wait for the execution thread to finish. if its finish start next execution
 			executionThread.join();

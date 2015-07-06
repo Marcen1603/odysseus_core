@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.parallelization.physicaloperator.ObserverCounterPOHelper;
-import de.uniol.inf.is.odysseus.parallelization.physicaloperator.ObserverCounterRegistry;
+import de.uniol.inf.is.odysseus.parallelization.benchmark.physicaloperator.BenchmarkObserverRegistry;
+import de.uniol.inf.is.odysseus.parallelization.benchmark.physicaloperator.BenchmarkPOObservable;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerExecution;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -19,8 +19,10 @@ import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class BenchmarkExecutionThread extends Thread implements Observer{
 	private static final int MAXIMUM_EXECUTION_TIME = 80000;
+	
 	private static Logger LOG = LoggerFactory
 			.getLogger(BenchmarkThread.class);
+	
 	private String queryString;
 	private BenchmarkerExecution benchmarkerExecution;
 	private BenchmarkDataHandler data;
@@ -40,7 +42,7 @@ public class BenchmarkExecutionThread extends Thread implements Observer{
 	public void run() {
 		LOG.debug("Executing benchmark query");
 
-		ObserverCounterRegistry registry = ObserverCounterRegistry.getInstance();
+		BenchmarkObserverRegistry registry = BenchmarkObserverRegistry.getInstance();
 		registry.registerObserver(observerUUID, this);
 		
 		executor = OdysseusRCPEditorTextPlugIn.getExecutor();
@@ -54,14 +56,16 @@ public class BenchmarkExecutionThread extends Thread implements Observer{
 			Thread.sleep(MAXIMUM_EXECUTION_TIME);
 		} catch (InterruptedException e) {
 			benchmarkerExecution.setExecutionTime(MAXIMUM_EXECUTION_TIME);
+		} finally {
+			registry.unregisterObserver(null, observerUUID);			
 		}
 	}
 
 	@Override
 	public void update(Observable observable, Object arg) {
-		if (observable instanceof ObserverCounterPOHelper){
-			ObserverCounterPOHelper counterPOHelper = (ObserverCounterPOHelper) observable;
-			ObserverCounterRegistry registry = ObserverCounterRegistry.getInstance();
+		if (observable instanceof BenchmarkPOObservable){
+			BenchmarkPOObservable counterPOHelper = (BenchmarkPOObservable) observable;
+			BenchmarkObserverRegistry registry = BenchmarkObserverRegistry.getInstance();
 			registry.unregisterObserver(counterPOHelper, observerUUID);
 		}
 		
