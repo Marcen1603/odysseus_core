@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransfor
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parallelization.benchmark.logicaloperator.BenchmarkAO;
+import de.uniol.inf.is.odysseus.parallelization.benchmark.logicaloperator.ObserverBenchmarkAO;
 
 public class BenchmarkPreTransformationHandler implements
 		IPreTransformationHandler {
@@ -37,13 +37,13 @@ public class BenchmarkPreTransformationHandler implements
 						.getTarget();
 				topAO.unsubscribeFromSource(logicalSubscription);
 
-				BenchmarkAO benchmarkAO = new BenchmarkAO();
+				ObserverBenchmarkAO observerBenchmarkAO = new ObserverBenchmarkAO();
 
-				sourceOperator.subscribeSink(benchmarkAO, 0,
+				sourceOperator.subscribeSink(observerBenchmarkAO, 0,
 						logicalSubscription.getSourceOutPort(),
 						logicalSubscription.getSchema());
 
-				benchmarkAO.subscribeSink(topAO,
+				observerBenchmarkAO.subscribeSink(topAO,
 						logicalSubscription.getSinkInPort(), 0,
 						logicalSubscription.getSchema());
 			}

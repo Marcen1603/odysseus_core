@@ -18,7 +18,7 @@ public class BenchmarkPOObservable extends Observable{
 	
 	public void updateObservers(){
 		for (Observer observer : observerMap.values()) {
-			observer.update(this, null);
+			observer.update(this, 4l);
 		}
 	}
 	

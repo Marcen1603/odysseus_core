@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class BenchmarkExecutionThread extends Thread implements Observer{
-	private static final int MAXIMUM_EXECUTION_TIME = 80000;
+	private static final int MAXIMUM_EXECUTION_TIME = 8000;
 	
 	private static Logger LOG = LoggerFactory
 			.getLogger(BenchmarkThread.class);
@@ -54,9 +54,12 @@ public class BenchmarkExecutionThread extends Thread implements Observer{
 		}
 		try {
 			Thread.sleep(MAXIMUM_EXECUTION_TIME);
-		} catch (InterruptedException e) {
 			benchmarkerExecution.setExecutionTime(MAXIMUM_EXECUTION_TIME);
+		} catch (InterruptedException e) {
 		} finally {
+			for (Integer queryId : queryIds) {
+				executor.removeQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
+			}
 			registry.unregisterObserver(null, observerUUID);			
 		}
 	}
@@ -68,15 +71,12 @@ public class BenchmarkExecutionThread extends Thread implements Observer{
 			BenchmarkObserverRegistry registry = BenchmarkObserverRegistry.getInstance();
 			registry.unregisterObserver(counterPOHelper, observerUUID);
 		}
-		
-		for (Integer queryId : queryIds) {
-			executor.removeQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
-		}
-
 		long executionTime = 0l;
 		if (arg instanceof Long){
 			executionTime = (Long) arg;
 		} 
 		benchmarkerExecution.setExecutionTime(executionTime);
+		this.interrupt();
+	
 	}
 }

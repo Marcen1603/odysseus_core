@@ -4,18 +4,18 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class BenchmarkPO<T extends IStreamObject<?>> extends AbstractPipe<T,T>{
+public class ObserverBenchmarkPO<T extends IStreamObject<?>> extends AbstractPipe<T,T>{
 
 	private Long counter = 0l;
 	private BenchmarkPOObservable helper;
 	
 
-	public BenchmarkPO()  {
+	public ObserverBenchmarkPO()  {
         super();
 		this.helper = new BenchmarkPOObservable();
     }
  
-    public BenchmarkPO(BenchmarkPO<T> observerCounterPO) {
+    public ObserverBenchmarkPO(ObserverBenchmarkPO<T> observerCounterPO) {
         super();
         this.helper = new BenchmarkPOObservable();
     }
@@ -32,12 +32,13 @@ public class BenchmarkPO<T extends IStreamObject<?>> extends AbstractPipe<T,T>{
 
 	@Override
 	protected void process_next(T object, int port) {
-		if (counter < 200){
+		if (counter < 2000){
 			counter++;
-			if (counter == 200){
+			if (counter == 2000){
 				helper.updateObservers();
 			}			
 		}
+		transfer(object);
 	}
 
 	
