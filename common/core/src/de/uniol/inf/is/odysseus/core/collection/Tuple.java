@@ -243,8 +243,13 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
     private static Object[] cloneAttributes(Object[] attr) {
         Object[] clone = new Object[attr.length];
         for (int i = 0; i < clone.length; i++) {
-            // TODO Optimize: Collect positions of primitive datatypes and
+            // null needs to clone
+        	if (attr[i] == null){
+            	continue;
+            }
+        	// TODO Optimize: Collect positions of primitive datatypes and
             // perform System arraycopy on them (CKu)
+        	
             if (immutables.contains(attr[i].getClass())) {
                 clone[i] = attr[i];
             }
