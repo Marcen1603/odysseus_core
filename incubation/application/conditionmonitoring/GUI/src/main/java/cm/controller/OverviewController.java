@@ -9,6 +9,8 @@ import cm.configuration.VisualizationInformation;
 import cm.data.DataHandler;
 import cm.model.Event;
 import cm.view.GaugeElement;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
@@ -16,6 +18,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.FlowPane;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -136,7 +139,8 @@ public class OverviewController implements Observer {
                             counterMap.put(visualInfo, timeAttribute);
                         }
 
-                        series.getData().add(new XYChart.Data<>(timeAttribute, value));
+
+                        series.getData().add(new XYChart.Data<Number, Number>(timeAttribute, value));
                         if (areaChartVisualizationInformation.getMaxElements() > 0 && series.getData().size() > areaChartVisualizationInformation.getMaxElements()) {
                             series.getData().remove(0);
                         }

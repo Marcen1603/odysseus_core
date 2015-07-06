@@ -54,6 +54,7 @@ public class RarePatternAO extends BinaryLogicalOp {
 		super(ao);
 		this.depth = ao.getDepth();
 		this.minRelativeFrequencyPath = ao.getMinRelativeFrequencyPath();
+		this.minRelativeFrequencyNode = ao.getMinRelativeFrequencyNode();
 		this.firstTupleIsRoot = ao.isFirstTupleIsRoot();
 		this.uniqueBackupId = ao.getUniqueBackupId();
 	}

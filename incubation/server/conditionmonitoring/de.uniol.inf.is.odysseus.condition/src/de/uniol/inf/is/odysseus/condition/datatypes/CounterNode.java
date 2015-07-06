@@ -111,7 +111,7 @@ public class CounterNode {
 	 */
 	public boolean pathHasSeldomNode(double minRelativeFrequencyNode) {
 		CounterNode currentNode = this;
-		while (currentNode != null && currentNode.getParent() != null) {
+		while (currentNode != null) {
 			double relativeFrequency = currentNode.calcRelativeFrequencyToSiblings();
 			if (relativeFrequency < minRelativeFrequencyNode)
 				return true;
@@ -129,19 +129,15 @@ public class CounterNode {
 	 * @return The relative frequency of this node
 	 */
 	public double calcRelativeFrequencyToSiblings() {
-		// The second check is needed to avoid that we use the root
-		if (this.getParent() != null && this.getParent().getParent() != null) {
-			double subTreeCount = this.getParent().getCount();
-			return this.getCount() / subTreeCount;
-		} else if (this.getParent() != null) {
+		if (this.getParent() != null) {
 			// This is the case if our direct parent is the root
 			// As the root does not count (cause the case "root" never occurs)
 			// we have to sum the counts of all children of the root
 			double subTreeCount = 0;
 			for (CounterNode child : this.getParent().getChildren()) {
 				subTreeCount += child.getCount();
-				return this.getCount() / subTreeCount;
 			}
+			return this.getCount() / subTreeCount;
 		}
 		return 1;
 	}

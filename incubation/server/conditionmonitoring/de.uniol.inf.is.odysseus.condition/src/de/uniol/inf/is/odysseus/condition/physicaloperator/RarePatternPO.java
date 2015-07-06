@@ -97,7 +97,6 @@ public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends 
 				Tuple newTuple = tuple.append(1.0 - relativeFrequencyOfPath).append(relativeFrequencyOfPath)
 						.append(path);
 				transfer(newTuple);
-				return;
 			}
 		} else if (port == BACKUP_PORT) {
 			// Get backup data

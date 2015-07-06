@@ -101,15 +101,15 @@ public class OffshoreSubstationManager implements Observer {
 	}
 
 	public void switchPump() {
-		if (!this.pump3.isRunning()) {
+		if (!this.pump3.isRunning() && !this.pump3.isDefect()) {
 			// switch on pump 3
 			this.valve3.open();
 			this.pump3.startPump();
-		} else if (!this.pump1.isRunning()) {
+		} else if (!this.pump1.isRunning() && !this.pump1.isDefect()) {
 			// switch on pump 1
 			this.valve1.open();
 			this.pump1.startPump();
-		} else if (!this.pump2.isRunning()) {
+		} else if (!this.pump2.isRunning() && !this.pump2.isDefect()) {
 			// switch on pump 2
 			this.valve2.open();
 			this.pump2.startPump();
@@ -134,18 +134,18 @@ public class OffshoreSubstationManager implements Observer {
 				this.valve1.close();
 			}
 		} else if (o == this.pump2) {
-			if (this.pump2.isRunning()) {
+			if (this.pump2.isRunning() && this.pump1.isRunning()) {
 				// Pump 2 was started successfully, we can now shut down pump 3
 				this.pump3.shutDownPump();
-			} else {
+			} else if (!this.pump2.isRunning()) {
 				// Pump 2 is shut down
 				this.valve2.close();
 			}
-		} else if (o == this.pump3) {
+		} else if (o == this.pump3 && this.pump2.isRunning()) {
 			if (this.pump3.isRunning()) {
 				// Pump 3 was started successfully, we can now shut down pump 1
 				this.pump1.shutDownPump();
-			} else {
+			} else if(!this.pump3.isRunning()) {
 				// Pump 3 is shut down
 				this.valve3.close();
 			}

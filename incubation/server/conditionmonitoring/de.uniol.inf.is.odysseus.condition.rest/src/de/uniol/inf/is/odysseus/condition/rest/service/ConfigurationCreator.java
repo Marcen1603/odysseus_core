@@ -39,6 +39,8 @@ public class ConfigurationCreator {
 		// --------------------------------
 		List<ConnectionInformation> connectionInformation = new ArrayList<>();
 
+		// Simple values
+		// -------------
 		// The temperature of the transformer
 		ConnectionInformation conTransformer = new ConnectionInformation();
 		conTransformer.setIp("127.0.0.1");
@@ -66,18 +68,63 @@ public class ConfigurationCreator {
 		conWindspeed.setOperatorOutputPort(0);
 		conWindspeed.setUseOperatorOutputPort(true);
 
+		// Analysis
+		// -------
+		// The pattern analysis of the cooling system
+		ConnectionInformation conPumpPattern = new ConnectionInformation();
+		conPumpPattern.setIp("127.0.0.1");
+		conPumpPattern.setQueryName("pumpPatternAnalysis");
+		conPumpPattern.setUseName(true);
+		conPumpPattern.setOperatorName("pumpRarePattern");
+		conPumpPattern.setOperatorOutputPort(0);
+		conPumpPattern.setUseOperatorOutputPort(true);
+
+		// The temperature analysis of the transformer (valueArea)
+		ConnectionInformation conTempValueAreaAnalysis = new ConnectionInformation();
+		conTempValueAreaAnalysis.setIp("127.0.0.1");
+		conTempValueAreaAnalysis.setQueryName("transformerTempAnalysis");
+		conTempValueAreaAnalysis.setUseName(true);
+		conTempValueAreaAnalysis.setOperatorName("valueTemp");
+		conTempValueAreaAnalysis.setOperatorOutputPort(0);
+		conTempValueAreaAnalysis.setUseOperatorOutputPort(true);
+
+		// The temperature analysis of the transformer (valueArea)
+		ConnectionInformation conTempChangeAnalysis = new ConnectionInformation();
+		conTempChangeAnalysis.setIp("127.0.0.1");
+		conTempChangeAnalysis.setQueryName("transformerTempAnalysis");
+		conTempChangeAnalysis.setUseName(true);
+		conTempChangeAnalysis.setOperatorName("changeTemp");
+		conTempChangeAnalysis.setOperatorOutputPort(0);
+		conTempChangeAnalysis.setUseOperatorOutputPort(true);
+
+		// The flow of the cooling pipe
+		ConnectionInformation conCoolingPipeValueArea = new ConnectionInformation();
+		conCoolingPipeValueArea.setIp("127.0.0.1");
+		conCoolingPipeValueArea.setQueryName("coolingPipeThroughput");
+		conCoolingPipeValueArea.setUseName(true);
+		conCoolingPipeValueArea.setOperatorName("coolingPipeValue");
+		conCoolingPipeValueArea.setOperatorOutputPort(0);
+		conCoolingPipeValueArea.setUseOperatorOutputPort(true);
+
 		connectionInformation.add(conTransformer);
 		connectionInformation.add(conBigPipeOut);
 		connectionInformation.add(conWindspeed);
+		connectionInformation.add(conPumpPattern);
+		connectionInformation.add(conTempValueAreaAnalysis);
+		connectionInformation.add(conTempChangeAnalysis);
+		connectionInformation.add(conCoolingPipeValueArea);
 		clientConfig.setConnectionInformation(connectionInformation);
-		
+
 		// Overview
 		// --------
 		OverviewInformation overviewInformation = new OverviewInformation();
 		clientConfig.setOverviewInformation(overviewInformation);
-		
+
 		List<ConnectionInformation> overviewConnections = new ArrayList<>();
-		overviewConnections.add(conWindspeed);
+		overviewConnections.add(conPumpPattern);
+		overviewConnections.add(conTempValueAreaAnalysis);
+		overviewConnections.add(conTempChangeAnalysis);
+		overviewConnections.add(conCoolingPipeValueArea);
 		overviewInformation.setOverviewConnections(overviewConnections);
 
 		// Visualizations
@@ -92,15 +139,6 @@ public class ConfigurationCreator {
 		transformerTemperatureGauge.setMinValue(20.0);
 		transformerTemperatureGauge.setMaxValue(70.0);
 		transformerTemperatureGauge.setTitle("Transformer Temperature");
-
-		// GaugeVisualizationInformation devGauge = new
-		// GaugeVisualizationInformation();
-		// devGauge.setConnectionInformation(conLOF);
-		// devGauge.setAttribute("anomalyScore");
-		// devGauge.setMinValue(0.0);
-		// devGauge.setMaxValue(1.0);
-		// devGauge.setStretch(true);
-		// devGauge.setTitle("Anomaly Score LOF");
 
 		// The cooling pipe of the transformer
 		AreaChartVisualizationInformation bigCoolingPipeThorughputAreaChart = new AreaChartVisualizationInformation();
@@ -138,12 +176,9 @@ public class ConfigurationCreator {
 		// -----------
 		List<CollectionInformation> collections = new ArrayList<>();
 
+		// Transformer
 		CollectionInformation transformerCollection = new CollectionInformation();
 		transformerCollection.setName("Transformer");
-		// List<ConnectionInformation> connectionInformationList = new
-		// ArrayList<>();
-		// connectionInformationList.add(conDeviation);
-		// collectionInformation.setConnectionInformation(connectionInformationList);
 		transformerCollection.addGaugeVisualizationInformation(transformerTemperatureGauge);
 		// Define, how it should be colored
 		CollectionColoringInformation transformerColoring = new CollectionColoringInformation();
@@ -155,7 +190,17 @@ public class ConfigurationCreator {
 		// Add a link from this overview to a specific collection
 		transformerTemperatureGauge.setCollectionLink(transformerCollection.getIdentifier());
 
+		// Cooling system
+		CollectionInformation coolingSystemCollection = new CollectionInformation();
+		coolingSystemCollection.setName("Cooling System");
+		coolingSystemCollection.addAreaChartVisualizationInformation(bigCoolingPipeThorughputAreaChart);
+		List<ConnectionInformation> coolingSystemConnections = new ArrayList<>();
+		coolingSystemConnections.add(conPumpPattern);
+		// Link
+		bigCoolingPipeThorughputAreaChart.setCollectionLink(coolingSystemCollection.getIdentifier());
+
 		collections.add(transformerCollection);
+		collections.add(coolingSystemCollection);
 		clientConfig.setCollections(collections);
 
 		// --------------------
@@ -173,6 +218,15 @@ public class ConfigurationCreator {
 				"OdysseusScript");
 		serverConfig.addQueryPath(
 				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\windspeed.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pumpPatternAnalysis.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\transformerTemperatureAnalysis.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\coolingPipeFlowAnalysis.qry",
 				"OdysseusScript");
 
 		// Put these to the big config

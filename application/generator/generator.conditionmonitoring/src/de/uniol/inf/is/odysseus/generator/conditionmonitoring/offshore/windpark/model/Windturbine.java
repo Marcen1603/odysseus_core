@@ -16,6 +16,9 @@ public class Windturbine {
 	// In 1/min
 	public final static double MIN_ROTATION_SPEED = 5;
 	public final static double MAX_ROTATION_SPEED = 11;
+	
+	public final static double BREAK_DECELERATION = 0.1;
+	public final static double ACCELERATION = 0.3;
 
 	private Wind wind;
 
@@ -41,8 +44,19 @@ public class Windturbine {
 			// the turbine is able to produce energy
 			double usefulWindSpeed = wind.getWindSpeed() > MAX_POWER_WINDSPEED ? MAX_POWER_WINDSPEED
 					: wind.getWindSpeed();
-			this.rotationSpeed = MIN_ROTATION_SPEED + ((usefulWindSpeed - MIN_WINDSPEED)
+			double targetSpeed =  MIN_ROTATION_SPEED + ((usefulWindSpeed - MIN_WINDSPEED)
 					* ((MAX_ROTATION_SPEED - MIN_ROTATION_SPEED) / (MAX_POWER_WINDSPEED - MIN_WINDSPEED)));
+			if (this.rotationSpeed < targetSpeed) {
+				this.rotationSpeed += ACCELERATION * (targetSpeed - this.rotationSpeed);
+				if (this.rotationSpeed > targetSpeed) {
+					this.rotationSpeed = targetSpeed;
+				}
+			} else {
+				this.rotationSpeed -= ACCELERATION * (this.rotationSpeed - targetSpeed);
+				if (this.rotationSpeed < 0) {
+					this.rotationSpeed = 0;
+				}
+			}
 			double random = Math.random();
 			if (random > 0.5) {
 				this.rotationSpeed += Math.random();
@@ -53,7 +67,11 @@ public class Windturbine {
 				}
 			}
 		} else {
-			this.rotationSpeed = 0;
+			// Slow down the turbine until it's off
+			this.rotationSpeed -= this.rotationSpeed * BREAK_DECELERATION;
+			if (this.rotationSpeed < 0.5) {
+				this.rotationSpeed = 0;
+			}
 		}
 		this.energyOutput = ((this.rotationSpeed - MIN_ROTATION_SPEED) / (MAX_ROTATION_SPEED - MIN_ROTATION_SPEED)) * MAX_POWER_OUTPUT;
 		if (this.energyOutput < 0)

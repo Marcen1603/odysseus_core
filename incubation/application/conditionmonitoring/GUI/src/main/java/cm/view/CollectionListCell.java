@@ -54,7 +54,7 @@ public class CollectionListCell extends ListCell<Collection> implements ListChan
         } else {
             Collection collection = getListView().getItems().get(super.getIndex());
             if (!alreadyListening && collection.getColorConnection() != null) {
-                DataHandler.getInstance().getCollectionEvents(collection).addListener(this);
+                DataHandler.getInstance().getObservableEventList().addListener(this);
                 colorAttribute = collection.getColorAttribute();
                 minValue = collection.getMinValue();
                 maxValue = collection.getMaxValue();
@@ -63,7 +63,7 @@ public class CollectionListCell extends ListCell<Collection> implements ListChan
             }
 
             collectionName.setText(collection.getName());
-            collectionBackground.setStyle("-fx-background-color: greenyellow");
+            collectionBackground.setStyle("-fx-background-color: #97b329;");
             setGraphic(root);
         }
     }

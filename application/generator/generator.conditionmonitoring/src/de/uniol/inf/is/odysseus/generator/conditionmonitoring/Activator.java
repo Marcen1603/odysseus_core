@@ -221,6 +221,29 @@ public class Activator implements BundleActivator {
 		substationManager.run();
 
 		// Listen to commands from the user
+		// Listen for commands
+		while (true) {
+			sc = new Scanner(System.in);
+			while (sc.hasNextLine()) {
+				String command = sc.nextLine();
+				if (command.equalsIgnoreCase("switchValve2")) {
+					if (substationManager.getValve2().isOpen()) {
+						substationManager.getValve2().close();
+						System.out.println("Closed valve 2");
+					} else {
+						substationManager.getValve2().open();
+						System.out.println("Opened valve 2");
+					}
+				} else if (command.equalsIgnoreCase("defectPump1")) {
+					substationManager.getPump1().setDefect(true);
+					System.out.println("Ooops, Pump 1 is now defect");
+				} else if (command.equalsIgnoreCase("repairPump1")) {
+					substationManager.getPump1().setDefect(false);
+					System.out.println("Repaired Pump 1");
+				}
+				Thread.sleep(10);
+			}
+		}
 	}
 
 	/*

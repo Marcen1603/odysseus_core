@@ -14,7 +14,7 @@ public class Wind {
 	private final static String DOWNTURN = "downturn";
 	private final static String STABLE = "stable";
 	
-	private final static double MAX_SPEED = 30;
+	private final static double MAX_SPEED = 25;
 
 	public Wind() {
 		// Start at about 10 m/s
@@ -52,10 +52,10 @@ public class Wind {
 			}
 
 			periodCounter = 0;
-			periodLength = (int) (Math.random() * 30);
+			periodLength = (int) (Math.random() * 20);
 		}
 
-		double amount = Math.random() * 1;
+		double amount = Math.random() * 0.5;
 
 		if (period.equals(STABLE)) {
 			double random = Math.random();

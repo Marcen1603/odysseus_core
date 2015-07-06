@@ -14,14 +14,21 @@ public class Pump extends Observable {
 	private double lastOutFlow;
 	private Pipe inPipe;
 	private Pipe outPipe;
+	
+	// To simulate failures
+	private boolean hasDefect;
 
 	public Pump(double maxFlowRate, Pipe inPipe, Pipe outPipe) {
 		this.maxFlowRate = maxFlowRate;
 		this.inPipe = inPipe;
 		this.outPipe = outPipe;
+		this.hasDefect = false;
 	}
 
 	public void startPump() {
+		if (hasDefect) {
+			return;
+		}
 		// Start pump
 		final int neededSteps = 10;
 		long startUpDelay = 0; // 0 seconds
@@ -88,6 +95,16 @@ public class Pump extends Observable {
 	 */
 	public double getCurrentVibration() {
 		return ((this.currentFlowRate / this.maxFlowRate) * 10) + Math.random();
+	}
+	
+	public void setDefect(boolean hasDefect) {
+		this.hasDefect = hasDefect;
+		if (hasDefect)
+			this.currentFlowRate = 0;
+	}
+	
+	public boolean isDefect() {
+		return this.hasDefect;
 	}
 
 }

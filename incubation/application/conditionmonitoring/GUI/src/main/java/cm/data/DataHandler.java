@@ -81,7 +81,7 @@ public class DataHandler {
         ObservableList<Event> collectionEvents = collectionEventsMap.get(collection);
         if (collectionEvents == null) {
             collectionEvents = FXCollections.observableArrayList();
-            // The collection has the normal connections
+            // The collection has the normal connections (Do not include the color connection as we maybe don't want to see the items)
             List<SocketInfo> connections = new ArrayList<>();
             connections.addAll(collection.getConnections());
             for (SocketInfo connection : connections) {
