@@ -21,5 +21,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.bytedeco.javacv"/>
 	<classpathentry kind="src" path="/org.apache.commons.io"/>
 	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.video"/>
+	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.imagejcv.common"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

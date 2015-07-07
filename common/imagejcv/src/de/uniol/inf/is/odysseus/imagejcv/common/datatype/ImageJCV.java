@@ -196,6 +196,15 @@ public class ImageJCV implements IClone, Cloneable
 		return result;
 	}
 	
+	public static ImageJCV fromIplImage(IplImage iplImage)
+	{
+		ImageJCV image = new ImageJCV(iplImage.width(), iplImage.height(), iplImage.depth(), iplImage.nChannels());
+		image.getImageData().rewind();
+		image.getImageData().put(iplImage.getByteBuffer());																	
+		
+		return image;
+	}
+	
 	public static ImageJCV fromStream(InputStream inputStream) throws IOException 
 	{
 		throw new UnsupportedOperationException("Not implemented yet!");

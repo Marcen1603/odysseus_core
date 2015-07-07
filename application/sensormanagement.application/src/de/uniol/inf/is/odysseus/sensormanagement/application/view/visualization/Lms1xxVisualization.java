@@ -16,8 +16,6 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.Play
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSession;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.position.AbsolutePosition;
 import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Measurement;
 import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Sample;
 
@@ -161,7 +159,7 @@ public class Lms1xxVisualization extends Visualization implements KeyListener
         }
     }	
 	
-	@Override public void sensorDataReceived(SensorModel source, Event event) 
+	@Override public void sensorDataReceived(AbstractSensor source, Event event) 
 	{
 		if (event == null || event.getEventObject() == null)
 		{
@@ -215,10 +213,7 @@ public class Lms1xxVisualization extends Visualization implements KeyListener
 		
 		@Override public void render(Data data) 
 		{
-        	if (!(data.event.getSource().position instanceof AbsolutePosition)) return;
-        	AbsolutePosition pos = (AbsolutePosition) data.event.getSource().position;
-			
-			double rot = pos.orientation + 90.0;
+			double rot = data.sensorRot + 90;
 			
 			Color scanColor = Color.BLACK;
 			BasicStroke solid = new BasicStroke();

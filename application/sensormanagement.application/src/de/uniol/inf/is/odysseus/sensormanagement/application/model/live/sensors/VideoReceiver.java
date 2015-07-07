@@ -55,7 +55,7 @@ public class VideoReceiver extends LiveSensor
 	                        double doubleTime = now / 1000.0;
 	                        double eventSecondsValid = 1.0;//secondsPerFrame * 2.0;
 		                        
-	                        Event e = new Event(getSensorModel(), image, doubleTime, eventSecondsValid);
+	                        Event e = new Event(getSensorModel(), image.clone(), doubleTime, eventSecondsValid);
 	                        sensorDataReceived.raise(VideoReceiver.this, e);
 						}
 		/*					

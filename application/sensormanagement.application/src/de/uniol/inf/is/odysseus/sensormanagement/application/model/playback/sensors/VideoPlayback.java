@@ -115,14 +115,16 @@ public class VideoPlayback extends PlaybackReceiver
 					eventTime = syncData[currentFrame];
 			}
 			
-			IplImage image = capture.grab();
+			IplImage image = capture.grab();			
+			
 			if (image != null && !image.isNull())
 			{		
+				image = image.clone();
 				if (rotate180)
 				{
 					cvFlip(image, image, -1);
 				}
-				
+
 				double eventSecondsValid = 1.0; //1.0 / fps * 2.0;
 				e =  new Event(getSensorModel(), image, eventTime, eventSecondsValid);
 				

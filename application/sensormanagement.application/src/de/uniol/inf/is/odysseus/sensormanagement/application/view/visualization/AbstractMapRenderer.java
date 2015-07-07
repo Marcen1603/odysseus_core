@@ -11,7 +11,7 @@ public abstract class AbstractMapRenderer
 	{
 		Graphics2D graphics;
 		int mapX, mapY, mapW, mapH;
-		double sensorX, sensorY;
+		double sensorX, sensorY, sensorRot;
 		Event event;
 		public double pixelPerMeter;
 	}

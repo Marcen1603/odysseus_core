@@ -299,11 +299,12 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 				if (attrs.length > 0)
 				{
 					if (receivedImage == null || (receivedImage.getWidth() != iplImage.width()) || (receivedImage.getHeight() != iplImage.height()) || 
-							 (receivedImage.getDepth() != iplImage.depth()) || (receivedImage.getNumChannels() != iplImage.nChannels()))	
-						receivedImage = new ImageJCV(iplImage.width(), iplImage.height(), iplImage.depth(), iplImage.nChannels());
-			
-					receivedImage.getImageData().rewind();
-					receivedImage.getImageData().put(iplImage.getByteBuffer());									
+							 (receivedImage.getDepth() != iplImage.depth()) || (receivedImage.getNumChannels() != iplImage.nChannels()))
+					{
+						receivedImage = ImageJCV.fromIplImage(iplImage);
+					}
+					else
+						receivedImage.copyFrom(iplImage);
 					currentTuple.setAttribute(attrs[0], receivedImage);
 				}
 					

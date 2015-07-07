@@ -3,13 +3,12 @@ package de.uniol.inf.is.odysseus.sensormanagement.application.view.visualization
 import java.awt.Color;
 import java.awt.Graphics;
 
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.playback.PlaybackSensorManager;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSession;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 
 public class TextVisualization extends Visualization
 {
@@ -58,7 +57,7 @@ public class TextVisualization extends Visualization
     }	
 	
 	@Override
-	public void sensorDataReceived(SensorModel source, Event event) 
+	public void sensorDataReceived(AbstractSensor source, Event event) 
 	{
    		this.event = event;
         repaint();

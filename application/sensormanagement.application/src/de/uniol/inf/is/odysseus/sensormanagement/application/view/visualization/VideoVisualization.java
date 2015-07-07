@@ -17,8 +17,6 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackScene;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.playback.PlaybackSession;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.utilities.Utilities;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.position.AbsolutePosition;
 
 public class VideoVisualization extends Visualization
 {
@@ -64,7 +62,7 @@ public class VideoVisualization extends Visualization
        }	
 	
 	@Override
-	public void sensorDataReceived(SensorModel source, Event event) 
+	public void sensorDataReceived(AbstractSensor source, Event event) 
 	{
    		this.event = event;
         repaint();
@@ -82,13 +80,10 @@ public class VideoVisualization extends Visualization
 		
 		@Override public void render(Data data) 
 		{
-        	if (!(data.event.getSource().position instanceof AbsolutePosition)) return;
-        	AbsolutePosition pos = (AbsolutePosition) data.event.getSource().position;
-			
         	Color cameraColor = Color.GRAY;
         	
-			double angle = 90;
-			double radius = 80.0;        	
+			double angle = 60;
+			double radius = 20.0 / data.pixelPerMeter;        	
         	
         	Scene scene = getSession().getSensorManager().getScene(); 
         	if (scene instanceof PlaybackScene)
@@ -103,7 +98,7 @@ public class VideoVisualization extends Visualization
         	        	
         	radius *= data.pixelPerMeter;
         	
-			double rot = pos.orientation + 90.0;			
+			double rot = data.sensorRot + 90.0;			
 			double x = data.sensorX - radius;
 			double y = data.sensorY - radius;
 			int startAngle = (int)(rot - angle/2);

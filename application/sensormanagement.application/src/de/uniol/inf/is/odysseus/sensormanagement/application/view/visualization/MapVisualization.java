@@ -7,9 +7,9 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.imageio.ImageIO;
 
@@ -20,12 +20,13 @@ import de.uniol.inf.is.odysseus.sensormanagement.application.view.Session;
 import de.uniol.inf.is.odysseus.sensormanagement.application.view.Visualization;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
 import de.uniol.inf.is.odysseus.sensormanagement.common.types.position.AbsolutePosition;
+import de.uniol.inf.is.odysseus.sensormanagement.common.types.position.RelativePosition;
 
 public class MapVisualization extends Visualization
 {
 	private static final long serialVersionUID = 3745022811236756800L;
 
-	private Map<SensorModel, Event> currentEvents = new ConcurrentHashMap<>();
+	private Map<AbstractSensor, Event> currentEvents = new IdentityHashMap<>();
 	private final BufferedImage mapImage;
 	private DisplayMap map;
 	
@@ -60,66 +61,97 @@ public class MapVisualization extends Visualization
         graphics.setColor(Color.BLACK);
         graphics.fillRect(0, 0, w, h);    	
 
-		int mapW = mapImage.getWidth();
-		int mapH = mapImage.getHeight();
-		double ratio = (double)mapW / mapH;
+		int mapWidthInPixel = mapImage.getWidth();
+		int mapHeightInPixel = mapImage.getHeight();
+		double ratio = (double)mapWidthInPixel / mapHeightInPixel;
 
-		mapW = getWidth();
-		mapH = (int)(w / ratio);
+		mapWidthInPixel = getWidth();
+		mapHeightInPixel = (int)(w / ratio);
 
-		if (mapH > getHeight())
+		if (mapHeightInPixel > getHeight())
 		{
-			mapH = getHeight();
-			mapW = (int)(ratio * mapH);
+			mapHeightInPixel = getHeight();
+			mapWidthInPixel = (int)(ratio * mapHeightInPixel);
 		}
 		
-		int mapX = (getWidth()  - mapW) / 2;
-		int mapY = (getHeight() - mapH) / 2;
+		int mapX = (getWidth()  - mapWidthInPixel) / 2;
+		int mapY = (getHeight() - mapHeightInPixel) / 2;
                 
-		graphics.drawImage(mapImage, mapX, mapY, mapW, mapH, this);
+		graphics.drawImage(mapImage, mapX, mapY, mapWidthInPixel, mapHeightInPixel, this);
 
-    	double mapLongitudeDelta = map.rightPosition - map.leftPosition;
-    	double mapLatitudeDelta  = map.topPosition   - map.bottomPosition;		
+		double pixelPerMeter;
+		double mapWidth  = map.rightPosition - map.leftPosition;
+		double mapHeight = map.topPosition   - map.bottomPosition;		
 		
-    	double distWE = distanceInMeter(map.topPosition, map.rightPosition, map.topPosition, map.leftPosition);
-    	double distNS = distanceInMeter(map.topPosition, map.rightPosition, map.bottomPosition, map.rightPosition);
+		if (map.instanceName == null)
+		{
+			// Absolute map. Map coordinates given in Long/Lat
+			double distWE = distanceInMeter(map.topPosition, map.rightPosition, map.topPosition, map.leftPosition);
+			double distNS = distanceInMeter(map.topPosition, map.rightPosition, map.bottomPosition, map.rightPosition);
     	
-    	double pixelPerMeter = (mapW / distWE + mapH / distNS) / 2;
+			pixelPerMeter = (mapWidthInPixel / distWE + mapHeightInPixel / distNS) / 2;
+		}
+		else
+		{
+			// Relative map. Map coordinates given as meters
+			double ppmW = mapWidthInPixel / mapWidth;
+			double ppmH = mapHeightInPixel / mapHeight;
+			pixelPerMeter = (ppmW + ppmH) / 2;
+		}
     	
-    	for (Entry<SensorModel, Event> entry : currentEvents.entrySet())
+    	synchronized (this)
     	{
-    		SensorModel sensor = entry.getKey();
-    		Event event  = entry.getValue();    		
-    	
-    		AbstractMapRenderer mapRenderer = getSession().getViewSensor(sensor.id).getMapRenderer();
-    		
-    		if (mapRenderer == null) return;
-    		if (event.getTimeStamp() > getSession().getNow()) continue;
-        	if (event.getTimeStamp() + event.getSecondsValid() < getSession().getNow()) continue;    		        	
-        
-        	if (!(sensor.position instanceof AbsolutePosition)) continue;
-        	AbsolutePosition pos = (AbsolutePosition) sensor.position;
-        	        	
-        	AbstractMapRenderer.Data data = new AbstractMapRenderer.Data();
-        	data.graphics = graphics;
-        	data.event = event;
-        	data.mapX = mapX;
-        	data.mapY = mapY;
-        	data.mapW = mapW;
-        	data.mapH = mapH;
-        	data.sensorX = mapX + 		 (pos.longitude - map.leftPosition)   / mapLongitudeDelta * mapW;
-        	data.sensorY = mapY + mapH - (pos.latitude  - map.bottomPosition) / mapLatitudeDelta  * mapH;
-        	data.pixelPerMeter = pixelPerMeter;
-       		mapRenderer.render(data);
-    	}
+	    	for (Entry<AbstractSensor, Event> entry : currentEvents.entrySet())
+	    	{
+	    		AbstractSensor sensor = entry.getKey();
+	    		SensorModel model = sensor.getSensorModel();
+	    		Event event  = entry.getValue();    		
+	    	
+	    		AbstractMapRenderer mapRenderer = getSession().getViewSensor(model.id).getMapRenderer();
+	    		
+	    		if (mapRenderer == null) continue;
+	    		if (event.getTimeStamp() > getSession().getNow()) continue;
+	        	if (event.getTimeStamp() + event.getSecondsValid() < getSession().getNow()) continue;    		        	
+	        	        	        	
+	        	AbstractMapRenderer.Data data = new AbstractMapRenderer.Data();
+	        	data.graphics = graphics;
+	        	data.event = event;
+	        	data.mapX = mapX;
+	        	data.mapY = mapY;
+	        	data.mapW = mapWidthInPixel;
+	        	data.mapH = mapHeightInPixel;
+	        	
+	        	if (model.position instanceof AbsolutePosition)
+	        	{
+	        		AbsolutePosition pos = (AbsolutePosition) model.position;
+	        		data.sensorX = mapX + (pos.longitude - map.leftPosition)   / mapWidth  * mapWidthInPixel;
+	        		data.sensorY = mapY - (pos.latitude  - map.bottomPosition) / mapHeight * mapHeightInPixel + mapHeightInPixel;
+	        		data.sensorRot = pos.orientation;
+	        	}
+	        	else
+	        	if (model.position instanceof RelativePosition)
+	        	{
+	        		RelativePosition pos = (RelativePosition) model.position;
+	        		data.sensorX = mapX + (pos.x - map.leftPosition)   / mapWidth  * mapWidthInPixel;
+	        		data.sensorY = mapY - (pos.y - map.bottomPosition) / mapHeight * mapHeightInPixel + mapHeightInPixel;
+	        		data.sensorRot = pos.orientation;
+	        	}
+	        	
+	        	data.pixelPerMeter = pixelPerMeter;
+	       		mapRenderer.render(data);
+	    	}
+	    }
     }
 	
-	@Override public void sensorDataReceived(SensorModel source, Event event) 
+	@Override public void sensorDataReceived(AbstractSensor source, Event event) 
 	{
-		if (event != null)
-			currentEvents.put(source, event);
-		else
-			currentEvents.remove(source);
+		synchronized (this)
+		{
+			if (event != null)
+				currentEvents.put(source, event);
+			else
+				currentEvents.remove(source);
+		}
 		
 		repaint();
 	}
@@ -127,7 +159,10 @@ public class MapVisualization extends Visualization
 	@Override public void listeningStarted(AbstractSensor receiver) {}
 	@Override public void listeningStopped(AbstractSensor receiver) 
 	{
-		currentEvents.remove(receiver.getSensorModel());
+		synchronized (this)
+		{
+			currentEvents.remove(receiver.getSensorModel());
+		}
 		repaint();
 	}	
 }

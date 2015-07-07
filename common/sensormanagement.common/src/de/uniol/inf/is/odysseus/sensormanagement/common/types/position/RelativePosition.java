@@ -8,7 +8,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType (XmlAccessType.FIELD)
 public class RelativePosition extends Position
 {
-	double x, y, z, orientation;
+	public double x;
+	public double y;
+	public double z;
+	public double orientation;
 	
 	protected RelativePosition() {}
 	

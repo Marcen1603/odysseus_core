@@ -37,7 +37,7 @@ public class Lms1xxReceiver extends UdpLiveReceiver
 		sensorDataReceived.raise(this, e);
     		
    		if (Application.getMainFrame().getCurrentSession().getMap() != null)
-   			Application.getMainFrame().getCurrentSession().getMap().sensorDataReceived(getSensorModel(), e);
+   			Application.getMainFrame().getCurrentSession().getMap().sensorDataReceived(this, e);
     		
 //    		String time = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(calendar.getTime());
 //    		System.out.println("Measurement at " + time);    		

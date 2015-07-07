@@ -4,9 +4,8 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
-import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
 import de.uniol.inf.is.odysseus.sensormanagement.application.model.AbstractSensor;
-import de.uniol.inf.is.odysseus.sensormanagement.common.types.SensorModel;
+import de.uniol.inf.is.odysseus.sensormanagement.application.model.Event;
 import de.uniol.inf.is.odysseus.sensormanagement.common.utilities.CallbackListener;
 
 public abstract class Visualization extends JPanel
@@ -46,7 +45,7 @@ public abstract class Visualization extends JPanel
 			
 			@Override public void raise(AbstractSensor sender, Event event) 
 			{
-				sensorDataReceived(event.getSource(), event);
+				sensorDataReceived(sender, event);
 			}
 		};
 	}
@@ -62,7 +61,7 @@ public abstract class Visualization extends JPanel
 		session.updateVisualizationConstraints(this);
 	}
 	
-	abstract protected void sensorDataReceived(SensorModel source, Event event);
+	abstract protected void sensorDataReceived(AbstractSensor source, Event event);
 	abstract protected void listeningStopped(AbstractSensor sender);
 	abstract protected void listeningStarted(AbstractSensor sender);	
 }
