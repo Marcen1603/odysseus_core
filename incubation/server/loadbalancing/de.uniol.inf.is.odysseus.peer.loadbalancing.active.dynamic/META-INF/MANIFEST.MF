@@ -18,8 +18,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.distribute,
  de.uniol.inf.is.odysseus.peer.distribute.allocate.survey,
  de.uniol.inf.is.odysseus.peer.network
-Service-Component: DynamicBalancing.xml,OSGI-INF/DynamicStrategy.xml,
- OSGI-INF/DynamicAllocator.xml
+Service-Component: DynamicBalancing.xml,OSGI-INF/DynamicStrategy.xml,OSGI-INF/DynamicAllocator.xml,
+ OSGI-INF/DynamicBidProvider.xml
 Import-Package: de.uniol.inf.is.odysseus.costmodel,
  de.uniol.inf.is.odysseus.peer.dictionary,
  de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid,

@@ -33,5 +33,12 @@ public class DynamicLoadBalancingConstants {
 			public static final double WEIGHT_GENERAL_COSTS = 0.3;
 			public static final double WEIGHT_INDIVIDUAL_COSTS = 0.7;
 			public static final String DEFAULT_QUERY_BUILD_CONFIG = "Standard";
+			
+			
+			//Fallback values for Cost model...
+			public static final double FALLBACK_CPU_COSTS = 0.1;
+			public static final double FALLBACK_MEM_COSTS = 0.1;
+			public static final double FALLBACK_NET_COSTS = 0.1;
+			
 
 }

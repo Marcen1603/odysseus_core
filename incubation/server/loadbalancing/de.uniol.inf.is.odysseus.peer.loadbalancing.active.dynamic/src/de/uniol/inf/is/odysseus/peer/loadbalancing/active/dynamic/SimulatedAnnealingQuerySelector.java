@@ -58,6 +58,12 @@ public class SimulatedAnnealingQuerySelector implements IQuerySelectionStrategy 
 
 		LOG.info("Finished suimulated annealing, best found proposal is:");
 		LOG.info(bestSolution.toString());
+		
+		if(!isFeasible(bestSolution,minCpuLoad,minMemLoad,minNetLoad)) {
+			LOG.warn("Solution is not feasible. Returning null instead.");
+			return null;
+		}
+		
 		return bestSolution;
 	}
 

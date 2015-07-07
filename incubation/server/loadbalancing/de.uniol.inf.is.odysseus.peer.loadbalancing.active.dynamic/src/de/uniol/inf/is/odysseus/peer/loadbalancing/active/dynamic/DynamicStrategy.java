@@ -196,9 +196,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 		LOG.info("Re-Allocation of queries triggered.");
 		
-		double cpuLoadToRemove = DynamicLoadBalancingConstants.CPU_THRESHOLD;
-		double memLoadToRemove = DynamicLoadBalancingConstants.MEM_THRESHOLD;
-		double netLoadToRemove = DynamicLoadBalancingConstants.NET_THRESHOLD;
+		double cpuLoadToRemove = Math.max(0.0, DynamicLoadBalancingConstants.CPU_THRESHOLD-cpuUsage);
+		double memLoadToRemove = Math.max(0.0, DynamicLoadBalancingConstants.MEM_THRESHOLD-memUsage);
+		double netLoadToRemove = Math.max(0.0, DynamicLoadBalancingConstants.NET_THRESHOLD-netUsage);
 		
 		QueryCostMap allQueries = generateCostMapForAllQueries();
 		IQuerySelectionStrategy greedySelector = new GreedyQuerySelector();
@@ -207,12 +207,16 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		QueryCostMap simulatedAnnealingResult =  simulatedAnnealingSelector.selectQueries(allQueries.clone(), cpuLoadToRemove, memLoadToRemove, netLoadToRemove);
 		
 		QueryCostMap chosenResult;
-		if(greedyResult.getCosts()<simulatedAnnealingResult.getCosts()) {
+		if(simulatedAnnealingResult == null) {
+			LOG.info("No feasible simulated Annealing Result found. Using Greedy Result.");
+			chosenResult = greedyResult;
+		}
+		else if(greedyResult.getCosts()<simulatedAnnealingResult.getCosts()) {
 			LOG.info("Greedy result is better than Simulated Annealing result ({}<{}), choosing Greedy result.",greedyResult.getCosts(),simulatedAnnealingResult.getCosts());
 			chosenResult = greedyResult;
 		}
 		else {
-			LOG.info("Simulated Annealing result is better than Greedy result ({}<{}), choosing Greedy result.",simulatedAnnealingResult.getCosts(),greedyResult.getCosts());
+			LOG.info("Simulated Annealing result is better than Greedy result ({}<{}), choosing Simulated Annealing result.",simulatedAnnealingResult.getCosts(),greedyResult.getCosts());
 			chosenResult = simulatedAnnealingResult;
 		}
 		
@@ -233,6 +237,10 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 		Collection<PeerID> knownRemotePeers = peerDictionary.getRemotePeerIDs();
 		
+		if(chosenResult.getQueryIds().size()==0) {
+			LOG.error("No Queries to remove.");
+			return;
+		}
 		//TODO What if no Object in List?
 		int firstQueryId = chosenResult.getQueryIds().get(0);
 		
