@@ -55,6 +55,8 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 				LOG.debug("query started, waiting until data is processed...");
 				result = waitProcessing();
 				LOG.debug("processing done.");
+				// Wait one second ... currently some deadlock problems
+				Thread.sleep(1000);
 			}else{
 				processingResult = result;
 			}
