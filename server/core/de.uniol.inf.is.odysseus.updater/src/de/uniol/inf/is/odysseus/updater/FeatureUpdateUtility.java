@@ -70,6 +70,7 @@ public class FeatureUpdateUtility {
 			List<IInstallableUnit> units = getInstalledFeatures(caller);
 			Collection<IInstallableUnit> toUninstall = new ArrayList<IInstallableUnit>();
 			for (IInstallableUnit u:units){
+				LOG.info("CHECK "+u.getId());
 				if (u.getId().startsWith(id)){
 					toUninstall.add(u);
 				}
