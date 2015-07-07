@@ -1032,6 +1032,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 								.getLogicalQuery().getQueryText());
 					}
 				}
+				if (executionPlan.isEmpty()){
+					getSchedulerManager().getActiveScheduler().clear();
+				}
 			} catch (Exception e) {
 				LOG.warn("Query not removed. An Error while removing occurd (ID: "
 						+ (queryToRemove != null ? queryToRemove.getID()

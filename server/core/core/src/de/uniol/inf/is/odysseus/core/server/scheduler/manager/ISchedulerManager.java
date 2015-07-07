@@ -189,5 +189,4 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	
 	public void schedulingsChanged();
 
-
 }

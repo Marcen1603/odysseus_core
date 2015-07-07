@@ -36,26 +36,26 @@ public interface IScheduler extends IErrorEventHandler, IEventHandler {
 	/**
 	 * Start scheduling of the registered physical plan.
 	 */
-	public void startScheduling();
+	void startScheduling();
 
 	/**
 	 * Stop scheduling of the registered physical plan.
 	 */
-	public void stopScheduling();
+	void stopScheduling();
 
 	/**
 	 * TODO: Sollte beschreiben, der sich damit auskennt. (Wolf)
 	 * 
 	 * @param time
 	 */
-	public void setTimeSlicePerStrategy(long time);
+	void setTimeSlicePerStrategy(long time);
 
 	/**
 	 * Signalizes if this scheduler is started oder not.
 	 * 
 	 * @return TRUE: Scheduler is started. FALSE: Scheduler is stopped.
 	 */
-	public boolean isRunning();
+	boolean isRunning();
 
 	/**
 	 * Set the global sources for scheduling (no pipes). Clears all existing sources
@@ -63,11 +63,11 @@ public interface IScheduler extends IErrorEventHandler, IEventHandler {
 	 * @param sources
 	 *            Global sources for scheduling (no pipes).
 	 */
-	public void setLeafSources(List<IIterableSource<?>> sources);
+	void setLeafSources(List<IIterableSource<?>> sources);
 	
-	public void addLeafSources(List<IIterableSource<?>> leafSources);
+	void addLeafSources(List<IIterableSource<?>> leafSources);
 
-	public List<IIterableSource<?>> getLeafSources();
+	List<IIterableSource<?>> getLeafSources();
 
 	/**
 	 * Set the partial plans for scheduling (pipes and roots).
@@ -75,15 +75,17 @@ public interface IScheduler extends IErrorEventHandler, IEventHandler {
 	 * @param partialPlans
 	 *            Partial plans for scheduling (pipes and roots).
 	 */
-	public void setPartialPlans(Collection<IPhysicalQuery> partialPlans);
+	void setPartialPlans(Collection<IPhysicalQuery> partialPlans);
 
-	public Collection<IPhysicalQuery> getPartialPlans();
+	Collection<IPhysicalQuery> getPartialPlans();
 
-	public void addPartialPlan(IPhysicalQuery query);
+	void addPartialPlan(IPhysicalQuery query);
 
-	public void removePartialPlan(IPhysicalQuery affectedQuery);
+	void removePartialPlan(IPhysicalQuery affectedQuery);
 	
-	public void removeLeafSources(List<IIterableSource<?>> sources);
+	void removeLeafSources(List<IIterableSource<?>> sources);
+
+	void clear();
 
 	
 	

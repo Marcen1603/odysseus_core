@@ -29,9 +29,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 public interface IExecutionPlan extends IClone, IReoptimizeRequester<AbstractPlanReoptimizeRule>,
 IReoptimizeHandler<IPlanReoptimizeListener> {
 
-	public void updateLeafSources();
+	boolean isEmpty();
+	
+	void updateLeafSources();
 
-	public List<IIterableSource<?>> getLeafSources();
+	List<IIterableSource<?>> getLeafSources();
 
 	/**
 	 * Returns a set of all registered roots. The size can be different to the
@@ -40,17 +42,17 @@ IReoptimizeHandler<IPlanReoptimizeListener> {
 	 * 
 	 * @return A list of all registered roots.
 	 */
-	public Set<IPhysicalOperator> getRoots();
+	Set<IPhysicalOperator> getRoots();
 
 	@Override
-	public IExecutionPlan clone();
+	IExecutionPlan clone();
 
 	/**
 	 * Returns a list of all registered queries.
 	 * 
 	 * @return A list of all registered queries.
 	 */
-	public Collection<IPhysicalQuery> getQueries();
+	Collection<IPhysicalQuery> getQueries();
 
 	/**
 	 * Adds a new query to the global plan.
@@ -75,7 +77,7 @@ IReoptimizeHandler<IPlanReoptimizeListener> {
 	 * @param queryID  ID of the searched modifiable query
 	 * @return The query with the defined ID or null if no query is found.
 	 */
-	public IPhysicalQuery getQueryById(int queryID);
+	IPhysicalQuery getQueryById(int queryID);
 	
 
 	/**
@@ -85,7 +87,7 @@ IReoptimizeHandler<IPlanReoptimizeListener> {
 	 *            
 	 * @return The query with the name or null if no query is found.
 	 */
-	public IPhysicalQuery getQueryByName(String name);
+	IPhysicalQuery getQueryByName(String name);
 
 	/**
 	 * Returns a query with the defined ID.
@@ -94,7 +96,8 @@ IReoptimizeHandler<IPlanReoptimizeListener> {
 	 *            ID of the query to remove.
 	 * @return The query with the defined ID or null if no query is found.
 	 */
-	public IPhysicalQuery removeQuery(int queryID);
+	IPhysicalQuery removeQuery(int queryID);
+
 
 
 }

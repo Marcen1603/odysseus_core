@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -193,13 +195,27 @@ abstract public class AbstractSimpleThreadScheduler extends AbstractScheduler im
 	public void removePartialPlan(IPhysicalQuery affectedQuery) {
 		if (partialPlans.contains(affectedQuery)) {
 			partialPlans.remove(affectedQuery);
-			Integer scheduler = planScheduledBy.remove(affectedQuery);
-			if (scheduler != null) {
-				planScheduling[scheduler].removePlan(partialPlanSchedulingMap.remove(affectedQuery));
-			} else {
-				logger.warn("Potential scheduling removal problem? Trying to remove " + affectedQuery);
-			}
+			removeFromScheduler(affectedQuery);
 		}
+	}
+
+	private void removeFromScheduler(IPhysicalQuery affectedQuery) {
+		Integer scheduler = planScheduledBy.remove(affectedQuery);
+		if (scheduler != null) {
+			planScheduling[scheduler].removePlan(partialPlanSchedulingMap.remove(affectedQuery));
+		} else {
+			logger.warn("Potential scheduling removal problem? Trying to remove " + affectedQuery);
+		}
+	}
+	
+	@Override
+	public void clear() {
+		 Iterator<IPhysicalQuery> iter = partialPlans.iterator();
+		 while(iter.hasNext()){
+				removeFromScheduler(iter.next());
+				iter.remove();
+		 }
+		 partialPlans.clear();
 	}
 	
 	protected boolean isScheduled(IIterableSource<?> s) {

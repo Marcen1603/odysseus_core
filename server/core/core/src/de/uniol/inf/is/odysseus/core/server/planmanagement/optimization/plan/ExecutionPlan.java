@@ -67,8 +67,8 @@ public class ExecutionPlan implements IExecutionPlan {
 	/**
 	 * Map of all registered queries.
 	 */
-	private Map<Integer, IPhysicalQuery> queries;
-	private Map<String, IPhysicalQuery> namedQueries;
+	final private Map<Integer, IPhysicalQuery> queries;
+	final private Map<String, IPhysicalQuery> namedQueries;
 
 	/**
 	 * List of objects which respond to reoptimize requests.
@@ -117,6 +117,11 @@ public class ExecutionPlan implements IExecutionPlan {
 	@Override
 	public List<IIterableSource<?>> getLeafSources() {
 		return Collections.unmodifiableList(this.leafSources);
+	}
+	
+	@Override
+	public boolean isEmpty() {
+		return this.queries != null && this.queries.size() > 0;
 	}
 
 	/*
