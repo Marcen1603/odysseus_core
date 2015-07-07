@@ -54,18 +54,21 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded
 					sourceExecutor.removeSources(toRemove);
 					logger.debug("Removed sources " + toRemove + " from "
 							+ sourceExecutor);
-					// TODO: Move to another place--> Remove is async
-					if (sourceExecutor.getRunningSources() == 0) {
-						sourceExecutor.interrupt();
-						removeSourceThread(sourceExecutor);
-						logger.debug("Remove source executor " + sourceExecutor);
-					}
+	
 				}
 
 			}
 		}
 	}
 
+	public void sourcesChanged(MultipleSourceExecutor sourceExecutor) {
+		if (sourceExecutor.getRunningSources() == 0) {
+			sourceExecutor.interrupt();
+			removeSourceThread(sourceExecutor);
+			logger.debug("Remove source executor " + sourceExecutor);
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -283,4 +283,8 @@ abstract public class AbstractSimpleThreadScheduler extends AbstractScheduler im
 		return planScheduling;
 	}
 
+	public void sourcesChanged(MultipleSourceExecutor multipleSourceExecutor) {
+		
+	}
+
 }

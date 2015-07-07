@@ -49,7 +49,6 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 			AbstractSimpleThreadScheduler singleThreadScheduler) {
 		this.setName("MultiSourceExecutor #" + (counter++) + " ");
 		this.caller = singleThreadScheduler;
-
 	}
 
 	@Override
@@ -325,6 +324,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 		logger.trace("" + this.currentState);
 		addList.clear();
 		// this.sourcesChangeRequested = false;
+		caller.sourcesChanged(this);
 	}
 
 	private void delayedRemoveSources(List<IIterableSource<?>> removeList) {
@@ -333,6 +333,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 			sources.removeAll(removeList);
 		}
 		logger.debug("Removed Sources " + removeList);
+		caller.sourcesChanged(this);
 		removeList.clear();
 		// this.sourcesChangeRequested = false;
 	}
@@ -348,5 +349,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 		// return this.getClass().getSimpleName() + " " + sources;
 		// }
 	}
+	
+	
 
 }
