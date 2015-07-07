@@ -22,4 +22,10 @@ public class BenchmarkPOObservable<T extends IStreamObject<?>> extends Observabl
 			benchmarkEvaluation.evaluate(this, object);
 		}
 	}
+	
+	public void evaluationDone(){
+		for (IBenchmarkEvaluation benchmarkEvaluation : evaluations) {
+			benchmarkEvaluation.evaluationDone(this);
+		}
+	}
 }

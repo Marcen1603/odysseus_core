@@ -220,6 +220,8 @@ public class InitializeQueryThread extends Thread {
 				"OdysseusScript", OdysseusRCPPlugIn.getActiveSession(),
 				ParserClientUtil.createRCPContext(scriptFile));
 		if (queryIds.size() > 0) {
+			// TODO it is possible that there are multiple queryIds, if the main
+			// query file starts other queries
 			Integer queryId = queryIds.iterator().next();
 			ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryId,
 					OdysseusRCPPlugIn.getActiveSession());
@@ -269,7 +271,8 @@ public class InitializeQueryThread extends Thread {
 
 		// PRETRANSFORMATION for benchmarking is also not supported
 		if (line.trim().startsWith(
-				"#" + PreTransformationHandlerPreParserKeyword.KEYWORD + " "+BenchmarkPreTransformationHandler.NAME)) {
+				"#" + PreTransformationHandlerPreParserKeyword.KEYWORD + " "
+						+ BenchmarkPreTransformationHandler.NAME)) {
 			return false;
 		}
 

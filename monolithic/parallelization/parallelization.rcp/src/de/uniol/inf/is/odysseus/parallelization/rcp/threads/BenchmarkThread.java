@@ -55,7 +55,14 @@ public class BenchmarkThread extends Thread {
 				changeProgress(
 						currentPercentage,
 						"Maximum execution time reached. Please restart benchmarker and adjust values "
-						+ "for maximum execution time or number of elements."+System.lineSeparator());
+								+ "for maximum execution time or number of elements."
+								+ System.lineSeparator());
+			} else if (benchmarkerExecution.getExecutionTime() == -1l) {
+				changeProgress(
+						currentPercentage,
+						"End of evaluation was reached, before "
+								+ data.getConfiguration().getNumberOfElements()
+								+ " elements are processed. Please decrese the number of elements.");
 			} else {
 				changeProgress(
 						currentPercentage,

@@ -7,17 +7,17 @@ import de.uniol.inf.is.odysseus.parallelization.benchmark.data.BenchmarkPOObserv
 
 public class ObserverBenchmarkPO<T extends IStreamObject<?>> extends AbstractPipe<T,T>{
 
-	private BenchmarkPOObservable<T> helper;
+	private BenchmarkPOObservable<T> delegate;
 	
 
 	public ObserverBenchmarkPO()  {
         super();
-		this.helper = new BenchmarkPOObservable<T>();
+		this.delegate = new BenchmarkPOObservable<T>();
     }
  
     public ObserverBenchmarkPO(ObserverBenchmarkPO<T> observerCounterPO) {
         super();
-        this.helper = new BenchmarkPOObservable<T>();
+        this.delegate = new BenchmarkPOObservable<T>();
     }
 	
 	@Override
@@ -32,8 +32,13 @@ public class ObserverBenchmarkPO<T extends IStreamObject<?>> extends AbstractPip
 
 	@Override
 	protected void process_next(T object, int port) {
-		helper.evaluate(object);
+		delegate.evaluate(object);
 		transfer(object);
+	}
+	
+	@Override
+	protected void process_done() {
+		
 	}
 
 	
