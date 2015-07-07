@@ -1,5 +1,6 @@
 package cm.controller;
 
+import cm.configuration.ConfigurationService;
 import cm.controller.listeners.CollectionListViewListener;
 import cm.data.DataHandler;
 import cm.model.Collection;
@@ -60,7 +61,9 @@ public class MainController {
 
         // Collections tab
         // ---------------
-        collectionList.setItems(DataHandler.getInstance().getObservableCollectionList());
+        // We add the overview as a collection, but as it's shown on the main overview tab, we don't want to show it in the collections tab
+        collectionList.setItems(DataHandler.getInstance().getObservableCollectionList().filtered(collection -> !collection.getName().equals
+                (ConfigurationService.HIDDEN_OVERVIEW_NAME)));
         collectionList.setCellFactory(listView -> {
             // Select the first cell to not show an empty collection
             if (collectionList.getItems().size() > 0 && collectionList.getSelectionModel().getSelectedItems().isEmpty()) {
@@ -94,15 +97,17 @@ public class MainController {
 
     public void addCollection(Collection collection) {
         try {
-            InputStream inputStream = getClass().getResource("../bundles/Language_en.properties").openStream();
-            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/overview.fxml"), bundle);
-            Parent root = loader.load();
+            if (!collection.getName().equals(ConfigurationService.HIDDEN_OVERVIEW_NAME)) {
+                InputStream inputStream = getClass().getResource("../bundles/Language_en.properties").openStream();
+                ResourceBundle bundle = new PropertyResourceBundle(inputStream);
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/overview.fxml"), bundle);
+                Parent root = loader.load();
 
-            // Overview
-            OverviewController overviewController = loader.getController();
-            overviewPaneMap.put(collection, root);
-            overviewControllerMap.put(collection, overviewController);
+                // Overview
+                OverviewController overviewController = loader.getController();
+                overviewPaneMap.put(collection, root);
+                overviewControllerMap.put(collection, overviewController);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

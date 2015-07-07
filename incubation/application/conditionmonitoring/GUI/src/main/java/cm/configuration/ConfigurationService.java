@@ -29,6 +29,8 @@ public class ConfigurationService {
 
     private MainController mainController;
 
+    public final static String HIDDEN_OVERVIEW_NAME = "OverviewHidden";
+
     private ConfigurationService() {
 
     }
@@ -117,7 +119,7 @@ public class ConfigurationService {
 
                 // Overview has an event list which we can handle as a collection
                 if (configuration.getOverviewInformation().getOverviewConnections() != null) {
-                    Collection overviewCollection = new Collection("Overview", UUID.randomUUID());
+                    Collection overviewCollection = new Collection(HIDDEN_OVERVIEW_NAME, UUID.randomUUID());
                     for (ConnectionInformation conInfo : configuration.getOverviewInformation().getOverviewConnections()) {
                         List<SocketReceiver> socketReceivers = CommunicationService.getSocketReceivers(conInfo);
                         for (SocketReceiver receiver : socketReceivers) {

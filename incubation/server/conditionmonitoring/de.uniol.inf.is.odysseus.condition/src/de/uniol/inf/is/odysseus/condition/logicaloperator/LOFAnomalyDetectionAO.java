@@ -56,12 +56,12 @@ public class LOFAnomalyDetectionAO extends UnaryLogicalOp {
 		this.k = number;
 	}
 
-	@Parameter(type = DoubleParameter.class, name = "LOFVALUE", optional = false, doc = "The value from which the tuples are declared as anomalies. Values near 1 are normal, higher values are anomalies. Standard is 1.5.")
+	@Parameter(type = DoubleParameter.class, name = "LOFVALUE", optional = true, doc = "The value from which the tuples are declared as anomalies. Values near 1 are normal, higher values are anomalies. Standard is 1.5.")
 	public void setLOFAnomalyValue(double value) {
 		this.lofAnomalyValue = value;
 	}
 
-	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = true, doc = "Name of the attribute which should be analysed")
+	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = false, doc = "Name of the attribute which should be analysed")
 	public void setNameOfValue(String nameOfValue) {
 		this.nameOfValue = nameOfValue;
 	}

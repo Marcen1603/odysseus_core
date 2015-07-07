@@ -71,6 +71,36 @@ public class ConfigurationCreator {
 		conWindspeed.setOperatorOutputPort(0);
 		conWindspeed.setUseOperatorOutputPort(true);
 
+		// Pump 1
+		ConnectionInformation conPump1 = new ConnectionInformation();
+		conPump1.setName("Pump 1");
+		conPump1.setIp("127.0.0.1");
+		conPump1.setQueryName("pump1");
+		conPump1.setUseName(true);
+		conPump1.setOperatorName("pump1Output");
+		conPump1.setOperatorOutputPort(0);
+		conPump1.setUseOperatorOutputPort(true);
+
+		// Pump 2
+		ConnectionInformation conPump2 = new ConnectionInformation();
+		conPump2.setName("Pump 2");
+		conPump2.setIp("127.0.0.1");
+		conPump2.setQueryName("pump2");
+		conPump2.setUseName(true);
+		conPump2.setOperatorName("pump2Output");
+		conPump2.setOperatorOutputPort(0);
+		conPump2.setUseOperatorOutputPort(true);
+
+		// Pump 3
+		ConnectionInformation conPump3 = new ConnectionInformation();
+		conPump3.setName("Pump 3");
+		conPump3.setIp("127.0.0.1");
+		conPump3.setQueryName("pump3");
+		conPump3.setUseName(true);
+		conPump3.setOperatorName("pump3Output");
+		conPump3.setOperatorOutputPort(0);
+		conPump3.setUseOperatorOutputPort(true);
+
 		// Analysis
 		// -------
 		// The pattern analysis of the cooling system
@@ -120,24 +150,14 @@ public class ConfigurationCreator {
 		// Cohort analysis of the windturbines (Deviation)
 		ConnectionInformation conCohortDeviation = new ConnectionInformation();
 		conCohortDeviation.setName("Windturbines");
-		conCohortDeviation.setDescription("The amount of produced energy of one windtubine is different from the other turbines.");
+		conCohortDeviation.setDescription(
+				"The amount of produced energy of one windtubine is different from the other turbines.");
 		conCohortDeviation.setIp("127.0.0.1");
 		conCohortDeviation.setQueryName("windturbineCohort");
 		conCohortDeviation.setUseName(true);
 		conCohortDeviation.setOperatorName("cohortDeviationOutput");
 		conCohortDeviation.setOperatorOutputPort(0);
 		conCohortDeviation.setUseOperatorOutputPort(true);
-
-		// Cohort analysis of the windturbines (LOF)
-		ConnectionInformation conCohortLOF = new ConnectionInformation();
-		conCohortLOF.setName("Windturbines");
-		conCohortLOF.setDescription("The amount of produced energy of one windtubine is different from the other turbines.");
-		conCohortLOF.setIp("127.0.0.1");
-		conCohortLOF.setQueryName("windturbineCohort");
-		conCohortLOF.setUseName(true);
-		conCohortLOF.setOperatorName("cohortLOFOutput");
-		conCohortLOF.setOperatorOutputPort(0);
-		conCohortLOF.setUseOperatorOutputPort(true);
 
 		// Interval analysis for pump switches
 		ConnectionInformation conIntervalPumpSwitch = new ConnectionInformation();
@@ -150,16 +170,54 @@ public class ConfigurationCreator {
 		conIntervalPumpSwitch.setOperatorOutputPort(0);
 		conIntervalPumpSwitch.setUseOperatorOutputPort(true);
 
+		// Pump 1 vibration analysis
+		ConnectionInformation conPump1Vibration = new ConnectionInformation();
+		conPump1Vibration.setName("Pump 1 vibration");
+		conPump1Vibration.setDescription("The vibration of pump 1 is too high compared to the current flow.");
+		conPump1Vibration.setIp("127.0.0.1");
+		conPump1Vibration.setQueryName("pump1VibrationAnalysis");
+		conPump1Vibration.setUseName(true);
+		conPump1Vibration.setOperatorName("pump1VibrationDetection");
+		conPump1Vibration.setOperatorOutputPort(0);
+		conPump1Vibration.setUseOperatorOutputPort(true);
+
+		// Pump 2 vibration analysis
+		ConnectionInformation conPump2Vibration = new ConnectionInformation();
+		conPump2Vibration.setName("Pump 2 vibration");
+		conPump2Vibration.setDescription("The vibration of pump 2 is too high compared to the current flow.");
+		conPump2Vibration.setIp("127.0.0.1");
+		conPump2Vibration.setQueryName("pump2VibrationAnalysis");
+		conPump2Vibration.setUseName(true);
+		conPump2Vibration.setOperatorName("pump2VibrationDetection");
+		conPump2Vibration.setOperatorOutputPort(0);
+		conPump2Vibration.setUseOperatorOutputPort(true);
+
+		// Pump 3 vibration analysis
+		ConnectionInformation conPump3Vibration = new ConnectionInformation();
+		conPump3Vibration.setName("Pump 3 vibration");
+		conPump3Vibration.setDescription("The vibration of pump 3 is too high compared to the current flow.");
+		conPump3Vibration.setIp("127.0.0.1");
+		conPump3Vibration.setQueryName("pump3VibrationAnalysis");
+		conPump3Vibration.setUseName(true);
+		conPump3Vibration.setOperatorName("pump3VibrationDetection");
+		conPump3Vibration.setOperatorOutputPort(0);
+		conPump3Vibration.setUseOperatorOutputPort(true);
+
 		connectionInformation.add(conTransformer);
 		connectionInformation.add(conBigPipeOut);
 		connectionInformation.add(conWindspeed);
+		connectionInformation.add(conPump1);
+		connectionInformation.add(conPump2);
+		connectionInformation.add(conPump3);
 		connectionInformation.add(conPumpPattern);
 		connectionInformation.add(conTempValueAreaAnalysis);
 		connectionInformation.add(conTempChangeAnalysis);
 		connectionInformation.add(conCoolingPipeValueArea);
 		connectionInformation.add(conCohortDeviation);
-		connectionInformation.add(conCohortLOF);
 		connectionInformation.add(conIntervalPumpSwitch);
+		connectionInformation.add(conPump1Vibration);
+		connectionInformation.add(conPump2Vibration);
+		connectionInformation.add(conPump3Vibration);
 		clientConfig.setConnectionInformation(connectionInformation);
 
 		// Overview
@@ -173,8 +231,10 @@ public class ConfigurationCreator {
 		overviewConnections.add(conTempChangeAnalysis);
 		overviewConnections.add(conCoolingPipeValueArea);
 		overviewConnections.add(conCohortDeviation);
-		overviewConnections.add(conCohortLOF);
 		overviewConnections.add(conIntervalPumpSwitch);
+		overviewConnections.add(conPump1Vibration);
+		overviewConnections.add(conPump2Vibration);
+		overviewConnections.add(conPump3Vibration);
 		overviewInformation.setOverviewConnections(overviewConnections);
 
 		// Visualizations
@@ -222,43 +282,107 @@ public class ConfigurationCreator {
 		overviewInformation.setGaugeVisualizationInformation(gaugeVisualizations);
 		overviewInformation.setAreaChartVisualizationInformation(areaChartVisualizationInformation);
 
+		// -----------
 		// Collections
 		// -----------
 		List<CollectionInformation> collections = new ArrayList<>();
 
 		// Transformer
+		// -----------
 		CollectionInformation transformerCollection = new CollectionInformation();
 		transformerCollection.setName("Transformer");
+		// Visualization
 		transformerCollection.addGaugeVisualizationInformation(transformerTemperatureGauge);
+		transformerCollection.addAreaChartVisualizationInformation(energyOutputAreaChart);
 		// Define, how it should be colored
 		CollectionColoringInformation transformerColoring = new CollectionColoringInformation();
 		transformerColoring.setConnectionInformation(conTransformer);
 		transformerColoring.setAttribute("temperature");
 		transformerColoring.setMinValue(20);
-		transformerColoring.setMaxValue(70);
+		transformerColoring.setMaxValue(80);
 		transformerCollection.setCollectionColoringInformation(transformerColoring);
+		// Connections for the collection
+		List<ConnectionInformation> transformerConnections = new ArrayList<>();
+		transformerConnections.add(conTempChangeAnalysis);
+		transformerConnections.add(conTempValueAreaAnalysis);
+		transformerCollection.setConnectionInformation(transformerConnections);
 		// Add a link from this overview to a specific collection
 		transformerTemperatureGauge.setCollectionLink(transformerCollection.getIdentifier());
 
 		// Cooling system
+		// --------------
 		CollectionInformation coolingSystemCollection = new CollectionInformation();
 		coolingSystemCollection.setName("Cooling System");
+		// Visualization
+		AreaChartVisualizationInformation pump1AreaChart = new AreaChartVisualizationInformation();
+		pump1AreaChart.setConnectionInformation(conPump1);
+		pump1AreaChart.setAttribute("lastOutFlowRate");
+		pump1AreaChart.setTimeAttribute("start");
+		pump1AreaChart.setMaxElements(1000);
+		pump1AreaChart.setTitle("Pump 1");
+		
+		AreaChartVisualizationInformation pump2AreaChart = new AreaChartVisualizationInformation();
+		pump2AreaChart.setConnectionInformation(conPump2);
+		pump2AreaChart.setAttribute("lastOutFlowRate");
+		pump2AreaChart.setTimeAttribute("start");
+		pump2AreaChart.setMaxElements(1000);
+		pump2AreaChart.setTitle("Pump 2");
+		
+		AreaChartVisualizationInformation pump3AreaChart = new AreaChartVisualizationInformation();
+		pump3AreaChart.setConnectionInformation(conPump3);
+		pump3AreaChart.setAttribute("lastOutFlowRate");
+		pump3AreaChart.setTimeAttribute("start");
+		pump3AreaChart.setMaxElements(1000);
+		pump3AreaChart.setTitle("Pump 3");
+		
 		coolingSystemCollection.addAreaChartVisualizationInformation(bigCoolingPipeThorughputAreaChart);
+		coolingSystemCollection.addAreaChartVisualizationInformation(pump1AreaChart);
+		coolingSystemCollection.addAreaChartVisualizationInformation(pump2AreaChart);
+		coolingSystemCollection.addAreaChartVisualizationInformation(pump3AreaChart);
+		
+		// Coloring
+		CollectionColoringInformation coolingColoring = new CollectionColoringInformation();
+		coolingColoring.setConnectionInformation(conBigPipeOut);
+		coolingColoring.setAttribute("lastThroughput");
+		coolingColoring.setMinValue(1800);
+		coolingColoring.setMaxValue(5000);
+		coolingSystemCollection.setCollectionColoringInformation(coolingColoring);
+		// Connections for the collection
 		List<ConnectionInformation> coolingSystemConnections = new ArrayList<>();
 		coolingSystemConnections.add(conPumpPattern);
 		coolingSystemConnections.add(conIntervalPumpSwitch);
 		coolingSystemConnections.add(conCoolingPipeValueArea);
+		coolingSystemConnections.add(conPump1Vibration);
+		coolingSystemConnections.add(conPump2Vibration);
+		coolingSystemConnections.add(conPump3Vibration);
+		coolingSystemCollection.setConnectionInformation(coolingSystemConnections);
 		// Link
 		bigCoolingPipeThorughputAreaChart.setCollectionLink(coolingSystemCollection.getIdentifier());
 
+		// Windturbines
+		// ------------
+		CollectionInformation windturbineCollection = new CollectionInformation();
+		windturbineCollection.setName("Windturbines");
+		// Visualizations
+		windturbineCollection.addAreaChartVisualizationInformation(windspeedAreaChart);
+		// Connections
+		List<ConnectionInformation> windturbineConnections = new ArrayList<>();
+		windturbineConnections.add(conCohortDeviation);
+		windturbineCollection.setConnectionInformation(windturbineConnections);
+		// Link
+		windspeedAreaChart.setCollectionLink(windturbineCollection.getIdentifier());
+		energyOutputAreaChart.setCollectionLink(windturbineCollection.getIdentifier());
+
 		collections.add(transformerCollection);
 		collections.add(coolingSystemCollection);
+		collections.add(windturbineCollection);
 		clientConfig.setCollections(collections);
 
 		// --------------------
 		// Server Configuration
 		// --------------------
 		ServerConfiguration serverConfig = new ServerConfiguration();
+		// Visualization
 		serverConfig.addSourcePath(
 				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\sources.qry",
 				"OdysseusScript");
@@ -271,6 +395,16 @@ public class ConfigurationCreator {
 		serverConfig.addQueryPath(
 				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\windspeed.qry",
 				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\pump1.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\pump2.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\visualization\\pump3.qry",
+				"OdysseusScript");
+		// Analysis
 		serverConfig.addQueryPath(
 				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pumpPatternAnalysis.qry",
 				"OdysseusScript");
@@ -285,6 +419,15 @@ public class ConfigurationCreator {
 				"OdysseusScript");
 		serverConfig.addQueryPath(
 				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pumpSwitchIntervalAnalysis.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pump1VibrationAnalysis.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pump2VibrationAnalysis.qry",
+				"OdysseusScript");
+		serverConfig.addQueryPath(
+				"D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\OdysseusWS\\ConditionMonitoring\\demonstration\\analysis\\pump3VibrationAnalysis.qry",
 				"OdysseusScript");
 
 		// Put these to the big config
