@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.costmodel.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,16 +28,19 @@ import de.uniol.inf.is.odysseus.costmodel.NoSampling;
 import de.uniol.inf.is.odysseus.costmodel.impl.histogram.EqualWidthHistogram;
 import de.uniol.inf.is.odysseus.costmodel.impl.interval.FreedmanDiaconisRule;
 
-public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificationListener {
+public class CostModelKnowledge implements ICostModelKnowledge,
+		IPlanModificationListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CostModelKnowledge.class);
-	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(CostModelKnowledge.class);
+
 	private static IServerExecutor executor;
 
 	private final SamplingContainer samplingContainer = new SamplingContainer();
 	private final DatarateContainer datarateContainer = new DatarateContainer();
 	private final CpuTimeContainer cpuTimeContainer = new CpuTimeContainer();
-	private final DataSourceManager dataSourceManager = new DataSourceManager(samplingContainer, datarateContainer);
+	private final DataSourceManager dataSourceManager = new DataSourceManager(
+			samplingContainer, datarateContainer);
 
 	// called by OSGi-DS
 	public void bindExecutor(IExecutor serv) {
@@ -51,30 +55,31 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 		if (executor == serv) {
 			executor.removePlanModificationListener(this);
 			cpuTimeContainer.unsetExecutor();
-			
+
 			executor = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public void activate() {
 		LOG.debug("CostModelKnowledge activated");
 	}
-	
+
 	// called by OSGi-DS
 	public void deactivate() {
 		saveAllSamplesIfNeeded();
 		datarateContainer.save();
 		cpuTimeContainer.save();
-		
+
 		LOG.debug("CostModelKnowledge deactivated");
 	}
 
 	private void saveAllSamplesIfNeeded() {
-		Collection<SDFAttribute> sampledAttributes = samplingContainer.getSampledAttributes();
-		if( sampledAttributes.isEmpty() ) {
+		Collection<SDFAttribute> sampledAttributes = samplingContainer
+				.getSampledAttributes();
+		if (sampledAttributes.isEmpty()) {
 			LOG.debug("Saving sampled data...");
-			for( SDFAttribute attribute : sampledAttributes ) {
+			for (SDFAttribute attribute : sampledAttributes) {
 				samplingContainer.removeSampler(attribute);
 			}
 		}
@@ -83,61 +88,76 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
-		if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs.getEventType())) {
+		if (PlanModificationEventType.QUERY_ADDED.equals(eventArgs
+				.getEventType())) {
 			processQueryAddEvent(query);
-		} else if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
+		} else if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
+				.getEventType())) {
 			processQueryRemoveEvent(query);
 		}
 	}
 
 	private void processQueryAddEvent(IPhysicalQuery query) {
-		Collection<ISource<? extends IStreamObject<?>>> sources = determineSources(query.getPhysicalChilds());
-		for( ISource<? extends IStreamObject<?>> source : sources ) {
+		Collection<ISource<? extends IStreamObject<?>>> sources = determineSources(query
+				.getPhysicalChilds());
+		for (ISource<? extends IStreamObject<?>> source : sources) {
 			dataSourceManager.addSource(source);
 		}
 	}
 
 	private void processQueryRemoveEvent(IPhysicalQuery query) {
-		Collection<ISource<? extends IStreamObject<?>>> sources = determineSources(query.getPhysicalChilds());
-		for( ISource<? extends IStreamObject<?>> source : sources ) {
+		Collection<ISource<? extends IStreamObject<?>>> sources = determineSources(query
+				.getPhysicalChilds());
+		for (ISource<? extends IStreamObject<?>> source : sources) {
 			dataSourceManager.removeSource(source);
 		}
-		
+
 	}
 
-	private static Collection<ISource<? extends IStreamObject<?>>> determineSources(List<IPhysicalOperator> operators) {
-		Collection<ISource<? extends IStreamObject<?>>> sources = Lists.newArrayList();
-		
-		for( IPhysicalOperator operator : operators ) {
-			if( operator instanceof ISource && !(operator instanceof ISink) && !operator.getClass().isAnnotationPresent(NoSampling.class)) {
+	private static Collection<ISource<? extends IStreamObject<?>>> determineSources(
+			List<IPhysicalOperator> operators) {
+		Collection<ISource<? extends IStreamObject<?>>> sources = Lists
+				.newArrayList();
+
+		for (IPhysicalOperator operator : operators) {
+			if (operator instanceof ISource
+					&& !(operator instanceof ISink)
+					&& !operator.getClass().isAnnotationPresent(
+							NoSampling.class)) {
 				@SuppressWarnings("unchecked")
-				ISource<? extends IStreamObject<?>> source = (ISource<? extends IStreamObject<?>>)operator;
+				ISource<? extends IStreamObject<?>> source = (ISource<? extends IStreamObject<?>>) operator;
 				sources.add(source);
 			}
 		}
-		
+
 		return sources;
 	}
 
 	@Override
 	public Optional<IHistogram> getHistogram(SDFAttribute attribute) {
-		Optional<ISampling> optSampler = samplingContainer.getSampler(attribute);
-		if( !optSampler.isPresent() ) {
+		Optional<ISampling> optSampler = samplingContainer
+				.getSampler(attribute);
+		if (!optSampler.isPresent()) {
 			return Optional.absent();
 		}
 		ISampling sampler = optSampler.get();
-		
+
 		return createEqualWidthHistogram(attribute, sampler);
-//		return createEqualDepthHistogram(attribute, sampler);
+		// return createEqualDepthHistogram(attribute, sampler);
 	}
 
-	private static Optional<IHistogram> createEqualWidthHistogram(SDFAttribute attribute, ISampling sampler) {
+	private static Optional<IHistogram> createEqualWidthHistogram(
+			SDFAttribute attribute, ISampling sampler) {
 		List<Double> values = new ArrayList<Double>(sampler.getSampledValues());
-		if( values.isEmpty() ) {
+		if (values.isEmpty()) {
 			return Optional.absent();
 		}
-		
-		int intervalCount = new FreedmanDiaconisRule().estimateIntervalCount(values);
+
+		//Remove null values -> Workaround for Bugfix.
+		values.removeAll(Collections.singleton(null));
+
+		int intervalCount = new FreedmanDiaconisRule()
+				.estimateIntervalCount(values);
 
 		double min = values.get(0);
 		double max = values.get(values.size() - 1);
@@ -153,75 +173,80 @@ public class CostModelKnowledge implements ICostModelKnowledge, IPlanModificatio
 				counts[index]++;
 			}
 		}
-		return Optional.of((IHistogram)new EqualWidthHistogram(attribute, min, max, intervalSize, counts));
+		return Optional.of((IHistogram) new EqualWidthHistogram(attribute, min,
+				max, intervalSize, counts));
 	}
 
-//	private static Optional<IHistogram> createEqualDepthHistogram(SDFAttribute attribute, ISampling sampler) {
-//		List<Double> values = sampler.getSampledValues();
-//		int valueCount = values.size();
-//		int binNum = new FreedmanDiaconisRule().estimateIntervalCount(values);
-//		
-//		if (binNum < 1) {
-//			binNum = 1;
-//		}
-//		
-//		double depth = (double)valueCount / (double)binNum;
-//		double[] borders = new double[binNum + 1];
-//		double[] counts = new double[binNum]; 
-//		
-//		// assume that values are sorted
-//		int actBin = 0;
-//		int actBorder = 1;
-//		borders[0] = values.get(0);
-//		borders[borders.length - 1] = values.get(values.size() - 1 );
-//		
-//		double overhead = 0.0;
-//		for( int i = 0; i < valueCount; i++ ) {
-//			counts[actBin]++;
-//			if( counts[actBin] > depth - overhead) {
-//				overhead += (counts[actBin] - depth);
-//				
-//				borders[actBorder] = values.get(i);
-//				actBorder++;
-//				actBin++;
-//			}
-//		}
-//		
-//		return Optional.of((IHistogram)new EqualDepthHistogram(attribute, borders, counts));
-//	}
-	
+	// private static Optional<IHistogram>
+	// createEqualDepthHistogram(SDFAttribute attribute, ISampling sampler) {
+	// List<Double> values = sampler.getSampledValues();
+	// int valueCount = values.size();
+	// int binNum = new FreedmanDiaconisRule().estimateIntervalCount(values);
+	//
+	// if (binNum < 1) {
+	// binNum = 1;
+	// }
+	//
+	// double depth = (double)valueCount / (double)binNum;
+	// double[] borders = new double[binNum + 1];
+	// double[] counts = new double[binNum];
+	//
+	// // assume that values are sorted
+	// int actBin = 0;
+	// int actBorder = 1;
+	// borders[0] = values.get(0);
+	// borders[borders.length - 1] = values.get(values.size() - 1 );
+	//
+	// double overhead = 0.0;
+	// for( int i = 0; i < valueCount; i++ ) {
+	// counts[actBin]++;
+	// if( counts[actBin] > depth - overhead) {
+	// overhead += (counts[actBin] - depth);
+	//
+	// borders[actBorder] = values.get(i);
+	// actBorder++;
+	// actBin++;
+	// }
+	// }
+	//
+	// return Optional.of((IHistogram)new EqualDepthHistogram(attribute,
+	// borders, counts));
+	// }
+
 	@Override
 	public Optional<IHistogram> getHistogram(String attributeName) {
-		Collection<SDFAttribute> sampledAttributes = samplingContainer.getSampledAttributes();
-		for( SDFAttribute sampledAttribute : sampledAttributes ) {
-			String attName = sampledAttribute.getSourceName() + "." + sampledAttribute.getAttributeName();
-			if( attName.equals(attributeName)) {
+		Collection<SDFAttribute> sampledAttributes = samplingContainer
+				.getSampledAttributes();
+		for (SDFAttribute sampledAttribute : sampledAttributes) {
+			String attName = sampledAttribute.getSourceName() + "."
+					+ sampledAttribute.getAttributeName();
+			if (attName.equals(attributeName)) {
 				return getHistogram(sampledAttribute);
 			}
 		}
 		return Optional.absent();
 	}
-	
+
 	@Override
 	public Collection<SDFAttribute> getHistogramAttributes() {
 		return samplingContainer.getSampledAttributes();
 	}
-	
+
 	@Override
 	public Optional<Double> getDatarate(String sourceName) {
 		return datarateContainer.getDatarate(sourceName);
 	}
-	
+
 	@Override
 	public Collection<String> getDatarateSourceNames() {
 		return datarateContainer.getDatarateSourceNames();
 	}
-	
+
 	@Override
 	public Optional<Double> getCpuTime(String operatorClass) {
 		return cpuTimeContainer.getCpuTime(operatorClass);
 	}
-	
+
 	@Override
 	public Collection<String> getCpuTimeOperatorClasses() {
 		return cpuTimeContainer.getCpuTimeOperatorClasses();
