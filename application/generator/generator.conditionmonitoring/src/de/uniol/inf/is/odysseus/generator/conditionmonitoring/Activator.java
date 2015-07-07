@@ -235,13 +235,21 @@ public class Activator implements BundleActivator {
 						substationManager.getValve2().open();
 						System.out.println("Opened valve 2");
 					}
-					// Pump 1
-				} else if (command.equalsIgnoreCase("defectPump1")) {
+					// Pump 1 (failure)
+				} else if (command.equalsIgnoreCase("failPump1")) {
+					substationManager.getPump1().setFailure(true);
+					System.out.println("Ooops, Pump 1 has failed");
+				} else if (command.equalsIgnoreCase("repairFailedPump1")) {
+					substationManager.getPump1().setFailure(false);
+					System.out.println("Repaired Pump 1 from failure");
+				}
+				// Pump 1 (defect)
+				else if (command.equalsIgnoreCase("defectPump1")) {
 					substationManager.getPump1().setDefect(true);
-					System.out.println("Ooops, Pump 1 is now defect");
-				} else if (command.equalsIgnoreCase("repairPump1")) {
+					System.out.println("Ooops, Pump 1 is defect");
+				} else if (command.equalsIgnoreCase("repairDefectPump1")) {
 					substationManager.getPump1().setDefect(false);
-					System.out.println("Repaired Pump 1");
+					System.out.println("Repaired Pump 1 from defect");
 				}
 				// Windturbine 0
 				else if (command.equalsIgnoreCase("defectTurbine0")) {
@@ -260,8 +268,14 @@ public class Activator implements BundleActivator {
 							.setDefect(false);
 					System.out.println("Last windturbine was repaired");
 				}
+				// Help
+				else {
+					System.out.println(
+							"switchValve2 \n failPump1 \n repairFailedPump1 \n defectPump1 \n repairDefectPump1 \n defectTurbine0 \n repairTurbine0 \n defectLastTurbine \n repairLastTurbine");
+				}
 			}
 		}
+
 	}
 
 	/*

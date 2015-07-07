@@ -17,7 +17,7 @@ public class Windturbine {
 	public final static double MIN_ROTATION_SPEED = 5;
 	public final static double MAX_ROTATION_SPEED = 11;
 
-	public final static double BREAK_DECELERATION = 0.1;
+	public final static double BREAK_DECELERATION = 0.01;
 	public final static double ACCELERATION = 0.15;
 
 	private Wind wind;

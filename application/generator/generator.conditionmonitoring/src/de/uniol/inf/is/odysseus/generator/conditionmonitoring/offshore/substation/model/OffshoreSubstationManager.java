@@ -101,15 +101,15 @@ public class OffshoreSubstationManager implements Observer {
 	}
 
 	public void switchPump() {
-		if (!this.pump3.isRunning() && !this.pump3.isDefect()) {
+		if (!this.pump3.isRunning() && !this.pump3.isFailed()) {
 			// switch on pump 3
 			this.valve3.open();
 			this.pump3.startPump();
-		} else if (!this.pump1.isRunning() && !this.pump1.isDefect()) {
+		} else if (!this.pump1.isRunning() && !this.pump1.isFailed()) {
 			// switch on pump 1
 			this.valve1.open();
 			this.pump1.startPump();
-		} else if (!this.pump2.isRunning() && !this.pump2.isDefect()) {
+		} else if (!this.pump2.isRunning() && !this.pump2.isFailed()) {
 			// switch on pump 2
 			this.valve2.open();
 			this.pump2.startPump();

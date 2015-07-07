@@ -16,17 +16,19 @@ public class Pump extends Observable {
 	private Pipe outPipe;
 	
 	// To simulate failures
+	private boolean hasFailure;
 	private boolean hasDefect;
 
 	public Pump(double maxFlowRate, Pipe inPipe, Pipe outPipe) {
 		this.maxFlowRate = maxFlowRate;
 		this.inPipe = inPipe;
 		this.outPipe = outPipe;
+		this.hasFailure = false;
 		this.hasDefect = false;
 	}
 
 	public void startPump() {
-		if (hasDefect) {
+		if (hasFailure) {
 			return;
 		}
 		// Start pump
@@ -94,17 +96,27 @@ public class Pump extends Observable {
 	 * @return
 	 */
 	public double getCurrentVibration() {
-		return ((this.currentFlowRate / this.maxFlowRate) * 10) + Math.random();
+		double vibration = ((this.currentFlowRate / this.maxFlowRate) * 10) + Math.random();
+		if (!hasDefect)
+			return vibration;
+		return vibration * (1 + (Math.random() * 0.5));
 	}
 	
 	public void setDefect(boolean hasDefect) {
 		this.hasDefect = hasDefect;
-		if (hasDefect)
-			this.currentFlowRate = 0;
 	}
 	
 	public boolean isDefect() {
 		return this.hasDefect;
 	}
-
+	
+	public void setFailure(boolean failure) {
+		this.hasFailure = failure;
+		if (hasFailure)
+			this.currentFlowRate = 0;
+	}
+	
+	public boolean isFailed() {
+		return this.hasFailure;
+	}
 }
