@@ -1137,7 +1137,7 @@ public class OdysseusConsole implements CommandProvider,
 		}
 	}
 
-	@Help(parameter = "", description = "lists current installed bundles")
+	@Help(parameter = "", description = "install feature")
 	public void _installFeature(CommandInterpreter ci) {
 		String id = ci.nextArgument();
 		if (id != null && !id.isEmpty()) {
@@ -1147,6 +1147,17 @@ public class OdysseusConsole implements CommandProvider,
 		}
 	}
 
+	@Help(parameter = "", description = "uninstall feature")
+	public void _uninstallFeature(CommandInterpreter ci) {
+		String id = ci.nextArgument();
+		if (id != null && !id.isEmpty()) {
+			FeatureUpdateUtility.uninstallFeature(id, this.currentUser);
+		} else {
+			ci.println("You have to provide an id of a feature!");
+		}
+	}
+
+	
 	// -----------------------------------------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------
 

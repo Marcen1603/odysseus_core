@@ -23,8 +23,10 @@ import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.operations.InstallOperation;
+import org.eclipse.equinox.p2.operations.ProfileChangeOperation;
 import org.eclipse.equinox.p2.operations.ProvisioningJob;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
+import org.eclipse.equinox.p2.operations.UninstallOperation;
 import org.eclipse.equinox.p2.operations.Update;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
 import org.eclipse.equinox.p2.query.IQuery;
@@ -63,6 +65,30 @@ public class FeatureUpdateUtility {
 		}
 	}
 
+	public static IStatus uninstallFeature(String id, final ISession caller){
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.REMOVE, UpdatePermission.objectURI)) {
+			List<IInstallableUnit> units = getInstalledFeatures(caller);
+			Collection<IInstallableUnit> toUninstall = new ArrayList<IInstallableUnit>();
+			for (IInstallableUnit u:units){
+				if (u.getId().startsWith(id)){
+					toUninstall.add(u);
+				}
+			}
+			if (toUninstall.size() == 0){
+				LOG.error("Feature "+id+" not found");
+				return Status.CANCEL_STATUS;
+			}
+			BundleContext context = Activator.getContext();
+			IProvisioningAgent agent = getAgent(context);
+			final ProvisioningSession session = new ProvisioningSession(agent);
+			final UninstallOperation operation = new UninstallOperation(session, toUninstall);
+			return runOperation(caller, operation);
+
+			
+		}		
+		throw new PermissionException("This user is not allowed to remove features!");
+	}
+	
 	public static IStatus installFeature(String id, final ISession caller) {
 		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL, UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstallableUnits(id, caller);
@@ -81,39 +107,7 @@ public class FeatureUpdateUtility {
 
 				operation.getProvisioningContext().setArtifactRepositories(new URI[] { REPOSITORY_LOC });
 				operation.getProvisioningContext().setMetadataRepositories(new URI[] { REPOSITORY_LOC });
-				LOG.info("Starting install process...");
-				IStatus status = operation.resolveModal(getDefaultMonitor());
-				if (status.isOK()) {
-					final ProvisioningJob provisioningJob = operation.getProvisioningJob(getDefaultMonitor());
-					// updates cannot run from within Eclipse IDE!!!
-					if (provisioningJob == null) {
-						LOG.error("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
-						throw new NullPointerException();
-					}
-
-					// register a job change listener to track
-					// installation progress and notify user upon success
-					provisioningJob.addJobChangeListener(new JobChangeAdapter() {
-						@Override
-						public void done(IJobChangeEvent event) {
-							if (event.getResult().isOK()) {
-								boolean restart = true;
-								if (restart) {
-									LOG.info("Features were installed. You have to restart Odysseus for the changed to take effekt!");
-									restart(caller);
-								}
-
-							}
-							super.done(event);
-						}
-					});
-
-					provisioningJob.schedule();
-
-					return Status.OK_STATUS;
-				}
-				LOG.error(status.getMessage());
-				return Status.CANCEL_STATUS;
+				return runOperation(caller, operation);
 
 			}
 			LOG.error("There is no update with this feature id");
@@ -121,6 +115,43 @@ public class FeatureUpdateUtility {
 
 		}
 		throw new PermissionException("This user is not allowed to install new features!");
+	}
+
+	private static IStatus runOperation(final ISession caller,
+			final ProfileChangeOperation operation) {
+		LOG.info("Starting install process...");
+		IStatus status = operation.resolveModal(getDefaultMonitor());
+		if (status.isOK()) {
+			final ProvisioningJob provisioningJob = operation.getProvisioningJob(getDefaultMonitor());
+			// updates cannot run from within Eclipse IDE!!!
+			if (provisioningJob == null) {
+				LOG.error("Running update from within Eclipse IDE? This won't work!!! Use exported product!");
+				throw new NullPointerException();
+			}
+
+			// register a job change listener to track
+			// installation progress and notify user upon success
+			provisioningJob.addJobChangeListener(new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().isOK()) {
+						boolean restart = true;
+						if (restart) {
+							LOG.info("Features were un/installed. You have to restart Odysseus for the changed to take effekt!");
+							restart(caller);
+						}
+
+					}
+					super.done(event);
+				}
+			});
+
+			provisioningJob.schedule();
+
+			return Status.OK_STATUS;
+		}
+		LOG.error(status.getMessage());
+		return Status.CANCEL_STATUS;
 	}
 
 	private static List<IInstallableUnit> getInstallableUnits(String id, ISession caller) {
