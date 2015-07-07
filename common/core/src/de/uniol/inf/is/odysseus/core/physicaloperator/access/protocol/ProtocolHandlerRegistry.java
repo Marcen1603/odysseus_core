@@ -69,4 +69,14 @@ public class ProtocolHandlerRegistry implements IProtocolHandlerRegistry {
 	public static ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(handlers.keySet());
 	}
+	
+	public static IProtocolHandler<?> getIProtocolHandlerClass(
+			String protocolHandler) {
+		if (protocolHandler != null) {
+			IProtocolHandler<?> dh = handlers.get(protocolHandler.toLowerCase());
+			return dh;
+		}	
+		return null;	
+	}
+
 }

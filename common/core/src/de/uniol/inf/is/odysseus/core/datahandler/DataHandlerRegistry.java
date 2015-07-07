@@ -94,7 +94,12 @@ public class DataHandlerRegistry {
 
 	public static ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(dataHandlers.keySet());
+	
 	}
+	
+
+	
+	
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Class<? extends IStreamObject> getCreatedType(
@@ -116,6 +121,16 @@ public class DataHandlerRegistry {
 		return type;
 	}
 
+	public static IDataHandler<?> getIDataHandlerClass(
+			String dhandlerText) {
+		if (dhandlerText != null) {
+			IDataHandler<?> dh = dataHandlers.get(dhandlerText.toLowerCase());
+			return dh;
+		}	
+		return null;	
+	}
+	
+	
 	public static List<String> getStreamableDataHandlerNames() {
 		List<String> list = new ArrayList<>();
 		for (String name : getHandlerNames()) {

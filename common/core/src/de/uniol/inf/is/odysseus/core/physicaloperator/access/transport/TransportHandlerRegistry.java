@@ -78,4 +78,14 @@ public class TransportHandlerRegistry {
 	public static ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(handlers.keySet());
 	}
+	
+	
+	public static ITransportHandler getITransportHandlerClass(
+			String transportHandler) {
+		if (transportHandler != null) {
+			ITransportHandler dh = handlers.get(transportHandler.toLowerCase());
+			return dh;
+		}	
+		return null;	
+	}
 }
