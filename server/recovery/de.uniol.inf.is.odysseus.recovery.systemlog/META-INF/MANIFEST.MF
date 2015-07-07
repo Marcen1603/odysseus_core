@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Systemlog Plug-In
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.recovery.systemlog
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.recovery.systemlog.SystemLogConfiguration
+Bundle-Vendor: Michael Brand
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: org.osgi.framework;version="1.3.0"
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ com.google.guava;bundle-version="18.0.0",
+ de.uniol.inf.is.odysseus.core.server
+Export-Package: de.uniol.inf.is.odysseus.recovery.systemlog
+Service-Component: OSGI-INF/SystemLog.xml
