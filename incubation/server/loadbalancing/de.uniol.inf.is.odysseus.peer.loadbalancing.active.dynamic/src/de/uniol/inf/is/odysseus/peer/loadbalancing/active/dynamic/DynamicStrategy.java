@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
@@ -250,7 +251,12 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		PeerID localPeerID = networkManager.getLocalPeerID();
 		
 		try {
-			allocator.allocate(queryParts, query, knownRemotePeers, localPeerID);
+			Map<ILogicalQueryPart,PeerID> allocationMap = allocator.allocate(queryParts, query, knownRemotePeers, localPeerID);
+			LOG.debug("Allocation finished.");
+			LOG.debug("Local PID is {}", localPeerID.toString());
+			for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
+				LOG.debug(queryPart.toString() + " goes to " + allocationMap.get(queryPart));
+			}
 		} catch (QueryPartAllocationException e) {
 			LOG.error("Could not allocate Query Parts: {}",e.getMessage());
 			e.printStackTrace();
