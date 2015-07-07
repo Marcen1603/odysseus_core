@@ -28,6 +28,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoPlanAdaption;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.IElementCloningUpdater;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.StandardElementCloningUpdater;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -71,9 +73,14 @@ public class StandardOptimizer extends AbstractOptimizer {
 					&& parameter.getParameterPerformQuerySharing().getValue()) {
 				qso.applyQuerySharing(currentExecPlan.getQueries(), optimizedQueries, parameter, dd);
 			}
+			
 			// Add new queries to the execution plan and optimize new plan
 			currentExecPlan.addQueries(optimizedQueries);
 			currentExecPlan.updateLeafSources();
+		}
+		IElementCloningUpdater equ = getElementCloningUpdater();
+		if (equ != null){
+			equ.updateCloning(currentExecPlan);
 		}
 		return optimizedQueries;
 	}

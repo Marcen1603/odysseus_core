@@ -129,6 +129,7 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public StyledString getText(Object element, StyledString styledString) {
 		if (element instanceof IOdysseusNodeView) {
 			IOdysseusNodeView node = (IOdysseusNodeView) element;
@@ -149,6 +150,12 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 				if (open > 0){
 					styledString.append(" #Open: "+open);
 				}
+			}
+
+			if (s instanceof AbstractPhysicalSubscription){
+				if (((AbstractPhysicalSubscription)s).isNeedsClone()){
+					styledString.append(" <c> ");
+				};
 			}
 			
 			return styledString;

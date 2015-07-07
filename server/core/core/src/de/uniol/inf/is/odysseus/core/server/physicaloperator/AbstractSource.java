@@ -53,7 +53,6 @@ import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.monitoring.AbstractMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.IMyLock;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.NonLockingLock;
-import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -476,13 +475,6 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 			AbstractPhysicalSubscription<ISink<? super T>> sink) {
 		if (sink.getSourceOutPort() == sourceOutPort) {
 			try {
-				// TODO: remove this and implement a handler that set cloning information 
-				final boolean nc = needsClone(sourceOutPort);
-				if (sink.getTarget() instanceof DefaultStreamConnection){
-					sink.setNeedsClone(false);
-				}else{
-					sink.setNeedsClone(nc);
-				}
 				
 				sink.process((IStreamObject)object);
 				
@@ -528,9 +520,9 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// transfer(object, 0);
 	// }
 
-	protected boolean needsClone(int port) {
-		return !hasSingleConsumer(port);
-	}
+//	public boolean needsClone(int port) {
+//		return !hasSingleConsumer(port);
+//	}
 
 	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String,
 	// etc.)

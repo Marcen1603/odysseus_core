@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class OdysseusConfiguration {
+	
+	public static final String CLONING_UPDATER = "CloningUpdater";
 
 	static Logger _logger = null;
 
@@ -204,6 +206,8 @@ public class OdysseusConfiguration {
 		// TODO: find a way to hide this?!
 		props.setProperty("security.default.password", "ithaka");
 		props.setProperty("systemLoadInterval", "3000");
+		
+		props.setProperty(CLONING_UPDATER, "standard");
 		
 	}
 

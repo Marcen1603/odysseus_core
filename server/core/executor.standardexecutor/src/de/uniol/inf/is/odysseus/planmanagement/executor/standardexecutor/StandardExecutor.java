@@ -1130,7 +1130,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public Collection<Integer> startAllClosedQueries(ISession user) {
-		executionPlanLock.lock();
 		List<Integer> started = new LinkedList<Integer>();
 		for (IPhysicalQuery q : executionPlan.getQueries()) {
 			if (!q.isOpened()) {
@@ -1138,20 +1137,16 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				started.add(q.getID());
 			}
 		}
-		executionPlanLock.unlock();
 		return started;
 	}
 
 	@Override
 	public void stopAllQueries(ISession user) {
-		executionPlanLock.lock();
 		for (IPhysicalQuery q : executionPlan.getQueries()) {
 			if (!q.isOpened()) {
 				stopQuery(q.getID(), user);
 			}
 		}
-		executionPlanLock.unlock();
-
 	}
 
 	private void validateUserRight(IPhysicalQuery query, ISession caller,

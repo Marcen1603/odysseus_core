@@ -157,11 +157,11 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	abstract public OutputMode getOutputMode();
 
 
-	@Override
-	protected boolean needsClone(int port) {
-		return getOutputMode() == OutputMode.MODIFIED_INPUT
-				|| super.needsClone(port);
-	}
+//	@Override
+//	public boolean needsClone(int port) {
+//		return getOutputMode() == OutputMode.MODIFIED_INPUT
+//				|| super.needsClone(port);
+//	}
 
 	// ------------------------------------------------------------------------
 	// OPEN

@@ -24,11 +24,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.IElementCloningUpdater;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.StandardElementCloningUpdater;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
@@ -76,6 +79,8 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 * optional Query-Sharing-Component
 	 */
 	protected IQuerySharingOptimizer querySharingOptimizer = null;
+	
+	final private Map<String, IElementCloningUpdater> cloningUpdater = new HashMap<String, IElementCloningUpdater>();
 
 	/**
 	 * List of error event listener. If an error occurs these objects should be informed.
@@ -196,6 +201,27 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		return null;
 	}
 	
+	public void bindElementCloningUpdater(IElementCloningUpdater elementCloningUpdater){
+		this.cloningUpdater.put(elementCloningUpdater.getName().toLowerCase(), elementCloningUpdater);
+	}
+	
+	public void unbindElementCloningUpdater(IElementCloningUpdater elementCloningUpdater){
+		this.cloningUpdater.remove(elementCloningUpdater.getName().toLowerCase());
+	}
+
+
+	protected IElementCloningUpdater getElementCloningUpdater() {
+		String updater = OdysseusConfiguration.get(OdysseusConfiguration.CLONING_UPDATER).toLowerCase();
+		
+		IElementCloningUpdater ret = cloningUpdater.get(updater);
+		
+		if (ret == null){
+				ret = StandardElementCloningUpdater.getInstance();
+		}
+		
+		return ret;
+	}
+
 	
 	/**
 	 * Get a formated info string for object. if object not null
@@ -344,4 +370,5 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	public OptimizationConfiguration getConfiguration() {
 		return this.configuration;
 	}
+	
 }

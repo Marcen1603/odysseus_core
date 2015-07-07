@@ -23,4 +23,5 @@
     <service>
       <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer"/>
    </service>
+    <reference bind="bindElementCloningUpdater" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.IElementCloningUpdater" name="IElementCloningUpdater" policy="dynamic" unbind="unbindElementCloningUpdater"/>
 </scr:component>
