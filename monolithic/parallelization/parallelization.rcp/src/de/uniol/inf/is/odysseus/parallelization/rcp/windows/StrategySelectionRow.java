@@ -10,6 +10,8 @@ public class StrategySelectionRow {
 	private String uniqueOperatorid;
 	private IParallelTransformationStrategy<? extends ILogicalOperator> strategy;
 	private Class<? extends AbstractFragmentAO> fragmentType;
+	private String endOperatorId;
+	private String customDegrees;
 	
 	public StrategySelectionRow(
 			int rowId,
@@ -23,6 +25,8 @@ public class StrategySelectionRow {
 		this.uniqueOperatorid = uniqueOperatorid;
 		this.strategy = strategy;
 		this.fragmentType = fragmentType;
+		this.endOperatorId = "";
+		this.customDegrees = "GLOBAL";
 	}
 
 	public int getRowId() {
@@ -65,8 +69,20 @@ public class StrategySelectionRow {
 	public void setFragmentType(Class<? extends AbstractFragmentAO> fragmentType) {
 		this.fragmentType = fragmentType;
 	}
-	
-	
-	
-	
+
+	public String getEndOperatorId() {
+		return endOperatorId;
+	}
+
+	public void setEndOperatorId(String endOperatorId) {
+		this.endOperatorId = endOperatorId;
+	}
+
+	public String getCustomDegrees() {
+		return customDegrees;
+	}
+
+	public void setCustomDegrees(String customDegrees) {
+		this.customDegrees = customDegrees;
+	}	
 }

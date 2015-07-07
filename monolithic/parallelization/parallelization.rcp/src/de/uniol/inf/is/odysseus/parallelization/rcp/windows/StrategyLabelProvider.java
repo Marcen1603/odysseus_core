@@ -47,9 +47,15 @@ public class StrategyLabelProvider implements ITableLabelProvider {
             	result = row.getLogicalOperator().getUniqueIdentifier();
                 break;
             case 2 :
-                result = row.getStrategy().getName();
+            	result = row.getEndOperatorId();
                 break;
             case 3 :
+            	result = row.getCustomDegrees();
+                break;
+            case 4 :
+                result = row.getStrategy().getName();
+                break;
+            case 5 :
                 result = row.getFragmentType().getSimpleName();
                 break;
             }

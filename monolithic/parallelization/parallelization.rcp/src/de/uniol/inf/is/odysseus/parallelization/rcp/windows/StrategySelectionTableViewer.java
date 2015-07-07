@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -23,6 +25,18 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkInitialization
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
 public class StrategySelectionTableViewer {
+
+	public static final String OPERATOR_TYPE = "Operator type";
+	public static final String OPERATOR_ID = "OperatorId";
+	public static final String END_OPERATOR_ID = "End OperatorId";
+	public static final String DEGREES = "Degrees (comma-seperated or GLOBAL)";
+	public static final String PARALLELIZATION_STRATEGY = "Parallelization Strategy";
+	public static final String FRAGMENTATION = "Fragmentation";
+
+	public static final String[] PROPS = { OPERATOR_TYPE, OPERATOR_ID,
+			END_OPERATOR_ID, DEGREES, PARALLELIZATION_STRATEGY, FRAGMENTATION };
+
+	private static final int NUMBER_OF_COLUMNS = PROPS.length;
 
 	private CheckboxTableViewer tableViewer;
 	private List<StrategySelectionRow> strategySelectionRows;
@@ -47,32 +61,53 @@ public class StrategySelectionTableViewer {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
+		CellEditor[] editors = new CellEditor[NUMBER_OF_COLUMNS];
+		editors[2] = new TextCellEditor(table);
+		editors[3] = new TextCellEditor(table);
+
+		// columns
 		TableViewerColumn attributeOperatorColumn = new TableViewerColumn(
 				tableViewer, SWT.NONE);
-		attributeOperatorColumn.getColumn().setText("Operator type");
+		attributeOperatorColumn.getColumn().setText(OPERATOR_TYPE);
 		tableColumnLayout.setColumnData(attributeOperatorColumn.getColumn(),
-				new ColumnWeightData(7, 25, true));
+				new ColumnWeightData(5, 20, true));
 
 		TableViewerColumn attributeOperatorIdColumn = new TableViewerColumn(
 				tableViewer, SWT.NONE);
-		attributeOperatorIdColumn.getColumn().setText("OperatorId");
+		attributeOperatorIdColumn.getColumn().setText(OPERATOR_ID);
 		tableColumnLayout.setColumnData(attributeOperatorIdColumn.getColumn(),
-				new ColumnWeightData(7, 25, true));
+				new ColumnWeightData(5, 10, true));
+
+		TableViewerColumn attributeEndOperatorIdColumn = new TableViewerColumn(
+				tableViewer, SWT.NONE);
+		attributeEndOperatorIdColumn.getColumn().setText(END_OPERATOR_ID);
+		tableColumnLayout.setColumnData(attributeEndOperatorIdColumn.getColumn(),
+				new ColumnWeightData(5, 10, true));
+
+		TableViewerColumn attributeDegreeColumn = new TableViewerColumn(
+				tableViewer, SWT.NONE);
+		attributeDegreeColumn.getColumn().setText(DEGREES);
+		tableColumnLayout.setColumnData(attributeDegreeColumn.getColumn(),
+				new ColumnWeightData(10, 35, true));
 
 		TableViewerColumn attributeStrategyColumn = new TableViewerColumn(
 				tableViewer, SWT.NONE);
-		attributeStrategyColumn.getColumn().setText("Parallelization Strategy");
+		attributeStrategyColumn.getColumn().setText(PARALLELIZATION_STRATEGY);
 		tableColumnLayout.setColumnData(attributeStrategyColumn.getColumn(),
-				new ColumnWeightData(7, 25, true));
+				new ColumnWeightData(10, 30, true));
 
 		TableViewerColumn attributefragmentColumn = new TableViewerColumn(
 				tableViewer, SWT.NONE);
-		attributefragmentColumn.getColumn().setText("Fragmentation");
+		attributefragmentColumn.getColumn().setText(FRAGMENTATION);
 		tableColumnLayout.setColumnData(attributefragmentColumn.getColumn(),
-				new ColumnWeightData(7, 25, true));
+				new ColumnWeightData(10, 30, true));
 
 		tableViewer.setContentProvider(new StrategyContentProvider());
 		tableViewer.setLabelProvider(new StrategyLabelProvider());
+
+		tableViewer.setColumnProperties(PROPS);
+		tableViewer.setCellModifier(new StrategyCellModifier(tableViewer));
+		tableViewer.setCellEditors(editors);
 
 		tableViewer.setInput(strategySelectionRows);
 		tableViewer.setAllChecked(true);
