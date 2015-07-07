@@ -1053,7 +1053,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				executionPlan.getQueries());
 		for (IPhysicalQuery q : queries) {
 			try {
-				removeQuery(q.getID(), caller);
+				removeQuery(caller, q);
 			} catch (Throwable throwable) {
 				LOG.error("Exception during stopping query " + q.getID()
 						+ " caller " + caller.getId(), throwable);
