@@ -332,7 +332,8 @@ public class PredicateSelectivityHelper {
 
 		try {
 			attribute = ((Variable) arg0).getIdentifier();
-			value = (Double) ((Constant<?>) arg1).getValue();
+			//Changed from typecast to call of toNumeric to avoid ClassCast Exceptions
+			value = toNumeric(((Constant<?>) arg1).getValue());
 		} catch (Throwable ex) {
 			LOG.warn("Operator is more complex than expected here...", ex);
 			return Optional.absent();
@@ -371,4 +372,31 @@ public class PredicateSelectivityHelper {
 			return false;
 		return true;
 	}
+	
+
+	private static Double toNumeric(Object value) {
+		if( value == null ) {
+			return null;
+		}
+		
+		if (value instanceof Double) {
+			return ((Double) value);
+		}
+		if (value instanceof Float) {
+			return ((Float) value).doubleValue();
+		}
+		if (value instanceof Long) {
+			return ((Long) value).doubleValue();
+		}
+		if (value instanceof Byte) {
+			return ((Byte) value).doubleValue();
+		}
+		if (value instanceof Integer) {
+			return ((Integer) value).doubleValue();
+		}
+
+		LOG.error("Could not sample value '{}'. Is it not numeric?", value);
+		return null;
+	}
+
 }
