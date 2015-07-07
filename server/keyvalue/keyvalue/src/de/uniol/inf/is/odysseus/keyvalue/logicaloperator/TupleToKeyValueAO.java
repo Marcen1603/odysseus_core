@@ -78,7 +78,7 @@ public class TupleToKeyValueAO extends UnaryLogicalOp {
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(
 				getInputSchema(0).getURI(),
-				(Class<? extends IMetaAttribute>) type, getInputSchema(0)
+				(Class<? extends IStreamObject<?>>) type, getInputSchema(0)
 						.getAttributes(), getInputSchema());
 
 		setOutputSchema(newOutputSchema);

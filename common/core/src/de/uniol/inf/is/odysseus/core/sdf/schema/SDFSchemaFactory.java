@@ -88,9 +88,8 @@ public class SDFSchemaFactory {
 		return out;
 	}
 	
-	static public SDFSchema createNewSchema(String uri, Class<? extends IMetaAttribute> type,
+	static public SDFSchema createNewSchema(String uri, Class<? extends IStreamObject<?>> type,
 			Collection<SDFAttribute> attributes, SDFSchema oldSchema) {
-		@SuppressWarnings("unchecked")
 		SDFSchema out = new SDFSchema(uri,
 				(Class<? extends IStreamObject<?>>) type, attributes, oldSchema);
 		return out;

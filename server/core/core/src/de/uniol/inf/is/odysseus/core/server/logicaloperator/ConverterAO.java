@@ -120,6 +120,10 @@ public class ConverterAO extends UnaryLogicalOp {
 		}else if (getInputSchema() != null){
 			name = getInputSchema().getURI();
 		}
+		SDFSchema inputSchema = getInputSchema();
+		if (inputSchema != null){
+			return SDFSchemaFactory.createNewSchema(name, (Class<? extends IStreamObject<?>>) type, outputAttributes, inputSchema);
+		}
 		return SDFSchemaFactory.createNewSchema(name, (Class<? extends IStreamObject<?>>) type, outputAttributes);
 	}
 
