@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Javaparser
+Bundle-SymbolicName: javaparser
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ClassPath: javaparser-core-3.0.0-SNAPSHOT.jar,
+ .
+Export-Package: com.github.javaparser,
+ com.github.javaparser.ast,
+ com.github.javaparser.ast.body,
+ com.github.javaparser.ast.comments,
+ com.github.javaparser.ast.expr,
+ com.github.javaparser.ast.internal,
+ com.github.javaparser.ast.stmt,
+ com.github.javaparser.ast.type,
+ com.github.javaparser.ast.visitor

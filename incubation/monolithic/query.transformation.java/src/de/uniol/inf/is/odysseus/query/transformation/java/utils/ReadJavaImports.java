@@ -2,31 +2,34 @@ package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import com.thoughtworks.qdox.JavaDocBuilder;
+import com.thoughtworks.qdox.JavaProjectBuilder;
+import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaSource;
-
-
-
 
 public class ReadJavaImports {
 	
-	public static List<String> getImportsFromFileWithKnownLocation(String fileFullPath){
+	public static Set<String> getImportsFromFileWithKnownLocation(String fileFullPath,String packageName){
 		
-		List<String> importList = new ArrayList<String>();
+		 Set<String> importList = new HashSet<String>();
 	
-		    JavaDocBuilder builder = new JavaDocBuilder();
+		 JavaProjectBuilder builder = new JavaProjectBuilder();
 		    try {
 				builder.addSource(new FileReader( fileFullPath  ));
-			    JavaSource src = builder.getSources()[0];
-			    String[] imports = src.getImports();
-
-			    for ( String imp : imports )
-			    {
-			        System.out.println(imp);
-			        importList.add(imp);
+			    JavaSource src = builder.getSources().iterator().next();
+			   
+			
+			    if( src.getPackage().equals(packageName)){
+				    List<String> imports = src.getImports();
+	
+				    for ( String imp : imports )
+				    {
+				        System.out.println(imp);
+				        importList.add(imp);
+				    }
 			    }
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -37,7 +40,7 @@ public class ReadJavaImports {
 	}
 	
 
-	public static List<String> getImportsFromFileWithUnknownLocation(String fileName, String odysseusPath){
+	public static Set<String> getImportsFromFileWithUnknownLocation(String fileName,String packageName, String odysseusPath){
 		
 		FileSearch fileSearch = new FileSearch(fileName, odysseusPath);
 		fileSearch.searchDirectory();
@@ -48,12 +51,35 @@ public class ReadJavaImports {
 		}else{
 		    System.out.println("\nFound " + count + " result!\n");
 		    for (String matched : fileSearch.getResult()){
-			System.out.println("Found : " + matched);
+		    	System.out.println("Found : " + matched);
+		  
+		    	
 		    }
 		}
 		
-		return getImportsFromFileWithKnownLocation(fileSearch.getResult().get(0));
-		
+		return getImportsFromFileWithKnownLocation(fileSearch.getResult().get(0),packageName);
 	}
 
+	
+	public static String getImportForFile(String fileFullPath){
+		String importString = "";
+		
+	    JavaProjectBuilder builder = new JavaProjectBuilder();
+	    try {
+			builder.addSource(new FileReader( fileFullPath  ));
+		    JavaSource src = builder.getSources().iterator().next();
+		  
+		   JavaClass clazzes = src.getClasses().get(0);
+	
+		    importString = src.getPackage().getName()+"."+clazzes.getName();
+	
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		
+		return importString;
+	}
 }

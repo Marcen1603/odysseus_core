@@ -4,15 +4,20 @@ Bundle-Name: Qdox
 Bundle-SymbolicName: qdox
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-ClassPath: qdox-1.12.1.jar
+Bundle-ClassPath: qdox-2.0-M3.jar
 Export-Package: com.thoughtworks.qdox,
- com.thoughtworks.qdox.ant,
+ com.thoughtworks.qdox.builder,
+ com.thoughtworks.qdox.builder.impl,
  com.thoughtworks.qdox.directorywalker,
- com.thoughtworks.qdox.junit,
+ com.thoughtworks.qdox.library,
  com.thoughtworks.qdox.model,
- com.thoughtworks.qdox.model.annotation,
+ com.thoughtworks.qdox.model.expression,
+ com.thoughtworks.qdox.model.impl,
  com.thoughtworks.qdox.model.util,
  com.thoughtworks.qdox.parser,
+ com.thoughtworks.qdox.parser.expression,
  com.thoughtworks.qdox.parser.impl,
  com.thoughtworks.qdox.parser.structs,
- com.thoughtworks.qdox.tools
+ com.thoughtworks.qdox.tools,
+ com.thoughtworks.qdox.writer,
+ com.thoughtworks.qdox.writer.impl

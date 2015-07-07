@@ -4,8 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
+import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededMEPFunctions;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorToVariable;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFSchema;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
@@ -15,6 +19,8 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 	
   private final String name =  new SelectAO().getClass().getSimpleName();
   private final String targetPlatform = "Java";
+  
+  private Set<String> importList = new HashSet<String>();
   
 	@Override
 	public String getName() {
@@ -38,10 +44,16 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 		String operatorVariable = OperatorToVariable.getVariable(operator);
 		
 		SelectAO selectAO = (SelectAO) operator;
-		IPredicate predicate = selectAO.getPredicate();
+		IPredicate<?> predicate = selectAO.getPredicate();
+		
+	
 		
 		String predicateValue = predicate.toString();
-
+		
+		
+		IExpression<?> test =MEP.getInstance().parse(predicateValue);
+		NeededMEPFunctions.addMEPFunction(test.toFunction().getClass().getName(), test.toFunction().getClass().getSimpleName());
+	
 		code.append("\n");
 		code.append("\n");
 		code.append(TransformSDFSchema.getCodeForSDFSchema(selectAO.getOutputSchema(), operatorVariable));
@@ -61,20 +73,12 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 		return code.toString();
 	}
 
+
+
 	@Override
 	public Set<String> getNeededImports() {
-		Set<String> importList = new HashSet<String>();
-		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver");
-		importList.add("de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO");
-		importList.add("de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder");
-		importList.add("de.uniol.inf.is.odysseus.core.predicate.IPredicate");
-		
-		
-
+		importList.add(SelectPO.class.getPackage().getName()+"."+SelectPO.class.getSimpleName());
 		return importList;
-		
-		
-	
 	}
 
 

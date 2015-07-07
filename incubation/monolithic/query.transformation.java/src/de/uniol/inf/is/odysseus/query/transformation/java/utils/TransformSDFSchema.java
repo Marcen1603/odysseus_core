@@ -8,6 +8,7 @@ public class TransformSDFSchema {
 		
 		String className = schema.getType().getSimpleName()+".class";
 	
+	
 		StringBuilder sdfSchemaCode = new StringBuilder();
 		
 		sdfSchemaCode.append("\n");

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,12 +13,11 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 
-import com.google.common.collect.ImmutableSet;
-
 import de.uniol.inf.is.odysseus.core.Activator;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.mep.FunctionSignature;
-import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededDataHandler;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededMEPFunctions;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededProtocolHandler;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededTransportHandler;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.osgi.Component;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.osgi.ObjectFactory;
 
@@ -26,10 +26,11 @@ public class JavaEmulateOSGIBindings {
 	
 	
 	private List<String> neededImportList  = new ArrayList<String>();
+	
+	
 	/*
 	 * dynamic
 	 */
-
 	public String getCodeForOSGIBinds(String odysseusPath){
 		/*
 		 * TODO get all XML Files and bundles ?
@@ -87,11 +88,11 @@ public class JavaEmulateOSGIBindings {
 			try {
 				if(cp.getName().equals("MEP")){
 					stringClass = loadClass(Activator.getBundleContext(), cp.getImplementation().getClazz(), "de.uniol.inf.is.odysseus.mep", null);
-				
-					
 				}else{
 					stringClass = Class.forName(cp.getImplementation().getClazz() );
 				}
+				//add class to importList
+				neededImportList.add(cp.getImplementation().getClazz());
 				code.append(stringClass.getSimpleName()+" " + stringClass.getSimpleName().toLowerCase()+" = new "+stringClass.getSimpleName()+"();");
 				code.append("\n");
 				
@@ -103,25 +104,60 @@ public class JavaEmulateOSGIBindings {
 		}
 		
 		//MEP Funktion
-		ImmutableSet<FunctionSignature>  mepFunktions = MEP.getFunctions();
-	
-		for(FunctionSignature function : mepFunktions){
+		Map<String, String> neededMEPFunctions = NeededMEPFunctions.getNeededMEPFunctions();
+		
+		for (Map.Entry<String, String> entry : neededMEPFunctions.entrySet())
+		{
+		
+		    neededImportList.add(entry.getKey());
 			
-			Class<?> classObject = MEP.getFunctionClass(function);
-			
-				neededImportList.add(classObject.getName());
-			
-				code.append("\n");
-				code.append("mep.registerFunction((IFunction<?>) new "+classObject.getSimpleName()+"());");
-				code.append("\n");
-			
+			code.append("\n");
+			code.append("mep.registerFunction(new "+entry.getValue()+"());");
+			code.append("\n");
+		}
 
-			function.getClass();
+	
+		code.append("\n");
+		code.append("\n");
+		
+	
+		//DataHandler
+		Map<String, String> neededDataHandler = NeededDataHandler.getNeededDataHandler();
+		
+		for (Map.Entry<String, String> entry : neededDataHandler.entrySet())
+		{
+		
+		    neededImportList.add(entry.getKey());
+			code.append("\n");
+			code.append("datahandlerregistry.registerDataHandler(new "+entry.getValue()+"());");
+			code.append("\n");
 		}
 		
-		code.append("\n");
-		code.append("\n");
+		//TransportHandler
+		Map<String, String> neededTransportHandler = NeededTransportHandler.getNeededTransportHandler();
 		
+		for (Map.Entry<String, String> entry : neededTransportHandler.entrySet())
+		{
+		    neededImportList.add(entry.getKey());
+			code.append("\n");
+			code.append("transporthandlerregistry.register(new "+entry.getValue()+"());");
+			code.append("\n");
+		}
+	
+		//ProtocolHandler
+		Map<String, String> neededProtocolHandler = NeededProtocolHandler.getNeededProtocolHandler();
+		
+		for (Map.Entry<String, String> entry : neededProtocolHandler.entrySet())
+		{
+		    neededImportList.add(entry.getKey());
+			code.append("\n");
+			code.append("protocolhandlerregistry.register(new "+entry.getValue()+"());");
+			code.append("\n");
+		}
+		
+		
+		
+		/*
 		//code for handler add
 		for(Component cp : handlerList){
 			Class<?> stringInterfaceClass;
@@ -147,10 +183,14 @@ public class JavaEmulateOSGIBindings {
 				code.append(registryVariable+"."+bindString+"("+implementationClass.getSimpleName().toLowerCase()+");");
 				code.append("\n");
 				code.append("\n");
+				
+				neededImportList.add(implementationClass.getName());
+				neededImportList.add(stringInterfaceClass.getName());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
+*/
 		return code.toString();
 		
 	}
@@ -185,5 +225,5 @@ public class JavaEmulateOSGIBindings {
 		   }
 		  }
 		  throw new ClassNotFoundException("Could not load class " + className);
-		 }
+	}
 }

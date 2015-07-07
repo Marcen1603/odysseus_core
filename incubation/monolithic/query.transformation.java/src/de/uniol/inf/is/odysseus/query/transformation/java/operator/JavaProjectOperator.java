@@ -5,6 +5,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorToVariable;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformIntegerArray;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFSchema;
@@ -36,7 +37,6 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 		project.setName(operator.getName());
 		
 		*/
-		
 		String operatorVariable = OperatorToVariable.getVariable(operator);
 		
 		ProjectAO projectAO = (ProjectAO)operator;
@@ -56,14 +56,12 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 		return code.toString();
 	}
 	
-	public Set<String> getNeededImports(){
-		Set<String> importList = new HashSet<String>();
-		importList.add("de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO");
-		importList.add("java.util.ArrayList");
-		importList.add("java.util.List");
+	@Override
+	public Set<String> getNeededImports() {
+		Set<String> imoportList = new HashSet<String>();
+		imoportList.add(RelationalProjectPO.class.getPackage().getName()+"."+RelationalProjectPO.class.getSimpleName());
+		return imoportList;
 
-		return importList;
-		
 	}
 
 

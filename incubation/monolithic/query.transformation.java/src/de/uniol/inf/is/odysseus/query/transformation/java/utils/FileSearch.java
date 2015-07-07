@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class FileSearch {
 	
 	  private String fileNameToSearch;
@@ -11,10 +12,14 @@ public class FileSearch {
 	  private List<String> result = new ArrayList<String>();
 	 
 	  public FileSearch(String fileNameToSearch, String directory){
-		  this.fileNameToSearch = fileNameToSearch;
+		  this.fileNameToSearch = fileNameToSearch.trim();
 		  this.directory = new File(directory);
 	  }
-	 
+
+	   public FileSearch(){
+		   
+	   }
+	  
 	  public String getFileNameToSearch() {
 		return fileNameToSearch;
 	  }
@@ -26,7 +31,8 @@ public class FileSearch {
 	  public List<String> getResult() {
 		return result;
 	  }
-	 
+	  
+	  @Deprecated
 	  public void searchDirectory() {
 		setFileNameToSearch(fileNameToSearch.toLowerCase());
 	 
@@ -44,6 +50,7 @@ public class FileSearch {
 		  System.out.println("Searching directory ... " + file.getAbsoluteFile());
 	            //do you have permission to read this directory?	
 		    if (file.canRead()) {
+		    
 				for (File temp : file.listFiles()) {
 				    if (temp.isDirectory()) {
 					search(temp);

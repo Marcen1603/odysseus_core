@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Java
+Bundle-Name: Java.incubation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.transformation.java
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.java.Activator
@@ -14,6 +14,9 @@ Require-Bundle: de.uniol.inf.is.odysseus.query.transformation,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.slf4j,
  com.google.guava,
- qdox;bundle-version="1.0.0"
+ qdox;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.relational.base,
+ org.apache.commons.io,
+ javaparser;bundle-version="1.0.0"
 Service-Component: OSGI-INF/JavaSelectOperator.xml,OSGI-INF/JavaProjectOperator.xml,OSGI-INF/JavaTargetPlatform.xml,
  OSGI-INF/JavaCSVFileSourceOperator.xml

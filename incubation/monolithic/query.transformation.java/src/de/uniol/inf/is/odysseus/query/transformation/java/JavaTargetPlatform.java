@@ -12,7 +12,9 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.transformation.java.analysis.JavaImportAnalysis;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWrite;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorToVariable;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIBindings;
@@ -46,6 +48,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
 			TransformationParameter parameter) {
 	
+		OdysseusIndex.search(parameter.getOdysseusPath());
+		
 		operatorList = new ArrayList<ILogicalOperator>();
 		body = new StringBuilder();
 
@@ -71,6 +75,9 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		osgiBinds = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath());
 		
 		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
+		
+		//add imports that needed for the code
+		importList.addAll(new JavaImportAnalysis().analyseCodeForImport(parameter, startDataStream()));
 		
 		try {
 			
@@ -112,35 +119,10 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	 */
 	private void addDefaultImport() {
 		
-		importList.add("java.io.IOException");
+		importList.add("java.util.ArrayList");
 		importList.add("java.util.List");
-		
-		importList.add("de.uniol.inf.is.odysseus.mep.MEP");
-		importList.add("de.uniol.inf.is.odysseus.core.mep.IFunction");
-				
-		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute");
-		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype");
-		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema");
-		importList.add("de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory");
-		importList.add("de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner");
-		
-		importList.add("de.uniol.inf.is.odysseus.core.datahandler.*");
-		importList.add("de.uniol.inf.is.odysseus.core.objecthandler.*");
-		
-		importList.add("de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry");
+		importList.add("java.io.IOException");
 	
-		
-		importList.add("de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.*");
-		
-		importList.add("de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.*");
-	
-		
-		importList.add("de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator");
-		importList.add("de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery");
-
-		
-		
-		
 	}
 	
 	
@@ -238,12 +220,19 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getClass().getSimpleName());
 		if(opTrans != null ){
 			System.out.println(opTrans.getCode(operator));
-			OperatorToVariable.addOperator(operator);
-			body.append(opTrans.getCode(operator));
 			
-			if(opTrans.getNeededImports()!=null){
-				importList.addAll(opTrans.getNeededImports());
-			}
+			OperatorToVariable.addOperator(operator);
+			String tempCode = opTrans.getCode(operator);
+		
+			body.append(tempCode);
+			
+			//add import for *PO
+			importList.addAll(opTrans.getNeededImports());
+			
+		
+			//add imports that needed for the code
+			importList.addAll(new JavaImportAnalysis().analyseCodeForImport(parameter, tempCode));
+		
 			operatorList.add(operator);
 		}
 		
