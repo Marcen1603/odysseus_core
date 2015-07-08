@@ -30,6 +30,14 @@ public class OptionMap {
 		}
 	}
 
+	public OptionMap(OptionMap optionMap) {
+		if (optionMap != null){
+			for (Entry<String, String> e : optionMap.optionMap.entrySet()) {
+				overwriteOption(e.getKey().toLowerCase(), e.getValue());
+			}	
+		}
+	}
+
 	public void setOption(String key, String value) {
 		if (optionMap.containsKey(key.toLowerCase())) {
 			throw new IllegalStateException("Option " + key.toLowerCase()
