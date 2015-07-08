@@ -115,7 +115,7 @@ public class CrashDetector implements ISystemLogListener {
 	 * calls its listeners.
 	 */
 	@Override
-	public void onInitialSystemLogReading(List<ISysLogEntry> entries)
+	public void onInitialSystemLogRead(List<ISysLogEntry> entries)
 			throws Throwable {
 		if (entries.isEmpty()) {
 			return;

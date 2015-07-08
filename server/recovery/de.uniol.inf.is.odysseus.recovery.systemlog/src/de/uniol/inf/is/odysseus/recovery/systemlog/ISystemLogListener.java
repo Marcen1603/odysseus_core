@@ -18,7 +18,7 @@ public interface ISystemLogListener {
 	 * @throws Throwable
 	 *             if any error occurs.
 	 */
-	public void onInitialSystemLogReading(List<ISysLogEntry> entries)
+	public void onInitialSystemLogRead(List<ISysLogEntry> entries)
 			throws Throwable;
 
 	/**

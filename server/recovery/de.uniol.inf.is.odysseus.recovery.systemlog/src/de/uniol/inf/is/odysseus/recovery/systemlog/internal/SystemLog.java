@@ -66,7 +66,7 @@ public class SystemLog implements ISystemLog {
 				listener.getClass().getSimpleName());
 		if (cLogLoaded) {
 			try {
-				listener.onInitialSystemLogReading(cEntries);
+				listener.onInitialSystemLogRead(cEntries);
 			} catch (Throwable t) {
 				cLog.error("Error occured for listener "
 						+ listener.getClass().getSimpleName(), t);
@@ -151,7 +151,7 @@ public class SystemLog implements ISystemLog {
 		// Call listeners
 		for (ISystemLogListener listener : cListeners) {
 			try {
-				listener.onInitialSystemLogReading(cEntries);
+				listener.onInitialSystemLogRead(cEntries);
 			} catch (Throwable t) {
 				cLog.error("Error occured for listener "
 						+ listener.getClass().getSimpleName(), t);
