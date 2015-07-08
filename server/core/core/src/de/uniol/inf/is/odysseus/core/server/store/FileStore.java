@@ -33,11 +33,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 
 public class FileStore<IDType extends Serializable & Comparable<? extends IDType>, STORETYPE extends Serializable>
 		extends AbstractStore<IDType, STORETYPE> {
 
+	public static final String FILENAME = "filename";
+	public static final String TYPE = "filestore";
+	
 	Logger logger = LoggerFactory.getLogger(FileStore.class);
 
 	private String path;
@@ -46,12 +50,33 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 
 	private boolean initialzed;
 
+	@Override
+	public IStore<IDType, STORETYPE> newInstance(OptionMap options) throws StoreException {
+		options.checkRequired(FILENAME);
+		
+		FileStore<IDType, STORETYPE> store;
+		try {
+			store = new FileStore<IDType, STORETYPE>(options.get(FILENAME));
+		} catch (IOException e) {
+			throw new StoreException(e);
+		}
+		return store;
+	}
+	
+	public FileStore(){
+	}
+	
 	public FileStore(String path) throws IOException {
 		this.path = path;
 		initialzed = false;
 		loadCache();
 	}
 
+	@Override
+	public String getType() {
+		return TYPE;
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void loadCache() throws IOException {
 		File f = FileUtils.openOrCreateFile(path);

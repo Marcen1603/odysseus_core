@@ -21,9 +21,24 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+
 public class MemoryStore<IDType extends Comparable<?>,STORETYPE> extends AbstractStore<IDType ,STORETYPE>{
 
+	public static final String TYPE = "MemoryStore";
+	
 	private Map<IDType, STORETYPE> elements = new TreeMap<IDType, STORETYPE>();
+	
+	@Override
+	public IStore<IDType, STORETYPE> newInstance(OptionMap options)
+			throws StoreException {
+		return new MemoryStore<IDType, STORETYPE>();	
+	}
+	
+	@Override
+	public String getType() {
+		return TYPE;
+	}
 	
 	@Override
 	public STORETYPE get(IDType username) {
