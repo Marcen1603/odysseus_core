@@ -20,7 +20,7 @@ public class StoreRegistry {
 	}
 	
 	public static IStore<?,?> createStore(
-			String storeType, OptionMap storeOptions) {
+			String storeType, OptionMap storeOptions) throws StoreException{
 		
 		IStore<?,?> store = stores.get(storeType);
 		if (store != null){

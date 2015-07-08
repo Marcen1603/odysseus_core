@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.store;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -45,6 +46,14 @@ public interface IStore<IDType extends Comparable<?>, STORETYPE> {
 	 * @return the value or null if value not available
 	 */
 	STORETYPE get(IDType id);
+	
+	/**
+	 * Retrieve elements in ascending order and limit
+	 * to the first limit results 
+	 * @param limit
+	 * @return
+	 */
+	List<Entry<IDType, STORETYPE>> getOrderedByKey(long limit);
 	
 	/**
 	 * Put key value pair to store
@@ -121,4 +130,5 @@ public interface IStore<IDType extends Comparable<?>, STORETYPE> {
 	 * @return
 	 */
 	String getType();
+
 }

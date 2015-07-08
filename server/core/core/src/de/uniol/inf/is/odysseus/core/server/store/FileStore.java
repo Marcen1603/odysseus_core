@@ -26,6 +26,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -144,6 +145,18 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 			}
 		}
 		return cache.get(id);
+	}
+	
+	@Override
+	public List<Entry<IDType, STORETYPE>> getOrderedByKey(long limit) {
+		if (!initialzed) {
+			try {
+				loadCache();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return cache.getOrderedByKey(limit);
 	}
 
 	@Override
