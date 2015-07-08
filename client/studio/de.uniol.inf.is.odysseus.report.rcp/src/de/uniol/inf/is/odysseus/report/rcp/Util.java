@@ -2,13 +2,12 @@ package de.uniol.inf.is.odysseus.report.rcp;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,21 +35,21 @@ public class Util {
 	}
 	
 	public static List<String> read(File file) throws IOException  {
-		Stream<String> fileContents = Files.lines(file.toPath());
-		try {
-			final List<String> result = Lists.newArrayList();
-			fileContents.forEach(new Consumer<String>() {
-	
-				@Override
-				public void accept(String textLine) {
-					result.add(textLine);
-				}
-				
-			});
-			return result;
-		} finally {
-			fileContents.close();
-		}
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		List<String> result = Lists.newArrayList();
+	    try {
+	    	
+	        String line = br.readLine();
+
+	        while (line != null) {
+	            result.add(line);
+	            line = br.readLine();
+	        }
+	    } finally {
+	        br.close();
+	    }
+	    
+	    return result;
 	}
 
 }
