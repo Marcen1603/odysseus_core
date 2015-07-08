@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.report.rcp;
 
+import java.io.IOException;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class EditorAreaReportProvider implements IReportProvider {
 		StringBuilder report = new StringBuilder();
 		
 		for( IEditorReference editorRef : editorRefs ) {
-			Optional<FileEditorInput> optInput = determineEditorFileInput(editorRef);
+			Optional<IPathEditorInput> optInput = determineEditorFileInput(editorRef);
 			if( optInput.isPresent() ) {
 				String partName = editorRef.getPartName();
 				String text = loadFileEditorInputContents(optInput.get());
@@ -63,24 +63,24 @@ public class EditorAreaReportProvider implements IReportProvider {
 		return report.toString();
 	}
 
-	private static String loadFileEditorInputContents(FileEditorInput input) {
+	private static String loadFileEditorInputContents(IPathEditorInput input) {
 		StringBuilder sb = new StringBuilder();
 		try {
-			List<String> lines = Util.read(input.getFile());
+			List<String> lines = Util.read(input.getPath().toFile());
 			for( String line : lines ) {
 				sb.append(line).append("\n");
 			}
-		} catch (CoreException e) {
-			LOG.error("Cannot read contents from file '{}'", input.getFile().getName(), e);
+		} catch (IOException e) {
+			LOG.error("Cannot read contents from file '{}'", input.getPath().toString(), e);
 		}
 		return sb.toString();
 	}
 
-	private static Optional<FileEditorInput> determineEditorFileInput(IEditorReference editorRef) {
+	private static Optional<IPathEditorInput> determineEditorFileInput(IEditorReference editorRef) {
 		try {
 			IEditorInput editorInput = editorRef.getEditorInput();
-			if( editorInput instanceof FileEditorInput) {
-				return Optional.of((FileEditorInput)editorInput);
+			if( editorInput instanceof IPathEditorInput) {
+				return Optional.of((IPathEditorInput)editorInput);
 			}
 		} catch (PartInitException e) {
 			LOG.error("Cannot get editor file input for editor '{}'", editorRef.getName(), e);
