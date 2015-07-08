@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.FileHelper;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.ReadJavaImports;
 
-public class JavaImportAnalysis {
+public class JavaImportAnalyse {
 	
 	private Set<String> importList = new HashSet<String>();
 	

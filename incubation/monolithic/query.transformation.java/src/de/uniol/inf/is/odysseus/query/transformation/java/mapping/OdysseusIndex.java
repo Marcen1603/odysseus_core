@@ -24,7 +24,6 @@ public class OdysseusIndex {
 			try {
 				Files.walkFileTree(Paths.get(odysseusPath), finder);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		
@@ -41,5 +40,11 @@ public class OdysseusIndex {
 	
 	public static List<Path> getOdysseusIndex(){
 		return odysseusIndex;
+		
+	}
+	
+	public static void creadOdysseusIndex(){
+		odysseusIndex.clear();
+		init = false;
 	}
 }

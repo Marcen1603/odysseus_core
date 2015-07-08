@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.transformation.java.analysis.JavaImportAnalysis;
+import de.uniol.inf.is.odysseus.query.transformation.java.analysis.JavaImportAnalyse;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorToVariable;
@@ -48,6 +48,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
 			TransformationParameter parameter) {
 	
+		//Start Odysseus index
 		OdysseusIndex.search(parameter.getOdysseusPath());
 		
 		operatorList = new ArrayList<ILogicalOperator>();
@@ -72,12 +73,15 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 		walkTroughLogicalPlanNeu(query,parameter);
 		
+		//analyse imports for the body code
+		importList.addAll(new JavaImportAnalyse().analyseCodeForImport(parameter, body.toString()));
+		
 		osgiBinds = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath());
 		
 		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
 		
 		//add imports that needed for the code
-		importList.addAll(new JavaImportAnalysis().analyseCodeForImport(parameter, startDataStream()));
+		importList.addAll(new JavaImportAnalyse().analyseCodeForImport(parameter, startDataStream()));
 		
 		try {
 			
@@ -231,7 +235,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			
 		
 			//add imports that needed for the code
-			importList.addAll(new JavaImportAnalysis().analyseCodeForImport(parameter, tempCode));
+			//importList.addAll(new JavaImportAnalysis().analyseCodeForImport(parameter, tempCode));
 		
 			operatorList.add(operator);
 		}

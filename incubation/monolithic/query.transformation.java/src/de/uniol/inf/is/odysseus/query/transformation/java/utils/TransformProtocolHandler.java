@@ -1,11 +1,6 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededDataHandler;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededProtocolHandler;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededTransportHandler;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 
 public class TransformProtocolHandler {
@@ -27,11 +22,9 @@ public class TransformProtocolHandler {
 			 wrapper = "IAccessPattern.PUSH";
 		}
 		
-		NeededDataHandler.addDataHandler(DataHandlerRegistry.getIDataHandlerClass(protocolHandlerParameter.getDataHandler()).getClass().getName(),DataHandlerRegistry.getIDataHandlerClass(protocolHandlerParameter.getDataHandler()).getClass().getSimpleName());
-		NeededTransportHandler.addTransportHandler(TransportHandlerRegistry.getITransportHandlerClass(protocolHandlerParameter.getTransportHandler()).getClass().getName(), TransportHandlerRegistry.getITransportHandlerClass(protocolHandlerParameter.getTransportHandler()).getClass().getSimpleName());
-	
-		
-		NeededProtocolHandler.addProtocolHandler(ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandlerParameter.getProtocolHandler()).getClass().getName(), ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandlerParameter.getProtocolHandler()).getClass().getSimpleName());
+		TransformationInformation.getInstance().addDataHandler(protocolHandlerParameter.getDataHandler());
+		TransformationInformation.getInstance().addProtocolHandler(protocolHandlerParameter.getProtocolHandler());
+		TransformationInformation.getInstance().addTransportHandler(protocolHandlerParameter.getTransportHandler());
 		
 		StringBuilder code = new StringBuilder();
 		code.append("\n");

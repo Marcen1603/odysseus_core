@@ -14,10 +14,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 
 import de.uniol.inf.is.odysseus.core.Activator;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededDataHandler;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededMEPFunctions;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededProtocolHandler;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.NeededTransportHandler;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.osgi.Component;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.osgi.ObjectFactory;
 
@@ -104,7 +101,7 @@ public class JavaEmulateOSGIBindings {
 		}
 		
 		//MEP Funktion
-		Map<String, String> neededMEPFunctions = NeededMEPFunctions.getNeededMEPFunctions();
+		Map<String, String> neededMEPFunctions = TransformationInformation.getInstance().getNeededMEPFunctions();
 		
 		for (Map.Entry<String, String> entry : neededMEPFunctions.entrySet())
 		{
@@ -120,9 +117,11 @@ public class JavaEmulateOSGIBindings {
 		code.append("\n");
 		code.append("\n");
 		
+		
+		
 	
 		//DataHandler
-		Map<String, String> neededDataHandler = NeededDataHandler.getNeededDataHandler();
+		Map<String, String> neededDataHandler = TransformationInformation.getInstance().getNeededDataHandler();
 		
 		for (Map.Entry<String, String> entry : neededDataHandler.entrySet())
 		{
@@ -134,7 +133,7 @@ public class JavaEmulateOSGIBindings {
 		}
 		
 		//TransportHandler
-		Map<String, String> neededTransportHandler = NeededTransportHandler.getNeededTransportHandler();
+		Map<String, String> neededTransportHandler = TransformationInformation.getInstance().getNeededTransportHandler();
 		
 		for (Map.Entry<String, String> entry : neededTransportHandler.entrySet())
 		{
@@ -145,7 +144,7 @@ public class JavaEmulateOSGIBindings {
 		}
 	
 		//ProtocolHandler
-		Map<String, String> neededProtocolHandler = NeededProtocolHandler.getNeededProtocolHandler();
+		Map<String, String> neededProtocolHandler = TransformationInformation.getInstance().getNeededProtocolHandler();
 		
 		for (Map.Entry<String, String> entry : neededProtocolHandler.entrySet())
 		{
