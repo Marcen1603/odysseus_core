@@ -13,17 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
+package de.uniol.inf.is.odysseus.core.collection;
 
-/**
- * 
- * @deprecated use de.uniol.inf.is.odysseus.core.collection.Option instead
- */
-@Deprecated
-public class Option extends de.uniol.inf.is.odysseus.core.collection.Option{
+public class Option {
+	
+	String name;
+	String value;
 	
 	public Option(String name, String value) {
-		super(name,value);
+		super();
+		this.name = name;
+		this.value = value;
 	}
-		
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		return "['"+name+"','"+value+"']";
+	}
+	
 }

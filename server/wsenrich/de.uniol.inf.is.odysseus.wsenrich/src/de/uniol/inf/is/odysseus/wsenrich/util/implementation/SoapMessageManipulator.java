@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.wsenrich.util.implementation;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IMessageManipulator;
 
 public class SoapMessageManipulator implements IMessageManipulator {

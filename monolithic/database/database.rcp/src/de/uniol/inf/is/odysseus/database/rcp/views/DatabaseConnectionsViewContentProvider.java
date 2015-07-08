@@ -47,7 +47,8 @@ import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
  * 
  * @author Dennis Geesen Created at: 08.11.2011
  */
-public class DatabaseConnectionsViewContentProvider implements ITreeContentProvider {
+public class DatabaseConnectionsViewContentProvider implements
+		ITreeContentProvider {
 
 	enum TreeType {
 		Connection, Schema, Information, Root
@@ -71,8 +72,10 @@ public class DatabaseConnectionsViewContentProvider implements ITreeContentProvi
 
 		if (parentElement instanceof IViewSite) {
 			List<Object> objects = new ArrayList<Object>();
-			for (Entry<String, IDatabaseConnection> c : DatabaseConnectionDictionary.getConnections().entrySet()) {
-				objects.add(new DatabaseConnectionViewEntry(c.getKey(), c.getValue()));
+			for (Entry<String, IDatabaseConnection> c : DatabaseConnectionDictionary
+					.getConnections().entrySet()) {
+				objects.add(new DatabaseConnectionViewEntry(c.getKey(), c
+						.getValue()));
 			}
 			return objects.toArray();
 		}
@@ -89,8 +92,10 @@ public class DatabaseConnectionsViewContentProvider implements ITreeContentProvi
 			DatabaseInformationsViewEntry e = (DatabaseInformationsViewEntry) parentElement;
 			List<Object> objects = new ArrayList<Object>();
 			try {
-				for (Entry<String, String> entry : e.getConnection().getInformation().entrySet()) {
-					objects.add(new DatabaseInformationItemViewEntry(entry.getKey(), entry.getValue()));
+				for (Entry<String, String> entry : e.getConnection()
+						.getInformation().entrySet()) {
+					objects.add(new DatabaseInformationItemViewEntry(entry
+							.getKey(), entry.getValue()));
 				}
 			} catch (SQLException ex) {
 				ex.printStackTrace();
@@ -102,7 +107,8 @@ public class DatabaseConnectionsViewContentProvider implements ITreeContentProvi
 			try {
 				DatabaseTablesViewEntry e = (DatabaseTablesViewEntry) parentElement;
 				for (String str : e.getConnection().getTables()) {
-					objects.add(new DatabaseTableItemViewEntry(str, e.getConnection()));
+					objects.add(new DatabaseTableItemViewEntry(str, e
+							.getConnection()));
 				}
 			} catch (SQLException ex) {
 				ex.printStackTrace();
@@ -114,9 +120,15 @@ public class DatabaseConnectionsViewContentProvider implements ITreeContentProvi
 			DatabaseTableItemViewEntry e = (DatabaseTableItemViewEntry) parentElement;
 			List<Object> objects = new ArrayList<Object>();
 			try {
-				for (SDFAttribute a : e.getDatabaseConnection().getSchema(e.getName())) {
-					objects.add(a.getAttributeName() + ": " + a.getDatatype());
-				}
+				if (e.getDatabaseConnection() != null
+						&& e.getDatabaseConnection().getConnection() != null
+						&& !e.getDatabaseConnection().getConnection()
+								.isClosed())
+					for (SDFAttribute a : e.getDatabaseConnection().getSchema(
+							e.getName())) {
+						objects.add(a.getAttributeName() + ": "
+								+ a.getDatatype());
+					}
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}

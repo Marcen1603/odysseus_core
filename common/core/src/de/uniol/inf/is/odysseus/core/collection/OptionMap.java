@@ -30,6 +30,15 @@ public class OptionMap {
 		}
 	}
 
+	public OptionMap(List<Option> optionMap) {
+		if (optionMap != null) {
+			for (Option e : optionMap) {
+				overwriteOption(e.getName().toLowerCase(), e.getValue());
+			}
+		}
+	}
+
+	
 	public OptionMap(OptionMap optionMap) {
 		if (optionMap != null){
 			for (Entry<String, String> e : optionMap.optionMap.entrySet()) {
@@ -127,5 +136,10 @@ public class OptionMap {
 		if (!missing.isEmpty()){
 			throw new IllegalArgumentException("The following required options are not set: "+missing);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return optionMap.toString();
 	}
 }

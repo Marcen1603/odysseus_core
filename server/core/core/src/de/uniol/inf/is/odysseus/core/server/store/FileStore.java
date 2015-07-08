@@ -53,7 +53,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 
 	@Override
 	public IStore<IDType, STORETYPE> newInstance(OptionMap options) throws StoreException {
-		options.checkRequired(FILENAME);
+		options.checkRequiredException(FILENAME);
 		
 		FileStore<IDType, STORETYPE> store;
 		try {

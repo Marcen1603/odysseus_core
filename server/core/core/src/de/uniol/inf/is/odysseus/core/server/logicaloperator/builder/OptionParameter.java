@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
+
 
 public class OptionParameter extends AbstractParameter<Option> {
 
@@ -43,7 +45,7 @@ public class OptionParameter extends AbstractParameter<Option> {
 			return "['" + list.get(0) + "','" + list.get(1) + "']";
 		} else if ( inputValue instanceof Option ) {
 			Option opt = (Option)inputValue;
-			return "['" + opt.name + "','" + opt.value + "']";
+			return "['" + opt.getName() + "','" + opt.getValue() + "']";
 		}
 		
 		return "";

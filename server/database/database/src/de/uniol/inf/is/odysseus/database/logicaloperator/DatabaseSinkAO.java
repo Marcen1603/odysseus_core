@@ -33,6 +33,8 @@ package de.uniol.inf.is.odysseus.database.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -40,6 +42,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
@@ -61,21 +64,31 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
     private String preparedStatement = "";
 	private List<String> tableSchema;
 
+	// For recovery
+	private boolean recoveryMode = false;
+	private String recoveryStoreType;
+	private OptionMap recoveryStoreOptions;
+	
 	public DatabaseSinkAO() {
 		super();
 	}
 
-	public DatabaseSinkAO(DatabaseSinkAO old) {
-		super(old);
-		this.tablename = old.tablename;
-		this.drop = old.drop;
-		this.truncate = old.truncate;
-		this.batchSize = old.batchSize;
-		if (old.tableSchema != null) {
-			this.tableSchema = new ArrayList<>(old.tableSchema);
+	public DatabaseSinkAO(DatabaseSinkAO other) {
+		super(other);
+		this.tablename = other.tablename;
+		this.drop = other.drop;
+		this.truncate = other.truncate;
+		this.batchSize = other.batchSize;
+		if (other.tableSchema != null) {
+			this.tableSchema = new ArrayList<>(other.tableSchema);
 		}
-		this.batchTimeout = old.batchTimeout;
-        this.preparedStatement = old.preparedStatement;
+		this.batchTimeout = other.batchTimeout;
+        this.preparedStatement = other.preparedStatement;
+        this.recoveryMode = other.recoveryMode;
+        this.recoveryStoreType = other.recoveryStoreType;
+        if (other.recoveryStoreOptions != null){
+        	this.recoveryStoreOptions = new OptionMap(other.recoveryStoreOptions);
+        }
 	}
 
 	@Override
@@ -157,6 +170,33 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 	public boolean isSourceOperator() {
 		return false;
 	}
+	
+	@Parameter(type = OptionParameter.class, name = "recoveryOptions", optional = true, isList = true, doc = "Additional options for recovery.")
+	public void setRecoveryStoreOption2(List<Option> value) {
+		this.recoveryStoreOptions = new OptionMap(value);
+	}
+	
+	public OptionMap getRecoveryStoreOptions() {
+		return recoveryStoreOptions;
+	}
+	
+	public String getRecoveryStoreType() {
+		return recoveryStoreType;
+	}
+	
+	@Parameter(name = "RecoveryStoreType", type = StringParameter.class, optional = true, isList = false, doc = "Which store should be used for recovery?")
+	public void setRecoveryStoreType(String recoveryStoreType) {
+		this.recoveryStoreType = recoveryStoreType;
+	}
+	
+	@Parameter(name = "RecoveryMode", type = BooleanParameter.class, optional = true, isList = false, doc = "Should the operator be run in recovery mode?")
+	public void setRecoveryMode(boolean recoveryMode) {
+		this.recoveryMode = recoveryMode;
+	}
+	
+	public boolean isRecoveryMode(){
+		return recoveryMode;
+	}
 
 	@Override
 	public boolean isValid() {
@@ -165,7 +205,12 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 				&& tableSchema.size() != getOutputSchema().size()) {
 			addError("TableSchema must have the same size as the output schema!");
 			isValid = false;
-
+		}
+		if (recoveryMode){
+			if (recoveryStoreType == null || recoveryStoreType.isEmpty()){
+				addError("For recovery a recoveryStoreType must be given!");
+				isValid = false;
+			}
 		}
 		return isValid;
 	}

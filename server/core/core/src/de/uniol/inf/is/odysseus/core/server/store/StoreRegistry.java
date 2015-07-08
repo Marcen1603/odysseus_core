@@ -22,7 +22,7 @@ public class StoreRegistry {
 	public static IStore<?,?> createStore(
 			String storeType, OptionMap storeOptions) throws StoreException{
 		
-		IStore<?,?> store = stores.get(storeType);
+		IStore<?,?> store = stores.get(storeType.toLowerCase());
 		if (store != null){
 			return store.newInstance(storeOptions);
 		}

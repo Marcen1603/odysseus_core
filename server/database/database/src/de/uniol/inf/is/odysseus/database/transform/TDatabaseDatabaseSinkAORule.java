@@ -30,7 +30,6 @@
 
 package de.uniol.inf.is.odysseus.database.transform;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
@@ -45,7 +44,8 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  * @author Dennis Geesen Created at: 22.08.2011
  */
-public class TDatabaseDatabaseSinkAORule extends AbstractTransformationRule<DatabaseSinkAO> {
+public class TDatabaseDatabaseSinkAORule extends
+		AbstractTransformationRule<DatabaseSinkAO> {
 
 	@Override
 	public int getPriority() {
@@ -53,18 +53,28 @@ public class TDatabaseDatabaseSinkAORule extends AbstractTransformationRule<Data
 	}
 
 	@Override
-	public void execute(DatabaseSinkAO operator, TransformationConfiguration config) throws RuleException {
+	public void execute(DatabaseSinkAO operator,
+			TransformationConfiguration config) throws RuleException {
 		IDatabaseConnection conn = operator.getConnection();
-		if (conn == null){
-			throw new TransformationException("Database connection cannot be initialized");
+		if (conn == null) {
+			throw new TransformationException(
+					"Database connection cannot be initialized");
 		}
-        ISink<?> sinkPO = new DatabaseSinkPO(conn, operator.getTablename(), operator.isDrop(), operator.isTruncate(), operator.getBatchSize(), operator.getBatchTimeout(), operator.getTableSchema(),
-                operator.getPreparedStatement());
-		defaultExecute(operator, sinkPO, config, true, true);		
+		DatabaseSinkPO sinkPO = new DatabaseSinkPO(conn,
+				operator.getTablename(), operator.isDrop(),
+				operator.isTruncate(), operator.getBatchSize(),
+				operator.getBatchTimeout(), operator.getTableSchema(),
+				operator.getPreparedStatement());
+		sinkPO.setRecoveryMode(operator.isRecoveryMode(),
+				operator.getRecoveryStoreType(),
+				operator.getRecoveryStoreOptions());
+
+		defaultExecute(operator, sinkPO, config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(DatabaseSinkAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(DatabaseSinkAO operator,
+			TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 

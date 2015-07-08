@@ -61,8 +61,6 @@ public class DatabaseConnection implements IDatabaseConnection {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(DatabaseConnection.class);
-	private static InfoService infoService = InfoServiceFactory
-			.getInfoService(DatabaseConnection.class);
 
 	private boolean connected = false;
 	// do NOT change this to protected or public!!
@@ -111,36 +109,37 @@ public class DatabaseConnection implements IDatabaseConnection {
 	public String getDBMSSpecificType(int jdbcType) throws SQLException {
 		assertConnection();
 		DatabaseMetaData dmd = this.connection.getMetaData();
-        try (ResultSet r = dmd.getTypeInfo()) {
-            while (r.next()) {
-                int type = r.getInt("DATA_TYPE");
-                if (type != jdbcType) {
-                    continue;
-                }
-                String dbmsSpecificName = r.getString("TYPE_NAME");
+		try (ResultSet r = dmd.getTypeInfo()) {
+			while (r.next()) {
+				int type = r.getInt("DATA_TYPE");
+				if (type != jdbcType) {
+					continue;
+				}
+				String dbmsSpecificName = r.getString("TYPE_NAME");
 
-                String params = r.getString("CREATE_PARAMS");
-                String fullName = dbmsSpecificName;
-                if (params != null) {
-                    params = params.trim();
-                    if (!params.isEmpty()) {
-                        if (params.startsWith("(M)")) {
-                            fullName = fullName + "(128)";
-                        }
-                    }
-                }
-                // Hack: Oracle delivers null for params for varchar2 :-/
-                if (connString.toLowerCase().contains("oracle") && fullName.equalsIgnoreCase("VARCHAR2")) {
-                    fullName = fullName + "(2000)";
-                }
+				String params = r.getString("CREATE_PARAMS");
+				String fullName = dbmsSpecificName;
+				if (params != null) {
+					params = params.trim();
+					if (!params.isEmpty()) {
+						if (params.startsWith("(M)")) {
+							fullName = fullName + "(128)";
+						}
+					}
+				}
+				// Hack: Oracle delivers null for params for varchar2 :-/
+				if (connString.toLowerCase().contains("oracle")
+						&& fullName.equalsIgnoreCase("VARCHAR2")) {
+					fullName = fullName + "(2000)";
+				}
 
-                // System.out.println(r.getString("TYPE_NAME") + " | " +
-                // r.getString("CREATE_PARAMS")+" --> "+fullName);
-                if (type == jdbcType) {
-                    return fullName;
-                }
-            }
-        }
+				// System.out.println(r.getString("TYPE_NAME") + " | " +
+				// r.getString("CREATE_PARAMS")+" --> "+fullName);
+				if (type == jdbcType) {
+					return fullName;
+				}
+			}
+		}
 		// nothing found?!
 		throw new SQLException("You tried to use " + getJdbcTypeName(jdbcType)
 				+ " which is not supported by your database!");
@@ -151,15 +150,14 @@ public class DatabaseConnection implements IDatabaseConnection {
 		// Get all field in java.sql.Types
 		Field[] fields = java.sql.Types.class.getFields();
 		for (int i = 0; i < fields.length; i++) {
-            try {
-                String name = fields[i].getName();
-                Integer value = (Integer) fields[i].get(null);
-                if (value == jdbcType) {
-                    return name;
-                }
-            }
-            catch (IllegalAccessException e) {
-            }
+			try {
+				String name = fields[i].getName();
+				Integer value = (Integer) fields[i].get(null);
+				if (value == jdbcType) {
+					return name;
+				}
+			} catch (IllegalAccessException e) {
+			}
 		}
 		return "unknown type";
 	}
@@ -168,27 +166,28 @@ public class DatabaseConnection implements IDatabaseConnection {
 	public void createTable(String tablename, SDFSchema schema,
 			List<String> tableSchema) throws SQLException {
 		assertConnection();
-        try (Statement st = connection.createStatement()) {
-            String table = "CREATE TABLE " + tablename + "(";
-            String sep = "";
-            int i = 0;
-            for (SDFAttribute attribute : schema) {
-                table = table + sep + attribute.getAttributeName() + " ";
-                if (tableSchema == null || tableSchema.size() == 0) {
-                    table = table + getDBMSSpecificType(DatatypeRegistry.getSQLDatatype(attribute.getDatatype()));
-                }
-                else {
-                    table = table + tableSchema.get(i++);
-                }
-                sep = ", ";
-            }
+		try (Statement st = connection.createStatement()) {
+			String table = "CREATE TABLE " + tablename + "(";
+			String sep = "";
+			int i = 0;
+			for (SDFAttribute attribute : schema) {
+				table = table + sep + attribute.getAttributeName() + " ";
+				if (tableSchema == null || tableSchema.size() == 0) {
+					table = table
+							+ getDBMSSpecificType(DatatypeRegistry
+									.getSQLDatatype(attribute.getDatatype()));
+				} else {
+					table = table + tableSchema.get(i++);
+				}
+				sep = ", ";
+			}
 
-            table = table + ")";
-            System.out.println("-------------------");
-            System.out.println(table);
-            System.out.println("-------------------");
-            st.executeUpdate(table);
-        }
+			table = table + ")";
+			System.out.println("-------------------");
+			System.out.println(table);
+			System.out.println("-------------------");
+			st.executeUpdate(table);
+		}
 	}
 
 	@Override
@@ -196,14 +195,15 @@ public class DatabaseConnection implements IDatabaseConnection {
 		try {
 			assertConnection();
 			DatabaseMetaData meta = connection.getMetaData();
-            try (ResultSet res = meta.getTables(null, null, null, new String[] { "TABLE" })) {
-                while (res.next()) {
-                    String tb = res.getString("TABLE_NAME");
-                    if (tb.trim().equalsIgnoreCase(tablename)) {
-                        return true;
-                    }
-                }
-            }
+			try (ResultSet res = meta.getTables(null, null, null,
+					new String[] { "TABLE" })) {
+				while (res.next()) {
+					String tb = res.getString("TABLE_NAME");
+					if (tb.trim().equalsIgnoreCase(tablename)) {
+						return true;
+					}
+				}
+			}
 			return false;
 		} catch (SQLException e) {
 			return false;
@@ -215,23 +215,25 @@ public class DatabaseConnection implements IDatabaseConnection {
 		List<SDFAttribute> attrs = new ArrayList<>();
 		assertConnection();
 		DatabaseMetaData meta = connection.getMetaData();
-        try (ResultSet rs = meta.getColumns(null, null, tablename, null)) {
-            while (rs.next()) {
+		try (ResultSet rs = meta.getColumns(null, null, tablename, null)) {
+			while (rs.next()) {
 
-                String name = rs.getString("COLUMN_NAME");
-                int type = rs.getInt("DATA_TYPE");
-                SDFDatatype dt = SDFDatatype.STRING;
-                try {
-                    dt = DatatypeRegistry.getSDFDatatype(type);
-                }
-                catch (Exception e) {
-                    logger.warn("No Mapping for " + rs.getString("TYPE_NAME") + " defined. Using STRING instead");
-                }
-                SDFAttribute a = new SDFAttribute(null, name, dt, null, null, null);
-                attrs.add(a);
-            }
-        }
-		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema(tablename, attrs);
+				String name = rs.getString("COLUMN_NAME");
+				int type = rs.getInt("DATA_TYPE");
+				SDFDatatype dt = SDFDatatype.STRING;
+				try {
+					dt = DatatypeRegistry.getSDFDatatype(type);
+				} catch (Exception e) {
+					logger.warn("No Mapping for " + rs.getString("TYPE_NAME")
+							+ " defined. Using STRING instead");
+				}
+				SDFAttribute a = new SDFAttribute(null, name, dt, null, null,
+						null);
+				attrs.add(a);
+			}
+		}
+		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema(tablename,
+				attrs);
 		return schema;
 	}
 
@@ -242,45 +244,48 @@ public class DatabaseConnection implements IDatabaseConnection {
 		assertConnection();
 		DatabaseMetaData meta = connection.getMetaData();
 		int i = 0;
-        try (ResultSet rsColumns = meta.getColumns(null, null, tablename, null)) {
-            while (rsColumns.next()) {
-                if (i >= schema.size()) {
-                    // unterschiedliche anzahl
-                    return false;
-                }
-                int dbType = rsColumns.getInt("DATA_TYPE");
-                SDFDatatype dt = schema.get(i).getDatatype();
+		try (ResultSet rsColumns = meta.getColumns(null, null, tablename, null)) {
+			while (rsColumns.next()) {
+				if (i >= schema.size()) {
+					// unterschiedliche anzahl
+					return false;
+				}
+				int dbType = rsColumns.getInt("DATA_TYPE");
+				SDFDatatype dt = schema.get(i).getDatatype();
 
-                if (!DatatypeRegistry.mappingExists(dt, dbType)) {
-                    // both combinations were not found
-                    logger.error("Expected types for stream and database are not equal for");
-                    logger.error("- database: " + dbType + " <--> local: " + dt);
-                    logger.error("- see also in java.sql.Types!");
-                    logger.error("- database: " + rsColumns.getShort("COLUMN_NAME") + " <--> local: " + schema.get(i).getAttributeName());
-                    return false;
-                }
-                i++;
-            }
-        }
+				if (!DatatypeRegistry.mappingExists(dt, dbType)) {
+					// both combinations were not found
+					logger.error("Expected types for stream and database are not equal for");
+					logger.error("- database: " + dbType + " <--> local: " + dt);
+					logger.error("- see also in java.sql.Types!");
+					logger.error("- database: "
+							+ rsColumns.getShort("COLUMN_NAME")
+							+ " <--> local: "
+							+ schema.get(i).getAttributeName());
+					return false;
+				}
+				i++;
+			}
+		}
 		return true;
 	}
 
-    @Override
-    public void dropTable(String tablename) throws SQLException {
-        assertConnection();
-        try (Statement stmt = this.connection.createStatement()) {
-            stmt.executeUpdate("DROP TABLE " + tablename);
-        }
+	@Override
+	public void dropTable(String tablename) throws SQLException {
+		assertConnection();
+		try (Statement stmt = this.connection.createStatement()) {
+			stmt.executeUpdate("DROP TABLE " + tablename);
+		}
 
-    }
+	}
 
-    @Override
-    public void truncateTable(String tablename) throws SQLException {
-        assertConnection();
-        try (Statement stmt = this.connection.createStatement()) {
-            stmt.executeUpdate("TRUNCATE TABLE " + tablename);
-        }
-    }
+	@Override
+	public void truncateTable(String tablename) throws SQLException {
+		assertConnection();
+		try (Statement stmt = this.connection.createStatement()) {
+			stmt.executeUpdate("TRUNCATE TABLE " + tablename);
+		}
+	}
 
 	@Override
 	public Map<String, String> getInformation() throws SQLException {
@@ -302,11 +307,12 @@ public class DatabaseConnection implements IDatabaseConnection {
 		List<String> tables = new ArrayList<>();
 		assertConnection();
 		DatabaseMetaData meta = connection.getMetaData();
-        try (ResultSet res = meta.getTables(null, null, null, new String[] { "TABLE" })) {
-            while (res.next()) {
-                tables.add(res.getString("TABLE_NAME"));
-            }
-        }
+		try (ResultSet res = meta.getTables(null, null, null,
+				new String[] { "TABLE" })) {
+			while (res.next()) {
+				tables.add(res.getString("TABLE_NAME"));
+			}
+		}
 		return tables;
 	}
 
@@ -315,30 +321,26 @@ public class DatabaseConnection implements IDatabaseConnection {
 		List<String> tables = new ArrayList<>();
 		assertConnection();
 		DatabaseMetaData meta = connection.getMetaData();
-        try (ResultSet res = meta.getSchemas()) {
-            while (res.next()) {
-                tables.add(res.getString("TABLE_SCHEM"));
-            }
-        }
+		try (ResultSet res = meta.getSchemas()) {
+			while (res.next()) {
+				tables.add(res.getString("TABLE_SCHEM"));
+			}
+		}
 		return tables;
 	}
 
-    private void assertConnection() throws SQLException {
-        try {
-            if (!this.connected) {
-                this.connection = DataSourceFactoryRegistry.getConnection(connString, connectionProps);
-                this.connected = true;
-            }
-        }
-        catch (Exception e) {
-            infoService.error("Error connecting to database " + e.getMessage(), e);
-            throw e;
-        }
-    }
+	private void assertConnection() throws SQLException {
+		if (!this.connected || connection == null || connection.isClosed()) {
+			this.connection = DataSourceFactoryRegistry.getConnection(
+					connString, connectionProps);
+			this.connected = true;
+		}
+	}
 
 	@Override
 	public void checkProperties() throws SQLException {
-        try (Connection con = DataSourceFactoryRegistry.getConnection(connString, connectionProps)) {
-        }
+		try (Connection con = DataSourceFactoryRegistry.getConnection(
+				connString, connectionProps)) {
+		}
 	}
 }
