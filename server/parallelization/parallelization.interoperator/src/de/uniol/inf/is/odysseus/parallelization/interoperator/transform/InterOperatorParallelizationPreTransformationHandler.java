@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -25,6 +24,7 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.Parallel
 import de.uniol.inf.is.odysseus.parallelization.interoperator.postoptimization.PostOptimizationHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
 import de.uniol.inf.is.odysseus.parallelization.parameter.ParallelizationKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.transformationhandler.AbstractParallelizationPreTransformationHandler;
 
@@ -66,12 +66,23 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 		List<TransformationResult> transformationResults = new ArrayList<TransformationResult>();
 		transformationResults = doTransformations(query, logicalPlan,
 				transformationResults);
+		
+		cleanupResults(transformationResults);
 
 		// if all transformations are done, we try to optimize the
 		// transformed plan (remove union, fragment combinations if
 		// possible)
 		PostOptimizationHandler.doPostOptimization(logicalPlan, query,
 				transformationResults, optimizationAllowed);
+	}
+
+	private void cleanupResults(List<TransformationResult> transformationResults) {
+		List<TransformationResult> copyOfResults = new ArrayList<TransformationResult>(transformationResults);
+		for (TransformationResult transformationResult : copyOfResults) {
+			if (transformationResult.getState() == State.FAILED){
+				transformationResults.remove(transformationResult);				
+			}
+		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

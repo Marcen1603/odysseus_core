@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.parallelization.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
@@ -53,11 +54,11 @@ public class JoinTransformationStrategy extends
 	public TransformationResult transform(ILogicalOperator operator,
 			ParallelOperatorSettings settingsForOperator) {
 		if (!super.areSettingsValid(settingsForOperator)) {
-			return null;
+			return new TransformationResult(State.FAILED);
 		}
 		checkIfWayToEndPointIsValid(operator, settingsForOperator, true);
 
-		TransformationResult transformationResult = new TransformationResult();
+		TransformationResult transformationResult = new TransformationResult(State.SUCCESS);
 		transformationResult.setAllowsModificationAfterUnion(true);
 
 		JoinAO joinOperator = (JoinAO) operator;
@@ -93,10 +94,10 @@ public class JoinTransformationStrategy extends
 								null, null);
 					} catch (InstantiationException | IllegalAccessException e) {
 						e.printStackTrace();
-						return null;
+						return new TransformationResult(State.FAILED);
 					}
 					if (fragmentAO == null) {
-						return null;
+						return new TransformationResult(State.FAILED);
 					}
 					transformationResult.addFragmentOperator(fragmentAO);
 

@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.ShuffleFragmentAO;
@@ -62,14 +63,14 @@ public class NonGroupedAggregateTransformationStrategy extends
 	public TransformationResult transform(ILogicalOperator operator,
 			ParallelOperatorSettings settingsForOperator) {
 		if (!super.areSettingsValid(settingsForOperator)) {
-			return null;
+			return new TransformationResult(State.FAILED);
 		}
 		if (settingsForOperator.getEndParallelizationId() != null
 				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
 			throw new IllegalArgumentException("Definition of Endpoint for strategy "+this.getName()+" is not allowed");
 		}
 
-		TransformationResult transformationResult = new TransformationResult();
+		TransformationResult transformationResult = new TransformationResult(State.SUCCESS);
 		transformationResult.setAllowsModificationAfterUnion(false);
 		
 		AggregateAO aggregateOperator = (AggregateAO) operator;
@@ -83,11 +84,11 @@ public class NonGroupedAggregateTransformationStrategy extends
 					null, null);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
-			return null;
+			return new TransformationResult(State.FAILED);
 		}
 
 		if (fragmentAO == null) {
-			return null;
+			return new TransformationResult(State.FAILED);
 		}
 		transformationResult.addFragmentOperator(fragmentAO);
 		

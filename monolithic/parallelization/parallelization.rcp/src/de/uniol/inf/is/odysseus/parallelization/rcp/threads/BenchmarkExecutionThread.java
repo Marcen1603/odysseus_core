@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class BenchmarkExecutionThread extends Thread implements
 		IBenchmarkObserver {
-	private static Logger LOG = LoggerFactory.getLogger(BenchmarkThread.class);
+	private static Logger LOG = LoggerFactory.getLogger(BenchmarkMainThread.class);
 
 	private String queryString;
 	private BenchmarkerExecution benchmarkerExecution;

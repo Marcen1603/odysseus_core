@@ -5,14 +5,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
-import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
@@ -21,9 +16,6 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 
 public abstract class AbstractParallelTransformationStrategy<T extends ILogicalOperator>
 		implements IParallelTransformationStrategy<T> {
-
-	final private InfoService INFO_SERVICE = InfoServiceFactory
-			.getInfoService(AbstractParallelTransformationStrategy.class);
 
 	@SuppressWarnings("unchecked")
 	public Class<T> getOperatorType() {
@@ -76,83 +68,16 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 			ILogicalOperator operatorForTransformation,
 			ParallelOperatorSettings settingsForOperator,
 			boolean aggregatesWithGroupingAllowed) {
-		if (settingsForOperator.getEndParallelizationId() != null
-				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
-			ILogicalOperator endOperator = LogicalGraphHelper
-					.findDownstreamOperatorWithId(
-							settingsForOperator.getEndParallelizationId(),
-							operatorForTransformation);
-			if (endOperator == null) {
-				// end operator id is invalid
-				ILogicalOperator upstreamOperator = LogicalGraphHelper
-						.findUpstreamOperatorWithId(
-								settingsForOperator.getEndParallelizationId(),
-								operatorForTransformation);
-				if (upstreamOperator != null) {
-					throw new IllegalArgumentException("End operator with id "
-							+ settingsForOperator.getEndParallelizationId()
-							+ " need to be on downstream and not upstream.");
-				} else {
-					throw new IllegalArgumentException("End operator with id"
-							+ settingsForOperator.getEndParallelizationId()
-							+ " does not exist.");
-				}
-			} else {
 
-				ILogicalOperator currentOperator = LogicalGraphHelper
-						.getNextOperator(operatorForTransformation);
-				while (currentOperator != null) {
+		String endParallelizationId = settingsForOperator
+				.getEndParallelizationId();
+		boolean assureSemanticCorrectness = settingsForOperator
+				.isAssureSemanticCorrectness();
 
-					boolean possibleSemanticChange = false;
+		LogicalGraphHelper.checkWayToEndPoint(operatorForTransformation,
+				aggregatesWithGroupingAllowed, endParallelizationId,
+				assureSemanticCorrectness);
 
-					// validation if stateful operators or stateful functions
-					// exists is only needed if semantic correctness is needed
-					if (currentOperator instanceof IStatefulAO) {
-						possibleSemanticChange = LogicalGraphHelper
-								.validateStatefulAO(settingsForOperator
-										.isAssureSemanticCorrectness(),
-										aggregatesWithGroupingAllowed,
-										currentOperator, possibleSemanticChange);
-					} else if (currentOperator instanceof SelectAO) {
-						possibleSemanticChange = LogicalGraphHelper
-								.validateSelectAO(settingsForOperator
-										.isAssureSemanticCorrectness(),
-										currentOperator, possibleSemanticChange);
-					} else if (currentOperator instanceof MapAO) {
-						possibleSemanticChange = LogicalGraphHelper
-								.validateMapAO(settingsForOperator
-										.isAssureSemanticCorrectness(),
-										currentOperator, possibleSemanticChange);
-					}
-
-					// if parameter with id is reached, parallelization is done
-					if (currentOperator.getUniqueIdentifier() != null) {
-						if (currentOperator.getUniqueIdentifier()
-								.equalsIgnoreCase(
-										settingsForOperator
-												.getEndParallelizationId())) {
-							if (possibleSemanticChange
-									&& !settingsForOperator
-											.isAssureSemanticCorrectness()) {
-								INFO_SERVICE
-										.info("Parallelization between start and end id possibly "
-												+ "results in a semantic change of the given plan.");
-							}
-
-							// all operators including end operator are
-							// valid,
-							// validation successful
-							return;
-						}
-					}
-
-					// if end operator is not reached, we need to get the next
-					// operator
-					currentOperator = LogicalGraphHelper
-							.getNextOperator(currentOperator);
-				}
-			}
-		}
 	}
 
 	protected ILogicalOperator doPostParallelization(

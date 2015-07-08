@@ -10,16 +10,16 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerExecution;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 
-public class BenchmarkThread extends Thread {
+public class BenchmarkMainThread extends Thread {
 
 	private static final String PRE_TRANSFORM_TOKEN = "#PRETRANSFORM BenchmarkPreTransformation";
 
-	private static Logger LOG = LoggerFactory.getLogger(BenchmarkThread.class);
+	private static Logger LOG = LoggerFactory.getLogger(BenchmarkMainThread.class);
 	private UUID processUid;
 	private BenchmarkDataHandler data;
 	private ParallelizationBenchmarkerWindow window;
 
-	public BenchmarkThread(UUID processUid,
+	public BenchmarkMainThread(UUID processUid,
 			ParallelizationBenchmarkerWindow parallelizationBenchmarkerWindow) {
 		this.processUid = processUid;
 		this.window = parallelizationBenchmarkerWindow;
@@ -49,35 +49,43 @@ public class BenchmarkThread extends Thread {
 				return;
 			}
 
-			currentPercentage = (int) (((executionCounter + 1) / (double) numberOfExecutions) * 100);
-			if (benchmarkerExecution.getExecutionTime() >= data
-					.getConfiguration().getMaximumExecutionTime()) {
-				changeProgress(
-						currentPercentage,
-						"Maximum execution time reached. Please restart benchmarker and adjust values "
-								+ "for maximum execution time or number of elements."
-								+ System.lineSeparator());
-			} else if (benchmarkerExecution.getExecutionTime() == -1l) {
-				changeProgress(
-						currentPercentage,
-						"End of evaluation was reached, before "
-								+ data.getConfiguration().getNumberOfElements()
-								+ " elements are processed. Please decrese the number of elements.");
-			} else {
-				changeProgress(
-						currentPercentage,
-						"Done. "
-								+ data.getConfiguration().getNumberOfElements()
-								+ " elements in "
-								+ benchmarkerExecution.getExecutionTime()
-								+ " ms processed." + System.lineSeparator());
-			}
+			currentPercentage = printResult(numberOfExecutions,
+					executionCounter, benchmarkerExecution);
 			executionCounter++;
 
 		}
 		changeProgress(100, System.lineSeparator()
 				+ "Parallelization Benchmark anaylsis complete");
 		evaluateResult(benchmarkerExecutions);
+	}
+
+	private int printResult(int numberOfExecutions, int executionCounter,
+			BenchmarkerExecution benchmarkerExecution) {
+		int currentPercentage;
+		currentPercentage = (int) (((executionCounter + 1) / (double) numberOfExecutions) * 100);
+		if (benchmarkerExecution.getExecutionTime() >= data
+				.getConfiguration().getMaximumExecutionTime()) {
+			changeProgress(
+					currentPercentage,
+					"Maximum execution time reached. Please restart benchmarker and adjust values "
+							+ "for maximum execution time or number of elements."
+							+ System.lineSeparator());
+		} else if (benchmarkerExecution.getExecutionTime() == -1l) {
+			changeProgress(
+					currentPercentage,
+					"End of evaluation was reached, before "
+							+ data.getConfiguration().getNumberOfElements()
+							+ " elements are processed. Please decrese the number of elements.");
+		} else {
+			changeProgress(
+					currentPercentage,
+					"Done. "
+							+ data.getConfiguration().getNumberOfElements()
+							+ " elements in "
+							+ benchmarkerExecution.getExecutionTime()
+							+ " ms processed." + System.lineSeparator());
+		}
+		return currentPercentage;
 	}
 
 	private void evaluateResult(List<BenchmarkerExecution> benchmarkerExecutions) {

@@ -24,7 +24,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerConfiguration;
-import de.uniol.inf.is.odysseus.parallelization.rcp.threads.BenchmarkThread;
+import de.uniol.inf.is.odysseus.parallelization.rcp.threads.BenchmarkMainThread;
 import de.uniol.inf.is.odysseus.parallelization.rcp.threads.InitializeQueryThread;
 
 public class ParallelizationBenchmarkerWindow {
@@ -48,7 +48,7 @@ public class ParallelizationBenchmarkerWindow {
 	private Button startButton;
 	private Text numberOfElementsText;
 	private Text analysisProgressLog;
-	private BenchmarkThread benchmarkThread;
+	private BenchmarkMainThread benchmarkMainThread;
 	private Button closeButton;
 	private Button allowPostOptimizationButton;
 	private Text maxExecutionTimeText;
@@ -179,7 +179,6 @@ public class ParallelizationBenchmarkerWindow {
 		startButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				clearError();
 				try {
 					List<StrategySelectionRow> selectedStratgies = strategySelectionTableViewer
 							.getSelectedStratgies();
@@ -203,10 +202,10 @@ public class ParallelizationBenchmarkerWindow {
 		removeStartButton();
 		showAnalysisContent();
 
-		benchmarkThread = new BenchmarkThread(benchmarkProcessId, this);
-		benchmarkThread.setName("BenchmarkThread");
-		benchmarkThread.setDaemon(true);
-		benchmarkThread.start();
+		benchmarkMainThread = new BenchmarkMainThread(benchmarkProcessId, this);
+		benchmarkMainThread.setName("BenchmarkThread");
+		benchmarkMainThread.setDaemon(true);
+		benchmarkMainThread.start();
 	}
 
 	protected void createConfiguration(
@@ -283,19 +282,15 @@ public class ParallelizationBenchmarkerWindow {
 
 	protected void validateConfiguration(
 			List<StrategySelectionRow> selectedStratgies) {
-		// selected strategies
-		if (selectedStratgies.isEmpty()) {
-			throw new IllegalArgumentException("No strategy selected");
-		}
-
 		// degree values
+		List<Integer> degrees = new ArrayList<Integer>();
 		String degreeString = this.degreeText.getText();
 		if (degreeString.isEmpty()) {
 			throw new IllegalArgumentException("No degree definied");
 		} else {
 			String[] degreeValues = degreeString.trim().split(",");
 			for (int i = 0; i < degreeValues.length; i++) {
-				Integer.parseInt(degreeValues[i]);
+				degrees.add(Integer.parseInt(degreeValues[i]));
 			}
 		}
 
@@ -313,11 +308,11 @@ public class ParallelizationBenchmarkerWindow {
 			throw new IllegalArgumentException("No number of elements definied");
 		} else {
 			int value = Integer.parseInt(numberOfElementsString);
-			if (value < 1){
+			if (value < 1) {
 				throw new IllegalArgumentException(
 						"Number of elements need to be greater than 0");
 			}
-			
+
 		}
 
 		// maximum execution time
@@ -327,9 +322,18 @@ public class ParallelizationBenchmarkerWindow {
 					"No maximum execution time definied");
 		} else {
 			long value = Long.parseLong(maxExecutionTimeString);
-			if (value < 1000){
+			if (value < 1000) {
 				throw new IllegalArgumentException(
 						"Maximum execution need to be greater equal 1000");
+			}
+		}
+
+		// selected strategies
+		if (selectedStratgies.isEmpty()) {
+			throw new IllegalArgumentException("No strategy selected");
+		} else {
+			for (StrategySelectionRow strategySelectionRow : selectedStratgies) {
+				strategySelectionRow.validate(selectedStratgies, degrees);
 			}
 		}
 	}
@@ -342,10 +346,13 @@ public class ParallelizationBenchmarkerWindow {
 	}
 
 	public void createErrorMessage(Throwable ex) {
-		errorLabel = createLabel(pageComposite,
-				"An error occured: " + ex.getMessage());
-		errorLabel.setForeground(window.getDisplay().getSystemColor(
-				SWT.COLOR_RED));
+		if (errorLabel == null){
+			errorLabel = createLabel(pageComposite,
+					"");			
+			errorLabel.setForeground(window.getDisplay().getSystemColor(
+					SWT.COLOR_RED));
+		}
+		errorLabel.setText("An error occured: " + ex.getMessage());
 		window.pack();
 		window.setVisible(true);
 	}
@@ -355,13 +362,6 @@ public class ParallelizationBenchmarkerWindow {
 			startButton.dispose();
 		}
 		startButton = null;
-	}
-
-	public void clearError() {
-		if (errorLabel != null) {
-			errorLabel.dispose();
-		}
-		errorLabel = null;
 	}
 
 	private static Label createLabel(Composite generalComposite, String string) {
@@ -381,9 +381,9 @@ public class ParallelizationBenchmarkerWindow {
 		closeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (benchmarkThread != null) {
+				if (benchmarkMainThread != null) {
 					// stop analyze if it is currently running
-					benchmarkThread.interrupt();
+					benchmarkMainThread.interrupt();
 				}
 				if (!window.isDisposed()) {
 					window.dispose();

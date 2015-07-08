@@ -1,30 +1,45 @@
 package de.uniol.inf.is.odysseus.parallelization.rcp.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
 public class BenchmarkExecutionElement {
 
-	private String uniqueOperatorid;
+	private String startOperatorid;
+	private String endOperatorId;
 	private IParallelTransformationStrategy<? extends ILogicalOperator> strategy;
 	private Class<? extends AbstractFragmentAO> fragmentType;
-
+	private List<Integer> possibleDegrees;
+	private int executionDegree;
+ 
 	public BenchmarkExecutionElement(
 			String uniqueOperatorid,
 			IParallelTransformationStrategy<? extends ILogicalOperator> strategy,
-			Class<? extends AbstractFragmentAO> fragmentType) {
-		this.uniqueOperatorid = uniqueOperatorid;
+			Class<? extends AbstractFragmentAO> fragmentType, String endOperatorId) {
+		this.startOperatorid = uniqueOperatorid;
 		this.strategy = strategy;
 		this.fragmentType = fragmentType;
+		this.endOperatorId = endOperatorId;
+		this.setPossibleDegrees(new ArrayList<Integer>());
+	}
+	
+	public BenchmarkExecutionElement clone(){
+		BenchmarkExecutionElement clone = new BenchmarkExecutionElement(this.startOperatorid, this.strategy, this.fragmentType, this.endOperatorId);
+		clone.possibleDegrees = new ArrayList<Integer>(this.possibleDegrees);
+		clone.executionDegree = this.executionDegree;
+		return clone;
 	}
 
-	public String getUniqueOperatorid() {
-		return uniqueOperatorid;
+	public String getStartOperatorid() {
+		return startOperatorid;
 	}
 
-	public void setUniqueOperatorid(String uniqueOperatorid) {
-		this.uniqueOperatorid = uniqueOperatorid;
+	public void setStartOperatorid(String uniqueOperatorid) {
+		this.startOperatorid = uniqueOperatorid;
 	}
 
 	public IParallelTransformationStrategy<? extends ILogicalOperator> getStrategy() {
@@ -45,13 +60,61 @@ public class BenchmarkExecutionElement {
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("( OperatorId: "+uniqueOperatorid);
-		builder.append(", Strategy: "+strategy.getName());
-		builder.append(", Fragmentation: "+fragmentType.getSimpleName()+") ");
+		builder.append("( OperatorId: " + startOperatorid);
+		if (!this.endOperatorId.isEmpty()){
+			builder.append(", End operator id: "+this.endOperatorId);		
+		}
+		builder.append(", degree: "+ executionDegree);
+		builder.append(", Strategy: " + strategy.getName());
+		builder.append(", Fragmentation: " + fragmentType.getSimpleName()
+				+ ") ");
 		return builder.toString();
 	}
-	
-}
 
+	public String getEndOperatorId() {
+		return endOperatorId;
+	}
+
+	public void setEndOperatorId(String endOperatorId) {
+		this.endOperatorId = endOperatorId;
+	}
+
+	public List<Integer> getPossibleDegrees() {
+		return possibleDegrees;
+	}
+
+	public Integer getPossibleDegreeAtIndex(int index) {
+		return possibleDegrees.get(index);
+	}
+	
+	public void setPossibleDegrees(List<Integer> possibleDegrees) {
+		this.possibleDegrees = possibleDegrees;
+	}
+
+	public void setPossibleDegrees(String possibleDegrees) {
+		String[] splittedPossibleDegrees = possibleDegrees.trim().split(",");
+		for (int i = 0; i < splittedPossibleDegrees.length; i++) {
+			this.possibleDegrees.add(Integer
+					.parseInt(splittedPossibleDegrees[i]));
+		}
+	}
+
+	public int getExecutionDegree() {
+		return executionDegree;
+	}
+
+	public void setExecutionDegree(int executionDegree, int iteration) {
+		if (possibleDegrees.isEmpty()){
+			this.executionDegree = executionDegree;
+		} else {
+			if (iteration < possibleDegrees.size()){
+				this.executionDegree = possibleDegrees.get(iteration).intValue();				
+			} else {
+				this.executionDegree = executionDegree;
+			}
+		}
+	}
+
+}

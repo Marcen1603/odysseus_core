@@ -8,10 +8,8 @@ import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -55,62 +53,51 @@ public class StrategySelectionTableViewer {
 		tableViewer = CheckboxTableViewer.newCheckList(tableComposite,
 				SWT.BORDER | SWT.FULL_SELECTION);
 
-		Table table = tableViewer.getTable();
+		Table table = configureTable();
+		createColumns(tableColumnLayout);
+		configureTableViewer(table);
+	}
 
+	private Table configureTable() {
+		Table table = tableViewer.getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
+		return table;
+	}
+
+	private void configureTableViewer(Table table) {
+		tableViewer.setContentProvider(new StrategyContentProvider(
+				strategySelectionRows));
+		tableViewer.setLabelProvider(new StrategyLabelProvider());
 
 		CellEditor[] editors = new CellEditor[NUMBER_OF_COLUMNS];
 		editors[2] = new TextCellEditor(table);
 		editors[3] = new TextCellEditor(table);
-
-		// columns
-		TableViewerColumn attributeOperatorColumn = new TableViewerColumn(
-				tableViewer, SWT.NONE);
-		attributeOperatorColumn.getColumn().setText(OPERATOR_TYPE);
-		tableColumnLayout.setColumnData(attributeOperatorColumn.getColumn(),
-				new ColumnWeightData(5, 20, true));
-
-		TableViewerColumn attributeOperatorIdColumn = new TableViewerColumn(
-				tableViewer, SWT.NONE);
-		attributeOperatorIdColumn.getColumn().setText(OPERATOR_ID);
-		tableColumnLayout.setColumnData(attributeOperatorIdColumn.getColumn(),
-				new ColumnWeightData(5, 10, true));
-
-		TableViewerColumn attributeEndOperatorIdColumn = new TableViewerColumn(
-				tableViewer, SWT.NONE);
-		attributeEndOperatorIdColumn.getColumn().setText(END_OPERATOR_ID);
-		tableColumnLayout.setColumnData(attributeEndOperatorIdColumn.getColumn(),
-				new ColumnWeightData(5, 10, true));
-
-		TableViewerColumn attributeDegreeColumn = new TableViewerColumn(
-				tableViewer, SWT.NONE);
-		attributeDegreeColumn.getColumn().setText(DEGREES);
-		tableColumnLayout.setColumnData(attributeDegreeColumn.getColumn(),
-				new ColumnWeightData(10, 35, true));
-
-		TableViewerColumn attributeStrategyColumn = new TableViewerColumn(
-				tableViewer, SWT.NONE);
-		attributeStrategyColumn.getColumn().setText(PARALLELIZATION_STRATEGY);
-		tableColumnLayout.setColumnData(attributeStrategyColumn.getColumn(),
-				new ColumnWeightData(10, 30, true));
-
-		TableViewerColumn attributefragmentColumn = new TableViewerColumn(
-				tableViewer, SWT.NONE);
-		attributefragmentColumn.getColumn().setText(FRAGMENTATION);
-		tableColumnLayout.setColumnData(attributefragmentColumn.getColumn(),
-				new ColumnWeightData(10, 30, true));
-
-		tableViewer.setContentProvider(new StrategyContentProvider());
-		tableViewer.setLabelProvider(new StrategyLabelProvider());
-
 		tableViewer.setColumnProperties(PROPS);
 		tableViewer.setCellModifier(new StrategyCellModifier(tableViewer));
 		tableViewer.setCellEditors(editors);
 
 		tableViewer.setInput(strategySelectionRows);
 		tableViewer.setAllChecked(true);
+	}
+
+	private void createColumns(TableColumnLayout tableColumnLayout) {
+		int[] weight = new int[PROPS.length];
+		weight[0] = 20;
+		weight[1] = 10;
+		weight[2] = 10;
+		weight[3] = 35;
+		weight[4] = 30;
+		weight[5] = 30;
+
+		for (int i = 0; i < PROPS.length; i++) {
+			TableViewerColumn column = new TableViewerColumn(tableViewer,
+					SWT.NONE);
+			column.getColumn().setText(PROPS[i]);
+			tableColumnLayout.setColumnData(column.getColumn(),
+					new ColumnWeightData(weight[i], 10, true));
+		}
 	}
 
 	public List<StrategySelectionRow> getSelectedStratgies() {
@@ -151,26 +138,5 @@ public class StrategySelectionTableViewer {
 			}
 		}
 		return rows;
-	}
-
-	class StrategyContentProvider implements IStructuredContentProvider {
-
-		@Override
-		public void dispose() {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return strategySelectionRows.toArray();
-		}
-
 	}
 }

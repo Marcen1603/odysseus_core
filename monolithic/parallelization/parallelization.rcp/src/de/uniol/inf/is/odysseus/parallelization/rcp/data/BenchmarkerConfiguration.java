@@ -66,7 +66,10 @@ public class BenchmarkerConfiguration {
 		for (StrategySelectionRow selectedRow : selectedStratgies) {
 			BenchmarkExecutionElement currentElement = new BenchmarkExecutionElement(
 					selectedRow.getUniqueOperatorid(),
-					selectedRow.getStrategy(), selectedRow.getFragmentType());
+					selectedRow.getStrategy(), selectedRow.getFragmentType(), selectedRow.getEndOperatorId());
+			if (!selectedRow.getCustomDegrees().trim().isEmpty()){
+				currentElement.setPossibleDegrees(selectedRow.getCustomDegrees().trim());
+			}
 
 			if (!executionElements.containsKey(selectedRow
 					.getUniqueOperatorid())) {
@@ -83,13 +86,15 @@ public class BenchmarkerConfiguration {
 		List<BenchmarkerExecution> combinedElements = combineElements(executionElements, 0, null,
 				new ArrayList<BenchmarkerExecution>());
 		for (BenchmarkerExecution benchmarkerExecution : combinedElements) {
+			int index = 0;
 			for (Integer degree : degrees) {
 				BenchmarkerExecution clonedExecution = benchmarkerExecution.clone();
-				clonedExecution.setDegree(degree);
+				clonedExecution.setDegree(degree, index);
 				clonedExecution.setBuffersize(buffersize);
 				clonedExecution.setNumberOfElements(numberOfElements);
 				clonedExecution.setAllowPostOptmization(allowPostOptimization);
 				executions.add(clonedExecution);
+				index++;
 			}
 		}
 
@@ -113,7 +118,7 @@ public class BenchmarkerConfiguration {
 				BenchmarkerExecution benchmarkerExecution = new BenchmarkerExecution();
 				for (BenchmarkExecutionElement currentElement : currentElements) {
 					benchmarkerExecution.addElement(
-							currentElement.getUniqueOperatorid(),
+							currentElement.getStartOperatorid(),
 							currentElement);
 				}
 				result.add(benchmarkerExecution);

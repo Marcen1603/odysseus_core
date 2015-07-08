@@ -33,9 +33,12 @@ public class BenchmarkerExecution {
 		clone.degree = this.degree;
 		clone.buffersize = this.buffersize;
 		clone.numberOfElements = this.numberOfElements;
-		clone.elements = new HashMap<String, BenchmarkExecutionElement>(
-				elements);
 		clone.allowPostOptmization = this.allowPostOptmization;
+		
+		clone.elements = new HashMap<String, BenchmarkExecutionElement>();
+		for (String elementKey : elements.keySet()) {
+			clone.elements.put(elementKey, elements.get(elementKey).clone());
+		}
 		return clone;
 	}
 
@@ -43,8 +46,12 @@ public class BenchmarkerExecution {
 		return degree;
 	}
 
-	public void setDegree(Integer degree) {
+	public void setDegree(int degree, int iteration) {
 		this.degree = degree;
+		// set the global degree of the benchmark execution to all elements if no custom value is defined
+		for (BenchmarkExecutionElement element : elements.values()) {
+			element.setExecutionDegree(degree, iteration);
+		}
 	}
 
 	public Integer getBuffersize() {
@@ -91,13 +98,24 @@ public class BenchmarkerExecution {
 						allowPostOptmization));
 		for (BenchmarkExecutionElement element : elements.values()) {
 			builder.append(InterOperatorParallelizationKeywordParameterBuilder
-					.buildKeywordWithParameters(element.getUniqueOperatorid(),
-							degree, buffersize, element.getStrategy(),
+					.buildKeywordWithParameters(element.getStartOperatorid(),
+							element.getExecutionDegree(), buffersize, element.getStrategy(),
 							element.getFragmentType()));
-		}
+		} 
 		return builder.toString();
 	}
 
+	@Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append("Global degree: "+degree);
+		builder.append(", Post optimization allowed: "+allowPostOptmization);
+		for (BenchmarkExecutionElement element : elements.values()) {
+			builder.append(", "+element.toString());
+		}
+		return builder.toString();
+	}
+	
 	public long getExecutionTime() {
 		return executionTime;
 	}
@@ -106,15 +124,6 @@ public class BenchmarkerExecution {
 		this.executionTime = executionTime;
 	}
 	
-	@Override
-	public String toString(){
-		StringBuilder builder = new StringBuilder();
-		builder.append("Degree: "+degree);
-		builder.append(", Post optimization allowed: "+allowPostOptmization);
-		for (BenchmarkExecutionElement element : elements.values()) {
-			builder.append(", "+element.toString());
-		}
-		return builder.toString();
-	}
+	
 
 }
