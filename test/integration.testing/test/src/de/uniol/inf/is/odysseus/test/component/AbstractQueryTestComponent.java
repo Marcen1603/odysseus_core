@@ -67,7 +67,9 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {			
+			LOG.debug("Try to remove all queries ");
 			executor.removeAllQueries(session);
+			LOG.debug("done");
 		}
 		return this.processingResult;
 
