@@ -29,7 +29,7 @@ public class ExceptionErrorDialog extends ErrorDialog {
     private final Throwable exception;
 
     public static void open(final IStatus status, final Throwable exception) {
-        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
             @Override
             public void run() {
