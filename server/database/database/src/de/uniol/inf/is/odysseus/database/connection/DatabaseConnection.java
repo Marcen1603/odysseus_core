@@ -192,9 +192,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 			}
 			
 			table += ")";
-			System.out.println("-------------------");
-			System.out.println(table);
-			System.out.println("-------------------");
+			logger.debug("Created new Table "+table);
 			st.executeUpdate(table);
 		}
 	}
