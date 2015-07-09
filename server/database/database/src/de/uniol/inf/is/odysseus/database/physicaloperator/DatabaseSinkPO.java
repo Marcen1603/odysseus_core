@@ -104,7 +104,8 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 
 	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
 			boolean drop, boolean truncate, long batchSize, int batchTimeout,
-			List<String> tableSchema, List<String> primaryKeys, String preparedStatement) {
+			List<String> tableSchema, List<String> primaryKeys,
+			String preparedStatement) {
 		if (connection == null) {
 			throw new IllegalArgumentException("Connection must not be null");
 		}
@@ -239,7 +240,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	private void dropTable() {
 		try {
 			this.connection.dropTable(this.tablename);
-			LOG.debug("DROPED TABLE "+this.tablename);
+			LOG.debug("DROPED TABLE " + this.tablename);
 		} catch (SQLException e) {
 			LOG.error(e.getMessage(), e);
 			INFO.error(e.getMessage(), e);
@@ -365,17 +366,34 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 					prepare(toStore.get(i));
 					this.preparedStatement.addBatch();
 				}
-				
+
 				int[] out;
+				boolean batchProcessingFailed = false;
 				try {
 					out = this.preparedStatement.executeBatch();
 					count = out.length;
 				} catch (BatchUpdateException e) {
 					preparedStatement.clearBatch();
 					e.printStackTrace();
-					INFO.warning("Error inserting elements",e);
+					INFO.warning("Error inserting elements", e);
+					batchProcessingFailed = true;
 				}
-				
+
+				// Retry with single inserts
+				if (batchProcessingFailed) {
+					count = 0;
+					this.jdbcConnection.rollback();
+					for (int i = 0; i < toStore.size(); i++) {
+						try {
+							prepare(toStore.get(i));
+							this.preparedStatement.executeUpdate();
+							count++;
+						} catch (SQLException e) {
+							INFO.warning("Insertion of "+toStore.get(i)+" failed",e);
+						}
+					}
+				}
+
 				LOG.trace("Inserted " + count + " rows in database");
 
 				this.jdbcConnection.commit();
@@ -401,8 +419,6 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		} catch (SQLException e) {
 			LOG.error(e.getMessage(), e);
 
-			
-			
 			// INFO.error("ERROR WRTING TO DATABASE " + preparedStatement,
 			// e.getNextException());
 		}
