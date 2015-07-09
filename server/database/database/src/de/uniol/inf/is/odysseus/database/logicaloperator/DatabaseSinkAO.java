@@ -65,9 +65,11 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 	private List<String> tableSchema;
 
 	// For recovery
-	private boolean recoveryMode = false;
+	private boolean recoveryEnabled = false;
 	private String recoveryStoreType;
 	private OptionMap recoveryStoreOptions;
+
+	private boolean useAttributeNames;
 	
 	public DatabaseSinkAO() {
 		super();
@@ -79,12 +81,13 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 		this.drop = other.drop;
 		this.truncate = other.truncate;
 		this.batchSize = other.batchSize;
+		this.useAttributeNames = other.useAttributeNames;
 		if (other.tableSchema != null) {
 			this.tableSchema = new ArrayList<>(other.tableSchema);
 		}
 		this.batchTimeout = other.batchTimeout;
         this.preparedStatement = other.preparedStatement;
-        this.recoveryMode = other.recoveryMode;
+        this.recoveryEnabled = other.recoveryEnabled;
         this.recoveryStoreType = other.recoveryStoreType;
         if (other.recoveryStoreOptions != null){
         	this.recoveryStoreOptions = new OptionMap(other.recoveryStoreOptions);
@@ -92,20 +95,13 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 	}
 
 	@Override
+	public boolean isSourceOperator() {
+		return false;
+	}
+	
+	@Override
 	public AbstractLogicalOperator clone() {
 		return new DatabaseSinkAO(this);
-	}
-
-	public String getTablename() {
-		return this.tablename;
-	}
-
-	public boolean isDrop() {
-		return this.drop;
-	}
-
-	public boolean isTruncate() {
-		return this.truncate;
 	}
 
 	@Parameter(name = "TABLE", type = StringParameter.class, optional = false, doc = "Name of store table")
@@ -113,14 +109,35 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 		this.tablename = tablename;
 	}
 
+	public String getTablename() {
+		return this.tablename;
+	}
+	
 	@Parameter(name = "TRUNCATE", type = BooleanParameter.class, optional = true, doc = "Empty table at start")
 	public void setTruncate(boolean truncate) {
 		this.truncate = truncate;
 	}
-
+	
+	public boolean isTruncate() {
+		return this.truncate;
+	}
+		
+	@Parameter(name = "useAttributeNames", type = BooleanParameter.class, optional = true, doc = "Use Attributenames in INSERT Statement")
+	public void setUseAttributeNames(boolean useAttributeNames) {
+		this.useAttributeNames = useAttributeNames;
+	}
+	
+	public boolean isUseAttributeNames() {
+		return useAttributeNames;
+	}
+	
 	@Parameter(name = "DROP", type = BooleanParameter.class, optional = true, doc = "Drop table at start")
 	public void setDrop(boolean drop) {
 		this.drop = drop;
+	}
+
+	public boolean isDrop() {
+		return this.drop;
 	}
 
 	@Parameter(name = "BatchSize", type = LongParameter.class, optional = true, doc = "How many elements should be buffered before storing to database.")
@@ -128,13 +145,13 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 		this.batchSize = batchSize;
 	}
 
-	@Parameter(name = "BatchTimeout", type = IntegerParameter.class, optional = true, doc = "If batchsize is set, write tuple after some time (in ms) after last write even if batch is not full.")
-	public void setTimeout(int timeout) {
-		this.batchTimeout = timeout;
+	public long getBatchSize() {
+		return batchSize;
 	}
-
-	public int getTimeout() {
-		return batchTimeout;
+	
+	@Parameter(name = "BatchTimeout", type = IntegerParameter.class, optional = true, doc = "If batchsize is set, write tuple after some time (in ms) after last write even if batch is not full.")
+	public void setBatchTimeout(int timeout) {
+		this.batchTimeout = timeout;
 	}
 
 	public int getBatchTimeout() {
@@ -162,14 +179,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
         return this.preparedStatement;
     }
 
-	public long getBatchSize() {
-		return batchSize;
-	}
 
-	@Override
-	public boolean isSourceOperator() {
-		return false;
-	}
 	
 	@Parameter(type = OptionParameter.class, name = "recoveryOptions", optional = true, isList = true, doc = "Additional options for recovery.")
 	public void setRecoveryStoreOption2(List<Option> value) {
@@ -180,22 +190,23 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 		return recoveryStoreOptions;
 	}
 	
-	public String getRecoveryStoreType() {
-		return recoveryStoreType;
-	}
 	
 	@Parameter(name = "RecoveryStoreType", type = StringParameter.class, optional = true, isList = false, doc = "Which store should be used for recovery?")
 	public void setRecoveryStoreType(String recoveryStoreType) {
 		this.recoveryStoreType = recoveryStoreType;
 	}
-	
-	@Parameter(name = "RecoveryMode", type = BooleanParameter.class, optional = true, isList = false, doc = "Should the operator be run in recovery mode?")
-	public void setRecoveryMode(boolean recoveryMode) {
-		this.recoveryMode = recoveryMode;
+
+	public String getRecoveryStoreType() {
+		return recoveryStoreType;
 	}
 	
-	public boolean isRecoveryMode(){
-		return recoveryMode;
+	@Parameter(name = "RecoveryEnabled", type = BooleanParameter.class, optional = true, isList = false, doc = "Should the operator provide mechanisms to allow recovery?")
+	public void setRecoveryEnabled(boolean recoveryEnabled) {
+		this.recoveryEnabled = recoveryEnabled;
+	}
+	
+	public boolean isRecoveryEnabled(){
+		return recoveryEnabled;
 	}
 
 	@Override
@@ -206,7 +217,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 			addError("TableSchema must have the same size as the output schema!");
 			isValid = false;
 		}
-		if (recoveryMode){
+		if (recoveryEnabled){
 			if (recoveryStoreType == null || recoveryStoreType.isEmpty()){
 				addError("For recovery a recoveryStoreType must be given!");
 				isValid = false;

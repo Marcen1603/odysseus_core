@@ -65,9 +65,10 @@ public class TDatabaseDatabaseSinkAORule extends
 				operator.isTruncate(), operator.getBatchSize(),
 				operator.getBatchTimeout(), operator.getTableSchema(),
 				operator.getPreparedStatement());
-		sinkPO.setRecoveryMode(operator.isRecoveryMode(),
+		sinkPO.setRecoveryEnabled(operator.isRecoveryEnabled(),
 				operator.getRecoveryStoreType(),
 				operator.getRecoveryStoreOptions());
+		sinkPO.setUseAttributeNames(operator.isUseAttributeNames());
 
 		defaultExecute(operator, sinkPO, config, true, true);
 	}

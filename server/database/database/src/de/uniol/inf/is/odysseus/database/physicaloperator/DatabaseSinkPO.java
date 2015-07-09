@@ -89,7 +89,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	final private long batchSize;
 	final private int batchTimeout;
 	private Timer timer = null;
-	private boolean recoveryMode = false;
+	private boolean recoveryEnabled = false;
 	private String recoveryStoreType;
 	private OptionMap recoveryStoreOptions;
 	private IStore<Long, Tuple<?>> recoveryStore;
@@ -97,6 +97,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	final private List<String> tableSchema;
 	private boolean firstConnectionFailed;
 	private boolean recovering;
+	private boolean useAttributeNames;
 
 	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
 			boolean drop, boolean truncate, long batchSize, int batchTimeout,
@@ -139,23 +140,27 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		}
 	}
 
-	public void setRecoveryMode(boolean recoveryMode, String recoveryStoreType,
+	public void setRecoveryEnabled(boolean recoveryEnabled, String recoveryStoreType,
 			OptionMap recoveryStoreOptions) {
-		this.recoveryMode = recoveryMode;
+		this.recoveryEnabled = recoveryEnabled;
 		this.recoveryStoreType = recoveryStoreType;
 		this.recoveryStoreOptions = new OptionMap(recoveryStoreOptions);
 	}
 
-	public boolean isRecoveryMode() {
-		return recoveryMode;
+	public boolean isRecoveryEnabled() {
+		return recoveryEnabled;
 	}
 
+	public void setUseAttributeNames(boolean useAttributeNames) {
+		this.useAttributeNames = useAttributeNames;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
 		recovering = false;
 		toStore.clear();
-		if (recoveryMode) {
+		if (recoveryEnabled) {
 			try {
 				recoveryStore = (IStore<Long, Tuple<?>>) StoreRegistry
 						.createStore(recoveryStoreType, recoveryStoreOptions);
@@ -262,8 +267,6 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		StringBuffer s = new StringBuffer("INSERT INTO " + this.tablename);
 
 		String sep = "";
-		// TODO: Move to config param
-		boolean useAttributeNames = true;
 		if (useAttributeNames) {
 			s.append("(");
 			for (int i = 0; i < count; i++) {
@@ -296,7 +299,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 			return;
 		}
 		if (isOpen()) {
-			if (recoveryMode) {
+			if (recoveryEnabled) {
 				// Check if there are some elements in the recovery store
 				// that not have been send to the database
 				if (recoveryStore.size() > counter) {
@@ -375,7 +378,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 
 				this.jdbcConnection.commit();
 
-				if (recoveryMode) {
+				if (recoveryEnabled) {
 					StringBuffer buffer = new StringBuffer();
 					recoveryStore.dumpTo(buffer);
 					// /System.err.println("COUNT "+count+" STORE "+recoveryStore.size()+" "+buffer);
@@ -419,5 +422,6 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	public void actionPerformed(ActionEvent e) {
 		writeToDB();
 	}
+
 
 }
