@@ -644,7 +644,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 						newQueries, new OptimizationConfiguration(
 								buildConfiguration), user);
 				List<Integer> queryIds = collectQueryIds(addedQueries);
-				fireQueryAddedEvent(query, queryIds, buildConfiguration.getName(), parserID, user);
+				fireQueryAddedEvent(query, queryIds, buildConfiguration.getName(), parserID, user, context);
 				Collection<Integer> createdQueries = new ArrayList<Integer>();
 				for (IPhysicalQuery p : addedQueries) {
 					createdQueries.add(p.getID());

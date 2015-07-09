@@ -9,5 +9,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  com.google.guava,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.slf4j,
- de.uniol.inf.is.odysseus.recovery.systemlog
-Service-Component: OSGI-INF/QueryStateLogger.xml
+ de.uniol.inf.is.odysseus.recovery.systemlog,
+ de.uniol.inf.is.odysseus.recovery;bundle-version="1.0.0"
+Service-Component: OSGI-INF/QueryStateLogger.xml,
+ OSGI-INF/QueryStateRecoveryComponent.xml

@@ -12,6 +12,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -55,6 +56,11 @@ public abstract class AbstractQueryAddedInfo implements Serializable {
 	 * The current session (and corresponding user).
 	 */
 	public ISession session;
+	
+	/**
+	 * The context.
+	 */
+	public Context context;
 
 	/**
 	 * Encode to a Base64Binary.

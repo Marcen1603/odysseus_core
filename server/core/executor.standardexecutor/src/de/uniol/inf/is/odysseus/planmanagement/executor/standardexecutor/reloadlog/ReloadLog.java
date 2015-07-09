@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -101,7 +102,7 @@ public class ReloadLog implements IQueryAddedListener, IPlanModificationListener
 	}
 
 	@Override
-	public void queryAddedEvent(String query, List<Integer> queryIds, String buildConfig, String parserID, ISession user) {
+	public void queryAddedEvent(String query, List<Integer> queryIds, String buildConfig, String parserID, ISession user, Context context) {
 		logger.debug("Query added to log: " + query);
 		QueryEntry qe = new QueryEntry();
 		qe.parserID = parserID;

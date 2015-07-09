@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Recovery Plug-in
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.recovery
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Michael Brand
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: com.google.guava,
+ de.uniol.inf.is.odysseus.recovery.systemlog
+Export-Package: de.uniol.inf.is.odysseus.recovery

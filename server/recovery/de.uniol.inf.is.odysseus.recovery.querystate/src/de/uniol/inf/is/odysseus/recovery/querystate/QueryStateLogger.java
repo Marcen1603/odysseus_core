@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -102,29 +103,9 @@ public class QueryStateLogger implements IQueryAddedListener,
 
 	}
 
-	/**
-	 * The tag for the system log entry for an added query.
-	 */
-	public static final String TAG_QUERYADDED = "QUERYADDED";
-
-	/**
-	 * Gets the tag for the system log entry for a changed query state.
-	 * 
-	 * @param The
-	 *            id of the query.
-	 */
-	public static final String getTagQueryRemoved(int id) {
-		return "QUERYSTATECHANGED " + id;
-	}
-
-	/**
-	 * The comment for the system log entry for a removed query.
-	 */
-	public static final String COMMENT_QUERYREMOVED = "REMOVED";
-
 	@Override
 	public void queryAddedEvent(String query, List<Integer> queryIds,
-			String buildConfig, String parserID, ISession user) {
+			String buildConfig, String parserID, ISession user, Context context) {
 		AbstractQueryAddedInfo entry;
 		if (queryIds.isEmpty()) {
 			// Source definition
@@ -142,8 +123,8 @@ public class QueryStateLogger implements IQueryAddedListener,
 
 		// Write to log
 		if (cSystemLog.isPresent()) {
-			cSystemLog.get().write(TAG_QUERYADDED, System.nanoTime(),
-					entry.toBase64Binary());
+			cSystemLog.get().write(QueryStateUtils.TAG_QUERYADDED,
+					System.nanoTime(), entry.toBase64Binary());
 		}
 	}
 
@@ -159,12 +140,14 @@ public class QueryStateLogger implements IQueryAddedListener,
 			String comment;
 			if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs
 					.getEventType())) {
-				comment = "REMOVED";
+				comment = QueryStateUtils.COMMENT_QUERYREMOVED;
 			} else {
 				comment = query.getState().toString();
 			}
+			cLog.debug("Query state changed for query {}: {}", queryId, comment);
 			if (cSystemLog.isPresent()) {
-				cSystemLog.get().write(getTagQueryRemoved(queryId),
+				cSystemLog.get().write(
+						QueryStateUtils.getTagQueryChanged(queryId),
 						System.nanoTime(), comment);
 			}
 		}

@@ -673,10 +673,10 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	protected synchronized void fireQueryAddedEvent(
 			String query, List<Integer> queryIds, String buildConfig,
-			String parserID, ISession user) {
+			String parserID, ISession user, Context context) {
 		for (IQueryAddedListener listener : this.queryAddedListener) {
 			try {
-				listener.queryAddedEvent(query, queryIds, buildConfig, parserID, user);
+				listener.queryAddedEvent(query, queryIds, buildConfig, parserID, user, context);
 			} catch (Throwable t) {
 				LOG.error("Exception during fireing query added event", t);
 			}

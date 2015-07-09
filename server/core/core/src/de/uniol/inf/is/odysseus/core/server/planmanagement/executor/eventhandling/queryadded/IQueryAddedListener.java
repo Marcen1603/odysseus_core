@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandli
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -18,5 +19,5 @@ public interface IQueryAddedListener {
 	 * {@link IExecutor#addQuery(String, String, ISession, String, de.uniol.inf.is.odysseus.core.collection.Context)}
 	 */
 	public void queryAddedEvent(String query, List<Integer> queryIds, String buildConfig,
-			String parserID, ISession user);
+			String parserID, ISession user, Context context);
 }
