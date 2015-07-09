@@ -238,12 +238,15 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * Iterate over all groups sweep areas, create output and clear state
 	 */
 	private void drainGroups() {
-		for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
-				.entrySet()) {
-			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
-					.getValue().iterator();
-			produceResults(results, entry.getKey());
-			entry.getValue().clear();
+		IGroupProcessor<R, W> g = getGroupProcessor();
+		synchronized (g) {
+			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+					.entrySet()) {
+				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
+						.getValue().iterator();
+				produceResults(results, entry.getKey());
+				entry.getValue().clear();
+			}
 		}
 	}
 
@@ -348,7 +351,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 				AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = entry
 						.getValue();
-
 
 				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 						.getValue().extractElementsBefore(timestamp);
