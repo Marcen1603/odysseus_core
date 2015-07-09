@@ -12,7 +12,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +29,7 @@ import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParser
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.helper.BenchmarkHelper;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
+import de.uniol.inf.is.odysseus.parallelization.rcp.windows.composite.BenchmarkStartComposite;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
@@ -42,16 +42,13 @@ public class InitializeQueryThread extends Thread {
 			.getLogger(InitializeQueryThread.class);
 
 	private final ParallelizationBenchmarkerWindow window;
-	private final ProgressBar progressInitializeQuery;
 	private static BenchmarkDataHandler benchmarkDataHandler;
 
 	private boolean errorOccoured = false;
 
 	public InitializeQueryThread(
-			ParallelizationBenchmarkerWindow parallelizationBenchmarkerWindow,
-			ProgressBar progressAnalyseQuery) {
+			ParallelizationBenchmarkerWindow parallelizationBenchmarkerWindow) {
 		this.window = parallelizationBenchmarkerWindow;
-		this.progressInitializeQuery = progressAnalyseQuery;
 	}
 
 	@Override
@@ -66,14 +63,14 @@ public class InitializeQueryThread extends Thread {
 
 			// get RCP data for query script
 			getWorkbenchData();
-			changeProgressBarSelection(20);
+			updateProgress(20);
 
 			// if we have this values, we could start executing the current
 			// query
 			if (benchmarkDataHandler.getSelection() != null) {
 				runSelectedQuery();
 			}
-			changeProgressBarSelection(50);
+			updateProgress(50);
 
 			// if executing of query works, we can start analysing the logical
 			// plan
@@ -87,7 +84,7 @@ public class InitializeQueryThread extends Thread {
 			createError(e);
 		}
 
-		changeProgressBarSelection(100);
+		updateProgress(100);
 
 		if (!errorOccoured) {
 			changeWindowOnSuccess();
@@ -132,18 +129,19 @@ public class InitializeQueryThread extends Thread {
 		window.getWindow().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				window.clearPageContent();
+				
 				window.createConfigContent();
 			}
 
 		});
 	}
 
-	private void changeProgressBarSelection(final int selectionValue) {
+	private void updateProgress(final int selectionValue) {
 		window.getWindow().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				progressInitializeQuery.setSelection(selectionValue);
+				BenchmarkStartComposite benchmarkStartComposite = window.getStartComposite();
+				benchmarkStartComposite.updateProgress(selectionValue);
 			}
 
 		});

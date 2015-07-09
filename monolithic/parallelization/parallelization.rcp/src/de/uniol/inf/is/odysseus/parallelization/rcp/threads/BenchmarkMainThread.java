@@ -14,7 +14,8 @@ public class BenchmarkMainThread extends Thread {
 
 	private static final String PRE_TRANSFORM_TOKEN = "#PRETRANSFORM BenchmarkPreTransformation";
 
-	private static Logger LOG = LoggerFactory.getLogger(BenchmarkMainThread.class);
+	private static Logger LOG = LoggerFactory
+			.getLogger(BenchmarkMainThread.class);
 	private UUID processUid;
 	private BenchmarkDataHandler data;
 	private ParallelizationBenchmarkerWindow window;
@@ -63,8 +64,8 @@ public class BenchmarkMainThread extends Thread {
 			BenchmarkerExecution benchmarkerExecution) {
 		int currentPercentage;
 		currentPercentage = (int) (((executionCounter + 1) / (double) numberOfExecutions) * 100);
-		if (benchmarkerExecution.getExecutionTime() >= data
-				.getConfiguration().getMaximumExecutionTime()) {
+		if (benchmarkerExecution.getExecutionTime() >= data.getConfiguration()
+				.getMaximumExecutionTime()) {
 			changeProgress(
 					currentPercentage,
 					"Maximum execution time reached. Please restart benchmarker and adjust values "
@@ -77,13 +78,10 @@ public class BenchmarkMainThread extends Thread {
 							+ data.getConfiguration().getNumberOfElements()
 							+ " elements are processed. Please decrese the number of elements.");
 		} else {
-			changeProgress(
-					currentPercentage,
-					"Done. "
-							+ data.getConfiguration().getNumberOfElements()
-							+ " elements in "
-							+ benchmarkerExecution.getExecutionTime()
-							+ " ms processed." + System.lineSeparator());
+			changeProgress(currentPercentage, "Done. "
+					+ data.getConfiguration().getNumberOfElements()
+					+ " elements in " + benchmarkerExecution.getExecutionTime()
+					+ " ms processed." + System.lineSeparator());
 		}
 		return currentPercentage;
 	}
@@ -109,7 +107,7 @@ public class BenchmarkMainThread extends Thread {
 		window.getWindow().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				window.showResult(resultOdysseusScript);
+				window.analyseDone(resultOdysseusScript);
 			}
 		});
 	}
@@ -151,7 +149,8 @@ public class BenchmarkMainThread extends Thread {
 		window.getWindow().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				window.updateAnalysisProgress(progressProcent, progressString);
+				window.getAnalyseComposite().updateAnalysisProgress(
+						progressProcent, progressString);
 			}
 
 		});

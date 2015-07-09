@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.parallelization.rcp.windows.StrategySelectionRow;
+import de.uniol.inf.is.odysseus.parallelization.rcp.windows.table.StrategySelectionRow;
 
 public class BenchmarkerConfiguration {
 

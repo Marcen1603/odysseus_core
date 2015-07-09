@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.parallelization.rcp.windows;
+package de.uniol.inf.is.odysseus.parallelization.rcp.windows.table;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.parallelization.rcp.windows;
+package de.uniol.inf.is.odysseus.parallelization.rcp.windows.table;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
