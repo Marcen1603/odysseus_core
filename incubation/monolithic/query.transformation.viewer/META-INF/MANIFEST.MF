@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.viewer.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.query.transformation.compiler,
  de.uniol.inf.is.odysseus.query.transformation.main,
+ de.uniol.inf.is.odysseus.query.transformation.target.platform.registry,
  org.eclipse.jface.dialogs,
  org.eclipse.swt,
  org.eclipse.swt.events,

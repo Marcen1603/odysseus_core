@@ -54,13 +54,14 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 		code.append("\n");
 		code.append(TransformSDFSchema.getCodeForSDFSchema(selectAO.getOutputSchema(), operatorVariable));
 		code.append("\n");
-		code.append("DirectAttributeResolver directAttriuteResolver = new DirectAttributeResolver("+operatorVariable+"SDFSchema);");
+		code.append("DirectAttributeResolver " +operatorVariable+"DirectAttriuteResolver = new DirectAttributeResolver("+operatorVariable+"SDFSchema);");
 		code.append("\n");
-		code.append("RelationalPredicateBuilder predicateNeu = new  RelationalPredicateBuilder();");
+		code.append("RelationalPredicateBuilder "+ operatorVariable+"RelationalPredicateBuilder = new  RelationalPredicateBuilder();");
 		code.append("\n");
-		code.append("IPredicate "+operatorVariable+"Predicate = predicateNeu.createPredicate(directAttriuteResolver, \""+predicateValue+"\");");
+		code.append("RelationalPredicate "+operatorVariable+"Predicate = (RelationalPredicate)"+operatorVariable+"RelationalPredicateBuilder.createPredicate("+operatorVariable+"DirectAttriuteResolver, \""+predicateValue+"\");");
+		code.append("\n");
 		
-		
+		code.append(operatorVariable+"Predicate.init("+operatorVariable+"SDFSchema, null);");
 		code.append("\n");
 		
 		code.append("SelectPO "+operatorVariable+"PO = new SelectPO("+operatorVariable+"Predicate);");
@@ -69,16 +70,10 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 		return code.toString();
 	}
 
-
-
 	@Override
 	public Set<String> getNeededImports() {
 		importList.add(SelectPO.class.getPackage().getName()+"."+SelectPO.class.getSimpleName());
 		return importList;
 	}
 
-
-	
-	
-	
 }

@@ -21,4 +21,5 @@ Export-Package: de.uniol.inf.is.odysseus.query.transformation.compiler,
  de.uniol.inf.is.odysseus.query.transformation.operator,
  de.uniol.inf.is.odysseus.query.transformation.operator.registry,
  de.uniol.inf.is.odysseus.query.transformation.target.platform,
+ de.uniol.inf.is.odysseus.query.transformation.target.platform.registry,
  de.uniol.inf.is.odysseus.query.transformation.utils

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.query.transformation.target.platform.registry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,6 @@ public class TargetPlatformRegistry {
 		}
 	}
 	
-	
-	
 	public static ITargetPlatform getTargetPlatform(String platformName){
 		if(supportedTargetPlattforms.containsKey(platformName.toLowerCase())){
 			return supportedTargetPlattforms.get(platformName.toLowerCase());
@@ -40,5 +39,9 @@ public class TargetPlatformRegistry {
 			LOG.debug("No target platform "+platformName +" found!");
 			return null;
 		}	
+	}
+	
+	public static Set<String> getAllTargetPlatform(){
+				return supportedTargetPlattforms.keySet();
 	}
 }

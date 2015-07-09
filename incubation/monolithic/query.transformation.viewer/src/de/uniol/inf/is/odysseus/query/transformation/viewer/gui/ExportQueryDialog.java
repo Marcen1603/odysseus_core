@@ -16,13 +16,14 @@ import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.main.QueryTransformation;
+import de.uniol.inf.is.odysseus.query.transformation.target.platform.registry.TargetPlatformRegistry;
 
 
 public class ExportQueryDialog extends Dialog {
 	private Text txtTragetDirectory;
 	private Button btnChooseTargetDirectory;
 	private Text txtTempDirectory;
-	private Combo programLanguage;
+	private Combo targetPlatform;
 	private  Button btnGenerateOdysseusJars;
 	
 	private int queryId;
@@ -43,12 +44,13 @@ public class ExportQueryDialog extends Dialog {
     label.setBounds(5, 130, 45, 15);
     label.setText("Sprache:");
     
-    programLanguage = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
-    programLanguage.setBounds(99, 127, 68, 23);
-    programLanguage.add("Java");
-    programLanguage.add("C#");
-    programLanguage.add("Python");
-    programLanguage.select(0);
+    targetPlatform = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
+    targetPlatform.setBounds(99, 127, 68, 23);
+    
+    for(String platform : TargetPlatformRegistry.getAllTargetPlatform()){
+    	 targetPlatform.add(platform.toUpperCase());
+    }
+    targetPlatform.select(1);
     
     txtTragetDirectory = new Text(container, SWT.BORDER);
     txtTragetDirectory.setText("C:\\Users\\Marc\\Desktop\\target");
@@ -150,7 +152,7 @@ public class ExportQueryDialog extends Dialog {
   
   private void saveInput(){
 	  
-	  TransformationParameter parameter = new TransformationParameter(programLanguage.getText(),txtTempDirectory.getText(), txtTragetDirectory.getText(), queryId, txtFOdysseusCode.getText(), btnGenerateOdysseusJars.getSelection());
+	  TransformationParameter parameter = new TransformationParameter(targetPlatform.getText(),txtTempDirectory.getText(), txtTragetDirectory.getText(), queryId, txtFOdysseusCode.getText(), btnGenerateOdysseusJars.getSelection());
 	  QueryTransformation.startQueryTransformation(parameter);
   }
 } 

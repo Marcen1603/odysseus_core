@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 
@@ -13,7 +14,7 @@ public class TransformProtocolHandler {
         transportHandler.processInOpen();
 	 
 	 */
-	public static String getCodeForProtocolHandler(ProtocolHandlerParameter protocolHandlerParameter, String operatorVariable){
+	public static String getCodeForProtocolHandler(ProtocolHandlerParameter protocolHandlerParameter, String operatorVariable, ITransportDirection direction){
 		String wrapper = "";
 	
 		if(protocolHandlerParameter.getWrapper().equals("GenericPull")){
@@ -26,15 +27,19 @@ public class TransformProtocolHandler {
 		TransformationInformation.getInstance().addProtocolHandler(protocolHandlerParameter.getProtocolHandler());
 		TransformationInformation.getInstance().addTransportHandler(protocolHandlerParameter.getTransportHandler());
 		
+		
 		StringBuilder code = new StringBuilder();
 		code.append("\n");
-		code.append("IProtocolHandler "+operatorVariable+"ProtocolHandler =  protocolhandlerregistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection.IN, "+wrapper+", "+operatorVariable+"ParameterInfo"+",  datahandlerregistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\","+ operatorVariable+"SDFSchema));");
+		code.append("IProtocolHandler "+operatorVariable+"ProtocolHandler =  protocolhandlerregistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection."+direction.toString()+", "+wrapper+", "+operatorVariable+"ParameterInfo"+",  datahandlerregistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\","+ operatorVariable+"SDFSchema));");
 		code.append("\n");
 		code.append("ITransportHandler "+operatorVariable+"TransportHandler = new FileHandler("+operatorVariable+"ProtocolHandler, "+operatorVariable+"ParameterInfo);");
 		code.append("\n");
 		code.append(operatorVariable+"ProtocolHandler.setTransportHandler("+operatorVariable+"TransportHandler);");
 		code.append("\n");
-		code.append(operatorVariable+"TransportHandler.processInOpen();");
+		
+		if(wrapper.equals("IAccessPattern.PULL")){
+			code.append(operatorVariable+"TransportHandler.processInOpen();");
+		}
 		
 		code.append("\n");
 		code.append("\n");
