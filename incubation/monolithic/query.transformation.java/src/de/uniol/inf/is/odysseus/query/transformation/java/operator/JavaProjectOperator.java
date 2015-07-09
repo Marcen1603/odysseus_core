@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformIntegerArray;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFSchema;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 
 
@@ -29,14 +28,16 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 		return targetPlatform;
 	}
 
+	/*
+	RelationalProjectPO testProject = new RelationalProjectPO(new int[] {0});
+	project.setName(operator.getName());
+	
+	*/
 	@Override
 	public String getCode(ILogicalOperator operator) {
+		StringBuilder code = new StringBuilder();
 		
-		/*
-		RelationalProjectPO testProject = new RelationalProjectPO(new int[] {0});
-		project.setName(operator.getName());
-		
-		*/
+	
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 		
 		ProjectAO projectAO = (ProjectAO)operator;
@@ -45,10 +46,7 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 		
 		String restrictListCode = TransformIntegerArray.getCodeForIntegerArray(restrictList);
 	
-		
-		StringBuilder code = new StringBuilder();
 		code.append("\n");
-		code.append(TransformSDFSchema.getCodeForSDFSchema(operator.getOutputSchema(),operatorVariable));
 		code.append("RelationalProjectPO "+operatorVariable+"PO = new RelationalProjectPO("+restrictListCode+");");
 		code.append("\n");
 		code.append(operatorVariable+"PO.setOutputSchema("+operatorVariable+"SDFSchema);");

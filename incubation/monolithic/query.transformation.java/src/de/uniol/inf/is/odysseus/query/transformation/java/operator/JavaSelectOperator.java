@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFSchema;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 
 
@@ -40,19 +39,17 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 	@Override
 	public String getCode(ILogicalOperator operator) {
 		StringBuilder code = new StringBuilder();
+		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 		
 		SelectAO selectAO = (SelectAO) operator;
 		IPredicate<?> predicate = selectAO.getPredicate();
-		
-
+	
 		String predicateValue = predicate.toString();
 		IExpression<?> mepExpression  = MEP.getInstance().parse(predicateValue);
 		TransformationInformation.getInstance().addMEPFunction(mepExpression);
 		
 		code.append("\n");
-		code.append("\n");
-		code.append(TransformSDFSchema.getCodeForSDFSchema(selectAO.getOutputSchema(), operatorVariable));
 		code.append("\n");
 		code.append("DirectAttributeResolver " +operatorVariable+"DirectAttriuteResolver = new DirectAttributeResolver("+operatorVariable+"SDFSchema);");
 		code.append("\n");

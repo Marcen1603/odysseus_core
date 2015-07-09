@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.query.transformation.java.mapping.Transformation
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformCSVParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformProtocolHandler;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFSchema;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 
 public class JavaCSVFileSinkOperator extends AbstractTransformationOperator{
@@ -34,8 +33,10 @@ public class JavaCSVFileSinkOperator extends AbstractTransformationOperator{
 	public String getCode(ILogicalOperator operator) {
 		StringBuilder code = new StringBuilder();
 		
-		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
+		//code.append(CreateDefaultCode.initOperator(operator));
 		
+		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
+
 		CSVFileSink csvFileSink = (CSVFileSink) operator;
 		
 		String filename = csvFileSink.getFilename();
@@ -44,10 +45,7 @@ public class JavaCSVFileSinkOperator extends AbstractTransformationOperator{
 		String wrapper = csvFileSink.getWrapper();
 		String protocolHandler = csvFileSink.getProtocolHandler();
 		
-		
-		//generate code for SDFSchema
-		code.append(TransformSDFSchema.getCodeForSDFSchema(csvFileSink.getOutputSchema(),operatorVariable));
-		
+	
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);	
 		
 		//generate code for options

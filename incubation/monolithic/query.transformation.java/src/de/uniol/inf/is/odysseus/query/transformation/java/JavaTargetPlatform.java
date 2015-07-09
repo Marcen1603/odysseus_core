@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWri
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIBindings;
 import de.uniol.inf.is.odysseus.query.transformation.operator.IOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.registry.OperatorRegistry;
@@ -28,7 +29,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 
 	private String targetPlatformName = "Java";
 
-	private static JavaFileWrite testWrite;
+	private static JavaFileWrite javaFileWrite;
 	
 	private Set<String> importList = new HashSet<String>();
 	
@@ -50,6 +51,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
 			TransformationParameter parameter) {
 		
+		//clear transformation infos
 		TransformationInformation.clear();
 	
 		//Start Odysseus index
@@ -62,26 +64,21 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(query, findSinksVisitor);
 		
-		List<ILogicalOperator> sinkList = findSinksVisitor.getResult();
-		
-		
-		for(ILogicalOperator op : sinkList){
-			op.getName();
-		}
-		
 		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
 		
-		testWrite = new JavaFileWrite("Main.java",parameter);
-		
-		addDefaultImport();
+		javaFileWrite = new JavaFileWrite("Main.java",parameter);
 		
 		walkTroughLogicalPlanNeu(query,parameter);
 		
-		//analyse imports for the body code
-		importList.addAll(new JavaImportAnalyse().analyseCodeForImport(parameter, body.toString()));
-		
+		//generate code for osgi binds
 		osgiBinds = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath());
 		
+		//add default java imports
+		addDefaultImport();
+		
+		//analyse imports for the body code
+		importList.addAll(new JavaImportAnalyse().analyseCodeForImport(parameter, body.toString()));
+
 		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
 		
 		//add imports that needed for the code
@@ -90,25 +87,25 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		try {
 			
 			//create java file
-			testWrite.createFile();
+			javaFileWrite.createFile();
 			
-			testWrite.writePackage();
+			javaFileWrite.writePackage();
 			
 			//write java imports
-			testWrite.writeImports(importList);
+			javaFileWrite.writeImports(importList);
 			
 			//write java main
-			testWrite.writeClassTop();
+			javaFileWrite.writeClassTop();
 			
 			//write body of main
-				testWrite.writeBody(osgiBinds);
-				testWrite.writeBody(body.toString());
-				testWrite.writeBody(generateSubscription(operatorList));
-				testWrite.writeBody(startDataStream());
+				javaFileWrite.writeBody(osgiBinds);
+				javaFileWrite.writeBody(body.toString());
+				javaFileWrite.writeBody(generateSubscription(operatorList));
+				javaFileWrite.writeBody(startDataStream());
 			
 			
 			//close file
-			testWrite.writeBottom();
+			javaFileWrite.writeBottom();
 			
 			ExecuteShellComand.compileJavaProgram(parameter.getTempDirectory());	
 		} catch (IOException e) {
@@ -119,23 +116,18 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 	}
 	
-	
-
-
 	/*
-	 * TODO how to get the needed imports? 
+	 * TODO how to get the needed imports for java? classLoader ?
 	 */
 	private void addDefaultImport() {
-		
 		importList.add("java.util.ArrayList");
 		importList.add("java.util.List");
 		importList.add("java.io.IOException");
-	
 	}
 	
 	
 	/*
-	 * Test
+	 *  Test
 	 	testAccess.subscribeSink(testProject, 0, 0, testAccess.getOutputSchema());
 	 	testAccess.connectSink(testProject, 0, 0, testAccess.getOutputSchema());
 	 	TODO Weg von Quelle zur Senke 
@@ -238,12 +230,18 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 		IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getClass().getSimpleName());
 		if(opTrans != null ){
-			System.out.println(opTrans.getCode(operator));
-			
-			TransformationInformation.getInstance().addOperator(operator);
-			String tempCode = opTrans.getCode(operator);
 		
-			body.append(tempCode);
+			//reg the operator to generate a uniq operatorVariable
+			TransformationInformation.getInstance().addOperator(operator);
+			
+			//generate the default code e.g. SDFSchema
+			String operatorCode = CreateDefaultCode.initOperator(operator);
+			
+			//generate operator code
+			operatorCode += opTrans.getCode(operator);
+		
+			//add operator code to java body
+			body.append(operatorCode);
 			
 			//add import for *PO
 			importList.addAll(opTrans.getNeededImports());

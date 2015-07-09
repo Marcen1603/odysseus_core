@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.query.transformation.java.mapping.Transformation
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformCSVParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformProtocolHandler;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFSchema;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 
 public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
@@ -32,21 +31,17 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 	}
 	@Override
 	public String getCode(ILogicalOperator operator) {
+		StringBuilder code = new StringBuilder();
 		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 
 		CSVFileSource csvFileSource = (CSVFileSource) operator;
-		StringBuilder code = new StringBuilder();
-		
-		//generate code for SDFSchema
-		code.append(TransformSDFSchema.getCodeForSDFSchema(csvFileSource.getOutputSchema(),operatorVariable));
-		
+	
 		String filename = csvFileSource.getFilename();
 		String transportHandler = csvFileSource.getTransportHandler();
 		String dataHandler = csvFileSource.getDataHandler();
 		String wrapper = csvFileSource.getWrapper();
 		String protocolHandler = csvFileSource.getProtocolHandler();
-		
 		
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
 		
@@ -64,7 +59,6 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 		code.append("\n");
 		
 
-	
 		return code.toString();
 	}
 	
