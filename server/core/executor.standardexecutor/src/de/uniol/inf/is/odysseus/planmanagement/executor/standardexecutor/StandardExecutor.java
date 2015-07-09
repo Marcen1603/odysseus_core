@@ -339,12 +339,12 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 				ParameterQueryName queryName = parameters
 						.get(ParameterQueryName.class);
-				
-				
+
 				if (queryName != null && queryName.getValue() != null
 						&& queryName.getValue().length() > 0) {
-					if (getExecutionPlan().getQueryByName(queryName.getValue())!=null){
-						throw new PlanManagementException("Query with name "+queryName.getValue()+" already defined.");
+					if (getExecutionPlan().getQueryByName(queryName.getValue()) != null) {
+						throw new PlanManagementException("Query with name "
+								+ queryName.getValue() + " already defined.");
 					}
 					query.setName(queryName.getValue());
 				}
@@ -1032,7 +1032,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 								.getLogicalQuery().getQueryText());
 					}
 				}
-				if (executionPlan.isEmpty()){
+				if (executionPlan.isEmpty()) {
 					getSchedulerManager().getActiveScheduler().clear();
 				}
 			} catch (Exception e) {
@@ -1049,16 +1049,23 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	@Override
 	public boolean removeAllQueries(ISession caller) {
 		boolean success = true;
-		List<IPhysicalQuery> queries = new ArrayList<>(
-				executionPlan.getQueries());
-		for (IPhysicalQuery q : queries) {
-			try {
-				removeQuery(caller, q);
-			} catch (Throwable throwable) {
-				LOG.error("Exception during stopping query " + q.getID()
-						+ " caller " + caller.getId(), throwable);
-				success = false;
+		try {
+			executionPlanLock.lock();
+			List<IPhysicalQuery> queries = new ArrayList<>(
+					executionPlan.getQueries());
+			for (IPhysicalQuery q : queries) {
+				try {
+					removeQuery(caller, q);
+				} catch (Throwable throwable) {
+					LOG.error("Exception during stopping query " + q.getID()
+							+ " caller " + caller.getId(), throwable);
+					success = false;
+				}
 			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			executionPlanLock.unlock();
 		}
 		return success;
 	}
