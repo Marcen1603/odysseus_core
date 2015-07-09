@@ -92,6 +92,7 @@ public class SystemLogConfiguration implements BundleActivator {
 		SystemLog.loadSystemLogFile();
 		SystemLog.delete(System.nanoTime()
 				- SystemLogConfiguration.getThreshold());
+		SystemLog.read_(System.nanoTime());
 	}
 
 	@Override

@@ -29,9 +29,10 @@ public class CrashDetector implements ISystemLogListener {
 			.getLogger(CrashDetector.class);
 
 	/**
-	 * True, if a crash has been detected.
+	 * The time stamp of the last startup, if a crash has been detected, or -1
+	 * else.
 	 */
-	private static boolean cCrashDetected = false;
+	private static long cLastStartup = -1L;
 
 	/**
 	 * All bound listeners.
@@ -52,9 +53,9 @@ public class CrashDetector implements ISystemLogListener {
 		cLog.debug(
 				"Bound '{}' as an implementation of ICrashDetectionListener.",
 				listener.getClass().getSimpleName());
-		if (cCrashDetected) {
+		if (cLastStartup != -1) {
 			try {
-				listener.onCrashDetected();
+				listener.onCrashDetected(cLastStartup);
 			} catch (Throwable t) {
 				cLog.error("Error occured for listener "
 						+ listener.getClass().getSimpleName(), t);
@@ -104,7 +105,8 @@ public class CrashDetector implements ISystemLogListener {
 			cLog.debug("Crash detected!");
 			for (ICrashDetectionListener listener : cListeners) {
 				try {
-					listener.onCrashDetected();
+					listener.onCrashDetected(entries.get(indexOfLastStartup)
+							.getTimeStamp());
 					;
 				} catch (Throwable t) {
 					cLog.error("Error occured for listener "

@@ -167,69 +167,42 @@ public class SystemLog implements ISystemLog {
 			return ImmutableList.copyOf(cEntries);
 		}
 	}
-
-	@Override
-	public ImmutableList<ISysLogEntry> read(long since) {
+	
+	public static ImmutableList<ISysLogEntry> read_(long since) {
 		// Assumption: entries are sorted by time stamp
-		ISysLogEntry[] entries;
+		int index;
 		synchronized (cEntries) {
-			entries = new ISysLogEntry[cEntries.size()];
-			cEntries.toArray(entries);
+			for(index = cEntries.size()-1; index >= 0 && cEntries.get(index).getTimeStamp() >= since; index--) {
+				// Nothing to do
+			}
 		}
-		int index = binSearchTimeStampIndex(since, entries, 0,
-				entries.length - 1);
+		
 		List<ISysLogEntry> subList = new LinkedList<ISysLogEntry>();
-		if (index != -1) {
+		if (++index < cEntries.size()) {
 			synchronized (cEntries) {
-				subList = cEntries.subList(index, entries.length);
+				subList = cEntries.subList(index, cEntries.size());
 			}
 		}
 		return ImmutableList.copyOf(subList);
 	}
 
-	/**
-	 * Searches the earliest entry with a given time stamp.
-	 * 
-	 * @param timeStamp
-	 *            The given time stamp.
-	 * @param entries
-	 *            The look-up field (ordered!).
-	 * @param start
-	 *            The first index to consider (inclusive).
-	 * @param end
-	 *            The last index to consider (inclusive).
-	 * @return The index of the earliest entry with a given time stamp or -1 if
-	 *         no entry could be found.
-	 */
-	private static int binSearchTimeStampIndex(long timeStamp,
-			ISysLogEntry[] entries, int start, int end) {
-		int p = start + (end - start) / 2;
-		if (p < start) {
-			return -1;
-		}
-
-		long pivot = entries[p].getTimeStamp();
-		if (p == 0) {
-			// Found it?
-			if (pivot == timeStamp) {
-				return p;
-			} else {
-				return -1;
-			}
-		} else if (pivot > timeStamp) {
-			// Have a look on the left side
-			return binSearchTimeStampIndex(timeStamp, entries, start, p - 1);
-		} else if (pivot < timeStamp) {
-			// Have a look on the right side
-			return binSearchTimeStampIndex(timeStamp, entries, p + 1, end);
-		}
-		// Find the most left element with the same time stamp
-		for (; p >= 0; p--) {
-			if (entries[p].getTimeStamp() != timeStamp) {
-				break;
+	@Override
+	public ImmutableList<ISysLogEntry> read(long since) {
+		// Assumption: entries are sorted by time stamp
+		int index;
+		synchronized (cEntries) {
+			for(index = cEntries.size()-1; index >= 0 && cEntries.get(index).getTimeStamp() >= since; index--) {
+				// Nothing to do
 			}
 		}
-		return p + 1;
+		
+		List<ISysLogEntry> subList = new LinkedList<ISysLogEntry>();
+		if (index < cEntries.size()) {
+			synchronized (cEntries) {
+				subList = cEntries.subList(index, cEntries.size());
+			}
+		}
+		return ImmutableList.copyOf(subList);
 	}
 
 	/**
