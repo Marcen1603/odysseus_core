@@ -5,17 +5,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.analysis.JavaImportAnalyse;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OdysseusIndex;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorToVariable;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIBindings;
 import de.uniol.inf.is.odysseus.query.transformation.operator.IOperator;
@@ -34,7 +36,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	private String osgiBinds;
 	
 	private ILogicalOperator rootOP;
-	private ILogicalOperator sinkOP;
+	private Collection<LogicalSubscription> sinkOPs;
 	
 	private List<ILogicalOperator> operatorList ;
 	
@@ -47,6 +49,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	@Override
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
 			TransformationParameter parameter) {
+		
+		TransformationInformation.clear();
 	
 		//Start Odysseus index
 		OdysseusIndex.search(parameter.getOdysseusPath());
@@ -143,13 +147,13 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 		for(ILogicalOperator op : operatorList){
 			
-		  String operatorVariable = OperatorToVariable.getVariable(op);
+		  String operatorVariable = TransformationInformation.getInstance().getVariable(op);
 		
 		   Collection<LogicalSubscription> subscriptionSourceList = op.getSubscribedToSource();
 			
 		   if(!subscriptionSourceList.isEmpty()){
 			   for(LogicalSubscription sub : subscriptionSourceList){
-					  String targetOp =  OperatorToVariable.getVariable(sub.getTarget());
+					  String targetOp =  TransformationInformation.getInstance().getVariable(sub.getTarget());
 					  if(!targetOp.equals("")){
 						  code.append("\n");
 							code.append("\n");
@@ -188,19 +192,29 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		code.append("\n");
 		code.append("ArrayList<IPhysicalOperator> physicalOperatorList = new ArrayList<IPhysicalOperator>();");
 		code.append("\n");
-		code.append("physicalOperatorList.add("+OperatorToVariable.getVariable(rootOP)+"PO);");
+		code.append("physicalOperatorList.add("+TransformationInformation.getInstance().getVariable(rootOP)+"PO);");
 		code.append("\n");
 		code.append("IOperatorOwner operatorOwner = new PhysicalQuery(physicalOperatorList);");
 		code.append("\n");
-		//Open on sink op
-		code.append(OperatorToVariable.getVariable(sinkOP)+"PO.open(operatorOwner);");
 		code.append("\n");
+	
+		//add owner to op
+		for (Entry<ILogicalOperator, String> entry : TransformationInformation.getInstance().getOperatorList().entrySet())
+		{
+			code.append(entry.getValue()+"PO.addOwner(operatorOwner);");
+			code.append("\n");
+		}
+	
+		//Open on sink ops
+		for(LogicalSubscription logicalSub : sinkOPs){
+				code.append(TransformationInformation.getInstance().getVariable(logicalSub.getTarget())+"PO.open(operatorOwner);");
+				code.append("\n");
+		}
+		
 		code.append("\n");
+		code.append("while("+TransformationInformation.getInstance().getVariable(rootOP)+"PO.hasNext()){");
 		code.append("\n");
-		code.append("\n");
-		code.append("while("+OperatorToVariable.getVariable(rootOP)+"PO.hasNext()){");
-		code.append("\n");
-		code.append(OperatorToVariable.getVariable(rootOP)+"PO.transferNext();");
+		code.append(TransformationInformation.getInstance().getVariable(rootOP)+"PO.transferNext();");
 		code.append("\n");
 		code.append("}");
 		code.append("\n");
@@ -217,15 +231,16 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			this.rootOP = operator;
 		}
 		
-		if(operator.isSinkOperator()){
-			this.sinkOP = operator;
+	
+		if(operator instanceof TopAO){
+			this.sinkOPs = operator.getSubscribedToSource();
 		}
 		
 		IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getClass().getSimpleName());
 		if(opTrans != null ){
 			System.out.println(opTrans.getCode(operator));
 			
-			OperatorToVariable.addOperator(operator);
+			TransformationInformation.getInstance().addOperator(operator);
 			String tempCode = opTrans.getCode(operator);
 		
 			body.append(tempCode);
@@ -233,10 +248,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			//add import for *PO
 			importList.addAll(opTrans.getNeededImports());
 			
-		
-			//add imports that needed for the code
-			//importList.addAll(new JavaImportAnalysis().analyseCodeForImport(parameter, tempCode));
-		
+
 			operatorList.add(operator);
 		}
 		

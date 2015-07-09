@@ -7,7 +7,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorToVariable;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformCSVParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformProtocolHandler;
@@ -32,7 +32,7 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 	@Override
 	public String getCode(ILogicalOperator operator) {
 		
-		String operatorVariable = OperatorToVariable.getVariable(operator);
+		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 
 		CSVFileSource csvFileSource = (CSVFileSource) operator;
 		StringBuilder code = new StringBuilder();
