@@ -38,14 +38,23 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * 
  * @author Dennis Geesen Created at: 17.08.2011
  */
-public class ReloadLog {
+public class ReloadLog implements IQueryAddedListener, IPlanModificationListener {
 
 	private static Logger logger = LoggerFactory.getLogger(ReloadLog.class);
 	public static final String LOG_FILENAME = OdysseusConfiguration.get("reloadLogStoreFilename");
@@ -54,8 +63,45 @@ public class ReloadLog {
 
 	public ReloadLog() {
 	}
+	
+	/**
+	 * The executor, if there is one bound.
+	 */
+	private static Optional<IServerExecutor> cExecutor;
+	
+	/**
+	 * Binds an executor. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param executor
+	 *            The executor to bind.
+	 */
+	public void bindExecutor(IExecutor executor) {
+		IServerExecutor serverExecutor = (IServerExecutor) executor;
+		serverExecutor.addQueryAddedListener(this);
+		serverExecutor.addPlanModificationListener(this);
+		cExecutor = Optional.of(serverExecutor);
+	}
 
-	public void queryAdded(String query, String buildConfig, String parserID, ISession user) {
+	/**
+	 * Unbinds an executor. <br />
+	 * Called by OSGI-DS.
+	 * 
+	 * @param executor
+	 *            The executor to unbind.
+	 */
+	public void unbindExecutor(IExecutor executor) {
+		if (cExecutor.isPresent() && cExecutor.get() == executor) {
+			IServerExecutor serverExecutor = (IServerExecutor) executor;
+			serverExecutor.removeQueryAddedListener(this);
+			serverExecutor.removePlanModificationListener(this);
+			cExecutor = Optional.absent();
+		}
+
+	}
+
+	@Override
+	public void queryAddedEvent(String query, String buildConfig, String parserID, ISession user) {
 		logger.debug("Query added to log: " + query);
 		QueryEntry qe = new QueryEntry();
 		qe.parserID = parserID;
@@ -92,16 +138,22 @@ public class ReloadLog {
 
 	}
 
-	public void removeQuery(String queryText) {
-		logger.debug("Removing query from log: " + queryText);
-		synchronized (queries) {
-			Iterator<QueryEntry> iterator = this.queries.iterator();
-			while (iterator.hasNext()) {
-				if (iterator.next().query.equals(queryText)) {
-					iterator.remove();
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		if (PlanModificationEventType.QUERY_REMOVE.equals(eventArgs.getEventType())) {
+			String queryText = ((IPhysicalQuery) eventArgs.getValue()).getQueryText();
+			logger.debug("Removing query from log: " + queryText);
+			synchronized (queries) {
+				Iterator<QueryEntry> iterator = this.queries.iterator();
+				while (iterator.hasNext()) {
+					if (iterator.next().query.equals(queryText)) {
+						iterator.remove();
+					}
 				}
+				saveState();
 			}
-			saveState();
 		}
+		
 	}
+
 }

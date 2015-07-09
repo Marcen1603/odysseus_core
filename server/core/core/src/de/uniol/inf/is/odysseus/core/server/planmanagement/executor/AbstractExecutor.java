@@ -92,6 +92,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.ExecutorInitializeException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoCompilerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoOptimizerLoadedException;
@@ -181,6 +182,12 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	private List<IPlanModificationListener> planModificationListener = Collections
 			.synchronizedList(new ArrayList<IPlanModificationListener>());
+	
+	/**
+	 * All Listener for query added events.
+	 */
+	private List<IQueryAddedListener> queryAddedListener = Collections
+			.synchronizedList(new ArrayList<IQueryAddedListener>());
 
 	/**
 	 * Alle Listener f�r Ausf�hrungs-Nachrichten
@@ -660,6 +667,21 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			}
 		}
 	}
+	
+	/**
+	 * Sends an added query to all listeners.
+	 */
+	protected synchronized void fireQueryAddedEvent(
+			String query, String buildConfig,
+			String parserID, ISession user) {
+		for (IQueryAddedListener listener : this.queryAddedListener) {
+			try {
+				listener.queryAddedEvent(query, buildConfig, parserID, user);
+			} catch (Throwable t) {
+				LOG.error("Exception during fireing query added event", t);
+			}
+		}
+	}
 
 	/**
 	 * firePlanExecutionEvent sendet ein Plan-Scheduling-Event an alle
@@ -900,6 +922,23 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			IPlanModificationListener listener) {
 		synchronized (this.planModificationListener) {
 			this.planModificationListener.remove(listener);
+		}
+	}
+	
+	@Override
+	public void addQueryAddedListener(IQueryAddedListener listener) {
+		synchronized (this.queryAddedListener) {
+			if (!this.queryAddedListener.contains(listener)) {
+				this.queryAddedListener.add(listener);
+			}
+		}
+	}
+
+	@Override
+	public void removeQueryAddedListener(
+			IQueryAddedListener listener) {
+		synchronized (this.queryAddedListener) {
+			this.queryAddedListener.remove(listener);
 		}
 	}
 

@@ -99,7 +99,6 @@ import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
-import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.reloadlog.ReloadLog;
 
 /**
  * StandardExecutor is the standard implementation of {@link IExecutor}. The
@@ -118,8 +117,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			.getLogger(StandardExecutor.class);
 
 	private static StandardExecutor instance;
-
-	private ReloadLog reloadLog;
 
 	private Map<ILogicalQuery, QueryBuildConfiguration> queryBuildParameter = new HashMap<ILogicalQuery, QueryBuildConfiguration>();
 
@@ -143,7 +140,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		// } else {
 		// this.configuration.set(new ParameterBufferPlacementStrategy());
 		// }
-		this.reloadLog = new ReloadLog();
 
 		instance = this;
 	}
@@ -647,8 +643,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				Collection<IPhysicalQuery> addedQueries = addQueries(
 						newQueries, new OptimizationConfiguration(
 								buildConfiguration), user);
-				reloadLog.queryAdded(query, buildConfiguration.getName(),
-						parserID, user);
+				fireQueryAddedEvent(query, buildConfiguration.getName(), parserID, user);
 				Collection<Integer> createdQueries = new ArrayList<Integer>();
 				for (IPhysicalQuery p : addedQueries) {
 					createdQueries.add(p.getID());
@@ -1028,8 +1023,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 					if (getDataDictionary(caller) != null) {
 						getDataDictionary(caller).removeQuery(
 								queryToRemove.getLogicalQuery(), caller);
-						this.reloadLog.removeQuery(queryToRemove
-								.getLogicalQuery().getQueryText());
 					}
 				}
 				if (executionPlan.isEmpty()) {
