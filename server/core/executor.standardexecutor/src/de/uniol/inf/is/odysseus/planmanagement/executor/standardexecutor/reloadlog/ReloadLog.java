@@ -101,7 +101,7 @@ public class ReloadLog implements IQueryAddedListener, IPlanModificationListener
 	}
 
 	@Override
-	public void queryAddedEvent(String query, String buildConfig, String parserID, ISession user) {
+	public void queryAddedEvent(String query, List<Integer> queryIds, String buildConfig, String parserID, ISession user) {
 		logger.debug("Query added to log: " + query);
 		QueryEntry qe = new QueryEntry();
 		qe.parserID = parserID;

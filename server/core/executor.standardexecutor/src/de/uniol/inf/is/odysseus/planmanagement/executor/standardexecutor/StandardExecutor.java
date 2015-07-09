@@ -643,7 +643,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				Collection<IPhysicalQuery> addedQueries = addQueries(
 						newQueries, new OptimizationConfiguration(
 								buildConfiguration), user);
-				fireQueryAddedEvent(query, buildConfiguration.getName(), parserID, user);
+				List<Integer> queryIds = collectQueryIds(addedQueries);
+				fireQueryAddedEvent(query, queryIds, buildConfiguration.getName(), parserID, user);
 				Collection<Integer> createdQueries = new ArrayList<Integer>();
 				for (IPhysicalQuery p : addedQueries) {
 					createdQueries.add(p.getID());
@@ -660,6 +661,15 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			LOG.error("Could not add query '" + query + "'", e);
 			throw e;
 		}
+	}
+	
+	private List<Integer> collectQueryIds(
+			Collection<IPhysicalQuery> queries) {
+		List<Integer> ids = Lists.newArrayList();
+		for(IPhysicalQuery query: queries) {
+			ids.add(query.getID());
+		}
+		return ids;
 	}
 
 	// -----------
