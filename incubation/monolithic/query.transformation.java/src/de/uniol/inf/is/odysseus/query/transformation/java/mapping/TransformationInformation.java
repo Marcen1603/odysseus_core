@@ -96,6 +96,15 @@ public class TransformationInformation {
 		return transportHandler;
 	}
 	
+
+
+	public boolean isOperatorAdded(ILogicalOperator operator){
+		if(operatorList.containsKey(operator)){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	
 	public  void addOperator(ILogicalOperator operator){
 		

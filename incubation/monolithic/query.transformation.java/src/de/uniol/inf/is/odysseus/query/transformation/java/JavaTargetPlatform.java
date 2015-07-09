@@ -231,23 +231,26 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getClass().getSimpleName());
 		if(opTrans != null ){
 		
-			//reg the operator to generate a uniq operatorVariable
-			TransformationInformation.getInstance().addOperator(operator);
+			if(!TransformationInformation.getInstance().isOperatorAdded(operator)){
+				
+				//reg the operator to generate a uniq operatorVariable
+				TransformationInformation.getInstance().addOperator(operator);
+				
+				//generate the default code e.g. SDFSchema
+				String operatorCode = CreateDefaultCode.initOperator(operator);
+				
+				//generate operator code
+				operatorCode += opTrans.getCode(operator);
 			
-			//generate the default code e.g. SDFSchema
-			String operatorCode = CreateDefaultCode.initOperator(operator);
-			
-			//generate operator code
-			operatorCode += opTrans.getCode(operator);
-		
-			//add operator code to java body
-			body.append(operatorCode);
-			
-			//add import for *PO
-			importList.addAll(opTrans.getNeededImports());
-			
-
-			operatorList.add(operator);
+				//add operator code to java body
+				body.append(operatorCode);
+				
+				//add import for *PO
+				importList.addAll(opTrans.getNeededImports());
+				
+	
+				operatorList.add(operator);
+			}
 		}
 		
 		for(LogicalSubscription s:operator.getSubscribedToSource()){
