@@ -95,13 +95,14 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	private IStore<Long, Tuple<?>> recoveryStore;
 
 	final private List<String> tableSchema;
+	final private List<String> primaryKeys;
 	private boolean firstConnectionFailed;
 	private boolean recovering;
 	private boolean useAttributeNames;
 
 	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
 			boolean drop, boolean truncate, long batchSize, int batchTimeout,
-			List<String> tableSchema, String preparedStatement) {
+			List<String> tableSchema, List<String> primaryKeys, String preparedStatement) {
 		if (connection == null) {
 			throw new IllegalArgumentException("Connection must not be null");
 		}
@@ -113,18 +114,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		this.batchTimeout = batchTimeout;
 		this.tableSchema = tableSchema;
 		this.preparedStatementString = preparedStatement;
-	}
-
-	public DatabaseSinkPO(DatabaseSinkPO databaseSinkPO) {
-		this.connection = databaseSinkPO.connection;
-		this.tablename = databaseSinkPO.tablename;
-		this.drop = databaseSinkPO.drop;
-		this.truncate = databaseSinkPO.truncate;
-		this.batchSize = databaseSinkPO.batchSize;
-		this.batchTimeout = databaseSinkPO.batchTimeout;
-		this.tableSchema = databaseSinkPO.tableSchema;
-		this.preparedStatementString = databaseSinkPO.preparedStatementString;
-
+		this.primaryKeys = primaryKeys;
 	}
 
 	private void initDTMappings() {
@@ -140,8 +130,8 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		}
 	}
 
-	public void setRecoveryEnabled(boolean recoveryEnabled, String recoveryStoreType,
-			OptionMap recoveryStoreOptions) {
+	public void setRecoveryEnabled(boolean recoveryEnabled,
+			String recoveryStoreType, OptionMap recoveryStoreOptions) {
 		this.recoveryEnabled = recoveryEnabled;
 		this.recoveryStoreType = recoveryStoreType;
 		this.recoveryStoreOptions = new OptionMap(recoveryStoreOptions);
@@ -154,7 +144,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	public void setUseAttributeNames(boolean useAttributeNames) {
 		this.useAttributeNames = useAttributeNames;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
@@ -202,7 +192,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 
 		if (!this.connection.tableExists(tablename)) {
 			this.connection.createTable(tablename, getOutputSchema(),
-					tableSchema);
+					tableSchema, primaryKeys);
 		} else {
 			// Do not clear table, if operator is recovering from former
 			// state!
@@ -210,7 +200,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 				if (this.drop) {
 					dropTable();
 					this.connection.createTable(tablename, getOutputSchema(),
-							tableSchema);
+							tableSchema, primaryKeys);
 				} else {
 					if (this.truncate) {
 						truncateTable();
@@ -302,18 +292,16 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 			if (recoveryEnabled) {
 				// Check if there are some elements in the recovery store
 				// that not have been send to the database
-				if (recoveryStore.size() > counter) {
+				while (recoveryStore.size() > counter) {
 					// TODO: Process RecoveryStore
 					// 1.Removed elements that are already stored?
 
 					// 2. Add remaining elements to storeList
-					while (!recoveryStore.isEmpty()) {
-						List<Entry<Long, Tuple<?>>> values = recoveryStore
-								.getOrderedByKey(batchSize - counter);
+					List<Entry<Long, Tuple<?>>> values = recoveryStore
+							.getOrderedByKey(batchSize - counter);
 
-						for (int i = 0; i < values.size(); i++) {
-							addTupleToStoreBatch(values.get(i).getValue());
-						}
+					for (int i = 0; i < values.size(); i++) {
+						addTupleToStoreBatch(values.get(i).getValue());
 					}
 
 				}
@@ -414,14 +402,8 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	}
 
 	@Override
-	public DatabaseSinkPO clone() {
-		return new DatabaseSinkPO(this);
-	}
-
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		writeToDB();
 	}
-
 
 }

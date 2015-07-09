@@ -64,7 +64,7 @@ public class TDatabaseDatabaseSinkAORule extends
 				operator.getTablename(), operator.isDrop(),
 				operator.isTruncate(), operator.getBatchSize(),
 				operator.getBatchTimeout(), operator.getTableSchema(),
-				operator.getPreparedStatement());
+				operator.getPrimaryKeys(), operator.getPreparedStatement());
 		sinkPO.setRecoveryEnabled(operator.isRecoveryEnabled(),
 				operator.getRecoveryStoreType(),
 				operator.getRecoveryStoreOptions());

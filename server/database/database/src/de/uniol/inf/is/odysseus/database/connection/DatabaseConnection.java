@@ -164,7 +164,7 @@ public class DatabaseConnection implements IDatabaseConnection {
 
 	@Override
 	public void createTable(String tablename, SDFSchema schema,
-			List<String> tableSchema) throws SQLException {
+			List<String> tableSchema, List<String> primaryKeys) throws SQLException {
 		assertConnection();
 		try (Statement st = connection.createStatement()) {
 			String table = "CREATE TABLE " + tablename + "(";
@@ -173,16 +173,25 @@ public class DatabaseConnection implements IDatabaseConnection {
 			for (SDFAttribute attribute : schema) {
 				table = table + sep + attribute.getAttributeName() + " ";
 				if (tableSchema == null || tableSchema.size() == 0) {
-					table = table
-							+ getDBMSSpecificType(DatatypeRegistry
+					table += getDBMSSpecificType(DatatypeRegistry
 									.getSQLDatatype(attribute.getDatatype()));
 				} else {
-					table = table + tableSchema.get(i++);
+					table  += tableSchema.get(i++);
 				}
 				sep = ", ";
 			}
 
-			table = table + ")";
+			if (primaryKeys != null && primaryKeys.size() > 0){
+				table += ",primary key(";
+				sep = "";
+				for (int j=0;j<primaryKeys.size();j++){
+						table += sep+primaryKeys.get(j);
+						sep=", ";
+				}
+				table += ")";
+			}
+			
+			table += ")";
 			System.out.println("-------------------");
 			System.out.println(table);
 			System.out.println("-------------------");

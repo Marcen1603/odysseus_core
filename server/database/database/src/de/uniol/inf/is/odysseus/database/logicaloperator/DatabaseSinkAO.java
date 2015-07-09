@@ -63,6 +63,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 	private int batchTimeout = 0;
     private String preparedStatement = "";
 	private List<String> tableSchema;
+	private List<String> primaryKeys;
 
 	// For recovery
 	private boolean recoveryEnabled = false;
@@ -91,6 +92,9 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
         this.recoveryStoreType = other.recoveryStoreType;
         if (other.recoveryStoreOptions != null){
         	this.recoveryStoreOptions = new OptionMap(other.recoveryStoreOptions);
+        }
+        if (other.primaryKeys != null){
+        	this.primaryKeys = new ArrayList<String>(other.primaryKeys);
         }
 	}
 
@@ -165,6 +169,15 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator {
 
 	public List<String> getTableSchema() {
 		return tableSchema;
+	}
+	
+	@Parameter(name = "PrimaryKeys", type = StringParameter.class, optional = true, isList = true, doc = "The names of the attributes that should be used as primary keys, when creating a new table.")
+	public void setPrimaryKeys(List<String> primaryKeys) {
+		this.primaryKeys = primaryKeys;
+	}
+	
+	public List<String> getPrimaryKeys() {
+		return primaryKeys;
 	}
 
     @Parameter(name = "PreparedStatement", type = StringParameter.class, optional = true, doc = "Prepared INSERT statement to use.")

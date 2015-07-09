@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public interface IDatabaseConnection {
 
-	public void createTable(String tablename, SDFSchema schema, List<String> tableSchema) throws SQLException;
+	public void createTable(String tablename, SDFSchema schema, List<String> tableSchema, List<String> primaryKeys) throws SQLException;
 	public void truncateTable(String tablename) throws SQLException;
 	public void dropTable(String tablename) throws SQLException;
 	public boolean tableExists(String tablename);
