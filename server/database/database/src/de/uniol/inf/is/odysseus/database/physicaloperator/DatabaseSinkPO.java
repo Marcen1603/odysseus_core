@@ -371,7 +371,9 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 					out = this.preparedStatement.executeBatch();
 					count = out.length;
 				} catch (BatchUpdateException e) {
+					preparedStatement.clearBatch();
 					e.printStackTrace();
+					INFO.warning("Error inserting elements",e);
 				}
 				
 				LOG.trace("Inserted " + count + " rows in database");
