@@ -149,7 +149,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 					  if(!targetOp.equals("")){
 						  code.append("\n");
 							code.append("\n");
-							code.append(operatorVariable+"PO.subscribeToSource("+targetOp+"PO, 0, 0, "+targetOp+"PO.getOutputSchema());");
+							code.append(operatorVariable+"PO.subscribeToSource("+targetOp+"PO, "+sub.getSinkInPort()+", "+sub.getSourceOutPort()+", "+targetOp+"PO.getOutputSchema());");
 							code.append("\n");
 					  }	
 				   }
