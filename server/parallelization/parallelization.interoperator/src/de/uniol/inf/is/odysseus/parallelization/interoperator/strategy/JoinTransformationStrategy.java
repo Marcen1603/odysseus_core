@@ -135,7 +135,7 @@ public class JoinTransformationStrategy extends
 			for (Pair<AbstractFragmentAO, Integer> pair : fragmentsSinkInPorts) {
 				BufferAO buffer = new BufferAO();
 				buffer.setName("Buffer_" + bufferCounter);
-				buffer.setThreaded(true);
+				buffer.setThreaded(settingsForOperator.isUseThreadedBuffer());
 				buffer.setMaxBufferSize(settingsForOperator.getBufferSize());
 				buffer.setDrainAtClose(false);
 				bufferCounter++;

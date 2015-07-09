@@ -7,7 +7,7 @@ public class ParallizationKeywordParameterBuilder {
 	private static String BLANK = " ";
 
 	public static String buildInterOperatorKeywordWithParameters(
-			Integer degree, Integer buffersize, boolean allowPostOptmization) {
+			Integer degree, Integer buffersize, boolean allowPostOptmization, boolean useThreadedBuffer) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("#" + ParallelizationPreParserKeyword.KEYWORD + BLANK);
 		builder.append("("
@@ -22,6 +22,9 @@ public class ParallizationKeywordParameterBuilder {
 		builder.append("("
 				+ ParallelizationKeywordParameter.OPTIMIZATION.getName() + "="
 				+ allowPostOptmization + ")" + BLANK);
+		builder.append("("
+				+ ParallelizationKeywordParameter.THREADEDBUFFER.getName() + "="
+				+ String.valueOf(useThreadedBuffer) + ")" + BLANK);
 		builder.append(System.lineSeparator());
 		return builder.toString();
 	}

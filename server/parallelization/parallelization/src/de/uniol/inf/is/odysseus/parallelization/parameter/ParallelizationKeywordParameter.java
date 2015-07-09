@@ -7,7 +7,8 @@ public enum ParallelizationKeywordParameter implements IKeywordParameter{
 	PARALLELIZATION_TYPE("type", 0, false),
 	DEGREE_OF_PARALLELIZATION("degree", 1, false), 
 	BUFFERSIZE("buffersize", 2, false), 
-	OPTIMIZATION("optimization", 3, true);
+	OPTIMIZATION("optimization", 3, true),
+	THREADEDBUFFER("threadedbuffer", 4, true);
 
 	
 	private ParallelizationKeywordParameter(String name, int position, boolean isOptional){

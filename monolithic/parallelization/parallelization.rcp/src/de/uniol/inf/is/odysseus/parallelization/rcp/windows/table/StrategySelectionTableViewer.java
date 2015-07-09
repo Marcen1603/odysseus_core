@@ -79,6 +79,7 @@ public class StrategySelectionTableViewer {
 		tableViewer.setCellEditors(editors);
 
 		tableViewer.setInput(strategySelectionRows);
+
 		tableViewer.setAllChecked(true);
 	}
 

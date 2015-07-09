@@ -12,7 +12,8 @@ public abstract class AbstractParallelizationPreTransformationHandler implements
 
 	@Override
 	public PreTransformationHandlerParameter createHandlerParameter(
-			int globalDegreeOfParallelization, int globalBufferSize, boolean allowCleanup) {
+			int globalDegreeOfParallelization, int globalBufferSize,
+			boolean allowCleanup, boolean useThreadedBuffer) {
 		PreTransformationHandlerParameter preTransformationHandlerParameter = new PreTransformationHandlerParameter();
 
 		// create parameter for global value (degree of parallelization)
@@ -26,20 +27,24 @@ public abstract class AbstractParallelizationPreTransformationHandler implements
 
 		// create parameter for global value (buffersize)
 		Pair<String, String> buffersizeParameter = new Pair<String, String>();
-		buffersizeParameter
-				.setE1(ParallelizationKeywordParameter.BUFFERSIZE
-						.name());
+		buffersizeParameter.setE1(ParallelizationKeywordParameter.BUFFERSIZE
+				.name());
 		buffersizeParameter.setE2(String.valueOf(globalBufferSize));
 		parameters.add(buffersizeParameter);
-		
+
 		// create parameter for global value (allow cleanup)
 		Pair<String, String> cleanupParameter = new Pair<String, String>();
-		cleanupParameter
-				.setE1(ParallelizationKeywordParameter.OPTIMIZATION
-						.name());
+		cleanupParameter.setE1(ParallelizationKeywordParameter.OPTIMIZATION
+				.name());
 		cleanupParameter.setE2(String.valueOf(allowCleanup));
 		parameters.add(cleanupParameter);
-		
+
+		// create parameter for global value (use threaded buffer)
+		Pair<String, String> threadedBufferParameter = new Pair<String, String>();
+		threadedBufferParameter.setE1(ParallelizationKeywordParameter.THREADEDBUFFER
+				.name());
+		threadedBufferParameter.setE2(String.valueOf(useThreadedBuffer));
+		parameters.add(threadedBufferParameter);
 
 		preTransformationHandlerParameter.add(getName(), parameters);
 

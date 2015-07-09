@@ -18,27 +18,32 @@ public class ParallelOperatorSettings {
 	private int bufferSize = 0;
 
 	private String multithreadingStrategy = "";
-	
+
 	private String startParallelizationId;
 	private String endParallelizationId;
-	
+
+	private boolean useThreadedBuffer;
+
 	private boolean assureSemanticCorrectness = false;
 
 	private Class<? extends AbstractFragmentAO> fragementationType;
 
 	public static ParallelOperatorSettings createDefaultSettings(
 			IParallelTransformationStrategy<? extends ILogicalOperator> strategy,
-			int globalDegreeOfParallelization, int globalBufferSize) {
+			int globalDegreeOfParallelization, int globalBufferSize,
+			boolean useThreadedBuffer) {
 		ParallelOperatorSettings settings = new ParallelOperatorSettings();
 
 		settings.doPostCalculationsForSettings(strategy,
-				globalDegreeOfParallelization, globalBufferSize);
+				globalDegreeOfParallelization, globalBufferSize,
+				useThreadedBuffer);
 		return settings;
 	}
 
 	public void doPostCalculationsForSettings(
 			IParallelTransformationStrategy<? extends ILogicalOperator> strategy,
-			int globalDegreeOfParallelization, int globalBufferSize) {
+			int globalDegreeOfParallelization, int globalBufferSize,
+			boolean useThreadedBuffer) {
 		// if GLOBAL is selected, we use the global parallelization degree
 		if (getDegreeConstant() == DegreeOfParalleizationConstants.GLOBAL) {
 			setDegreeOfParallelization(globalDegreeOfParallelization);
@@ -56,6 +61,9 @@ public class ParallelOperatorSettings {
 			setBufferSize(ParallelizationPreParserKeyword.AUTO_BUFFER_SIZE);
 		}
 
+		// use threaded buffer
+		this.useThreadedBuffer = useThreadedBuffer;
+
 		if (this.getFragementationType() != null) {
 			// Validate fragmentationtype for this strategy
 			boolean fragmentationTypeIsAllowed = false;
@@ -66,10 +74,11 @@ public class ParallelOperatorSettings {
 				}
 			}
 			if (!fragmentationTypeIsAllowed) {
-				throw new IllegalArgumentException("Selected strategy "
-						+ this.getParallelStrategy()
-						+ " is not compatible with the selected fragmentationType "
-						+ getFragementationType().getSimpleName());
+				throw new IllegalArgumentException(
+						"Selected strategy "
+								+ this.getParallelStrategy()
+								+ " is not compatible with the selected fragmentationType "
+								+ getFragementationType().getSimpleName());
 			}
 		} else {
 			// get preferred fragmentation type for strategy
@@ -175,6 +184,14 @@ public class ParallelOperatorSettings {
 
 	public void setAssureSemanticCorrectness(boolean assureSemanticCorrectness) {
 		this.assureSemanticCorrectness = assureSemanticCorrectness;
+	}
+
+	public boolean isUseThreadedBuffer() {
+		return useThreadedBuffer;
+	}
+
+	public void setUseThreadedBuffer(boolean useThreadedBuffer) {
+		this.useThreadedBuffer = useThreadedBuffer;
 	}
 
 }

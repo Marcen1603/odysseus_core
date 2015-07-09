@@ -30,6 +30,7 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 	private int globalDegreeOfParallelization = 0;
 	private int globalBufferSize = AUTO_BUFFER_SIZE;
 	private boolean allowOptimization = true;
+	private boolean useThreadedBuffer = true;
 
 	private PreParserKeywordParameterHelper<ParallelizationKeywordParameter> parameterHelper;
 
@@ -62,11 +63,24 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 			processOptimizationValue(result
 					.get(ParallelizationKeywordParameter.OPTIMIZATION));
 		}
+		if (result.containsKey(ParallelizationKeywordParameter.THREADEDBUFFER)){
+			processUseThreadedBuffer(result.get(ParallelizationKeywordParameter.THREADEDBUFFER));
+		}
 
 		// create handler parameter for pretransformation
 		createHandlerParameter(settings, handler);
 
 		return null;
+	}
+
+	private void processUseThreadedBuffer(String useThreadedBuffer) throws OdysseusScriptException {
+		if (!useThreadedBuffer.equalsIgnoreCase("true")
+				&& !useThreadedBuffer.equalsIgnoreCase("false")) {
+			throw new OdysseusScriptException(
+					"Value for ThreadedBuffer is invalid. Valid values are true or false.");
+		} else {
+			this.useThreadedBuffer = Boolean.parseBoolean(useThreadedBuffer);
+		}
 	}
 
 	private void processOptimizationValue(String optimization)
@@ -86,7 +100,7 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 		// if handler exists
 		PreTransformationHandlerParameter newHandlerParameter = handler
 				.createHandlerParameter(globalDegreeOfParallelization,
-						globalBufferSize, allowOptimization);
+						globalBufferSize, allowOptimization, useThreadedBuffer);
 
 		boolean parameterAlreadyAdded = false;
 		for (IQueryBuildSetting<?> setting : settings) {

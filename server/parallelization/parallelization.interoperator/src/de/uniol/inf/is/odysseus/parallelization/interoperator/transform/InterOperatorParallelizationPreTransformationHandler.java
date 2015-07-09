@@ -33,11 +33,12 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 
 	public static final String HANDLER_NAME = "InterOperatorParallelizationPreTransformationHandler";
 	private final String TYPE = "INTER_OPERATOR";
-	private final int PARAMETER_COUNT = 3;
+	private final int PARAMETER_COUNT = 4;
 
 	private int globalDegreeOfParallelization = 0;
 	private int globalBufferSize = 0;
 	private boolean optimizationAllowed;
+	private boolean useThreadedBuffer;
 
 	private ParallelOperatorParameter parallelOperatorParameter;
 	private List<String> operatorIds = new ArrayList<String>();
@@ -151,7 +152,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 					// do post calculations and validations for settings
 					settingsForOperator.doPostCalculationsForSettings(
 							selectedStrategy, globalDegreeOfParallelization,
-							globalBufferSize);
+							globalBufferSize, useThreadedBuffer);
 					if (selectedStrategy.getOperatorType() == operatorForTransformation
 							.getClass()) {
 						// evaluate compatibility of strategy and operator
@@ -191,7 +192,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 					// do post calculations and validations for settings
 					settingsForOperator.doPostCalculationsForSettings(
 							bestStrategy, globalDegreeOfParallelization,
-							globalBufferSize);
+							globalBufferSize, useThreadedBuffer);
 					transformationResults.add(bestStrategy.transform(
 							operatorForTransformation, settingsForOperator));
 				}
@@ -228,7 +229,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 				// create default settings for this transformation
 				ParallelOperatorSettings settings = ParallelOperatorSettings
 						.createDefaultSettings(bestStrategy,
-								globalDegreeOfParallelization, globalBufferSize);
+								globalDegreeOfParallelization, globalBufferSize, useThreadedBuffer);
 				transformationResults.add(bestStrategy.transform(
 						operatorForTransformation, settings));
 			}
@@ -248,7 +249,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 	private void getGlobalParameters(
 			List<Pair<String, String>> handlerParameters) {
 		if (handlerParameters.size() != PARAMETER_COUNT) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Number of paramters is invalid");
 		} else {
 			// Determine parameters
 			for (Pair<String, String> pair : handlerParameters) {
@@ -272,6 +273,9 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 					break;
 				case OPTIMIZATION:
 					optimizationAllowed = Boolean.parseBoolean(pair.getE2());
+					break;
+				case THREADEDBUFFER:
+					useThreadedBuffer = Boolean.parseBoolean(pair.getE2());
 					break;
 				default:
 					break;

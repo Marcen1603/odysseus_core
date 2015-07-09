@@ -8,6 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -29,13 +30,19 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 	private Text maxExecutionTimeText;
 	private BenchmarkDataHandler data;
 	private ParallelizationBenchmarkerWindow window;
+	private Combo buffertypeCombo;
 
+	private final String BOTH = "Threaded & Non-Threaded Buffer";
+	private final String THREADED = "Only Threaded Buffer";
+	private final String NON_THREADED = "Only Non-Threaded Buffer";
+	private String[] BUFFER_COMBO = {BOTH, THREADED, NON_THREADED};
+	
 	public BenchmarkConfigureComposite(Composite parent, int style,
 			int windowWidth, UUID benchmarkProcessId,
 			ParallelizationBenchmarkerWindow window) {
 		super(parent, style);
 		this.window = window;
-		
+
 		this.data = BenchmarkDataHandler
 				.getExistingInstance(benchmarkProcessId);
 		if (data.getBenchmarkInitializationResult().getStrategiesForOperator()
@@ -45,7 +52,6 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 			return;
 		}
 
-
 		GridData contentGridData = new GridData(GridData.FILL_BOTH);
 		contentGridData.widthHint = windowWidth;
 		this.setLayoutData(contentGridData);
@@ -53,7 +59,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 		this.setLayout(gridLayout);
 
 		createContent();
-		
+
 		parent.pack();
 		parent.setVisible(true);
 	}
@@ -63,7 +69,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				"Configure parallelization benchmark for selected query");
 
 		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.widthHint = 200;
+		gridData.widthHint = 220;
 
 		Composite configComposite = new Composite(this, SWT.NONE);
 		GridLayout gridLayout = new GridLayout(2, false);
@@ -98,15 +104,23 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				.valueOf(BenchmarkerConfiguration.DEFAULT_EXECUTION_TIME));
 		maxExecutionTimeText.setLayoutData(gridData);
 
+		Label selectBufferType = new Label(configComposite, SWT.NULL);
+		selectBufferType.setText("Select buffer type: ");
+		buffertypeCombo = new Combo(configComposite, SWT.READ_ONLY);
+		buffertypeCombo.setItems(BUFFER_COMBO);
+		buffertypeCombo.select(1);
+		buffertypeCombo.setLayoutData(gridData);
+
 		allowPostOptimizationButton = new Button(this, SWT.CHECK);
 		allowPostOptimizationButton.setText("Allow post optimization");
 		allowPostOptimizationButton.setSelection(true);
 
+
 		createLabel(
 				this,
 				"Following strategies are possible for the selected query. Please select at least one strategy for "
-						+ "parallelization. \n If more than one strategy for one operator is compatible, each strategy is "
-						+ "benchmarked. Note that executing \n the benchmark depends one the number of combinations.");
+						+ "parallelization. If more than one strategy for one operator is compatible, each strategy \n is "
+						+ "benchmarked. Note that executing the benchmark depends one the number of combinations.");
 
 		strategySelectionTableViewer = new StrategySelectionTableViewer(this,
 				data);
@@ -198,7 +212,21 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				.getSelection();
 		configuration.setAllowPostOptimization(allowPostOptimization);
 
+		setBufferTypeFromCombo(configuration);
+		
 		data.setConfiguration(configuration);
+	}
+
+	private void setBufferTypeFromCombo(BenchmarkerConfiguration configuration){
+		String bufferSelection = buffertypeCombo.getText();
+		if (bufferSelection.equals(BOTH)){
+			configuration.setUseThreadedBuffer(true);
+			configuration.setUseNonThreadedBuffer(true);
+		} else if (bufferSelection.equals(THREADED)){
+			configuration.setUseThreadedBuffer(true);
+		} else if (bufferSelection.equals(NON_THREADED)){
+			configuration.setUseNonThreadedBuffer(true);
+		}
 	}
 
 	public void prepareParallelizationAnalysis() {

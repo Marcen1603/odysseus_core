@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 public interface IParallelizationPreTransformationHandler extends IPreTransformationHandler{
 
 	PreTransformationHandlerParameter createHandlerParameter(
-			int globalDegreeOfParallelization, int globalBufferSize, boolean allowCleanup);
+			int globalDegreeOfParallelization, int globalBufferSize, boolean allowCleanup, boolean useThreadedBuffer);
 	
 	String getType();
 

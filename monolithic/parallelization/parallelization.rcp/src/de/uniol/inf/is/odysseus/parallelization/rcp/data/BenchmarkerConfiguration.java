@@ -15,6 +15,8 @@ public class BenchmarkerConfiguration {
 	private List<StrategySelectionRow> selectedStratgies;
 	private List<Integer> degrees;
 	private Integer buffersize;
+	private boolean useThreadedBuffer = false;
+	private boolean useNonThreadedBuffer = false;
 	private Integer numberOfElements;
 	private Long maximumExecutionTime;
 	private boolean allowPostOptimization;
@@ -88,17 +90,31 @@ public class BenchmarkerConfiguration {
 		for (BenchmarkerExecution benchmarkerExecution : combinedElements) {
 			int index = 0;
 			for (Integer degree : degrees) {
-				BenchmarkerExecution clonedExecution = benchmarkerExecution.clone();
-				clonedExecution.setDegree(degree, index);
-				clonedExecution.setBuffersize(buffersize);
-				clonedExecution.setNumberOfElements(numberOfElements);
-				clonedExecution.setAllowPostOptmization(allowPostOptimization);
-				executions.add(clonedExecution);
+				if (useThreadedBuffer){
+					cloneAndConfigureExecution(executions, benchmarkerExecution,
+							index, degree, true);
+				}
+				if (useNonThreadedBuffer){
+					cloneAndConfigureExecution(executions, benchmarkerExecution,
+							index, degree, false);
+				}
 				index++;
 			}
 		}
 
 		return executions;
+	}
+
+	private void cloneAndConfigureExecution(
+			List<BenchmarkerExecution> executions,
+			BenchmarkerExecution benchmarkerExecution, int index, Integer degree, boolean useThreadedBuffer) {
+		BenchmarkerExecution clonedExecution = benchmarkerExecution.clone();
+		clonedExecution.setDegree(degree, index);
+		clonedExecution.setBuffersize(buffersize);
+		clonedExecution.setNumberOfElements(numberOfElements);
+		clonedExecution.setAllowPostOptmization(allowPostOptimization);
+		clonedExecution.setUseThreadedBuffer(useThreadedBuffer);
+		executions.add(clonedExecution);
 	}
 
 	private List<BenchmarkerExecution> combineElements(
@@ -146,5 +162,21 @@ public class BenchmarkerConfiguration {
 
 	public void setMaximumExecutionTime(Long maximumExecutionTime) {
 		this.maximumExecutionTime = maximumExecutionTime;
+	}
+
+	public boolean isUseThreadedBuffer() {
+		return useThreadedBuffer;
+	}
+
+	public void setUseThreadedBuffer(boolean useThreadedBuffer) {
+		this.useThreadedBuffer = useThreadedBuffer;
+	}
+
+	public boolean isUseNonThreadedBuffer() {
+		return useNonThreadedBuffer;
+	}
+
+	public void setUseNonThreadedBuffer(boolean useNonThreadedBuffer) {
+		this.useNonThreadedBuffer = useNonThreadedBuffer;
 	}
 }

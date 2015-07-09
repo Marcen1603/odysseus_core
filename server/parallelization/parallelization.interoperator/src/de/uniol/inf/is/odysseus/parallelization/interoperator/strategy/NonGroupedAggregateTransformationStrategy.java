@@ -149,7 +149,7 @@ public class NonGroupedAggregateTransformationStrategy extends
 			// create buffer
 			BufferAO buffer = new BufferAO();
 			buffer.setName("Buffer_" + i);
-			buffer.setThreaded(true);
+			buffer.setThreaded(settingsForOperator.isUseThreadedBuffer());
 			buffer.setMaxBufferSize(settingsForOperator.getBufferSize());
 			buffer.setDrainAtClose(false);
 			

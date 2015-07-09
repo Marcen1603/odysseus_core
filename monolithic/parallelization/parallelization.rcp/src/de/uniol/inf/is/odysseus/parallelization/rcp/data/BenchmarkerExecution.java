@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.parallelization.parameter.ParallizationKeywordPa
 public class BenchmarkerExecution {
 	private Integer degree;
 	private Integer buffersize;
+	private boolean useThreadedBuffer;
 	private Integer numberOfElements;
 	private boolean allowPostOptmization;
 	private Map<String, BenchmarkExecutionElement> elements;
@@ -34,7 +35,7 @@ public class BenchmarkerExecution {
 		clone.buffersize = this.buffersize;
 		clone.numberOfElements = this.numberOfElements;
 		clone.allowPostOptmization = this.allowPostOptmization;
-		
+		clone.useThreadedBuffer = this.useThreadedBuffer;
 		clone.elements = new HashMap<String, BenchmarkExecutionElement>();
 		for (String elementKey : elements.keySet()) {
 			clone.elements.put(elementKey, elements.get(elementKey).clone());
@@ -90,12 +91,28 @@ public class BenchmarkerExecution {
 					"Duplicate execution element for operator id " + operatorId);
 		}
 	}
+	
+	public long getExecutionTime() {
+		return executionTime;
+	}
+
+	public void setExecutionTime(long executionTime) {
+		this.executionTime = executionTime;
+	}
+
+	public boolean isUseThreadedBuffer() {
+		return useThreadedBuffer;
+	}
+
+	public void setUseThreadedBuffer(boolean useThreadedBuffer) {
+		this.useThreadedBuffer = useThreadedBuffer;
+	}
 
 	public String getOdysseusScript() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(ParallizationKeywordParameterBuilder
 				.buildInterOperatorKeywordWithParameters(degree, buffersize,
-						allowPostOptmization));
+						allowPostOptmization, useThreadedBuffer));
 		for (BenchmarkExecutionElement element : elements.values()) {
 			builder.append(InterOperatorParallelizationKeywordParameterBuilder
 					.buildKeywordWithParameters(element.getStartOperatorid(),
@@ -110,19 +127,14 @@ public class BenchmarkerExecution {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Global degree: "+degree);
 		builder.append(", Post optimization allowed: "+allowPostOptmization);
+		builder.append(", Use threaded buffer: "+useThreadedBuffer);
 		for (BenchmarkExecutionElement element : elements.values()) {
 			builder.append(", "+element.toString());
 		}
 		return builder.toString();
 	}
 	
-	public long getExecutionTime() {
-		return executionTime;
-	}
-
-	public void setExecutionTime(long executionTime) {
-		this.executionTime = executionTime;
-	}
+	
 	
 	
 
