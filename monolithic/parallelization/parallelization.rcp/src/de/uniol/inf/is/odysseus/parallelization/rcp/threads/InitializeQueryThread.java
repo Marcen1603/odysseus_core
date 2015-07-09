@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.parallelization.rcp.threads;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,6 +22,8 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parallelization.benchmark.transformationhandler.BenchmarkPreTransformationHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
@@ -74,10 +77,9 @@ public class InitializeQueryThread extends Thread {
 
 			// if executing of query works, we can start analysing the logical
 			// plan
-			if (benchmarkDataHandler.getLogicalQuery() != null) {
-				BenchmarkHelper.getPossibleParallelizationOptions(
-						benchmarkDataHandler.getLogicalQuery(),
-						benchmarkDataHandler.getUniqueIdentifier());
+			if (!benchmarkDataHandler.getLogicalQueries().isEmpty()) {
+				BenchmarkHelper
+						.getPossibleParallelizationOptions(benchmarkDataHandler);
 			} else {
 				throw new Exception("Logical query not found");
 			}
@@ -216,17 +218,28 @@ public class InitializeQueryThread extends Thread {
 		benchmarkDataHandler.setQueryFile(scriptFile);
 		String text = readLinesFromFile(scriptFile);
 		IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
+		ISession activeSession = OdysseusRCPPlugIn.getActiveSession();
 		Collection<Integer> queryIds = executor.addQuery(text,
-				"OdysseusScript", OdysseusRCPPlugIn.getActiveSession(),
+				"OdysseusScript", activeSession,
 				ParserClientUtil.createRCPContext(scriptFile));
 		if (queryIds.size() > 0) {
-			// TODO it is possible that there are multiple queryIds, if the main
-			// query file starts other queries
-			Integer queryId = queryIds.iterator().next();
-			ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryId,
-					OdysseusRCPPlugIn.getActiveSession());
-			benchmarkDataHandler.setLogicalQuery(logicalQuery);
-			executor.removeQuery(queryId, OdysseusRCPPlugIn.getActiveSession());
+			List<Integer> queryIdArray = new ArrayList<Integer>(queryIds);
+			for (Integer queryId : queryIdArray) {
+				QueryState state = executor.getQueryState(queryId,
+						activeSession);
+				if (state == QueryState.INACTIVE) {
+					executor.startQuery(queryId, activeSession);
+				}
+				ILogicalQuery logicalQuery = executor.getLogicalQueryById(
+						queryId, activeSession);
+				benchmarkDataHandler.addLogicalQuery(logicalQuery);
+			}
+
+			// if we have all logical plans, we need to stop and remove all
+			// querys
+			for (Integer queryId : queryIdArray) {
+				executor.removeQuery(queryId, activeSession);
+			}
 		}
 	}
 

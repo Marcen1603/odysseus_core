@@ -24,7 +24,7 @@ public class BenchmarkDataHandler {
 	// query data
 	private IFile queryFile;
 	private List<String> queryStringArray = new ArrayList<String>();
-	private ILogicalQuery logicalQuery;
+	private List<ILogicalQuery> logicalQueries = new ArrayList<ILogicalQuery>();
 	
 	// Initialization data
 	private BenchmarkInitializationResult benchmarkInitializationResult;
@@ -86,17 +86,6 @@ public class BenchmarkDataHandler {
 		this.part = part;
 	}
 
-
-	public ILogicalQuery getLogicalQuery() {
-		return logicalQuery;
-	}
-
-
-	public void setLogicalQuery(ILogicalQuery logicalQuery) {
-		this.logicalQuery = logicalQuery;
-	}
-
-
 	public void addQueryString(String queryString) {
 		this.queryStringArray.add(queryString);
 	}
@@ -135,5 +124,19 @@ public class BenchmarkDataHandler {
 	
 	public static void removeInstance(String processUid) {
 		removeInstance(UUID.fromString(processUid));
+	}
+
+
+	public List<ILogicalQuery> getLogicalQueries() {
+		return logicalQueries;
+	}
+
+
+	public void setLogicalQueries(List<ILogicalQuery> logicalQueries) {
+		this.logicalQueries = logicalQueries;
+	}
+	
+	public void addLogicalQuery(ILogicalQuery logicalQuery) {
+		this.logicalQueries.add(logicalQuery);
 	}
 }
