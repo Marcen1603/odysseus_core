@@ -3,6 +3,10 @@ package cm.controller;
 import cm.communication.CommunicationService;
 import cm.communication.rest.RestException;
 import cm.communication.rest.RestService;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -11,10 +15,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.restlet.data.Product;
 
 import java.io.IOException;
@@ -39,6 +45,8 @@ public class LoginController {
     PasswordField loginPassword;
     @FXML
     ProgressIndicator loginProgress;
+    @FXML
+    Button loginButton;
 
     public void login(ActionEvent actionEvent) {
 
@@ -76,6 +84,7 @@ public class LoginController {
                                 } catch (RestException e) {
                                     // Login was not successful, stay on this view
                                     loginProgress.setVisible(false);
+                                    animateWrongLogin();
                                 } catch (IOException e) {
                                     // Loading the next view was not successful
                                     loginProgress.setVisible(false);
@@ -93,6 +102,34 @@ public class LoginController {
             }
         };
         service.start();
+    }
 
+    private void animateWrongLogin() {
+        // Left
+        final Timeline leftTimeline1 = new Timeline();
+        final KeyValue kv1 = new KeyValue(loginButton.translateXProperty(), -25);
+        final KeyFrame kf1 = new KeyFrame(Duration.millis(120), kv1);
+        leftTimeline1.getKeyFrames().add(kf1);
+
+        // Right
+        final Timeline rightTimeline1 = new Timeline();
+        final KeyValue kv2 = new KeyValue(loginButton.translateXProperty(), 35);
+        final KeyFrame kf2 = new KeyFrame(Duration.millis(240), kv2);
+        rightTimeline1.getKeyFrames().add(kf2);
+
+        // Left
+        final Timeline leftTimeline2 = new Timeline();
+        final KeyValue kv3 = new KeyValue(loginButton.translateXProperty(), -35);
+        final KeyFrame kf3 = new KeyFrame(Duration.millis(240), kv3);
+        leftTimeline2.getKeyFrames().add(kf3);
+
+        // Right
+        final Timeline rightTimeline2 = new Timeline();
+        final KeyValue kv4 = new KeyValue(loginButton.translateXProperty(), 5);
+        final KeyFrame kf4 = new KeyFrame(Duration.millis(120), kv4);
+        rightTimeline2.getKeyFrames().add(kf4);
+
+        SequentialTransition sequence = new SequentialTransition(leftTimeline1, rightTimeline1, leftTimeline2, rightTimeline2);
+        sequence.play();
     }
 }
