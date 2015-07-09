@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Recovery Query State Plug-in
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.recovery.querystate
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Michael Brand
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ com.google.guava,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.slf4j,
+ de.uniol.inf.is.odysseus.recovery.systemlog
+Service-Component: OSGI-INF/QueryStateLogger.xml

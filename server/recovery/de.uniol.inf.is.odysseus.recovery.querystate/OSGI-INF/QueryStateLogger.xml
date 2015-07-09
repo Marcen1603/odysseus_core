@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.recovery.querystate.QueryStateLogger">
+   <implementation class="de.uniol.inf.is.odysseus.recovery.querystate.QueryStateLogger"/>
+   <reference bind="bindExecutor" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindExecutor"/>
+   <reference bind="bindSystemLog" cardinality="0..1" interface="de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog" name="ISystemLog" policy="dynamic" unbind="unbindSystemLog"/>
+</scr:component>
