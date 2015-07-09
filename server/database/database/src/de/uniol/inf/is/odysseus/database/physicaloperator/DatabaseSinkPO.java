@@ -32,6 +32,8 @@ package de.uniol.inf.is.odysseus.database.physicaloperator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.Statement;
+import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -237,8 +239,10 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	private void dropTable() {
 		try {
 			this.connection.dropTable(this.tablename);
+			LOG.debug("DROPED TABLE "+this.tablename);
 		} catch (SQLException e) {
 			LOG.error(e.getMessage(), e);
+			INFO.error(e.getMessage(), e);
 		}
 	}
 
@@ -361,10 +365,19 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 					prepare(toStore.get(i));
 					this.preparedStatement.addBatch();
 				}
-				count = this.preparedStatement.executeBatch().length;
+				
+				int[] out;
+				try {
+					out = this.preparedStatement.executeBatch();
+					count = out.length;
+				} catch (BatchUpdateException e) {
+					e.printStackTrace();
+				}
+				
 				LOG.trace("Inserted " + count + " rows in database");
 
 				this.jdbcConnection.commit();
+				toStore.clear();
 
 				if (recoveryEnabled) {
 					StringBuffer buffer = new StringBuffer();
@@ -386,6 +399,8 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		} catch (SQLException e) {
 			LOG.error(e.getMessage(), e);
 
+			
+			
 			// INFO.error("ERROR WRTING TO DATABASE " + preparedStatement,
 			// e.getNextException());
 		}
