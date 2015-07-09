@@ -1,11 +1,12 @@
-package de.uniol.inf.is.odysseus.parallelization.parameter;
+package de.uniol.inf.is.odysseus.script.parser.parameter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class PreParserKeywordParameterHelper {
+public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParameter> {
 
 	private static final String PATTERN_PAIRS = "((([a-zA-Z0-9_]+))[,])"
 			+ "*(([a-zA-Z0-9_]+))";
@@ -36,13 +37,15 @@ public class PreParserKeywordParameterHelper {
 		this.numberOfOptionalParameters = numberOfOptionalParameters;
 	}
 
-	public static PreParserKeywordParameterHelper newInstance(
-			List<IKeywordParameter> keywordParameters, String regexString) {
+	public static <T extends Enum<?> & IKeywordParameter> PreParserKeywordParameterHelper<T> newInstance(
+			Class<T> parameterClazz, String regexString) {
 		Map<Integer, IKeywordParameter> positionMap = new HashMap<Integer, IKeywordParameter>();
 		Map<String, IKeywordParameter> nameMap = new HashMap<String, IKeywordParameter>();
 		int numberOfParameters = 0;
 		int numberOfOptionalParameters = 0;
 
+		List<IKeywordParameter> keywordParameters = getParametersAsArray(parameterClazz);
+		
 		for (IKeywordParameter keywordParameter : keywordParameters) {
 			if (!positionMap.containsKey(keywordParameter.getPosition())) {
 				positionMap.put(keywordParameter.getPosition(),
@@ -69,7 +72,7 @@ public class PreParserKeywordParameterHelper {
 			}
 		}
 
-		PreParserKeywordParameterHelper instance = new PreParserKeywordParameterHelper(
+		PreParserKeywordParameterHelper<T> instance = new PreParserKeywordParameterHelper<T>(
 				positionMap, nameMap, regexString, numberOfParameters,
 				numberOfOptionalParameters);
 		instance.validateParametersAndRegex();
@@ -77,11 +80,26 @@ public class PreParserKeywordParameterHelper {
 		return instance;
 	}
 
-	public static PreParserKeywordParameterHelper newInstance(
-			List<IKeywordParameter> keywordParameters) {
-		return newInstance(keywordParameters, PATTERN_KEYWORD);
+	public static <T extends Enum<?> & IKeywordParameter> PreParserKeywordParameterHelper<T> newInstance(
+			Class<T> parameterClass) {
+		return newInstance(parameterClass, PATTERN_KEYWORD);
 	}
 
+	private static <T extends Enum<?> & IKeywordParameter> List<IKeywordParameter> getParametersAsArray(
+			Class<T> parameterClazz) {
+		List<IKeywordParameter> result = new ArrayList<IKeywordParameter>();
+
+		T[] enumConstants = parameterClazz.getEnumConstants();
+
+		if (enumConstants.length > 0) {
+			for (int i = 0; i < enumConstants.length; i++) {
+				result.add((IKeywordParameter) enumConstants[i]);
+			}
+		}
+
+		return result;
+	}
+	
 	private boolean validateParametersAndRegex() {
 		// check regex
 		Pattern.compile(this.regexString);
@@ -110,8 +128,8 @@ public class PreParserKeywordParameterHelper {
 	public String getShortParameterPattern() {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < this.numberOfParameters; i++) {
-			if (positionMap.get(i) instanceof IExtendedKeywordParameter) {
-				IExtendedKeywordParameter extendedParameter = (IExtendedKeywordParameter) positionMap
+			if (positionMap.get(i) instanceof ICustomPatternKeywordParameter) {
+				ICustomPatternKeywordParameter extendedParameter = (ICustomPatternKeywordParameter) positionMap
 						.get(i);
 				if (!extendedParameter.getValuePattern().isEmpty()) {
 					builder.append(extendedParameter.getValuePattern());

@@ -17,6 +17,7 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.parallelization.transformationhandler,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.script.parser.parameter,
  de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator,
  org.osgi.framework;version="1.3.0",
  org.slf4j

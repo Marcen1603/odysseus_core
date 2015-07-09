@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.parallelization.parameter;
+package de.uniol.inf.is.odysseus.script.parser.parameter;
 
 
 public interface IKeywordParameter{

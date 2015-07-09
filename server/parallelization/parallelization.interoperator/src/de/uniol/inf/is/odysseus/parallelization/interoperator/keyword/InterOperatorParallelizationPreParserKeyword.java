@@ -20,10 +20,10 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.Parallel
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.InterOperatorParallelizationPreTransformationHandler;
-import de.uniol.inf.is.odysseus.parallelization.parameter.IKeywordParameter;
-import de.uniol.inf.is.odysseus.parallelization.parameter.PreParserKeywordParameterHelper;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
+import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 
 public class InterOperatorParallelizationPreParserKeyword extends
 		AbstractPreParserKeyword {
@@ -72,7 +72,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(InterOperatorParallelizationPreParserKeyword.class);
-	private PreParserKeywordParameterHelper parameterHelper;
+	private PreParserKeywordParameterHelper<InterOperatorParallelizationKeywordParameter> parameterHelper;
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
@@ -86,7 +86,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		}
 
 		parameterHelper = PreParserKeywordParameterHelper.newInstance(
-				parameters, PATTERN_KEYWORD);
+				InterOperatorParallelizationKeywordParameter.class, PATTERN_KEYWORD);
 		parameterHelper.validateParameterString(parameter);
 	}
 

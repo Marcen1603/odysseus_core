@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.parallelization.keyword;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -14,13 +12,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
-import de.uniol.inf.is.odysseus.parallelization.parameter.IKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.parameter.ParallelizationKeywordParameter;
-import de.uniol.inf.is.odysseus.parallelization.parameter.PreParserKeywordParameterHelper;
 import de.uniol.inf.is.odysseus.parallelization.transformationhandler.IParallelizationPreTransformationHandler;
 import de.uniol.inf.is.odysseus.parallelization.transformationhandler.registry.ParallelizationPreTransformationHandlerRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
+import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 
 public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String KEYWORD = "PARALLELIZATION";
@@ -33,33 +31,25 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 	private int globalBufferSize = AUTO_BUFFER_SIZE;
 	private boolean allowOptimization = true;
 
-	private PreParserKeywordParameterHelper parameterHelper;
+	private PreParserKeywordParameterHelper<ParallelizationKeywordParameter> parameterHelper;
 
-	@Override
+	@Override 
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller, Context context) throws OdysseusScriptException {
 
-		// get elements from enum for parameters
-		List<IKeywordParameter> parameters = new ArrayList<IKeywordParameter>();
-		List<ParallelizationKeywordParameter> asList = Arrays
-				.asList(ParallelizationKeywordParameter.values());
-		for (ParallelizationKeywordParameter parallelizationKeywordParameter : asList) {
-			parameters.add(parallelizationKeywordParameter);
-		}
-
 		parameterHelper = PreParserKeywordParameterHelper
-				.newInstance(parameters);
+				.newInstance(ParallelizationKeywordParameter.class);
 		parameterHelper.validateParameterString(parameter);
 	}
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
-			String parameter, ISession caller, Context context)
+			String parameterString, ISession caller, Context context)
 			throws OdysseusScriptException {
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 
 		Map<IKeywordParameter, String> result = parameterHelper
-				.parse(parameter);
+				.parse(parameterString);
 
 		IParallelizationPreTransformationHandler handler = getParallelizationPreTransformationHandler(result);
 

@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.parallelization.interoperator.keyword;
 
-import de.uniol.inf.is.odysseus.parallelization.parameter.IExtendedKeywordParameter;
+import de.uniol.inf.is.odysseus.script.parser.parameter.ICustomPatternKeywordParameter;
 
-public enum InterOperatorParallelizationKeywordParameter implements IExtendedKeywordParameter{
+public enum InterOperatorParallelizationKeywordParameter implements ICustomPatternKeywordParameter{
 	OPERATORID("id", 0, false, "<id or (firstId:secondId:allowSemanticChange) multiple ids comma seperated and no blank>"),
 	DEGREE("degree", 1, false),
 	BUFFERSIZE("buffersize", 2, false),

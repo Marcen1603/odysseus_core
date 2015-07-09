@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.parallelization.parameter;
 
+import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
+
 
 public enum ParallelizationKeywordParameter implements IKeywordParameter{
 	PARALLELIZATION_TYPE("type", 0, false),
