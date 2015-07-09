@@ -4,13 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
-import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformCSVParameter;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformProtocolHandler;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 
 public class JavaCSVFileSinkOperator extends AbstractTransformationOperator{
@@ -33,26 +29,9 @@ public class JavaCSVFileSinkOperator extends AbstractTransformationOperator{
 	public String getCode(ILogicalOperator operator) {
 		StringBuilder code = new StringBuilder();
 		
-		//code.append(CreateDefaultCode.initOperator(operator));
-		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
-
-		CSVFileSink csvFileSink = (CSVFileSink) operator;
 		
-		String filename = csvFileSink.getFilename();
-		String transportHandler = csvFileSink.getTransportHandler();
-		String dataHandler = csvFileSink.getDataHandler();
-		String wrapper = csvFileSink.getWrapper();
-		String protocolHandler = csvFileSink.getProtocolHandler();
-		
-	
-		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);	
-		
-		//generate code for options
-		code.append(TransformCSVParameter.getCodeForParameterInfo(csvFileSink.getParameterInfos(),operatorVariable));
-		
-		//setup transportHandler
-		code.append(TransformProtocolHandler.getCodeForProtocolHandler(protocolHandlerParameter, operatorVariable, ITransportDirection.OUT));
+		code.append(CreateDefaultCode.codeForAccessFramework(operator));
 	
 		//now create the SenderPO
 		code.append("SenderPO "+operatorVariable+"PO = new SenderPO("+operatorVariable+"ProtocolHandler);");

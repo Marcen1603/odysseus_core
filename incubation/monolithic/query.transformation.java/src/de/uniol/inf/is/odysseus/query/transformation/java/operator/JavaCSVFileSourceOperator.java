@@ -5,13 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
-import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformCSVParameter;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformProtocolHandler;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 
 public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
@@ -35,22 +31,8 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 
-		CSVFileSource csvFileSource = (CSVFileSource) operator;
-	
-		String filename = csvFileSource.getFilename();
-		String transportHandler = csvFileSource.getTransportHandler();
-		String dataHandler = csvFileSource.getDataHandler();
-		String wrapper = csvFileSource.getWrapper();
-		String protocolHandler = csvFileSource.getProtocolHandler();
-		
-		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
-		
-		//generate code for options
-		code.append(TransformCSVParameter.getCodeForParameterInfo(csvFileSource.getParameterInfos(),operatorVariable));
-		
-		//setup transportHandler
-		code.append(TransformProtocolHandler.getCodeForProtocolHandler(protocolHandlerParameter, operatorVariable, ITransportDirection.IN));
-	
+		code.append(CreateDefaultCode.codeForAccessFramework(operator));
+
 		//now create the AccessPO
 		code.append("AccessPO "+operatorVariable+"PO = new AccessPO("+operatorVariable+"ProtocolHandler,0);");
 		code.append("\n");
