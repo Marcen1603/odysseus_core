@@ -4,7 +4,9 @@ import cm.data.DataHandler;
 import cm.model.Event;
 import cm.view.EventListCell;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
@@ -118,5 +120,13 @@ public class EventListController {
     public void setItems(ObservableList<Event> items) {
         this.listOfEvents = items;
         eventList.setItems(items);
+    }
+
+    public void clearList(ActionEvent actionEvent) {
+        if (this.listOfEvents != null) {
+            this.listOfEvents.clear();
+        } else {
+            DataHandler.getInstance().getObservableEventList().clear();
+        }
     }
 }
