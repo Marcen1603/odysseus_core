@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -37,21 +40,23 @@ public class ParallelizationBenchmarkerWindow {
 	private final Shell parent;
 	private Shell window;
 	private Composite pageComposite;
-	private ProgressBar progressInitializeQuery;
-	private UUID benchmarkProcessId;
-	private StrategySelectionTableViewer strategySelectionTableViewer;
 	private Composite buttonComposite;
+
+	private Label errorLabel;
+	private ProgressBar progressInitializeQuery;
+	private ProgressBar progressAnalyseQuery;
 	private Text degreeText;
 	private Text buffersizeText;
-	private Label errorLabel;
-	private ProgressBar progressAnalyseQuery;
-	private Button startButton;
 	private Text numberOfElementsText;
 	private Text analysisProgressLog;
-	private BenchmarkMainThread benchmarkMainThread;
-	private Button closeButton;
-	private Button allowPostOptimizationButton;
 	private Text maxExecutionTimeText;
+	private Button startButton;
+	private Button copyClipboardButton;
+	private Button allowPostOptimizationButton;
+	private StrategySelectionTableViewer strategySelectionTableViewer;
+
+	private UUID benchmarkProcessId;
+	private BenchmarkMainThread benchmarkMainThread;
 
 	public ParallelizationBenchmarkerWindow(Shell parent) {
 		this.parent = Preconditions.checkNotNull(parent,
@@ -346,9 +351,8 @@ public class ParallelizationBenchmarkerWindow {
 	}
 
 	public void createErrorMessage(Throwable ex) {
-		if (errorLabel == null){
-			errorLabel = createLabel(pageComposite,
-					"");			
+		if (errorLabel == null) {
+			errorLabel = createLabel(pageComposite, "");
 			errorLabel.setForeground(window.getDisplay().getSystemColor(
 					SWT.COLOR_RED));
 		}
@@ -375,10 +379,11 @@ public class ParallelizationBenchmarkerWindow {
 		buttonComposite = new Composite(window, SWT.NONE);
 		buttonComposite.setLayoutData(new GridData(SWT.BEGINNING));
 		buttonComposite.setLayout(new GridLayout(2, false));
-		closeButton = new Button(buttonComposite, SWT.PUSH);
-		closeButton.setText(CANCEL_BUTTON_TEXT);
-		closeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		closeButton.addSelectionListener(new SelectionAdapter() {
+		copyClipboardButton = new Button(buttonComposite, SWT.PUSH);
+		copyClipboardButton.setText(CANCEL_BUTTON_TEXT);
+		copyClipboardButton
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		copyClipboardButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (benchmarkMainThread != null) {
@@ -396,7 +401,7 @@ public class ParallelizationBenchmarkerWindow {
 		this.benchmarkProcessId = uniqueIdentifier;
 	}
 
-	public void showResult(String resultOdysseusScript) {
+	public void showResult(final String resultOdysseusScript) {
 		createLabel(pageComposite,
 				"Result of parallelization benchmarker. Put this Snippet in your script.");
 
@@ -407,7 +412,21 @@ public class ParallelizationBenchmarkerWindow {
 		analysisResultScript.setLayoutData(gridData);
 		analysisResultScript.setText(resultOdysseusScript);
 
-		closeButton.setText("Done");
+		copyClipboardButton.setText("Done");
+
+		final Clipboard cb = new Clipboard(window.getDisplay());
+		copyClipboardButton = new Button(buttonComposite, SWT.PUSH);
+		copyClipboardButton.setText("Copy to Clipboard");
+		copyClipboardButton
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		copyClipboardButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TextTransfer textTransfer = TextTransfer.getInstance();
+				cb.setContents(new Object[] { resultOdysseusScript },
+						new Transfer[] { textTransfer });
+			}
+		});
 
 		window.pack();
 		window.setVisible(true);
