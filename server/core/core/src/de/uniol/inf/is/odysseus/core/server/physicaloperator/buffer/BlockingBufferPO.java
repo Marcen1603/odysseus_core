@@ -15,11 +15,16 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 
+	Logger LOG = LoggerFactory.getLogger(BlockingBufferPO.class);
+	
 	final long maxBufferSize;
 
 	public BlockingBufferPO(long maxBufferSize) {
@@ -34,6 +39,16 @@ public class BlockingBufferPO<T extends IStreamObject<?>> extends BufferPO<T> {
 		}
 	}
 
+	@Override
+	protected void process_close() {
+		LOG.debug("Closing at size "+buffer.size());
+		super.process_close();
+		synchronized (this) {
+			this.notifyAll();
+		}
+		LOG.debug("Closing done");
+	}
+	
 	@Override
 	protected void process_next(T object, int port) {
 		if (size() < maxBufferSize) {
