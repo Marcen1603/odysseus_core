@@ -376,21 +376,21 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				}
 
 			}
+		}
+		// Inform transferArea about the time progress
+		transferArea.newHeartbeat(border, 0);
 
-			// Inform transferArea about the time progress
-			transferArea.newHeartbeat(border, 0);
-
-			if (debug) {
-				System.err.println("CREATE OUTPUT " + border);
-				transferArea.dump();
-			}
+		if (debug) {
+			System.err.println("CREATE OUTPUT " + border);
+			transferArea.dump();
 		}
 
 	}
 
 	@Override
-	public synchronized void processPunctuation(IPunctuation punctuation,
+	public void processPunctuation(IPunctuation punctuation,
 			int port) {
+
 		// Keep punctuation order by sending to transfer area
 		transferArea.sendPunctuation(punctuation, port);
 		// Maybe new output can be created because of time progress
