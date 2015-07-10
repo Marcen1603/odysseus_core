@@ -586,6 +586,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 						.size()) {
 					getLogger().trace("Closing " + toString());
 					doLocalClose();
+					getLogger().trace("Closing " + toString()+ " done");
 				}
 				removeActiveSubscription(sub);
 				// Close all sinks that are not connected by open
