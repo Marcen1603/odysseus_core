@@ -100,6 +100,7 @@ public class NioConnection extends Thread implements IConnection {
     @Override
     public void run() {
         getLogger().debug("Nio Connection Handler started ...");
+        this.setName("NIO Connection");
         while (doRouting) {
             try {
                 int n = selector.select();
