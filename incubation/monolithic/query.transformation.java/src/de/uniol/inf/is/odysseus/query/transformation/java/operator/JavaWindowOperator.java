@@ -40,22 +40,29 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 		TimeValueItem windowSize = windowAO.getWindowSize();
 		TimeValueItem windowSlide = windowAO.getWindowSlide();
 		TimeValueItem windowAdvance = windowAO.getWindowAdvance();
+		
+		
 
 		code.append("TimeWindowAO "+operatorVariable+"TimeWindowAO = new TimeWindowAO();");
 		code.append("\n");
-
+		
+		code.append(operatorVariable+"TimeWindowAO.setBaseTimeUnit(TimeUnit.MICROSECONDS);");
+		code.append("\n");
+		
 		code.append(operatorVariable+"TimeWindowAO.setWindowSize(new TimeValueItem("+windowSize.getTime()+",TimeUnit.valueOf(\""+windowSize.getUnit().toString()+"\")));");
 		code.append("\n");
 		if(windowSlide != null){
-			code.append(operatorVariable+"TimeWindowAO.setWindowSize(new TimeValueItem("+windowSlide.getTime()+",TimeUnit.valueOf(\""+windowSlide.getUnit().toString()+"\")));");
+			code.append(operatorVariable+"TimeWindowAO.setWindowSlide(new TimeValueItem("+windowSlide.getTime()+",TimeUnit.valueOf(\""+windowSlide.getUnit().toString()+"\")));");
 			code.append("\n");
 		}
 		
-		code.append(operatorVariable+"TimeWindowAO.setWindowSize(new TimeValueItem("+windowAdvance.getTime()+",TimeUnit.valueOf(\""+windowAdvance.getUnit().toString()+"\")));");
+		code.append(operatorVariable+"TimeWindowAO.setWindowAdvance(new TimeValueItem("+windowAdvance.getTime()+",TimeUnit.valueOf(\""+windowAdvance.getUnit().toString()+"\")));");
+		code.append("\n");
+		code.append(operatorVariable+"TimeWindowAO.setOutputSchema("+operatorVariable+"SDFSchema);");
 		code.append("\n");
 		code.append("SlidingAdvanceTimeWindowTIPO "+operatorVariable+"PO = new SlidingAdvanceTimeWindowTIPO("+operatorVariable+"TimeWindowAO);");
 		code.append("\n");
-	
+
 		return code.toString();
 	}
 	

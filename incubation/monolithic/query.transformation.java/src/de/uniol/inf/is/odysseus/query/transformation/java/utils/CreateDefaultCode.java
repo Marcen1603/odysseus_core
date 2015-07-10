@@ -1,11 +1,16 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
+import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
 public class CreateDefaultCode {
 	
@@ -68,6 +73,34 @@ public class CreateDefaultCode {
 		code.append(TransformProtocolHandler.getCodeForProtocolHandler(protocolHandlerParameter, operatorVariable, direction));
 	
 		return code.toString();
+	}
+	
+	
+	public static String codeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
+		StringBuilder code = new StringBuilder();
+		
+		String operatorVariable = TransformationInformation.getInstance().getVariable(forOperator);
+		
+		SDFSchema schema = timestampAO.getInputSchema();
+		boolean clearEnd = timestampAO.isClearEnd();
+		int pos = schema.indexOf(timestampAO.getStartTimestamp());
+
+		if (Tuple.class.isAssignableFrom(timestampAO.getInputSchema().getType())) {
+			if (pos >= 0) {
+				int posEnd = timestampAO.hasEndTimestamp() ? timestampAO
+						.getInputSchema()
+						.indexOf(timestampAO.getEndTimestamp()) : -1;
+						
+			code.append("RelationalTimestampAttributeTimeIntervalMFactory "+operatorVariable+"MetaUpdater = new RelationalTimestampAttributeTimeIntervalMFactory("+pos+", "+posEnd+","+ clearEnd+","+ timestampAO.getDateFormat()+","+timestampAO.getTimezone()+","+ timestampAO.getLocale()+","+timestampAO.getFactor()+","+ timestampAO.getOffset()+");");
+			code.append("\n");
+			code.append("((IMetadataInitializer) "+operatorVariable+"PO).addMetadataUpdater("+operatorVariable+"MetaUpdater);");
+			}
+			
+		}
+		
+	
+		return code.toString();
+		
 	}
 
 }
