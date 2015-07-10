@@ -27,101 +27,97 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Michael Brand
  */
 @LogicalOperator(name = "HASHFRAGMENT", minInputPorts = 1, maxInputPorts = 1, doc = "Can be used to fragment incoming streams", category = { LogicalOperatorCategory.PROCESSING })
-public class HashFragmentAO extends AbstractFragmentAO {
+public class HashFragmentAO extends AbstractStaticFragmentAO {
 
-	private static final long serialVersionUID = -6789007084291408905L;
+    private static final long serialVersionUID = -6789007084291408905L;
 
-	/**
-	 * The URIs of the attributes forming the hash key, if the key is not the
-	 * whole tuple.
-	 */
-	private List<SDFAttribute> fragmentAttributes;
-	
-	private boolean optimizeDistribution;
+    /**
+     * The URIs of the attributes forming the hash key, if the key is not the
+     * whole tuple.
+     */
+    private List<SDFAttribute> fragmentAttributes;
 
-	private List<String> stringAttributes;
+    private boolean optimizeDistribution;
 
-	/**
-	 * Constructs a new {@link HashFragmentAO}.
-	 * 
-	 * @see UnaryLogicalOp#UnaryLogicalOp()
-	 */
-	public HashFragmentAO() {
-		super();
-	}
+    private List<String> stringAttributes;
 
-	/**
-	 * Constructs a new {@link HashFragmentAO} as a copy of an existing one.
-	 * 
-	 * @param fragmentAO
-	 *            The {@link HashFragmentAO} to be copied.
-	 * @see UnaryLogicalOp#UnaryLogicalOp(AbstractLogicalOperator)
-	 */
-	public HashFragmentAO(HashFragmentAO fragmentAO) {
-		super(fragmentAO);
-		if (fragmentAO.fragmentAttributes != null) {
-			this.fragmentAttributes= Lists
-					.newArrayList(fragmentAO.fragmentAttributes);
-		}
-		this.optimizeDistribution = fragmentAO.optimizeDistribution;
-	}
+    /**
+     * Constructs a new {@link HashFragmentAO}.
+     * 
+     * @see UnaryLogicalOp#UnaryLogicalOp()
+     */
+    public HashFragmentAO() {
+        super();
+    }
 
-	@Override
-	public AbstractLogicalOperator clone() {
-		return new HashFragmentAO(this);
-	}
+    /**
+     * Constructs a new {@link HashFragmentAO} as a copy of an existing one.
+     * 
+     * @param fragmentAO
+     *            The {@link HashFragmentAO} to be copied.
+     * @see UnaryLogicalOp#UnaryLogicalOp(AbstractLogicalOperator)
+     */
+    public HashFragmentAO(HashFragmentAO fragmentAO) {
+        super(fragmentAO);
+        if (fragmentAO.fragmentAttributes != null) {
+            this.fragmentAttributes = Lists.newArrayList(fragmentAO.fragmentAttributes);
+        }
+        this.optimizeDistribution = fragmentAO.optimizeDistribution;
+    }
 
-	/**
-	 * Returns the URIs of the attributes forming the hash key, if the key is
-	 * not the whole tuple.
-	 */
-	@GetParameter(name = "ATTRIBUTES")
-	public List<SDFAttribute> getAttributes() {
-		return fragmentAttributes;
-	}
+    @Override
+    public AbstractLogicalOperator clone() {
+        return new HashFragmentAO(this);
+    }
 
-	/**
-	 * Sets the URIs of the attributes forming the hash key, if the key is not
-	 * the whole tuple.
-	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", optional = true, isList = true)
-	public void setAttributes(List<SDFAttribute> uris) {
+    /**
+     * Returns the URIs of the attributes forming the hash key, if the key is
+     * not the whole tuple.
+     */
+    @GetParameter(name = "ATTRIBUTES")
+    public List<SDFAttribute> getAttributes() {
+        return fragmentAttributes;
+    }
 
-		this.fragmentAttributes = uris;
+    /**
+     * Sets the URIs of the attributes forming the hash key, if the key is not
+     * the whole tuple.
+     */
+    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", optional = true, isList = true)
+    public void setAttributes(List<SDFAttribute> uris) {
 
-		List<String> attributes = Lists.newArrayList();
-		for (SDFAttribute uri : uris) {
-			attributes.add("'" + uri.getAttributeName() + "'");
-		}
-		this.addParameterInfo("ATTRIBUTES", attributes);
+        this.fragmentAttributes = uris;
 
-	}
+        List<String> attributes = Lists.newArrayList();
+        for (SDFAttribute uri : uris) {
+            attributes.add("'" + uri.getAttributeName() + "'");
+        }
+        this.addParameterInfo("ATTRIBUTES", attributes);
 
-	public void setStringAttributes(List<String> list) {
-		this.stringAttributes = list;
-	}
-	
-	@Override
-	public void initialize() {
-		if (stringAttributes != null){
-			this.fragmentAttributes = Lists.newArrayList();
-			SDFSchema inputSchema = getInputSchema(0);
-			for (String attributeNameToFind:stringAttributes){
-				fragmentAttributes.add(inputSchema.findAttribute(attributeNameToFind));
-			}
-		}
-	}
+    }
 
-	
-	public boolean isOptimizeDistribution() {
-		return optimizeDistribution;
-	}
+    public void setStringAttributes(List<String> list) {
+        this.stringAttributes = list;
+    }
 
-	@Parameter(type = BooleanParameter.class, name="optimizeDistribution", optional = true)
-	public void setOptimizeDistribution(boolean optimizeDistribution) {
-		this.optimizeDistribution = optimizeDistribution;
-	}
+    @Override
+    public void initialize() {
+        if (stringAttributes != null) {
+            this.fragmentAttributes = Lists.newArrayList();
+            SDFSchema inputSchema = getInputSchema(0);
+            for (String attributeNameToFind : stringAttributes) {
+                fragmentAttributes.add(inputSchema.findAttribute(attributeNameToFind));
+            }
+        }
+    }
 
+    public boolean isOptimizeDistribution() {
+        return optimizeDistribution;
+    }
 
+    @Parameter(type = BooleanParameter.class, name = "optimizeDistribution", optional = true)
+    public void setOptimizeDistribution(boolean optimizeDistribution) {
+        this.optimizeDistribution = optimizeDistribution;
+    }
 
 }

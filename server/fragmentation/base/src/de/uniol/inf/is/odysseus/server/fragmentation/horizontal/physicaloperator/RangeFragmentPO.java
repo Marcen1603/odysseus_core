@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * @author Michael Brand
  */
 public class RangeFragmentPO<T extends IStreamObject<IMetaAttribute>> 
-		extends AbstractFragmentPO<T> {
+		extends AbstractStaticFragmentPO<T> {
 	
 	private static final Logger log = LoggerFactory.getLogger(RangeFragmentPO.class);
 	

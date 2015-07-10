@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * @author Marco Grawunder
  */
 public class HashFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
-		AbstractFragmentPO<T> {
+AbstractStaticFragmentPO<T> {
 
 	/**
 	 * The indices of the attributes forming the hash key, if the key is not the

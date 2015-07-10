@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * @version $Id$
  *
  */
-public class GenericFragmentPO extends AbstractFragmentPO<Tuple<IMetaAttribute>> {
+public class GenericFragmentPO extends AbstractStaticFragmentPO<Tuple<IMetaAttribute>> {
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(GenericFragmentPO.class);
     /** The partition expression. */

@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Michael Brand
  */
 @LogicalOperator(name = "RRFRAGMENT", minInputPorts = 1, maxInputPorts = 1, doc="Can be used to fragment incoming streams",category={LogicalOperatorCategory.PROCESSING})
-public class RoundRobinFragmentAO extends AbstractFragmentAO {
+public class RoundRobinFragmentAO extends AbstractStaticFragmentAO {
 	
 	private static final long serialVersionUID = -6789007084291408905L;
 	

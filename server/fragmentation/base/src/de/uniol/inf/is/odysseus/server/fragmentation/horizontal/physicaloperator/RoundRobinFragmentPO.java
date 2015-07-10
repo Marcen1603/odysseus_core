@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * @author Marco Grawunder 
  */
 public class RoundRobinFragmentPO<T extends IStreamObject<IMetaAttribute>> 
-		extends AbstractFragmentPO<T> {
+		extends AbstractStaticFragmentPO<T> {
 	
 	/**
 	 * The counter for all incoming objects.

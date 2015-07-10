@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
  * @author Michael Brand
  */
 @LogicalOperator(category = {LogicalOperatorCategory.PROCESSING}, doc = "Can be used to fragment incoming streams", maxInputPorts = 1, minInputPorts = 1, name = "RANGEFRAGMENT")
-public class RangeFragmentAO extends AbstractFragmentAO {
+public class RangeFragmentAO extends AbstractStaticFragmentAO {
 
 	private static final long serialVersionUID = -2630113178519582998L;
 	

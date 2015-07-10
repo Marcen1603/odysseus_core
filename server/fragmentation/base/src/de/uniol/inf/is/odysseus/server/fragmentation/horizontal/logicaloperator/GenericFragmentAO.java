@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressio
  *
  */
 @LogicalOperator(name = "GENERICFRAGMENT", minInputPorts = 1, maxInputPorts = 1, doc = "Can be used to fragment incoming streams", category = { LogicalOperatorCategory.PROCESSING })
-public class GenericFragmentAO extends AbstractFragmentAO {
+public class GenericFragmentAO extends AbstractStaticFragmentAO {
 
     /**
      * 

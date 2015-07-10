@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.ShuffleFragmentAO;
 
 public class ShuffleFragmentPO<T extends IStreamObject<IMetaAttribute>> extends
-		AbstractFragmentPO<T> {
+AbstractStaticFragmentPO<T> {
 
 	private Random rand;
 	
