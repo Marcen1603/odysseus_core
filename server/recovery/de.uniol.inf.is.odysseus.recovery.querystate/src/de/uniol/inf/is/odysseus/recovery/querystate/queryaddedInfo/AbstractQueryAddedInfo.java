@@ -17,7 +17,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
 
 /**
@@ -52,10 +51,12 @@ public abstract class AbstractQueryAddedInfo implements Serializable {
 	 */
 	public String queryText;
 
-	/**
-	 * The current session (and corresponding user).
-	 */
-	public ISession session;
+	// TODO Problem with ISession while fromBase64Binary: ClassNotFoundException.
+	// Is only used for addQuery. All other events are done with SuperUser.
+//	/**
+//	 * The current session (and corresponding user).
+//	 */
+//	public ISession session;
 
 	/**
 	 * The context.

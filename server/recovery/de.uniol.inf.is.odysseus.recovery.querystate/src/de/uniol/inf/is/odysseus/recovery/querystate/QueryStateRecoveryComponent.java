@@ -78,11 +78,16 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 					.getClass().getSimpleName());
 		}
 	}
+	
+	/**
+	 * The list of system log entries for recovery, if crash has been detected before an executor is bound.
+	 */
+	private static List<ISysLogEntry> cEntriesForRecovery = Lists.newArrayList();
 
 	/**
 	 * The executor, if bound.
 	 */
-	private static Optional<IServerExecutor> cExecutor;
+	private static Optional<IServerExecutor> cExecutor = Optional.absent();
 
 	/**
 	 * Binds an implementation of the executor.
@@ -95,6 +100,14 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		serverExecutor.addQueryAddedListener(this);
 		serverExecutor.addPlanModificationListener(this);
 		cExecutor = Optional.of(serverExecutor);
+		if(!cEntriesForRecovery.isEmpty()) {
+			try {
+				recover(cEntriesForRecovery);
+			} catch (Exception e) {
+				cLog.error("Could not recover!", e);
+			}
+			cEntriesForRecovery.clear();
+		}
 	}
 
 	/**
@@ -139,9 +152,8 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	@Override
 	public void recover(List<ISysLogEntry> log) throws Exception {
 		// TODO to be tested
-		// TODO ein Enitrag zu viel (letzter Shutdown. Zurückverfolgen.}
 		if (!cExecutor.isPresent()) {
-			cLog.error("No executorbound!");
+			cEntriesForRecovery.addAll(log);
 			return;
 		}
 		cLog.debug("Begin of recovery...");
@@ -178,7 +190,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	private void recoverQueryAddEvent(ISysLogEntry entry) {
 		AbstractQueryAddedInfo info = AbstractQueryAddedInfo
 				.fromBase64Binary(entry.getComment().get());
-		cExecutor.get().addQuery(info.queryText, info.parserId, info.session,
+		cExecutor.get().addQuery(info.queryText, info.parserId, getSession(),
 				info.getContext());
 		cLog.debug("Added query {}", info.queryText);
 	}
@@ -242,7 +254,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		}
 		info.parserId = parserID;
 		info.queryText = query;
-		info.session = user;
 		info.setContext(context);
 		// TODO read IRecoveryExecutor from Odysseus Script
 

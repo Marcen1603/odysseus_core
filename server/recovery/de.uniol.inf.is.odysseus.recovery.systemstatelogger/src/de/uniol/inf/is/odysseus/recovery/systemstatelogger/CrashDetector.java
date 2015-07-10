@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLogListener;
@@ -30,16 +31,84 @@ public class CrashDetector implements ISystemLogListener {
 			.getLogger(CrashDetector.class);
 
 	/**
-	 * The time stamp in milliseconds of the last startup, if a crash has been detected, or -1
-	 * else.
+	 * The time stamp in milliseconds of the last startup, if a crash has been
+	 * detected, or -1 else.
 	 */
 	private static long cLastStartup = -1L;
+
+	/**
+	 * True between the call of {@link #bindExecutor(IExecutor)} and
+	 * {@link #unbindExecutor(IExecutor)} by OSGi.
+	 */
+	private static boolean cExecutorBound = false;
+
+	/**
+	 * Binds an implementation of the executor.
+	 * 
+	 * @param executor
+	 *            The implementation to bind.
+	 */
+	public static void bindExecutor(IExecutor executor) {
+		cExecutorBound = true;
+		if (canCallListeners()) {
+			callAllListeners();
+		}
+	}
+
+	/**
+	 * Calls {@link ICrashDetectionListener#onCrashDetected(long)} with
+	 * {@value #cLastStartup} for a listener.
+	 * 
+	 * @param listener
+	 *            The listener to call.
+	 */
+	private static void callListener(ICrashDetectionListener listener) {
+		try {
+			listener.onCrashDetected(cLastStartup);
+		} catch (Throwable t) {
+			cLog.error("Error occured for listener "
+					+ listener.getClass().getSimpleName(), t);
+		}
+	}
+
+	/**
+	 * Calls {@link ICrashDetectionListener#onCrashDetected(long)} with
+	 * {@value #cLastStartup} for all bound listeners.
+	 */
+	private static void callAllListeners() {
+		synchronized (cListeners) {
+			for (ICrashDetectionListener listener : cListeners) {
+				callListener(listener);
+			}
+		}
+	}
+
+	/**
+	 * Checks, if listeners can/should be called. This is of cause, if a crash
+	 * happend and if an executor could be bound. So Odysseus is ready for
+	 * recovery.
+	 * 
+	 * @return
+	 */
+	private static boolean canCallListeners() {
+		return cExecutorBound && cLastStartup != -1L;
+	}
+
+	/**
+	 * Unbinds an implementation of the executor.
+	 * 
+	 * @param executor
+	 *            The implementation to unbind.
+	 */
+	public static void unbindExecutor(IExecutor executor) {
+		cExecutorBound = false;
+	}
 
 	/**
 	 * All bound listeners.
 	 */
 	private static final Set<ICrashDetectionListener> cListeners = Sets
-			.newHashSet();
+			.newConcurrentHashSet();
 
 	/**
 	 * Binds a listener.
@@ -54,13 +123,8 @@ public class CrashDetector implements ISystemLogListener {
 		cLog.debug(
 				"Bound '{}' as an implementation of ICrashDetectionListener.",
 				listener.getClass().getSimpleName());
-		if (cLastStartup != -1) {
-			try {
-				listener.onCrashDetected(cLastStartup);
-			} catch (Throwable t) {
-				cLog.error("Error occured for listener "
-						+ listener.getClass().getSimpleName(), t);
-			}
+		if (canCallListeners()) {
+			callListener(listener);
 		}
 	}
 
@@ -78,12 +142,12 @@ public class CrashDetector implements ISystemLogListener {
 				"Unbound '{}' as an implementation of ICrashDetectionListener.",
 				listener.getClass().getSimpleName());
 	}
-	
+
 	/**
 	 * The system log, if bound.
 	 */
 	private static Optional<ISystemLog> cSystemLog = Optional.absent();
-	
+
 	/**
 	 * Binds an implementation of the system log.
 	 * 
@@ -109,7 +173,7 @@ public class CrashDetector implements ISystemLogListener {
 					.getClass().getSimpleName());
 		}
 	}
-	
+
 	/**
 	 * The tag for the system log entry for a crash of Odysseus.
 	 */
@@ -140,18 +204,12 @@ public class CrashDetector implements ISystemLogListener {
 		if (indexOfLastStartup > indexOfLastShutdown) {
 			// There must been a crash
 			cLog.debug("Crash detected!");
-			if(cSystemLog.isPresent()) {
+			cLastStartup = entries.get(indexOfLastStartup).getTimeStamp();
+			if (cSystemLog.isPresent()) {
 				cSystemLog.get().write(TAG_CRASH, System.currentTimeMillis());
 			}
-			for (ICrashDetectionListener listener : cListeners) {
-				try {
-					listener.onCrashDetected(entries.get(indexOfLastStartup)
-							.getTimeStamp());
-					;
-				} catch (Throwable t) {
-					cLog.error("Error occured for listener "
-							+ listener.getClass().getSimpleName(), t);
-				}
+			if (canCallListeners()) {
+				callAllListeners();
 			}
 		}
 	}
