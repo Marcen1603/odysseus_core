@@ -36,8 +36,9 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
-public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractSource<W> implements
-		ITransferHandler<W>, IMetadataInitializer<M, W>, ICommandProvider {
+public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute>
+		extends AbstractSource<W> implements ITransferHandler<W>,
+		IMetadataInitializer<M, W>, ICommandProvider {
 
 	volatile protected static Logger _logger = null;
 
@@ -52,8 +53,8 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 
 	private IProtocolHandler<W> protocolHandler;
 
-	private IMetadataInitializer<M,W> metadataInitializer = new MetadataInitializerAdapter<>();
-	
+	private IMetadataInitializer<M, W> metadataInitializer = new MetadataInitializerAdapter<>();
+
 	public ReceiverPO(IProtocolHandler<W> protocolHandler) {
 		this.protocolHandler = protocolHandler;
 		this.protocolHandler.setTransfer(this);
@@ -83,7 +84,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 				protocolHandler.open();
 				opened = true;
 			} catch (Exception e) {
-				sendError("Error Opening "+e.getMessage(), e);
+				sendError("Error Opening " + e.getMessage(), e);
 				throw new OpenFailedException(e);
 			}
 		}
@@ -107,31 +108,40 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 		propagateDone();
 	}
 
-
 	@Override
 	final public void transfer(W object) {
-		try {
-			object.setMetadata(getMetadataInstance());
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+		if (opened) {
+			try {
+				object.setMetadata(getMetadataInstance());
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			updateMetadata(object);
+			super.transfer(object);
 		}
-		updateMetadata(object);
-		super.transfer(object);
 	}
-	
+
 	@Override
 	public final void transfer(W object, int sourceOutPort) {
-		super.transfer(object, sourceOutPort);
+		if (opened) {
+			try {
+				object.setMetadata(getMetadataInstance());
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			updateMetadata(object);
+			super.transfer(object, sourceOutPort);
+		}
 	}
-	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof ReceiverPO)) {
 			return false;
 		}
 
-//		@SuppressWarnings("rawtypes")
-//		ReceiverPO bbrpo = (ReceiverPO) ipo;
+		// @SuppressWarnings("rawtypes")
+		// ReceiverPO bbrpo = (ReceiverPO) ipo;
 
 		// TODO: Implement me
 		return false;
@@ -162,37 +172,34 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 	@Override
 	public Command getCommandByName(String commandName, SDFSchema schema) {
 		int delimiter = commandName.indexOf('.');
-		if (delimiter != -1)
-		{
+		if (delimiter != -1) {
 			// Command is for transport, protocol, ... handler
 			String target = commandName.substring(0, delimiter);
-			String newCommandName = commandName.substring(delimiter+1);
-			
-			if (target.equalsIgnoreCase("transport"))
-			{
-				ITransportHandler transportHandler = ((AbstractProtocolHandler<W>) protocolHandler).getTransportHandler();
+			String newCommandName = commandName.substring(delimiter + 1);
+
+			if (target.equalsIgnoreCase("transport")) {
+				ITransportHandler transportHandler = ((AbstractProtocolHandler<W>) protocolHandler)
+						.getTransportHandler();
 				if (transportHandler instanceof ICommandProvider)
-					return ((ICommandProvider) transportHandler).getCommandByName(newCommandName, schema);
+					return ((ICommandProvider) transportHandler)
+							.getCommandByName(newCommandName, schema);
 				else
-					throw new UnsupportedOperationException("transport handler doesn't implement ICommandProvider");
-			}
-			else
-			if (target.equalsIgnoreCase("protocol"))
-			{
+					throw new UnsupportedOperationException(
+							"transport handler doesn't implement ICommandProvider");
+			} else if (target.equalsIgnoreCase("protocol")) {
 				if (protocolHandler instanceof ICommandProvider)
-					return ((ICommandProvider) protocolHandler).getCommandByName(newCommandName, schema);
+					return ((ICommandProvider) protocolHandler)
+							.getCommandByName(newCommandName, schema);
 				else
-					throw new UnsupportedOperationException("protocol handler doesn't implement ICommandProvider");
-			}
-			else
-				throw new IllegalArgumentException("Unknown target \"" + target + "\" in \"" + commandName + "\"");				
-		}
-		else
-		{
+					throw new UnsupportedOperationException(
+							"protocol handler doesn't implement ICommandProvider");
+			} else
+				throw new IllegalArgumentException("Unknown target \"" + target
+						+ "\" in \"" + commandName + "\"");
+		} else {
 			// Command is for this Operator!
 			return null;
-		}	
+		}
 	}
-	
-	
+
 }
