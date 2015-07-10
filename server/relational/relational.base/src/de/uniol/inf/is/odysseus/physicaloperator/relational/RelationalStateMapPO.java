@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,15 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		} catch (Throwable T) {
 			LOG.error("The serializable state to set for the RelationalStateMapPO is not a valid RelationalStateMapPOState!");
 		}
+	}
+
+	@Override
+	public long estimateStateSize(long schemaSizeInBytes) {
+		long numberOfTuples = 0;
+		for(List<Tuple<T>> group : history.getGroupsLastObjects().values()) {
+			numberOfTuples += group.size();
+		}
+		return numberOfTuples*schemaSizeInBytes;
 	}
 
 }

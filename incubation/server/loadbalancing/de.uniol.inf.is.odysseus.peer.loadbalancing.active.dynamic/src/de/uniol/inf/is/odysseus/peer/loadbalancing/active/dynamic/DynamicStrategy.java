@@ -1,9 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.costmodel.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -310,7 +307,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				continue;
 			}
 			if(op instanceof IStatefulPO) {
-				
+				/*
 				//Full serialization Method (probably takes loooong.)
 				IStatefulPO statefulOp = (IStatefulPO)op;
 				Serializable state = statefulOp.getState();
@@ -327,10 +324,26 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 						LOG.error("Assuming Infinite Migration Cost for state!");
 						memoryForStates+=Double.POSITIVE_INFINITY;
 					}
-					
+				*/
+				
+				/*
 				//Cost-Model Method.
 				//DetailCost costForOp = costmodelCosts.getDetailCost(op);
 				//memoryForStates += costForOp.getMemCost();
+				 * 
+				 */
+				
+				//Estimate State Size Method 
+				try {
+					IStatefulPO statefulOP = (IStatefulPO) op;
+					memoryForStates = statefulOP.estimateStateSize(EstimatorHelper.sizeInBytes(op.getOutputSchema()));
+				}
+				 catch (Exception e) {
+						LOG.error("Error estimating state size of {} Operator",op.getName());
+						LOG.error(e.getMessage());
+						LOG.error("Assuming Infinite Migration Cost for state!");
+						memoryForStates+=Double.POSITIVE_INFINITY;
+				}
 			}
 		}
 		

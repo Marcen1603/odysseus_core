@@ -120,6 +120,10 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 			elements.clear();
 		}
 	}
+	
+	public int size() {
+		return elements.size();
+	}
 
 	public Iterator<T> iterator() {
 		return elements.iterator();

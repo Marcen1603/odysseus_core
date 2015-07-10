@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
+import de.uniol.inf.is.odysseus.core.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -42,7 +43,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
@@ -839,6 +839,26 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		map.put("Groups", groups.size() + "");
 		map.put("Watermark", transferArea.getWatermark() + "");
 		return map;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public long estimateStateSize(long schemaSizeInBytes) {
+		long numberOfTuples = 0;
+		numberOfTuples += this.transferArea.size();
+		
+		for(AggregateTISweepArea area : groups.values()) {
+			numberOfTuples += area.size();
+		}
+		
+		long numberOfAggregateFunctions = 0;
+		//Just a guess.
+		final long bytesPerAggregateFunction = 255;
+		numberOfAggregateFunctions += super.getAllEvalFunctions().size() + super.getAllInitFunctions().size() + super.getAllMergerFunctions().size();
+		
+		long totalByteEstimation = numberOfTuples*schemaSizeInBytes + (numberOfAggregateFunctions*(schemaSizeInBytes + bytesPerAggregateFunction));
+		
+		return totalByteEstimation;
 	}
 }
 

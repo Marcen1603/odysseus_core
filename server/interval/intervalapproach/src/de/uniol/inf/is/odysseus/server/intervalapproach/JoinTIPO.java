@@ -515,4 +515,15 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		return map;
 	}
 
+	@SuppressWarnings("rawtypes")
+	@Override
+	public long estimateStateSize(long schemaSizeInBytes) {
+		long numberOfTuples = 0;
+		for (ITimeIntervalSweepArea area : this.areas) {
+			numberOfTuples += area.size();
+		}
+		numberOfTuples += this.transferFunction.size();
+		return numberOfTuples*schemaSizeInBytes;
+	}
+
 }

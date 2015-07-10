@@ -213,6 +213,19 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 			LOG.error("The serializable state to set for the SlidingElementWindowTIPO is not a valid SlidingElementWindowTIPOState!");
 		}
 	}
+	
+	@Override
+	public long estimateStateSize(long sizeOfSchema) {
+		long numberOfTuples = 0;
+		for(List<T> buffer : buffers.values()) {
+			numberOfTuples += buffer.size();
+		}
+		numberOfTuples += transferArea.size();
+		
+		//Ignoring size of Timestamp and of Group Processors as these are small in comparison to number of Tuples.
+		return numberOfTuples*sizeOfSchema;
+		
+	}
 
 	public Object getPartitionBy() {
 		return null;

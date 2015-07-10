@@ -140,7 +140,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		state.setTransferArea(this.transferArea);
 		return state;
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setState(Serializable s) {
@@ -170,5 +170,10 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
+	}
+
+	@Override
+	public long estimateStateSize(long schemaSizeInBytes) {
+		return this.transferArea.size()*schemaSizeInBytes;
 	}
 }
