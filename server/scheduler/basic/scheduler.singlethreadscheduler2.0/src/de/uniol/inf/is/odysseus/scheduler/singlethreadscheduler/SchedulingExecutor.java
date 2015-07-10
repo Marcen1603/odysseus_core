@@ -37,6 +37,7 @@ class SchedulingExecutor extends Thread {
 	public SchedulingExecutor(IPhysicalQueryScheduling planScheduling,
 			long timeSlicePerStrategy,
 			AbstractSimpleThreadScheduler caller, int trainsize) {
+		setName("SchedulingExecutor");
 		this.planScheduling = planScheduling;
 		if (planScheduling == null) {
 			throw new IllegalArgumentException("PlanScheduling cannot be null!");
