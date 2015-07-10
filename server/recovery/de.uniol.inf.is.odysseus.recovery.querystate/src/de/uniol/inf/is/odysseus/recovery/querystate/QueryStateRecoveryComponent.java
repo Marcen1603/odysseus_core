@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryComponent;
@@ -31,7 +32,13 @@ import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.crashdetection.ICrashDetectionListener;
 
-// TODO javaDoc
+/**
+ * The query state recovery component handles the backup and recovery of queries
+ * (queries and their states, sources, sinks).
+ * 
+ * @author Michael Brand
+ *
+ */
 public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		IQueryAddedListener, IPlanModificationListener, ICrashDetectionListener {
 
@@ -105,6 +112,11 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		}
 	}
 
+	/**
+	 * Gets the current session.
+	 * 
+	 * @return {@link ISessionManagement#loginSuperUser(Object, String)}
+	 */
 	private static ISession getSession() {
 		return UserManagementProvider.getSessionmanagement().loginSuperUser(
 				null, UserManagementProvider.getDefaultTenant().getName());
@@ -156,6 +168,13 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		}
 	}
 
+	/**
+	 * Recovers added queries (and sources).
+	 * 
+	 * @param entry
+	 *            A system log entry with an {@link AbstractQueryAddedInfo} as
+	 *            comment.
+	 */
 	private void recoverQueryAddEvent(ISysLogEntry entry) {
 		AbstractQueryAddedInfo info = AbstractQueryAddedInfo
 				.fromBase64Binary(entry.getComment().get());
@@ -164,12 +183,24 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		cLog.debug("Added query {}", info.queryText);
 	}
 
+	/**
+	 * Recovers removed queries (removes them again).
+	 * 
+	 * @param entry
+	 *            A system log entry representing the remove event.
+	 */
 	private void recoverQueryRemovedEvent(ISysLogEntry entry) {
 		int queryId = QueryStateUtils.getQueryId(entry.getTag());
 		cExecutor.get().removeQuery(queryId, getSession());
 		cLog.debug("Removed query {}", queryId);
 	}
 
+	/**
+	 * Recovers query state change (makes the change again).
+	 * 
+	 * @param entry
+	 *            A system log entry representing the change event.
+	 */
 	private void recoverQueryStateChangedEvent(ISysLogEntry entry) {
 		int queryId = QueryStateUtils.getQueryId(entry.getTag());
 		if (entry.getComment().get().equals(QueryState.INACTIVE.toString())) {
@@ -272,7 +303,8 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		if (!cSystemLog.isPresent()) {
 			cLog.error("No system log bound!");
 		}
-		// TODO does not work. Error in AbstractQueryAddedInfo.fromBase64Binary. Problems with the usermanagement?
-//		recover(cSystemLog.get().read(lastStartup));
+		// TODO does not work. Error in AbstractQueryAddedInfo.fromBase64Binary.
+		// Problems with the usermanagement?
+		// recover(cSystemLog.get().read(lastStartup));
 	}
 }

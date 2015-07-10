@@ -1,6 +1,11 @@
 package de.uniol.inf.is.odysseus.recovery.querystate;
 
-// TODO javaDoc
+/**
+ * Helper class for the {@link QueryStateRecoveryComponent}.
+ * 
+ * @author Michael Brand
+ *
+ */
 public class QueryStateUtils {
 
 	/**

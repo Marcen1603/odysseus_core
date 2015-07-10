@@ -61,23 +61,36 @@ public abstract class AbstractQueryAddedInfo implements Serializable {
 	 * The context.
 	 */
 	private final Map<String, Serializable> context = Maps.newHashMap();
-	
-	// TODO javaDoc
+
+	/**
+	 * Sets the context. <br />
+	 * Field is not set directly because it is a {@link Map}. This is because
+	 * {@link Context} is not serializable.
+	 * 
+	 * @param c
+	 *            The context
+	 */
 	public void setContext(Context c) {
-		for(String key : c.getKeys()) {
+		for (String key : c.getKeys()) {
 			this.context.put(key, c.get(key));
 		}
 	}
-	
-	// TODO javaDoc
+
+	/**
+	 * Gets the context. <br />
+	 * Field is not set directly because it is a {@link Map}. This is because
+	 * {@link Context} is not serializable.
+	 * 
+	 * @return The context
+	 */
 	public Context getContext() {
 		Context c = Context.empty();
-		for(String key : this.context.keySet()) {
+		for (String key : this.context.keySet()) {
 			c.put(key, this.context.get(key));
 		}
 		return c;
 	}
-	
+
 	/**
 	 * The recovery executor, if set.
 	 */
