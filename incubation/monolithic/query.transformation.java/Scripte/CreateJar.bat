@@ -57,5 +57,17 @@ jar cvf OdysseusMemstoreMdastore.jar *.properties lib/*.jar -C bin .
 xcopy /Y OdysseusMemstoreMdastore.jar %2
 
 
+::server\interval\intervalapproach
+cd %1\server\interval\intervalapproach
+xcopy %1\server\interval\intervalapproach\src\* %1\server\interval\intervalapproach\bin /s /e /c /y
+jar cvf OdysseusIntervalapproach.jar *.properties lib/*.jar -C bin .
+xcopy /Y OdysseusIntervalapproach.jar %2
+
+::common\resources\com.google.guava\guava-18.0.jar
+cd %1\common\resources\com.google.guava
+xcopy /Y guava-18.0.jar %2
+
+
+
 
 

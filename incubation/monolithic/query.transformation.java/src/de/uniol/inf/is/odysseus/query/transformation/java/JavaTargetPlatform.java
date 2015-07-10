@@ -123,6 +123,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		importList.add("java.util.ArrayList");
 		importList.add("java.util.List");
 		importList.add("java.io.IOException");
+		
+		importList.add("java.util.concurrent.TimeUnit");
 	}
 	
 	
