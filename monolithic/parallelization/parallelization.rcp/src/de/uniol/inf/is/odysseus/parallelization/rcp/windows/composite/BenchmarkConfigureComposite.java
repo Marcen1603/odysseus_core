@@ -108,7 +108,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 		selectBufferType.setText("Select buffer type: ");
 		buffertypeCombo = new Combo(configComposite, SWT.READ_ONLY);
 		buffertypeCombo.setItems(BUFFER_COMBO);
-		buffertypeCombo.select(1);
+		buffertypeCombo.select(0);
 		buffertypeCombo.setLayoutData(gridData);
 
 		allowPostOptimizationButton = new Button(this, SWT.CHECK);
