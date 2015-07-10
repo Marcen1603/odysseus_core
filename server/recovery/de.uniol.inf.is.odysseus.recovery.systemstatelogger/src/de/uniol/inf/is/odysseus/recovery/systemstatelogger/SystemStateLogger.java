@@ -120,7 +120,7 @@ public class SystemStateLogger {
 	 */
 	private static void log(String tag) {
 		// Attention: No check, if system log is bound!
-		cSystemLog.get().write(tag, System.nanoTime(), COMMENT);
+		cSystemLog.get().write(tag, System.currentTimeMillis(), COMMENT);
 	}
 
 }

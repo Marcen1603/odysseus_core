@@ -25,7 +25,7 @@ public interface ISystemLog {
 	 * Gets all entries before a given point in time.
 	 * 
 	 * @param since
-	 *            Time stamp in nanoseconds.
+	 *            Time stamp in milliseconds.
 	 * @return All entries, which are not older than "since", ordered by time
 	 *         stamp (older entries first).
 	 */
@@ -47,7 +47,7 @@ public interface ISystemLog {
 	 * @param tag
 	 *            The tag for the given entry.
 	 * @param timeStamp
-	 *            The time stamp for the given entry.
+	 *            The time stamp in milliseconds for the given entry.
 	 * @return True, if the entry could be written; false, else (e.g., entry is
 	 *         too old).
 	 */
@@ -59,7 +59,7 @@ public interface ISystemLog {
 	 * @param tag
 	 *            The tag for the given entry.
 	 * @param timeStamp
-	 *            The time stamp for the given entry.
+	 *            The time stamp in milliseconds for the given entry.
 	 * @param comment
 	 *            The comment for the given entry.
 	 * @return True, if the entry could be written; false, else (e.g., entry is

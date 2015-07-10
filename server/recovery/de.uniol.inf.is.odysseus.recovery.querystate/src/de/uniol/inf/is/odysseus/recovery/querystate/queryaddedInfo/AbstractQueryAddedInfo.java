@@ -6,14 +6,19 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
 
 /**
  * All information needed to recover a query added event (normal queries as well
@@ -43,11 +48,6 @@ public abstract class AbstractQueryAddedInfo implements Serializable {
 	public String parserId;
 
 	/**
-	 * The query build configuration.
-	 */
-	public String buildConfiguration;
-
-	/**
 	 * The full query text (e.g., Odysseus Script).
 	 */
 	public String queryText;
@@ -56,11 +56,32 @@ public abstract class AbstractQueryAddedInfo implements Serializable {
 	 * The current session (and corresponding user).
 	 */
 	public ISession session;
-	
+
 	/**
 	 * The context.
 	 */
-	public Context context;
+	private final Map<String, Serializable> context = Maps.newHashMap();
+	
+	// TODO javaDoc
+	public void setContext(Context c) {
+		for(String key : c.getKeys()) {
+			this.context.put(key, c.get(key));
+		}
+	}
+	
+	// TODO javaDoc
+	public Context getContext() {
+		Context c = Context.empty();
+		for(String key : this.context.keySet()) {
+			c.put(key, this.context.get(key));
+		}
+		return c;
+	}
+	
+	/**
+	 * The recovery executor, if set.
+	 */
+	public Optional<IRecoveryExecutor> recExecutor;
 
 	/**
 	 * Encode to a Base64Binary.

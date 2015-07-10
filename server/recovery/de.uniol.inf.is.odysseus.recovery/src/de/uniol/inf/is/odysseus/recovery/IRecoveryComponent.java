@@ -14,5 +14,9 @@ public interface IRecoveryComponent {
 	public ImmutableCollection<String> getDependencies();
 	
 	public void recover(List<ISysLogEntry> log) throws Exception;
+	
+	public void activateBackup(List<Integer> queryIds);
+	
+	public void deactivateBackup(List<Integer> queryIds);
 
 }

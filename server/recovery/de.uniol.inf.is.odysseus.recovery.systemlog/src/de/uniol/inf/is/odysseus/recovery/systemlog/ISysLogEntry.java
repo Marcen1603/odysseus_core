@@ -21,7 +21,7 @@ public interface ISysLogEntry {
 	/**
 	 * Gets the time stamp.
 	 * 
-	 * @return The time stamp of the action in nanoseconds.
+	 * @return The time stamp of the action in milliseconds.
 	 */
 	public long getTimeStamp();
 

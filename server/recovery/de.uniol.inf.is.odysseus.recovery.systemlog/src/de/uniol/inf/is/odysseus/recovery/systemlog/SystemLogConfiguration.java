@@ -36,22 +36,22 @@ public class SystemLogConfiguration implements BundleActivator {
 	}
 
 	/**
-	 * The default time span after which older entries will be deleted from the
-	 * system log file.
+	 * The default time span (milliseconds) after which older entries will be
+	 * deleted from the system log file.
 	 */
-	private static final long cDefaultThreshold = (long) (Math.pow(10, 9)
+	private static final long cDefaultThreshold = (long) (Math.pow(10, 3)
 			* Math.pow(60, 2) * 24 * 30);
 
 	/**
 	 * Gets the time span after which older entries will be deleted from the
 	 * system log file.
 	 * 
-	 * @return A time span in nanoseconds: defined within odysseus
-	 *         configuration, key "systemlogThresholdNanoseconds" or a default
+	 * @return A time span in milliseconds: defined within odysseus
+	 *         configuration, key "systemlogThresholdMilliseconds" or a default
 	 *         value.
 	 */
 	public static long getThreshold() {
-		return OdysseusConfiguration.getLong("systemlogThresholdNanoseconds",
+		return OdysseusConfiguration.getLong("systemlogThresholdMilliseconds",
 				cDefaultThreshold);
 	}
 
@@ -61,7 +61,7 @@ public class SystemLogConfiguration implements BundleActivator {
 	 * @param tag
 	 *            A string identifying the action.
 	 * @param timeStamp
-	 *            The time stamp of the action in nanoseconds.
+	 *            The time stamp of the action in milliseconds.
 	 * @param comment
 	 *            An optional string or null, if there is no comment.
 	 * @return A new system log entry for that action.
@@ -77,7 +77,7 @@ public class SystemLogConfiguration implements BundleActivator {
 	 * @param tag
 	 *            A string identifying the action.
 	 * @param timeStamp
-	 *            The time stamp of the action in nanoseconds.
+	 *            The time stamp of the action in milliseconds.
 	 * @return A new system log entry for that action.
 	 */
 	public static ISysLogEntry createEntry(String tag, long timeStamp) {
@@ -90,9 +90,8 @@ public class SystemLogConfiguration implements BundleActivator {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		SystemLog.loadSystemLogFile();
-		SystemLog.delete(System.nanoTime()
+		SystemLog.delete(System.currentTimeMillis()
 				- SystemLogConfiguration.getThreshold());
-		SystemLog.read_(System.nanoTime());
 	}
 
 	@Override

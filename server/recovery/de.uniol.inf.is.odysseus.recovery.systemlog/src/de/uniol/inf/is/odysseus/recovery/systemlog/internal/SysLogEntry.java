@@ -20,7 +20,7 @@ public class SysLogEntry implements ISysLogEntry {
 	private final String mTag;
 
 	/**
-	 * The time stamp in nanoseconds.
+	 * The time stamp in milliseconds.
 	 */
 	private final long mTimeStamp;
 
@@ -35,7 +35,7 @@ public class SysLogEntry implements ISysLogEntry {
 	 * @param tag
 	 *            A string identifying the action.
 	 * @param timeStamp
-	 *            The time stamp of the action in nanoseconds.
+	 *            The time stamp of the action in milliseconds.
 	 * @param comment
 	 *            An optional string or null, if there is no comment.
 	 */
@@ -52,7 +52,7 @@ public class SysLogEntry implements ISysLogEntry {
 	 * @param tag
 	 *            A string identifying the action.
 	 * @param timeStamp
-	 *            The time stamp of the action in nanoseconds.
+	 *            The time stamp of the action in milliseconds.
 	 */
 	public SysLogEntry(String tag, long timeStamp) {
 		this(tag, timeStamp, null);

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.systemstatelogger;
+package de.uniol.inf.is.odysseus.recovery.systemstatelogger.crashdetection;
 
 /**
  * Listeners for crash detections of Odysseus.
@@ -12,7 +12,7 @@ public interface ICrashDetectionListener {
 	 * Called after a crash has been detected.
 	 * 
 	 * @param lastStartup
-	 *            The time stamp in nanoseconds of the last logged startup.
+	 *            The time stamp in milliseconds of the last logged startup.
 	 * @throws Throwable
 	 *             if any error occurs.
 	 */

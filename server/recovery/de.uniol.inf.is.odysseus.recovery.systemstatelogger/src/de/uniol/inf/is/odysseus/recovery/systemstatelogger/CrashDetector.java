@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.systemstatelogger.crashdetection;
+package de.uniol.inf.is.odysseus.recovery.systemstatelogger;
 
 import java.util.List;
 import java.util.Set;
@@ -10,8 +10,7 @@ import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLogListener;
-import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
-import de.uniol.inf.is.odysseus.recovery.systemstatelogger.SystemStateLogger;
+import de.uniol.inf.is.odysseus.recovery.systemstatelogger.crashdetection.ICrashDetectionListener;
 
 /**
  * Class to check, if there has been a crash of Odysseus. It uses the system log
@@ -29,7 +28,7 @@ public class CrashDetector implements ISystemLogListener {
 			.getLogger(CrashDetector.class);
 
 	/**
-	 * The time stamp of the last startup, if a crash has been detected, or -1
+	 * The time stamp in milliseconds of the last startup, if a crash has been detected, or -1
 	 * else.
 	 */
 	private static long cLastStartup = -1L;

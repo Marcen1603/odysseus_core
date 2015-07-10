@@ -210,8 +210,8 @@ public class OdysseusConfiguration {
 		props.setProperty(CLONING_UPDATER, "standard");
 		
 		// System log
-		props.put("systemlogThresholdNanoseconds", (long) (Math.pow(10, 9)
-				* Math.pow(60, 2) * 24 * 30)); // 30 days in nanoseconds
+		props.put("systemlogThresholdMilliseconds", (long) (Math.pow(10, 3)
+				* Math.pow(60, 2) * 24 * 30)); // 30 days in milliseconds
 	}
 
 	private static void savePropertyFile(String odysseusHome) {

@@ -167,24 +167,6 @@ public class SystemLog implements ISystemLog {
 			return ImmutableList.copyOf(cEntries);
 		}
 	}
-	
-	public static ImmutableList<ISysLogEntry> read_(long since) {
-		// Assumption: entries are sorted by time stamp
-		int index;
-		synchronized (cEntries) {
-			for(index = cEntries.size()-1; index >= 0 && cEntries.get(index).getTimeStamp() >= since; index--) {
-				// Nothing to do
-			}
-		}
-		
-		List<ISysLogEntry> subList = new LinkedList<ISysLogEntry>();
-		if (++index < cEntries.size()) {
-			synchronized (cEntries) {
-				subList = cEntries.subList(index, cEntries.size());
-			}
-		}
-		return ImmutableList.copyOf(subList);
-	}
 
 	@Override
 	public ImmutableList<ISysLogEntry> read(long since) {
@@ -299,7 +281,7 @@ public class SystemLog implements ISystemLog {
 	 * Deletes old entries, which are before a given point in time.
 	 * 
 	 * @param before
-	 *            Time stamp in nanoseconds.
+	 *            Time stamp in milliseconds.
 	 */
 	public static void delete(long before) {
 		if (before < 0) {
