@@ -305,6 +305,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		}
 		// TODO does not work. Error in AbstractQueryAddedInfo.fromBase64Binary.
 		// Problems with the usermanagement?
-		// recover(cSystemLog.get().read(lastStartup));
+		recover(cSystemLog.get().read(lastStartup));
 	}
 }

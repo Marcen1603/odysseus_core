@@ -102,8 +102,6 @@ public class SysLogEntry implements ISysLogEntry {
 		StringBuffer out = new StringBuffer(this.mTag + ", " + this.mTimeStamp);
 		if (this.mComment.isPresent()) {
 			out.append(", " + this.mComment.get());
-		} else {
-			out.append("<Null>");
 		}
 		return out.toString();
 	}

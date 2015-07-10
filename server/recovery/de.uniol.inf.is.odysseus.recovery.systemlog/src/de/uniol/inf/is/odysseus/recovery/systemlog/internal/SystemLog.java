@@ -179,7 +179,7 @@ public class SystemLog implements ISystemLog {
 		}
 		
 		List<ISysLogEntry> subList = new LinkedList<ISysLogEntry>();
-		if (index < cEntries.size()) {
+		if (++index < cEntries.size()) {
 			synchronized (cEntries) {
 				subList = cEntries.subList(index, cEntries.size());
 			}

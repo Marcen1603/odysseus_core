@@ -6,9 +6,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
+import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLogListener;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.crashdetection.ICrashDetectionListener;
 
@@ -76,6 +78,42 @@ public class CrashDetector implements ISystemLogListener {
 				"Unbound '{}' as an implementation of ICrashDetectionListener.",
 				listener.getClass().getSimpleName());
 	}
+	
+	/**
+	 * The system log, if bound.
+	 */
+	private static Optional<ISystemLog> cSystemLog = Optional.absent();
+	
+	/**
+	 * Binds an implementation of the system log.
+	 * 
+	 * @param log
+	 *            The implementation to bind.
+	 */
+	public static void bindSystemLog(ISystemLog log) {
+		cSystemLog = Optional.of(log);
+		cLog.debug("Bound '{}' as an implementation of ISystemLog.", log
+				.getClass().getSimpleName());
+	}
+
+	/**
+	 * Unbinds an implementation of the system log.
+	 * 
+	 * @param log
+	 *            The implementation to unbind.
+	 */
+	public static void unbindSystemLog(ISystemLog log) {
+		if (cSystemLog.isPresent() && log == cSystemLog.get()) {
+			cSystemLog = Optional.absent();
+			cLog.debug("Unbound '{}' as an implementation of ISystemLog.", log
+					.getClass().getSimpleName());
+		}
+	}
+	
+	/**
+	 * The tag for the system log entry for a crash of Odysseus.
+	 */
+	private static final String TAG_CRASH = "CRASH";
 
 	/**
 	 * Checks, if there has been a crash (last startup after last shutdown) and
@@ -102,6 +140,9 @@ public class CrashDetector implements ISystemLogListener {
 		if (indexOfLastStartup > indexOfLastShutdown) {
 			// There must been a crash
 			cLog.debug("Crash detected!");
+			if(cSystemLog.isPresent()) {
+				cSystemLog.get().write(TAG_CRASH, System.currentTimeMillis());
+			}
 			for (ICrashDetectionListener listener : cListeners) {
 				try {
 					listener.onCrashDetected(entries.get(indexOfLastStartup)
