@@ -5,10 +5,12 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.costmodel.logical.estimate.AccessAOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.logical.estimate.BufferAOEstimator;
+import de.uniol.inf.is.odysseus.costmodel.logical.estimate.ElementWindowAOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.logical.estimate.JoinAOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.logical.estimate.ProjectAOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.logical.estimate.RenameAOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.logical.estimate.SelectAOEstimator;
+import de.uniol.inf.is.odysseus.costmodel.logical.estimate.StreamAOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.logical.estimate.TopAOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.logical.estimate.UnionAOEstimator;
 import de.uniol.inf.is.odysseus.costmodel.logical.estimate.WindowAOEstimator;
@@ -27,6 +29,8 @@ public class LogicalCostModelPlugIn implements BundleActivator {
 		OperatorEstimatorRegistry.bindLogicalOperatorEstimator(new UnionAOEstimator());
 		OperatorEstimatorRegistry.bindLogicalOperatorEstimator(new RenameAOEstimator());
 		OperatorEstimatorRegistry.bindLogicalOperatorEstimator(new TopAOEstimator());
+		OperatorEstimatorRegistry.bindLogicalOperatorEstimator(new ElementWindowAOEstimator());
+		OperatorEstimatorRegistry.bindLogicalOperatorEstimator(new StreamAOEstimator());
 	}
 
 	@Override
@@ -40,6 +44,8 @@ public class LogicalCostModelPlugIn implements BundleActivator {
 		OperatorEstimatorRegistry.unbindLogicalOperatorEstimator(new UnionAOEstimator());
 		OperatorEstimatorRegistry.unbindLogicalOperatorEstimator(new RenameAOEstimator());
 		OperatorEstimatorRegistry.unbindLogicalOperatorEstimator(new TopAOEstimator());
+		OperatorEstimatorRegistry.unbindLogicalOperatorEstimator(new ElementWindowAOEstimator());
+		OperatorEstimatorRegistry.unbindLogicalOperatorEstimator(new StreamAOEstimator());
 	}
 
 }

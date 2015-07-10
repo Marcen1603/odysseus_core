@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.costmodel.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -148,13 +146,10 @@ public class CostModelKnowledge implements ICostModelKnowledge,
 
 	private static Optional<IHistogram> createEqualWidthHistogram(
 			SDFAttribute attribute, ISampling sampler) {
-		List<Double> values = new ArrayList<Double>(sampler.getSampledValues());
+		List<Double> values = sampler.getSampledValues();
 		if (values.isEmpty()) {
 			return Optional.absent();
 		}
-
-		//Remove null values -> Workaround for Bugfix.
-		values.removeAll(Collections.singleton(null));
 
 		int intervalCount = new FreedmanDiaconisRule()
 				.estimateIntervalCount(values);

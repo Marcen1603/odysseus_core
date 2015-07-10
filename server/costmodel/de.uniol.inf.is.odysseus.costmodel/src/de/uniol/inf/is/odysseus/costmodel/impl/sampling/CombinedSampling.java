@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.costmodel.impl.sampling;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -65,7 +66,7 @@ public class CombinedSampling implements ISampling {
 
 	@Override
 	public synchronized List<Double> getSampledValues() {
-		return elements;
+		return new ArrayList<Double>(elements);
 	}
 
 	@Override
