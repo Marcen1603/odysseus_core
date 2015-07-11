@@ -39,7 +39,7 @@ public class Wind {
 			double random = Math.random();
 			
 			
-			double prob = 0.75;
+			double prob = 0.8;
 			if (windSpeed > MAX_SPEED) {
 				// Higher probability to lower the speed
 				prob = 0.9;
@@ -87,6 +87,10 @@ public class Wind {
 	 */
 	public double getWindSpeed() {
 		return this.windSpeed;
+	}
+	
+	public void changeWindspeed(double amount) {
+		this.windSpeed += amount;
 	}
 
 }

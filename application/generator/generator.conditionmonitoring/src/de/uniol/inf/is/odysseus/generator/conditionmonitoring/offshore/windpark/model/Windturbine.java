@@ -25,7 +25,7 @@ public class Windturbine {
 	private double rotationSpeed;
 	private double energyOutput;
 
-	private boolean isDefect;
+	private boolean isFailed;
 
 	public Windturbine(Wind wind) {
 		this.wind = wind;
@@ -42,7 +42,7 @@ public class Windturbine {
 	}
 
 	private void rotate() {
-		if (!isDefect) {
+		if (!isFailed) {
 			if (wind.getWindSpeed() > MIN_WINDSPEED && wind.getWindSpeed() < MAX_WINDSPEED) {
 				// the turbine is able to produce energy
 				double usefulWindSpeed = wind.getWindSpeed() > MAX_POWER_WINDSPEED ? MAX_POWER_WINDSPEED
@@ -99,8 +99,8 @@ public class Windturbine {
 		return wind.getWindSpeed();
 	}
 
-	public void setDefect(boolean defect) {
-		this.isDefect = defect;
+	public void setFailed(boolean failed) {
+		this.isFailed = failed;
 	}
 
 }

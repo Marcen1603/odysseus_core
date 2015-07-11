@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.generator.conditionmonitoring;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -226,56 +230,150 @@ public class Activator implements BundleActivator {
 			sc = new Scanner(System.in);
 			while (sc.hasNextLine()) {
 				String command = sc.nextLine();
-				// Valve 2
-				if (command.equalsIgnoreCase("switchValve2")) {
-					if (substationManager.getValve2().isOpen()) {
-						substationManager.getValve2().close();
-						System.out.println("Closed valve 2");
-					} else {
-						substationManager.getValve2().open();
-						System.out.println("Opened valve 2");
+				boolean executable = runFailCommand(command, windparkManager, substationManager);
+				if (!executable) {
+					// Fail programs
+					if (command.equalsIgnoreCase("runFail1")) {
+						String path = "D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\Fehlerszenarien\\szenario1.txt";
+						runFailProgram(path, windparkManager, substationManager);
 					}
-					// Pump 1 (failure)
-				} else if (command.equalsIgnoreCase("failPump1")) {
-					substationManager.getPump1().setFailure(true);
-					System.out.println("Ooops, Pump 1 has failed");
-				} else if (command.equalsIgnoreCase("repairFailedPump1")) {
-					substationManager.getPump1().setFailure(false);
-					System.out.println("Repaired Pump 1 from failure");
+					else if (command.equalsIgnoreCase("runFail2")) {
+						String path = "D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\Fehlerszenarien\\scenario_rarepattern.csv";
+						runFailProgram(path, windparkManager, substationManager);
+					}
+					// Help
+					else {
+						System.out.println(
+								"switchValve2 \n failPump1 \n repairFailedPump1 \n defectPump1 \n repairDefectPump1 \n defectTurbine0 \n repairTurbine0 \n defectLastTurbine \n repairLastTurbine");
+					}
 				}
-				// Pump 1 (defect)
-				else if (command.equalsIgnoreCase("defectPump1")) {
-					substationManager.getPump1().setDefect(true);
-					System.out.println("Ooops, Pump 1 is defect");
-				} else if (command.equalsIgnoreCase("repairDefectPump1")) {
-					substationManager.getPump1().setDefect(false);
-					System.out.println("Repaired Pump 1 from defect");
+			}
+		}
+	}
+
+	private void runFailProgram(String path, OffshoreWindparkManager windparkManager,
+			OffshoreSubstationManager substationManager) {
+		BufferedReader br = null;
+		String line = "";
+		String cvsSplitBy = ",";
+
+		try {
+			br = new BufferedReader(new FileReader(path));
+			while ((line = br.readLine()) != null) {
+				// use comma as separator
+				String[] values = line.split(cvsSplitBy);
+				// Skip comments
+				if (!values[0].startsWith("//")) {
+					int duration = Integer.parseInt(values[0]);
+					String command = values[1];
+					System.out.println("Duration until next action: " + duration + "s, Next command: " + command);
+					Thread.sleep(duration * 1000);
+					runFailCommand(command, windparkManager, substationManager);
 				}
-				// Windturbine 0
-				else if (command.equalsIgnoreCase("defectTurbine0")) {
-					windparkManager.getWindturbines().get(0).setDefect(true);
-					System.out.println("Windturbine 0 is now defect");
-				} else if (command.equalsIgnoreCase("repairTurbine0")) {
-					windparkManager.getWindturbines().get(0).setDefect(false);
-					System.out.println("Windturbine 0 was repaired");
-				}
-				// Last windturbine
-				else if (command.equalsIgnoreCase("defectLastTurbine")) {
-					windparkManager.getWindturbines().get(windparkManager.getWindturbines().size() - 1).setDefect(true);
-					System.out.println("Last windturbine is now defect");
-				} else if (command.equalsIgnoreCase("repairLastTurbine")) {
-					windparkManager.getWindturbines().get(windparkManager.getWindturbines().size() - 1)
-							.setDefect(false);
-					System.out.println("Last windturbine was repaired");
-				}
-				// Help
-				else {
-					System.out.println(
-							"switchValve2 \n failPump1 \n repairFailedPump1 \n defectPump1 \n repairDefectPump1 \n defectTurbine0 \n repairTurbine0 \n defectLastTurbine \n repairLastTurbine");
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}
 
+		System.out.println("Done");
+	}
+
+	private boolean runFailCommand(String command, OffshoreWindparkManager windparkManager,
+			OffshoreSubstationManager substationManager) {
+		// Valve 2
+		if (command.equalsIgnoreCase("switchValve2")) {
+			if (substationManager.getValve2().isOpen()) {
+				substationManager.getValve2().close();
+				System.out.println("Closed valve 2");
+			} else {
+				substationManager.getValve2().open();
+				System.out.println("Opened valve 2");
+			}
+			return true;
+		}
+		// Pump 1 (failure)
+		else if (command.equalsIgnoreCase("failPump1")) {
+			substationManager.getPump1().setFailure(true);
+			System.out.println("Ooops, Pump 1 has failed");
+			return true;
+		} else if (command.equalsIgnoreCase("repairFailedPump1")) {
+			substationManager.getPump1().setFailure(false);
+			System.out.println("Repaired Pump 1 from failure");
+			return true;
+		}
+		// Pump 2 (failure)
+		else if (command.equalsIgnoreCase("failPump2")) {
+			substationManager.getPump2().setFailure(true);
+			System.out.println("Ooops, Pump 2 has failed");
+			return true;
+		} else if (command.equalsIgnoreCase("repairFailedPump2")) {
+			substationManager.getPump2().setFailure(false);
+			System.out.println("Repaired Pump 2 from failure");
+			return true;
+		}
+		// Pump 1 (defect)
+		else if (command.equalsIgnoreCase("defectPump1")) {
+			substationManager.getPump1().setDefect(true);
+			System.out.println("Ooops, Pump 1 is defect");
+			return true;
+		} else if (command.equalsIgnoreCase("repairDefectPump1")) {
+			substationManager.getPump1().setDefect(false);
+			System.out.println("Repaired Pump 1 from defect");
+			return true;
+		}
+		// Pump 2 (defect)
+		else if (command.equalsIgnoreCase("defectPump2")) {
+			substationManager.getPump2().setDefect(true);
+			System.out.println("Ooops, Pump 2 is defect");
+			return true;
+		} else if (command.equalsIgnoreCase("repairDefectPump2")) {
+			substationManager.getPump2().setDefect(false);
+			System.out.println("Repaired Pump 2 from defect");
+			return true;
+		}
+		// Windturbine 0
+		else if (command.equalsIgnoreCase("failTurbine0")) {
+			windparkManager.getWindturbines().get(0).setFailed(true);
+			System.out.println("Windturbine 0 has failed");
+			return true;
+		} else if (command.equalsIgnoreCase("repairTurbine0")) {
+			windparkManager.getWindturbines().get(0).setFailed(false);
+			System.out.println("Windturbine 0 was repaired");
+			return true;
+		}
+		// Last windturbine
+		else if (command.equalsIgnoreCase("failLastTurbine")) {
+			windparkManager.getWindturbines().get(windparkManager.getWindturbines().size() - 1).setFailed(true);
+			System.out.println("Last windturbine has failed");
+			return true;
+		} else if (command.equalsIgnoreCase("repairLastTurbine")) {
+			windparkManager.getWindturbines().get(windparkManager.getWindturbines().size() - 1).setFailed(false);
+			System.out.println("Last windturbine was repaired");
+			return true;
+		}
+		// Windspeed
+		else if (command.equalsIgnoreCase("increaseWind")) {
+			windparkManager.getWind().changeWindspeed(1);
+			System.out.println("Increased windspeed by 1 m/s");
+			return true;
+		} else if (command.equalsIgnoreCase("decreaseWind")) {
+			windparkManager.getWind().changeWindspeed(-1);
+			System.out.println("Decreased windspeed by 1 m/s");
+			return true;
+		}
+		return false;
 	}
 
 	/*

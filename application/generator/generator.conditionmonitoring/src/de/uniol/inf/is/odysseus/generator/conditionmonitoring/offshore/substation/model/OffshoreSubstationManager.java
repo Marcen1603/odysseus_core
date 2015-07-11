@@ -78,7 +78,7 @@ public class OffshoreSubstationManager implements Observer {
 		this.pump3.shutDownPump();
 
 		// Start a timer to update the values synchronously
-		long switchDelay = 30 * 1000; // 30 seconds
+		long switchDelay = 60 * 1000; // 30 seconds
 		long switchPeriod = switchDelay;
 		Timer switchTimer = new Timer();
 		switchTimer.scheduleAtFixedRate(new TimerTask() {

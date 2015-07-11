@@ -14,7 +14,7 @@ public class Pump extends Observable {
 	private double lastOutFlow;
 	private Pipe inPipe;
 	private Pipe outPipe;
-	
+
 	// To simulate failures
 	private boolean hasFailure;
 	private boolean hasDefect;
@@ -39,13 +39,19 @@ public class Pump extends Observable {
 		startUpTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				currentFlowRate += maxFlowRate / neededSteps;
-				if (currentFlowRate >= maxFlowRate) {
-					currentFlowRate = maxFlowRate;
-					setChanged();
-					notifyObservers(currentFlowRate);
+				if (hasFailure) {
+					currentFlowRate = 0;
 					startUpTimer.cancel();
+				} else {
+					currentFlowRate += maxFlowRate / neededSteps;
+					if (currentFlowRate >= maxFlowRate) {
+						currentFlowRate = maxFlowRate;
+						setChanged();
+						notifyObservers(currentFlowRate);
+						startUpTimer.cancel();
+					}
 				}
+
 			}
 		}, startUpDelay, stepDelay);
 	}
@@ -90,32 +96,33 @@ public class Pump extends Observable {
 	public double getLastOutFlow() {
 		return lastOutFlow;
 	}
-	
+
 	/**
 	 * In absolute values: mm/s from about 0 to 10
+	 * 
 	 * @return
 	 */
 	public double getCurrentVibration() {
-		double vibration = ((this.currentFlowRate / this.maxFlowRate) * 10) + Math.random();
+		double vibration = ((this.lastInFlow / this.maxFlowRate) * 10) + Math.random();
 		if (!hasDefect)
 			return vibration;
 		return vibration * (1 + (Math.random() * 0.5));
 	}
-	
+
 	public void setDefect(boolean hasDefect) {
 		this.hasDefect = hasDefect;
 	}
-	
+
 	public boolean isDefect() {
 		return this.hasDefect;
 	}
-	
+
 	public void setFailure(boolean failure) {
 		this.hasFailure = failure;
 		if (hasFailure)
 			this.currentFlowRate = 0;
 	}
-	
+
 	public boolean isFailed() {
 		return this.hasFailure;
 	}

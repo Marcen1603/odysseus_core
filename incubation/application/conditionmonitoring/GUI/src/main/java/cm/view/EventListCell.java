@@ -79,13 +79,13 @@ public class EventListCell extends ListCell<Event> {
 
     private String getColor(double anomalyScore) {
         if (anomalyScore < 0.2) {
-            return "-fx-background-color: green;";
-        } else if (anomalyScore < 0.5) {
-            return "-fx-background-color: greenyellow;";
-        } else if (anomalyScore < 0.8) {
             return "-fx-background-color: yellow;";
-        } else if (anomalyScore < 0.9) {
+        } else if (anomalyScore < 0.5) {
             return "-fx-background-color: orange;";
+        } else if (anomalyScore < 0.8) {
+            return "-fx-background-color: orange;";
+        } else if (anomalyScore < 0.9) {
+            return "-fx-background-color: orangered;";
         } else if (anomalyScore < 0.95) {
             return "-fx-background-color: orangered;";
         }

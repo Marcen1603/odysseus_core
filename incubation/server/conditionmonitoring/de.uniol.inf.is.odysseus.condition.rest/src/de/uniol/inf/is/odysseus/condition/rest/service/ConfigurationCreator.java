@@ -105,7 +105,7 @@ public class ConfigurationCreator {
 		// -------
 		// The pattern analysis of the cooling system
 		ConnectionInformation conPumpPattern = new ConnectionInformation();
-		conPumpPattern.setName("Pumpswitch pattern");
+		conPumpPattern.setName("Pump switch pattern");
 		conPumpPattern.setDescription("The pattern of closing / opening valves and starting / stopping is anomal.");
 		conPumpPattern.setIp("127.0.0.1");
 		conPumpPattern.setQueryName("pumpPatternAnalysis");
@@ -173,7 +173,7 @@ public class ConfigurationCreator {
 		// Pump 1 vibration analysis
 		ConnectionInformation conPump1Vibration = new ConnectionInformation();
 		conPump1Vibration.setName("Pump 1 vibration");
-		conPump1Vibration.setDescription("The vibration of pump 1 is too high compared to the current flow.");
+		conPump1Vibration.setDescription("The vibration of pump 1 is too high or too low compared to the current flow.");
 		conPump1Vibration.setIp("127.0.0.1");
 		conPump1Vibration.setQueryName("pump1VibrationAnalysis");
 		conPump1Vibration.setUseName(true);
@@ -184,7 +184,7 @@ public class ConfigurationCreator {
 		// Pump 2 vibration analysis
 		ConnectionInformation conPump2Vibration = new ConnectionInformation();
 		conPump2Vibration.setName("Pump 2 vibration");
-		conPump2Vibration.setDescription("The vibration of pump 2 is too high compared to the current flow.");
+		conPump2Vibration.setDescription("The vibration of pump 2 is too high or too low compared to the current flow.");
 		conPump2Vibration.setIp("127.0.0.1");
 		conPump2Vibration.setQueryName("pump2VibrationAnalysis");
 		conPump2Vibration.setUseName(true);
@@ -195,7 +195,7 @@ public class ConfigurationCreator {
 		// Pump 3 vibration analysis
 		ConnectionInformation conPump3Vibration = new ConnectionInformation();
 		conPump3Vibration.setName("Pump 3 vibration");
-		conPump3Vibration.setDescription("The vibration of pump 3 is too high compared to the current flow.");
+		conPump3Vibration.setDescription("The vibration of pump 3 is too high or too low compared to the current flow.");
 		conPump3Vibration.setIp("127.0.0.1");
 		conPump3Vibration.setQueryName("pump3VibrationAnalysis");
 		conPump3Vibration.setUseName(true);
@@ -292,7 +292,17 @@ public class ConfigurationCreator {
 		CollectionInformation transformerCollection = new CollectionInformation();
 		transformerCollection.setName("Transformer");
 		// Visualization
+
+		// Temperature of the transformer
+		AreaChartVisualizationInformation transformerTempertureAreaChart = new AreaChartVisualizationInformation();
+		transformerTempertureAreaChart.setConnectionInformation(conTransformer);
+		transformerTempertureAreaChart.setAttribute("temperature");
+		transformerTempertureAreaChart.setMaxElements(600);
+		transformerTempertureAreaChart.setTimeAttribute("start");
+		transformerTempertureAreaChart.setTitle("Temperature of transformer in Celsius");
+
 		transformerCollection.addGaugeVisualizationInformation(transformerTemperatureGauge);
+		transformerCollection.addAreaChartVisualizationInformation(transformerTempertureAreaChart);
 		transformerCollection.addAreaChartVisualizationInformation(energyOutputAreaChart);
 		// Define, how it should be colored
 		CollectionColoringInformation transformerColoring = new CollectionColoringInformation();
@@ -320,26 +330,26 @@ public class ConfigurationCreator {
 		pump1AreaChart.setTimeAttribute("start");
 		pump1AreaChart.setMaxElements(1000);
 		pump1AreaChart.setTitle("Pump 1");
-		
+
 		AreaChartVisualizationInformation pump2AreaChart = new AreaChartVisualizationInformation();
 		pump2AreaChart.setConnectionInformation(conPump2);
 		pump2AreaChart.setAttribute("lastOutFlowRate");
 		pump2AreaChart.setTimeAttribute("start");
 		pump2AreaChart.setMaxElements(1000);
 		pump2AreaChart.setTitle("Pump 2");
-		
+
 		AreaChartVisualizationInformation pump3AreaChart = new AreaChartVisualizationInformation();
 		pump3AreaChart.setConnectionInformation(conPump3);
 		pump3AreaChart.setAttribute("lastOutFlowRate");
 		pump3AreaChart.setTimeAttribute("start");
 		pump3AreaChart.setMaxElements(1000);
 		pump3AreaChart.setTitle("Pump 3");
-		
+
 		coolingSystemCollection.addAreaChartVisualizationInformation(bigCoolingPipeThorughputAreaChart);
 		coolingSystemCollection.addAreaChartVisualizationInformation(pump1AreaChart);
 		coolingSystemCollection.addAreaChartVisualizationInformation(pump2AreaChart);
 		coolingSystemCollection.addAreaChartVisualizationInformation(pump3AreaChart);
-		
+
 		// Coloring
 		CollectionColoringInformation coolingColoring = new CollectionColoringInformation();
 		coolingColoring.setConnectionInformation(conBigPipeOut);

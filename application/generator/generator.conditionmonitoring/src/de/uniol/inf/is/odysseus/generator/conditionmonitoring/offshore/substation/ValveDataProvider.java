@@ -26,9 +26,6 @@ public class ValveDataProvider extends AbstractDataGenerator implements Observer
 	public List<DataTuple> next() throws InterruptedException {
 		while (!this.changed) {
 			Thread.sleep(this.sleepTime);
-			// Maybe this works like a punctuation?
-			List<DataTuple> dataTuplesList = new ArrayList<DataTuple>();
-			return dataTuplesList;
 		}
 
 		this.changed = false;

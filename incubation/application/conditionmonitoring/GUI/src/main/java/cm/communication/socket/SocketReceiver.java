@@ -74,8 +74,10 @@ public class SocketReceiver {
                     Map<String, String> valueMap = new HashMap<>();
                     for (int i = 0; i < results.getValues().size(); i++) {
                         Object o = results.getValues().get(i);
-                        String name = socketInfo.getSchema().get(i).getName();
-                        valueMap.put(name, o.toString());
+                        if (o != null) {
+                            String name = socketInfo.getSchema().get(i).getName();
+                            valueMap.put(name, o.toString());
+                        }
                     }
                     DataHandler.getInstance().addEvent(new Event(SocketReceiver.this, valueMap));
                 }
