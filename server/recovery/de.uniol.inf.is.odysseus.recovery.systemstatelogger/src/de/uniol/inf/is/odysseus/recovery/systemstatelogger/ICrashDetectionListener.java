@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.systemstatelogger.crashdetection;
+package de.uniol.inf.is.odysseus.recovery.systemstatelogger;
 
 /**
  * Listeners for crash detections of Odysseus.

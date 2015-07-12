@@ -77,4 +77,20 @@ public interface ISystemLog {
 	 */
 	public boolean write(List<ISysLogEntry> entries);
 
+	/**
+	 * Registers a listener.
+	 * 
+	 * @param listener
+	 *            A new listener.
+	 */
+	public void addListener(ISystemLogListener listener);
+
+	/**
+	 * Unregisters a listener.
+	 * 
+	 * @param listener
+	 *            A listener to unregister.
+	 */
+	public void removeListener(ISystemLogListener listener);
+
 }

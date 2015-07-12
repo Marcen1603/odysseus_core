@@ -48,47 +48,6 @@ public class SystemLog implements ISystemLog {
 	private static boolean cLogLoaded = false;
 
 	/**
-	 * All bound listeners.
-	 */
-	private static final Set<ISystemLogListener> cListeners = Sets.newHashSet();
-
-	/**
-	 * Binds a listener.
-	 * 
-	 * @param listener
-	 *            The listener to bind.
-	 */
-	public static void bindListener(ISystemLogListener listener) {
-		synchronized (cListeners) {
-			cListeners.add(listener);
-		}
-		cLog.debug("Bound '{}' as an implementation of ISystemLogListener.",
-				listener.getClass().getSimpleName());
-		if (cLogLoaded) {
-			try {
-				listener.onInitialSystemLogRead(cEntries);
-			} catch (Throwable t) {
-				cLog.error("Error occured for listener "
-						+ listener.getClass().getSimpleName(), t);
-			}
-		}
-	}
-
-	/**
-	 * Unbinds a listener.
-	 * 
-	 * @param listener
-	 *            The listener to unbind.
-	 */
-	public static void unbindListener(ISystemLogListener listener) {
-		synchronized (cListeners) {
-			cListeners.remove(listener);
-		}
-		cLog.debug("Unbound '{}' as an implementation of ISystemLogListener.",
-				listener.getClass().getSimpleName());
-	}
-
-	/**
 	 * Loads all entries from the log file. Should be called once! File will be
 	 * created if necessary.
 	 * 
@@ -173,11 +132,12 @@ public class SystemLog implements ISystemLog {
 		// Assumption: entries are sorted by time stamp
 		int index;
 		synchronized (cEntries) {
-			for(index = cEntries.size()-1; index >= 0 && cEntries.get(index).getTimeStamp() >= since; index--) {
+			for (index = cEntries.size() - 1; index >= 0
+					&& cEntries.get(index).getTimeStamp() >= since; index--) {
 				// Nothing to do
 			}
 		}
-		
+
 		List<ISysLogEntry> subList = new LinkedList<ISysLogEntry>();
 		if (++index < cEntries.size()) {
 			synchronized (cEntries) {
@@ -337,6 +297,29 @@ public class SystemLog implements ISystemLog {
 						+ listener.getClass().getSimpleName(), t);
 			}
 		}
+	}
+
+	/**
+	 * All bound listeners.
+	 */
+	private static final Set<ISystemLogListener> cListeners = Sets.newHashSet();
+
+	@Override
+	public void addListener(ISystemLogListener listener) {
+		cListeners.add(listener);
+		if (cLogLoaded) {
+			try {
+				listener.onInitialSystemLogRead(cEntries);
+			} catch (Throwable t) {
+				cLog.error("Error occured for listener "
+						+ listener.getClass().getSimpleName(), t);
+			}
+		}
+	}
+
+	@Override
+	public void removeListener(ISystemLogListener listener) {
+		cListeners.remove(listener);
 	}
 
 }

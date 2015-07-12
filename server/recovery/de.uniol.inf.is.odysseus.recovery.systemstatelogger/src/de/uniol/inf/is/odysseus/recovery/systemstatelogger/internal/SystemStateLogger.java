@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.systemstatelogger;
+package de.uniol.inf.is.odysseus.recovery.systemstatelogger.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,17 +24,6 @@ public class SystemStateLogger {
 			.getLogger(SystemStateLogger.class);
 
 	/**
-	 * The system log, if bound.
-	 */
-	private static Optional<ISystemLog> cSystemLog = Optional.absent();
-
-	/**
-	 * True between the call of {@link #bindExecutor(IExecutor)} and
-	 * {@link #unbindExecutor(IExecutor)} by OSGi.
-	 */
-	private static boolean cExecutorBound = false;
-
-	/**
 	 * The tag for the system log entry for a startup of Odysseus.
 	 */
 	public static final String TAG_STARTUP = "STARTUP";
@@ -51,6 +40,11 @@ public class SystemStateLogger {
 	public static final String COMMENT = "Defined by binding/unbinding of IExecutor";
 
 	/**
+	 * The system log, if bound.
+	 */
+	private static Optional<ISystemLog> cSystemLog = Optional.absent();
+
+	/**
 	 * Binds an implementation of the system log and logs the startup, if an
 	 * implementation of the executor could be bound before.
 	 * 
@@ -59,11 +53,7 @@ public class SystemStateLogger {
 	 */
 	public static void bindSystemLog(ISystemLog log) {
 		cSystemLog = Optional.of(log);
-		cLog.debug("Bound '{}' as an implementation of ISystemLog.", log
-				.getClass().getSimpleName());
-		if (cExecutorBound) {
-			log(TAG_STARTUP);
-		}
+		tryLogStartup();
 	}
 
 	/**
@@ -76,13 +66,14 @@ public class SystemStateLogger {
 	public static void unbindSystemLog(ISystemLog log) {
 		if (cSystemLog.isPresent() && log == cSystemLog.get()) {
 			cSystemLog = Optional.absent();
-			if (cExecutorBound) {
-				log(TAG_SHUTDOWN);
-			}
-			cLog.debug("Unbound '{}' as an implementation of ISystemLog.", log
-					.getClass().getSimpleName());
 		}
 	}
+
+	/**
+	 * True between the call of {@link #bindExecutor(IExecutor)} and
+	 * {@link #unbindExecutor(IExecutor)} by OSGi.
+	 */
+	private static boolean cExecutorBound = false;
 
 	/**
 	 * Binds an implementation of the executor and logs the startup, if an
@@ -93,9 +84,7 @@ public class SystemStateLogger {
 	 */
 	public static void bindExecutor(IExecutor executor) {
 		cExecutorBound = true;
-		if (cSystemLog.isPresent()) {
-			log(TAG_STARTUP);
-		}
+		tryLogStartup();
 	}
 
 	/**
@@ -107,20 +96,34 @@ public class SystemStateLogger {
 	 */
 	public static void unbindExecutor(IExecutor executor) {
 		cExecutorBound = false;
-		if (cSystemLog.isPresent()) {
-			log(TAG_SHUTDOWN);
-		}
+		tryLogShutDown();
 	}
 
 	/**
-	 * Logs a system state action.
+	 * Checks, if Odyseus is started.
 	 * 
-	 * @param tag
-	 *            {@link #TAG_STARTUP} or {@link #TAG_SHUTDOWN}.
+	 * @return True, if an executor and a system log could be bound.
 	 */
-	private static void log(String tag) {
-		// Attention: No check, if system log is bound!
-		cSystemLog.get().write(tag, System.currentTimeMillis(), COMMENT);
+	private static boolean isSystemStarted() {
+		return cExecutorBound && cSystemLog.isPresent();
+	}
+
+	// TODO javaDoc
+	private static void tryLogStartup() {
+		if (isSystemStarted()) {
+			cSystemLog.get().write(TAG_STARTUP, System.currentTimeMillis(),
+					COMMENT);
+		}
+	}
+
+	// TODO javaDoc
+	private static void tryLogShutDown() {
+		if (cSystemLog.isPresent()) {
+			cSystemLog.get().write(TAG_SHUTDOWN, System.currentTimeMillis(),
+					COMMENT);
+		} else {
+			cLog.error("Could not write a system log for the shutdown!");
+		}
 	}
 
 }

@@ -30,7 +30,8 @@ import de.uniol.inf.is.odysseus.recovery.querystate.queryaddedInfo.QueryAddedEnt
 import de.uniol.inf.is.odysseus.recovery.querystate.queryaddedInfo.SourceAddedEntryInfo;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
-import de.uniol.inf.is.odysseus.recovery.systemstatelogger.crashdetection.ICrashDetectionListener;
+import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 /**
  * The query state recovery component handles the backup and recovery of queries
@@ -61,8 +62,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 */
 	public static void bindSystemLog(ISystemLog log) {
 		cSystemLog = Optional.of(log);
-		cLog.debug("Bound '{}' as an implementation of ISystemLog.", log
-				.getClass().getSimpleName());
 	}
 
 	/**
@@ -74,15 +73,15 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	public static void unbindSystemLog(ISystemLog log) {
 		if (cSystemLog.isPresent() && log == cSystemLog.get()) {
 			cSystemLog = Optional.absent();
-			cLog.debug("Unbound '{}' as an implementation of ISystemLog.", log
-					.getClass().getSimpleName());
 		}
 	}
-	
+
 	/**
-	 * The list of system log entries for recovery, if crash has been detected before an executor is bound.
+	 * The list of system log entries for recovery, if crash has been detected
+	 * before an executor is bound.
 	 */
-	private static List<ISysLogEntry> cEntriesForRecovery = Lists.newArrayList();
+	private static List<ISysLogEntry> cEntriesForRecovery = Lists
+			.newArrayList();
 
 	/**
 	 * The executor, if bound.
@@ -100,7 +99,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		serverExecutor.addQueryAddedListener(this);
 		serverExecutor.addPlanModificationListener(this);
 		cExecutor = Optional.of(serverExecutor);
-		if(!cEntriesForRecovery.isEmpty()) {
+		if (!cEntriesForRecovery.isEmpty()) {
 			try {
 				recover(cEntriesForRecovery);
 			} catch (Exception e) {
@@ -151,7 +150,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 
 	@Override
 	public void recover(List<ISysLogEntry> log) throws Exception {
-		// TODO to be tested
+		// TODO to be tested 
 		if (!cExecutor.isPresent()) {
 			cEntriesForRecovery.addAll(log);
 			return;
@@ -190,9 +189,10 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	private void recoverQueryAddEvent(ISysLogEntry entry) {
 		AbstractQueryAddedInfo info = AbstractQueryAddedInfo
 				.fromBase64Binary(entry.getComment().get());
+		// TODO GetSession does not work/is not ready
 		cExecutor.get().addQuery(info.queryText, info.parserId, getSession(),
 				info.getContext());
-		cLog.debug("Added query {}", info.queryText);
+		cLog.debug("Added query.");
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	private void recoverQueryRemovedEvent(ISysLogEntry entry) {
 		int queryId = QueryStateUtils.getQueryId(entry.getTag());
 		cExecutor.get().removeQuery(queryId, getSession());
-		cLog.debug("Removed query {}", queryId);
+		cLog.debug("Removed query.", queryId);
 	}
 
 	/**
@@ -217,23 +217,23 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		int queryId = QueryStateUtils.getQueryId(entry.getTag());
 		if (entry.getComment().get().equals(QueryState.INACTIVE.toString())) {
 			cExecutor.get().stopQuery(queryId, getSession());
-			cLog.debug("Stopped query {}", queryId);
+			cLog.debug("Stopped query.");
 		} else if (entry.getComment().get()
 				.equals(QueryState.PARTIAL.toString())) {
 			// TODO need a shedding factor
 			int sheddingFactor = 0;
 			cExecutor.get().partialQuery(queryId, sheddingFactor, getSession());
-			cLog.debug("Set query {} to be partial", queryId);
+			cLog.debug("Set query to be partial.");
 		} else if (entry.getComment().get()
 				.equals(QueryState.PARTIAL_SUSPENDED.toString())
 				|| entry.getComment().get()
 						.equals(QueryState.SUSPENDED.toString())) {
 			cExecutor.get().suspendQuery(queryId, getSession());
-			cLog.debug("Suspended query {}", queryId);
+			cLog.debug("Suspended query.");
 		} else if (entry.getComment().get()
 				.equals(QueryState.RUNNING.toString())) {
 			cExecutor.get().startQuery(queryId, getSession());
-			cLog.debug("Started query {}", queryId);
+			cLog.debug("Started query.");
 		} else {
 			cLog.error("Unknown query state: {}", entry.getComment().get());
 		}
@@ -245,13 +245,21 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		AbstractQueryAddedInfo info;
 		if (queryIds.isEmpty()) {
 			// Source definition
+			/*
+			 * Note: For a source defintion each source is added using PQL and
+			 * afterwards the complete script is added with odysseus script.
+			 */
+			if (!parserID.equals(OdysseusScriptParser.PARSER_NAME)) {
+				return;
+			}
 			info = new SourceAddedEntryInfo();
-			cLog.debug("Source added: " + query);
+			cLog.debug("Source added.");
 		} else {
 			info = new QueryAddedEntryInfo();
 			((QueryAddedEntryInfo) info).ids = Lists.newArrayList(queryIds);
-			cLog.debug("Query added: " + query);
+			cLog.debug("Query added.");
 		}
+
 		info.parserId = parserID;
 		info.queryText = query;
 		info.setContext(context);
@@ -313,9 +321,9 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	public void onCrashDetected(long lastStartup) throws Throwable {
 		if (!cSystemLog.isPresent()) {
 			cLog.error("No system log bound!");
+		} else {
+			recover(cSystemLog.get().read(lastStartup));
 		}
-		// TODO does not work. Error in AbstractQueryAddedInfo.fromBase64Binary.
-		// Problems with the usermanagement?
-		recover(cSystemLog.get().read(lastStartup));
 	}
+
 }

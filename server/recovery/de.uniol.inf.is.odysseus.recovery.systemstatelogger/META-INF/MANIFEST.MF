@@ -9,6 +9,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  com.google.guava;bundle-version="18.0.0",
  de.uniol.inf.is.odysseus.recovery.systemlog;bundle-version="1.0.0"
+Export-Package: de.uniol.inf.is.odysseus.recovery.systemstatelogger
 Service-Component: OSGI-INF/SystemStateLogger.xml,
  OSGI-INF/CrashDetector.xml
-Export-Package: de.uniol.inf.is.odysseus.recovery.systemstatelogger.crashdetection
