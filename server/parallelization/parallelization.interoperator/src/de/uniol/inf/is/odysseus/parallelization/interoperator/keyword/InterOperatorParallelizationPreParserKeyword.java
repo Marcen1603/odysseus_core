@@ -78,14 +78,6 @@ public class InterOperatorParallelizationPreParserKeyword extends
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
-		// get elements from enum for parameters
-		List<IKeywordParameter> parameters = new ArrayList<IKeywordParameter>();
-		List<InterOperatorParallelizationKeywordParameter> asList = Arrays
-				.asList(InterOperatorParallelizationKeywordParameter.values());
-		for (InterOperatorParallelizationKeywordParameter parallelizationKeywordParameter : asList) {
-			parameters.add(parallelizationKeywordParameter);
-		}
-
 		parameterHelper = PreParserKeywordParameterHelper.newInstance(
 				InterOperatorParallelizationKeywordParameter.class, PATTERN_KEYWORD);
 		parameterHelper.validateParameterString(parameter);
