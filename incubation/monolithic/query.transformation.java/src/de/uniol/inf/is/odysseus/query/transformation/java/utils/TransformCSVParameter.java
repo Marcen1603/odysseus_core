@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 public class TransformCSVParameter {
@@ -23,10 +26,9 @@ public class TransformCSVParameter {
 	
 	
 
-public static CodeFragmentInfo getCodeForParameterInfoNeu(Map<String, String> map, String operatorVariable){
+public static CodeFragmentInfo getCodeForParameterInfoNeu(ILogicalOperator operator, String operatorVariable){
 		CodeFragmentInfo codeFragmentInfo= new CodeFragmentInfo();
 		Set<String> imports = new HashSet<String>();
-	
 	
 		StringBuilder code = new StringBuilder();
 		
@@ -35,27 +37,27 @@ public static CodeFragmentInfo getCodeForParameterInfoNeu(Map<String, String> ma
 		code.append("OptionMap "+operatorVariable+"ParameterInfo = new OptionMap();");
 		code.append("\n");
 		
-		if(map.containsKey("FILENAME")){
-			code.append(operatorVariable+"ParameterInfo.setOption(\"filename\","+ map.get("FILENAME").replace("'", "\"").replace("\\", "\\\\")+");");
-			code.append("\n");
+	
+		if(operator instanceof CSVFileSource)
+		{
+			CSVFileSource sss = (CSVFileSource) operator;
+			for (Map.Entry<String, String> entry : sss.getOptionsMap().entrySet())
+			{
+			    String value = entry.getValue().replace("\\", "\\\\");
+			    code.append(operatorVariable+"ParameterInfo.setOption(\""+entry.getKey()+"\",\""+ value+"\");");
+				code.append("\n");
+			}
 		}
 		
-		/*
-		if(map.containsKey("OPTIONS")){
-			code.append("csvOptions.setOption(\"options\","+ map.get("OPTIONS")+");");
-			code.append("\n");
+		if(operator instanceof CSVFileSink){
+			CSVFileSink sss = (CSVFileSink) operator;
+			for (Map.Entry<String, String> entry : sss.getOptionsMap().entrySet())
+			{
+			    String value = entry.getValue().replace("\\", "\\\\");
+			    code.append(operatorVariable+"ParameterInfo.setOption(\""+entry.getKey()+"\",\""+ value+"\");");
+				code.append("\n");
+			}
 		}
-		
-		if(map.containsKey("SCHEMA")){
-			code.append("csvOptions.setOption(\"schema\","+ map.get("SCHEMA")+");");
-			code.append("\n");
-		}
-		
-		if(map.containsKey("SOURCE")){
-			code.append("csvOptions.setOption(\"source\","+ map.get("SOURCE")+");");
-			code.append("\n");
-		}
-		*/
 		
 		codeFragmentInfo.addCode(code.toString());
 		
@@ -67,6 +69,7 @@ public static CodeFragmentInfo getCodeForParameterInfoNeu(Map<String, String> ma
 	
 
 	
+	
 	public static Set<String> getImportsForParameterInfo(){
 		Set<String> importList = new HashSet<String>();
 		importList.add("de.uniol.inf.is.odysseus.core.collection.OptionMap");
@@ -74,6 +77,7 @@ public static CodeFragmentInfo getCodeForParameterInfoNeu(Map<String, String> ma
 		return importList;
 		
 	}
+	
 	
 
 

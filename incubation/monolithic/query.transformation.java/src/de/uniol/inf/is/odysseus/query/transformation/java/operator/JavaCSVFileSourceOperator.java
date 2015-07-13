@@ -33,7 +33,7 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 		
 		csvFileSource.addCodeFragmentInfo(CreateDefaultCode.codeForAccessFrameworkNeu(operator));
 		
-		
+	
 		TimestampAO timestampAO = Utils.createTimestampAO(operator, null);
 		
 		//now create the AccessPO

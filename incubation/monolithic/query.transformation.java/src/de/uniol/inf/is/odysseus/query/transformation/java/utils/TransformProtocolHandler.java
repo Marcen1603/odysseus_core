@@ -38,17 +38,18 @@ public class TransformProtocolHandler {
 		}
 		imports.add(IAccessPattern.class.getName());
 		
-		
+
 		TransformationInformation.getInstance().addDataHandler(protocolHandlerParameter.getDataHandler());
 		TransformationInformation.getInstance().addProtocolHandler(protocolHandlerParameter.getProtocolHandler());
 		TransformationInformation.getInstance().addTransportHandler(protocolHandlerParameter.getTransportHandler());
+		
 		
 		
 		StringBuilder code = new StringBuilder();
 		code.append("\n");
 		code.append("IProtocolHandler "+operatorVariable+"ProtocolHandler =  protocolhandlerregistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection."+direction.toString()+", "+wrapper+", "+operatorVariable+"ParameterInfo"+",  datahandlerregistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\","+ operatorVariable+"SDFSchema));");
 		code.append("\n");
-		code.append("ITransportHandler "+operatorVariable+"TransportHandler = new FileHandler("+operatorVariable+"ProtocolHandler, "+operatorVariable+"ParameterInfo);");
+		code.append("ITransportHandler "+ operatorVariable+"TransportHandler = transporthandlerregistry.getInstance(\""+protocolHandlerParameter.getTransportHandler()+"\","+operatorVariable+"ProtocolHandler," +operatorVariable+"ParameterInfo);");
 		code.append("\n");
 		code.append(operatorVariable+"ProtocolHandler.setTransportHandler("+operatorVariable+"TransportHandler);");
 		code.append("\n");

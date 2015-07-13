@@ -46,7 +46,6 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 		SDFSchema inputSchema = windowAO.getInputSchema();
 		
 		
-		
 		 if(partioned){
 				CodeFragmentInfo sdfAttributeInfo = TransformSDFAttribute.getCodeForSDFAttribute(partitionedBy, operatorVariable+"PartitionBy");
 				code.append(sdfAttributeInfo.getCode());
@@ -54,8 +53,6 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 		 
 		 CodeFragmentInfo sdfInputSchema  = TransformSDFSchema.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
 		 code.append(sdfInputSchema.getCode());
-		 
-
 	
 		 code.append("SlidingAdvanceTimeWindowTIPO "+operatorVariable+"PO = new SlidingAdvanceTimeWindowTIPO(");
 		 code.append("WindowType."+windowType.toString().toUpperCase()+",");
@@ -79,8 +76,7 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 	     code.append(operatorVariable+"InputSchemaSDFSchema");
 		 code.append(");");
 		
-		
-
+	
 		slidingWindow.addCode(code.toString());
 		slidingWindow.addImport(TimeValueItem.class.getName());
 		slidingWindow.addImport(TimeUnit.class.getName());

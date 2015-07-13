@@ -47,10 +47,12 @@ public class CreateDefaultCode {
 		String dataHandler =  "";
 		String wrapper = "";
 		String protocolHandler = "";
+
+		
 		
 		if(operator instanceof CSVFileSink){
 			 CSVFileSink csvFileSink = (CSVFileSink) operator;
-		
+			
 			 filename = csvFileSink.getFilename();
 			 transportHandler = csvFileSink.getTransportHandler();
 			 dataHandler = csvFileSink.getDataHandler();
@@ -70,16 +72,15 @@ public class CreateDefaultCode {
 			 wrapper = csvFileSource.getWrapper();
 			 protocolHandler = csvFileSource.getProtocolHandler();
 			 direction = ITransportDirection.IN;
-			
 		}
 		
 		//add import
 		codeFragmentInfo.addImport(ITransportDirection.class.getName());
-
+		
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);	
 		
 		//generate code for options
-		codeFragmentInfo.addCodeFragmentInfo(TransformCSVParameter.getCodeForParameterInfoNeu(operator.getParameterInfos(),operatorVariable));
+		codeFragmentInfo.addCodeFragmentInfo(TransformCSVParameter.getCodeForParameterInfoNeu(operator,operatorVariable));
 		
 		//setup transportHandler
 		codeFragmentInfo.addCodeFragmentInfo(TransformProtocolHandler.getCodeForProtocolHandlerNeu(protocolHandlerParameter, operatorVariable, direction));
