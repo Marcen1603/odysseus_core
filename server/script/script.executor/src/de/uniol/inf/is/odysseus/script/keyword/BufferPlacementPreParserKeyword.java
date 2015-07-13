@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKeyword {

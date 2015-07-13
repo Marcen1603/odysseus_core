@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class StopSchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword {

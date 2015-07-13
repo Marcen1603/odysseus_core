@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class CyclicQueryPreParserKeyword extends

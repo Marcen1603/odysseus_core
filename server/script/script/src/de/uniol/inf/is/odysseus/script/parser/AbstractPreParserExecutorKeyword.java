@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.script.keyword;
+package de.uniol.inf.is.odysseus.script.parser;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
+import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 
 public abstract class AbstractPreParserExecutorKeyword extends AbstractPreParserKeyword {
 
-	IServerExecutor getServerExecutor() throws OdysseusScriptException{
-		IServerExecutor executor = ExecutorHandler.getServerExecutor();
+	protected IServerExecutor getServerExecutor() throws OdysseusScriptException{
+		IServerExecutor executor = (IServerExecutor)Activator.getExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No server-executor found");
 		return executor;
