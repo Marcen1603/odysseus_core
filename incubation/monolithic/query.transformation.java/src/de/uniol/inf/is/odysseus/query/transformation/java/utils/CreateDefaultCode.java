@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttribute
 
 public class CreateDefaultCode {
 	
-	
 	public static CodeFragmentInfo initOperator(ILogicalOperator operator){
 		CodeFragmentInfo sdfSchema = new CodeFragmentInfo();
 		
@@ -34,6 +33,7 @@ public class CreateDefaultCode {
 				
 		return sdfSchema;
 	}
+	
 
 	public static CodeFragmentInfo codeForAccessFrameworkNeu(ILogicalOperator operator){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
@@ -171,7 +171,6 @@ public class CreateDefaultCode {
 	
 		
 		return startFragment;
-		
 		
 	}
 	

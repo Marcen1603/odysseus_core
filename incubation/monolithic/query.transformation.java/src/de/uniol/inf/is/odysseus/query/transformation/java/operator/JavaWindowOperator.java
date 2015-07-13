@@ -1,12 +1,17 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.operator;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWidthAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFAttribute;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFSchema;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
@@ -31,39 +36,58 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 
 		AbstractWindowWithWidthAO windowAO = (AbstractWindowWithWidthAO) operator;
 		
+		WindowType windowType = windowAO.getWindowType();
+		TimeUnit baseTimeUnit =windowAO.getBaseTimeUnit();
 		TimeValueItem windowSize = windowAO.getWindowSize();
-		TimeValueItem windowSlide = windowAO.getWindowSlide();
 		TimeValueItem windowAdvance = windowAO.getWindowAdvance();
+		TimeValueItem windowSlide = windowAO.getWindowSlide();
+		boolean partioned = windowAO.isPartitioned();
+		List<SDFAttribute> partitionedBy = windowAO.getPartitionBy();
+		SDFSchema inputSchema = windowAO.getInputSchema();
 		
-
-		code.append("TimeWindowAO "+operatorVariable+"TimeWindowAO = new TimeWindowAO();");
-		code.append("\n");
 		
-		code.append(operatorVariable+"TimeWindowAO.setBaseTimeUnit(TimeUnit.MICROSECONDS);");
-		code.append("\n");
 		
-		code.append(operatorVariable+"TimeWindowAO.setWindowSize(new TimeValueItem("+windowSize.getTime()+",TimeUnit.valueOf(\""+windowSize.getUnit().toString()+"\")));");
-		code.append("\n");
-		if(windowSlide != null){
-			code.append(operatorVariable+"TimeWindowAO.setWindowSlide(new TimeValueItem("+windowSlide.getTime()+",TimeUnit.valueOf(\""+windowSlide.getUnit().toString()+"\")));");
-			code.append("\n");
+		 if(partioned){
+				CodeFragmentInfo sdfAttributeInfo = TransformSDFAttribute.getCodeForSDFAttribute(partitionedBy, operatorVariable+"PartitionBy");
+				code.append(sdfAttributeInfo.getCode());
 		}
-		
-		code.append(operatorVariable+"TimeWindowAO.setWindowAdvance(new TimeValueItem("+windowAdvance.getTime()+",TimeUnit.valueOf(\""+windowAdvance.getUnit().toString()+"\")));");
-		code.append("\n");
-		code.append(operatorVariable+"TimeWindowAO.setOutputSchema("+operatorVariable+"SDFSchema);");
-		code.append("\n");
-		code.append("SlidingAdvanceTimeWindowTIPO "+operatorVariable+"PO = new SlidingAdvanceTimeWindowTIPO("+operatorVariable+"TimeWindowAO);");
-		code.append("\n");
+		 
+		 CodeFragmentInfo sdfInputSchema  = TransformSDFSchema.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
+		 code.append(sdfInputSchema.getCode());
+		 
 
 	
-		slidingWindow.addCode(code.toString());
+		 code.append("SlidingAdvanceTimeWindowTIPO "+operatorVariable+"PO = new SlidingAdvanceTimeWindowTIPO(");
+		 code.append("WindowType."+windowType.toString().toUpperCase()+",");
+		 code.append("TimeUnit."+baseTimeUnit.toString().toUpperCase()+",");
+		 code.append("new TimeValueItem("+windowSize.getTime()+",TimeUnit.valueOf(\""+windowSize.getUnit().toString()+"\")),");
+		 code.append("new TimeValueItem("+windowAdvance.getTime()+",TimeUnit.valueOf(\""+windowAdvance.getUnit().toString()+"\")),");
+		 
+		 if(windowSlide!=null){
+			 code.append("new TimeValueItem("+windowSlide.getTime()+",TimeUnit.valueOf(\""+windowSlide.getUnit().toString()+"\",");
+		 }else{
+			 code.append("null,");
+		 }
+		 code.append(partioned+",");
+		 
+		 if(partioned){
+			     code.append(operatorVariable+"PartitionBySDFAttributeList,");
+			}else{
+			     code.append("null,");
+		 }
 		
-		slidingWindow.addImport(TimeWindowAO.class.getName());
+	     code.append(operatorVariable+"InputSchemaSDFSchema");
+		 code.append(");");
+		
+		
+
+		slidingWindow.addCode(code.toString());
 		slidingWindow.addImport(TimeValueItem.class.getName());
 		slidingWindow.addImport(TimeUnit.class.getName());
+		slidingWindow.addImport(WindowType.class.getName());
+
 		
-		
+	
 		return slidingWindow;
 	}
 
