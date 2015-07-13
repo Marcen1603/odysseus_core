@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -124,6 +127,38 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 
 		strategySelectionTableViewer = new StrategySelectionTableViewer(this,
 				data);
+		
+		GridData selectGridData = new GridData(GridData.FILL_BOTH);
+
+		Composite selectComposite = new Composite(this, SWT.NONE);
+		GridLayout selectGridLayout = new GridLayout(2, false);
+		selectComposite.setLayout(selectGridLayout);
+		
+		final CheckboxTableViewer tableViewer = strategySelectionTableViewer.getTableViewer();
+		
+		Button selectAllButton = new Button(selectComposite, SWT.PUSH);
+		selectAllButton.setText("Select all");
+		selectAllButton
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		selectAllButton.setLayoutData(selectGridData);
+		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				tableViewer.setAllChecked(true);
+			}
+		});
+		
+		Button unselectAllButton = new Button(selectComposite, SWT.PUSH);
+		unselectAllButton.setText("Unselect all");
+		unselectAllButton
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		unselectAllButton.setLayoutData(selectGridData);
+		unselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				tableViewer.setAllChecked(false);
+			}
+		});
 	}
 
 	protected void validateConfiguration(

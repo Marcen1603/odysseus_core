@@ -59,7 +59,7 @@ public class StrategySelectionTableViewer {
 	}
 
 	private Table configureTable() {
-		Table table = tableViewer.getTable();
+		Table table = getTableViewer().getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
@@ -67,20 +67,20 @@ public class StrategySelectionTableViewer {
 	}
 
 	private void configureTableViewer(Table table) {
-		tableViewer.setContentProvider(new StrategyContentProvider(
+		getTableViewer().setContentProvider(new StrategyContentProvider(
 				strategySelectionRows));
-		tableViewer.setLabelProvider(new StrategyLabelProvider());
+		getTableViewer().setLabelProvider(new StrategyLabelProvider());
 
 		CellEditor[] editors = new CellEditor[NUMBER_OF_COLUMNS];
 		editors[2] = new TextCellEditor(table);
 		editors[3] = new TextCellEditor(table);
-		tableViewer.setColumnProperties(PROPS);
-		tableViewer.setCellModifier(new StrategyCellModifier(tableViewer));
-		tableViewer.setCellEditors(editors);
+		getTableViewer().setColumnProperties(PROPS);
+		getTableViewer().setCellModifier(new StrategyCellModifier(getTableViewer()));
+		getTableViewer().setCellEditors(editors);
 
-		tableViewer.setInput(strategySelectionRows);
+		getTableViewer().setInput(strategySelectionRows);
 
-		tableViewer.setAllChecked(true);
+		getTableViewer().setAllChecked(true);
 	}
 
 	private void createColumns(TableColumnLayout tableColumnLayout) {
@@ -93,7 +93,7 @@ public class StrategySelectionTableViewer {
 		weight[5] = 30;
 
 		for (int i = 0; i < PROPS.length; i++) {
-			TableViewerColumn column = new TableViewerColumn(tableViewer,
+			TableViewerColumn column = new TableViewerColumn(getTableViewer(),
 					SWT.NONE);
 			column.getColumn().setText(PROPS[i]);
 			tableColumnLayout.setColumnData(column.getColumn(),
@@ -103,7 +103,7 @@ public class StrategySelectionTableViewer {
 
 	public List<StrategySelectionRow> getSelectedStratgies() {
 		ArrayList<StrategySelectionRow> checkedElementResult = new ArrayList<StrategySelectionRow>();
-		Object[] checkedElements = tableViewer.getCheckedElements();
+		Object[] checkedElements = getTableViewer().getCheckedElements();
 		if (checkedElements.length > 0) {
 			if (checkedElements[0] instanceof StrategySelectionRow) {
 				for (int i = 0; i < checkedElements.length; i++) {
@@ -139,5 +139,9 @@ public class StrategySelectionTableViewer {
 			}
 		}
 		return rows;
+	}
+
+	public CheckboxTableViewer getTableViewer() {
+		return tableViewer;
 	}
 }

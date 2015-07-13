@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
@@ -29,6 +30,8 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 	private ParallelizationBenchmarkerWindow window;
 	private Button startButton;
 	private BenchmarkDataHandler data;
+
+	private Composite buttonComposite;
 	
 	
 	public BenchmarkButtonComposite(Composite parent, int style,
@@ -41,11 +44,20 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 			data = BenchmarkDataHandler.getExistingInstance(benchmarkProcessId);
 		}
 		
-		this.setLayoutData(new GridData(SWT.BEGINNING));
-		this.setLayout(new GridLayout(3, false));
-
+		this.setLayout(new GridLayout(1, false));
+		this.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		// Create a horizontal separator
+		Label separator = new Label(this, SWT.HORIZONTAL | SWT.SEPARATOR);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		buttonComposite = new Composite(this, SWT.NONE);
+		buttonComposite.setLayoutData(new GridData(SWT.BEGINNING));
+		buttonComposite.setLayout(new GridLayout(3, false));
+		
 		createButtonsBasedOnPage(currentPage, parameter);
 
+		
 		parent.pack();
 		parent.setVisible(true);
 	}
@@ -77,7 +89,7 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 	private void createButtonsForConfigPage(String parameter) {
 		createCancelButton(CANCEL_BUTTON_TEXT);
 
-		startButton = new Button(this, SWT.PUSH);
+		startButton = new Button(buttonComposite, SWT.PUSH);
 		startButton.setText("Start Analyse");
 		startButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		startButton.addSelectionListener(new SelectionAdapter() {
@@ -97,7 +109,7 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 		createCancelButton("Done");
 
 		final Clipboard cb = new Clipboard(window.getWindow().getDisplay());
-		Button copyClipboardButton = new Button(this, SWT.PUSH);
+		Button copyClipboardButton = new Button(buttonComposite, SWT.PUSH);
 		copyClipboardButton.setText("Copy to Clipboard");
 		copyClipboardButton
 				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -110,7 +122,7 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 			}
 		});
 
-		Button changeFileButton = new Button(this, SWT.PUSH);
+		Button changeFileButton = new Button(buttonComposite, SWT.PUSH);
 		changeFileButton.setText("Change file");
 		changeFileButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		changeFileButton.addSelectionListener(new SelectionAdapter() {
@@ -119,6 +131,8 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
+						
+						
 						StringBuilder builder = new StringBuilder();
 						List<String> queryStringArray = data.getQueryStringArray();
 						
@@ -130,6 +144,7 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 						}
 						ByteArrayInputStream in = new 
 								ByteArrayInputStream(builder.toString().getBytes());
+						// TODO refresh of file is needed
 						IFile queryFile = data.getQueryFile();
 						try {
 							queryFile.setContents(in, false, true, null);
@@ -143,7 +158,7 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 	}
 
 	private void createCancelButton(String label) {
-		Button cancelButton = new Button(this, SWT.PUSH);
+		Button cancelButton = new Button(buttonComposite, SWT.PUSH);
 		cancelButton.setText(label);
 		cancelButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		cancelButton.addSelectionListener(new SelectionAdapter() {
