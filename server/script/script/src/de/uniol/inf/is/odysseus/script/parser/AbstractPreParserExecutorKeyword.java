@@ -20,29 +20,12 @@ import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 
 public abstract class AbstractPreParserExecutorKeyword extends AbstractPreParserKeyword {
 
-	private static final long MAX_WAIT_TIME_MILLIS = 60 * 1000;
-
 	protected IServerExecutor getServerExecutor() throws OdysseusScriptException {
 		IServerExecutor executor = (IServerExecutor) Activator.getExecutor();
-		long startTime = System.currentTimeMillis();
-
-		while (executor == null) {
-			tryWait();
-			executor = (IServerExecutor) Activator.getExecutor();
-
-			if (executor == null && System.currentTimeMillis() - startTime > MAX_WAIT_TIME_MILLIS) {
-				throw new OdysseusScriptException("No executor bound after " + MAX_WAIT_TIME_MILLIS + " milliseconds");
-			}
+		if (executor == null ) {
+			throw new OdysseusScriptException("No executor bound");
 		}
-
+		
 		return executor;
 	}
-
-	private static void tryWait() {
-		try {
-			Thread.sleep(250);
-		} catch (InterruptedException e) {
-		}
-	}
-
 }
