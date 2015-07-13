@@ -1,19 +1,19 @@
 package de.uniol.inf.is.odysseus.parallelization.interoperator.postoptimization;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
 public class PostOptimizationElement {
 	private int degreeOfParallelization;
 	private UnionAO startOperator;
-	private AbstractFragmentAO endOperator;
+	private AbstractStaticFragmentAO endOperator;
 	private boolean allowsModificationAfterUnion;
 
-	public AbstractFragmentAO getEndOperator() {
+	public AbstractStaticFragmentAO getEndOperator() {
 		return endOperator;
 	}
 
-	public void setEndOperator(AbstractFragmentAO endOperator) {
+	public void setEndOperator(AbstractStaticFragmentAO endOperator) {
 		this.endOperator = endOperator;
 	}
 

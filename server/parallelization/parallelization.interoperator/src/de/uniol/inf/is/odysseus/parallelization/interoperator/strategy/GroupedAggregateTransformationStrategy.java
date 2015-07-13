@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGrap
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
 public class GroupedAggregateTransformationStrategy extends
@@ -57,7 +57,7 @@ public class GroupedAggregateTransformationStrategy extends
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		// create fragment operator
-		AbstractFragmentAO fragmentAO;
+		AbstractStaticFragmentAO fragmentAO;
 		List<SDFAttribute> groupingAttributes = aggregateOperator
 				.getGroupingAttributes();
 		try {
@@ -120,7 +120,7 @@ public class GroupedAggregateTransformationStrategy extends
 				if (settingsForOperator.getEndParallelizationId() != null
 						&& !settingsForOperator.getEndParallelizationId()
 								.isEmpty()) {
-					List<AbstractFragmentAO> fragments = new ArrayList<AbstractFragmentAO>();
+					List<AbstractStaticFragmentAO> fragments = new ArrayList<AbstractStaticFragmentAO>();
 					fragments.add(fragmentAO);
 					ILogicalOperator lastParallelizedOperator = doPostParallelization(
 							aggregateOperator, newAggregateOperator,
@@ -168,14 +168,14 @@ public class GroupedAggregateTransformationStrategy extends
 	}
 
 	@Override
-	public List<Class<? extends AbstractFragmentAO>> getAllowedFragmentationTypes() {
-		List<Class<? extends AbstractFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractFragmentAO>>();
+	public List<Class<? extends AbstractStaticFragmentAO>> getAllowedFragmentationTypes() {
+		List<Class<? extends AbstractStaticFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractStaticFragmentAO>>();
 		allowedFragmentTypes.add(HashFragmentAO.class);
 		return allowedFragmentTypes;
 	}
 
 	@Override
-	public Class<? extends AbstractFragmentAO> getPreferredFragmentationType() {
+	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return HashFragmentAO.class;
 	}
 
@@ -184,7 +184,7 @@ public class GroupedAggregateTransformationStrategy extends
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
 			ILogicalOperator currentClonedOperator, int iteration,
-			List<AbstractFragmentAO> fragments,
+			List<AbstractStaticFragmentAO> fragments,
 			ParallelOperatorSettings settingsForOperator) {
 		if (currentExistingOperator instanceof AggregateAO) {
 			SDFAttributeHelper.checkIfAttributesAreEqual((AggregateAO) currentExistingOperator, iteration,

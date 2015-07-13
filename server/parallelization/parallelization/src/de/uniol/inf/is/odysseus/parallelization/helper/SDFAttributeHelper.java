@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.IStatefulFunction;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
 public class SDFAttributeHelper {
@@ -195,7 +196,7 @@ public class SDFAttributeHelper {
 	}
 
 	public static void checkIfAttributesAreEqual(AggregateAO aggregateAO,
-			int iteration, List<AbstractFragmentAO> fragmentAOs,
+			int iteration, List<AbstractStaticFragmentAO> fragmentAOs,
 			boolean assureSemanticCorrectness) {
 
 		AggregateAO aggregateOperator = aggregateAO;

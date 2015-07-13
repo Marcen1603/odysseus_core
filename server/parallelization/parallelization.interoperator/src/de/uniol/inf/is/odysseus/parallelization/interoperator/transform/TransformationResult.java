@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
 public class TransformationResult {
 	
@@ -15,7 +15,7 @@ public class TransformationResult {
 
 	private UUID uniqueIdentifier = UUID.randomUUID();
 	private State state;
-	private List<AbstractFragmentAO> fragmentOperators = new ArrayList<AbstractFragmentAO>();
+	private List<AbstractStaticFragmentAO> fragmentOperators = new ArrayList<AbstractStaticFragmentAO>();
 	private UnionAO unionOperator;
 
 	public TransformationResult(State state){
@@ -43,15 +43,15 @@ public class TransformationResult {
 		this.unionOperator = unionOperator;
 	}
 
-	public List<AbstractFragmentAO> getFragmentOperators() {
+	public List<AbstractStaticFragmentAO> getFragmentOperators() {
 		return fragmentOperators;
 	}
 
-	public void setFragmentOperators(List<AbstractFragmentAO> fragmentOperators) {
+	public void setFragmentOperators(List<AbstractStaticFragmentAO> fragmentOperators) {
 		this.fragmentOperators.addAll(fragmentOperators);
 	}
 
-	public void addFragmentOperator(AbstractFragmentAO fragmentOperator) {
+	public void addFragmentOperator(AbstractStaticFragmentAO fragmentOperator) {
 		this.fragmentOperators.add(fragmentOperator);
 	}
 

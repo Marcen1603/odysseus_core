@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RangeFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
@@ -18,9 +18,9 @@ public class FragmentationTypeHelper {
 				.getFragmentationTypeByName(fragmentationType) != null;
 	}
 
-	public static Class<? extends AbstractFragmentAO> getFragmentationTypeByName(
+	public static Class<? extends AbstractStaticFragmentAO> getFragmentationTypeByName(
 			String name) {
-		Map<String, Class<? extends AbstractFragmentAO>> fragmentationTypes = getFragmentationTypes();
+		Map<String, Class<? extends AbstractStaticFragmentAO>> fragmentationTypes = getFragmentationTypes();
 		for (String typeName : fragmentationTypes.keySet()) {
 			if (typeName.equalsIgnoreCase(name)) {
 				return fragmentationTypes.get(typeName);
@@ -30,16 +30,16 @@ public class FragmentationTypeHelper {
 	}
 
 	public static List<String> getAllowedFragmentationTypes() {
-		Map<String, Class<? extends AbstractFragmentAO>> fragmentationTypes = getFragmentationTypes();
+		Map<String, Class<? extends AbstractStaticFragmentAO>> fragmentationTypes = getFragmentationTypes();
 		List<String> allowedTypes = new ArrayList<String>(
 				fragmentationTypes.keySet());
 		return allowedTypes;
 	}
 
-	private static Map<String, Class<? extends AbstractFragmentAO>> getFragmentationTypes() {
+	private static Map<String, Class<? extends AbstractStaticFragmentAO>> getFragmentationTypes() {
 		// TODO first try. should be more dynamically if new fragmentation types
 		// are added
-		Map<String, Class<? extends AbstractFragmentAO>> fragmentTypes = new HashMap<String, Class<? extends AbstractFragmentAO>>();
+		Map<String, Class<? extends AbstractStaticFragmentAO>> fragmentTypes = new HashMap<String, Class<? extends AbstractStaticFragmentAO>>();
 		fragmentTypes.put(HashFragmentAO.class.getSimpleName(),
 				HashFragmentAO.class);
 		fragmentTypes.put(RangeFragmentAO.class.getSimpleName(),

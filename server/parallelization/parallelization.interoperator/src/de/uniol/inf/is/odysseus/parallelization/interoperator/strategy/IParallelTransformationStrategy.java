@@ -5,7 +5,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
 public interface IParallelTransformationStrategy<T extends ILogicalOperator> {
 	
@@ -13,9 +13,9 @@ public interface IParallelTransformationStrategy<T extends ILogicalOperator> {
 	
 	Class<T> getOperatorType();
 	
-	List<Class<? extends AbstractFragmentAO>> getAllowedFragmentationTypes();
+	List<Class<? extends AbstractStaticFragmentAO>> getAllowedFragmentationTypes();
 	
-	Class<? extends AbstractFragmentAO> getPreferredFragmentationType();
+	Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType();
 	
 	int evaluateCompatibility(ILogicalOperator operator);
 	

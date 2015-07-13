@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkInitializationResult;
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
 public class StrategySelectionTableViewer {
 
@@ -128,9 +128,9 @@ public class StrategySelectionTableViewer {
 			List<IParallelTransformationStrategy<? extends ILogicalOperator>> strategies = strategiesForOperator
 					.get(logicalOperator);
 			for (IParallelTransformationStrategy<? extends ILogicalOperator> strategy : strategies) {
-				List<Class<? extends AbstractFragmentAO>> allowedFragmentationTypes = strategy
+				List<Class<? extends AbstractStaticFragmentAO>> allowedFragmentationTypes = strategy
 						.getAllowedFragmentationTypes();
-				for (Class<? extends AbstractFragmentAO> fragmentationType : allowedFragmentationTypes) {
+				for (Class<? extends AbstractStaticFragmentAO> fragmentationType : allowedFragmentationTypes) {
 					rows.add(new StrategySelectionRow(counter, logicalOperator,
 							logicalOperator.getUniqueIdentifier(), strategy,
 							fragmentationType));

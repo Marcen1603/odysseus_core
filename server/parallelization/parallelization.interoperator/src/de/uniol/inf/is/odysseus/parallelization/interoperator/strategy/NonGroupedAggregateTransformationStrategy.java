@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateIte
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.ShuffleFragmentAO;
 
@@ -76,7 +76,7 @@ public class NonGroupedAggregateTransformationStrategy extends
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		// create fragment operator
-		AbstractFragmentAO fragmentAO;
+		AbstractStaticFragmentAO fragmentAO;
 		try {
 			fragmentAO = createFragmentAO(
 					settingsForOperator.getFragementationType(),
@@ -221,15 +221,15 @@ public class NonGroupedAggregateTransformationStrategy extends
 	}
 
 	@Override
-	public List<Class<? extends AbstractFragmentAO>> getAllowedFragmentationTypes() {
-		List<Class<? extends AbstractFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractFragmentAO>>();
+	public List<Class<? extends AbstractStaticFragmentAO>> getAllowedFragmentationTypes() {
+		List<Class<? extends AbstractStaticFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractStaticFragmentAO>>();
 		allowedFragmentTypes.add(RoundRobinFragmentAO.class);
 		allowedFragmentTypes.add(ShuffleFragmentAO.class);
 		return allowedFragmentTypes;
 	}
 
 	@Override
-	public Class<? extends AbstractFragmentAO> getPreferredFragmentationType() {
+	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return RoundRobinFragmentAO.class;
 	}
 
@@ -238,7 +238,7 @@ public class NonGroupedAggregateTransformationStrategy extends
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
 			ILogicalOperator currentClonedOperator, int iteration,
-			List<AbstractFragmentAO> fragments, ParallelOperatorSettings settingsForOperator) {
+			List<AbstractStaticFragmentAO> fragments, ParallelOperatorSettings settingsForOperator) {
 		// no operation needed, because post parallelization is not allowed for this strategy 
 	}
 

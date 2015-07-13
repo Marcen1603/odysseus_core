@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.parallelization.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
 public class PostOptimizationHandler {
@@ -105,7 +105,7 @@ public class PostOptimizationHandler {
 				while (currentOperator != null) {
 					// if fragment operator is reached, connect last cloned
 					// operator with operator after buffer
-					if (currentOperator instanceof AbstractFragmentAO
+					if (currentOperator instanceof AbstractStaticFragmentAO
 							&& currentOperator.getUniqueIdentifier() != null) {
 						if (currentOperator.getUniqueIdentifier()
 								.equalsIgnoreCase(
@@ -132,7 +132,7 @@ public class PostOptimizationHandler {
 								&& fragmentOperator instanceof HashFragmentAO) {
 							// check if attributes of aggregation are equal to
 							// attributes of fragmentation
-							List<AbstractFragmentAO> fragmentAOs = new ArrayList<AbstractFragmentAO>();
+							List<AbstractStaticFragmentAO> fragmentAOs = new ArrayList<AbstractStaticFragmentAO>();
 							fragmentAOs.add((HashFragmentAO) fragmentOperator);
 							SDFAttributeHelper.checkIfAttributesAreEqual(
 									(AggregateAO) currentOperator, iteration,
@@ -279,13 +279,13 @@ public class PostOptimizationHandler {
 		for (TransformationResult currentTransformationResult : transformationResults) {
 			// only first fragmentation is needed, because for every
 			// strategy every fragmentation is from the same type
-			AbstractFragmentAO currentFragementAO = currentTransformationResult
+			AbstractStaticFragmentAO currentFragementAO = currentTransformationResult
 					.getFragmentOperators().get(0);
 
 			for (TransformationResult otherTransformationResult : transformationResults) {
 				// only first fragmentation is needed, because for every
 				// strategy every fragmentation is from the same type
-				AbstractFragmentAO otherFragmentAO = otherTransformationResult
+				AbstractStaticFragmentAO otherFragmentAO = otherTransformationResult
 						.getFragmentOperators().get(0);
 
 				// check if it is not the same result
@@ -313,7 +313,7 @@ public class PostOptimizationHandler {
 	private static void processEqualFragementTypes(
 			List<PostOptimizationElement> postOptimizationElements,
 			TransformationResult currentTransformationResult,
-			AbstractFragmentAO currentFragementAO,
+			AbstractStaticFragmentAO currentFragementAO,
 			TransformationResult otherTransformationResult) {
 		// check if it is a hash fragment, if so, we need to
 		// check if the attributes are equal
@@ -322,7 +322,7 @@ public class PostOptimizationHandler {
 			// and we know that one is a hash fragment, so
 			// both can be casted
 			List<HashFragmentAO> thisFragmentations = new ArrayList<HashFragmentAO>();
-			for (AbstractFragmentAO fragmentAO : currentTransformationResult
+			for (AbstractStaticFragmentAO fragmentAO : currentTransformationResult
 					.getFragmentOperators()) {
 				if (fragmentAO instanceof HashFragmentAO) {
 					thisFragmentations.add((HashFragmentAO) fragmentAO);
@@ -330,7 +330,7 @@ public class PostOptimizationHandler {
 			}
 
 			List<HashFragmentAO> otherFragmentations = new ArrayList<HashFragmentAO>();
-			for (AbstractFragmentAO fragmentAO : otherTransformationResult
+			for (AbstractStaticFragmentAO fragmentAO : otherTransformationResult
 					.getFragmentOperators()) {
 				if (fragmentAO instanceof HashFragmentAO) {
 					otherFragmentations.add((HashFragmentAO) fragmentAO);

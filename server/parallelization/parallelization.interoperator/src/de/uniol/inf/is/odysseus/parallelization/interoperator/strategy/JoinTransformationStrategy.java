@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGrap
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
 public class JoinTransformationStrategy extends
@@ -68,8 +68,8 @@ public class JoinTransformationStrategy extends
 				.getSDFAttributesFromEqualPredicates(attributes, joinOperator);
 
 		int numberOfFragments = 0;
-		List<Pair<AbstractFragmentAO, Integer>> fragmentsSinkInPorts = new ArrayList<Pair<AbstractFragmentAO, Integer>>();
-		List<AbstractFragmentAO> fragments = new ArrayList<AbstractFragmentAO>();
+		List<Pair<AbstractStaticFragmentAO, Integer>> fragmentsSinkInPorts = new ArrayList<Pair<AbstractStaticFragmentAO, Integer>>();
+		List<AbstractStaticFragmentAO> fragments = new ArrayList<AbstractStaticFragmentAO>();
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 		upstreamOperatorSubscriptions.addAll(joinOperator
@@ -84,7 +84,7 @@ public class JoinTransformationStrategy extends
 					// from
 					// this subscription, create fragment operator
 					// Fragment operator
-					AbstractFragmentAO fragmentAO;
+					AbstractStaticFragmentAO fragmentAO;
 					try {
 						fragmentAO = createFragmentAO(
 								settingsForOperator.getFragementationType(),
@@ -101,7 +101,7 @@ public class JoinTransformationStrategy extends
 					}
 					transformationResult.addFragmentOperator(fragmentAO);
 
-					Pair<AbstractFragmentAO, Integer> pair = new Pair<AbstractFragmentAO, Integer>();
+					Pair<AbstractStaticFragmentAO, Integer> pair = new Pair<AbstractStaticFragmentAO, Integer>();
 					pair.setE1(fragmentAO);
 					pair.setE2(upstreamOperatorSubscription.getSinkInPort());
 					fragmentsSinkInPorts.add(pair);
@@ -132,7 +132,7 @@ public class JoinTransformationStrategy extends
 			newJoinOperator.setUniqueIdentifier(joinOperator
 					.getUniqueIdentifier() + "_" + i);
 
-			for (Pair<AbstractFragmentAO, Integer> pair : fragmentsSinkInPorts) {
+			for (Pair<AbstractStaticFragmentAO, Integer> pair : fragmentsSinkInPorts) {
 				BufferAO buffer = new BufferAO();
 				buffer.setName("Buffer_" + bufferCounter);
 				buffer.setThreaded(settingsForOperator.isUseThreadedBuffer());
@@ -193,14 +193,14 @@ public class JoinTransformationStrategy extends
 	}
 
 	@Override
-	public List<Class<? extends AbstractFragmentAO>> getAllowedFragmentationTypes() {
-		List<Class<? extends AbstractFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractFragmentAO>>();
+	public List<Class<? extends AbstractStaticFragmentAO>> getAllowedFragmentationTypes() {
+		List<Class<? extends AbstractStaticFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractStaticFragmentAO>>();
 		allowedFragmentTypes.add(HashFragmentAO.class);
 		return allowedFragmentTypes;
 	}
 
 	@Override
-	public Class<? extends AbstractFragmentAO> getPreferredFragmentationType() {
+	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return HashFragmentAO.class;
 	}
 
@@ -209,7 +209,7 @@ public class JoinTransformationStrategy extends
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
 			ILogicalOperator currentClonedOperator, int iteration,
-			List<AbstractFragmentAO> fragments,
+			List<AbstractStaticFragmentAO> fragments,
 			ParallelOperatorSettings settingsForOperator) {
 		if (currentExistingOperator instanceof AggregateAO) {
 			SDFAttributeHelper.checkIfAttributesAreEqual((AggregateAO) currentExistingOperator, iteration,

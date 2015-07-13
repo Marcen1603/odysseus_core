@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
-import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RangeFragmentAO;
 
@@ -32,13 +32,13 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 		return true;
 	}
 
-	protected AbstractFragmentAO createFragmentAO(
-			Class<? extends AbstractFragmentAO> fragmentClass,
+	protected AbstractStaticFragmentAO createFragmentAO(
+			Class<? extends AbstractStaticFragmentAO> fragmentClass,
 			int degreeOfParallelization, String namePostfix,
 			List<SDFAttribute> hashAttributes, String rangeAttributeString,
 			List<String> rangeRanges) throws InstantiationException,
-			IllegalAccessException {
-		AbstractFragmentAO fragmentAO = fragmentClass.newInstance();
+			IllegalAccessException { 
+		AbstractStaticFragmentAO fragmentAO = fragmentClass.newInstance();
 		fragmentAO.setNumberOfFragments(degreeOfParallelization);
 		fragmentAO.setName(fragmentAO.getName() + namePostfix); // set postfix
 		fragmentAO.setUniqueIdentifier(UUID.randomUUID().toString());
@@ -83,7 +83,7 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 	protected ILogicalOperator doPostParallelization(
 			ILogicalOperator existingOperator, ILogicalOperator newOperator,
 			String endOperatorId, int iteration,
-			List<AbstractFragmentAO> fragments,
+			List<AbstractStaticFragmentAO> fragments,
 			ParallelOperatorSettings settingsForOperator) {
 
 		ILogicalOperator lastClonedOperator = newOperator;
@@ -148,6 +148,6 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
 			ILogicalOperator currentClonedOperator, int iteration,
-			List<AbstractFragmentAO> fragments,
+			List<AbstractStaticFragmentAO> fragments,
 			ParallelOperatorSettings settingsForOperator);
 }

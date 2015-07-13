@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOpera
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
+import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
 public class ParallelOperatorSettings {
 
@@ -26,7 +27,7 @@ public class ParallelOperatorSettings {
 
 	private boolean assureSemanticCorrectness = false;
 
-	private Class<? extends AbstractFragmentAO> fragementationType;
+	private Class<? extends AbstractStaticFragmentAO> fragementationType;
 
 	public static ParallelOperatorSettings createDefaultSettings(
 			IParallelTransformationStrategy<? extends ILogicalOperator> strategy,
@@ -139,12 +140,12 @@ public class ParallelOperatorSettings {
 		this.multithreadingStrategy = multithreadingStrategy;
 	}
 
-	public Class<? extends AbstractFragmentAO> getFragementationType() {
+	public Class<? extends AbstractStaticFragmentAO> getFragementationType() {
 		return fragementationType;
 	}
 
 	public void setFragementationType(
-			Class<? extends AbstractFragmentAO> fragementationType) {
+			Class<? extends AbstractStaticFragmentAO> fragementationType) {
 		this.fragementationType = fragementationType;
 	}
 
