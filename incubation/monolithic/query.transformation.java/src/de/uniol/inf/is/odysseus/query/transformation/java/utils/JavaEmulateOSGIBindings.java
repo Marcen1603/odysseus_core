@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
@@ -148,12 +151,28 @@ public class JavaEmulateOSGIBindings {
 		
 		for (Map.Entry<String, String> entry : neededProtocolHandler.entrySet())
 		{
+			
+	
+			try {
+				Bundle neededBundel = org.osgi.framework.FrameworkUtil.getBundle(Class.forName(entry.getKey()));
+				System.out.println(neededBundel.getSymbolicName());
+	
+				URL entryss = neededBundel.getEntry(".project");
+				String path = FileLocator.toFileURL(entryss).getPath();
+				
+				System.out.println(path);
+			} catch (ClassNotFoundException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		    neededImportList.add(entry.getKey());
 			code.append("\n");
 			code.append("protocolhandlerregistry.register(new "+entry.getValue()+"());");
 			code.append("\n");
 		}
 		
+		
+
 		
 		
 		/*
