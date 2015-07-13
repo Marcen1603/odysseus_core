@@ -67,7 +67,11 @@ xcopy /Y OdysseusIntervalapproach.jar %2
 cd %1\common\resources\com.google.guava
 xcopy /Y guava-18.0.jar %2
 
-
+::server\relational\relational_interval
+cd %1\server\relational\relational_interval
+xcopy %1\server\relational\relational_interval\src\* %1\server\relational\relational_interval\bin /s /e /c /y
+jar cvf OdysseusRelationalInterval.jar *.properties lib/*.jar -C bin .
+xcopy /Y OdysseusRelationalInterval.jar %2
 
 
 
