@@ -24,13 +24,6 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.parallelization.intraoperator"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.parallelization.interoperator"
          download-size="0"
          install-size="0"
