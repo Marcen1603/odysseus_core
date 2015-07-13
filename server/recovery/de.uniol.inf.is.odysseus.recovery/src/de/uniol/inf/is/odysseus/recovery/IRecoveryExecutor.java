@@ -36,12 +36,4 @@ public interface IRecoveryExecutor {
 	 */
 	public void activateBackup(List<Integer> queryIds);
 
-	/**
-	 * Deactivates the backup mechanism for given queries.
-	 * 
-	 * @param queryIds
-	 *            The ids of the queries.
-	 */
-	public void deactivateBackup(List<Integer> queryIds);
-
 }

@@ -332,14 +332,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	}
 
 	/**
-	 * Global recovery component which is always active.
-	 */
-	@Override
-	public void deactivateBackup(List<Integer> queryIds) {
-		// Nothing to do.
-	}
-
-	/**
 	 * Global recovery component which has no dependencies. Therefor it can
 	 * directly react to crashes.
 	 */

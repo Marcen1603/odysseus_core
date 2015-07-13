@@ -6,5 +6,10 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Michael Brand
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: com.google.guava,
- de.uniol.inf.is.odysseus.recovery.systemlog
+ de.uniol.inf.is.odysseus.recovery.systemlog,
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core
 Export-Package: de.uniol.inf.is.odysseus.recovery
+Service-Component: OSGI-INF/PreParserKeywordProvider.xml,
+ OSGI-INF/RecoveryExecutorPreParserKeyword.xml

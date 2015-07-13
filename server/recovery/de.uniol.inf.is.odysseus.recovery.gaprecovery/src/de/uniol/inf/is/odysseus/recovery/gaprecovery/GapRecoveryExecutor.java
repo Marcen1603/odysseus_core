@@ -21,17 +21,12 @@ public class GapRecoveryExecutor implements IRecoveryExecutor {
 
 	@Override
 	public void recover(List<Integer> queryIds) throws Exception {
-		// TODO implement
+		// TODO implement GapRecoveryExecutor.recover
 	}
 
 	@Override
 	public void activateBackup(List<Integer> queryIds) {
-		// TODO implement
-	}
-
-	@Override
-	public void deactivateBackup(List<Integer> queryIds) {
-		// TODO implement
+		// TODO implement GapRecoveryExecutor.activateBackup
 	}
 
 }
