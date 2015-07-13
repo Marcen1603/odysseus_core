@@ -172,43 +172,6 @@ public class JavaEmulateOSGIBindings {
 		}
 		
 		
-
-		
-		
-		/*
-		//code for handler add
-		for(Component cp : handlerList){
-			Class<?> stringInterfaceClass;
-			Class<?> implementationClass;
-	
-			try {
-				List<Component.Service.Provide> provides = cp.getService().getProvide();
-				
-				//dirty get first
-				//TODO fix ?
-				stringInterfaceClass = Class.forName(provides.get(0).getInterface());
-				implementationClass = Class.forName(cp.getImplementation().getClazz());
-				
-				code.append(stringInterfaceClass.getSimpleName()+" " + implementationClass.getSimpleName().toLowerCase()+" = new "+implementationClass.getSimpleName()+"();");
-				code.append("\n");
-				
-				Component registry = getRegistryForInterface(registryList, provides.get(0).getInterface());
-				
-				String bindString = registry.getReference().getBind();
-				String registryVariable = Class.forName(registry.getImplementation().getClazz()).getSimpleName().toLowerCase();
-				
-				
-				code.append(registryVariable+"."+bindString+"("+implementationClass.getSimpleName().toLowerCase()+");");
-				code.append("\n");
-				code.append("\n");
-				
-				neededImportList.add(implementationClass.getName());
-				neededImportList.add(stringInterfaceClass.getName());
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-*/
 		return code.toString();
 		
 	}
@@ -221,17 +184,7 @@ public class JavaEmulateOSGIBindings {
 	    return xmlFileList;
 	}
 	
-	private Component getRegistryForInterface(List<Component> registryList,String stringInterface){
-		for(Component cp : registryList){
-			
-			if(cp.getReference().getInterface().equals(stringInterface)){
-				//registry found
-				return cp;
-			}
-		}
-		return null;
-	}
-	
+
 	public List<String> getNeededImports(){
 		return neededImportList;
 	}

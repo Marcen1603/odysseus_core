@@ -3,11 +3,7 @@ package de.uniol.inf.is.odysseus.query.transformation.python;
 import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.transformation.operator.IOperator;
-import de.uniol.inf.is.odysseus.query.transformation.operator.registry.OperatorRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.python.filewrite.PythonFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.AbstractTargetPlatform;
 

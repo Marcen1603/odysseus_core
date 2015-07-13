@@ -22,44 +22,11 @@ public class TransformProtocolHandler {
         transportHandler.processInOpen();
 	 
 	 */
-	public static String getCodeForProtocolHandler(ProtocolHandlerParameter protocolHandlerParameter, String operatorVariable, ITransportDirection direction){
-		String wrapper = "";
-	
-		if(protocolHandlerParameter.getWrapper().equals("GenericPull")){
-			 wrapper = "IAccessPattern.PULL";
-		}else{
-			 wrapper = "IAccessPattern.PUSH";
-		}
-		
-		TransformationInformation.getInstance().addDataHandler(protocolHandlerParameter.getDataHandler());
-		TransformationInformation.getInstance().addProtocolHandler(protocolHandlerParameter.getProtocolHandler());
-		TransformationInformation.getInstance().addTransportHandler(protocolHandlerParameter.getTransportHandler());
-		
-		
-		StringBuilder code = new StringBuilder();
-		code.append("\n");
-		code.append("IProtocolHandler "+operatorVariable+"ProtocolHandler =  protocolhandlerregistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection."+direction.toString()+", "+wrapper+", "+operatorVariable+"ParameterInfo"+",  datahandlerregistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\","+ operatorVariable+"SDFSchema));");
-		code.append("\n");
-		code.append("ITransportHandler "+operatorVariable+"TransportHandler = new FileHandler("+operatorVariable+"ProtocolHandler, "+operatorVariable+"ParameterInfo);");
-		code.append("\n");
-		code.append(operatorVariable+"ProtocolHandler.setTransportHandler("+operatorVariable+"TransportHandler);");
-		code.append("\n");
-		
-		if(wrapper.equals("IAccessPattern.PULL")){
-			code.append(operatorVariable+"TransportHandler.processInOpen();");
-		}
-		
-		code.append("\n");
-		code.append("\n");
-	 
-		return code.toString();
-	}
-	
-	
-	
+
+
 	public static CodeFragmentInfo getCodeForProtocolHandlerNeu(ProtocolHandlerParameter protocolHandlerParameter, String operatorVariable, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
-		Set<String> imports = new HashSet();
+		Set<String> imports = new HashSet<String>();
 		
 
 		String wrapper = "";
@@ -106,17 +73,4 @@ public class TransformProtocolHandler {
 		return codeFragmentInfo;
 	}
 	
-	
-	
-	
-	public static Set<String> getImportsForProtocolHandler(){
-		Set<String> importList = new HashSet<String>();
-		importList.add(IProtocolHandler.class.getName());
-		importList.add(ITransportHandler.class.getName());
-		importList.add(FileHandler.class.getName());
-		
-		return importList;
-		
-	}
-
 }

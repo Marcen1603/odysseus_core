@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -28,11 +25,6 @@ public class CreateDefaultCode {
 				
 		return sdfSchema;
 	}
-	
-	
-	
-	
-	
 
 	public static CodeFragmentInfo codeForAccessFrameworkNeu(ILogicalOperator operator){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
