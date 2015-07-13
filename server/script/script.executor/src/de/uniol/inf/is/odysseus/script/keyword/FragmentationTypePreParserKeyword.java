@@ -10,8 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterFragmentationType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 /**
@@ -20,7 +19,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
  * #DATAFRAGMENTATIONTYPE name source additionalParameters; name source additionalParameters; ...
  * @author Michael Brand
  */
-public class FragmentationTypePreParserKeyword extends AbstractPreParserKeyword {
+public class FragmentationTypePreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	/**
 	 * The string representation of the keyword.
@@ -42,7 +41,7 @@ public class FragmentationTypePreParserKeyword extends AbstractPreParserKeyword 
 				throw new OdysseusScriptException("At least one data fragmentation strategy is not defined.");
 			
 			String strategyName = parameters[0];
-			if(strategyName == null || !ExecutorHandler.getServerExecutor().getDataFragmentationNames().contains(strategyName))
+			if(strategyName == null || !getServerExecutor().getDataFragmentationNames().contains(strategyName))
 				throw new OdysseusScriptException("Specified data fragmentation strategy '" + strategyName + 
 						"' not found.");
 			

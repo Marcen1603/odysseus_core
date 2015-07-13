@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -49,7 +48,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		try {
-			IExecutor executor = ExecutorHandler.getServerExecutor();
+			IExecutor executor = getServerExecutor();
 			if (executor == null) {
 				throw new OdysseusScriptException("No executor found");
 			}

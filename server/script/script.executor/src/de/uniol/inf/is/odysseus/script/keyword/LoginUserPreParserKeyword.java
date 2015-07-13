@@ -21,11 +21,10 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class LoginUserPreParserKeyword extends AbstractPreParserKeyword{
+public class LoginUserPreParserKeyword extends AbstractPreParserExecutorKeyword{
 
 	public static final String LOGIN = "LOGIN";
 
@@ -43,7 +42,7 @@ public class LoginUserPreParserKeyword extends AbstractPreParserKeyword{
 		
 		ISession user = null;
 		if (password != null && password.length() > 0){
-			user = ExecutorHandler.getServerExecutor().login(userName, password.getBytes(), caller.getTenant().getName());
+			user = getServerExecutor().login(userName, password.getBytes(), caller.getTenant().getName());
 		}
 		if( user == null ) {
 			throw new OdysseusScriptException("Login with user " + userName + " failed");
