@@ -2,10 +2,8 @@ package de.uniol.inf.is.odysseus.query.transformation.java;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -14,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.transformation.java.analysis.JavaImportAnalyse;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
@@ -87,34 +84,33 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		//generate code for osgi binds
 		osgiBinds = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath());
 		
-		//add default java imports
-		//addDefaultImport();
-		
-		//analyse imports for the body code
-		//importList.addAll(new JavaImportAnalyse().analyseCodeForImport(parameter, body.toString()));
-
 		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
 		
 		//add imports that needed for the code
-		importList.addAll(new JavaImportAnalyse().analyseCodeForImport(parameter, startDataStream()));
+		//importList.addAll(new JavaImportAnalyse().analyseCodeForImport(parameter, startDataStream()));
+		
+		//generate start code
+		CodeFragmentInfo startStreams = CreateDefaultCode.codeForStartStreams(sinkOPs, sourceOPs);
+		
+		importList.addAll(startStreams.getImports());
 		
 		try {
 			
-			//create java file
+			//create java file6
 			javaFileWrite.createFile();
 			
 			javaFileWrite.writePackage();
 			
 			//write java imports
 			javaFileWrite.writeImports(importList);
-			
+		
 			//write java main
 			javaFileWrite.writeClassTop();
 			
 			//write body of main
 				javaFileWrite.writeBody(osgiBinds);
 				javaFileWrite.writeBody(body.toString());
-				javaFileWrite.writeBody(startDataStream());
+				javaFileWrite.writeBody(startStreams.getCode());
 			
 			
 			//close file
@@ -122,105 +118,11 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			
 			ExecuteShellComand.compileJavaProgram(parameter.getTempDirectory());	
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		
 	}
-	
-	/*
-	 * TODO how to get the needed imports for java? classLoader ?
-	 */
-	private void addDefaultImport() {
-		importList.add("java.util.ArrayList");
-		importList.add("java.util.List");
-		importList.add("java.io.IOException");
-		importList.add("java.util.concurrent.TimeUnit");
-	}
-	
-	
-	private String generateSubscription(ILogicalOperator operator) {
-		
-		StringBuilder code = new StringBuilder();
-	
-		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
-		
-		Collection<LogicalSubscription> subscriptionSourceList = operator.getSubscribedToSource();
-			
-		   if(!subscriptionSourceList.isEmpty()){
-			   for(LogicalSubscription sub : subscriptionSourceList){
-					  String targetOp =  TransformationInformation.getInstance().getVariable(sub.getTarget());
-					  if(!targetOp.equals("")){
-						  code.append("\n");
-							code.append("\n");
-							code.append(operatorVariable+"PO.subscribeToSource("+targetOp+"PO, "+sub.getSinkInPort()+", "+sub.getSourceOutPort()+", "+targetOp+"PO.getOutputSchema());");
-							code.append("\n");
-					  }	
-				   }
-		   }
-		
-
-		code.append("\n");
-		code.append("\n");
-		code.append("\n");
-		
-		return code.toString();
-	}
-	
-	
-	
-	
-	/*
-	 * Test
-	 * 
-	 ArrayList<IPhysicalOperator> testList = new ArrayList<IPhysicalOperator>();
-	 testList.add(soccergame37PO);
-	 IOperatorOwner operatorOwner = new PhysicalQuery(testList);
-	 
-
-	   testAccess.open(operatorOwner); 
-	     while(true){
-        	testAccess.transferNext();
-        }
-	 */
-	private String startDataStream(){
-		StringBuilder code = new StringBuilder();
-		code.append("\n");
-		code.append("\n");
-		code.append("ArrayList<IPhysicalOperator> physicalOperatorList = new ArrayList<IPhysicalOperator>();");
-		code.append("\n");
-		code.append("physicalOperatorList.add("+TransformationInformation.getInstance().getVariable(sourceOPs.get(0))+"PO);");
-		code.append("\n");
-		code.append("IOperatorOwner operatorOwner = new PhysicalQuery(physicalOperatorList);");
-		code.append("\n");
-		code.append("\n");
-	
-		//add owner to op
-		for (Entry<ILogicalOperator, String> entry : TransformationInformation.getInstance().getOperatorList().entrySet())
-		{
-			code.append(entry.getValue()+"PO.addOwner(operatorOwner);");
-			code.append("\n");
-		}
-	
-		//Open on sink ops
-		for(ILogicalOperator sinkOp : sinkOPs){
-				code.append(TransformationInformation.getInstance().getVariable(sinkOp)+"PO.open(operatorOwner);");
-				code.append("\n");
-		}
-		
-		code.append("\n");
-		code.append("while("+TransformationInformation.getInstance().getVariable(sourceOPs.get(0))+"PO.hasNext()){");
-		code.append("\n");
-		code.append(TransformationInformation.getInstance().getVariable(sourceOPs.get(0))+"PO.transferNext();");
-		code.append("\n");
-		code.append("}");
-		code.append("\n");
-		code.append("\n");
-		
-		return code.toString();
-	}
-
 	
 	
 	private void walkTroughLogicalPlan(List<ILogicalOperator> operatorSources,TransformationParameter parameter){
@@ -268,7 +170,9 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				
 			
 				//generate subscription
-				body.append(generateSubscription(operator));	
+				CodeFragmentInfo  subscription = CreateDefaultCode.generateSubscription(operator);
+				body.append(subscription.getCode());	
+				importList.addAll(subscription.getImports());
 			}
 		}
 		
