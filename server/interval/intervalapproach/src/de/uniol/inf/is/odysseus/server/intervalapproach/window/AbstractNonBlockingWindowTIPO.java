@@ -28,10 +28,6 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IStreamObject<? ex
 		super(algebraOp);
 	}
 
-	public AbstractNonBlockingWindowTIPO(AbstractNonBlockingWindowTIPO<T> po) {
-		super(po);
-	}
-
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;

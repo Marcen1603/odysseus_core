@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -36,10 +35,9 @@ public class TRelationalInsertGroupProcessorTIPORule
 	public void execute(
 			AbstractPartitionedWindowTIPO<IStreamObject<ITimeInterval>> windowPO,
 			TransformationConfiguration transformConfig) throws RuleException {
-		AbstractWindowAO ao = windowPO.getWindowAO();
 		@SuppressWarnings("rawtypes")
-		RelationalGroupProcessor r = new RelationalGroupProcessor<>(
-				ao.getInputSchema(), ao.getOutputSchema(), ao.getPartitionBy(),
+		RelationalGroupProcessor r = new RelationalGroupProcessor(
+				windowPO.getInputSchema(), windowPO.getOutputSchema(), windowPO.getPartitionedBy(),
 				null, false);
 		windowPO.setGroupProcessor(r);
 		update(windowPO);
@@ -50,7 +48,7 @@ public class TRelationalInsertGroupProcessorTIPORule
 			AbstractPartitionedWindowTIPO<IStreamObject<ITimeInterval>> operator,
 			TransformationConfiguration transformConfig) {
 		if (operator.getOutputSchema().getType() == Tuple.class) {
-			return operator.getWindowAO().isPartitioned();
+			return operator.isPartitioned();
 		}
 		return false;
 	}

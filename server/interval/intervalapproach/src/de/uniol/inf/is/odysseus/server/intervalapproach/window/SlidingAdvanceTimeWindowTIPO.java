@@ -34,9 +34,6 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITi
 		super(algebraOp);
 	}
 
-	public SlidingAdvanceTimeWindowTIPO(SlidingAdvanceTimeWindowTIPO<T> name) {
-		super(name);
-	}
 		
 	@Override
 	protected PointInTime calcWindowEnd(ITimeInterval time) {		

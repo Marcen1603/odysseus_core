@@ -26,10 +26,6 @@ public class UnboundedWindowTIPO<T extends IStreamObject<? extends ITimeInterval
 		super(algebraOp);
 	}
 
-	public UnboundedWindowTIPO(UnboundedWindowTIPO<T> unboundedWindowTIPO) {
-		super(unboundedWindowTIPO);
-	}
-
 	@Override
 	protected PointInTime calcWindowEnd(ITimeInterval interval) {
 		return PointInTime.getInfinityTime();

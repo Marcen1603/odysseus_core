@@ -30,11 +30,7 @@ public class SlidingTimeWindowTIPO<T extends IStreamObject<ITimeInterval>> exten
 	public SlidingTimeWindowTIPO(AbstractWindowAO algebraOp) {
 		super(algebraOp);
 	}
-
-	public SlidingTimeWindowTIPO(SlidingTimeWindowTIPO<T> name) {
-		super(name);
-	}
-
+	
 	@Override
 	protected PointInTime calcWindowEnd(ITimeInterval time) {
 		return time.getStart().sum(windowSize);

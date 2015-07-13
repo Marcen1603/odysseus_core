@@ -15,14 +15,19 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IWindow;
 
@@ -33,58 +38,59 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	protected final WindowType windowType;
 	protected final boolean partitioned;
 	final boolean usesSlideParam;
-	
-	protected final AbstractWindowAO ao;
 
 	private final TimeUnit baseTimeUnit;
+	private final List<SDFAttribute> partitionedBy;
+	private final SDFSchema inputSchema;
 
 	public AbstractWindowTIPO(AbstractWindowAO ao) {
-		this.ao = ao;
-		
-		this.baseTimeUnit = ao.getBaseTimeUnit();
+		this(ao.getWindowType(), ao.getBaseTimeUnit(), ao.getWindowSize(), ao
+				.getWindowAdvance(), ao.getWindowSlide(), ao.isPartitioned(),
+				ao.getPartitionBy(), ao.getInputSchema());
+	}
 
-		if (ao.getWindowSize() != null) {
-			this.windowSize = ao.getBaseTimeUnit().convert(
-					ao.getWindowSize().getTime(), ao.getWindowSize().getUnit());
+	public AbstractWindowTIPO(WindowType windowType, TimeUnit baseTimeUnit,
+			TimeValueItem windowSize, TimeValueItem windowAdvance,
+			TimeValueItem windowSlide, boolean partioned,
+			List<SDFAttribute> partitionedBy, SDFSchema inputSchema) {
+
+		this.baseTimeUnit = baseTimeUnit;
+
+		this.inputSchema = inputSchema;
+
+		if (windowSize != null) {
+			this.windowSize = baseTimeUnit.convert(windowSize.getTime(),
+					windowSize.getUnit());
 		} else {
 			this.windowSize = -1;
 		}
-		if (ao.getWindowAdvance() == null && ao.getWindowSlide() == null) {
+		if (windowAdvance == null && windowSlide == null) {
 			this.windowAdvance = 1;
 			usesSlideParam = false;
-		} else if (ao.getWindowAdvance() != null) {
-			this.windowAdvance = ao.getBaseTimeUnit().convert(
-					ao.getWindowAdvance().getTime(),
-					ao.getWindowAdvance().getUnit());
+		} else if (windowAdvance != null) {
+			this.windowAdvance = baseTimeUnit.convert(windowAdvance.getTime(),
+					windowAdvance.getUnit());
 			usesSlideParam = false;
 		} else {
-			this.windowAdvance = ao.getBaseTimeUnit().convert(
-					ao.getWindowSlide().getTime(),
-					ao.getWindowSlide().getUnit());
+			this.windowAdvance = baseTimeUnit.convert(windowSlide.getTime(),
+					windowSlide.getUnit());
 			usesSlideParam = true;
 		}
-		// this.windowAO = ao;
-		this.windowType = ao.getWindowType();
-		this.partitioned = ao.isPartitioned();
-		// setName(getName() + " s=" + windowSize + " a=" + windowAdvance);
-		addParameterInfo("unit-based size", windowSize);
-		if (!usesSlideParam) {
-			addParameterInfo("unit-based advance", windowAdvance);
+		this.windowType = windowType;
+		this.partitioned = partioned;
+		if (partitionedBy != null) {
+			this.partitionedBy = new ArrayList<>(partitionedBy);
 		} else {
-			addParameterInfo("unit-based slide", windowAdvance);
+			this.partitionedBy = null;
 		}
-	}
+		// setName(getName() + " s=" + windowSize + " a=" + windowAdvance);
+		addParameterInfo("unit-based size", this.windowSize);
+		if (!usesSlideParam) {
+			addParameterInfo("unit-based advance", this.windowAdvance);
+		} else {
+			addParameterInfo("unit-based slide", this.windowAdvance);
+		}
 
-	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {
-		super(window);
-		this.ao = window.ao;
-		this.baseTimeUnit = window.baseTimeUnit;
-		this.windowSize = window.windowSize;
-		this.windowAdvance = window.windowAdvance;
-		// this.windowAO = window.windowAO.clone();
-		this.windowType = window.windowType;
-		this.partitioned = window.partitioned;
-		this.usesSlideParam = window.usesSlideParam;
 	}
 
 	@Override
@@ -108,9 +114,13 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	public WindowType getWindowType() {
 		return this.windowType;
 	}
-	
-	public AbstractWindowAO getWindowAO() {
-		return ao;
+
+	public List<SDFAttribute> getPartitionedBy() {
+		return partitionedBy;
+	}
+
+	public SDFSchema getInputSchema() {
+		return inputSchema;
 	}
 
 	@SuppressWarnings("unchecked")

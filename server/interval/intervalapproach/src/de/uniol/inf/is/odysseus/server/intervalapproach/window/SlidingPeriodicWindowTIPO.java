@@ -53,12 +53,7 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 		this.windowSlide = logical.getBaseTimeUnit().convert(logical.getWindowSlide().getTime(), logical.getWindowSlide().getUnit());
 		setName(getName() + " slide=" + windowSlide);
 	}
-
-	public SlidingPeriodicWindowTIPO(SlidingPeriodicWindowTIPO<R> original) {
-		super(original);
-		this.windowSlide = original.windowSlide;
-	}
-
+	
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;

@@ -68,12 +68,6 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 		setName(getName() + " slide=" + windowSlide);
 	}
 
-	public SlidingPeriodicBlockingWindowTIPO(
-			SlidingPeriodicBlockingWindowTIPO<R> original) {
-		super(original);
-		this.windowSlide = original.windowSlide;
-	}
-
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
