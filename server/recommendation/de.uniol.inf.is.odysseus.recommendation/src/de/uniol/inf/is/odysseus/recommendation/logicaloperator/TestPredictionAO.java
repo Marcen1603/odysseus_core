@@ -15,8 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.recommendation.logicaloperator;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -26,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.recommendation.transform.FindAttributeHelper;
+import de.uniol.inf.is.odysseus.recommendation.transform.TTestPredictionAORule;
 
 /**
  * @author Cornelius Ludmann
@@ -59,7 +66,7 @@ public class TestPredictionAO extends UnaryLogicalOp {
 	 * These attributes store the user, item and rating.
 	 */
 	private SDFAttribute userAttribute, itemAttribute, ratingAttribute,
-	predictedRatingAttribute;
+			predictedRatingAttribute;
 
 	/**
 	 * The evaluation metric.
@@ -215,7 +222,29 @@ public class TestPredictionAO extends UnaryLogicalOp {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+	 * #getOutputSchemaIntern(int)
+	 */
+	@Override
+	protected SDFSchema getOutputSchemaIntern(final int pos) {
+		if (pos == 0) {
+			final SDFSchema subSchema = getInputSchema(0);
+			final List<SDFAttribute> attributes = new LinkedList<SDFAttribute>();
+			attributes.add(new SDFAttribute(subSchema.getURI(),
+					TTestPredictionAORule.ERROR_ATTRIBUTE_NAME,
+					SDFDatatype.DOUBLE, subSchema));
+			final SDFSchema outputSchema = SDFSchemaFactory
+					.createNewWithAttributes(attributes, subSchema);
+			return outputSchema;
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
 	 * #clone()

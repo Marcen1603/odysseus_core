@@ -61,6 +61,8 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 		final String predictRatingAttributeName = predictedRatingAttribute
 				.getAttributeName();
 
+		operator.setOutputSchema(operator.getInputSchema());
+
 		if (operator.getTopN() != -1) {
 			// top n
 			final NamedExpression scoringFunction = new NamedExpression(
@@ -99,6 +101,7 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 					sdfExpression);
 			final SelectAO selectAo = new SelectAO(predicate);
 			// selectAo.setName(selectAo.getClass().getSimpleName());
+			selectAo.setOutputSchema(operator.getInputSchema());
 			RestructHelper.insertOperatorBefore(selectAo, operator);
 			insert(selectAo);
 		}

@@ -154,11 +154,13 @@ public class BRISMFRecommendationLearner extends
 			initPredictor();
 		}
 		// TODO: disable updates?
+		brismfPredictor.getData().disableUpdates(true);
 		for (Tuple<ITimeInterval> tuple : oldLearningObjects) {
 			int user = getUserInTuple(tuple);
 			int item = getItemInTuple(tuple);
 			this.brismfPredictor.getData().removeRating(user, item);
 		}
+		brismfPredictor.getData().disableUpdates(false);
 		
 		
 		for (final Tuple<ITimeInterval> t : oldLearningObjects) {

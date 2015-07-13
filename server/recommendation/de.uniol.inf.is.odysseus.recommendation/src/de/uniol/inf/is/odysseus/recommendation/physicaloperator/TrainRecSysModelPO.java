@@ -15,8 +15,10 @@
  */
 package de.uniol.inf.is.odysseus.recommendation.physicaloperator;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner;
@@ -41,7 +44,8 @@ import de.uniol.inf.is.odysseus.recommendation.model.recommendation_candidates_m
  *
  */
 public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
-		AbstractPipe<Tuple<M>, Tuple<M>> implements Cloneable {
+		AbstractPipe<Tuple<M>, Tuple<M>> implements Cloneable,
+		IPhysicalOperatorKeyValueProvider {
 
 	protected static Logger logger = LoggerFactory
 			.getLogger(TrainRecSysModelPO.class);
@@ -89,6 +93,14 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	private final RecommendationLearner<Tuple<M>, M, U, I, P> learner;
 
 	private final boolean outputRecomCandObj;
+
+	/**
+	 * This variable stores the number of leanring tuples that are currently
+	 * valid. That means, every time a tuple is transfered to the learner, this
+	 * variable is increased, every time a tuple is removed from the leaner
+	 * (decaying tuple), this variable is decreased.
+	 */
+	private long noOfActiveLearningTuples = 0;
 
 	/**
 	 *
@@ -177,7 +189,6 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	 */
 	@Override
 	protected void process_next(final Tuple<M> object, final int port) {
-
 		final PointInTime ts = object.getMetadata().getStart();
 		final PointInTime te = object.getMetadata().getEnd();
 		@SuppressWarnings("unchecked")
@@ -321,7 +332,6 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	private void createAndTransferNewModel(
 			final PointInTime currentBufferingPointInTime,
 			final PointInTime ts, final M metadata) {
-
 		final long startOfModelLearning = System.currentTimeMillis();
 
 		final RatingPredictor<Tuple<M>, M, U, I, P> model = this.learner
@@ -346,6 +356,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	private void removeLearningTuplesFromLearners(
 			final Set<Tuple<M>> decayingLearningTuples) {
 		this.learner.removeLearningData(decayingLearningTuples);
+		--this.noOfActiveLearningTuples;
 		//
 		// if (this.recommCandBuilder != null) {
 		// this.recommCandBuilder.removeRatedItems(decayingLearningTuples);
@@ -359,6 +370,7 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 	private void addLearningTuplesToLearners(
 			final Set<Tuple<M>> newLearningTuples) {
 		this.learner.addLearningData(newLearningTuples);
+		++this.noOfActiveLearningTuples;
 		//
 		// if (this.recommCandBuilder != null) {
 		// this.recommCandBuilder.addRatedItems(newLearningTuples);
@@ -480,5 +492,33 @@ public class TrainRecSysModelPO<M extends ITimeInterval, U, I, P> extends
 			final int port) {
 		// FIXME Process punctuation
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
+	 * getName()
+	 */
+	@Override
+	public String getName() {
+		return this.learner.getName();
+		// return super.getName();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.physicaloperator.
+	 * IPhysicalOperatorKeyValueProvider#getKeyValues()
+	 */
+	@Override
+	public Map<String, String> getKeyValues() {
+		final Map<String, String> keyValues = new HashMap<>();
+		keyValues.put("Tuples in Model",
+				String.valueOf(this.noOfActiveLearningTuples));
+		keyValues.putAll(this.learner.getInfo());
+		return keyValues;
 	}
 }

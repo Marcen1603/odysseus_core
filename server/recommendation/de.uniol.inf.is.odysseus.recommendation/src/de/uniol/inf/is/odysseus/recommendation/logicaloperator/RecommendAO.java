@@ -15,8 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.recommendation.logicaloperator;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -137,6 +143,48 @@ public class RecommendAO extends UnaryLogicalOp {
 	@Parameter(name = "min_rating", type = DoubleParameter.class, doc = "The min. rating.", optional = true)
 	public void setMinRating(final double minRating) {
 		this.minRating = minRating;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+	 * #getOutputSchemaIntern(int)
+	 */
+	@Override
+	protected SDFSchema getOutputSchemaIntern(final int port) {
+		if (port == 0) {
+			final SDFSchema subSchema = getInputSchema(0);
+			final List<SDFAttribute> attributes = new LinkedList<SDFAttribute>();
+			// for (final SDFAttribute attr : subSchema.getAttributes()) {
+			// /*
+			// * if (getUserAttribute() == null) { if
+			// * (this.DEFAULT_USER_ATTRIBUTE_NAME.equals(attr
+			// * .getAttributeName())) { attributes.add(attr); } } else if
+			// * (attr == getUserAttribute()) { attributes.add(attr); }
+			// */
+			// attributes.add(attr);
+			// }
+			attributes.add(new SDFAttribute(null, "topk",
+					SDFDatatype.LIST_TUPLE, subSchema));
+			attributes.add(new SDFAttribute(null, "trigger", SDFDatatype.TUPLE,
+					subSchema));
+			for (final SDFAttribute attr : subSchema.getAttributes()) {
+				if (getUserAttribute() == null) {
+					if (this.DEFAULT_USER_ATTRIBUTE_NAME.equals(attr
+							.getAttributeName())) {
+						attributes.add(attr);
+					}
+				} else if (attr == getUserAttribute()) {
+					attributes.add(attr);
+				}
+			}
+			final SDFSchema outputSchema = SDFSchemaFactory
+					.createNewWithAttributes(attributes, subSchema);
+			return outputSchema;
+		}
+		return null;
 	}
 
 	/*

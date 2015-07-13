@@ -40,10 +40,12 @@ public class TSplitLearningTestDataAORule extends
 	 * java.lang.Object)
 	 */
 	@Override
-	public void execute(SplitLearningTestDataAO operator,
-			TransformationConfiguration config) throws RuleException {
+	public void execute(final SplitLearningTestDataAO operator,
+			final TransformationConfiguration config) throws RuleException {
 		if ("ITTT".equals(operator.getStrategy())) {
 			final IPhysicalOperator po = new ITTTPO<ITimeInterval>();
+			po.setOutputSchema(operator.getOutputSchema(0), 0);
+			po.setOutputSchema(operator.getOutputSchema(1), 1);
 			defaultExecute(operator, po, config, true, false);
 			return;
 		} else if ("Hould out".equals(operator.getStrategy())) {
@@ -60,8 +62,8 @@ public class TSplitLearningTestDataAORule extends
 	 * .Object, java.lang.Object)
 	 */
 	@Override
-	public boolean isExecutable(SplitLearningTestDataAO operator,
-			TransformationConfiguration config) {
+	public boolean isExecutable(final SplitLearningTestDataAO operator,
+			final TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 
@@ -74,7 +76,7 @@ public class TSplitLearningTestDataAORule extends
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "Transform SplitLearningTestDataAO";

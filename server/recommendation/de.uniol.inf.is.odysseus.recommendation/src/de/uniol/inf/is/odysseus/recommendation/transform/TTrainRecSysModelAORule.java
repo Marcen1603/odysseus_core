@@ -49,6 +49,8 @@ public class TTrainRecSysModelAORule extends
 						operator.getItemAttribute(),
 						operator.getRatingAttribute(), operator.getOptions(),
 						operator.getOutputUsedItems());
+		trainRecSysModelPO.setOutputSchema(operator.getOutputSchema(0), 0);
+		trainRecSysModelPO.setOutputSchema(operator.getOutputSchema(1), 1);
 
 		defaultExecute(operator, trainRecSysModelPO, config, true, false);
 	}

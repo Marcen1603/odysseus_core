@@ -45,18 +45,18 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  *
  */
 public class TTestPredictionAORule extends
-AbstractTransformationRule<TestPredictionAO> {
+		AbstractTransformationRule<TestPredictionAO> {
 
 	private static final String SQUARE_ERROR_ATTRIBUTE_NAME = "square_error";
 	// private static final String SUM_OF_SQUARE_ERROR_ATTRIBUTE_NAME =
 	// "sum_of_square_error";
 	private static final String COUNT_OF_SQUARE_ERROR_ATTRIBUTE_NAME = "no_of_test_tuples";
-	private static final String RMSE_ATTRIBUTE_NAME = "RMSE";
+	public static final String ERROR_ATTRIBUTE_NAME = "error";
 	private static final String MEAN_OF_SQUARE_ERROR_ATTRIBUTE_NAME = "mean_of_square_error";
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
 	 * java.lang.Object)
@@ -105,14 +105,15 @@ AbstractTransformationRule<TestPredictionAO> {
 					"Aggregate Square Error", windowAo);
 
 			final String[] rmseMapFunction = {
-					// "sqrt(" + SUM_OF_SQUARE_ERROR_ATTRIBUTE_NAME + "/"
-					// + COUNT_OF_SQUARE_ERROR_ATTRIBUTE_NAME + ")",
-					"sqrt(" + MEAN_OF_SQUARE_ERROR_ATTRIBUTE_NAME + ")",
-					COUNT_OF_SQUARE_ERROR_ATTRIBUTE_NAME };
-			insertMapAO("RMSE MAP", new String[] { RMSE_ATTRIBUTE_NAME,
-					// RMSE_ATTRIBUTE_NAME + "_2",
-					COUNT_OF_SQUARE_ERROR_ATTRIBUTE_NAME }, rmseMapFunction,
-					aggregateAO);
+			// "sqrt(" + SUM_OF_SQUARE_ERROR_ATTRIBUTE_NAME + "/"
+			// + COUNT_OF_SQUARE_ERROR_ATTRIBUTE_NAME + ")",
+			"sqrt(" + MEAN_OF_SQUARE_ERROR_ATTRIBUTE_NAME + ")"
+			// , COUNT_OF_SQUARE_ERROR_ATTRIBUTE_NAME
+			};
+			insertMapAO("RMSE MAP", new String[] { ERROR_ATTRIBUTE_NAME
+			// , ERROR_ATTRIBUTE_NAME + "_2"
+			// ,COUNT_OF_SQUARE_ERROR_ATTRIBUTE_NAME
+					}, rmseMapFunction, aggregateAO);
 
 			RestructHelper.removeOperator(operator, false);
 			retract(operator);
@@ -212,7 +213,7 @@ AbstractTransformationRule<TestPredictionAO> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
 	 * .Object, java.lang.Object)
@@ -229,7 +230,7 @@ AbstractTransformationRule<TestPredictionAO> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
 	 */
 	@Override

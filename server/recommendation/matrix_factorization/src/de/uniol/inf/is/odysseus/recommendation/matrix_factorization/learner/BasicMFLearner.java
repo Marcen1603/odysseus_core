@@ -684,4 +684,20 @@ public class BasicMFLearner
 				ImmutableMap.copyOf(unratedItemsByUser));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner
+	 * #getInfo()
+	 */
+	@Override
+	public Map<? extends String, ? extends String> getInfo() {
+		final Map<String, String> info = new HashMap<>();
+		info.put("Tuples in Model (2)", String.valueOf(this.noRatings));
+		info.put("Users in Model", String.valueOf(this.userFeatures.size()));
+		info.put("Items in Model", String.valueOf(this.itemFeatures.size()));
+		return info;
+	}
+
 }

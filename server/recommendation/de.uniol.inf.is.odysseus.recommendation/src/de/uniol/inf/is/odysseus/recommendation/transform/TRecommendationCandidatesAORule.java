@@ -38,11 +38,11 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  *
  */
 public class TRecommendationCandidatesAORule extends
-AbstractTransformationRule<RecommendationCandidatesAO> {
+		AbstractTransformationRule<RecommendationCandidatesAO> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
 	 * java.lang.Object)
@@ -104,7 +104,7 @@ AbstractTransformationRule<RecommendationCandidatesAO> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
 	 * .Object, java.lang.Object)
@@ -117,7 +117,7 @@ AbstractTransformationRule<RecommendationCandidatesAO> {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
 	 */
 	@Override

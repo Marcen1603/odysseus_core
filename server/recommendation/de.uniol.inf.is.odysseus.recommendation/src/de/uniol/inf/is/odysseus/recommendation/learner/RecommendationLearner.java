@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.recommendation.learner;
 
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.machine_learning.learner.Learner;
@@ -59,4 +61,12 @@ public interface RecommendationLearner<T extends IStreamObject<M>, M extends IMe
 	public RatingPredictor<T, M, U, I, P> getModel(boolean train);
 
 	RecommendationCandidates<U, I> getRecommendationCandidatesModel();
+
+	/**
+	 * Get some information (key-value pairs) about the learner (e.g. number of
+	 * users or items used for learning).
+	 * 
+	 * @return A key-value map with some status information about the learner.
+	 */
+	public Map<? extends String, ? extends String> getInfo();
 }

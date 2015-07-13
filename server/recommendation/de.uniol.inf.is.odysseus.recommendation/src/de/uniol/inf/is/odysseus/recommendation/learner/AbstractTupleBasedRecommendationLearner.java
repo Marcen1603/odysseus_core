@@ -270,4 +270,20 @@ public abstract class AbstractTupleBasedRecommendationLearner<T extends Tuple<M>
 		return unratedItems;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.recommendation.learner.RecommendationLearner
+	 * #getInfo()
+	 */
+	@Override
+	public Map<String, String> getInfo() {
+		final Map<String, String> info = new HashMap<>();
+		info.put("Ratings in Model", String.valueOf(this.ratedItems.size()));
+		info.put("Users in Model", String.valueOf(this.ratedItemsByUser.size()));
+		info.put("Items in Model",
+				String.valueOf(this.ratedItems.entrySet().size()));
+		return info;
+	}
 }
