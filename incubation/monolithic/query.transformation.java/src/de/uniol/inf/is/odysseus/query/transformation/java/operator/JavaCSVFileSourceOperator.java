@@ -1,47 +1,40 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.operator;
 
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.IOException;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.Utils;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
+import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 	
-
-	private final String name =  "CSVFileSource";
-	private final String targetPlatform = "Java";
-	  
-	  
-	@Override
-	public String getName() {
-		return name;
+	public JavaCSVFileSourceOperator(){
+		 this.implClass = AccessPO.class;
+		 this.name = "CSVFileSource";
+		 this.targetPlatform = "Java";
+			defaultImports();
 	}
+	  
 	@Override
-	public String getTargetPlatform() {
-		return targetPlatform;
-	}
-	@Override
-	public String getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+		CodeFragmentInfo csvFileSource = new CodeFragmentInfo();
+	
 		StringBuilder code = new StringBuilder();
 		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
-
-	
 		
-
-		code.append(CreateDefaultCode.codeForAccessFramework(operator));
-
+		csvFileSource.addCodeFragmentInfo(CreateDefaultCode.codeForAccessFrameworkNeu(operator));
+		
+		
 		TimestampAO timestampAO = Utils.createTimestampAO(operator, null);
-		
-		
 		
 		//now create the AccessPO
 		code.append("AccessPO "+operatorVariable+"PO = new AccessPO("+operatorVariable+"ProtocolHandler,0);");
@@ -54,21 +47,26 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 		code.append("\n");
 		code.append("((IMetadataInitializer) "+operatorVariable+"PO).setMetadataType("+operatorVariable+"MetaAttribute);");
 		code.append("\n");
-		code.append(CreateDefaultCode.codeForRelationalTimestampAttributeTimeIntervalMFactory(operator, timestampAO));
+		csvFileSource.addCode(code.toString());
+	
+		csvFileSource.addCodeFragmentInfo(CreateDefaultCode.codeForRelationalTimestampAttributeTimeIntervalMFactory(operator, timestampAO));
+
+	
+		csvFileSource.addImport(IMetaAttribute.class.getName());
+		csvFileSource.addImport(TimeInterval.class.getName());
+		csvFileSource.addImport(IOException.class.getName());
 		
-
-		return code.toString();
+		
+		return csvFileSource;
 	}
-	
-	
+
 	@Override
-	public Set<String> getNeededImports() {
-		Set<String> importList = new HashSet<String>();
-		importList.add(AccessPO.class.getPackage().getName()+"."+AccessPO.class.getSimpleName());
-		return importList;
+	public void defineImports() {
+		// TODO Auto-generated method stub
+		
 	}
 	
-	
 
+	
 
 }

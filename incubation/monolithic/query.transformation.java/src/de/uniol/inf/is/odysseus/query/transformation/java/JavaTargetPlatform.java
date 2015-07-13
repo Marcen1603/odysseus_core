@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.query.transformation.java.mapping.Transformation
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIBindings;
+import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.IOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.registry.OperatorRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.AbstractTargetPlatform;
@@ -87,10 +88,10 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		osgiBinds = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath());
 		
 		//add default java imports
-		addDefaultImport();
+		//addDefaultImport();
 		
 		//analyse imports for the body code
-		importList.addAll(new JavaImportAnalyse().analyseCodeForImport(parameter, body.toString()));
+		//importList.addAll(new JavaImportAnalyse().analyseCodeForImport(parameter, body.toString()));
 
 		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
 		
@@ -239,21 +240,33 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 			if(!TransformationInformation.getInstance().isOperatorAdded(operator)){
 				
+			
 				//reg the operator to generate a uniq operatorVariable
 				TransformationInformation.getInstance().addOperator(operator);
-				
+
 				//generate the default code e.g. SDFSchema
-				String operatorCode = CreateDefaultCode.initOperator(operator);
+				CodeFragmentInfo initOp = CreateDefaultCode.initOperator(operator);
+				String operatorCode = initOp.getCode();
+				
+				//add imports for default code
+				importList.addAll(initOp.getImports());
+				
 				
 				//generate operator code
-				operatorCode += opTrans.getCode(operator);
+				CodeFragmentInfo opCodeFragment = opTrans.getCode(operator);
+				
+				operatorCode += opCodeFragment.getCode();
 			
 				//add operator code to java body
 				body.append(operatorCode);
 				
 				//add import for *PO
 				importList.addAll(opTrans.getNeededImports());
+	
+				//subcode imports
+				importList.addAll(opCodeFragment.getImports());
 				
+			
 				//generate subscription
 				body.append(generateSubscription(operator));	
 			}

@@ -4,6 +4,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
+import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 public class PythonProjectOperator extends AbstractTransformationOperator {
 
@@ -21,9 +22,9 @@ public class PythonProjectOperator extends AbstractTransformationOperator {
 	}
 
 	@Override
-	public String getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 		// TODO Auto-generated method stub
-		return "ProjectMachES";
+		return null;
 	}
 
 
@@ -31,6 +32,12 @@ public class PythonProjectOperator extends AbstractTransformationOperator {
 	public Set<String> getNeededImports() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void defineImports() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -1,28 +1,40 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
+import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 public class TransformSDFSchema {
 	
-	public static String getCodeForSDFSchema(SDFSchema schema, String operatorVariable){
+	public static CodeFragmentInfo getCodeForSDFSchema(SDFSchema schema, String operatorVariable){
+		CodeFragmentInfo sdfSchema = new CodeFragmentInfo();
 		
 		String className = schema.getType().getSimpleName()+".class";
-	
-	
-		StringBuilder sdfSchemaCode = new StringBuilder();
-		
-		sdfSchemaCode.append("\n");
-		sdfSchemaCode.append("\n");
-		sdfSchemaCode.append("//Create SDFSchema for "+operatorVariable);
-		sdfSchemaCode.append("\n");
-		sdfSchemaCode.append("\n");
-		sdfSchemaCode.append(TransformSDFAttribute.getCodeForSDFAttribute(schema.getAttributes(), operatorVariable));
-		sdfSchemaCode.append("SDFSchema "+operatorVariable+"SDFSchema = SDFSchemaFactory.createNewSchema(\""+schema.getURI()+"\", "+className+", "+operatorVariable+"SDFAttributeList);");
-		sdfSchemaCode.append("\n");
-		sdfSchemaCode.append("\n");
-		
 
-		return sdfSchemaCode.toString();
+		
+		StringBuilder code = new StringBuilder();
+		
+	
+		
+		sdfSchema.addCodeFragmentInfo(TransformSDFAttribute.getCodeForSDFAttribute(schema.getAttributes(), operatorVariable));
+
+		code.append("\n");
+		code.append("\n");
+		code.append("//Create SDFSchema for "+operatorVariable);
+		code.append("\n");
+		code.append("SDFSchema "+operatorVariable+"SDFSchema = SDFSchemaFactory.createNewSchema(\""+schema.getURI()+"\", "+className+", "+operatorVariable+"SDFAttributeList);");
+		code.append("\n");
+		code.append("\n");
+		
+		
+		sdfSchema.addImport(schema.getType().getName());
+		sdfSchema.addImport(SDFSchema.class.getName());
+		sdfSchema.addImport(SDFSchemaFactory.class.getName());
+		
+		
+		sdfSchema.addCode(code.toString());
+
+		return sdfSchema;
 	}
 	
 	

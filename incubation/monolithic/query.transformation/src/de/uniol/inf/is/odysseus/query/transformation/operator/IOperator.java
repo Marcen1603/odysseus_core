@@ -12,10 +12,11 @@ public interface IOperator {
 	
 	public String getTargetPlatform();
 	
-	public String getCode(ILogicalOperator operator);
+	public CodeFragmentInfo getCode(ILogicalOperator operator);
 	
 	public Set<String> getNeededImports();
 	
-	
+	public void defineImports();
+
 
 }

@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.operator;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -11,25 +8,18 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
+import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 
 public class JavaSelectOperator extends AbstractTransformationOperator{
 	
-  private final String name =  new SelectAO().getClass().getSimpleName();
-  private final String targetPlatform = "Java";
-  
-  private Set<String> importList = new HashSet<String>();
-  
-	@Override
-	public String getName() {
-		return name;
+	public JavaSelectOperator(){
+		this.implClass = SelectPO.class;
+		this.name =  new SelectAO().getClass().getSimpleName();
+		this.targetPlatform = "Java";
+		defaultImports();
 	}
-
-	@Override
-	public String getTargetPlatform() {
-		return targetPlatform;
-	}
-
+	
 	
 /*
  * 
@@ -37,7 +27,9 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
         selectPO.setHeartbeatRate(selectAO.getHeartbeatRate());
  */
 	@Override
-	public String getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+		CodeFragmentInfo selectPO = new CodeFragmentInfo();
+		
 		StringBuilder code = new StringBuilder();
 		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
@@ -64,13 +56,19 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 		code.append("SelectPO "+operatorVariable+"PO = new SelectPO("+operatorVariable+"Predicate);");
 		code.append("\n");
 		code.append("\n");
-		return code.toString();
+		
+		
+		
+		selectPO.addCode(code.toString());
+		
+		return selectPO;
 	}
 
+
 	@Override
-	public Set<String> getNeededImports() {
-		importList.add(SelectPO.class.getPackage().getName()+"."+SelectPO.class.getSimpleName());
-		return importList;
+	public void defineImports() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

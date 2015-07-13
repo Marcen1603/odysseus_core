@@ -1,35 +1,29 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.operator;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWidthAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
+import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
 
 public class JavaWindowOperator extends AbstractTransformationOperator {
 
-	private final String name = "TimeWindowAO";
-	private final String targetPlatform = "Java";
-
-	@Override
-	public String getName() {
-		return name;
+	public JavaWindowOperator(){
+		this.implClass = SlidingAdvanceTimeWindowTIPO.class;
+		this.name = "TimeWindowAO";
+		this.targetPlatform = "Java";
+		defaultImports();
 	}
 
 	@Override
-	public String getTargetPlatform() {
-		return targetPlatform;
-	}
-
-	@Override
-	public String getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+		CodeFragmentInfo slidingWindow = new CodeFragmentInfo();
+		
 		StringBuilder code = new StringBuilder();
 
 		String operatorVariable = TransformationInformation.getInstance()
@@ -40,7 +34,6 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 		TimeValueItem windowSize = windowAO.getWindowSize();
 		TimeValueItem windowSlide = windowAO.getWindowSlide();
 		TimeValueItem windowAdvance = windowAO.getWindowAdvance();
-		
 		
 
 		code.append("TimeWindowAO "+operatorVariable+"TimeWindowAO = new TimeWindowAO();");
@@ -63,19 +56,21 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 		code.append("SlidingAdvanceTimeWindowTIPO "+operatorVariable+"PO = new SlidingAdvanceTimeWindowTIPO("+operatorVariable+"TimeWindowAO);");
 		code.append("\n");
 
-		return code.toString();
-	}
 	
+		slidingWindow.addCode(code.toString());
+		
+		slidingWindow.addImport(TimeWindowAO.class.getName());
+		slidingWindow.addImport(TimeValueItem.class.getName());
+		slidingWindow.addImport(TimeUnit.class.getName());
+		
+		
+		return slidingWindow;
+	}
 
 	@Override
-	public Set<String> getNeededImports() {
-		Set<String> imoportList = new HashSet<String>();
-		imoportList.add(TimeWindowAO.class.getPackage().getName() + "."
-				+ TimeWindowAO.class.getSimpleName());
-		imoportList.add(SlidingAdvanceTimeWindowTIPO.class.getPackage()
-				.getName()
-				+ "."
-				+ SlidingAdvanceTimeWindowTIPO.class.getSimpleName());
-		return imoportList;
+	public void defineImports() {
+
+		
 	}
+	
 }

@@ -1,32 +1,23 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.operator;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformIntegerArray;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
+import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 
 public class JavaProjectOperator extends AbstractTransformationOperator{
 	
-  private final String name =  "ProjectAO";
-  private final String targetPlatform = "Java";
-
-  
-  
-	@Override
-	public String getName() {
-		return name;
+	public JavaProjectOperator(){
+		this.implClass = RelationalProjectPO.class;
+		this.name =  "ProjectAO";
+		this.targetPlatform = "Java";
+		defaultImports();
 	}
-
-	@Override
-	public String getTargetPlatform() {
-		return targetPlatform;
-	}
+	
 
 	/*
 	RelationalProjectPO testProject = new RelationalProjectPO(new int[] {0});
@@ -34,10 +25,11 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 	
 	*/
 	@Override
-	public String getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+		CodeFragmentInfo projectPO = new CodeFragmentInfo();
+		
 		StringBuilder code = new StringBuilder();
 		
-	
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 		
 		ProjectAO projectAO = (ProjectAO)operator;
@@ -45,25 +37,26 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 		int[] restrictList = projectAO.determineRestrictList();
 		
 		String restrictListCode = TransformIntegerArray.getCodeForIntegerArray(restrictList);
-	
+		
+		
 		code.append("\n");
 		code.append("RelationalProjectPO "+operatorVariable+"PO = new RelationalProjectPO("+restrictListCode+");");
 		code.append("\n");
 		code.append(operatorVariable+"PO.setOutputSchema("+operatorVariable+"SDFSchema);");
 		code.append("\n");
-		return code.toString();
+		
+		projectPO.addCode(code.toString());
+		projectPO.addImports(getNeededImports());
+
+		return projectPO;
 	}
-	
+
+
 	@Override
-	public Set<String> getNeededImports() {
-		Set<String> imoportList = new HashSet<String>();
-		imoportList.add(RelationalProjectPO.class.getPackage().getName()+"."+RelationalProjectPO.class.getSimpleName());
-		return imoportList;
-
+	public void defineImports() {
+		// TODO Auto-generated method stub
+		
 	}
-
-
-	
 	
 	
 }

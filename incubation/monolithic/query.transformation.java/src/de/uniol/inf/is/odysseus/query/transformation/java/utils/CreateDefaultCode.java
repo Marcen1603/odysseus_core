@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -7,33 +10,37 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
-import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
+import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
 public class CreateDefaultCode {
 	
 	
-	public static String initOperator(ILogicalOperator operator){
+	public static CodeFragmentInfo initOperator(ILogicalOperator operator){
+		CodeFragmentInfo sdfSchema = new CodeFragmentInfo();
+		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
-
-		StringBuilder code = new StringBuilder();
-		//generate code for SDFSchema
-		code.append(TransformSDFSchema.getCodeForSDFSchema(operator.getOutputSchema(),operatorVariable));
+		
+		sdfSchema.addCodeFragmentInfo(TransformSDFSchema.getCodeForSDFSchema(operator.getOutputSchema(),operatorVariable));
 				
-	
-		return code.toString();
+		return sdfSchema;
 	}
 	
 	
-	public static String codeForAccessFramework(ILogicalOperator operator){
-		StringBuilder code = new StringBuilder();
-		
+	
+	
+	
+
+	public static CodeFragmentInfo codeForAccessFrameworkNeu(ILogicalOperator operator){
+		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
+	
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 
 		ITransportDirection direction = ITransportDirection.IN;
-		
+
 		String filename = "";
 		String transportHandler =  "";
 		String dataHandler =  "";
@@ -51,6 +58,8 @@ public class CreateDefaultCode {
 			 direction = ITransportDirection.OUT;
 		}
 		
+
+		 
 		if(operator instanceof CSVFileSource){
 			CSVFileSource csvFileSource = (CSVFileSource) operator; 
 			 
@@ -60,23 +69,30 @@ public class CreateDefaultCode {
 			 wrapper = csvFileSource.getWrapper();
 			 protocolHandler = csvFileSource.getProtocolHandler();
 			 direction = ITransportDirection.IN;
+			
 		}
 		
-		
+		//add import
+		codeFragmentInfo.addImport(ITransportDirection.class.getName());
 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);	
 		
 		//generate code for options
-		code.append(TransformCSVParameter.getCodeForParameterInfo(operator.getParameterInfos(),operatorVariable));
+		codeFragmentInfo.addCodeFragmentInfo(TransformCSVParameter.getCodeForParameterInfoNeu(operator.getParameterInfos(),operatorVariable));
 		
 		//setup transportHandler
-		code.append(TransformProtocolHandler.getCodeForProtocolHandler(protocolHandlerParameter, operatorVariable, direction));
+		codeFragmentInfo.addCodeFragmentInfo(TransformProtocolHandler.getCodeForProtocolHandlerNeu(protocolHandlerParameter, operatorVariable, direction));
 	
-		return code.toString();
+
+		return codeFragmentInfo;
 	}
 	
 	
-	public static String codeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
+	
+	public static CodeFragmentInfo codeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
+		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
+		
+		
 		StringBuilder code = new StringBuilder();
 		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(forOperator);
@@ -97,9 +113,14 @@ public class CreateDefaultCode {
 			}
 			
 		}
+		codeFragmentInfo.addImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
+		codeFragmentInfo.addImport(IMetadataInitializer.class.getName());
 		
+		codeFragmentInfo.addCode(code.toString());
+		
+
 	
-		return code.toString();
+		return codeFragmentInfo;
 		
 	}
 

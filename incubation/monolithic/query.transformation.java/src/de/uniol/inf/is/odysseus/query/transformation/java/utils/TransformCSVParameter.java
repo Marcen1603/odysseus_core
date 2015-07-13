@@ -1,6 +1,11 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 public class TransformCSVParameter {
 	
@@ -16,9 +21,17 @@ public class TransformCSVParameter {
     
     */
 	
-	public static String getCodeForParameterInfo(Map<String, String> map, String operatorVariable){
-		
+	
+
+public static CodeFragmentInfo getCodeForParameterInfoNeu(Map<String, String> map, String operatorVariable){
+		CodeFragmentInfo codeFragmentInfo= new CodeFragmentInfo();
+		Set<String> imports = new HashSet<String>();
+	
+	
 		StringBuilder code = new StringBuilder();
+		
+		imports.add(OptionMap.class.getName());
+		
 		code.append("OptionMap "+operatorVariable+"ParameterInfo = new OptionMap();");
 		code.append("\n");
 		
@@ -44,7 +57,21 @@ public class TransformCSVParameter {
 		}
 		*/
 		
-		return code.toString();
+		codeFragmentInfo.addCode(code.toString());
+		
+		codeFragmentInfo.addImports(imports);
+		
+		return codeFragmentInfo;
+		
+	}
+	
+
+	
+	public static Set<String> getImportsForParameterInfo(){
+		Set<String> importList = new HashSet<String>();
+		importList.add("de.uniol.inf.is.odysseus.core.collection.OptionMap");
+		
+		return importList;
 		
 	}
 	
