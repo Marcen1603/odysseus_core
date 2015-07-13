@@ -35,7 +35,9 @@ public class CrashDetector implements ISystemLogListener {
 	 */
 	private static long cLastStartup = -1L;
 
-	// TODO javaDoc
+	/**
+	 * True, if a startup is detected.
+	 */
 	private static boolean cStartup = false;
 
 	/**
@@ -128,7 +130,7 @@ public class CrashDetector implements ISystemLogListener {
 	/**
 	 * The tag for the system log entry for a crash of Odysseus.
 	 */
-	private static final String TAG_CRASH = "CRASH";
+	private static final String TAG_CRASH = "CRASH DETECTED";
 
 	/**
 	 * Checks, if there has been a crash (last startup after last shutdown) and
@@ -181,7 +183,11 @@ public class CrashDetector implements ISystemLogListener {
 		// Nothing to do
 	}
 
-	// TODO javaDoc
+	/**
+	 * Checks, if the listeners can/shall be called.
+	 * 
+	 * @return True, if a startup and a crash of Odysseus is both detected.
+	 */
 	private static boolean canCallListeners() {
 		return cStartup && cLastStartup != -1;
 	}

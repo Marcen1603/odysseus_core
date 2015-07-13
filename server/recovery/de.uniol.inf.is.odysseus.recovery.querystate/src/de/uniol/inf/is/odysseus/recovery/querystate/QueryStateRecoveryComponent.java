@@ -25,9 +25,6 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryComponent;
-import de.uniol.inf.is.odysseus.recovery.querystate.queryaddedInfo.AbstractQueryAddedInfo;
-import de.uniol.inf.is.odysseus.recovery.querystate.queryaddedInfo.QueryAddedEntryInfo;
-import de.uniol.inf.is.odysseus.recovery.querystate.queryaddedInfo.SourceAddedEntryInfo;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
@@ -35,7 +32,12 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 /**
  * The query state recovery component handles the backup and recovery of queries
- * (queries and their states, sources, sinks).
+ * (queries and their states, sources, sinks). <br />
+ * 
+ * Note for logging of added queries: For each Odysseus-Script, (1) the inner
+ * queries are delivered with their parsers (e.g., PQL) and (2) the complete
+ * Odysseus-Script is delivered. Only the latter will be logged, because it
+ * contains all information.
  * 
  * @author Michael Brand
  *
@@ -125,13 +127,27 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	}
 
 	/**
+	 * The current session, if retrieved.
+	 */
+	private static Optional<ISession> cSession = Optional.absent();
+
+	/**
 	 * Gets the current session.
 	 * 
 	 * @return {@link ISessionManagement#loginSuperUser(Object, String)}
 	 */
 	private static ISession getSession() {
-		return UserManagementProvider.getSessionmanagement().loginSuperUser(
-				null, UserManagementProvider.getDefaultTenant().getName());
+		if (!cSession.isPresent() || !cSession.get().isValid()) {
+			cSession = Optional
+					.of(UserManagementProvider
+							.getUsermanagement(true)
+							.getSessionManagement()
+							.loginSuperUser(
+									null,
+									UserManagementProvider.getDefaultTenant()
+											.getName()));
+		}
+		return cSession.get();
 	}
 
 	@Override
@@ -150,7 +166,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 
 	@Override
 	public void recover(List<ISysLogEntry> log) throws Exception {
-		// TODO to be tested 
 		if (!cExecutor.isPresent()) {
 			cEntriesForRecovery.addAll(log);
 			return;
@@ -158,7 +173,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		cLog.debug("Begin of recovery...");
 		for (ISysLogEntry entry : log) {
 			if (entry.getTag().equals(QueryStateUtils.TAG_QUERYADDED)
-					|| entry.getTag().equals(
+					|| entry.getTag().startsWith(
 							QueryStateUtils.TAG_QUERYSTATECHANGED)) {
 				cLog.debug("Try to recover {}", entry);
 				if (!entry.getComment().isPresent()) {
@@ -168,7 +183,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 
 				if (entry.getTag().equals(QueryStateUtils.TAG_QUERYADDED)) {
 					recoverQueryAddEvent(entry);
-					// TODO call IRecoveryExecutor
 				} else if (entry.getComment().get()
 						.equals(QueryStateUtils.COMMENT_QUERYREMOVED)) {
 					recoverQueryRemovedEvent(entry);
@@ -177,22 +191,29 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 				}
 			}
 		}
+		cLog.debug("Finished QueryStateRecovery.");
 	}
 
 	/**
 	 * Recovers added queries (and sources).
 	 * 
 	 * @param entry
-	 *            A system log entry with an {@link AbstractQueryAddedInfo} as
-	 *            comment.
+	 *            A system log entry with an {@link QueryAddedInfo} as comment.
 	 */
 	private void recoverQueryAddEvent(ISysLogEntry entry) {
-		AbstractQueryAddedInfo info = AbstractQueryAddedInfo
-				.fromBase64Binary(entry.getComment().get());
-		// TODO GetSession does not work/is not ready
-		cExecutor.get().addQuery(info.queryText, info.parserId, getSession(),
-				info.getContext());
+		QueryAddedInfo info = QueryAddedInfo.fromBase64Binary(entry
+				.getComment().get());
+		cExecutor.get().addQuery(info.getQueryText(), info.getParserId(),
+				getSession(), info.getContext());
 		cLog.debug("Added query.");
+		if (info.getRecoveryExecutor().isPresent()) {
+			try {
+				info.getRecoveryExecutor().get().recover(info.getQueryIds());
+			} catch (Exception e) {
+				cLog.error("Error while calling recovery executor for queries "
+						+ info.getQueryText(), e);
+			}
+		}
 	}
 
 	/**
@@ -219,19 +240,21 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 			cExecutor.get().stopQuery(queryId, getSession());
 			cLog.debug("Stopped query.");
 		} else if (entry.getComment().get()
-				.equals(QueryState.PARTIAL.toString())) {
-			// TODO need a shedding factor
-			int sheddingFactor = 0;
+				.startsWith(QueryState.PARTIAL.toString())) {
+			// <state> + blank + <sheddingFactor>
+			int sheddingFactor = Integer.parseInt(entry.getComment().get()
+					.replace(QueryState.PARTIAL.toString(), "").trim());
+			;
 			cExecutor.get().partialQuery(queryId, sheddingFactor, getSession());
 			cLog.debug("Set query to be partial.");
 		} else if (entry.getComment().get()
-				.equals(QueryState.PARTIAL_SUSPENDED.toString())
+				.startsWith(QueryState.PARTIAL_SUSPENDED.toString())
 				|| entry.getComment().get()
 						.equals(QueryState.SUSPENDED.toString())) {
 			cExecutor.get().suspendQuery(queryId, getSession());
 			cLog.debug("Suspended query.");
 		} else if (entry.getComment().get()
-				.equals(QueryState.RUNNING.toString())) {
+				.startsWith(QueryState.RUNNING.toString())) {
 			cExecutor.get().startQuery(queryId, getSession());
 			cLog.debug("Started query.");
 		} else {
@@ -242,28 +265,29 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	@Override
 	public void queryAddedEvent(String query, List<Integer> queryIds,
 			String buildConfig, String parserID, ISession user, Context context) {
-		AbstractQueryAddedInfo info;
-		if (queryIds.isEmpty()) {
-			// Source definition
-			/*
-			 * Note: For a source defintion each source is added using PQL and
-			 * afterwards the complete script is added with odysseus script.
-			 */
-			if (!parserID.equals(OdysseusScriptParser.PARSER_NAME)) {
-				return;
-			}
-			info = new SourceAddedEntryInfo();
-			cLog.debug("Source added.");
-		} else {
-			info = new QueryAddedEntryInfo();
-			((QueryAddedEntryInfo) info).ids = Lists.newArrayList(queryIds);
-			cLog.debug("Query added.");
+		/*
+		 * Note: For each Odysseus-Script, (1) the inner queries are delivered
+		 * with their parsers (e.g., PQL) and (2) the complete Odysseus-Script
+		 * is delivered. Only the latter will be logged, because it contains all
+		 * information.
+		 */
+		if (!parserID.equals(OdysseusScriptParser.PARSER_NAME)) {
+			return;
 		}
 
-		info.parserId = parserID;
-		info.queryText = query;
+		QueryAddedInfo info = new QueryAddedInfo();
+		info.setParserId(parserID);
+		info.setQueryText(query);
 		info.setContext(context);
 		// TODO read IRecoveryExecutor from Odysseus Script
+		if (queryIds.isEmpty()) {
+			// Source definition
+			cLog.debug("Source added.");
+		} else {
+			// "Normal" query
+			info.setQueryIds(queryIds);
+			cLog.debug("Query added.");
+		}
 
 		// Write to log
 		if (cSystemLog.isPresent()) {
@@ -286,13 +310,15 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 					.getEventType())) {
 				comment = QueryStateUtils.COMMENT_QUERYREMOVED;
 			} else {
-				comment = query.getState().toString();
+				// The shedding factor is needed for partial queries
+				comment = query.getState().toString() + " "
+						+ query.getSheddingFactor();
 			}
 			cLog.debug("Query state changed for query {}: {}", queryId, comment);
 			if (cSystemLog.isPresent()) {
 				cSystemLog.get().write(
 						QueryStateUtils.getTagQueryChanged(queryId),
-						System.nanoTime(), comment);
+						System.currentTimeMillis(), comment);
 			}
 		}
 	}
@@ -318,11 +344,21 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * directly react to crashes.
 	 */
 	@Override
-	public void onCrashDetected(long lastStartup) throws Throwable {
+	public void onCrashDetected(final long lastStartup) throws Throwable {
 		if (!cSystemLog.isPresent()) {
 			cLog.error("No system log bound!");
 		} else {
-			recover(cSystemLog.get().read(lastStartup));
+			new Thread() {
+
+				@Override
+				public void run() {
+					try {
+						recover(cSystemLog.get().read(lastStartup));
+					} catch (Throwable t) {
+						cLog.error("Could not recover!", t);
+					}
+				}
+			}.start();
 		}
 	}
 

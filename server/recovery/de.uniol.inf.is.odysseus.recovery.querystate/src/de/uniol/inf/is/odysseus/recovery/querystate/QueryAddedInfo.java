@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.querystate.queryaddedInfo;
+package de.uniol.inf.is.odysseus.recovery.querystate;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -28,7 +30,9 @@ import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
  * @author Michael Brand
  *
  */
-public abstract class AbstractQueryAddedInfo implements Serializable {
+public class QueryAddedInfo implements Serializable {
+
+	// TODO Chance to log the human readable information
 
 	/**
 	 * The version of this class for serialization.
@@ -39,29 +43,68 @@ public abstract class AbstractQueryAddedInfo implements Serializable {
 	 * The logger for this class.
 	 */
 	private static final Logger cLog = LoggerFactory
-			.getLogger(AbstractQueryAddedInfo.class);
+			.getLogger(QueryAddedInfo.class);
 
 	/**
 	 * The parser id.
 	 */
-	public String parserId;
+	private String mParserId;
+
+	/**
+	 * Gets the parser id.
+	 * 
+	 * @return A string identifying the parser.
+	 */
+	public String getParserId() {
+		return this.mParserId;
+	}
+
+	/**
+	 * Sets the parser id.
+	 * 
+	 * @param parserId
+	 *            A string identifying the parser.
+	 */
+	public void setParserId(String parserId) {
+		this.mParserId = parserId;
+	}
 
 	/**
 	 * The full query text (e.g., Odysseus Script).
 	 */
-	public String queryText;
+	private String mQueryText;
 
-	// TODO Problem with ISession while fromBase64Binary: ClassNotFoundException.
+	/**
+	 * Sets the query text.
+	 * 
+	 * @return The full query text (e.g., Odysseus Script).
+	 */
+	public String getQueryText() {
+		return this.mQueryText;
+	}
+
+	/**
+	 * Gets the query text.
+	 * 
+	 * @param queryText
+	 *            The full query text (e.g., Odysseus Script).
+	 */
+	public void setQueryText(String queryText) {
+		this.mQueryText = queryText;
+	}
+
+	// TODO Problem with ISession while fromBase64Binary:
+	// ClassNotFoundException.
 	// Is only used for addQuery. All other events are done with SuperUser.
-//	/**
-//	 * The current session (and corresponding user).
-//	 */
-//	public ISession session;
+	// /**
+	// * The current session (and corresponding user).
+	// */
+	// private ISession mSsession;
 
 	/**
 	 * The context.
 	 */
-	private final Map<String, Serializable> context = Maps.newHashMap();
+	private Map<String, Serializable> mContext = Maps.newHashMap();
 
 	/**
 	 * Sets the context. <br />
@@ -73,7 +116,7 @@ public abstract class AbstractQueryAddedInfo implements Serializable {
 	 */
 	public void setContext(Context c) {
 		for (String key : c.getKeys()) {
-			this.context.put(key, c.get(key));
+			this.mContext.put(key, c.get(key));
 		}
 	}
 
@@ -86,8 +129,8 @@ public abstract class AbstractQueryAddedInfo implements Serializable {
 	 */
 	public Context getContext() {
 		Context c = Context.empty();
-		for (String key : this.context.keySet()) {
-			c.put(key, this.context.get(key));
+		for (String key : this.mContext.keySet()) {
+			c.put(key, this.mContext.get(key));
 		}
 		return c;
 	}
@@ -95,7 +138,53 @@ public abstract class AbstractQueryAddedInfo implements Serializable {
 	/**
 	 * The recovery executor, if set.
 	 */
-	public Optional<IRecoveryExecutor> recExecutor;
+	private Optional<IRecoveryExecutor> mExecutor = Optional.absent();
+
+	/**
+	 * Gets the recovery executor.
+	 * 
+	 * @return An implementation of {@link IRecoveryExecutor}, if a recovery
+	 *         strategy was selected.
+	 */
+	public Optional<IRecoveryExecutor> getRecoveryExecutor() {
+		return this.mExecutor;
+	}
+
+	/**
+	 * Sets the recovery executor.
+	 * 
+	 * @param executor
+	 *            An implementation of {@link IRecoveryExecutor}, if a recovery
+	 *            strategy was selected.
+	 */
+	public void setRecoveryExecutor(Optional<IRecoveryExecutor> executor) {
+		this.mExecutor = executor;
+	}
+
+	/**
+	 * The query ids.
+	 */
+	private List<Integer> mIds = Lists.newArrayList();
+
+	/**
+	 * Gets the query ids.
+	 * 
+	 * @return A list of all query ids for this entry or an empty list for
+	 *         source definitions.
+	 */
+	public List<Integer> getQueryIds() {
+		return this.mIds;
+	}
+
+	/**
+	 * Gets the query ids.
+	 * 
+	 * @param ids
+	 *            A list of all query ids (not for source definitions).
+	 */
+	public void setQueryIds(List<Integer> ids) {
+		this.mIds = ids;
+	}
 
 	/**
 	 * Encode to a Base64Binary.
@@ -121,11 +210,11 @@ public abstract class AbstractQueryAddedInfo implements Serializable {
 	 *            A string representing the binary.
 	 * @return The decoded information.
 	 */
-	public static AbstractQueryAddedInfo fromBase64Binary(String str) {
+	public static QueryAddedInfo fromBase64Binary(String str) {
 		byte[] data = DatatypeConverter.parseBase64Binary(str);
 		try (ObjectInputStream ois = new ObjectInputStream(
 				new ByteArrayInputStream(data))) {
-			return (AbstractQueryAddedInfo) ois.readObject();
+			return (QueryAddedInfo) ois.readObject();
 		} catch (IOException e) {
 			cLog.error("Info is not serializable!", e);
 			return null;

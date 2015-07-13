@@ -100,7 +100,7 @@ public class SystemStateLogger {
 	}
 
 	/**
-	 * Checks, if Odyseus is started.
+	 * Checks, if Odysseus is started.
 	 * 
 	 * @return True, if an executor and a system log could be bound.
 	 */
@@ -108,7 +108,9 @@ public class SystemStateLogger {
 		return cExecutorBound && cSystemLog.isPresent();
 	}
 
-	// TODO javaDoc
+	/**
+	 * Checks, if Odysseus is started and logs it, if started.
+	 */
 	private static void tryLogStartup() {
 		if (isSystemStarted()) {
 			cSystemLog.get().write(TAG_STARTUP, System.currentTimeMillis(),
@@ -116,7 +118,10 @@ public class SystemStateLogger {
 		}
 	}
 
-	// TODO javaDoc
+	/**
+	 * Checks, if the system log is still bound and logs the shutdown of
+	 * Odysseus, if possible.
+	 */
 	private static void tryLogShutDown() {
 		if (cSystemLog.isPresent()) {
 			cSystemLog.get().write(TAG_SHUTDOWN, System.currentTimeMillis(),
