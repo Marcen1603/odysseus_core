@@ -133,7 +133,7 @@ public class ParallelizationBenchmarkerWindow {
 
 	private void createButtons(ParalleizationBenchmarkerPage currentPage, String parameter) {
 		benchmarkButtonComposite = new BenchmarkButtonComposite(window,
-				SWT.NONE, this, currentPage, parameter);
+				SWT.NONE, this, currentPage, benchmarkProcessId, parameter);
 		bottomComposite = benchmarkButtonComposite;
 	}
 

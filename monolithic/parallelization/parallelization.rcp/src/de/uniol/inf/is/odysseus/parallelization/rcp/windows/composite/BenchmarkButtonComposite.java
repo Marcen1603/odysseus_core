@@ -1,5 +1,11 @@
 package de.uniol.inf.is.odysseus.parallelization.rcp.windows.composite;
 
+import java.io.ByteArrayInputStream;
+import java.util.List;
+import java.util.UUID;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -10,7 +16,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
+import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow.ParalleizationBenchmarkerPage;
 
@@ -20,13 +28,19 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 
 	private ParallelizationBenchmarkerWindow window;
 	private Button startButton;
-
+	private BenchmarkDataHandler data;
+	
+	
 	public BenchmarkButtonComposite(Composite parent, int style,
 			final ParallelizationBenchmarkerWindow window,
-			ParalleizationBenchmarkerPage currentPage, String parameter) {
+			ParalleizationBenchmarkerPage currentPage, UUID benchmarkProcessId, String parameter) {
 		super(parent, style);
 		this.window = window;
 
+		if (benchmarkProcessId != null){
+			data = BenchmarkDataHandler.getExistingInstance(benchmarkProcessId);
+		}
+		
 		this.setLayoutData(new GridData(SWT.BEGINNING));
 		this.setLayout(new GridLayout(3, false));
 
@@ -102,7 +116,28 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 		changeFileButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						StringBuilder builder = new StringBuilder();
+						List<String> queryStringArray = data.getQueryStringArray();
+						
+						for (String queryString : queryStringArray) {
+							builder.append(queryString);
+							if (queryString.startsWith("#PARSER")){
+								builder.append(parameter);
+							}
+						}
+						ByteArrayInputStream in = new 
+								ByteArrayInputStream(builder.toString().getBytes());
+						IFile queryFile = data.getQueryFile();
+						try {
+							queryFile.setContents(in, false, true, null);
+						} catch (CoreException e1) {
+							e1.printStackTrace();
+						}
+					}
+				});
 			}
 		});
 	}
