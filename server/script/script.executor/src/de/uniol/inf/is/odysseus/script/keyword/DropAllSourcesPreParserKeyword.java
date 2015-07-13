@@ -35,32 +35,26 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 /**
  * 
  * @author Dennis Geesen Created at: 19.04.2012
  */
-public class DropAllSourcesPreParserKeyword extends AbstractPreParserExecutorKeyword {
+public class DropAllSourcesPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String DROPALLSOURCES = "DROPALLSOURCES";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		IExecutor executor = getServerExecutor();
-		if (executor == null)
-			throw new OdysseusScriptException("No executor found");
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 	}
 
 	@Override
-	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		IExecutor executor = getServerExecutor();
-		if (executor == null)
-			throw new OdysseusScriptException("No executor found");
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		for(ViewInformation s : executor.getStreamsAndViewsInformation(caller)){		
 			executor.removeViewOrStream(s.getName(), caller);
 		}	

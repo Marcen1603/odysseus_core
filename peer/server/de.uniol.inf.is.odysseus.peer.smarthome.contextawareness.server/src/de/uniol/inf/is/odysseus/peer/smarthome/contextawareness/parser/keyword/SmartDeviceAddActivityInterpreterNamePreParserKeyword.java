@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.smarthome.contextawareness.SmartHomeServerPlugIn;
@@ -29,7 +30,7 @@ public class SmartDeviceAddActivityInterpreterNamePreParserKeyword extends
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException("Parameter needed for #"
 					+ KEYWORD);
@@ -66,7 +67,7 @@ public class SmartDeviceAddActivityInterpreterNamePreParserKeyword extends
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
-			String parameter, ISession caller, Context context)
+			String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
 		variables.put(KEYWORD, parameter);
 

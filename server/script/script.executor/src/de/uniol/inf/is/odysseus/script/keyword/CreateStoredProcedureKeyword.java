@@ -8,25 +8,26 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
-public class CreateStoredProcedureKeyword extends AbstractPreParserExecutorKeyword {
+public class CreateStoredProcedureKeyword extends AbstractPreParserKeyword {
 
 	public static final String STORED_PROCEDURE = "PROCEDURE";
 	private static final String KEY_BEGIN = "BEGIN";
 	private static final String KEY_END = "END";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 
 	}
 
 	@Override
-	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {	
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {	
 		int start = parameter.indexOf(KEY_BEGIN) + KEY_BEGIN.length();
 		int end = parameter.indexOf(KEY_END);
 		String[] lines = parameter.split(System.lineSeparator());
@@ -54,7 +55,7 @@ public class CreateStoredProcedureKeyword extends AbstractPreParserExecutorKeywo
 		}
 
 		StoredProcedure sp = new StoredProcedure(name, procedureText, procVars);
-		getServerExecutor().addStoredProcedure(name, sp, caller);
+		executor.addStoredProcedure(name, sp, caller);
 		return null;
 	}
 

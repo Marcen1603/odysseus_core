@@ -11,21 +11,22 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class PreTransformationHandlerPreParserKeyword extends
-		AbstractPreParserExecutorKeyword {
+		AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "PRETRANSFORM";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 
 		if (Strings.isNullOrEmpty(parameter)) {
 			throw new OdysseusScriptException(
@@ -35,7 +36,7 @@ public class PreTransformationHandlerPreParserKeyword extends
 		String[] splitted = parameter.trim().split(" ");
 		String preTransformationHandlerName = splitted[0].trim();
 
-		if (!getServerExecutor().hasPreTransformationHandler(
+		if (!executor.hasPreTransformationHandler(
 				preTransformationHandlerName)) {
 			throw new OdysseusScriptException(
 					"Query distribution preprocessor name '"
@@ -46,7 +47,7 @@ public class PreTransformationHandlerPreParserKeyword extends
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
-			String parameter, ISession caller, Context context)
+			String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
 
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
@@ -113,11 +114,13 @@ public class PreTransformationHandlerPreParserKeyword extends
 
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
-		try {
-			return getServerExecutor().getPreTransformationHandlerNames();
-		} catch (OdysseusScriptException e) {
-			return Lists.newArrayList();
-		}
+		// TODO
+//		try {
+//			return getServerExecutor().getPreTransformationHandlerNames();
+//		} catch (OdysseusScriptException e) {
+//			return Lists.newArrayList();
+//		}
+		return Lists.newArrayList();
 	}
 
 }

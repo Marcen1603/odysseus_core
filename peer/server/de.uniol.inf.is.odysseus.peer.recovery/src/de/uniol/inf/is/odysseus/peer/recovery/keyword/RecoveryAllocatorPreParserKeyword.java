@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.recovery.IRecoveryAllocator;
@@ -27,7 +28,7 @@ public class RecoveryAllocatorPreParserKeyword extends AbstractPreParserKeyword 
 	public static final String KEYWORD = "RECOVERY_ALLOCATE";
 	
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		
 		if( Strings.isNullOrEmpty(parameter)) {
 			throw new OdysseusScriptException("Recovery allocator name is missing");
@@ -42,7 +43,7 @@ public class RecoveryAllocatorPreParserKeyword extends AbstractPreParserKeyword 
 	}
 
 	@Override
-	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		IRecoveryAllocator allocator = RecoveryAllocatorRegistry.getInstance().get(parameter);
 		LOG.info("Selected recovery allocator "+allocator.getName());
 		for (IRecoveryStrategy strategy : RecoveryStrategyRegistry.getInstance().getInterfaceContributions()) {

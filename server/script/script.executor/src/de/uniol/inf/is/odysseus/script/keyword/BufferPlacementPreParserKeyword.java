@@ -21,24 +21,25 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKeyword {
+public class BufferPlacementPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String BUFFERPLACEMENT = "BUFFERPLACEMENT";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context)
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
 	}
 
 	@Override
-	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context)
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
 		
 		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
@@ -48,11 +49,12 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKe
 	
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {	
-		try {
-			return getServerExecutor().getRegisteredBufferPlacementStrategiesIDs(caller);
-		} catch (OdysseusScriptException e) {
-			return new ArrayList<>();			
-		}
+//		try {
+//			return getServerExecutor().getRegisteredBufferPlacementStrategiesIDs(caller);
+//		} catch (OdysseusScriptException e) {
+//			return new ArrayList<>();			
+//		}
+		return new ArrayList<>();			
 	}
 
 }

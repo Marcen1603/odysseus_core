@@ -25,30 +25,25 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class StopSchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword {
+public class StopSchedulerPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String KEYWORD = "STOPSCHEDULER";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		IServerExecutor serverExecutor = getServerExecutor();
-		if ( serverExecutor == null ) {
-			throw new OdysseusScriptException("No executor found");
-		}
-		
-		ISchedulerManager manager = serverExecutor.getSchedulerManager();
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
+		ISchedulerManager manager = executor.getSchedulerManager();
 		if( manager == null ) {
 			throw new OdysseusScriptException("No schedulermanager found");
 		}
 	}
 
 	@Override
-	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		try {
-			ISchedulerManager manager = getServerExecutor().getSchedulerManager();
+			ISchedulerManager manager = executor.getSchedulerManager();
 			manager.stopScheduling();
 			return null;
 		} catch (NoSchedulerLoadedException ex) {

@@ -35,32 +35,26 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 /**
  * 
  * @author Dennis Geesen Created at: 19.04.2012
  */
-public class DropAllSinksPreParserKeyword extends AbstractPreParserExecutorKeyword {
+public class DropAllSinksPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String DROPALLSINKS = "DROPALLSINKS";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		IExecutor executor = getServerExecutor();
-		if (executor == null)
-			throw new OdysseusScriptException("No executor found");
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 	}
 
 	@Override
-	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
-		IExecutor executor = getServerExecutor();
-		if (executor == null)
-			throw new OdysseusScriptException("No executor found");
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		for(SinkInformation s : executor.getSinks(caller)){		
 			executor.removeSink(s.getName(), caller);
 		}	

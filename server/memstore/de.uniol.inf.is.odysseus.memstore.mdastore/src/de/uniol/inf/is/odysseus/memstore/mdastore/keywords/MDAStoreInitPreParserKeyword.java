@@ -8,6 +8,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.memstore.mdastore.commands.CreateMDAStoreCommand;
@@ -26,7 +27,7 @@ public class MDAStoreInitPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		if (Strings.isNullOrEmpty(parameter)) {
 			throw new OdysseusScriptException("MDAStore name is missing!");
 		}
@@ -41,7 +42,7 @@ public class MDAStoreInitPreParserKeyword extends AbstractPreParserKeyword {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
-			String parameter, ISession caller, Context context)
+			String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
 		String[] splitted = parameter.trim().split(" ");
 		String name = splitted[0];

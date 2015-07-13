@@ -6,11 +6,12 @@ import java.util.Map;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterFragmentationType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 /**
@@ -19,7 +20,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
  * #DATAFRAGMENTATIONTYPE name source additionalParameters; name source additionalParameters; ...
  * @author Michael Brand
  */
-public class FragmentationTypePreParserKeyword extends AbstractPreParserExecutorKeyword {
+public class FragmentationTypePreParserKeyword extends AbstractPreParserKeyword {
 
 	/**
 	 * The string representation of the keyword.
@@ -28,7 +29,7 @@ public class FragmentationTypePreParserKeyword extends AbstractPreParserExecutor
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		
 		String[] strategies = parameter.split(ParameterFragmentationType.OUTER_SEP);
 		if(strategies == null || strategies.length == 0)
@@ -41,7 +42,7 @@ public class FragmentationTypePreParserKeyword extends AbstractPreParserExecutor
 				throw new OdysseusScriptException("At least one data fragmentation strategy is not defined.");
 			
 			String strategyName = parameters[0];
-			if(strategyName == null || !getServerExecutor().getDataFragmentationNames().contains(strategyName))
+			if(strategyName == null || !executor.getDataFragmentationNames().contains(strategyName))
 				throw new OdysseusScriptException("Specified data fragmentation strategy '" + strategyName + 
 						"' not found.");
 			
@@ -51,7 +52,7 @@ public class FragmentationTypePreParserKeyword extends AbstractPreParserExecutor
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 
 		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
 		

@@ -26,6 +26,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -50,19 +51,19 @@ public final class PreParserStatement {
 		this.context = context.copy();
 	}
 	
-	void validate( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser) throws OdysseusScriptException {
+	void validate( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser, IServerExecutor executor) throws OdysseusScriptException {
 		keyword.setParser(parser);
 		
-		keyword.validate(variables, parameter, caller, context.copy());
+		keyword.validate(variables, parameter, caller, context.copy(), executor);
 	}
 	
-	List<IExecutorCommand> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser) throws OdysseusScriptException {
+	List<IExecutorCommand> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser, IServerExecutor executor) throws OdysseusScriptException {
 		if( keyword.isDeprecated() ) {
 			logDeprecation();
 		}
 		
 		keyword.setParser(parser);
-		List<IExecutorCommand> commands = keyword.execute(variables, parameter, caller, context.copy());
+		List<IExecutorCommand> commands = keyword.execute(variables, parameter, caller, context.copy(), executor);
 		return commands == null ? Lists.<IExecutorCommand>newArrayList() : commands;
 	}
 

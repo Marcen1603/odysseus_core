@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -25,7 +26,7 @@ public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 	private static List<String> includingFiles = Lists.newArrayList();
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		File includingFile = new File(parameter);
 		if( !includingFile.exists() ) {
 			throw new OdysseusScriptException("File for including '" + parameter + "' does not exist!");
@@ -39,7 +40,7 @@ public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 			includingFiles.add(parameter);
 			
 			String[] lines = readTextLinesFromFile(includingFile);
-			getParser().validate(lines, caller, context);
+			getParser().validate(lines, caller, context, executor);
 			
 		} catch( Exception ex ) {
 			throw new OdysseusScriptException("Could not read including file '" + parameter + "' for validating", ex );
@@ -67,13 +68,13 @@ public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		try {
 			String[] lines = readTextLinesFromFile(new File(parameter));
 			
 			ISink<?> defaultSink = variables.containsKey("_defaultSink") ? (ISink<?>) variables.get("_defaultSink") : null;
 			
-			List<?> ret = getParser().parseAndExecute(lines, caller, defaultSink, context);
+			List<?> ret = getParser().parseAndExecute(lines, caller, defaultSink, context, executor);
 			List<IExecutorCommand> commands = new ArrayList<IExecutorCommand>();
 			for (Object o:ret){
 				if (o instanceof IExecutorCommand){

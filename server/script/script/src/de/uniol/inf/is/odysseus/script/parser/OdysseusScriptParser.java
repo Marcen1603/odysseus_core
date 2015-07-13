@@ -38,7 +38,6 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
@@ -46,7 +45,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ResumeOnErrorPreParserKeyword;
 
 public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser {
@@ -132,25 +130,24 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	@Override
-	public List<IExecutorCommand> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
-		return execute(parseScript(completeText, caller, context), caller, defaultSink);
+	public List<IExecutorCommand> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink, Context context, IServerExecutor executor) throws OdysseusScriptException {
+		return execute(parseScript(completeText, caller, context, executor), caller, defaultSink, executor);
 	}
 
 	@Override
-	public List<IExecutorCommand> parseAndExecute(String[] textLines, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
-		return execute(parseScript(textLines, caller, context), caller, defaultSink);
+	public List<IExecutorCommand> parseAndExecute(String[] textLines, ISession caller, ISink<?> defaultSink, Context context, IServerExecutor executor) throws OdysseusScriptException {
+		return execute(parseScript(textLines, caller, context, executor), caller, defaultSink, executor);
 	}
 
 	@Override
-	public List<IExecutorCommand> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
-
-		validate(statements, caller, defaultSink);
+	public List<IExecutorCommand> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink, IServerExecutor executor) throws OdysseusScriptException {
+		validate(statements, caller, defaultSink, executor);
 
 		Map<String, Object> variables = prepareVariables(defaultSink);
 		List<IExecutorCommand> results = Lists.newArrayList();
 		for (PreParserStatement stmt : statements) {
 			try {
-				List<IExecutorCommand> commands = stmt.execute(variables, caller, this);
+				List<IExecutorCommand> commands = stmt.execute(variables, caller, this, executor);
 				if (commands != null) {
 					results.addAll(commands);
 				}
@@ -168,16 +165,16 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		return results;
 	}
 
-	private void validate(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
+	private void validate(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink, IServerExecutor executor) throws OdysseusScriptException {
 		Map<String, Object> variables = prepareVariables(defaultSink);
 		for (PreParserStatement stmt : statements) {
-			stmt.validate(variables, caller, this);
+			stmt.validate(variables, caller, this, executor);
 		}
 	}
 
 	@Override
-	public void validate(String[] lines, ISession caller, Context context) throws OdysseusScriptException {
-		validate(parseScript(lines, caller, context), caller, null);
+	public void validate(String[] lines, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
+		validate(parseScript(lines, caller, context, executor), caller, null, executor);
 	}
 
 	private static Boolean isResumeOnError(Map<String, Object> variables) {
@@ -201,14 +198,14 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	@Override
-	public List<PreParserStatement> parseScript(String completeText, ISession caller, Context context) throws OdysseusScriptException {
+	public List<PreParserStatement> parseScript(String completeText, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		List<String> lines = null;
 		lines = splitToList(completeText);
-		return parseScript(lines.toArray(new String[lines.size()]), caller, context);
+		return parseScript(lines.toArray(new String[lines.size()]), caller, context, executor);
 	}
 
 	@Override
-	public synchronized List<PreParserStatement> parseScript(String[] script, ISession caller, Context context) throws OdysseusScriptException {
+	public synchronized List<PreParserStatement> parseScript(String[] script, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 
 		String[] textToParse = Arrays.copyOf(script, script.length);
 		List<PreParserStatement> statements = new LinkedList<PreParserStatement>();
@@ -226,7 +223,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			String[] text = rewriteLoop(textToParse, context, caller);
 
 			// after that, we are looking for procedures and replace them
-			text = runProcedures(text, caller);
+			text = runProcedures(text, caller, executor);
 
 			IfController ifController = new IfController(text, caller);
 			StringBuffer sb = null;
@@ -393,11 +390,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		ReplacementContainer.addDefault(key, value);
 	}
 
-	private String[] runProcedures(String[] text, ISession caller) throws OdysseusScriptException {
+	private String[] runProcedures(String[] text, ISession caller, IServerExecutor executor) throws OdysseusScriptException {
 		List<String> lines = new ArrayList<>();
 		for (String line : text) {
 			if (line.indexOf(PARAMETER_KEY + EXECUTE) != -1) {
-				lines.addAll(runProcedure(line, caller));
+				lines.addAll(runProcedure(line, caller, executor));
 			} else {
 				lines.add(line);
 			}
@@ -405,7 +402,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		return lines.toArray(new String[0]);
 	}
 
-	private List<String> runProcedure(String line, ISession caller) throws OdysseusScriptException {
+	private List<String> runProcedure(String line, ISession caller, IServerExecutor executor) throws OdysseusScriptException {
 		String key = PARAMETER_KEY + EXECUTE;
 		int toCut = line.indexOf(key) + key.length();
 		String head = line.substring(toCut).trim();
@@ -415,7 +412,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		}
 		String name = head.substring(0, endNamePos).trim();
 
-		StoredProcedure proc = getExecutor().getStoredProcedure(name, caller);
+		StoredProcedure proc = executor.getStoredProcedure(name, caller);
 
 		String procText = proc.getText();
 		// check parameters
@@ -695,7 +692,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context, IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException {
 		List<IExecutorCommand> executorCommands = new ArrayList<>();
 		try {
-			List<?> results = parseAndExecute(query, user, null, context);
+			List<?> results = parseAndExecute(query, user, null, context, executor);
 			for (Object result : results) {
 				if (result instanceof IExecutorCommand) {
 					executorCommands.add((IExecutorCommand) result);
@@ -727,11 +724,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			throw new QueryParseException(message.toString(), e.getCause());
 		}
 		throw new QueryParseException("Parsing Odysseus script failed:" + e.getMessage(), e);
-	}
-
-	@Override
-	public IExecutor getExecutor() {
-		return Activator.getExecutor();
 	}
 
 	@Override

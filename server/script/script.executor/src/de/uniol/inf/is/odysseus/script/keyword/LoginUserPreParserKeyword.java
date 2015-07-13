@@ -19,30 +19,31 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class LoginUserPreParserKeyword extends AbstractPreParserExecutorKeyword{
+public class LoginUserPreParserKeyword extends AbstractPreParserKeyword{
 
 	public static final String LOGIN = "LOGIN";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		// kann hier nicht validieren, da es sein kann, dass in der gleichen anfrage zuvor
 		// erst der Nutzer angelegt wurde.
 	}
 
 	@Override
-	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		String[] para = getSimpleParameters(parameter);
 		String userName = para[0];
 		String password = para[1];
 		
 		ISession user = null;
 		if (password != null && password.length() > 0){
-			user = getServerExecutor().login(userName, password.getBytes(), caller.getTenant().getName());
+			user = executor.login(userName, password.getBytes(), caller.getTenant().getName());
 		}
 		if( user == null ) {
 			throw new OdysseusScriptException("Login with user " + userName + " failed");

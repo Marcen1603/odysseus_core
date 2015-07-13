@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -58,19 +59,19 @@ public class ReloadFromLogPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String RELOADFROMLOG = "RELOADFROMLOG";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		
 	}
 
 	@Override
-	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		logger.debug("Start reloading queries from reload log file...");
-		loadData(caller);
+		loadData(caller, executor);
 		logger.debug("Reloading queries from reload log file done.");
 		return null;
 	}
 
-	private void loadData(ISession caller) {
+	private void loadData(ISession caller, IServerExecutor executor) {
 
 		String toParse = "";
 		String newline = System.getProperty("line.separator");
@@ -84,7 +85,7 @@ public class ReloadFromLogPreParserKeyword extends AbstractPreParserKeyword {
 					toParse = toParse + newline + zeile;
 				}
 			}
-			getParser().parseAndExecute(toParse, caller, null, Context.empty());
+			getParser().parseAndExecute(toParse, caller, null, Context.empty(), executor);
 			in.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

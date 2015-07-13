@@ -20,25 +20,26 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.StartQueryCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class StartAllClosedQueriesPreParserKeyword extends
-		AbstractPreParserExecutorKeyword {
+		AbstractPreParserKeyword {
 
 	public static final String STARTQUERIES = "STARTQUERIES";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 	}
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
-			String parameter, ISession caller, Context context)
+			String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
 		List<IExecutorCommand> ret = new LinkedList<>();
 		ret.add(new StartQueryCommand(caller, null));

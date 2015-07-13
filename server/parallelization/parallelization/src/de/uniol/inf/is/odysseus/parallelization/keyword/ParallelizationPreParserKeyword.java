@@ -6,6 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter.HandlerParameterPair;
@@ -36,7 +37,7 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override 
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 
 		parameterHelper = PreParserKeywordParameterHelper
 				.newInstance(ParallelizationKeywordParameter.class);
@@ -45,7 +46,7 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
-			String parameterString, ISession caller, Context context)
+			String parameterString, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 

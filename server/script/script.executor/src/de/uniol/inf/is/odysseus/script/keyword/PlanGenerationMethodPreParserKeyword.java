@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PlanGenerationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
@@ -51,7 +52,7 @@ public class PlanGenerationMethodPreParserKeyword extends
 	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		if(parameter.length() == 0) {
 			throw new OdysseusScriptException("Parameter needed for #" + PLANGENERATIONMETHOD);
 		}
@@ -59,7 +60,7 @@ public class PlanGenerationMethodPreParserKeyword extends
 	
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		List<IQueryBuildSetting<?>> additionalSettings = getAdditionalTransformationSettings(variables);
 		Map<String, String> config = new HashMap<String, String>();
 		config.put(PLANGENERATIONMETHOD, parameter);

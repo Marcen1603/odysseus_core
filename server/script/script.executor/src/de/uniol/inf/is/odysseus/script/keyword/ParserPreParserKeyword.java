@@ -19,14 +19,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
@@ -36,13 +34,13 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
  * @author Timo Michelsen
  * 
  */
-public class ParserPreParserKeyword extends AbstractPreParserExecutorKeyword {
+public class ParserPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String PARSER = "PARSER";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException("Parameter needed for #PARSER");
 		if (parameter.equalsIgnoreCase(OdysseusScriptParser.PARSER_NAME))
@@ -53,7 +51,7 @@ public class ParserPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
-			String parameter, ISession caller, Context context)
+			String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
 		variables.put(PARSER, parameter);
 		return null;
@@ -61,16 +59,17 @@ public class ParserPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
-		try {
-			Set<String> r = new TreeSet<>(getServerExecutor()
-					.getSupportedQueryParsers(caller));
-			r.remove(OdysseusScriptParser.PARSER_NAME);
-			return r;
-		} catch (PlanManagementException e) {
-			e.printStackTrace();
-		} catch (OdysseusScriptException e) {
-			e.printStackTrace();
-		}
+		// TODO
+//		try {
+//			Set<String> r = new TreeSet<>(getServerExecutor()
+//					.getSupportedQueryParsers(caller));
+//			r.remove(OdysseusScriptParser.PARSER_NAME);
+//			return r;
+//		} catch (PlanManagementException e) {
+//			e.printStackTrace();
+//		} catch (OdysseusScriptException e) {
+//			e.printStackTrace();
+//		}
 		return new ArrayList<>();
 	}
 }

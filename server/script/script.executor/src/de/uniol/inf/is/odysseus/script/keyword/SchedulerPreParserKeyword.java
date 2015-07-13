@@ -20,22 +20,19 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword {
+public class SchedulerPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String SCHEDULER = "SCHEDULER";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context)
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
-		IExecutor executor = getServerExecutor();
-		if (executor == null)
-			throw new OdysseusScriptException("No executor found");
 		parameter.split("\"*\"");
 		List<String> params = splitParams(parameter);
 		if (params.size() != 2){
@@ -47,16 +44,11 @@ public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword 
 		if (!(executor.getRegisteredSchedulingStrategies(caller).contains(params.get(1)))){
 			throw new OdysseusScriptException("Schedulingstrategy "+params.get(1)+" not found");			
 		}
-		
-			
 	}
 
 	@Override
-	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context)
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
-		IExecutor executor = getServerExecutor();
-		if (executor == null)
-			throw new OdysseusScriptException("No executor found");
 		parameter.split("\"*\"");
 		List<String> params = splitParams(parameter);
 		executor.setScheduler(params.get(0), params.get(1), caller);

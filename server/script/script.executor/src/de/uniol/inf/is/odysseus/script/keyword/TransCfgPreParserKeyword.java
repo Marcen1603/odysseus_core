@@ -15,15 +15,17 @@
   */
 package de.uniol.inf.is.odysseus.script.keyword;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 /**
@@ -33,12 +35,12 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
  * 
  */
 @Deprecated
-public class TransCfgPreParserKeyword extends AbstractPreParserExecutorKeyword {
+public class TransCfgPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String TRANSCFG = "TRANSCFG";	
 	
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException("Parameter needed for #"+TRANSCFG);
 
@@ -46,18 +48,19 @@ public class TransCfgPreParserKeyword extends AbstractPreParserExecutorKeyword {
 	}
 
 	@Override
-	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		variables.put(TRANSCFG, parameter);
 		return null;
 	}
 	
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
-		try {
-			return getServerExecutor().getQueryBuildConfigurationNames(caller);
-		} catch (OdysseusScriptException e) {			
-			return new ArrayList<>();
-		}			
+//		try {
+//			return getServerExecutor().getQueryBuildConfigurationNames(caller);
+//		} catch (OdysseusScriptException e) {			
+//			return new ArrayList<>();
+//		}			
+		return Lists.newArrayList();
 	}
 
 }

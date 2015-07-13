@@ -22,10 +22,8 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPlanManager;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
@@ -35,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.keyword.MaxSheddingFactorPreParserKeyword;
@@ -43,16 +40,11 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyword;
 
 @SuppressWarnings("deprecation")
-public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
+public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		try {
-			IExecutor executor = getServerExecutor();
-			if (executor == null) {
-				throw new OdysseusScriptException("No executor found");
-			}
-
 			if (parameter.length() == 0) {
 				throw new OdysseusScriptException("Encountered empty query");
 			}
@@ -76,7 +68,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
 		String transCfgName = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
 		if (transCfgName == null) {
@@ -133,8 +125,6 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 			transCfgName = transCfgName.trim();
 			String queryText = parameter.trim();
 
-			IExecutor executor = getServerExecutor();
-
 			List<IExecutorCommand> commands = new LinkedList<>();
 
 			// Add rules to use to context
@@ -145,16 +135,12 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 				context.put(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE, new ArrayList<String>((ArrayList<String>) variables.get(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)));
 			}
 
-			if (!(executor instanceof IServerExecutor)) {
-				throw new QueryParseException("Additional transformation parameter currently not supported on clients");
-			}
-
 			AddQueryCommand cmd = new AddQueryCommand(queryText, parserID, queryCaller, transCfgName, context, addSettings, startQuery());
 			commands.add(cmd);
 
 			ISink defaultSink = variables.containsKey("_defaultSink") ? (ISink) variables.get("_defaultSink") : null;
 
-			if (defaultSink != null && executor instanceof IPlanManager) {
+			if (defaultSink != null) {
 				throw new IllegalArgumentException("_Default Sink currently not supported!");
 				// appendSinkToQueries(defaultSink, queriesToStart,
 				// (IPlanManager) executor);

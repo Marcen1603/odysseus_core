@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
@@ -27,7 +28,7 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String KEYWORD = "EXPORTALL";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		final String transCfgName = (String) variables.get("TRANSCFG");
 
 		if (Strings.isNullOrEmpty(transCfgName)) {
@@ -45,7 +46,7 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		List<String> sources = determineCurrentSourceNames();
 		List<String> exportableSources = determineExportableSources(sources);
 		

@@ -19,26 +19,22 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserExecutorKeyword;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class CyclicQueryPreParserKeyword extends
-		AbstractPreParserExecutorKeyword {
+		AbstractPreParserKeyword {
 
 	public static final String CYCLICQUERY = "CYCLICQUERY";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		try {
-			IExecutor executor = getServerExecutor();
-			if (executor == null)
-				throw new OdysseusScriptException("No executor found");
-
 			String parserID = (String) variables.get("PARSER");
 			if (parserID == null)
 				throw new OdysseusScriptException("Parser not set");
@@ -58,7 +54,7 @@ public class CyclicQueryPreParserKeyword extends
 
 	@Override
 	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter,
-			ISession caller, Context context) throws OdysseusScriptException {
+			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 
 		throw new QueryParseException("The keyword "+CYCLICQUERY+" can currently not be used!");
 	}
