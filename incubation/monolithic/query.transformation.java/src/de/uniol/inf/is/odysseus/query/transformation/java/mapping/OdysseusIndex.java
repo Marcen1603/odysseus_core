@@ -15,6 +15,7 @@ public class OdysseusIndex {
 	private static List<Path> odysseusIndex = new ArrayList<Path>();
 	private static boolean init = false;
 	
+	
 	public static void search(String odysseusPath){
 		if(!init){
 			// create a FileFinder instance with a naming pattern

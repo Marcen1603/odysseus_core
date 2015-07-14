@@ -78,7 +78,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	
 		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
 		
-		javaFileWrite = new JavaFileWrite("Main.java",parameter);
+		
 		
 		walkTroughLogicalPlan(sourceOPs,parameter);
 		
@@ -94,6 +94,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		CodeFragmentInfo startStreams = CreateDefaultCode.codeForStartStreams(sinkOPs, sourceOPs);
 		
 		importList.addAll(startStreams.getImports());
+		
+		javaFileWrite = new JavaFileWrite("Main.java",parameter,importList);
 		
 		try {
 			
@@ -124,6 +126,11 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 		
 	}
+	
+	
+	
+	
+	
 	
 	
 	private void walkTroughLogicalPlan(List<ILogicalOperator> operatorSources,TransformationParameter parameter){
