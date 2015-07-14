@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
@@ -152,7 +153,17 @@ public class CreateDefaultCode {
 			
 		   if(!subscriptionSourceList.isEmpty()){
 			   for(LogicalSubscription sub : subscriptionSourceList){
-					  String targetOp =  TransformationInformation.getInstance().getVariable(sub.getTarget());
+				   
+					ILogicalOperator  targetLogicalOP;
+					
+					//TODO workaround for renameAO
+					if( sub.getTarget() instanceof RenameAO){
+						targetLogicalOP =sub.getTarget().getSubscribedToSource().iterator().next().getTarget();
+					}else{
+						targetLogicalOP = sub.getTarget();
+					}
+			
+					 String  targetOp =  TransformationInformation.getInstance().getVariable(targetLogicalOP);
 					  if(!targetOp.equals("")){
 						  code.append("\n");
 							code.append("\n");

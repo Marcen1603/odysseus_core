@@ -27,6 +27,7 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 		CodeFragmentInfo slidingWindow = new CodeFragmentInfo();
 		
+		
 		StringBuilder code = new StringBuilder();
 
 		String operatorVariable = TransformationInformation.getInstance()
