@@ -26,7 +26,7 @@ public class TransformCSVParameter {
 	
 	
 
-public static CodeFragmentInfo getCodeForParameterInfoNeu(ILogicalOperator operator, String operatorVariable){
+public static CodeFragmentInfo getCodeForParameterInfoNeu(Map<String, String> optionMap, String operatorVariable){
 		CodeFragmentInfo codeFragmentInfo= new CodeFragmentInfo();
 		Set<String> imports = new HashSet<String>();
 	
@@ -36,29 +36,14 @@ public static CodeFragmentInfo getCodeForParameterInfoNeu(ILogicalOperator opera
 		
 		code.append("OptionMap "+operatorVariable+"ParameterInfo = new OptionMap();");
 		code.append("\n");
-		
 	
-		if(operator instanceof CSVFileSource)
-		{
-			CSVFileSource sss = (CSVFileSource) operator;
-			for (Map.Entry<String, String> entry : sss.getOptionsMap().entrySet())
+			for (Map.Entry<String, String> entry : optionMap.entrySet())
 			{
 			    String value = entry.getValue().replace("\\", "\\\\");
 			    code.append(operatorVariable+"ParameterInfo.setOption(\""+entry.getKey()+"\",\""+ value+"\");");
 				code.append("\n");
 			}
-		}
-		
-		if(operator instanceof CSVFileSink){
-			CSVFileSink sss = (CSVFileSink) operator;
-			for (Map.Entry<String, String> entry : sss.getOptionsMap().entrySet())
-			{
-			    String value = entry.getValue().replace("\\", "\\\\");
-			    code.append(operatorVariable+"ParameterInfo.setOption(\""+entry.getKey()+"\",\""+ value+"\");");
-				code.append("\n");
-			}
-		}
-		
+	
 		codeFragmentInfo.addCode(code.toString());
 		
 		codeFragmentInfo.addImports(imports);

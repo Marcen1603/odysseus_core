@@ -6,9 +6,12 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.Utils;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
@@ -31,7 +34,18 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 		
-		csvFileSource.addCodeFragmentInfo(CreateDefaultCode.codeForAccessFrameworkNeu(operator));
+		CSVFileSource csvFileSourceOP = (CSVFileSource) operator;
+	
+		 String filename = csvFileSourceOP.getFilename();
+		 String transportHandler = csvFileSourceOP.getTransportHandler();
+		 String dataHandler = csvFileSourceOP.getDataHandler();
+		 String wrapper = csvFileSourceOP.getWrapper();
+		 String protocolHandler = csvFileSourceOP.getProtocolHandler();
+		 ITransportDirection direction = ITransportDirection.IN;
+		 
+		 ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
+		
+		 csvFileSource.addCodeFragmentInfo(CreateDefaultCode.codeForAccessFrameworkNeu(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
 		
 	
 		TimestampAO timestampAO = Utils.createTimestampAO(operator, null);
