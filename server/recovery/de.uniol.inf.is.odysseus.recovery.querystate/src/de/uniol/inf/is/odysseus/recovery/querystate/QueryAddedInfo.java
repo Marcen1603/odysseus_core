@@ -138,27 +138,27 @@ public class QueryAddedInfo implements Serializable {
 	/**
 	 * The recovery executor, if set.
 	 */
-	private Optional<IRecoveryExecutor> mExecutor = Optional.absent();
+	private Optional<String> mExecutorName = Optional.absent();
 
 	/**
 	 * Gets the recovery executor.
 	 * 
-	 * @return An implementation of {@link IRecoveryExecutor}, if a recovery
+	 * @return The name of the used {@link IRecoveryExecutor}, if a recovery
 	 *         strategy was selected.
 	 */
-	public Optional<IRecoveryExecutor> getRecoveryExecutor() {
-		return this.mExecutor;
+	public Optional<String> getRecoveryExecutor() {
+		return this.mExecutorName;
 	}
 
 	/**
 	 * Sets the recovery executor.
 	 * 
 	 * @param executor
-	 *            An implementation of {@link IRecoveryExecutor}, if a recovery
+	 *            The name of the used {@link IRecoveryExecutor}, if a recovery
 	 *            strategy was selected.
 	 */
-	public void setRecoveryExecutor(Optional<IRecoveryExecutor> executor) {
-		this.mExecutor = executor;
+	public void setRecoveryExecutor(String executor) {
+		this.mExecutorName = Optional.fromNullable(executor);
 	}
 
 	/**

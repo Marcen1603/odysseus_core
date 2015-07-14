@@ -49,6 +49,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -102,12 +103,12 @@ public class ReloadLog implements IQueryAddedListener, IPlanModificationListener
 	}
 
 	@Override
-	public void queryAddedEvent(String query, List<Integer> queryIds, String buildConfig, String parserID, ISession user, Context context) {
+	public void queryAddedEvent(String query, List<Integer> queryIds, QueryBuildConfiguration buildConfig, String parserID, ISession user, Context context) {
 		logger.debug("Query added to log: " + query);
 		QueryEntry qe = new QueryEntry();
 		qe.parserID = parserID;
 		qe.query = query;
-		qe.transCfgID = buildConfig;
+		qe.transCfgID = buildConfig.getName();
 		qe.username = user.getUser().getName();
 		synchronized (queries) {
 			queries.add(qe);

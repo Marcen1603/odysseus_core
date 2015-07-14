@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -15,18 +14,8 @@ import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
-/**
- * The Odysseus-Script keyword to set an {@link IRecoveryExecutor} for a script.
- * 
- * @author Michael Brand
- *
- */
-public class RecoveryExecutorPreParserKeyword extends AbstractPreParserKeyword {
-
-	/**
-	 * The name of the keyword to appear in Odysseus-Script.
-	 */
-	public static final String KEYWORD = "RECOVERY";
+// TODO javaDoc
+public class RecoveryConfigKeyword extends AbstractPreParserKeyword {
 
 	/**
 	 * All bound recovery executors.
@@ -54,33 +43,33 @@ public class RecoveryExecutorPreParserKeyword extends AbstractPreParserKeyword {
 		cExecutors.remove(executor.getName());
 	}
 
-	@Override
-	public Collection<String> getAllowedParameters(ISession caller) {
-		return cExecutors.keySet();
+	public static String getName() {
+		return "RECOVERYCONFIGUTRATION";
 	}
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
-		if (Strings.isNullOrEmpty(parameter)) {
-			throw new OdysseusScriptException(
-					"Recovery startegy name is missing!");
+		if (!getAllowedParameters(caller).contains(parameter)) {
+			throw new OdysseusScriptException("'" + parameter
+					+ "' is not a valid recovery configuaration!");
 		}
 
-		String executorName = parameter.trim();
-		if (!getAllowedParameters(caller).contains(executorName)) {
-			throw new OdysseusScriptException("Recovery startegy '"
-					+ executorName + "' is not registered!");
-		}
 	}
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
 			String parameter, ISession caller, Context context,
 			IServerExecutor executor) throws OdysseusScriptException {
-		// TODO implement RecoveryExecutorPreParserKeyword.execute
+		variables.put(getName(), new RecoveryExecutorConfigSettingParameter(
+				parameter));
 		return null;
+	}
+
+	@Override
+	public Collection<String> getAllowedParameters(ISession caller) {
+		return cExecutors.keySet();
 	}
 
 }

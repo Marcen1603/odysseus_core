@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.recovery.querystate;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -21,10 +23,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryComponent;
+import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
+import de.uniol.inf.is.odysseus.recovery.configuration.RecoveryConfigKeyword;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
@@ -127,6 +132,32 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	}
 
 	/**
+	 * All bound recovery executors.
+	 */
+	private static final Map<String, IRecoveryExecutor> cRecExecutors = Maps
+			.newConcurrentMap();
+
+	/**
+	 * Binds a recovery executor.
+	 * 
+	 * @param executor
+	 *            The recovery executor to bind.
+	 */
+	public static void bindRecoveryExecutor(IRecoveryExecutor executor) {
+		cRecExecutors.put(executor.getName(), executor);
+	}
+
+	/**
+	 * Unbinds a recovery executor.
+	 * 
+	 * @param executor
+	 *            The recovery executor to unbind.
+	 */
+	public static void unbindRecoveryExecutor(IRecoveryExecutor executor) {
+		cRecExecutors.remove(executor.getName());
+	}
+
+	/**
 	 * The current session, if retrieved.
 	 */
 	private static Optional<ISession> cSession = Optional.absent();
@@ -207,11 +238,19 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 				getSession(), info.getContext());
 		cLog.debug("Added query.");
 		if (info.getRecoveryExecutor().isPresent()) {
-			try {
-				info.getRecoveryExecutor().get().recover(info.getQueryIds());
-			} catch (Exception e) {
-				cLog.error("Error while calling recovery executor for queries "
-						+ info.getQueryText(), e);
+			String recExecutorName = info.getRecoveryExecutor().get();
+			if (cRecExecutors.containsKey(recExecutorName)) {
+				try {
+					cRecExecutors.get(recExecutorName).recover(
+							info.getQueryIds());
+				} catch (Exception e) {
+					cLog.error(
+							"Error while calling recovery executor for queries "
+									+ info.getQueryText(), e);
+				}
+			} else {
+				cLog.error("Recovery executor {} is not bound!",
+						recExecutorName);
 			}
 		}
 	}
@@ -264,7 +303,8 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 
 	@Override
 	public void queryAddedEvent(String query, List<Integer> queryIds,
-			String buildConfig, String parserID, ISession user, Context context) {
+			QueryBuildConfiguration buildConfig, String parserID,
+			ISession user, Context context) {
 		/*
 		 * Note: For each Odysseus-Script, (1) the inner queries are delivered
 		 * with their parsers (e.g., PQL) and (2) the complete Odysseus-Script
@@ -279,7 +319,10 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		info.setParserId(parserID);
 		info.setQueryText(query);
 		info.setContext(context);
-		// TODO read IRecoveryExecutor from Odysseus Script
+		Optional<IRecoveryExecutor> recExecutor = determineRecoveryExecutor(query);
+		if (recExecutor.isPresent()) {
+			info.setRecoveryExecutor(recExecutor.get().getName());
+		}
 		if (queryIds.isEmpty()) {
 			// Source definition
 			cLog.debug("Source added.");
@@ -294,6 +337,28 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 			cSystemLog.get().write(QueryStateUtils.TAG_QUERYADDED,
 					System.currentTimeMillis(), info.toBase64Binary());
 		}
+	}
+
+	// TODO javaDoc
+	private Optional<IRecoveryExecutor> determineRecoveryExecutor(String script) {
+		int beginKeyword = script.indexOf(RecoveryConfigKeyword.getName());
+		if (beginKeyword >= 0) {
+			int endLine = script.indexOf("\n", beginKeyword);
+			if(endLine == -1) {
+				endLine = script.length();
+			}
+			String keyWordPlusParameter = script.substring(beginKeyword,
+					endLine);
+			String parameter = keyWordPlusParameter.substring(
+					RecoveryConfigKeyword.getName().length(),
+					keyWordPlusParameter.length()).trim();
+			if (cRecExecutors.containsKey(parameter)) {
+				return Optional.of(cRecExecutors.get(parameter));
+			} else {
+				cLog.error("Unknown recovery executor: " + parameter);
+			}
+		}
+		return Optional.absent();
 	}
 
 	@Override

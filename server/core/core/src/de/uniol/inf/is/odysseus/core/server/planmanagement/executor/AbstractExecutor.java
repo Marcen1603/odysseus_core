@@ -103,6 +103,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlanReoptimizeListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryReoptimizeListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
@@ -672,7 +673,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * Sends an added query to all listeners.
 	 */
 	protected synchronized void fireQueryAddedEvent(
-			String query, List<Integer> queryIds, String buildConfig,
+			String query, List<Integer> queryIds, QueryBuildConfiguration buildConfig,
 			String parserID, ISession user, Context context) {
 		for (IQueryAddedListener listener : this.queryAddedListener) {
 			try {

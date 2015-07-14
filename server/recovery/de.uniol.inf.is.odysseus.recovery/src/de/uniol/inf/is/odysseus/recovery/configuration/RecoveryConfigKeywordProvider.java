@@ -7,21 +7,16 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
-/**
- * Provider of all Odysseus-Script keywords relevant for recovery.
- * 
- * @author Michael Brand
- *
- */
-public class PreParserKeywordProvider implements IPreParserKeywordProvider {
+// TODO javaDoc
+public class RecoveryConfigKeywordProvider implements IPreParserKeywordProvider {
 
 	@Override
 	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
-		Map<String, Class<? extends IPreParserKeyword>> keywords = Maps
+		Map<String, Class<? extends IPreParserKeyword>> recoveryKeywords = Maps
 				.newHashMap();
-		keywords.put(RecoveryExecutorPreParserKeyword.KEYWORD,
-				RecoveryExecutorPreParserKeyword.class);
-		return keywords;
+		recoveryKeywords.put(RecoveryConfigKeyword.getName(),
+				RecoveryConfigKeyword.class);
+		return recoveryKeywords;
 	}
 
 }
