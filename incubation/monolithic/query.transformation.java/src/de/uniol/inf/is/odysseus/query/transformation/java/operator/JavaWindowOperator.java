@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.operator;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
