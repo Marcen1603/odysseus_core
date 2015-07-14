@@ -211,7 +211,9 @@ public class SelectorThread implements Runnable, UncaughtExceptionHandler {
 				try {
 					task.run();
 				} catch (Exception e) {
-					LOG.error(e.getMessage(), e);
+					if (!(e instanceof CancelledKeyException)) {
+						LOG.error(e.getMessage(), e);
+					}
 				}
 			}
 			this.pendingInvocations.clear();
