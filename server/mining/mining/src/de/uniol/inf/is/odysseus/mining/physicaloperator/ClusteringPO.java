@@ -95,7 +95,7 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 			if (endP.beforeOrEquals(object.getMetadata().getStart())) {
 				synchronized (this.sweepArea) {
 					TimeInterval ti = new TimeInterval(startP, endP);
-					List<Tuple<M>> qualifies = this.sweepArea.queryOverlapsAsList(ti);					
+					List<Tuple<M>> qualifies = this.sweepArea.queryOverlapsAsList(ti);
 					Map<Integer, List<Tuple<M>>> results = clusterer.processClustering(qualifies);					
 					for (Entry<Integer, List<Tuple<M>>> cluster : results.entrySet()) {
 						for (Tuple<M> result : cluster.getValue()) {

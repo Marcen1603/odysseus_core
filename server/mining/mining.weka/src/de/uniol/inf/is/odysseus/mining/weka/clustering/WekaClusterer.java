@@ -75,6 +75,9 @@ public class WekaClusterer<M extends ITimeInterval> implements IClusterer<M> {
 		Map<Integer, List<Tuple<M>>> map = new HashMap<>();
 		Instances instances = WekaConverter.convertToInstances(tuples, war);
 		try {
+			if (tuples.size() < clusterer.numberOfClusters()) {
+				return map;
+			}
 			clusterer.buildClusterer(instances);
 			ClusterEvaluation eval = new ClusterEvaluation();
 			eval.setClusterer(clusterer);
