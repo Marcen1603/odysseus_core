@@ -7,7 +7,12 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
-// TODO javaDoc
+/**
+ * Provider of all Odysseus Script keywords related to recovery.
+ * 
+ * @author Michael Brand
+ *
+ */
 public class RecoveryConfigKeywordProvider implements IPreParserKeywordProvider {
 
 	@Override

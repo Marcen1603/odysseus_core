@@ -241,6 +241,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 			String recExecutorName = info.getRecoveryExecutor().get();
 			if (cRecExecutors.containsKey(recExecutorName)) {
 				try {
+					// Call the recovery executor to recover:
 					cRecExecutors.get(recExecutorName).recover(
 							info.getQueryIds());
 				} catch (Exception e) {
@@ -302,7 +303,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	}
 
 	@Override
-	public void queryAddedEvent(String query, List<Integer> queryIds,
+	public void queryAddedEvent(String query, final List<Integer> queryIds,
 			QueryBuildConfiguration buildConfig, String parserID,
 			ISession user, Context context) {
 		/*
@@ -319,9 +320,12 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		info.setParserId(parserID);
 		info.setQueryText(query);
 		info.setContext(context);
-		Optional<IRecoveryExecutor> recExecutor = determineRecoveryExecutor(query);
+		final Optional<IRecoveryExecutor> recExecutor = RecoveryConfigKeyword
+				.determineRecoveryExecutor(query);
 		if (recExecutor.isPresent()) {
 			info.setRecoveryExecutor(recExecutor.get().getName());
+			// Call the recovery executor to backup:
+			recExecutor.get().activateBackup(queryIds);
 		}
 		if (queryIds.isEmpty()) {
 			// Source definition
@@ -337,28 +341,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 			cSystemLog.get().write(QueryStateUtils.TAG_QUERYADDED,
 					System.currentTimeMillis(), info.toBase64Binary());
 		}
-	}
-
-	// TODO javaDoc
-	private Optional<IRecoveryExecutor> determineRecoveryExecutor(String script) {
-		int beginKeyword = script.indexOf(RecoveryConfigKeyword.getName());
-		if (beginKeyword >= 0) {
-			int endLine = script.indexOf("\n", beginKeyword);
-			if(endLine == -1) {
-				endLine = script.length();
-			}
-			String keyWordPlusParameter = script.substring(beginKeyword,
-					endLine);
-			String parameter = keyWordPlusParameter.substring(
-					RecoveryConfigKeyword.getName().length(),
-					keyWordPlusParameter.length()).trim();
-			if (cRecExecutors.containsKey(parameter)) {
-				return Optional.of(cRecExecutors.get(parameter));
-			} else {
-				cLog.error("Unknown recovery executor: " + parameter);
-			}
-		}
-		return Optional.absent();
 	}
 
 	@Override

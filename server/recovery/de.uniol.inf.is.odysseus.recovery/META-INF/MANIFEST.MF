@@ -9,7 +9,8 @@ Require-Bundle: com.google.guava,
  de.uniol.inf.is.odysseus.recovery.systemlog,
  de.uniol.inf.is.odysseus.script.parser,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.slf4j
 Export-Package: de.uniol.inf.is.odysseus.recovery,
  de.uniol.inf.is.odysseus.recovery.configuration
 Service-Component: OSGI-INF/RecoveryConfigKeyword.xml, OSGI-INF/RecoveryConfigKeywordProvider.xml
