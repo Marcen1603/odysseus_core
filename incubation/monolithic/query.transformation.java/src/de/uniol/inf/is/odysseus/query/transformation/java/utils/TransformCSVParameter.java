@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 public class TransformCSVParameter {
@@ -51,19 +48,5 @@ public static CodeFragmentInfo getCodeForParameterInfoNeu(Map<String, String> op
 		return codeFragmentInfo;
 		
 	}
-	
-
-	
-	
-	public static Set<String> getImportsForParameterInfo(){
-		Set<String> importList = new HashSet<String>();
-		importList.add("de.uniol.inf.is.odysseus.core.collection.OptionMap");
-		
-		return importList;
-		
-	}
-	
-	
-
 
 }
