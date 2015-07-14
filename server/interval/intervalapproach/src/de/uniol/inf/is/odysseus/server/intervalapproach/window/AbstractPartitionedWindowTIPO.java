@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupProcessor;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.state.SlidingElementWindowTIPOState;
@@ -40,6 +44,13 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 
 	public AbstractPartitionedWindowTIPO(AbstractWindowAO ao) {
 		super(ao);
+	}
+	
+	protected AbstractPartitionedWindowTIPO(WindowType windowType, TimeUnit baseTimeUnit,
+			TimeValueItem windowSize, TimeValueItem windowAdvance,
+			TimeValueItem windowSlide, 
+			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
+		super(windowType, baseTimeUnit, windowSize, windowAdvance, windowSlide, true, partitionedBy, inputSchema);
 	}
 
 	@Override

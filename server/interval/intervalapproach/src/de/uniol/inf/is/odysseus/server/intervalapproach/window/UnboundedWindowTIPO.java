@@ -18,7 +18,9 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 
 public class UnboundedWindowTIPO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractNonBlockingWindowTIPO<T> {
 
@@ -26,6 +28,10 @@ public class UnboundedWindowTIPO<T extends IStreamObject<? extends ITimeInterval
 		super(algebraOp);
 	}
 
+	public UnboundedWindowTIPO(SDFSchema inputSchema){
+		super(WindowType.TIME, null, null , null ,null, false, null, inputSchema);
+	}
+	
 	@Override
 	protected PointInTime calcWindowEnd(ITimeInterval interval) {
 		return PointInTime.getInfinityTime();

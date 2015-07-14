@@ -15,10 +15,15 @@
   */
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
  * Allgemeine Klasse fuer SlidingTimeWindow. Spezielle implementierungen fuer SlidingTimeWindow mit Delta = 1 und FixedWindow mit Delta = WindowSize
@@ -33,6 +38,12 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITi
 	public SlidingAdvanceTimeWindowTIPO(AbstractWindowAO algebraOp) {
 		super(algebraOp);
 	}
+	
+	public SlidingAdvanceTimeWindowTIPO(TimeUnit baseTimeUnit,
+			TimeValueItem windowSize, TimeValueItem windowAdvance, SDFSchema inputSchema){
+		super(WindowType.TIME, baseTimeUnit, windowSize, windowAdvance,null, false, null, inputSchema);
+	}
+	
 
 		
 	@Override

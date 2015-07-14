@@ -15,8 +15,15 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -28,6 +35,13 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IStreamObject<? ex
 		super(algebraOp);
 	}
 
+	protected AbstractNonBlockingWindowTIPO(WindowType windowType, TimeUnit baseTimeUnit,
+			TimeValueItem windowSize, TimeValueItem windowAdvance,
+			TimeValueItem windowSlide, boolean partioned,
+			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
+		super(windowType, baseTimeUnit, windowSize, windowAdvance, windowSlide, partioned, partitionedBy, inputSchema);
+	}
+	
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
