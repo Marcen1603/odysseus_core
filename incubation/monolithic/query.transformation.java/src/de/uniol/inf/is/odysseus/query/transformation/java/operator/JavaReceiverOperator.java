@@ -52,7 +52,7 @@ public class JavaReceiverOperator extends AbstractTransformationOperator{
 		 
 		 
 		//now create the AccessPO
-			code.append("ReceiverPO "+operatorVariable+"PO = new ReceiverPO("+operatorVariable+"ProtocolHandler,0);");
+			code.append("ReceiverPO "+operatorVariable+"PO = new ReceiverPO("+operatorVariable+"ProtocolHandler);");
 			code.append("\n");
 			code.append(operatorVariable+"PO.setOutputSchema("+operatorVariable+"SDFSchema);");
 			code.append("\n");

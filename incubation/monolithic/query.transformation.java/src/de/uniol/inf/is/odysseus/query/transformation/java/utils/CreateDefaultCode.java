@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
@@ -119,14 +120,20 @@ public class CreateDefaultCode {
 				code.append("\n");
 		}
 		
-		code.append("\n");
-		code.append("while("+TransformationInformation.getInstance().getVariable(sourceOPs.get(0))+"PO.hasNext()){");
-		code.append("\n");
-		code.append(TransformationInformation.getInstance().getVariable(sourceOPs.get(0))+"PO.transferNext();");
-		code.append("\n");
-		code.append("}");
-		code.append("\n");
-		code.append("\n");
+		if(sourceOPs.get(0) instanceof StreamAO){
+			//TODO keine schleife notwendig? siehe SelectorThread?
+		}else{
+			code.append("\n");
+			code.append("while("+TransformationInformation.getInstance().getVariable(sourceOPs.get(0))+"PO.hasNext()){");
+			code.append("\n");
+			code.append(TransformationInformation.getInstance().getVariable(sourceOPs.get(0))+"PO.transferNext();");
+			code.append("\n");
+			code.append("}");
+			code.append("\n");
+			code.append("\n");
+		}
+		
+	
 		
 		startFragment.addCode(code.toString());
 		
