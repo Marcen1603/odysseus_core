@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.AbstractSession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
@@ -30,20 +29,26 @@ public class WsClientSession  extends AbstractSession implements ISession {
 
 
 	private static final long serialVersionUID = 3523363132440028382L;
+	private String tenantName;
 
-	public WsClientSession(final IUser user, final ITenant tenant, final String connection) {
-		super(user, tenant);
+	public WsClientSession(final IUser user, final String tenant, final String connection) {
+		super(user, null);
+		this.tenantName = tenant;
 		setConnectionName(connection);
 	}
-
+	
 	@Override
 	protected long getSessionTimeout() {
 		// Is not relevant on client side		
 		return 0;
 	}
+	
+	public String getTenantName() {
+		return tenantName;
+	}
 
 	public void setToken(String securitytoken) {
 		super.setToken(securitytoken);
 	}
-	
+		
 }

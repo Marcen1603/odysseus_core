@@ -74,6 +74,10 @@ public class WsClientUser implements IUser {
 		this.password = password;
 	}
 
+	public byte[] getPassword() {
+		return password;
+	}
+	
 	@Override
 	public void setName(String name) {
 		this.name = name;
