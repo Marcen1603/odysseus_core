@@ -32,7 +32,6 @@ package de.uniol.inf.is.odysseus.database.physicaloperator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.Statement;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

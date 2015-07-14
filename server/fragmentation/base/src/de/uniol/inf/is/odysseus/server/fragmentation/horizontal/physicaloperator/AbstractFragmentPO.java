@@ -9,12 +9,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
@@ -27,7 +23,8 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  */
 public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>> extends AbstractPipe<T, T> implements IPhysicalOperatorKeyValueProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractFragmentPO.class);
+    @SuppressWarnings("unused")
+	private static final Logger log = LoggerFactory.getLogger(AbstractFragmentPO.class);
 
     /**
      * Constructs a new {@link AbstractFragmentPO}.

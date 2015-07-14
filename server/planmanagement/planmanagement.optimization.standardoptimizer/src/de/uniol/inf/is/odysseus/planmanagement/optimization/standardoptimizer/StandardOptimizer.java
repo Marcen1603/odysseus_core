@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.Abstract
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoPlanAdaption;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.IElementCloningUpdater;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.StandardElementCloningUpdater;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;

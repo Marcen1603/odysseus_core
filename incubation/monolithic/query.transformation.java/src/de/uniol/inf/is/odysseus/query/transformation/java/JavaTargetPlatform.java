@@ -44,6 +44,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	}
 
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
 			TransformationParameter parameter) {

@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;

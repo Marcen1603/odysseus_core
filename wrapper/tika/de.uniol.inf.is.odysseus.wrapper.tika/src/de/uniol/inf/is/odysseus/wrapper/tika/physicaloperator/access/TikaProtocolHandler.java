@@ -46,7 +46,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtoc
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>

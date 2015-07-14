@@ -17,6 +17,7 @@ public class QueryTransformation {
 	
 	private static Logger LOG = LoggerFactory.getLogger(QueryTransformation.class);
 	
+	@SuppressWarnings("unchecked")
 	public static void startQueryTransformation(TransformationParameter parameter){
 		
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
@@ -24,6 +25,7 @@ public class QueryTransformation {
 		ILogicalQuery queryTopAo = ExecutorServiceBinding.getExecutor().getLogicalQueryById(parameter.getQueryId(), QueryTransformationHelper.getActiveSession());
 
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(queryTopAo);
+		@SuppressWarnings("rawtypes")
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(queryTopAo.getLogicalPlan(), copyVisitor);
 		

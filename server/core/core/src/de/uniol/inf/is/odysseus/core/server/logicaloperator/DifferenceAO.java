@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
-import de.uniol.inf.is.odysseus.core.server.predicate.EqualsPredicate;
 
 /**
  * @author Marco Grawunder

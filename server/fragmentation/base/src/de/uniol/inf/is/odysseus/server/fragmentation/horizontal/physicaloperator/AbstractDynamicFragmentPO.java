@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractDynamicFragmentAO;
@@ -27,15 +26,15 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 public abstract class AbstractDynamicFragmentPO<T extends IStreamObject<IMetaAttribute>> extends AbstractFragmentPO<T> {
     private static final Logger log = LoggerFactory.getLogger(AbstractDynamicFragmentPO.class);
 
-    /**
-     * The rate heartbeats are send.
-     */
-    private final int heartbeatRate;
-
-    /**
-     * The current amount of heartbeats.
-     */
-    private int[] heartbeatCounter;
+//    /**
+//     * The rate heartbeats are send.
+//     */
+//    private final int heartbeatRate;
+//
+//    /**
+//     * The current amount of heartbeats.
+//     */
+//    private int[] heartbeatCounter;
 
     /**
      * How many elements are send to which port
@@ -52,7 +51,7 @@ public abstract class AbstractDynamicFragmentPO<T extends IStreamObject<IMetaAtt
     public AbstractDynamicFragmentPO(AbstractDynamicFragmentAO fragmentAO) {
         super(fragmentAO);
         // this.heartbeatCounter = new int[this.numFragments];
-        this.heartbeatRate = fragmentAO.getHeartbeatrate();
+        //this.heartbeatRate = fragmentAO.getHeartbeatrate();
         // this.elementsSend = new long[this.numFragments];
     }
 
@@ -97,7 +96,7 @@ public abstract class AbstractDynamicFragmentPO<T extends IStreamObject<IMetaAtt
      */
     private void sendHeartbeats(int exceptionPort, PointInTime currentPoT) {
 
-        final Heartbeat heartbeat = Heartbeat.createNewHeartbeat(currentPoT);
+       // final Heartbeat heartbeat = Heartbeat.createNewHeartbeat(currentPoT);
 
         // for (int p = 0; p < this.numFragments; p++) {
         //
