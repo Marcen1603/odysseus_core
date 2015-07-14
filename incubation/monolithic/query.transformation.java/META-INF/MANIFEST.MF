@@ -21,5 +21,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.query.transformation,
  de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.relational_interval,
  org.eclipse.core.runtime
-Service-Component: OSGI-INF/JavaSelectOperator.xml,OSGI-INF/JavaProjectOperator.xml,OSGI-INF/JavaTargetPlatform.xml,OSGI-INF/JavaCSVFileSourceOperator.xml,OSGI-INF/JavaCSVFileSinkOperator.xml,
- OSGI-INF/JavaWindowOperator.xml
+Service-Component: OSGI-INF/JavaSelectOperator.xml,OSGI-INF/JavaProjectOperator.xml,OSGI-INF/JavaTargetPlatform.xml,OSGI-INF/JavaCSVFileSourceOperator.xml,OSGI-INF/JavaCSVFileSinkOperator.xml,OSGI-INF/JavaWindowOperator.xml,
+ OSGI-INF/JavaReceiverOperator.xml
