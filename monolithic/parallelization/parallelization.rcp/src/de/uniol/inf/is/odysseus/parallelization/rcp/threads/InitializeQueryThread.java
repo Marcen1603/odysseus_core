@@ -126,35 +126,42 @@ public class InitializeQueryThread extends Thread {
 	}
 
 	private void changeWindowOnSuccess() {
-		window.getWindow().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				
-				window.createConfigContent();
-			}
+		if (!window.getWindow().isDisposed()) {
+			window.getWindow().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
 
-		});
+					window.createConfigContent();
+				}
+
+			});
+		}
 	}
 
 	private void updateProgress(final int selectionValue) {
-		window.getWindow().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				BenchmarkStartComposite benchmarkStartComposite = window.getStartComposite();
-				benchmarkStartComposite.updateProgress(selectionValue);
-			}
+		if (!window.getWindow().isDisposed()) {
+			window.getWindow().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					BenchmarkStartComposite benchmarkStartComposite = window
+							.getStartComposite();
+					benchmarkStartComposite.updateProgress(selectionValue);
+				}
 
-		});
+			});
+		}
 	}
 
 	private void createError(final Throwable ex) {
-		window.getWindow().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				window.createErrorMessage(ex);
-			}
-		});
-		errorOccoured = true;
+		if (!window.getWindow().isDisposed()) {
+			window.getWindow().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					window.createErrorMessage(ex);
+				}
+			});
+			errorOccoured = true;
+		}
 	}
 
 	private void runSelectedQuery() throws CoreException, IOException {

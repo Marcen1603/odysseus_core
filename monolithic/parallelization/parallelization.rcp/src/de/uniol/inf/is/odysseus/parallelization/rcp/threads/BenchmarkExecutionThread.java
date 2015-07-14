@@ -57,7 +57,7 @@ public class BenchmarkExecutionThread extends Thread implements
 		}
 		try {
 			Thread.sleep(maximumExecutionTime);
-			benchmarkerExecution.setExecutionTime(maximumExecutionTime);
+			benchmarkerExecution.addExecutionTime(maximumExecutionTime);
 		} catch (InterruptedException e) {
 		} finally {
 			for (Integer queryId : queryIds) {
@@ -80,7 +80,7 @@ public class BenchmarkExecutionThread extends Thread implements
 		if (arg instanceof Long) {
 			executionTime = (Long) arg;
 		}
-		benchmarkerExecution.setExecutionTime(executionTime);
+		benchmarkerExecution.addExecutionTime(executionTime);
 		this.interrupt();
 
 	}

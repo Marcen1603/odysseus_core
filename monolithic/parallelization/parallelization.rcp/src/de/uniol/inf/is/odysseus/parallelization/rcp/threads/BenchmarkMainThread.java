@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.parallelization.rcp.threads;
 import java.util.List;
 import java.util.UUID;
 
+import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,50 +39,66 @@ public class BenchmarkMainThread extends Thread {
 		int currentPercentage = 0;
 
 		for (BenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
-			changeProgress(currentPercentage, "Executing analysis "
-					+ (executionCounter + 1) + " of " + numberOfExecutions
-					+ ": " + benchmarkerExecution.toString());
+			if (!isInterrupted()) {
+				changeProgress(currentPercentage, -1l, "Executing analysis "
+						+ (executionCounter + 1) + " of " + numberOfExecutions
+						+ ": " + benchmarkerExecution.toString());
+			}
 
-			executeAnalysis(benchmarkerExecution);
-			// if cancel button is pressed, we want to stop the analysis after
-			// current execution
+			for (int i = 0; i < benchmarkerExecution.getNumberOfExecutions(); i++) {
+				if (!isInterrupted()) {
+					executeAnalysis(benchmarkerExecution);
+				}
+			}
+
+			if (!isInterrupted()) {
+				currentPercentage = printResult(numberOfExecutions,
+						executionCounter, benchmarkerExecution);
+				executionCounter++;
+			}
+
 			if (isInterrupted()) {
 				cleanupBenchmarker();
 				return;
 			}
 
-			currentPercentage = printResult(numberOfExecutions,
-					executionCounter, benchmarkerExecution);
-			executionCounter++;
-
 		}
-		changeProgress(100, System.lineSeparator()
+		changeProgress(100, 0l, System.lineSeparator()
 				+ "Parallelization Benchmark anaylsis complete");
 		evaluateResult(benchmarkerExecutions);
 	}
 
-	private int printResult(int numberOfExecutions, int executionCounter,
+	private int printResult(int numberOfConfigurations, int configurationCounter,
 			BenchmarkerExecution benchmarkerExecution) {
-		int currentPercentage;
-		currentPercentage = (int) (((executionCounter + 1) / (double) numberOfExecutions) * 100);
-		if (benchmarkerExecution.getExecutionTime() >= data.getConfiguration()
-				.getMaximumExecutionTime()) {
+		int currentPercentage = (int) (((configurationCounter + 1) / (double) numberOfConfigurations) * 100);
+		
+		long averageExecutionTime = benchmarkerExecution.getAverageExecutionTime(data
+				.getConfiguration().getMaximumExecutionTime());
+		long remainingTimeMillis = ((numberOfConfigurations-configurationCounter) * averageExecutionTime * benchmarkerExecution.getNumberOfExecutions());
+		
+		if (averageExecutionTime >= data
+				.getConfiguration().getMaximumExecutionTime()) {
 			changeProgress(
-					currentPercentage,
+					currentPercentage, remainingTimeMillis,
 					"Maximum execution time reached. Please restart benchmarker and adjust values "
 							+ "for maximum execution time or number of elements."
 							+ System.lineSeparator());
-		} else if (benchmarkerExecution.getExecutionTime() == -1l) {
+		} else if (averageExecutionTime == -1l) {
 			changeProgress(
-					currentPercentage,
+					currentPercentage, remainingTimeMillis,
 					"End of evaluation was reached, before "
 							+ data.getConfiguration().getNumberOfElements()
 							+ " elements are processed. Please decrese the number of elements.");
 		} else {
-			changeProgress(currentPercentage, "Done. "
-					+ data.getConfiguration().getNumberOfElements()
-					+ " elements in " + benchmarkerExecution.getExecutionTime()
-					+ " ms processed." + System.lineSeparator());
+			changeProgress(
+					currentPercentage, remainingTimeMillis,
+					"Done. "
+							+ data.getConfiguration().getNumberOfElements()
+							+ " elements in an average time of "
+							+ averageExecutionTime
+							+ " ms processed. ("
+							+ benchmarkerExecution.getNumberOfExecutions()
+							+ " executions)" + System.lineSeparator());
 		}
 		return currentPercentage;
 	}
@@ -91,11 +108,14 @@ public class BenchmarkMainThread extends Thread {
 				.get(0);
 
 		for (BenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
-			if (benchmarkerExecution.getExecutionTime() <= 0l) {
+			if (benchmarkerExecution.getAverageExecutionTime(data
+					.getConfiguration().getMaximumExecutionTime()) <= 0l) {
 				continue;
 			} else {
-				if (benchmarkerExecution.getExecutionTime() < currentBestExecution
-						.getExecutionTime()) {
+				if (benchmarkerExecution.getAverageExecutionTime(data
+						.getConfiguration().getMaximumExecutionTime()) < currentBestExecution
+						.getAverageExecutionTime(data.getConfiguration()
+								.getMaximumExecutionTime())) {
 					currentBestExecution = benchmarkerExecution;
 				}
 			}
@@ -137,6 +157,7 @@ public class BenchmarkMainThread extends Thread {
 			executionThread.join();
 		} catch (InterruptedException e) {
 			// do nothing
+			interrupt();
 		}
 	}
 
@@ -145,14 +166,19 @@ public class BenchmarkMainThread extends Thread {
 	}
 
 	private void changeProgress(final int progressProcent,
-			final String progressString) {
-		window.getWindow().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				window.getAnalyseComposite().updateAnalysisProgress(
-						progressProcent, progressString);
-			}
+			final long remainingTimeMillis, final String progressString) {
+		Shell currentWindow = window.getWindow();
+		if (!currentWindow.isDisposed()) {
+			currentWindow.getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					window.getAnalyseComposite().updateAnalysisProgress(
+							progressProcent, remainingTimeMillis, progressString);
+				}
 
-		});
+			});
+		} else {
+			interrupt();
+		}
 	}
 }

@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.parallelization.rcp.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorParallelizationKeywordParameterBuilder;
@@ -12,8 +14,9 @@ public class BenchmarkerExecution {
 	private boolean useThreadedBuffer;
 	private Integer numberOfElements;
 	private boolean allowPostOptmization;
-	private Map<String, BenchmarkExecutionElement> elements;
-	private long executionTime;
+	private Map<String, BenchmarkExecutionElement> elements = new HashMap<String, BenchmarkExecutionElement>();
+	private List<Long> executionTimes = new ArrayList<Long>();
+	private int numberOfExecutions;
 
 	public BenchmarkerExecution(Integer degree, Integer buffersize,
 			boolean allowPostOptmization, Integer numberOfElements) {
@@ -21,11 +24,10 @@ public class BenchmarkerExecution {
 		this.buffersize = buffersize;
 		this.allowPostOptmization = allowPostOptmization;
 		this.numberOfElements = numberOfElements;
-		this.elements = new HashMap<String, BenchmarkExecutionElement>();
 	}
 
 	public BenchmarkerExecution() {
-		this.elements = new HashMap<String, BenchmarkExecutionElement>();
+		
 	}
 
 	@Override
@@ -36,6 +38,8 @@ public class BenchmarkerExecution {
 		clone.numberOfElements = this.numberOfElements;
 		clone.allowPostOptmization = this.allowPostOptmization;
 		clone.useThreadedBuffer = this.useThreadedBuffer;
+		clone.numberOfExecutions = this.numberOfExecutions;
+		clone.executionTimes = new ArrayList<Long>(executionTimes);
 		clone.elements = new HashMap<String, BenchmarkExecutionElement>();
 		for (String elementKey : elements.keySet()) {
 			clone.elements.put(elementKey, elements.get(elementKey).clone());
@@ -92,12 +96,25 @@ public class BenchmarkerExecution {
 		}
 	}
 	
-	public long getExecutionTime() {
-		return executionTime;
+	public long getAverageExecutionTime(long maximumExecutionTime) {
+		long sumExecutionTime = 0l;
+		
+		for (Long executionTime : executionTimes) {
+			if (executionTime == -1l){
+				return -1l;
+			} else if (executionTime == 0l){
+				return 0l;
+			}  else if (executionTime >= maximumExecutionTime){
+				return maximumExecutionTime;
+			} else {
+				sumExecutionTime += executionTime;				
+			}
+		}
+		return sumExecutionTime / executionTimes.size();
 	}
 
-	public void setExecutionTime(long executionTime) {
-		this.executionTime = executionTime;
+	public void addExecutionTime(long executionTime) {
+		this.executionTimes.add(executionTime);
 	}
 
 	public boolean isUseThreadedBuffer() {
@@ -132,6 +149,14 @@ public class BenchmarkerExecution {
 			builder.append(", "+element.toString());
 		}
 		return builder.toString();
+	}
+
+	public int getNumberOfExecutions() {
+		return numberOfExecutions;
+	}
+
+	public void setNumberOfExecutions(int numberOfExecutions) {
+		this.numberOfExecutions = numberOfExecutions;
 	}
 	
 	

@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow.ParalleizationBenchmarkerPage;
+import de.uniol.inf.is.odysseus.parallelization.rcp.windows.table.StrategySelectionHelper;
 
 public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 
@@ -92,11 +93,20 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 		startButton = new Button(buttonComposite, SWT.PUSH);
 		startButton.setText("Start Analyse");
 		startButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		
 		startButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				window.getConfigureComposite().prepareParallelizationAnalysis();
-				window.startAnalysis();
+				final BenchmarkConfigureComposite configureComposite = window.getConfigureComposite();
+				StrategySelectionHelper strategySelectionHelper = configureComposite.getStrategySelectionTableViewer();
+				if (strategySelectionHelper != null){
+					
+				}
+				boolean successful = configureComposite.prepareParallelizationAnalysis();
+				if (successful){
+					window.startAnalysis();					
+				}
 			}
 		});
 	}
@@ -131,8 +141,6 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						
-						
 						StringBuilder builder = new StringBuilder();
 						List<String> queryStringArray = data.getQueryStringArray();
 						
@@ -144,10 +152,10 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 						}
 						ByteArrayInputStream in = new 
 								ByteArrayInputStream(builder.toString().getBytes());
-						// TODO refresh of file is needed
+						
 						IFile queryFile = data.getQueryFile();
 						try {
-							queryFile.setContents(in, false, true, null);
+							queryFile.setContents(in, true, true, null);
 						} catch (CoreException e1) {
 							e1.printStackTrace();
 						}

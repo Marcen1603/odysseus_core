@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.table.StrategySelectionRow;
-import de.uniol.inf.is.odysseus.parallelization.rcp.windows.table.StrategySelectionTableViewer;
+import de.uniol.inf.is.odysseus.parallelization.rcp.windows.table.StrategySelectionHelper;
 
 public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 
@@ -29,7 +29,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 	private Text buffersizeText;
 	private Text numberOfElementsText;
 	private Button allowPostOptimizationButton;
-	private StrategySelectionTableViewer strategySelectionTableViewer;
+	private StrategySelectionHelper strategySelectionHelper;
 	private Text maxExecutionTimeText;
 	private BenchmarkDataHandler data;
 	private ParallelizationBenchmarkerWindow window;
@@ -38,8 +38,9 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 	private final String BOTH = "Threaded & Non-Threaded Buffer";
 	private final String THREADED = "Only Threaded Buffer";
 	private final String NON_THREADED = "Only Non-Threaded Buffer";
-	private String[] BUFFER_COMBO = {BOTH, THREADED, NON_THREADED};
-	
+	private String[] BUFFER_COMBO = { BOTH, THREADED, NON_THREADED };
+	private Text numberOfExecutionsText;
+
 	public BenchmarkConfigureComposite(Composite parent, int style,
 			int windowWidth, UUID benchmarkProcessId,
 			ParallelizationBenchmarkerWindow window) {
@@ -104,8 +105,18 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 		maxExecutionTimeText = new Text(configComposite, SWT.SINGLE
 				| SWT.BORDER);
 		maxExecutionTimeText.setText(String
-				.valueOf(BenchmarkerConfiguration.DEFAULT_EXECUTION_TIME));
+				.valueOf(BenchmarkerConfiguration.DEFAULT_MAX_EXECUTION_TIME));
 		maxExecutionTimeText.setLayoutData(gridData);
+
+		Label numberOfExecutionsLabel = new Label(configComposite, SWT.NULL);
+		numberOfExecutionsLabel
+				.setText("Number of executions for each configuration: ");
+		numberOfExecutionsText = new Text(configComposite, SWT.SINGLE
+				| SWT.BORDER);
+		numberOfExecutionsText
+				.setText(String
+						.valueOf(BenchmarkerConfiguration.DEFAULT_NUMBER_OF_EXECUTIONS));
+		numberOfExecutionsText.setLayoutData(gridData);
 
 		Label selectBufferType = new Label(configComposite, SWT.NULL);
 		selectBufferType.setText("Select buffer type: ");
@@ -118,28 +129,26 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 		allowPostOptimizationButton.setText("Allow post optimization");
 		allowPostOptimizationButton.setSelection(true);
 
-
 		createLabel(
 				this,
 				"Following strategies are possible for the selected query. Please select at least one strategy for "
 						+ "parallelization. If more than one strategy for one operator is compatible, each strategy \n is "
 						+ "benchmarked. Note that executing the benchmark depends one the number of combinations.");
 
-		strategySelectionTableViewer = new StrategySelectionTableViewer(this,
-				data);
-		
+		strategySelectionHelper = new StrategySelectionHelper(this, data);
+
 		GridData selectGridData = new GridData(GridData.FILL_BOTH);
 
 		Composite selectComposite = new Composite(this, SWT.NONE);
 		GridLayout selectGridLayout = new GridLayout(2, false);
 		selectComposite.setLayout(selectGridLayout);
-		
-		final CheckboxTableViewer tableViewer = strategySelectionTableViewer.getTableViewer();
-		
+
+		final CheckboxTableViewer tableViewer = getStrategySelectionTableViewer()
+				.getTableViewer();
+
 		Button selectAllButton = new Button(selectComposite, SWT.PUSH);
 		selectAllButton.setText("Select all");
-		selectAllButton
-				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		selectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		selectAllButton.setLayoutData(selectGridData);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -147,11 +156,10 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				tableViewer.setAllChecked(true);
 			}
 		});
-		
+
 		Button unselectAllButton = new Button(selectComposite, SWT.PUSH);
 		unselectAllButton.setText("Unselect all");
-		unselectAllButton
-				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		unselectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		unselectAllButton.setLayoutData(selectGridData);
 		unselectAllButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -209,6 +217,18 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 			}
 		}
 
+		String numberOfExecutionString = numberOfExecutionsText.getText();
+		if (numberOfExecutionString.isEmpty()) {
+			throw new IllegalArgumentException(
+					"No number of executions definied");
+		} else {
+			int value = Integer.parseInt(numberOfExecutionString);
+			if (value > 100) {
+				throw new IllegalArgumentException(
+						"number of executions need to be less equal 100");
+			}
+		}
+
 		// selected strategies
 		if (selectedStratgies.isEmpty()) {
 			throw new IllegalArgumentException("No strategy selected");
@@ -217,6 +237,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				strategySelectionRow.validate(selectedStratgies, degrees);
 			}
 		}
+
 	}
 
 	protected void createConfiguration(
@@ -243,37 +264,46 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 		configuration.setMaximumExecutionTime(Long
 				.parseLong(maxExecutionTimeString));
 
+		String numberOfExecutionString = numberOfExecutionsText.getText();
+		configuration.setNumberOfExecutions(Integer
+				.parseInt(numberOfExecutionString));
+
 		boolean allowPostOptimization = allowPostOptimizationButton
 				.getSelection();
 		configuration.setAllowPostOptimization(allowPostOptimization);
 
 		setBufferTypeFromCombo(configuration);
-		
+
 		data.setConfiguration(configuration);
 	}
 
-	private void setBufferTypeFromCombo(BenchmarkerConfiguration configuration){
+	private void setBufferTypeFromCombo(BenchmarkerConfiguration configuration) {
 		String bufferSelection = buffertypeCombo.getText();
-		if (bufferSelection.equals(BOTH)){
+		if (bufferSelection.equals(BOTH)) {
 			configuration.setUseThreadedBuffer(true);
 			configuration.setUseNonThreadedBuffer(true);
-		} else if (bufferSelection.equals(THREADED)){
+		} else if (bufferSelection.equals(THREADED)) {
 			configuration.setUseThreadedBuffer(true);
-		} else if (bufferSelection.equals(NON_THREADED)){
+		} else if (bufferSelection.equals(NON_THREADED)) {
 			configuration.setUseNonThreadedBuffer(true);
 		}
 	}
 
-	public void prepareParallelizationAnalysis() {
+	public boolean prepareParallelizationAnalysis() {
 		List<StrategySelectionRow> selectedStratgies = null;
 		try {
-			selectedStratgies = strategySelectionTableViewer
+			selectedStratgies = getStrategySelectionTableViewer()
 					.getSelectedStratgies();
 			validateConfiguration(selectedStratgies);
+			createConfiguration(selectedStratgies);
 		} catch (Exception ex) {
 			window.createErrorMessage(ex);
+			return false;
 		}
+		return true;
+	}
 
-		createConfiguration(selectedStratgies);
+	public StrategySelectionHelper getStrategySelectionTableViewer() {
+		return strategySelectionHelper;
 	}
 }

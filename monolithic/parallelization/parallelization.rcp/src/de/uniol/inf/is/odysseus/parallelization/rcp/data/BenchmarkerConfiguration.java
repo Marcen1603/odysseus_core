@@ -9,7 +9,8 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.windows.table.StrategySelect
 
 public class BenchmarkerConfiguration {
 
-	public static final long DEFAULT_EXECUTION_TIME = 80000;
+	public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
+	public static final long DEFAULT_MAX_EXECUTION_TIME = 80000;
 	public static final int DEFAULT_NUMBER_OF_ELEMENTS = 20000;
 	
 	private List<StrategySelectionRow> selectedStratgies;
@@ -20,6 +21,7 @@ public class BenchmarkerConfiguration {
 	private Integer numberOfElements;
 	private Long maximumExecutionTime;
 	private boolean allowPostOptimization;
+	private int numberOfExecutions;
 
 	public List<StrategySelectionRow> getSelectedStratgies() {
 		return selectedStratgies;
@@ -113,6 +115,7 @@ public class BenchmarkerConfiguration {
 		clonedExecution.setBuffersize(buffersize);
 		clonedExecution.setNumberOfElements(numberOfElements);
 		clonedExecution.setAllowPostOptmization(allowPostOptimization);
+		clonedExecution.setNumberOfExecutions(numberOfExecutions);
 		clonedExecution.setUseThreadedBuffer(useThreadedBuffer);
 		executions.add(clonedExecution);
 	}
@@ -178,5 +181,13 @@ public class BenchmarkerConfiguration {
 
 	public void setUseNonThreadedBuffer(boolean useNonThreadedBuffer) {
 		this.useNonThreadedBuffer = useNonThreadedBuffer;
+	}
+
+	public int getNumberOfExecutions() {
+		return numberOfExecutions;
+	}
+
+	public void setNumberOfExecutions(int numberOfExecutions) {
+		this.numberOfExecutions = numberOfExecutions;
 	}
 }

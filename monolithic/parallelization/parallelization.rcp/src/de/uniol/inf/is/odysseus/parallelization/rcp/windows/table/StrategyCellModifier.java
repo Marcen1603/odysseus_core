@@ -20,9 +20,9 @@ public class StrategyCellModifier implements ICellModifier {
 		}
 		if (row != null) {
 			switch (property) {
-			case StrategySelectionTableViewer.END_OPERATOR_ID:
+			case StrategySelectionHelper.END_OPERATOR_ID:
 				return true;
-			case StrategySelectionTableViewer.DEGREES:
+			case StrategySelectionHelper.DEGREES:
 				return true;
 			}
 		}
@@ -37,9 +37,9 @@ public class StrategyCellModifier implements ICellModifier {
 		}
 		if (row != null) {
 			switch (property) {
-			case StrategySelectionTableViewer.END_OPERATOR_ID:
+			case StrategySelectionHelper.END_OPERATOR_ID:
 				return row.getEndOperatorId();
-			case StrategySelectionTableViewer.DEGREES:
+			case StrategySelectionHelper.DEGREES:
 				return row.getCustomDegrees();
 			}
 		}
@@ -57,10 +57,10 @@ public class StrategyCellModifier implements ICellModifier {
 		}
 		if (row != null) {
 			switch (property) {
-			case StrategySelectionTableViewer.END_OPERATOR_ID:
+			case StrategySelectionHelper.END_OPERATOR_ID:
 				row.setEndOperatorId(String.valueOf(value));
 				break;
-			case StrategySelectionTableViewer.DEGREES:
+			case StrategySelectionHelper.DEGREES:
 				row.setCustomDegrees(String.valueOf(value));
 				break;
 			}

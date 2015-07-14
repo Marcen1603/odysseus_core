@@ -14,7 +14,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
@@ -22,12 +21,12 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkInitializationResult;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
-public class StrategySelectionTableViewer {
+public class StrategySelectionHelper {
 
 	public static final String OPERATOR_TYPE = "Operator type";
 	public static final String OPERATOR_ID = "OperatorId";
 	public static final String END_OPERATOR_ID = "End OperatorId";
-	public static final String DEGREES = "Degrees (comma-seperated or GLOBAL)";
+	public static final String DEGREES = "Custom degrees (comma-seperated)";
 	public static final String PARALLELIZATION_STRATEGY = "Parallelization Strategy";
 	public static final String FRAGMENTATION = "Fragmentation";
 
@@ -36,10 +35,10 @@ public class StrategySelectionTableViewer {
 
 	private static final int NUMBER_OF_COLUMNS = PROPS.length;
 
-	private CheckboxTableViewer tableViewer;
+	private StrategyTableViewer tableViewer;
 	private List<StrategySelectionRow> strategySelectionRows;
 
-	public StrategySelectionTableViewer(Composite parent,
+	public StrategySelectionHelper(Composite parent,
 			BenchmarkDataHandler data) {
 		strategySelectionRows = convertData(data);
 
@@ -50,39 +49,28 @@ public class StrategySelectionTableViewer {
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		tableViewer = CheckboxTableViewer.newCheckList(tableComposite,
-				SWT.BORDER | SWT.FULL_SELECTION);
+		
+		tableViewer = StrategyTableViewer.newCheckList(tableComposite,
+				SWT.BORDER | SWT.FULL_SELECTION, strategySelectionRows );
 
-		Table table = configureTable();
 		createColumns(tableColumnLayout);
-		configureTableViewer(table);
-	}
-
-	private Table configureTable() {
-		Table table = getTableViewer().getTable();
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
-		return table;
-	}
-
-	private void configureTableViewer(Table table) {
-		getTableViewer().setContentProvider(new StrategyContentProvider(
+		
+		tableViewer.setContentProvider(new StrategyContentProvider(
 				strategySelectionRows));
-		getTableViewer().setLabelProvider(new StrategyLabelProvider());
+		tableViewer.setLabelProvider(new StrategyLabelProvider());
+		tableViewer.setCellModifier(new StrategyCellModifier(tableViewer));
 
 		CellEditor[] editors = new CellEditor[NUMBER_OF_COLUMNS];
-		editors[2] = new TextCellEditor(table);
-		editors[3] = new TextCellEditor(table);
+		editors[2] = new TextCellEditor(tableViewer.getTable());
+		editors[3] = new TextCellEditor(tableViewer.getTable());
 		getTableViewer().setColumnProperties(PROPS);
-		getTableViewer().setCellModifier(new StrategyCellModifier(getTableViewer()));
 		getTableViewer().setCellEditors(editors);
-
-		getTableViewer().setInput(strategySelectionRows);
-
-		getTableViewer().setAllChecked(true);
+		
+		tableViewer.setInput(strategySelectionRows);
+		tableViewer.setAllChecked(true);
+		
 	}
-
+	
 	private void createColumns(TableColumnLayout tableColumnLayout) {
 		int[] weight = new int[PROPS.length];
 		weight[0] = 20;
@@ -100,20 +88,12 @@ public class StrategySelectionTableViewer {
 					new ColumnWeightData(weight[i], 10, true));
 		}
 	}
-
+	
 	public List<StrategySelectionRow> getSelectedStratgies() {
-		ArrayList<StrategySelectionRow> checkedElementResult = new ArrayList<StrategySelectionRow>();
-		Object[] checkedElements = getTableViewer().getCheckedElements();
-		if (checkedElements.length > 0) {
-			if (checkedElements[0] instanceof StrategySelectionRow) {
-				for (int i = 0; i < checkedElements.length; i++) {
-					StrategySelectionRow row = (StrategySelectionRow) checkedElements[i];
-					checkedElementResult.add(row);
-				}
-			}
-		}
-		return checkedElementResult;
+		return tableViewer.getSelectedStratgies();
 	}
+	
+	
 
 	private List<StrategySelectionRow> convertData(BenchmarkDataHandler data) {
 		BenchmarkInitializationResult benchmarkInitializationResult = data
