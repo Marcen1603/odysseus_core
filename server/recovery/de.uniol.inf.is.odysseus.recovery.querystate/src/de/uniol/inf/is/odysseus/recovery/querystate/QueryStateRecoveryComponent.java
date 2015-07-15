@@ -234,8 +234,9 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	private void recoverQueryAddEvent(ISysLogEntry entry) {
 		QueryAddedInfo info = QueryAddedInfo.fromBase64Binary(entry
 				.getComment().get());
+		ISession session = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginAs(info.getUser().getName(), info.getTenant(), UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null));
 		cExecutor.get().addQuery(info.getQueryText(), info.getParserId(),
-				getSession(), info.getContext());
+				session, info.getContext());
 		cLog.debug("Added query.");
 		if (info.getRecoveryExecutor().isPresent()) {
 			String recExecutorName = info.getRecoveryExecutor().get();
@@ -320,6 +321,8 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		info.setParserId(parserID);
 		info.setQueryText(query);
 		info.setContext(context);
+		info.setTenant(user.getTenant());
+		info.setUser(user.getUser());
 		final Optional<IRecoveryExecutor> recExecutor = RecoveryConfigKeyword
 				.determineRecoveryExecutor(query);
 		if (recExecutor.isPresent()) {

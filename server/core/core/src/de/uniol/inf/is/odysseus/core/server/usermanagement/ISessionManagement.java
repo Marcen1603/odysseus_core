@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,20 @@ public interface ISessionManagement {
 	ISession login(String username, byte[] password, ITenant tenant);
 
 	/**
+	 * Creates a session for a given user.
+	 * 
+	 * @param username
+	 *            The name of the user to login.
+	 * @param tenant
+	 *            The tenant.
+	 * @param caller
+	 *            A session object with SUDO_LOGIN rights.
+	 * @return A session object for the given user or null, if the caller has no
+	 *         permission to create the session.
+	 */
+	ISession loginAs(String username, ITenant tenant, ISession caller);
+
+	/**
 	 * @param caller
 	 */
 	void logout(ISession caller);
@@ -40,16 +54,16 @@ public interface ISessionManagement {
 	 * @return
 	 */
 	boolean isValid(ISession session);
-	
+
 	ISession login(String token);
-	
+
 	void subscribe(ISessionListener listener);
-	 
+
 	void unsubscribe(ISessionListener listener);
-	
+
 	ISession loginSuperUser(Object secret, String tenantname);
-	
+
 	ISession loginSuperUser(Object secret);
-		
+
 	String getType();
 }

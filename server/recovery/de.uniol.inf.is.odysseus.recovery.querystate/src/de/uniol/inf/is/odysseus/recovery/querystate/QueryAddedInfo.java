@@ -19,6 +19,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
 
 /**
@@ -93,13 +97,56 @@ public class QueryAddedInfo implements Serializable {
 		this.mQueryText = queryText;
 	}
 
-	// TODO Problem with ISession while fromBase64Binary:
-	// ClassNotFoundException.
-	// Is only used for addQuery. All other events are done with SuperUser.
-	// /**
-	// * The current session (and corresponding user).
-	// */
-	// private ISession mSsession;
+	/**
+	 * The name of the tenant.
+	 */
+	private String mTenant;
+
+	/**
+	 * Gets the tenant.
+	 * 
+	 * @return The tenant of the caller.
+	 */
+	public ITenant getTenant() {
+		return UserManagementProvider.getTenant(this.mTenant);
+	}
+
+	/**
+	 * Sets the tenant.
+	 * 
+	 * @param tenant
+	 *            The tenant of the caller.
+	 */
+	public void setTenant(ITenant tenant) {
+		this.mTenant = tenant.getName();
+	}
+
+	/**
+	 * The name of the user.
+	 */
+	private String mUser;
+
+	/**
+	 * Gets the user.
+	 * 
+	 * @return The user of the caller.
+	 */
+	public IUser getUser() {
+		ISession caller = UserManagementProvider.getUsermanagement(true)
+				.getSessionManagement().loginSuperUser(null, this.mTenant);
+		return UserManagementProvider.getUsermanagement(true).findUser(
+				this.mUser, caller);
+	}
+
+	/**
+	 * Sets the user.
+	 * 
+	 * @param user
+	 *            The user of the caller.
+	 */
+	public void setUser(IUser user) {
+		this.mUser = user.getName();
+	}
 
 	/**
 	 * The context.

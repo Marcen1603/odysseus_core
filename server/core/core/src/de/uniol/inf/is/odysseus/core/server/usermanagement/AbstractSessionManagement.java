@@ -45,6 +45,14 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements
 		return login(username, password, tenant, true);
 	}
 	
+	@Override
+	public ISession loginAs(final String username, ITenant tenant, ISession caller) {
+		if(UserManagementProvider.getUsermanagement(false).hasPermission(caller, UserManagementPermission.SUDO_LOGIN, UserManagementPermission.objectUri)) {
+			return login(username, null, tenant, false);
+		}
+		return null;
+	}
+	
 	private ISession login(final String username, final byte[] password,
 			ITenant tenant, boolean checkLogin) {
 		IGenericDAO<USER, String> userDao = getUserDAO(tenant);
