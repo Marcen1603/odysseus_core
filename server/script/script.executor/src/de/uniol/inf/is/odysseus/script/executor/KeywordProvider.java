@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.script.keyword.PlanGenerationMethodPreParserKeyw
 import de.uniol.inf.is.odysseus.script.keyword.PreTransformationHandlerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.RemoveQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.RequiredFeaturePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.ResetUpdateSitePreparserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ResumeQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SchedulerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SleepPreParserKeyword;
@@ -49,6 +50,7 @@ import de.uniol.inf.is.odysseus.script.keyword.StopSchedulerPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.SuspendQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.TransCfgPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.UpdateFeaturePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.UpdateSitePreparserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.WaitForQueryPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
@@ -93,6 +95,8 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(SuspendQueryPreParserKeyword.NAME, SuspendQueryPreParserKeyword.class);
 		keywords.put(RemoveQueryPreParserKeyword.NAME, RemoveQueryPreParserKeyword.class);
 		keywords.put(WaitForQueryPreParserKeyword.NAME, WaitForQueryPreParserKeyword.class);
+		keywords.put(UpdateSitePreparserKeyword.NAME, UpdateSitePreparserKeyword.class);
+		keywords.put(ResetUpdateSitePreparserKeyword.NAME, ResetUpdateSitePreparserKeyword.class);
 		return keywords;
 	}
 }
