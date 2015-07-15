@@ -31,7 +31,7 @@ public class Windturbine {
 		this.wind = wind;
 
 		long firstDelay = 0; // 0 seconds
-		long rotationPeriod = 1 * 500; // 1 second
+		long rotationPeriod = 1 * 500; // 0.5 seconds
 		Timer rotationTimer = new Timer();
 		rotationTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override

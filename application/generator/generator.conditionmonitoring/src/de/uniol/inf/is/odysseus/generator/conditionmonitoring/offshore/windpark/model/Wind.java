@@ -56,7 +56,7 @@ public class Wind {
 			}
 
 			periodCounter = 0;
-			periodLength = (int) (Math.random() * 20);
+			periodLength = (int) (Math.random() * 21);
 		}
 
 		double amount = Math.random() * 0.25;

@@ -43,7 +43,17 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+
 		boolean demo = true;
+		System.out.println("Windpark-Demo (d) or single value generators (s)?");
+		sc = new Scanner(System.in);
+		if (sc.hasNextLine()) {
+			String command = sc.nextLine();
+			if (!command.equals("d")) {
+				demo = false;
+			}
+		}
+
 		if (!demo) {
 			startTestInstance();
 		} else {
@@ -233,12 +243,10 @@ public class Activator implements BundleActivator {
 				boolean executable = runFailCommand(command, windparkManager, substationManager);
 				if (!executable) {
 					// Fail programs
-					if (command.equalsIgnoreCase("runFail1")) {
-						String path = "D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\Fehlerszenarien\\szenario1.txt";
-						runFailProgram(path, windparkManager, substationManager);
-					}
-					else if (command.equalsIgnoreCase("runFail2")) {
-						String path = "D:\\Dropbox\\Studium\\Master\\Masterarbeit\\SVN\\Fehlerszenarien\\scenario_rarepattern.csv";
+					if (command.equalsIgnoreCase("runScenario")) {
+						System.out.print("Path: ");
+						String path = sc.nextLine();
+						path = path.replaceAll("/", "//");
 						runFailProgram(path, windparkManager, substationManager);
 					}
 					// Help
