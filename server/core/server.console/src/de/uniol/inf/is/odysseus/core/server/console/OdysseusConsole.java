@@ -1147,6 +1147,22 @@ public class OdysseusConsole implements CommandProvider,
 		}
 	}
 
+	@Help(parameter = "", description = "change location of current update site")
+	public void _setUpdateSite(CommandInterpreter ci){
+		String id = ci.nextArgument();
+		if (id != null && !id.isEmpty()) {
+			FeatureUpdateUtility.setRepositoryLocation(id, this.currentUser);
+		} else {
+			ci.println("You have to provide an update site!");
+		}
+	}
+
+	@Help(parameter = "", description = "reset location of current update site to default location")
+	public void _resetUpdateSite(CommandInterpreter ci){
+		FeatureUpdateUtility.clearRepositoryLocation(this.currentUser);
+	}
+
+	
 	@Help(parameter = "", description = "uninstall feature")
 	public void _uninstallFeature(CommandInterpreter ci) {
 		String id = ci.nextArgument();
