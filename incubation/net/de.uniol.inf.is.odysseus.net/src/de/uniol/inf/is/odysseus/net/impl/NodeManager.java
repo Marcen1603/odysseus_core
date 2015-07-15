@@ -28,6 +28,8 @@ public final class NodeManager implements INodeManager {
 		synchronized (nodes) {
 			if (!nodes.contains(node)) {
 				nodes.add(node);
+				LOG.info("Node {} added", node);
+				
 				fireNodeAddedEvent(node);
 			} else {
 				LOG.error("Node {} was already added to the node manager", node);
@@ -37,6 +39,8 @@ public final class NodeManager implements INodeManager {
 
 	private void fireNodeAddedEvent(INode node) {
 		synchronized (listeners) {
+			LOG.debug("Fire node add event to listeners");
+			
 			for (INodeManagerListener listener : listeners) {
 				try {
 					listener.nodeAdded(this, node);
@@ -49,9 +53,13 @@ public final class NodeManager implements INodeManager {
 
 	@Override
 	public void removeNode(INode node) {
+		Preconditions.checkNotNull(node, "node must not be null!");
+		
 		synchronized (nodes) {
 			if (nodes.contains(node)) {
 				nodes.remove(node);
+				LOG.info("Node {} removed", node);
+				
 				fireNodeRemovedEvent(node);
 			}
 		}
@@ -59,6 +67,8 @@ public final class NodeManager implements INodeManager {
 
 	private void fireNodeRemovedEvent(INode node) {
 		synchronized (listeners) {
+			LOG.debug("Fire node remove event to listeners");
+			
 			for (INodeManagerListener listener : listeners) {
 				try {
 					listener.nodeRemoved(this, node);
@@ -80,6 +90,8 @@ public final class NodeManager implements INodeManager {
 
 		synchronized (listeners) {
 			listeners.add(listener);
+			
+			LOG.debug("Added node manager listener {}", listener);
 		}
 
 		// call nodeAdded for new listener for already existing nodes
@@ -92,8 +104,12 @@ public final class NodeManager implements INodeManager {
 
 	@Override
 	public void removeListener(INodeManagerListener listener) {
+		Preconditions.checkNotNull(listener, "listener must not be null!");
+		
 		synchronized (listeners) {
 			listeners.remove(listener);
+			
+			LOG.debug("Added node manager listener {}", listener);
 		}
 	}
 
