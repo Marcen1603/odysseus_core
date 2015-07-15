@@ -28,76 +28,120 @@ public class JavaFileWrite {
 	private String fileName;
 	private File file;
 	private FileWriter writer;
-	private String path;
+	private String tempPath;
 	private JavaMainstructure mainStructure;
 	TransformationParameter parameter;
-	private CreateOdysseusJar createOdysseusJar;
 	private Set<String> importList = new HashSet<String>();
 	private List<String> copyJars = new ArrayList<String>();
-
-	public JavaFileWrite(String fileName, TransformationParameter parameter, Set<String> importList){
+	private String osgiBindCode ;
+	private String bodyCode;
+	private String startCode;
+	
+	
+	public JavaFileWrite(String fileName, TransformationParameter parameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode){
 		this.fileName = fileName;
-		this.path = parameter.getTempDirectory();
+		this.tempPath = parameter.getTempDirectory();
 		this.mainStructure = new JavaMainstructure();
 		this.parameter = parameter;
-		this.createOdysseusJar = new CreateOdysseusJar();
 		this.importList = importList;
+		this.osgiBindCode = osgiBindCode;
+		this.bodyCode = bodyCode;
+		this.startCode = startCode;
+		
+	}
+
+	public void createProject() throws IOException{
+		//unzip project template
+		unzipProjectTemplate();
+		
+		//create and copy odysseus jars
+		copyOdysseusJar();
+		
+		//create main.java file
+		createMainJavaFile();
+		
+		//create build.xml file
+		createBuildScript();
+		
+		//create .classpath file
+		createClassFile();
 	}
 	
-	public void createFile() throws IOException{
+	
+	private void unzipProjectTemplate(){
+		UnZip unZip = new UnZip();
+    	unZip.unZipIt(parameter.getOdysseusPath()+"\\incubation\\monolithic\\query.transformation.java\\templates\\"+"JavaProject.zip",tempPath);
+		
+	}
+	
+	private void createMainJavaFile(){
 		StringBuilder absolutePath = new StringBuilder();
-		absolutePath.append(path);
+		absolutePath.append(tempPath);
 		absolutePath.append("\\src\\main\\");
 		absolutePath.append(fileName);
 		
-		UnZip unZip = new UnZip();
-    	unZip.unZipIt(parameter.getOdysseusPath()+"\\incubation\\monolithic\\query.transformation.java\\templates\\"+"JavaProject.zip",parameter.getTempDirectory());
-		
-
 		file = new File(absolutePath.toString());
 		 // creates the file
-		// creates a FileWriter Object
-		file.createNewFile();
-		writer = new FileWriter(file); 
-		
-		//create lib directory
-		File dir = new File(path+"\\lib");
-		dir.mkdir();
-		
-		
-		/* 
-		 * old
-		 * 
-		if(parameter.isGenerateOdysseusJar()){
-			createOdysseusJar.createOdysseusJar(parameter);
+		try {
+			file.createNewFile();
+			writer = new FileWriter(file); 
+			
+				writePackage();
+				writeImports();
+					writeClassTop();
+					writeBody(osgiBindCode);
+					writeBody(bodyCode);
+					writeBody(startCode);
+				writeBottom();
+				
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		*/
-		
+
+	}
+	
+	
+	private void createBuildScript(){
 		//generate build.xml
 		GenerateAntBuildFile buildFileGenerator = new GenerateAntBuildFile();
 	
-		File buildFile = new File(path+"\\build.xml");
-		buildFile.createNewFile();
+		File buildFile = new File(tempPath+"\\build.xml");
+		try {
+			buildFile.createNewFile();
+			FileWriter buildWriter = new FileWriter(buildFile); 
+			buildWriter.write(buildFileGenerator.getCodeForAntBuild(parameter, copyJars  ));
+			buildWriter.flush();
+			buildWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		FileWriter buildWriter = new FileWriter(buildFile); 
-		buildWriter.write(buildFileGenerator.getCodeForAntBuild(parameter));
-		buildWriter.flush();
-		buildWriter.close();
-		
-		
-		generateJarExport(importList,parameter.getTempDirectory());
 	
-		File projectFile = new File(path+"\\.classpath");
-		projectFile.createNewFile();
+	}
+	
+	private void createClassFile(){
+		File projectFile = new File(tempPath+"\\.classpath");
 		
-		FileWriter buildProjectWriter = new FileWriter(projectFile); 
-		buildProjectWriter.write(getCodeForProjectFile());
-		buildProjectWriter.flush();
-		buildProjectWriter.close();
+		try {
+			projectFile.createNewFile();
+			FileWriter buildProjectWriter = new FileWriter(projectFile); 
+			buildProjectWriter.write(getCodeForClassPathFile());
+			buildProjectWriter.flush();
+			buildProjectWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
-	public void writeImports(Set<String> importList) throws IOException{
+	
+	private void copyOdysseusJar(){
+		generateJarExport(importList,parameter.getTempDirectory());
+	}
+	
+	private void writeImports() throws IOException{
 		//sort the imports for nice look
 		TreeSet<String> sortList = new TreeSet<String>( Collections.reverseOrder() );
 		sortList.addAll(importList);
@@ -107,29 +151,24 @@ public class JavaFileWrite {
 		}
 	}
 	
-	
-	public void writeClassTop() throws IOException{
+	private void writeClassTop() throws IOException{
 		 writer.write(mainStructure.getClassTop()); 
 	}
 	
-	public void writeBody(String bodyText) throws IOException{
+	private void writeBody(String bodyText) throws IOException{
 		 writer.write(bodyText); 
 	}
 	
-	
-	public void writeBottom() throws IOException{
-		//Write imports
+	private void writeBottom() throws IOException{
 		 writer.write(mainStructure.getClassBottom()); 
-		 writer.flush();
-		 writer.close();
 	}
 	
-	public void writePackage() throws IOException{
+	private void writePackage() throws IOException{
 		 writer.write(mainStructure.getPackage()); 
 	}
 	
 	
-	private String getCodeForProjectFile(){
+	private String getCodeForClassPathFile(){
 		StringBuilder code = new StringBuilder();
 		
 		
@@ -158,7 +197,7 @@ public class JavaFileWrite {
 		}
 		
 	
-		code.append("classpathentry kind=\"output\" path=\"bin\"/>");
+		code.append("classpathentry kind=\"output\" path=\"build\"/>");
 		code.append("\n");
 		code.append("</classpath>");
 		code.append("\n");
@@ -189,8 +228,6 @@ public class JavaFileWrite {
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-			
-			
 		}
 		
 		System.out.println("");

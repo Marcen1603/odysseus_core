@@ -27,12 +27,10 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 
 	private String targetPlatformName = "Java";
 
-	private static JavaFileWrite javaFileWrite;
-	
 	private Set<String> importList = new HashSet<String>();
 	
-	private StringBuilder body;
-	private String osgiBinds;
+	private StringBuilder bodyCode;
+	private String osgiBindCode;
 	
 	private List<ILogicalOperator> sourceOPs;
 	private List<ILogicalOperator> sinkOPs;
@@ -57,7 +55,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		//Start Odysseus index
 		OdysseusIndex.search(parameter.getOdysseusPath());
 	
-		body = new StringBuilder();
+		bodyCode = new StringBuilder();
 
 		FindSinksLogicalVisitor<ILogicalOperator> findSinksVisitor = new FindSinksLogicalVisitor<ILogicalOperator>();
 		GenericGraphWalker walker = new GenericGraphWalker();
@@ -78,57 +76,32 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	
 		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
 		
-		
-		
 		walkTroughLogicalPlan(sourceOPs,parameter);
 		
 		//generate code for osgi binds
-		osgiBinds = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath());
+		osgiBindCode = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath());
 		
 		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
-		
-		//add imports that needed for the code
-		//importList.addAll(new JavaImportAnalyse().analyseCodeForImport(parameter, startDataStream()));
 		
 		//generate start code
 		CodeFragmentInfo startStreams = CreateDefaultCode.codeForStartStreams(sinkOPs, sourceOPs);
 		
 		importList.addAll(startStreams.getImports());
-		
-		javaFileWrite = new JavaFileWrite("Main.java",parameter,importList);
+	
+		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBindCode,bodyCode.toString(),startStreams.getCode());
 		
 		try {
-			
-			//create java file6
-			javaFileWrite.createFile();
-			
-			javaFileWrite.writePackage();
-			
-			//write java imports
-			javaFileWrite.writeImports(importList);
-		
-			//write java main
-			javaFileWrite.writeClassTop();
-			
-			//write body of main
-				javaFileWrite.writeBody(osgiBinds);
-				javaFileWrite.writeBody(body.toString());
-				javaFileWrite.writeBody(startStreams.getCode());
-			
-			
-			//close file
-			javaFileWrite.writeBottom();
-			
+			javaFileWrite.createProject();
+	
 			ExecuteShellComand.compileJavaProgram(parameter.getTempDirectory());	
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		
 	}
-	
-	
-	
 	
 	
 	
@@ -168,7 +141,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				operatorCode += opCodeFragment.getCode();
 			
 				//add operator code to java body
-				body.append(operatorCode);
+				bodyCode.append(operatorCode);
 				
 				//add import for *PO
 				importList.addAll(opTrans.getNeededImports());
@@ -179,7 +152,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			
 				//generate subscription
 				CodeFragmentInfo  subscription = CreateDefaultCode.generateSubscription(operator);
-				body.append(subscription.getCode());	
+				bodyCode.append(subscription.getCode());	
 				importList.addAll(subscription.getImports());
 			}
 		}
