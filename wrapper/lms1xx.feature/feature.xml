@@ -24,7 +24,6 @@
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.apache.hadoop.driver"/>
       <import plugin="org.osgeo.proj4j" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="com.vividsolutions.jts" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.mep" version="1.0.0" match="greaterOrEqual"/>
