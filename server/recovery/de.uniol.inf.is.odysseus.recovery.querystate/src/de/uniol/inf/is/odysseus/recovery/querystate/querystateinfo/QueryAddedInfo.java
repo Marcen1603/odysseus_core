@@ -1,53 +1,31 @@
-package de.uniol.inf.is.odysseus.recovery.querystate;
+package de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.DatatypeConverter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
 
 /**
  * All information needed to recover a query added event (normal queries as well
  * as source definitions). <br />
  * To write those information to the system log and to read them,
- * {@link #toBase64Binary()} and {@link #fromBase64Binary(String)} can be used.
+ * {@link #toBase64Binary()} and {@link AbstractQueryStateInfo#fromBase64Binary(String)} can be used.
  * 
  * @author Michael Brand
  *
  */
-public class QueryAddedInfo implements Serializable {
-
-	// TODO Chance to log the human readable information
+public class QueryAddedInfo extends AbstractQueryStateInfo {
 
 	/**
 	 * The version of this class for serialization.
 	 */
 	private static final long serialVersionUID = 4007923324539604364L;
-
-	/**
-	 * The logger for this class.
-	 */
-	private static final Logger cLog = LoggerFactory
-			.getLogger(QueryAddedInfo.class);
 
 	/**
 	 * The parser id.
@@ -95,57 +73,6 @@ public class QueryAddedInfo implements Serializable {
 	 */
 	public void setQueryText(String queryText) {
 		this.mQueryText = queryText;
-	}
-
-	/**
-	 * The name of the tenant.
-	 */
-	private String mTenant;
-
-	/**
-	 * Gets the tenant.
-	 * 
-	 * @return The tenant of the caller.
-	 */
-	public ITenant getTenant() {
-		return UserManagementProvider.getTenant(this.mTenant);
-	}
-
-	/**
-	 * Sets the tenant.
-	 * 
-	 * @param tenant
-	 *            The tenant of the caller.
-	 */
-	public void setTenant(ITenant tenant) {
-		this.mTenant = tenant.getName();
-	}
-
-	/**
-	 * The name of the user.
-	 */
-	private String mUser;
-
-	/**
-	 * Gets the user.
-	 * 
-	 * @return The user of the caller.
-	 */
-	public IUser getUser() {
-		ISession caller = UserManagementProvider.getUsermanagement(true)
-				.getSessionManagement().loginSuperUser(null, this.mTenant);
-		return UserManagementProvider.getUsermanagement(true).findUser(
-				this.mUser, caller);
-	}
-
-	/**
-	 * Sets the user.
-	 * 
-	 * @param user
-	 *            The user of the caller.
-	 */
-	public void setUser(IUser user) {
-		this.mUser = user.getName();
 	}
 
 	/**
@@ -231,44 +158,6 @@ public class QueryAddedInfo implements Serializable {
 	 */
 	public void setQueryIds(List<Integer> ids) {
 		this.mIds = ids;
-	}
-
-	/**
-	 * Encode to a Base64Binary.
-	 * 
-	 * @return A string representing the binary.
-	 */
-	public String toBase64Binary() {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-			oos.writeObject(this);
-			return new String(DatatypeConverter.printBase64Binary(baos
-					.toByteArray()));
-		} catch (IOException e) {
-			cLog.error("Info is not serializable!", e);
-			return null;
-		}
-	}
-
-	/**
-	 * Decode from a Base64Binary.
-	 * 
-	 * @param str
-	 *            A string representing the binary.
-	 * @return The decoded information.
-	 */
-	public static QueryAddedInfo fromBase64Binary(String str) {
-		byte[] data = DatatypeConverter.parseBase64Binary(str);
-		try (ObjectInputStream ois = new ObjectInputStream(
-				new ByteArrayInputStream(data))) {
-			return (QueryAddedInfo) ois.readObject();
-		} catch (IOException e) {
-			cLog.error("Info is not serializable!", e);
-			return null;
-		} catch (ClassNotFoundException e) {
-			cLog.error("Unknown class for decoding!", e);
-			return null;
-		}
 	}
 
 }

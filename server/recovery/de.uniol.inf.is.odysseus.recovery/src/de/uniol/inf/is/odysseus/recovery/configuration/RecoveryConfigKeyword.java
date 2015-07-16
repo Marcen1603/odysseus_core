@@ -42,6 +42,17 @@ public class RecoveryConfigKeyword extends AbstractPreParserKeyword {
 			.newConcurrentMap();
 
 	/**
+	 * Gets a recovery executor by its name.
+	 * 
+	 * @param name
+	 *            The name of the recovery executor.
+	 * @return The recovery executor with the given name, if present.
+	 */
+	public static Optional<IRecoveryExecutor> getRecoveryExecutor(String name) {
+		return Optional.fromNullable(cExecutors.get(name));
+	}
+
+	/**
 	 * Binds a recovery executor.
 	 * 
 	 * @param executor
@@ -63,6 +74,7 @@ public class RecoveryConfigKeyword extends AbstractPreParserKeyword {
 
 	/**
 	 * Gets the name.
+	 * 
 	 * @return A string to represent the keyword in Odysseus Script.
 	 */
 	public static String getName() {
