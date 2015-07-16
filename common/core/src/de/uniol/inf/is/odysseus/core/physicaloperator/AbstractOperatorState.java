@@ -2,6 +2,10 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 public abstract class AbstractOperatorState implements IOperatorState, Serializable {
 
 	/**
@@ -13,5 +17,51 @@ public abstract class AbstractOperatorState implements IOperatorState, Serializa
 	public Serializable getSerializedState() {
 		return this;
 	}
+	
 
+	protected int getSizeOfSimpleSchemaInBytes(SDFSchema schema) {
+		if (schema == null)
+			return 0;
+
+		int size = 0;
+		for (SDFAttribute attribute : schema) {
+
+			SDFDatatype type = attribute.getDatatype();
+			if (type.isDouble())
+				size += 8;
+			else if (type.isFloat())
+				size += 8;
+			else if (type.isInteger())
+				size += 4;
+			else if (type.isLong())
+				size += 8;
+			else if (type.isEndTimestamp())
+				size += 8;
+			else if (type.isStartTimestamp())
+				size += 8;
+			else if (type.isTimestamp())
+				size += 8;
+			else
+				size += 4; // default
+		}
+
+		return size;
+
+	} 
+
+	protected boolean hasStringOrListOrComplexDatatypes(SDFSchema schema) {
+		if(schema==null) {
+			return false;
+		}
+		
+		for(SDFAttribute attribute : schema) {
+			SDFDatatype type = attribute.getDatatype();
+			if(type.isString() || type.isListValue() || type.isComplex()) {
+				return true;
+			}
+			
+		}
+		return false;
+	}
+	
 }
