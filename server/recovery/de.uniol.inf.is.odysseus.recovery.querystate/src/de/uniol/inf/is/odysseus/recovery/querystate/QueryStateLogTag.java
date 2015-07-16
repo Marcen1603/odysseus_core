@@ -27,7 +27,7 @@ public enum QueryStateLogTag {
 	/**
 	 * The tag for system log entries identifying a removed source.
 	 */
-	SOURCE_REOMOVED {
+	SOURCE_REMOVED {
 
 		@Override
 		public String toString() {

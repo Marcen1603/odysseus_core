@@ -24,13 +24,5 @@ public class QueryRemovedInfo extends QueryStateChangedInfo {
 	public QueryRemovedInfo() {
 		setQueryState(QueryState.UNDEF);
 	}
-	
-	/**
-	 * No-Op.
-	 */
-	@Override
-	public void setQueryState(QueryState state) {
-		return;
-	}
 
 }

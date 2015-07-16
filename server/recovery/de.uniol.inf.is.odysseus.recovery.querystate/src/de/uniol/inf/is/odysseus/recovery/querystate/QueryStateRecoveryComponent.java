@@ -68,6 +68,38 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 			.getLogger(QueryStateRecoveryComponent.class);
 
 	/**
+	 * The name for backup threads.
+	 */
+	private static final String cBackupThreadName = "QueryStateBackup";
+
+	/**
+	 * The name for backup recovery.
+	 */
+	private static final String cReoveryThreadName = "QueryStateRecovery";
+
+	/**
+	 * Recovery will be started.
+	 */
+	@Override
+	public void onCrashDetected(final long lastStartup) throws Throwable {
+		new Thread(cReoveryThreadName) {
+
+			@Override
+			public void run() {
+				if (cSystemLog.isPresent()) {
+					cLog.debug("Starting recovery...");
+					recover(cSystemLog.get().read(lastStartup));
+					cLog.debug("Recovery finished.");
+				} else {
+					cLog.error("Could not start recovery, because no system log is bound!");
+				}
+			}
+
+		}.start();
+
+	}
+
+	/**
 	 * Only for Odysseus Script queries a backup will be created.
 	 */
 	@Override
@@ -76,7 +108,7 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 			final QueryBuildConfiguration buildConfig, final String parserId,
 			final ISession user, final Context context) {
 		if (parserId.equals(OdysseusScriptParser.PARSER_NAME)) {
-			new Thread("QueryStateBackup") {
+			new Thread(cBackupThreadName) {
 
 				@Override
 				public void run() {
@@ -96,34 +128,12 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 	}
 
 	/**
-	 * Recovery will be started.
-	 */
-	@Override
-	public void onCrashDetected(final long lastStartup) throws Throwable {
-		new Thread("QueryStateRecovery") {
-
-			@Override
-			public void run() {
-				if (cSystemLog.isPresent()) {
-					cLog.debug("Starting recovery...");
-					recover(cSystemLog.get().read(lastStartup));
-					cLog.debug("Recovery finished.");
-				} else {
-					cLog.error("Could not start recovery, because no system log is bound!");
-				}
-			}
-
-		}.start();
-
-	}
-
-	/**
 	 * The removal of a source will be logged.
 	 */
 	@Override
 	public void removedViewDefinition(final IDataDictionary sender,
 			final String name, ILogicalOperator op) {
-		new Thread("QueryStateBackup") {
+		new Thread(cBackupThreadName) {
 
 			@Override
 			public void run() {
@@ -140,24 +150,6 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 	}
 
 	/**
-	 * No-Op. Already done by
-	 * {@link #addedViewDefinition(IDataDictionary, String, ILogicalOperator)}.
-	 */
-	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name,
-			ILogicalOperator op) {
-		// Nothing to do.
-	}
-
-	/**
-	 * No-Op, because the only logged events are source creations and removals.
-	 */
-	@Override
-	public void dataDictionaryChanged(IDataDictionary sender) {
-		// Nothing to do.
-	}
-
-	/**
 	 * The removal of a query and query state changes will be logged.
 	 */
 	@Override
@@ -169,7 +161,7 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 		final ISession caller = query.getSession();
 		switch (eventType) {
 		case QUERY_REMOVE:
-			new Thread("QueryStateBackup") {
+			new Thread(cBackupThreadName) {
 
 				@Override
 				public void run() {
@@ -189,7 +181,7 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 		case QUERY_START:
 		case QUERY_STOP:
 		case QUERY_SUSPEND:
-			new Thread("QueryStateBackup") {
+			new Thread(cBackupThreadName) {
 
 				@Override
 				public void run() {
@@ -211,6 +203,24 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 			// Nothing to do.
 			break;
 		}
+	}
+
+	/**
+	 * No-Op. Already done by
+	 * {@link #addedViewDefinition(IDataDictionary, String, ILogicalOperator)}.
+	 */
+	@Override
+	public void addedViewDefinition(IDataDictionary sender, String name,
+			ILogicalOperator op) {
+		// Nothing to do.
+	}
+
+	/**
+	 * No-Op, because the only logged events are source creations and removals.
+	 */
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {
+		// Nothing to do.
 	}
 
 	/**
@@ -335,7 +345,7 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 		SourceRemovedInfo info = new SourceRemovedInfo();
 		info.setSourceName(name);
 		info.setSession(user);
-		cSystemLog.get().write(QueryStateLogTag.SOURCE_REOMOVED.toString(),
+		cSystemLog.get().write(QueryStateLogTag.SOURCE_REMOVED.toString(),
 				System.currentTimeMillis(), info.toBase64Binary());
 	}
 
@@ -388,6 +398,9 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 	 *            All system log entries to recover.
 	 */
 	private static void recover(List<ISysLogEntry> log) {
+		// Mapping of the last seen log entry (the contained info, but not yet
+		// recovered) for each query (state change or removal, not creation).
+		Map<Integer, QueryStateChangedInfo> lastSeenEntries = Maps.newHashMap();
 		for (ISysLogEntry entry : log) {
 			if (QueryStateLogTag.containsTag(entry.getTag())) {
 				cLog.debug("Try to recover '{}'...", entry);
@@ -402,18 +415,20 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 				case SCRIPT_ADDED:
 					recoverScript(entry);
 					break;
-				case SOURCE_REOMOVED:
+				case SOURCE_REMOVED:
 					recoverSourceRemoval(entry);
 					break;
 				case QUERY_REMOVED:
-					recoverQueryRemoval(entry);
-					break;
 				case QUERYSTATE_CHANGED:
-					recoverQueryStateChange(entry);
+					QueryStateChangedInfo info = (QueryStateChangedInfo) AbstractQueryStateInfo
+							.fromBase64Binary(entry.getComment().get());
+					lastSeenEntries.put(info.getQueryId(), info);
 					break;
 				}
-				cLog.debug("Finished recovery of '{}'", entry);
 			}
+		}
+		for (int queryId : lastSeenEntries.keySet()) {
+			recoverQueryStateChange(lastSeenEntries.get(queryId));
 		}
 	}
 
@@ -448,28 +463,13 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 	}
 
 	/**
-	 * Recovers a query removal event (removes the query again). <br />
-	 * Precondition: executor is bound and entry has a comment.
-	 * 
-	 * @param entry
-	 *            The entry representing a query removal.
-	 */
-	private static void recoverQueryRemoval(ISysLogEntry entry) {
-		QueryRemovedInfo info = (QueryRemovedInfo) AbstractQueryStateInfo
-				.fromBase64Binary(entry.getComment().get());
-		cExecutor.get().removeQuery(info.getQueryId(), info.getSession());
-	}
-
-	/**
 	 * Recovers a query state change event (changes the query state again). <br />
 	 * Precondition: executor is bound and entry has a comment.
 	 * 
-	 * @param entry
-	 *            The entry representing a query state change.
+	 * @param info
+	 *            The info representing a query state change.
 	 */
-	private static void recoverQueryStateChange(ISysLogEntry entry) {
-		QueryStateChangedInfo info = (QueryStateChangedInfo) AbstractQueryStateInfo
-				.fromBase64Binary(entry.getComment().get());
+	private static void recoverQueryStateChange(QueryStateChangedInfo info) {
 		int queryID = info.getQueryId();
 		ISession caller = info.getSession();
 		switch (info.getQueryState()) {
@@ -488,7 +488,7 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 			cExecutor.get().startQuery(queryID, caller);
 			break;
 		case UNDEF:
-			recoverQueryRemoval(entry);
+			cExecutor.get().removeQuery(queryID, caller);
 		}
 	}
 
