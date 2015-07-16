@@ -320,6 +320,11 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 				.determineRecoveryExecutor(script);
 		if (usedRecoveryExecutor.isPresent()) {
 			info.setRecoveryExecutor(usedRecoveryExecutor.get().getName());
+
+			// Call the recovery executor
+			cLog.debug("Calling recovery executor '{}'", usedRecoveryExecutor
+					.get().getName());
+			usedRecoveryExecutor.get().activateBackup(queryIds);
 		}
 		cSystemLog.get().write(QueryStateLogTag.SCRIPT_ADDED.toString(),
 				System.currentTimeMillis(), info.toBase64Binary());
@@ -445,7 +450,25 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 				.fromBase64Binary(entry.getComment().get());
 		cExecutor.get().addQuery(info.getQueryText(), info.getParserId(),
 				info.getSession(), info.getContext());
-		// TODO read out recovery executor and call it.
+		if (info.getRecoveryExecutor().isPresent()) {
+			// Call the recovery executor
+			Optional<IRecoveryExecutor> recoveryExecutor = RecoveryConfigKeyword
+					.getRecoveryExecutor(info.getRecoveryExecutor().get());
+			if (!recoveryExecutor.isPresent()) {
+				cLog.error("Logged recovery executor '"
+						+ info.getRecoveryExecutor().get()
+						+ "' is not available!");
+				return;
+			}
+			cLog.debug("Calling recovery executor '{}'", recoveryExecutor.get()
+					.getName());
+			try {
+				recoveryExecutor.get().recover(info.getQueryIds());
+			} catch (Exception e) {
+				cLog.error("Error while calling recovery executor '"
+						+ recoveryExecutor.get().getName() + "'", e);
+			}
+		}
 	}
 
 	/**

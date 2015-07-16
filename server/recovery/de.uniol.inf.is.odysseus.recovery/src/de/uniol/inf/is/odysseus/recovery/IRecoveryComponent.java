@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableCollection;
 
-import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
-
 /**
  * A recovery component handles the backup and recovery of certain information
  * (e.g., installed queries).
@@ -31,14 +29,14 @@ public interface IRecoveryComponent {
 	public ImmutableCollection<String> getDependencies();
 
 	/**
-	 * Runs the recovery mechanism.
+	 * Runs the recovery mechanism for given queries.
 	 * 
-	 * @param log
-	 *            All entries to recover.
+	 * @param queryIds
+	 *            The ids of the queries.
 	 * @throws Exception
 	 *             if any error occurs.
 	 */
-	public void recover(List<ISysLogEntry> log) throws Exception;
+	public void recover(List<Integer> queryIds) throws Exception;
 
 	/**
 	 * Activates the backup mechanism for given queries.
