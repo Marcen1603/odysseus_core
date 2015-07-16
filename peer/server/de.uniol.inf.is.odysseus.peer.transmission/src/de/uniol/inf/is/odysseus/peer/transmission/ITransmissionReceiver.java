@@ -13,6 +13,8 @@ public interface ITransmissionReceiver {
 	public void open();
 	public void close();
 	
+	public int getBufferSize();
+	
 	/**
 	 * Change the peerId. E.g., if the sender changes due to recovery.
 	 * @param peerId The id of the new peer

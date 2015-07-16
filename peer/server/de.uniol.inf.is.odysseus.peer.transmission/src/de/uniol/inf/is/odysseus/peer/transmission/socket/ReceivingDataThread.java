@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.peer.util.ObjectByteConverter;
 public class ReceivingDataThread extends Thread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ReceivingDataThread.class);
-	private static final int TRANSPORT_BUFFER_SIZE = 640*480*3+(1+4);
+	public static final int TRANSPORT_BUFFER_SIZE = 640*480*3+(1+4);
 
 	private final InetAddress address;
 	private final int port;

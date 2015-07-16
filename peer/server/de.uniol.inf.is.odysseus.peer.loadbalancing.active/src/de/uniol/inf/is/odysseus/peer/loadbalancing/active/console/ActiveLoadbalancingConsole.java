@@ -535,7 +535,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		
 		try {
 			MovingStateHelper.startBuffering(physicalOp);
-			state = statefulOp.getState();
+			state = statefulOp.getState().getSerializedState();
 			MovingStateHelper.stopBuffering(physicalOp);
 		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e1) {
 			ci.print("Error while Stopping or Starting Buffering.");

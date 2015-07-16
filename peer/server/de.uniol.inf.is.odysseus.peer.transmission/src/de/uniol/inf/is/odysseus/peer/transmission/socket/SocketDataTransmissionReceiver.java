@@ -152,6 +152,11 @@ public class SocketDataTransmissionReceiver extends EndpointDataTransmissionRece
 			LOG.error("Could not send the portAckMessage to peer {}", receiverPeer);
 		}
 	}
+	
+	@Override
+	public int getBufferSize() {
+		return ReceivingDataThread.TRANSPORT_BUFFER_SIZE;
+	}
 
 	@Override
 	public void setPeerId(PeerID peerId) throws DataTransmissionException {

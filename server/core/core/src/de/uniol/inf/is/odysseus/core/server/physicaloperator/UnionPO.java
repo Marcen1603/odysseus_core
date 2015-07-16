@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -135,7 +136,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	}
 
 	@Override
-	public Serializable getState() {
+	public IOperatorState getState() {
 		UnionPOState<R> state = new UnionPOState<R>();
 		state.setTransferArea(this.transferArea);
 		return state;
@@ -172,8 +173,4 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		this.drainAtClose = drainAtClose;
 	}
 
-	@Override
-	public long estimateStateSize(long schemaSizeInBytes) {
-		return this.transferArea.size()*schemaSizeInBytes;
-	}
 }

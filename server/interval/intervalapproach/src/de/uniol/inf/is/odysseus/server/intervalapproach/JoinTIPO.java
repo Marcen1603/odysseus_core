@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -458,7 +459,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	public Serializable getState() {
+	public IOperatorState getState() {
 		JoinTIPOState<K, T> state = new JoinTIPOState<K, T>();
 		state.setSweepAreas(areas);
 		state.setTransferArea(transferFunction);
@@ -514,16 +515,4 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		map.put("Watermark",transferFunction.getWatermark()+"");
 		return map;
 	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public long estimateStateSize(long schemaSizeInBytes) {
-		long numberOfTuples = 0;
-		for (ITimeIntervalSweepArea area : this.areas) {
-			numberOfTuples += area.size();
-		}
-		numberOfTuples += this.transferFunction.size();
-		return numberOfTuples*schemaSizeInBytes;
-	}
-
 }

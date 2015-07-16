@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
@@ -198,7 +199,7 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 	}
 
 	@Override
-	public Serializable getState() {
+	public IOperatorState getState() {
 		SlidingElementWindowTIPOState<T> state = new SlidingElementWindowTIPOState<T>();
 		synchronized (buffers) {
 			state.setBuffers(buffers);
@@ -226,18 +227,5 @@ abstract public class AbstractPartitionedWindowTIPO<T extends IStreamObject<ITim
 		}
 	}
 	
-	@Override
-	public long estimateStateSize(long sizeOfSchema) {
-		long numberOfTuples = 0;
-		for(List<T> buffer : buffers.values()) {
-			numberOfTuples += buffer.size();
-		}
-		numberOfTuples += transferArea.size();
-		
-		//Ignoring size of Timestamp and of Group Processors as these are small in comparison to number of Tuples.
-		return numberOfTuples*sizeOfSchema;
-		
-	}
-
 
 }

@@ -2,13 +2,13 @@ package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -72,7 +72,7 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 
 
 	@Override
-	public Serializable getState() {
+	public IOperatorState getState() {
 		RelationalStateMapPOState<T> state = new RelationalStateMapPOState<T>();
 		state.setGroupsLastObjects(history.getGroupsLastObjects());
 		return state;
@@ -87,15 +87,6 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		} catch (Throwable T) {
 			LOG.error("The serializable state to set for the RelationalStateMapPO is not a valid RelationalStateMapPOState!");
 		}
-	}
-
-	@Override
-	public long estimateStateSize(long schemaSizeInBytes) {
-		long numberOfTuples = 0;
-		for(List<Tuple<T>> group : history.getGroupsLastObjects().values()) {
-			numberOfTuples += group.size();
-		}
-		return numberOfTuples*schemaSizeInBytes;
 	}
 
 }

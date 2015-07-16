@@ -4,12 +4,11 @@ import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
-public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>>
-		implements Serializable, IOperatorState {
+public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> extends AbstractOperatorState {
 
 	private static final long serialVersionUID = 3316591729332909753L;
 
@@ -31,5 +30,10 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	public void setTransferArea(ITransferArea<T, T> transferArea) {
 		this.transferArea = transferArea;
+	}
+	
+	@Override
+	public Serializable getSerializedState() {
+		return this;
 	}
 }

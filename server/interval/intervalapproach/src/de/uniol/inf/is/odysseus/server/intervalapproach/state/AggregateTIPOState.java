@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
  * @author Michael Brand
  *
  */
-public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>> implements Serializable, IOperatorState {
+public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>> extends AbstractOperatorState  {
 	
 	private static final long serialVersionUID = 9088231287860150949L;
 
@@ -77,6 +77,11 @@ public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject
 
 	public void setGroups(Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups) {
 		this.groups = groups;
+	}
+
+	@Override
+	public Serializable getSerializedState() {
+		return this;
 	}
 	
 }

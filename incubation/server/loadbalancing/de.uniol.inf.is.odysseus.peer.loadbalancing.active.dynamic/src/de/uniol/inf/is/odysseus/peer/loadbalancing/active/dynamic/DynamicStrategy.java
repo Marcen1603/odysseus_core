@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.costmodel.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -335,8 +334,10 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				
 				//Estimate State Size Method 
 				try {
+					@SuppressWarnings("unused")
 					IStatefulPO statefulOP = (IStatefulPO) op;
-					memoryForStates = statefulOP.estimateStateSize(EstimatorHelper.sizeInBytes(op.getOutputSchema()));
+					//TODO Get State Size.
+					///memoryForStates = statefulOP.estimateStateSize(EstimatorHelper.sizeInBytes(op.getOutputSchema()));
 				}
 				 catch (Exception e) {
 						LOG.error("Error estimating state size of {} Operator",op.getName());

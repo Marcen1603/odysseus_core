@@ -7,9 +7,9 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 
-public class RelationalStateMapPOState<T extends IMetaAttribute> implements Serializable, IOperatorState {
+public class RelationalStateMapPOState<T extends IMetaAttribute> extends AbstractOperatorState {
 	
 	private static final long serialVersionUID = 3107458255925732610L;
 	
@@ -21,6 +21,12 @@ public class RelationalStateMapPOState<T extends IMetaAttribute> implements Seri
 
 	public void setGroupsLastObjects(Map<Long, LinkedList<Tuple<T>>> groupsLastObjects) {
 		this.groupsLastObjects = groupsLastObjects;
+	}
+	
+
+	@Override
+	public Serializable getSerializedState() {
+		return this;
 	}
 	
 

@@ -146,4 +146,9 @@ public class EndpointDataTransmissionReceiver extends AbstractTransmissionReceiv
 		//Has to be implemented in SubClass.
 		
 	}
+
+	@Override
+	public int getBufferSize() {
+		return 0;
+	}
 }

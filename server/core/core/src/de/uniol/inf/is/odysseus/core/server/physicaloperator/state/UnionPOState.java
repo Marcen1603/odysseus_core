@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.state;
 import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.UnionPO;
 
@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.UnionPO;
  * @author Chris Tönjes-Deye
  * 
  */
-public class UnionPOState<R extends IStreamObject<?>> implements Serializable, IOperatorState {
+public class UnionPOState<R extends IStreamObject<?>> extends AbstractOperatorState {
 
 	private static final long serialVersionUID = 9088231287860150949L;
 
@@ -26,5 +26,10 @@ public class UnionPOState<R extends IStreamObject<?>> implements Serializable, I
 
 	public void setTransferArea(ITransferArea<R, R> transferArea) {
 		this.transferArea = transferArea;
+	}
+	
+	@Override
+	public Serializable getSerializedState() {
+		return this;
 	}
 }

@@ -7,7 +7,6 @@ import java.io.Serializable;
  *
  */
 public interface IStatefulPO {
-	public Serializable getState();
+	public IOperatorState getState();
 	public void setState(Serializable state);
-	public long estimateStateSize(long schemaSizeInBytes);
 }

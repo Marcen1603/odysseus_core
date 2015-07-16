@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
@@ -795,7 +796,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	@Override
-	public Serializable getState() {
+	public IOperatorState getState() {
 		AggregateTIPOState<Q, R, W> state = new AggregateTIPOState<Q, R, W>();
 		state.setTransferArea(this.transferArea);
 		state.setGroups(this.groups);
@@ -841,25 +842,6 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		return map;
 	}
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public long estimateStateSize(long schemaSizeInBytes) {
-		long numberOfTuples = 0;
-		numberOfTuples += this.transferArea.size();
-		
-		for(AggregateTISweepArea area : groups.values()) {
-			numberOfTuples += area.size();
-		}
-		
-		long numberOfAggregateFunctions = 0;
-		//Just a guess.
-		final long bytesPerAggregateFunction = 255;
-		numberOfAggregateFunctions += super.getAllEvalFunctions().size() + super.getAllInitFunctions().size() + super.getAllMergerFunctions().size();
-		
-		long totalByteEstimation = numberOfTuples*schemaSizeInBytes + (numberOfAggregateFunctions*(schemaSizeInBytes + bytesPerAggregateFunction));
-		
-		return totalByteEstimation;
-	}
 }
 
 /**
