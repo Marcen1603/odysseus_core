@@ -17,11 +17,12 @@ public class UpdateFeaturePreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
+		// Must be done at validate, else the parser could have exceptions
+		FeatureUpdateUtility.checkForAndInstallUpdates(caller);
 	}
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
-		FeatureUpdateUtility.checkForAndInstallUpdates(caller);
 		return null;
 	}
 }

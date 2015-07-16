@@ -17,11 +17,7 @@ public class RequiredFeaturePreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
-
-	}
-
-	@Override
-	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
+		// Must be done at validate, else the following commands could cause errors
 		String params[] = getSimpleParameters(parameter);
 		String id = params[0];
 		boolean install = true;
@@ -35,6 +31,11 @@ public class RequiredFeaturePreParserKeyword extends AbstractPreParserKeyword {
 				throw new OdysseusScriptException("This script requires feature " + id + " which is not installed!");
 			}
 		}
+	}
+
+	@Override
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
+
 		return null;
 	}
 
