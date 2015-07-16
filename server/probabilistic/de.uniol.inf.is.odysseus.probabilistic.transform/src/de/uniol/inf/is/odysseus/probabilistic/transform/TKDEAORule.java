@@ -19,9 +19,12 @@ import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.KDEAO;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.KDEPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -70,11 +73,16 @@ public class TKDEAORule extends AbstractTransformationRule<KDEAO> {
     public final boolean isExecutable(final KDEAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getInputSchema());
-        Objects.requireNonNull(config);
+        Objects.requireNonNull(config);   
         if (operator.isAllPhysicalInputSet()) {
-            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-                return true;
-            }
+        	for (SDFMetaSchema metaSchema : operator.getInputSchema().getMetaschema()) {
+        		if (metaSchema.getMetaAttribute() == IProbabilistic.class) {
+        			return true;
+        		}
+        	}
+//            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+//                return true;
+//            }
         }
         return false;
     }
