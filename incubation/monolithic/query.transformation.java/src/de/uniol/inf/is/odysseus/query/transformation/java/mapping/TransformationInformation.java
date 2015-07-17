@@ -18,6 +18,7 @@ public class TransformationInformation {
 	private Map<String, String> protocolHandler = new HashMap<String, String>();
 	private Map<String, String> transportHandler = new HashMap<String, String>();
 	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
+	
 	private int uniqueId = 0;
 	
 	public static TransformationInformation getInstance() {
