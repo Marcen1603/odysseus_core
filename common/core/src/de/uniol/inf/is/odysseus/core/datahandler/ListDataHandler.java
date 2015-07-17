@@ -78,6 +78,23 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 		return values;
 	}
 	
+	public List<?> readData(String[] list, int from, int to) {
+		ArrayList<Object> values = new ArrayList<Object>();
+		for (int i=from; i<to;i++){
+			values.add(list[i]);
+		}
+		return values;
+	}
+
+	public List<?> readData(List<String> list, int from, int to) {
+		ArrayList<Object> values = new ArrayList<Object>();
+		for (int i=from; i<to;i++){
+			values.add(list.get(i));
+		}
+		return values;
+	}
+
+	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler#readData(java.nio.ByteBuffer)
 	 */
@@ -128,5 +145,6 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	public Class<?> createsType() {
 		return List.class;
 	}
+
 	
 }

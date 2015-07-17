@@ -127,7 +127,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		int min = Math.min(dataHandlers.length, input.length);
 		for (int i = 0; i < min; i++) {
 			try {
-				attributes[i] = dataHandlers[i].readData(input[i]);
+				if (dataHandlers[i].getClass() != ListDataHandler.class) {
+					attributes[i] = dataHandlers[i].readData(input[i]);
+				} else {
+					attributes[i] = ((ListDataHandler) dataHandlers[i])
+							.readData(input, i, input.length);
+				}
 			} catch (Exception e) {
 				if (dataHandlers.length > i) {
 					logger.warn("Error parsing " + input[i] + " with "
@@ -153,8 +158,13 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 				false);
 		for (int i = 0; i < input.size(); i++) {
 			try {
-				tuple.setAttribute(i,
-						this.dataHandlers[i].readData(input.get(i)));
+				if (dataHandlers[i].getClass() != ListDataHandler.class) {
+					tuple.setAttribute(i,
+							this.dataHandlers[i].readData(input.get(i)));
+				} else {
+					tuple.setAttribute(i, ((ListDataHandler) dataHandlers[i])
+							.readData(input, i, input.size()));
+				}
 			} catch (Exception e) {
 				if (dataHandlers.length > i) {
 					logger.warn("Error parsing " + input.get(i) + " with "
@@ -166,8 +176,8 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 				tuple.setAttribute(i, (Object) null);
 			}
 		}
-		
-		if (handleMetaData){
+
+		if (handleMetaData) {
 			IMetaAttribute meta = readMetaData(input);
 			tuple.setMetadata(meta);
 		}
@@ -213,7 +223,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			r = new Tuple<IMetaAttribute>(attributes, false);
 			// buffer.clear(); // DO NOT CLEAR THIS BUFFER, OTHER READERS MIGHT
 			// STILL USE IT
-			if (handleMetaData){
+			if (handleMetaData) {
 				IMetaAttribute meta = readMetaData(buffer);
 				r.setMetadata(meta);
 			}
@@ -244,7 +254,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			for (int i = 0; i < dataHandlers.length; i++) {
 				dataHandlers[i].writeData(output, r.getAttribute(i));
 			}
-			if (handleMetaData){
+			if (handleMetaData) {
 				writeMetaData(output, r.getMetadata());
 			}
 		}
@@ -266,7 +276,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			for (int i = 0; i < dataHandlers.length; i++) {
 				dataHandlers[i].writeData(string, r.getAttribute(i));
 			}
-			if (handleMetaData){
+			if (handleMetaData) {
 				writeMetaData(string, r.getMetadata());
 			}
 		}
@@ -308,7 +318,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 					dataHandlers[i].writeData(buffer, r.getAttribute(i));
 				}
 			}
-			if (handleMetaData){
+			if (handleMetaData) {
 				writeMetaData(buffer, r.getMetadata());
 			}
 		}
@@ -390,7 +400,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		if (nullMode) {
 			size += dataHandlers.length;
 		}
-		if (handleMetaData){
+		if (handleMetaData) {
 			size += getMetaDataMemSize(r.getMetadata());
 		}
 		return size;
