@@ -68,7 +68,19 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 			e.printStackTrace();
 		} finally {			
 			LOG.debug("Try to remove all queries ");
-			executor.removeAllQueries(session);
+			Thread t = new Thread(){
+				public void run() {
+					executor.removeAllQueries(session);					
+				};
+			};
+			t.start();
+			try {
+				t.join(10000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Could not remove all queries in time");
+			}
+			
 			LOG.debug("done");
 		}
 		return this.processingResult;
