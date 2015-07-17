@@ -154,9 +154,9 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 	@Override
 	public Tuple<?> readData(List<String> input) {
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(input.size(),
-				false);
 		int min = Math.min(dataHandlers.length, input.size());
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(min,
+				false);
 		for (int i = 0; i < min; i++) {
 			try {
 				if (dataHandlers[i].getClass() != ListDataHandler.class) {
