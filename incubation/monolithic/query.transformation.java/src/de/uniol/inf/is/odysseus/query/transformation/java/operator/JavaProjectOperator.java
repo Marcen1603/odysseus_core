@@ -5,7 +5,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformIntegerArray;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
@@ -37,8 +36,6 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 	
 		int[] restrictList = projectAO.determineRestrictList();
 		
-		String restrictListCode = TransformIntegerArray.getCodeForIntegerArray(restrictList);
-		
 	
 		StringTemplate relationalProjectPOTemplate = new StringTemplate("relationalProjectPO");
 		
@@ -47,8 +44,7 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 		
 		
 		code.append(relationalProjectPOTemplate.getSt().render());
-		
-		
+	
 	
 		projectPO.addCode(code.toString());
 		projectPO.addImports(getNeededImports());

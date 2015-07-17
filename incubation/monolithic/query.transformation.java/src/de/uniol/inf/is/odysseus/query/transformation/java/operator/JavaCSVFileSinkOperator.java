@@ -30,16 +30,16 @@ public class JavaCSVFileSinkOperator extends AbstractTransformationOperator{
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 		
 		
-		 CSVFileSink csvFileSinkOP = (CSVFileSink) operator;
+		CSVFileSink csvFileSinkOP = (CSVFileSink) operator;
 			
-		 String filename = csvFileSinkOP.getFilename();
-		 String transportHandler = csvFileSinkOP.getTransportHandler();
-		 String dataHandler = csvFileSinkOP.getDataHandler();
-		 String wrapper = csvFileSinkOP.getWrapper();
-		 String protocolHandler = csvFileSinkOP.getProtocolHandler();
-		 ITransportDirection direction = ITransportDirection.OUT;
+		String filename = csvFileSinkOP.getFilename();
+		String transportHandler = csvFileSinkOP.getTransportHandler();
+		String dataHandler = csvFileSinkOP.getDataHandler();
+		String wrapper = csvFileSinkOP.getWrapper();
+		String protocolHandler = csvFileSinkOP.getProtocolHandler();
+		ITransportDirection direction = ITransportDirection.OUT;
 		 
-		 ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
+		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
 		
 
 		CodeFragmentInfo codeAccessFramwork = CreateDefaultCode.codeForAccessFrameworkNeu(protocolHandlerParameter, csvFileSinkOP.getOptionsMap(),operator, direction);
