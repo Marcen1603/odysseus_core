@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.console;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,11 +37,11 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy.LoadBalancingException;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateReceiver;
@@ -235,6 +238,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    sendLongString <pipeID>                              - Sends a 100MB big String to test Buffers.\n");
 		sb.append("    printQPController									- Prints Current Content of Query Part Controller\n");
 		sb.append("    verifyDependencies									- Verifies if all Dependencies are available\n");
+		sb.append("    extractState <LocalQueryId>							- Extracts first StatefulPO State from Query with Query ID\n");
 		return sb.toString();
 	}
 
@@ -606,7 +610,17 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		try {
 			MovingStateHelper.startBuffering(physicalOp);
 			IOperatorState stateObject = statefulOp.getState();
+			long startTime = System.currentTimeMillis();
+			ci.println("Estimated size:"+stateObject.estimateSizeInBytes());
+			long curTime = System.currentTimeMillis();
+			ci.println("Estimation took "+(curTime-startTime)+" ms.");
+			startTime = System.currentTimeMillis();
 			state = (Serializable)stateObject.getSerializedState();
+			int realSize = getSizeInBytesOfSerializable(state);
+			curTime = System.currentTimeMillis();
+			ci.println("Real State Size (after serialization:)" + realSize);
+			ci.println("Serialization took "+(curTime-startTime)+" ms.");
+			
 			MovingStateHelper.stopBuffering(physicalOp);
 		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e1) {
 			ci.print("Error while Stopping or Starting Buffering.");
@@ -615,13 +629,29 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		if(state==null) {
 			ci.println(ERROR_NO_STATE);
 		}
-		
 		ci.println(state.toString());
 		
 		ci.println("Data sent.");
 
 	}
 	
+	
+
+	protected int getSizeInBytesOfSerializable(Serializable obj) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(baos);
+			out.writeObject(obj);
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			LOG.error("Could not serialize Streamable. Returning 0");
+			return 0;
+		}
+		//Sub 4 Bytes for Serialization magic Numbers
+		int objectSize = baos.toByteArray().length - 4;
+		return objectSize;
+	}
 	
 
 	/***

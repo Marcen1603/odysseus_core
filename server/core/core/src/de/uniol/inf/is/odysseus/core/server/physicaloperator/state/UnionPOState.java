@@ -32,4 +32,9 @@ public class UnionPOState<R extends IStreamObject<?>> extends AbstractOperatorSt
 	public Serializable getSerializedState() {
 		return this;
 	}
+	
+
+	public long estimateSizeInBytes() {
+		return 0;
+	}
 }

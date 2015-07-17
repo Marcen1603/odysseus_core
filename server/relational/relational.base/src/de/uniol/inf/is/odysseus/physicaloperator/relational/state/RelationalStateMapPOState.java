@@ -28,6 +28,9 @@ public class RelationalStateMapPOState<T extends IMetaAttribute> extends Abstrac
 	public Serializable getSerializedState() {
 		return this;
 	}
-	
+
+	public long estimateSizeInBytes() {
+		return 0;
+	}
 
 }

@@ -83,5 +83,9 @@ public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject
 	public Serializable getSerializedState() {
 		return this;
 	}
+
+	public long estimateSizeInBytes() {
+		return 0;
+	}
 	
 }

@@ -1,13 +1,26 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public abstract class AbstractOperatorState implements IOperatorState, Serializable {
 
+	/***
+	 * Logger
+	 */
+	private static final Logger LOG = LoggerFactory
+			.getLogger(AbstractOperatorState.class);
+	
 	/**
 	 * 
 	 */
@@ -27,27 +40,20 @@ public abstract class AbstractOperatorState implements IOperatorState, Serializa
 		for (SDFAttribute attribute : schema) {
 
 			SDFDatatype type = attribute.getDatatype();
-			if (type.isDouble())
-				size += 8;
-			else if (type.isFloat())
-				size += 8;
-			else if (type.isInteger())
-				size += 4;
-			else if (type.isLong())
-				size += 8;
-			else if (type.isEndTimestamp())
-				size += 8;
-			else if (type.isStartTimestamp())
-				size += 8;
-			else if (type.isTimestamp())
-				size += 8;
-			else
-				size += 4; // default
+			size += getSizeOfSimpleDatatypeInBytes(type);
+			
 		}
-
 		return size;
-
 	} 
+	
+	protected int getSizeOfSimpleDatatypeInBytes(SDFDatatype type) {
+		if (type.isDouble() || type.isFloat() || type.isLong() || type.isEndTimestamp() || type.isStartTimestamp() || type.isTimestamp())
+			return 8;
+		if(type.isInteger())
+			return 4;
+		//Default? return 4 bytes.
+		return 4;
+	}
 
 	protected boolean hasStringOrListOrComplexDatatypes(SDFSchema schema) {
 		if(schema==null) {
@@ -63,5 +69,23 @@ public abstract class AbstractOperatorState implements IOperatorState, Serializa
 		}
 		return false;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	protected int getSizeInBytesOfSerializable(IStreamObject obj) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(baos);
+			out.writeObject(obj);
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			LOG.error("Could not serialize Streamable. Returning 0");
+			return 0;
+		}
+		//Sub 4 Bytes for Serialization magic Numbers
+		int objectSize = baos.toByteArray().length - 4;
+		return objectSize;
+	}
+	
 	
 }
