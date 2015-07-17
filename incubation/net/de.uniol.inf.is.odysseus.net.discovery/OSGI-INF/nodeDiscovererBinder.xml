@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.net.discovery.NodeDiscovererBinder">
    <implementation class="de.uniol.inf.is.odysseus.net.discovery.impl.NodeDiscovererBinder"/>
-   <reference bind="bindNodeDiscoverer" cardinality="0..n" interface="de.uniol.inf.is.odysseus.net.discovery.INodeDiscoverer" name="INodeDiscoverer" policy="static" unbind="unbindNodeDiscoverer"/>
+   <reference bind="bindNodeDiscoverer" cardinality="0..n" interface="de.uniol.inf.is.odysseus.net.discovery.INodeDiscoverer" name="INodeDiscoverer" policy="dynamic" unbind="unbindNodeDiscoverer"/>
    <reference bind="bindNodeDiscovererManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.discovery.INodeDiscovererManager" name="INodeDiscovererManager" policy="static" unbind="unbindNodeDiscovererManager"/>
 </scr:component>

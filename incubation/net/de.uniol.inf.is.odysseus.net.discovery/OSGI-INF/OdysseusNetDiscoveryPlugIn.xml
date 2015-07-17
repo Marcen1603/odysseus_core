@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.net.discoveryOdysseusNetDiscoveryPlugIn">
+   <implementation class="de.uniol.inf.is.odysseus.net.discovery.activator.OdysseusNetDiscoveryPlugIn"/>
+   <reference bind="bindNodeManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.INodeManager" name="INodeManager" policy="static" unbind="unbindNodeManager"/>
+   <reference bind="bindNodeDiscovererManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.net.discovery.INodeDiscovererManager" name="INodeDiscovererManager" policy="static" unbind="unbindNodeDiscovererManager"/>
+</scr:component>

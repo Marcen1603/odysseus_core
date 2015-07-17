@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.net.discovery.iplist;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -69,7 +68,7 @@ public final class IPListNodeDiscoverer extends AbstractNodeDiscoverer {
 	}
 
 	private static String determineFullFilename() {
-		return OdysseusBaseConfiguration.getHomeDir() + File.separator + IP_LIST_FILENAME;
+		return OdysseusBaseConfiguration.getHomeDir() + IP_LIST_FILENAME;
 	}
 
 	@Override
