@@ -64,6 +64,9 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded
 	public void sourcesChanged(MultipleSourceExecutor sourceExecutor) {
 		if (sourceExecutor.getRunningSources() == 0) {
 			sourceExecutor.interrupt();
+			synchronized (sourceThreads) {
+				sourceThreads.notifyAll();
+			}
 			removeSourceThread(sourceExecutor);
 			logger.debug("Remove source executor " + sourceExecutor);
 		}
