@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UpdatePermission;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -61,8 +62,8 @@ public class FeatureUpdateUtility {
 
 	static {
 		try {
-			DEFAULT_REPOSITORY_LOC = new URI(
-					"http://odysseus.informatik.uni-oldenburg.de/update/");
+			DEFAULT_REPOSITORY_LOC = new URI(OdysseusConfiguration.get(OdysseusConfiguration.DEFAULT_UPDATE_SITE,
+					"http://odysseus.informatik.uni-oldenburg.de/update/"));
 		} catch (final URISyntaxException e) {
 			LOG.error("URI invalid: " + e.getMessage());
 		}

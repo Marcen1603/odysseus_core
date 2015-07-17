@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 public class OdysseusConfiguration {
 	
 	public static final String CLONING_UPDATER = "CloningUpdater";
+	public static final String DEFAULT_UPDATE_SITE = "Update.DefaultUpdateSite";
 
 	static Logger _logger = null;
 
@@ -209,6 +210,8 @@ public class OdysseusConfiguration {
 		
 		props.setProperty(CLONING_UPDATER, "standard");
 		
+		props.setProperty(DEFAULT_UPDATE_SITE, "http://odysseus.informatik.uni-oldenburg.de/update/");
+		
 		// System log
 		props.put("systemlogThresholdMilliseconds", (long) (Math.pow(10, 3)
 				* Math.pow(60, 2) * 24 * 30)); // 30 days in milliseconds
@@ -240,6 +243,15 @@ public class OdysseusConfiguration {
 		return ret;
 	}
 
+	public static String get(String key, String defaultValue) {
+		String ret = props.getProperty(key);
+		if (ret == null) {
+			return defaultValue;
+		}
+		return ret;
+	}
+
+	
 	public static String getFileProperty(String key, String tenantName) {
 		String home = getHomeDir();
 		if(!home.endsWith(File.separator)){
