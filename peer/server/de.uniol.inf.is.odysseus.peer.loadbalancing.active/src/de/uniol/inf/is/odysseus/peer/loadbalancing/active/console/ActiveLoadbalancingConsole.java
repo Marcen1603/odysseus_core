@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -535,7 +536,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		
 		try {
 			MovingStateHelper.startBuffering(physicalOp);
-			state = statefulOp.getState().getSerializedState();
+			IOperatorState stateObject = statefulOp.getState();
+			state = (Serializable)stateObject.getSerializedState();
 			MovingStateHelper.stopBuffering(physicalOp);
 		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e1) {
 			ci.print("Error while Stopping or Starting Buffering.");
@@ -557,6 +559,65 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			ci.println("ERROR:" + e.getMessage());
 			return;
 		}
+		ci.println("Data sent.");
+
+	}
+	
+
+	public void _extractState(CommandInterpreter ci) {
+		final String ERROR_USAGE = "Usage: extractState <LocalQueryId>";
+		final String ERROR_LOCALOP = "ERROR: Local Query does not contain stateful Operator.";
+		final String ERROR_NO_STATE ="Error: Could not get state.";
+		
+		String localQueryIdString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(localQueryIdString)) {
+
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		int localQueryId;
+
+		try {
+			localQueryId = Integer.parseInt(localQueryIdString);
+		} catch (NumberFormatException e) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		IStatefulPO statefulOp = null;
+
+		IPhysicalQuery localQuery = executor.getExecutionPlan().getQueryById(
+				localQueryId);
+		for (IPhysicalOperator operator : localQuery.getAllOperators()) {
+			if (operator instanceof IStatefulPO) {
+				statefulOp = (IStatefulPO) operator;
+				break;
+			}
+		}
+
+		if (statefulOp == null) {
+			ci.println(ERROR_LOCALOP);
+			return;
+		}
+		IPhysicalOperator physicalOp = (IPhysicalOperator)statefulOp;
+		Serializable state = null;
+		
+		try {
+			MovingStateHelper.startBuffering(physicalOp);
+			IOperatorState stateObject = statefulOp.getState();
+			state = (Serializable)stateObject.getSerializedState();
+			MovingStateHelper.stopBuffering(physicalOp);
+		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e1) {
+			ci.print("Error while Stopping or Starting Buffering.");
+		}
+		
+		if(state==null) {
+			ci.println(ERROR_NO_STATE);
+		}
+		
+		ci.println(state.toString());
+		
 		ci.println("Data sent.");
 
 	}

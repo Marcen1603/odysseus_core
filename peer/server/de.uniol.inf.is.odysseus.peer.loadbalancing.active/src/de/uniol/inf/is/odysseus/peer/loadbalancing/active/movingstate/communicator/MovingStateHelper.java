@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -87,7 +88,8 @@ public class MovingStateHelper {
 
 		LOG.debug("Sending state for " + operator.toString() + " on pipe "
 				+ pipe);
-		Serializable state = operator.getState().getSerializedState();
+		IOperatorState stateObject = operator.getState();
+		Serializable state = (Serializable)stateObject.getSerializedState();
 		LOG.debug("Got state.");
 		sender.sendData(state);
 		LOG.debug("Data sent.");
