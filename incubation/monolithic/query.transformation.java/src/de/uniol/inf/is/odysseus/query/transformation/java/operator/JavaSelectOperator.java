@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -33,8 +34,6 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 		CodeFragmentInfo selectPO = new CodeFragmentInfo();
 		
-		StringBuilder code = new StringBuilder();
-		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 		
 		SelectAO selectAO = (SelectAO) operator;
@@ -42,25 +41,15 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 	
 		String predicateValue = predicate.toString();
 		IExpression<?> mepExpression  = MEP.getInstance().parse(predicateValue);
+		
 		TransformationInformation.getInstance().addMEPFunction(mepExpression);
 		
-		code.append("\n");
-		code.append("\n");
-		code.append("DirectAttributeResolver " +operatorVariable+"DirectAttriuteResolver = new DirectAttributeResolver("+operatorVariable+"SDFSchema);");
-		code.append("\n");
-		code.append("RelationalPredicateBuilder "+ operatorVariable+"RelationalPredicateBuilder = new  RelationalPredicateBuilder();");
-		code.append("\n");
-		code.append("RelationalPredicate "+operatorVariable+"Predicate = (RelationalPredicate)"+operatorVariable+"RelationalPredicateBuilder.createPredicate("+operatorVariable+"DirectAttriuteResolver, \""+predicateValue+"\");");
-		code.append("\n");
+		StringTemplate selectTemplate = new StringTemplate("selectPO");
+		selectTemplate.getSt().add("operatorVariable", operatorVariable);
+		selectTemplate.getSt().add("predicateValue", predicateValue);
 		
-		code.append(operatorVariable+"Predicate.init("+operatorVariable+"SDFSchema, null);");
-		code.append("\n");
-		
-		code.append("SelectPO "+operatorVariable+"PO = new SelectPO("+operatorVariable+"Predicate);");
-		code.append("\n");
-		code.append("\n");
-		
-		selectPO.addCode(code.toString());
+
+		selectPO.addCode(selectTemplate.getSt().render());
 		
 		selectPO.addImport(DirectAttributeResolver.class.getName());
 		selectPO.addImport(RelationalPredicateBuilder.class.getName());
