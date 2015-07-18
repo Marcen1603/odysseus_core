@@ -7,6 +7,9 @@ import de.uniol.inf.is.odysseus.peer.transmission.ITransmissionReceiver;
 @SuppressWarnings("rawtypes")
 public class JxtaReceiverPOEstimator extends
 		StandardPhysicalOperatorEstimator<JxtaReceiverPO> {
+	
+
+	//TODO Move to seperate Project
 
 	@Override
 	protected Class<? extends JxtaReceiverPO> getOperatorClass() {

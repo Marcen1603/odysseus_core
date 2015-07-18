@@ -108,4 +108,5 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 		
 		return estimatedSize;
 	}
+	
 }

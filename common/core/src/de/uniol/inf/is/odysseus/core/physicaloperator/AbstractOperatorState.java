@@ -46,6 +46,26 @@ public abstract class AbstractOperatorState implements IOperatorState, Serializa
 		return size;
 	} 
 	
+	protected boolean isSimpleDataType(SDFAttribute attribute) {
+		
+		SDFDatatype type = attribute.getDatatype();
+		if(type.isDouble() || type.isFloat() || type.isLong() || type.isEndTimestamp() || type.isStartTimestamp() || type.isTimestamp() || type.isInteger()) {
+			return true;
+		}
+		return false;
+	}
+	
+	protected int getSizeOfSimpleDataAttributeInBytes(SDFAttribute attr) {
+		
+		SDFDatatype type = attr.getDatatype();
+		if (type.isDouble() || type.isFloat() || type.isLong() || type.isEndTimestamp() || type.isStartTimestamp() || type.isTimestamp())
+			return 8;
+		if(type.isInteger())
+			return 4;
+		//Default? return 4 bytes.
+		return 0;
+	}
+	
 	protected int getSizeOfSimpleDatatypeInBytes(SDFDatatype type) {
 		if (type.isDouble() || type.isFloat() || type.isLong() || type.isEndTimestamp() || type.isStartTimestamp() || type.isTimestamp())
 			return 8;

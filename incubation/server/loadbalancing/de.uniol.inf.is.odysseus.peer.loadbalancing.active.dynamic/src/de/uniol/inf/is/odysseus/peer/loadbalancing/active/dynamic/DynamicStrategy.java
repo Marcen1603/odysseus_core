@@ -53,6 +53,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 
 	public void bindPhysicalCostModel(IPhysicalCostModel serv) {
 		this.physicalCostModel = serv;
+		
 	}
 
 
