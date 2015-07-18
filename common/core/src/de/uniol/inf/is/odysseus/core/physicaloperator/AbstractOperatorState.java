@@ -8,7 +8,6 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -72,7 +71,7 @@ public abstract class AbstractOperatorState implements IOperatorState, Serializa
 		if(type.isInteger())
 			return 4;
 		//Default? return 4 bytes.
-		return 4;
+		return 0;
 	}
 
 	protected boolean hasStringOrListOrComplexDatatypes(SDFSchema schema) {
@@ -90,8 +89,7 @@ public abstract class AbstractOperatorState implements IOperatorState, Serializa
 		return false;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	protected int getSizeInBytesOfSerializable(IStreamObject obj) {
+	protected int getSizeInBytesOfSerializable(Serializable obj) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(baos);

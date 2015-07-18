@@ -1,15 +1,24 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach.state;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> extends AbstractOperatorState {
@@ -20,6 +29,7 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 
 	private ITimeIntervalSweepArea<T>[] sweepAreas;
 	private ITransferArea<T, T> transferArea;
+	
 	
 
 	/***
@@ -67,6 +77,7 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 	
 
 	
+	@SuppressWarnings("unused")
 	private int getAvgTupleSizeInBytesOfSweepAreaSample(ITimeIntervalSweepArea<T> area, int sampleSize) {
 		Iterator<T> areaIterator = area.iterator();
 		int i=0;
@@ -87,13 +98,59 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 	}
 	
 	public long estimateSizeInBytes() {
+		
 		LOG.debug("Estimating JoinTIPOState Size.");
+		
+		long totalSize = 0;
+		
+		for(ITimeIntervalSweepArea<T> area : sweepAreas) {
+			totalSize += estimateSweepAreaSizeInBytes(area, SIZE_ESTIMATION_SAMPLE_SIZE);
+		}
+		
+		totalSize += getSizeInBytesOfSerializable(transferArea);
+		
+		/** Schema based Method.... Result is too small.
 		long estimatedSize = 0;
 		
-		int combinedMaxSizeOfAllAreas = 0;
+		int sizeOfBiggestInputSchema = 0;
 		
+		for (int i=0; i<sweepAreas.length;i++) {
+
+			ITimeIntervalSweepArea<T> area = sweepAreas[i];
+			SDFSchema schema;
+			if(referenceOperator.isInOrder()) {
+				schema = referenceOperator.getInputSchema(i^1);
+			}
+			else {
+				schema = referenceOperator.getInputSchema(i);
+			}
+			
+			
+			int sizeOfSchema = getSizeOfSimpleSchemaInBytes(schema);
+			if(hasStringOrListOrComplexDatatypes(schema)){
+				Collection<Integer> nonSimpleAttributes = findNonSimpleAttributes(schema);
+				int avgSizeOfNonSimpleAttributes = sampleLengthOfNonSimpleAttributesInSweepArea(area, nonSimpleAttributes, SIZE_ESTIMATION_SAMPLE_SIZE);
+				sizeOfSchema +=avgSizeOfNonSimpleAttributes;
+			}
+			int areaSizeInBytes = sizeOfSchema*area.size();
+			sizeOfBiggestInputSchema = Math.max(sizeOfBiggestInputSchema,sizeOfSchema);
+			LOG.info("SweepArea Area est. size in Bytes {} for {} Tuples",areaSizeInBytes,area.size());
+			LOG.info("Real size(serialized): {}",this.getSizeInBytesOfSerializable((Serializable)area));
+			estimatedSize+=areaSizeInBytes;
+		}
+		
+		//As transfer Areas store tuples of both Input Ports, we take the biggest Schema estimation for all elements in TransferArea.
+		int areaSizeInBytes = sizeOfBiggestInputSchema*transferArea.size();
+		estimatedSize+=areaSizeInBytes;
+		LOG.info("TransferArea est. size in Bytes {} for {} Tuples",areaSizeInBytes,transferArea.size());
+		*///
+		
+		
+		/***	Method by serialization. This works but the result is about 5-8 times to big.
 		//For each SweepArea: Multiply number of Tuples with max size of Tuples in Sample from that area.
 		for(ITimeIntervalSweepArea<T> area : sweepAreas) {
+			
+			
 			long saSize = getAvgTupleSizeInBytesOfSweepAreaSample(area, SIZE_ESTIMATION_SAMPLE_SIZE)*area.size();
 			estimatedSize += saSize;
 			combinedMaxSizeOfAllAreas += saSize;
@@ -105,8 +162,85 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 		estimatedSize += taSize;
 		
 		LOG.debug("Transfer Area est. size {} for {} Tuples",taSize,transferArea.size());
-		
-		return estimatedSize;
+		*/
+		///
+		return totalSize;
 	}
 	
+	
+	private long estimateSweepAreaSizeInBytes(ITimeIntervalSweepArea<T> area, int sampleSize) {
+		if(area.size()<sampleSize) {
+			return getSizeInBytesOfSerializable((Serializable)area);
+		}
+		
+		ITimeIntervalSweepArea<T> oneElementArea = new DefaultTISweepArea<T>();
+		ITimeIntervalSweepArea<T> fullElementArea = new DefaultTISweepArea<T>();
+		
+		oneElementArea.insert(area.peek());
+		
+		Iterator<T> areaIterator = area.iterator();
+		int i=0;
+		//Get maximum Number of Bytes for (serialized) Tuple/Streamable
+		while(areaIterator.hasNext() && i<sampleSize) {
+			T streamObject = areaIterator.next();
+			fullElementArea.insert(streamObject);
+			i+=1;
+		}
+		
+		int sizeOfOneElementArea = getSizeInBytesOfSerializable(oneElementArea);
+		int sizeOfFullElementArea = getSizeInBytesOfSerializable(fullElementArea);
+		
+		int ByteGrowthPerElement = (sizeOfFullElementArea-sizeOfOneElementArea)/(sampleSize-1);
+		
+		long estimatedAreaSize = ByteGrowthPerElement*(area.size()-1)+sizeOfOneElementArea;
+		LOG.info("SweepArea Area est. size in Bytes {} for {} Tuples",estimatedAreaSize,area.size());
+		return estimatedAreaSize;
+	}
+	
+	@SuppressWarnings("unused")
+	private Collection<Integer> findNonSimpleAttributes(SDFSchema schema) {
+		ArrayList<Integer> indizesOfComplexAttributes = Lists.newArrayList();
+		for(SDFAttribute attribute : schema) {
+			if(isSimpleDataType(attribute)) {
+				continue;
+			}
+			indizesOfComplexAttributes.add(schema.indexOf(attribute));
+		}
+		return indizesOfComplexAttributes;
+	}
+	
+	
+	@SuppressWarnings({ "rawtypes", "unused" })
+	private int sampleLengthOfNonSimpleAttributesInSweepArea(ITimeIntervalSweepArea<T> area, Collection<Integer> attributesToSample, int sampleSize) {
+		
+		Iterator<T> areaIterator = area.iterator();
+		int i=0;
+		int sum = 0;
+		while(areaIterator.hasNext() && i<sampleSize) {
+			T streamObject = areaIterator.next();
+			if(streamObject instanceof Tuple) {
+				Tuple tuple = (Tuple) streamObject;
+				for(int attr : attributesToSample) {
+					Object attrValue = tuple.getAttribute(attr);
+					//If Attribute is String -> Add 2 bytes for every char (As UTF-8 is used for serialization)
+					if(attrValue instanceof String) {
+						sum += ((String)attrValue).length()*2;
+					}
+					//TODO Lists.
+					if(attrValue instanceof List) {
+						
+					}
+					
+				}
+				i+=1;
+			}
+		}
+		
+		if(i==0) {
+			return 0;
+		}
+		else {
+			return (int)(sum/i);
+		}
+	}
 }
