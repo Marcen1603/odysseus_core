@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.parallelization.helper.FragmentationTypeHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorParallelizationKeywordParameter;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution.InterOperatorPreExecutionHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.InterOperatorParallelizationPreTransformationHandler;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -254,12 +255,11 @@ public class InterOperatorParallelizationPreParserKeyword extends
 						parallelizationHandlerExists = true;
 					}
 				}
-
 			}
 		}
 		if (!parallelizationHandlerExists) {
 			throw new OdysseusScriptException(
-					"#PARALLELIZATION keyword is missing or placed after #INTEROPERATORPARALLELIZATION keyword.");
+					"#PARALLELIZATION keyword with type= "+InterOperatorPreExecutionHandler.TYPE +" is missing or placed after #INTEROPERATORPARALLELIZATION keyword.");
 		}
 	}
 

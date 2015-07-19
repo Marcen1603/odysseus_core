@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParamete
 public class InterOperatorPreExecutionHandler extends
 		AbstractParallelizationPreExecutionHandler {
 	public static final int AUTO_BUFFER_SIZE = 10000000;
+	public static final String TYPE = "INTER_OPERATOR";
 	
-	private final String TYPE = "INTER_OPERATOR";
 	private PreParserKeywordParameterHelper<InterOperatorGlobalKeywordParameter> parameterHelper;
 	private static final InfoService INFO_SERVICE = InfoServiceFactory
 			.getInfoService(InterOperatorPreExecutionHandler.class);
@@ -36,10 +36,6 @@ public class InterOperatorPreExecutionHandler extends
 	public InterOperatorPreExecutionHandler() {
 		parameterHelper = PreParserKeywordParameterHelper
 				.newInstance(InterOperatorGlobalKeywordParameter.class);
-	}
-
-	public static InterOperatorPreExecutionHandler getInstance(){
-		return new InterOperatorPreExecutionHandler();
 	}
 	
 	@Override

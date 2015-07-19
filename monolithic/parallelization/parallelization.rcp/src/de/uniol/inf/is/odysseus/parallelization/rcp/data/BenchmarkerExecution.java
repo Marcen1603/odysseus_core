@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorParallelizationKeywordParameterBuilder;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorGlobalKeywordParameterBuilder;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorGlobalKeywordBuilder;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorParallelizationPreParserKeywordBuilder;
 
 public class BenchmarkerExecution {
 	private Integer degree;
@@ -142,12 +142,12 @@ public class BenchmarkerExecution {
 
 	public String getOdysseusScript() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(InterOperatorGlobalKeywordParameterBuilder
-				.buildInterOperatorKeywordWithParameters(degree, buffersize,
+		builder.append(InterOperatorGlobalKeywordBuilder
+				.buildParameterString(degree, buffersize,
 						allowPostOptmization, useThreadedBuffer));
 		for (BenchmarkExecutionElement element : elements.values()) {
-			builder.append(InterOperatorParallelizationKeywordParameterBuilder
-					.buildKeywordWithParameters(element.getStartOperatorid(),
+			builder.append(InterOperatorParallelizationPreParserKeywordBuilder
+					.buildKeywordWithParameters(element.getStartOperatorid(), element.getEndOperatorId(),
 							element.getExecutionDegree(), buffersize, element.getStrategy(),
 							element.getFragmentType()));
 		} 
