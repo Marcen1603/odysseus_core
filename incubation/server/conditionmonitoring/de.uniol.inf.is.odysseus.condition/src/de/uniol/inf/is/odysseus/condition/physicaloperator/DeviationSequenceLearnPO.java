@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 
-public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterval> extends
-		DeviationLearnPO<Tuple<ITimeInterval>, ITimeInterval> {
+public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterval>
+		extends DeviationLearnPO<Tuple<ITimeInterval>, ITimeInterval> {
 
 	public static final int DATA_OUT = 0;
 	public static final int LEARN_OUT = 1;
@@ -43,26 +43,26 @@ public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterva
 
 		lastSequenceCounter = sequenceTupleCounter;
 
-		if (learnedSequence <= sequencesToLearn || sequencesToLearn == 0) {
-			// Sequence tuples
-			DeviationInformation info = this.deviationInfos.get(sequenceTupleCounter);
-			if (info == null) {
-				info = new DeviationInformation();
-				this.deviationInfos.put(sequenceTupleCounter, info);
-			}
+		// Sequence tuples
+		DeviationInformation info = this.deviationInfos.get(sequenceTupleCounter);
+		if (info == null) {
+			info = new DeviationInformation();
+			this.deviationInfos.put(sequenceTupleCounter, info);
+		}
 
+		if (learnedSequence <= sequencesToLearn || sequencesToLearn == 0) {
 			double value = getValue(tuple);
 			info = calcStandardDeviationOnline(value, info);
-
-			// Transfer tuple with info about the updated standard deviation
-			// (counter, mean, and std dev)
-			Tuple<ITimeInterval> output = new Tuple<ITimeInterval>(3, false);
-			output.setMetadata(tuple.getMetadata());
-			output.setAttribute(0, sequenceTupleCounter); // group
-			output.setAttribute(1, info.mean);
-			output.setAttribute(2, info.standardDeviation);
-			transfer(output, LEARN_OUT);
 		}
+
+		// Transfer tuple with info about the (maybe) updated standard deviation
+		// (counter, mean, and std dev)
+		Tuple<ITimeInterval> outputLearn = new Tuple<ITimeInterval>(3, false);
+		outputLearn.setMetadata(tuple.getMetadata());
+		outputLearn.setAttribute(0, sequenceTupleCounter); // group
+		outputLearn.setAttribute(1, info.mean);
+		outputLearn.setAttribute(2, info.standardDeviation);
+		transfer(outputLearn, LEARN_OUT);
 
 		// Give the next operator the data with our group id so that it's
 		// possible to map to the learned group id

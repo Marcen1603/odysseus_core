@@ -35,7 +35,10 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private IGroupProcessor<T, T> groupProcessor;
 	// groupId, PointInTime from when it's active and information
 	private Map<Long, Map<PointInTime, DeviationInformation>> deviationInfo;
+	// For window checking
 	private Map<Long, List<T>> tupleMap;
+	// For tuples where the info is too old
+	private List<T> futureTupleList;
 	private boolean exactCalculation;
 
 	private boolean windowChecking;
@@ -68,6 +71,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private PointInTime lastTimePunctuationBasedTuple;
 
 	public DeviationAnomalyDetectionPO(DeviationAnomalyDetectionAO ao, IGroupProcessor<T, T> groupProcessor) {
+		this.futureTupleList = new ArrayList<>();
+
 		this.interval = ao.getInterval();
 		this.groupProcessor = groupProcessor;
 		this.valueAttributeName = ao.getNameOfValue();
@@ -131,14 +136,20 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		if (port == DATA_PORT && startToDeliver.get(gId)) {
 			// Process data
 			lastDataTuples.put(gId, tuple);
-			double sensorValue = getValue(tuple);
-			if (info != null)
+			if (info != null) {
+				double sensorValue = getValue(tuple);
 				processTuple(gId, sensorValue, tuple, info);
+			} else {
+				// We don't have an info for this tuple, therefore save it for
+				// later
+				futureTupleList.add(tuple);
+			}
 		} else if (port == DATA_PORT && deliverUnlearnedTuples) {
 			// We don't have an anomaly as we don't know the deviation. But the
 			// user wants to get such tuples, so there it is.
 			transferTuple(tuple, 0.0, 0.0, getValue(tuple), 0.0);
 		} else if (port == LEARN_PORT) {
+			DeviationInformation oldInfo = getNewestInfoForTuple(tuple);
 			// We always need a new object as the metadata (starttimestamp)
 			// changes every time
 			DeviationInformation newInformation = new DeviationInformation();
@@ -146,11 +157,11 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 			// Old information - if is exists
 			double oldMean = 0;
-			if (info != null) {
-				oldMean = info.mean;
+			if (oldInfo != null) {
+				oldMean = oldInfo.mean;
 
 				// Count, how many updates this information got
-				newInformation.counter = info.counter + 1;
+				newInformation.counter = oldInfo.counter + 1;
 			}
 
 			// Update deviation information
@@ -169,6 +180,19 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 				this.hadLittleChange.put(gId, true);
 			}
 
+			// With this new knowledge maybe we can process a few tuples we
+			// weren't able to before
+			List<T> toRemove = new ArrayList<>();
+			for (T oldTuple : futureTupleList) {
+				// Get correct information
+				DeviationInformation correctInfo = getInfoForTuple(oldTuple);
+				if (correctInfo != null) {
+					double sensorValue = getValue(oldTuple);
+					processTuple(gId, sensorValue, oldTuple, correctInfo);
+					toRemove.add(oldTuple);
+				}
+			}
+			futureTupleList.removeAll(toRemove);
 		}
 	}
 
@@ -183,10 +207,55 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * for "startTime.before(tupleStartTime)" and not
 	 * "startTime.beforeOrEquals(tupleStartTime)"
 	 * 
+	 * Also purges old tuples in the infoMap
+	 * 
 	 * @param tuple
 	 * @return
 	 */
 	private DeviationInformation getInfoForTuple(T tuple) {
+		Long gId = groupProcessor.getGroupID(tuple);
+		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(gId);
+		PointInTime tupleStartTime = tuple.getMetadata().getStart();
+
+		// Search for the newest information which fits
+		PointInTime bestPointInTime = null;
+		PointInTime biggerThanBestPoint = null;
+		for (PointInTime startTime : infoMap.keySet()) {
+			if ((bestPointInTime == null || startTime.after(bestPointInTime)) && startTime.before(tupleStartTime)) {
+				bestPointInTime = startTime;
+			}
+			// We need to know if there is a tuple after the best tuple. Cause
+			// if not, maybe there will be a better fitting info in the future
+			// and then we would need to wait
+			if (bestPointInTime != null && startTime.after(bestPointInTime)) {
+				biggerThanBestPoint = startTime;
+			}
+		}
+
+		if (bestPointInTime != null && biggerThanBestPoint != null && biggerThanBestPoint.after(bestPointInTime)) {
+			// Purge elements before
+			List<PointInTime> toRemove = new ArrayList<>();
+			for (PointInTime startTime : infoMap.keySet()) {
+				if (startTime.before(bestPointInTime)) {
+					toRemove.add(startTime);
+				}
+			}
+			for (PointInTime startTime : toRemove) {
+				infoMap.remove(startTime);
+			}
+			return infoMap.get(bestPointInTime);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the newest info which is older than the given tuple and does not
+	 * check, if there is a tuple after that one.
+	 * 
+	 * @param tuple
+	 * @return
+	 */
+	private DeviationInformation getNewestInfoForTuple(T tuple) {
 		Long gId = groupProcessor.getGroupID(tuple);
 		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(gId);
 		PointInTime tupleStartTime = tuple.getMetadata().getStart();
@@ -200,16 +269,6 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		}
 
 		if (bestPointInTime != null) {
-			// Purge elements before
-			List<PointInTime> toRemove = new ArrayList<>();
-			for (PointInTime startTime : infoMap.keySet()) {
-				if (startTime.before(bestPointInTime)) {
-					toRemove.add(startTime);
-				}
-			}
-			for (PointInTime startTime : toRemove) {
-				infoMap.remove(startTime);
-			}
 			return infoMap.get(bestPointInTime);
 		}
 		return null;
