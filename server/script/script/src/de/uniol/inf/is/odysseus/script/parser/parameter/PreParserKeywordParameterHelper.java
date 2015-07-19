@@ -8,10 +8,18 @@ import java.util.regex.Pattern;
 
 public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParameter> {
 
-	private static final String PATTERN_PAIRS = "((([a-zA-Z0-9_]+))[,])" + "*(([a-zA-Z0-9_]+))";
-	private static final String PATTERN_WITH_ATTRIBUTESNAMES = "([(][a-zA-Z0-9_]+[=]" + PATTERN_PAIRS + "[)])([\\s][(][a-zA-Z0-9_]+[=]" + PATTERN_PAIRS + "[)])*";
-	private static final String PATTERN_WITHOUT_ATTRIBUTENAMES = "(" + PATTERN_PAIRS + ")([\\s]" + PATTERN_PAIRS + ")*";
-	private static final String PATTERN_KEYWORD = PATTERN_WITH_ATTRIBUTESNAMES + "|" + PATTERN_WITHOUT_ATTRIBUTENAMES;
+	private static final String PATTERN_PAIRS = "((([a-zA-Z0-9_]+))[,])"
+			+ "*(([a-zA-Z0-9_]+))";
+	private static final String PATTERN_WITH_ATTRIBUTESNAMES = "([(][a-zA-Z0-9_]+[=]"
+			+ PATTERN_PAIRS
+			+ "[)])([\\s][(][a-zA-Z0-9_]+[=]"
+			+ PATTERN_PAIRS
+			+ "[)])*";
+	private static final String PATTERN_WITHOUT_ATTRIBUTENAMES = "("
+			+ PATTERN_PAIRS + ")([\\s]" + PATTERN_PAIRS + ")*";
+	private static final String PATTERN_KEYWORD = PATTERN_WITH_ATTRIBUTESNAMES
+			+ "|" + PATTERN_WITHOUT_ATTRIBUTENAMES;
+	private static final String BLANK = " ";
 
 	private Map<Integer, IKeywordParameter> positionMap;
 	private Map<String, IKeywordParameter> nameMap;
@@ -19,7 +27,10 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 	private int numberOfParameters;
 	private int numberOfOptionalParameters;
 
-	private PreParserKeywordParameterHelper(Map<Integer, IKeywordParameter> positionMap, Map<String, IKeywordParameter> nameMap, String regexString, int numberOfParameters, int numberOfOptionalParameters) {
+	private PreParserKeywordParameterHelper(
+			Map<Integer, IKeywordParameter> positionMap,
+			Map<String, IKeywordParameter> nameMap, String regexString,
+			int numberOfParameters, int numberOfOptionalParameters) {
 		this.positionMap = positionMap;
 		this.nameMap = nameMap;
 		this.regexString = regexString;
@@ -27,7 +38,8 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		this.numberOfOptionalParameters = numberOfOptionalParameters;
 	}
 
-	public static <T extends Enum<?> & IKeywordParameter> PreParserKeywordParameterHelper<T> newInstance(Class<T> parameterClazz, String regexString) {
+	public static <T extends Enum<?> & IKeywordParameter> PreParserKeywordParameterHelper<T> newInstance(
+			Class<T> parameterClazz, String regexString) {
 		Map<Integer, IKeywordParameter> positionMap = new HashMap<Integer, IKeywordParameter>();
 		Map<String, IKeywordParameter> nameMap = new HashMap<String, IKeywordParameter>();
 		int numberOfParameters = 0;
@@ -37,15 +49,19 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 
 		for (IKeywordParameter keywordParameter : keywordParameters) {
 			if (!positionMap.containsKey(keywordParameter.getPosition())) {
-				positionMap.put(keywordParameter.getPosition(), keywordParameter);
+				positionMap.put(keywordParameter.getPosition(),
+						keywordParameter);
 			} else {
-				throw new IllegalArgumentException("Position needs to be unique.");
+				throw new IllegalArgumentException(
+						"Position needs to be unique.");
 			}
-			if (keywordParameter.getName() == null || keywordParameter.getName().isEmpty()) {
+			if (keywordParameter.getName() == null
+					|| keywordParameter.getName().isEmpty()) {
 				throw new IllegalArgumentException("Empty name is not allowed");
 			}
 			if (!nameMap.containsKey(keywordParameter.getName().toLowerCase())) {
-				nameMap.put(keywordParameter.getName().toLowerCase(), keywordParameter);
+				nameMap.put(keywordParameter.getName().toLowerCase(),
+						keywordParameter);
 			} else {
 				throw new IllegalArgumentException("Name needs to be unique.");
 			}
@@ -57,17 +73,21 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 			}
 		}
 
-		PreParserKeywordParameterHelper<T> instance = new PreParserKeywordParameterHelper<T>(positionMap, nameMap, regexString, numberOfParameters, numberOfOptionalParameters);
+		PreParserKeywordParameterHelper<T> instance = new PreParserKeywordParameterHelper<T>(
+				positionMap, nameMap, regexString, numberOfParameters,
+				numberOfOptionalParameters);
 		instance.validateParametersAndRegex();
 
 		return instance;
 	}
 
-	public static <T extends Enum<?> & IKeywordParameter> PreParserKeywordParameterHelper<T> newInstance(Class<T> parameterClass) {
+	public static <T extends Enum<?> & IKeywordParameter> PreParserKeywordParameterHelper<T> newInstance(
+			Class<T> parameterClass) {
 		return newInstance(parameterClass, PATTERN_KEYWORD);
 	}
 
-	private static <T extends Enum<?> & IKeywordParameter> List<IKeywordParameter> getParametersAsArray(Class<T> parameterClazz) {
+	private static <T extends Enum<?> & IKeywordParameter> List<IKeywordParameter> getParametersAsArray(
+			Class<T> parameterClazz) {
 		List<IKeywordParameter> result = new ArrayList<IKeywordParameter>();
 
 		T[] enumConstants = parameterClazz.getEnumConstants();
@@ -89,10 +109,12 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		boolean firstOptionalParameterFound = false;
 		for (int i = 0; i < this.numberOfParameters; i++) {
 			if (!positionMap.containsKey(i)) {
-				throw new IllegalArgumentException("positions need to be from 0 to numberOfParameters-1");
+				throw new IllegalArgumentException(
+						"positions need to be from 0 to numberOfParameters-1");
 			}
 			if (!positionMap.get(i).isOptional() && firstOptionalParameterFound) {
-				throw new IllegalArgumentException("No mandatory parameters after optional parameters are allowed");
+				throw new IllegalArgumentException(
+						"No mandatory parameters after optional parameters are allowed");
 			}
 			if (positionMap.get(i).isOptional()) {
 				firstOptionalParameterFound = true;
@@ -106,7 +128,8 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < this.numberOfParameters; i++) {
 			if (positionMap.get(i) instanceof ICustomPatternKeywordParameter) {
-				ICustomPatternKeywordParameter extendedParameter = (ICustomPatternKeywordParameter) positionMap.get(i);
+				ICustomPatternKeywordParameter extendedParameter = (ICustomPatternKeywordParameter) positionMap
+						.get(i);
 				if (!extendedParameter.getValuePattern().isEmpty()) {
 					builder.append(extendedParameter.getValuePattern());
 					continue;
@@ -153,28 +176,51 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		return result;
 	}
 
-	private void checkIfAllMandatoryParametersAreSet(Map<IKeywordParameter, String> result) {
+	public String createParameterString(
+			Map<T, String> parameters) {
+		StringBuilder builder = new StringBuilder();
+		for (IKeywordParameter parameter : parameters.keySet()) {
+			builder.append("(");
+			builder.append(parameter.getName());
+			builder.append("=");
+			builder.append(parameters.get(parameter));
+			builder.append(")");
+			builder.append(BLANK);
+		}
+		builder.append(System.lineSeparator());
+
+		String resultString = builder.toString();
+		validateParameterString(resultString);
+		return resultString;
+	}
+
+	private void checkIfAllMandatoryParametersAreSet(
+			Map<IKeywordParameter, String> result) {
 		for (IKeywordParameter keywordParameter : positionMap.values()) {
 			if (!keywordParameter.isOptional()) {
 				// if parameter is mandatory
 				if (!result.containsKey(keywordParameter)) {
 					// if this mandatory parameter does not exists
-					throw new IllegalArgumentException("Mandatory parameter " + keywordParameter.getName() + " is missing.");
+					throw new IllegalArgumentException("Mandatory parameter "
+							+ keywordParameter.getName() + " is missing.");
 				}
 			}
 		}
 	}
 
-	private void doParsingWithoutParameterNames(String[] splittedParameters, Map<IKeywordParameter, String> result) {
+	private void doParsingWithoutParameterNames(String[] splittedParameters,
+			Map<IKeywordParameter, String> result) {
 		for (int i = 0; i < splittedParameters.length; i++) {
 			result.put(positionMap.get(i), splittedParameters[i]);
 		}
 	}
 
-	private void doParsingWithParameterNames(String[] splittedParameters, Map<IKeywordParameter, String> result) {
+	private void doParsingWithParameterNames(String[] splittedParameters,
+			Map<IKeywordParameter, String> result) {
 		for (int i = 0; i < splittedParameters.length; i++) {
 			// remove surrounding brackets
-			String keyValueString = splittedParameters[i].substring(1, splittedParameters[i].length() - 1);
+			String keyValueString = splittedParameters[i].substring(1,
+					splittedParameters[i].length() - 1);
 
 			// split key and value on =
 			String[] keyValueArray = keyValueString.trim().split("=");
@@ -182,11 +228,14 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 				String key = keyValueArray[0].trim().toLowerCase();
 				String value = keyValueArray[1].trim();
 				if (!nameMap.containsKey(key)) {
-					throw new IllegalArgumentException("Parameter " + key + " does not exists. Pattern: " + getLongParameterPattern());
+					throw new IllegalArgumentException("Parameter " + key
+							+ " does not exists. Pattern: "
+							+ getLongParameterPattern());
 				}
 				IKeywordParameter keywordParameter = nameMap.get(key);
 				if (result.containsKey(keywordParameter)) {
-					throw new IllegalArgumentException("Duplicate definition for parameter " + key);
+					throw new IllegalArgumentException(
+							"Duplicate definition for parameter " + key);
 				}
 				result.put(nameMap.get(key), value);
 
@@ -195,15 +244,21 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 	}
 
 	public void validateParameterString(String parameterString) {
+		parameterString = parameterString.trim();
 		if (parameterString == null || parameterString.isEmpty()) {
-			throw new IllegalArgumentException("Null or empty string is not allowed for parsing");
+			throw new IllegalArgumentException(
+					"Null or empty string is not allowed for parsing");
 		}
 
 		if (!parameterString.matches(regexString)) {
 			if (parameterString.contains("=")) {
-				throw new IllegalArgumentException("String does not match pattern. Pattern: " + getLongParameterPattern());
+				throw new IllegalArgumentException(
+						"String does not match pattern. Pattern: "
+								+ getLongParameterPattern());
 			}
-			throw new IllegalArgumentException("String does not match pattern. Pattern: " + getShortParameterPattern());
+			throw new IllegalArgumentException(
+					"String does not match pattern. Pattern: "
+							+ getShortParameterPattern());
 
 		}
 
