@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
@@ -76,6 +77,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPeerCommunicator peerCommunicator;
 	private static IServerExecutor executor;
+	private static ILoadBalancingCommunicatorRegistry communicatorRegistry;
 
 	/**
 	 * Used to store different LoadBalancing Parts.
@@ -84,12 +86,20 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			.newArrayList();
 	private static Collection<ILoadBalancingAllocator> loadBalancingAllocators = Lists
 			.newArrayList();
-	private static Collection<ILoadBalancingCommunicator> loadBalancingCommunicators = Lists
-			.newArrayList();
 
 	// called by OSGi-DS
 	public static void bindPeerDictionary(IPeerDictionary serv) {
 		peerDictionary = serv;
+	}
+	
+	public static void bindCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
+		communicatorRegistry = serv;
+	}
+	
+	public static void unbindCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
+		if(communicatorRegistry == serv) {
+			communicatorRegistry = null;
+		}
 	}
 
 	// called by OSGi-DS
@@ -170,26 +180,6 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 			ActiveLoadbalancingConsole.loadBalancingAllocators
 					.remove(allocator);
-
-		}
-
-	}
-
-	// called by OSGi-DS
-	public static void bindLoadBalancingCommunicator(
-			ILoadBalancingCommunicator communicator) {
-		ActiveLoadbalancingConsole.loadBalancingCommunicators.add(communicator);
-
-	}
-
-	// called by OSGi-DS
-	public static void unbindLoadBalancingCommunicator(
-			ILoadBalancingCommunicator communicator) {
-
-		if (communicator != null) {
-
-			ActiveLoadbalancingConsole.loadBalancingCommunicators
-					.remove(communicator);
 
 		}
 
@@ -429,8 +419,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		} else {
 			ci.println(ERROR_NOTFOUND + communicatorName);
 			ci.println("Available Communicators are: ");
-			for (ILoadBalancingCommunicator communicator : loadBalancingCommunicators) {
-				ci.println(communicator.getName());
+			for (String commName : communicatorRegistry.getRegisteredCommunicators()) {
+				ci.println(commName);
 			}
 		}
 
@@ -1058,8 +1048,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	 */
 	public void _lsLBCommunicators(CommandInterpreter ci) {
 		ci.println("Available load balancing Communicators:");
-		for (ILoadBalancingCommunicator communicator : ActiveLoadbalancingConsole.loadBalancingCommunicators) {
-			ci.println(communicator.getName());
+		for (String communicator : communicatorRegistry.getRegisteredCommunicators()) {
+			ci.println(communicator);
 		}
 	}
 
@@ -1133,18 +1123,14 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		Preconditions.checkNotNull(communicatorName,
 				"The name of the load balancing allocator must be not null!");
 
-		for (ILoadBalancingCommunicator communicator : ActiveLoadbalancingConsole.loadBalancingCommunicators) {
+		ILoadBalancingCommunicator communicator = communicatorRegistry.getCommunicator(communicatorName);
+		if(communicator==null) {
 
-			if (communicator.getName().equals(communicatorName)) {
-
-				return Optional.of(communicator);
-
-			}
-
+			return Optional.absent();
 		}
-
-		return Optional.absent();
-
+		else {
+			return Optional.of(communicator);
+		}
 	}
 
 	/**
