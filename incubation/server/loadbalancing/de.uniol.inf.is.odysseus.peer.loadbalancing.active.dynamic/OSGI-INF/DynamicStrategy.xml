@@ -9,4 +9,5 @@
    <reference bind="bindPhysicalCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel" name="IPhysicalCostModel" policy="static" unbind="unbindPhysicalCostModel"/>
    <reference bind="bindNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindNetworkManager"/>
    <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
+   <reference bind="bindLoadBalancingLock" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock" name="ILoadBalancingLock" policy="static" unbind="unbindLoadBalancingLock"/>
 </scr:component>

@@ -16,6 +16,11 @@ public class DynamicLoadBalancingConstants {
 			public static final String ALLOCATOR_NAME = "OdyLoad";
 			
 			
+			public static final String INACTIVE_QUERIES_COMMUNICATOR_NAME = "InactiveQuery";
+			public static final String STATELESS_QUERIES_COMMUNICATOR_NAME = "ParallelTrack";
+			public static final String STATEFUL_QUERIES_COMMUNICATOR_NAME = "MovingState";
+			
+			
 			//Survey Allocator Parameters
 			public static final int SURVEY_LATENCY_WEIGHT = 0;
 			public static final int SURVEY_BID_WEIGHT = 1;
