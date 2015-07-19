@@ -65,6 +65,7 @@ public class SlidingElementWindowTIPOState<T extends IStreamObject<ITimeInterval
 	
 
 	public long estimateSizeInBytes() {
-		return 0;
+		//As this state does not tend to be really big we return the real size
+		return getSizeInBytesOfSerializable((Serializable)this);
 	}
 }

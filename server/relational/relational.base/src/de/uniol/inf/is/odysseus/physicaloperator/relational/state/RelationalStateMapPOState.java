@@ -30,7 +30,7 @@ public class RelationalStateMapPOState<T extends IMetaAttribute> extends Abstrac
 	}
 
 	public long estimateSizeInBytes() {
-		return 0;
+		return getSizeInBytesOfSerializable((Serializable)this);
 	}
 
 }

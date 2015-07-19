@@ -85,7 +85,8 @@ public class AggregateTIPOState<Q extends ITimeInterval, R extends IStreamObject
 	}
 
 	public long estimateSizeInBytes() {
-		return 0;
+		//As this state does not tend to be really big we return the real size
+		return getSizeInBytesOfSerializable((Serializable)this);
 	}
 	
 }

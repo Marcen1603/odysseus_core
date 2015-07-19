@@ -35,6 +35,8 @@ public class UnionPOState<R extends IStreamObject<?>> extends AbstractOperatorSt
 	
 
 	public long estimateSizeInBytes() {
-		return 0;
+		//As this state does not tend to be really big we return the real size
+		return getSizeInBytesOfSerializable((Serializable)this);
 	}
+	
 }
