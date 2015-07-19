@@ -1,3 +1,18 @@
+/********************************************************************************** 
+ * Copyright 2015 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parallelization.interoperator.transform;
 
 import java.util.ArrayList;
@@ -6,12 +21,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
@@ -19,20 +36,18 @@ import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.OperatorIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorParameter;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorSettings;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorGlobalKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.postoptimization.PostOptimizationHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
-import de.uniol.inf.is.odysseus.parallelization.parameter.ParallelizationKeywordParameter;
-import de.uniol.inf.is.odysseus.parallelization.transformationhandler.AbstractParallelizationPreTransformationHandler;
 
-public class InterOperatorParallelizationPreTransformationHandler extends
-		AbstractParallelizationPreTransformationHandler {
+public class InterOperatorParallelizationPreTransformationHandler implements
+		IPreTransformationHandler {
 
 	public static final String HANDLER_NAME = "InterOperatorParallelizationPreTransformationHandler";
-	private final String TYPE = "INTER_OPERATOR";
 	private final int PARAMETER_COUNT = 4;
 
 	private int globalDegreeOfParallelization = 0;
@@ -40,7 +55,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 	private boolean optimizationAllowed;
 	private boolean useThreadedBuffer;
 
-	private ParallelOperatorParameter parallelOperatorParameter;
+	private ParallelOperatorSettings parallelOperatorParameter;
 	private List<String> operatorIds = new ArrayList<String>();
 
 	@Override
@@ -138,19 +153,19 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 		// iterate over result of id visitor
 		for (String operatorId : result.keySet()) {
 			ILogicalOperator operatorForTransformation = result.get(operatorId);
-			ParallelOperatorSettings settingsForOperator = parallelOperatorParameter
+			ParallelOperatorConfiguration configurationForOperator = parallelOperatorParameter
 					.getSettingsForOperator(operatorId);
 			if (operatorForTransformation != null
-					&& settingsForOperator != null) {
+					&& configurationForOperator != null) {
 				// only do transformation if operator is found and settings
 				// exists
-				if (settingsForOperator.hasMultithreadingStrategy()) {
+				if (configurationForOperator.hasMultithreadingStrategy()) {
 					// if setting has an user defined Parallel strategy
 					IParallelTransformationStrategy<? extends ILogicalOperator> selectedStrategy = ParallelTransformationStrategyRegistry
-							.getStrategiesByName(settingsForOperator
+							.getStrategiesByName(configurationForOperator
 									.getParallelStrategy());
 					// do post calculations and validations for settings
-					settingsForOperator.doPostCalculationsForSettings(
+					configurationForOperator.doPostCalculationsForConfiguration(
 							selectedStrategy, globalDegreeOfParallelization,
 							globalBufferSize, useThreadedBuffer);
 					if (selectedStrategy.getOperatorType() == operatorForTransformation
@@ -163,7 +178,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 							// transformation is possible
 							transformationResults.add(selectedStrategy
 									.transform(operatorForTransformation,
-											settingsForOperator));
+											configurationForOperator));
 						} else {
 							// if the selected strategy corresponds to the given
 							// operator type, but is not compatible
@@ -179,7 +194,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 						// type (selected by id), throw exception
 						throw new IllegalArgumentException(
 								"Strategy with name "
-										+ settingsForOperator
+										+ configurationForOperator
 												.getParallelStrategy()
 										+ " is not compatible with Operator of type "
 										+ operatorForTransformation.getClass());
@@ -190,11 +205,11 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 					// strategy for this operator
 					IParallelTransformationStrategy<? extends ILogicalOperator> bestStrategy = getBestStrategy(operatorForTransformation);
 					// do post calculations and validations for settings
-					settingsForOperator.doPostCalculationsForSettings(
+					configurationForOperator.doPostCalculationsForConfiguration(
 							bestStrategy, globalDegreeOfParallelization,
 							globalBufferSize, useThreadedBuffer);
 					transformationResults.add(bestStrategy.transform(
-							operatorForTransformation, settingsForOperator));
+							operatorForTransformation, configurationForOperator));
 				}
 			}
 		}
@@ -227,11 +242,11 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 				// get best strategy
 				IParallelTransformationStrategy<? extends ILogicalOperator> bestStrategy = getBestStrategy(operatorForTransformation);
 				// create default settings for this transformation
-				ParallelOperatorSettings settings = ParallelOperatorSettings
-						.createDefaultSettings(bestStrategy,
+				ParallelOperatorConfiguration configuration = ParallelOperatorConfiguration
+						.createDefaultConfiguration(bestStrategy,
 								globalDegreeOfParallelization, globalBufferSize, useThreadedBuffer);
 				transformationResults.add(bestStrategy.transform(
-						operatorForTransformation, settings));
+						operatorForTransformation, configuration));
 			}
 		}
 		return transformationResults;
@@ -240,7 +255,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 	private void getOperatorSpecificParameters(QueryBuildConfiguration config) {
 		operatorIds = new ArrayList<String>();
 		parallelOperatorParameter = config
-				.get(ParallelOperatorParameter.class);
+				.get(ParallelOperatorSettings.class);
 		if (parallelOperatorParameter != null) {
 			operatorIds.addAll(parallelOperatorParameter.getOperatorIds());
 		}
@@ -253,7 +268,7 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 		} else {
 			// Determine parameters
 			for (Pair<String, String> pair : handlerParameters) {
-				ParallelizationKeywordParameter parameter = ParallelizationKeywordParameter
+				InterOperatorGlobalKeywordParameter parameter = InterOperatorGlobalKeywordParameter
 						.getParameterByName(pair.getE1());
 				switch (parameter) {
 				case DEGREE_OF_PARALLELIZATION:
@@ -306,10 +321,4 @@ public class InterOperatorParallelizationPreTransformationHandler extends
 		}
 		return null;
 	}
-
-	@Override
-	public String getType() {
-		return TYPE;
-	}
-
 }

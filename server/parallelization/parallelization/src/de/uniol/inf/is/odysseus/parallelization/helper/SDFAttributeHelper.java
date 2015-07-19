@@ -1,3 +1,18 @@
+/********************************************************************************** 
+ * Copyright 2015 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parallelization.helper;
 
 import java.util.ArrayList;
@@ -22,6 +37,12 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
+/**
+ * helper class for working with sdf attributes
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class SDFAttributeHelper {
 
 	final private static InfoService INFO_SERVICE = InfoServiceFactory
@@ -30,6 +51,10 @@ public class SDFAttributeHelper {
 	private boolean fragmentationIsPossible = true;
 	private static SDFAttributeHelper instance;
 
+	/**
+	 * returns a single instance
+	 * @return
+	 */
 	public static SDFAttributeHelper getInstance() {
 		if (instance == null) {
 			instance = new SDFAttributeHelper();
@@ -37,6 +62,14 @@ public class SDFAttributeHelper {
 		return instance;
 	}
 
+	/**
+	 * validates of the structure of a given join attribute is in a correct structure
+	 * valid structure: (a.A == b.B) && (a.C == b.D) && ...
+	 * in addition to this the number of attributes need to be equals for both input ports
+	 * 
+	 * @param a logical join operator
+	 * @return true if the structure is valid, else false
+	 */
 	public boolean validateStructureOfPredicate(JoinAO joinOperator) {
 		IPredicate<?> predicate = joinOperator.getPredicate();
 		if (predicate instanceof RelationalPredicate) {
@@ -73,6 +106,15 @@ public class SDFAttributeHelper {
 		return false;
 	}
 
+	/**
+	 * gets the sdf attributes from a given join operator. Only returns results if the structure is valid
+	 * valid structure: (a.A == b.B) && (a.C == b.D) && ...
+	 * in addition to this the number of attributes need to be equals for both input ports
+	 * 
+	 * @param resultin attributes
+	 * @param a logical join operator
+	 * @return a map of attributes for both input ports
+	 */
 	public Map<Integer, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(
 			Map<Integer, List<SDFAttribute>> attributes, JoinAO joinOperator) {
 		IPredicate<?> predicate = joinOperator.getPredicate();
@@ -177,6 +219,12 @@ public class SDFAttributeHelper {
 		return attributes;
 	}
 
+	/**
+	 * checks if a given mep expression contains stateful expressions 
+	 * 
+	 * @param mepExpression
+	 * @return true if the given expression contains stateful expressions
+	 */
 	public static boolean expressionContainsStatefulFunction(
 			IExpression<?> mepExpression) {
 		if (mepExpression.isFunction()) {
@@ -195,14 +243,21 @@ public class SDFAttributeHelper {
 		return false;
 	}
 
-	public static void checkIfAttributesAreEqual(AggregateAO aggregateAO,
+	/**
+	 * checks if the grouping attributes contains in one of the given fragmentation operators (only hash fragments)
+	 * 
+	 * @param aggregateAO
+	 * @param iteration
+	 * @param fragmentAOs
+	 * @param assureSemanticCorrectness
+	 */
+	public static void checkIfAttributesAreEqual(AggregateAO aggregateOperator,
 			int iteration, List<AbstractStaticFragmentAO> fragmentAOs,
 			boolean assureSemanticCorrectness) {
 
-		AggregateAO aggregateOperator = aggregateAO;
-
 		List<SDFAttribute> groupingAttributes = aggregateOperator
 				.getGroupingAttributes();
+		
 		for (SDFAttribute sdfAttribute : groupingAttributes) {
 			boolean attributeFound = false;
 			for (AbstractFragmentAO fragment : fragmentAOs) {

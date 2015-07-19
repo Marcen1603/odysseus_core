@@ -1,16 +1,31 @@
-package de.uniol.inf.is.odysseus.parallelization.interoperator.parameter;
+/********************************************************************************** 
+ * Copyright 2015 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package de.uniol.inf.is.odysseus.parallelization.interoperator.configuration;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
 import de.uniol.inf.is.odysseus.parallelization.helper.FragmentationTypeHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorParallelizationPreParserKeyword.BufferSizeConstants;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorParallelizationPreParserKeyword.DegreeOfParalleizationConstants;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution.InterOperatorPreExecutionHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
-import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
-public class ParallelOperatorSettings {
+public class ParallelOperatorConfiguration {
 
 	private DegreeOfParalleizationConstants degreeConstant = DegreeOfParalleizationConstants.GLOBAL;
 	private int degreeOfParallelization = 0;
@@ -29,19 +44,19 @@ public class ParallelOperatorSettings {
 
 	private Class<? extends AbstractStaticFragmentAO> fragementationType;
 
-	public static ParallelOperatorSettings createDefaultSettings(
+	public static ParallelOperatorConfiguration createDefaultConfiguration(
 			IParallelTransformationStrategy<? extends ILogicalOperator> strategy,
 			int globalDegreeOfParallelization, int globalBufferSize,
 			boolean useThreadedBuffer) {
-		ParallelOperatorSettings settings = new ParallelOperatorSettings();
+		ParallelOperatorConfiguration settings = new ParallelOperatorConfiguration();
 
-		settings.doPostCalculationsForSettings(strategy,
+		settings.doPostCalculationsForConfiguration(strategy,
 				globalDegreeOfParallelization, globalBufferSize,
 				useThreadedBuffer);
 		return settings;
 	}
 
-	public void doPostCalculationsForSettings(
+	public void doPostCalculationsForConfiguration(
 			IParallelTransformationStrategy<? extends ILogicalOperator> strategy,
 			int globalDegreeOfParallelization, int globalBufferSize,
 			boolean useThreadedBuffer) {
@@ -59,7 +74,7 @@ public class ParallelOperatorSettings {
 		if (getBufferSizeConstant() == BufferSizeConstants.GLOBAL) {
 			setBufferSize(globalBufferSize);
 		} else if (getBufferSizeConstant() == BufferSizeConstants.AUTO) {
-			setBufferSize(ParallelizationPreParserKeyword.AUTO_BUFFER_SIZE);
+			setBufferSize(InterOperatorPreExecutionHandler.AUTO_BUFFER_SIZE);
 		}
 
 		// use threaded buffer

@@ -21,9 +21,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.script.parser;bundle-version="1.0.0"
 Service-Component: OSGI-INF/ParallelizationPreParserKeywordProvider.xml,
- OSGI-INF/ParallelizationPreTransformationHandlerRegistry.xml
+ OSGI-INF/ParallelizationPreExecutionHandlerRegistry.xml
 Export-Package: de.uniol.inf.is.odysseus.parallelization.autodetect,
  de.uniol.inf.is.odysseus.parallelization.helper,
  de.uniol.inf.is.odysseus.parallelization.keyword,
- de.uniol.inf.is.odysseus.parallelization.parameter,
- de.uniol.inf.is.odysseus.parallelization.transformationhandler
+ de.uniol.inf.is.odysseus.parallelization.preexecution

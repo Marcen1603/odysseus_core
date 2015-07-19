@@ -1,3 +1,18 @@
+/********************************************************************************** 
+ * Copyright 2015 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parallelization.interoperator.strategy;
 
 import java.util.ArrayList;
@@ -12,8 +27,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.parallelization.helper.SDFAttributeHelper;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
@@ -44,7 +59,7 @@ public class GroupedAggregateTransformationStrategy extends
 
 	@Override
 	public TransformationResult transform(ILogicalOperator operator,
-			ParallelOperatorSettings settingsForOperator) {
+			ParallelOperatorConfiguration settingsForOperator) {
 		// validate settings and way to end point
 		if (!super.areSettingsValid(settingsForOperator)) {
 			return new TransformationResult(State.FAILED);
@@ -185,7 +200,7 @@ public class GroupedAggregateTransformationStrategy extends
 			ILogicalOperator currentExistingOperator,
 			ILogicalOperator currentClonedOperator, int iteration,
 			List<AbstractStaticFragmentAO> fragments,
-			ParallelOperatorSettings settingsForOperator) {
+			ParallelOperatorConfiguration settingsForOperator) {
 		if (currentExistingOperator instanceof AggregateAO) {
 			SDFAttributeHelper.checkIfAttributesAreEqual((AggregateAO) currentExistingOperator, iteration,
 					fragments, settingsForOperator.isAssureSemanticCorrectness());

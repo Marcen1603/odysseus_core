@@ -1,3 +1,18 @@
+/********************************************************************************** 
+ * Copyright 2015 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parallelization.interoperator.keyword;
 
 import java.util.ArrayList;
@@ -17,8 +32,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
 import de.uniol.inf.is.odysseus.parallelization.helper.FragmentationTypeHelper;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorParameter;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.ParallelOperatorSettings;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorSettings;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorParallelizationKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.InterOperatorParallelizationPreTransformationHandler;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -94,10 +110,10 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		Map<IKeywordParameter, String> result = parameterHelper
 				.parse(parameter);
 
-		List<ParallelOperatorSettings> operatorSettings = createOperatorSettingsFromIds(result
+		List<ParallelOperatorConfiguration> operatorSettings = createOperatorSettingsFromIds(result
 				.get(InterOperatorParallelizationKeywordParameter.OPERATORID));
 
-		for (ParallelOperatorSettings operatorSetting : operatorSettings) {
+		for (ParallelOperatorConfiguration operatorSetting : operatorSettings) {
 
 			addParallelizationDegree(
 					result.get(InterOperatorParallelizationKeywordParameter.DEGREE),
@@ -112,17 +128,17 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			addFragmentationType(result, operatorSetting);
 		}
 
-		ParallelOperatorParameter mtOperatorParameter = getMultithreadedOperatorParameter(settings);
+		ParallelOperatorSettings mtOperatorParameter = getMultithreadedOperatorParameter(settings);
 
 		addSettingsToParameter(operatorSettings, mtOperatorParameter);
 
 		return null;
 	}
 
-	private List<ParallelOperatorSettings> createOperatorSettingsFromIds(
+	private List<ParallelOperatorConfiguration> createOperatorSettingsFromIds(
 			String operatorIds) throws OdysseusScriptException {
 		// create operator settings
-		List<ParallelOperatorSettings> operatorSettings = new ArrayList<ParallelOperatorSettings>();
+		List<ParallelOperatorConfiguration> operatorSettings = new ArrayList<ParallelOperatorConfiguration>();
 
 		// 1. parameter: operatorId's
 		if (operatorIds.contains("(") && operatorIds.contains(")")) {
@@ -135,14 +151,14 @@ public class InterOperatorParallelizationPreParserKeyword extends
 					String[] currentIdPair = currentId.split(":");
 					if (currentIdPair.length == 2) {
 						// (StartParallelizationId:EndParallelizationId)
-						ParallelOperatorSettings settingsForId = new ParallelOperatorSettings();
+						ParallelOperatorConfiguration settingsForId = new ParallelOperatorConfiguration();
 						settingsForId
 								.setStartParallelizationId(currentIdPair[0]);
 						settingsForId.setEndParallelizationId(currentIdPair[1]);
 						operatorSettings.add(settingsForId);
 					} else if (currentIdPair.length == 3) {
 						// (StartParallelizationId:EndParallelizationId:AssureSemanticCorrectness)
-						ParallelOperatorSettings settingsForId = new ParallelOperatorSettings();
+						ParallelOperatorConfiguration settingsForId = new ParallelOperatorConfiguration();
 						settingsForId
 								.setStartParallelizationId(currentIdPair[0]);
 						settingsForId.setEndParallelizationId(currentIdPair[1]);
@@ -162,7 +178,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 					}
 				} else if (!currentId.contains("(") && !currentId.contains(")")) {
 					// we have an single id
-					ParallelOperatorSettings settingsForId = new ParallelOperatorSettings();
+					ParallelOperatorConfiguration settingsForId = new ParallelOperatorConfiguration();
 					settingsForId.setStartParallelizationId(currentId);
 					operatorSettings.add(settingsForId);
 				} else {
@@ -174,7 +190,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		} else if (!operatorIds.contains("(") && !operatorIds.contains(")")) {
 			String[] splittedOperatorIDs = operatorIds.trim().split(",");
 			for (String operatorId : Arrays.asList(splittedOperatorIDs)) {
-				ParallelOperatorSettings settingsForId = new ParallelOperatorSettings();
+				ParallelOperatorConfiguration settingsForId = new ParallelOperatorConfiguration();
 				settingsForId.setStartParallelizationId(operatorId);
 				operatorSettings.add(settingsForId);
 			}
@@ -186,11 +202,11 @@ public class InterOperatorParallelizationPreParserKeyword extends
 	}
 
 	private void addSettingsToParameter(
-			List<ParallelOperatorSettings> operatorSettings,
-			ParallelOperatorParameter mtOperatorParameter)
+			List<ParallelOperatorConfiguration> operatorSettings,
+			ParallelOperatorSettings mtOperatorParameter)
 			throws OdysseusScriptException {
 		// check if settings for one of the given operatorIds already exists
-		for (ParallelOperatorSettings operatorSetting : operatorSettings) {
+		for (ParallelOperatorConfiguration operatorSetting : operatorSettings) {
 			if (mtOperatorParameter.getOperatorIds().contains(
 					operatorSetting.getStartParallelizationId())) {
 				throw new OdysseusScriptException(
@@ -204,17 +220,17 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		}
 	}
 
-	private ParallelOperatorParameter getMultithreadedOperatorParameter(
+	private ParallelOperatorSettings getMultithreadedOperatorParameter(
 			List<IQueryBuildSetting<?>> settings) {
 		// get parameter from settings or create new one if not exists
-		ParallelOperatorParameter mtOperatorParameter = null;
+		ParallelOperatorSettings mtOperatorParameter = null;
 		for (IQueryBuildSetting<?> setting : settings) {
-			if (setting.getClass().equals(ParallelOperatorParameter.class)) {
-				mtOperatorParameter = (ParallelOperatorParameter) setting;
+			if (setting.getClass().equals(ParallelOperatorSettings.class)) {
+				mtOperatorParameter = (ParallelOperatorSettings) setting;
 			}
 		}
 		if (mtOperatorParameter == null) {
-			mtOperatorParameter = new ParallelOperatorParameter();
+			mtOperatorParameter = new ParallelOperatorSettings();
 			settings.add(mtOperatorParameter);
 		}
 		return mtOperatorParameter;
@@ -248,7 +264,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 	}
 
 	private void addFragmentationType(Map<IKeywordParameter, String> result,
-			ParallelOperatorSettings operatorSetting)
+			ParallelOperatorConfiguration operatorSetting)
 			throws OdysseusScriptException {
 		// 5. parameter (optional): fragmentation-type
 		if (result
@@ -267,7 +283,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 	}
 
 	private void addStrategy(Map<IKeywordParameter, String> result,
-			ParallelOperatorSettings operatorSetting)
+			ParallelOperatorConfiguration operatorSetting)
 			throws OdysseusScriptException {
 		// 4. parameter (optional): multithreading-strategy
 		if (result
@@ -285,7 +301,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 	}
 
 	private void addBufferSize(String buffersizeString,
-			ParallelOperatorSettings operatorSetting)
+			ParallelOperatorConfiguration operatorSetting)
 			throws OdysseusScriptException {
 		// 3. parameter: buffer-size
 		try {
@@ -306,7 +322,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 	}
 
 	private void addParallelizationDegree(String degreeOfParallelizationString,
-			ParallelOperatorSettings operatorSetting)
+			ParallelOperatorConfiguration operatorSetting)
 			throws OdysseusScriptException {
 		// 2. parameter: degree of parallelization for defined operators
 		try {

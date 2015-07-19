@@ -1,3 +1,18 @@
+/********************************************************************************** 
+ * Copyright 2015 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parallelization.rcp.windows.composite;
 
 import java.util.ArrayList;
@@ -16,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution.InterOperatorPreExecutionHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
@@ -89,7 +104,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 		buffersizeLabel.setText("Buffersize: ");
 		buffersizeText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
 		buffersizeText.setText(String
-				.valueOf(ParallelizationPreParserKeyword.AUTO_BUFFER_SIZE));
+				.valueOf(InterOperatorPreExecutionHandler.AUTO_BUFFER_SIZE));
 		buffersizeText.setLayoutData(gridData);
 
 		Label numberOfElementsLabel = new Label(configComposite, SWT.NULL);
