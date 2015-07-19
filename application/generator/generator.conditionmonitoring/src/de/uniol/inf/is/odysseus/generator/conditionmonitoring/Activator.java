@@ -252,7 +252,7 @@ public class Activator implements BundleActivator {
 					// Help
 					else {
 						System.out.println(
-								"switchValve2 \n failPump1 \n repairFailedPump1 \n defectPump1 \n repairDefectPump1 \n failTurbine0 \n repairTurbine0 \n failLastTurbine \n repairLastTurbine \n increaseWind \n decreaseWind \n ");
+								"switchValve2 \n failPump1 \n repairFailedPump1 \n defectPump1 \n repairDefectPump1 \n failTurbine0 \n repairTurbine0 \n failLastTurbine \n repairLastTurbine \n increaseWind \n decreaseWind \n runScenario");
 					}
 				}
 			}

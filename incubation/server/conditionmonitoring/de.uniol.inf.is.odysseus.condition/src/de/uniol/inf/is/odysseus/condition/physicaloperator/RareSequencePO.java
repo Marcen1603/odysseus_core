@@ -7,14 +7,14 @@ import java.util.List;
 import com.google.gson.Gson;
 
 import de.uniol.inf.is.odysseus.condition.datatypes.CounterNode;
-import de.uniol.inf.is.odysseus.condition.logicaloperator.RarePatternAO;
+import de.uniol.inf.is.odysseus.condition.logicaloperator.RareSequenceAO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
- * This operator searches for rare patterns in data. It's especially designed to
+ * This operator searches for rare sequences in data. It's especially designed to
  * find rare state sequences. E.g. if state "b" nearly always follows state "a",
  * but very seldom a "c" follows "a". This operator should find the seldom
  * pattern "a" -> "c".
@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * @author Tobias Brandt
  */
 @SuppressWarnings("rawtypes")
-public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
+public class RareSequencePO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, Tuple> {
 
 	private CounterNode root;
 	private int depthCounter;
@@ -42,7 +42,7 @@ public class RarePatternPO<T extends Tuple<M>, M extends ITimeInterval> extends 
 	private Gson gson;
 	private String uniqueBackupId;
 
-	public RarePatternPO(RarePatternAO ao) {
+	public RareSequencePO(RareSequenceAO ao) {
 		this.root = new CounterNode(null);
 		this.maxDepth = ao.getDepth();
 		this.minRelativeFrequencyPath = ao.getMinRelativeFrequencyPath();

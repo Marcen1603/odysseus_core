@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 
 /**
  * 
- * This operator searches for rare patterns in data. It's especially designed to
+ * This operator searches for rare sequences in data. It's especially designed to
  * find rare state sequences. E.g. if state "b" nearly always follows state "a",
  * but very seldom a "c" follows a. This operator should find the seldom pattern
  * "a" -> "c".
@@ -27,9 +27,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Tobias Brandt
  *
  */
-@LogicalOperator(maxInputPorts = 2, minInputPorts = 1, name = "RarePattern", doc = "Searches for rare pattern in a stream of (discrete) states", category = {
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 1, name = "RareSequence", doc = "Searches for rare pattern in a stream of (discrete) states", category = {
 		LogicalOperatorCategory.PROCESSING })
-public class RarePatternAO extends BinaryLogicalOp {
+public class RareSequenceAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = -7990417520941357348L;
 
@@ -42,7 +42,7 @@ public class RarePatternAO extends BinaryLogicalOp {
 	private boolean firstTupleIsRoot;
 	private String uniqueBackupId;
 
-	public RarePatternAO() {
+	public RareSequenceAO() {
 		this.depth = 2;
 		this.minRelativeFrequencyPath = 0.3;
 		this.minRelativeFrequencyNode = 0.3;
@@ -50,7 +50,7 @@ public class RarePatternAO extends BinaryLogicalOp {
 		this.uniqueBackupId = "rarePattern_" + depth;
 	}
 
-	public RarePatternAO(RarePatternAO ao) {
+	public RareSequenceAO(RareSequenceAO ao) {
 		super(ao);
 		this.depth = ao.getDepth();
 		this.minRelativeFrequencyPath = ao.getMinRelativeFrequencyPath();
@@ -106,7 +106,7 @@ public class RarePatternAO extends BinaryLogicalOp {
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new RarePatternAO(this);
+		return new RareSequenceAO(this);
 	}
 
 	@Override
