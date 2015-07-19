@@ -33,7 +33,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 	private double interval;
 	private IGroupProcessor<T, T> groupProcessor;
-	private Map<Long, DeviationInformation> deviationInfo;
+	// groupId, PointInTime from when it's active and information
+	private Map<Long, Map<PointInTime, DeviationInformation>> deviationInfo;
 	private Map<Long, List<T>> tupleMap;
 	private boolean exactCalculation;
 
@@ -62,7 +63,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	// timeSensitive for punctuations (for interval analysis)
 	private Map<Long, T> lastDataTuples;
 	private boolean isTimeSensitive;
-	
+
 	// The last time we send a tuples based on a punctuation
 	private PointInTime lastTimePunctuationBasedTuple;
 
@@ -70,7 +71,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		this.interval = ao.getInterval();
 		this.groupProcessor = groupProcessor;
 		this.valueAttributeName = ao.getNameOfValue();
-		this.deviationInfo = new HashMap<Long, DeviationInformation>();
+		this.deviationInfo = new HashMap<Long, Map<PointInTime, DeviationInformation>>();
 
 		this.windowChecking = ao.isWindowChecking();
 		this.tupleMap = new HashMap<Long, List<T>>();
@@ -106,19 +107,22 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		// Get the group for this tuple (e.g., the incoming values have
 		// different contexts)
 		Long gId = groupProcessor.getGroupID(tuple);
-		DeviationInformation info = this.deviationInfo.get(gId);
-		
-		if (info == null) {
+		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(gId);
+
+		if (infoMap == null) {
 			// First occurrence of this group
-			info = new DeviationInformation();
-			this.deviationInfo.put(gId, info);
+			infoMap = new HashMap<PointInTime, DeviationInformation>();
+			this.deviationInfo.put(gId, infoMap);
 			this.sendEnd.put(gId, true);
 			this.startToDeliver.put(gId, false);
 			this.hadLittleChange.put(gId, false);
 			this.lastWindowWithAnomaly.put(gId, false);
 		}
 
-		if (!(this.maxRelativeChange > 0) || (this.maxRelativeChange > 0 && hadLittleChange.get(gId))) {
+		// Get correct information
+		DeviationInformation info = getInfoForTuple(tuple);
+
+		if (info != null && !(this.maxRelativeChange > 0) || (this.maxRelativeChange > 0 && hadLittleChange.get(gId))) {
 			if (info.counter > this.tuplesToWait) {
 				this.startToDeliver.put(gId, true);
 			}
@@ -128,31 +132,87 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			// Process data
 			lastDataTuples.put(gId, tuple);
 			double sensorValue = getValue(tuple);
-			processTuple(gId, sensorValue, tuple, info);
+			if (info != null)
+				processTuple(gId, sensorValue, tuple, info);
 		} else if (port == DATA_PORT && deliverUnlearnedTuples) {
 			// We don't have an anomaly as we don't know the deviation. But the
 			// user wants to get such tuples, so there it is.
 			transferTuple(tuple, 0.0, 0.0, getValue(tuple), 0.0);
 		} else if (port == LEARN_PORT) {
+			// We always need a new object as the metadata (starttimestamp)
+			// changes every time
+			DeviationInformation newInformation = new DeviationInformation();
+			infoMap.put(tuple.getMetadata().getStart(), newInformation);
+
+			// Old information - if is exists
+			double oldMean = 0;
+			if (info != null) {
+				oldMean = info.mean;
+
+				// Count, how many updates this information got
+				newInformation.counter = info.counter + 1;
+			}
+
 			// Update deviation information
 			int stdDevIndex = getInputSchema(LEARN_PORT).findAttributeIndex(standardDeviationAttributeName);
 			if (stdDevIndex >= 0) {
-				info.standardDeviation = tuple.getAttribute(stdDevIndex);
+				newInformation.standardDeviation = tuple.getAttribute(stdDevIndex);
 			}
-			double oldMean = info.mean;
+
 			int meanIndex = getInputSchema(LEARN_PORT).findAttributeIndex(meanAttributeName);
 			if (meanIndex >= 0) {
-				info.mean = tuple.getAttribute(meanIndex);
+				newInformation.mean = tuple.getAttribute(meanIndex);
 			}
-			double newMean = info.mean;
+			double newMean = newInformation.mean;
 			if (this.maxRelativeChange > 0 && oldMean != 0
 					&& (Math.abs(oldMean - newMean) / oldMean) < this.maxRelativeChange) {
 				this.hadLittleChange.put(gId, true);
 			}
 
-			// Count, how many updates this information got
-			info.counter++;
 		}
+	}
+
+	/**
+	 * Searches for the correct information for this tuple. The correct
+	 * information is the one with the newest timestamp that is older than the
+	 * one of the tuple.
+	 * 
+	 * The new info and the next tuple normally have the same timestamp. We
+	 * don't use the info which is made with the current tuple cause we want an
+	 * info which is uninfluenced by a potential anomaly. Therefore, is searches
+	 * for "startTime.before(tupleStartTime)" and not
+	 * "startTime.beforeOrEquals(tupleStartTime)"
+	 * 
+	 * @param tuple
+	 * @return
+	 */
+	private DeviationInformation getInfoForTuple(T tuple) {
+		Long gId = groupProcessor.getGroupID(tuple);
+		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(gId);
+		PointInTime tupleStartTime = tuple.getMetadata().getStart();
+
+		// Search for the newest information which fits
+		PointInTime bestPointInTime = null;
+		for (PointInTime startTime : infoMap.keySet()) {
+			if ((bestPointInTime == null || startTime.after(bestPointInTime)) && startTime.before(tupleStartTime)) {
+				bestPointInTime = startTime;
+			}
+		}
+
+		if (bestPointInTime != null) {
+			// Purge elements before
+			List<PointInTime> toRemove = new ArrayList<>();
+			for (PointInTime startTime : infoMap.keySet()) {
+				if (startTime.before(bestPointInTime)) {
+					toRemove.add(startTime);
+				}
+			}
+			for (PointInTime startTime : toRemove) {
+				infoMap.remove(startTime);
+			}
+			return infoMap.get(bestPointInTime);
+		}
+		return null;
 	}
 
 	/**
@@ -164,18 +224,18 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * @param start
 	 *            Start timestamp from the newest tuple
 	 */
-	private void removeOldValues(List<T> tuples, PointInTime start, DeviationInformation info, boolean exactCalculation, Long gId) {
+	private void removeOldValues(List<T> tuples, PointInTime start, DeviationInformation info, boolean exactCalculation,
+			Long gId) {
 		boolean skippedSomething = false;
 		boolean needToSendEndOfAnomalies = this.lastWindowWithAnomaly.get(gId);
-		
+
 		T lastAnomaly = lastAnomalies.get(gId);
-		
+
 		Iterator<T> iter = tuples.iterator();
 		while (iter.hasNext()) {
 			T next = iter.next();
 			if (next.getMetadata().getEnd().beforeOrEquals(start)) {
-				if (lastAnomaly != null
-						&& next.getMetadata().getStart().before(lastAnomaly.getMetadata().getStart())) {
+				if (lastAnomaly != null && next.getMetadata().getStart().before(lastAnomaly.getMetadata().getStart())) {
 					// These are the tuples which were in the same window before
 					// the first anomaly occurred
 					iter.remove();
@@ -289,8 +349,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			T next = iter.next();
 			Long gId = this.groupProcessor.getGroupID(next);
 			T lastAnomaly = this.lastAnomalies.get(gId);
-			if (lastAnomaly != null
-					&& next.getMetadata().getStart().before(lastAnomaly.getMetadata().getStart())) {
+			if (lastAnomaly != null && next.getMetadata().getStart().before(lastAnomaly.getMetadata().getStart())) {
 				iter.remove();
 				continue;
 			}
@@ -345,7 +404,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	 * @return True, if it's an anomaly, false, if not
 	 */
 	private boolean isAnomaly(double sensorValue, double standardDeviation, double mean) {
-		if (sensorValue < mean - (interval * standardDeviation) || sensorValue > mean + (interval * standardDeviation)) {
+		if (sensorValue < mean - (interval * standardDeviation)
+				|| sensorValue > mean + (interval * standardDeviation)) {
 			return true;
 		}
 		return false;
@@ -363,8 +423,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		double minValue = mean - (interval * standardDeviation);
 		double maxValue = mean + (interval * standardDeviation);
 
-		double distance = sensorValue > maxValue ? sensorValue - maxValue : sensorValue < minValue ? minValue
-				- sensorValue : 0;
+		double distance = sensorValue > maxValue ? sensorValue - maxValue
+				: sensorValue < minValue ? minValue - sensorValue : 0;
 
 		double div = distance / (maxValue - minValue);
 
@@ -411,11 +471,9 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 
 		if (this.isTimeSensitive) {
 			for (Long groupId : deviationInfo.keySet()) {
-				DeviationInformation info = this.deviationInfo.get(groupId);
 				T lastDataTuple = this.lastDataTuples.get(groupId);
-				if (this.isTimeSensitive
-						&& info != null
-						&& lastDataTuple != null
+				DeviationInformation info = getInfoForTuple(lastDataTuple);
+				if (this.isTimeSensitive && info != null && lastDataTuple != null
 						&& (this.lastTimePunctuationBasedTuple == null || punctuation.getTime()
 								.minus(lastTimePunctuationBasedTuple).compareTo(new PointInTime(info.mean)) > 0)) {
 					PointInTime time = punctuation.getTime().minus(lastDataTuple.getMetadata().getStart());
