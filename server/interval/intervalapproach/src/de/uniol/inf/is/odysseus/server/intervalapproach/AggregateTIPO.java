@@ -87,7 +87,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	/**
 	 * The aggregation could output values or partial aggregates.
 	 */
-	private boolean outputPA = false;
+	protected boolean outputPA = false;
 	/**
 	 * if set to true, the current elements that are still stored to keep order
 	 * are written, when a done call from the input operator arrives
@@ -109,7 +109,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * For every group exists a sweep area that keeps the state for the
 	 * aggregation
 	 */
-	private Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
+	protected Map<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
 
 	static final Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
@@ -315,7 +315,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		}
 	}
 
-	private void createOutput(
+	protected void createOutput(
 			List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults,
 			Long groupID, PointInTime timestamp) {
 

@@ -26,11 +26,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.threaded.ThreadedAggregateTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 public class TStreamGroupingWithAggregationTIPORule extends
 		AbstractIntervalTransformationRule<AggregateAO> {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(AggregateAO aggregateAO,
 			TransformationConfiguration transformConfig) throws RuleException {
@@ -41,23 +43,33 @@ public class TStreamGroupingWithAggregationTIPORule extends
 		IMetadataMergeFunction mf =  MetadataRegistry
 				.getMergeFunction(metadataSet);
 		
-		@SuppressWarnings("unchecked")
-		AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>> po = new AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
-				aggregateAO.getInputSchema(),
-				aggregateAO.getOutputSchemaIntern(0),
-				aggregateAO.getGroupingAttributes(),
-				aggregateAO.getAggregations(), aggregateAO.isFastGrouping(), mf);
-		po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());
-
-		po.setOutputPA(aggregateAO.isOutputPA());
-		po.setDrainAtDone(aggregateAO.isDrainAtDone());
-		po.setDrainAtClose(aggregateAO.isDrainAtClose());
-		// ACHTUNG: Die Zeit-Metadaten werden manuell in der Aggregation
-		// gesetzt!!
-		// ((CombinedMergeFunction) po.getMetadataMerge()).add(new
-		// TimeIntervalInlineMetadataMergeFunction());
-		defaultExecute(aggregateAO, po, transformConfig, true, true);
-
+		AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>> po = null;
+		if (transformConfig.getOption("Threaded") != null){
+			Integer degree = (Integer) transformConfig.getOption("Threaded");
+			po = new ThreadedAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
+					aggregateAO.getInputSchema(),
+					aggregateAO.getOutputSchemaIntern(0),
+					aggregateAO.getGroupingAttributes(),
+					aggregateAO.getAggregations(), aggregateAO.isFastGrouping(), mf, degree);
+		} else {
+			po = new AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
+					aggregateAO.getInputSchema(),
+					aggregateAO.getOutputSchemaIntern(0),
+					aggregateAO.getGroupingAttributes(),
+					aggregateAO.getAggregations(), aggregateAO.isFastGrouping(), mf);
+		}
+		if (po != null){
+			po.setDumpAtValueCount(aggregateAO.getDumpAtValueCount());
+			
+			po.setOutputPA(aggregateAO.isOutputPA());
+			po.setDrainAtDone(aggregateAO.isDrainAtDone());
+			po.setDrainAtClose(aggregateAO.isDrainAtClose());
+			// ACHTUNG: Die Zeit-Metadaten werden manuell in der Aggregation
+			// gesetzt!!
+			// ((CombinedMergeFunction) po.getMetadataMerge()).add(new
+			// TimeIntervalInlineMetadataMergeFunction());
+			defaultExecute(aggregateAO, po, transformConfig, true, true);			
+		}
 	}
 
 	@Override
