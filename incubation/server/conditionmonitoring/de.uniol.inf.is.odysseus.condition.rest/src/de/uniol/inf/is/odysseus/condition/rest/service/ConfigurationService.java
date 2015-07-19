@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class ConfigurationService {
 
-	public static List<Configuration> getAvailableConfigurations() {
+	public static List<Configuration> getAvailableConfigurations(String username) {
 		List<Configuration> configs = new ArrayList<>();
 		try {
 			MongoClient mongoClient = new MongoClient("127.0.0.1:27017");
@@ -43,7 +43,10 @@ public class ConfigurationService {
 			for (String json : jsons) {
 				Gson gson = new Gson();
 				Configuration config = gson.fromJson(json, Configuration.class);
-				configs.add(config);
+				if (config.getUsers().contains(username)) {
+					// Only add the configurations which are for this user
+					configs.add(config);
+				}
 			}
 			return configs;
 

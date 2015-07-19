@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.condition.rest.datatypes.ConfigurationDescriptio
 import de.uniol.inf.is.odysseus.condition.rest.dto.request.GetCMConfigurationListRequestDTO;
 import de.uniol.inf.is.odysseus.condition.rest.dto.response.CMConfigurationListResponseDTO;
 import de.uniol.inf.is.odysseus.condition.rest.service.ConfigurationService;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest.serverresources.AbstractSessionServerResource;
 
 public class GetConfigurationServerResource extends AbstractSessionServerResource {
@@ -20,19 +21,19 @@ public class GetConfigurationServerResource extends AbstractSessionServerResourc
 	public CMConfigurationListResponseDTO getConfigurationList(GetCMConfigurationListRequestDTO request) {
 		// Try to login
 		try {
-		loginWithToken(request.getToken());
+			ISession session = loginWithToken(request.getToken());
+			String username = session.getUser().getName();
+			List<Configuration> configs = ConfigurationService.getAvailableConfigurations(username);
+			CMConfigurationListResponseDTO dto = new CMConfigurationListResponseDTO();
+			for (Configuration config : configs) {
+				ConfigurationDescription description = new ConfigurationDescription(config.getIdentifier(),
+						config.getName(), config.getDescription());
+				dto.addConfiguration(description);
+			}
+			return dto;
 		} catch (ResourceException e) {
 			// Login data was wrong
 			return null;
 		}
-		List<Configuration> configs = ConfigurationService.getAvailableConfigurations();
-		CMConfigurationListResponseDTO dto = new CMConfigurationListResponseDTO();
-		for (Configuration config : configs) {
-			ConfigurationDescription description = new ConfigurationDescription(config.getIdentifier(),
-					config.getName(), config.getDescription());
-			dto.addConfiguration(description);
-		}
-		return dto;
 	}
-
 }

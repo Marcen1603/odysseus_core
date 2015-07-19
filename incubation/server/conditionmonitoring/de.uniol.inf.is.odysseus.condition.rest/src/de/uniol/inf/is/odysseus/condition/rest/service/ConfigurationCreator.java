@@ -29,6 +29,8 @@ public class ConfigurationCreator {
 		config.setName("Offshore Windpark");
 		config.setDescription(
 				"Analysis of the offshore windpark with windturbines and transformer substation with its cooling system.");
+		config.addUser("System");
+		
 
 		// --------------------
 		// Client Configuration
