@@ -224,12 +224,15 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 			if ((bestPointInTime == null || startTime.after(bestPointInTime)) && startTime.before(tupleStartTime)) {
 				bestPointInTime = startTime;
 			}
+		}
+		
+		for (PointInTime startTime : infoMap.keySet()) {
 			// We need to know if there is a tuple after the best tuple. Cause
 			// if not, maybe there will be a better fitting info in the future
 			// and then we would need to wait
 			if (bestPointInTime != null && startTime.after(bestPointInTime)) {
 				biggerThanBestPoint = startTime;
-			}
+			}			
 		}
 
 		if (bestPointInTime != null && biggerThanBestPoint != null && biggerThanBestPoint.after(bestPointInTime)) {
