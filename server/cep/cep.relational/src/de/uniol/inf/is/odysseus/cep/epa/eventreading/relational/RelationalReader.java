@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 public class RelationalReader extends AbstractEventReader<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> {
 
 	HashMap<String, Integer> scheme;
+	private SDFSchema schema;
 	
 	
 	/**
@@ -38,6 +39,7 @@ public class RelationalReader extends AbstractEventReader<Tuple<? extends ITimeI
 	 */
 	public RelationalReader(SDFSchema scheme, String type) {
 		super(type);
+		this.schema = scheme;
 		this.scheme = new HashMap<String, Integer>();
 		int i=0;
 		for (SDFAttribute a:scheme) {
@@ -46,6 +48,10 @@ public class RelationalReader extends AbstractEventReader<Tuple<? extends ITimeI
 			this.scheme.put(a.getAttributeName(), pos);
 			i++;
 		}
+	}
+	
+	public SDFSchema getSchema() {
+		return schema;
 	}
 	
 	/**

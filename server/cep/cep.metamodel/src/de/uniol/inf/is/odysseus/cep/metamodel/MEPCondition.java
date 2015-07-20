@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public abstract class MEPCondition extends AbstractCondition{
 
@@ -56,13 +58,15 @@ public abstract class MEPCondition extends AbstractCondition{
 	@Override
 	public void setLabel(String label){
 		super.setLabel((label == null || label.length() == 0) ? "true" : label);
-//		try {
-			expression = MepHelper.initMEPExpressionFromLabel(getLabel(), symbolTable);
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
+		expression = MepHelper.initMEPExpressionFromLabel(getLabel(), symbolTable, null);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void updateCondition(List<SDFSchema> schema) {
+		expression = MepHelper.initMEPExpressionFromLabel(getLabel(), symbolTable, schema);
+	}
+	
 	@Override
 	public String toString(String indent) {
 		String str = indent + "Condition: " + this.hashCode();

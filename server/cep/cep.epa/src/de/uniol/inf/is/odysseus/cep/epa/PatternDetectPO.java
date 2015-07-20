@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +43,13 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
 
 /**
@@ -137,8 +139,10 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 			boolean onlyOneMatchPerInstance) throws Exception {
 		super();
 		this.stateMachines = new ArrayList<StateMachine<R>>();
+		updateExpressions(stateMachine, eventReader);
 		stateMachines.add(stateMachine);
 		if (secondStateMachine != null) {
+			updateExpressions(secondStateMachine, eventReader);
 			stateMachines.add(secondStateMachine);
 		}
 
@@ -153,10 +157,24 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 		this.onlyOneMatchPerInstance = onlyOneMatchPerInstance;
 	}
 
-	public PatternDetectPO(PatternDetectPO<R, W> cepOperator) {
-		throw new RuntimeException(this.getClass()
-				+ " Copy Constructor not yet implemented");
+	
+	
+	private void updateExpressions(StateMachine<R> stateMachine,
+			Map<Integer, IEventReader<R, R>> eventReader) {
+		List<SDFSchema> schema = new ArrayList<>(); 
+		for (Entry<Integer,IEventReader<R,R>> e: eventReader.entrySet()){
+			schema.add(e.getValue().getSchema());
+		}
+		List<State> states = stateMachine.getStates();
+		for (State state : states) {
+			List<Transition> transitions = state.getTransitions();
+			for (Transition transition : transitions) {
+				transition.updateCondition(schema);
+			}
+		}
 	}
+
+
 
 	@Override
 	public OutputMode getOutputMode() {

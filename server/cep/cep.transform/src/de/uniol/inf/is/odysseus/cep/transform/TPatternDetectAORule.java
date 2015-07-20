@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TPatternDetect extends AbstractTransformationRule<PatternDetectAO> {
+public class TPatternDetectAORule extends AbstractTransformationRule<PatternDetectAO> {
 
 	@Override
 	public int getPriority() {

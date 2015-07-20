@@ -16,6 +16,9 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import java.io.Serializable;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
 public interface ICepCondition extends ICepExpression<Boolean>,Serializable{
@@ -31,26 +34,27 @@ public interface ICepCondition extends ICepExpression<Boolean>,Serializable{
 	 *            Transition wird somit zu einem Epsilon-Übergang.
 	 */
 
-	public void setLabel(String label);
-	public String getLabel();
-	public String toString(String indent);
-	public boolean evaluate(String eventType);
-	public boolean evaluate(int eventTypePort);
-	public void appendAND(String fullExpression);
-	public void appendOR(String fullExpression);
-	public void addAssignment(String attribute, String fullexpression);
-	public void negate();
-	public boolean isNegate();
+	void setLabel(String label);
+	String getLabel();
+	void updateCondition(List<SDFSchema> schema);	
+	String toString(String indent);
+	boolean evaluate(String eventType);
+	boolean evaluate(int eventTypePort);
+	void appendAND(String fullExpression);
+	void appendOR(String fullExpression);
+	void addAssignment(String attribute, String fullexpression);
+	void negate();
+	boolean isNegate();
 
-	public boolean doEventTypeChecking();
-	public void setEventTypeChecking(boolean eventTypeChecking);
+	boolean doEventTypeChecking();
+	void setEventTypeChecking(boolean eventTypeChecking);
 	/**
 	 * Set Type of Events that can be processed by this Transition (only one)
 	 * @param type
 	 * @return
 	 */
-	public void setEventType(String type);
-	public String getEventType();
+	void setEventType(String type);
+	String getEventType();
 	
 	/**
 	 * Set InputPort of Events that can be processed by this Transition 
@@ -60,6 +64,6 @@ public interface ICepCondition extends ICepExpression<Boolean>,Serializable{
 	void setEventPort(int eventPort);
 	
 	boolean checkEventType(String eventType);
-	boolean checkEventTypeWithPort(int port);	
+	boolean checkEventTypeWithPort(int port);
 
 }

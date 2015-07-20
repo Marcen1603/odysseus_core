@@ -35,7 +35,7 @@ public class MEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 	public MEPOutputSchemeEntry(String label) {
 		super(label);
 		try{
-			expression = MepHelper.initMEPExpressionFromLabel(label, symbolTable);
+			expression = MepHelper.initMEPExpressionFromLabel(label, symbolTable, null);
 		}catch(ParseException e){
 			throw new RuntimeException(e);
 		}

@@ -16,6 +16,9 @@
 package de.uniol.inf.is.odysseus.cep.metamodel;
 
 import java.io.Serializable;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * Zustandsübergang eines Automaten. Die Zustandsübergänge werden grundsätzlich
@@ -98,6 +101,10 @@ public class Transition implements Serializable{
 		return condition;
 	}
 
+	public void updateCondition(List<SDFSchema> schema){
+		condition.updateCondition(schema);
+	}
+	
 	/**
 	 * Liefert die Action (Mealy-Ausgabe) der Transition
 	 * 

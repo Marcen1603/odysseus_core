@@ -15,8 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.cep.epa.eventreading;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 public interface IEventReader<R, W> {
-	public W getValue(String identifier, R event);
-	public String getType();
-	public long getTime(R event);
+	W getValue(String identifier, R event);
+	String getType();
+	long getTime(R event);
+	SDFSchema getSchema();
 }
