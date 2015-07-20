@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
@@ -39,7 +41,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLoc
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
-public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThreadListener {
+public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThreadListener, IQueryTransmissionHandlerListener {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DynamicStrategy.class);
@@ -53,10 +55,22 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	private IP2PNetworkManager networkManager;
 	private ILoadBalancingLock lock;
 	private ILoadBalancingCommunicatorRegistry communicatorRegistry;
+	private IPeerCommunicator peerCommunicator;
+	private List<QueryTransmissionHandler> transmissionHandlerList;
 	
 
 	private MonitoringThread monitoringThread = null;
 	
+	
+	public void bindPeerCommunicator(IPeerCommunicator serv) {
+		this.peerCommunicator = serv;
+	}
+	
+	public void unbindPeerCommunicator(IPeerCommunicator serv) {
+		if(this.peerCommunicator==serv) {
+			this.peerCommunicator = null;
+		}
+	}
 	
 	public void bindCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
 		this.communicatorRegistry = serv;
@@ -213,7 +227,6 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	}
 
 	
-	@SuppressWarnings("unused")
 	@Override
 	public void triggerLoadBalancing(double cpuUsage, double memUsage, double netUsage) {
 		synchronized(threadManipulationLock) {
@@ -253,13 +266,13 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 			
 			
-		List<ILogicalQueryPart> queryParts = new ArrayList<ILogicalQueryPart>();
+		HashMap<ILogicalQueryPart,Integer> queryPartIDMapping = new HashMap<ILogicalQueryPart,Integer>();
 		
 		for (int queryId : chosenResult.getQueryIds()) {
 			ILogicalQuery query = executor.getLogicalQueryById(queryId, getActiveSession());
 			ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
-			queryParts.add(new LogicalQueryPart(operators));
+			queryPartIDMapping.put(new LogicalQueryPart(operators),queryId);
 		}
 			
 		Collection<PeerID> knownRemotePeers = peerDictionary.getRemotePeerIDs();
@@ -275,9 +288,12 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		ILogicalQuery query = executor.getLogicalQueryById(firstQueryId, getActiveSession());
 			
 		PeerID localPeerID = networkManager.getLocalPeerID();
+		
+		
 			
 		try {
-			Map<ILogicalQueryPart,PeerID> allocationMap = allocator.allocate(queryParts, query, knownRemotePeers, localPeerID);
+			Map<ILogicalQueryPart,PeerID> allocationMap = allocator.allocate(queryPartIDMapping.keySet(), query, knownRemotePeers, localPeerID);
+			
 			if(LOG.isDebugEnabled()) {
 				LOG.debug("Allocation finished.");
 				LOG.debug("Local PID is {}", localPeerID.toString());
@@ -285,33 +301,24 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 					LOG.debug(queryPart.toString() + " goes to " + allocationMap.get(queryPart));
 				}
 			}
+			
+			
+			HashMap<Integer,ILoadBalancingCommunicator> communicatorMapping = chooseCommunicators(chosenResult.getQueryIds());
+			
+			this.transmissionHandlerList = new ArrayList<QueryTransmissionHandler>();
+			
+			for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
+				//Create a Query Transmission handler for every  transmission we have to do.
+				int queryId = queryPartIDMapping.get(queryPart);
+				PeerID slavePeerId = allocationMap.get(queryPart);
+				ILoadBalancingCommunicator communicator = communicatorMapping.get(queryId);
+				transmissionHandlerList.add(new QueryTransmissionHandler(queryId,slavePeerId,communicator, peerCommunicator, lock));
+			}
 		} catch (QueryPartAllocationException e) {
 			LOG.error("Could not allocate Query Parts: {}",e.getMessage());
 			e.printStackTrace();
 		}
 			
-		HashMap<Integer,ILoadBalancingCommunicator> communicatorMapping = chooseCommunicators(chosenResult.getQueryIds());
-		/**
-		if(lock.requestLocalLock()) {
-			
-			List<PeerID> otherPeers = this.mCommunicator.getInvolvedPeers(queryAndID.getE2());
-
-			if (!otherPeers.contains(peerID))
-				otherPeers.add(peerID);
-
-			this.volunteer = peerID;
-			this.queryID = queryAndID.getE2();
-
-			// Acquire Locks for other peers
-			PeerLockContainer peerLocks = new PeerLockContainer(peerCommunicator, otherPeers, this);
-			peerLocks.requestLocks();
-			this.lockContainer = peerLocks;
-			
-			
-			lock.releaseLocalLock();
-		}
-		
-		*/
 		
 	}
 	
@@ -423,8 +430,70 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		return (DynamicLoadBalancingConstants.WEIGHT_RECEIVERS*numberOfReceivers)+(DynamicLoadBalancingConstants.WEIGHT_SENDERS*numberOfSenders)+(DynamicLoadBalancingConstants.WEIGHT_STATE*memoryForStates);
 		
 	}
+
+	@Override
+	public void tranmissionFailed(QueryTransmissionHandler transmission) {
+		Iterator<QueryTransmissionHandler> iter = findTransmissionInList(transmission);
+		if(iter==null) {
+			return;
+		}
+		if(iter.hasNext()) {
+			iter.next().initiateTransmission(this);
+		}
+		else {
+			if(transmissionHandlerList.size()>0) {
+				transmissionHandlerList.get(0).initiateTransmission(this);
+			}
+			else {
+				LOG.warn("Last transmission returned Error, but no other transmission is in List.");
+			}
+		}
+	}
+
+	@Override
+	public void transmissionSuccessful(QueryTransmissionHandler transmission) {
+		Iterator<QueryTransmissionHandler> iter = findTransmissionInList(transmission);
+		if(iter==null) {
+			return;
+		}
+		iter.remove();
+		if(iter.hasNext()) {
+			iter.next().initiateTransmission(this);
+		}
+		else {
+			if(transmissionHandlerList.size()>0) {
+				transmissionHandlerList.get(0).initiateTransmission(this);
+			}
+			else {
+				LOG.info("All Queries transferred.");
+				//TODO Restart monitoring Thread.
+			}
+		}
+		transmissionHandlerList.remove(transmission);
+		
+	}
 	
 
+	private Iterator<QueryTransmissionHandler> findTransmissionInList(QueryTransmissionHandler transmission) {
+		Iterator<QueryTransmissionHandler> iter = transmissionHandlerList.iterator();
+		while(iter.hasNext()) {
+			if(iter.next()==transmission) {
+				return iter;
+			}
+		}
+		return null;
+	}
 
+	@Override
+	public void localLockFailed(QueryTransmissionHandler transmission) {
+		try {
+			Thread.sleep(DynamicLoadBalancingConstants.WAITING_TIME_FOR_LOCAL_LOCK);
+			transmission.initiateTransmission(this);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 }
