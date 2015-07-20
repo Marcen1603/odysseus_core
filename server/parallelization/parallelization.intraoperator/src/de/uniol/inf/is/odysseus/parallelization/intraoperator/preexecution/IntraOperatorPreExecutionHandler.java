@@ -6,10 +6,11 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting.ParallelIntraOperatorSettingKeys;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.value.ParallelIntraOperatorSettingValue;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
 import de.uniol.inf.is.odysseus.parallelization.intraoperator.parameter.IntraOperatorGlobalKeywordParameter;
+import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.preexecution.AbstractParallelizationPreExecutionHandler;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
@@ -42,30 +43,28 @@ public class IntraOperatorPreExecutionHandler extends
 		// parse given parameters
 		Map<IKeywordParameter, String> result = parameterHelper
 				.parse(parameterString);
-
+		
 		// process parameters
 		processDegreeParameter(result
 				.get(IntraOperatorGlobalKeywordParameter.DEGREE_OF_PARALLELIZATION));
 
-		ParallelIntraOperatorSetting intraOperatorSetting = getIntraOperatorSetting(settings);
-		intraOperatorSetting.addKeyValuePair(ParallelIntraOperatorSettingKeys.DEGREE,
-				String.valueOf(globalDegreeOfParallelization));
+		checkIfIntraOperatorSettingAlreadyExists(settings);
+		
+		ParallelIntraOperatorSettingValue value = new ParallelIntraOperatorSettingValue(globalDegreeOfParallelization);
+		ParallelIntraOperatorSetting intraOperatorSetting = new ParallelIntraOperatorSetting(value);
+		settings.add(intraOperatorSetting);
 	}
 
-	private ParallelIntraOperatorSetting getIntraOperatorSetting(
-			List<IQueryBuildSetting<?>> settings) {
+	private void checkIfIntraOperatorSettingAlreadyExists(
+			List<IQueryBuildSetting<?>> settings) throws OdysseusScriptException {
 		// get parameter from settings or create new one if not exists
-		ParallelIntraOperatorSetting intraOperatorSetting = null;
 		for (IQueryBuildSetting<?> setting : settings) {
 			if (setting.getClass().equals(ParallelIntraOperatorSetting.class)) {
-				intraOperatorSetting = (ParallelIntraOperatorSetting) setting;
+				throw new OdysseusScriptException("Duplicate definition of "
+						+ ParallelizationPreParserKeyword.KEYWORD
+						+ " with type " + IntraOperatorPreExecutionHandler.TYPE);
 			}
 		}
-		if (intraOperatorSetting == null) {
-			intraOperatorSetting = new ParallelIntraOperatorSetting();
-			settings.add(intraOperatorSetting);
-		}
-		return intraOperatorSetting;
 	}
 
 	@Override

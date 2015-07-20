@@ -46,47 +46,7 @@ import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParamete
 public class InterOperatorParallelizationPreParserKeyword extends
 		AbstractPreParserKeyword {
 
-	private static final String PATTERN_PAIRS = "((([a-zA-Z0-9_]+)|([(][a-zA-Z0-9_]+([:][a-zA-Z0-9_]+)+[)]))[,])"
-			+ "*(([a-zA-Z0-9_]+)|([(][a-zA-Z0-9_]+([:][a-zA-Z0-9_]+)+[)]))";
-	private static final String PATTERN_WITH_ATTRIBUTESNAMES = "([(][a-zA-Z0-9_]+[=]"
-			+ PATTERN_PAIRS
-			+ "[)])([\\s][(][a-zA-Z0-9_]+[=]"
-			+ PATTERN_PAIRS
-			+ "[)])*";
-	private static final String PATTERN_WITHOUT_ATTRIBUTENAMES = "("
-			+ PATTERN_PAIRS + ")([\\s]" + PATTERN_PAIRS + ")*";
-	private static final String PATTERN_KEYWORD = PATTERN_WITH_ATTRIBUTESNAMES
-			+ "|" + PATTERN_WITHOUT_ATTRIBUTENAMES;
-
-	public enum DegreeOfParalleizationConstants {
-		USERDEFINED, GLOBAL, AUTO;
-
-		public static DegreeOfParalleizationConstants getConstantByName(
-				String name) {
-			for (DegreeOfParalleizationConstants parameter : DegreeOfParalleizationConstants
-					.values()) {
-				if (parameter.name().equalsIgnoreCase(name)) {
-					return parameter;
-				}
-			}
-			return null;
-		}
-	}
-
-	public enum BufferSizeConstants {
-		USERDEFINED, GLOBAL, AUTO;
-
-		public static BufferSizeConstants getConstantByName(String name) {
-			for (BufferSizeConstants parameter : BufferSizeConstants.values()) {
-				if (parameter.name().equalsIgnoreCase(name)) {
-					return parameter;
-				}
-			}
-			return null;
-		}
-	}
-
-	public static final String KEYWORD = "INTEROPERATORPARALLELIZATION";
+	public static final String KEYWORD = "INTEROPERATOR";
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(InterOperatorParallelizationPreParserKeyword.class);
@@ -94,44 +54,40 @@ public class InterOperatorParallelizationPreParserKeyword extends
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
-		parameterHelper = PreParserKeywordParameterHelper.newInstance(
-				InterOperatorParallelizationKeywordParameter.class, PATTERN_KEYWORD);
+			ISession caller, Context context, IServerExecutor executor)
+			throws OdysseusScriptException {
+		parameterHelper = PreParserKeywordParameterHelper
+				.newInstance(
+						InterOperatorParallelizationKeywordParameter.class,
+						InterOperatorParallelizationKeywordParameterConstants.PATTERN_KEYWORD);
 		parameterHelper.validateParameterString(parameter);
 	}
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
-			String parameter, ISession caller, Context context, IServerExecutor executor)
-			throws OdysseusScriptException {
+			String parameter, ISession caller, Context context,
+			IServerExecutor executor) throws OdysseusScriptException {
 
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 		checkIfParallelizationKeywordExists(settings);
 
 		Map<IKeywordParameter, String> result = parameterHelper
 				.parse(parameter);
-
-		List<ParallelOperatorConfiguration> operatorSettings = createOperatorSettingsFromIds(result
+		List<ParallelOperatorConfiguration> operatorConfigurations = createOperatorSettingsFromIds(result
 				.get(InterOperatorParallelizationKeywordParameter.OPERATORID));
-
-		for (ParallelOperatorConfiguration operatorSetting : operatorSettings) {
-
+		for (ParallelOperatorConfiguration operatorConfiguration : operatorConfigurations) {
 			addParallelizationDegree(
 					result.get(InterOperatorParallelizationKeywordParameter.DEGREE),
-					operatorSetting);
-
+					operatorConfiguration);
 			addBufferSize(
 					result.get(InterOperatorParallelizationKeywordParameter.BUFFERSIZE),
-					operatorSetting);
-
-			addStrategy(result, operatorSetting);
-
-			addFragmentationType(result, operatorSetting);
+					operatorConfiguration);
+			addStrategy(result, operatorConfiguration);
+			addFragmentationType(result, operatorConfiguration);
 		}
 
-		ParallelInterOperatorSetting mtOperatorParameter = getMultithreadedOperatorParameter(settings);
-
-		addSettingsToParameter(operatorSettings, mtOperatorParameter);
+		ParallelInterOperatorSetting interOperatorSetting = getMultithreadedOperatorParameter(settings);
+		addSettingsToParameter(operatorConfigurations, interOperatorSetting);
 
 		return null;
 	}
@@ -259,7 +215,9 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		}
 		if (!parallelizationHandlerExists) {
 			throw new OdysseusScriptException(
-					"#PARALLELIZATION keyword with type= "+InterOperatorPreExecutionHandler.TYPE +" is missing or placed after #INTEROPERATORPARALLELIZATION keyword.");
+					"#PARALLELIZATION keyword with type= "
+							+ InterOperatorPreExecutionHandler.TYPE
+							+ " is missing or placed after #"+KEYWORD+" keyword.");
 		}
 	}
 

@@ -65,6 +65,7 @@ Export-Package:
  de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.bufferplacement,
  de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.bufferplacement.nobuffers,
  de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.value,
  de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning,
  de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception,
  de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan,

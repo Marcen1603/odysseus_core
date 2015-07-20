@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting.ParallelIntraOperatorSettingKeys;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.value.ParallelIntraOperatorSettingValue;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
@@ -46,10 +46,27 @@ public class TStreamGroupingWithAggregationTIPORule extends
 				.getMergeFunction(metadataSet);
 		
 		AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>> po = null;
+		
+		// threaded aggregate operator
+		boolean useThreadedOperator = false;
+		int degree = 0;
 		if (transformConfig.getOption(ParallelIntraOperatorSetting.class.getName()) != null){
-			ParallelIntraOperatorSetting setting = transformConfig.getOption(ParallelIntraOperatorSetting.class.getName());
-			int degree = Integer.parseInt(setting.getValue(ParallelIntraOperatorSettingKeys.DEGREE));
-			
+			ParallelIntraOperatorSettingValue value = ((ParallelIntraOperatorSetting) transformConfig.getOption(ParallelIntraOperatorSetting.class.getName())).getValue();
+			if (value != null){
+				if (!value.hasIndividualDegrees()){
+					degree = value.getGlobalDegree();
+					useThreadedOperator = true;
+				} else {
+					String operatorId = aggregateAO.getUniqueIdentifier();
+					if (value.hasIndividualDegreeForOperator(operatorId)){
+						degree = value.getIndividualDegree(operatorId);
+						useThreadedOperator = true;
+					}
+				}
+			}
+		}
+		
+		if (useThreadedOperator && degree > 1){
 			po = new ThreadedAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
 					aggregateAO.getInputSchema(),
 					aggregateAO.getOutputSchemaIntern(0),
