@@ -3,25 +3,17 @@ package de.uniol.inf.is.odysseus.query.transformation.python.operator;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 public class PythonSelectOperator extends AbstractTransformationOperator {
-
-	private final String name =  "SelectAO";
-	 private final String targetPlatform = "Python";
 	  
+	 PythonSelectOperator(){
+			super(SelectAO.class, "SelectAO","Python");
+		}
+		
 	
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public String getTargetPlatform() {
-			return targetPlatform;
-	}
-
 	@Override
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 		// TODO Auto-generated method stub

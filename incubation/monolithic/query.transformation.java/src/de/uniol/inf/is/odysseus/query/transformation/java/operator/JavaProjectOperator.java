@@ -12,10 +12,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 public class JavaProjectOperator extends AbstractTransformationOperator{
 	
 	public JavaProjectOperator(){
-		this.implClass = RelationalProjectPO.class;
-		this.name =  "ProjectAO";
-		this.targetPlatform = "Java";
-		defaultImports();
+		super(RelationalProjectPO.class, "ProjectAO","Java");
 	}
 	
 

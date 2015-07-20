@@ -18,10 +18,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 public class JavaSelectOperator extends AbstractTransformationOperator{
 	
 	public JavaSelectOperator(){
-		this.implClass = SelectPO.class;
-		this.name =  new SelectAO().getClass().getSimpleName();
-		this.targetPlatform = "Java";
-		defaultImports();
+		super(SelectPO.class, new SelectAO().getClass().getSimpleName(),"Java");
 	}
 	
 	

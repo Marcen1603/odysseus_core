@@ -7,19 +7,11 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransforma
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 public class PythonProjectOperator extends AbstractTransformationOperator {
-
-	private final String name =  "ProjectAO";
-	private final String targetPlatform = "Python";
 	
-	@Override
-	public String getName() {
-		return name;
+	PythonProjectOperator(){
+		super(PythonProjectOperator.class, "ProjectAO","Python");
 	}
-
-	@Override
-	public String getTargetPlatform() {
-		return targetPlatform;
-	}
+	
 
 	@Override
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {

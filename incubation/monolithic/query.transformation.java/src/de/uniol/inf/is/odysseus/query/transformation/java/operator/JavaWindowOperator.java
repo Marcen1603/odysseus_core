@@ -16,10 +16,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTim
 public class JavaWindowOperator extends AbstractTransformationOperator {
 
 	public JavaWindowOperator(){
-		this.implClass = SlidingAdvanceTimeWindowTIPO.class;
-		this.name = "TimeWindowAO";
-		this.targetPlatform = "Java";
-		defaultImports();
+		super(SlidingAdvanceTimeWindowTIPO.class, "TimeWindowAO","Java");
 	}
 
 	@Override

@@ -14,10 +14,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 public class JavaCSVFileSinkOperator extends AbstractTransformationOperator{
 
 	public JavaCSVFileSinkOperator(){
-		this.implClass = SenderPO.class;
-		this.name =  "CSVFILESINK";
-		this.targetPlatform = "Java";
-		defaultImports();
+		super(SenderPO.class, "CSVFILESINK","Java");
 	}
 	
 

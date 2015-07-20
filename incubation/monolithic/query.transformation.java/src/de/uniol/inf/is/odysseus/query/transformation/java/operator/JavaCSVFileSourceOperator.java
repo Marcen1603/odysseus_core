@@ -20,10 +20,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 	
 	public JavaCSVFileSourceOperator(){
-		 this.implClass = AccessPO.class;
-		 this.name = "CSVFileSource";
-		 this.targetPlatform = "Java";
-			defaultImports();
+		super(AccessPO.class, "CSVFileSource","Java");
 	}
 	  
 	@Override

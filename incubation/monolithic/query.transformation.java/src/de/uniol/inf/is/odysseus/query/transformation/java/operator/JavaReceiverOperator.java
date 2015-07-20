@@ -19,10 +19,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 public class JavaReceiverOperator extends AbstractTransformationOperator{
 	
 	public JavaReceiverOperator(){
-		 this.implClass = ReceiverPO.class;
-		 this.name = "StreamAO";
-		 this.targetPlatform = "Java";
-			defaultImports();
+		super(ReceiverPO.class, "StreamAO","Java");
 	}
 
 	@Override
