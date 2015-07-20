@@ -32,6 +32,8 @@ public class ThreadedAggregateTIPORunnable<Q extends ITimeInterval, R extends IS
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo.updateSA(
 				sa, object, tipo.isOutputPA());
 
-		tipo.createOutput(results, groupID, object.getMetadata().getStart(),0);
+		String name = Thread.currentThread().getName();
+		int threadNumber = Integer.parseInt(name); // threads are named as integer values
+		tipo.createOutput(results, groupID, object.getMetadata().getStart(),threadNumber-1);
 	  }
 }

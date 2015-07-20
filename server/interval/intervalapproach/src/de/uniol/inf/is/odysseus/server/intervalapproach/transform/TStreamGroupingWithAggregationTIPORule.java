@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting.ParallelIntraOperatorSettingKeys;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
@@ -44,8 +46,10 @@ public class TStreamGroupingWithAggregationTIPORule extends
 				.getMergeFunction(metadataSet);
 		
 		AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>> po = null;
-		if (transformConfig.getOption("Threaded") != null){
-			Integer degree = (Integer) transformConfig.getOption("Threaded");
+		if (transformConfig.getOption(ParallelIntraOperatorSetting.class.getName()) != null){
+			ParallelIntraOperatorSetting setting = transformConfig.getOption(ParallelIntraOperatorSetting.class.getName());
+			int degree = Integer.parseInt(setting.getValue(ParallelIntraOperatorSettingKeys.DEGREE));
+			
 			po = new ThreadedAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
 					aggregateAO.getInputSchema(),
 					aggregateAO.getOutputSchemaIntern(0),

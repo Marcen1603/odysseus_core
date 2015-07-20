@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
 import de.uniol.inf.is.odysseus.parallelization.helper.FragmentationTypeHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorSettings;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelInterOperatorSetting;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorParallelizationKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution.InterOperatorPreExecutionHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
@@ -129,7 +129,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			addFragmentationType(result, operatorSetting);
 		}
 
-		ParallelOperatorSettings mtOperatorParameter = getMultithreadedOperatorParameter(settings);
+		ParallelInterOperatorSetting mtOperatorParameter = getMultithreadedOperatorParameter(settings);
 
 		addSettingsToParameter(operatorSettings, mtOperatorParameter);
 
@@ -204,7 +204,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 
 	private void addSettingsToParameter(
 			List<ParallelOperatorConfiguration> operatorSettings,
-			ParallelOperatorSettings mtOperatorParameter)
+			ParallelInterOperatorSetting mtOperatorParameter)
 			throws OdysseusScriptException {
 		// check if settings for one of the given operatorIds already exists
 		for (ParallelOperatorConfiguration operatorSetting : operatorSettings) {
@@ -221,17 +221,17 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		}
 	}
 
-	private ParallelOperatorSettings getMultithreadedOperatorParameter(
+	private ParallelInterOperatorSetting getMultithreadedOperatorParameter(
 			List<IQueryBuildSetting<?>> settings) {
 		// get parameter from settings or create new one if not exists
-		ParallelOperatorSettings mtOperatorParameter = null;
+		ParallelInterOperatorSetting mtOperatorParameter = null;
 		for (IQueryBuildSetting<?> setting : settings) {
-			if (setting.getClass().equals(ParallelOperatorSettings.class)) {
-				mtOperatorParameter = (ParallelOperatorSettings) setting;
+			if (setting.getClass().equals(ParallelInterOperatorSetting.class)) {
+				mtOperatorParameter = (ParallelInterOperatorSetting) setting;
 			}
 		}
 		if (mtOperatorParameter == null) {
-			mtOperatorParameter = new ParallelOperatorSettings();
+			mtOperatorParameter = new ParallelInterOperatorSetting();
 			settings.add(mtOperatorParameter);
 		}
 		return mtOperatorParameter;

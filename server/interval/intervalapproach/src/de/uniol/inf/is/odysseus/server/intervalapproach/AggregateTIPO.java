@@ -82,7 +82,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	/**
 	 * How many elements have been read since last dump of elements
 	 */
-	private long createOutputCounter = 0;
+	protected long createOutputCounter = 0;
 
 	/**
 	 * The aggregation could output values or partial aggregates.
@@ -103,7 +103,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * Aggreation can create out of order elements. The transferArea is used to
 	 * assure the right out order
 	 */
-	private ITransferArea<W, W> transferArea;
+	protected ITransferArea<W, W> transferArea;
 
 	/**
 	 * For every group exists a sweep area that keeps the state for the

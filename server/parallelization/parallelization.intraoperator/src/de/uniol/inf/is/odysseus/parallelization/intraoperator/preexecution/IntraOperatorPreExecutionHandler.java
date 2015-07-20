@@ -5,9 +5,9 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting.ParallelIntraOperatorSettingKeys;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
 import de.uniol.inf.is.odysseus.parallelization.intraoperator.parameter.IntraOperatorGlobalKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.preexecution.AbstractParallelizationPreExecutionHandler;
@@ -47,24 +47,25 @@ public class IntraOperatorPreExecutionHandler extends
 		processDegreeParameter(result
 				.get(IntraOperatorGlobalKeywordParameter.DEGREE_OF_PARALLELIZATION));
 
-		ParameterTransformationConfiguration parameter = getParameterTransformationConfiguration(settings);
-		if (parameter != null){
-			parameter.getValue().setOption("Threaded", globalDegreeOfParallelization);
-		} else {			
-			// TODO missing meta types leads to an error in executor
-			ParameterTransformationConfiguration newParameter = new ParameterTransformationConfiguration(new TransformationConfiguration());
-			newParameter.getValue().setOption("Threaded", globalDegreeOfParallelization);
-			settings.add(newParameter);
-		}
+		ParallelIntraOperatorSetting intraOperatorSetting = getIntraOperatorSetting(settings);
+		intraOperatorSetting.addKeyValuePair(ParallelIntraOperatorSettingKeys.DEGREE,
+				String.valueOf(globalDegreeOfParallelization));
 	}
-	
-	private static ParameterTransformationConfiguration getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
-		for (IQueryBuildSetting<?> s : settings) {
-			if (s instanceof ParameterTransformationConfiguration) {
-				return (ParameterTransformationConfiguration) s;
+
+	private ParallelIntraOperatorSetting getIntraOperatorSetting(
+			List<IQueryBuildSetting<?>> settings) {
+		// get parameter from settings or create new one if not exists
+		ParallelIntraOperatorSetting intraOperatorSetting = null;
+		for (IQueryBuildSetting<?> setting : settings) {
+			if (setting.getClass().equals(ParallelIntraOperatorSetting.class)) {
+				intraOperatorSetting = (ParallelIntraOperatorSetting) setting;
 			}
 		}
-		return null;
+		if (intraOperatorSetting == null) {
+			intraOperatorSetting = new ParallelIntraOperatorSetting();
+			settings.add(intraOperatorSetting);
+		}
+		return intraOperatorSetting;
 	}
 
 	@Override

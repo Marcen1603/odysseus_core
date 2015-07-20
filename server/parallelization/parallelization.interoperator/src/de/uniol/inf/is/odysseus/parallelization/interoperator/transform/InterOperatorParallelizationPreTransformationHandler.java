@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.OperatorIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorSettings;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelInterOperatorSetting;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorGlobalKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.postoptimization.PostOptimizationHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
@@ -55,7 +55,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	private boolean optimizationAllowed;
 	private boolean useThreadedBuffer;
 
-	private ParallelOperatorSettings parallelOperatorParameter;
+	private ParallelInterOperatorSetting parallelOperatorParameter;
 	private List<String> operatorIds = new ArrayList<String>();
 
 	@Override
@@ -255,7 +255,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	private void getOperatorSpecificParameters(QueryBuildConfiguration config) {
 		operatorIds = new ArrayList<String>();
 		parallelOperatorParameter = config
-				.get(ParallelOperatorSettings.class);
+				.get(ParallelInterOperatorSetting.class);
 		if (parallelOperatorParameter != null) {
 			operatorIds.addAll(parallelOperatorParameter.getOperatorIds());
 		}
