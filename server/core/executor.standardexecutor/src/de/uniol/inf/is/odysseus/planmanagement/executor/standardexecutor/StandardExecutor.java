@@ -927,6 +927,10 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		config.setExecutor(this);
 		config.getTransformationConfiguration().setOption(
 				IServerExecutor.class.getName(), this);
+		
+		for (IQueryBuildSetting<?> iQueryBuildSetting : newSettings) {
+			config.getTransformationConfiguration().setOption(iQueryBuildSetting.getClass().getName(), iQueryBuildSetting);
+		}
 
 		config = validateBuildParameters(config);
 
