@@ -311,13 +311,13 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			if (debug) {
 				System.err.println(sa);
 			}
-			createOutput(results, groupID, object.getMetadata().getStart());
+			createOutput(results, groupID, object.getMetadata().getStart(), port);
 		}
 	}
 
 	protected void createOutput(
 			List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults,
-			Long groupID, PointInTime timestamp) {
+			Long groupID, PointInTime timestamp, int inPort) {
 
 		// Check if additional output should be created
 		// Allow to create additional output by cutting all current partial
@@ -379,7 +379,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 			}
 		}
 		// Inform transferArea about the time progress
-		transferArea.newHeartbeat(border, 0);
+		// Port could be other than 0 in multi threaded case
+		transferArea.newHeartbeat(border, inPort);
 
 		if (debug) {
 			System.err.println("CREATE OUTPUT " + border);
@@ -395,7 +396,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		// Keep punctuation order by sending to transfer area
 		transferArea.sendPunctuation(punctuation, port);
 		// Maybe new output can be created because of time progress
-		createOutput(null, null, punctuation.getTime());
+		createOutput(null, null, punctuation.getTime(), port);
 	}
 
 	/**

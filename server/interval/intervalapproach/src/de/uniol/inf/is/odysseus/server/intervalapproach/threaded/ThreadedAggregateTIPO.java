@@ -75,8 +75,8 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	@Override
 	public void createOutput(
 			List<PairMap<SDFSchema, AggregateFunction, W, Q>> existingResults,
-			Long groupID, PointInTime timestamp) {
-		super.createOutput(existingResults, groupID, timestamp);
+			Long groupID, PointInTime timestamp, int inPort) {
+		super.createOutput(existingResults, groupID, timestamp, inPort);
 	}
 	
 	@Override
