@@ -966,6 +966,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			validateUserRight(queryToRemove, caller,
 					ExecutorPermission.REMOVE_QUERY);
 			try {
+				LOG.debug("Try to get lock on execution plan "+executionPlanLock);
 				executionPlanLock.lock();
 				getOptimizer().beforeQueryRemove(queryToRemove,
 						this.executionPlan, null, getDataDictionary(caller));
@@ -1233,7 +1234,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		// deadlock!
 		if (!queryToStop.isMarkedAsStopping()) {
 			queryToStop.setAsStopping(true);
-
+			LOG.debug("Try to stop query "+queryToStop.getID());
 			try {
 				this.executionPlanLock.lock();
 				getOptimizer().beforeQueryStop(queryToStop, this.executionPlan);
