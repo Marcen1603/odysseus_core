@@ -6,7 +6,7 @@ sdfSchema(operatorVariable,className,schemaURI,sdfAttributes)::=<<
 List<SDFAttribute> $operatorVariable$SDFAttributeList = new ArrayList<SDFAttribute>();
  
 $sdfAttributes : {attribute |
-SDFAttribute $operatorVariable$$attribute.qualName$ = new SDFAttribute(null," $attribute.qualName$", SDFDatatype.getType("$attribute.datatype$"), null, null,null);
+SDFAttribute $operatorVariable$$attribute.qualName$ = new SDFAttribute(null,"$attribute.qualName$", SDFDatatype.getType("$attribute.datatype$"), null, null,null);
 $operatorVariable$SDFAttributeList.add($operatorVariable$$attribute.qualName$);
 	
 }$
