@@ -28,7 +28,8 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 	// Ports
 	private static final int DATA_PORT = 0;
 	private static final int OUT_INPUT_WITH_GROUP = 1;
-	private static final int BACKUP_PORT = 2;
+	private static final int BACKUP_PORT_OUT = 2;
+	private static final int BACKUP_PORT_IN = 1;
 
 	private static final int DATA_INPUT_PORT = 0;
 	
@@ -66,7 +67,7 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 		return groupingAttributes;
 	}
 
-	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "To group the tuples and learn a unique deviation for each group")
 	public void setGroupingAttributes(List<SDFAttribute> groupingAttributes) {
 		this.groupingAttributes = groupingAttributes;
 	}
@@ -102,7 +103,7 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 		return trainingMode;
 	}
 
-	@Parameter(type = EnumParameter.class, name = "trainingMode", optional = true)
+	@Parameter(type = EnumParameter.class, name = "trainingMode", optional = true, doc = "The training mode for this operator")
 	public void setTrainingMode(TrainingMode trainingMode) {
 		this.trainingMode = trainingMode;
 	}
@@ -111,7 +112,7 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 		return manualMean;
 	}
 
-	@Parameter(type = DoubleParameter.class, name = "mean", optional = true)
+	@Parameter(type = DoubleParameter.class, name = "mean", optional = true, doc = "If you want to set the mean manually (with trainingMode = manual) you can do this here.")
 	public void setManualMean(double manualMean) {
 		this.manualMean = manualMean;
 	}
@@ -120,7 +121,7 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 		return manualStandardDeviation;
 	}
 
-	@Parameter(type = DoubleParameter.class, name = "standardDeviation", optional = true)
+	@Parameter(type = DoubleParameter.class, name = "standardDeviation", optional = true, doc = "If you want to set the standard deviation manually (with trainingMode = manual) you can do this here.")
 	public void setManualStandardDeviation(double manualStandardDeviation) {
 		this.manualStandardDeviation = manualStandardDeviation;
 	}
@@ -174,7 +175,7 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, inSchema);
 			this.setOutputSchema(OUT_INPUT_WITH_GROUP, outputSchema);
 			return getOutputSchema(OUT_INPUT_WITH_GROUP);
-		} else if (port == BACKUP_PORT) {
+		} else if (port == BACKUP_PORT_OUT) {
 			// Backup-Information
 			SDFAttribute groupId = new SDFAttribute(null, "group", SDFDatatype.LONG, null, null, null);
 			SDFAttribute uuid = new SDFAttribute(null, "backupId", SDFDatatype.STRING, null, null, null);
@@ -209,9 +210,9 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 			outputAttributes.add(sum1Value);
 			outputAttributes.add(sum2Value);
 			
-			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema(BACKUP_PORT));
+			SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(outputAttributes, getInputSchema(BACKUP_PORT_IN));
 			this.setOutputSchema(port, outputSchema);
-			return getOutputSchema(BACKUP_PORT);
+			return getOutputSchema(BACKUP_PORT_OUT);
 		}
 
 		return getOutputSchema();

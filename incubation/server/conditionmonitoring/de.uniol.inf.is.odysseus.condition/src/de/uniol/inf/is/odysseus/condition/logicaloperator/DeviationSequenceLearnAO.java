@@ -53,7 +53,7 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 		return valueAttributeName;
 	}
 
-	@Parameter(type = IntegerParameter.class, name = "sequencesToLearn", optional = true, doc = "THe number of (correct) curves to learn from. The first x sequences will define the perfect sequence the others are compared to. If set to 0, the operator will not stop to learn (learn infinity sequences). Default is 0.")
+	@Parameter(type = IntegerParameter.class, name = "sequencesToLearn", optional = true, doc = "The number of (correct) curves to learn from. The first x sequences will define the perfect sequence the others are compared to. If set to 0, the operator will not stop to learn (learn infinity sequences). Default is 0.")
 	public void setSequencesToLearn(int sequencesToLearn) {
 		this.sequencesToLearn = sequencesToLearn;
 	}
@@ -75,7 +75,7 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 		return groupingAttributes;
 	}
 
-	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "To group the tuples")
 	public void setGroupingAttributes(List<SDFAttribute> groupingAttributes) {
 		this.groupingAttributes = groupingAttributes;
 	}

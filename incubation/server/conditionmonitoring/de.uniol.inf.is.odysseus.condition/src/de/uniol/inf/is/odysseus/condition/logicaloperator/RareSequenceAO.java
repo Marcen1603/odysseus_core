@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Tobias Brandt
  *
  */
-@LogicalOperator(maxInputPorts = 2, minInputPorts = 1, name = "RareSequence", doc = "Searches for rare pattern in a stream of (discrete) states", category = {
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 1, name = "RareSequence", doc = "Searches for rare sequences in a stream of (discrete) states", category = {
 		LogicalOperatorCategory.PROCESSING })
 public class RareSequenceAO extends BinaryLogicalOp {
 
@@ -59,7 +59,7 @@ public class RareSequenceAO extends BinaryLogicalOp {
 		this.uniqueBackupId = ao.getUniqueBackupId();
 	}
 
-	@Parameter(type = IntegerParameter.class, name = "treeDepth", optional = true, doc = "The depth of the tree. Default is 2.")
+	@Parameter(type = IntegerParameter.class, name = "treeDepth", optional = true, doc = "The maximum depth of the tree. Default is 2.")
 	public void setDepth(int depth) {
 		this.depth = depth;
 	}

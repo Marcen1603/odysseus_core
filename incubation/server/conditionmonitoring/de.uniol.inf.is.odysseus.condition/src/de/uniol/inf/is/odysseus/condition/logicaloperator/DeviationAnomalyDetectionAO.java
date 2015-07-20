@@ -76,7 +76,7 @@ public class DeviationAnomalyDetectionAO extends BinaryLogicalOp {
 		this.nameOfValue = nameOfValue;
 	}
 
-	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "To group the tuples and learn a unique deviation for each group. If used with a deviationLearn operator, use the group attribute it produces as group_by in this operator.")
 	public void setGroupingAttributes(List<SDFAttribute> attributes) {
 		this.groupingAttributes = attributes;
 	}
