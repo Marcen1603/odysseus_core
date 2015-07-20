@@ -68,6 +68,9 @@ public class JavaFileWrite {
 	}
 	
 	
+	/*
+	 * TODO only works for eclipse odysseus
+	 */
 	private void unzipProjectTemplate(){
 		UnZip unZip = new UnZip();
     	unZip.unZipIt(parameter.getOdysseusPath()+"\\incubation\\monolithic\\query.transformation.java\\templates\\"+"JavaProject.zip",tempPath);
@@ -207,6 +210,9 @@ public class JavaFileWrite {
 	}
 	
 	
+	/*
+	 * TODO only works with eclipse odysseus
+	 */
 	private  void generateJarExport(Set<String> importList ,String tempPath){
 		Map<String,String> bundles = new HashMap<String, String>();
 		//get needed bundle

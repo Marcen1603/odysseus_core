@@ -28,8 +28,7 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 		CodeFragmentInfo projectPO = new CodeFragmentInfo();
 		
-		StringBuilder code = new StringBuilder();
-		
+
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 		
 		ProjectAO projectAO = (ProjectAO)operator;
@@ -42,11 +41,8 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 		relationalProjectPOTemplate.getSt().add("restrictList", restrictList);
 		relationalProjectPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		
-		
-		code.append(relationalProjectPOTemplate.getSt().render());
 	
-	
-		projectPO.addCode(code.toString());
+		projectPO.addCode(relationalProjectPOTemplate.getSt().render());
 		projectPO.addImports(getNeededImports());
 
 		return projectPO;
