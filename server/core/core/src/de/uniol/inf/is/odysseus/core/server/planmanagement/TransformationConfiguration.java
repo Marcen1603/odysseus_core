@@ -32,27 +32,15 @@ public class TransformationConfiguration {
 	final private ITransformationHelper transformHelper = new StandardTransformationHelper();;
 	private boolean virtualTransformation;
 	
-//	public TransformationConfiguration(ITransformationHelper transformHelper, String... metaTypes) {
-//		this.metaTypes = toSet(metaTypes);
-//		this.options = new HashMap<String, Object>();	
-//		this.transformHelper = transformHelper;
-//	}
-	
-
-//	@SafeVarargs
-//	public TransformationConfiguration(ITransformationHelper transformHelper,
-//			Class<? extends IMetaAttribute>... metaTypes) {
-//		HashSet<String> tmp = new HashSet<String>();
-//		for(Class<? extends IMetaAttribute> type : metaTypes) {
-//			tmp.add(type.getName());
-//		}
-//		this.metaTypes = Collections.unmodifiableSet(tmp);
-//		this.options = new HashMap<String, Object>();
-//		this.transformHelper = transformHelper;
-//	}
 
 	public TransformationConfiguration(){
 		
+	}
+	
+	public TransformationConfiguration(TransformationConfiguration other) {
+		this.metaTypes.addAll(other.metaTypes);
+		this.options.putAll(other.options);
+		this.virtualTransformation = other.virtualTransformation;
 	}
 	
 	public TransformationConfiguration(String... metaTypes) {
@@ -70,6 +58,8 @@ public class TransformationConfiguration {
 	}
 
 	
+
+
 	public boolean metaTypesEqual(String... types) {
 		return metaTypes.equals(toSet(types));
 	}

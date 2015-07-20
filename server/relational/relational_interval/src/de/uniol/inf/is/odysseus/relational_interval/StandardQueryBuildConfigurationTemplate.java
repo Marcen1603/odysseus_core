@@ -56,7 +56,13 @@ public class StandardQueryBuildConfigurationTemplate extends
 	}
 	
 	public StandardQueryBuildConfigurationTemplate(List<IQueryBuildSetting<?>> settings) {
-		settings.addAll(settings);
+		for (IQueryBuildSetting<?> iQueryBuildSetting : settings) {
+			if (iQueryBuildSetting instanceof ParameterTransformationConfiguration){
+				settings.add(new ParameterTransformationConfiguration((ParameterTransformationConfiguration)iQueryBuildSetting));
+			}else{
+				settings.add(iQueryBuildSetting);
+			}
+		}
 	}
 
 	@Override

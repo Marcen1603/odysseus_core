@@ -38,4 +38,9 @@ public final class ParameterTransformationConfiguration extends
 			TransformationConfiguration value) {
 		super(value);
 	}
+
+	public ParameterTransformationConfiguration(
+			ParameterTransformationConfiguration setting) {
+		super(new TransformationConfiguration(setting.getValue()));
+	}
 }
