@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.recovery.IRecoveryComponent;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.recovery.configuration.RecoveryConfigKeyword;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.AbstractQueryStateInfo;
@@ -38,6 +39,11 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 /**
  * The query state recovery component handles the backup and recovery of queries
  * (queries and their states, sources, sinks). <br />
+ * <br />
+ * 
+ * Global recovery component without dependencies. Not to be called by an
+ * {@link IRecoveryExecutor}. <br />
+ * <br />
  * 
  * Note for logging of added queries/sources: For each Odysseus-Script, (1) the
  * inner queries are delivered with their parsers (e.g., PQL) and (2) the
@@ -47,8 +53,8 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
  * @author Michael Brand
  *
  */
-public class QueryStateRecoveryComponent implements IQueryAddedListener,
-		ICrashDetectionListener, IDataDictionaryListener,
+public class QueryStateRecoveryComponent implements IRecoveryComponent,
+		IQueryAddedListener, ICrashDetectionListener, IDataDictionaryListener,
 		IPlanModificationListener {
 
 	/*
@@ -88,7 +94,7 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 			public void run() {
 				if (cSystemLog.isPresent()) {
 					cLog.debug("Starting recovery...");
-					recover(cSystemLog.get().read(lastStartup));
+					recoverFromLog(cSystemLog.get().read(lastStartup));
 					cLog.debug("Recovery finished.");
 				} else {
 					cLog.error("Could not start recovery, because no system log is bound!");
@@ -223,6 +229,28 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 		// Nothing to do.
 	}
 
+	@Override
+	public String getName() {
+		return "Query State";
+	}
+
+	/**
+	 * Global recovery component. Not to be called for certain queries.
+	 */
+	@Override
+	public void recover(List<Integer> queryIds, ISession caller,
+			List<ISysLogEntry> log) throws Exception {
+		// Nothing to do.
+	}
+
+	/**
+	 * Global recovery component. Not to be called for certain queries.
+	 */
+	@Override
+	public void activateBackup(List<Integer> queryIds, ISession caller) {
+		// Nothing to do.
+	}
+
 	/**
 	 * The system log, if bound.
 	 */
@@ -324,7 +352,7 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 			// Call the recovery executor
 			cLog.debug("Calling recovery executor '{}'", usedRecoveryExecutor
 					.get().getName());
-			usedRecoveryExecutor.get().activateBackup(queryIds);
+			usedRecoveryExecutor.get().activateBackup(queryIds, user);
 		}
 		cSystemLog.get().write(QueryStateLogTag.SCRIPT_ADDED.toString(),
 				System.currentTimeMillis(), info.toBase64Binary());
@@ -402,7 +430,7 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 	 * @param log
 	 *            All system log entries to recover.
 	 */
-	private static void recover(List<ISysLogEntry> log) {
+	private static void recoverFromLog(List<ISysLogEntry> log) {
 		// Mapping of the last seen log entry (the contained info, but not yet
 		// recovered) for each query (state change or removal, not creation).
 		Map<Integer, QueryStateChangedInfo> lastSeenEntries = Maps.newHashMap();
@@ -418,7 +446,7 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 						entry.getTag()).get();
 				switch (enumEntry) {
 				case SCRIPT_ADDED:
-					recoverScript(entry);
+					recoverScript(entry, log);
 					break;
 				case SOURCE_REMOVED:
 					recoverSourceRemoval(entry);
@@ -444,8 +472,10 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 	 * 
 	 * @param entry
 	 *            The entry representing a backuped script.
+	 * @param log
+	 *            All system log entries to recover.
 	 */
-	private static void recoverScript(ISysLogEntry entry) {
+	private static void recoverScript(ISysLogEntry entry, List<ISysLogEntry> log) {
 		QueryAddedInfo info = (QueryAddedInfo) AbstractQueryStateInfo
 				.fromBase64Binary(entry.getComment().get());
 		cExecutor.get().addQuery(info.getQueryText(), info.getParserId(),
@@ -463,7 +493,8 @@ public class QueryStateRecoveryComponent implements IQueryAddedListener,
 			cLog.debug("Calling recovery executor '{}'", recoveryExecutor.get()
 					.getName());
 			try {
-				recoveryExecutor.get().recover(info.getQueryIds());
+				recoveryExecutor.get().recover(info.getQueryIds(),
+						info.getSession(), log);
 			} catch (Exception e) {
 				cLog.error("Error while calling recovery executor '"
 						+ recoveryExecutor.get().getName() + "'", e);

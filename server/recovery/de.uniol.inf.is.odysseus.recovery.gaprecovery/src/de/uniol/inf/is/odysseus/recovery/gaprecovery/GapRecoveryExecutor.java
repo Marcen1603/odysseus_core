@@ -2,12 +2,13 @@ package de.uniol.inf.is.odysseus.recovery.gaprecovery;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
+import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 
 /**
  * The gap recovery executor represents a recovery strategy, which backups and
- * recovery query states (incl. sinks and sources) and window alignments, if
- * necessary.
+ * recovery query states (incl. sinks and sources).
  * 
  * @author Michael Brand
  *
@@ -19,14 +20,23 @@ public class GapRecoveryExecutor implements IRecoveryExecutor {
 		return "GapRecovery";
 	}
 
+	/**
+	 * Nothing to do, because recovery of query states (incl. sinks and sources)
+	 * is done globally.
+	 */
 	@Override
-	public void recover(List<Integer> queryIds) throws Exception {
-		// TODO implement GapRecoveryExecutor.recover
+	public void recover(List<Integer> queryIds, ISession caller,
+			List<ISysLogEntry> log) throws Exception {
+		// Nothing to do.
 	}
 
+	/**
+	 * Nothing to do, because backup of query states (incl. sinks and sources)
+	 * is done globally.
+	 */
 	@Override
-	public void activateBackup(List<Integer> queryIds) {
-		// TODO implement GapRecoveryExecutor.activateBackup
+	public void activateBackup(List<Integer> queryIds, ISession caller) {
+		// Nothing to do.
 	}
 
 }

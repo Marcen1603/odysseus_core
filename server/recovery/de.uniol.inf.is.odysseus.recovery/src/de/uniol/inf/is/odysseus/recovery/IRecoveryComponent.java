@@ -2,7 +2,8 @@ package de.uniol.inf.is.odysseus.recovery;
 
 import java.util.List;
 
-import com.google.common.collect.ImmutableCollection;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 
 /**
  * A recovery component handles the backup and recovery of certain information
@@ -21,29 +22,30 @@ public interface IRecoveryComponent {
 	public String getName();
 
 	/**
-	 * Gets the dependencies.
-	 * 
-	 * @return The names of all recovery components, where
-	 *         {@link #recover(List)} has to be called before this component.
-	 */
-	public ImmutableCollection<String> getDependencies();
-
-	/**
 	 * Runs the recovery mechanism for given queries.
 	 * 
 	 * @param queryIds
 	 *            The ids of the queries.
+	 * @param caller
+	 *            The caller is a session for the same user, who backed up the
+	 *            data.
+	 * @param log
+	 *            All system log entries to recover.
 	 * @throws Exception
 	 *             if any error occurs.
 	 */
-	public void recover(List<Integer> queryIds) throws Exception;
+	public void recover(List<Integer> queryIds, ISession caller,
+			List<ISysLogEntry> log) throws Exception;
 
 	/**
 	 * Activates the backup mechanism for given queries.
 	 * 
 	 * @param queryIds
 	 *            The ids of the queries.
+	 * @param caller
+	 *            The caller is a session of the user, who wants to back up the
+	 *            data.
 	 */
-	public void activateBackup(List<Integer> queryIds);
+	public void activateBackup(List<Integer> queryIds, ISession caller);
 
 }
