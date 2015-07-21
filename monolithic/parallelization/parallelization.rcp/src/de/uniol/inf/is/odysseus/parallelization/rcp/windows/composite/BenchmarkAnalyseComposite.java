@@ -54,7 +54,7 @@ public class BenchmarkAnalyseComposite extends AbstractBenchmarkComposite {
 	}
 
 	private void createContent() {
-		createLabel(this, "Analyse parallelization of current query");
+		createLabelWithSeperator(this, "Analyse parallelization of current query");
 
 
 		progressAnalyseQuery = new ProgressBar(this, SWT.SMOOTH);

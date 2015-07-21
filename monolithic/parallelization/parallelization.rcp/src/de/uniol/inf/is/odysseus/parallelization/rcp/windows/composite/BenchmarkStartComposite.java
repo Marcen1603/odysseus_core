@@ -41,7 +41,7 @@ public class BenchmarkStartComposite extends AbstractBenchmarkComposite{
 	}
 
 	private void createContent() {
-		createLabel(this, "Initialize current query");
+		createLabelWithSeperator(this, "Initialize current query");
 
 		progressInitializeQuery = new ProgressBar(this, SWT.SMOOTH);
 		progressInitializeQuery.setLayoutData(new GridData(

@@ -23,20 +23,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
-import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerExecution;
+import de.uniol.inf.is.odysseus.parallelization.rcp.data.IBenchmarkerExecution;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 
-public class BenchmarkMainThread extends Thread {
+public class BenchmarkMainExecutionThread extends Thread {
 
 	private static final String PRE_TRANSFORM_TOKEN = "#PRETRANSFORM BenchmarkPreTransformation";
 
 	private static Logger LOG = LoggerFactory
-			.getLogger(BenchmarkMainThread.class);
+			.getLogger(BenchmarkMainExecutionThread.class);
 	private UUID processUid;
 	private BenchmarkDataHandler data;
 	private ParallelizationBenchmarkerWindow window;
 
-	public BenchmarkMainThread(UUID processUid,
+	public BenchmarkMainExecutionThread(UUID processUid,
 			ParallelizationBenchmarkerWindow parallelizationBenchmarkerWindow) {
 		this.processUid = processUid;
 		this.window = parallelizationBenchmarkerWindow;
@@ -47,20 +47,20 @@ public class BenchmarkMainThread extends Thread {
 	public void run() {
 		LOG.debug("Analysing of current query started.");
 
-		List<BenchmarkerExecution> benchmarkerExecutions = data
+		List<IBenchmarkerExecution> benchmarkerExecutions = data
 				.getConfiguration().getBenchmarkerExecutions();
 		int numberOfExecutions = benchmarkerExecutions.size();
 		int executionCounter = 0;
 		int currentPercentage = 0;
 
-		for (BenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
+		for (IBenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
 			if (!isInterrupted()) {
 				changeProgress(currentPercentage, -1l, "Executing analysis "
 						+ (executionCounter + 1) + " of " + numberOfExecutions
 						+ ": " + benchmarkerExecution.toString());
 			}
 
-			for (int i = 0; i < benchmarkerExecution.getNumberOfExecutions(); i++) {
+			for (int i = 0; i < data.getConfiguration().getNumberOfExecutions(); i++) {
 				if (!isInterrupted()) {
 					executeAnalysis(benchmarkerExecution);
 				}
@@ -83,46 +83,49 @@ public class BenchmarkMainThread extends Thread {
 		evaluateResult(benchmarkerExecutions);
 	}
 
-	private int printResult(int numberOfConfigurations, int configurationCounter,
-			BenchmarkerExecution benchmarkerExecution) {
+	private int printResult(int numberOfConfigurations,
+			int configurationCounter, IBenchmarkerExecution benchmarkerExecution) {
 		int currentPercentage = (int) (((configurationCounter + 1) / (double) numberOfConfigurations) * 100);
-		
-		long averageExecutionTime = benchmarkerExecution.getAverageExecutionTime(data
-				.getConfiguration().getMaximumExecutionTime());
-		long remainingTimeMillis = ((numberOfConfigurations-configurationCounter) * averageExecutionTime * benchmarkerExecution.getNumberOfExecutions());
-		
-		if (averageExecutionTime >= data
-				.getConfiguration().getMaximumExecutionTime()) {
+
+		long averageExecutionTime = benchmarkerExecution
+				.getAverageExecutionTime(data.getConfiguration()
+						.getMaximumExecutionTime());
+		long remainingTimeMillis = ((numberOfConfigurations - configurationCounter)
+				* averageExecutionTime * data.getConfiguration()
+				.getNumberOfExecutions());
+
+		if (averageExecutionTime >= data.getConfiguration()
+				.getMaximumExecutionTime()) {
 			changeProgress(
-					currentPercentage, remainingTimeMillis,
+					currentPercentage,
+					remainingTimeMillis,
 					"Maximum execution time reached. Please restart benchmarker and adjust values "
 							+ "for maximum execution time or number of elements."
 							+ System.lineSeparator());
 		} else if (averageExecutionTime == -1l) {
 			changeProgress(
-					currentPercentage, remainingTimeMillis,
+					currentPercentage,
+					remainingTimeMillis,
 					"End of evaluation was reached, before "
 							+ data.getConfiguration().getNumberOfElements()
 							+ " elements are processed. Please decrese the number of elements.");
 		} else {
-			changeProgress(
-					currentPercentage, remainingTimeMillis,
-					"Done. "
-							+ data.getConfiguration().getNumberOfElements()
-							+ " elements in an average time of "
-							+ averageExecutionTime
-							+ " ms processed. ("
-							+ benchmarkerExecution.getNumberOfExecutions()
-							+ " executions)" + System.lineSeparator());
+			changeProgress(currentPercentage, remainingTimeMillis, "Done. "
+					+ data.getConfiguration().getNumberOfElements()
+					+ " elements in an average time of " + averageExecutionTime
+					+ " ms processed. ("
+					+ data.getConfiguration().getNumberOfExecutions()
+					+ " executions)" + System.lineSeparator());
 		}
 		return currentPercentage;
 	}
 
-	private void evaluateResult(List<BenchmarkerExecution> benchmarkerExecutions) {
-		BenchmarkerExecution currentBestExecution = benchmarkerExecutions
+	private void evaluateResult(
+			List<IBenchmarkerExecution> benchmarkerExecutions) {
+		IBenchmarkerExecution currentBestExecution = benchmarkerExecutions
 				.get(0);
 
-		for (BenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
+		for (IBenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
 			if (benchmarkerExecution.getAverageExecutionTime(data
 					.getConfiguration().getMaximumExecutionTime()) <= 0l) {
 				continue;
@@ -147,7 +150,7 @@ public class BenchmarkMainThread extends Thread {
 		});
 	}
 
-	private void executeAnalysis(BenchmarkerExecution benchmarkerExecution) {
+	private void executeAnalysis(IBenchmarkerExecution benchmarkerExecution) {
 		List<String> queryStringArray = data.getQueryStringArray();
 		StringBuilder builder = new StringBuilder();
 		for (String queryStringLine : queryStringArray) {
@@ -188,7 +191,8 @@ public class BenchmarkMainThread extends Thread {
 				@Override
 				public void run() {
 					window.getAnalyseComposite().updateAnalysisProgress(
-							progressProcent, remainingTimeMillis, progressString);
+							progressProcent, remainingTimeMillis,
+							progressString);
 				}
 
 			});

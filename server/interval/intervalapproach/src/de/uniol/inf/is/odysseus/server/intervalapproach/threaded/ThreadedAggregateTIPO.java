@@ -2,8 +2,11 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.threaded;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
@@ -38,7 +41,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		// and
 		// a priority
 		BasicThreadFactory factory = new BasicThreadFactory.Builder()
-				.namingPattern("%d").daemon(true).build();
+				.namingPattern("%d").build();
 		// Create an executor service for single-threaded execution
 		executor = Executors.newFixedThreadPool(degree, factory);
 		this.setDegree(degree);
@@ -79,17 +82,51 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 		synchronized (sa) {
 			if (sa != null) {
-				ThreadedAggregateTIPORunnable<Q, R, W> runnable = new ThreadedAggregateTIPORunnable<Q, R, W>(
+				ThreadedAggregateTIPOCallable<Q, R, W> runnable = new ThreadedAggregateTIPOCallable<Q, R, W>(
 						this, sa, object, groupID);
-				executor.execute(runnable);
+				Future<String> result = executor.submit(runnable);
+				try {
+					result.get();
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+				}
 			}
+		}
+	}
+	
+	@Override
+	protected void process_done(int port) {
+		executor.shutdown();
+		try {
+			executor.awaitTermination(1, TimeUnit.MINUTES);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		// has only one port, so process_done can be called when first input
+		// port calls done
+		IGroupProcessor<R, W> g = getGroupProcessor();
+		synchronized (g) {
+			if (drainAtDone) {
+				// Drain all groups
+				drainGroups();
+			}
+		}
+		// Send information to transfer area that no more elements will be
+		// delivered on port 0, so all data can be written
+		if (debug) {
+			System.err.println(this + " done");
+		}
+		
+		for (int i = 0; i < degree; i++) {
+			transferArea.done(i);			
 		}
 	}
 
 	@Override
 	protected void process_close() {
+		
 		super.process_close();
-		executor.shutdown();
 	}
 
 	@Override

@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.parallelization.rcp.threads.BenchmarkMainThread;
-import de.uniol.inf.is.odysseus.parallelization.rcp.threads.InitializeQueryThread;
+import de.uniol.inf.is.odysseus.parallelization.rcp.threads.BenchmarkMainExecutionThread;
+import de.uniol.inf.is.odysseus.parallelization.rcp.threads.BenchmarkInitializeQueryThread;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.composite.BenchmarkAnalyseComposite;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.composite.BenchmarkButtonComposite;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.composite.BenchmarkConfigureComposite;
@@ -51,13 +51,13 @@ public class ParallelizationBenchmarkerWindow {
 
 	private UUID benchmarkProcessId;
 
-	private BenchmarkMainThread benchmarkMainThread;
+	private BenchmarkMainExecutionThread benchmarkMainThread;
 
 	private BenchmarkStartComposite benchmarkStartComposite;
 	private BenchmarkConfigureComposite benchmarkConfigureComposite;
 	private BenchmarkAnalyseComposite benchmarkAnalyseComposite;
 	private BenchmarkButtonComposite benchmarkButtonComposite;
-	private InitializeQueryThread initializeQueryThread;
+	private BenchmarkInitializeQueryThread initializeQueryThread;
 
 	public ParallelizationBenchmarkerWindow(Shell parent) {
 		this.parent = Preconditions.checkNotNull(parent,
@@ -72,7 +72,7 @@ public class ParallelizationBenchmarkerWindow {
 		createWindow(parent);
 
 		if (benchmarkStartComposite != null) {
-			initializeQueryThread = new InitializeQueryThread(
+			initializeQueryThread = new BenchmarkInitializeQueryThread(
 					this);
 			initializeQueryThread.setName("InitializeQueryThread");
 			initializeQueryThread.setDaemon(true);
@@ -132,7 +132,7 @@ public class ParallelizationBenchmarkerWindow {
 	public void startAnalysis() {
 		createAnalysisContent();
 
-		benchmarkMainThread = new BenchmarkMainThread(benchmarkProcessId, this);
+		benchmarkMainThread = new BenchmarkMainExecutionThread(benchmarkProcessId, this);
 		benchmarkMainThread.setName("BenchmarkThread");
 		benchmarkMainThread.setDaemon(true);
 		benchmarkMainThread.start();
@@ -179,11 +179,11 @@ public class ParallelizationBenchmarkerWindow {
 		return this.benchmarkButtonComposite;
 	}
 
-	public BenchmarkMainThread getBenchmarkMainThread() {
+	public BenchmarkMainExecutionThread getBenchmarkMainThread() {
 		return benchmarkMainThread;
 	}
 	
-	public InitializeQueryThread getInitializeQueryThread() {
+	public BenchmarkInitializeQueryThread getInitializeQueryThread() {
 		return initializeQueryThread;
 	}
 }

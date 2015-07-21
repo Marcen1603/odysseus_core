@@ -1,8 +1,9 @@
-package de.uniol.inf.is.odysseus.parallelization.intraoperator.parameter;
+package de.uniol.inf.is.odysseus.parallelization.intraoperator.keyword;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.parallelization.intraoperator.parameter.IntraOperatorGlobalKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.intraoperator.preexecution.IntraOperatorPreExecutionHandler;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;

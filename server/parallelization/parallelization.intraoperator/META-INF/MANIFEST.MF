@@ -19,3 +19,4 @@ Import-Package: com.google.common.base,
  org.slf4j
 Service-Component: OSGI-INF/IntraOperatorPreExecutionHandler.xml,
  OSGI-INF/IntraOperatorParallelizationKeywordProvider.xml
+Export-Package: de.uniol.inf.is.odysseus.parallelization.intraoperator.keyword

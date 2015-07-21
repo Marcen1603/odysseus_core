@@ -29,17 +29,17 @@ import de.uniol.inf.is.odysseus.parallelization.benchmark.data.CountElementsBenc
 import de.uniol.inf.is.odysseus.parallelization.benchmark.data.IBenchmarkEvaluation;
 import de.uniol.inf.is.odysseus.parallelization.benchmark.data.IBenchmarkObserver;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
-import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerExecution;
+import de.uniol.inf.is.odysseus.parallelization.rcp.data.IBenchmarkerExecution;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class BenchmarkExecutionThread extends Thread implements
 		IBenchmarkObserver {
-	private static Logger LOG = LoggerFactory.getLogger(BenchmarkMainThread.class);
+	private static Logger LOG = LoggerFactory.getLogger(BenchmarkMainExecutionThread.class);
 
 	private String queryString;
-	private BenchmarkerExecution benchmarkerExecution;
+	private IBenchmarkerExecution benchmarkerExecution;
 	private BenchmarkDataHandler data;
 	private Collection<Integer> queryIds;
 	private IExecutor executor;
@@ -47,7 +47,7 @@ public class BenchmarkExecutionThread extends Thread implements
 	private long maximumExecutionTime;
 
 	public BenchmarkExecutionThread(String queryString, UUID processUid,
-			BenchmarkerExecution benchmarkerExecution) {
+			IBenchmarkerExecution benchmarkerExecution) {
 		this.queryString = queryString;
 		this.data = BenchmarkDataHandler.getExistingInstance(processUid);
 		this.benchmarkerExecution = benchmarkerExecution;

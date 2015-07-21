@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
-public class BenchmarkExecutionElement {
+public class InterOperatorBenchmarkerExecutionElement {
 
 	private String startOperatorid;
 	private String endOperatorId;
@@ -31,7 +31,7 @@ public class BenchmarkExecutionElement {
 	private List<Integer> possibleDegrees;
 	private int executionDegree;
  
-	public BenchmarkExecutionElement(
+	public InterOperatorBenchmarkerExecutionElement(
 			String uniqueOperatorid,
 			IParallelTransformationStrategy<? extends ILogicalOperator> strategy,
 			Class<? extends AbstractFragmentAO> fragmentType, String endOperatorId) {
@@ -42,8 +42,8 @@ public class BenchmarkExecutionElement {
 		this.setPossibleDegrees(new ArrayList<Integer>());
 	}
 	
-	public BenchmarkExecutionElement clone(){
-		BenchmarkExecutionElement clone = new BenchmarkExecutionElement(this.startOperatorid, this.strategy, this.fragmentType, this.endOperatorId);
+	public InterOperatorBenchmarkerExecutionElement clone(){
+		InterOperatorBenchmarkerExecutionElement clone = new InterOperatorBenchmarkerExecutionElement(this.startOperatorid, this.strategy, this.fragmentType, this.endOperatorId);
 		clone.possibleDegrees = new ArrayList<Integer>(this.possibleDegrees);
 		clone.executionDegree = this.executionDegree;
 		return clone;

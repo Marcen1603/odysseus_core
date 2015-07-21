@@ -89,13 +89,13 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 	private void createContent() {
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.widthHint = 220;
-		
+
 		createLabelWithSeperator(this, "Global configuration");
-		
+
 		Composite globalConfigComposite = new Composite(this, SWT.NONE);
 		GridLayout globalConfigGridLayout = new GridLayout(2, false);
 		globalConfigComposite.setLayout(globalConfigGridLayout);
-		
+
 		Label numberOfElementsLabel = new Label(globalConfigComposite, SWT.NULL);
 		numberOfElementsLabel.setText("Number of elements for analyse: ");
 		numberOfElementsText = new Text(globalConfigComposite, SWT.SINGLE
@@ -112,7 +112,8 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				.valueOf(BenchmarkerConfiguration.DEFAULT_MAX_EXECUTION_TIME));
 		maxExecutionTimeText.setLayoutData(gridData);
 
-		Label numberOfExecutionsLabel = new Label(globalConfigComposite, SWT.NULL);
+		Label numberOfExecutionsLabel = new Label(globalConfigComposite,
+				SWT.NULL);
 		numberOfExecutionsLabel
 				.setText("Number of executions for each configuration: ");
 		numberOfExecutionsText = new Text(globalConfigComposite, SWT.SINGLE
@@ -121,33 +122,37 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				.setText(String
 						.valueOf(BenchmarkerConfiguration.DEFAULT_NUMBER_OF_EXECUTIONS));
 		numberOfExecutionsText.setLayoutData(gridData);
-		
 
-		
-		createLabelWithSeperator(this, "Configure Inter-operator parallelization");
+		createLabelWithSeperator(this,
+				"Configure Inter-operator parallelization");
 
 		useInterOperatorParallelization = new Button(this, SWT.CHECK);
-		useInterOperatorParallelization.setText("Use Inter-Operator Parallelization");
+		useInterOperatorParallelization
+				.setText("Use Inter-Operator Parallelization");
 		useInterOperatorParallelization.setSelection(true);
-		
+
 		Composite interOperatorconfigComposite = new Composite(this, SWT.NONE);
 		GridLayout interOperatorGridLayout = new GridLayout(2, false);
 		interOperatorconfigComposite.setLayout(interOperatorGridLayout);
 
 		Label degreeLabel = new Label(interOperatorconfigComposite, SWT.NULL);
 		degreeLabel.setText("Degrees (comma-seperated): ");
-		interOperatorDegreeText = new Text(interOperatorconfigComposite, SWT.SINGLE | SWT.BORDER);
+		interOperatorDegreeText = new Text(interOperatorconfigComposite,
+				SWT.SINGLE | SWT.BORDER);
 		interOperatorDegreeText.setText("2,4,8");
 		interOperatorDegreeText.setLayoutData(gridData);
 
-		Label buffersizeLabel = new Label(interOperatorconfigComposite, SWT.NULL);
+		Label buffersizeLabel = new Label(interOperatorconfigComposite,
+				SWT.NULL);
 		buffersizeLabel.setText("Buffersize: ");
-		buffersizeText = new Text(interOperatorconfigComposite, SWT.SINGLE | SWT.BORDER);
+		buffersizeText = new Text(interOperatorconfigComposite, SWT.SINGLE
+				| SWT.BORDER);
 		buffersizeText.setText(String
 				.valueOf(InterOperatorPreExecutionHandler.AUTO_BUFFER_SIZE));
 		buffersizeText.setLayoutData(gridData);
 
-		Label selectBufferType = new Label(interOperatorconfigComposite, SWT.NULL);
+		Label selectBufferType = new Label(interOperatorconfigComposite,
+				SWT.NULL);
 		selectBufferType.setText("Select buffer type: ");
 		buffertypeCombo = new Combo(interOperatorconfigComposite, SWT.READ_ONLY);
 		buffertypeCombo.setItems(BUFFER_COMBO);
@@ -196,62 +201,32 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				tableViewer.setAllChecked(false);
 			}
 		});
-		
-		
-		createLabelWithSeperator(this, "Configure Intra-operator parallelization");
-		
+
+		createLabelWithSeperator(this,
+				"Configure Intra-operator parallelization");
+
 		useIntraOperatorParallelization = new Button(this, SWT.CHECK);
-		useIntraOperatorParallelization.setText("Use Intra-Operator Parallelization");
+		useIntraOperatorParallelization
+				.setText("Use Intra-Operator Parallelization");
 		useIntraOperatorParallelization.setSelection(true);
-		
+
 		Composite intraOperatorconfigComposite = new Composite(this, SWT.NONE);
 		GridLayout intraOperatorGridLayout = new GridLayout(2, false);
 		intraOperatorconfigComposite.setLayout(intraOperatorGridLayout);
-		
-		Label intraOperatorDegreeLabel = new Label(intraOperatorconfigComposite, SWT.NULL);
+
+		Label intraOperatorDegreeLabel = new Label(
+				intraOperatorconfigComposite, SWT.NULL);
 		intraOperatorDegreeLabel.setText("Degrees (comma-seperated): ");
-		
-		intraOperatorDegreeText = new Text(intraOperatorconfigComposite, SWT.SINGLE | SWT.BORDER);
+
+		intraOperatorDegreeText = new Text(intraOperatorconfigComposite,
+				SWT.SINGLE | SWT.BORDER);
 		intraOperatorDegreeText.setText("2,4,8");
 		intraOperatorDegreeText.setLayoutData(gridData);
-		
+
 	}
 
 	protected void validateConfiguration(
 			List<StrategySelectionRow> selectedStratgies) {
-		// degree values
-		List<Integer> degrees = new ArrayList<Integer>();
-		String degreeString = this.interOperatorDegreeText.getText();
-		if (degreeString.isEmpty()) {
-			throw new IllegalArgumentException("No degree definied");
-		} else {
-			String[] degreeValues = degreeString.trim().split(",");
-			for (int i = 0; i < degreeValues.length; i++) {
-				degrees.add(Integer.parseInt(degreeValues[i]));
-			}
-		}
-
-		// buffersize
-		String buffersizeString = this.buffersizeText.getText();
-		if (buffersizeString.isEmpty()) {
-			throw new IllegalArgumentException("No buffersize definied");
-		} else {
-			Integer.parseInt(buffersizeString);
-		}
-
-		// number of elements
-		String numberOfElementsString = this.numberOfElementsText.getText();
-		if (numberOfElementsString.isEmpty()) {
-			throw new IllegalArgumentException("No number of elements definied");
-		} else {
-			int value = Integer.parseInt(numberOfElementsString);
-			if (value < 1) {
-				throw new IllegalArgumentException(
-						"Number of elements need to be greater than 0");
-			}
-
-		}
-
 		// maximum execution time
 		String maxExecutionTimeString = this.maxExecutionTimeText.getText();
 		if (maxExecutionTimeString.isEmpty()) {
@@ -265,6 +240,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 			}
 		}
 
+		// number of executions
 		String numberOfExecutionString = numberOfExecutionsText.getText();
 		if (numberOfExecutionString.isEmpty()) {
 			throw new IllegalArgumentException(
@@ -277,32 +253,72 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 			}
 		}
 
-		// selected strategies
-		if (selectedStratgies.isEmpty()) {
-			throw new IllegalArgumentException("No strategy selected");
+		// number of elements
+		String numberOfElementsString = this.numberOfElementsText.getText();
+		if (numberOfElementsString.isEmpty()) {
+			throw new IllegalArgumentException("No number of elements definied");
 		} else {
-			for (StrategySelectionRow strategySelectionRow : selectedStratgies) {
-				strategySelectionRow.validate(selectedStratgies, degrees);
+			int value = Integer.parseInt(numberOfElementsString);
+			if (value < 1) {
+				throw new IllegalArgumentException(
+						"Number of elements need to be greater than 0");
 			}
 		}
 
+		if (!useInterOperatorParallelization.getSelection() && !useIntraOperatorParallelization.getSelection()){
+			throw new IllegalArgumentException(
+					"You need to enable inter- or intra-operator-parallelization or both.");
+		}
+		
+		if (useInterOperatorParallelization.getSelection()) {
+			// degree values
+			List<Integer> degrees = new ArrayList<Integer>();
+			String degreeString = this.interOperatorDegreeText.getText();
+			if (degreeString.isEmpty()) {
+				throw new IllegalArgumentException("No degree definied");
+			} else {
+				String[] degreeValues = degreeString.trim().split(",");
+				for (int i = 0; i < degreeValues.length; i++) {
+					degrees.add(Integer.parseInt(degreeValues[i]));
+				}
+			}
+
+			// buffersize
+			String buffersizeString = this.buffersizeText.getText();
+			if (buffersizeString.isEmpty()) {
+				throw new IllegalArgumentException("No buffersize definied");
+			} else {
+				Integer.parseInt(buffersizeString);
+			}
+
+			// selected strategies
+			if (selectedStratgies.isEmpty()) {
+				throw new IllegalArgumentException("No strategy selected");
+			} else {
+				for (StrategySelectionRow strategySelectionRow : selectedStratgies) {
+					strategySelectionRow.validate(selectedStratgies, degrees);
+				}
+			}
+		}
+
+		if (useIntraOperatorParallelization.getSelection()) {
+			// degree values
+			List<Integer> degrees = new ArrayList<Integer>();
+			String degreeString = this.intraOperatorDegreeText.getText();
+			if (degreeString.isEmpty()) {
+				throw new IllegalArgumentException("No degree definied");
+			} else {
+				String[] degreeValues = degreeString.trim().split(",");
+				for (int i = 0; i < degreeValues.length; i++) {
+					degrees.add(Integer.parseInt(degreeValues[i]));
+				}
+			}
+		}
 	}
 
 	protected void createConfiguration(
 			List<StrategySelectionRow> selectedStratgies) {
 		BenchmarkerConfiguration configuration = new BenchmarkerConfiguration();
-		configuration.setSelectedStratgies(selectedStratgies);
-
-		List<Integer> degrees = new ArrayList<Integer>();
-		String degreeString = this.interOperatorDegreeText.getText();
-		String[] degreeValues = degreeString.trim().split(",");
-		for (int i = 0; i < degreeValues.length; i++) {
-			degrees.add(Integer.parseInt(degreeValues[i]));
-		}
-		configuration.setDegrees(degrees);
-
-		String buffersizeString = this.buffersizeText.getText();
-		configuration.setBuffersize(Integer.parseInt(buffersizeString));
 
 		String numberOfElementsString = this.numberOfElementsText.getText();
 		configuration.setNumberOfElements(Integer
@@ -316,11 +332,44 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 		configuration.setNumberOfExecutions(Integer
 				.parseInt(numberOfExecutionString));
 
-		boolean allowPostOptimization = allowPostOptimizationButton
-				.getSelection();
-		configuration.setAllowPostOptimization(allowPostOptimization);
+		if (useInterOperatorParallelization.getSelection()) {
+			configuration.setUseInterOperatorParallelization(true);
+			// degrees for inter operator parallelization
+			List<Integer> degrees = new ArrayList<Integer>();
+			String degreeString = this.interOperatorDegreeText.getText();
+			String[] degreeValues = degreeString.trim().split(",");
+			for (int i = 0; i < degreeValues.length; i++) {
+				degrees.add(Integer.parseInt(degreeValues[i]));
+			}
+			configuration.setInterOperatorDegrees(degrees);
 
-		setBufferTypeFromCombo(configuration);
+			// buffersize
+			String buffersizeString = this.buffersizeText.getText();
+			configuration.setBuffersize(Integer.parseInt(buffersizeString));
+
+			// buffertype
+			setBufferTypeFromCombo(configuration);
+
+			// allow post optimization
+			boolean allowPostOptimization = allowPostOptimizationButton
+					.getSelection();
+			configuration.setAllowPostOptimization(allowPostOptimization);
+
+			// set selected strategies
+			configuration.setSelectedStratgies(selectedStratgies);
+		}
+
+		if (useIntraOperatorParallelization.getSelection()) {
+			configuration.setUseIntraOperatorParallelization(true);
+			// degrees for inter operator parallelization
+			List<Integer> degrees = new ArrayList<Integer>();
+			String degreeString = this.intraOperatorDegreeText.getText();
+			String[] degreeValues = degreeString.trim().split(",");
+			for (int i = 0; i < degreeValues.length; i++) {
+				degrees.add(Integer.parseInt(degreeValues[i]));
+			}
+			configuration.setIntraOperatorDegrees(degrees);
+		}
 
 		data.setConfiguration(configuration);
 	}

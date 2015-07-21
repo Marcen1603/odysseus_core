@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parallelization.benchmark.transformationhandler.BenchmarkPreTransformationHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorParallelizationPreParserKeyword;
+import de.uniol.inf.is.odysseus.parallelization.intraoperator.keyword.IntraOperatorParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.helper.BenchmarkHelper;
@@ -51,17 +52,17 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 import de.uniol.inf.is.odysseus.script.keyword.PreTransformationHandlerPreParserKeyword;
 
-public class InitializeQueryThread extends Thread {
+public class BenchmarkInitializeQueryThread extends Thread {
 
 	private static Logger LOG = LoggerFactory
-			.getLogger(InitializeQueryThread.class);
+			.getLogger(BenchmarkInitializeQueryThread.class);
 
 	private final ParallelizationBenchmarkerWindow window;
 	private static BenchmarkDataHandler benchmarkDataHandler;
 
 	private boolean errorOccoured = false;
 
-	public InitializeQueryThread(
+	public BenchmarkInitializeQueryThread(
 			ParallelizationBenchmarkerWindow parallelizationBenchmarkerWindow) {
 		this.window = parallelizationBenchmarkerWindow;
 	}
@@ -292,13 +293,19 @@ public class InitializeQueryThread extends Thread {
 	private static boolean isLineSupported(String line) {
 		// #PARALLELIZATION is not supported in benchmarker
 		if (line.trim().startsWith(
-				"#" + InterOperatorParallelizationPreParserKeyword.KEYWORD)) {
+				"#" + ParallelizationPreParserKeyword.KEYWORD)) {
 			return false;
 		}
 
 		// #INTEROPERATORPARALLELIZATION is not supported in benchmarker
 		if (line.trim().startsWith(
-				"#" + ParallelizationPreParserKeyword.KEYWORD)) {
+				"#" + InterOperatorParallelizationPreParserKeyword.KEYWORD)) {
+			return false;
+		}
+		
+		// #INTRAOPERATORPARALLELIZATION is not supported in benchmarker
+		if (line.trim().startsWith(
+				"#" + IntraOperatorParallelizationPreParserKeyword.KEYWORD)) {
 			return false;
 		}
 

@@ -92,7 +92,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	 * if set to true, the current elements that are still stored to keep order
 	 * are written, when a done call from the input operator arrives
 	 */
-	private boolean drainAtDone = true;
+	protected boolean drainAtDone = true;
 	/**
 	 * if set to true, the current elements that are still stored to keep order
 	 * are written, when a close call from the output operator arrives
@@ -238,7 +238,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	/**
 	 * Iterate over all groups sweep areas, create output and clear state
 	 */
-	private void drainGroups() {
+	protected void drainGroups() {
 		IGroupProcessor<R, W> g = getGroupProcessor();
 		synchronized (g) {
 			for (Entry<Long, AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
