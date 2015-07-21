@@ -38,6 +38,8 @@ public class CreateViewCommand extends AbstractExecutorCommand {
 			IUserManagementWritable um, IServerExecutor executor) {		
 		RenameAO rename = new RenameAO();
 		rename.setKeepPosition(true);
+		// remove potential topAO!
+		rootAO.unsubscribeFromAllSinks();
 		rename.subscribeTo(rootAO, rootAO.getOutputSchema());
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute old : rootAO.getOutputSchema()) {
