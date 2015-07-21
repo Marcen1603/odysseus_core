@@ -21,6 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -30,7 +33,11 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
 public class RestructHelper {
-    public static Collection<ILogicalOperator> removeOperator(BinaryLogicalOp remove, boolean reserveOutputSchema) {
+	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(RestructHelper.class);
+	
+	public static Collection<ILogicalOperator> removeOperator(BinaryLogicalOp remove, boolean reserveOutputSchema) {
         List<ILogicalOperator> ret = new ArrayList<>();
         Collection<LogicalSubscription> fathers = remove.getSubscriptions();
         LogicalSubscription left = remove.getSubscribedToSource(0);
@@ -149,10 +156,10 @@ public class RestructHelper {
 			UnaryLogicalOp father, UnaryLogicalOp son) {
 		// TODO: Can there be more than one father??
 		if (son.getSubscriptions().size() != 1) {
-			System.out.println("MAY NOT HAPPEN IN SIMPLE SWITCH!!!");
-			System.out.println("FATHER: " + father);
-			System.out.println("SON HAS MORE THAN ONE FATHER!!!!");
-			System.out.println("SON: " + son);
+			LOG.error("MAY NOT HAPPEN IN SIMPLE SWITCH!!!");
+			LOG.error("FATHER: " + father);
+			LOG.error("SON HAS MORE THAN ONE FATHER!!!!");
+			LOG.error("SON: " + son);
 			for (LogicalSubscription sub : son.getSubscriptions()) {
 				System.out.println(sub);
 			}
@@ -164,7 +171,7 @@ public class RestructHelper {
 
 		// TODO: Can there be more than one father??
 		if (father.getSubscriptions().size() != 1) {
-			System.out.println("THIS MAY NOT HAPPEN");
+			LOG.error("THIS MAY NOT HAPPEN");
 			for (LogicalSubscription sub : son.getSubscriptions()) {
 				System.out.println(sub);
 			}
