@@ -68,8 +68,6 @@ public class RestService {
             Gson gson = new Gson();
             GenericResponseDTO<String> resp = gson.fromJson(t.getText(), resultDataType);
             return resp.getValue();
-        } catch (IOException ex) {
-            throw new RestException(ex.toString());
         } catch (Exception ex) {
             throw new RestException(ex.toString());
         } finally {
@@ -77,6 +75,14 @@ public class RestService {
         }
     }
 
+    /**
+     *
+     * @param ip The IP of the odysseus instance
+     * @param token The security token from the login
+     * @param query The query test
+     * @return A map with the name of the operator -> the output port of this operator -> the socketInformation
+     * @throws RestException
+     */
     public static Map<String, Map<Integer, SocketInfo>> runQuery(String ip, String token, String query) throws RestException {
         String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CORE;
         ClientResource crAddQuery = new ClientResource(hostURL + "/" + RESOURCE_PATH_ADD_QUERY);
@@ -85,7 +91,8 @@ public class RestService {
         Gson gson = new Gson();
 
         // Add query
-        AddQueryRequestDTO addQueryRequestDTO = new AddQueryRequestDTO(token, query, "OdysseusScript", "");
+        String transformationConfig = "";
+        AddQueryRequestDTO addQueryRequestDTO = new AddQueryRequestDTO(token, query, "OdysseusScript", transformationConfig);
         Representation addQueryRepresentation = crAddQuery.post(addQueryRequestDTO);
         GenericResponseDTO<Collection<Double>> queryIds = null;
         try {
@@ -131,6 +138,14 @@ public class RestService {
     }
 
 
+    /**
+     *
+     * @param ip The IP of the Odysseus instance
+     * @param createSocketRequestDTO The request object
+     * @return  The outer map has the name of the operator as key, the inner map
+     *         the output port of the operator
+     * @throws RestException
+     */
     public static Map<String, Map<Integer, SocketInfo>> getResultsFromQuery(String ip, CreateSocketRequestDTO createSocketRequestDTO) throws RestException {
         String hostURL = BASE_PROTOCOL + ip + ":" + SERVICE_PORT + "/" + SERVICE_PATH_CORE;
         ClientResource crCreateSocket = new ClientResource(hostURL + "/" + RESOURCE_PATH_CREATE_SOCKET);

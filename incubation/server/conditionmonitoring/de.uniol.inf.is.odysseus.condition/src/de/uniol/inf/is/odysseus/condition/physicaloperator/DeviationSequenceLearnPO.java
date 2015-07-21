@@ -37,7 +37,7 @@ public class DeviationSequenceLearnPO<T extends Tuple<M>, M extends ITimeInterva
 
 		if (sequenceTupleCounter < lastSequenceCounter
 				&& (learnedSequence <= sequencesToLearn || sequencesToLearn == 0)) {
-			// We are in the next curve
+			// We are in the next sequence
 			learnedSequence++;
 		}
 

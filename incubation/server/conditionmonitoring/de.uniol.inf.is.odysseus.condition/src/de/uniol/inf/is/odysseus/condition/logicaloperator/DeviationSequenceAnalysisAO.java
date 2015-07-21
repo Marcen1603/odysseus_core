@@ -114,7 +114,7 @@ public class DeviationSequenceAnalysisAO extends BinaryLogicalOp {
 		return groupingAttributes;
 	}
 
-	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "If you use a deviationSequenceLearn operator, use 'group' as grouping attribute.")
 	public void setGroupingAttributes(List<SDFAttribute> groupingAttributes) {
 		this.groupingAttributes = groupingAttributes;
 	}

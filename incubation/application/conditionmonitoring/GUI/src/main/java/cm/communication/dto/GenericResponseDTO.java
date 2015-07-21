@@ -12,6 +12,7 @@ public class GenericResponseDTO<T> extends AbstractResponseDTO {
     public GenericResponseDTO(T value) {
         this.value = value;
     }
+
     public GenericResponseDTO() {
 
     }
