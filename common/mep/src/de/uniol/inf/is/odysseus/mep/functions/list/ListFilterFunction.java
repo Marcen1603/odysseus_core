@@ -12,7 +12,7 @@ public class ListFilterFunction extends AbstractLambdaListFunction{
 	}
 
 	protected void fillReturnList(List<Object> out, Object o) {
-		if (expression.getValue()) {
+		if ((boolean)expression.getValue()) {
 			out.add(o);
 		}
 	}

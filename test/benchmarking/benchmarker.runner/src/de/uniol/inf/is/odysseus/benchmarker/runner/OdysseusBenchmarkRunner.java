@@ -99,7 +99,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			oStream.write("\n</benchmark>\n".getBytes());
 			oStream.close();
 
-			if (arguments.get(MEMORY_USAGE)) {
+			if ((boolean)arguments.get(MEMORY_USAGE)) {
 				String memFile = filename.replaceAll(".xml", "_memory.xml");
 				serializer.write(benchmark.getMemUsageStatistics(), new File(
 						memFile));
@@ -199,7 +199,7 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			metaTypes = metaTypesStr.split(":");
 		}
 
-		if (arguments.get(PRIORITY)) {
+		if ((boolean)arguments.get(PRIORITY)) {
 			metaTypes = Arrays.copyOf(metaTypes, metaTypes.length + 1);
 			metaTypes[metaTypes.length - 1] = "de.uniol.inf.is.odysseus.priority.IPriority";
 			benchmark
@@ -210,15 +210,15 @@ public class OdysseusBenchmarkRunner implements IApplication {
 
 		benchmark.setNoMetadataCreation(arguments.getBoolean(NO_METADATA));
 
-		if (arguments.get(PUNCTUATIONS)) {
+		if ((boolean)arguments.get(PUNCTUATIONS)) {
 			benchmark.setUsePunctuations(true);
 		}
 
-		if (arguments.get(EXTENDED_POSTPRIORISATION)) {
+		if ((boolean)arguments.get(EXTENDED_POSTPRIORISATION)) {
 			benchmark.setExtendedPostPriorisation(true);
 		}
 
-		if (arguments.get(LOAD_SHEDDING)) {
+		if ((boolean)arguments.get(LOAD_SHEDDING)) {
 			benchmark.setUseLoadShedding(true);
 		}
 
@@ -227,11 +227,11 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			benchmark.setMaxResults(maxResults);
 		}
 
-		if (arguments.get(MEMORY_USAGE)) {
+		if ((boolean)arguments.get(MEMORY_USAGE)) {
 			benchmark.setBenchmarkMemUsage(true);
 		}
 
-		if (arguments.get(RESULT_PER_QUERY)) {
+		if ((boolean)arguments.get(RESULT_PER_QUERY)) {
 			benchmark.setResultPerQuery(true);
 		}
 

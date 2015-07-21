@@ -11,5 +11,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.recommendation,
  de.uniol.inf.is.odysseus.core,
  org.eclipse.osgi,
  fastutil;bundle-version="7.0.2",
- com.google.guava
+ com.google.guava,
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/recommendationlearner.xml

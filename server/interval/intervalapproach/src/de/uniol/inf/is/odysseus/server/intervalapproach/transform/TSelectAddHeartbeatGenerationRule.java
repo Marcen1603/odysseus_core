@@ -30,9 +30,10 @@ public class TSelectAddHeartbeatGenerationRule extends AbstractTransformationRul
         return 0;
     }
 
-    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
     public void execute(SelectPO<?> operator, TransformationConfiguration transformConfig) throws RuleException {
-        operator.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration<>(operator.getHeartbeatRate()));
+        operator.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(operator.getHeartbeatRate()));
     }
 
     @Override

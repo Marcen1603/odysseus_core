@@ -49,7 +49,7 @@ abstract public class AbstractQueryIDsFunction extends AbstractFunction<List<Int
 			for (IPhysicalQuery q : queries) {
 				Tuple<IMetaAttribute> queryValues = getQueryValues(toRead, q);
 				predicate.bindVariables(queryValues.getAttributes());
-				if (predicate.getValue()) {
+				if ((boolean)predicate.getValue()) {
 					ret.add(q.getID());
 				}
 			}

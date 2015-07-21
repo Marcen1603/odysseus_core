@@ -63,7 +63,7 @@ public class ArgsTest extends TestCase {
 		String[] params = new String[] { "-value", "10" };
 		args.parse(params);
 
-		assertEquals(10, args.get("-value"));
+		assertEquals(10, (int)args.get("-value"));
 	}
 
 	@Test
@@ -96,7 +96,7 @@ public class ArgsTest extends TestCase {
 		String[] params = new String[] { "-value", "a" };
 		args.parse(params);
 
-		assertEquals('a', args.get("-value"));
+		assertEquals('a', (String)args.get("-value"));
 	}
 
 	@Test
