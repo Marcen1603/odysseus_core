@@ -832,13 +832,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		if (buildConfigurationName == null) {
 			buildConfigurationName = "Standard";
 		}
-		IQueryBuildConfigurationTemplate settings = getQueryBuildConfiguration(buildConfigurationName);
+		IQueryBuildConfigurationTemplate settings = getQueryBuildConfiguration(buildConfigurationName).clone();
 
-		// Could not happend
-		if (settings == null) {
-			throw new QueryAddException("Transformation Configuration "
-					+ buildConfigurationName + " not found");
-		}
 		ArrayList<IQueryBuildSetting<?>> newSettings = new ArrayList<IQueryBuildSetting<?>>(
 				settings.getConfiguration());
 

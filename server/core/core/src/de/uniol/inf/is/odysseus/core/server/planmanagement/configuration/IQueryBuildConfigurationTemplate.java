@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 
 public interface IQueryBuildConfigurationTemplate {
 
-	public List<IQueryBuildSetting<?>> getConfiguration();
-	public String getName();
+	List<IQueryBuildSetting<?>> getConfiguration();
+	String getName();
+	IQueryBuildConfigurationTemplate clone();
 }
