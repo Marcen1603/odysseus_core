@@ -15,7 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.parallelization.rcp.windows.composite;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
@@ -31,4 +33,24 @@ public abstract class AbstractBenchmarkComposite extends Composite{
 		label.setText(string);
 		return label;
 	}
+	
+	protected static Label createBoldLabel(Composite generalComposite, String string) {
+		Label label = new Label(generalComposite, SWT.WRAP | SWT.BORDER
+				| SWT.LEFT);
+		label.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
+		label.setText(string);
+		return label;
+	}
+	
+	protected static Label createSeperator(Composite generalComposite){
+		Label separator = new Label(generalComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		return separator;
+	}
+
+	protected static void createLabelWithSeperator(Composite generalComposite,String string){
+		createBoldLabel(generalComposite, string);
+		createSeperator(generalComposite);
+	}
+	
 }

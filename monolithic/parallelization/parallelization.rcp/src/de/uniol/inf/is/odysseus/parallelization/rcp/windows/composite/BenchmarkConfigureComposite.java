@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.windows.table.StrategySelect
 
 public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 
-	private Text degreeText;
+	private Text interOperatorDegreeText;
 	private Text buffersizeText;
 	private Text numberOfElementsText;
 	private Button allowPostOptimizationButton;
@@ -55,6 +55,9 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 	private final String NON_THREADED = "Only Non-Threaded Buffer";
 	private String[] BUFFER_COMBO = { BOTH, THREADED, NON_THREADED };
 	private Text numberOfExecutionsText;
+	private Button useIntraOperatorParallelization;
+	private Button useInterOperatorParallelization;
+	private Text intraOperatorDegreeText;
 
 	public BenchmarkConfigureComposite(Composite parent, int style,
 			int windowWidth, UUID benchmarkProcessId,
@@ -84,58 +87,69 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 	}
 
 	private void createContent() {
-		createLabel(this,
-				"Configure parallelization benchmark for selected query");
-
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.widthHint = 220;
-
-		Composite configComposite = new Composite(this, SWT.NONE);
-		GridLayout gridLayout = new GridLayout(2, false);
-		configComposite.setLayout(gridLayout);
-
-		Label degreeLabel = new Label(configComposite, SWT.NULL);
-		degreeLabel.setText("Degrees (comma-seperated): ");
-		degreeText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-		degreeText.setText("2,4,8");
-		degreeText.setLayoutData(gridData);
-
-		Label buffersizeLabel = new Label(configComposite, SWT.NULL);
-		buffersizeLabel.setText("Buffersize: ");
-		buffersizeText = new Text(configComposite, SWT.SINGLE | SWT.BORDER);
-		buffersizeText.setText(String
-				.valueOf(InterOperatorPreExecutionHandler.AUTO_BUFFER_SIZE));
-		buffersizeText.setLayoutData(gridData);
-
-		Label numberOfElementsLabel = new Label(configComposite, SWT.NULL);
+		
+		createLabelWithSeperator(this, "Global configuration");
+		
+		Composite globalConfigComposite = new Composite(this, SWT.NONE);
+		GridLayout globalConfigGridLayout = new GridLayout(2, false);
+		globalConfigComposite.setLayout(globalConfigGridLayout);
+		
+		Label numberOfElementsLabel = new Label(globalConfigComposite, SWT.NULL);
 		numberOfElementsLabel.setText("Number of elements for analyse: ");
-		numberOfElementsText = new Text(configComposite, SWT.SINGLE
+		numberOfElementsText = new Text(globalConfigComposite, SWT.SINGLE
 				| SWT.BORDER);
 		numberOfElementsText.setText(String
 				.valueOf(BenchmarkerConfiguration.DEFAULT_NUMBER_OF_ELEMENTS));
 		numberOfElementsText.setLayoutData(gridData);
 
-		Label maxExecutionTimeLabel = new Label(configComposite, SWT.NULL);
+		Label maxExecutionTimeLabel = new Label(globalConfigComposite, SWT.NULL);
 		maxExecutionTimeLabel.setText("Maximum time for each analyse in ms: ");
-		maxExecutionTimeText = new Text(configComposite, SWT.SINGLE
+		maxExecutionTimeText = new Text(globalConfigComposite, SWT.SINGLE
 				| SWT.BORDER);
 		maxExecutionTimeText.setText(String
 				.valueOf(BenchmarkerConfiguration.DEFAULT_MAX_EXECUTION_TIME));
 		maxExecutionTimeText.setLayoutData(gridData);
 
-		Label numberOfExecutionsLabel = new Label(configComposite, SWT.NULL);
+		Label numberOfExecutionsLabel = new Label(globalConfigComposite, SWT.NULL);
 		numberOfExecutionsLabel
 				.setText("Number of executions for each configuration: ");
-		numberOfExecutionsText = new Text(configComposite, SWT.SINGLE
+		numberOfExecutionsText = new Text(globalConfigComposite, SWT.SINGLE
 				| SWT.BORDER);
 		numberOfExecutionsText
 				.setText(String
 						.valueOf(BenchmarkerConfiguration.DEFAULT_NUMBER_OF_EXECUTIONS));
 		numberOfExecutionsText.setLayoutData(gridData);
+		
 
-		Label selectBufferType = new Label(configComposite, SWT.NULL);
+		
+		createLabelWithSeperator(this, "Configure Inter-operator parallelization");
+
+		useInterOperatorParallelization = new Button(this, SWT.CHECK);
+		useInterOperatorParallelization.setText("Use Inter-Operator Parallelization");
+		useInterOperatorParallelization.setSelection(true);
+		
+		Composite interOperatorconfigComposite = new Composite(this, SWT.NONE);
+		GridLayout interOperatorGridLayout = new GridLayout(2, false);
+		interOperatorconfigComposite.setLayout(interOperatorGridLayout);
+
+		Label degreeLabel = new Label(interOperatorconfigComposite, SWT.NULL);
+		degreeLabel.setText("Degrees (comma-seperated): ");
+		interOperatorDegreeText = new Text(interOperatorconfigComposite, SWT.SINGLE | SWT.BORDER);
+		interOperatorDegreeText.setText("2,4,8");
+		interOperatorDegreeText.setLayoutData(gridData);
+
+		Label buffersizeLabel = new Label(interOperatorconfigComposite, SWT.NULL);
+		buffersizeLabel.setText("Buffersize: ");
+		buffersizeText = new Text(interOperatorconfigComposite, SWT.SINGLE | SWT.BORDER);
+		buffersizeText.setText(String
+				.valueOf(InterOperatorPreExecutionHandler.AUTO_BUFFER_SIZE));
+		buffersizeText.setLayoutData(gridData);
+
+		Label selectBufferType = new Label(interOperatorconfigComposite, SWT.NULL);
 		selectBufferType.setText("Select buffer type: ");
-		buffertypeCombo = new Combo(configComposite, SWT.READ_ONLY);
+		buffertypeCombo = new Combo(interOperatorconfigComposite, SWT.READ_ONLY);
 		buffertypeCombo.setItems(BUFFER_COMBO);
 		buffertypeCombo.select(0);
 		buffertypeCombo.setLayoutData(gridData);
@@ -182,13 +196,32 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				tableViewer.setAllChecked(false);
 			}
 		});
+		
+		
+		createLabelWithSeperator(this, "Configure Intra-operator parallelization");
+		
+		useIntraOperatorParallelization = new Button(this, SWT.CHECK);
+		useIntraOperatorParallelization.setText("Use Intra-Operator Parallelization");
+		useIntraOperatorParallelization.setSelection(true);
+		
+		Composite intraOperatorconfigComposite = new Composite(this, SWT.NONE);
+		GridLayout intraOperatorGridLayout = new GridLayout(2, false);
+		intraOperatorconfigComposite.setLayout(intraOperatorGridLayout);
+		
+		Label intraOperatorDegreeLabel = new Label(intraOperatorconfigComposite, SWT.NULL);
+		intraOperatorDegreeLabel.setText("Degrees (comma-seperated): ");
+		
+		intraOperatorDegreeText = new Text(intraOperatorconfigComposite, SWT.SINGLE | SWT.BORDER);
+		intraOperatorDegreeText.setText("2,4,8");
+		intraOperatorDegreeText.setLayoutData(gridData);
+		
 	}
 
 	protected void validateConfiguration(
 			List<StrategySelectionRow> selectedStratgies) {
 		// degree values
 		List<Integer> degrees = new ArrayList<Integer>();
-		String degreeString = this.degreeText.getText();
+		String degreeString = this.interOperatorDegreeText.getText();
 		if (degreeString.isEmpty()) {
 			throw new IllegalArgumentException("No degree definied");
 		} else {
@@ -261,7 +294,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 		configuration.setSelectedStratgies(selectedStratgies);
 
 		List<Integer> degrees = new ArrayList<Integer>();
-		String degreeString = this.degreeText.getText();
+		String degreeString = this.interOperatorDegreeText.getText();
 		String[] degreeValues = degreeString.trim().split(",");
 		for (int i = 0; i < degreeValues.length; i++) {
 			degrees.add(Integer.parseInt(degreeValues[i]));
