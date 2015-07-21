@@ -14,8 +14,8 @@ public class ConcatFunction extends AbstractFunction<String> {
 	@Override
 	public String getValue() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getInputValue(0));
-		sb.append(getInputValue(1));
+		sb.append(String.valueOf(getInputValue(0)));
+		sb.append(String.valueOf(getInputValue(1)));
 		return sb.toString();
 	}
 

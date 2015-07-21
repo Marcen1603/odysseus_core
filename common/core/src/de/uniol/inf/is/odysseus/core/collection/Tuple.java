@@ -764,7 +764,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public String toString(final int[] gRestrict) {
 		StringBuffer value = new StringBuffer();
 		for (int pos : gRestrict) {
-			value.append(getAttribute(pos)).append(" ");
+			value.append(String.valueOf(getAttribute(pos))).append(" ");
 		}
 		return value.toString();
 	}

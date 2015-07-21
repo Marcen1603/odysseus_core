@@ -261,7 +261,7 @@ public class IfController {
 			values.add(replacementMap.get(name));
 		}
 		expression.bindVariables(values.toArray());
-		System.out.println(expression.getValue());
+		System.out.println(String.valueOf(expression.getValue()));
 	}
 
 	private static boolean existsSource(String sourceName, ISession caller) {
