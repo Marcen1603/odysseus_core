@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
  * @author Michael Brand
  *
  */
-public class QueryAddedInfo extends AbstractQueryStateInfo {
+public class ScriptAddedInfo extends AbstractQueryStateInfo {
 
 	/**
 	 * The version of this class for serialization.

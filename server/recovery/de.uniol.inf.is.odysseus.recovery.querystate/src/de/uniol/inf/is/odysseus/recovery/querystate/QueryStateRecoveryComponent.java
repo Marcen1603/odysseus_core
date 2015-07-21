@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.recovery.IRecoveryComponent;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.recovery.configuration.RecoveryConfigKeyword;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.AbstractQueryStateInfo;
-import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryAddedInfo;
+import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.ScriptAddedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryRemovedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryStateChangedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.SourceRemovedInfo;
@@ -338,7 +338,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 */
 	private void backupScript(String script, List<Integer> queryIds,
 			String parserId, ISession user, Context context) {
-		QueryAddedInfo info = new QueryAddedInfo();
+		ScriptAddedInfo info = new ScriptAddedInfo();
 		info.setContext(context);
 		info.setParserId(parserId);
 		info.setQueryIds(queryIds);
@@ -476,7 +476,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 *            All system log entries to recover.
 	 */
 	private static void recoverScript(ISysLogEntry entry, List<ISysLogEntry> log) {
-		QueryAddedInfo info = (QueryAddedInfo) AbstractQueryStateInfo
+		ScriptAddedInfo info = (ScriptAddedInfo) AbstractQueryStateInfo
 				.fromBase64Binary(entry.getComment().get());
 		cExecutor.get().addQuery(info.getQueryText(), info.getParserId(),
 				info.getSession(), info.getContext());
