@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingCommunicatorRegistry">
-   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingCommunicatorRegistry"/>
+   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.impl.LoadBalancingCommunicatorRegistry"/>
    <reference bind="bindCommunicator" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator" name="ILoadBalancingCommunicator" policy="static" unbind="unbindCommunicator"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicatorRegistry"/>
+      <provide interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry"/>
    </service>
 </scr:component>

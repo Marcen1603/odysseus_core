@@ -74,8 +74,8 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.monolithic.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.peer.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.costmodel.server.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.core.server.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.feature" version="1.0.0.qualifier"/>
    </features>
 

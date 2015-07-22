@@ -35,9 +35,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
@@ -72,11 +72,11 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 	}
 	
-	public void bindCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
+	public void bindLoadBalancingCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
 		this.communicatorRegistry = serv;
 	}
 
-	public void unbindCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
+	public void unbindLoadBalancingCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
 		if(this.communicatorRegistry==serv) {
 			this.communicatorRegistry = null;
 		}
