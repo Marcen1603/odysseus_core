@@ -63,11 +63,6 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 
 	private IMetadataInitializer<M, W> metadataInitializer = new MetadataInitializerAdapter<>();
 
-	// public AccessPO(IProtocolHandler<W> protocolHandler) {
-	// this.protocolHandler = protocolHandler;
-	// this.maxTimeToWaitForNewEventMS = 0;
-	// }
-
 	public AccessPO(IProtocolHandler<W> protocolHandler,
 			long maxTimeToWaitForNewEventMS) {
 		this.protocolHandler = protocolHandler;
@@ -97,8 +92,6 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 			sendError("Exception reading input", e);
 		}
 
-		// TODO: We should think about propagate done ... maybe its better
-		// to send a punctuation??
 		tryPropagateDone();
 		return false;
 	}
@@ -126,8 +119,6 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 			meta = getMetadataInstance();
 		} catch (InstantiationException | IllegalAccessException e1) {
 			LOG.error("Error creating meta data", e1);
-			// BAD Bad bad idea, this line kills your screen with popups!!!
-			// sendError("Error creating meta data",e1);
 		}
 
 		if (isOpen() && !isDone()) {
@@ -150,8 +141,6 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 				}
 			} catch (Exception e) {
 				LOG.error("Error Reading from input", e);
-				// BAD Bad bad idea, this line kills your screen with popups!!!
-				// sendError("Error Reading from input", e);
 			}
 		}
 	}
@@ -193,6 +182,7 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 			return false;
 		}
 		// TODO: Check for Equality
+		// This is not needed. Access Operators with the same name are shared automatically
 		return false;
 	}
 
