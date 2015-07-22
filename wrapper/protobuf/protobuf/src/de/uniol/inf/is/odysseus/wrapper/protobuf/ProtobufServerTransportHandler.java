@@ -297,6 +297,11 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	public void send(byte[] message) throws IOException {
 		throw new RuntimeException("Not implemented");
 	}
+	
+	@Override
+	public void send(Object message) throws IOException {
+		throw new RuntimeException("Not implemented");
+	}
 
 	@Override
 	public ITransportHandler createInstance(

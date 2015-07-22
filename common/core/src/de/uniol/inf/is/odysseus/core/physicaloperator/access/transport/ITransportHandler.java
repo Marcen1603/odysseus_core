@@ -87,6 +87,13 @@ public interface ITransportHandler {
     void send(byte[] message) throws IOException;
     
     /**
+     * This message is used, when the transport handler works as sender
+     * @param message
+     * @throws IOException
+     */
+    void send(Object message) throws IOException;
+    
+    /**
      * Send punctuations to transport handler
      * @param punctuation
      */

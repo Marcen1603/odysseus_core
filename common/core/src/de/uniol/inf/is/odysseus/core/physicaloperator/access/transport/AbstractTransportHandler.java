@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
+import com.sun.xml.internal.ws.resources.SenderMessages;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -143,6 +145,11 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	@Override
 	public void processPunctuation(IPunctuation punctuation) {
 		// Default: Nothing to do
+	}
+	
+	@Override
+	public void send(Object message) throws IOException {
+		// empty default implementation
 	}
 
 }

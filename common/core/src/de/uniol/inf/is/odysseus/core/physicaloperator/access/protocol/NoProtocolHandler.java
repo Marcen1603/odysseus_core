@@ -56,6 +56,11 @@ public class NoProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		}
 	}
 
+	@Override
+	public void write(T object) throws IOException {
+		getTransportHandler().send(object);
+	}
+	
     /**
      * {@inheritDoc}
      */
