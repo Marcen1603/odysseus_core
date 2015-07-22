@@ -532,6 +532,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			this.isStarting = true;
 			doneRoots.clear();
 			this.queryListener = queryListener;
+			queryStartedTS = System.currentTimeMillis();
 			for (IPhysicalOperator curRoot : getRoots()) {
 				// this also works for cyclic plans,
 				// since if an operator is already open, the
@@ -539,7 +540,6 @@ public class PhysicalQuery implements IPhysicalQuery {
 				curRoot.open(this);
 			}
 			setState(nextState);
-			queryStartedTS = System.currentTimeMillis();
 			this.isStarting = false;
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
