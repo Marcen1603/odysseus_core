@@ -80,10 +80,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAct
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.SaveImageAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting.Type;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.IChartSettingChangeable;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.MethodSetting;
 
 public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		AbstractChart<T, M> implements IChartSettingChangeable, IDashboardPart {

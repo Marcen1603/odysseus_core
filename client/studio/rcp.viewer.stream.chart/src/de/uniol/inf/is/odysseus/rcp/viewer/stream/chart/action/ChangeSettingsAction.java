@@ -23,8 +23,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.dialogs.ChangeSettingsDialog;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.IChartSettingChangeable;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.MethodSetting;
 
 public class ChangeSettingsAction extends Action {
 

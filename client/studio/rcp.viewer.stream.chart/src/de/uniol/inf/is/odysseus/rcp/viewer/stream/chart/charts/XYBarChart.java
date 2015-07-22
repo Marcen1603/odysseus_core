@@ -20,8 +20,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractTimeSeriesChart;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting.Type;
 
 public class XYBarChart extends AbstractTimeSeriesChart {	
 

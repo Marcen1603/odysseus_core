@@ -42,8 +42,8 @@ import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype.ProbabilisticVi
 import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype.ProbabilisticViewableSDFAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting.Type;
 
 /**
  * 

@@ -22,8 +22,8 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractCategorySingleValuesChart;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting.Type;
 
 public class BarChart extends AbstractCategorySingleValuesChart {
 

@@ -13,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings;
+package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config;
 
 import java.util.List;
 

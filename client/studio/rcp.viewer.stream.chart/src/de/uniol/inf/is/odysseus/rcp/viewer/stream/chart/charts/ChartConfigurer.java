@@ -38,8 +38,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.AbstractViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.IChartSettingChangeable;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.MethodSetting;
 
 @SuppressWarnings("rawtypes")
 public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFreeChart> {

@@ -21,9 +21,9 @@ Import-Package: de.uniol.inf.is.odysseus.rcp,
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.chart,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts,
+ de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.dialogs,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema,
- de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype,
- de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings
+ de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype
 Service-Component: OSGI-INF/executor.xml
