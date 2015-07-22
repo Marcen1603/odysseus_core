@@ -637,6 +637,11 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 				}
 			}
 		}
+		if (isRoot()) {
+			for (IOperatorOwner owner : getOwner()) {
+				owner.done(this);
+			}
+		}
 	}
 
 	@Override

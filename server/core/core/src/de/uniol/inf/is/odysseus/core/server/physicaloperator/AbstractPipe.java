@@ -299,15 +299,15 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 	}
 
-	@Override
-	final protected void propagateDone() {
-		super.propagateDone();
-		if (isRoot()) {
-			for (IOperatorOwner owner : getOwner()) {
-				owner.done(this);
-			}
-		}
-	}
+//	@Override
+//	final protected void propagateDone() {
+//		super.propagateDone();
+//		if (isRoot()) {
+//			for (IOperatorOwner owner : getOwner()) {
+//				owner.done(this);
+//			}
+//		}
+//	}
 
 	/**
 	 * Every ISink can have additional conditions, if it is done (e.g. in a
