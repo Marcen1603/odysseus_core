@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach.threaded;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,22 +26,27 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		extends AggregateTIPO<Q, R, W> implements IThreadedPO {
 
 	private int degree;
+	private int maxBufferSize;
 	private Map<Integer, ThreadedAggregateTIPOWorker<Q, R, W>> threadMap = new ConcurrentHashMap<Integer, ThreadedAggregateTIPOWorker<Q, R, W>>();
 	private Map<Integer, ArrayBlockingQueue<Pair<Long, R>>> queueMap = new ConcurrentHashMap<Integer, ArrayBlockingQueue<Pair<Long, R>>>();
 	private ThreadGroup workerThreadGroup;
+	private int counter = 0;
 
 	public ThreadedAggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
 			boolean fastGrouping, IMetadataMergeFunction<Q> metadataMerge,
-			int degree) {
+			int degree, int buffersize) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations,
 				fastGrouping, metadataMerge);
-		this.setDegree(degree);
-		workerThreadGroup = new ThreadGroup("Threaded Aggregate worker threads");
+		this.maxBufferSize = buffersize;
+		this.degree = degree;
+		workerThreadGroup = new ThreadGroup(
+				"Threaded Aggregate worker threads "
+						+ UUID.randomUUID().toString());
 		for (int i = 0; i < degree; i++) {
 			ArrayBlockingQueue<Pair<Long, R>> blockingQueue = new ArrayBlockingQueue<Pair<Long, R>>(
-					1000);
+					maxBufferSize);
 			ThreadedAggregateTIPOWorker<Q, R, W> worker = new ThreadedAggregateTIPOWorker<Q, R, W>(
 					workerThreadGroup, this, i, blockingQueue);
 			queueMap.put(i, blockingQueue);
@@ -87,7 +94,14 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 			}
 		}
 
-		int threadNumber = (int) (groupID % degree);
+		// we need to use the threads in round robin mode, to do a identically
+		// load on the different cores
+		int threadNumber = counter;
+		counter++;
+		if (counter == degree) {
+			counter = 0;
+		}
+
 		ArrayBlockingQueue<Pair<Long, R>> queue = queueMap.get(threadNumber);
 
 		try {
@@ -153,4 +167,13 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		this.degree = degree;
 	}
 
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> map = new HashMap<>();
+		map.putAll(super.getKeyValues());
+		map.put("Number of threads", String.valueOf(degree));
+		map.put("Buffersize", String.valueOf(maxBufferSize));
+		return map;
+
+	}
 }

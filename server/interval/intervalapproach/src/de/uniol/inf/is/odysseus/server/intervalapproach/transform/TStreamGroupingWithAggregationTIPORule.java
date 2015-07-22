@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.value.ParallelIntraOperatorSettingValue;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.value.ParallelIntraOperatorSettingValueElement;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
@@ -50,31 +51,37 @@ public class TStreamGroupingWithAggregationTIPORule extends
 		// threaded aggregate operator
 		boolean useThreadedOperator = false;
 		int degree = 0;
+		int maxBuffersize = 0;
+		
 		if (aggregateAO.getNumberOfThreads() > 1){
 			useThreadedOperator = true;
 			degree = aggregateAO.getNumberOfThreads();
+			maxBuffersize = aggregateAO.getMaxBufferSize();
 		} else if (transformConfig.getOption(ParallelIntraOperatorSetting.class.getName()) != null){
 			ParallelIntraOperatorSettingValue value = ((ParallelIntraOperatorSetting) transformConfig.getOption(ParallelIntraOperatorSetting.class.getName())).getValue();
 			if (value != null){
-				if (!value.hasIndividualDegrees()){
+				if (!value.hasIndividualSettings()){
 					degree = value.getGlobalDegree();
+					maxBuffersize = value.getGlobalBuffersize();
 					useThreadedOperator = true;
 				} else {
 					String operatorId = aggregateAO.getUniqueIdentifier();
-					if (value.hasIndividualDegreeForOperator(operatorId)){
-						degree = value.getIndividualDegree(operatorId);
+					if (value.hasIndividualSettingsForOperator(operatorId)){
+						ParallelIntraOperatorSettingValueElement individualSettings = value.getIndividualSettings(operatorId);
+						degree = individualSettings.getIndividualDegree();
+						maxBuffersize = individualSettings.getIndividualBuffersize();
 						useThreadedOperator = true;
 					}
 				}
 			}
 		}
 		
-		if (useThreadedOperator && degree > 1){
+		if (useThreadedOperator && degree > 1 && maxBuffersize > 1){
 			po = new ThreadedAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
 					aggregateAO.getInputSchema(),
 					aggregateAO.getOutputSchemaIntern(0),
 					aggregateAO.getGroupingAttributes(),
-					aggregateAO.getAggregations(), aggregateAO.isFastGrouping(), mf, degree);
+					aggregateAO.getAggregations(), aggregateAO.isFastGrouping(), mf, degree, maxBuffersize);
 		} else {
 			po = new AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
 					aggregateAO.getInputSchema(),

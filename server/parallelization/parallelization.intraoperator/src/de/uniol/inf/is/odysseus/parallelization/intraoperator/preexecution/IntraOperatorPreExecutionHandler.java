@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.value.ParallelIntraOperatorSettingValue;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
+import de.uniol.inf.is.odysseus.parallelization.intraoperator.constants.IntraOperatorParallelizationConstants;
 import de.uniol.inf.is.odysseus.parallelization.intraoperator.parameter.IntraOperatorGlobalKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.parallelization.preexecution.AbstractParallelizationPreExecutionHandler;
@@ -25,6 +26,7 @@ public class IntraOperatorPreExecutionHandler extends
 			.getInfoService(IntraOperatorPreExecutionHandler.class);
 
 	private int globalDegreeOfParallelization = 0;
+	private int globalBuffersize = 0;
 
 	public IntraOperatorPreExecutionHandler() {
 		parameterHelper = PreParserKeywordParameterHelper
@@ -48,11 +50,32 @@ public class IntraOperatorPreExecutionHandler extends
 		processDegreeParameter(result
 				.get(IntraOperatorGlobalKeywordParameter.DEGREE_OF_PARALLELIZATION));
 
+		processBuffersizeParameter(result.get(IntraOperatorGlobalKeywordParameter.BUFFERSIZE));
+		
 		checkIfIntraOperatorSettingAlreadyExists(settings);
 		
-		ParallelIntraOperatorSettingValue value = new ParallelIntraOperatorSettingValue(globalDegreeOfParallelization);
+		ParallelIntraOperatorSettingValue value = new ParallelIntraOperatorSettingValue(globalDegreeOfParallelization, globalBuffersize);
 		ParallelIntraOperatorSetting intraOperatorSetting = new ParallelIntraOperatorSetting(value);
 		settings.add(intraOperatorSetting);
+	}
+
+	private void processBuffersizeParameter(String string) throws OdysseusScriptException {
+		if (string == null || string.equalsIgnoreCase("AUTO")) {
+			globalBuffersize = IntraOperatorParallelizationConstants.DEFAULT_BUFFERSIZE;
+		} else {
+			try {
+				int buffersize = Integer.parseInt(string);
+				if (buffersize > 0){
+					globalBuffersize = buffersize;					
+				} else {
+					throw new OdysseusScriptException(
+							"Value for buffersize is not valid. Value need to be greater 0.");
+				}
+			} catch (NumberFormatException e) {
+				throw new OdysseusScriptException(
+						"Value for buffersize is not valid. Degree is no integer.");
+			}
+		}
 	}
 
 	private void checkIfIntraOperatorSettingAlreadyExists(

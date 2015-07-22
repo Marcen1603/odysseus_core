@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter.HandlerParameterPair;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.constants.InterOperatorParallelizationConstants;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorGlobalKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.InterOperatorParallelizationPreTransformationHandler;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
@@ -21,7 +22,6 @@ import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParamete
 
 public class InterOperatorPreExecutionHandler extends
 		AbstractParallelizationPreExecutionHandler {
-	public static final int AUTO_BUFFER_SIZE = 10000000;
 	public static final String TYPE = "INTER_OPERATOR";
 	
 	private PreParserKeywordParameterHelper<InterOperatorGlobalKeywordParameter> parameterHelper;
@@ -29,7 +29,7 @@ public class InterOperatorPreExecutionHandler extends
 			.getInfoService(InterOperatorPreExecutionHandler.class);
 
 	private int globalDegreeOfParallelization = 0;
-	private int globalBufferSize = AUTO_BUFFER_SIZE;
+	private int globalBufferSize = InterOperatorParallelizationConstants.AUTO_BUFFER_SIZE;
 	private boolean allowOptimization = true;
 	private boolean useThreadedBuffer = true;
 
@@ -170,11 +170,11 @@ public class InterOperatorPreExecutionHandler extends
 		parameters.add(buffersizeParameter);
 
 		// create parameter for global value (allow cleanup)
-		Pair<String, String> cleanupParameter = new Pair<String, String>();
-		cleanupParameter.setE1(InterOperatorGlobalKeywordParameter.OPTIMIZATION
+		Pair<String, String> optimizationParameter = new Pair<String, String>();
+		optimizationParameter.setE1(InterOperatorGlobalKeywordParameter.OPTIMIZATION
 				.name());
-		cleanupParameter.setE2(String.valueOf(allowCleanup));
-		parameters.add(cleanupParameter);
+		optimizationParameter.setE2(String.valueOf(allowCleanup));
+		parameters.add(optimizationParameter);
 
 		// create parameter for global value (use threaded buffer)
 		Pair<String, String> threadedBufferParameter = new Pair<String, String>();
@@ -229,7 +229,7 @@ public class InterOperatorPreExecutionHandler extends
 			}
 		} catch (NumberFormatException e) {
 			if (buffersizeString.equalsIgnoreCase("AUTO")) {
-				globalBufferSize = AUTO_BUFFER_SIZE;
+				globalBufferSize = InterOperatorParallelizationConstants.AUTO_BUFFER_SIZE;
 			} else {
 				throw new OdysseusScriptException();
 			}

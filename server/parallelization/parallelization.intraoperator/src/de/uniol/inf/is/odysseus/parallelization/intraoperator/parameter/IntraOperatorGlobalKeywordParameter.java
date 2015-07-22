@@ -20,7 +20,8 @@ import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
 
 public enum IntraOperatorGlobalKeywordParameter implements IKeywordParameter{
 	PARALLELIZATION_TYPE("type", 0, false),
-	DEGREE_OF_PARALLELIZATION("degree", 1, false);
+	DEGREE_OF_PARALLELIZATION("degree", 1, false),
+	BUFFERSIZE("buffersize", 2, true);
 
 	
 	private IntraOperatorGlobalKeywordParameter(String name, int position, boolean isOptional){

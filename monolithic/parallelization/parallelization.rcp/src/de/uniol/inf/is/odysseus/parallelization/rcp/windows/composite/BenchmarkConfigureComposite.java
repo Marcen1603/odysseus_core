@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution.InterOperatorPreExecutionHandler;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.constants.InterOperatorParallelizationConstants;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkerConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
@@ -148,7 +148,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 		buffersizeText = new Text(interOperatorconfigComposite, SWT.SINGLE
 				| SWT.BORDER);
 		buffersizeText.setText(String
-				.valueOf(InterOperatorPreExecutionHandler.AUTO_BUFFER_SIZE));
+				.valueOf(InterOperatorParallelizationConstants.AUTO_BUFFER_SIZE));
 		buffersizeText.setLayoutData(gridData);
 
 		Label selectBufferType = new Label(interOperatorconfigComposite,

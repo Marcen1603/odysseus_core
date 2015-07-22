@@ -18,9 +18,9 @@ package de.uniol.inf.is.odysseus.parallelization.interoperator.configuration;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
 import de.uniol.inf.is.odysseus.parallelization.helper.FragmentationTypeHelper;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.BufferSizeConstants;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.DegreeOfParalleizationConstants;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution.InterOperatorPreExecutionHandler;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.constants.BufferSizeConstants;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.constants.DegreeOfParalleizationConstants;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.constants.InterOperatorParallelizationConstants;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
@@ -32,15 +32,12 @@ public class ParallelOperatorConfiguration {
 
 	private BufferSizeConstants bufferSizeConstant = BufferSizeConstants.GLOBAL;
 	private int bufferSize = 0;
-
 	private String multithreadingStrategy = "";
-
 	private String startParallelizationId;
 	private String endParallelizationId;
-
 	private boolean useThreadedBuffer;
-
 	private boolean assureSemanticCorrectness = false;
+	private boolean useParallelOperators = false;
 
 	private Class<? extends AbstractStaticFragmentAO> fragementationType;
 
@@ -74,7 +71,7 @@ public class ParallelOperatorConfiguration {
 		if (getBufferSizeConstant() == BufferSizeConstants.GLOBAL) {
 			setBufferSize(globalBufferSize);
 		} else if (getBufferSizeConstant() == BufferSizeConstants.AUTO) {
-			setBufferSize(InterOperatorPreExecutionHandler.AUTO_BUFFER_SIZE);
+			setBufferSize(InterOperatorParallelizationConstants.AUTO_BUFFER_SIZE);
 		}
 
 		// use threaded buffer
@@ -208,6 +205,14 @@ public class ParallelOperatorConfiguration {
 
 	public void setUseThreadedBuffer(boolean useThreadedBuffer) {
 		this.useThreadedBuffer = useThreadedBuffer;
+	}
+
+	public boolean isUseParallelOperators() {
+		return useParallelOperators;
+	}
+
+	public void setUseParallelOperators(boolean useParallelOperators) {
+		this.useParallelOperators = useParallelOperators;
 	}
 
 }

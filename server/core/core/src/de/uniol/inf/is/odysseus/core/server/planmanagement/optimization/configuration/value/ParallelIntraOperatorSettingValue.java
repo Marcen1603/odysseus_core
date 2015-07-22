@@ -5,15 +5,17 @@ import java.util.Map;
 
 public class ParallelIntraOperatorSettingValue {
 	private int globalDegree = 0;
+	private int globalBuffersize = 0;
 
 	// maps unique operator id to individual degree
-	private Map<String, Integer> individualDegrees = new HashMap<String, Integer>();
+	private Map<String, ParallelIntraOperatorSettingValueElement> individualSettings = new HashMap<String, ParallelIntraOperatorSettingValueElement>();
 
 	public ParallelIntraOperatorSettingValue() {
 	}
 
-	public ParallelIntraOperatorSettingValue(int globalDegree) {
-		this.setGlobalDegree(globalDegree);
+	public ParallelIntraOperatorSettingValue(int globalDegree, int globalBuffersize) {
+		this.globalDegree = globalDegree;
+		this.globalBuffersize = globalBuffersize;
 	}
 
 	public int getGlobalDegree() {
@@ -24,30 +26,38 @@ public class ParallelIntraOperatorSettingValue {
 		this.globalDegree = globalDegree;
 	}
 
-	public boolean hasIndividualDegrees() {
-		return !individualDegrees.isEmpty();
+	public boolean hasIndividualSettings() {
+		return !individualSettings.isEmpty();
 	}
 
-	public boolean hasIndividualDegreeForOperator(String operatorId) {
+	public boolean hasIndividualSettingsForOperator(String operatorId) {
 		if (operatorId == null){
 			return false;
 		}
-		return individualDegrees.containsKey(operatorId);
+		return individualSettings.containsKey(operatorId);
 	}
 
-	public int getIndividualDegree(String operatorId) {
+	public ParallelIntraOperatorSettingValueElement getIndividualSettings(String operatorId) {
 		if (operatorId == null){
-			return -1;
+			return null;
 		}
-		return individualDegrees.get(operatorId);
+		return individualSettings.get(operatorId);
 	}
 
-	public void addIndividualDegree(String operatorId, int degree) {
-		if (individualDegrees.containsKey(operatorId)) {
+	public void addIndividualSettings(String operatorId, ParallelIntraOperatorSettingValueElement individualSetting) {
+		if (individualSettings.containsKey(operatorId)) {
 			throw new IllegalArgumentException(
 					"Duplicate definition for operator with id " + operatorId);
 		}
-		individualDegrees.put(operatorId, degree);
+		individualSettings.put(operatorId, individualSetting);
+	}
+
+	public int getGlobalBuffersize() {
+		return globalBuffersize;
+	}
+
+	public void setGlobalBuffersize(int globalBuffersize) {
+		this.globalBuffersize = globalBuffersize;
 	}
 
 }

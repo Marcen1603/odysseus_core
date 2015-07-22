@@ -34,6 +34,9 @@ import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionH
 import de.uniol.inf.is.odysseus.parallelization.helper.FragmentationTypeHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelInterOperatorSetting;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.constants.BufferSizeConstants;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.constants.DegreeOfParalleizationConstants;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.constants.InterOperatorParallelizationConstants;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorParallelizationKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution.InterOperatorPreExecutionHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
@@ -59,7 +62,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		parameterHelper = PreParserKeywordParameterHelper
 				.newInstance(
 						InterOperatorParallelizationKeywordParameter.class,
-						InterOperatorParallelizationKeywordParameterConstants.PATTERN_KEYWORD);
+						InterOperatorParallelizationConstants.PATTERN_KEYWORD);
 		parameterHelper.validateParameterString(parameter);
 	}
 
@@ -84,6 +87,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 					operatorConfiguration);
 			addStrategy(result, operatorConfiguration);
 			addFragmentationType(result, operatorConfiguration);
+			addUseParallelOperators(result, operatorConfiguration);
 		}
 
 		ParallelInterOperatorSetting interOperatorSetting = getMultithreadedOperatorParameter(settings);
@@ -306,6 +310,21 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			} else {
 				throw new OdysseusScriptException(
 						"DegreeOfParallelization is not an integer or an valid constant: ");
+			}
+		}
+	}
+	
+	private void addUseParallelOperators(Map<IKeywordParameter, String> result,
+			ParallelOperatorConfiguration operatorConfiguration) throws OdysseusScriptException {
+		if (result.containsKey(InterOperatorParallelizationKeywordParameter.USEPARALLELOPERATOR)){
+			String useParallelOperatorString = result.get(InterOperatorParallelizationKeywordParameter.USEPARALLELOPERATOR);
+			// only true or false are allowed for parameter optimization
+			if (!useParallelOperatorString.equalsIgnoreCase("true")
+					&& !useParallelOperatorString.equalsIgnoreCase("false")) {
+				throw new OdysseusScriptException(
+						"Value for useParallelOperator is invalid. Valid values are true or false.");
+			} else {
+				operatorConfiguration.setUseParallelOperators(Boolean.parseBoolean(useParallelOperatorString));
 			}
 		}
 	}

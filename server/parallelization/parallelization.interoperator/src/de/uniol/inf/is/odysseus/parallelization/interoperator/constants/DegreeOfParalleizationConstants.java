@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.parallelization.interoperator.keyword;
+package de.uniol.inf.is.odysseus.parallelization.interoperator.constants;
 
 public enum DegreeOfParalleizationConstants {
 	USERDEFINED, GLOBAL, AUTO;

@@ -11,9 +11,11 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.value.ParallelIntraOperatorSettingValueElement;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parallelization.autodetect.PerformanceDetectionHelper;
+import de.uniol.inf.is.odysseus.parallelization.intraoperator.constants.IntraOperatorParallelizationConstants;
 import de.uniol.inf.is.odysseus.parallelization.intraoperator.parameter.IntraOperatorParallelizationKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.intraoperator.preexecution.IntraOperatorPreExecutionHandler;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -23,12 +25,11 @@ import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParamete
 
 public class IntraOperatorParallelizationPreParserKeyword extends
 		AbstractPreParserKeyword {
-
 	public static final String KEYWORD = "INTRAOPERATOR";
-	
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(IntraOperatorParallelizationPreParserKeyword.class);
-	
+
 	private PreParserKeywordParameterHelper<IntraOperatorParallelizationKeywordParameter> parameterHelper;
 
 	@Override
@@ -54,15 +55,40 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 				.get(IntraOperatorParallelizationKeywordParameter.OPERATORID));
 		int individualDegree = parseDegree(result
 				.get(IntraOperatorParallelizationKeywordParameter.DEGREE_OF_PARALLELIZATION));
+		int individualBuffersize = parseBuffersize(result
+				.get(IntraOperatorParallelizationKeywordParameter.BUFFERSIZE));
+
 		for (String operatorId : operatorIds) {
-			intraOperatorSetting.getValue().addIndividualDegree(operatorId,
-					individualDegree);
+			ParallelIntraOperatorSettingValueElement individualSettings = new ParallelIntraOperatorSettingValueElement(
+					individualDegree, individualBuffersize);
+			intraOperatorSetting.getValue().addIndividualSettings(operatorId,
+					individualSettings);
 		}
 
 		return null;
 	}
 
-	private int parseDegree(String degreeOfParallelizationString) throws OdysseusScriptException {
+	private int parseBuffersize(String string) throws OdysseusScriptException {
+		if (string == null || string.equalsIgnoreCase("AUTO")) {
+			return IntraOperatorParallelizationConstants.DEFAULT_BUFFERSIZE;
+		} else {
+			try {
+				int buffersize = Integer.parseInt(string);
+				if (buffersize > 0){
+					return buffersize;					
+				} else {
+					throw new OdysseusScriptException(
+							"Value for buffersize is not valid. Value need to be greater 0.");
+				}
+			} catch (NumberFormatException e) {
+				throw new OdysseusScriptException(
+						"Value for buffersize is not valid. Degree is no integer.");
+			}
+		}
+	}
+
+	private int parseDegree(String degreeOfParallelizationString)
+			throws OdysseusScriptException {
 		try {
 			int degreeOfParallelization = Integer
 					.parseInt(degreeOfParallelizationString);

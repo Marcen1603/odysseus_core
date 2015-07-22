@@ -59,17 +59,20 @@ public class GroupedAggregateTransformationStrategy extends
 
 	@Override
 	public TransformationResult transform(ILogicalOperator operator,
-			ParallelOperatorConfiguration settingsForOperator) {
+			ParallelOperatorConfiguration configurationForOperator) {
 		// validate settings and way to end point
-		if (!super.areSettingsValid(settingsForOperator)) {
+		if (!super.areSettingsValid(configurationForOperator)) {
 			return new TransformationResult(State.FAILED);
 		}
-		checkIfWayToEndPointIsValid(operator, settingsForOperator, true);
+		checkIfWayToEndPointIsValid(operator, configurationForOperator, true);
 
 		TransformationResult transformationResult = new TransformationResult(State.SUCCESS);
 		transformationResult.setAllowsModificationAfterUnion(true);
 
-		AggregateAO aggregateOperator = (AggregateAO) operator;
+		AggregateAO aggregateOperator = (AggregateAO) operator;			
+		if (configurationForOperator.isUseParallelOperators()){
+			aggregateOperator.setNumberOfThreads(configurationForOperator.getDegreeOfParallelization());
+		}
 
 		// create fragment operator
 		AbstractStaticFragmentAO fragmentAO;
@@ -77,8 +80,8 @@ public class GroupedAggregateTransformationStrategy extends
 				.getGroupingAttributes();
 		try {
 			fragmentAO = createFragmentAO(
-					settingsForOperator.getFragementationType(),
-					settingsForOperator.getDegreeOfParallelization(), "",
+					configurationForOperator.getFragementationType(),
+					configurationForOperator.getDegreeOfParallelization(), "",
 					groupingAttributes, null, null);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
@@ -111,12 +114,12 @@ public class GroupedAggregateTransformationStrategy extends
 			union.setUniqueIdentifier(UUID.randomUUID().toString());
 			transformationResult.setUnionOperator(union);
 
-			for (int i = 0; i < settingsForOperator
+			for (int i = 0; i < configurationForOperator
 					.getDegreeOfParallelization(); i++) {
 				BufferAO buffer = new BufferAO();
 				buffer.setName("Buffer_" + i);
-				buffer.setThreaded(settingsForOperator.isUseThreadedBuffer());
-				buffer.setMaxBufferSize(settingsForOperator.getBufferSize());
+				buffer.setThreaded(configurationForOperator.isUseThreadedBuffer());
+				buffer.setMaxBufferSize(configurationForOperator.getBufferSize());
 				buffer.setDrainAtClose(false);
 
 				AggregateAO newAggregateOperator = aggregateOperator.clone();
@@ -132,15 +135,15 @@ public class GroupedAggregateTransformationStrategy extends
 				newAggregateOperator.subscribeToSource(buffer, 0, 0,
 						buffer.getOutputSchema());
 
-				if (settingsForOperator.getEndParallelizationId() != null
-						&& !settingsForOperator.getEndParallelizationId()
+				if (configurationForOperator.getEndParallelizationId() != null
+						&& !configurationForOperator.getEndParallelizationId()
 								.isEmpty()) {
 					List<AbstractStaticFragmentAO> fragments = new ArrayList<AbstractStaticFragmentAO>();
 					fragments.add(fragmentAO);
 					ILogicalOperator lastParallelizedOperator = doPostParallelization(
 							aggregateOperator, newAggregateOperator,
-							settingsForOperator.getEndParallelizationId(), i,
-							fragments, settingsForOperator);
+							configurationForOperator.getEndParallelizationId(), i,
+							fragments, configurationForOperator);
 					union.subscribeToSource(lastParallelizedOperator, i, 0,
 							lastParallelizedOperator.getOutputSchema());
 				} else {
@@ -152,11 +155,11 @@ public class GroupedAggregateTransformationStrategy extends
 			// get the last operator that need to be parallelized. if no end id
 			// is set, the given operator for transformation is selected
 			ILogicalOperator lastOperatorForParallelization = null;
-			if (settingsForOperator.getEndParallelizationId() != null
-					&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
+			if (configurationForOperator.getEndParallelizationId() != null
+					&& !configurationForOperator.getEndParallelizationId().isEmpty()) {
 				lastOperatorForParallelization = LogicalGraphHelper
 						.findDownstreamOperatorWithId(
-								settingsForOperator.getEndParallelizationId(),
+								configurationForOperator.getEndParallelizationId(),
 								aggregateOperator);
 			} else {
 				lastOperatorForParallelization = aggregateOperator;

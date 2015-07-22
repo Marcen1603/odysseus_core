@@ -22,7 +22,8 @@ public enum InterOperatorParallelizationKeywordParameter implements ICustomPatte
 	DEGREE("degree", 1, false),
 	BUFFERSIZE("buffersize", 2, false),
 	STRATEGY("strategy", 3, true),
-	FRAGMENTATION("fragment", 4, true);
+	FRAGMENTATION("fragment", 4, true),
+	USEPARALLELOPERATOR("useParallelOp", 5, true);
 	
 	private InterOperatorParallelizationKeywordParameter(String name, int position, boolean isOptional, String valuePattern){
 		this.name = name;

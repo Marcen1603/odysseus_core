@@ -65,6 +65,8 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 	private boolean drainAtClose = false;
 	private boolean fastGrouping = false;
 	private int numberOfThreads = 1;
+	private int maxBufferSize = 10000;
+
 
 	public static final String AGGREGATIONS = "AGGREGATIONS";
 
@@ -89,6 +91,7 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		this.fastGrouping = op.fastGrouping;
 		this.drainAtClose = op.drainAtClose;
 		this.numberOfThreads = op.numberOfThreads;
+		this.maxBufferSize = op.maxBufferSize;
 		this.aggregationItems = op.aggregationItems != null ? Lists
 				.newArrayList(op.aggregationItems) : null;
 	}
@@ -320,6 +323,15 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 	public int getNumberOfThreads() {
 		return numberOfThreads;
 	}
+	
+	@Parameter(type = IntegerParameter.class, optional = true)
+	public void setMaxBufferSize(int maxBufferSize) {
+		this.maxBufferSize  = maxBufferSize;
+	}
+	
+	public int getMaxBufferSize() {
+		return maxBufferSize;
+	}
 
 	@Override
 	public boolean isValid() {
@@ -329,6 +341,10 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		if (numberOfThreads > MAXIMUM_DEGREE) {
 			addError("Maximum value for multithreading is " + MAXIMUM_DEGREE);
 		}
+		if (maxBufferSize < 1){
+			addError("Minimum value for buffersize is 1");
+		}
+		
 		return true;
 	}
 }
