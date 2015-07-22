@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.collection;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -350,10 +349,11 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		// calcSize();
 	}
 
-	public final void setAttribute(int pos, CharBuffer value) {
-		String stringValue = new String(value.array(), 0, value.position());
-		setAttribute(pos, stringValue);
-	}
+	// Temp commented out ... who needs this??
+//	public final void setAttribute(int pos, CharBuffer value) {
+//		String stringValue = new String(value.array(), 0, value.position());
+//		setAttribute(pos, stringValue);
+//	}
 
 	public final int size() {
 		return this.attributes.length;
