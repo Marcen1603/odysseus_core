@@ -47,7 +47,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregat
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 @LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on attributes e.g Min, Max, Count, Avg, Sum and grouping.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Aggregate+%28and+Group%29+operator", category = { LogicalOperatorCategory.BASE })
-public class AggregateAO extends UnaryLogicalOp implements IStatefulAO{
+public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
+
+	private static final int MAXIMUM_DEGREE = 128;
 
 	private static final long serialVersionUID = 2539966167342852544L;
 
@@ -62,7 +64,8 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO{
 	private boolean drainAtDone = true;
 	private boolean drainAtClose = false;
 	private boolean fastGrouping = false;
-	
+	private int numberOfThreads = 1;
+
 	public static final String AGGREGATIONS = "AGGREGATIONS";
 
 	public AggregateAO() {
@@ -83,9 +86,11 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO{
 		dumpAtValueCount = op.dumpAtValueCount;
 		this.outputPA = op.outputPA;
 		this.drainAtDone = op.drainAtDone;
-		this.fastGrouping  = op.fastGrouping;
+		this.fastGrouping = op.fastGrouping;
 		this.drainAtClose = op.drainAtClose;
-		this.aggregationItems = op.aggregationItems != null ? Lists.newArrayList(op.aggregationItems) : null;
+		this.numberOfThreads = op.numberOfThreads;
+		this.aggregationItems = op.aggregationItems != null ? Lists
+				.newArrayList(op.aggregationItems) : null;
 	}
 
 	public void addAggregation(SDFAttribute attribute,
@@ -95,12 +100,14 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO{
 		addAggregation(attributes, function, outAttribute);
 	}
 
-    public void addAggregation(List<SDFAttribute> attributes, AggregateFunction function, SDFAttribute outAttribute) {
-        @SuppressWarnings("unchecked")
-		SDFSchema schema = SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) Tuple.class, attributes);
-        addAggregation(schema, function, outAttribute);
-    }
-	   
+	public void addAggregation(List<SDFAttribute> attributes,
+			AggregateFunction function, SDFAttribute outAttribute) {
+		@SuppressWarnings("unchecked")
+		SDFSchema schema = SDFSchemaFactory.createNewSchema("",
+				(Class<? extends IStreamObject<?>>) Tuple.class, attributes);
+		addAggregation(schema, function, outAttribute);
+	}
+
 	public void addAggregation(SDFSchema attributes,
 			AggregateFunction function, SDFAttribute outAttribute) {
 		for (Pair<SDFAttribute, Boolean> v : outputAttributList) {
@@ -131,18 +138,20 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO{
 			}
 		}
 	}
-	
+
 	/**
 	 * Removes all existing aggregations (needed for renaming of attributes)
 	 * Author: Chris Tönjes-Deye
 	 */
-	public void clearAggregations(){
+	public void clearAggregations() {
 		// only remove outputAttributes that are related to an aggregation
-		ArrayList<Pair<SDFAttribute, Boolean>> copyOfOutputAttributeList = new ArrayList<Pair<SDFAttribute, Boolean>>(outputAttributList);
+		ArrayList<Pair<SDFAttribute, Boolean>> copyOfOutputAttributeList = new ArrayList<Pair<SDFAttribute, Boolean>>(
+				outputAttributList);
 		for (AggregateItem aggregateItem : aggregationItems) {
 			for (int i = 0; i < copyOfOutputAttributeList.size(); i++) {
-				Pair<SDFAttribute, Boolean> pair = copyOfOutputAttributeList.get(i);
-				if (pair.getE1().equals(aggregateItem.outAttribute)){
+				Pair<SDFAttribute, Boolean> pair = copyOfOutputAttributeList
+						.get(i);
+				if (pair.getE1().equals(aggregateItem.outAttribute)) {
 					outputAttributList.remove(pair);
 				}
 			}
@@ -192,7 +201,7 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO{
 		}
 		aggregationItems = aggregations;
 	}
-	
+
 	public List<AggregateItem> getAggregationItems() {
 		return aggregationItems;
 	}
@@ -237,9 +246,13 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO{
 		}
 
 		if (getInputSchema() != null) {
-			outputSchema = SDFSchemaFactory.createNewWithAttributes(outAttribs, getInputSchema());
+			outputSchema = SDFSchemaFactory.createNewWithAttributes(outAttribs,
+					getInputSchema());
 		} else {
-			outputSchema = SDFSchemaFactory.createNewSchema("<tmp>", (Class<? extends IStreamObject<?>>) Tuple.class, outAttribs);
+			outputSchema = SDFSchemaFactory
+					.createNewSchema("<tmp>",
+							(Class<? extends IStreamObject<?>>) Tuple.class,
+							outAttribs);
 		}
 		return outputSchema;
 	}
@@ -262,20 +275,19 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO{
 		return outputPA;
 	}
 
-	@Parameter(name = "drain", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at done.", deprecated=true)
+	@Parameter(name = "drain", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at done.", deprecated = true)
 	public void setDrainAtDoneOld(boolean drainAtDone) {
 		this.drainAtDone = drainAtDone;
 	}
-	
+
 	public boolean isDrainAtDoneOld() {
 		return this.drainAtDone;
 	}
-	
+
 	@Parameter(name = "drainAtDone", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at done. ")
 	public void setDrainAtDone(boolean drainAtDone) {
 		this.drainAtDone = drainAtDone;
 	}
-	
 
 	@Parameter(name = "drainAtClose", type = BooleanParameter.class, optional = true, doc = "If set to true (default is false), elements are not yet written will be written at close. ")
 	public void setDrainAtClose(boolean drainAtClose) {
@@ -285,11 +297,11 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO{
 	public boolean isDrainAtDone() {
 		return drainAtDone;
 	}
-	
+
 	public boolean isDrainAtClose() {
 		return drainAtClose;
 	}
-	
+
 	public boolean isFastGrouping() {
 		return fastGrouping;
 	}
@@ -297,5 +309,26 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO{
 	@Parameter(name = "fastGrouping", type = BooleanParameter.class, optional = true, doc = "Use hash code instead of tuple compare to create group. Potentially unsafe!")
 	public void setFastGrouping(boolean fastGrouping) {
 		this.fastGrouping = fastGrouping;
+	}
+
+	@Parameter(type = IntegerParameter.class, optional = true, doc = "Use multiple threads for execution (only possible if grouping attributes are set) Maximum value is: "
+			+ MAXIMUM_DEGREE)
+	public void setNumberOfThreads(int numberOfThreads) {
+		this.numberOfThreads = numberOfThreads;
+	}
+
+	public int getNumberOfThreads() {
+		return numberOfThreads;
+	}
+
+	@Override
+	public boolean isValid() {
+		if (numberOfThreads > 1 && groupingAttributes.isEmpty()) {
+			addError("Mutlithreading is only possible if at least one grouping attribute is set");
+		}
+		if (numberOfThreads > MAXIMUM_DEGREE) {
+			addError("Maximum value for multithreading is " + MAXIMUM_DEGREE);
+		}
+		return true;
 	}
 }

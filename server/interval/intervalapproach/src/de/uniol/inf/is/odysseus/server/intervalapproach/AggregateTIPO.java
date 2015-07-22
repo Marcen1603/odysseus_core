@@ -113,6 +113,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	static final Logger logger = LoggerFactory.getLogger(AggregateTIPO.class);
 
+	
+	
 	/**
 	 * Create a new aggregation operator
 	 * 
@@ -842,6 +844,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		map.put("Watermark", transferArea.getWatermark() + "");
 		return map;
 	}
+	
+	public AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> getSweepAreaForGroup(Long groupId){
+		return groups.get(groupId);
+	}
 
 }
 
@@ -962,5 +968,4 @@ class _Point<T> implements Comparable<_Point<T>> {
 	public String toString() {
 		return (isStartPoint ? "s" : "e") + (newElement() ? "^" : "") + point;
 	}
-
 }

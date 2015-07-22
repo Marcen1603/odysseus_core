@@ -2,14 +2,10 @@ package de.uniol.inf.is.odysseus.server.intervalapproach.threaded;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -28,7 +24,9 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		extends AggregateTIPO<Q, R, W> implements IThreadedPO {
 
 	private int degree;
-	private ExecutorService executor;
+	private Map<Integer, ThreadedAggregateTIPOWorker<Q, R, W>> threadMap = new ConcurrentHashMap<Integer, ThreadedAggregateTIPOWorker<Q, R, W>>();
+	private Map<Integer, ArrayBlockingQueue<Pair<Long, R>>> queueMap = new ConcurrentHashMap<Integer, ArrayBlockingQueue<Pair<Long, R>>>();
+	private ThreadGroup workerThreadGroup;
 
 	public ThreadedAggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
@@ -37,24 +35,31 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 			int degree) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations,
 				fastGrouping, metadataMerge);
-		// Create a factory that produces daemon threads with a naming pattern
-		// and
-		// a priority
-		BasicThreadFactory factory = new BasicThreadFactory.Builder()
-				.namingPattern("%d").build();
-		// Create an executor service for single-threaded execution
-		executor = Executors.newFixedThreadPool(degree, factory);
 		this.setDegree(degree);
+		workerThreadGroup = new ThreadGroup("Threaded Aggregate worker threads");
+		for (int i = 0; i < degree; i++) {
+			ArrayBlockingQueue<Pair<Long, R>> blockingQueue = new ArrayBlockingQueue<Pair<Long, R>>(
+					1000);
+			ThreadedAggregateTIPOWorker<Q, R, W> worker = new ThreadedAggregateTIPOWorker<Q, R, W>(
+					workerThreadGroup, this, i, blockingQueue);
+			queueMap.put(i, blockingQueue);
+			threadMap.put(i, worker);
+		}
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
+
 		IGroupProcessor<R, W> g = getGroupProcessor();
 		synchronized (g) {
 			g.init();
 			transferArea.init(this, degree);
 			groups.clear();
 			createOutputCounter = 0;
+		}
+
+		for (ThreadedAggregateTIPOWorker<Q, R, W> worker : threadMap.values()) {
+			worker.start();
 		}
 	}
 
@@ -73,36 +78,31 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 			// Determine group ID from input object
 			groupID = g.getGroupID(object);
 			// Find or create sweep area for group
-			sa = groups.get(groupID);
-			if (sa == null) {
-				sa = new AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
-				groups.put(groupID, sa);
-			}
-		}
-
-		synchronized (sa) {
-			if (sa != null) {
-				ThreadedAggregateTIPOCallable<Q, R, W> runnable = new ThreadedAggregateTIPOCallable<Q, R, W>(
-						this, sa, object, groupID);
-				Future<String> result = executor.submit(runnable);
-				try {
-					result.get();
-				} catch (InterruptedException | ExecutionException e) {
-					e.printStackTrace();
+			synchronized (groups) {
+				sa = groups.get(groupID);
+				if (sa == null) {
+					sa = new AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>();
+					groups.put(groupID, sa);
 				}
 			}
 		}
-	}
-	
-	@Override
-	protected void process_done(int port) {
-		executor.shutdown();
+
+		int threadNumber = (int) (groupID % degree);
+		ArrayBlockingQueue<Pair<Long, R>> queue = queueMap.get(threadNumber);
+
 		try {
-			executor.awaitTermination(1, TimeUnit.MINUTES);
+			Pair<Long, R> pair = new Pair<Long, R>(groupID, object);
+			queue.put(pair);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+	}
+
+	@Override
+	protected void process_done(int port) {
+		// interrupt worker threads to finish work
+		workerThreadGroup.interrupt();
+
 		// has only one port, so process_done can be called when first input
 		// port calls done
 		IGroupProcessor<R, W> g = getGroupProcessor();
@@ -117,15 +117,16 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		if (debug) {
 			System.err.println(this + " done");
 		}
-		
+
 		for (int i = 0; i < degree; i++) {
-			transferArea.done(i);			
+			transferArea.done(i);
 		}
 	}
 
 	@Override
 	protected void process_close() {
-		
+		// interrupt worker threads to finish work
+		workerThreadGroup.interrupt();
 		super.process_close();
 	}
 

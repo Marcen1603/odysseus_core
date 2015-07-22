@@ -50,7 +50,10 @@ public class TStreamGroupingWithAggregationTIPORule extends
 		// threaded aggregate operator
 		boolean useThreadedOperator = false;
 		int degree = 0;
-		if (transformConfig.getOption(ParallelIntraOperatorSetting.class.getName()) != null){
+		if (aggregateAO.getNumberOfThreads() > 1){
+			useThreadedOperator = true;
+			degree = aggregateAO.getNumberOfThreads();
+		} else if (transformConfig.getOption(ParallelIntraOperatorSetting.class.getName()) != null){
 			ParallelIntraOperatorSettingValue value = ((ParallelIntraOperatorSetting) transformConfig.getOption(ParallelIntraOperatorSetting.class.getName())).getValue();
 			if (value != null){
 				if (!value.hasIndividualDegrees()){
