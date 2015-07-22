@@ -5,7 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.zookeeper;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Michael Brand
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.apache.zookeeper;bundle-version="1.0.0",
+Require-Bundle: org.apache.zookeeper;bundle-version="3.3.2",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.zookeeper
 Bundle-ClassPath: config/,
