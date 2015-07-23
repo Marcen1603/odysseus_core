@@ -21,24 +21,44 @@ import java.util.Observable;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-
-public class BenchmarkPOObservable<T extends IStreamObject<?>> extends Observable{
+/**
+ * Delegate class needed in benchmarkObserverPO. This delegate is needed because
+ * java does not support multi inheritance
+ * 
+ * @author ChrisToenjesDeye
+ */
+public class BenchmarkPOObservable<T extends IStreamObject<?>> extends
+		Observable {
 	private List<IBenchmarkEvaluation> evaluations = new ArrayList<IBenchmarkEvaluation>();
-	
-	public BenchmarkPOObservable(){
-		BenchmarkObserverRegistry registry = BenchmarkObserverRegistry.getInstance();
-		for (IBenchmarkObserver benchmarkObserver : registry.getObserverMap().values()) {
+
+	public BenchmarkPOObservable() {
+		// get all observers from registry
+		BenchmarkObserverRegistry registry = BenchmarkObserverRegistry
+				.getInstance();
+		// get the evaluation from every benchmarkObserver
+		for (IBenchmarkObserver benchmarkObserver : registry.getObserverMap()
+				.values()) {
 			evaluations.add(benchmarkObserver.getBenchmarkEvaluation());
 		}
 	}
-	
-	public void evaluate(T object){
+
+	/**
+	 * evaluates every registered evaluation (e.g. counting of elements)
+	 * 
+	 * @param data
+	 *            stream object
+	 */
+	public void evaluate(T object) {
 		for (IBenchmarkEvaluation benchmarkEvaluation : evaluations) {
 			benchmarkEvaluation.evaluate(this, object);
 		}
 	}
-	
-	public void evaluationDone(){
+
+	/**
+	 * if the processing of data stream elements is done before the evaluation
+	 * is done, this method is called.
+	 */
+	public void evaluationDone() {
 		for (IBenchmarkEvaluation benchmarkEvaluation : evaluations) {
 			benchmarkEvaluation.evaluationDone(this);
 		}

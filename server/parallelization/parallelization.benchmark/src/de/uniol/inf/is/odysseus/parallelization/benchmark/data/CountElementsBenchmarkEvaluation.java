@@ -17,6 +17,13 @@ package de.uniol.inf.is.odysseus.parallelization.benchmark.data;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
+/**
+ * Benchmark Evaluation for counting elements. Calculating the time until the
+ * number of elements is reached. If it is reached all observers are informed
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class CountElementsBenchmarkEvaluation extends
 		AbstractBenchmarkEvaluation {
 
@@ -31,13 +38,20 @@ public class CountElementsBenchmarkEvaluation extends
 		this.numberOfElements = numberOfElements;
 	}
 
+	/**
+	 * increses a counter until the defined number of elements is reached if
+	 * this number is reached the observer is informed and the evaluation is
+	 * stopped
+	 */
 	@Override
 	public <T extends IStreamObject<?>> void evaluate(
 			BenchmarkPOObservable<?> observable, T object) {
+		// if counter is greater than the given value ignore this element
 		if (counter > numberOfElements) {
 			return;
 		}
 
+		// if counter is zero and first element comes, start the evaluation time
 		if (counter == 0) {
 			startTimestamp = System.currentTimeMillis();
 		}
@@ -46,6 +60,7 @@ public class CountElementsBenchmarkEvaluation extends
 			counter++;
 			if (counter == numberOfElements) {
 				endTimestamp = System.currentTimeMillis();
+				// calculate the needed evaluation time
 				long executionTime = endTimestamp - startTimestamp;
 				updateObserver(observable, executionTime);
 			}
@@ -53,6 +68,9 @@ public class CountElementsBenchmarkEvaluation extends
 
 	}
 
+	/**
+	 * If every element is processed, evaluation need to be aborted
+	 */
 	@Override
 	public void evaluationDone(BenchmarkPOObservable<?> observable) {
 		// update observer and tell them, that evaluation was done before number

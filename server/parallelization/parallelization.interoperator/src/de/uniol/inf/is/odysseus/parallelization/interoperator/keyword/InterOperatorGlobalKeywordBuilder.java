@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.parallelization.interoperator.keyword;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.parallelization.interoperator.constants.InterOperatorParallelizationConstants;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorGlobalKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution.InterOperatorPreExecutionHandler;
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
@@ -25,13 +26,11 @@ import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParamete
 
 public class InterOperatorGlobalKeywordBuilder{
 
-	private static String BLANK = " ";
-
 	public static String buildParameterString(
 			Integer degree, Integer buffersize, boolean allowPostOptmization,
 			boolean useThreadedBuffer) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("#" + ParallelizationPreParserKeyword.KEYWORD + BLANK);
+		builder.append("#" + ParallelizationPreParserKeyword.KEYWORD + InterOperatorParallelizationConstants.BLANK);
 		PreParserKeywordParameterHelper<InterOperatorGlobalKeywordParameter> helper = PreParserKeywordParameterHelper
 				.newInstance(InterOperatorGlobalKeywordParameter.class);
 		Map<InterOperatorGlobalKeywordParameter, String> parameters = new HashMap<InterOperatorGlobalKeywordParameter, String>();

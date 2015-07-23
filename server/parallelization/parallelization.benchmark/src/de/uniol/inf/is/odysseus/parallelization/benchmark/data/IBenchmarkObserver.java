@@ -17,7 +17,19 @@ package de.uniol.inf.is.odysseus.parallelization.benchmark.data;
 
 import java.util.Observer;
 
-public interface IBenchmarkObserver extends Observer{
+/**
+ * BenchmarkObserverPO needs Observer which provides an benchmarker evaluation.
+ * This allows the definition of evaluations from other parts of the application
+ * and not inside of the operator
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
+public interface IBenchmarkObserver extends Observer {
 
+	/**
+	 * Returns an instance of a benchmark evaluation
+	 * @return
+	 */
 	IBenchmarkEvaluation getBenchmarkEvaluation();
 }

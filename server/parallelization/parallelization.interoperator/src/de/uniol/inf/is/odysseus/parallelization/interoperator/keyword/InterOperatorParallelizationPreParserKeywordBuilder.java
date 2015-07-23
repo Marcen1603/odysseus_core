@@ -19,34 +19,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.constants.InterOperatorParallelizationConstants;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorParallelizationKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
 public class InterOperatorParallelizationPreParserKeywordBuilder {
-
-	private static final String BLANK = " ";
-
+	
 	public static String buildKeywordWithParameters(
 			String operatorId,
 			String endOperatorId,
 			Integer degree,
 			Integer buffersize,
 			IParallelTransformationStrategy<? extends ILogicalOperator> parallelTransformationStrategy,
-			Class<? extends AbstractFragmentAO> fragmentClass) {
+			Class<? extends AbstractFragmentAO> fragmentClass,
+			boolean useThreadedOperators) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("#"
-				+ InterOperatorParallelizationPreParserKeyword.KEYWORD + BLANK);
+				+ InterOperatorParallelizationPreParserKeyword.KEYWORD + InterOperatorParallelizationConstants.BLANK);
 
 		PreParserKeywordParameterHelper<InterOperatorParallelizationKeywordParameter> helper = PreParserKeywordParameterHelper
 				.newInstance(InterOperatorParallelizationKeywordParameter.class);
 		Map<InterOperatorParallelizationKeywordParameter, String> parameters = new HashMap<InterOperatorParallelizationKeywordParameter, String>();
-		if (!endOperatorId.isEmpty()){
-			parameters.put(InterOperatorParallelizationKeywordParameter.OPERATORID,
+		if (!endOperatorId.isEmpty()) {
+			parameters.put(
+					InterOperatorParallelizationKeywordParameter.OPERATORID,
 					operatorId + ":" + endOperatorId);
 		} else {
-			parameters.put(InterOperatorParallelizationKeywordParameter.OPERATORID,
+			parameters.put(
+					InterOperatorParallelizationKeywordParameter.OPERATORID,
 					operatorId);
 		}
 		parameters.put(InterOperatorParallelizationKeywordParameter.DEGREE,
@@ -58,6 +60,9 @@ public class InterOperatorParallelizationPreParserKeywordBuilder {
 		parameters.put(
 				InterOperatorParallelizationKeywordParameter.FRAGMENTATION,
 				fragmentClass.getSimpleName());
+		parameters
+				.put(InterOperatorParallelizationKeywordParameter.USEPARALLELOPERATOR,
+						String.valueOf(useThreadedOperators));
 
 		builder.append(helper.createParameterString(parameters));
 		return builder.toString();

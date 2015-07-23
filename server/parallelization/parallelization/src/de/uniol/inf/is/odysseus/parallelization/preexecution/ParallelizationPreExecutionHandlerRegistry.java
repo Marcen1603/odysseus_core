@@ -1,3 +1,18 @@
+/********************************************************************************** 
+ * Copyright 2015 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.parallelization.preexecution;
 
 import java.util.ArrayList;
@@ -8,6 +23,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * OSGI Registry for PreExecutionHandlers (allows easy extensibility of parallelization types)
+ * @author ChrisToenjesDeye
+ *
+ */
 public class ParallelizationPreExecutionHandlerRegistry {
 
 	private static Logger LOG = LoggerFactory
@@ -22,14 +42,14 @@ public class ParallelizationPreExecutionHandlerRegistry {
 	 */
 	public static void registerHandler(
 			IParallelizationPreExecutionHandler preExecutionHandler) {
-		LOG.debug("Register new PreTransformationHandler "
+		LOG.debug("Register new PreExecutionHandler "
 				+ preExecutionHandler.getType());
 		if (!handler.containsKey(preExecutionHandler.getType()
 				.toLowerCase())) {
 			handler.put(preExecutionHandler.getType().toLowerCase(),
 					preExecutionHandler);
 		} else {
-			LOG.error("PreTransformationHandler with name "
+			LOG.error("PreExecutionHandler with name "
 					+ preExecutionHandler.getType()
 					+ " already registered");
 		}
@@ -42,7 +62,7 @@ public class ParallelizationPreExecutionHandlerRegistry {
 	 */
 	public static void unregisterHandler(
 			IParallelizationPreExecutionHandler preExecutionHandler) {
-		LOG.debug("Remove PreTransformationHandler "
+		LOG.debug("Remove PreExecutionHandler "
 				+ preExecutionHandler.getType());
 		handler.remove(preExecutionHandler.getType().toLowerCase());
 	}
@@ -57,10 +77,19 @@ public class ParallelizationPreExecutionHandlerRegistry {
 		}
 	}
 
+	/**
+	 * returns a list of names of all registered preExecutionHandlers
+	 * @return
+	 */
 	public static List<String> getValidTypes() {
 		return new ArrayList<String>(handler.keySet());
 	}
 
+	/**
+	 * checks if the string contains a valid parallelization type
+	 * @param type
+	 * @return
+	 */
 	public static boolean isValidType(String type) {
 		for (String handlerName : handler.keySet()) {
 			if (handlerName.equalsIgnoreCase(type)){

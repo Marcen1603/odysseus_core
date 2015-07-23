@@ -22,13 +22,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.parallelization.rcp.constants.ParallelizationBenchmarkerConstants;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.IBenchmarkerExecution;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 
 public class BenchmarkMainExecutionThread extends Thread {
-
-	private static final String PRE_TRANSFORM_TOKEN = "#PRETRANSFORM BenchmarkPreTransformation";
 
 	private static Logger LOG = LoggerFactory
 			.getLogger(BenchmarkMainExecutionThread.class);
@@ -158,14 +157,14 @@ public class BenchmarkMainExecutionThread extends Thread {
 			// put parallelization keywords directly after parser command
 			if (queryStringLine.trim().startsWith("#PARSER")) {
 				builder.append(benchmarkerExecution.getOdysseusScript());
-				builder.append(PRE_TRANSFORM_TOKEN);
+				builder.append(ParallelizationBenchmarkerConstants.PRE_TRANSFORM_TOKEN);
 			}
 		}
 
 		// start execution thread
 		BenchmarkExecutionThread executionThread = new BenchmarkExecutionThread(
 				builder.toString(), processUid, benchmarkerExecution);
-		executionThread.setName("BenchmarkExecutionThread");
+		executionThread.setName("Benchmark Execution Thread");
 		executionThread.setDaemon(true);
 		executionThread.start();
 

@@ -48,23 +48,28 @@ public class TStreamGroupingWithAggregationTIPORule extends
 		
 		AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>> po = null;
 		
+		//  @Autor: Chris Tönjes-Deye
 		// threaded aggregate operator
 		boolean useThreadedOperator = false;
 		int degree = 0;
 		int maxBuffersize = 0;
 		
 		if (aggregateAO.getNumberOfThreads() > 1){
+			// if the aggregate operator is configured via pql
 			useThreadedOperator = true;
 			degree = aggregateAO.getNumberOfThreads();
 			maxBuffersize = aggregateAO.getMaxBufferSize();
 		} else if (transformConfig.getOption(ParallelIntraOperatorSetting.class.getName()) != null){
+			// if configuration is done via odysseus script
 			ParallelIntraOperatorSettingValue value = ((ParallelIntraOperatorSetting) transformConfig.getOption(ParallelIntraOperatorSetting.class.getName())).getValue();
 			if (value != null){
 				if (!value.hasIndividualSettings()){
+					// if configuration is done for every operator use global configuration
 					degree = value.getGlobalDegree();
 					maxBuffersize = value.getGlobalBuffersize();
 					useThreadedOperator = true;
 				} else {
+					// if configuration is only for specific operators, check if id is equal and get configuration 
 					String operatorId = aggregateAO.getUniqueIdentifier();
 					if (value.hasIndividualSettingsForOperator(operatorId)){
 						ParallelIntraOperatorSettingValueElement individualSettings = value.getIndividualSettings(operatorId);
@@ -76,6 +81,7 @@ public class TStreamGroupingWithAggregationTIPORule extends
 			}
 		}
 		
+		// if we could use an threaded operator, create it, but only if degree and buffersize are valid
 		if (useThreadedOperator && degree > 1 && maxBuffersize > 1){
 			po = new ThreadedAggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
 					aggregateAO.getInputSchema(),
@@ -83,6 +89,7 @@ public class TStreamGroupingWithAggregationTIPORule extends
 					aggregateAO.getGroupingAttributes(),
 					aggregateAO.getAggregations(), aggregateAO.isFastGrouping(), mf, degree, maxBuffersize);
 		} else {
+			// otherwise create normal aggregate (non threaded)
 			po = new AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeInterval>>(
 					aggregateAO.getInputSchema(),
 					aggregateAO.getOutputSchemaIntern(0),

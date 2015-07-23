@@ -30,36 +30,53 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parallelization.benchmark.logicaloperator.ObserverBenchmarkAO;
 
+/**
+ * Simple transformation handler, which integrates an ObserverBenchmarkAO at the
+ * end of the current logical plan. Could be used with #TRANSFORM keyword in
+ * Odysseus script
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class BenchmarkPreTransformationHandler implements
 		IPreTransformationHandler {
 
 	public static String NAME = "BenchmarkPreTransformation";
-	
+
+	/**
+	 * returns the name of this preTransformationHandler
+	 */
 	@Override
 	public String getName() {
 		return NAME;
 	}
 
+	/**
+	 * integrates an ObserverBenchmarkAO at the end of the current logical plan.
+	 */
 	@Override
 	public void preTransform(IServerExecutor executor, ISession caller,
 			ILogicalQuery query, QueryBuildConfiguration config,
 			List<Pair<String, String>> handlerParameters, Context context) {
 		ILogicalOperator topAO = query.getLogicalPlan();
 
+		// get topAO
 		if (topAO instanceof TopAO) {
 			CopyOnWriteArrayList<LogicalSubscription> sourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>(
 					topAO.getSubscribedToSource());
 			for (LogicalSubscription logicalSubscription : sourceSubscriptions) {
+				// unsibscribe the topAO from all source subscriptions 
 				ILogicalOperator sourceOperator = logicalSubscription
 						.getTarget();
 				topAO.unsubscribeFromSource(logicalSubscription);
-
+				
+				// create ObserverBenchmark operator and connect to all existing sources
 				ObserverBenchmarkAO observerBenchmarkAO = new ObserverBenchmarkAO();
-
 				sourceOperator.subscribeSink(observerBenchmarkAO, 0,
 						logicalSubscription.getSourceOutPort(),
 						logicalSubscription.getSchema());
 
+				// reconnect existing topAO
 				observerBenchmarkAO.subscribeSink(topAO,
 						logicalSubscription.getSinkInPort(), 0,
 						logicalSubscription.getSchema());

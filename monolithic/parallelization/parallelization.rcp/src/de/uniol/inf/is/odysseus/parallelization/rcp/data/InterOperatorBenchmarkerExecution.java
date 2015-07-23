@@ -32,19 +32,21 @@ public class InterOperatorBenchmarkerExecution extends
 	public InterOperatorBenchmarkerExecution() {
 		super();
 	}
+	
+	public InterOperatorBenchmarkerExecution(InterOperatorBenchmarkerExecution other){
+		this.degree = other.degree;
+		this.buffersize = other.buffersize;
+		this.allowPostOptmization = other.allowPostOptmization;
+		this.useThreadedBuffer = other.useThreadedBuffer;
+		this.elements = new HashMap<String, InterOperatorBenchmarkerExecutionElement>();
+		for (String elementKey : other.elements.keySet()) {
+			this.elements.put(elementKey, other.elements.get(elementKey).clone());
+		}
+	}
 
 	@Override
 	public InterOperatorBenchmarkerExecution clone() {
-		InterOperatorBenchmarkerExecution clone = new InterOperatorBenchmarkerExecution();
-		clone.degree = this.degree;
-		clone.buffersize = this.buffersize;
-		clone.allowPostOptmization = this.allowPostOptmization;
-		clone.useThreadedBuffer = this.useThreadedBuffer;
-		clone.elements = new HashMap<String, InterOperatorBenchmarkerExecutionElement>();
-		for (String elementKey : elements.keySet()) {
-			clone.elements.put(elementKey, elements.get(elementKey).clone());
-		}
-		return clone;
+		return new InterOperatorBenchmarkerExecution(this);
 	}
 
 	public Integer getDegree() {
@@ -107,7 +109,7 @@ public class InterOperatorBenchmarkerExecution extends
 					.buildKeywordWithParameters(element.getStartOperatorid(),
 							element.getEndOperatorId(),
 							element.getExecutionDegree(), buffersize,
-							element.getStrategy(), element.getFragmentType()));
+							element.getStrategy(), element.getFragmentType(), element.isUseThreadedOperators()));
 		}
 		return builder.toString();
 	}
@@ -123,5 +125,7 @@ public class InterOperatorBenchmarkerExecution extends
 		}
 		return builder.toString();
 	}
+
+	
 
 }

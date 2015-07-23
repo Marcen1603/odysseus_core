@@ -17,9 +17,22 @@ package de.uniol.inf.is.odysseus.parallelization.benchmark.data;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
+/**
+ * Interface for an easy integration of new evaluations into ObserverBenchmarkPO
+ * @author ChrisToenjesDeye
+ *
+ */
 public interface IBenchmarkEvaluation {
 	
+	/**
+	 * do a custom evaluation of the data stream elements
+	 * @param observable the observable
+	 * @param object the data stream elements
+	 */
 	<T extends IStreamObject<?>> void evaluate(BenchmarkPOObservable<?> observable, T object);
 	
+	/**
+	 * If every element is processed, evaluation need to be aborted
+	 */
 	void evaluationDone(BenchmarkPOObservable<?> observable);
 }

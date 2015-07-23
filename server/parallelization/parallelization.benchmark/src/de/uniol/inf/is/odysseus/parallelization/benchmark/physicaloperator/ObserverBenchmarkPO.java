@@ -20,21 +20,31 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.parallelization.benchmark.data.BenchmarkPOObservable;
 
-public class ObserverBenchmarkPO<T extends IStreamObject<?>> extends AbstractPipe<T,T>{
+/**
+ * Physical operator for ObserverBenchmark. Do evaluations until goal is reached
+ * and inform all observers
+ * 
+ * @author ChrisToenjesDeye
+ *
+ * @param <T>
+ */
+public class ObserverBenchmarkPO<T extends IStreamObject<?>> extends
+		AbstractPipe<T, T> {
 
+	// we need a delegate, because it is not possible to inherit from Obserable
+	// (no multi inhertance in java)
 	private BenchmarkPOObservable<T> delegate;
-	
 
-	public ObserverBenchmarkPO()  {
-        super();
+	public ObserverBenchmarkPO() {
+		super();
 		this.delegate = new BenchmarkPOObservable<T>();
-    }
- 
-    public ObserverBenchmarkPO(ObserverBenchmarkPO<T> observerCounterPO) {
-        super();
-        this.delegate = new BenchmarkPOObservable<T>();
-    }
-	
+	}
+
+	public ObserverBenchmarkPO(ObserverBenchmarkPO<T> observerCounterPO) {
+		super();
+		this.delegate = new BenchmarkPOObservable<T>();
+	}
+
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
@@ -47,14 +57,14 @@ public class ObserverBenchmarkPO<T extends IStreamObject<?>> extends AbstractPip
 
 	@Override
 	protected void process_next(T object, int port) {
+		// do evaluation and transfer object
 		delegate.evaluate(object);
 		transfer(object);
 	}
-	
+
 	@Override
 	protected void process_done() {
-		
+
 	}
 
-	
 }

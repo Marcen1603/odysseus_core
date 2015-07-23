@@ -74,7 +74,7 @@ public class ParallelizationBenchmarkerWindow {
 		if (benchmarkStartComposite != null) {
 			initializeQueryThread = new BenchmarkInitializeQueryThread(
 					this);
-			initializeQueryThread.setName("InitializeQueryThread");
+			initializeQueryThread.setName("Benchmarker Initialize Query Thread");
 			initializeQueryThread.setDaemon(true);
 			initializeQueryThread.start();
 		}
@@ -133,7 +133,7 @@ public class ParallelizationBenchmarkerWindow {
 		createAnalysisContent();
 
 		benchmarkMainThread = new BenchmarkMainExecutionThread(benchmarkProcessId, this);
-		benchmarkMainThread.setName("BenchmarkThread");
+		benchmarkMainThread.setName("Benchmark Main Execution Thread");
 		benchmarkMainThread.setDaemon(true);
 		benchmarkMainThread.start();
 	}

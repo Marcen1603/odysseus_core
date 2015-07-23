@@ -64,7 +64,6 @@ public class FragmentationTypeHelper {
 
 	/**
 	 * returns a list of allowed fragmentation types
-	 * 
 	 * @return list of fragmentations
 	 */
 	public static List<String> getAllowedFragmentationTypes() {
@@ -74,6 +73,10 @@ public class FragmentationTypeHelper {
 		return allowedTypes;
 	}
 
+	/**
+	 * returns all fragment types which can be used in inter operator parallelization (need to extended manually)
+	 * @return fragemnt operators
+	 */
 	private static Map<String, Class<? extends AbstractStaticFragmentAO>> getFragmentationTypes() {
 		// maybe there is another way to detect all available fragmentation operators
 		// currently only hash, range, roundRobin and shuffle fragmentations are available

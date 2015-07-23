@@ -71,7 +71,7 @@ public class ParallelOperatorConfiguration {
 		if (getBufferSizeConstant() == BufferSizeConstants.GLOBAL) {
 			setBufferSize(globalBufferSize);
 		} else if (getBufferSizeConstant() == BufferSizeConstants.AUTO) {
-			setBufferSize(InterOperatorParallelizationConstants.AUTO_BUFFER_SIZE);
+			setBufferSize(InterOperatorParallelizationConstants.DEFAULT_BUFFER_SIZE);
 		}
 
 		// use threaded buffer

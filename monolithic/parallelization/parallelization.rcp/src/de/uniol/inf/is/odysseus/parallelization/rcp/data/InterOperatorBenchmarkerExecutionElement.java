@@ -30,23 +30,32 @@ public class InterOperatorBenchmarkerExecutionElement {
 	private Class<? extends AbstractFragmentAO> fragmentType;
 	private List<Integer> possibleDegrees;
 	private int executionDegree;
+	private boolean useThreadedOperators;
  
 	public InterOperatorBenchmarkerExecutionElement(
 			String uniqueOperatorid,
 			IParallelTransformationStrategy<? extends ILogicalOperator> strategy,
-			Class<? extends AbstractFragmentAO> fragmentType, String endOperatorId) {
+			Class<? extends AbstractFragmentAO> fragmentType, String endOperatorId, boolean useThreadedOperators) {
 		this.startOperatorid = uniqueOperatorid;
 		this.strategy = strategy;
 		this.fragmentType = fragmentType;
 		this.endOperatorId = endOperatorId;
-		this.setPossibleDegrees(new ArrayList<Integer>());
+		this.useThreadedOperators = useThreadedOperators;
+		this.possibleDegrees = new ArrayList<Integer>();
+	}
+	
+	public InterOperatorBenchmarkerExecutionElement(InterOperatorBenchmarkerExecutionElement other){
+		this.startOperatorid = other.startOperatorid;
+		this.strategy = other.strategy;
+		this.fragmentType = other.fragmentType;
+		this.endOperatorId = other.endOperatorId;
+		this.executionDegree = other.executionDegree;
+		this.useThreadedOperators = other.useThreadedOperators;
+		this.possibleDegrees = new ArrayList<Integer>(other.possibleDegrees);
 	}
 	
 	public InterOperatorBenchmarkerExecutionElement clone(){
-		InterOperatorBenchmarkerExecutionElement clone = new InterOperatorBenchmarkerExecutionElement(this.startOperatorid, this.strategy, this.fragmentType, this.endOperatorId);
-		clone.possibleDegrees = new ArrayList<Integer>(this.possibleDegrees);
-		clone.executionDegree = this.executionDegree;
-		return clone;
+		return new InterOperatorBenchmarkerExecutionElement(this);
 	}
 
 	public String getStartOperatorid() {
@@ -85,6 +94,7 @@ public class InterOperatorBenchmarkerExecutionElement {
 		builder.append(", Strategy: " + strategy.getName());
 		builder.append(", Fragmentation: " + fragmentType.getSimpleName()
 				+ ") ");
+		builder.append(", Use threaded operators: "+useThreadedOperators);
 		return builder.toString();
 	}
 
@@ -130,6 +140,14 @@ public class InterOperatorBenchmarkerExecutionElement {
 				this.executionDegree = executionDegree;
 			}
 		}
+	}
+
+	public boolean isUseThreadedOperators() {
+		return useThreadedOperators;
+	}
+
+	public void setUseThreadedOperators(boolean useThreadedOperators) {
+		this.useThreadedOperators = useThreadedOperators;
 	}
 
 }

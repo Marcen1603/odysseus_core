@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 /**
- * Odysseus Script keyword PARALLELIZATION. This class provides global
+ * Odysseus Script keyword #PARALLELIZATION. This class provides global
  * parallelization functionality in Odysseus script and also validates the given
  * parameters for this keyword. It also creates transformation handlers for
  * processing of parallelization
@@ -51,38 +51,36 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 	public void validate(Map<String, Object> variables, String parameterString,
 			ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
+		// get type parameter from keyword
 		String[] split = parameterString.trim().split(" ");
 		String parallelizationType = "";
 		for (int i = 0; i < split.length; i++) {
-			String parameterBeginning = "("
-					+ PARALLELIZATION_TYPE
-							 + "=";
+			String parameterBeginning = "(" + PARALLELIZATION_TYPE + "=";
 			if (split[i].trim().startsWith(parameterBeginning)) {
 				;
 				parallelizationType = split[i].substring(
 						parameterBeginning.length(), split[i].length() - 1);
-			} else {
-
 			}
 		}
 		if (parallelizationType.isEmpty()) {
+			// if parameters are not defined via names, get the first one
+			parallelizationType = split[0];
+		}
+
+		// validate if pre execution handler exists
+		if (ParallelizationPreExecutionHandlerRegistry
+				.isValidType(parallelizationType)) {
+			// get preExecution handler and validate the complete parameter string
+			handler = ParallelizationPreExecutionHandlerRegistry
+					.getPreExecutionHandlerByType(parallelizationType);
+			handler.validateParameters(parameterString);
+		} else {
 			throw new OdysseusScriptException(
 					"value for "
-							+ PARALLELIZATION_TYPE + " not found.");
-		} else {
-			if (ParallelizationPreExecutionHandlerRegistry
-					.isValidType(parallelizationType)) {
-				handler = ParallelizationPreExecutionHandlerRegistry
-						.getPreExecutionHandlerByType(parallelizationType);
-				handler.validateParameters(parameterString);
-			} else {
-				throw new OdysseusScriptException(
-						"value for "
-								+ PARALLELIZATION_TYPE
-								+ " is invalid. Valid values are: "
-								+ ParallelizationPreExecutionHandlerRegistry
-										.getValidTypes());
-			}
+							+ PARALLELIZATION_TYPE
+							+ " is invalid. Valid values are: "
+							+ ParallelizationPreExecutionHandlerRegistry
+									.getValidTypes());
 		}
 
 	}
@@ -95,8 +93,10 @@ public class ParallelizationPreParserKeyword extends AbstractPreParserKeyword {
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
 			String parameterString, ISession caller, Context context,
 			IServerExecutor executor) throws OdysseusScriptException {
+		// get settings and do pre execution (inter or intra-operator parallelization)
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 		handler.preExecute(parameterString, settings);
+
 		return null;
 	}
 }

@@ -24,10 +24,6 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.windows.table.StrategySelect
 
 public class BenchmarkerConfiguration {
 
-	public static final int DEFAULT_NUMBER_OF_EXECUTIONS = 5;
-	public static final long DEFAULT_MAX_EXECUTION_TIME = 80000;
-	public static final int DEFAULT_NUMBER_OF_ELEMENTS = 20000;
-
 	// global configuration
 	private boolean useInterOperatorParallelization = false;
 	private Integer numberOfElements;
@@ -37,14 +33,130 @@ public class BenchmarkerConfiguration {
 	// inter operator configuration
 	private boolean useIntraOperatorParallelization = false;
 	private List<Integer> interOperatorDegrees;
-	private Integer buffersize;
+	private Integer interOPeratorBuffersize;
 	private boolean useThreadedBuffer = false;
 	private boolean useNonThreadedBuffer = false;
 	private boolean allowPostOptimization;
+	private boolean useThreadedOperators = false;
 	private List<StrategySelectionRow> selectedStratgies;
 
 	// intra operator configuration
 	private List<Integer> intraOperatorDegrees;
+	private List<String> selectedOperators;
+	private int intraOperatorBuffersize;
+
+	public List<IBenchmarkerExecution> getBenchmarkerExecutions() {
+		List<IBenchmarkerExecution> executions = new ArrayList<IBenchmarkerExecution>();
+
+		// Calculating executions for inter operator parallelization
+		// map rows to elements
+		if (useInterOperatorParallelization) {
+			Map<String, List<InterOperatorBenchmarkerExecutionElement>> executionElements = new HashMap<String, List<InterOperatorBenchmarkerExecutionElement>>();
+			for (StrategySelectionRow selectedRow : selectedStratgies) {
+				InterOperatorBenchmarkerExecutionElement currentElement = new InterOperatorBenchmarkerExecutionElement(
+						selectedRow.getUniqueOperatorid(),
+						selectedRow.getStrategy(),
+						selectedRow.getFragmentType(),
+						selectedRow.getEndOperatorId(), useThreadedOperators);
+				if (!selectedRow.getCustomDegrees().trim().isEmpty()) {
+					currentElement.setPossibleDegrees(selectedRow
+							.getCustomDegrees().trim());
+				}
+
+				if (!executionElements.containsKey(selectedRow
+						.getUniqueOperatorid())) {
+					executionElements
+							.put(selectedRow.getUniqueOperatorid(),
+									new ArrayList<InterOperatorBenchmarkerExecutionElement>());
+				}
+
+				executionElements.get(selectedRow.getUniqueOperatorid()).add(
+						currentElement);
+			}
+
+			List<InterOperatorBenchmarkerExecution> combinedElements = combineElements(
+					executionElements, 0, null,
+					new ArrayList<InterOperatorBenchmarkerExecution>());
+			for (InterOperatorBenchmarkerExecution benchmarkerExecution : combinedElements) {
+				int index = 0;
+				for (Integer degree : interOperatorDegrees) {
+					if (useThreadedBuffer) {
+						cloneAndConfigureExecution(executions,
+								benchmarkerExecution, index, degree, true);
+					}
+					if (useNonThreadedBuffer) {
+						cloneAndConfigureExecution(executions,
+								benchmarkerExecution, index, degree, false);
+					}
+					index++;
+				}
+			}
+		}
+
+		// Calculating executions for intra operator parallelization
+		if (useIntraOperatorParallelization) {
+			for (Integer degree : intraOperatorDegrees) {
+				executions.add(new IntraOperatorBenchmarkerExecution(degree,
+						selectedOperators, intraOperatorBuffersize));
+			}
+		}
+
+		return executions;
+	}
+
+	private void cloneAndConfigureExecution(
+			List<IBenchmarkerExecution> executions,
+			InterOperatorBenchmarkerExecution benchmarkerExecution, int index,
+			Integer degree, boolean useThreadedBuffer) {
+		InterOperatorBenchmarkerExecution clonedExecution = benchmarkerExecution
+				.clone();
+		clonedExecution.setDegree(degree, index);
+		clonedExecution.setUseThreadedBuffer(useThreadedBuffer);
+		executions.add(clonedExecution);
+	}
+
+	private List<InterOperatorBenchmarkerExecution> combineElements(
+			Map<String, List<InterOperatorBenchmarkerExecutionElement>> executionElements,
+			int currentLevel,
+			List<InterOperatorBenchmarkerExecutionElement> currentElements,
+			List<InterOperatorBenchmarkerExecution> result) {
+		if (currentElements == null) {
+			currentElements = new ArrayList<InterOperatorBenchmarkerExecutionElement>();
+		}
+
+		for (InterOperatorBenchmarkerExecutionElement executionElement : executionElements
+				.get(getNameAtIndex(executionElements, currentLevel))) {
+
+			currentElements.add(executionElement);
+			if (currentLevel >= executionElements.keySet().size() - 1) {
+				InterOperatorBenchmarkerExecution benchmarkerExecution = new InterOperatorBenchmarkerExecution();
+				benchmarkerExecution.setBuffersize(interOPeratorBuffersize);
+				benchmarkerExecution
+						.setAllowPostOptmization(allowPostOptimization);
+				for (InterOperatorBenchmarkerExecutionElement currentElement : currentElements) {
+					benchmarkerExecution
+							.addElement(currentElement.getStartOperatorid(),
+									currentElement);
+				}
+				result.add(benchmarkerExecution);
+			} else {
+				int nextLevel = currentLevel + 1;
+				combineElements(executionElements, nextLevel, currentElements,
+						result);
+			}
+			currentElements.remove(currentElements.size() - 1);
+		}
+
+		return result;
+	}
+
+	private String getNameAtIndex(
+			Map<String, List<InterOperatorBenchmarkerExecutionElement>> executionElements,
+			int currentPosition) {
+		ArrayList<String> arrayList = new ArrayList<String>(
+				executionElements.keySet());
+		return arrayList.get(currentPosition);
+	}
 
 	public List<StrategySelectionRow> getSelectedStratgies() {
 		return selectedStratgies;
@@ -71,12 +183,12 @@ public class BenchmarkerConfiguration {
 		this.intraOperatorDegrees = degrees;
 	}
 
-	public Integer getBuffersize() {
-		return buffersize;
+	public Integer getInterOperatorBuffersize() {
+		return interOPeratorBuffersize;
 	}
 
-	public void setBuffersize(Integer buffersize) {
-		this.buffersize = buffersize;
+	public void setInterOperatorBuffersize(Integer buffersize) {
+		this.interOPeratorBuffersize = buffersize;
 	}
 
 	public Integer getNumberOfElements() {
@@ -127,116 +239,6 @@ public class BenchmarkerConfiguration {
 		this.numberOfExecutions = numberOfExecutions;
 	}
 
-	public List<IBenchmarkerExecution> getBenchmarkerExecutions() {
-		List<IBenchmarkerExecution> executions = new ArrayList<IBenchmarkerExecution>();
-
-		// Calculating executions for inter operator parallelization
-		// map rows to elements
-		if (useInterOperatorParallelization) {
-			Map<String, List<InterOperatorBenchmarkerExecutionElement>> executionElements = new HashMap<String, List<InterOperatorBenchmarkerExecutionElement>>();
-			for (StrategySelectionRow selectedRow : selectedStratgies) {
-				InterOperatorBenchmarkerExecutionElement currentElement = new InterOperatorBenchmarkerExecutionElement(
-						selectedRow.getUniqueOperatorid(),
-						selectedRow.getStrategy(),
-						selectedRow.getFragmentType(),
-						selectedRow.getEndOperatorId());
-				if (!selectedRow.getCustomDegrees().trim().isEmpty()) {
-					currentElement.setPossibleDegrees(selectedRow
-							.getCustomDegrees().trim());
-				}
-
-				if (!executionElements.containsKey(selectedRow
-						.getUniqueOperatorid())) {
-					executionElements.put(selectedRow.getUniqueOperatorid(),
-							new ArrayList<InterOperatorBenchmarkerExecutionElement>());
-				}
-
-				executionElements.get(selectedRow.getUniqueOperatorid()).add(
-						currentElement);
-			}
-
-			List<InterOperatorBenchmarkerExecution> combinedElements = combineElements(
-					executionElements, 0, null,
-					new ArrayList<InterOperatorBenchmarkerExecution>());
-			for (InterOperatorBenchmarkerExecution benchmarkerExecution : combinedElements) {
-				int index = 0;
-				for (Integer degree : interOperatorDegrees) {
-					if (useThreadedBuffer) {
-						cloneAndConfigureExecution(executions,
-								benchmarkerExecution, index, degree, true);
-					}
-					if (useNonThreadedBuffer) {
-						cloneAndConfigureExecution(executions,
-								benchmarkerExecution, index, degree, false);
-					}
-					index++;
-				}
-			}
-		}
-
-		// Calculating executions for intra operator parallelization
-		if (useIntraOperatorParallelization) {
-			for (Integer degree : intraOperatorDegrees) {
-				executions.add(new IntraOperatorBenchmarkerExecution(degree));
-			}
-		}
-
-		return executions;
-	}
-
-	private void cloneAndConfigureExecution(
-			List<IBenchmarkerExecution> executions,
-			InterOperatorBenchmarkerExecution benchmarkerExecution, int index,
-			Integer degree, boolean useThreadedBuffer) {
-		InterOperatorBenchmarkerExecution clonedExecution = benchmarkerExecution
-				.clone();
-		clonedExecution.setDegree(degree, index);
-		clonedExecution.setUseThreadedBuffer(useThreadedBuffer);
-		executions.add(clonedExecution);
-	}
-
-	private List<InterOperatorBenchmarkerExecution> combineElements(
-			Map<String, List<InterOperatorBenchmarkerExecutionElement>> executionElements,
-			int currentLevel, List<InterOperatorBenchmarkerExecutionElement> currentElements,
-			List<InterOperatorBenchmarkerExecution> result) {
-		if (currentElements == null) {
-			currentElements = new ArrayList<InterOperatorBenchmarkerExecutionElement>();
-		}
-
-		for (InterOperatorBenchmarkerExecutionElement executionElement : executionElements
-				.get(getNameAtIndex(executionElements, currentLevel))) {
-
-			currentElements.add(executionElement);
-			if (currentLevel >= executionElements.keySet().size() - 1) {
-				InterOperatorBenchmarkerExecution benchmarkerExecution = new InterOperatorBenchmarkerExecution();
-				benchmarkerExecution.setBuffersize(buffersize);
-				benchmarkerExecution
-						.setAllowPostOptmization(allowPostOptimization);
-				for (InterOperatorBenchmarkerExecutionElement currentElement : currentElements) {
-					benchmarkerExecution
-							.addElement(currentElement.getStartOperatorid(),
-									currentElement);
-				}
-				result.add(benchmarkerExecution);
-			} else {
-				int nextLevel = currentLevel + 1;
-				combineElements(executionElements, nextLevel, currentElements,
-						result);
-			}
-			currentElements.remove(currentElements.size() - 1);
-		}
-
-		return result;
-	}
-
-	private String getNameAtIndex(
-			Map<String, List<InterOperatorBenchmarkerExecutionElement>> executionElements,
-			int currentPosition) {
-		ArrayList<String> arrayList = new ArrayList<String>(
-				executionElements.keySet());
-		return arrayList.get(currentPosition);
-	}
-
 	public boolean isUseInterOperatorParallelization() {
 		return useInterOperatorParallelization;
 	}
@@ -253,6 +255,30 @@ public class BenchmarkerConfiguration {
 	public void setUseIntraOperatorParallelization(
 			boolean useIntraOperatorParallelization) {
 		this.useIntraOperatorParallelization = useIntraOperatorParallelization;
+	}
+
+	public boolean isUseThreadedOperators() {
+		return useThreadedOperators;
+	}
+
+	public void setUseThreadedOperators(boolean useThreadedOperators) {
+		this.useThreadedOperators = useThreadedOperators;
+	}
+
+	public List<String> getSelectedOperators() {
+		return selectedOperators;
+	}
+
+	public void setSelectedOperators(List<String> selectedOperators) {
+		this.selectedOperators = selectedOperators;
+	}
+
+	public int getIntraOperatorBuffersize() {
+		return intraOperatorBuffersize;
+	}
+
+	public void setIntraOperatorBuffersize(int intraOperatorBuffersize) {
+		this.intraOperatorBuffersize = intraOperatorBuffersize;
 	}
 
 }

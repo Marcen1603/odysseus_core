@@ -53,6 +53,7 @@ public class SDFAttributeHelper {
 
 	/**
 	 * returns a single instance
+	 * 
 	 * @return
 	 */
 	public static SDFAttributeHelper getInstance() {
@@ -63,11 +64,13 @@ public class SDFAttributeHelper {
 	}
 
 	/**
-	 * validates of the structure of a given join attribute is in a correct structure
-	 * valid structure: (a.A == b.B) && (a.C == b.D) && ...
-	 * in addition to this the number of attributes need to be equals for both input ports
+	 * validates of the structure of a given join attribute is in a correct
+	 * structure valid structure: (a.A == b.B) && (a.C == b.D) && ... in
+	 * addition to this the number of attributes need to be equals for both
+	 * input ports
 	 * 
-	 * @param a logical join operator
+	 * @param a
+	 *            logical join operator
 	 * @return true if the structure is valid, else false
 	 */
 	public boolean validateStructureOfPredicate(JoinAO joinOperator) {
@@ -107,12 +110,15 @@ public class SDFAttributeHelper {
 	}
 
 	/**
-	 * gets the sdf attributes from a given join operator. Only returns results if the structure is valid
-	 * valid structure: (a.A == b.B) && (a.C == b.D) && ...
-	 * in addition to this the number of attributes need to be equals for both input ports
+	 * gets the sdf attributes from a given join operator. Only returns results
+	 * if the structure is valid valid structure: (a.A == b.B) && (a.C == b.D)
+	 * && ... in addition to this the number of attributes need to be equals for
+	 * both input ports
 	 * 
-	 * @param resultin attributes
-	 * @param a logical join operator
+	 * @param resultin
+	 *            attributes
+	 * @param a
+	 *            logical join operator
 	 * @return a map of attributes for both input ports
 	 */
 	public Map<Integer, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(
@@ -145,33 +151,44 @@ public class SDFAttributeHelper {
 
 	}
 
+	/**
+	 * Gets the attributes from expression 
+	 * 
+	 * @param attributes
+	 * @param expression
+	 * @param resolver
+	 * @param joinOperator
+	 * @return attributes grouped by input port
+	 */
 	private Map<Integer, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(
 			Map<Integer, List<SDFAttribute>> attributes,
 			IExpression<?> expression, IAttributeResolver resolver,
 			JoinAO joinOperator) {
 		String symbol = expression.toFunction().getSymbol();
 
+		// check if expression is function and is AND
 		if (expression.isFunction() && (symbol.equalsIgnoreCase("&&"))) {
 
 			IBinaryOperator<?> binaryOperator = (IBinaryOperator<?>) expression;
 			IExpression<?> argument1 = binaryOperator.getArgument(0);
 			if (argument1.isFunction()) {
-				// recursive call
+				// recursive call for left part of AND
 				getSDFAttributesFromEqualPredicates(attributes, argument1,
 						resolver, joinOperator);
 			}
 			IExpression<?> argument2 = binaryOperator.getArgument(1);
 			if (argument2.isFunction()) {
-				// recursive call
+				// recursive call for right part of AND
 				getSDFAttributesFromEqualPredicates(attributes, argument2,
 						resolver, joinOperator);
 			}
 		} else if ((expression.isFunction()) && (symbol.equalsIgnoreCase("="))) {
+			// if we have an EQUALS function
 			final IBinaryOperator<?> eq = (IBinaryOperator<?>) expression;
 			final IExpression<?> arg1 = eq.getArgument(0);
 			final IExpression<?> arg2 = eq.getArgument(1);
 			if ((arg1.isVariable()) && (arg2.isVariable())) {
-				// Attribute 1
+				// Resolve first attribute and get input port
 				SDFAttribute attr1 = resolver.getAttribute(((Variable) arg1)
 						.getIdentifier());
 
@@ -184,7 +201,7 @@ public class SDFAttributeHelper {
 					attribute1port = 1;
 				}
 
-				// Attribute 2
+				// Resolve second attribute and get input port
 				SDFAttribute attr2 = resolver.getAttribute(((Variable) arg2)
 						.getIdentifier());
 
@@ -197,7 +214,8 @@ public class SDFAttributeHelper {
 					attribute2port = 1;
 				}
 
-				// save attributes in combination with input port
+				// save attributes in combination with input port only if
+				// attributes belong to both input ports
 				if (attribute1port > -1 && attribute2port > -1) {
 					if (!attributes.containsKey(attribute1port)) {
 						attributes.put(attribute1port,
@@ -213,6 +231,7 @@ public class SDFAttributeHelper {
 				}
 			}
 		} else {
+			// only EQUALS and AND functions are allowed
 			fragmentationIsPossible = false;
 		}
 
@@ -220,7 +239,7 @@ public class SDFAttributeHelper {
 	}
 
 	/**
-	 * checks if a given mep expression contains stateful expressions 
+	 * checks if a given mep expression contains stateful expressions
 	 * 
 	 * @param mepExpression
 	 * @return true if the given expression contains stateful expressions
@@ -244,7 +263,8 @@ public class SDFAttributeHelper {
 	}
 
 	/**
-	 * checks if the grouping attributes contains in one of the given fragmentation operators (only hash fragments)
+	 * checks if the grouping attributes contains in one of the given
+	 * fragmentation operators (only hash fragments)
 	 * 
 	 * @param aggregateAO
 	 * @param iteration
@@ -257,7 +277,7 @@ public class SDFAttributeHelper {
 
 		List<SDFAttribute> groupingAttributes = aggregateOperator
 				.getGroupingAttributes();
-		
+
 		for (SDFAttribute sdfAttribute : groupingAttributes) {
 			boolean attributeFound = false;
 			for (AbstractFragmentAO fragment : fragmentAOs) {
