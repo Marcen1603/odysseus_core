@@ -1,3 +1,18 @@
+/********************************************************************************** 
+ * Copyright 2015 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.script.parser.parameter;
 
 import java.util.ArrayList;
@@ -6,6 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * This class provides functionality for parsing and creating paramter strings used in PreParserKeywords (Odysseus Script)
+ *
+ * @author ChrisToenjesDeye
+ *
+ */
 public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParameter> {
 
 	private static final String PATTERN_PAIRS = "((([a-zA-Z0-9_]+))[,])"
@@ -27,6 +48,15 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 	private int numberOfParameters;
 	private int numberOfOptionalParameters;
 
+	/**
+	 * Construction of this helper is only possible via static methods
+	 * 
+	 * @param positionMap
+	 * @param nameMap
+	 * @param regexString
+	 * @param numberOfParameters
+	 * @param numberOfOptionalParameters
+	 */
 	private PreParserKeywordParameterHelper(
 			Map<Integer, IKeywordParameter> positionMap,
 			Map<String, IKeywordParameter> nameMap, String regexString,
@@ -38,6 +68,13 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		this.numberOfOptionalParameters = numberOfOptionalParameters;
 	}
 
+	/**
+	 * Creates a new instance of this helper with custom regex
+	 * 
+	 * @param parameterClazz - the type of the parameters
+	 * @param regexString - a custom regular expression
+	 * @return new instance of helper
+	 */
 	public static <T extends Enum<?> & IKeywordParameter> PreParserKeywordParameterHelper<T> newInstance(
 			Class<T> parameterClazz, String regexString) {
 		Map<Integer, IKeywordParameter> positionMap = new HashMap<Integer, IKeywordParameter>();
@@ -48,6 +85,7 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		List<IKeywordParameter> keywordParameters = getParametersAsArray(parameterClazz);
 
 		for (IKeywordParameter keywordParameter : keywordParameters) {
+			
 			if (!positionMap.containsKey(keywordParameter.getPosition())) {
 				positionMap.put(keywordParameter.getPosition(),
 						keywordParameter);
@@ -57,12 +95,14 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 			}
 			if (keywordParameter.getName() == null
 					|| keywordParameter.getName().isEmpty()) {
+				//Empty names are not allowed
 				throw new IllegalArgumentException("Empty name is not allowed");
 			}
 			if (!nameMap.containsKey(keywordParameter.getName().toLowerCase())) {
 				nameMap.put(keywordParameter.getName().toLowerCase(),
 						keywordParameter);
 			} else {
+				// names need to be unique
 				throw new IllegalArgumentException("Name needs to be unique.");
 			}
 
@@ -81,11 +121,22 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		return instance;
 	}
 
+	/**
+	 * Creates a new instance of this helper with custom regex
+	 * @param parameterClazz - the type of the parameters
+	 * @return new instance of helper
+	 */
 	public static <T extends Enum<?> & IKeywordParameter> PreParserKeywordParameterHelper<T> newInstance(
 			Class<T> parameterClass) {
 		return newInstance(parameterClass, PATTERN_KEYWORD);
 	}
 
+	/**
+	 * Returns the parameters for a given type as an array
+	 * 
+	 * @param parameterClazz
+	 * @return every parameter of this enum
+	 */
 	private static <T extends Enum<?> & IKeywordParameter> List<IKeywordParameter> getParametersAsArray(
 			Class<T> parameterClazz) {
 		List<IKeywordParameter> result = new ArrayList<IKeywordParameter>();
@@ -101,6 +152,12 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		return result;
 	}
 
+	/**
+	 * Validates if the given parameter class and elements are valid. Also the given regex is validated
+	 * 
+	 * @return true if valid, else false
+	 * 
+	 */
 	private boolean validateParametersAndRegex() {
 		// check regex
 		Pattern.compile(this.regexString);
@@ -108,10 +165,12 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		// check if positions from zero to numberOfParamters-1 exists
 		boolean firstOptionalParameterFound = false;
 		for (int i = 0; i < this.numberOfParameters; i++) {
+			// checks if the positions are correct
 			if (!positionMap.containsKey(i)) {
 				throw new IllegalArgumentException(
 						"positions need to be from 0 to numberOfParameters-1");
 			}
+			// checks if a mandatory parameter exists after a optional parameter (this is not valid)
 			if (!positionMap.get(i).isOptional() && firstOptionalParameterFound) {
 				throw new IllegalArgumentException(
 						"No mandatory parameters after optional parameters are allowed");
@@ -124,6 +183,11 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		return false;
 	}
 
+	/**
+	 * Creates a short version of the pattern for the given parameter (without name of parameter)
+	 * Needs the correct order of parameters
+	 * @return pattern
+	 */
 	public String getShortParameterPattern() {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < this.numberOfParameters; i++) {
@@ -146,6 +210,10 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		return builder.toString();
 	}
 
+	/**
+	 * creates the long pattern version for the given parameters (with name of parameters)
+	 * @return pattern
+	 */
 	public String getLongParameterPattern() {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < this.numberOfParameters; i++) {
@@ -159,6 +227,11 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		return builder.toString();
 	}
 
+	/**
+	 * Parses the given parameter string and returns a map with parameter and value
+	 * @param parameterString
+	 * @return map with parameter and value
+	 */
 	public Map<IKeywordParameter, String> parse(String parameterString) {
 		validateParameterString(parameterString);
 
@@ -176,6 +249,11 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		return result;
 	}
 
+	/**
+	 * creates a parameter string from the given map (name and value)
+	 * @param parameters
+	 * @return parameter string
+	 */
 	public String createParameterString(
 			Map<T, String> parameters) {
 		StringBuilder builder = new StringBuilder();
@@ -194,6 +272,10 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		return resultString;
 	}
 
+	/**
+	 * checks if all mandatory parameters are set
+	 * @param result the result of parsing
+	 */
 	private void checkIfAllMandatoryParametersAreSet(
 			Map<IKeywordParameter, String> result) {
 		for (IKeywordParameter keywordParameter : positionMap.values()) {
@@ -208,6 +290,11 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		}
 	}
 
+	/**
+	 * do the parsing if no parameter names exists
+	 * @param splittedParameters
+	 * @param result
+	 */
 	private void doParsingWithoutParameterNames(String[] splittedParameters,
 			Map<IKeywordParameter, String> result) {
 		for (int i = 0; i < splittedParameters.length; i++) {
@@ -215,6 +302,11 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		}
 	}
 
+	/**
+	 * do the parsing if parameter names exists
+	 * @param splittedParameters
+	 * @param result
+	 */
 	private void doParsingWithParameterNames(String[] splittedParameters,
 			Map<IKeywordParameter, String> result) {
 		for (int i = 0; i < splittedParameters.length; i++) {
@@ -243,13 +335,20 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 		}
 	}
 
+	/**
+	 * Validates the given parameter string
+	 * 
+	 * @param parameterString
+	 */
 	public void validateParameterString(String parameterString) {
 		parameterString = parameterString.trim();
+		// empty string is not allowed
 		if (parameterString == null || parameterString.isEmpty()) {
 			throw new IllegalArgumentException(
 					"Null or empty string is not allowed for parsing");
 		}
 
+		// need to match the regex
 		if (!parameterString.matches(regexString)) {
 			if (parameterString.contains("=")) {
 				throw new IllegalArgumentException(
@@ -259,7 +358,6 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 			throw new IllegalArgumentException(
 					"String does not match pattern. Pattern: "
 							+ getShortParameterPattern());
-
 		}
 
 		String[] split = parameterString.trim().split(" ");
