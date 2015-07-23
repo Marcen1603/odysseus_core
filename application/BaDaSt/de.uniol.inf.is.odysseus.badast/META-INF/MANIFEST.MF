@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Backup of Data Streams Application
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.badast
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.badast;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Michael Brand
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -11,6 +11,7 @@ Require-Bundle: org.apache.kafka;bundle-version="0.8.2",
  org.scala-lang.scala-library;bundle-version="2.10.4",
  org.i0itec.zkclient;bundle-version="1.0.0",
  org.apache.zookeeper;bundle-version="3.3.2",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ org.eclipse.core.runtime;bundle-version="3.7.0"
 Bundle-ClassPath: config/,
  .

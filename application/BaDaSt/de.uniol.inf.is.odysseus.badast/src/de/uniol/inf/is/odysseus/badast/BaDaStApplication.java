@@ -11,6 +11,8 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.zookeeper.server.ServerConfig;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
 import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * @author Michael Brand
  *
  */
-public class BaDaStApplication {
+public class BaDaStApplication implements IApplication {
 
 	/**
 	 * The logger for this class.
@@ -81,6 +83,11 @@ public class BaDaStApplication {
 	public int getPort() {
 		return this.mPort;
 	}
+	
+	/**
+	 * The Kafka Server.
+	 */
+	private KafkaServerStartable mKafkaServer;
 
 	/**
 	 * Starts first a ZooKeeper server and afterwards a Kafka server.
@@ -174,9 +181,9 @@ public class BaDaStApplication {
 			public void run() {
 				try {
 					KafkaConfig config = new KafkaConfig(props);
-					KafkaServerStartable kafkaServer = new KafkaServerStartable(
+					BaDaStApplication.this.mKafkaServer = new KafkaServerStartable(
 							config);
-					kafkaServer.startup();
+					BaDaStApplication.this.mKafkaServer.startup();
 				} catch (Exception e) {
 					cLog.error("Kafka failed!", e);
 					return;
@@ -184,6 +191,20 @@ public class BaDaStApplication {
 			}
 
 		}.start();
+	}
+
+	@Override
+	public Object start(IApplicationContext context) throws Exception {
+		context.applicationRunning();
+		getInstance().run();
+		return IApplicationContext.EXIT_ASYNC_RESULT;
+	}
+
+	@Override
+	public void stop() {
+		if(this.mKafkaServer != null) {
+			this.mKafkaServer.shutdown();
+		}
 	}
 
 }
