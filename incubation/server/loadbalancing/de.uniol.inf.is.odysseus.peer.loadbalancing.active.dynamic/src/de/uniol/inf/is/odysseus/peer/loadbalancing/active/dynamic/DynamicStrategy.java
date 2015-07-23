@@ -236,9 +236,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 		LOG.info("Re-Allocation of queries triggered.");
 					
-		double cpuLoadToRemove = Math.max(0.0, DynamicLoadBalancingConstants.CPU_THRESHOLD-cpuUsage);
-		double memLoadToRemove = Math.max(0.0, DynamicLoadBalancingConstants.MEM_THRESHOLD-memUsage);
-		double netLoadToRemove = Math.max(0.0, DynamicLoadBalancingConstants.NET_THRESHOLD-netUsage);
+		double cpuLoadToRemove = Math.max(0.0, cpuUsage-DynamicLoadBalancingConstants.CPU_THRESHOLD);
+		double memLoadToRemove = Math.max(0.0, memUsage-DynamicLoadBalancingConstants.MEM_THRESHOLD);
+		double netLoadToRemove = Math.max(0.0, netUsage-DynamicLoadBalancingConstants.NET_THRESHOLD);
 		
 		QueryCostMap allQueries = generateCostMapForAllQueries();
 		IQuerySelectionStrategy greedySelector = new GreedyQuerySelector();
@@ -382,10 +382,11 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 			double cpuLoad = queryCost.getCpuSum()/(cpuMax*DynamicLoadBalancingConstants.CPU_LOAD_COSTMODEL_FACTOR);
 			double netLoad = queryCost.getNetworkSum()/netMax;
 			double memLoad = queryCost.getMemorySum()/memMax;
+				
 			
 			double migrationCosts = calculateIndividualMigrationCostsForQuery(operatorsInQuery,queryCost);
 			
-			QueryLoadInformation info = new QueryLoadInformation(queryId,cpuLoad,netLoad,memLoad,migrationCosts);
+			QueryLoadInformation info = new QueryLoadInformation(queryId,cpuLoad,memLoad,netLoad,migrationCosts);
 			
 			queryCostMap.add(info);
 		}

@@ -11,11 +11,18 @@ public class SimulatedAnnealingQuerySelector implements IQuerySelectionStrategy 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SimulatedAnnealingQuerySelector.class);
 
-	private static final int INITIAL_TEMPERATURE = 100;
+	private static final int INITIAL_TEMPERATURE = 1000;
 	private static final double INITITAL_SELECTION_PROBABILITY = 0.3;
+	
+	private QueryCostMap previousResult;
 
 	public SimulatedAnnealingQuerySelector() {
 
+	}
+	
+
+	public SimulatedAnnealingQuerySelector(QueryCostMap previousResult) {
+		this.previousResult = previousResult;
 	}
 
 	Random rand;
@@ -26,8 +33,13 @@ public class SimulatedAnnealingQuerySelector implements IQuerySelectionStrategy 
 
 		rand = new Random();
 		rand.setSeed(System.currentTimeMillis());
-
-		QueryCostMap currentSolution = chooseRandom(allQueries);
+		QueryCostMap currentSolution;
+		if(previousResult==null) {
+			currentSolution = chooseRandom(allQueries);
+		}
+		else {
+			currentSolution = previousResult;
+		}
 		QueryCostMap bestSolution = currentSolution.clone();
 
 		int currentTemperature = INITIAL_TEMPERATURE;

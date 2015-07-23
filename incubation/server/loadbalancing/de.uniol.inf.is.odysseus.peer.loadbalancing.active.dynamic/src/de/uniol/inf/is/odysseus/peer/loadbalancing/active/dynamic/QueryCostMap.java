@@ -67,6 +67,9 @@ public class QueryCostMap implements Cloneable {
 		
 		totalCpuLoad +=query.getCpuLoad();
 		totalNetLoad +=query.getNetLoad();
+		if(totalNetLoad!=0.0) {
+			
+		}
 		totalMemLoad +=query.getMemLoad();
 		individualCostSum += query.getIndividualMigrationCost();
 		
