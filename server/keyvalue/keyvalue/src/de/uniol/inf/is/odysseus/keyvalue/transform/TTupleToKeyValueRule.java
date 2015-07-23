@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.keyvalue.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -22,7 +21,7 @@ public class TTupleToKeyValueRule extends AbstractTransformationRule<TupleToKeyV
 
 	@Override
 	public void execute(TupleToKeyValueAO ao, TransformationConfiguration config) throws RuleException {
-		SDFSchema newOutputSchema =  SDFSchema.changeType(ao.getInputSchema(),KeyValueObject.class);
+		SDFSchema newOutputSchema =  SDFSchema.changeType(ao.getInputSchema(), ao.getTypeClass());
 		TupleToKeyValuePO<IMetaAttribute> po = new TupleToKeyValuePO<IMetaAttribute>();
 		po.setOutputSchema(newOutputSchema);
 		defaultExecute(ao, po, config, true, false);

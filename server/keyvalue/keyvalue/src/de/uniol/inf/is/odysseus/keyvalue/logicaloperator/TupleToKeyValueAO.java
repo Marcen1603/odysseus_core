@@ -47,7 +47,7 @@ public class TupleToKeyValueAO extends UnaryLogicalOp {
 	}
 
 	@Parameter(type = StringParameter.class, name = "TYPE", optional = true, isList = false, doc = "type of key value object the tuples will be transformed to")
-	public void setPaths(String type) {
+	public void setType(String type) {
 		if (type.equalsIgnoreCase("KEYVALUEOBJECT")) {
 			this.type = KeyValueObject.class;
 		} else if (type.equalsIgnoreCase("NESTEDKEYVALUEOBJECT")) {
@@ -57,11 +57,17 @@ public class TupleToKeyValueAO extends UnaryLogicalOp {
 		}
 	}
 
+	// TODO: Shouldn't this method be renamed to getType?
 	@GetParameter(name = "TYPE")
-	public String getPaths() {
+	public String getType() {
 		return this.type.getSimpleName();
 	}
 
+	@SuppressWarnings("rawtypes")
+	public Class<? extends IStreamObject> getTypeClass() {
+		return this.type;
+	}	
+	
 	@Override
 	public boolean isValid() {
 		if (this.type != null

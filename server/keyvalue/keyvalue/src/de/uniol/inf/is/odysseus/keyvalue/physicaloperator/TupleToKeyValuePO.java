@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.keyvalue.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -48,7 +49,13 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 	@SuppressWarnings("unchecked")
     @Override
 	protected void process_next(Tuple<M> input, int port) {
-		KeyValueObject<M> output = new KeyValueObject<M>();
+		KeyValueObject<M> output = null;
+		if (getOutputSchema().getType() == KeyValueObject.class)
+			output = new KeyValueObject<M>();
+		else
+		if (getOutputSchema().getType() == NestedKeyValueObject.class)
+			output = new NestedKeyValueObject<M>();
+		
 		int pos = 0;
 		for (SDFAttribute attr : getOutputSchema()) {
 			output.setAttribute(attr.getQualName(), input.getAttribute(pos++));
