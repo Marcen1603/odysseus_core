@@ -243,7 +243,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		QueryCostMap allQueries = generateCostMapForAllQueries();
 		IQuerySelectionStrategy greedySelector = new GreedyQuerySelector();
 		QueryCostMap greedyResult = greedySelector.selectQueries(allQueries.clone(),cpuLoadToRemove, memLoadToRemove, netLoadToRemove);
-		IQuerySelectionStrategy simulatedAnnealingSelector = new SimulatedAnnealingQuerySelector();
+		IQuerySelectionStrategy simulatedAnnealingSelector = new SimulatedAnnealingQuerySelector(greedyResult);
 		QueryCostMap simulatedAnnealingResult =  simulatedAnnealingSelector.selectQueries(allQueries.clone(), cpuLoadToRemove, memLoadToRemove, netLoadToRemove);
 			
 		QueryCostMap chosenResult;

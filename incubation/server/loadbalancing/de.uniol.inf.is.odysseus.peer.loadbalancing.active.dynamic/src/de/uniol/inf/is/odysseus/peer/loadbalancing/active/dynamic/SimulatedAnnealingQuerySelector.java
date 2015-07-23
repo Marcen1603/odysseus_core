@@ -22,7 +22,7 @@ public class SimulatedAnnealingQuerySelector implements IQuerySelectionStrategy 
 	
 
 	public SimulatedAnnealingQuerySelector(QueryCostMap previousResult) {
-		this.previousResult = previousResult;
+		this.previousResult = previousResult.clone();
 	}
 
 	Random rand;

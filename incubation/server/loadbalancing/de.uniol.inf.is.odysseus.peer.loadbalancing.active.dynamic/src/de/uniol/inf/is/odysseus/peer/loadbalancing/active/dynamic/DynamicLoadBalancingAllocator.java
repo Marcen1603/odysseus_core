@@ -79,6 +79,10 @@ public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 			throw new QueryPartAllocationException("No QueryBuildConfiguration defined.");
 		}
 		
+		if(knownRemotePeers.contains(localPeerID)) {
+			knownRemotePeers.remove(localPeerID);
+		}
+		
 		Map<ILogicalQueryPart,PeerID> allocationResult = surveyAllocator.allocate(queryParts, query, knownRemotePeers, localPeerID, config, allocatorParameters);
 		
 		return allocationResult;
