@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.costmodel.physical.estimate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.costmodel.physical.StandardPhysicalOperatorEstimator;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingElementWindowTIPO;
@@ -7,6 +10,13 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingElementWin
 @SuppressWarnings("rawtypes")
 public class ElementWindowTIPOEstimator extends StandardPhysicalOperatorEstimator<SlidingElementWindowTIPO> {
 
+
+	/***
+	 * Logger
+	 */
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ElementWindowTIPOEstimator.class);
+	
 	@Override
 	protected Class<? extends SlidingElementWindowTIPO> getOperatorClass() {
 		return SlidingElementWindowTIPO.class;
@@ -17,6 +27,7 @@ public class ElementWindowTIPOEstimator extends StandardPhysicalOperatorEstimato
 
 		double inputDataRate = getInputDataRate();
 
+		
 		long windowAdvanceElements = getOperator().getWindowAdvanceMillis();
 		long windowSizeElements = getOperator().getWindowSizeMillis();
 
@@ -29,6 +40,10 @@ public class ElementWindowTIPOEstimator extends StandardPhysicalOperatorEstimato
 
 	private double getInputDataRate() {
 		for (IPhysicalOperator operator : getPrevCostMap().keySet()) {
+
+			if(getPrevCostMap().get(operator).getDatarate()==0.0) {
+				LOG.warn("Operator {} had Datarate of 0.0. This will lead to infinite Window Size and is probably not correct.",operator.getName());
+			}
 			return getPrevCostMap().get(operator).getDatarate();
 		}
 

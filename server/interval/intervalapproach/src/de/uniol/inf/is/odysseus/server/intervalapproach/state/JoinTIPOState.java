@@ -168,7 +168,10 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 	}
 	
 	
-	private long estimateSweepAreaSizeInBytes(ITimeIntervalSweepArea<T> area, int sampleSize) {
+	private long estimateSweepAreaSizeInBytes(ITimeIntervalSweepArea<T> originalArea, int sampleSize) {
+		
+		ITimeIntervalSweepArea<T> area = originalArea.clone();
+		
 		if(area.size()<sampleSize) {
 			return getSizeInBytesOfSerializable((Serializable)area);
 		}
@@ -181,6 +184,7 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 		Iterator<T> areaIterator = area.iterator();
 		int i=0;
 		//Get maximum Number of Bytes for (serialized) Tuple/Streamable
+		
 		while(areaIterator.hasNext() && i<sampleSize) {
 			T streamObject = areaIterator.next();
 			fullElementArea.insert(streamObject);
