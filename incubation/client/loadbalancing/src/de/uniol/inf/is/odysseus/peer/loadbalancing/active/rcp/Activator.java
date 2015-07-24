@@ -1,11 +1,16 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
 
-public class Activator implements BundleActivator {
+public class Activator extends AbstractUIPlugin implements BundleActivator {
+	
+	// The plug-in ID
+	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp";
 
 	private static BundleContext context;
 
@@ -46,7 +51,18 @@ public class Activator implements BundleActivator {
 	public static ILoadBalancingController getLoadBalancingController() {
 		return controller;
 	}
-	
+
+
+	/**
+	 * Returns an image descriptor for the image file at the given
+	 * plug-in relative path
+	 *
+	 * @param path the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
 	
 
 }

@@ -5,6 +5,7 @@ import java.util.Set;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -25,6 +26,9 @@ public class LoadBalancingView extends ViewPart {
 	private String selectedStrategy = "";
 	private String selectedAllocator ="";
 	
+	private Combo strategyCombo;
+	private Combo allocatorCombo;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 
@@ -33,7 +37,6 @@ public class LoadBalancingView extends ViewPart {
 			createLabel(parent,CONTROL_NOT_BOUND);
 		}
 		else {
-			
 			createChooserComposite(parent);
 			
 			
@@ -49,7 +52,7 @@ public class LoadBalancingView extends ViewPart {
 		rootComposite.setLayout(new GridLayout(2, false));
 		
 		createLabel(rootComposite,STRATEGY_LABEL);
-		Combo strategyCombo = new Combo(rootComposite,SWT.READ_ONLY);
+		strategyCombo = new Combo(rootComposite,SWT.READ_ONLY);
 		strategyCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -58,7 +61,7 @@ public class LoadBalancingView extends ViewPart {
 		});
 		
 		createLabel(rootComposite,ALLOCATOR_LABEL);
-		Combo allocatorCombo = new Combo(rootComposite, SWT.READ_ONLY);
+		allocatorCombo = new Combo(rootComposite, SWT.READ_ONLY);
 		allocatorCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -66,10 +69,12 @@ public class LoadBalancingView extends ViewPart {
 			}
 		});
 		
-		
+		Composite buttonComposite = new Composite(rootComposite, SWT.NONE);
+		buttonComposite.setLayout(new GridLayout(3, true));
 
-		Button startButton = new Button(rootComposite, SWT.NONE);
-		startButton.setText("Start");
+		Button startButton = new Button(buttonComposite, SWT.NONE);
+		Image startImage = Activator.getImageDescriptor("icons/start.png").createImage();
+		startButton.setImage(startImage);
 		startButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -83,8 +88,9 @@ public class LoadBalancingView extends ViewPart {
 			}
 		});
 		
-		Button stopButton = new Button(rootComposite, SWT.NONE);
-		stopButton.setText("Stop");
+		Button stopButton = new Button(buttonComposite, SWT.NONE);
+		Image stopImage = Activator.getImageDescriptor("icons/stop.png").createImage();
+		stopButton.setImage(stopImage);
 		stopButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -97,8 +103,24 @@ public class LoadBalancingView extends ViewPart {
 		});
 		
 
-		populateStrategyList(strategyCombo, controller);
-		populateAllocatorList(allocatorCombo, controller);
+		Button refreshButton = new Button(buttonComposite,SWT.None);
+		Image refreshImage = Activator.getImageDescriptor("icons/refresh.png").createImage();
+		refreshButton.setImage(refreshImage);
+		refreshButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ILoadBalancingController controller = Activator.getLoadBalancingController();
+
+				if (controller != null){
+					populateStrategyList(controller);
+					populateAllocatorList(controller);
+				}
+			}
+		});
+
+		
+		populateStrategyList(controller);
+		populateAllocatorList(controller);
 	}
 	
 	
@@ -114,16 +136,16 @@ public class LoadBalancingView extends ViewPart {
 		 
 	}
 	
-	private void populateStrategyList(Combo combo,ILoadBalancingController controller) {
+	private void populateStrategyList(ILoadBalancingController controller) {
 		Set<String> strategies = controller.getAvailableStrategies();
 		String[] stringArray = strategies.toArray(new String[strategies.size()]);
-		combo.setItems(stringArray);
+		strategyCombo.setItems(stringArray);
 	}
 	
-	private void populateAllocatorList(Combo combo,ILoadBalancingController controller) {
+	private void populateAllocatorList(ILoadBalancingController controller) {
 		Set<String> allocators = controller.getAvailableAllocators();
 		String[] stringArray = allocators.toArray(new String[allocators.size()]);
-		combo.setItems(stringArray);
+		allocatorCombo.setItems(stringArray);
 	}
 	
 }
