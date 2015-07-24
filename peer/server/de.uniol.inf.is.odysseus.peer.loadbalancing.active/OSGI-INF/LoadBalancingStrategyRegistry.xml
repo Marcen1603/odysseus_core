@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.loadbalancing.active.LoadBalancingStrategyRegistry">
    <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.impl.LoadBalancingStrategyRegistry"/>
-   <reference bind="bindStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy" name="ILoadBalancingStrategy" policy="static" unbind="unbindStrategy"/>
+   <reference bind="bindStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy" name="ILoadBalancingStrategy" policy="dynamic" unbind="unbindStrategy"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingStrategyRegistry"/>
    </service>
