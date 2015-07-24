@@ -1,0 +1,107 @@
+package de.uniol.inf.is.odysseus.iql.basic.generator.compiler
+
+import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper
+import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueList
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement
+
+abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>> implements IIQLMetadataAnnotationCompiler<G>{
+	protected H helper;
+	protected T typeCompiler;
+	
+	new (H helper, T typeCompiler) {
+		this.helper = helper;
+		this.typeCompiler = typeCompiler;		
+	}
+	
+
+	def String compile(IQLMetadataList o, G c) {
+		'''
+		«o.elements.map[e | compile(e, c)].join(", ")»
+		'''		
+	}
+	
+	def String compile(IQLMetadata o, G c) {
+		'''
+		«o.name» = «compile(o.value, c)»
+		'''		
+	}
+	
+	def String compile(IQLMetadataValue o, G c) {
+		if(o instanceof IQLMetadataValueSingleLong) {
+			return compile(o as IQLMetadataValueSingleLong, c);
+		} else if(o instanceof IQLMetadataValueSingleDouble) {
+			return compile(o as IQLMetadataValueSingleDouble, c);
+		} else if(o instanceof IQLMetadataValueSingleString) {
+			return compile(o as IQLMetadataValueSingleString, c);
+		} else if(o instanceof IQLMetadataValueSingleBoolean) {
+			return compile(o as IQLMetadataValueSingleBoolean, c);
+		} else if(o instanceof IQLMetadataValueSingleChar) {
+			return compile(o as IQLMetadataValueSingleChar, c);
+		} else if(o instanceof IQLMetadataValueSingleNull) {
+			return compile(o as IQLMetadataValueSingleNull, c);
+		}else if(o instanceof IQLMetadataValueSingleTypeRef) {
+			return compile(o as IQLMetadataValueSingleTypeRef, c);
+		}else if(o instanceof IQLMetadataValueList) {
+			return compile(o as IQLMetadataValueList, c);
+		} else if(o instanceof IQLMetadataValueMap) {
+			return compile(o as IQLMetadataValueMap, c);
+		} 
+		return "";	
+	}
+
+	def String compile(IQLMetadataValueSingleLong o, G c) {
+		'''«o.value»'''		
+	}
+	
+	
+	def String compile(IQLMetadataValueSingleDouble o, G c) {
+		'''«o.value»'''		
+	}
+	
+	def String compile(IQLMetadataValueSingleString o, G c) {
+		'''"«o.value»"'''		
+	}
+	
+	def String compile(IQLMetadataValueSingleBoolean o, G c) {
+		'''«o.value»'''		
+	}
+	
+	def String compile(IQLMetadataValueSingleChar o, G c) {
+		'''
+		'«o.value»'
+		'''	
+	}
+
+	def String compile(IQLMetadataValueSingleNull o, G c) {
+		'''null'''		
+	}
+	
+	def String compile(IQLMetadataValueSingleTypeRef o, G c) {
+		'''«typeCompiler.compile(o.value, c, true)».class'''		
+	}
+
+	def String compile(IQLMetadataValueList o, G c) {
+		'''{«o.elements.map[e | compile(e, c)].join(", ")»}'''		
+	}
+	
+	def String compile(IQLMetadataValueMap o, G c) {
+		'''(«o.elements.map[e | compile(e, c)].join(", ")»)'''		
+	}
+	
+	def String compile(IQLMetadataValueMapElement o, G c) {
+		'''«compile(o.key, c)» = «compile(o.value, c)»'''		
+	}
+	
+}

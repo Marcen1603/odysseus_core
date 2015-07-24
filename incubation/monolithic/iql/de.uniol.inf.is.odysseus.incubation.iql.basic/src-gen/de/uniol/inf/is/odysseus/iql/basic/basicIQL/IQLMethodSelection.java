@@ -1,0 +1,77 @@
+/**
+ */
+package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
+
+
+/**
+ * <!-- begin-user-doc -->
+ * A representation of the model object '<em><b>IQL Method Selection</b></em>'.
+ * <!-- end-user-doc -->
+ *
+ * <p>
+ * The following features are supported:
+ * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection#getMethod <em>Method</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection#getArgs <em>Args</em>}</li>
+ * </ul>
+ * </p>
+ *
+ * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLMethodSelection()
+ * @model
+ * @generated
+ */
+public interface IQLMethodSelection extends IQLMemberSelection
+{
+  /**
+   * Returns the value of the '<em><b>Method</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Method</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Method</em>' attribute.
+   * @see #setMethod(String)
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLMethodSelection_Method()
+   * @model
+   * @generated
+   */
+  String getMethod();
+
+  /**
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection#getMethod <em>Method</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Method</em>' attribute.
+   * @see #getMethod()
+   * @generated
+   */
+  void setMethod(String value);
+
+  /**
+   * Returns the value of the '<em><b>Args</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Args</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Args</em>' containment reference.
+   * @see #setArgs(IQLArgumentsList)
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLMethodSelection_Args()
+   * @model containment="true"
+   * @generated
+   */
+  IQLArgumentsList getArgs();
+
+  /**
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection#getArgs <em>Args</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Args</em>' containment reference.
+   * @see #getArgs()
+   * @generated
+   */
+  void setArgs(IQLArgumentsList value);
+
+} // IQLMethodSelection

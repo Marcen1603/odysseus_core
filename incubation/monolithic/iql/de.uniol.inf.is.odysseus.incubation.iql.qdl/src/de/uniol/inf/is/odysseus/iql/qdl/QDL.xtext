@@ -1,0 +1,45 @@
+grammar de.uniol.inf.is.odysseus.iql.qdl.QDL with de.uniol.inf.is.odysseus.iql.basic.BasicIQL
+
+generate qDL "http://www.uniol.de/inf/is/odysseus/iql/qdl/QDL"
+
+import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as iql
+
+QDLFile returns iql::IQLFile:
+	{QDLFile}
+	namespaces+=IQLNamespace*
+	(elements+=QDLTypeDefs)*
+;
+
+QDLTypeDefs returns iql::IQLTypeDef:
+	=>IQLClass | =>IQLInterface | QDLQuery
+;
+
+
+
+QDLQuery returns iql::IQLTypeDef:
+	{QDLQuery}
+	(javametadata+=IQLJavaMetadata)*
+	'query' simpleName=ID ('(' (metadataList=IQLMetadataList)? ')')?
+	statements=IQLStatementBlock
+;
+
+IQLAssignmentExpression returns iql::IQLExpression:
+	IQLSubscribeExpression (
+		=>({iql::IQLAssignmentExpression.leftOperand=current} op=OpAssign) rightOperand=IQLAssignmentExpression
+	)?
+;
+
+IQLSubscribeExpression returns iql::IQLExpression:
+	IQLPortExpression
+	(=>({IQLSubscribeExpression.leftOperand=current} op=IQLSubscribe) rightOperand=IQLPortExpression)*
+;
+
+IQLPortExpression returns iql::IQLExpression:
+	IQLLogicalOrExpression
+	(=>({IQLPortExpression.leftOperand=current} op=':') rightOperand=IQLLogicalOrExpression)*
+;
+
+
+IQLSubscribe:
+	'->' | '<-'
+;

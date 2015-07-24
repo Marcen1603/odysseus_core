@@ -1,0 +1,38 @@
+grammar de.uniol.inf.is.odysseus.iql.odl.ODL with de.uniol.inf.is.odysseus.iql.basic.BasicIQL
+
+generate oDL "http://www.uniol.de/inf/is/odysseus/iql/odl/ODL"
+
+
+import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as iql
+
+ODLFile returns iql::IQLFile:
+	{ODLFile}
+	namespaces+=IQLNamespace*
+	(elements+=ODLTypeDefs)*
+;
+
+ODLTypeDefs returns iql::IQLTypeDef:
+	=>IQLClass | =>IQLInterface | ODLOperator
+;
+
+ODLOperator returns iql::IQLTypeDef:
+	{ODLOperator}
+	(javametadata+=IQLJavaMetadata)*
+	'operator' simpleName=ID ('(' (metadataList=IQLMetadataList)? ')')? '{'
+		members += (IQLAttribute | IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)*
+	'}'		
+;
+
+ODLParameter returns iql::IQLAttribute:
+	{ODLParameter}		
+	(optional?='optional')? parameter?='parameter' ('(' (metadataList=IQLMetadataList)? ')')?
+	type=JvmTypeReference simpleName=ID (init=IQLVariableInitialization)? ';'
+;
+
+
+ODLMethod returns iql::IQLMethod:
+	{ODLMethod}		
+	(on?='on' | validate?='validate')
+	(simpleName=ID ('(' (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? ')')? (':' returnType=JvmTypeReference)?)?
+	body=IQLStatementBlock
+;

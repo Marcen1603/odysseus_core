@@ -1,0 +1,486 @@
+grammar de.uniol.inf.is.odysseus.iql.basic.BasicIQL with org.eclipse.xtext.common.Terminals
+
+generate basicIQL "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL"
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
+
+IQLFile:
+	('namespace' name=QualifiedName ';')?
+	namespaces+=IQLNamespace*
+	(elements+=IQLTypeDefs)*
+;
+
+IQLTypeDefs returns IQLTypeDef:
+	=>IQLClass | IQLInterface
+;	
+
+IQLNamespace :
+	'use' importedNamespace = QualifiedNameWithWildcard ';'
+;
+
+IQLClass returns IQLTypeDef:
+	{IQLClass}
+	(javametadata+=IQLJavaMetadata)*
+	'class' simpleName=ID ('extends' extendedClass=JvmTypeReference)? ('implements' extendedInterfaces+=JvmTypeReference (',' extendedInterfaces+=JvmTypeReference)?)? '{'
+		members += (IQLAttribute | IQLMethod | IQLJavaMember)*
+	'}'	
+;
+
+IQLInterface returns IQLTypeDef:
+	{IQLInterface}
+	(javametadata+=IQLJavaMetadata)*
+	'interface' simpleName=ID ('extends' extendedInterfaces+=JvmTypeReference (',' extendedInterfaces+=JvmTypeReference)?)? '{'
+		members += (IQLMethodDeclarationMember | IQLJavaMember )*
+	'}'	
+;
+
+IQLTypeDef returns types::JvmGenericType:
+	{IQLTypeDef}
+; 
+
+IQLJavaMetadata:
+	{IQLJavaMetadata}
+	'$*' text=IQLJava '*$'
+;
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+IQLAttribute returns types::JvmField:
+	{IQLAttribute}		
+	type=JvmTypeReference simpleName=ID (init=IQLVariableInitialization)? ';'
+;
+
+JvmTypeReference returns types::JvmTypeReference:
+    IQLSimpleTypeRef | IQLArrayTypeRef
+;
+
+JvmType returns types::JvmType: 
+	IQLSimpleType | IQLArrayType
+;
+
+IQLSimpleTypeRef:
+	type=IQLSimpleType
+;
+
+IQLArrayTypeRef:
+	type=IQLArrayType
+;
+
+IQLSimpleType:
+	type=[types::JvmType|QualifiedName]
+;
+
+IQLArrayType:
+	type=[types::JvmType|QualifiedName] (dimensions+=ArrayBrackets)+
+;
+
+ArrayBrackets :
+	'[' ']'
+;
+
+JvmFormalParameter returns types::JvmFormalParameter:
+	IQLFormalParameter
+;
+
+IQLFormalParameter returns IQLVariableDeclaration:
+	parameterType=JvmTypeReference name=ID
+;
+
+IQLMethod returns types::JvmOperation:
+	{IQLMethod}		
+	simpleName=ID ('(' (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? ')')? (':' returnType=JvmTypeReference)?
+	body=IQLStatementBlock
+;
+
+
+IQLMethodDeclarationMember returns types::JvmOperation:
+	{IQLMethodDeclarationMember}	
+	simpleName=ID '(' (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? ')' (':' returnType=JvmTypeReference)?';'
+;
+
+IQLJavaMember returns types::JvmMember:
+	{IQLJavaMember}
+	'$*' text=IQLJava '*$'
+;
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+IQLMetadataList:
+	elements +=IQLMetadata (',' elements+=IQLMetadata)*
+;
+
+IQLMetadata:
+	name=ID '=' value=IQLMetadataValue
+;
+
+IQLMetadataValue returns IQLMetadataValue:
+	IQLMetadataValueSingle | IQLMetadataValueList | IQLMetadataValueMap
+;
+
+IQLMetadataValueSingle returns IQLMetadataValue:
+	{IQLMetadataValueSingleLong} value = INT|
+	{IQLMetadataValueSingleDouble} value = DOUBLE|
+	{IQLMetadataValueSingleString} value = STRING|
+	{IQLMetadataValueSingleBoolean} value = BOOLEAN|
+	{IQLMetadataValueSingleChar} value = CHAR |
+	{IQLMetadataValueSingleTypeRef} value = JvmTypeReference |
+	{IQLMetadataValueSingleNull} value = 'null'	
+;
+
+
+IQLMetadataValueList returns IQLMetadataValue:
+	{IQLMetadataValueList}
+	'[' (elements+=IQLMetadataValue (',' elements+=IQLMetadataValue)*)? ']'
+;
+
+IQLMetadataValueMap returns IQLMetadataValue:
+	{IQLMetadataValueMap}
+	'{' (elements+=IQLMetadataValueMapElement (',' elements+=IQLMetadataValueMapElement)*)? '}'
+;
+
+IQLMetadataValueMapElement:
+	key=(IQLMetadataValue) '=' value=IQLMetadataValue
+;
+
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+IQLVariableDeclaration:
+	ref=JvmTypeReference name=ID
+;
+
+IQLVariableInitialization:
+	{IQLVariableInitialization}	
+	( argsList=IQLArgumentsList  (argsMap=IQLArgumentsMap)? ) | ('=' value=IQLExpression)
+;
+
+IQLArgumentsList:
+	{IQLArgumentsList}	
+	'(' (elements+=IQLExpression (',' elements+=IQLExpression)*)? ')'	 
+;
+
+IQLArgumentsMap:
+	{IQLArgumentsMap}	
+	'{' (elements+=IQLArgumentsMapKeyValue (',' elements+=IQLArgumentsMapKeyValue)*)? '}'	
+;
+
+IQLArgumentsMapKeyValue :
+	key=ID '=' value=IQLExpression
+;
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+
+IQLStatement:	
+	=>IQLStatementBlock |
+	IQLExpressionStatement |
+	IQLIfStatement |
+	IQLWhileStatement |
+	IQLDoWhileStatement |
+	IQLForStatement |
+	IQLForEachStatement	|
+	IQLSwitchStatement |	
+	=>IQLVariableStatement |
+	IQLBreakStatement |
+	IQLContinueStatement |
+	IQLReturnStatement | 
+	IQLConstructorCallStatement |
+	IQLJavaStatement
+;
+
+IQLStatementBlock returns IQLStatement:
+	{IQLStatementBlock}
+	'{' statements += IQLStatement* '}'
+;
+
+IQLJavaStatement returns IQLStatement:
+	{IQLJavaStatement}
+	'$*' text=IQLJava '*$'
+;
+
+IQLIfStatement returns IQLStatement:
+	{IQLIfStatement}
+	'if' '(' predicate=IQLExpression ')'
+	thenBody=IQLStatement
+	(=>'else' elseBody=IQLStatement)?
+;
+	
+IQLWhileStatement returns IQLStatement:
+	{IQLWhileStatement}
+	'while' '(' predicate=IQLExpression ')'
+		body=IQLStatement
+;
+		
+IQLDoWhileStatement returns IQLStatement:
+	{IQLDoWhileStatement}
+   'do'
+       body=IQLStatement
+   'while' '(' predicate=IQLExpression ')'
+;
+   
+IQLForStatement returns IQLStatement:
+	{IQLForStatement}
+	'for' '(' var=IQLVariableStatement predicate=IQLExpressionStatement updateExpr=IQLExpression ')'
+		body=IQLStatement
+;
+		
+IQLForEachStatement returns IQLStatement:
+	{IQLForEachStatement}
+	'for' '(' var=IQLVariableDeclaration ':' forExpression=IQLExpression ')'
+		body=IQLStatement
+;
+
+IQLSwitchStatement returns IQLStatement:
+	{IQLSwitchStatement}
+	'switch' '(' expr=IQLExpression ')' '{'
+	(cases+=IQLCasePart)*
+	('default' ':' default=IQLStatement)?
+	'}';
+	
+IQLCasePart:
+	{IQLCasePart}
+	'case' expr=IQLLiteralExpression ':' body=IQLStatement
+;
+		
+IQLExpressionStatement returns IQLStatement:
+	{IQLExpressionStatement}
+	expression=IQLExpression ';'
+;	
+
+IQLVariableStatement returns IQLStatement:
+	{IQLVariableStatement}
+	var=IQLVariableDeclaration init=IQLVariableInitialization ';'
+;	
+
+IQLConstructorCallStatement returns IQLStatement:
+	{IQLConstructorCallStatement}
+	keyword=('super' | 'this') args=IQLArgumentsList ';'
+;
+
+IQLBreakStatement returns IQLStatement:
+	{IQLBreakStatement}
+	'break' ';'
+;
+
+IQLContinueStatement returns IQLStatement:
+	{IQLContinueStatement}
+	'continue' ';'
+;
+
+IQLReturnStatement returns IQLStatement:
+	{IQLReturnStatement}
+	'return' expression=IQLExpression ';'
+;	
+
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+IQLExpression: 
+	IQLAssignmentExpression
+;
+
+IQLAssignmentExpression returns IQLExpression:
+	IQLLogicalOrExpression (
+		=>({IQLAssignmentExpression.leftOperand=current} op=OpAssign) rightOperand=IQLAssignmentExpression
+	)?
+;
+
+OpAssign:
+	'=' | '+=' | '-=' | '*=' | '/=' | '%='
+;	
+
+IQLLogicalOrExpression returns IQLExpression:
+	IQLLogicalAndExpression 
+	(=>({IQLLogicalOrExpression.leftOperand=current} op=OpLogicalOr) rightOperand=IQLLogicalAndExpression)*
+;
+
+OpLogicalOr:
+	'||';
+	
+IQLLogicalAndExpression returns IQLExpression:
+	IQLEqualityExpression 
+	(=>({IQLLogicalAndExpression.leftOperand=current} op=OpLogicalAnd) rightOperand=IQLEqualityExpression)*
+;
+
+OpLogicalAnd:
+	'&&';
+
+IQLEqualityExpression returns IQLExpression:
+	IQLRelationalExpression
+	(=>({IQLEqualityExpression.leftOperand=current} op=OpEquality) rightOperand=IQLRelationalExpression)*
+;
+
+OpEquality:
+	'==' | '!=' 
+;	
+
+IQLRelationalExpression returns IQLExpression:
+	IQLAdditiveExpression
+	(=>({IQLInstanceOfExpression.leftOperand=current} 'instanceof') targetRef=JvmTypeReference |
+	 =>({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLAdditiveExpression)*
+;
+
+OpRelational:
+	'>' | '>=' | '<' | '<=' 
+;
+
+IQLAdditiveExpression returns IQLExpression:
+	IQLMultiplicativeExpression
+	(=>({IQLAdditiveExpression.leftOperand=current} op=OpAdd) rightOperand=IQLMultiplicativeExpression)*;
+
+OpAdd:
+	'+' | '-';
+
+IQLMultiplicativeExpression returns IQLExpression:
+	IQLUnaryExpression
+	(=>({IQLMultiplicativeExpression.leftOperand=current} op=OpMulti) rightOperand=IQLUnaryExpression)*
+;
+
+
+OpMulti:
+	'*' | '/' | '%'
+;
+
+IQLUnaryExpression returns IQLExpression:
+	({IQLPlusMinusExpression} op=OpUnaryPlusMinus) operand=IQLMemberCallExpression |
+	({IQLBooleanNotExpression} op=OpUnaryBooleanNot) operand=IQLMemberCallExpression |	
+	({IQLPrefixExpression} op=OpPrefix) operand=IQLMemberCallExpression |
+	=>({IQLTypeCastExpression} '(' targetRef=JvmTypeReference ')') operand=IQLMemberCallExpression |
+	IQLMemberCallExpression (=>({IQLPostfixExpression.operand=current} op=OpPostfix))?
+;
+
+OpUnaryPlusMinus:
+	"-" | "+";
+	
+OpUnaryBooleanNot:
+	"!";	
+	
+OpPrefix:
+	"++" | "--"
+;	
+
+OpPostfix:
+	"++" | "--"
+;	
+
+IQLMemberCallExpression returns IQLExpression:
+	IQLTerminalExpression
+	(=>({IQLArrayExpression.leftOperand=current} '[' expr=IQLExpression ']'))*
+	(=>({IQLMemberSelectionExpression.leftOperand=current} '.') rightOperand=(IQLAttributeSelection | IQLMethodSelection))*
+;
+
+
+IQLAttributeSelection returns IQLMemberSelection:
+	{IQLAttributeSelection}
+	var=[types::JvmField]
+;
+
+IQLMethodSelection returns IQLMemberSelection:
+	{IQLMethodSelection}
+	method=ID args=IQLArgumentsList
+;
+
+IQLTerminalExpression returns IQLExpression:
+    {IQLTerminalExpressionVariable} var=[IQLVariableDeclaration]  |
+    {IQLTerminalExpressionThis} 'this'  |
+    {IQLTerminalExpressionSuper} 'super'  |    
+    {IQLTerminalExpressionParenthesis} '(' expr = IQLExpression ')'  |
+    {IQLTerminalExpressionNew} 'new' ((ref=IQLArrayTypeRef) | (ref=IQLSimpleTypeRef argsList=IQLArgumentsList  (argsMap=IQLArgumentsMap)?)) |
+    IQLLiteralExpression
+; 
+
+IQLLiteralExpression returns IQLExpression:
+	{IQLLiteralExpressionInt} value=INT |
+	{IQLLiteralExpressionDouble} value=DOUBLE |
+	{IQLLiteralExpressionString} value=STRING |
+   	{IQLLiteralExpressionBoolean} value = BOOLEAN |
+   	{IQLLiteralExpressionChar} value = CHAR |
+   	{IQLLiteralExpressionRange} value = RANGE |  
+	{IQLLiteralExpressionNull} 'null' |
+	(=>IQLLiteralExpressionList) |
+	IQLLiteralExpressionMap
+;
+
+IQLLiteralExpressionList returns IQLExpression:
+	{IQLLiteralExpressionList} 
+	'[' (elements += IQLExpression (',' elements += IQLExpression)*)? ']'
+;
+
+IQLLiteralExpressionMap returns IQLExpression:
+	{IQLLiteralExpressionMap} 
+	'[' (elements += IQLLiteralExpressionMapKeyValue (',' elements += IQLLiteralExpressionMapKeyValue)*)? ']'
+;
+
+IQLLiteralExpressionMapKeyValue :
+	key = IQLExpression ':' value = IQLExpression
+;
+
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+/////////////////////////////////////////////
+
+QualifiedNameWithWildcard:
+    QualifiedName '::*'?
+;
+
+QualifiedName:
+	ID ('::' ID)*
+;
+
+terminal RANGE:
+	INT'..'INT
+;
+
+IQLJava:
+	{IQLJava}
+	(text+=IQLJavaText | keywords+=IQLJavaKeywords)*
+;
+
+IQLJavaText:
+	ID | BOOLEAN | DOUBLE | STRING | CHAR |  INT | ANY_OTHER |
+	'+'  | '+='  | '-'  | '-='  | '*'   | '*='   | '/' | '/=' | '%'  | '%=' |
+	'++' | '--'	 | '>'  | '>='  | '<'   | '<='   | '!' | '!=' | '&&' | '||' |
+	'==' | '='   | '~'  | '?:'  | '|'   | '|='   | '^' | '^=' | '&'  | '&=' |
+	'>>' | '>>=' | '<<' | '<<=' | '>>>' | '>>>=' |
+	'['  | ']'   |'{'   |'}'    |  '('  |')'     |
+	 '.' | ':'   | ';'  | ','   | 'null'
+;
+
+IQLJavaKeywords:
+	{IQLJavaKeywords}
+	keyword=('break'   | 'case'   | 'class' | 'continue'   | 'default'   | 'do'        | 'else' |
+	'extends' | 'for'    | 'if'    | 'implements' | 'instanceof'| 'interface' | 'new'  |
+    'package' | 'return' | 'super' | 'switch'     | 'this'      | 'while'     |
+	
+	'abstract'     | 'assert'  | 'catch'  | 'const'     |  'enum'     | 'final'      | 'finally'   |
+	'goto'         | 'import'  | 'native' | 'private'   | 'protected' | 'public'     | 'static'    |
+	'synchronized' | 'throw'   | 'throws' | 'transient' | 'try'       | 'volatile'   | 'strictfp')
+;
+
+
+terminal BOOLEAN returns ecore::EBoolean:
+	'true' | 'false'
+;
+
+terminal INT returns ecore::EInt: 
+	('0'..'9')+
+;
+
+terminal DOUBLE returns ecore::EDouble:
+  ('0'..'9')* '.' ('0'..'9')+
+ ;
+  
+  
+terminal CHAR returns ecore::EChar:
+  "'" ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | "'" | '\\') | !('\\' | "'")) "'";

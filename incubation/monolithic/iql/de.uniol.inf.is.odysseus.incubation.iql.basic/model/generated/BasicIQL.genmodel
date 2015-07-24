@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen"
+    editDirectory="/de.uniol.inf.is.odysseus.incubation.iql.basic.edit/src" editorDirectory="/de.uniol.inf.is.odysseus.incubation.iql.basic.editor/src"
+    modelPluginID="de.uniol.inf.is.odysseus.incubation.iql.basic" forceOverwrite="true"
+    modelName="BasicIQL" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="de.uniol.inf.is.odysseus.incubation.iql.basic.edit"
+    editorPluginID="de.uniol.inf.is.odysseus.incubation.iql.basic.editor" runtimeVersion="2.10"
+    usedGenPackages="platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types">
+  <genPackages prefix="BasicIQL" basePackage="de.uniol.inf.is.odysseus.iql.basic"
+      disposableProviderFactory="true" fileExtensions="basiciql" ecorePackage="BasicIQL.ecore#/">
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLFile">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLFile/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLFile/namespaces"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLFile/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLTypeDef">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTypeDef/javametadata"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTypeDef/extendedInterfaces"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLNamespace">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLNamespace/importedNamespace"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLJavaMetadata">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLJavaMetadata/text"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLSimpleTypeRef">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLSimpleTypeRef/type"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLArrayTypeRef">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLArrayTypeRef/type"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLSimpleType">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLSimpleType/type"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLArrayType">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLArrayType/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLArrayType/dimensions"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLVariableDeclaration">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLVariableDeclaration/ref"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMetadataList/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadata">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadata/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMetadata/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValue"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueMapElement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMetadataValueMapElement/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMetadataValueMapElement/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLVariableInitialization">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLVariableInitialization/argsList"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLVariableInitialization/argsMap"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLVariableInitialization/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLArgumentsList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLArgumentsList/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLArgumentsMap">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLArgumentsMap/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLArgumentsMapKeyValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLArgumentsMapKeyValue/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLArgumentsMapKeyValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLStatement"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLCasePart">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLCasePart/expr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLCasePart/body"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLExpression"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMemberSelection"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionMapKeyValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLiteralExpressionMapKeyValue/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLiteralExpressionMapKeyValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLJava">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLJava/text"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLJava/keywords"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLJavaKeywords">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLJavaKeywords/keyword"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLClass">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLClass/extendedClass"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLInterface"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLAttribute">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLAttribute/init"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMethod">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMethod/body"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMethodDeclarationMember"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLJavaMember">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLJavaMember/text"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleLong">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleLong/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleDouble">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleDouble/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleString">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleString/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleBoolean">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleBoolean/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleChar">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleChar/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleTypeRef">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMetadataValueSingleTypeRef/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleNull">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleNull/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMetadataValueList/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueMap">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMetadataValueMap/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLStatementBlock">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLStatementBlock/statements"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLJavaStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLJavaStatement/text"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLIfStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLIfStatement/predicate"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLIfStatement/thenBody"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLIfStatement/elseBody"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLWhileStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLWhileStatement/predicate"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLWhileStatement/body"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLDoWhileStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLDoWhileStatement/body"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLDoWhileStatement/predicate"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLForStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForStatement/var"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForStatement/predicate"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForStatement/updateExpr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForStatement/body"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLForEachStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForEachStatement/var"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForEachStatement/forExpression"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLForEachStatement/body"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLSwitchStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLSwitchStatement/expr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLSwitchStatement/cases"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLSwitchStatement/default"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLExpressionStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLExpressionStatement/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLVariableStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLVariableStatement/var"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLVariableStatement/init"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLConstructorCallStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLConstructorCallStatement/keyword"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLConstructorCallStatement/args"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLBreakStatement"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLContinueStatement"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLReturnStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLReturnStatement/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLAssignmentExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLAssignmentExpression/leftOperand"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLAssignmentExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLAssignmentExpression/rightOperand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLogicalOrExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLogicalOrExpression/leftOperand"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLLogicalOrExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLogicalOrExpression/rightOperand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLogicalAndExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLogicalAndExpression/leftOperand"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLLogicalAndExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLogicalAndExpression/rightOperand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLEqualityExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLEqualityExpression/leftOperand"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLEqualityExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLEqualityExpression/rightOperand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLInstanceOfExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLInstanceOfExpression/leftOperand"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLInstanceOfExpression/targetRef"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLRelationalExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLRelationalExpression/leftOperand"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLRelationalExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLRelationalExpression/rightOperand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLAdditiveExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLAdditiveExpression/leftOperand"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLAdditiveExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLAdditiveExpression/rightOperand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMultiplicativeExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMultiplicativeExpression/leftOperand"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMultiplicativeExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMultiplicativeExpression/rightOperand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLPlusMinusExpression">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLPlusMinusExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLPlusMinusExpression/operand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLBooleanNotExpression">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLBooleanNotExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLBooleanNotExpression/operand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLPrefixExpression">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLPrefixExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLPrefixExpression/operand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLTypeCastExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTypeCastExpression/targetRef"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTypeCastExpression/operand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLPostfixExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLPostfixExpression/operand"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLPostfixExpression/op"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLArrayExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLArrayExpression/leftOperand"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLArrayExpression/expr"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMemberSelectionExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMemberSelectionExpression/leftOperand"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMemberSelectionExpression/rightOperand"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLAttributeSelection">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLAttributeSelection/var"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMethodSelection">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMethodSelection/method"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMethodSelection/args"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionVariable">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionVariable/var"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionThis"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionSuper"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionParenthesis">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionParenthesis/expr"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionNew">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionNew/ref"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionNew/argsList"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionNew/argsMap"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionInt">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLLiteralExpressionInt/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionDouble">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLLiteralExpressionDouble/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionString">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLLiteralExpressionString/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionBoolean">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLLiteralExpressionBoolean/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionChar">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLLiteralExpressionChar/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionRange">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLLiteralExpressionRange/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionNull"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLiteralExpressionList/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionMap">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLiteralExpressionMap/elements"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
