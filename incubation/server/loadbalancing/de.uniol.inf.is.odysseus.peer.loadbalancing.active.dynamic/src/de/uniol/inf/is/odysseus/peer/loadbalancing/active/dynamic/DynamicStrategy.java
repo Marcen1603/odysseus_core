@@ -229,6 +229,11 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	
 	@Override
 	public void triggerLoadBalancing(double cpuUsage, double memUsage, double netUsage) {
+		
+		if(executor.getLogicalQueryIds(getActiveSession()).size()==0) {
+			LOG.warn("Load Balancing triggered, but no queries installed. Continuing monitoring.");
+		}
+		
 		synchronized(threadManipulationLock) {
 			monitoringThread.removeListener(this);
 			monitoringThread.setInactive();
@@ -298,7 +303,10 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				LOG.debug("Allocation finished.");
 				LOG.debug("Local PID is {}", localPeerID.toString());
 				for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
-					LOG.debug(queryPart.toString() + " goes to " + allocationMap.get(queryPart));
+					if(allocationMap.get(queryPart).equals(localPeerID)) {
+						LOG.warn("No other Peer wanted to take Query {}.",queryPartIDMapping.get(queryPart));
+					}
+					LOG.debug("({} goes to {}",queryPartIDMapping.get(queryPart),allocationMap.get(queryPart));
 				}
 			}
 			
@@ -311,6 +319,8 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				//Create a Query Transmission handler for every  transmission we have to do.
 				int queryId = queryPartIDMapping.get(queryPart);
 				PeerID slavePeerId = allocationMap.get(queryPart);
+				if(slavePeerId.equals(localPeerID))
+					continue;
 				ILoadBalancingCommunicator communicator = communicatorMapping.get(queryId);
 				transmissionHandlerList.add(new QueryTransmissionHandler(queryId,slavePeerId,communicator, peerCommunicator, lock));
 			}
@@ -420,6 +430,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				 catch (Exception e) {
 						LOG.error("Error estimating state size of {} Operator",op.getName());
 						LOG.error(e.getMessage());
+						e.printStackTrace();
 						LOG.error("Assuming Infinite Migration Cost for state!");
 						memoryForStates+=Double.POSITIVE_INFINITY;
 				}

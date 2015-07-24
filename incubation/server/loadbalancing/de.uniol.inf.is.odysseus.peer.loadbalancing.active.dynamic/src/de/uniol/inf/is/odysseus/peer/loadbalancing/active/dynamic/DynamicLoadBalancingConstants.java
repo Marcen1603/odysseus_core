@@ -24,7 +24,7 @@ public class DynamicLoadBalancingConstants {
 			//Survey Allocator Parameters
 			public static final int SURVEY_LATENCY_WEIGHT = 0;
 			public static final int SURVEY_BID_WEIGHT = 1;
-			public static final String SURVEY_USE_OWN_BID = "false";
+			public static final String SURVEY_USE_OWN_BID = "notlocal";
 			
 			
 			//Load-Model weights and calculation factors

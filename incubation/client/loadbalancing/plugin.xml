@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+          <view
+            category="de.uniol.inf.is.odysseus.rcp.peer.PeerCategory"
+            class="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.views.LoadBalancingView"
+            icon="icons/peer.png"
+            id="de.uniol.inf.is.odysseus.rcp.peer.loadbalancing.active.rcp.views.LoadBalancingView"
+            name="LoadBalancing"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
