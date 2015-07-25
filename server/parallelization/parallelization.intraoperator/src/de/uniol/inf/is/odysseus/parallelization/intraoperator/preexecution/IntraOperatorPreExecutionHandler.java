@@ -32,11 +32,21 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
 import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 
+/**
+ * Pre Execution handler for intra operator parallelization. This executors
+ * allows easy extension of different parallelization types. this executors are
+ * called from execute methods of #PARALLELIZATION keyword. This preExecution
+ * handler creates setting, which is used in transformation rules of operators
+ * to transform logical operators in threaded physical operators
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class IntraOperatorPreExecutionHandler extends
 		AbstractParallelizationPreExecutionHandler {
 
 	public static final String TYPE = "INTRA_OPERATOR";
-	
+
 	private static final InfoService INFO_SERVICE = InfoServiceFactory
 			.getInfoService(IntraOperatorPreExecutionHandler.class);
 
@@ -50,11 +60,26 @@ public class IntraOperatorPreExecutionHandler extends
 				.newInstance(IntraOperatorGlobalKeywordParameter.class);
 	}
 
+	/**
+	 * Validates the parameter string based on the parallelization type (here
+	 * intra-operator)
+	 * 
+	 * @param parameterString
+	 */
 	@Override
 	public void validateParameters(String parameterString) {
 		parameterHelper.validateParameterString(parameterString);
 	}
 
+	/**
+	 * does the execution for intra-operator parallelization. creates setting,
+	 * which is used in transformation rules of operators to transform logical
+	 * operators in threaded physical operators
+	 * 
+	 * @param parameterString
+	 * @param settings
+	 * @throws OdysseusScriptException
+	 */
 	@Override
 	public void preExecute(String parameterString,
 			List<IQueryBuildSetting<?>> settings)
@@ -62,28 +87,44 @@ public class IntraOperatorPreExecutionHandler extends
 		// parse given parameters
 		Map<IKeywordParameter, String> result = parameterHelper
 				.parse(parameterString);
-		
+
 		// process parameters
 		processDegreeParameter(result
 				.get(IntraOperatorGlobalKeywordParameter.DEGREE_OF_PARALLELIZATION));
 
-		processBuffersizeParameter(result.get(IntraOperatorGlobalKeywordParameter.BUFFERSIZE));
-		
+		processBuffersizeParameter(result
+				.get(IntraOperatorGlobalKeywordParameter.BUFFERSIZE));
+
 		checkIfIntraOperatorSettingAlreadyExists(settings);
-		
-		ParallelIntraOperatorSettingValue value = new ParallelIntraOperatorSettingValue(globalDegreeOfParallelization, globalBuffersize);
-		ParallelIntraOperatorSetting intraOperatorSetting = new ParallelIntraOperatorSetting(value);
+
+		// create global settings for intra operator parallelization. if only
+		// this setting is set and no custom settings are defined in odysseus
+		// script via #INTRAOPERATOR keyword, all possible operators use a
+		// threaded physical operator
+		ParallelIntraOperatorSettingValue value = new ParallelIntraOperatorSettingValue(
+				globalDegreeOfParallelization, globalBuffersize);
+		ParallelIntraOperatorSetting intraOperatorSetting = new ParallelIntraOperatorSetting(
+				value);
 		settings.add(intraOperatorSetting);
 	}
 
-	private void processBuffersizeParameter(String string) throws OdysseusScriptException {
+	/**
+	 * validate and parse the buffersize parameter. this value is needed for
+	 * buffer inside of threaded physical operators. Uses a default value if
+	 * nothing is set or constant AUTO is used
+	 * 
+	 * @param string
+	 * @throws OdysseusScriptException
+	 */
+	private void processBuffersizeParameter(String string)
+			throws OdysseusScriptException {
 		if (string == null || string.equalsIgnoreCase("AUTO")) {
 			globalBuffersize = IntraOperatorParallelizationConstants.DEFAULT_BUFFERSIZE;
 		} else {
 			try {
 				int buffersize = Integer.parseInt(string);
-				if (buffersize > 0){
-					globalBuffersize = buffersize;					
+				if (buffersize > 0) {
+					globalBuffersize = buffersize;
 				} else {
 					throw new OdysseusScriptException(
 							"Value for buffersize is not valid. Value need to be greater 0.");
@@ -95,8 +136,15 @@ public class IntraOperatorPreExecutionHandler extends
 		}
 	}
 
+	/**
+	 * checks if this keyword with intra-operator type is only once defined.
+	 * 
+	 * @param settings
+	 * @throws OdysseusScriptException
+	 */
 	private void checkIfIntraOperatorSettingAlreadyExists(
-			List<IQueryBuildSetting<?>> settings) throws OdysseusScriptException {
+			List<IQueryBuildSetting<?>> settings)
+			throws OdysseusScriptException {
 		// get parameter from settings or create new one if not exists
 		for (IQueryBuildSetting<?> setting : settings) {
 			if (setting.getClass().equals(ParallelIntraOperatorSetting.class)) {
@@ -107,11 +155,24 @@ public class IntraOperatorPreExecutionHandler extends
 		}
 	}
 
+	/**
+	 * returns the name for this pre execution handler
+	 * 
+	 * @return the type
+	 */
 	@Override
 	public String getType() {
 		return TYPE;
 	}
 
+	/**
+	 * processes the degree parameter. only positive integers and constant AUTO
+	 * are allowed. if AUTO is used, the number of cores for this instance is
+	 * detected
+	 * 
+	 * @param degreeOfParallelization
+	 * @throws OdysseusScriptException
+	 */
 	private void processDegreeParameter(String degreeOfParallelization)
 			throws OdysseusScriptException {
 		try {

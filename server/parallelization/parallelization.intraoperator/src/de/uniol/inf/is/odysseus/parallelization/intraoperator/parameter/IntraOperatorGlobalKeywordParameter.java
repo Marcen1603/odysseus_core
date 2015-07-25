@@ -17,23 +17,28 @@ package de.uniol.inf.is.odysseus.parallelization.intraoperator.parameter;
 
 import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
 
+/**
+ * Defines the parameters for the #PARALLELIZATION keyword if the type is set to
+ * intra-operator. This parameter is used in parameter helper for parsing the
+ * keyword parameters
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
+public enum IntraOperatorGlobalKeywordParameter implements IKeywordParameter {
+	PARALLELIZATION_TYPE("type", 0, false), DEGREE_OF_PARALLELIZATION("degree",
+			1, false), BUFFERSIZE("buffersize", 2, true);
 
-public enum IntraOperatorGlobalKeywordParameter implements IKeywordParameter{
-	PARALLELIZATION_TYPE("type", 0, false),
-	DEGREE_OF_PARALLELIZATION("degree", 1, false),
-	BUFFERSIZE("buffersize", 2, true);
-
-	
-	private IntraOperatorGlobalKeywordParameter(String name, int position, boolean isOptional){
+	private IntraOperatorGlobalKeywordParameter(String name, int position,
+			boolean isOptional) {
 		this.name = name;
 		this.position = position;
 		this.isOptional = isOptional;
 	}
-	
+
 	private String name;
 	private Integer position;
 	private boolean isOptional;
-	
 
 	@Override
 	public String getName() {
@@ -49,10 +54,12 @@ public enum IntraOperatorGlobalKeywordParameter implements IKeywordParameter{
 	public boolean isOptional() {
 		return this.isOptional;
 	}
-	
-	public static IntraOperatorGlobalKeywordParameter getParameterByName(String parallelizationParameter) {
-		for (IntraOperatorGlobalKeywordParameter parameter : IntraOperatorGlobalKeywordParameter.values()){
-			if (parameter.name().equalsIgnoreCase(parallelizationParameter)){
+
+	public static IntraOperatorGlobalKeywordParameter getParameterByName(
+			String parallelizationParameter) {
+		for (IntraOperatorGlobalKeywordParameter parameter : IntraOperatorGlobalKeywordParameter
+				.values()) {
+			if (parameter.name().equalsIgnoreCase(parallelizationParameter)) {
 				return parameter;
 			}
 		}

@@ -23,13 +23,23 @@ import de.uniol.inf.is.odysseus.parallelization.intraoperator.constants.IntraOpe
 import de.uniol.inf.is.odysseus.parallelization.intraoperator.parameter.IntraOperatorParallelizationKeywordParameter;
 import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 
+/**
+ * Keyword builder for #INTRAOPERATOR keyword with parameters
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class IntraOperatorParallelizationPreParserKeywordBuilder {
 
 	public static String buildParameterString(Integer degree, int buffersize,
 			List<String> operatorIds) {
 		StringBuilder builder = new StringBuilder();
+		
+		// add INTRAOPERATOR keyword
 		builder.append("#"
 				+ IntraOperatorParallelizationPreParserKeyword.KEYWORD + IntraOperatorParallelizationConstants.BLANK);
+		
+		// use helper to create parameters
 		PreParserKeywordParameterHelper<IntraOperatorParallelizationKeywordParameter> helper = PreParserKeywordParameterHelper
 				.newInstance(IntraOperatorParallelizationKeywordParameter.class);
 		Map<IntraOperatorParallelizationKeywordParameter, String> parameters = new HashMap<IntraOperatorParallelizationKeywordParameter, String>();

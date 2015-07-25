@@ -15,6 +15,11 @@
  */
 package de.uniol.inf.is.odysseus.parallelization.intraoperator.constants;
 
+/**
+ * Constants for Intra operator parallelization project
+ * @author ChrisToenjesDeye
+ *
+ */
 public class IntraOperatorParallelizationConstants {
 	public static final int DEFAULT_BUFFERSIZE = 10000;
 	

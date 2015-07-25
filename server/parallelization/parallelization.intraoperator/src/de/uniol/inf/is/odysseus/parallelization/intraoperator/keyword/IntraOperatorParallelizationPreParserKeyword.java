@@ -38,6 +38,14 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
 import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 
+/**
+ * keyword class for INTRAOPERATOR parallelization. this keyword is used to
+ * define operator specific configuration for parallelization (e.g. custom
+ * degree for only this operator)
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class IntraOperatorParallelizationPreParserKeyword extends
 		AbstractPreParserKeyword {
 	public static final String KEYWORD = "INTRAOPERATOR";
@@ -47,23 +55,32 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 
 	private PreParserKeywordParameterHelper<IntraOperatorParallelizationKeywordParameter> parameterHelper;
 
+	/**
+	 * validates the parameters defined in this keyword
+	 */
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
+		// validate parameter string
 		parameterHelper = PreParserKeywordParameterHelper
 				.newInstance(IntraOperatorParallelizationKeywordParameter.class);
 		parameterHelper.validateParameterString(parameter);
 
 	}
 
+	/**
+	 * do execute the keyword. here parameters are parsed and adds custom config
+	 * to existing intra operator configuration
+	 */
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
 			String parameter, ISession caller, Context context,
 			IServerExecutor executor) throws OdysseusScriptException {
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
-		ParallelIntraOperatorSetting intraOperatorSetting = getParallelizationKeywordIfExists(settings);
+		ParallelIntraOperatorSetting intraOperatorSetting = getIntraOperatorParallelizationSettingIfExists(settings);
 
+		// parse and validate input parameters
 		Map<IKeywordParameter, String> result = parameterHelper
 				.parse(parameter);
 		List<String> operatorIds = parseOperatorIds(result
@@ -73,6 +90,7 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 		int individualBuffersize = parseBuffersize(result
 				.get(IntraOperatorParallelizationKeywordParameter.BUFFERSIZE));
 
+		// create individual settings for each operator id
 		for (String operatorId : operatorIds) {
 			ParallelIntraOperatorSettingValueElement individualSettings = new ParallelIntraOperatorSettingValueElement(
 					individualDegree, individualBuffersize);
@@ -83,14 +101,24 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 		return null;
 	}
 
+	/**
+	 * Parse and validate value for buffersize. This value is used inside of
+	 * intra parallelized operators to buffer input stream. Returns the default
+	 * value if buffersize is not set or AUTO constant is defined
+	 * 
+	 * @param parameter
+	 *            value for buffersize
+	 * @return
+	 * @throws OdysseusScriptException
+	 */
 	private int parseBuffersize(String string) throws OdysseusScriptException {
 		if (string == null || string.equalsIgnoreCase("AUTO")) {
 			return IntraOperatorParallelizationConstants.DEFAULT_BUFFERSIZE;
 		} else {
 			try {
 				int buffersize = Integer.parseInt(string);
-				if (buffersize > 0){
-					return buffersize;					
+				if (buffersize > 0) {
+					return buffersize;
 				} else {
 					throw new OdysseusScriptException(
 							"Value for buffersize is not valid. Value need to be greater 0.");
@@ -102,6 +130,14 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 		}
 	}
 
+	/**
+	 * parse and validate value for degree parameter. Only positive integers are
+	 * allowed
+	 * 
+	 * @param degreeOfParallelizationString
+	 * @return
+	 * @throws OdysseusScriptException
+	 */
 	private int parseDegree(String degreeOfParallelizationString)
 			throws OdysseusScriptException {
 		try {
@@ -122,6 +158,14 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 		}
 	}
 
+	/**
+	 * Parses the operator ids from parameter. if more than one operator id is
+	 * defined, the ids need to be seperated with a comma
+	 * 
+	 * @param operatorIdString
+	 * @return
+	 * @throws OdysseusScriptException
+	 */
 	private List<String> parseOperatorIds(String operatorIdString)
 			throws OdysseusScriptException {
 		if (operatorIdString.isEmpty()) {
@@ -138,7 +182,17 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 		return operatorIds;
 	}
 
-	private ParallelIntraOperatorSetting getParallelizationKeywordIfExists(
+	/**
+	 * gets the global setting value for intra operator parallelization. If the
+	 * settings arent exist an error is shown, because it is not allowed to use
+	 * this keyword without global #PARALLELIZATION keyword and type to intra
+	 * operator
+	 * 
+	 * @param settings
+	 * @return
+	 * @throws OdysseusScriptException
+	 */
+	private ParallelIntraOperatorSetting getIntraOperatorParallelizationSettingIfExists(
 			List<IQueryBuildSetting<?>> settings)
 			throws OdysseusScriptException {
 		// check if #PARALLELIZATION keyword exists and type is set to

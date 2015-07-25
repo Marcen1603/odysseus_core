@@ -23,6 +23,11 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 
+/**
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class ParallelInterOperatorSetting extends Setting<Map<String, ParallelOperatorConfiguration>> implements IQueryBuildSetting<Map<String, ParallelOperatorConfiguration>>{
 
 	protected ParallelInterOperatorSetting(

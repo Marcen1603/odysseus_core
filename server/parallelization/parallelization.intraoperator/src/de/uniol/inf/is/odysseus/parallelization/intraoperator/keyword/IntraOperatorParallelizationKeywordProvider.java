@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
 /**
  * Provider class for odysseus script keywords
- * 
  * @author ChrisToenjesDeye
  *
  */
