@@ -129,6 +129,15 @@ public class DeviationLearnPO<T extends Tuple<M>, M extends ITimeInterval> exten
 		}
 	}
 
+	/**
+	 * Updates the deviation information with the data we got. Writes all
+	 * deviation data (sums, etc.) info the info object
+	 * 
+	 * @param infoTuple
+	 * @param info
+	 * @param gId
+	 * @return
+	 */
 	private DeviationInformation updateInfo(T infoTuple, DeviationInformation info, Long gId) {
 		// Only use the data if it's from this operator
 		String tupleBackupId = getValue(infoTuple, BACKUP_PORT, "backupId", String.class);

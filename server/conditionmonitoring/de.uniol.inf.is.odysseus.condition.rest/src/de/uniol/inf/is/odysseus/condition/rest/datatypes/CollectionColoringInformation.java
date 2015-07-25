@@ -1,5 +1,11 @@
 package de.uniol.inf.is.odysseus.condition.rest.datatypes;
 
+/**
+ * Information about the coloring in the client application
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class CollectionColoringInformation {
 
 	private ConnectionInformation connectionInformation;

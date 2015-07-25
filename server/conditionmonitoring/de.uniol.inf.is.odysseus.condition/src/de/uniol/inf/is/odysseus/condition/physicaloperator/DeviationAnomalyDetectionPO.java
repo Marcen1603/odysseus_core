@@ -225,14 +225,14 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 				bestPointInTime = startTime;
 			}
 		}
-		
+
 		for (PointInTime startTime : infoMap.keySet()) {
 			// We need to know if there is a tuple after the best tuple. Cause
 			// if not, maybe there will be a better fitting info in the future
 			// and then we would need to wait
 			if (bestPointInTime != null && startTime.after(bestPointInTime)) {
 				biggerThanBestPoint = startTime;
-			}			
+			}
 		}
 
 		if (bestPointInTime != null && biggerThanBestPoint != null && biggerThanBestPoint.after(bestPointInTime)) {
@@ -405,6 +405,14 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		}
 	}
 
+	/**
+	 * Sends the tuples within a window if the window and the next window has an
+	 * outlier - but does not send the tuples at the margins (which were no
+	 * outliers and the window before / after had no outlier, too)
+	 * 
+	 * @param tuples
+	 * @param info
+	 */
 	private void sendWindow(List<T> tuples, DeviationInformation info) {
 		Iterator<T> iter = tuples.iterator();
 		while (iter.hasNext()) {

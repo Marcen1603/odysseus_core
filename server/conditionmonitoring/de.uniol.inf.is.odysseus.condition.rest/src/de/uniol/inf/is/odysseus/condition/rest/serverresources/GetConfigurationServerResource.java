@@ -13,6 +13,13 @@ import de.uniol.inf.is.odysseus.condition.rest.service.ConfigurationService;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest.serverresources.AbstractSessionServerResource;
 
+/**
+ * This resource returns a list of configurations which are available for the
+ * user given in the request
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class GetConfigurationServerResource extends AbstractSessionServerResource {
 
 	public static final String PATH = "CMGetConfigurationList";

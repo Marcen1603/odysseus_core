@@ -4,6 +4,13 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.condition.rest.dto.response.CollectionInformation;
 
+/**
+ * Configuration for the client application which only has to show what the
+ * configuration tells.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ClientConfiguration {
 
 	// To which query the client has to connect and which query IDs and outputs

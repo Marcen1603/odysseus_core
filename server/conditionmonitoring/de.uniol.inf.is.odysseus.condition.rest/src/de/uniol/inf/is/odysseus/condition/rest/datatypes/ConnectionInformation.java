@@ -4,6 +4,13 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.rest.socket.AttributeInformation;
 
+/**
+ * Information which is needed to connect to the right source (needed by the
+ * client to connect to Odysseus)
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ConnectionInformation {
 
 	private String name;

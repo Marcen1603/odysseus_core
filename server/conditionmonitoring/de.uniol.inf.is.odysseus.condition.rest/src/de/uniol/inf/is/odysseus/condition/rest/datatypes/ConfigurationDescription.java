@@ -2,6 +2,13 @@ package de.uniol.inf.is.odysseus.condition.rest.datatypes;
 
 import java.util.UUID;
 
+/**
+ * Object used to show a list on the client which contains information about all
+ * available configurations.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ConfigurationDescription {
 
 	private UUID identifier;

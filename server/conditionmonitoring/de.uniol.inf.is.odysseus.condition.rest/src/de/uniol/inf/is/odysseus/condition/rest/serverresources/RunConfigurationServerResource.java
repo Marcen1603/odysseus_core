@@ -9,6 +9,13 @@ import de.uniol.inf.is.odysseus.condition.rest.service.ConfigurationService;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest.serverresources.AbstractSessionServerResource;
 
+/**
+ * This resource runs the given configuration. Therefore, the server part of the
+ * configuration is executed and the client part is send to the client
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class RunConfigurationServerResource extends AbstractSessionServerResource {
 
 	public static final String PATH = "RunConfiguration";
@@ -19,16 +26,7 @@ public class RunConfigurationServerResource extends AbstractSessionServerResourc
 
 		Configuration config = ConfigurationService.getConfiguration(runRequest.getConfigurationId());
 		ConfigurationService.runConfiguration(config, session);
-		// TODO Set ip of the connections to the current IP of this Odysseus
 		return config.getClientConfiguration();
-		// SDFSchema out =
-		// ExecutorServiceBinding.getExecutor().getOutputSchema(4, session);
-		// Map<Integer, SDFSchema> outputSchemaMap =
-		// ExecutorServiceBinding.getExecutor().getLogicalQueryByName("cohort1",
-		// session).getLogicalPlan().getOutputSchemaMap();
-		
-		// System.out.println(out);
-		// System.out.println(outputSchemaMap);
 	}
 
 }

@@ -20,6 +20,13 @@ import de.uniol.inf.is.odysseus.condition.rest.datatypes.OverviewInformation;
 import de.uniol.inf.is.odysseus.condition.rest.datatypes.ServerConfiguration;
 import de.uniol.inf.is.odysseus.condition.rest.dto.response.CollectionInformation;
 
+/**
+ * This class gives an example of how to create a configuration for the
+ * condition monitoring application
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ConfigurationCreator {
 
 	// Demo configuration
@@ -30,7 +37,6 @@ public class ConfigurationCreator {
 		config.setDescription(
 				"Analysis of the offshore windpark with windturbines and transformer substation with its cooling system.");
 		config.addUser("System");
-		
 
 		// --------------------
 		// Client Configuration
@@ -175,7 +181,8 @@ public class ConfigurationCreator {
 		// Pump 1 vibration analysis
 		ConnectionInformation conPump1Vibration = new ConnectionInformation();
 		conPump1Vibration.setName("Pump 1 vibration");
-		conPump1Vibration.setDescription("The vibration of pump 1 is too high or too low compared to the current flow.");
+		conPump1Vibration
+				.setDescription("The vibration of pump 1 is too high or too low compared to the current flow.");
 		conPump1Vibration.setIp("127.0.0.1");
 		conPump1Vibration.setQueryName("pump1VibrationAnalysis");
 		conPump1Vibration.setUseName(true);
@@ -186,7 +193,8 @@ public class ConfigurationCreator {
 		// Pump 2 vibration analysis
 		ConnectionInformation conPump2Vibration = new ConnectionInformation();
 		conPump2Vibration.setName("Pump 2 vibration");
-		conPump2Vibration.setDescription("The vibration of pump 2 is too high or too low compared to the current flow.");
+		conPump2Vibration
+				.setDescription("The vibration of pump 2 is too high or too low compared to the current flow.");
 		conPump2Vibration.setIp("127.0.0.1");
 		conPump2Vibration.setQueryName("pump2VibrationAnalysis");
 		conPump2Vibration.setUseName(true);
@@ -197,7 +205,8 @@ public class ConfigurationCreator {
 		// Pump 3 vibration analysis
 		ConnectionInformation conPump3Vibration = new ConnectionInformation();
 		conPump3Vibration.setName("Pump 3 vibration");
-		conPump3Vibration.setDescription("The vibration of pump 3 is too high or too low compared to the current flow.");
+		conPump3Vibration
+				.setDescription("The vibration of pump 3 is too high or too low compared to the current flow.");
 		conPump3Vibration.setIp("127.0.0.1");
 		conPump3Vibration.setQueryName("pump3VibrationAnalysis");
 		conPump3Vibration.setUseName(true);

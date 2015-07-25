@@ -23,6 +23,14 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManag
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
+/**
+ * This class can load configurations from a MongoDB and can store
+ * configurations within a MongoDB. These configurations can be executed by this
+ * service.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ConfigurationService {
 
 	public static List<Configuration> getAvailableConfigurations(String username) {
