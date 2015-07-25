@@ -22,11 +22,19 @@ import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 
+/**
+ * Window handler for opening parallelization benchmarker window used in
+ * odysseus studio for detecting best parallelization settings
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class InterOperatorParallelizationBenchmarkerWindowHandler extends
 		AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		// create window and show it, if this event is called (done via osgi)
 		ParallelizationBenchmarkerWindow window = new ParallelizationBenchmarkerWindow(
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		window.show();

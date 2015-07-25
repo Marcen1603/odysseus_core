@@ -15,11 +15,37 @@
  */
 package de.uniol.inf.is.odysseus.parallelization.rcp.data;
 
+/**
+ * This interface defines executions for benchmarker. the executions are
+ * calculated from the configuration the user has defined in the benchmarker UI.
+ * Possible executions are for inter or intra operator parallelization
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public interface IBenchmarkerExecution {
 
+	/**
+	 * returns the odysseus script keywords for this execution
+	 * 
+	 * @return odysseus script keywords
+	 */
 	String getOdysseusScript();
 
+	/**
+	 * calculates the avergae execution time for an execution which is executed
+	 * multiple times to get better results
+	 * 
+	 * @param maximumExecutionTime
+	 *            (is needed to exclude this values)
+	 * @return average execution time
+	 */
 	long getAverageExecutionTime(long maximumExecutionTime);
 
+	/**
+	 * adds an execution time to this execution. 
+	 * 
+	 * @param executionTime
+	 */
 	void addExecutionTime(long executionTime);
 }

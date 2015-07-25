@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.parallelization.benchmark.data.BenchmarkObserverRegistry;
 import de.uniol.inf.is.odysseus.parallelization.benchmark.data.BenchmarkPOObservable;
 import de.uniol.inf.is.odysseus.parallelization.benchmark.data.CountElementsBenchmarkEvaluation;
@@ -34,9 +35,18 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
+/**
+ * thread for executing the different executions in benchmarker. This thread
+ * executes the query with custom settings (via odysseus script). If the
+ * execution is done the time for execution is added
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class BenchmarkExecutionThread extends Thread implements
 		IBenchmarkObserver {
-	private static Logger LOG = LoggerFactory.getLogger(BenchmarkMainExecutionThread.class);
+	private static Logger LOG = LoggerFactory
+			.getLogger(BenchmarkMainExecutionThread.class);
 
 	private String queryString;
 	private IBenchmarkerExecution benchmarkerExecution;
@@ -52,29 +62,45 @@ public class BenchmarkExecutionThread extends Thread implements
 		this.data = BenchmarkDataHandler.getExistingInstance(processUid);
 		this.benchmarkerExecution = benchmarkerExecution;
 		this.observerUUID = UUID.randomUUID();
-		this.maximumExecutionTime = data.getConfiguration().getMaximumExecutionTime();
+		this.maximumExecutionTime = data.getConfiguration()
+				.getMaximumExecutionTime();
 	}
 
 	@Override
 	public void run() {
 		LOG.debug("Executing benchmark query");
 
+		// register current thread as observer for benchmarking
 		BenchmarkObserverRegistry registry = BenchmarkObserverRegistry
 				.getInstance();
 		registry.registerObserver(observerUUID, this);
 
+		// add the query for this execution
 		executor = OdysseusRCPEditorTextPlugIn.getExecutor();
 		queryIds = executor.addQuery(this.queryString, "OdysseusScript",
 				OdysseusRCPPlugIn.getActiveSession(),
 				ParserClientUtil.createRCPContext(data.getQueryFile()));
+
+		// start the query if it is inactive
 		for (Integer queryID : queryIds) {
-			executor.startQuery(queryID, OdysseusRCPPlugIn.getActiveSession());
+			QueryState state = executor.getQueryState(queryID,
+					OdysseusRCPPlugIn.getActiveSession());
+			if (state == QueryState.INACTIVE) {
+				executor.startQuery(queryID,
+						OdysseusRCPPlugIn.getActiveSession());
+			}
 		}
+
+		// let this thread sleep for the maximum execution time
 		try {
 			Thread.sleep(maximumExecutionTime);
+			// if maximum execution time is reached, add this value to execution
+			// times
 			benchmarkerExecution.addExecutionTime(maximumExecutionTime);
 		} catch (InterruptedException e) {
 		} finally {
+			// if maximum execution time is reached or sleep was interrupted,
+			// remove this query and unregister observer
 			for (Integer queryId : queryIds) {
 				executor.removeQuery(queryId,
 						OdysseusRCPPlugIn.getActiveSession());
@@ -83,26 +109,38 @@ public class BenchmarkExecutionThread extends Thread implements
 		}
 	}
 
+	/**
+	 * udate method for observer. this method is called when the benchmark is
+	 * done successfully or data stream is done. The execution time is send via
+	 * args
+	 */
 	@Override
 	public void update(Observable observable, Object arg) {
+		// unregister from delegate
 		if (observable instanceof BenchmarkPOObservable) {
-			BenchmarkPOObservable<?> counterPOHelper = (BenchmarkPOObservable<?>) observable;
+			BenchmarkPOObservable<?> counterPODelegate = (BenchmarkPOObservable<?>) observable;
 			BenchmarkObserverRegistry registry = BenchmarkObserverRegistry
 					.getInstance();
-			registry.unregisterObserver(counterPOHelper, observerUUID);
+			registry.unregisterObserver(counterPODelegate, observerUUID);
 		}
+		// get execution time
 		long executionTime = 0l;
 		if (arg instanceof Long) {
 			executionTime = (Long) arg;
 		}
 		benchmarkerExecution.addExecutionTime(executionTime);
+		// interrupt this threat to finish execution
 		this.interrupt();
 
 	}
 
+	/**
+	 * returns the specific evaluation (counting of elements and get execution
+	 * time)
+	 */
 	@Override
 	public IBenchmarkEvaluation getBenchmarkEvaluation() {
-		return new CountElementsBenchmarkEvaluation(
-				this, data.getConfiguration().getNumberOfElements());
+		return new CountElementsBenchmarkEvaluation(this, data
+				.getConfiguration().getNumberOfElements());
 	}
 }

@@ -31,6 +31,13 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 
+/**
+ * Composite for execution of analysis (progressbar, progresslog and result of
+ * the benchmarker)
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class BenchmarkAnalyseComposite extends AbstractBenchmarkComposite {
 
 	private ProgressBar progressAnalyseQuery;
@@ -53,21 +60,27 @@ public class BenchmarkAnalyseComposite extends AbstractBenchmarkComposite {
 		parent.setVisible(true);
 	}
 
+	/**
+	 * create the content of this composite
+	 */
 	private void createContent() {
-		createLabelWithSeperator(this, "Analyse parallelization of current query");
+		createLabelWithSeperator(this,
+				"Analyse parallelization of current query");
 
-
+		// progres bar for the execution progress
 		progressAnalyseQuery = new ProgressBar(this, SWT.SMOOTH);
 		progressAnalyseQuery.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
 		progressAnalyseQuery.setMinimum(0);
 		progressAnalyseQuery.setMaximum(100);
 
+		// label with the remaining time
 		remainingTimeLabel = new Label(this, SWT.NULL);
 		remainingTimeLabel.setText("Calculating remaining time...");
-		remainingTimeLabel.setLayoutData(new GridData(
-				GridData.FILL_HORIZONTAL));
+		remainingTimeLabel
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		// text with log messages
 		analysisProgressLog = new Text(this, SWT.MULTI | SWT.BORDER | SWT.WRAP
 				| SWT.V_SCROLL | SWT.READ_ONLY);
 		GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -83,10 +96,20 @@ public class BenchmarkAnalyseComposite extends AbstractBenchmarkComposite {
 		});
 	}
 
+	/**
+	 * updates the analysis progress. updates remaining time, progress bar and
+	 * text log
+	 * 
+	 * @param progressProcent
+	 * @param remainingTimeMillis
+	 * @param progressString
+	 */
 	public void updateAnalysisProgress(int progressProcent,
 			long remainingTimeMillis, String progressString) {
+		// pretty time framework for nice remaining time
 		PrettyTime p = new PrettyTime(new Locale("en"));
 
+		// remaining time
 		if (remainingTimeMillis > 0l) {
 			remainingTimeLabel.setText("Approximately finished in "
 					+ p.format(new Date(System.currentTimeMillis()
@@ -95,17 +118,24 @@ public class BenchmarkAnalyseComposite extends AbstractBenchmarkComposite {
 			remainingTimeLabel.setText("Finished !");
 		}
 
+		// progress log
 		if (!progressString.isEmpty()) {
 			analysisProgressLog.setText(analysisProgressLog.getText()
 					+ progressString + System.lineSeparator());
 		}
 
+		// progress bar
 		if (progressProcent != 0
 				&& progressProcent >= progressAnalyseQuery.getSelection()) {
 			progressAnalyseQuery.setSelection(progressProcent);
 		}
 	}
 
+	/**
+	 * shows the result if the benchmark is completely done
+	 * 
+	 * @param resultOdysseusScript
+	 */
 	public void showResult(String resultOdysseusScript) {
 		createLabel(this,
 				"Result of parallelization benchmarker. Put this Snippet in your script.");

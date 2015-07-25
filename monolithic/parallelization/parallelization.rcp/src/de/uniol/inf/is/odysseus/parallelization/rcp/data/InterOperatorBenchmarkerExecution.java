@@ -21,6 +21,13 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorGlobalKeywordBuilder;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.keyword.InterOperatorParallelizationPreParserKeywordBuilder;
 
+/**
+ * benchmarker execution for inter operator parallelization. Contains all needed
+ * data to create the specific odysseus script keywords
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class InterOperatorBenchmarkerExecution extends
 		AbstractBenchmarkerExecution {
 	private Integer degree;
@@ -32,15 +39,17 @@ public class InterOperatorBenchmarkerExecution extends
 	public InterOperatorBenchmarkerExecution() {
 		super();
 	}
-	
-	public InterOperatorBenchmarkerExecution(InterOperatorBenchmarkerExecution other){
+
+	public InterOperatorBenchmarkerExecution(
+			InterOperatorBenchmarkerExecution other) {
 		this.degree = other.degree;
 		this.buffersize = other.buffersize;
 		this.allowPostOptmization = other.allowPostOptmization;
 		this.useThreadedBuffer = other.useThreadedBuffer;
 		this.elements = new HashMap<String, InterOperatorBenchmarkerExecutionElement>();
 		for (String elementKey : other.elements.keySet()) {
-			this.elements.put(elementKey, other.elements.get(elementKey).clone());
+			this.elements.put(elementKey, other.elements.get(elementKey)
+					.clone());
 		}
 	}
 
@@ -53,12 +62,38 @@ public class InterOperatorBenchmarkerExecution extends
 		return degree;
 	}
 
+	/**
+	 * sets the degree to the global execution and also sets it to all elements
+	 * (but only if the elements contains no custom degrees)
+	 * 
+	 * @param degree
+	 * @param iteration
+	 */
 	public void setDegree(int degree, int iteration) {
 		this.degree = degree;
 		// set the global degree of the benchmark execution to all elements if
 		// no custom value is defined
-		for (InterOperatorBenchmarkerExecutionElement element : elements.values()) {
+		for (InterOperatorBenchmarkerExecutionElement element : elements
+				.values()) {
 			element.setExecutionDegree(degree, iteration);
+		}
+	}
+
+	/**
+	 * adds an execution element (contains strategies for each operator ... )
+	 * execution elements represents the combinations from the different
+	 * selected strategies and fragmentations
+	 * 
+	 * @param operatorId
+	 * @param element
+	 */
+	public void addElement(String operatorId,
+			InterOperatorBenchmarkerExecutionElement element) {
+		if (!elements.containsKey(operatorId)) {
+			elements.put(operatorId, element);
+		} else {
+			throw new IllegalArgumentException(
+					"Duplicate execution element for operator id " + operatorId);
 		}
 	}
 
@@ -82,15 +117,6 @@ public class InterOperatorBenchmarkerExecution extends
 		this.allowPostOptmization = allowPostOptmization;
 	}
 
-	public void addElement(String operatorId, InterOperatorBenchmarkerExecutionElement element) {
-		if (!elements.containsKey(operatorId)) {
-			elements.put(operatorId, element);
-		} else {
-			throw new IllegalArgumentException(
-					"Duplicate execution element for operator id " + operatorId);
-		}
-	}
-
 	public boolean isUseThreadedBuffer() {
 		return useThreadedBuffer;
 	}
@@ -99,33 +125,46 @@ public class InterOperatorBenchmarkerExecution extends
 		this.useThreadedBuffer = useThreadedBuffer;
 	}
 
+	/**
+	 * returns the odysseus script keywords for this execution
+	 * 
+	 * @return odysseus script keywords
+	 */
 	@Override
 	public String getOdysseusScript() {
 		StringBuilder builder = new StringBuilder();
+		// create #PARALLELIZATION keyword
 		builder.append(InterOperatorGlobalKeywordBuilder.buildParameterString(
 				degree, buffersize, allowPostOptmization, useThreadedBuffer));
-		for (InterOperatorBenchmarkerExecutionElement element : elements.values()) {
+		// create #INTEROPERATOR keyword for each element
+		for (InterOperatorBenchmarkerExecutionElement element : elements
+				.values()) {
 			builder.append(InterOperatorParallelizationPreParserKeywordBuilder
 					.buildKeywordWithParameters(element.getStartOperatorid(),
 							element.getEndOperatorId(),
 							element.getExecutionDegree(), buffersize,
-							element.getStrategy(), element.getFragmentType(), element.isUseThreadedOperators()));
+							element.getStrategy(), element.getFragmentType(),
+							element.isUseThreadedOperators()));
 		}
 		return builder.toString();
 	}
 
+	/**
+	 * custom to string method. this string is used to show the currently
+	 * executed execution in benchmarker UI
+	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Inter-Operator Parallelization: Global degree: " + degree);
+		builder.append("Inter-Operator Parallelization: Global degree: "
+				+ degree);
 		builder.append(", Post optimization allowed: " + allowPostOptmization);
 		builder.append(", Use threaded buffer: " + useThreadedBuffer);
-		for (InterOperatorBenchmarkerExecutionElement element : elements.values()) {
+		for (InterOperatorBenchmarkerExecutionElement element : elements
+				.values()) {
 			builder.append(", " + element.toString());
 		}
 		return builder.toString();
 	}
-
-	
 
 }

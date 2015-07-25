@@ -23,6 +23,13 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 
+/**
+ * this class represents the result of the intialization of the current query in
+ * benchmarker UI. COntains strategies for inter operator parallelization
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class BenchmarkInitializationResult {
 
 	private Map<ILogicalOperator, List<IParallelTransformationStrategy<? extends ILogicalOperator>>> strategiesForOperator = new HashMap<ILogicalOperator, List<IParallelTransformationStrategy<? extends ILogicalOperator>>>();
@@ -36,7 +43,12 @@ public class BenchmarkInitializationResult {
 		return strategiesForOperator.get(operator);
 	}
 
-	
+	/**
+	 * adds a list of strategies for an specific operator 
+	 * 
+	 * @param operator
+	 * @param strategies
+	 */
 	public void setStrategiesForOperator(
 			ILogicalOperator operator,
 			List<IParallelTransformationStrategy<? extends ILogicalOperator>> strategies) {

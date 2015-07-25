@@ -28,47 +28,70 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkInitializationResult;
 
+/**
+ * this helper is needed for initialization of the currently selected query.
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class BenchmarkHelper {
 
+	/**
+	 * gets all possible parallelization options for the existing logical
+	 * queries. the logical plan is searched for operator types that support
+	 * inter operator parallelization. if there exists at least one operator,
+	 * all possible strategies are detected
+	 * 
+	 * @param dataHandler
+	 * @throws IllegalArgumentException
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void getPossibleParallelizationOptions(BenchmarkDataHandler dataHandler) throws IllegalArgumentException {
+	public static void getPossibleParallelizationOptions(
+			BenchmarkDataHandler dataHandler) throws IllegalArgumentException {
 		if (dataHandler.getLogicalQueries().isEmpty()) {
 			throw new IllegalArgumentException("Logical query not found");
 		}
-		
+
 		List<ILogicalQuery> logicalQueries = dataHandler.getLogicalQueries();
-		
+
 		BenchmarkInitializationResult result = new BenchmarkInitializationResult();
-		
+
+		// for each logical query, search possible operators
 		for (ILogicalQuery logicalQuery : logicalQueries) {
 			ILogicalOperator logicalPlan = logicalQuery.getLogicalPlan();
 			Set<Class<? extends ILogicalOperator>> set = new HashSet<>();
 			List<Class<? extends ILogicalOperator>> validTypes = ParallelTransformationStrategyRegistry
 					.getValidTypes();
 			if (validTypes != null) {
-				// if we have strategies, we need to add the logical operators to
+				// if we have strategies, we need to add the logical operators
+				// to
 				// graph visitor
 				set.addAll(validTypes);
 				CollectOperatorLogicalGraphVisitor<ILogicalOperator> collVisitor = new CollectOperatorLogicalGraphVisitor<>(
 						set, true);
 				GenericGraphWalker collectWalker = new GenericGraphWalker();
 				collectWalker.prefixWalk(logicalPlan, collVisitor);
-				
-				// result of graph visitor contains all operators, which have one or
+
+				// result of graph visitor contains all operators, which have
+				// one or
 				// more available strategies
-				for (ILogicalOperator operatorForTransformation : collVisitor.getResult()) {
-					if (operatorForTransformation.getUniqueIdentifier() != null){
-						
+				for (ILogicalOperator operatorForTransformation : collVisitor
+						.getResult()) {
+					if (operatorForTransformation.getUniqueIdentifier() != null) {
+
 						List<IParallelTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = ParallelTransformationStrategyRegistry
-								.getStrategiesForOperator(operatorForTransformation.getClass());
+								.getStrategiesForOperator(operatorForTransformation
+										.getClass());
 						if (!strategiesForOperator.isEmpty()) {
-							result.setStrategiesForOperator(operatorForTransformation, strategiesForOperator);
-						}					
+							result.setStrategiesForOperator(
+									operatorForTransformation,
+									strategiesForOperator);
+						}
 					}
 				}
 			}
 		}
-		
+
 		dataHandler.setBenchmarkInitializationResult(result);
 	}
 }

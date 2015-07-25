@@ -19,30 +19,33 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+/**
+ * Label provider for strategy selection table
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class StrategyLabelProvider implements ITableLabelProvider {
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-		
+		// nothing to do
 	}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+		// nothing to do
 	}
 
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
-		// TODO Auto-generated method stub
+		// nothing to do
 		return false;
 	}
 
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-		
+		// nothing to do
 	}
 
 	@Override
@@ -54,28 +57,33 @@ public class StrategyLabelProvider implements ITableLabelProvider {
 	public String getColumnText(Object element, int columnIndex) {
 		String result = "";
 		StrategySelectionRow row = (StrategySelectionRow) element;
-        switch (columnIndex) {
-            case 0 :
-            	result = row.getLogicalOperator().getClass().getSimpleName();
-                break;
-            case 1 :
-            	result = row.getLogicalOperator().getUniqueIdentifier();
-                break;
-            case 2 :
-            	result = row.getEndOperatorId();
-                break;
-            case 3 :
-            	result = row.getCustomDegrees();
-                break;
-            case 4 :
-                result = row.getStrategy().getName();
-                break;
-            case 5 :
-                result = row.getFragmentType().getSimpleName();
-                break;
-            }
-        return result;
+		switch (columnIndex) {
+		case 0:
+			// first column: operator type
+			result = row.getLogicalOperator().getClass().getSimpleName();
+			break;
+		case 1:
+			// second column: operator id
+			result = row.getLogicalOperator().getUniqueIdentifier();
+			break;
+		case 2:
+			// third column: end operator (editable)
+			result = row.getEndOperatorId();
+			break;
+		case 3:
+			// fourth column: custom degrees (editable)
+			result = row.getCustomDegrees();
+			break;
+		case 4:
+			// fifth column: strategy
+			result = row.getStrategy().getName();
+			break;
+		case 5:
+			// sixth column: fragmentation
+			result = row.getFragmentType().getSimpleName();
+			break;
+		}
+		return result;
 	}
-
 
 }

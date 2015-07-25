@@ -27,6 +27,13 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.IBenchmarkerExecution;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.ParallelizationBenchmarkerWindow;
 
+/**
+ * Main thread for benchmarker execution. this thread executes all
+ * configurations
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class BenchmarkMainExecutionThread extends Thread {
 
 	private static Logger LOG = LoggerFactory
@@ -42,35 +49,43 @@ public class BenchmarkMainExecutionThread extends Thread {
 		data = BenchmarkDataHandler.getExistingInstance(processUid);
 	}
 
+	/**
+	 * run method for this thread. get executions and execute them all
+	 */
 	@Override
 	public void run() {
 		LOG.debug("Analysing of current query started.");
 
+		// get all execution
 		List<IBenchmarkerExecution> benchmarkerExecutions = data
 				.getConfiguration().getBenchmarkerExecutions();
 		int numberOfExecutions = benchmarkerExecutions.size();
 		int executionCounter = 0;
 		int currentPercentage = 0;
 
+		// for every execution
 		for (IBenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
+			// update UI only if this thread is not interrupted
 			if (!isInterrupted()) {
 				changeProgress(currentPercentage, -1l, "Executing analysis "
 						+ (executionCounter + 1) + " of " + numberOfExecutions
 						+ ": " + benchmarkerExecution.toString());
 			}
 
+			// do this execution multiple times for better results
 			for (int i = 0; i < data.getConfiguration().getNumberOfExecutions(); i++) {
 				if (!isInterrupted()) {
 					executeAnalysis(benchmarkerExecution);
 				}
 			}
 
+			// update UI only if this thread is not interrupted
 			if (!isInterrupted()) {
 				currentPercentage = printResult(numberOfExecutions,
 						executionCounter, benchmarkerExecution);
 				executionCounter++;
 			}
-
+			// cleanup benchmarker if this thread is interrupted
 			if (isInterrupted()) {
 				cleanupBenchmarker();
 				return;
@@ -82,6 +97,15 @@ public class BenchmarkMainExecutionThread extends Thread {
 		evaluateResult(benchmarkerExecutions);
 	}
 
+	/**
+	 * print the result of an execution, if it is done (multiple times),
+	 * calculates remaining time, percentage
+	 * 
+	 * @param numberOfConfigurations
+	 * @param configurationCounter
+	 * @param benchmarkerExecution
+	 * @return
+	 */
 	private int printResult(int numberOfConfigurations,
 			int configurationCounter, IBenchmarkerExecution benchmarkerExecution) {
 		int currentPercentage = (int) (((configurationCounter + 1) / (double) numberOfConfigurations) * 100);
@@ -119,16 +143,24 @@ public class BenchmarkMainExecutionThread extends Thread {
 		return currentPercentage;
 	}
 
+	/**
+	 * evaluates the result at the end of the execution of all configurations
+	 * 
+	 * @param benchmarkerExecutions
+	 */
 	private void evaluateResult(
 			List<IBenchmarkerExecution> benchmarkerExecutions) {
 		IBenchmarkerExecution currentBestExecution = benchmarkerExecutions
 				.get(0);
 
+		// iterate over all execution results
 		for (IBenchmarkerExecution benchmarkerExecution : benchmarkerExecutions) {
 			if (benchmarkerExecution.getAverageExecutionTime(data
 					.getConfiguration().getMaximumExecutionTime()) <= 0l) {
+				// ignore result if it is not better than another
 				continue;
 			} else {
+				// if it is better, set it as best execution time and result
 				if (benchmarkerExecution.getAverageExecutionTime(data
 						.getConfiguration().getMaximumExecutionTime()) < currentBestExecution
 						.getAverageExecutionTime(data.getConfiguration()
@@ -140,6 +172,11 @@ public class BenchmarkMainExecutionThread extends Thread {
 		showResult(currentBestExecution.getOdysseusScript());
 	}
 
+	/**
+	 * show the result (resulting odysseus script and so on) on UI
+	 * 
+	 * @param resultOdysseusScript
+	 */
 	private void showResult(final String resultOdysseusScript) {
 		window.getWindow().getDisplay().asyncExec(new Runnable() {
 			@Override
@@ -149,6 +186,11 @@ public class BenchmarkMainExecutionThread extends Thread {
 		});
 	}
 
+	/**
+	 * do the execution
+	 * 
+	 * @param benchmarkerExecution
+	 */
 	private void executeAnalysis(IBenchmarkerExecution benchmarkerExecution) {
 		List<String> queryStringArray = data.getQueryStringArray();
 		StringBuilder builder = new StringBuilder();
@@ -169,7 +211,7 @@ public class BenchmarkMainExecutionThread extends Thread {
 		executionThread.start();
 
 		try {
-			// wait for the execution thread to finish. if its finish start next
+			// wait for the execution thread to finish. if its finished start next
 			// execution
 			executionThread.join();
 		} catch (InterruptedException e) {
@@ -178,10 +220,19 @@ public class BenchmarkMainExecutionThread extends Thread {
 		}
 	}
 
+	/**
+	 * removes data from this benchmark instance
+	 */
 	private void cleanupBenchmarker() {
 		BenchmarkDataHandler.removeInstance(processUid);
 	}
 
+	/**
+	 * change the progress on the UI (progress bar and text box)
+	 * @param progressProcent
+	 * @param remainingTimeMillis
+	 * @param progressString
+	 */
 	private void changeProgress(final int progressProcent,
 			final long remainingTimeMillis, final String progressString) {
 		Shell currentWindow = window.getWindow();

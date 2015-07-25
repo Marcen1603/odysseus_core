@@ -32,6 +32,12 @@ import de.uniol.inf.is.odysseus.parallelization.rcp.windows.composite.BenchmarkB
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.composite.BenchmarkConfigureComposite;
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.composite.BenchmarkStartComposite;
 
+/**
+ * main window class for parallelization benchmarker
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class ParallelizationBenchmarkerWindow {
 
 	public enum ParalleizationBenchmarkerPage {
@@ -44,20 +50,21 @@ public class ParallelizationBenchmarkerWindow {
 
 	private final Shell parent;
 	private Shell window;
-	private Composite pageComposite;
-	private Composite bottomComposite;
 
 	private Label errorLabel;
-
 	private UUID benchmarkProcessId;
 
+	// threads
+	private BenchmarkInitializeQueryThread initializeQueryThread;
 	private BenchmarkMainExecutionThread benchmarkMainThread;
 
+	// composites
+	private Composite pageComposite;
+	private Composite bottomComposite;
 	private BenchmarkStartComposite benchmarkStartComposite;
 	private BenchmarkConfigureComposite benchmarkConfigureComposite;
 	private BenchmarkAnalyseComposite benchmarkAnalyseComposite;
 	private BenchmarkButtonComposite benchmarkButtonComposite;
-	private BenchmarkInitializeQueryThread initializeQueryThread;
 
 	public ParallelizationBenchmarkerWindow(Shell parent) {
 		this.parent = Preconditions.checkNotNull(parent,
@@ -68,18 +75,26 @@ public class ParallelizationBenchmarkerWindow {
 		return this.window;
 	}
 
+	/**
+	 * shows the initial content and starts the intialization thread
+	 */
 	public void show() {
 		createWindow(parent);
 
 		if (benchmarkStartComposite != null) {
-			initializeQueryThread = new BenchmarkInitializeQueryThread(
-					this);
-			initializeQueryThread.setName("Benchmarker Initialize Query Thread");
+			initializeQueryThread = new BenchmarkInitializeQueryThread(this);
+			initializeQueryThread
+					.setName("Benchmarker Initialize Query Thread");
 			initializeQueryThread.setDaemon(true);
 			initializeQueryThread.start();
 		}
 	}
 
+	/**
+	 * creates the base window
+	 * 
+	 * @param parent
+	 */
 	private void createWindow(Shell parent) {
 		window = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE);
 		window.setText(TITLE);
@@ -89,6 +104,9 @@ public class ParallelizationBenchmarkerWindow {
 		createStartContent();
 	}
 
+	/**
+	 * create the start content
+	 */
 	public void createStartContent() {
 		benchmarkStartComposite = new BenchmarkStartComposite(window, SWT.NONE,
 				WINDOW_WIDTH);
@@ -96,6 +114,9 @@ public class ParallelizationBenchmarkerWindow {
 		createButtons(ParalleizationBenchmarkerPage.START, null);
 	}
 
+	/**
+	 * create the config content
+	 */
 	public void createConfigContent() {
 		this.clearContent();
 		benchmarkConfigureComposite = new BenchmarkConfigureComposite(window,
@@ -105,6 +126,9 @@ public class ParallelizationBenchmarkerWindow {
 		createButtons(ParalleizationBenchmarkerPage.CONFIG, null);
 	}
 
+	/**
+	 * create analysis content
+	 */
 	public void createAnalysisContent() {
 		clearContent();
 		benchmarkAnalyseComposite = new BenchmarkAnalyseComposite(window,
@@ -113,40 +137,77 @@ public class ParallelizationBenchmarkerWindow {
 		createButtons(ParalleizationBenchmarkerPage.ANALYSE, null);
 	}
 
+	/**
+	 * clears the content, needed if a new page is shown
+	 */
 	public void clearContent() {
 		pageComposite.dispose();
 		bottomComposite.dispose();
 	}
 
+	/**
+	 * shows an error message on the current composite
+	 * 
+	 * @param ex
+	 */
 	public void createErrorMessage(Throwable ex) {
-		if (errorLabel == null) {
-			errorLabel = createLabel(pageComposite, "");
-			errorLabel.setForeground(window.getDisplay().getSystemColor(
-					SWT.COLOR_RED));
-		}
-		errorLabel.setText("An error occured: " + ex.getMessage());
-		window.pack();
-		window.setVisible(true);
+		createErrorMessage(pageComposite, ex);
 	}
 
+	/**
+	 * shows the error message on a soecific composite
+	 * 
+	 * @param composite
+	 * @param ex
+	 */
+	public void createErrorMessage(Composite composite, Throwable ex) {
+		if (composite != null) {
+			if (errorLabel == null) {
+				errorLabel = createLabel(composite, "");
+				errorLabel.setForeground(window.getDisplay().getSystemColor(
+						SWT.COLOR_RED));
+			}
+			errorLabel.setText("An error occured: " + ex.getMessage());
+			window.pack();
+			window.setVisible(true);
+		}
+	}
+
+	/**
+	 * start the analysis if configuration is done
+	 */
 	public void startAnalysis() {
 		createAnalysisContent();
 
-		benchmarkMainThread = new BenchmarkMainExecutionThread(benchmarkProcessId, this);
+		benchmarkMainThread = new BenchmarkMainExecutionThread(
+				benchmarkProcessId, this);
 		benchmarkMainThread.setName("Benchmark Main Execution Thread");
 		benchmarkMainThread.setDaemon(true);
 		benchmarkMainThread.start();
 	}
-	
-	public void analyseDone(String resultOdysseusScript){
+
+	/**
+	 * shows result content if the analysis is done
+	 * 
+	 * @param resultOdysseusScript
+	 */
+	public void analyseDone(String resultOdysseusScript) {
 		benchmarkAnalyseComposite.showResult(resultOdysseusScript);
 		bottomComposite.dispose();
-		createButtons(ParalleizationBenchmarkerPage.ANALYSE_FINISHED, resultOdysseusScript);
+		createButtons(ParalleizationBenchmarkerPage.ANALYSE_FINISHED,
+				resultOdysseusScript);
 		window.pack();
 		window.setVisible(true);
 	}
 
-	private void createButtons(ParalleizationBenchmarkerPage currentPage, String parameter) {
+	/**
+	 * create the buttons based on the given page
+	 * 
+	 * @param currentPage
+	 * @param parameter
+	 */
+	private void createButtons(ParalleizationBenchmarkerPage currentPage,
+			String parameter) {
 		benchmarkButtonComposite = new BenchmarkButtonComposite(window,
 				SWT.NONE, this, currentPage, benchmarkProcessId, parameter);
 		bottomComposite = benchmarkButtonComposite;
@@ -182,9 +243,8 @@ public class ParallelizationBenchmarkerWindow {
 	public BenchmarkMainExecutionThread getBenchmarkMainThread() {
 		return benchmarkMainThread;
 	}
-	
+
 	public BenchmarkInitializeQueryThread getInitializeQueryThread() {
 		return initializeQueryThread;
 	}
 }
-

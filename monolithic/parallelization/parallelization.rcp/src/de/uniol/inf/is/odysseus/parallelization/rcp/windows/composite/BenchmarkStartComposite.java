@@ -21,13 +21,19 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ProgressBar;
 
-public class BenchmarkStartComposite extends AbstractBenchmarkComposite{
+/**
+ * benchmarker composite for initializing current query
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
+public class BenchmarkStartComposite extends AbstractBenchmarkComposite {
 
 	private ProgressBar progressInitializeQuery;
-	
+
 	public BenchmarkStartComposite(Composite parent, int style, int windowWidth) {
 		super(parent, style);
-		
+
 		GridData contentGridData = new GridData(GridData.FILL_BOTH);
 		contentGridData.widthHint = windowWidth;
 		this.setLayoutData(contentGridData);
@@ -35,11 +41,14 @@ public class BenchmarkStartComposite extends AbstractBenchmarkComposite{
 		this.setLayout(gridLayout);
 
 		createContent();
-		
+
 		parent.pack();
 		parent.setVisible(true);
 	}
 
+	/**
+	 * create content for this page (progress bar and a hint)
+	 */
 	private void createContent() {
 		createLabelWithSeperator(this, "Initialize current query");
 
@@ -49,11 +58,9 @@ public class BenchmarkStartComposite extends AbstractBenchmarkComposite{
 		progressInitializeQuery.setMinimum(0);
 		progressInitializeQuery.setMaximum(100);
 
-		createLabel(
-				this,
-				"Hint: Optimization is only possible if operators have an unique id. If #INTEROPERATORPARALLELIZATION \n keyword is used, only selected operators are used for benchmarking.");
+		createLabel(this,
+				"Hint: Benchmarking is only possible if operators have an unique id.");
 	}
-	
 
 	public void updateProgress(int selectionValue) {
 		progressInitializeQuery.setSelection(selectionValue);

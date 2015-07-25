@@ -19,6 +19,13 @@ import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.TableItem;
 
+/**
+ * cell modifier which allows to enter specific degrees for strategies and
+ * allows the definition of an end operatorId
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class StrategyCellModifier implements ICellModifier {
 
 	private Viewer viewer;
@@ -27,6 +34,9 @@ public class StrategyCellModifier implements ICellModifier {
 		this.viewer = viewer;
 	}
 
+	/**
+	 * checks if a given property can be modified
+	 */
 	@Override
 	public boolean canModify(Object element, String property) {
 		StrategySelectionRow row = null;
@@ -44,6 +54,9 @@ public class StrategyCellModifier implements ICellModifier {
 		return false;
 	}
 
+	/**
+	 * returns the value for a given property from a given row
+	 */
 	@Override
 	public Object getValue(Object element, String property) {
 		StrategySelectionRow row = null;
@@ -61,6 +74,9 @@ public class StrategyCellModifier implements ICellModifier {
 		return "";
 	}
 
+	/**
+	 * sets the value if the value is changed in UI
+	 */
 	@Override
 	public void modify(Object element, String property, Object value) {
 		StrategySelectionRow row = null;

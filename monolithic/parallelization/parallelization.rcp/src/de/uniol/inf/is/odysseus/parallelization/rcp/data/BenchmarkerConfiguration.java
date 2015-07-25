@@ -22,6 +22,15 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.parallelization.rcp.windows.table.StrategySelectionRow;
 
+/**
+ * The class holds the configuration data from benchmarker UI. Out of this
+ * configuration the possible executions are calculated. The configuration
+ * consists of three parts: global configuration for benchmarking, the inter
+ * operator configuration and the intra operator configuration
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class BenchmarkerConfiguration {
 
 	// global configuration
@@ -45,24 +54,35 @@ public class BenchmarkerConfiguration {
 	private List<String> selectedOperators;
 	private int intraOperatorBuffersize;
 
+	/**
+	 * calculates all possbile executions. If multiple strategies for multiple
+	 * operators are selected each of this are combined
+	 * 
+	 * @return List of executions
+	 */
 	public List<IBenchmarkerExecution> getBenchmarkerExecutions() {
 		List<IBenchmarkerExecution> executions = new ArrayList<IBenchmarkerExecution>();
 
-		// Calculating executions for inter operator parallelization
-		// map rows to elements
+		// do pre calculations for inter operator parallelization
 		if (useInterOperatorParallelization) {
 			Map<String, List<InterOperatorBenchmarkerExecutionElement>> executionElements = new HashMap<String, List<InterOperatorBenchmarkerExecutionElement>>();
+			// for each row and execution element is created
 			for (StrategySelectionRow selectedRow : selectedStratgies) {
 				InterOperatorBenchmarkerExecutionElement currentElement = new InterOperatorBenchmarkerExecutionElement(
 						selectedRow.getUniqueOperatorid(),
 						selectedRow.getStrategy(),
 						selectedRow.getFragmentType(),
 						selectedRow.getEndOperatorId(), useThreadedOperators);
+				// if inside of this row custom degrees are defined, set them to
+				// the element
 				if (!selectedRow.getCustomDegrees().trim().isEmpty()) {
 					currentElement.setPossibleDegrees(selectedRow
 							.getCustomDegrees().trim());
 				}
 
+				// add the element to map with operator ids as key and multiple
+				// execution elements as value
+				// create List for this operator id if not exists
 				if (!executionElements.containsKey(selectedRow
 						.getUniqueOperatorid())) {
 					executionElements
@@ -70,13 +90,18 @@ public class BenchmarkerConfiguration {
 									new ArrayList<InterOperatorBenchmarkerExecutionElement>());
 				}
 
+				// add element to list
 				executionElements.get(selectedRow.getUniqueOperatorid()).add(
 						currentElement);
 			}
 
+			// now combine each of the elements (grouped by operator)
 			List<InterOperatorBenchmarkerExecution> combinedElements = combineElements(
 					executionElements, 0, null,
 					new ArrayList<InterOperatorBenchmarkerExecution>());
+
+			// for every combination, clone this execution and add different
+			// degrees or if the need to use threaded buffer
 			for (InterOperatorBenchmarkerExecution benchmarkerExecution : combinedElements) {
 				int index = 0;
 				for (Integer degree : interOperatorDegrees) {
@@ -93,7 +118,8 @@ public class BenchmarkerConfiguration {
 			}
 		}
 
-		// Calculating executions for intra operator parallelization
+		// Calculating executions for intra operator parallelization (one
+		// execution for every degree)
 		if (useIntraOperatorParallelization) {
 			for (Integer degree : intraOperatorDegrees) {
 				executions.add(new IntraOperatorBenchmarkerExecution(degree,
@@ -104,6 +130,16 @@ public class BenchmarkerConfiguration {
 		return executions;
 	}
 
+	/**
+	 * Clones an inter operator execution and add specific value for degree and
+	 * buffertype
+	 * 
+	 * @param executions
+	 * @param benchmarkerExecution
+	 * @param index
+	 * @param degree
+	 * @param useThreadedBuffer
+	 */
 	private void cloneAndConfigureExecution(
 			List<IBenchmarkerExecution> executions,
 			InterOperatorBenchmarkerExecution benchmarkerExecution, int index,
@@ -115,47 +151,82 @@ public class BenchmarkerConfiguration {
 		executions.add(clonedExecution);
 	}
 
+	/**
+	 * combine every execution element with each other. For every operator one
+	 * of the strategies is selected. the combination works like a truth table
+	 * where the operator ids are the different variables and the strategies the
+	 * different values for this variables
+	 * 
+	 * @param executionElements
+	 * @param currentLevel
+	 * @param currentElements
+	 * @param result
+	 * @return
+	 */
 	private List<InterOperatorBenchmarkerExecution> combineElements(
 			Map<String, List<InterOperatorBenchmarkerExecutionElement>> executionElements,
 			int currentLevel,
 			List<InterOperatorBenchmarkerExecutionElement> currentElements,
 			List<InterOperatorBenchmarkerExecution> result) {
+		// cuurent elements for this combination
 		if (currentElements == null) {
 			currentElements = new ArrayList<InterOperatorBenchmarkerExecutionElement>();
 		}
 
+		// iterate over all stratgies for the operator of this level (level is
+		// an integer representation for the position of this operatorId inside
+		// of the map)
 		for (InterOperatorBenchmarkerExecutionElement executionElement : executionElements
 				.get(getNameAtIndex(executionElements, currentLevel))) {
 
+			// add this element to current combined elements
 			currentElements.add(executionElement);
+
+			// if all operators are used in this combination, we can create an
+			// execution for this combination
 			if (currentLevel >= executionElements.keySet().size() - 1) {
+				// create execution
 				InterOperatorBenchmarkerExecution benchmarkerExecution = new InterOperatorBenchmarkerExecution();
 				benchmarkerExecution.setBuffersize(interOPeratorBuffersize);
 				benchmarkerExecution
 						.setAllowPostOptmization(allowPostOptimization);
+				// add all elements to execution
 				for (InterOperatorBenchmarkerExecutionElement currentElement : currentElements) {
 					benchmarkerExecution
 							.addElement(currentElement.getStartOperatorid(),
 									currentElement);
 				}
+				// add this execution to result
 				result.add(benchmarkerExecution);
 			} else {
+				// if not all operators are used in this combination, go to next
+				// level (recursive call)
 				int nextLevel = currentLevel + 1;
 				combineElements(executionElements, nextLevel, currentElements,
 						result);
 			}
+			// if this element is processed we need to remove this from the
+			// current combination
 			currentElements.remove(currentElements.size() - 1);
 		}
 
+		// return result
 		return result;
 	}
 
+	/**
+	 * returns the operator id from execution elements based on the index
+	 * 
+	 * @param executionElements
+	 * @param index
+	 * @return
+	 */
 	private String getNameAtIndex(
 			Map<String, List<InterOperatorBenchmarkerExecutionElement>> executionElements,
-			int currentPosition) {
+			int index) {
 		ArrayList<String> arrayList = new ArrayList<String>(
 				executionElements.keySet());
-		return arrayList.get(currentPosition);
+		return arrayList.get(index);
 	}
 
 	public List<StrategySelectionRow> getSelectedStratgies() {

@@ -22,6 +22,12 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGrap
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
+/**
+ * this class represents one row inside of the strategy selection table
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class StrategySelectionRow {
 	private int rowId;
 	private ILogicalOperator logicalOperator;
@@ -45,6 +51,75 @@ public class StrategySelectionRow {
 		this.fragmentType = fragmentType;
 		this.endOperatorId = "";
 		this.customDegrees = "";
+	}
+
+	/**
+	 * validate contents of this row
+	 * 
+	 * @param otherStrategies
+	 * @param globalDegrees
+	 */
+	public void validate(List<StrategySelectionRow> otherStrategies,
+			List<Integer> globalDegrees) {
+		if (!endOperatorId.isEmpty()) {
+			// validate the endoperator id
+			if (uniqueOperatorid.equalsIgnoreCase(endOperatorId)) {
+				// we don't need it, if start and end id are equal
+				endOperatorId = null;
+			}
+
+			// check if the id is valid
+			// if the id is valid, check if the operator is downstream located
+			ILogicalOperator downstreamOperator = LogicalGraphHelper
+					.findDownstreamOperatorWithId(endOperatorId,
+							logicalOperator);
+			if (downstreamOperator == null) {
+				throw new IllegalArgumentException(
+						"Id for end operator is invalid. Maybe the id is "
+								+ "incorrect or the operator is not downstream located");
+			} else {
+				// check if the endoperator id is the start id of another
+				// strategy. this is not allowed
+				for (StrategySelectionRow otherStrategy : otherStrategies) {
+					if (otherStrategy.getUniqueOperatorid().equalsIgnoreCase(
+							endOperatorId)) {
+						throw new IllegalArgumentException(
+								"It is not allowed to use an end operator id, while strategies "
+										+ "exists with the same start operator id");
+					}
+				}
+				try {
+					// check if the way from start to end operator is valid (no
+					// splits or stateful operators etc)
+					LogicalGraphHelper.checkWayToEndPoint(logicalOperator,
+							false, endOperatorId, true);
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Way from start id "
+							+ uniqueOperatorid + " to end operator id "
+							+ endOperatorId + "is not valid.");
+				}
+			}
+		}
+
+		// check if the degrees are valid
+		if (!customDegrees.isEmpty()) {
+			String[] splittedDegrees = customDegrees.trim().split(",");
+			// the number of custom degrees need to be less or equal with the global degrees
+			if (splittedDegrees.length > globalDegrees.size()) {
+				throw new IllegalArgumentException(
+						"Number of custom degrees need to be less or equal than global degrees");
+			} else {
+				// check if all degrees are integers
+				for (int i = 0; i < splittedDegrees.length; i++) {
+					try {
+						Integer.parseInt(splittedDegrees[i]);
+					} catch (Exception e) {
+						throw new IllegalArgumentException(
+								"Custom degrees contains illegal values. Please use integers");
+					}
+				}
+			}
+		}
 	}
 
 	public int getRowId() {
@@ -102,58 +177,5 @@ public class StrategySelectionRow {
 
 	public void setCustomDegrees(String customDegrees) {
 		this.customDegrees = customDegrees;
-	}
-
-	public void validate(List<StrategySelectionRow> otherStrategies,
-			List<Integer> globalDegrees) {
-		if (!endOperatorId.isEmpty()) {
-			if (uniqueOperatorid.equals(endOperatorId)) {
-				// we don't need it, if start and end id are equal
-				endOperatorId = null;
-			}
-
-			ILogicalOperator downstreamOperator = LogicalGraphHelper
-					.findDownstreamOperatorWithId(endOperatorId,
-							logicalOperator);
-			if (downstreamOperator == null) {
-				throw new IllegalArgumentException(
-						"Id for end operator is invalid. Maybe the id is "
-								+ "incorrect or the operator is not downstream located");
-			} else {
-				for (StrategySelectionRow otherStrategy : otherStrategies) {
-					if (otherStrategy.getUniqueOperatorid().equals(
-							endOperatorId)) {
-						throw new IllegalArgumentException(
-								"It is not allowed to use an end operator id, while strategies "
-										+ "exists with the same start operator id");
-					}
-				}
-				try {
-					LogicalGraphHelper.checkWayToEndPoint(logicalOperator,
-							false, endOperatorId, true);
-				} catch (Exception e) {
-					throw new IllegalArgumentException("Way from start id "
-							+ uniqueOperatorid + " to end operator id "
-							+ endOperatorId + "is not valid.");
-				}
-			}
-		}
-
-		if (!customDegrees.isEmpty()) {
-			String[] splittedDegrees = customDegrees.trim().split(",");
-			if (splittedDegrees.length > globalDegrees.size()) {
-				throw new IllegalArgumentException(
-						"Number of custom degrees need to be less or equal than global degrees");
-			} else {
-				for (int i = 0; i < splittedDegrees.length; i++) {
-					try {
-						Integer.parseInt(splittedDegrees[i]);
-					} catch (Exception e) {
-						throw new IllegalArgumentException(
-								"Custom degrees contains illegal values. Please use integers");
-					}
-				}
-			}
-		}
 	}
 }

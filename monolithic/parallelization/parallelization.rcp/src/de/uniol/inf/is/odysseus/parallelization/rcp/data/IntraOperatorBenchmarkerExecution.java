@@ -21,6 +21,13 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.parallelization.intraoperator.keyword.IntraOperatorGlobalKeywordBuilder;
 import de.uniol.inf.is.odysseus.parallelization.intraoperator.keyword.IntraOperatorParallelizationPreParserKeywordBuilder;
 
+/**
+ * benchmarker execution for intra operator parallelization. Contains all needed
+ * data to create the specific odysseus script keywords
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class IntraOperatorBenchmarkerExecution extends
 		AbstractBenchmarkerExecution {
 
@@ -54,25 +61,36 @@ public class IntraOperatorBenchmarkerExecution extends
 		this.degree = degree;
 	}
 
+	/**
+	 * returns the odysseus script keywords for this execution
+	 * 
+	 * @return odysseus script keywords
+	 */
 	@Override
 	public String getOdysseusScript() {
 		StringBuilder builder = new StringBuilder();
+		// create #PARALLELIZATION keyword
 		builder.append(IntraOperatorGlobalKeywordBuilder.buildParameterString(
 				degree, buffersize));
-		if (selectedOperators != null && !selectedOperators.isEmpty()){
+		// create #INTRAOPERATOR keyword for selected operators
+		if (selectedOperators != null && !selectedOperators.isEmpty()) {
 			builder.append(IntraOperatorParallelizationPreParserKeywordBuilder
-					.buildParameterString(degree, buffersize, selectedOperators));			
+					.buildParameterString(degree, buffersize, selectedOperators));
 		}
 		return builder.toString();
 	}
 
+	/**
+	 * custom to string method. this string is used to show the currently
+	 * executed execution in benchmarker UI
+	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Intra-Operator Parallelization: Degree: " + degree);
 		builder.append(", Buffersize: " + buffersize);
-		if (selectedOperators != null && !selectedOperators.isEmpty()){
-			builder.append(", Use only operators with id: " + selectedOperators);			
+		if (selectedOperators != null && !selectedOperators.isEmpty()) {
+			builder.append(", Use only operators with id: " + selectedOperators);
 		}
 		return builder.toString();
 	}

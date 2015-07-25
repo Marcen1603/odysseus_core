@@ -52,6 +52,12 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 import de.uniol.inf.is.odysseus.script.keyword.PreTransformationHandlerPreParserKeyword;
 
+/**
+ * Thread for initializing currently selected query
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class BenchmarkInitializeQueryThread extends Thread {
 
 	private static Logger LOG = LoggerFactory
@@ -67,6 +73,10 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		this.window = parallelizationBenchmarkerWindow;
 	}
 
+	/**
+	 * run method for this thread. Get query from editor, modify it and execute
+	 * it.
+	 */
 	@Override
 	public void run() {
 		LOG.debug("Initializing of current query started.");
@@ -111,6 +121,9 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		LOG.debug("Initializing of current query done.");
 	}
 
+	/**
+	 * gets the workbench data
+	 */
 	private void getWorkbenchData() {
 		// getting values from workbench, needs asynchonious execution, because
 		// its inside of another view
@@ -141,7 +154,11 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		}
 	}
 
+	/**
+	 * change the window (go to configuration page)
+	 */
 	private void changeWindowOnSuccess() {
+		// switch to UI thread
 		if (!window.getWindow().isDisposed()) {
 			window.getWindow().getDisplay().asyncExec(new Runnable() {
 				@Override
@@ -154,7 +171,13 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		}
 	}
 
+	/**
+	 * updates the current progress (progress bar)
+	 * 
+	 * @param selectionValue
+	 */
 	private void updateProgress(final int selectionValue) {
+		// switch to UI thread
 		if (!window.getWindow().isDisposed()) {
 			window.getWindow().getDisplay().asyncExec(new Runnable() {
 				@Override
@@ -168,7 +191,13 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		}
 	}
 
+	/**
+	 * creates an error on UI if something went wrong
+	 * 
+	 * @param ex
+	 */
 	private void createError(final Throwable ex) {
+		// switch to UI thread
 		if (!window.getWindow().isDisposed()) {
 			window.getWindow().getDisplay().asyncExec(new Runnable() {
 				@Override
@@ -180,6 +209,12 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		}
 	}
 
+	/**
+	 * run the selected query file
+	 * 
+	 * @throws CoreException
+	 * @throws IOException
+	 */
 	private void runSelectedQuery() throws CoreException, IOException {
 		List<IFile> optFileToRun = getSelectedFiles();
 		if (!optFileToRun.isEmpty()) {
@@ -193,6 +228,11 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		}
 	}
 
+	/**
+	 * returns all selected files
+	 * 
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private static List<IFile> getSelectedFiles() {
 		List<IFile> foundFiles = Lists.newArrayList();
@@ -208,12 +248,23 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		return foundFiles;
 	}
 
+	/**
+	 * checks if the selected file is a query
+	 * 
+	 * @param obj
+	 * @return
+	 */
 	private static boolean isQueryTextFile(Object obj) {
 		return obj instanceof IFile
 				&& ((IFile) obj).getFileExtension().equals(
 						OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION);
 	}
 
+	/**
+	 * gets the odysseus script editor if exists
+	 * 
+	 * @return
+	 */
 	private static Optional<OdysseusScriptEditor> getScriptEditor() {
 		if (benchmarkDataHandler.getPart() instanceof OdysseusScriptEditor) {
 			return Optional.of((OdysseusScriptEditor) benchmarkDataHandler
@@ -222,10 +273,24 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		return Optional.absent();
 	}
 
+	/**
+	 * run a single file
+	 * 
+	 * @param fileToRun
+	 * @throws CoreException
+	 * @throws IOException
+	 */
 	private void runFile(IFile fileToRun) throws CoreException, IOException {
 		runFiles(Lists.newArrayList(fileToRun));
 	}
 
+	/**
+	 * run multiple files
+	 * 
+	 * @param filesToRun
+	 * @throws CoreException
+	 * @throws IOException
+	 */
 	private void runFiles(List<IFile> filesToRun) throws CoreException,
 			IOException {
 		for (IFile file : filesToRun) {
@@ -233,6 +298,13 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		}
 	}
 
+	/**
+	 * do the execution of the selected query
+	 * 
+	 * @param scriptFile
+	 * @throws CoreException
+	 * @throws IOException
+	 */
 	private void execute(final IFile scriptFile) throws CoreException,
 			IOException {
 
@@ -243,14 +315,17 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		Collection<Integer> queryIds = executor.addQuery(text,
 				"OdysseusScript", activeSession,
 				ParserClientUtil.createRCPContext(scriptFile));
+		// if we have a query
 		if (queryIds.size() > 0) {
 			List<Integer> queryIdArray = new ArrayList<Integer>(queryIds);
 			for (Integer queryId : queryIdArray) {
 				QueryState state = executor.getQueryState(queryId,
 						activeSession);
+				// if query is inactive, start it
 				if (state == QueryState.INACTIVE) {
 					executor.startQuery(queryId, activeSession);
 				}
+				// get logical plan from executor
 				ILogicalQuery logicalQuery = executor.getLogicalQueryById(
 						queryId, activeSession);
 				benchmarkDataHandler.addLogicalQuery(logicalQuery);
@@ -264,6 +339,15 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		}
 	}
 
+	/**
+	 * reads the text for the query and removes odysseus script keywords used in
+	 * parallelization
+	 * 
+	 * @param queryFile
+	 * @return queryString
+	 * @throws CoreException
+	 * @throws IOException
+	 */
 	private static String readLinesFromFile(IFile queryFile)
 			throws CoreException, IOException {
 		if (!queryFile.isSynchronized(IResource.DEPTH_ZERO)) {
@@ -290,6 +374,13 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		return lines;
 	}
 
+	/**
+	 * checks if the line is supported (lines with parallelization or
+	 * benchmarker keywords are not supported)
+	 * 
+	 * @param line
+	 * @return
+	 */
 	private static boolean isLineSupported(String line) {
 		// #PARALLELIZATION is not supported in benchmarker
 		if (line.trim().startsWith(
@@ -302,7 +393,7 @@ public class BenchmarkInitializeQueryThread extends Thread {
 				"#" + InterOperatorParallelizationPreParserKeyword.KEYWORD)) {
 			return false;
 		}
-		
+
 		// #INTRAOPERATORPARALLELIZATION is not supported in benchmarker
 		if (line.trim().startsWith(
 				"#" + IntraOperatorParallelizationPreParserKeyword.KEYWORD)) {
