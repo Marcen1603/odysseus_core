@@ -175,7 +175,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		return useWindow;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "useWindow", optional = true, doc = "If this is set to true, the operator compares not to the last value (or base value), but instead to the oldest element in the window. Default is false.")
+	@Parameter(type = BooleanParameter.class, name = "useWindow", optional = true, doc = "If this is set to true, the operator compares not to the last value (or base value), but instead to the elements in the window. Therefore the difference to the minimum and maximum value to the new value is calculated. Default is false.")
 	public void setUseWindow(boolean useWindow) {
 		this.useWindow = useWindow;
 	}
