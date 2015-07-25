@@ -15,11 +15,16 @@
  */
 package de.uniol.inf.is.odysseus.parallelization.interoperator.constants;
 
+/**
+ * Constants for degree of parallelization
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public enum DegreeOfParalleizationConstants {
 	USERDEFINED, GLOBAL, AUTO;
 
-	public static DegreeOfParalleizationConstants getConstantByName(
-			String name) {
+	public static DegreeOfParalleizationConstants getConstantByName(String name) {
 		for (DegreeOfParalleizationConstants parameter : DegreeOfParalleizationConstants
 				.values()) {
 			if (parameter.name().equalsIgnoreCase(name)) {

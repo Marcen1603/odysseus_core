@@ -34,14 +34,30 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.Transfor
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
+/**
+ * Inter operator parallelization strategy for AggregateAO operators, which
+ * contains grouping. this strategy used a HashFragmentation on the input
+ * stream, clones the specific aggregate operator and combines the datastream
+ * with a union operator. the fragmentation is based on the grouping attributes
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class GroupedAggregateTransformationStrategy extends
 		AbstractParallelTransformationStrategy<AggregateAO> {
-	
+
 	@Override
 	public String getName() {
 		return "GroupedAggregateTransformationStrategy";
 	}
 
+	/**
+	 * evaluates the compatibility of this strategy with a given operator. this
+	 * strategy is compatible if the aggregate contains a grouping
+	 * 
+	 * @param operator
+	 * @return
+	 */
 	@Override
 	public int evaluateCompatibility(ILogicalOperator operator) {
 		if (operator instanceof AggregateAO) {
@@ -57,6 +73,13 @@ public class GroupedAggregateTransformationStrategy extends
 		return 0;
 	}
 
+	/**
+	 * do the specific transformation based on the configuration
+	 * 
+	 * @param operator
+	 * @param configurationForOperator
+	 * @return
+	 */
 	@Override
 	public TransformationResult transform(ILogicalOperator operator,
 			ParallelOperatorConfiguration configurationForOperator) {
@@ -64,14 +87,21 @@ public class GroupedAggregateTransformationStrategy extends
 		if (!super.areSettingsValid(configurationForOperator)) {
 			return new TransformationResult(State.FAILED);
 		}
+
+		// check the way to endpoint if endoperator id is set
 		checkIfWayToEndPointIsValid(operator, configurationForOperator, true);
 
-		TransformationResult transformationResult = new TransformationResult(State.SUCCESS);
+		// create the transformation result object
+		TransformationResult transformationResult = new TransformationResult(
+				State.SUCCESS);
 		transformationResult.setAllowsModificationAfterUnion(true);
 
-		AggregateAO aggregateOperator = (AggregateAO) operator;			
-		if (configurationForOperator.isUseParallelOperators()){
-			aggregateOperator.setNumberOfThreads(configurationForOperator.getDegreeOfParallelization());
+		// if the option for using parallel operators is set to true, the given
+		// operator is modified to use multiple threads
+		AggregateAO aggregateOperator = (AggregateAO) operator;
+		if (configurationForOperator.isUseParallelOperators()) {
+			aggregateOperator.setNumberOfThreads(configurationForOperator
+					.getDegreeOfParallelization());
 		}
 
 		// create fragment operator
@@ -93,6 +123,7 @@ public class GroupedAggregateTransformationStrategy extends
 		}
 		transformationResult.addFragmentOperator(fragmentAO);
 
+		// if there is a grouping
 		if (!groupingAttributes.isEmpty()) {
 			// subscribe new operator
 			CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
@@ -100,8 +131,10 @@ public class GroupedAggregateTransformationStrategy extends
 					.getSubscribedToSource());
 
 			for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
+				// unsubscribe from all sources
 				aggregateOperator
 						.unsubscribeFromSource(upstreamOperatorSubscription);
+				// subscribe new fragement operator to these sources
 				fragmentAO.subscribeToSource(upstreamOperatorSubscription
 						.getTarget(), upstreamOperatorSubscription
 						.getSinkInPort(), upstreamOperatorSubscription
@@ -109,19 +142,27 @@ public class GroupedAggregateTransformationStrategy extends
 						.getTarget().getOutputSchema());
 			}
 
+			// create union operator
 			UnionAO union = new UnionAO();
 			union.setName("Union");
 			union.setUniqueIdentifier(UUID.randomUUID().toString());
 			transformationResult.setUnionOperator(union);
 
+			// for every degree, clone existing operator and connect it to
+			// fragement and union operator
 			for (int i = 0; i < configurationForOperator
 					.getDegreeOfParallelization(); i++) {
+
+				// create buffer operator
 				BufferAO buffer = new BufferAO();
 				buffer.setName("Buffer_" + i);
-				buffer.setThreaded(configurationForOperator.isUseThreadedBuffer());
-				buffer.setMaxBufferSize(configurationForOperator.getBufferSize());
+				buffer.setThreaded(configurationForOperator
+						.isUseThreadedBuffer());
+				buffer.setMaxBufferSize(configurationForOperator
+						.getBufferSize());
 				buffer.setDrainAtClose(false);
 
+				// clone existing aggregate operator
 				AggregateAO newAggregateOperator = aggregateOperator.clone();
 				newAggregateOperator.setName(aggregateOperator.getName() + "_"
 						+ i);
@@ -138,12 +179,13 @@ public class GroupedAggregateTransformationStrategy extends
 				if (configurationForOperator.getEndParallelizationId() != null
 						&& !configurationForOperator.getEndParallelizationId()
 								.isEmpty()) {
+					// if a end operator id is set, do post parallelization
 					List<AbstractStaticFragmentAO> fragments = new ArrayList<AbstractStaticFragmentAO>();
 					fragments.add(fragmentAO);
 					ILogicalOperator lastParallelizedOperator = doPostParallelization(
 							aggregateOperator, newAggregateOperator,
-							configurationForOperator.getEndParallelizationId(), i,
-							fragments, configurationForOperator);
+							configurationForOperator.getEndParallelizationId(),
+							i, fragments, configurationForOperator);
 					union.subscribeToSource(lastParallelizedOperator, i, 0,
 							lastParallelizedOperator.getOutputSchema());
 				} else {
@@ -156,11 +198,11 @@ public class GroupedAggregateTransformationStrategy extends
 			// is set, the given operator for transformation is selected
 			ILogicalOperator lastOperatorForParallelization = null;
 			if (configurationForOperator.getEndParallelizationId() != null
-					&& !configurationForOperator.getEndParallelizationId().isEmpty()) {
+					&& !configurationForOperator.getEndParallelizationId()
+							.isEmpty()) {
 				lastOperatorForParallelization = LogicalGraphHelper
-						.findDownstreamOperatorWithId(
-								configurationForOperator.getEndParallelizationId(),
-								aggregateOperator);
+						.findDownstreamOperatorWithId(configurationForOperator
+								.getEndParallelizationId(), aggregateOperator);
 			} else {
 				lastOperatorForParallelization = aggregateOperator;
 			}
@@ -170,12 +212,11 @@ public class GroupedAggregateTransformationStrategy extends
 			CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 			downstreamOperatorSubscriptions
 					.addAll(lastOperatorForParallelization.getSubscriptions());
-			
+
 			lastOperatorForParallelization.unsubscribeFromAllSources();
 			lastOperatorForParallelization.unsubscribeFromAllSinks();
-			
-			for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
 
+			for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
 				downstreamOperatorSubscription.getTarget().subscribeToSource(
 						union, downstreamOperatorSubscription.getSinkInPort(),
 						downstreamOperatorSubscription.getSourceOutPort(),
@@ -185,6 +226,11 @@ public class GroupedAggregateTransformationStrategy extends
 		return transformationResult;
 	}
 
+	/**
+	 * returns a list of compatible fragmentation types (e.g. HashFragementAO)
+	 * 
+	 * @return
+	 */
 	@Override
 	public List<Class<? extends AbstractStaticFragmentAO>> getAllowedFragmentationTypes() {
 		List<Class<? extends AbstractStaticFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractStaticFragmentAO>>();
@@ -192,11 +238,29 @@ public class GroupedAggregateTransformationStrategy extends
 		return allowedFragmentTypes;
 	}
 
+	/**
+	 * returns the preferred fragementation type. this is needed if the user
+	 * doesnt select a fragmentation
+	 * 
+	 * @return
+	 */
 	@Override
 	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return HashFragmentAO.class;
 	}
 
+	/**
+	 * abstract method to allow strategy specific post parallelization works or
+	 * validations. this method is used in postParalleliaztion for each operator
+	 * between start and end
+	 * 
+	 * @param parallelizedOperator
+	 * @param currentExistingOperator
+	 * @param currentClonedOperator
+	 * @param iteration
+	 * @param fragments
+	 * @param settingsForOperator
+	 */
 	@Override
 	protected void doStrategySpecificPostParallelization(
 			ILogicalOperator parallelizedOperator,
@@ -205,8 +269,10 @@ public class GroupedAggregateTransformationStrategy extends
 			List<AbstractStaticFragmentAO> fragments,
 			ParallelOperatorConfiguration settingsForOperator) {
 		if (currentExistingOperator instanceof AggregateAO) {
-			SDFAttributeHelper.checkIfAttributesAreEqual((AggregateAO) currentExistingOperator, iteration,
-					fragments, settingsForOperator.isAssureSemanticCorrectness());
+			SDFAttributeHelper.checkIfAttributesAreEqual(
+					(AggregateAO) currentExistingOperator, iteration,
+					fragments,
+					settingsForOperator.isAssureSemanticCorrectness());
 		}
 	}
 

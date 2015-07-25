@@ -18,6 +18,12 @@ package de.uniol.inf.is.odysseus.parallelization.interoperator.postoptimization;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
+/**
+ * this element stores information needed in post optimization
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class PostOptimizationElement {
 	private int degreeOfParallelization;
 	private UnionAO startOperator;

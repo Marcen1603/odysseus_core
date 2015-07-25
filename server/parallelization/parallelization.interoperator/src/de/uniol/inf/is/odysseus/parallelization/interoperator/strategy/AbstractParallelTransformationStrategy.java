@@ -29,9 +29,17 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RangeFragmentAO;
 
+/**
+ * abstract class for inter operator parallelization strategies
+ * 
+ * @author ChrisToenjesDeye
+ */
 public abstract class AbstractParallelTransformationStrategy<T extends ILogicalOperator>
 		implements IParallelTransformationStrategy<T> {
 
+	/**
+	 * returns the selected operator type
+	 */
 	@SuppressWarnings("unchecked")
 	public Class<T> getOperatorType() {
 		ParameterizedType parameterizedType = (ParameterizedType) getClass()
@@ -39,6 +47,13 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 		return (Class<T>) parameterizedType.getActualTypeArguments()[0];
 	}
 
+	/**
+	 * checks if the settings are valid for this strategy. If the degree is set
+	 * to 1, no operations are done and the transformation is aborted
+	 * 
+	 * @param settingsForOperator
+	 * @return
+	 */
 	protected boolean areSettingsValid(
 			ParallelOperatorConfiguration settingsForOperator) {
 		if (settingsForOperator.getDegreeOfParallelization() == 1) {
@@ -47,18 +62,33 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 		return true;
 	}
 
+	/**
+	 * creates are fragementAO dynamically based on the given type
+	 * 
+	 * @param fragmentClass
+	 * @param degreeOfParallelization
+	 * @param namePostfix
+	 * @param hashAttributes
+	 * @param rangeAttributeString
+	 * @param rangeRanges
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
 	protected AbstractStaticFragmentAO createFragmentAO(
 			Class<? extends AbstractStaticFragmentAO> fragmentClass,
 			int degreeOfParallelization, String namePostfix,
 			List<SDFAttribute> hashAttributes, String rangeAttributeString,
 			List<String> rangeRanges) throws InstantiationException,
-			IllegalAccessException { 
+			IllegalAccessException {
+		// create an abstract fragment operator
 		AbstractStaticFragmentAO fragmentAO = fragmentClass.newInstance();
 		fragmentAO.setNumberOfFragments(degreeOfParallelization);
 		fragmentAO.setName(fragmentAO.getName() + namePostfix); // set postfix
 		fragmentAO.setUniqueIdentifier(UUID.randomUUID().toString());
 
 		if (fragmentAO instanceof HashFragmentAO) {
+			// do some hash specific configurations
 			HashFragmentAO hashFragmentAO = (HashFragmentAO) fragmentAO;
 			if (hashAttributes != null && !hashAttributes.isEmpty()) {
 				hashFragmentAO.setAttributes(hashAttributes);
@@ -67,6 +97,7 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 						"Attributes must not be null for creating HashFragment");
 			}
 		} else if (fragmentAO instanceof RangeFragmentAO) {
+			// do some range specific configurations
 			RangeFragmentAO rangeFragmentAO = (RangeFragmentAO) fragmentAO;
 			if (rangeAttributeString != null && rangeRanges != null
 					&& !rangeAttributeString.isEmpty()
@@ -79,22 +110,46 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 		return fragmentAO;
 	}
 
+	/**
+	 * checks if the way from start to end operator is valid. if
+	 * assureSemanticCorrectness is set to true an exeception is thrown if the
+	 * way is not valid
+	 * 
+	 * @param operatorForTransformation
+	 * @param settingsForOperator
+	 * @param aggregatesWithGroupingAllowed
+	 */
 	protected void checkIfWayToEndPointIsValid(
 			ILogicalOperator operatorForTransformation,
 			ParallelOperatorConfiguration settingsForOperator,
 			boolean aggregatesWithGroupingAllowed) {
 
+		// get end operator and value for assureSemanticCorrectness
 		String endParallelizationId = settingsForOperator
 				.getEndParallelizationId();
 		boolean assureSemanticCorrectness = settingsForOperator
 				.isAssureSemanticCorrectness();
 
+		// check the way to endpoint
 		LogicalGraphHelper.checkWayToEndPoint(operatorForTransformation,
 				aggregatesWithGroupingAllowed, endParallelizationId,
 				assureSemanticCorrectness);
 
 	}
 
+	/**
+	 * do the post parallelization from the given operator to the operator with
+	 * the end id. Iteration parameter is needed because otherwise errors are
+	 * shown multiple times.
+	 * 
+	 * @param existingOperator
+	 * @param newOperator
+	 * @param endOperatorId
+	 * @param iteration
+	 * @param fragments
+	 * @param settingsForOperator
+	 * @return last cloned operator
+	 */
 	protected ILogicalOperator doPostParallelization(
 			ILogicalOperator existingOperator, ILogicalOperator newOperator,
 			String endOperatorId, int iteration,
@@ -159,6 +214,18 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 		return lastClonedOperator;
 	}
 
+	/**
+	 * abstract method to allow strategy specific post parallelization works or
+	 * validations. this method is used in postParalleliaztion for each operator
+	 * between start and end
+	 * 
+	 * @param parallelizedOperator
+	 * @param currentExistingOperator
+	 * @param currentClonedOperator
+	 * @param iteration
+	 * @param fragments
+	 * @param settingsForOperator
+	 */
 	protected abstract void doStrategySpecificPostParallelization(
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,

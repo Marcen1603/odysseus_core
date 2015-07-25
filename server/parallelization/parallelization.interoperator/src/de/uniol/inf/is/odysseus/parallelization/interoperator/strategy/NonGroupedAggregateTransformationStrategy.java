@@ -35,6 +35,18 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RoundRobinFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.ShuffleFragmentAO;
 
+/**
+ * Inter operator parallelization strategy for AggregateAO operators, which
+ * contains no grouping. this fragmentation uses roundRobin or
+ * shuffleFragmentation and partial aggregates. The data stream is splitted with
+ * the fragmentation operator. After this a buffer is inserted. the existing
+ * operator is cloned and configured to use partial aggregates. after this the
+ * data stream is combined with an union operator. the created partial
+ * aggregates are combined with an new aggregate operator after the union.
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class NonGroupedAggregateTransformationStrategy extends
 		AbstractParallelTransformationStrategy<AggregateAO> {
 
@@ -43,6 +55,14 @@ public class NonGroupedAggregateTransformationStrategy extends
 		return "NonGroupedAggregateTransformationStrategy";
 	}
 
+	/**
+	 * evaluates the compatibility of this strategy with a given operator. to
+	 * use this strategy it is possible if the aggregation has grouping or not.
+	 * the aggregations need to be one input attribute to use partial aggregates
+	 * 
+	 * @param operator
+	 * @return
+	 */
 	@Override
 	public int evaluateCompatibility(ILogicalOperator operator) {
 		if (operator instanceof AggregateAO) {
@@ -74,28 +94,38 @@ public class NonGroupedAggregateTransformationStrategy extends
 		return 0;
 	}
 
+	/**
+	 * do the specific transformation based on the configuration
+	 * 
+	 * @param operator
+	 * @param configurationForOperator
+	 * @return
+	 */
 	@Override
 	public TransformationResult transform(ILogicalOperator operator,
-			ParallelOperatorConfiguration settingsForOperator) {
-		if (!super.areSettingsValid(settingsForOperator)) {
+			ParallelOperatorConfiguration configurationForOperator) {
+		if (!super.areSettingsValid(configurationForOperator)) {
 			return new TransformationResult(State.FAILED);
 		}
-		if (settingsForOperator.getEndParallelizationId() != null
-				&& !settingsForOperator.getEndParallelizationId().isEmpty()) {
-			throw new IllegalArgumentException("Definition of Endpoint for strategy "+this.getName()+" is not allowed");
+		if (configurationForOperator.getEndParallelizationId() != null
+				&& !configurationForOperator.getEndParallelizationId().isEmpty()) {
+			throw new IllegalArgumentException(
+					"Definition of Endpoint for strategy " + this.getName()
+							+ " is not allowed");
 		}
 
-		TransformationResult transformationResult = new TransformationResult(State.SUCCESS);
+		TransformationResult transformationResult = new TransformationResult(
+				State.SUCCESS);
 		transformationResult.setAllowsModificationAfterUnion(false);
-		
+
 		AggregateAO aggregateOperator = (AggregateAO) operator;
 
 		// create fragment operator
 		AbstractStaticFragmentAO fragmentAO;
 		try {
 			fragmentAO = createFragmentAO(
-					settingsForOperator.getFragementationType(),
-					settingsForOperator.getDegreeOfParallelization(), "", null,
+					configurationForOperator.getFragementationType(),
+					configurationForOperator.getDegreeOfParallelization(), "", null,
 					null, null);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
@@ -106,7 +136,6 @@ public class NonGroupedAggregateTransformationStrategy extends
 			return new TransformationResult(State.FAILED);
 		}
 		transformationResult.addFragmentOperator(fragmentAO);
-		
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 		upstreamOperatorSubscriptions.addAll(aggregateOperator
@@ -160,14 +189,13 @@ public class NonGroupedAggregateTransformationStrategy extends
 		transformationResult.setUnionOperator(union);
 
 		// for each degree of parallelization
-		for (int i = 0; i < settingsForOperator.getDegreeOfParallelization(); i++) {
+		for (int i = 0; i < configurationForOperator.getDegreeOfParallelization(); i++) {
 			// create buffer
 			BufferAO buffer = new BufferAO();
 			buffer.setName("Buffer_" + i);
-			buffer.setThreaded(settingsForOperator.isUseThreadedBuffer());
-			buffer.setMaxBufferSize(settingsForOperator.getBufferSize());
+			buffer.setThreaded(configurationForOperator.isUseThreadedBuffer());
+			buffer.setMaxBufferSize(configurationForOperator.getBufferSize());
 			buffer.setDrainAtClose(false);
-			
 
 			// create new aggregate operator from existing operator
 			AggregateAO newAggregateOperator = aggregateOperator.clone();
@@ -222,7 +250,7 @@ public class NonGroupedAggregateTransformationStrategy extends
 		// existing downstream operators
 		aggregateOperator.unsubscribeFromAllSources();
 		aggregateOperator.unsubscribeFromAllSinks();
-		
+
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
 			downstreamOperatorSubscription.getTarget().subscribeToSource(
 					combinePAAggregateOperator,
@@ -230,11 +258,14 @@ public class NonGroupedAggregateTransformationStrategy extends
 					downstreamOperatorSubscription.getSourceOutPort(),
 					combinePAAggregateOperator.getOutputSchema());
 		}
-
-		
 		return transformationResult;
 	}
 
+	/**
+	 * returns a list of compatible fragmentation types (e.g. ShuffleFragmentAO)
+	 * 
+	 * @return
+	 */
 	@Override
 	public List<Class<? extends AbstractStaticFragmentAO>> getAllowedFragmentationTypes() {
 		List<Class<? extends AbstractStaticFragmentAO>> allowedFragmentTypes = new ArrayList<Class<? extends AbstractStaticFragmentAO>>();
@@ -243,18 +274,38 @@ public class NonGroupedAggregateTransformationStrategy extends
 		return allowedFragmentTypes;
 	}
 
+	/**
+	 * returns the preferred fragementation type. this is needed if the user
+	 * doesnt select a fragmentation
+	 * 
+	 * @return
+	 */
 	@Override
 	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return RoundRobinFragmentAO.class;
 	}
 
+	/**
+	 * abstract method to allow strategy specific post parallelization works or
+	 * validations. this method is used in postParalleliaztion for each operator
+	 * between start and end
+	 * 
+	 * @param parallelizedOperator
+	 * @param currentExistingOperator
+	 * @param currentClonedOperator
+	 * @param iteration
+	 * @param fragments
+	 * @param settingsForOperator
+	 */
 	@Override
 	protected void doStrategySpecificPostParallelization(
 			ILogicalOperator parallelizedOperator,
 			ILogicalOperator currentExistingOperator,
 			ILogicalOperator currentClonedOperator, int iteration,
-			List<AbstractStaticFragmentAO> fragments, ParallelOperatorConfiguration settingsForOperator) {
-		// no operation needed, because post parallelization is not allowed for this strategy 
+			List<AbstractStaticFragmentAO> fragments,
+			ParallelOperatorConfiguration settingsForOperator) {
+		// no operation needed, because post parallelization is not allowed for
+		// this strategy
 	}
 
 }

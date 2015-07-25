@@ -39,11 +39,34 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.Transfor
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
+/**
+ * this handler does the post optimization. This optimization is useful if two
+ * inter operator parallelization strategies are done and the datastream is
+ * combined with a union and directly after this splitted with a union operator.
+ * It is not needed that the union and fragment operator are directly one after
+ * the other, but it is not allowed, that there are splits in the data stream,
+ * other stateful operators or functions or unions. IN addition to this. it is
+ * mandatory that the fragement operators are equal in attributes and number of
+ * fragments
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class PostOptimizationHandler {
 
 	final private static InfoService INFO_SERVICE = InfoServiceFactory
 			.getInfoService(PostOptimizationHandler.class);
 
+	/**
+	 * main method for post optimization, transforms the logical plan if there
+	 * are more than one successful transformations and the way between them is
+	 * valid.
+	 * 
+	 * @param logicalPlan
+	 * @param query
+	 * @param transformationResults
+	 * @param optimizationAllowed
+	 */
 	public static void doPostOptimization(ILogicalOperator logicalPlan,
 			ILogicalQuery query,
 			List<TransformationResult> transformationResults,
@@ -53,7 +76,7 @@ public class PostOptimizationHandler {
 			INFO_SERVICE.info("Optimization of plan is disabled");
 			return;
 		}
-		//if there is no or only one, optimization doesn't make sense
+		// if there is no or only one, optimization doesn't make sense
 		if (transformationResults.isEmpty()
 				|| transformationResults.size() == 1) {
 			INFO_SERVICE
@@ -73,7 +96,7 @@ public class PostOptimizationHandler {
 					.info("Optimization not possible, because there are no fragmentations found, that can be combined.");
 			return;
 		}
-		
+
 		// iterate through post optimizations
 		int processedOptimizationsCounter = 0;
 		for (PostOptimizationElement element : postOptimizationElements) {
@@ -88,6 +111,15 @@ public class PostOptimizationHandler {
 
 	}
 
+	/**
+	 * processes the optimization if at least one post optimization element is
+	 * created
+	 * 
+	 * @param logicalPlan
+	 * @param query
+	 * @param element
+	 * @return
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static boolean processOptimization(ILogicalOperator logicalPlan,
 			ILogicalQuery query, PostOptimizationElement element) {
@@ -141,7 +173,7 @@ public class PostOptimizationHandler {
 								currentOperator, false);
 					}
 					if (currentOperator instanceof IStatefulAO) {
-						LogicalGraphHelper.validateStatefulAO(true, false,
+						LogicalGraphHelper.validateAggregateAO(true, false,
 								currentOperator, false);
 						if (currentOperator instanceof AggregateAO
 								&& fragmentOperator instanceof HashFragmentAO) {
@@ -184,6 +216,16 @@ public class PostOptimizationHandler {
 		return true;
 	}
 
+	/**
+	 * connects a cloned operator with a previously created operator with the
+	 * same iteration
+	 * 
+	 * @param iteration
+	 * @param currentNewOperator
+	 * @param lastNewOperator
+	 * @param lastOperator
+	 * @param currentOperator
+	 */
 	private static void connectNewOperators(int iteration,
 			ILogicalOperator currentNewOperator,
 			ILogicalOperator lastNewOperator, ILogicalOperator lastOperator,
@@ -217,6 +259,13 @@ public class PostOptimizationHandler {
 		}
 	}
 
+	/**
+	 * clones an existing operator. the iteration is needed for naming
+	 * 
+	 * @param iteration
+	 * @param currentOperator
+	 * @return
+	 */
 	private static ILogicalOperator cloneOperator(int iteration,
 			ILogicalOperator currentOperator) {
 		ILogicalOperator currentNewOperator;
@@ -232,6 +281,16 @@ public class PostOptimizationHandler {
 		return currentNewOperator;
 	}
 
+	/**
+	 * if the last operator (end operator) is reached. the final connection
+	 * between all parts need to be done. for this reason, the fragement
+	 * operator and buffer operators are removed and the new operators are
+	 * connected
+	 * 
+	 * @param iteration
+	 * @param lastNewOperator
+	 * @param currentOperator
+	 */
 	private static void doFinalConnection(int iteration,
 			ILogicalOperator lastNewOperator, ILogicalOperator currentOperator) {
 		// end fragment operator reached
@@ -262,6 +321,14 @@ public class PostOptimizationHandler {
 		}
 	}
 
+	/**
+	 * prepare and create list of post optimization elements. at first all
+	 * transformation results are validated
+	 * 
+	 * @param transformationResults
+	 * @param optimizationAllowed
+	 * @return
+	 */
 	private static List<PostOptimizationElement> prepareOptimizations(
 			List<TransformationResult> transformationResults,
 			boolean optimizationAllowed) {
@@ -278,6 +345,12 @@ public class PostOptimizationHandler {
 		return postOptimizationElements;
 	}
 
+	/**
+	 * validates all transformation results
+	 * 
+	 * @param transformationResults
+	 * @return
+	 */
 	private static boolean validateTransformationResults(
 			List<TransformationResult> transformationResults) {
 		for (TransformationResult transformationResult : transformationResults) {
@@ -288,6 +361,12 @@ public class PostOptimizationHandler {
 		return true;
 	}
 
+	/**
+	 * create post optimization elements out of the transformation results
+	 * 
+	 * @param transformationResults
+	 * @return
+	 */
 	private static List<PostOptimizationElement> createPostOptimizationElements(
 			List<TransformationResult> transformationResults) {
 		List<PostOptimizationElement> postOptimizationElements = new ArrayList<PostOptimizationElement>();
@@ -325,6 +404,15 @@ public class PostOptimizationHandler {
 		return postOptimizationElements;
 	}
 
+	/**
+	 * if degree and type of the fragmentation operators are equal, it is also
+	 * needed to check if the attributes are equal if it is a hash fragment
+	 * 
+	 * @param postOptimizationElements
+	 * @param currentTransformationResult
+	 * @param currentFragementAO
+	 * @param otherTransformationResult
+	 */
 	private static void processEqualFragementTypes(
 			List<PostOptimizationElement> postOptimizationElements,
 			TransformationResult currentTransformationResult,
@@ -375,6 +463,14 @@ public class PostOptimizationHandler {
 				currentTransformationResult, otherTransformationResult);
 	}
 
+	/**
+	 * creates a optimization element out of two transformation results that
+	 * matches
+	 * 
+	 * @param postOptimizationElements
+	 * @param currentTransformationResult
+	 * @param otherTransformationResult
+	 */
 	private static void addPostOptimizationElement(
 			List<PostOptimizationElement> postOptimizationElements,
 			TransformationResult currentTransformationResult,
@@ -391,6 +487,14 @@ public class PostOptimizationHandler {
 		}
 	}
 
+	/**
+	 * this method detects the order of the both transformation results. this is
+	 * important for later processing these elements
+	 * 
+	 * @param currentTransformationResult
+	 * @param otherTransformationResult
+	 * @return
+	 */
 	private static PostOptimizationElement createOrderedMatchingPair(
 			TransformationResult currentTransformationResult,
 			TransformationResult otherTransformationResult) {
@@ -442,6 +546,15 @@ public class PostOptimizationHandler {
 		return postOptimizationElement;
 	}
 
+	/**
+	 * checks if a postOptimization element with these operator ids already
+	 * exists. This avoids redundant optimizations
+	 * 
+	 * @param postOptimizationElements
+	 * @param currentTransformationResult
+	 * @param otherTransformationResult
+	 * @return
+	 */
 	private static boolean doPostOptimizationElementAlreadyExists(
 			List<PostOptimizationElement> postOptimizationElements,
 			TransformationResult currentTransformationResult,
@@ -461,7 +574,7 @@ public class PostOptimizationHandler {
 									.getFragmentOperators().get(0)
 									.getUniqueIdentifier())) {
 				return true;
-			// and second possible element combination
+				// and second possible element combination
 			} else if (element
 					.getStartOperator()
 					.getUniqueIdentifier()
@@ -479,6 +592,14 @@ public class PostOptimizationHandler {
 		return false;
 	}
 
+	/**
+	 * Checks if at least two fragment operators conatins equal attributes. this
+	 * is needed for post optimization
+	 * 
+	 * @param thisFragmentations
+	 * @param otherFragmentations
+	 * @return
+	 */
 	private static Pair<HashFragmentAO, HashFragmentAO> getFragmentOperatorsWithEqualAttributes(
 			List<HashFragmentAO> thisFragmentations,
 			List<HashFragmentAO> otherFragmentations) {

@@ -26,6 +26,13 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 
+/**
+ * Registry for easy extension and integration of new strategies for inter
+ * operator parallelization
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class ParallelTransformationStrategyRegistry {
 
 	private static Logger LOG = LoggerFactory
@@ -37,6 +44,11 @@ public class ParallelTransformationStrategyRegistry {
 	// strategies by name
 	private static Map<String, IParallelTransformationStrategy<? extends ILogicalOperator>> strategiesByName = new HashMap<String, IParallelTransformationStrategy<? extends ILogicalOperator>>();
 
+	/**
+	 * registers a new strategy (OSGI method)
+	 * 
+	 * @param parallelTransformationStrategy
+	 */
 	public static void registerStrategy(
 			IParallelTransformationStrategy<?> parallelTransformationStrategy) {
 		LOG.debug("Register new ParallelTransformationStrategy "
@@ -63,6 +75,11 @@ public class ParallelTransformationStrategyRegistry {
 		}
 	}
 
+	/**
+	 * unregisters an existing strategy (OSGI method)
+	 * 
+	 * @param parallelTransformationStrategy
+	 */
 	public static void unregisterStrategy(
 			IParallelTransformationStrategy<?> parallelTransformationStrategy) {
 		LOG.debug("Remove ParallelTransformationStrategy "
@@ -83,11 +100,17 @@ public class ParallelTransformationStrategyRegistry {
 		// strategies by name
 		if (strategiesByName.containsKey(parallelTransformationStrategy
 				.getName().toLowerCase())) {
-			strategiesByName.remove(parallelTransformationStrategy
-					.getName().toLowerCase());
+			strategiesByName.remove(parallelTransformationStrategy.getName()
+					.toLowerCase());
 		}
 	}
 
+	/**
+	 * returns a list of strategies for a given operator type
+	 * 
+	 * @param operatorType
+	 * @return list of strategies
+	 */
 	public static List<IParallelTransformationStrategy<? extends ILogicalOperator>> getStrategiesForOperator(
 			Class<? extends ILogicalOperator> operatorType) {
 		if (!strategiesForLogicalOperator.containsKey(operatorType)) {
@@ -99,6 +122,12 @@ public class ParallelTransformationStrategyRegistry {
 		}
 	}
 
+	/**
+	 * returns a strategy with the given name if exists
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public static IParallelTransformationStrategy<? extends ILogicalOperator> getStrategiesByName(
 			String name) {
 		if (strategiesByName.containsKey(name.toLowerCase())) {
@@ -107,18 +136,35 @@ public class ParallelTransformationStrategyRegistry {
 		return null;
 	}
 
+	/**
+	 * returns a list of valid logical operator types, which support a
+	 * parallelization strategy
+	 * 
+	 * @return
+	 */
 	public static List<Class<? extends ILogicalOperator>> getValidTypes() {
 		List<Class<? extends ILogicalOperator>> validTypes = new ArrayList<Class<? extends ILogicalOperator>>();
 		validTypes.addAll(strategiesForLogicalOperator.keySet());
 		return validTypes;
 	}
 
+	/**
+	 * returns a list of valid strategy names
+	 * 
+	 * @return
+	 */
 	public static List<String> getValidStrategyNames() {
 		List<String> validNames = new ArrayList<String>();
 		validNames.addAll(strategiesByName.keySet());
 		return validNames;
 	}
 
+	/**
+	 * checks if the name of a strategy is valid
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public static boolean isValidStrategyName(String name) {
 		return strategiesByName.containsKey(name.toLowerCase());
 	}

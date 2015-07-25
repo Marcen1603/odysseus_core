@@ -46,6 +46,13 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
 import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 
+/**
+ * INTEROPERATOR keyword. this keyword is used for custom definition of inter
+ * operator parallelization for specific operatorIds
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class InterOperatorParallelizationPreParserKeyword extends
 		AbstractPreParserKeyword {
 
@@ -55,29 +62,43 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			.getLogger(InterOperatorParallelizationPreParserKeyword.class);
 	private PreParserKeywordParameterHelper<InterOperatorParallelizationKeywordParameter> parameterHelper;
 
+	/**
+	 * validates the parameters defined in this keyword
+	 */
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller, Context context, IServerExecutor executor)
 			throws OdysseusScriptException {
-		parameterHelper = PreParserKeywordParameterHelper
-				.newInstance(
-						InterOperatorParallelizationKeywordParameter.class,
-						InterOperatorParallelizationConstants.PATTERN_KEYWORD);
+		parameterHelper = PreParserKeywordParameterHelper.newInstance(
+				InterOperatorParallelizationKeywordParameter.class,
+				InterOperatorParallelizationConstants.PATTERN_KEYWORD);
 		parameterHelper.validateParameterString(parameter);
 	}
 
+	/**
+	 * do execute the keyword. the parameters are parsed and added to custom
+	 * config
+	 */
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables,
 			String parameter, ISession caller, Context context,
 			IServerExecutor executor) throws OdysseusScriptException {
 
+		// get settings and check if the global PARALLELIZATION keyword with the
+		// type inter-operator is set
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
 		checkIfParallelizationKeywordExists(settings);
 
+		// parse the parameter string
 		Map<IKeywordParameter, String> result = parameterHelper
 				.parse(parameter);
+
+		// get the ids from result and create a configuration for each id
 		List<ParallelOperatorConfiguration> operatorConfigurations = createOperatorSettingsFromIds(result
 				.get(InterOperatorParallelizationKeywordParameter.OPERATORID));
+
+		// for all configurations parse the values for degree, buffersize,
+		// strategy, fragmentation and if parallel operators need to be used
 		for (ParallelOperatorConfiguration operatorConfiguration : operatorConfigurations) {
 			addParallelizationDegree(
 					result.get(InterOperatorParallelizationKeywordParameter.DEGREE),
@@ -90,12 +111,21 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			addUseParallelOperators(result, operatorConfiguration);
 		}
 
-		ParallelInterOperatorSetting interOperatorSetting = getMultithreadedOperatorParameter(settings);
-		addSettingsToParameter(operatorConfigurations, interOperatorSetting);
+		ParallelInterOperatorSetting interOperatorSetting = getInterOperatorSettingIfExists(settings);
+		addConfigurationToSettings(operatorConfigurations, interOperatorSetting);
 
 		return null;
 	}
 
+	/**
+	 * parse the ids out of the parameter. it is possible, that only comma
+	 * seperated ids are set. But it is also possible, that and end operator id
+	 * is set and if semantic changes are allowed
+	 * 
+	 * @param operatorIds
+	 * @return
+	 * @throws OdysseusScriptException
+	 */
 	private List<ParallelOperatorConfiguration> createOperatorSettingsFromIds(
 			String operatorIds) throws OdysseusScriptException {
 		// create operator settings
@@ -162,41 +192,57 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		return operatorSettings;
 	}
 
-	private void addSettingsToParameter(
-			List<ParallelOperatorConfiguration> operatorSettings,
-			ParallelInterOperatorSetting mtOperatorParameter)
+	/**
+	 * adds the configuration for a list of operator ids to settings. If already
+	 * a configuration for this operator exists an exception is thrown
+	 * 
+	 * @param operatorConfiguration
+	 * @param interOperatorSettings
+	 *            +
+	 * @throws OdysseusScriptException
+	 */
+	private void addConfigurationToSettings(
+			List<ParallelOperatorConfiguration> operatorConfiguration,
+			ParallelInterOperatorSetting interOperatorSettings)
 			throws OdysseusScriptException {
 		// check if settings for one of the given operatorIds already exists
-		for (ParallelOperatorConfiguration operatorSetting : operatorSettings) {
-			if (mtOperatorParameter.getOperatorIds().contains(
+		for (ParallelOperatorConfiguration operatorSetting : operatorConfiguration) {
+			if (interOperatorSettings.getOperatorIds().contains(
 					operatorSetting.getStartParallelizationId())) {
 				throw new OdysseusScriptException(
 						"Multiple definition for operator with id: "
 								+ operatorSetting.getStartParallelizationId());
 			} else {
-				mtOperatorParameter.addSettingsForOperator(
+				interOperatorSettings.addConfigurationForOperator(
 						operatorSetting.getStartParallelizationId(),
 						operatorSetting);
 			}
 		}
 	}
 
-	private ParallelInterOperatorSetting getMultithreadedOperatorParameter(
+	private ParallelInterOperatorSetting getInterOperatorSettingIfExists(
 			List<IQueryBuildSetting<?>> settings) {
-		// get parameter from settings or create new one if not exists
-		ParallelInterOperatorSetting mtOperatorParameter = null;
+		// get setting or create new one if not exists
+		ParallelInterOperatorSetting interOperatorSetting = null;
 		for (IQueryBuildSetting<?> setting : settings) {
 			if (setting.getClass().equals(ParallelInterOperatorSetting.class)) {
-				mtOperatorParameter = (ParallelInterOperatorSetting) setting;
+				interOperatorSetting = (ParallelInterOperatorSetting) setting;
 			}
 		}
-		if (mtOperatorParameter == null) {
-			mtOperatorParameter = new ParallelInterOperatorSetting();
-			settings.add(mtOperatorParameter);
+		if (interOperatorSetting == null) {
+			interOperatorSetting = new ParallelInterOperatorSetting();
+			settings.add(interOperatorSetting);
 		}
-		return mtOperatorParameter;
+		return interOperatorSetting;
 	}
 
+	/**
+	 * Checks if the PARALLELIZATION keyword is set. The usage of this keyword
+	 * is not allowed if the global keyword is not used
+	 * 
+	 * @param settings
+	 * @throws OdysseusScriptException
+	 */
 	private void checkIfParallelizationKeywordExists(
 			List<IQueryBuildSetting<?>> settings)
 			throws OdysseusScriptException {
@@ -221,10 +267,19 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			throw new OdysseusScriptException(
 					"#PARALLELIZATION keyword with type= "
 							+ InterOperatorPreExecutionHandler.TYPE
-							+ " is missing or placed after #"+KEYWORD+" keyword.");
+							+ " is missing or placed after #" + KEYWORD
+							+ " keyword.");
 		}
 	}
 
+	/**
+	 * adds the fragmentation type to settings if the parameter is set. also
+	 * checks if the given value is valid
+	 * 
+	 * @param result
+	 * @param operatorSetting
+	 * @throws OdysseusScriptException
+	 */
 	private void addFragmentationType(Map<IKeywordParameter, String> result,
 			ParallelOperatorConfiguration operatorSetting)
 			throws OdysseusScriptException {
@@ -244,6 +299,14 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		}
 	}
 
+	/**
+	 * adds the strategy to the configuration if this value is set. Also
+	 * validates if the given value is valid
+	 * 
+	 * @param result
+	 * @param operatorSetting
+	 * @throws OdysseusScriptException
+	 */
 	private void addStrategy(Map<IKeywordParameter, String> result,
 			ParallelOperatorConfiguration operatorSetting)
 			throws OdysseusScriptException {
@@ -262,6 +325,14 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		}
 	}
 
+	/**
+	 * adds the value for buffersize to configuration. Also supports the
+	 * definition of constants AUTO or GLOBAL
+	 * 
+	 * @param buffersizeString
+	 * @param operatorSetting
+	 * @throws OdysseusScriptException
+	 */
 	private void addBufferSize(String buffersizeString,
 			ParallelOperatorConfiguration operatorSetting)
 			throws OdysseusScriptException {
@@ -283,6 +354,14 @@ public class InterOperatorParallelizationPreParserKeyword extends
 		}
 	}
 
+	/**
+	 * adds the value for degree to configuration. Also supports the definition
+	 * of constants AUTO or GLOBAL
+	 * 
+	 * @param degreeOfParallelizationString
+	 * @param operatorSetting
+	 * @throws OdysseusScriptException
+	 */
 	private void addParallelizationDegree(String degreeOfParallelizationString,
 			ParallelOperatorConfiguration operatorSetting)
 			throws OdysseusScriptException {
@@ -313,18 +392,30 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			}
 		}
 	}
-	
+
+	/**
+	 * adds the value if parallel operators should be used. only true or false
+	 * are supported
+	 * 
+	 * @param result
+	 * @param operatorConfiguration
+	 * @throws OdysseusScriptException
+	 */
 	private void addUseParallelOperators(Map<IKeywordParameter, String> result,
-			ParallelOperatorConfiguration operatorConfiguration) throws OdysseusScriptException {
-		if (result.containsKey(InterOperatorParallelizationKeywordParameter.USEPARALLELOPERATOR)){
-			String useParallelOperatorString = result.get(InterOperatorParallelizationKeywordParameter.USEPARALLELOPERATOR);
+			ParallelOperatorConfiguration operatorConfiguration)
+			throws OdysseusScriptException {
+		if (result
+				.containsKey(InterOperatorParallelizationKeywordParameter.USEPARALLELOPERATOR)) {
+			String useParallelOperatorString = result
+					.get(InterOperatorParallelizationKeywordParameter.USEPARALLELOPERATOR);
 			// only true or false are allowed for parameter optimization
 			if (!useParallelOperatorString.equalsIgnoreCase("true")
 					&& !useParallelOperatorString.equalsIgnoreCase("false")) {
 				throw new OdysseusScriptException(
 						"Value for useParallelOperator is invalid. Valid values are true or false.");
 			} else {
-				operatorConfiguration.setUseParallelOperators(Boolean.parseBoolean(useParallelOperatorString));
+				operatorConfiguration.setUseParallelOperators(Boolean
+						.parseBoolean(useParallelOperatorString));
 			}
 		}
 	}

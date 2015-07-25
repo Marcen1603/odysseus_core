@@ -43,7 +43,15 @@ public class LogicalGraphHelper {
 
 	static final private InfoService INFO_SERVICE = InfoServiceFactory
 			.getInfoService(AbstractParallelTransformationStrategy.class);
-	
+
+	/**
+	 * Searches for a operator with the given id only downstream from the given
+	 * operator
+	 * 
+	 * @param endParallelizationId
+	 * @param logicalOperator
+	 * @return the operator or null if not found
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ILogicalOperator findDownstreamOperatorWithId(
 			String endParallelizationId, ILogicalOperator logicalOperator) {
@@ -54,6 +62,14 @@ public class LogicalGraphHelper {
 		return idVisitor.getResult().get(endParallelizationId);
 	}
 
+	/**
+	 * Searches for a operator with the given id only upstream from the given
+	 * operator
+	 * 
+	 * @param endParallelizationId
+	 * @param logicalOperator
+	 * @return the operator or null if not found
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ILogicalOperator findUpstreamOperatorWithId(
 			String endParallelizationId, ILogicalOperator logicalOperator) {
@@ -64,9 +80,17 @@ public class LogicalGraphHelper {
 		return idVisitor.getResult().get(endParallelizationId);
 	}
 
+	/**
+	 * Searches for a operator with the given id upstream and downstream from
+	 * the given operator
+	 * 
+	 * @param operatorId
+	 * @param logicalOperator
+	 * @return
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static ILogicalOperator findOperatorWithId(
-			String operatorId, ILogicalOperator logicalOperator) {
+	public static ILogicalOperator findOperatorWithId(String operatorId,
+			ILogicalOperator logicalOperator) {
 		OperatorIdLogicalGraphVisitor<ILogicalOperator> idVisitor = new OperatorIdLogicalGraphVisitor<ILogicalOperator>(
 				operatorId);
 		GenericGraphWalker walker = new GenericGraphWalker();
@@ -74,6 +98,15 @@ public class LogicalGraphHelper {
 		return idVisitor.getResult().get(operatorId);
 	}
 
+	/**
+	 * checks if the combination of start end end id of the operators is valid.
+	 * Only if the endoperator id is on downstream the combination is valid
+	 * 
+	 * @param startParallelizationId
+	 * @param endParallelizationId
+	 * @param logicalPlan
+	 * @return
+	 */
 	public static boolean checkStartEndIdCombination(
 			String startParallelizationId, String endParallelizationId,
 			ILogicalOperator logicalPlan) {
@@ -89,6 +122,17 @@ public class LogicalGraphHelper {
 		return false;
 	}
 
+	/**
+	 * calculates a new source out port. This is needed because a output port
+	 * can be subscribed only to one other port. If the existing subscription
+	 * could not be unsubscribed, but another operator needs to be subscribed, a
+	 * new output port need to be calculated and checked if this port is not in
+	 * use
+	 * 
+	 * @param sourceSubscription
+	 * @param iteration
+	 * @return
+	 */
 	public static int calculateNewSourceOutPort(
 			LogicalSubscription sourceSubscription, int iteration) {
 		Map<Integer, SDFSchema> outputSchemaMap = sourceSubscription
@@ -102,7 +146,19 @@ public class LogicalGraphHelper {
 		return newSourceOutPort;
 	}
 
-	public static boolean validateStatefulAO(boolean assureSemanticCorrectness,
+	/**
+	 * Validates if a given aggregate ao is valid or causes a semantic change of
+	 * the existing plan. an exeception is thrown if assureSemanticCorrectness
+	 * is set to true
+	 * 
+	 * @param assureSemanticCorrectness
+	 * @param aggregatesWithGroupingAllowed
+	 * @param currentOperator
+	 * @param possibleSemanticChange
+	 * @return
+	 */
+	public static boolean validateAggregateAO(
+			boolean assureSemanticCorrectness,
 			boolean aggregatesWithGroupingAllowed,
 			ILogicalOperator currentOperator, boolean possibleSemanticChange) {
 		if (currentOperator instanceof AggregateAO) {
@@ -129,6 +185,16 @@ public class LogicalGraphHelper {
 		return possibleSemanticChange;
 	}
 
+	/**
+	 * Validates a given select operator. the select operator normally is a
+	 * stateless operator, but can contain stateful functions. an exeception is
+	 * thrown if assureSemanticCorrectness is set to true
+	 * 
+	 * @param assureSemanticCorrectness
+	 * @param currentOperator
+	 * @param possibleSemanticChange
+	 * @return
+	 */
 	public static boolean validateSelectAO(boolean assureSemanticCorrectness,
 			ILogicalOperator currentOperator, boolean possibleSemanticChange) {
 		SelectAO selectOperator = (SelectAO) currentOperator;
@@ -151,6 +217,16 @@ public class LogicalGraphHelper {
 		return possibleSemanticChange;
 	}
 
+	/**
+	 * Validates a given map operator. the map operator normally is a stateless
+	 * operator, but can contain stateful functions. an exeception is thrown if
+	 * assureSemanticCorrectness is set to true
+	 * 
+	 * @param assureSemanticCorrectness
+	 * @param currentOperator
+	 * @param possibleSemanticChange
+	 * @return
+	 */
 	public static boolean validateMapAO(boolean assureSemanticCorrectness,
 			ILogicalOperator currentOperator, boolean possibleSemanticChange) {
 		MapAO mapOperator = (MapAO) currentOperator;
@@ -171,6 +247,15 @@ public class LogicalGraphHelper {
 		return possibleSemanticChange;
 	}
 
+	/**
+	 * returns the next operator on downstream side if there is only one
+	 * subscription. if there are more than one downstream operators an
+	 * execption is thrown because this is not allowed between start and end
+	 * operator in inter operator parallelization or in optimization
+	 * 
+	 * @param currentOperator
+	 * @return
+	 */
 	public static ILogicalOperator getNextOperator(
 			ILogicalOperator currentOperator) {
 		List<LogicalSubscription> subscriptions = new ArrayList<LogicalSubscription>(
@@ -184,7 +269,18 @@ public class LogicalGraphHelper {
 			return subscriptions.get(0).getTarget();
 		}
 	}
-	
+
+	/**
+	 * checks if the way between two operators is valid. checks if there are no
+	 * splits in logical plan between these operators or stateful operators or
+	 * functions between these operators. an exeception is thrown if
+	 * assureSemanticCorrectness is set to true
+	 * 
+	 * @param operatorForTransformation
+	 * @param aggregatesWithGroupingAllowed
+	 * @param endParallelizationId
+	 * @param assureSemanticCorrectness
+	 */
 	public static void checkWayToEndPoint(
 			ILogicalOperator operatorForTransformation,
 			boolean aggregatesWithGroupingAllowed, String endParallelizationId,
@@ -219,7 +315,7 @@ public class LogicalGraphHelper {
 
 					if (currentOperator instanceof IStatefulAO) {
 						possibleSemanticChange = LogicalGraphHelper
-								.validateStatefulAO(assureSemanticCorrectness,
+								.validateAggregateAO(assureSemanticCorrectness,
 										aggregatesWithGroupingAllowed,
 										currentOperator, possibleSemanticChange);
 					} else if (currentOperator instanceof SelectAO) {
@@ -235,8 +331,7 @@ public class LogicalGraphHelper {
 					// if parameter with id is reached, parallelization is done
 					if (currentOperator.getUniqueIdentifier() != null) {
 						if (currentOperator.getUniqueIdentifier()
-								.equalsIgnoreCase(
-										endParallelizationId)) {
+								.equalsIgnoreCase(endParallelizationId)) {
 							if (possibleSemanticChange
 									&& !assureSemanticCorrectness) {
 								INFO_SERVICE

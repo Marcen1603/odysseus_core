@@ -24,11 +24,16 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Setting
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 
 /**
+ * Build setting for inter operator parallelization. these setting is used for
+ * operator custom configurations. The setting is created in #INTEROPERATOR
+ * keyword
  * 
  * @author ChrisToenjesDeye
  *
  */
-public class ParallelInterOperatorSetting extends Setting<Map<String, ParallelOperatorConfiguration>> implements IQueryBuildSetting<Map<String, ParallelOperatorConfiguration>>{
+public class ParallelInterOperatorSetting extends
+		Setting<Map<String, ParallelOperatorConfiguration>> implements
+		IQueryBuildSetting<Map<String, ParallelOperatorConfiguration>> {
 
 	protected ParallelInterOperatorSetting(
 			Map<String, ParallelOperatorConfiguration> value) {
@@ -39,32 +44,65 @@ public class ParallelInterOperatorSetting extends Setting<Map<String, ParallelOp
 		super(new HashMap<String, ParallelOperatorConfiguration>());
 	}
 
-	public ParallelOperatorConfiguration getSettingsForOperator(String operatorId){
-		if (super.getValue().containsKey(operatorId.toLowerCase())){
+	/**
+	 * returns the custom configuration for a specific operator id
+	 * 
+	 * @param operatorId
+	 * @return
+	 */
+	public ParallelOperatorConfiguration getConfigurationForOperator(
+			String operatorId) {
+		if (super.getValue().containsKey(operatorId.toLowerCase())) {
 			return super.getValue().get(operatorId.toLowerCase());
 		}
 		return null;
 	}
-	
-	public boolean settingsForOperatorExists(String operatorId) {
-		
+
+	/**
+	 * checks if custom configuration for a specific operator exists
+	 * 
+	 * @param operatorId
+	 * @return
+	 */
+	public boolean configurationForOperatorExists(String operatorId) {
 		return super.getValue().containsKey(operatorId.toLowerCase());
 	}
 
-	public void addSettingsForOperator(String operatorId, ParallelOperatorConfiguration settings){
-		if (!settingsForOperatorExists(operatorId)){
-			super.getValue().put(operatorId.toLowerCase(), settings);			
+	/**
+	 * adds a new configuration for a specific operator id, throws error if
+	 * definition is mutliple for the same operator id
+	 * 
+	 * @param operatorId
+	 * @param settings
+	 */
+	public void addConfigurationForOperator(String operatorId,
+			ParallelOperatorConfiguration settings) {
+		if (!configurationForOperatorExists(operatorId)) {
+			super.getValue().put(operatorId.toLowerCase(), settings);
 		} else {
-			throw new IllegalArgumentException("Multiple operator settings for id: "+operatorId);
-		}
-	}
-	
-	public void addSettingsForOperators(List<String> operatorIds, ParallelOperatorConfiguration settings){
-		for (String operatorId : operatorIds) {
-			addSettingsForOperator(operatorId, settings);
+			throw new IllegalArgumentException(
+					"Multiple operator settings for id: " + operatorId);
 		}
 	}
 
+	/**
+	 * adds same configuration for multiple operator ids
+	 * 
+	 * @param operatorIds
+	 * @param configuration
+	 */
+	public void addConfigurationForOperators(List<String> operatorIds,
+			ParallelOperatorConfiguration configuration) {
+		for (String operatorId : operatorIds) {
+			addConfigurationForOperator(operatorId, configuration);
+		}
+	}
+
+	/**
+	 * returns a list of operator ids which has specific configuration
+	 * 
+	 * @return list of operatorIDs
+	 */
 	public List<String> getOperatorIds() {
 		List<String> operatorIds = new ArrayList<String>();
 		operatorIds.addAll(super.getValue().keySet());

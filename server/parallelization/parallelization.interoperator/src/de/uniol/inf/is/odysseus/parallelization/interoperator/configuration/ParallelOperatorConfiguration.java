@@ -25,6 +25,14 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallel
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
+/**
+ * Operator specific configuration which is used in InterOperator Setting. These
+ * configurations are created if the #INTEROPERATOR keyword is used in odysseus
+ * script
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class ParallelOperatorConfiguration {
 
 	private DegreeOfParalleizationConstants degreeConstant = DegreeOfParalleizationConstants.GLOBAL;
@@ -41,6 +49,16 @@ public class ParallelOperatorConfiguration {
 
 	private Class<? extends AbstractStaticFragmentAO> fragementationType;
 
+	/**
+	 * creates a configuration with default values. this is needed in
+	 * transformation if no operator specific configuration is set
+	 * 
+	 * @param strategy
+	 * @param globalDegreeOfParallelization
+	 * @param globalBufferSize
+	 * @param useThreadedBuffer
+	 * @return
+	 */
 	public static ParallelOperatorConfiguration createDefaultConfiguration(
 			IParallelTransformationStrategy<? extends ILogicalOperator> strategy,
 			int globalDegreeOfParallelization, int globalBufferSize,
@@ -53,6 +71,17 @@ public class ParallelOperatorConfiguration {
 		return settings;
 	}
 
+	/**
+	 * do post calculations before transformation is done (e.g. get the auto
+	 * degree or get the global buffersize if GLOBAL constant is used). also
+	 * some validations are done (e.g. if the fragmentation works with the
+	 * selected strategy)
+	 * 
+	 * @param strategy
+	 * @param globalDegreeOfParallelization
+	 * @param globalBufferSize
+	 * @param useThreadedBuffer
+	 */
 	public void doPostCalculationsForConfiguration(
 			IParallelTransformationStrategy<? extends ILogicalOperator> strategy,
 			int globalDegreeOfParallelization, int globalBufferSize,
@@ -105,6 +134,7 @@ public class ParallelOperatorConfiguration {
 
 	public void setDegreeConstant(DegreeOfParalleizationConstants degreeConstant) {
 		this.degreeConstant = degreeConstant;
+		// if the constant AUTO or GLOABL is set, set the value to zero
 		if (degreeConstant == DegreeOfParalleizationConstants.AUTO
 				|| degreeConstant == DegreeOfParalleizationConstants.GLOBAL) {
 			degreeOfParallelization = 0;
@@ -117,6 +147,7 @@ public class ParallelOperatorConfiguration {
 
 	public void setDegreeOfParallelization(int degreeOfParallelization) {
 		this.degreeOfParallelization = degreeOfParallelization;
+		// if a value is set, set the constant to userdefined
 		if (degreeOfParallelization != 0) {
 			degreeConstant = DegreeOfParalleizationConstants.USERDEFINED;
 		}
@@ -128,6 +159,7 @@ public class ParallelOperatorConfiguration {
 
 	public void setBufferSizeConstant(BufferSizeConstants bufferSizeConstant) {
 		this.bufferSizeConstant = bufferSizeConstant;
+		// if constant AUTO is set, set the value to zero
 		if (bufferSizeConstant == BufferSizeConstants.AUTO) {
 			bufferSize = 0;
 		}
@@ -139,6 +171,7 @@ public class ParallelOperatorConfiguration {
 
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
+		// if a value is set, set the constant to userdefined
 		if (bufferSize != 0) {
 			bufferSizeConstant = BufferSizeConstants.USERDEFINED;
 		}

@@ -44,6 +44,13 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallel
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
 
+/**
+ * PreTransformation handler for inter operator paralleization. this handler is
+ * used to transform the existing logical plan.
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class InterOperatorParallelizationPreTransformationHandler implements
 		IPreTransformationHandler {
 
@@ -63,6 +70,9 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 		return HANDLER_NAME;
 	}
 
+	/**
+	 * do the transformation of the logical plan
+	 */
 	@Override
 	public void preTransform(IServerExecutor executor, ISession caller,
 			ILogicalQuery query, QueryBuildConfiguration config,
@@ -82,7 +92,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 		List<TransformationResult> transformationResults = new ArrayList<TransformationResult>();
 		transformationResults = doTransformations(query, logicalPlan,
 				transformationResults);
-		
+
 		cleanupResults(transformationResults);
 
 		// if all transformations are done, we try to optimize the
@@ -92,15 +102,30 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 				transformationResults, optimizationAllowed);
 	}
 
+	/**
+	 * cleans the results of the transformations. Removes the results with a
+	 * state = FAILED. this is needed for post optimization
+	 * 
+	 * @param transformationResults
+	 */
 	private void cleanupResults(List<TransformationResult> transformationResults) {
-		List<TransformationResult> copyOfResults = new ArrayList<TransformationResult>(transformationResults);
+		List<TransformationResult> copyOfResults = new ArrayList<TransformationResult>(
+				transformationResults);
 		for (TransformationResult transformationResult : copyOfResults) {
-			if (transformationResult.getState() == State.FAILED){
-				transformationResults.remove(transformationResult);				
+			if (transformationResult.getState() == State.FAILED) {
+				transformationResults.remove(transformationResult);
 			}
 		}
 	}
 
+	/**
+	 * do all transformations of the plan
+	 * 
+	 * @param query
+	 * @param logicalPlan
+	 * @param transformationResults
+	 * @return
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<TransformationResult> doTransformations(ILogicalQuery query,
 			ILogicalOperator logicalPlan,
@@ -136,6 +161,15 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 		return transformationResults;
 	}
 
+	/**
+	 * if there exists custom configurations no automatic transformation is
+	 * done. Only the operators definied in odysseus script are transformed with
+	 * the selected strategy and fragmentation. if the stragety or fragmantation
+	 * are not selected, they are detectetd automatically
+	 * 
+	 * @param logicalPlan
+	 * @return
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<TransformationResult> doCustomTransformation(
 			ILogicalOperator logicalPlan) {
@@ -154,7 +188,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 		for (String operatorId : result.keySet()) {
 			ILogicalOperator operatorForTransformation = result.get(operatorId);
 			ParallelOperatorConfiguration configurationForOperator = parallelOperatorParameter
-					.getSettingsForOperator(operatorId);
+					.getConfigurationForOperator(operatorId);
 			if (operatorForTransformation != null
 					&& configurationForOperator != null) {
 				// only do transformation if operator is found and settings
@@ -165,9 +199,11 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 							.getStrategiesByName(configurationForOperator
 									.getParallelStrategy());
 					// do post calculations and validations for settings
-					configurationForOperator.doPostCalculationsForConfiguration(
-							selectedStrategy, globalDegreeOfParallelization,
-							globalBufferSize, useThreadedBuffer);
+					configurationForOperator
+							.doPostCalculationsForConfiguration(
+									selectedStrategy,
+									globalDegreeOfParallelization,
+									globalBufferSize, useThreadedBuffer);
 					if (selectedStrategy.getOperatorType() == operatorForTransformation
 							.getClass()) {
 						// evaluate compatibility of strategy and operator
@@ -203,19 +239,29 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 				} else {
 					// if no user defined strategy is given, get the best
 					// strategy for this operator
-					IParallelTransformationStrategy<? extends ILogicalOperator> bestStrategy = getBestStrategy(operatorForTransformation);
+					IParallelTransformationStrategy<? extends ILogicalOperator> bestStrategy = getPreferredStrategy(operatorForTransformation);
 					// do post calculations and validations for settings
-					configurationForOperator.doPostCalculationsForConfiguration(
-							bestStrategy, globalDegreeOfParallelization,
-							globalBufferSize, useThreadedBuffer);
-					transformationResults.add(bestStrategy.transform(
-							operatorForTransformation, configurationForOperator));
+					configurationForOperator
+							.doPostCalculationsForConfiguration(bestStrategy,
+									globalDegreeOfParallelization,
+									globalBufferSize, useThreadedBuffer);
+					transformationResults.add(bestStrategy
+							.transform(operatorForTransformation,
+									configurationForOperator));
 				}
 			}
 		}
 		return transformationResults;
 	}
 
+	/**
+	 * do automatic transformations if no custom operator ids and configurations
+	 * are set. the operators are automatically detected from the given logical
+	 * plan and the preferred strategies and fragmentations are used
+	 * 
+	 * @param logicalPlan
+	 * @return
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List<TransformationResult> doAutomaticTransformation(
 			ILogicalOperator logicalPlan) {
@@ -240,11 +286,12 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 			for (ILogicalOperator operatorForTransformation : collVisitor
 					.getResult()) {
 				// get best strategy
-				IParallelTransformationStrategy<? extends ILogicalOperator> bestStrategy = getBestStrategy(operatorForTransformation);
+				IParallelTransformationStrategy<? extends ILogicalOperator> bestStrategy = getPreferredStrategy(operatorForTransformation);
 				// create default settings for this transformation
 				ParallelOperatorConfiguration configuration = ParallelOperatorConfiguration
 						.createDefaultConfiguration(bestStrategy,
-								globalDegreeOfParallelization, globalBufferSize, useThreadedBuffer);
+								globalDegreeOfParallelization,
+								globalBufferSize, useThreadedBuffer);
 				transformationResults.add(bestStrategy.transform(
 						operatorForTransformation, configuration));
 			}
@@ -252,6 +299,11 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 		return transformationResults;
 	}
 
+	/**
+	 * get operator specific configurations
+	 * 
+	 * @param config
+	 */
 	private void getOperatorSpecificParameters(QueryBuildConfiguration config) {
 		operatorIds = new ArrayList<String>();
 		parallelOperatorParameter = config
@@ -261,6 +313,12 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 		}
 	}
 
+	/**
+	 * gets the gobal parameters which are definied in the PARALLELIZATION
+	 * keyword
+	 * 
+	 * @param handlerParameters
+	 */
 	private void getGlobalParameters(
 			List<Pair<String, String>> handlerParameters) {
 		if (handlerParameters.size() != PARAMETER_COUNT) {
@@ -299,7 +357,13 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 		}
 	}
 
-	private IParallelTransformationStrategy<? extends ILogicalOperator> getBestStrategy(
+	/**
+	 * detects the preferred strategy for the given operator
+	 * 
+	 * @param operatorForTransformation
+	 * @return
+	 */
+	private IParallelTransformationStrategy<? extends ILogicalOperator> getPreferredStrategy(
 			ILogicalOperator operatorForTransformation) {
 		List<IParallelTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = ParallelTransformationStrategyRegistry
 				.getStrategiesForOperator(operatorForTransformation.getClass());

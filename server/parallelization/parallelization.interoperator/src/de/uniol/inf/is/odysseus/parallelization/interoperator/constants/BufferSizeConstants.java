@@ -15,6 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.parallelization.interoperator.constants;
 
+/**
+ * Constants for buffersize
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public enum BufferSizeConstants {
 	USERDEFINED, GLOBAL, AUTO;
 

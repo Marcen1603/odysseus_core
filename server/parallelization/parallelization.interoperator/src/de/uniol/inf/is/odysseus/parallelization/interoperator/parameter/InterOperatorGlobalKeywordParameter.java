@@ -17,7 +17,14 @@ package de.uniol.inf.is.odysseus.parallelization.interoperator.parameter;
 
 import de.uniol.inf.is.odysseus.script.parser.parameter.IKeywordParameter;
 
-
+/**
+ * Defines the parameters for the #PARALLELIZATION keyword if the type is set to
+ * inter-operator. This parameter is used in parameter helper for parsing the
+ * keyword parameters
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public enum InterOperatorGlobalKeywordParameter implements IKeywordParameter{
 	PARALLELIZATION_TYPE("type", 0, false),
 	DEGREE_OF_PARALLELIZATION("degree", 1, false), 

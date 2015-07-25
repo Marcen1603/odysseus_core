@@ -24,15 +24,35 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.preexecution.Inter
 import de.uniol.inf.is.odysseus.parallelization.keyword.ParallelizationPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 
-public class InterOperatorGlobalKeywordBuilder{
+/**
+ * Keyword builder for #PARALLELIZATION keyword with parameters for inter
+ * operator parallelization
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
+public class InterOperatorGlobalKeywordBuilder {
 
-	public static String buildParameterString(
-			Integer degree, Integer buffersize, boolean allowPostOptmization,
+	/**
+	 * creates the keyword with the given values
+	 * 
+	 * @param degree
+	 * @param buffersize
+	 * @param allowPostOptmization
+	 * @param useThreadedBuffer
+	 * @return
+	 */
+	public static String buildParameterString(Integer degree,
+			Integer buffersize, boolean allowPostOptmization,
 			boolean useThreadedBuffer) {
+		// add keyword
 		StringBuilder builder = new StringBuilder();
-		builder.append("#" + ParallelizationPreParserKeyword.KEYWORD + InterOperatorParallelizationConstants.BLANK);
+		builder.append("#" + ParallelizationPreParserKeyword.KEYWORD
+				+ InterOperatorParallelizationConstants.BLANK);
+		// use parameterHelper to create parameter string
 		PreParserKeywordParameterHelper<InterOperatorGlobalKeywordParameter> helper = PreParserKeywordParameterHelper
 				.newInstance(InterOperatorGlobalKeywordParameter.class);
+		// add the values for different parameters
 		Map<InterOperatorGlobalKeywordParameter, String> parameters = new HashMap<InterOperatorGlobalKeywordParameter, String>();
 		parameters.put(
 				InterOperatorGlobalKeywordParameter.PARALLELIZATION_TYPE,

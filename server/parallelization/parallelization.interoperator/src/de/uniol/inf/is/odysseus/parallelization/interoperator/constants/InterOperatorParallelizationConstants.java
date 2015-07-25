@@ -15,7 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.parallelization.interoperator.constants;
 
+/**
+ * Constants for inter operator parallelization project
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class InterOperatorParallelizationConstants {
+	// custom pattern for parsing parameters of INTEROPERATOR keyword 
 	private static final String PATTERN_PAIRS = "((([a-zA-Z0-9_]+)|([(][a-zA-Z0-9_]+([:][a-zA-Z0-9_]+)+[)]))[,])"
 			+ "*(([a-zA-Z0-9_]+)|([(][a-zA-Z0-9_]+([:][a-zA-Z0-9_]+)+[)]))";
 	private static final String PATTERN_WITH_ATTRIBUTESNAMES = "([(][a-zA-Z0-9_]+[=]"
@@ -27,8 +34,8 @@ public class InterOperatorParallelizationConstants {
 			+ PATTERN_PAIRS + ")([\\s]" + PATTERN_PAIRS + ")*";
 	public static final String PATTERN_KEYWORD = PATTERN_WITH_ATTRIBUTESNAMES
 			+ "|" + PATTERN_WITHOUT_ATTRIBUTENAMES;
-	
+
 	public static final int DEFAULT_BUFFER_SIZE = 10000000;
-	
+
 	public static String BLANK = " ";
 }

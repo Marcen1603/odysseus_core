@@ -22,9 +22,16 @@ import java.util.UUID;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
+/**
+ * this class contains informations about transformation and is used in post
+ * optimization if the result is SUCCESS
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class TransformationResult {
-	
-	public enum State{
+
+	public enum State {
 		SUCCESS, FAILED;
 	}
 
@@ -33,13 +40,26 @@ public class TransformationResult {
 	private List<AbstractStaticFragmentAO> fragmentOperators = new ArrayList<AbstractStaticFragmentAO>();
 	private UnionAO unionOperator;
 
-	public TransformationResult(State state){
+	public TransformationResult(State state) {
 		this.state = state;
 	}
-	
+
 	// default is true, e.g. if partial aggregates are used, a modification
 	// after union is not possible
 	private boolean allowsModificationAfterUnion = true;
+
+	/**
+	 * validates if this object is valid
+	 * 
+	 * @return isValid
+	 */
+	public boolean validate() {
+		if (!fragmentOperators.isEmpty() && unionOperator != null
+				&& state != null) {
+			return true;
+		}
+		return false;
+	}
 
 	public boolean allowsModificationAfterUnion() {
 		return allowsModificationAfterUnion;
@@ -62,7 +82,8 @@ public class TransformationResult {
 		return fragmentOperators;
 	}
 
-	public void setFragmentOperators(List<AbstractStaticFragmentAO> fragmentOperators) {
+	public void setFragmentOperators(
+			List<AbstractStaticFragmentAO> fragmentOperators) {
 		this.fragmentOperators.addAll(fragmentOperators);
 	}
 
@@ -72,13 +93,6 @@ public class TransformationResult {
 
 	public UUID getUniqueIdentifier() {
 		return uniqueIdentifier;
-	}
-
-	public boolean validate() {
-		if (!fragmentOperators.isEmpty() && unionOperator != null && state != null){
-			return true;
-		}
-		return false;
 	}
 
 	public State getState() {

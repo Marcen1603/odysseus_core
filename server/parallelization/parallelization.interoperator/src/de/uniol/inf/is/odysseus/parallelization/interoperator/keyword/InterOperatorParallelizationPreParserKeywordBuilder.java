@@ -25,8 +25,26 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallel
 import de.uniol.inf.is.odysseus.script.parser.parameter.PreParserKeywordParameterHelper;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractFragmentAO;
 
+/**
+ * Keyword builder for #INTEROPERATOR keyword with parameters
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class InterOperatorParallelizationPreParserKeywordBuilder {
-	
+
+	/**
+	 * creates the keyword with the given values
+	 * 
+	 * @param operatorId
+	 * @param endOperatorId
+	 * @param degree
+	 * @param buffersize
+	 * @param parallelTransformationStrategy
+	 * @param fragmentClass
+	 * @param useThreadedOperators
+	 * @return
+	 */
 	public static String buildKeywordWithParameters(
 			String operatorId,
 			String endOperatorId,
@@ -35,13 +53,17 @@ public class InterOperatorParallelizationPreParserKeywordBuilder {
 			IParallelTransformationStrategy<? extends ILogicalOperator> parallelTransformationStrategy,
 			Class<? extends AbstractFragmentAO> fragmentClass,
 			boolean useThreadedOperators) {
+		// add keyword
 		StringBuilder builder = new StringBuilder();
 		builder.append("#"
-				+ InterOperatorParallelizationPreParserKeyword.KEYWORD + InterOperatorParallelizationConstants.BLANK);
+				+ InterOperatorParallelizationPreParserKeyword.KEYWORD
+				+ InterOperatorParallelizationConstants.BLANK);
 
+		// use parameterHelper to create parameter string
 		PreParserKeywordParameterHelper<InterOperatorParallelizationKeywordParameter> helper = PreParserKeywordParameterHelper
 				.newInstance(InterOperatorParallelizationKeywordParameter.class);
 		Map<InterOperatorParallelizationKeywordParameter, String> parameters = new HashMap<InterOperatorParallelizationKeywordParameter, String>();
+		// add the values for different parameters
 		if (!endOperatorId.isEmpty()) {
 			parameters.put(
 					InterOperatorParallelizationKeywordParameter.OPERATORID,

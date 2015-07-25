@@ -22,17 +22,61 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.Para
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 
+/**
+ * Interface for inter operator parallelization strategies
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public interface IParallelTransformationStrategy<T extends ILogicalOperator> {
-	
+
+	/**
+	 * returns the name of this strategy
+	 * 
+	 * @return
+	 */
 	String getName();
-	
+
+	/**
+	 * returns the operator type (e.g. aggregateAO) which is compatible to this
+	 * strategy
+	 * 
+	 * @return
+	 */
 	Class<T> getOperatorType();
-	
+
+	/**
+	 * returns a list of compatible fragmentation types (e.g. HashFragementAO)
+	 * 
+	 * @return
+	 */
 	List<Class<? extends AbstractStaticFragmentAO>> getAllowedFragmentationTypes();
-	
+
+	/**
+	 * returns the preferred fragementation type. this is needed if the user
+	 * doesnt select a fragmentation
+	 * 
+	 * @return
+	 */
 	Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType();
-	
+
+	/**
+	 * evaluates the compatibility of this strategy with a given operator. It
+	 * also allows to define multiple strategies for a single operator type and
+	 * select the best strategy
+	 * 
+	 * @param operator
+	 * @return
+	 */
 	int evaluateCompatibility(ILogicalOperator operator);
-	
-	TransformationResult transform(ILogicalOperator operator, ParallelOperatorConfiguration settingsForOperator);
+
+	/**
+	 * do the specific transformation based on the configuration
+	 * 
+	 * @param operator
+	 * @param settingsForOperator
+	 * @return
+	 */
+	TransformationResult transform(ILogicalOperator operator,
+			ParallelOperatorConfiguration configurationForOperator);
 }
