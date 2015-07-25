@@ -1,9 +1,12 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingAllocatorRegistry;
@@ -22,6 +25,8 @@ public class LoadBalancingControl implements ILoadBalancingController {
 	private ILoadBalancingStrategy chosenStrategy;
 	private ILoadBalancingAllocator currentAllocator;
 	private ILoadBalancingAllocator chosenAllocator;
+	
+	private ArrayList<ILoadBalancingControllerListener> listeners = Lists.newArrayList();
 	
 	
 	private boolean isRunning = false;
@@ -100,6 +105,8 @@ public class LoadBalancingControl implements ILoadBalancingController {
 	public synchronized void stopLoadBalancing() {
 		currentStrategy.stopMonitoring();
 		this.isRunning = false;
+		
+		notifyListeners();
 	}
 	
 	@Override
@@ -143,6 +150,33 @@ public class LoadBalancingControl implements ILoadBalancingController {
 			e.printStackTrace();
 			stopLoadBalancing();
 		}
+		
+		notifyListeners();
+	}
+
+
+	private synchronized void notifyListeners() {
+		for (ILoadBalancingControllerListener listener : listeners) {
+			listener.notifyLoadBalancingStatusChanged(isRunning);
+		}
+	}
+	
+
+	@Override
+	public synchronized void addControllerListener(ILoadBalancingControllerListener listener) {
+		if(!this.listeners.contains(listener))
+			listeners.add(listener);
+		
+	}
+
+
+
+	@Override
+	public synchronized void removeControllerListener(
+			ILoadBalancingControllerListener listener) {
+		if(this.listeners.contains(listener))
+			listeners.remove(listener);
+		
 		
 	}
 

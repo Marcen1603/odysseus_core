@@ -12,4 +12,8 @@ public interface ILoadBalancingController {
 	public void startLoadBalancing();
 	public Set<String> getAvailableStrategies();
 	public Set<String> getAvailableAllocators();
+	
+	
+	public void addControllerListener(ILoadBalancingControllerListener listener);
+	public void removeControllerListener(ILoadBalancingControllerListener listener);
 }
