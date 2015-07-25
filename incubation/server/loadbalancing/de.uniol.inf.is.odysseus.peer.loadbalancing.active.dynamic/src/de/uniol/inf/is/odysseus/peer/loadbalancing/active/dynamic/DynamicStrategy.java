@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SourceTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
@@ -230,9 +231,12 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	@Override
 	public void triggerLoadBalancing(double cpuUsage, double memUsage, double netUsage) {
 		
+		
+		
 		if(executor.getLogicalQueryIds(getActiveSession()).size()==0) {
 			LOG.warn("Load Balancing triggered, but no queries installed. Continuing monitoring.");
 		}
+		
 		
 		synchronized(threadManipulationLock) {
 			monitoringThread.removeListener(this);
@@ -244,6 +248,14 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		double cpuLoadToRemove = Math.max(0.0, cpuUsage-DynamicLoadBalancingConstants.CPU_THRESHOLD);
 		double memLoadToRemove = Math.max(0.0, memUsage-DynamicLoadBalancingConstants.MEM_THRESHOLD);
 		double netLoadToRemove = Math.max(0.0, netUsage-DynamicLoadBalancingConstants.NET_THRESHOLD);
+		
+		PeerID localPeerID = networkManager.getLocalPeerID();
+		
+		
+		//Replaces Sources with Sender-Receiver constructs.
+		for(int queryID : executor.getLogicalQueryIds(getActiveSession())) {
+			SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor);
+		}
 		
 		QueryCostMap allQueries = generateCostMapForAllQueries();
 		IQuerySelectionStrategy greedySelector = new GreedyQuerySelector();
@@ -292,8 +304,6 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		//Parameter Query is used to get Build Configuration...
 		ILogicalQuery query = executor.getLogicalQueryById(firstQueryId, getActiveSession());
 			
-		PeerID localPeerID = networkManager.getLocalPeerID();
-		
 		
 			
 		try {
@@ -324,11 +334,15 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				ILoadBalancingCommunicator communicator = communicatorMapping.get(queryId);
 				transmissionHandlerList.add(new QueryTransmissionHandler(queryId,slavePeerId,communicator, peerCommunicator, lock));
 			}
+			
 		} catch (QueryPartAllocationException e) {
 			LOG.error("Could not allocate Query Parts: {}",e.getMessage());
 			e.printStackTrace();
 		}
-			
+		
+		if(transmissionHandlerList!=null && transmissionHandlerList.size()>0) {
+			transmissionHandlerList.get(0).initiateTransmission(this);
+		}
 		
 	}
 	
