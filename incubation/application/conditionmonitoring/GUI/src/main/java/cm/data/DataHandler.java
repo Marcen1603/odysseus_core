@@ -50,6 +50,11 @@ public class DataHandler {
         return null;
     }
 
+    /**
+     * Add a new event to the top of the list(s). Automatically handles, which lists will show the events.
+     *
+     * @param event
+     */
     public void addEvent(Event event) {
         // Add the new element at the top of the list to show it on the top of the ListView
         Platform.runLater(() -> {
@@ -77,6 +82,10 @@ public class DataHandler {
         });
     }
 
+    /**
+     * @param collection The collection you want to have the events for
+     * @return An observablelist with all events for the given collection
+     */
     public ObservableList<Event> getCollectionEvents(Collection collection) {
         ObservableList<Event> collectionEvents = collectionEventsMap.get(collection);
         if (collectionEvents == null) {
@@ -105,14 +114,26 @@ public class DataHandler {
         return collectionEvents;
     }
 
+    /**
+     * @return Observable list with all events
+     */
     public ObservableList<Event> getObservableEventList() {
         return observableEventList;
     }
 
+    /**
+     * @return Observable list with all collections
+     */
     public ObservableList<Collection> getObservableCollectionList() {
         return observableCollectionList;
     }
 
+    /**
+     * Add the observer as observer for the given connection. If a new event on that connection arrives, the observer will be notified
+     *
+     * @param connection
+     * @param observer
+     */
     public void addObserverForConnection(SocketReceiver connection, Observer observer) {
         List<Observer> observers = this.observerMap.get(connection);
         if (observers == null) {

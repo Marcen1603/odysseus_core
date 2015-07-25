@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Tobias
+ * Deserializes the socket information from Odysseus
+ * @author Tobias Brandt
  * @since 26.06.2015.
  */
 public class SocketInfoDeserializer implements JsonDeserializer<SocketInfo> {

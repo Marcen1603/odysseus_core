@@ -15,6 +15,8 @@ import javafx.scene.layout.AnchorPane;
 import java.io.IOException;
 
 /**
+ * The cell with the name of the collection
+ *
  * @author Tobias
  * @since 15.03.2015.
  */
