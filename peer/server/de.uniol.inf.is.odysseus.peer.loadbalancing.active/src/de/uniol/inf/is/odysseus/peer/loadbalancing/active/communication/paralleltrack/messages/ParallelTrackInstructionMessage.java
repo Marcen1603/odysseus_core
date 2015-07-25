@@ -174,8 +174,21 @@ public class ParallelTrackInstructionMessage implements IMessage {
 
 				byte[] pqlAsBytes = PQLQuery.getBytes();
 
-				byte[] sharedQueryIDAsBytes = sharedQueryID.getBytes();
-				byte[] masterPeerIDAsBytes = masterPeerID.getBytes();
+				byte[] sharedQueryIDAsBytes;
+				if(sharedQueryID==null) {
+					sharedQueryIDAsBytes="null".getBytes();
+				}
+				else {
+					sharedQueryIDAsBytes = sharedQueryID.getBytes();
+				}
+				
+				byte[] masterPeerIDAsBytes;
+				if(masterPeerID==null) {
+					masterPeerIDAsBytes = "null".getBytes();
+				}
+				else {
+					masterPeerIDAsBytes = masterPeerID.getBytes();
+				}
 
 				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 4 + sharedQueryIDAsBytes.length + 1 + 4 + masterPeerIDAsBytes.length;
 				bb = ByteBuffer.allocate(bbsize);
@@ -192,8 +205,20 @@ public class ParallelTrackInstructionMessage implements IMessage {
 			}
 
 			byte[] pqlAsBytes = PQLQuery.getBytes();
+			
+			if(this.getOtherPeerIDs()==null) {
+				this.otherPeers = new ArrayList<String>();
+			}
+			
 			byte[] otherPeersAsBytes = stringListToBytes(this.getOtherPeerIDs());
-			byte[] sharedQueryIDAsBytes = sharedQueryID.getBytes();
+			
+			byte[] sharedQueryIDAsBytes;
+			if(sharedQueryID==null) {
+				sharedQueryIDAsBytes="null".getBytes();
+			}
+			else {
+				sharedQueryIDAsBytes = sharedQueryID.getBytes();
+			}
 
 			bbsize = 4 + 4 + 4 + pqlAsBytes.length + 1 + otherPeersAsBytes.length + 4 + sharedQueryIDAsBytes.length;
 			bb = ByteBuffer.allocate(bbsize);
@@ -286,7 +311,13 @@ public class ParallelTrackInstructionMessage implements IMessage {
 			int sizeOfSharedQueryID = bb.getInt();
 			byte[] sharedQueryIDAsBytes = new byte[sizeOfSharedQueryID];
 			bb.get(sharedQueryIDAsBytes);
-			this.sharedQueryID = new String(sharedQueryIDAsBytes);
+			String receivedSharedQueryID = new String(sharedQueryIDAsBytes);
+			if(!receivedSharedQueryID.equals("null")) {
+				this.sharedQueryID = new String(sharedQueryIDAsBytes);
+			}
+			else {
+				this.sharedQueryID = null;
+			}
 
 			byte masterFlag = bb.get();
 			if (masterFlag == 0) {

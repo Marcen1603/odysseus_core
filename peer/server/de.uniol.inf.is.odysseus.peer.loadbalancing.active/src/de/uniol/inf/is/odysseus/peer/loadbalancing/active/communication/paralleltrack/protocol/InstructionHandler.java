@@ -100,40 +100,45 @@ public class InstructionHandler {
 					IQueryPartController queryPartController = OsgiServiceManager.getQueryPartController();
 
 					// Register as new Master when Query is Master Query
-					if (instruction.isMasterForQuery()) {
-
-						LOG.debug("Received Query is Master Query");
-
-						List<String> otherPeerIDStrings = instruction.getOtherPeerIDs();
-						String sharedQueryIDString = instruction.getSharedQueryID();
-
-						LOG.debug("Received {} other peer IDs.", otherPeerIDStrings.size());
-						LOG.debug("Shared Query ID is {}", sharedQueryIDString);
-						Collection<PeerID> otherPeers = LoadBalancingHelper.toPeerIDCollection(otherPeerIDStrings);
-						ID sharedQueryID = LoadBalancingHelper.toID(sharedQueryIDString);
-
-						queryPartController.registerAsMaster(query, installedQuery, sharedQueryID, otherPeers);
-						status.setRegisteredAsMaster(sharedQueryID);
-						OsgiServiceManager.getQueryManager().sendChangeMasterToAllSlaves(sharedQueryID);
-
-					} else {
-						LOG.debug("Received Query is Slave Query.");
-						ID sharedQueryID = LoadBalancingHelper.toID(instruction.getSharedQueryID());
-						PeerID masterPeerID = LoadBalancingHelper.toPeerID(instruction.getMasterPeerID());
-
-						if (queryPartController.isSharedQueryKnown(sharedQueryID)) {
-							// No need to inform Master as he already knows this
-							// Peer, just add local Query to sharedID...
-							Collection<Integer> localQueriesForSharedQuery = queryPartController.getLocalIds(sharedQueryID);
-							localQueriesForSharedQuery.addAll(queryIDs);
-							queryPartController.registerAsSlave(localQueriesForSharedQuery, sharedQueryID, masterPeerID);
+					if(instruction.getSharedQueryID()==null) {
+						LOG.debug("No shared Query ID -> no one to notify.");
+					}
+					else {
+						if (instruction.isMasterForQuery()) {
+	
+							LOG.debug("Received Query is Master Query");
+	
+							List<String> otherPeerIDStrings = instruction.getOtherPeerIDs();
+							String sharedQueryIDString = instruction.getSharedQueryID();
+	
+							LOG.debug("Received {} other peer IDs.", otherPeerIDStrings.size());
+							LOG.debug("Shared Query ID is {}", sharedQueryIDString);
+							Collection<PeerID> otherPeers = LoadBalancingHelper.toPeerIDCollection(otherPeerIDStrings);
+							ID sharedQueryID = LoadBalancingHelper.toID(sharedQueryIDString);
+	
+							queryPartController.registerAsMaster(query, installedQuery, sharedQueryID, otherPeers);
+							status.setRegisteredAsMaster(sharedQueryID);
+							OsgiServiceManager.getQueryManager().sendChangeMasterToAllSlaves(sharedQueryID);
+	
 						} else {
-							queryPartController.registerAsSlave(queryIDs, sharedQueryID, masterPeerID);
-							status.setRegisteredAsNewSlave(masterPeerID, sharedQueryID);
-							OsgiServiceManager.getQueryManager().sendRegisterAsSlave(masterPeerID, sharedQueryID);
-
+							LOG.debug("Received Query is Slave Query.");
+							ID sharedQueryID = LoadBalancingHelper.toID(instruction.getSharedQueryID());
+							PeerID masterPeerID = LoadBalancingHelper.toPeerID(instruction.getMasterPeerID());
+	
+							if (queryPartController.isSharedQueryKnown(sharedQueryID)) {
+								// No need to inform Master as he already knows this
+								// Peer, just add local Query to sharedID...
+								Collection<Integer> localQueriesForSharedQuery = queryPartController.getLocalIds(sharedQueryID);
+								localQueriesForSharedQuery.addAll(queryIDs);
+								queryPartController.registerAsSlave(localQueriesForSharedQuery, sharedQueryID, masterPeerID);
+							} else {
+								queryPartController.registerAsSlave(queryIDs, sharedQueryID, masterPeerID);
+								status.setRegisteredAsNewSlave(masterPeerID, sharedQueryID);
+								OsgiServiceManager.getQueryManager().sendRegisterAsSlave(masterPeerID, sharedQueryID);
+	
+							}
+	
 						}
-
 					}
 
 					dispatcher.sendInstallSuccess(senderPeer);
