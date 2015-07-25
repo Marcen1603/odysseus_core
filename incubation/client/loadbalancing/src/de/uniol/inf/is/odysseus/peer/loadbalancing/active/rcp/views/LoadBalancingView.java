@@ -10,20 +10,24 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingControllerListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLockListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.Activator;
 
-public class LoadBalancingView extends ViewPart implements ILoadBalancingControllerListener {
+public class LoadBalancingView extends ViewPart implements ILoadBalancingControllerListener, ILoadBalancingLockListener {
 	
 	private static final String CONTROL_NOT_BOUND = "Load Balancing Control not (yet) bound.";
 	
 	private static final String STRATEGY_LABEL = "Strategy:";
 	private static final String ALLOCATOR_LABEL = "Allocator:";
 	private static final String STATUS_DESCRIPTION_LABEL = "Current Status:";
+	private static final String STATUS_LOCK = "Lock Status:";
 	
 	private String selectedStrategy = "";
 	private String selectedAllocator ="";
@@ -31,25 +35,34 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 	private Combo strategyCombo;
 	private Combo allocatorCombo;
 	private Label statusLabel;
+	private Label lockLabel;
+	private Button unlockButton;
 	
 	@Override
 	public void createPartControl(Composite parent) {
 
 		ILoadBalancingController controller = Activator.getLoadBalancingController();
+		ILoadBalancingLock lock = Activator.getLock();
+		
 		if(controller==null) {
 			createLabel(parent,CONTROL_NOT_BOUND);
 		}
 		else {
 			createChooserComposite(parent);
+			controller.addControllerListener(this);
 		}
 
-		controller.addControllerListener(this);
+		if(lock!=null) {
+			lock.addListener(this);
+		}
 		
 	}
 	
 	private void createChooserComposite(Composite parent) {
 
 		ILoadBalancingController controller = Activator.getLoadBalancingController();
+		ILoadBalancingLock lock = Activator.getLock();
+		
 		Composite rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayout(new GridLayout(2, false));
 		
@@ -61,6 +74,18 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 			}
 			else {
 				statusLabel.setText("Inactive");
+			}
+		}
+		
+		createLabel(rootComposite,STATUS_LOCK);
+		lockLabel = createLabel(rootComposite,"unbound");
+		
+		if(lock!=null) {
+			if(lock.isLocked()) {
+				lockLabel.setText("locked");
+			}
+			else {
+				lockLabel.setText("unlocked");
 			}
 		}
 		
@@ -132,6 +157,26 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 			}
 		});
 
+		Composite rightButtonComposite = new Composite(rootComposite, SWT.NONE);
+		rightButtonComposite.setLayout(new GridLayout(3, true));
+
+		unlockButton = new Button(rightButtonComposite, SWT.NONE);
+		Image unlockImages = Activator.getImageDescriptor("icons/lock_break.png").createImage();
+		unlockButton.setImage(unlockImages);
+		unlockButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ILoadBalancingLock lock = Activator.getLock();
+
+				if (lock != null){
+					lock.forceUnlock();
+				}
+			}
+		});
+		if(lock==null || !lock.isLocked()) {
+			unlockButton.setEnabled(false);
+		}
+		
 		
 		populateStrategyList(controller);
 		populateAllocatorList(controller);
@@ -156,6 +201,10 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		if(controller!=null) {
 			controller.removeControllerListener(this);
 		}
+		ILoadBalancingLock lock = Activator.getLock();
+		if(lock!=null) {
+			lock.removeListener(this);
+		}
 	}
 	
 	private void populateStrategyList(ILoadBalancingController controller) {
@@ -171,14 +220,47 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 	}
 
 	@Override
-	public void notifyLoadBalancingStatusChanged(boolean isRunning) {
+	public synchronized void notifyLoadBalancingStatusChanged(boolean isRunning) {
+		
 		if(isRunning) {
-			statusLabel.setText("Active");
+			Display.getDefault().syncExec(new Runnable() {
+			    public void run() {
+			    	statusLabel.setText("Active");
+			    }
+			});
 		}
 		else {
-			statusLabel.setText("Inactive");
+			Display.getDefault().syncExec(new Runnable() {
+			    public void run() {
+			    	statusLabel.setText("Inactive");
+			    }
+			});
 		}
 		
 	}
+
+	@Override
+	public synchronized void notifyLockStatusChanged(boolean status) {
+		if(status) {
+			Display.getDefault().syncExec(new Runnable() {
+			    public void run() {
+			    	lockLabel.setText("locked");
+					unlockButton.setEnabled(true);
+			    }
+			});
+			
+		}
+		else {
+			Display.getDefault().syncExec(new Runnable() {
+			    public void run() {
+			    	lockLabel.setText("unlocked");
+					unlockButton.setEnabled(false);
+			    }
+			});
+			
+		}		
+	}
+	
+	
 	
 }

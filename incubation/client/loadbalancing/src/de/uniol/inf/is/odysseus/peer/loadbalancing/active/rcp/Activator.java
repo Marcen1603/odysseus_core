@@ -6,6 +6,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 
 public class Activator extends AbstractUIPlugin implements BundleActivator {
 	
@@ -16,6 +17,7 @@ public class Activator extends AbstractUIPlugin implements BundleActivator {
 
 
 	private static ILoadBalancingController controller;
+	private static ILoadBalancingLock lock;
 
 	static BundleContext getContext() {
 		return context;
@@ -48,8 +50,22 @@ public class Activator extends AbstractUIPlugin implements BundleActivator {
 		}
 	}
 	
+	public static void bindLoadBalancingLock(ILoadBalancingLock serv) {
+		lock = serv;
+	}
+	
+	public static void unbindLoadBalancingLock(ILoadBalancingLock serv) {
+		if(lock==serv) {
+			lock = null;
+		}
+	}
+	
 	public static ILoadBalancingController getLoadBalancingController() {
 		return controller;
+	}
+	
+	public static ILoadBalancingLock getLock() {
+		return lock;
 	}
 
 
