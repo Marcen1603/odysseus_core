@@ -1,9 +1,14 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock;
 
+import java.util.ArrayList;
+
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.peer.PeerID;
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicatorListener;
@@ -25,6 +30,8 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 	private IP2PNetworkManager networkManager;
 
 	private PeerID lockedForPeer = null;
+	
+	private ArrayList<ILoadBalancingLockListener> listeners = Lists.newArrayList();
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, IMessage message) {
@@ -44,18 +51,23 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 				sendLockNotReleased(senderPeer);
 			}
 		}
+		notifyListeners();
 	}
 
 	@Override
 	public boolean requestLocalLock() {
 		PeerID localPeerID = networkManager.getLocalPeerID();
-		return modifyLock(true, localPeerID);
+		boolean lockResult = modifyLock(true, localPeerID);
+		notifyListeners();
+		return lockResult;
 	}
 
 	@Override
 	public boolean releaseLocalLock() {
 		PeerID localPeerID = networkManager.getLocalPeerID();
-		return modifyLock(false, localPeerID);
+		boolean lockResult =  modifyLock(false, localPeerID);
+		notifyListeners();
+		return lockResult;
 	}
 
 	private synchronized boolean modifyLock(boolean newLock, PeerID requestingPeer) {
@@ -91,6 +103,12 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		}
 		// Currently unlocked.
 		return true;
+	}
+	
+	private void notifyListeners() {
+		for(ILoadBalancingLockListener listener : listeners) {
+			listener.notifyLockStatusChanged(isLocked());
+		}
 	}
 
 	private void sendLockGranted(PeerID peerID) {
@@ -188,6 +206,33 @@ public class LoadBalancingLock implements IPeerCommunicatorListener, ILoadBalanc
 		}
 		LOG.debug("Peer ID " + lockedForPeer + " not known any more.");
 		return false;
+	}
+
+	@Override
+	public boolean isLocked() {
+		return lock;
+	}
+
+	@Override
+	public void forceUnlock() {
+		modifyLock(false,lockedForPeer);
+		notifyListeners();
+	}
+
+	@Override
+	public void addListener(ILoadBalancingLockListener listener) {
+		if(!listeners.contains(listener)) {
+			listeners.add(listener);
+		}
+		
+	}
+
+	@Override
+	public void removeListener(ILoadBalancingLockListener listener) {
+		if(listeners.contains(listener)) {
+			listeners.remove(listener);
+		}
+		
 	}
 
 }

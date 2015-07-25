@@ -4,4 +4,10 @@ public interface ILoadBalancingLock {
 
 	public boolean requestLocalLock();
 	public boolean releaseLocalLock();
+	
+	public boolean isLocked();
+	public void forceUnlock();
+	
+	public void addListener(ILoadBalancingLockListener listener);
+	public void removeListener(ILoadBalancingLockListener listener);
 }

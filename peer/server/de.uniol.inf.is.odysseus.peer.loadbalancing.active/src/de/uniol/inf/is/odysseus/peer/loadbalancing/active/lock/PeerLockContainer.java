@@ -39,6 +39,7 @@ public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerC
 
 		this.listeners = new ArrayList<IPeerLockContainerListener>();
 		this.locks = new ConcurrentHashMap<PeerID, LOCK_STATE>();
+		this.jobs = new ConcurrentHashMap<PeerID,RepeatingMessageSend>();
 
 		listeners.add(callbackListener);
 

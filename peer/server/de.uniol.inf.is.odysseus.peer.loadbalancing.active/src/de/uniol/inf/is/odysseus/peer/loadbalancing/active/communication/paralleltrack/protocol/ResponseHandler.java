@@ -78,6 +78,7 @@ public class ResponseHandler {
 				IQueryPartController queryPartController = OsgiServiceManager.getQueryPartController();
 
 				ID sharedQueryID = queryPartController.getSharedQueryID(status.getLogicalQuery());
+				
 				boolean isMaster = queryPartController.isMasterForQuery(status.getLogicalQuery());
 				Collection<Integer> localQueries = queryPartController.getLocalIds(sharedQueryID);
 
