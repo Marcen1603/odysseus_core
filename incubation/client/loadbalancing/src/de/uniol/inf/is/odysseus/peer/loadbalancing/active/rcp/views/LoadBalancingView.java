@@ -14,20 +14,23 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingControllerListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.Activator;
 
-public class LoadBalancingView extends ViewPart {
+public class LoadBalancingView extends ViewPart implements ILoadBalancingControllerListener {
 	
 	private static final String CONTROL_NOT_BOUND = "Load Balancing Control not (yet) bound.";
 	
 	private static final String STRATEGY_LABEL = "Strategy:";
 	private static final String ALLOCATOR_LABEL = "Allocator:";
+	private static final String STATUS_DESCRIPTION_LABEL = "Current Status:";
 	
 	private String selectedStrategy = "";
 	private String selectedAllocator ="";
 	
 	private Combo strategyCombo;
 	private Combo allocatorCombo;
+	private Label statusLabel;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -38,10 +41,9 @@ public class LoadBalancingView extends ViewPart {
 		}
 		else {
 			createChooserComposite(parent);
-			
-			
 		}
-		
+
+		controller.addControllerListener(this);
 		
 	}
 	
@@ -50,6 +52,18 @@ public class LoadBalancingView extends ViewPart {
 		ILoadBalancingController controller = Activator.getLoadBalancingController();
 		Composite rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayout(new GridLayout(2, false));
+		
+		createLabel(rootComposite,STATUS_DESCRIPTION_LABEL);
+		statusLabel = createLabel(rootComposite,STATUS_DESCRIPTION_LABEL);
+		if(controller!=null) {
+			if(controller.isLoadBalancingRunning()) {
+				statusLabel.setText("Active");
+			}
+			else {
+				statusLabel.setText("Inactive");
+			}
+		}
+		
 		
 		createLabel(rootComposite,STRATEGY_LABEL);
 		strategyCombo = new Combo(rootComposite,SWT.READ_ONLY);
@@ -136,6 +150,14 @@ public class LoadBalancingView extends ViewPart {
 		 
 	}
 	
+	@Override
+	public void dispose() {
+		ILoadBalancingController controller = Activator.getLoadBalancingController();
+		if(controller!=null) {
+			controller.removeControllerListener(this);
+		}
+	}
+	
 	private void populateStrategyList(ILoadBalancingController controller) {
 		Set<String> strategies = controller.getAvailableStrategies();
 		String[] stringArray = strategies.toArray(new String[strategies.size()]);
@@ -146,6 +168,17 @@ public class LoadBalancingView extends ViewPart {
 		Set<String> allocators = controller.getAvailableAllocators();
 		String[] stringArray = allocators.toArray(new String[allocators.size()]);
 		allocatorCombo.setItems(stringArray);
+	}
+
+	@Override
+	public void notifyLoadBalancingStatusChanged(boolean isRunning) {
+		if(isRunning) {
+			statusLabel.setText("Active");
+		}
+		else {
+			statusLabel.setText("Inactive");
+		}
+		
 	}
 	
 }
