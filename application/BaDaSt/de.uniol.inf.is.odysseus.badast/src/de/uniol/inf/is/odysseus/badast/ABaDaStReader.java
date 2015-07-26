@@ -12,6 +12,6 @@ public @interface ABaDaStReader {
 
 	public String type();
 	
-	// TODO public String usage();
+	public String[] parameters();
 	
 }

@@ -11,7 +11,8 @@ import de.uniol.inf.is.odysseus.badast.BaDaStException;
 import de.uniol.inf.is.odysseus.badast.IBaDaStReader;
 
 // TODO javaDoc
-@ABaDaStReader(type = BaDaStFileReader.TYPE)
+@ABaDaStReader(type = BaDaStFileReader.TYPE, parameters = { BaDaStFileReader.SOURCENAME_CONFIG,
+		BaDaStFileReader.FILENAME_CONFIG })
 public class BaDaStFileReader extends AbstractBaDaStReader<String> {
 
 	public static final String TYPE = "FileReader";

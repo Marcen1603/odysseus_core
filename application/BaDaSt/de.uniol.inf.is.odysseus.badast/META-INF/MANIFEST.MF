@@ -12,6 +12,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
  org.apache.zookeeper;bundle-version="3.4.6",
  org.apache.kafka;bundle-version="0.8.2",
  org.apache.kafka.clients,
- com.google.guava
+ com.google.guava,
+ de.uniol.inf.is.odysseus.core
 Export-Package: de.uniol.inf.is.odysseus.badast
 Service-Component: OSGI-INF/BaDaStCommandProvider.xml
