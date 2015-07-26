@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.badast;
+package de.uniol.inf.is.odysseus.badast.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
