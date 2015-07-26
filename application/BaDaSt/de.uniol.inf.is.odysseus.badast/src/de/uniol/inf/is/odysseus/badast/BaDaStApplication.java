@@ -151,7 +151,8 @@ public class BaDaStApplication implements BundleActivator {
 	 */
 	private void startKafkaServer() {
 		final Properties props = new Properties();
-		try (InputStream stream = BaDaStApplication.class.getClassLoader().getResourceAsStream("config/kafka.properties")) {
+		try (InputStream stream = BaDaStApplication.class.getClassLoader()
+				.getResourceAsStream("config/kafka.properties")) {
 			props.load(stream);
 		} catch (IOException e) {
 			cLog.error("Kafka failed!", e);
