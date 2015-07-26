@@ -50,6 +50,39 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 public class NonGroupedAggregateTransformationStrategy extends
 		AbstractParallelTransformationStrategy<AggregateAO> {
 
+	private AggregateAO operator;
+	private ParallelOperatorConfiguration configuration;
+	private TransformationResult transformationResult;
+	private UnionAO union;
+	private AbstractStaticFragmentAO fragmentAO;
+	private List<AggregateItem> renamedPAAggregationItems;
+	private List<AggregateItem> renamedCombineAggregationItems;
+
+	@Override
+	public IParallelTransformationStrategy<AggregateAO> getNewInstance(
+			ILogicalOperator operator,
+			ParallelOperatorConfiguration configurationForOperator) {
+		NonGroupedAggregateTransformationStrategy instance = new NonGroupedAggregateTransformationStrategy();
+		if (operator != null) {
+			if (operator instanceof AggregateAO) {
+				instance.operator = (AggregateAO) operator;
+			} else {
+				throw new IllegalArgumentException(
+						"Operator type is invalid for strategy " + getName());
+			}
+		} else {
+			throw new IllegalArgumentException(
+					"Null value for operator is not allowed");
+		}
+		if (configurationForOperator != null) {
+			instance.configuration = configurationForOperator;
+		} else {
+			throw new IllegalArgumentException(
+					"Null value for configuration is not allowed");
+		}
+		return instance;
+	}
+
 	@Override
 	public String getName() {
 		return "NonGroupedAggregateTransformationStrategy";
@@ -95,68 +128,158 @@ public class NonGroupedAggregateTransformationStrategy extends
 	}
 
 	/**
-	 * do the specific transformation based on the configuration
+	 * do the specific transformation based on the configuration. Instance need
+	 * to be initialized via newInstance method
 	 * 
-	 * @param operator
-	 * @param configurationForOperator
 	 * @return
 	 */
 	@Override
-	public TransformationResult transform(ILogicalOperator operator,
-			ParallelOperatorConfiguration configurationForOperator) {
-		if (!super.areSettingsValid(configurationForOperator)) {
-			return new TransformationResult(State.FAILED);
-		}
-		if (configurationForOperator.getEndParallelizationId() != null
-				&& !configurationForOperator.getEndParallelizationId().isEmpty()) {
-			throw new IllegalArgumentException(
-					"Definition of Endpoint for strategy " + this.getName()
-							+ " is not allowed");
+	public TransformationResult transform() {
+		prepareTransformation();
+		createFragmentOperator();
+
+		if (transformationResult.getState() == State.FAILED) {
+			return transformationResult;
 		}
 
-		TransformationResult transformationResult = new TransformationResult(
-				State.SUCCESS);
-		transformationResult.setAllowsModificationAfterUnion(false);
+		subscribeFragementAO();
+		renameAggregations();
+		createUnionOperator();
 
-		AggregateAO aggregateOperator = (AggregateAO) operator;
-
-		// create fragment operator
-		AbstractStaticFragmentAO fragmentAO;
-		try {
-			fragmentAO = createFragmentAO(
-					configurationForOperator.getFragementationType(),
-					configurationForOperator.getDegreeOfParallelization(), "", null,
-					null, null);
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-			return new TransformationResult(State.FAILED);
+		// for each degree of parallelization
+		for (int i = 0; i < configuration.getDegreeOfParallelization(); i++) {
+			BufferAO buffer = createBufferOperator(i);
+			AggregateAO newAggregateOperator = cloneAggregateOperator(i);
+			updateSubscriptions(i, buffer, newAggregateOperator);
 		}
 
-		if (fragmentAO == null) {
-			return new TransformationResult(State.FAILED);
+		AggregateAO combinePAAggregateOperator = createCombinePAAggregateOperator();
+		doFinalConnection(combinePAAggregateOperator);
+		return transformationResult;
+	}
+
+	/**
+	 * connect fragmented data stream with union
+	 */
+	private void doFinalConnection(AggregateAO combinePAAggregateOperator) {
+		// subscribe aggregate operator for combining partial aggregates to
+		// union
+		combinePAAggregateOperator.subscribeToSource(union, 0, 0,
+				union.getOutputSchema());
+
+		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		downstreamOperatorSubscriptions.addAll(operator.getSubscriptions());
+
+		// remove old subscription and subscribe new aggregate operator to
+		// existing downstream operators
+		operator.unsubscribeFromAllSources();
+		operator.unsubscribeFromAllSinks();
+
+		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
+			downstreamOperatorSubscription.getTarget().subscribeToSource(
+					combinePAAggregateOperator,
+					downstreamOperatorSubscription.getSinkInPort(),
+					downstreamOperatorSubscription.getSourceOutPort(),
+					combinePAAggregateOperator.getOutputSchema());
 		}
-		transformationResult.addFragmentOperator(fragmentAO);
+	}
 
-		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		upstreamOperatorSubscriptions.addAll(aggregateOperator
-				.getSubscribedToSource());
+	/**
+	 * creates the aggregate operator which combines the partial aggregates
+	 * 
+	 * @return aggregate operator
+	 */
+	private AggregateAO createCombinePAAggregateOperator() {
+		// create aggregate operator for combining partial aggregates
+		AggregateAO combinePAAggregateOperator = operator.clone();
+		combinePAAggregateOperator.setName(operator.getName() + "_combinePA");
+		combinePAAggregateOperator.setUniqueIdentifier(UUID.randomUUID()
+				.toString());
+		combinePAAggregateOperator.clearAggregations();
+		combinePAAggregateOperator
+				.setAggregationItems(renamedCombineAggregationItems);
+		combinePAAggregateOperator.setDrainAtClose(true);
+		return combinePAAggregateOperator;
+	}
 
-		// subscribe new operator
-		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
-			aggregateOperator
-					.unsubscribeFromSource(upstreamOperatorSubscription);
-			fragmentAO.subscribeToSource(
-					upstreamOperatorSubscription.getTarget(),
-					upstreamOperatorSubscription.getSinkInPort(),
-					upstreamOperatorSubscription.getSourceOutPort(),
-					upstreamOperatorSubscription.getTarget().getOutputSchema());
-		}
+	/**
+	 * connects fragment to buffer and buffer to aggregate
+	 * 
+	 * @param i
+	 * @param buffer
+	 * @param newAggregateOperator
+	 */
+	private void updateSubscriptions(int i, BufferAO buffer,
+			AggregateAO newAggregateOperator) {
+		// subscribe buffer to fragment
+		buffer.subscribeToSource(fragmentAO, 0, i, fragmentAO.getOutputSchema());
 
+		// subscribe new aggregate operator to buffer
+		newAggregateOperator.subscribeToSource(buffer, 0, 0,
+				buffer.getOutputSchema());
+
+		union.subscribeToSource(newAggregateOperator, i, 0,
+				newAggregateOperator.getOutputSchema());
+	}
+
+	/**
+	 * clone existing aggregate operator and updates the existing aggregations
+	 * to use partial aggregates
+	 * 
+	 * @param i
+	 *            index for naming
+	 * @return
+	 */
+	private AggregateAO cloneAggregateOperator(int i) {
+		// create new aggregate operator from existing operator
+		AggregateAO newAggregateOperator = operator.clone();
+		newAggregateOperator.setName(operator.getName() + "_pa_" + i);
+		newAggregateOperator.setUniqueIdentifier(UUID.randomUUID().toString());
+		newAggregateOperator.setOutputPA(true); // enable partial aggregates
+		newAggregateOperator.clearAggregations();
+		// use renamed output name of attributes
+		newAggregateOperator.setAggregationItems(renamedPAAggregationItems);
+		newAggregateOperator.setDrainAtClose(true);
+		return newAggregateOperator;
+	}
+
+	/**
+	 * creates a new buffer operator
+	 * 
+	 * @param i
+	 *            index for naming
+	 * @return
+	 */
+	private BufferAO createBufferOperator(int i) {
+		// create buffer
+		BufferAO buffer = new BufferAO();
+		buffer.setName("Buffer_" + i);
+		buffer.setThreaded(configuration.isUseThreadedBuffer());
+		buffer.setMaxBufferSize(configuration.getBufferSize());
+		buffer.setDrainAtClose(false);
+		return buffer;
+	}
+
+	/**
+	 * creates a new union operator
+	 */
+	private void createUnionOperator() {
+		union = new UnionAO();
+		union.setName("Union");
+		union.setUniqueIdentifier(UUID.randomUUID().toString());
+		transformationResult.setUnionOperator(union);
+	}
+
+	/**
+	 * do renaming of aggregate attributes. this is needed to use partial
+	 * aggregates
+	 */
+	private void renameAggregations() {
 		// Renaming of input and output attributes for partial aggregates
-		List<AggregateItem> existingAggregationItems = aggregateOperator
+		List<AggregateItem> existingAggregationItems = operator
 				.getAggregationItems();
-		List<AggregateItem> renamedPAAggregationItems = new ArrayList<AggregateItem>();
-		List<AggregateItem> renamedCombineAggregationItems = new ArrayList<AggregateItem>();
+		renamedPAAggregationItems = new ArrayList<AggregateItem>();
+		renamedCombineAggregationItems = new ArrayList<AggregateItem>();
 
 		for (AggregateItem aggregateItem : existingAggregationItems) {
 			SDFAttribute attr = aggregateItem.outAttribute;
@@ -181,84 +304,78 @@ public class NonGroupedAggregateTransformationStrategy extends
 					aggregateItem.outAttribute);
 			renamedCombineAggregationItems.add(newInItem);
 		}
+	}
 
-		// create union operator for merging fragmented datastreams
-		UnionAO union = new UnionAO();
-		union.setName("Union");
-		union.setUniqueIdentifier(UUID.randomUUID().toString());
-		transformationResult.setUnionOperator(union);
+	/**
+	 * subscribes the fragment operator to existing upstream operator
+	 */
+	private void subscribeFragementAO() {
+		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		upstreamOperatorSubscriptions.addAll(operator.getSubscribedToSource());
 
-		// for each degree of parallelization
-		for (int i = 0; i < configurationForOperator.getDegreeOfParallelization(); i++) {
-			// create buffer
-			BufferAO buffer = new BufferAO();
-			buffer.setName("Buffer_" + i);
-			buffer.setThreaded(configurationForOperator.isUseThreadedBuffer());
-			buffer.setMaxBufferSize(configurationForOperator.getBufferSize());
-			buffer.setDrainAtClose(false);
+		// subscribe new operator
+		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
+			operator.unsubscribeFromSource(upstreamOperatorSubscription);
+			fragmentAO.subscribeToSource(
+					upstreamOperatorSubscription.getTarget(),
+					upstreamOperatorSubscription.getSinkInPort(),
+					upstreamOperatorSubscription.getSourceOutPort(),
+					upstreamOperatorSubscription.getTarget().getOutputSchema());
+		}
+	}
 
-			// create new aggregate operator from existing operator
-			AggregateAO newAggregateOperator = aggregateOperator.clone();
-			newAggregateOperator.setName(aggregateOperator.getName() + "_pa_"
-					+ i);
-			newAggregateOperator.setUniqueIdentifier(aggregateOperator
-					.getUniqueIdentifier() + "_pa_" + i);
-			newAggregateOperator.setOutputPA(true); // enable partial aggregates
-			newAggregateOperator.clearAggregations();
-			newAggregateOperator.setAggregationItems(renamedPAAggregationItems); // use
-																					// renamed
-																					// output
-																					// name
-																					// of
-																					// attributes
-			newAggregateOperator.setDrainAtClose(true);
-
-			// subscribe buffer to fragment
-			buffer.subscribeToSource(fragmentAO, 0, i,
-					fragmentAO.getOutputSchema());
-
-			// subscribe new aggregate operator to buffer
-			newAggregateOperator.subscribeToSource(buffer, 0, 0,
-					buffer.getOutputSchema());
-
-			union.subscribeToSource(newAggregateOperator, i, 0,
-					newAggregateOperator.getOutputSchema());
-
+	/**
+	 * prepares transformation and validates values
+	 * 
+	 * @param groupingAttributes
+	 */
+	private void prepareTransformation() {
+		transformationResult = new TransformationResult(State.SUCCESS);
+		// validates if operator and configuration are set
+		if (configuration == null || operator == null) {
+			transformationResult.setState(State.FAILED);
+			return;
 		}
 
-		// create aggregate operator for combining partial aggregates
-		AggregateAO combinePAAggregateOperator = aggregateOperator.clone();
-		combinePAAggregateOperator.setName(aggregateOperator.getName()
-				+ "_combinePA");
-		combinePAAggregateOperator.setUniqueIdentifier(aggregateOperator
-				.getUniqueIdentifier() + "_combinePA");
-		combinePAAggregateOperator.clearAggregations();
-		combinePAAggregateOperator
-				.setAggregationItems(renamedCombineAggregationItems);
-		combinePAAggregateOperator.setDrainAtClose(true);
-
-		// subscribe aggregate operator for combining partial aggregates to
-		// union
-		combinePAAggregateOperator.subscribeToSource(union, 0, 0,
-				union.getOutputSchema());
-
-		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		downstreamOperatorSubscriptions.addAll(aggregateOperator
-				.getSubscriptions());
-
-		// remove old subscription and subscribe new aggregate operator to
-		// existing downstream operators
-		aggregateOperator.unsubscribeFromAllSources();
-		aggregateOperator.unsubscribeFromAllSinks();
-
-		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			downstreamOperatorSubscription.getTarget().subscribeToSource(
-					combinePAAggregateOperator,
-					downstreamOperatorSubscription.getSinkInPort(),
-					downstreamOperatorSubscription.getSourceOutPort(),
-					combinePAAggregateOperator.getOutputSchema());
+		if (!super.areSettingsValid(configuration)) {
+			transformationResult.setState(State.FAILED);
+			return;
 		}
-		return transformationResult;
+		if (configuration.getEndParallelizationId() != null
+				&& !configuration.getEndParallelizationId().isEmpty()) {
+			throw new IllegalArgumentException(
+					"Definition of Endpoint for strategy " + this.getName()
+							+ " is not allowed");
+		}
+
+		transformationResult.setAllowsModificationAfterUnion(false);
+
+		// if the option for using parallel operators is set to true, the given
+		// operator is modified to use multiple threads
+		if (configuration.isUseParallelOperators()) {
+			operator.setNumberOfThreads(configuration
+					.getDegreeOfParallelization());
+		}
+	}
+
+	/**
+	 * creates a fragment operator dynamically based on type
+	 * 
+	 * @param groupingAttributes
+	 */
+	private void createFragmentOperator() {
+		try {
+			fragmentAO = createFragmentAO(
+					configuration.getFragementationType(),
+					configuration.getDegreeOfParallelization(), "", null, null,
+					null);
+			transformationResult.addFragmentOperator(fragmentAO);
+		} catch (InstantiationException | IllegalAccessException e) {
+			transformationResult.setState(State.FAILED);
+		}
+		if (fragmentAO == null) {
+			transformationResult.setState(State.FAILED);
+		}
 	}
 
 	/**

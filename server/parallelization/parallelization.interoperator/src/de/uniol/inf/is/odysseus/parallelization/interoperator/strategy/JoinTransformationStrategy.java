@@ -41,6 +41,38 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 public class JoinTransformationStrategy extends
 		AbstractParallelTransformationStrategy<JoinAO> {
 
+	private JoinAO operator;
+	private ParallelOperatorConfiguration configuration;
+	private TransformationResult transformationResult;
+	private UnionAO union;
+	private List<Pair<AbstractStaticFragmentAO, Integer>> fragmentsSinkInPorts;
+	private List<AbstractStaticFragmentAO> fragments;
+	private Map<Integer, List<SDFAttribute>> attributes;
+
+	@Override
+	public JoinTransformationStrategy getNewInstance(ILogicalOperator operator,
+			ParallelOperatorConfiguration configurationForOperator) {
+		JoinTransformationStrategy instance = new JoinTransformationStrategy();
+		if (operator != null) {
+			if (operator instanceof JoinAO) {
+				instance.operator = (JoinAO) operator;
+			} else {
+				throw new IllegalArgumentException(
+						"Operator type is invalid for strategy " + getName());
+			}
+		} else {
+			throw new IllegalArgumentException(
+					"Null value for operator is not allowed");
+		}
+		if (configurationForOperator != null) {
+			instance.configuration = configurationForOperator;
+		} else {
+			throw new IllegalArgumentException(
+					"Null value for configuration is not allowed");
+		}
+		return instance;
+	}
+
 	@Override
 	public String getName() {
 		return "JoinTransformationStrategy";
@@ -73,39 +105,165 @@ public class JoinTransformationStrategy extends
 	}
 
 	/**
-	 * do the specific transformation based on the configuration
+	 * do the specific transformation based on the configuration. Instance need
+	 * to be initialized via newInstance method
 	 * 
-	 * @param operator
-	 * @param configurationForOperator
 	 * @return
 	 */
 	@Override
-	public TransformationResult transform(ILogicalOperator operator,
-			ParallelOperatorConfiguration configurationForOperator) {
-		if (!super.areSettingsValid(configurationForOperator)) {
-			return new TransformationResult(State.FAILED);
+	public TransformationResult transform() {
+		prepareTransformation();
+		createAndSubscribeFragments();
+
+		if (transformationResult.getState() == State.FAILED) {
+			return transformationResult;
 		}
-		// check if the way to endpoint is valid, only if the end operator id is set
-		checkIfWayToEndPointIsValid(operator, configurationForOperator, true);
 
-		// create transformation result
-		TransformationResult transformationResult = new TransformationResult(
-				State.SUCCESS);
-		transformationResult.setAllowsModificationAfterUnion(true);
+		createUnionOperator();
 
-		// get the attributes of join predicate grouped by input port (needed for fragementation)
-		JoinAO joinOperator = (JoinAO) operator;
-		Map<Integer, List<SDFAttribute>> attributes = new HashMap<Integer, List<SDFAttribute>>();
-		attributes = SDFAttributeHelper.getInstance()
-				.getSDFAttributesFromEqualPredicates(attributes, joinOperator);
+		// for every degree, insert buffer, clone join operator and connect
+		// everything
+		int bufferCounter = 0;
+		for (int i = 0; i < configuration.getDegreeOfParallelization(); i++) {
+			JoinAO newJoinOperator = cloneJoinOperator(i);
+			bufferCounter = doSubscriptions(bufferCounter, i, newJoinOperator);
+			doPostParallelizationIfNeeded(i, newJoinOperator);
+		}
+		// connect fragmented data stream with union
+		doFinalConnection();
+		return transformationResult;
+	}
 
+	/**
+	 * connect fragmented data stream with union
+	 */
+	private void doFinalConnection() {
+		// get the last operator that need to be parallelized. if no end id is
+		// set, the given operator for transformation is selected
+		ILogicalOperator lastOperatorForParallelization = null;
+		if (configuration.getEndParallelizationId() != null
+				&& !configuration.getEndParallelizationId().isEmpty()) {
+			lastOperatorForParallelization = LogicalGraphHelper
+					.findDownstreamOperatorWithId(
+							configuration.getEndParallelizationId(), operator);
+		} else {
+			lastOperatorForParallelization = operator;
+		}
+
+		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+		downstreamOperatorSubscriptions.addAll(lastOperatorForParallelization
+				.getSubscriptions());
+
+		// unsibscribe existing operator from all sources and include new
+		// operator
+		lastOperatorForParallelization.unsubscribeFromAllSources();
+		lastOperatorForParallelization.unsubscribeFromAllSinks();
+
+		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
+			downstreamOperatorSubscription.getTarget().subscribeToSource(union,
+					downstreamOperatorSubscription.getSinkInPort(),
+					downstreamOperatorSubscription.getSourceOutPort(),
+					union.getOutputSchema());
+		}
+	}
+
+	/**
+	 * transform plan until endoperator is reached
+	 * 
+	 * @param i
+	 *            portNumber / iteration
+	 * @param newAggregateOperator
+	 */
+	private void doPostParallelizationIfNeeded(int i, JoinAO newJoinOperator) {
+		if (configuration.getEndParallelizationId() != null
+				&& !configuration.getEndParallelizationId().isEmpty()) {
+			// if endoperator id is set, do post parallelization
+			ILogicalOperator lastParallelizedOperator = doPostParallelization(
+					operator, newJoinOperator,
+					configuration.getEndParallelizationId(), i, fragments,
+					configuration);
+			union.subscribeToSource(lastParallelizedOperator, i, 0,
+					lastParallelizedOperator.getOutputSchema());
+		} else {
+			union.subscribeToSource(newJoinOperator, i, 0,
+					newJoinOperator.getOutputSchema());
+		}
+	}
+
+	/**
+	 * subscribes fragment to buffer and buffer to new join operator
+	 * 
+	 * @param bufferCounter
+	 * @param i
+	 * @param newJoinOperator
+	 * @return
+	 */
+	private int doSubscriptions(int bufferCounter, int i, JoinAO newJoinOperator) {
+		// for every fragementation operator do subscriptions
+		for (Pair<AbstractStaticFragmentAO, Integer> pair : fragmentsSinkInPorts) {
+			BufferAO buffer = createBufferOperator(bufferCounter);
+			bufferCounter++;
+
+			buffer.subscribeToSource(pair.getE1(), 0, i, pair.getE1()
+					.getOutputSchema());
+
+			newJoinOperator.subscribeToSource(buffer, pair.getE2(), 0,
+					buffer.getOutputSchema());
+		}
+		return bufferCounter;
+	}
+
+	/**
+	 * creates a new buffer operator
+	 * 
+	 * @param bufferCounter
+	 * @return
+	 */
+	private BufferAO createBufferOperator(int bufferCounter) {
+		BufferAO buffer = new BufferAO();
+		buffer.setName("Buffer_" + bufferCounter);
+		buffer.setThreaded(configuration.isUseThreadedBuffer());
+		buffer.setMaxBufferSize(configuration.getBufferSize());
+		buffer.setDrainAtClose(false);
+		return buffer;
+	}
+
+	/**
+	 * clones an existing join operator
+	 * 
+	 * @param i
+	 *            index for naming
+	 * @return
+	 */
+	private JoinAO cloneJoinOperator(int i) {
+		// clone join operator
+		JoinAO newJoinOperator = operator.clone();
+		newJoinOperator.setName(operator.getName() + "_" + i);
+		newJoinOperator.setUniqueIdentifier(UUID.randomUUID().toString());
+		return newJoinOperator;
+	}
+
+	/**
+	 * creates a new union operator
+	 */
+	private void createUnionOperator() {
+		union = new UnionAO();
+		union.setName("Union");
+		union.setUniqueIdentifier(UUID.randomUUID().toString());
+		transformationResult.setUnionOperator(union);
+	}
+
+	/**
+	 * creates the different fragment operators for both input streams of join
+	 * operator
+	 */
+	private void createAndSubscribeFragments() {
 		int numberOfFragments = 0;
-		List<Pair<AbstractStaticFragmentAO, Integer>> fragmentsSinkInPorts = new ArrayList<Pair<AbstractStaticFragmentAO, Integer>>();
-		List<AbstractStaticFragmentAO> fragments = new ArrayList<AbstractStaticFragmentAO>();
+		fragmentsSinkInPorts = new ArrayList<Pair<AbstractStaticFragmentAO, Integer>>();
+		fragments = new ArrayList<AbstractStaticFragmentAO>();
 
 		CopyOnWriteArrayList<LogicalSubscription> upstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		upstreamOperatorSubscriptions.addAll(joinOperator
-				.getSubscribedToSource());
+		upstreamOperatorSubscriptions.addAll(operator.getSubscribedToSource());
 
 		// for each input port of the join
 		for (Integer inputPort : attributes.keySet()) {
@@ -118,120 +276,91 @@ public class JoinTransformationStrategy extends
 					// from
 					// this subscription, create fragment operator
 					// Fragment operator
-					AbstractStaticFragmentAO fragmentAO;
+					AbstractStaticFragmentAO fragmentAO = null;
 					try {
 						fragmentAO = createFragmentAO(
-								configurationForOperator.getFragementationType(),
-								configurationForOperator
-										.getDegreeOfParallelization(),
+								configuration.getFragementationType(),
+								configuration.getDegreeOfParallelization(),
 								numberOfFragments + "", attributesForSource,
 								null, null);
 					} catch (InstantiationException | IllegalAccessException e) {
 						e.printStackTrace();
-						return new TransformationResult(State.FAILED);
+						transformationResult.setState(State.FAILED);
+						return;
 					}
 					if (fragmentAO == null) {
-						return new TransformationResult(State.FAILED);
+						transformationResult.setState(State.FAILED);
+						return;
 					}
 					transformationResult.addFragmentOperator(fragmentAO);
-
-					// save the fragement operator and the input port in a map
-					Pair<AbstractStaticFragmentAO, Integer> pair = new Pair<AbstractStaticFragmentAO, Integer>();
-					pair.setE1(fragmentAO);
-					pair.setE2(upstreamOperatorSubscription.getSinkInPort());
-					fragmentsSinkInPorts.add(pair);
-					fragments.add(fragmentAO);
-
-					// unsubscribe the join and subscribe the fragemnt operator
-					joinOperator
-							.unsubscribeFromSource(upstreamOperatorSubscription);
-					fragmentAO.subscribeToSource(upstreamOperatorSubscription
-							.getTarget(), 0, upstreamOperatorSubscription
-							.getSourceOutPort(), upstreamOperatorSubscription
-							.getTarget().getOutputSchema());
-
+					storeFragmentOperators(upstreamOperatorSubscription,
+							fragmentAO);
+					subscribeFragmentOperator(upstreamOperatorSubscription,
+							fragmentAO);
 					numberOfFragments++;
 					break;
 				}
 			}
 		}
+	}
 
-		// create union operator
-		UnionAO union = new UnionAO();
-		union.setName("Union");
-		union.setUniqueIdentifier(UUID.randomUUID().toString());
-		transformationResult.setUnionOperator(union);
+	/**
+	 * subscribe fragment operator to existing upstream operator
+	 * 
+	 * @param upstreamOperatorSubscription
+	 * @param fragmentAO
+	 */
+	private void subscribeFragmentOperator(
+			LogicalSubscription upstreamOperatorSubscription,
+			AbstractStaticFragmentAO fragmentAO) {
+		// unsubscribe the join and subscribe the fragemnt operator
+		operator.unsubscribeFromSource(upstreamOperatorSubscription);
+		fragmentAO.subscribeToSource(upstreamOperatorSubscription.getTarget(),
+				0, upstreamOperatorSubscription.getSourceOutPort(),
+				upstreamOperatorSubscription.getTarget().getOutputSchema());
+	}
 
-		// for every degree, insert buffer, clone join operator and connect everything
-		int bufferCounter = 0;
-		for (int i = 0; i < configurationForOperator.getDegreeOfParallelization(); i++) {
-			// clone join operator
-			JoinAO newJoinOperator = joinOperator.clone();
-			newJoinOperator.setName(joinOperator.getName() + "_" + i);
-			newJoinOperator.setUniqueIdentifier(joinOperator
-					.getUniqueIdentifier() + "_" + i);
+	/**
+	 * saves the created fragment operators for later usage
+	 * 
+	 * @param upstreamOperatorSubscription
+	 * @param fragmentAO
+	 */
+	private void storeFragmentOperators(
+			LogicalSubscription upstreamOperatorSubscription,
+			AbstractStaticFragmentAO fragmentAO) {
+		// save the fragement operator and the input port in a map
+		Pair<AbstractStaticFragmentAO, Integer> pair = new Pair<AbstractStaticFragmentAO, Integer>();
+		pair.setE1(fragmentAO);
+		pair.setE2(upstreamOperatorSubscription.getSinkInPort());
+		fragmentsSinkInPorts.add(pair);
+		fragments.add(fragmentAO);
+	}
 
-			// for every fragementation operator do subscriptions
-			for (Pair<AbstractStaticFragmentAO, Integer> pair : fragmentsSinkInPorts) {
-				BufferAO buffer = new BufferAO();
-				buffer.setName("Buffer_" + bufferCounter);
-				buffer.setThreaded(configurationForOperator.isUseThreadedBuffer());
-				buffer.setMaxBufferSize(configurationForOperator.getBufferSize());
-				buffer.setDrainAtClose(false);
-				bufferCounter++;
-
-				buffer.subscribeToSource(pair.getE1(), 0, i, pair.getE1()
-						.getOutputSchema());
-
-				newJoinOperator.subscribeToSource(buffer, pair.getE2(), 0,
-						buffer.getOutputSchema());
-
-			}
-
-			if (configurationForOperator.getEndParallelizationId() != null
-					&& !configurationForOperator.getEndParallelizationId().isEmpty()) {
-				// if endoperator id is set, do post parallelization
-				ILogicalOperator lastParallelizedOperator = doPostParallelization(
-						joinOperator, newJoinOperator,
-						configurationForOperator.getEndParallelizationId(), i,
-						fragments, configurationForOperator);
-				union.subscribeToSource(lastParallelizedOperator, i, 0,
-						lastParallelizedOperator.getOutputSchema());
-			} else {
-				union.subscribeToSource(newJoinOperator, i, 0,
-						newJoinOperator.getOutputSchema());
-			}
+	/**
+	 * prepares transformation and validates values
+	 */
+	private void prepareTransformation() {
+		transformationResult = new TransformationResult(State.SUCCESS);
+		// validates if operator and configuration are set
+		if (configuration == null || operator == null){
+			transformationResult.setState(State.FAILED);
+			return;
 		}
-
-		// get the last operator that need to be parallelized. if no end id is
-		// set, the given operator for transformation is selected
-		ILogicalOperator lastOperatorForParallelization = null;
-		if (configurationForOperator.getEndParallelizationId() != null
-				&& !configurationForOperator.getEndParallelizationId().isEmpty()) {
-			lastOperatorForParallelization = LogicalGraphHelper
-					.findDownstreamOperatorWithId(
-							configurationForOperator.getEndParallelizationId(),
-							joinOperator);
-		} else {
-			lastOperatorForParallelization = joinOperator;
+		
+		if (!super.areSettingsValid(configuration)) {
+			transformationResult.setState(State.FAILED);
+			return;
 		}
+		// check if the way to endpoint is valid, only if the end operator id is
+		// set
+		checkIfWayToEndPointIsValid(operator, configuration, true);
 
-		CopyOnWriteArrayList<LogicalSubscription> downstreamOperatorSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
-		downstreamOperatorSubscriptions.addAll(lastOperatorForParallelization
-				.getSubscriptions());
+		transformationResult.setAllowsModificationAfterUnion(true);
 
-		// unsibscribe existing operator from all sources and include new operator
-		lastOperatorForParallelization.unsubscribeFromAllSources();
-		lastOperatorForParallelization.unsubscribeFromAllSinks();
-
-		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			downstreamOperatorSubscription.getTarget().subscribeToSource(union,
-					downstreamOperatorSubscription.getSinkInPort(),
-					downstreamOperatorSubscription.getSourceOutPort(),
-					union.getOutputSchema());
-		}
-
-		return transformationResult;
+		attributes = new HashMap<Integer, List<SDFAttribute>>();
+		attributes = SDFAttributeHelper.getInstance()
+				.getSDFAttributesFromEqualPredicates(attributes, operator);
 	}
 
 	/**

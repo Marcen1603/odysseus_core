@@ -213,8 +213,9 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 							// if compatibility is greater than 0,
 							// transformation is possible
 							transformationResults.add(selectedStrategy
-									.transform(operatorForTransformation,
-											configurationForOperator));
+									.getNewInstance(operatorForTransformation,
+											configurationForOperator)
+									.transform());
 						} else {
 							// if the selected strategy corresponds to the given
 							// operator type, but is not compatible
@@ -246,8 +247,8 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 									globalDegreeOfParallelization,
 									globalBufferSize, useThreadedBuffer);
 					transformationResults.add(bestStrategy
-							.transform(operatorForTransformation,
-									configurationForOperator));
+							.getNewInstance(operatorForTransformation,
+									configurationForOperator).transform());
 				}
 			}
 		}
@@ -292,8 +293,8 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 						.createDefaultConfiguration(bestStrategy,
 								globalDegreeOfParallelization,
 								globalBufferSize, useThreadedBuffer);
-				transformationResults.add(bestStrategy.transform(
-						operatorForTransformation, configuration));
+				transformationResults.add(bestStrategy.getNewInstance(
+						operatorForTransformation, configuration).transform());
 			}
 		}
 		return transformationResults;

@@ -73,10 +73,16 @@ public interface IParallelTransformationStrategy<T extends ILogicalOperator> {
 	/**
 	 * do the specific transformation based on the configuration
 	 * 
-	 * @param operator
-	 * @param settingsForOperator
 	 * @return
 	 */
-	TransformationResult transform(ILogicalOperator operator,
-			ParallelOperatorConfiguration configurationForOperator);
+	TransformationResult transform();
+
+	/**
+	 * returns a new instance of this strategy. this is needed to avoid wrong
+	 * initialized variables
+	 * 
+	 * @return
+	 */
+	 IParallelTransformationStrategy<T> getNewInstance(ILogicalOperator operator, ParallelOperatorConfiguration configurationForOperator);
+
 }

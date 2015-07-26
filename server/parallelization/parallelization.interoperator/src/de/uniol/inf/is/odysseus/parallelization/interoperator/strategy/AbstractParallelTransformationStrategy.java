@@ -167,8 +167,7 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 					.clone();
 			currentClonedOperator.setName(currentClonedOperator.getName() + "_"
 					+ iteration);
-			currentClonedOperator.setUniqueIdentifier(currentClonedOperator
-					.getUniqueIdentifier() + "_" + iteration);
+			currentClonedOperator.setUniqueIdentifier(UUID.randomUUID().toString());
 
 			CopyOnWriteArrayList<LogicalSubscription> operatorSourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 			operatorSourceSubscriptions.addAll(currentExistingOperator
