@@ -390,13 +390,14 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 		sendResultMap.clear();
 
 		int remoteSendCount = 0;
+		int partNumber = 0;
 		for (ILogicalQueryPart part : correctedAllocationMap.keySet()) {
 			PeerID peerID = correctedAllocationMap.get(part);
 
 			if (!peerID.equals(p2pNetworkManager.getLocalPeerID())) {
 				ParameterTransformationConfiguration paramConfiguration = parameters.get(ParameterTransformationConfiguration.class);
 				Collection<String> metaTypes = paramConfiguration.getValue().getDefaultMetaTypeSet();
-				AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName(), queryPartIDCounter++, metaTypes, queryName);
+				AddQueryPartMessage msg = new AddQueryPartMessage(sharedQueryID, LogicalQueryHelper.generatePQLStatementFromQueryPart(part), parameters.getName(), queryPartIDCounter++, metaTypes, queryName + "_" + partNumber);
 
 				RepeatingMessageSend msgSender = new RepeatingMessageSend(peerCommunicator, msg, peerID);
 				senderMap.put(msg.getQueryPartID(), msgSender);
@@ -407,6 +408,8 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 				LOG.debug("Sent query part {} to peerID {} (queryPartID = {})", new Object[] { part, peerID, msg.getQueryPartID() });
 				LOG.trace("PQL-Query of query part {} is\n{}", part, msg.getPqlStatement());
 			}
+			
+			partNumber++;
 		}
 
 		waitForAcksAndFails();

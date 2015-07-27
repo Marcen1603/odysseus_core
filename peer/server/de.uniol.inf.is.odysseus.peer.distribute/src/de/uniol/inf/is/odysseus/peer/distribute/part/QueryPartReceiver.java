@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.part;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
@@ -27,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -150,7 +152,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 			p2pDictionary = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindPeerDictionary(IPeerDictionary serv) {
 		peerDictionary = serv;
@@ -162,7 +164,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 			peerDictionary = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindQueryPartController(IQueryPartController serv) {
 		controller = serv;
@@ -193,7 +195,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 				}
 
 				try {
-					addQueryPart(addQueryPartMessage,senderPeer);
+					addQueryPart(addQueryPartMessage, senderPeer);
 					ackedQueryPartIDs.add(addQueryPartMessage.getQueryPartID());
 
 					sendQueryAddAck(senderPeer, addQueryPartMessage);
@@ -208,7 +210,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		} else if (message instanceof AbortQueryPartAddMessage) {
 			AbortQueryPartAddMessage abortMessage = (AbortQueryPartAddMessage) message;
 
-			((QueryPartController)controller).removeSharedQuery(abortMessage.getSharedQueryID());
+			((QueryPartController) controller).removeSharedQuery(abortMessage.getSharedQueryID());
 
 			sendAbortAck(senderPeer, abortMessage.getSharedQueryID());
 		}
@@ -246,7 +248,7 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 
 		try {
 			checkNeededSources(message);
-			callExecutor(message,senderPeer);
+			callExecutor(message, senderPeer);
 		} catch (Throwable t) {
 			throw new QueryDistributionException("Could not execute query: " + t.getMessage(), t);
 		}
@@ -254,11 +256,10 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 
 	private void checkNeededSources(AddQueryPartMessage message) throws QueryDistributionException {
 		ISession session = PeerDistributePlugIn.getActiveSession();
-		System.err.println(message.getPqlStatement());
 		// FIX-ME: Add metaAttribute
 		IMetaAttribute metaAttribute = null;
 		List<IExecutorCommand> queries = compiler.translateQuery(message.getPqlStatement(), "PQL", session, getDataDictionary(), Context.empty(), metaAttribute, executor);
-		
+
 		for (IExecutorCommand q : queries) {
 
 			if (q instanceof CreateQueryCommand) {
@@ -268,21 +269,21 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 				RestructHelper.collectOperators(query.getLogicalPlan(), operators);
 
 				for (ILogicalOperator operator : operators) {
-					if( operator instanceof StreamAO ) {
-						StreamAO streamAO = (StreamAO)operator;
-						
+					if (operator instanceof StreamAO) {
+						StreamAO streamAO = (StreamAO) operator;
+
 						String peerIDString = streamAO.getNode();
 						String sourceName = streamAO.getStreamname().getResourceName();
-						
+
 						Optional<SourceAdvertisement> optSrcAdv = findSourceAdvertisement(sourceName, peerIDString);
-						if( optSrcAdv.isPresent() ) {
-							if( p2pDictionary.isImported(optSrcAdv.get())) {
+						if (optSrcAdv.isPresent()) {
+							if (p2pDictionary.isImported(optSrcAdv.get())) {
 								String importedName = p2pDictionary.getImportedSourceName(optSrcAdv.get()).get();
 								Resource resource = new Resource(session.getUser(), importedName);
-								
+
 								if (getDataDictionary().containsViewOrStream(resource, session)) {
 									streamAO.setSourceName(resource);
-									
+
 								} else {
 									throw new QueryDistributionException("Source " + sourceName + " of peer " + peerDictionary.getRemotePeerName(peerIDString) + " (locally known as " + importedName + ") is not known in local data dictionary!");
 								}
@@ -300,8 +301,8 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 
 	private static Optional<SourceAdvertisement> findSourceAdvertisement(String sourceName, String peerIDString) {
 		Collection<SourceAdvertisement> srcAdvs = p2pDictionary.getSources(sourceName);
-		for( SourceAdvertisement srcAdv : srcAdvs ) {
-			if( srcAdv.getPeerID().toString().equals(peerIDString)) {
+		for (SourceAdvertisement srcAdv : srcAdvs) {
+			if (srcAdv.getPeerID().toString().equals(peerIDString)) {
 				return Optional.of(srcAdv);
 			}
 		}
@@ -316,24 +317,61 @@ public class QueryPartReceiver implements IPeerCommunicatorListener {
 		}
 
 		String script = buildOdysseusScriptText(message);
+		System.err.println(script);
+
 		Collection<Integer> ids = executor.addQuery(script, "OdysseusScript", PeerDistributePlugIn.getActiveSession(), message.getTransCfgName(), Context.empty(), configuration);
-		
-		((QueryPartController)controller).registerAsSlave(ids, message.getSharedQueryID(),senderPeer);
+
+		((QueryPartController) controller).registerAsSlave(ids, message.getSharedQueryID(), senderPeer);
 	}
 
 	private static String buildOdysseusScriptText(AddQueryPartMessage message) {
 		StringBuilder sb = new StringBuilder();
-		
+
+		Collection<String> metadataTypeNames = message.getMetadataTypes();
+		Collection<Class<? extends IMetaAttribute>> metadataTypes = determineMetadataTypes(metadataTypeNames);
+		Set<String> metadataNames = MetadataRegistry.getNames();
+
+		for (Class<? extends IMetaAttribute> metadataType : metadataTypes) {
+			for (String metadataName : metadataNames) {
+				Optional<IMetaAttribute> metaAttribute = tryGetMetaAttribute(metadataName);
+				if (metaAttribute.isPresent() && metadataType.equals(metaAttribute.get().getClass())) {
+					sb.append("#METADATA " + metadataName).append("\n");
+					break;
+				}
+			}
+		}
+
 		sb.append("#PARSER PQL").append("\n");
-		
+
 		String queryName = message.getQueryName();
-		if( !Strings.isNullOrEmpty(queryName)) {
+		if (!Strings.isNullOrEmpty(queryName)) {
 			sb.append("#QNAME ").append(queryName).append("\n");
 		}
 		// TODO should not be set that way
 		sb.append("#ADDQUERY").append("\n");
 		sb.append(message.getPqlStatement()).append("\n");
 		return sb.toString();
+	}
+
+	private static Optional<IMetaAttribute> tryGetMetaAttribute(String metadataName) {
+		try {
+			return Optional.fromNullable(MetadataRegistry.getMetadataTypeByName(metadataName));
+		} catch (IllegalArgumentException e) {
+			return Optional.absent();
+		}
+	}
+
+	private static Collection<Class<? extends IMetaAttribute>> determineMetadataTypes(Collection<String> metadataTypeNames) {
+		Collection<Class<? extends IMetaAttribute>> result = Lists.newArrayList();
+		for (String metadataTypeName : metadataTypeNames) {
+			try {
+				IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(metadataTypeName);
+				result.add(metaAttribute.getClass());
+			} catch( Throwable t ) {
+				LOG.error("Could not determine metaAttribute of '{}'", metadataTypeName);
+			}
+		}
+		return result;
 	}
 
 	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
