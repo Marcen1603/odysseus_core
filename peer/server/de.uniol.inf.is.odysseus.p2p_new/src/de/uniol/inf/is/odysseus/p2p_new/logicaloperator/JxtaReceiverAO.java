@@ -7,11 +7,14 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -116,7 +119,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		}
 		
 		appendToAssignedSchema(basetimeUnit);
-		addParameterInfo("SCHEMA", schemaToString(outputSchema));
+		addParameterInfo("SCHEMA", schemaToString(assignedSchema.getAttributes()));
 	}
 	
 	public List<SDFAttribute> getSchema() {
@@ -137,6 +140,10 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 			Map<String, SDFConstraint> constraints = Maps.newHashMap();
 			constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, baseTimeunit));
 			assignedSchema = SDFSchemaFactory.createNewWithContraints(constraints, assignedSchema);
+			
+			List<SDFMetaSchema> metaSchemaList = Lists.newArrayList();
+			metaSchemaList.addAll(TimeInterval.schema);
+			assignedSchema = SDFSchemaFactory.createNewWithMetaSchema(assignedSchema, metaSchemaList );
 			
 			addParameterInfo("SCHEMA", schemaToString(assignedSchema.getAttributes()));
 		}
