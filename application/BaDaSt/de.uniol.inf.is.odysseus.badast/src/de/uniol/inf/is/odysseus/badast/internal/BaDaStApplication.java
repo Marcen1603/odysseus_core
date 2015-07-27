@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import kafka.server.KafkaConfig;
+import kafka.server.KafkaServerStartable;
+
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.zookeeper.server.ServerConfig;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
@@ -13,13 +16,12 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kafka.server.KafkaConfig;
-import kafka.server.KafkaServerStartable;
-
 /**
  * BaDaSt - Backup of Data Streams application. <br />
  * <br />
- * Starts first a ZooKeeper server and afterwards a Kafka server.
+ * Starts first a ZooKeeper server and afterwards a Kafka server. <br />
+ * <br />
+ * Type help in the OSGi console to see all BaDaSt commands.
  * 
  * @author Michael Brand
  *
@@ -29,7 +31,8 @@ public class BaDaStApplication implements BundleActivator {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory.getLogger(BaDaStApplication.class);
+	private static final Logger cLog = LoggerFactory
+			.getLogger(BaDaStApplication.class);
 
 	/**
 	 * The only instance.
@@ -96,7 +99,8 @@ public class BaDaStApplication implements BundleActivator {
 	 * /config/log4j.properties.
 	 */
 	private void configureLogging() {
-		PropertyConfigurator.configure(BaDaStApplication.class.getClassLoader().getResource("config/log4j.properties"));
+		PropertyConfigurator.configure(BaDaStApplication.class.getClassLoader()
+				.getResource("config/log4j.properties"));
 	}
 
 	/**
@@ -172,7 +176,8 @@ public class BaDaStApplication implements BundleActivator {
 			public void run() {
 				try {
 					KafkaConfig config = new KafkaConfig(props);
-					BaDaStApplication.this.mKafkaServer = new KafkaServerStartable(config);
+					BaDaStApplication.this.mKafkaServer = new KafkaServerStartable(
+							config);
 					BaDaStApplication.this.mKafkaServer.startup();
 				} catch (Exception e) {
 					cLog.error("Kafka failed!", e);
