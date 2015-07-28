@@ -1,7 +1,15 @@
 package de.uniol.inf.is.odysseus.badast.internal;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Properties;
+
+import kafka.api.FetchRequest;
+import kafka.api.FetchRequestBuilder;
+import kafka.javaapi.FetchResponse;
+import kafka.javaapi.consumer.SimpleConsumer;
+import kafka.message.MessageAndOffset;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
@@ -13,6 +21,7 @@ import de.uniol.inf.is.odysseus.badast.AbstractBaDaStReader;
 import de.uniol.inf.is.odysseus.badast.BaDaStException;
 import de.uniol.inf.is.odysseus.badast.IBaDaStReader;
 import de.uniol.inf.is.odysseus.badast.readers.BaDaStFileReader;
+import de.uniol.inf.is.odysseus.badast.readers.BaDaStTCPClientReader;
 
 /**
  * Provider of OSGi console commands for the BaDaSt application. <br />
@@ -40,6 +49,11 @@ public class BaDaStCommandProvider implements CommandProvider {
 	public static final String NAME_CONFIG = AbstractBaDaStReader.NAME_CONFIG;
 
 	/**
+	 * The key for configuration, where the source name is set.
+	 */
+	public static final String SOURCENAME_CONFIG = AbstractBaDaStReader.SOURCENAME_CONFIG;
+
+	/**
 	 * All available reader types. Key is the type, value is a not initialized
 	 * reader of that type.
 	 */
@@ -52,6 +66,10 @@ public class BaDaStCommandProvider implements CommandProvider {
 		cReaderTypes.put(
 				BaDaStFileReader.class.getAnnotation(ABaDaStReader.class)
 						.type(), fileReader);
+		IBaDaStReader<byte[]> tcpClientReader = new BaDaStTCPClientReader();
+		cReaderTypes.put(
+				BaDaStTCPClientReader.class.getAnnotation(ABaDaStReader.class)
+						.type(), tcpClientReader);
 	}
 
 	/**
@@ -164,7 +182,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 			cReaders.put(reader.getName(), reader);
 			ci.println("Created BaDaSt reader " + reader.getName());
 		} catch (BaDaStException e) {
-			ci.printStackTrace(e);
+			ci.println(e.getMessage());
 		}
 	}
 
@@ -242,6 +260,34 @@ public class BaDaStCommandProvider implements CommandProvider {
 	}
 
 	/**
+	 * Reads a source name from a given key value argument.
+	 * 
+	 * @param keyValueArgument
+	 *            The given key value argument.
+	 * @return The set source name.
+	 * @throws BaDaStException
+	 *             if the argument is null or if it does not match "key=value",
+	 *             where key is {@link #SOURCENAME_CONFIG}.
+	 */
+	private String readSourceName(String keyValueArgument)
+			throws BaDaStException {
+		if (keyValueArgument == null) {
+			throw new BaDaStException("Key value argument is null!");
+		}
+		if (!keyValueArgument.contains("=")) {
+			throw new BaDaStException(keyValueArgument
+					+ " is not a valid key value argument! key=value");
+		}
+		String[] keyValue = keyValueArgument.split("=");
+		if (!keyValue[0].trim().equals(SOURCENAME_CONFIG)) {
+			throw new BaDaStException(keyValueArgument
+					+ " is not a valid key value argument for source names! "
+					+ SOURCENAME_CONFIG + "=value");
+		}
+		return keyValue[1].trim();
+	}
+
+	/**
 	 * Starts an existing reader.
 	 * 
 	 * @param ci
@@ -259,14 +305,14 @@ public class BaDaStCommandProvider implements CommandProvider {
 					try {
 						cReaders.get(name).startReading();
 					} catch (BaDaStException e) {
-						ci.printStackTrace(e);
+						ci.println(e.getMessage());
 					}
 				}
 
 			}.start();
 			ci.println("Started BaDaSt reader " + name);
 		} catch (BaDaStException e) {
-			ci.printStackTrace(e);
+			ci.println(e.getMessage());
 		}
 	}
 
@@ -283,7 +329,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 			name = readName(ci.nextArgument());
 			validateNameShallExist(name);
 		} catch (BaDaStException e) {
-			ci.printStackTrace(e);
+			ci.println(e.getMessage());
 			return;
 		}
 
@@ -291,51 +337,78 @@ public class BaDaStCommandProvider implements CommandProvider {
 			cReaders.get(name).close();
 		} catch (Exception e) {
 			ci.print("Could not close reader!");
-			ci.printStackTrace(e);
+			ci.println(e.getMessage());
 		} finally {
 			cReaders.remove(name);
 			ci.println("Removed BaDaSt reader " + name);
 		}
 	}
 
-	// TODO just a test
-	public void _testConsumer(CommandInterpreter ci) {
-		kafka.javaapi.consumer.SimpleConsumer consumer = new kafka.javaapi.consumer.SimpleConsumer(
-				"0", 9092, 100000, 64 * 1024, "TestClient");
-		long readOffset = 0;
-		kafka.api.FetchRequest req = new kafka.api.FetchRequestBuilder()
-				.clientId("TestClient").addFetch("test", 0, 0, 100000).build();
-		kafka.javaapi.FetchResponse fetchResponse = consumer.fetch(req);
+	/**
+	 * Consumes a given topic from the Kafka server.
+	 * 
+	 * @param ci
+	 *            Should contain one argument "key=value", where key is
+	 *            {@link #SOURCENAME_CONFIG}.
+	 */
+	public void _consume(final CommandInterpreter ci) {
+		final String clientid = "OSGiConsoleClient";
+		try {
+			final String sourcename = readSourceName(ci.nextArgument());
+			new Thread(sourcename) {
 
-		long numRead = 0;
-		for (kafka.message.MessageAndOffset messageAndOffset : fetchResponse
-				.messageSet("test", 0)) {
-			long currentOffset = messageAndOffset.offset();
-			if (currentOffset < readOffset) {
-				System.out.println("Found an old offset: " + currentOffset
-						+ " Expecting: " + readOffset);
-				continue;
-			}
-			readOffset = messageAndOffset.nextOffset();
-			java.nio.ByteBuffer payload = messageAndOffset.message().payload();
+				@Override
+				public void run() {
+					SimpleConsumer consumer = new SimpleConsumer("0", 9092,
+							100000, 64 * 1024, clientid);
+					long readOffset = 0;
+					FetchRequest req = new FetchRequestBuilder()
+							.clientId(clientid)
+							.addFetch(sourcename, 0, 0, 100000).build();
+					FetchResponse fetchResponse = consumer.fetch(req);
 
-			byte[] bytes = new byte[payload.limit()];
-			payload.get(bytes);
-			try {
-				System.out.println(String.valueOf(messageAndOffset.offset())
-						+ ": " + new String(bytes, "UTF-8"));
-			} catch (java.io.UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			numRead++;
-		}
+					long numRead = 0;
+					for (MessageAndOffset messageAndOffset : fetchResponse
+							.messageSet(sourcename, 0)) {
+						long currentOffset = messageAndOffset.offset();
+						if (currentOffset < readOffset) {
+							System.out.println("Found an old offset: "
+									+ currentOffset + " Expecting: "
+									+ readOffset);
+							continue;
+						}
+						readOffset = messageAndOffset.nextOffset();
+						ByteBuffer payload = messageAndOffset.message()
+								.payload();
 
-		if (numRead == 0) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException ie) {
-			}
+						byte[] bytes = new byte[payload.limit()];
+						payload.get(bytes);
+						try {
+							System.out.println(String.valueOf(messageAndOffset
+									.offset())
+									+ ": "
+									+ new String(bytes, "UTF-8"));
+						} catch (UnsupportedEncodingException e) {
+							ci.print("Could not encode message!");
+							ci.println(e.getMessage());
+						}
+						numRead++;
+					}
+
+					if (numRead == 0) {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException ie) {
+							ci.println(ie.getMessage());
+						}
+					}
+				}
+
+			}.start();
+			ci.println("Reading the backup of source " + sourcename
+					+ " finished");
+		} catch (BaDaStException e) {
+			ci.println(e.getMessage());
 		}
 	}
 
@@ -353,6 +426,8 @@ public class BaDaStCommandProvider implements CommandProvider {
 				+ "startReader name=xyz - Starts an existing BaDaSt reader with the name of the BaDaSt reader as a key value pair.\n");
 		out.append(TAB
 				+ "closeReader name=xyz - Closes and removes an existing BaDaSt reader with the name of the BaDaSt reader as a key value pair.\n");
+		out.append(TAB
+				+ "consume sourcename=xyz - Reads the backup of a given source from the Kafka server with the name of the source as a key value pair.\n");
 		return out.toString();
 	}
 

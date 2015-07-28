@@ -16,11 +16,6 @@ import de.uniol.inf.is.odysseus.badast.KafkaProducerFactory;
 /**
  * BaDaSt readers act as subscriber for data sources and as publisher for Kafka. <br />
  * <br />
- * Individual BaDaSt reader implementations are to be designed for certain types
- * of data sources (e.g., a simple file source). They connect to the data
- * source, read the outgoing data streams and publish them to a Kafka server to
- * store them. <br />
- * <br />
  * This reader is for file sources and needs {@link #SOURCENAME_CONFIG} and
  * {@link #FILENAME_CONFIG} as entries of the configuration. It publishes the
  * read lines as Strings to Kafka.

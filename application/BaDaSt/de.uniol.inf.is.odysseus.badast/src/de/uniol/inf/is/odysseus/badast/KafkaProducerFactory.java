@@ -27,7 +27,7 @@ public class KafkaProducerFactory {
 	public static KafkaProducer<String, byte[]> createKafkaProducerByteArray(
 			String clientId) throws IOException {
 		Properties cfg = new Properties();
-		cfg.put("client_id", clientId);
+		cfg.put("client.id", clientId);
 		cfg.put("value.serializer",
 				"org.apache.kafka.common.serialization.ByteArraySerializer");
 		try (InputStream stream = KafkaProducerFactory.class.getClassLoader()

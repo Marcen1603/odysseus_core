@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 
-// TODO implement a reader to read from Nexmark server
 /**
  * BaDaSt readers act as subscriber for data sources and as publisher for Kafka. <br />
  * <br />
