@@ -57,6 +57,7 @@ public class SocketSinkAO extends AbstractLogicalOperator {
 		this.sinkName = socketSinkAO.sinkName;
 		this.host = socketSinkAO.host;
 		this.connectToServer = socketSinkAO.connectToServer;
+		this.withMetadata = socketSinkAO.withMetadata;
 	}
 
 	@Parameter(name="SINKPORT",type = IntegerParameter.class, optional = false)
