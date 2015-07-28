@@ -130,7 +130,7 @@ public class DeviationLearnAO extends BinaryLogicalOp {
 		return nameOfValue;
 	}
 
-	@Parameter(type = StringParameter.class, name = "nameOfParameter", optional = false, doc = "Name of the attribute which should be analysed")
+	@Parameter(type = StringParameter.class, name = "attribute", optional = false, doc = "Name of the attribute which should be analysed")
 	public void setNameOfValue(String nameOfValue) {
 		this.nameOfValue = nameOfValue;
 	}

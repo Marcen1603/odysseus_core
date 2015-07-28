@@ -44,7 +44,7 @@ public class DeviationSequenceLearnAO extends UnaryLogicalOp {
 		this.groupingAttributes = ao.getGroupingAttributes();
 	}
 
-	@Parameter(type = StringParameter.class, name = "parameterAttribute", optional = true, doc = "Name of the attribute which should be analysed")
+	@Parameter(type = StringParameter.class, name = "attribute", optional = true, doc = "Name of the attribute which should be analysed")
 	public void setValueAttributeName(String valueAttributeName) {
 		this.valueAttributeName = valueAttributeName;
 	}
