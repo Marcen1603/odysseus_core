@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.views;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -12,6 +14,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
@@ -27,7 +30,9 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 	private static final String STRATEGY_LABEL = "Strategy:";
 	private static final String ALLOCATOR_LABEL = "Allocator:";
 	private static final String STATUS_DESCRIPTION_LABEL = "Current Status:";
+	private static final String BLOCK_MEMORY_LABEL = "Block Memory:";
 	private static final String STATUS_LOCK = "Lock Status:";
+	private static final String MEGABYTES_RESERVED = "MB of Memory reserved";
 	
 	private String selectedStrategy = "";
 	private String selectedAllocator ="";
@@ -37,6 +42,11 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 	private Label statusLabel;
 	private Label lockLabel;
 	private Button unlockButton;
+	private Label reservedLabel;
+	private Text memText;
+	
+	
+	private byte[] blockedMem;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -64,7 +74,7 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		ILoadBalancingLock lock = Activator.getLock();
 		
 		Composite rootComposite = new Composite(parent, SWT.NONE);
-		rootComposite.setLayout(new GridLayout(2, false));
+		rootComposite.setLayout(new GridLayout(2, true));
 		
 		createLabel(rootComposite,STATUS_DESCRIPTION_LABEL);
 		statusLabel = createLabel(rootComposite,STATUS_DESCRIPTION_LABEL);
@@ -107,6 +117,45 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 				selectedAllocator = ((Combo)e.getSource()).getText();
 			}
 		});
+		
+		
+		createLabel(rootComposite,BLOCK_MEMORY_LABEL);
+		memText = new Text(rootComposite,SWT.NONE);
+		memText.setText("0");
+		memText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// Enter pressed
+				if (e.keyCode == 13) {
+					String text = memText.getText();
+					try {
+						int size = Integer.parseInt(text);
+						size  = size*1024;
+						blockedMem = null;
+						blockedMem = new byte[size];
+						for(int i=0;i<size;i++) {
+							blockedMem[i]='X';
+						}
+						Display.getDefault().syncExec(new Runnable() {
+						    public void run() {
+						    	reservedLabel.setText(memText.getText());
+						    }
+						});
+						
+						
+					}
+					catch(NumberFormatException ex) {
+						//DO nothing.
+					}
+				}
+			}
+		});
+		
+		
+		reservedLabel = createLabel(rootComposite,"0");
+		createLabel(rootComposite,MEGABYTES_RESERVED);
+		
+		
 		
 		Composite buttonComposite = new Composite(rootComposite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout(3, true));
@@ -178,6 +227,8 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		}
 		
 		
+		
+		
 		populateStrategyList(controller);
 		populateAllocatorList(controller);
 	}
@@ -205,6 +256,8 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		if(lock!=null) {
 			lock.removeListener(this);
 		}
+		
+		blockedMem = null;
 	}
 	
 	private void populateStrategyList(ILoadBalancingController controller) {
@@ -260,6 +313,8 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 			
 		}		
 	}
+	
+	
 	
 	
 	

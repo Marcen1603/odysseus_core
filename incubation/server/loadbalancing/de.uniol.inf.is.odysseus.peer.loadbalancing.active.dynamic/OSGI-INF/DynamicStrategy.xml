@@ -12,4 +12,5 @@
    <reference bind="bindLoadBalancingLock" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock" name="ILoadBalancingLock" policy="static" unbind="unbindLoadBalancingLock"/>
    <reference bind="bindPeerCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator" name="IPeerCommunicator" policy="static" unbind="unbindPeerCommunicator"/>
    <reference bind="bindLoadBalancingCommunicatorRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry" name="ILoadBalancingCommunicatorRegistry" policy="static" unbind="unbindLoadBalancingCommunicatorRegistry"/>
+   <reference bind="bindQueryPartController" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController" name="IQueryPartController" policy="static" unbind="unbindQueryPartController"/>
 </scr:component>

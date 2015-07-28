@@ -12,6 +12,8 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -31,6 +33,7 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
@@ -58,6 +61,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	private ILoadBalancingCommunicatorRegistry communicatorRegistry;
 	private IPeerCommunicator peerCommunicator;
 	private List<QueryTransmissionHandler> transmissionHandlerList;
+	private IQueryPartController queryPartController;
 	
 
 	private MonitoringThread monitoringThread = null;
@@ -70,6 +74,16 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	public void unbindPeerCommunicator(IPeerCommunicator serv) {
 		if(this.peerCommunicator==serv) {
 			this.peerCommunicator = null;
+		}
+	}
+	
+	public void bindQueryPartController(IQueryPartController serv) {
+			this.queryPartController = serv;
+	}
+	
+	public void unbindQueryPartController(IQueryPartController serv) {
+		if(this.queryPartController==serv) {
+			this.queryPartController=null;
 		}
 	}
 	
@@ -231,7 +245,14 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	@Override
 	public void triggerLoadBalancing(double cpuUsage, double memUsage, double netUsage) {
 		
-		
+		Preconditions.checkNotNull(this.networkManager);
+		Preconditions.checkNotNull(this.executor);
+		Preconditions.checkNotNull(this.queryPartController);
+		Preconditions.checkNotNull(this.communicatorRegistry);
+		Preconditions.checkNotNull(this.allocator);
+		Preconditions.checkNotNull(this.lock);
+		Preconditions.checkNotNull(this.peerDictionary);
+		Preconditions.checkNotNull(this.physicalCostModel);
 		
 		if(executor.getLogicalQueryIds(getActiveSession()).size()==0) {
 			LOG.warn("Load Balancing triggered, but no queries installed. Continuing monitoring.");
@@ -254,7 +275,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 		//Replaces Sources with Sender-Receiver constructs.
 		for(int queryID : executor.getLogicalQueryIds(getActiveSession())) {
-			SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor);
+			SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor,queryPartController);
 		}
 		
 		QueryCostMap allQueries = generateCostMapForAllQueries();
