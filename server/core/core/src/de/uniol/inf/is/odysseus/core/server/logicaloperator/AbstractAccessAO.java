@@ -275,6 +275,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return readMetaData;
 	}
 
+	// needed for PQL-Generator
+	public boolean getReadMetaData() {
+		return readMetaData();
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
