@@ -4,12 +4,6 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.ITypeOperators;
 
 public class ObjectOperators implements ITypeOperators {
 	
-	public static String NAME = "";
-	
-	protected static void print(Object obj, String toPrint) {
-		System.out.println(toPrint);
-	}
-
 	@Override
 	public Class<?> getType() {
 		return Object.class;

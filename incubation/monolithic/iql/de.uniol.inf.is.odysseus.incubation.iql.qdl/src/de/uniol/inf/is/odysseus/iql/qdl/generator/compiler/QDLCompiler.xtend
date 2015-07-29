@@ -16,6 +16,8 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource
 
 class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLStatementCompiler, QDLTypeFactory>{
 	
@@ -66,6 +68,11 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 			}
 			
 			public «Collection.simpleName»<«IQDLOperator.simpleName»<?>> execute() {
+			 	«FOR source : factory.sources»
+			 		«context.addImport(StreamAO.canonicalName)»
+			 		«context.addImport(DefaultQDLSource.canonicalName)»			 		
+			 		«DefaultQDLSource.simpleName»<«StreamAO.simpleName»> «source» = getSource("«source»");
+				«ENDFOR»
 			 	«Collection.simpleName»<«IQDLOperator.simpleName»<?>> operators = new «ArrayList.simpleName»<>();
 			 	«FOR stmt : block.statements»
 			 		«stmtCompiler.compile(stmt, context)»

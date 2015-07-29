@@ -8158,11 +8158,11 @@ rule__IQLMetadataValueSingle__Group_5_0__0__Impl
     }
 :
 (
-{ before(grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleTypeRefAction_5_0_0()); }
+{ before(grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleIDAction_5_0_0()); }
 (
 
 )
-{ after(grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleTypeRefAction_5_0_0()); }
+{ after(grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleIDAction_5_0_0()); }
 )
 
 ;
@@ -8221,11 +8221,11 @@ rule__IQLMetadataValueSingle__Group_6__0__Impl
     }
 :
 (
-{ before(grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleIDAction_6_0()); }
+{ before(grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleTypeRefAction_6_0()); }
 (
 
 )
-{ after(grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleIDAction_6_0()); }
+{ after(grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleTypeRefAction_6_0()); }
 )
 
 ;
@@ -18155,8 +18155,8 @@ rule__IQLMetadataValueSingle__ValueAssignment_5_0_1
     }
 :
 (
-{ before(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_5_0_1_0()); }
-	ruleJvmTypeReference{ after(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_5_0_1_0()); }
+{ before(grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_5_0_1_0()); }
+	RULE_ID{ after(grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_5_0_1_0()); }
 )
 
 ;
@@ -18170,8 +18170,8 @@ rule__IQLMetadataValueSingle__ValueAssignment_6_1
     }
 :
 (
-{ before(grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_6_1_0()); }
-	RULE_ID{ after(grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_6_1_0()); }
+{ before(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_6_1_0()); }
+	ruleJvmTypeReference{ after(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_6_1_0()); }
 )
 
 ;

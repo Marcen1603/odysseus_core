@@ -7,8 +7,6 @@ import de.uniol.inf.is.odysseus.iql.basic.types.Range;
 
 public class ListOperators extends CollectionOperators {
 	
-	public static String NAME = "";
-
 	@Override
 	public Class<?> getType() {
 		return List.class;
@@ -41,16 +39,9 @@ public class ListOperators extends CollectionOperators {
 		return true;
 	}
 
-
-	public static int length(List<?> list) {
-		return list.size();
-	}
 	
 	@Override
 	public boolean hasExtensionAttribute(String name) {
-		if (name.equalsIgnoreCase("NAME")) {
-			return true;
-		}
 		return false;	
 	}
 	
@@ -60,5 +51,9 @@ public class ListOperators extends CollectionOperators {
 			return true;
 		}
 		return false;
+	}
+	
+	public static int length(List<?> list) {
+		return list.size();
 	}
 }

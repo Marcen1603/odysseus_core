@@ -129,7 +129,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		} else if (sourceObj instanceof IQDLOperator) {
 			source = ((IQDLOperator<?>)sourceObj);
 		}
-		sink.subscribeToSource(source, sink.getLogicalOperator().getSubscribedToSource().size(), sourceOutPort);
+		sink.subscribeToSource(source, sourceOutPort);
 		return source;
 	}
 	
@@ -185,7 +185,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		} else if (sourceObj instanceof IQDLOperator) {
 			source = ((IQDLOperator<?>)sourceObj);
 		}
-		source.subscribeSink(sink, sink.getLogicalOperator().getSubscriptions().size(), sourceOutPort);
+		source.subscribeSink(sink, sourceOutPort);
 
 		return sink;
 	}

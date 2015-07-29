@@ -329,15 +329,6 @@ public interface BasicIQLFactory extends EFactory
   IQLMetadataValueSingleChar createIQLMetadataValueSingleChar();
 
   /**
-   * Returns a new object of class '<em>IQL Metadata Value Single Type Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Metadata Value Single Type Ref</em>'.
-   * @generated
-   */
-  IQLMetadataValueSingleTypeRef createIQLMetadataValueSingleTypeRef();
-
-  /**
    * Returns a new object of class '<em>IQL Metadata Value Single ID</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -345,6 +336,15 @@ public interface BasicIQLFactory extends EFactory
    * @generated
    */
   IQLMetadataValueSingleID createIQLMetadataValueSingleID();
+
+  /**
+   * Returns a new object of class '<em>IQL Metadata Value Single Type Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Metadata Value Single Type Ref</em>'.
+   * @generated
+   */
+  IQLMetadataValueSingleTypeRef createIQLMetadataValueSingleTypeRef();
 
   /**
    * Returns a new object of class '<em>IQL Metadata Value Single Null</em>'.

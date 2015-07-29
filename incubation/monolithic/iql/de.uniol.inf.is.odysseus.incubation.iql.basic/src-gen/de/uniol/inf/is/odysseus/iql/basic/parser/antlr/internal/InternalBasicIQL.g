@@ -1580,44 +1580,20 @@ ruleIQLMetadataValueSingle returns [EObject current=null]
     |((((
 )(
 (
-ruleJvmTypeReference
+RULE_ID
+
 )
 )))=>((
     {
         $current = forceCreateModelElement(
-            grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleTypeRefAction_5_0_0(),
+            grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleIDAction_5_0_0(),
             $current);
     }
 )(
 (
-		{ 
-	        newCompositeNode(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_5_0_1_0()); 
-	    }
-		lv_value_11_0=ruleJvmTypeReference		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getIQLMetadataValueSingleRule());
-	        }
-       		set(
-       			$current, 
-       			"value",
-        		lv_value_11_0, 
-        		"JvmTypeReference");
-	        afterParserOrEnumRuleCall();
-	    }
-
-)
-)))
-    |((
-    {
-        $current = forceCreateModelElement(
-            grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleIDAction_6_0(),
-            $current);
-    }
-)(
-(
-		lv_value_13_0=RULE_ID
+		lv_value_11_0=RULE_ID
 		{
-			newLeafNode(lv_value_13_0, grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_6_1_0()); 
+			newLeafNode(lv_value_11_0, grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_5_0_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -1626,8 +1602,33 @@ ruleJvmTypeReference
        		setWithLastConsumed(
        			$current, 
        			"value",
-        		lv_value_13_0, 
+        		lv_value_11_0, 
         		"ID");
+	    }
+
+)
+)))
+    |((
+    {
+        $current = forceCreateModelElement(
+            grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleTypeRefAction_6_0(),
+            $current);
+    }
+)(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_6_1_0()); 
+	    }
+		lv_value_13_0=ruleJvmTypeReference		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getIQLMetadataValueSingleRule());
+	        }
+       		set(
+       			$current, 
+       			"value",
+        		lv_value_13_0, 
+        		"JvmTypeReference");
+	        afterParserOrEnumRuleCall();
 	    }
 
 )

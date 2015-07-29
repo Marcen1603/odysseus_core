@@ -61,6 +61,9 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory {
 				types.add(t);
 			}
 		}
+		for (Class<?> c : QDLDefaultTypes.getVisibleTypes()) {
+			types.add(typeReferences.findDeclaredType(c.getCanonicalName(), context));
+		}
 		return types;
 	}
 	
@@ -70,6 +73,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory {
 		for (Class<?> parameterValueType : parameterValueTypes) {
 			implicitImports.add(parameterValueType.getCanonicalName());
 		}	
+		implicitImports.addAll(QDLDefaultTypes.getImplicitImports());	
 		return implicitImports;
 	}
 
@@ -96,6 +100,9 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory {
 		sourceTypes.remove(sourceName.toLowerCase());
 	}
 	
+	public Collection<String> getSources() {
+		return sources.keySet();
+	}	
 	
 	public Collection<IQLClass> getSourceTypes() {
 		return sourceTypes.values();

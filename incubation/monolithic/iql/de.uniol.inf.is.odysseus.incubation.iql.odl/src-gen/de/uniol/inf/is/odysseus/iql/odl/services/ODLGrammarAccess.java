@@ -703,7 +703,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	//IQLMetadataValueSingle returns IQLMetadataValue:
 	//	{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
 	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR | =>
-	//	({IQLMetadataValueSingleTypeRef} value=JvmTypeReference) | {IQLMetadataValueSingleID} value=ID |
+	//	({IQLMetadataValueSingleID} value=ID) | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
 	//	{IQLMetadataValueSingleNull} value="null";
 	public BasicIQLGrammarAccess.IQLMetadataValueSingleElements getIQLMetadataValueSingleAccess() {
 		return gaBasicIQL.getIQLMetadataValueSingleAccess();

@@ -111,11 +111,11 @@
     <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleChar">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleChar/value"/>
     </genClasses>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleTypeRef">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMetadataValueSingleTypeRef/value"/>
-    </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleID">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleID/value"/>
+    </genClasses>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleTypeRef">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMetadataValueSingleTypeRef/value"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleNull">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleNull/value"/>

@@ -259,14 +259,14 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLMetadataValueSingleCharAdapter();
       }
       @Override
-      public Adapter caseIQLMetadataValueSingleTypeRef(IQLMetadataValueSingleTypeRef object)
-      {
-        return createIQLMetadataValueSingleTypeRefAdapter();
-      }
-      @Override
       public Adapter caseIQLMetadataValueSingleID(IQLMetadataValueSingleID object)
       {
         return createIQLMetadataValueSingleIDAdapter();
+      }
+      @Override
+      public Adapter caseIQLMetadataValueSingleTypeRef(IQLMetadataValueSingleTypeRef object)
+      {
+        return createIQLMetadataValueSingleTypeRefAdapter();
       }
       @Override
       public Adapter caseIQLMetadataValueSingleNull(IQLMetadataValueSingleNull object)
@@ -1116,21 +1116,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef <em>IQL Metadata Value Single Type Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef
-   * @generated
-   */
-  public Adapter createIQLMetadataValueSingleTypeRefAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID <em>IQL Metadata Value Single ID</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -1141,6 +1126,21 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIQLMetadataValueSingleIDAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef <em>IQL Metadata Value Single Type Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef
+   * @generated
+   */
+  public Adapter createIQLMetadataValueSingleTypeRefAdapter()
   {
     return null;
   }

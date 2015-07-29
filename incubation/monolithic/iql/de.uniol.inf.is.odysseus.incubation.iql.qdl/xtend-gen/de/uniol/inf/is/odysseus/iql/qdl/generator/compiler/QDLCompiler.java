@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.iql.qdl.generator.compiler;
 
 import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
@@ -23,6 +24,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
 import java.util.ArrayList;
@@ -138,15 +140,41 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
       _builder.append(_simpleName_1, "\t");
       _builder.append("<?>> execute() {");
       _builder.newLineIfNotEmpty();
+      {
+        Collection<String> _sources = this.factory.getSources();
+        for(final String source : _sources) {
+          _builder.append("\t \t");
+          String _canonicalName = StreamAO.class.getCanonicalName();
+          context.addImport(_canonicalName);
+          _builder.newLineIfNotEmpty();
+          _builder.append("\t \t");
+          String _canonicalName_1 = DefaultQDLSource.class.getCanonicalName();
+          context.addImport(_canonicalName_1);
+          _builder.append("\t\t\t \t\t");
+          _builder.newLineIfNotEmpty();
+          _builder.append("\t \t");
+          String _simpleName_2 = DefaultQDLSource.class.getSimpleName();
+          _builder.append(_simpleName_2, "\t \t");
+          _builder.append("<");
+          String _simpleName_3 = StreamAO.class.getSimpleName();
+          _builder.append(_simpleName_3, "\t \t");
+          _builder.append("> ");
+          _builder.append(source, "\t \t");
+          _builder.append(" = getSource(\"");
+          _builder.append(source, "\t \t");
+          _builder.append("\");");
+          _builder.newLineIfNotEmpty();
+        }
+      }
       _builder.append("\t \t");
-      String _simpleName_2 = Collection.class.getSimpleName();
-      _builder.append(_simpleName_2, "\t \t");
-      _builder.append("<");
-      String _simpleName_3 = IQDLOperator.class.getSimpleName();
-      _builder.append(_simpleName_3, "\t \t");
-      _builder.append("<?>> operators = new ");
-      String _simpleName_4 = ArrayList.class.getSimpleName();
+      String _simpleName_4 = Collection.class.getSimpleName();
       _builder.append(_simpleName_4, "\t \t");
+      _builder.append("<");
+      String _simpleName_5 = IQDLOperator.class.getSimpleName();
+      _builder.append(_simpleName_5, "\t \t");
+      _builder.append("<?>> operators = new ");
+      String _simpleName_6 = ArrayList.class.getSimpleName();
+      _builder.append(_simpleName_6, "\t \t");
       _builder.append("<>();");
       _builder.newLineIfNotEmpty();
       {

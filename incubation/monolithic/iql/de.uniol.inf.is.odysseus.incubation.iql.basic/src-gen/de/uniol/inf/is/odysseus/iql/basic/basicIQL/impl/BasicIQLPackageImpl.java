@@ -351,14 +351,14 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass iqlMetadataValueSingleTypeRefEClass = null;
+  private EClass iqlMetadataValueSingleIDEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass iqlMetadataValueSingleIDEClass = null;
+  private EClass iqlMetadataValueSingleTypeRefEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1521,26 +1521,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getIQLMetadataValueSingleTypeRef()
-  {
-    return iqlMetadataValueSingleTypeRefEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getIQLMetadataValueSingleTypeRef_Value()
-  {
-    return (EReference)iqlMetadataValueSingleTypeRefEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getIQLMetadataValueSingleID()
   {
     return iqlMetadataValueSingleIDEClass;
@@ -1554,6 +1534,26 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
   public EAttribute getIQLMetadataValueSingleID_Value()
   {
     return (EAttribute)iqlMetadataValueSingleIDEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIQLMetadataValueSingleTypeRef()
+  {
+    return iqlMetadataValueSingleTypeRefEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getIQLMetadataValueSingleTypeRef_Value()
+  {
+    return (EReference)iqlMetadataValueSingleTypeRefEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -3044,11 +3044,11 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     iqlMetadataValueSingleCharEClass = createEClass(IQL_METADATA_VALUE_SINGLE_CHAR);
     createEAttribute(iqlMetadataValueSingleCharEClass, IQL_METADATA_VALUE_SINGLE_CHAR__VALUE);
 
-    iqlMetadataValueSingleTypeRefEClass = createEClass(IQL_METADATA_VALUE_SINGLE_TYPE_REF);
-    createEReference(iqlMetadataValueSingleTypeRefEClass, IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE);
-
     iqlMetadataValueSingleIDEClass = createEClass(IQL_METADATA_VALUE_SINGLE_ID);
     createEAttribute(iqlMetadataValueSingleIDEClass, IQL_METADATA_VALUE_SINGLE_ID__VALUE);
+
+    iqlMetadataValueSingleTypeRefEClass = createEClass(IQL_METADATA_VALUE_SINGLE_TYPE_REF);
+    createEReference(iqlMetadataValueSingleTypeRefEClass, IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE);
 
     iqlMetadataValueSingleNullEClass = createEClass(IQL_METADATA_VALUE_SINGLE_NULL);
     createEAttribute(iqlMetadataValueSingleNullEClass, IQL_METADATA_VALUE_SINGLE_NULL__VALUE);
@@ -3284,8 +3284,8 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     iqlMetadataValueSingleStringEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleBooleanEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleCharEClass.getESuperTypes().add(this.getIQLMetadataValue());
-    iqlMetadataValueSingleTypeRefEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleIDEClass.getESuperTypes().add(this.getIQLMetadataValue());
+    iqlMetadataValueSingleTypeRefEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleNullEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueListEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueMapEClass.getESuperTypes().add(this.getIQLMetadataValue());
@@ -3446,11 +3446,11 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     initEClass(iqlMetadataValueSingleCharEClass, IQLMetadataValueSingleChar.class, "IQLMetadataValueSingleChar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIQLMetadataValueSingleChar_Value(), ecorePackage.getEChar(), "value", null, 0, 1, IQLMetadataValueSingleChar.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(iqlMetadataValueSingleTypeRefEClass, IQLMetadataValueSingleTypeRef.class, "IQLMetadataValueSingleTypeRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIQLMetadataValueSingleTypeRef_Value(), theTypesPackage.getJvmTypeReference(), null, "value", null, 0, 1, IQLMetadataValueSingleTypeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
     initEClass(iqlMetadataValueSingleIDEClass, IQLMetadataValueSingleID.class, "IQLMetadataValueSingleID", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIQLMetadataValueSingleID_Value(), ecorePackage.getEString(), "value", null, 0, 1, IQLMetadataValueSingleID.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(iqlMetadataValueSingleTypeRefEClass, IQLMetadataValueSingleTypeRef.class, "IQLMetadataValueSingleTypeRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getIQLMetadataValueSingleTypeRef_Value(), theTypesPackage.getJvmTypeReference(), null, "value", null, 0, 1, IQLMetadataValueSingleTypeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlMetadataValueSingleNullEClass, IQLMetadataValueSingleNull.class, "IQLMetadataValueSingleNull", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIQLMetadataValueSingleNull_Value(), ecorePackage.getEString(), "value", null, 0, 1, IQLMetadataValueSingleNull.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

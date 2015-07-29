@@ -383,19 +383,19 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF:
-      {
-        IQLMetadataValueSingleTypeRef iqlMetadataValueSingleTypeRef = (IQLMetadataValueSingleTypeRef)theEObject;
-        T result = caseIQLMetadataValueSingleTypeRef(iqlMetadataValueSingleTypeRef);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleTypeRef);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_ID:
       {
         IQLMetadataValueSingleID iqlMetadataValueSingleID = (IQLMetadataValueSingleID)theEObject;
         T result = caseIQLMetadataValueSingleID(iqlMetadataValueSingleID);
         if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleID);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF:
+      {
+        IQLMetadataValueSingleTypeRef iqlMetadataValueSingleTypeRef = (IQLMetadataValueSingleTypeRef)theEObject;
+        T result = caseIQLMetadataValueSingleTypeRef(iqlMetadataValueSingleTypeRef);
+        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleTypeRef);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1348,22 +1348,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Type Ref</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Type Ref</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLMetadataValueSingleTypeRef(IQLMetadataValueSingleTypeRef object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single ID</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1375,6 +1359,22 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIQLMetadataValueSingleID(IQLMetadataValueSingleID object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Type Ref</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Type Ref</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLMetadataValueSingleTypeRef(IQLMetadataValueSingleTypeRef object)
   {
     return null;
   }

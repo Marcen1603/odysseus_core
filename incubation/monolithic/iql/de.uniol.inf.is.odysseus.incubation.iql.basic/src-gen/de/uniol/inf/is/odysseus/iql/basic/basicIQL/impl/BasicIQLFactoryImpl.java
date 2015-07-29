@@ -98,8 +98,8 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_STRING: return createIQLMetadataValueSingleString();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN: return createIQLMetadataValueSingleBoolean();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_CHAR: return createIQLMetadataValueSingleChar();
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF: return createIQLMetadataValueSingleTypeRef();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_ID: return createIQLMetadataValueSingleID();
+      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF: return createIQLMetadataValueSingleTypeRef();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_NULL: return createIQLMetadataValueSingleNull();
       case BasicIQLPackage.IQL_METADATA_VALUE_LIST: return createIQLMetadataValueList();
       case BasicIQLPackage.IQL_METADATA_VALUE_MAP: return createIQLMetadataValueMap();
@@ -534,10 +534,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLMetadataValueSingleTypeRef createIQLMetadataValueSingleTypeRef()
+  public IQLMetadataValueSingleID createIQLMetadataValueSingleID()
   {
-    IQLMetadataValueSingleTypeRefImpl iqlMetadataValueSingleTypeRef = new IQLMetadataValueSingleTypeRefImpl();
-    return iqlMetadataValueSingleTypeRef;
+    IQLMetadataValueSingleIDImpl iqlMetadataValueSingleID = new IQLMetadataValueSingleIDImpl();
+    return iqlMetadataValueSingleID;
   }
 
   /**
@@ -545,10 +545,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLMetadataValueSingleID createIQLMetadataValueSingleID()
+  public IQLMetadataValueSingleTypeRef createIQLMetadataValueSingleTypeRef()
   {
-    IQLMetadataValueSingleIDImpl iqlMetadataValueSingleID = new IQLMetadataValueSingleIDImpl();
-    return iqlMetadataValueSingleID;
+    IQLMetadataValueSingleTypeRefImpl iqlMetadataValueSingleTypeRef = new IQLMetadataValueSingleTypeRefImpl();
+    return iqlMetadataValueSingleTypeRef;
   }
 
   /**

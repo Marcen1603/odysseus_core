@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,12 +63,12 @@ public abstract class AbstractIQLTypeOperatorsFactory<F extends IIQLTypeFactory>
 
 	@Override
 	public ITypeOperators getTypeOperators(JvmTypeReference typeRef, String attribute) {
-		return findTypeOperators(typeRef);
+		return findTypeOperators(typeRef, attribute);
 	}
 
 	@Override
 	public ITypeOperators getTypeOperators(JvmTypeReference typeRef,String method, int args) {
-		return findTypeOperators(typeRef);
+		return findTypeOperators(typeRef, method, args);
 	}
 	
 	@Override
@@ -77,6 +79,68 @@ public abstract class AbstractIQLTypeOperatorsFactory<F extends IIQLTypeFactory>
 	@Override
 	public boolean hasTypeOperators(JvmTypeReference typeRef, String method,int args) {
 		return getTypeOperators(typeRef, method, args) != null;
+	}
+	
+	private ITypeOperators findTypeOperators(JvmTypeReference typeRef, String attribute) {
+		JvmType innerType = typeFactory.getInnerType(typeRef, true);
+
+		String name = typeFactory.getLongName(innerType, true);
+		for (ITypeOperators operators : typeOperators.values()) {
+			Class<?> type = operators.getType();
+			if (type.getCanonicalName().equalsIgnoreCase(name)) {
+				try {
+					Field field = type.getDeclaredField(attribute);
+					if (field.getName().equalsIgnoreCase(attribute)) {
+						return operators;
+					}
+				} catch (NoSuchFieldException | SecurityException e) {
+				}
+			}
+		}
+		if (innerType instanceof JvmGenericType) {
+			JvmGenericType genericType = (JvmGenericType) innerType;
+			for (JvmTypeReference interf : genericType.getExtendedInterfaces()) {
+				ITypeOperators operators = findTypeOperators(interf, attribute);
+				if (operators != null) {
+					return operators;
+				}
+			}
+			if (genericType.getExtendedClass() != null) {
+				return findTypeOperators(genericType.getExtendedClass(), attribute);
+			}
+		}
+		return null;
+	}
+	
+	private ITypeOperators findTypeOperators(JvmTypeReference typeRef, String method, int args) {
+		JvmType innerType = typeFactory.getInnerType(typeRef, true);
+
+		String name = typeFactory.getLongName(innerType, true);
+		for (ITypeOperators operators : typeOperators.values()) {
+			Class<?> type = operators.getType();
+			if (type.getCanonicalName().equalsIgnoreCase(name)) {
+				try {
+					Method m = type.getDeclaredMethod(method);
+					if (m.getName().equalsIgnoreCase(method)) {
+						return operators;
+					}
+				} catch (NoSuchMethodException | SecurityException e) {
+				} 
+			}
+		}
+		if (innerType instanceof JvmGenericType) {
+			JvmGenericType genericType = (JvmGenericType) innerType;
+			for (JvmTypeReference interf : genericType.getExtendedInterfaces()) {
+				ITypeOperators operators = findTypeOperators(interf, method, args);
+				if (operators != null) {
+					return operators;
+				}
+			}
+			if (genericType.getExtendedClass() != null) {
+				return findTypeOperators(genericType.getExtendedClass(), method, args);
+			}
+		}
+		return null;
 	}
 	
 	private ITypeOperators findTypeOperators(JvmTypeReference typeRef) {

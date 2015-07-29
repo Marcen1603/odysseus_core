@@ -916,13 +916,13 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValueCHARTerminalRuleCall_4_1_0 = (RuleCall)cValueAssignment_4_1.eContents().get(0);
 		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
 		private final Group cGroup_5_0 = (Group)cGroup_5.eContents().get(0);
-		private final Action cIQLMetadataValueSingleTypeRefAction_5_0_0 = (Action)cGroup_5_0.eContents().get(0);
+		private final Action cIQLMetadataValueSingleIDAction_5_0_0 = (Action)cGroup_5_0.eContents().get(0);
 		private final Assignment cValueAssignment_5_0_1 = (Assignment)cGroup_5_0.eContents().get(1);
-		private final RuleCall cValueJvmTypeReferenceParserRuleCall_5_0_1_0 = (RuleCall)cValueAssignment_5_0_1.eContents().get(0);
+		private final RuleCall cValueIDTerminalRuleCall_5_0_1_0 = (RuleCall)cValueAssignment_5_0_1.eContents().get(0);
 		private final Group cGroup_6 = (Group)cAlternatives.eContents().get(6);
-		private final Action cIQLMetadataValueSingleIDAction_6_0 = (Action)cGroup_6.eContents().get(0);
+		private final Action cIQLMetadataValueSingleTypeRefAction_6_0 = (Action)cGroup_6.eContents().get(0);
 		private final Assignment cValueAssignment_6_1 = (Assignment)cGroup_6.eContents().get(1);
-		private final RuleCall cValueIDTerminalRuleCall_6_1_0 = (RuleCall)cValueAssignment_6_1.eContents().get(0);
+		private final RuleCall cValueJvmTypeReferenceParserRuleCall_6_1_0 = (RuleCall)cValueAssignment_6_1.eContents().get(0);
 		private final Group cGroup_7 = (Group)cAlternatives.eContents().get(7);
 		private final Action cIQLMetadataValueSingleNullAction_7_0 = (Action)cGroup_7.eContents().get(0);
 		private final Assignment cValueAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
@@ -931,13 +931,13 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		//IQLMetadataValueSingle returns IQLMetadataValue:
 		//	{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
 		//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR | =>
-		//	({IQLMetadataValueSingleTypeRef} value=JvmTypeReference) | {IQLMetadataValueSingleID} value=ID |
+		//	({IQLMetadataValueSingleID} value=ID) | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
 		//	{IQLMetadataValueSingleNull} value="null";
 		public ParserRule getRule() { return rule; }
 
 		//{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
 		//value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR | =>
-		//({IQLMetadataValueSingleTypeRef} value=JvmTypeReference) | {IQLMetadataValueSingleID} value=ID |
+		//({IQLMetadataValueSingleID} value=ID) | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
 		//{IQLMetadataValueSingleNull} value="null"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
@@ -1001,32 +1001,32 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		//CHAR
 		public RuleCall getValueCHARTerminalRuleCall_4_1_0() { return cValueCHARTerminalRuleCall_4_1_0; }
 
-		//=> ({IQLMetadataValueSingleTypeRef} value=JvmTypeReference)
+		//=> ({IQLMetadataValueSingleID} value=ID)
 		public Group getGroup_5() { return cGroup_5; }
 
-		//{IQLMetadataValueSingleTypeRef} value=JvmTypeReference
+		//{IQLMetadataValueSingleID} value=ID
 		public Group getGroup_5_0() { return cGroup_5_0; }
 
-		//{IQLMetadataValueSingleTypeRef}
-		public Action getIQLMetadataValueSingleTypeRefAction_5_0_0() { return cIQLMetadataValueSingleTypeRefAction_5_0_0; }
-
-		//value=JvmTypeReference
-		public Assignment getValueAssignment_5_0_1() { return cValueAssignment_5_0_1; }
-
-		//JvmTypeReference
-		public RuleCall getValueJvmTypeReferenceParserRuleCall_5_0_1_0() { return cValueJvmTypeReferenceParserRuleCall_5_0_1_0; }
-
-		//{IQLMetadataValueSingleID} value=ID
-		public Group getGroup_6() { return cGroup_6; }
-
 		//{IQLMetadataValueSingleID}
-		public Action getIQLMetadataValueSingleIDAction_6_0() { return cIQLMetadataValueSingleIDAction_6_0; }
+		public Action getIQLMetadataValueSingleIDAction_5_0_0() { return cIQLMetadataValueSingleIDAction_5_0_0; }
 
 		//value=ID
-		public Assignment getValueAssignment_6_1() { return cValueAssignment_6_1; }
+		public Assignment getValueAssignment_5_0_1() { return cValueAssignment_5_0_1; }
 
 		//ID
-		public RuleCall getValueIDTerminalRuleCall_6_1_0() { return cValueIDTerminalRuleCall_6_1_0; }
+		public RuleCall getValueIDTerminalRuleCall_5_0_1_0() { return cValueIDTerminalRuleCall_5_0_1_0; }
+
+		//{IQLMetadataValueSingleTypeRef} value=JvmTypeReference
+		public Group getGroup_6() { return cGroup_6; }
+
+		//{IQLMetadataValueSingleTypeRef}
+		public Action getIQLMetadataValueSingleTypeRefAction_6_0() { return cIQLMetadataValueSingleTypeRefAction_6_0; }
+
+		//value=JvmTypeReference
+		public Assignment getValueAssignment_6_1() { return cValueAssignment_6_1; }
+
+		//JvmTypeReference
+		public RuleCall getValueJvmTypeReferenceParserRuleCall_6_1_0() { return cValueJvmTypeReferenceParserRuleCall_6_1_0; }
 
 		//{IQLMetadataValueSingleNull} value="null"
 		public Group getGroup_7() { return cGroup_7; }
@@ -4482,7 +4482,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	//IQLMetadataValueSingle returns IQLMetadataValue:
 	//	{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
 	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR | =>
-	//	({IQLMetadataValueSingleTypeRef} value=JvmTypeReference) | {IQLMetadataValueSingleID} value=ID |
+	//	({IQLMetadataValueSingleID} value=ID) | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
 	//	{IQLMetadataValueSingleNull} value="null";
 	public IQLMetadataValueSingleElements getIQLMetadataValueSingleAccess() {
 		return pIQLMetadataValueSingle;
