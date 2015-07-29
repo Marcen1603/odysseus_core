@@ -3,7 +3,6 @@
 package de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 
@@ -14,6 +13,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -39,7 +40,7 @@ public class IQLVariableStatementImpl extends IQLStatementImpl implements IQLVar
    * @generated
    * @ordered
    */
-  protected IQLVariableDeclaration var;
+  protected JvmIdentifiableElement var;
 
   /**
    * The cached value of the '{@link #getInit() <em>Init</em>}' containment reference.
@@ -77,7 +78,7 @@ public class IQLVariableStatementImpl extends IQLStatementImpl implements IQLVar
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLVariableDeclaration getVar()
+  public JvmIdentifiableElement getVar()
   {
     return var;
   }
@@ -87,9 +88,9 @@ public class IQLVariableStatementImpl extends IQLStatementImpl implements IQLVar
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetVar(IQLVariableDeclaration newVar, NotificationChain msgs)
+  public NotificationChain basicSetVar(JvmIdentifiableElement newVar, NotificationChain msgs)
   {
-    IQLVariableDeclaration oldVar = var;
+    JvmIdentifiableElement oldVar = var;
     var = newVar;
     if (eNotificationRequired())
     {
@@ -104,7 +105,7 @@ public class IQLVariableStatementImpl extends IQLStatementImpl implements IQLVar
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setVar(IQLVariableDeclaration newVar)
+  public void setVar(JvmIdentifiableElement newVar)
   {
     if (newVar != var)
     {
@@ -215,7 +216,7 @@ public class IQLVariableStatementImpl extends IQLStatementImpl implements IQLVar
     switch (featureID)
     {
       case BasicIQLPackage.IQL_VARIABLE_STATEMENT__VAR:
-        setVar((IQLVariableDeclaration)newValue);
+        setVar((JvmIdentifiableElement)newValue);
         return;
       case BasicIQLPackage.IQL_VARIABLE_STATEMENT__INIT:
         setInit((IQLVariableInitialization)newValue);
@@ -235,7 +236,7 @@ public class IQLVariableStatementImpl extends IQLStatementImpl implements IQLVar
     switch (featureID)
     {
       case BasicIQLPackage.IQL_VARIABLE_STATEMENT__VAR:
-        setVar((IQLVariableDeclaration)null);
+        setVar((JvmIdentifiableElement)null);
         return;
       case BasicIQLPackage.IQL_VARIABLE_STATEMENT__INIT:
         setInit((IQLVariableInitialization)null);

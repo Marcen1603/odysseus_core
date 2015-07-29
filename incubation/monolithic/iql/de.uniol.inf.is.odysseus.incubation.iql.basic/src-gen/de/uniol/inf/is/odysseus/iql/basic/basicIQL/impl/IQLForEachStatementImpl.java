@@ -6,7 +6,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForEachStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -15,6 +14,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -41,7 +42,7 @@ public class IQLForEachStatementImpl extends IQLStatementImpl implements IQLForE
    * @generated
    * @ordered
    */
-  protected IQLVariableDeclaration var;
+  protected JvmIdentifiableElement var;
 
   /**
    * The cached value of the '{@link #getForExpression() <em>For Expression</em>}' containment reference.
@@ -89,7 +90,7 @@ public class IQLForEachStatementImpl extends IQLStatementImpl implements IQLForE
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLVariableDeclaration getVar()
+  public JvmIdentifiableElement getVar()
   {
     return var;
   }
@@ -99,9 +100,9 @@ public class IQLForEachStatementImpl extends IQLStatementImpl implements IQLForE
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetVar(IQLVariableDeclaration newVar, NotificationChain msgs)
+  public NotificationChain basicSetVar(JvmIdentifiableElement newVar, NotificationChain msgs)
   {
-    IQLVariableDeclaration oldVar = var;
+    JvmIdentifiableElement oldVar = var;
     var = newVar;
     if (eNotificationRequired())
     {
@@ -116,7 +117,7 @@ public class IQLForEachStatementImpl extends IQLStatementImpl implements IQLForE
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setVar(IQLVariableDeclaration newVar)
+  public void setVar(JvmIdentifiableElement newVar)
   {
     if (newVar != var)
     {
@@ -279,7 +280,7 @@ public class IQLForEachStatementImpl extends IQLStatementImpl implements IQLForE
     switch (featureID)
     {
       case BasicIQLPackage.IQL_FOR_EACH_STATEMENT__VAR:
-        setVar((IQLVariableDeclaration)newValue);
+        setVar((JvmIdentifiableElement)newValue);
         return;
       case BasicIQLPackage.IQL_FOR_EACH_STATEMENT__FOR_EXPRESSION:
         setForExpression((IQLExpression)newValue);
@@ -302,7 +303,7 @@ public class IQLForEachStatementImpl extends IQLStatementImpl implements IQLForE
     switch (featureID)
     {
       case BasicIQLPackage.IQL_FOR_EACH_STATEMENT__VAR:
-        setVar((IQLVariableDeclaration)null);
+        setVar((JvmIdentifiableElement)null);
         return;
       case BasicIQLPackage.IQL_FOR_EACH_STATEMENT__FOR_EXPRESSION:
         setForExpression((IQLExpression)null);

@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmMember;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
@@ -416,19 +417,12 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
             }
             if (_and_3) {
               _builder.append("\t");
-              IQLVariableDeclaration _var = a_1.getVar();
-              JvmTypeReference type_2 = _var.getRef();
+              JvmIdentifiableElement _var = a_1.getVar();
+              IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
               _builder.newLineIfNotEmpty();
-              {
-                boolean _equals = Objects.equal(type_2, null);
-                if (_equals) {
-                  _builder.append("\t");
-                  IQLVariableDeclaration _var_1 = a_1.getVar();
-                  JvmTypeReference _parameterType = _var_1.getParameterType();
-                  _builder.append(type_2 = _parameterType, "\t");
-                  _builder.newLineIfNotEmpty();
-                }
-              }
+              _builder.append("\t");
+              JvmTypeReference type_2 = decl.getRef();
+              _builder.newLineIfNotEmpty();
               _builder.append("\t");
               IQLVariableInitialization _init_7 = a_1.getInit();
               IQLArgumentsMap _argsMap_8 = _init_7.getArgsMap();
@@ -739,19 +733,12 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
             }
             if (_and_3) {
               _builder.append("\t");
-              IQLVariableDeclaration _var = a_1.getVar();
-              JvmTypeReference type_1 = _var.getRef();
+              JvmIdentifiableElement _var = a_1.getVar();
+              IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
               _builder.newLineIfNotEmpty();
-              {
-                boolean _equals = Objects.equal(type_1, null);
-                if (_equals) {
-                  _builder.append("\t");
-                  IQLVariableDeclaration _var_1 = a_1.getVar();
-                  JvmTypeReference _parameterType = _var_1.getParameterType();
-                  _builder.append(type_1 = _parameterType, "\t");
-                  _builder.newLineIfNotEmpty();
-                }
-              }
+              _builder.append("\t");
+              JvmTypeReference type_1 = decl.getRef();
+              _builder.newLineIfNotEmpty();
               _builder.append("\t");
               IQLVariableInitialization _init_7 = a_1.getInit();
               IQLArgumentsMap _argsMap_8 = _init_7.getArgsMap();

@@ -95,15 +95,6 @@ public interface BasicIQLFactory extends EFactory
   IQLArrayType createIQLArrayType();
 
   /**
-   * Returns a new object of class '<em>IQL Variable Declaration</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Variable Declaration</em>'.
-   * @generated
-   */
-  IQLVariableDeclaration createIQLVariableDeclaration();
-
-  /**
    * Returns a new object of class '<em>IQL Metadata List</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -293,13 +284,13 @@ public interface BasicIQLFactory extends EFactory
   IQLJavaMember createIQLJavaMember();
 
   /**
-   * Returns a new object of class '<em>IQL Metadata Value Single Long</em>'.
+   * Returns a new object of class '<em>IQL Metadata Value Single Int</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Metadata Value Single Long</em>'.
+   * @return a new object of class '<em>IQL Metadata Value Single Int</em>'.
    * @generated
    */
-  IQLMetadataValueSingleLong createIQLMetadataValueSingleLong();
+  IQLMetadataValueSingleInt createIQLMetadataValueSingleInt();
 
   /**
    * Returns a new object of class '<em>IQL Metadata Value Single Double</em>'.
@@ -347,6 +338,15 @@ public interface BasicIQLFactory extends EFactory
   IQLMetadataValueSingleTypeRef createIQLMetadataValueSingleTypeRef();
 
   /**
+   * Returns a new object of class '<em>IQL Metadata Value Single ID</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Metadata Value Single ID</em>'.
+   * @generated
+   */
+  IQLMetadataValueSingleID createIQLMetadataValueSingleID();
+
+  /**
    * Returns a new object of class '<em>IQL Metadata Value Single Null</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -372,6 +372,15 @@ public interface BasicIQLFactory extends EFactory
    * @generated
    */
   IQLMetadataValueMap createIQLMetadataValueMap();
+
+  /**
+   * Returns a new object of class '<em>IQL Variable Declaration</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Variable Declaration</em>'.
+   * @generated
+   */
+  IQLVariableDeclaration createIQLVariableDeclaration();
 
   /**
    * Returns a new object of class '<em>IQL Statement Block</em>'.
@@ -660,6 +669,15 @@ public interface BasicIQLFactory extends EFactory
    * @generated
    */
   IQLTerminalExpressionVariable createIQLTerminalExpressionVariable();
+
+  /**
+   * Returns a new object of class '<em>IQL Terminal Expression Method</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Terminal Expression Method</em>'.
+   * @generated
+   */
+  IQLTerminalExpressionMethod createIQLTerminalExpressionMethod();
 
   /**
    * Returns a new object of class '<em>IQL Terminal Expression This</em>'.

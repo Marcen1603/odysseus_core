@@ -1,8 +1,12 @@
 package de.uniol.inf.is.odysseus.iql.qdl.services;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
 public class QDLServiceBinding {
 	
@@ -12,6 +16,20 @@ public class QDLServiceBinding {
 	
 	private static IExecutor executor;
 
+	private static Set<IPreParserKeywordProvider> preParserKeywordProviders = new HashSet<>();
+
+	public static void bindPreParserKeywordProvider(IPreParserKeywordProvider provider) {
+		preParserKeywordProviders.add(provider);
+	}
+	
+	public static void unbindPreParserKeywordProvider(IPreParserKeywordProvider provider) {
+		preParserKeywordProviders.remove(provider);
+	}
+	
+	public static Set<IPreParserKeywordProvider> getPreParserKeywordProviders() {
+		return preParserKeywordProviders;
+	}
+	
 	
 	public static void bindExecutor(IExecutor exe) {
 		executor = exe;

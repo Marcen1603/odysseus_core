@@ -133,7 +133,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	
 	def String compile(IQLForEachStatement s, G c) {
 		'''
-		for («compile(s.^var, c)» : «exprCompiler.compile(s.forExpression, c)»
+		for («compile(s.^var as IQLVariableDeclaration, c)» : «exprCompiler.compile(s.forExpression, c)»
 			«compile(s.body, c)»
 		'''
 	}
@@ -161,24 +161,21 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	
 	
 	def String compile(IQLVariableStatement s, G c) {
-		if (s.init != null && s.init.argsList == null && s.init.argsMap == null) {
-			var left = s.^var
-			var leftType = left.ref
-			if (leftType == null) {
-				leftType = left.parameterType
-			}
+		var leftVar = s.^var as IQLVariableDeclaration
+		var leftType = leftVar.ref
+		if (s.init != null && s.init.argsList == null && s.init.argsMap == null) {			
 			var right = exprParser.getType(s.init.value, leftType);
 			if (right.isNull || lookUp.isAssignable(leftType, right.ref)){
-				'''«compile(s.^var, c)»«IF s.init != null» = «compile(s.init, s.^var.ref, c)»«ENDIF»;'''
+				'''«compile(leftVar, c)»«IF s.init != null» = «compile(s.init, leftType, c)»«ENDIF»;'''
 			} else {
 				var target = typeCompiler.compile(leftType, c, false)
-				'''«compile(s.^var, c)»«IF s.init != null» = ((«target»)«compile(s.init, s.^var.ref, c)»«ENDIF»);'''
+				'''«compile(leftVar, c)»«IF s.init != null» = ((«target»)«compile(s.init, leftType, c)»«ENDIF»);'''
 			}					
 		} else if (s.init != null) {
-			'''«compile(s.^var, c)» = «compile(s.init, s.^var.ref, c)»;'''
+			'''«compile(leftVar, c)» = «compile(s.init, leftType, c)»;'''
 			
 		} else {
-			'''«compile(s.^var, c)»;'''
+			'''«compile(leftVar, c)»;'''
 			
 		}
 	}
@@ -202,7 +199,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 			if (s.keyword.equalsIgnoreCase("super")) {
 				typeRef = type.extendedClass
 			} 
-			var constructor = lookUp.findConstructor(typeRef, s.args);
+			var constructor = lookUp.findConstructor(typeRef, s.args.elements.size);
 			if (constructor != null) {
 				'''«s.keyword»(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
 			}
@@ -214,9 +211,6 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	
 	def String compile(IQLVariableDeclaration decl, G context) {
 		var type = decl.ref
-		if (type == null) {
-			type = decl.parameterType
-		}
 		'''«typeCompiler.compile(type, context, false)» «decl.name»'''
 	}
 	
@@ -224,14 +218,14 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 		var result = "";
 		context.expectedTypeRef = typeRef		
 		if (init.argsMap != null && init.argsMap.elements.size > 0) {
-			var constructor = lookUp.findConstructor(typeRef, init.argsList)
+			var constructor = lookUp.findConstructor(typeRef, init.argsList.elements.size)
 			if (constructor != null) {
 				result = '''get«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, constructor.parameters,context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			} else {
 				result = '''get«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			}
 		} else if (init.argsList != null) {
-			var constructor = lookUp.findConstructor(typeRef, init.argsList)
+			var constructor = lookUp.findConstructor(typeRef, init.argsList.elements.size)
 			if (constructor != null) {
 				result = '''new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList,constructor.parameters, context)»)'''			
 			} else {

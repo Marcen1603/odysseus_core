@@ -4,9 +4,11 @@
 package de.uniol.inf.is.odysseus.iql.basic;
 
 import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceFactory;
+import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
 
 import de.uniol.inf.is.odysseus.iql.basic.generator.BasicIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.BasicIQLCompiler;
@@ -25,8 +27,10 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.BasicIQLComp
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.BasicIQLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.basic.linking.BasicIQLLinkingService;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
+import de.uniol.inf.is.odysseus.iql.basic.postprocessor.BasicIQLPostProcessor;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
@@ -40,13 +44,28 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.BasicIQLExpr
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.IIQLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.BasicIQLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.IIQLTypeOperatorsFactory;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"restriction", "rawtypes"})
 public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.AbstractBasicIQLRuntimeModule {
 
+	public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {
+        return BasicIQLPostProcessor.class;
+    }
+	
+	public Class<? extends IIQLTypeOperatorsFactory> bindTypeOperatorsFactory() {
+		return BasicIQLTypeOperatorsFactory.class;
+	}
+	
+	@Override
+	public Class<? extends ILinkingService> bindILinkingService() {
+		return BasicIQLLinkingService.class;
+	}	
+	
 	public Class<? extends IIQLExpressionParserContext> bindExpressionParserContext() {
 		return BasicIQLExpressionParserContext.class;
 	}
@@ -109,7 +128,6 @@ public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.Ab
 		return IQLQualifiedNameConverter.class;
 	}
 	
-	@SuppressWarnings("restriction")
 	@Override
 	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
 		return IQLClasspathTypeProviderFactory.class;

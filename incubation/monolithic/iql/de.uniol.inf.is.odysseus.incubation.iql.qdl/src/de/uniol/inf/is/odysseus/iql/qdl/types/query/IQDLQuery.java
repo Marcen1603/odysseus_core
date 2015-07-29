@@ -2,18 +2,18 @@ package de.uniol.inf.is.odysseus.iql.qdl.types.query;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 
 
 public interface IQDLQuery {
 	
-	public Collection<ILogicalOperator> execute();
+	public Collection<IQDLOperator<?>> execute();
 	
-	public Map<String, List<Object>> getMetadata();
+	public List<IPair<String, Object>> getMetadata();
 	
 	public void addMetadata(String key, Object value);
 

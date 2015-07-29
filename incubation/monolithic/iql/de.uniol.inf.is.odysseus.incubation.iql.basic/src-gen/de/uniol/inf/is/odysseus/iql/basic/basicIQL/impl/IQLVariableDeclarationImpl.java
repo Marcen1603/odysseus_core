@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
-import org.eclipse.xtext.common.types.impl.JvmFormalParameterImpl;
+import org.eclipse.xtext.common.types.impl.JvmIdentifiableElementImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,12 +25,13 @@ import org.eclipse.xtext.common.types.impl.JvmFormalParameterImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableDeclarationImpl#getRef <em>Ref</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableDeclarationImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class IQLVariableDeclarationImpl extends JvmFormalParameterImpl implements IQLVariableDeclaration
+public class IQLVariableDeclarationImpl extends JvmIdentifiableElementImpl implements IQLVariableDeclaration
 {
   /**
    * The cached value of the '{@link #getRef() <em>Ref</em>}' containment reference.
@@ -41,6 +42,26 @@ public class IQLVariableDeclarationImpl extends JvmFormalParameterImpl implement
    * @ordered
    */
   protected JvmTypeReference ref;
+
+  /**
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected static final String NAME_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected String name = NAME_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -116,6 +137,29 @@ public class IQLVariableDeclarationImpl extends JvmFormalParameterImpl implement
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getName()
+  {
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setName(String newName)
+  {
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_VARIABLE_DECLARATION__NAME, oldName, name));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -139,6 +183,8 @@ public class IQLVariableDeclarationImpl extends JvmFormalParameterImpl implement
     {
       case BasicIQLPackage.IQL_VARIABLE_DECLARATION__REF:
         return getRef();
+      case BasicIQLPackage.IQL_VARIABLE_DECLARATION__NAME:
+        return getName();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -155,6 +201,9 @@ public class IQLVariableDeclarationImpl extends JvmFormalParameterImpl implement
     {
       case BasicIQLPackage.IQL_VARIABLE_DECLARATION__REF:
         setRef((JvmTypeReference)newValue);
+        return;
+      case BasicIQLPackage.IQL_VARIABLE_DECLARATION__NAME:
+        setName((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -173,6 +222,9 @@ public class IQLVariableDeclarationImpl extends JvmFormalParameterImpl implement
       case BasicIQLPackage.IQL_VARIABLE_DECLARATION__REF:
         setRef((JvmTypeReference)null);
         return;
+      case BasicIQLPackage.IQL_VARIABLE_DECLARATION__NAME:
+        setName(NAME_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -189,8 +241,27 @@ public class IQLVariableDeclarationImpl extends JvmFormalParameterImpl implement
     {
       case BasicIQLPackage.IQL_VARIABLE_DECLARATION__REF:
         return ref != null;
+      case BasicIQLPackage.IQL_VARIABLE_DECLARATION__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (name: ");
+    result.append(name);
+    result.append(')');
+    return result.toString();
   }
 
 } //IQLVariableDeclarationImpl

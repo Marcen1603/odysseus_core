@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttributeSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLBooleanNotExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLEqualityExpression;
@@ -33,6 +34,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPlusMinusExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPostfixExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPrefixExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLRelationalExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionParenthesis;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionSuper;
@@ -50,12 +52,15 @@ import de.uniol.inf.is.odysseus.iql.basic.types.Range;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.IIQLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.ITypeOperators;
 import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -63,7 +68,7 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
-public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionParser, F extends IIQLTypeFactory, L extends IIQLLookUp> implements IIQLExpressionCompiler<G> {
+public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionParser, F extends IIQLTypeFactory, L extends IIQLLookUp, O extends IIQLTypeOperatorsFactory> implements IIQLExpressionCompiler<G> {
   protected H helper;
   
   protected T typeCompiler;
@@ -74,12 +79,15 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   protected L lookUp;
   
-  public AbstractIQLExpressionCompiler(final H helper, final T typeCompiler, final E exprParser, final F factory, final L lookUp) {
+  protected O typeOperatorsFactory;
+  
+  public AbstractIQLExpressionCompiler(final H helper, final T typeCompiler, final E exprParser, final F factory, final L lookUp, final O typeOperatorsFactory) {
     this.helper = helper;
     this.typeCompiler = typeCompiler;
     this.exprParser = exprParser;
     this.factory = factory;
     this.lookUp = lookUp;
+    this.typeOperatorsFactory = typeOperatorsFactory;
   }
   
   public String compile(final IQLExpression expr, final G context) {
@@ -131,44 +139,48 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                                   if ((expr instanceof IQLTerminalExpressionVariable)) {
                                     return this.compile(((IQLTerminalExpressionVariable) expr), context);
                                   } else {
-                                    if ((expr instanceof IQLTerminalExpressionThis)) {
-                                      return this.compile(((IQLTerminalExpressionThis) expr), context);
+                                    if ((expr instanceof IQLTerminalExpressionMethod)) {
+                                      return this.compile(((IQLTerminalExpressionMethod) expr), context);
                                     } else {
-                                      if ((expr instanceof IQLTerminalExpressionSuper)) {
-                                        return this.compile(((IQLTerminalExpressionSuper) expr), context);
+                                      if ((expr instanceof IQLTerminalExpressionThis)) {
+                                        return this.compile(((IQLTerminalExpressionThis) expr), context);
                                       } else {
-                                        if ((expr instanceof IQLTerminalExpressionParenthesis)) {
-                                          return this.compile(((IQLTerminalExpressionParenthesis) expr), context);
+                                        if ((expr instanceof IQLTerminalExpressionSuper)) {
+                                          return this.compile(((IQLTerminalExpressionSuper) expr), context);
                                         } else {
-                                          if ((expr instanceof IQLTerminalExpressionNew)) {
-                                            return this.compile(((IQLTerminalExpressionNew) expr), context);
+                                          if ((expr instanceof IQLTerminalExpressionParenthesis)) {
+                                            return this.compile(((IQLTerminalExpressionParenthesis) expr), context);
                                           } else {
-                                            if ((expr instanceof IQLLiteralExpressionInt)) {
-                                              return this.compile(((IQLLiteralExpressionInt) expr), context);
+                                            if ((expr instanceof IQLTerminalExpressionNew)) {
+                                              return this.compile(((IQLTerminalExpressionNew) expr), context);
                                             } else {
-                                              if ((expr instanceof IQLLiteralExpressionDouble)) {
-                                                return this.compile(((IQLLiteralExpressionDouble) expr), context);
+                                              if ((expr instanceof IQLLiteralExpressionInt)) {
+                                                return this.compile(((IQLLiteralExpressionInt) expr), context);
                                               } else {
-                                                if ((expr instanceof IQLLiteralExpressionString)) {
-                                                  return this.compile(((IQLLiteralExpressionString) expr), context);
+                                                if ((expr instanceof IQLLiteralExpressionDouble)) {
+                                                  return this.compile(((IQLLiteralExpressionDouble) expr), context);
                                                 } else {
-                                                  if ((expr instanceof IQLLiteralExpressionBoolean)) {
-                                                    return this.compile(((IQLLiteralExpressionBoolean) expr), context);
+                                                  if ((expr instanceof IQLLiteralExpressionString)) {
+                                                    return this.compile(((IQLLiteralExpressionString) expr), context);
                                                   } else {
-                                                    if ((expr instanceof IQLLiteralExpressionChar)) {
-                                                      return this.compile(((IQLLiteralExpressionChar) expr), context);
+                                                    if ((expr instanceof IQLLiteralExpressionBoolean)) {
+                                                      return this.compile(((IQLLiteralExpressionBoolean) expr), context);
                                                     } else {
-                                                      if ((expr instanceof IQLLiteralExpressionRange)) {
-                                                        return this.compile(((IQLLiteralExpressionRange) expr), context);
+                                                      if ((expr instanceof IQLLiteralExpressionChar)) {
+                                                        return this.compile(((IQLLiteralExpressionChar) expr), context);
                                                       } else {
-                                                        if ((expr instanceof IQLLiteralExpressionNull)) {
-                                                          return this.compile(((IQLLiteralExpressionNull) expr), context);
+                                                        if ((expr instanceof IQLLiteralExpressionRange)) {
+                                                          return this.compile(((IQLLiteralExpressionRange) expr), context);
                                                         } else {
-                                                          if ((expr instanceof IQLLiteralExpressionList)) {
-                                                            return this.compile(((IQLLiteralExpressionList) expr), context);
+                                                          if ((expr instanceof IQLLiteralExpressionNull)) {
+                                                            return this.compile(((IQLLiteralExpressionNull) expr), context);
                                                           } else {
-                                                            if ((expr instanceof IQLLiteralExpressionMap)) {
-                                                              return this.compile(((IQLLiteralExpressionMap) expr), context);
+                                                            if ((expr instanceof IQLLiteralExpressionList)) {
+                                                              return this.compile(((IQLLiteralExpressionList) expr), context);
+                                                            } else {
+                                                              if ((expr instanceof IQLLiteralExpressionMap)) {
+                                                                return this.compile(((IQLLiteralExpressionMap) expr), context);
+                                                              }
                                                             }
                                                           }
                                                         }
@@ -344,24 +356,110 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   public String compile(final IQLAdditiveExpression e, final G c) {
     IQLExpression _leftOperand = e.getLeftOperand();
     TypeResult left = this.exprParser.getType(_leftOperand);
+    String result = "";
     boolean _isNull = left.isNull();
     boolean _not = (!_isNull);
     if (_not) {
       JvmTypeReference _ref = left.getRef();
       c.setExpectedTypeRef(_ref);
     }
-    StringConcatenation _builder = new StringConcatenation();
-    IQLExpression _leftOperand_1 = e.getLeftOperand();
-    String _compile = this.compile(_leftOperand_1, c);
-    _builder.append(_compile, "");
-    _builder.append(" ");
-    String _op = e.getOp();
-    _builder.append(_op, "");
-    _builder.append(" ");
-    IQLExpression _rightOperand = e.getRightOperand();
-    String _compile_1 = this.compile(_rightOperand, c);
-    _builder.append(_compile_1, "");
-    String result = _builder.toString();
+    boolean _and = false;
+    boolean _isNull_1 = left.isNull();
+    boolean _not_1 = (!_isNull_1);
+    if (!_not_1) {
+      _and = false;
+    } else {
+      JvmTypeReference _ref_1 = left.getRef();
+      boolean _hasTypeOperators = this.typeOperatorsFactory.hasTypeOperators(_ref_1);
+      _and = _hasTypeOperators;
+    }
+    if (_and) {
+      JvmTypeReference _ref_2 = left.getRef();
+      ITypeOperators typeOps = this.typeOperatorsFactory.getTypeOperators(_ref_2);
+      boolean _and_1 = false;
+      String _op = e.getOp();
+      boolean _equals = _op.equals("+");
+      if (!_equals) {
+        _and_1 = false;
+      } else {
+        boolean _plusSupported = typeOps.plusSupported();
+        _and_1 = _plusSupported;
+      }
+      if (_and_1) {
+        Class<? extends ITypeOperators> _class = typeOps.getClass();
+        String _canonicalName = _class.getCanonicalName();
+        c.addImport(_canonicalName);
+        StringConcatenation _builder = new StringConcatenation();
+        Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+        String _simpleName = _class_1.getSimpleName();
+        _builder.append(_simpleName, "");
+        _builder.append(".plus(");
+        IQLExpression _leftOperand_1 = e.getLeftOperand();
+        String _compile = this.compile(_leftOperand_1, c);
+        _builder.append(_compile, "");
+        _builder.append(", ");
+        IQLExpression _rightOperand = e.getRightOperand();
+        String _compile_1 = this.compile(_rightOperand, c);
+        _builder.append(_compile_1, "");
+        _builder.append(")");
+        result = _builder.toString();
+      } else {
+        boolean _and_2 = false;
+        String _op_1 = e.getOp();
+        boolean _equals_1 = _op_1.equals("-");
+        if (!_equals_1) {
+          _and_2 = false;
+        } else {
+          boolean _minusSupported = typeOps.minusSupported();
+          _and_2 = _minusSupported;
+        }
+        if (_and_2) {
+          Class<? extends ITypeOperators> _class_2 = typeOps.getClass();
+          String _canonicalName_1 = _class_2.getCanonicalName();
+          c.addImport(_canonicalName_1);
+          StringConcatenation _builder_1 = new StringConcatenation();
+          Class<? extends ITypeOperators> _class_3 = typeOps.getClass();
+          String _simpleName_1 = _class_3.getSimpleName();
+          _builder_1.append(_simpleName_1, "");
+          _builder_1.append(".minus(");
+          IQLExpression _leftOperand_2 = e.getLeftOperand();
+          String _compile_2 = this.compile(_leftOperand_2, c);
+          _builder_1.append(_compile_2, "");
+          _builder_1.append(", ");
+          IQLExpression _rightOperand_1 = e.getRightOperand();
+          String _compile_3 = this.compile(_rightOperand_1, c);
+          _builder_1.append(_compile_3, "");
+          _builder_1.append(")");
+          result = _builder_1.toString();
+        } else {
+          StringConcatenation _builder_2 = new StringConcatenation();
+          IQLExpression _leftOperand_3 = e.getLeftOperand();
+          String _compile_4 = this.compile(_leftOperand_3, c);
+          _builder_2.append(_compile_4, "");
+          _builder_2.append(" ");
+          String _op_2 = e.getOp();
+          _builder_2.append(_op_2, "");
+          _builder_2.append(" ");
+          IQLExpression _rightOperand_2 = e.getRightOperand();
+          String _compile_5 = this.compile(_rightOperand_2, c);
+          _builder_2.append(_compile_5, "");
+          result = _builder_2.toString();
+        }
+      }
+    } else {
+      StringConcatenation _builder_3 = new StringConcatenation();
+      IQLExpression _leftOperand_4 = e.getLeftOperand();
+      String _compile_6 = this.compile(_leftOperand_4, c);
+      _builder_3.append(_compile_6, "");
+      _builder_3.append(" ");
+      String _op_3 = e.getOp();
+      _builder_3.append(_op_3, "");
+      _builder_3.append(" ");
+      IQLExpression _rightOperand_3 = e.getRightOperand();
+      String _compile_7 = this.compile(_rightOperand_3, c);
+      _builder_3.append(_compile_7, "");
+      result = _builder_3.toString();
+    }
     c.setExpectedTypeRef(null);
     return result;
   }
@@ -369,24 +467,139 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   public String compile(final IQLMultiplicativeExpression e, final G c) {
     IQLExpression _leftOperand = e.getLeftOperand();
     TypeResult left = this.exprParser.getType(_leftOperand);
+    String result = "";
     boolean _isNull = left.isNull();
     boolean _not = (!_isNull);
     if (_not) {
       JvmTypeReference _ref = left.getRef();
       c.setExpectedTypeRef(_ref);
     }
-    StringConcatenation _builder = new StringConcatenation();
-    IQLExpression _leftOperand_1 = e.getLeftOperand();
-    String _compile = this.compile(_leftOperand_1, c);
-    _builder.append(_compile, "");
-    _builder.append(" ");
-    String _op = e.getOp();
-    _builder.append(_op, "");
-    _builder.append(" ");
-    IQLExpression _rightOperand = e.getRightOperand();
-    String _compile_1 = this.compile(_rightOperand, c);
-    _builder.append(_compile_1, "");
-    String result = _builder.toString();
+    boolean _and = false;
+    boolean _isNull_1 = left.isNull();
+    boolean _not_1 = (!_isNull_1);
+    if (!_not_1) {
+      _and = false;
+    } else {
+      JvmTypeReference _ref_1 = left.getRef();
+      boolean _hasTypeOperators = this.typeOperatorsFactory.hasTypeOperators(_ref_1);
+      _and = _hasTypeOperators;
+    }
+    if (_and) {
+      JvmTypeReference _ref_2 = left.getRef();
+      ITypeOperators typeOps = this.typeOperatorsFactory.getTypeOperators(_ref_2);
+      boolean _and_1 = false;
+      String _op = e.getOp();
+      boolean _equals = _op.equals("*");
+      if (!_equals) {
+        _and_1 = false;
+      } else {
+        boolean _multiplySupported = typeOps.multiplySupported();
+        _and_1 = _multiplySupported;
+      }
+      if (_and_1) {
+        Class<? extends ITypeOperators> _class = typeOps.getClass();
+        String _canonicalName = _class.getCanonicalName();
+        c.addImport(_canonicalName);
+        StringConcatenation _builder = new StringConcatenation();
+        Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+        String _simpleName = _class_1.getSimpleName();
+        _builder.append(_simpleName, "");
+        _builder.append(".multiply(");
+        IQLExpression _leftOperand_1 = e.getLeftOperand();
+        String _compile = this.compile(_leftOperand_1, c);
+        _builder.append(_compile, "");
+        _builder.append(", ");
+        IQLExpression _rightOperand = e.getRightOperand();
+        String _compile_1 = this.compile(_rightOperand, c);
+        _builder.append(_compile_1, "");
+        _builder.append(")");
+        result = _builder.toString();
+      } else {
+        boolean _and_2 = false;
+        String _op_1 = e.getOp();
+        boolean _equals_1 = _op_1.equals("/");
+        if (!_equals_1) {
+          _and_2 = false;
+        } else {
+          boolean _divideSupported = typeOps.divideSupported();
+          _and_2 = _divideSupported;
+        }
+        if (_and_2) {
+          Class<? extends ITypeOperators> _class_2 = typeOps.getClass();
+          String _canonicalName_1 = _class_2.getCanonicalName();
+          c.addImport(_canonicalName_1);
+          StringConcatenation _builder_1 = new StringConcatenation();
+          Class<? extends ITypeOperators> _class_3 = typeOps.getClass();
+          String _simpleName_1 = _class_3.getSimpleName();
+          _builder_1.append(_simpleName_1, "");
+          _builder_1.append(".divide(");
+          IQLExpression _leftOperand_2 = e.getLeftOperand();
+          String _compile_2 = this.compile(_leftOperand_2, c);
+          _builder_1.append(_compile_2, "");
+          _builder_1.append(", ");
+          IQLExpression _rightOperand_1 = e.getRightOperand();
+          String _compile_3 = this.compile(_rightOperand_1, c);
+          _builder_1.append(_compile_3, "");
+          _builder_1.append(")");
+          result = _builder_1.toString();
+        } else {
+          boolean _and_3 = false;
+          String _op_2 = e.getOp();
+          boolean _equals_2 = _op_2.equals("%");
+          if (!_equals_2) {
+            _and_3 = false;
+          } else {
+            boolean _moduloSupported = typeOps.moduloSupported();
+            _and_3 = _moduloSupported;
+          }
+          if (_and_3) {
+            Class<? extends ITypeOperators> _class_4 = typeOps.getClass();
+            String _canonicalName_2 = _class_4.getCanonicalName();
+            c.addImport(_canonicalName_2);
+            StringConcatenation _builder_2 = new StringConcatenation();
+            Class<? extends ITypeOperators> _class_5 = typeOps.getClass();
+            String _simpleName_2 = _class_5.getSimpleName();
+            _builder_2.append(_simpleName_2, "");
+            _builder_2.append(".modulo(");
+            IQLExpression _leftOperand_3 = e.getLeftOperand();
+            String _compile_4 = this.compile(_leftOperand_3, c);
+            _builder_2.append(_compile_4, "");
+            _builder_2.append(", ");
+            IQLExpression _rightOperand_2 = e.getRightOperand();
+            String _compile_5 = this.compile(_rightOperand_2, c);
+            _builder_2.append(_compile_5, "");
+            _builder_2.append(")");
+            result = _builder_2.toString();
+          } else {
+            StringConcatenation _builder_3 = new StringConcatenation();
+            IQLExpression _leftOperand_4 = e.getLeftOperand();
+            String _compile_6 = this.compile(_leftOperand_4, c);
+            _builder_3.append(_compile_6, "");
+            _builder_3.append(" ");
+            String _op_3 = e.getOp();
+            _builder_3.append(_op_3, "");
+            _builder_3.append(" ");
+            IQLExpression _rightOperand_3 = e.getRightOperand();
+            String _compile_7 = this.compile(_rightOperand_3, c);
+            _builder_3.append(_compile_7, "");
+            result = _builder_3.toString();
+          }
+        }
+      }
+    } else {
+      StringConcatenation _builder_4 = new StringConcatenation();
+      IQLExpression _leftOperand_5 = e.getLeftOperand();
+      String _compile_8 = this.compile(_leftOperand_5, c);
+      _builder_4.append(_compile_8, "");
+      _builder_4.append(" ");
+      String _op_4 = e.getOp();
+      _builder_4.append(_op_4, "");
+      _builder_4.append(" ");
+      IQLExpression _rightOperand_4 = e.getRightOperand();
+      String _compile_9 = this.compile(_rightOperand_4, c);
+      _builder_4.append(_compile_9, "");
+      result = _builder_4.toString();
+    }
     c.setExpectedTypeRef(null);
     return result;
   }
@@ -412,13 +625,109 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   }
   
   public String compile(final IQLPrefixExpression e, final G c) {
-    StringConcatenation _builder = new StringConcatenation();
-    String _op = e.getOp();
-    _builder.append(_op, "");
-    IQLExpression _operand = e.getOperand();
-    String _compile = this.compile(_operand, c);
-    _builder.append(_compile, "");
-    return _builder.toString();
+    String _xblockexpression = null;
+    {
+      IQLExpression _operand = e.getOperand();
+      TypeResult left = this.exprParser.getType(_operand);
+      String _xifexpression = null;
+      boolean _and = false;
+      boolean _isNull = left.isNull();
+      boolean _not = (!_isNull);
+      if (!_not) {
+        _and = false;
+      } else {
+        JvmTypeReference _ref = left.getRef();
+        boolean _hasTypeOperators = this.typeOperatorsFactory.hasTypeOperators(_ref);
+        _and = _hasTypeOperators;
+      }
+      if (_and) {
+        String _xblockexpression_1 = null;
+        {
+          JvmTypeReference _ref_1 = left.getRef();
+          ITypeOperators typeOps = this.typeOperatorsFactory.getTypeOperators(_ref_1);
+          String _xifexpression_1 = null;
+          boolean _and_1 = false;
+          String _op = e.getOp();
+          boolean _equals = _op.equals("++");
+          if (!_equals) {
+            _and_1 = false;
+          } else {
+            boolean _plusPrefixSupported = typeOps.plusPrefixSupported();
+            _and_1 = _plusPrefixSupported;
+          }
+          if (_and_1) {
+            String _xblockexpression_2 = null;
+            {
+              Class<? extends ITypeOperators> _class = typeOps.getClass();
+              String _canonicalName = _class.getCanonicalName();
+              c.addImport(_canonicalName);
+              StringConcatenation _builder = new StringConcatenation();
+              Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+              String _simpleName = _class_1.getSimpleName();
+              _builder.append(_simpleName, "");
+              _builder.append(".plusPrefix(");
+              IQLExpression _operand_1 = e.getOperand();
+              String _compile = this.compile(_operand_1, c);
+              _builder.append(_compile, "");
+              _builder.append(")");
+              _xblockexpression_2 = _builder.toString();
+            }
+            _xifexpression_1 = _xblockexpression_2;
+          } else {
+            String _xifexpression_2 = null;
+            boolean _and_2 = false;
+            String _op_1 = e.getOp();
+            boolean _equals_1 = _op_1.equals("--");
+            if (!_equals_1) {
+              _and_2 = false;
+            } else {
+              boolean _minusPrefixSupported = typeOps.minusPrefixSupported();
+              _and_2 = _minusPrefixSupported;
+            }
+            if (_and_2) {
+              String _xblockexpression_3 = null;
+              {
+                Class<? extends ITypeOperators> _class = typeOps.getClass();
+                String _canonicalName = _class.getCanonicalName();
+                c.addImport(_canonicalName);
+                StringConcatenation _builder = new StringConcatenation();
+                Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+                String _simpleName = _class_1.getSimpleName();
+                _builder.append(_simpleName, "");
+                _builder.append(".minusPrefix(");
+                IQLExpression _operand_1 = e.getOperand();
+                String _compile = this.compile(_operand_1, c);
+                _builder.append(_compile, "");
+                _builder.append(")");
+                _xblockexpression_3 = _builder.toString();
+              }
+              _xifexpression_2 = _xblockexpression_3;
+            } else {
+              StringConcatenation _builder = new StringConcatenation();
+              String _op_2 = e.getOp();
+              _builder.append(_op_2, "");
+              IQLExpression _operand_1 = e.getOperand();
+              String _compile = this.compile(_operand_1, c);
+              _builder.append(_compile, "");
+              _xifexpression_2 = _builder.toString();
+            }
+            _xifexpression_1 = _xifexpression_2;
+          }
+          _xblockexpression_1 = _xifexpression_1;
+        }
+        _xifexpression = _xblockexpression_1;
+      } else {
+        StringConcatenation _builder = new StringConcatenation();
+        String _op = e.getOp();
+        _builder.append(_op, "");
+        IQLExpression _operand_1 = e.getOperand();
+        String _compile = this.compile(_operand_1, c);
+        _builder.append(_compile, "");
+        _xifexpression = _builder.toString();
+      }
+      _xblockexpression = _xifexpression;
+    }
+    return _xblockexpression;
   }
   
   public String compile(final IQLTypeCastExpression e, final G c) {
@@ -436,26 +745,194 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   }
   
   public String compile(final IQLPostfixExpression e, final G c) {
-    StringConcatenation _builder = new StringConcatenation();
-    IQLExpression _operand = e.getOperand();
-    String _compile = this.compile(_operand, c);
-    _builder.append(_compile, "");
-    String _op = e.getOp();
-    _builder.append(_op, "");
-    return _builder.toString();
+    String _xblockexpression = null;
+    {
+      IQLExpression _operand = e.getOperand();
+      TypeResult left = this.exprParser.getType(_operand);
+      String _xifexpression = null;
+      boolean _and = false;
+      boolean _isNull = left.isNull();
+      boolean _not = (!_isNull);
+      if (!_not) {
+        _and = false;
+      } else {
+        JvmTypeReference _ref = left.getRef();
+        boolean _hasTypeOperators = this.typeOperatorsFactory.hasTypeOperators(_ref);
+        _and = _hasTypeOperators;
+      }
+      if (_and) {
+        String _xblockexpression_1 = null;
+        {
+          JvmTypeReference _ref_1 = left.getRef();
+          ITypeOperators typeOps = this.typeOperatorsFactory.getTypeOperators(_ref_1);
+          String _xifexpression_1 = null;
+          boolean _and_1 = false;
+          String _op = e.getOp();
+          boolean _equals = _op.equals("++");
+          if (!_equals) {
+            _and_1 = false;
+          } else {
+            boolean _plusPrefixSupported = typeOps.plusPrefixSupported();
+            _and_1 = _plusPrefixSupported;
+          }
+          if (_and_1) {
+            String _xblockexpression_2 = null;
+            {
+              Class<? extends ITypeOperators> _class = typeOps.getClass();
+              String _canonicalName = _class.getCanonicalName();
+              c.addImport(_canonicalName);
+              StringConcatenation _builder = new StringConcatenation();
+              Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+              String _simpleName = _class_1.getSimpleName();
+              _builder.append(_simpleName, "");
+              _builder.append(".plusPostfix(");
+              IQLExpression _operand_1 = e.getOperand();
+              String _compile = this.compile(_operand_1, c);
+              _builder.append(_compile, "");
+              _builder.append(")");
+              _xblockexpression_2 = _builder.toString();
+            }
+            _xifexpression_1 = _xblockexpression_2;
+          } else {
+            String _xifexpression_2 = null;
+            boolean _and_2 = false;
+            String _op_1 = e.getOp();
+            boolean _equals_1 = _op_1.equals("--");
+            if (!_equals_1) {
+              _and_2 = false;
+            } else {
+              boolean _minusPrefixSupported = typeOps.minusPrefixSupported();
+              _and_2 = _minusPrefixSupported;
+            }
+            if (_and_2) {
+              String _xblockexpression_3 = null;
+              {
+                Class<? extends ITypeOperators> _class = typeOps.getClass();
+                String _canonicalName = _class.getCanonicalName();
+                c.addImport(_canonicalName);
+                StringConcatenation _builder = new StringConcatenation();
+                Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+                String _simpleName = _class_1.getSimpleName();
+                _builder.append(_simpleName, "");
+                _builder.append(".minusPostfix(");
+                IQLExpression _operand_1 = e.getOperand();
+                String _compile = this.compile(_operand_1, c);
+                _builder.append(_compile, "");
+                _builder.append(")");
+                _xblockexpression_3 = _builder.toString();
+              }
+              _xifexpression_2 = _xblockexpression_3;
+            } else {
+              StringConcatenation _builder = new StringConcatenation();
+              IQLExpression _operand_1 = e.getOperand();
+              String _compile = this.compile(_operand_1, c);
+              _builder.append(_compile, "");
+              String _op_2 = e.getOp();
+              _builder.append(_op_2, "");
+              _xifexpression_2 = _builder.toString();
+            }
+            _xifexpression_1 = _xifexpression_2;
+          }
+          _xblockexpression_1 = _xifexpression_1;
+        }
+        _xifexpression = _xblockexpression_1;
+      } else {
+        StringConcatenation _builder = new StringConcatenation();
+        IQLExpression _operand_1 = e.getOperand();
+        String _compile = this.compile(_operand_1, c);
+        _builder.append(_compile, "");
+        String _op = e.getOp();
+        _builder.append(_op, "");
+        _xifexpression = _builder.toString();
+      }
+      _xblockexpression = _xifexpression;
+    }
+    return _xblockexpression;
   }
   
   public String compile(final IQLArrayExpression e, final G c) {
-    StringConcatenation _builder = new StringConcatenation();
-    IQLExpression _leftOperand = e.getLeftOperand();
-    String _compile = this.compile(_leftOperand, c);
-    _builder.append(_compile, "");
-    _builder.append("[");
-    IQLExpression _expr = e.getExpr();
-    String _compile_1 = this.compile(_expr, c);
-    _builder.append(_compile_1, "");
-    _builder.append("]");
-    return _builder.toString();
+    String _xblockexpression = null;
+    {
+      IQLExpression _leftOperand = e.getLeftOperand();
+      TypeResult left = this.exprParser.getType(_leftOperand);
+      String _xifexpression = null;
+      boolean _and = false;
+      boolean _isNull = left.isNull();
+      boolean _not = (!_isNull);
+      if (!_not) {
+        _and = false;
+      } else {
+        JvmTypeReference _ref = left.getRef();
+        boolean _hasTypeOperators = this.typeOperatorsFactory.hasTypeOperators(_ref);
+        _and = _hasTypeOperators;
+      }
+      if (_and) {
+        String _xblockexpression_1 = null;
+        {
+          JvmTypeReference _ref_1 = left.getRef();
+          ITypeOperators typeOps = this.typeOperatorsFactory.getTypeOperators(_ref_1);
+          String _xifexpression_1 = null;
+          boolean _supported = typeOps.getSupported();
+          if (_supported) {
+            String _xblockexpression_2 = null;
+            {
+              Class<? extends ITypeOperators> _class = typeOps.getClass();
+              String _canonicalName = _class.getCanonicalName();
+              c.addImport(_canonicalName);
+              StringConcatenation _builder = new StringConcatenation();
+              Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+              String _simpleName = _class_1.getSimpleName();
+              _builder.append(_simpleName, "");
+              _builder.append(".get(");
+              IQLExpression _leftOperand_1 = e.getLeftOperand();
+              String _compile = this.compile(_leftOperand_1, c);
+              _builder.append(_compile, "");
+              _builder.append(", ");
+              EList<IQLExpression> _expressions = e.getExpressions();
+              final Function1<IQLExpression, String> _function = new Function1<IQLExpression, String>() {
+                public String apply(final IQLExpression el) {
+                  return AbstractIQLExpressionCompiler.this.compile(el, c);
+                }
+              };
+              List<String> _map = ListExtensions.<IQLExpression, String>map(_expressions, _function);
+              String _join = IterableExtensions.join(_map, ", ");
+              _builder.append(_join, "");
+              _builder.append(")");
+              _xblockexpression_2 = _builder.toString();
+            }
+            _xifexpression_1 = _xblockexpression_2;
+          } else {
+            StringConcatenation _builder = new StringConcatenation();
+            IQLExpression _leftOperand_1 = e.getLeftOperand();
+            String _compile = this.compile(_leftOperand_1, c);
+            _builder.append(_compile, "");
+            _builder.append("[");
+            EList<IQLExpression> _expressions = e.getExpressions();
+            IQLExpression _get = _expressions.get(0);
+            String _compile_1 = this.compile(_get, c);
+            _builder.append(_compile_1, "");
+            _builder.append("]");
+            _xifexpression_1 = _builder.toString();
+          }
+          _xblockexpression_1 = _xifexpression_1;
+        }
+        _xifexpression = _xblockexpression_1;
+      } else {
+        StringConcatenation _builder = new StringConcatenation();
+        IQLExpression _leftOperand_1 = e.getLeftOperand();
+        String _compile = this.compile(_leftOperand_1, c);
+        _builder.append(_compile, "");
+        _builder.append("[");
+        EList<IQLExpression> _expressions = e.getExpressions();
+        IQLExpression _get = _expressions.get(0);
+        String _compile_1 = this.compile(_get, c);
+        _builder.append(_compile_1, "");
+        _builder.append("]");
+        _xifexpression = _builder.toString();
+      }
+      _xblockexpression = _xifexpression;
+    }
+    return _xblockexpression;
   }
   
   public String compile(final IQLMemberSelectionExpression e, final G c) {
@@ -500,73 +977,118 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   }
   
   public String compile(final IQLAttributeSelection a, final JvmTypeReference left, final IQLMemberSelectionExpression expr, final G c) {
-    StringConcatenation _builder = new StringConcatenation();
-    IQLExpression _leftOperand = expr.getLeftOperand();
-    String _compile = this.compile(_leftOperand, c);
-    _builder.append(_compile, "");
-    _builder.append(".");
+    String _xifexpression = null;
     JvmField _var = a.getVar();
     String _simpleName = _var.getSimpleName();
-    _builder.append(_simpleName, "");
-    return _builder.toString();
+    boolean _hasTypeOperators = this.typeOperatorsFactory.hasTypeOperators(left, _simpleName);
+    if (_hasTypeOperators) {
+      String _xblockexpression = null;
+      {
+        JvmField _var_1 = a.getVar();
+        String _simpleName_1 = _var_1.getSimpleName();
+        ITypeOperators typeOps = this.typeOperatorsFactory.getTypeOperators(left, _simpleName_1);
+        Class<? extends ITypeOperators> _class = typeOps.getClass();
+        String _canonicalName = _class.getCanonicalName();
+        c.addImport(_canonicalName);
+        StringConcatenation _builder = new StringConcatenation();
+        Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+        String _simpleName_2 = _class_1.getSimpleName();
+        _builder.append(_simpleName_2, "");
+        _builder.append(".");
+        JvmField _var_2 = a.getVar();
+        String _simpleName_3 = _var_2.getSimpleName();
+        _builder.append(_simpleName_3, "");
+        _xblockexpression = _builder.toString();
+      }
+      _xifexpression = _xblockexpression;
+    } else {
+      StringConcatenation _builder = new StringConcatenation();
+      IQLExpression _leftOperand = expr.getLeftOperand();
+      String _compile = this.compile(_leftOperand, c);
+      _builder.append(_compile, "");
+      _builder.append(".");
+      JvmField _var_1 = a.getVar();
+      String _simpleName_1 = _var_1.getSimpleName();
+      _builder.append(_simpleName_1, "");
+      _xifexpression = _builder.toString();
+    }
+    return _xifexpression;
   }
   
   public String compile(final IQLMethodSelection m, final JvmTypeReference left, final IQLMemberSelectionExpression expr, final G c) {
-    IQLExpression _leftOperand = expr.getLeftOperand();
-    TypeResult leftType = this.exprParser.getType(_leftOperand);
-    boolean _and = false;
-    boolean _isNull = leftType.isNull();
-    boolean _not = (!_isNull);
-    if (!_not) {
-      _and = false;
-    } else {
-      IQLArgumentsList _args = m.getArgs();
-      EList<IQLExpression> _elements = _args.getElements();
-      int _size = _elements.size();
-      boolean _greaterThan = (_size > 0);
-      _and = _greaterThan;
-    }
-    if (_and) {
-      JvmTypeReference _ref = leftType.getRef();
-      String _method = m.getMethod();
-      IQLArgumentsList _args_1 = m.getArgs();
-      JvmOperation method = this.lookUp.findMethod(_ref, _method, _args_1);
-      boolean _notEquals = (!Objects.equal(method, null));
-      if (_notEquals) {
+    String _xifexpression = null;
+    JvmOperation _method = m.getMethod();
+    String _simpleName = _method.getSimpleName();
+    IQLArgumentsList _args = m.getArgs();
+    EList<IQLExpression> _elements = _args.getElements();
+    int _size = _elements.size();
+    boolean _hasTypeOperators = this.typeOperatorsFactory.hasTypeOperators(left, _simpleName, _size);
+    if (_hasTypeOperators) {
+      String _xblockexpression = null;
+      {
+        JvmOperation _method_1 = m.getMethod();
+        String _simpleName_1 = _method_1.getSimpleName();
+        IQLArgumentsList _args_1 = m.getArgs();
+        EList<IQLExpression> _elements_1 = _args_1.getElements();
+        int _size_1 = _elements_1.size();
+        ITypeOperators typeOps = this.typeOperatorsFactory.getTypeOperators(left, _simpleName_1, _size_1);
+        Class<? extends ITypeOperators> _class = typeOps.getClass();
+        String _canonicalName = _class.getCanonicalName();
+        c.addImport(_canonicalName);
         StringConcatenation _builder = new StringConcatenation();
-        IQLExpression _leftOperand_1 = expr.getLeftOperand();
-        String _compile = this.compile(_leftOperand_1, c);
-        _builder.append(_compile, "");
+        Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+        String _simpleName_2 = _class_1.getSimpleName();
+        _builder.append(_simpleName_2, "");
         _builder.append(".");
-        String _method_1 = m.getMethod();
-        _builder.append(_method_1, "");
+        JvmOperation _method_2 = m.getMethod();
+        String _simpleName_3 = _method_2.getSimpleName();
+        _builder.append(_simpleName_3, "");
         _builder.append("(");
-        IQLArgumentsList _args_2 = m.getArgs();
-        EList<JvmFormalParameter> _parameters = method.getParameters();
-        String _compile_1 = this.compile(_args_2, _parameters, c);
+        IQLExpression _leftOperand = expr.getLeftOperand();
+        String _compile = this.compile(_leftOperand, c);
+        _builder.append(_compile, "");
+        {
+          IQLArgumentsList _args_2 = m.getArgs();
+          EList<IQLExpression> _elements_2 = _args_2.getElements();
+          int _size_2 = _elements_2.size();
+          boolean _greaterThan = (_size_2 > 0);
+          if (_greaterThan) {
+            _builder.append(", ");
+          }
+        }
+        IQLArgumentsList _args_3 = m.getArgs();
+        JvmOperation _method_3 = m.getMethod();
+        EList<JvmFormalParameter> _parameters = _method_3.getParameters();
+        String _compile_1 = this.compile(_args_3, _parameters, c);
         _builder.append(_compile_1, "");
         _builder.append(")");
-        return _builder.toString();
+        _xblockexpression = _builder.toString();
       }
+      _xifexpression = _xblockexpression;
+    } else {
+      StringConcatenation _builder = new StringConcatenation();
+      IQLExpression _leftOperand = expr.getLeftOperand();
+      String _compile = this.compile(_leftOperand, c);
+      _builder.append(_compile, "");
+      _builder.append(".");
+      JvmOperation _method_1 = m.getMethod();
+      String _simpleName_1 = _method_1.getSimpleName();
+      _builder.append(_simpleName_1, "");
+      _builder.append("(");
+      IQLArgumentsList _args_1 = m.getArgs();
+      JvmOperation _method_2 = m.getMethod();
+      EList<JvmFormalParameter> _parameters = _method_2.getParameters();
+      String _compile_1 = this.compile(_args_1, _parameters, c);
+      _builder.append(_compile_1, "");
+      _builder.append(")");
+      _xifexpression = _builder.toString();
     }
-    StringConcatenation _builder_1 = new StringConcatenation();
-    IQLExpression _leftOperand_2 = expr.getLeftOperand();
-    String _compile_2 = this.compile(_leftOperand_2, c);
-    _builder_1.append(_compile_2, "");
-    _builder_1.append(".");
-    String _method_2 = m.getMethod();
-    _builder_1.append(_method_2, "");
-    _builder_1.append("(");
-    IQLArgumentsList _args_3 = m.getArgs();
-    String _compile_3 = this.compile(_args_3, c);
-    _builder_1.append(_compile_3, "");
-    _builder_1.append(")");
-    return _builder_1.toString();
+    return _xifexpression;
   }
   
   public String compile(final IQLArgumentsList args, final EList<JvmFormalParameter> parameters, final G c) {
     String result = "";
-    for (int i = 0; (i < args.getElements().size()); i++) {
+    for (int i = 0; (i < parameters.size()); i++) {
       {
         if ((i > 0)) {
           result = (result + ",");
@@ -640,11 +1162,146 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   }
   
   public String compile(final IQLTerminalExpressionVariable e, final G c) {
-    StringConcatenation _builder = new StringConcatenation();
-    IQLVariableDeclaration _var = e.getVar();
-    String _name = _var.getName();
-    _builder.append(_name, "");
-    return _builder.toString();
+    String _xblockexpression = null;
+    {
+      String name = "";
+      JvmIdentifiableElement _var = e.getVar();
+      if ((_var instanceof IQLVariableDeclaration)) {
+        JvmIdentifiableElement _var_1 = e.getVar();
+        IQLVariableDeclaration v = ((IQLVariableDeclaration) _var_1);
+        String _name = v.getName();
+        name = _name;
+      } else {
+        JvmIdentifiableElement _var_2 = e.getVar();
+        if ((_var_2 instanceof IQLAttribute)) {
+          JvmIdentifiableElement _var_3 = e.getVar();
+          IQLAttribute a = ((IQLAttribute) _var_3);
+          String _simpleName = a.getSimpleName();
+          name = _simpleName;
+        } else {
+          JvmIdentifiableElement _var_4 = e.getVar();
+          if ((_var_4 instanceof JvmFormalParameter)) {
+            JvmIdentifiableElement _var_5 = e.getVar();
+            JvmFormalParameter p = ((JvmFormalParameter) _var_5);
+            String _name_1 = p.getName();
+            name = _name_1;
+          }
+        }
+      }
+      TypeResult typeDef = this.exprParser.getThisType(e);
+      String _xifexpression = null;
+      boolean _and = false;
+      boolean _isNull = typeDef.isNull();
+      boolean _not = (!_isNull);
+      if (!_not) {
+        _and = false;
+      } else {
+        JvmTypeReference _ref = typeDef.getRef();
+        boolean _hasTypeOperators = this.typeOperatorsFactory.hasTypeOperators(_ref, name);
+        _and = _hasTypeOperators;
+      }
+      if (_and) {
+        String _xblockexpression_1 = null;
+        {
+          JvmTypeReference _ref_1 = typeDef.getRef();
+          ITypeOperators typeOps = this.typeOperatorsFactory.getTypeOperators(_ref_1, name);
+          Class<? extends ITypeOperators> _class = typeOps.getClass();
+          String _canonicalName = _class.getCanonicalName();
+          c.addImport(_canonicalName);
+          StringConcatenation _builder = new StringConcatenation();
+          Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+          String _simpleName_1 = _class_1.getSimpleName();
+          _builder.append(_simpleName_1, "");
+          _builder.append(".");
+          _builder.append(name, "");
+          _xblockexpression_1 = _builder.toString();
+        }
+        _xifexpression = _xblockexpression_1;
+      } else {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append(name, "");
+        _xifexpression = _builder.toString();
+      }
+      _xblockexpression = _xifexpression;
+    }
+    return _xblockexpression;
+  }
+  
+  public String compile(final IQLTerminalExpressionMethod m, final G c) {
+    String _xblockexpression = null;
+    {
+      TypeResult typeDef = this.exprParser.getThisType(m);
+      String _xifexpression = null;
+      boolean _and = false;
+      boolean _isNull = typeDef.isNull();
+      boolean _not = (!_isNull);
+      if (!_not) {
+        _and = false;
+      } else {
+        JvmTypeReference _ref = typeDef.getRef();
+        JvmOperation _method = m.getMethod();
+        String _simpleName = _method.getSimpleName();
+        IQLArgumentsList _args = m.getArgs();
+        EList<IQLExpression> _elements = _args.getElements();
+        int _size = _elements.size();
+        boolean _hasTypeOperators = this.typeOperatorsFactory.hasTypeOperators(_ref, _simpleName, _size);
+        _and = _hasTypeOperators;
+      }
+      if (_and) {
+        String _xblockexpression_1 = null;
+        {
+          JvmTypeReference _ref_1 = typeDef.getRef();
+          JvmOperation _method_1 = m.getMethod();
+          String _simpleName_1 = _method_1.getSimpleName();
+          IQLArgumentsList _args_1 = m.getArgs();
+          EList<IQLExpression> _elements_1 = _args_1.getElements();
+          int _size_1 = _elements_1.size();
+          ITypeOperators typeOps = this.typeOperatorsFactory.getTypeOperators(_ref_1, _simpleName_1, _size_1);
+          Class<? extends ITypeOperators> _class = typeOps.getClass();
+          String _canonicalName = _class.getCanonicalName();
+          c.addImport(_canonicalName);
+          StringConcatenation _builder = new StringConcatenation();
+          Class<? extends ITypeOperators> _class_1 = typeOps.getClass();
+          String _simpleName_2 = _class_1.getSimpleName();
+          _builder.append(_simpleName_2, "");
+          _builder.append(".");
+          JvmOperation _method_2 = m.getMethod();
+          String _simpleName_3 = _method_2.getSimpleName();
+          _builder.append(_simpleName_3, "");
+          _builder.append("(this");
+          {
+            IQLArgumentsList _args_2 = m.getArgs();
+            EList<IQLExpression> _elements_2 = _args_2.getElements();
+            int _size_2 = _elements_2.size();
+            boolean _greaterThan = (_size_2 > 0);
+            if (_greaterThan) {
+              _builder.append(", ");
+            }
+          }
+          IQLArgumentsList _args_3 = m.getArgs();
+          JvmOperation _method_3 = m.getMethod();
+          EList<JvmFormalParameter> _parameters = _method_3.getParameters();
+          String _compile = this.compile(_args_3, _parameters, c);
+          _builder.append(_compile, "");
+          _builder.append(")");
+          _xblockexpression_1 = _builder.toString();
+        }
+        _xifexpression = _xblockexpression_1;
+      } else {
+        StringConcatenation _builder = new StringConcatenation();
+        JvmOperation _method_1 = m.getMethod();
+        String _simpleName_1 = _method_1.getSimpleName();
+        _builder.append(_simpleName_1, "");
+        _builder.append("(");
+        IQLArgumentsList _args_1 = m.getArgs();
+        String _compile = this.compile(_args_1, c);
+        _builder.append(_compile, "");
+        _builder.append(")");
+        _xifexpression = _builder.toString();
+      }
+      _xblockexpression = _xifexpression;
+    }
+    return _xblockexpression;
   }
   
   public String compile(final IQLTerminalExpressionThis e, final G c) {
@@ -688,7 +1345,9 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       {
         JvmTypeReference _ref = e.getRef();
         IQLArgumentsList _argsList = e.getArgsList();
-        JvmExecutable constructor = this.lookUp.findConstructor(_ref, _argsList);
+        EList<IQLExpression> _elements_1 = _argsList.getElements();
+        int _size_1 = _elements_1.size();
+        JvmExecutable constructor = this.lookUp.findConstructor(_ref, _size_1);
         String _xifexpression_1 = null;
         boolean _notEquals_1 = (!Objects.equal(constructor, null));
         if (_notEquals_1) {
@@ -753,7 +1412,9 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         {
           JvmTypeReference _ref = e.getRef();
           IQLArgumentsList _argsList_1 = e.getArgsList();
-          JvmExecutable constructor = this.lookUp.findConstructor(_ref, _argsList_1);
+          EList<IQLExpression> _elements_1 = _argsList_1.getElements();
+          int _size_1 = _elements_1.size();
+          JvmExecutable constructor = this.lookUp.findConstructor(_ref, _size_1);
           String _xifexpression_2 = null;
           boolean _notEquals_2 = (!Objects.equal(constructor, null));
           if (_notEquals_2) {
@@ -954,7 +1615,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       _builder.append("new ");
       String _simpleName = Range.class.getSimpleName();
       _builder.append(_simpleName, "");
-      _builder.append("\'(");
+      _builder.append("(");
       _builder.append(from, "");
       _builder.append(" , ");
       _builder.append(to, "");

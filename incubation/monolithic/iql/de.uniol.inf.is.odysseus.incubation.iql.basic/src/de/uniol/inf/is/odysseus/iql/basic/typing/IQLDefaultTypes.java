@@ -7,6 +7,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.ITypeOperators;
+import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.impl.CollectionOperators;
+import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.impl.ListOperators;
+import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.impl.ObjectOperators;
+
 public class IQLDefaultTypes {
 	
 	
@@ -26,6 +31,14 @@ public class IQLDefaultTypes {
 		implicitImports.add("java.util.*");
 		implicitImports.add("java.lang.*");
 		return implicitImports;
+	}
+	
+	public static Collection<ITypeOperators> getTypeOperators() {
+		Collection<ITypeOperators> result = new HashSet<>();
+		result.add(new CollectionOperators());
+		result.add(new ListOperators());
+		result.add(new ObjectOperators());
+		return result;
 	}
 
 }

@@ -81,7 +81,7 @@ public class AbstractIQLProposalBuilder implements Function<IEObjectDescription,
 		} else if (obj instanceof JvmField) {
 			return null;
 		} else if (obj instanceof IQLVariableDeclaration) {
-			return apply((IQLVariableDeclaration) obj, candidate);
+			return null;
 		} else if (obj instanceof JvmGenericType) {
 			return null;
 		} else if (obj instanceof JvmPrimitiveType) {
@@ -146,11 +146,7 @@ public class AbstractIQLProposalBuilder implements Function<IEObjectDescription,
 
 		StringBuilder b = new StringBuilder();
 		b.append(decl.getName());
-		if (decl.getRef()!= null) {
-			b.append(" : " +toString(decl.getRef()));
-		} else if (decl.getParameterType()!= null) {
-			b.append(" : " +toString(decl.getParameterType()));
-		}	
+		b.append(" : " +toString(decl.getRef()));
 		return defaultApply(candidate, simpleName, new StyledString(b.toString()));
 	}
 	

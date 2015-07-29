@@ -72,7 +72,6 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
       case BasicIQLPackage.IQL_ARRAY_TYPE_REF: return createIQLArrayTypeRef();
       case BasicIQLPackage.IQL_SIMPLE_TYPE: return createIQLSimpleType();
       case BasicIQLPackage.IQL_ARRAY_TYPE: return createIQLArrayType();
-      case BasicIQLPackage.IQL_VARIABLE_DECLARATION: return createIQLVariableDeclaration();
       case BasicIQLPackage.IQL_METADATA_LIST: return createIQLMetadataList();
       case BasicIQLPackage.IQL_METADATA: return createIQLMetadata();
       case BasicIQLPackage.IQL_METADATA_VALUE: return createIQLMetadataValue();
@@ -94,15 +93,17 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
       case BasicIQLPackage.IQL_METHOD: return createIQLMethod();
       case BasicIQLPackage.IQL_METHOD_DECLARATION_MEMBER: return createIQLMethodDeclarationMember();
       case BasicIQLPackage.IQL_JAVA_MEMBER: return createIQLJavaMember();
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_LONG: return createIQLMetadataValueSingleLong();
+      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT: return createIQLMetadataValueSingleInt();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE: return createIQLMetadataValueSingleDouble();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_STRING: return createIQLMetadataValueSingleString();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN: return createIQLMetadataValueSingleBoolean();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_CHAR: return createIQLMetadataValueSingleChar();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF: return createIQLMetadataValueSingleTypeRef();
+      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_ID: return createIQLMetadataValueSingleID();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_NULL: return createIQLMetadataValueSingleNull();
       case BasicIQLPackage.IQL_METADATA_VALUE_LIST: return createIQLMetadataValueList();
       case BasicIQLPackage.IQL_METADATA_VALUE_MAP: return createIQLMetadataValueMap();
+      case BasicIQLPackage.IQL_VARIABLE_DECLARATION: return createIQLVariableDeclaration();
       case BasicIQLPackage.IQL_STATEMENT_BLOCK: return createIQLStatementBlock();
       case BasicIQLPackage.IQL_JAVA_STATEMENT: return createIQLJavaStatement();
       case BasicIQLPackage.IQL_IF_STATEMENT: return createIQLIfStatement();
@@ -135,6 +136,7 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
       case BasicIQLPackage.IQL_ATTRIBUTE_SELECTION: return createIQLAttributeSelection();
       case BasicIQLPackage.IQL_METHOD_SELECTION: return createIQLMethodSelection();
       case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_VARIABLE: return createIQLTerminalExpressionVariable();
+      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_METHOD: return createIQLTerminalExpressionMethod();
       case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_THIS: return createIQLTerminalExpressionThis();
       case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_SUPER: return createIQLTerminalExpressionSuper();
       case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_PARENTHESIS: return createIQLTerminalExpressionParenthesis();
@@ -239,17 +241,6 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
   {
     IQLArrayTypeImpl iqlArrayType = new IQLArrayTypeImpl();
     return iqlArrayType;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLVariableDeclaration createIQLVariableDeclaration()
-  {
-    IQLVariableDeclarationImpl iqlVariableDeclaration = new IQLVariableDeclarationImpl();
-    return iqlVariableDeclaration;
   }
 
   /**
@@ -488,10 +479,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLMetadataValueSingleLong createIQLMetadataValueSingleLong()
+  public IQLMetadataValueSingleInt createIQLMetadataValueSingleInt()
   {
-    IQLMetadataValueSingleLongImpl iqlMetadataValueSingleLong = new IQLMetadataValueSingleLongImpl();
-    return iqlMetadataValueSingleLong;
+    IQLMetadataValueSingleIntImpl iqlMetadataValueSingleInt = new IQLMetadataValueSingleIntImpl();
+    return iqlMetadataValueSingleInt;
   }
 
   /**
@@ -554,6 +545,17 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public IQLMetadataValueSingleID createIQLMetadataValueSingleID()
+  {
+    IQLMetadataValueSingleIDImpl iqlMetadataValueSingleID = new IQLMetadataValueSingleIDImpl();
+    return iqlMetadataValueSingleID;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public IQLMetadataValueSingleNull createIQLMetadataValueSingleNull()
   {
     IQLMetadataValueSingleNullImpl iqlMetadataValueSingleNull = new IQLMetadataValueSingleNullImpl();
@@ -580,6 +582,17 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
   {
     IQLMetadataValueMapImpl iqlMetadataValueMap = new IQLMetadataValueMapImpl();
     return iqlMetadataValueMap;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLVariableDeclaration createIQLVariableDeclaration()
+  {
+    IQLVariableDeclarationImpl iqlVariableDeclaration = new IQLVariableDeclarationImpl();
+    return iqlVariableDeclaration;
   }
 
   /**
@@ -932,6 +945,17 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
   {
     IQLTerminalExpressionVariableImpl iqlTerminalExpressionVariable = new IQLTerminalExpressionVariableImpl();
     return iqlTerminalExpressionVariable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLTerminalExpressionMethod createIQLTerminalExpressionMethod()
+  {
+    IQLTerminalExpressionMethodImpl iqlTerminalExpressionMethod = new IQLTerminalExpressionMethodImpl();
+    return iqlTerminalExpressionMethod;
   }
 
   /**

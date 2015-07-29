@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 
 abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, S extends IIQLStatementCompiler<G>, F extends IIQLTypeFactory> implements IIQLCompiler<G>{
 	
@@ -76,10 +77,8 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 			
 			«FOR a : varStmts»
 				«IF a.init != null && a.init.argsMap != null && a.init.argsMap.elements.size>0»
-					«var type = a.^var.ref»
-					«IF type == null»
-					«type = a.^var.parameterType»
-					«ENDIF»
+					«var decl = a.^var as IQLVariableDeclaration»
+					«var type = decl.ref»
 					«createGetterMethod(type, a.init.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»

@@ -11,9 +11,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.builder.nature.NatureAddingEditorCallback;
 import org.eclipse.xtext.builder.nature.ToggleXtextNatureAction;
 import org.eclipse.xtext.common.types.xtext.ClasspathBasedTypeScopeProvider;
+import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
+import org.eclipse.xtext.ui.editor.hover.DispatchingEObjectTextHover;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
@@ -21,6 +25,9 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactor
 import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLTemplateProposalProvider;
+import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectDocumentationProvider;
+import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectHoverProvider;
+import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -29,6 +36,18 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLTemplatePropo
 public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.AbstractBasicIQLUiModule {
 	public BasicIQLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	
+	public Class<? extends IEObjectHover> bindIEObjectHover() {
+		return IQLDispatchingEObjectTextHover.class;
+	}
+	
+	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
+	    return BasicIQLEObjectHoverProvider.class;
+	}
+	 
+	public Class<? extends IEObjectDocumentationProvider> bindIEObjectDocumentationProviderr() {
+	    return BasicIQLEObjectDocumentationProvider.class;
 	}
 
 	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration () {

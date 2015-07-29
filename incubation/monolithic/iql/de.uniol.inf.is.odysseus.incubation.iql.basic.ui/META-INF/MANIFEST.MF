@@ -23,6 +23,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.iql.basic.ui.coloring,
  de.uniol.inf.is.odysseus.iql.basic.ui.contentassist,
  de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.antlr,
+ de.uniol.inf.is.odysseus.iql.basic.ui.hover,
  de.uniol.inf.is.odysseus.iql.basic.ui.internal,
  de.uniol.inf.is.odysseus.iql.basic.ui.quickfix
 Bundle-Activator: de.uniol.inf.is.odysseus.iql.basic.ui.internal.BasicIQLActivator

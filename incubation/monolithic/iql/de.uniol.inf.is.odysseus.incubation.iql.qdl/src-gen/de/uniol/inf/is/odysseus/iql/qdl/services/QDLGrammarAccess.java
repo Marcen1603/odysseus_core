@@ -592,23 +592,13 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//JvmFormalParameter returns types::JvmFormalParameter:
-	//	IQLFormalParameter;
+	//	parameterType=JvmTypeReference name=ID;
 	public BasicIQLGrammarAccess.JvmFormalParameterElements getJvmFormalParameterAccess() {
 		return gaBasicIQL.getJvmFormalParameterAccess();
 	}
 	
 	public ParserRule getJvmFormalParameterRule() {
 		return getJvmFormalParameterAccess().getRule();
-	}
-
-	//IQLFormalParameter returns IQLVariableDeclaration:
-	//	parameterType=JvmTypeReference name=ID;
-	public BasicIQLGrammarAccess.IQLFormalParameterElements getIQLFormalParameterAccess() {
-		return gaBasicIQL.getIQLFormalParameterAccess();
-	}
-	
-	public ParserRule getIQLFormalParameterRule() {
-		return getIQLFormalParameterAccess().getRule();
 	}
 
 	//IQLMethod returns types::JvmOperation:
@@ -657,7 +647,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMetadata:
-	//	name=ID "=" value=IQLMetadataValue;
+	//	name=ID ("=" value=IQLMetadataValue)?;
 	public BasicIQLGrammarAccess.IQLMetadataElements getIQLMetadataAccess() {
 		return gaBasicIQL.getIQLMetadataAccess();
 	}
@@ -677,9 +667,10 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMetadataValueSingle returns IQLMetadataValue:
-	//	{IQLMetadataValueSingleLong} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
-	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR |
-	//	{IQLMetadataValueSingleTypeRef} value=JvmTypeReference | {IQLMetadataValueSingleNull} value="null";
+	//	{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
+	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR | =>
+	//	({IQLMetadataValueSingleTypeRef} value=JvmTypeReference) | {IQLMetadataValueSingleID} value=ID |
+	//	{IQLMetadataValueSingleNull} value="null";
 	public BasicIQLGrammarAccess.IQLMetadataValueSingleElements getIQLMetadataValueSingleAccess() {
 		return gaBasicIQL.getIQLMetadataValueSingleAccess();
 	}
@@ -721,8 +712,8 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	///////////////////////////////////////////////
 	///////////////////////////////////////////////
 	///////////////////////////////////////////////
-	//IQLVariableDeclaration:
-	//	ref=JvmTypeReference name=ID;
+	//IQLVariableDeclaration returns types::JvmIdentifiableElement:
+	//	{IQLVariableDeclaration} ref=JvmTypeReference name=ID;
 	public BasicIQLGrammarAccess.IQLVariableDeclarationElements getIQLVariableDeclarationAccess() {
 		return gaBasicIQL.getIQLVariableDeclarationAccess();
 	}
@@ -776,7 +767,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	///////////////////////////////////////////////
 	//IQLStatement:
 	//	IQLStatementBlock | IQLExpressionStatement | IQLIfStatement | IQLWhileStatement | IQLDoWhileStatement |
-	//	IQLForStatement | IQLForEachStatement | IQLSwitchStatement | => IQLVariableStatement | IQLBreakStatement |
+	//	IQLForStatement | IQLForEachStatement | IQLSwitchStatement | IQLVariableStatement | IQLBreakStatement |
 	//	IQLContinueStatement | IQLReturnStatement | IQLConstructorCallStatement | IQLJavaStatement;
 	public BasicIQLGrammarAccess.IQLStatementElements getIQLStatementAccess() {
 		return gaBasicIQL.getIQLStatementAccess();
@@ -1141,8 +1132,9 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMemberCallExpression returns IQLExpression:
-	//	IQLTerminalExpression => ({IQLArrayExpression.leftOperand=current} "[" expr=IQLExpression "]")* (=>
-	//	({IQLMemberSelectionExpression.leftOperand=current} ".") rightOperand=(IQLAttributeSelection | IQLMethodSelection))*;
+	//	IQLTerminalExpression => ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
+	//	expressions+=IQLExpression)? "]")* (=> ({IQLMemberSelectionExpression.leftOperand=current} ".")
+	//	rightOperand=(IQLAttributeSelection | IQLMethodSelection))*;
 	public BasicIQLGrammarAccess.IQLMemberCallExpressionElements getIQLMemberCallExpressionAccess() {
 		return gaBasicIQL.getIQLMemberCallExpressionAccess();
 	}
@@ -1162,7 +1154,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMethodSelection returns IQLMemberSelection:
-	//	{IQLMethodSelection} method=ID args=IQLArgumentsList;
+	//	{IQLMethodSelection} method=[types::JvmOperation] args=IQLArgumentsList;
 	public BasicIQLGrammarAccess.IQLMethodSelectionElements getIQLMethodSelectionAccess() {
 		return gaBasicIQL.getIQLMethodSelectionAccess();
 	}
@@ -1172,7 +1164,8 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLTerminalExpression returns IQLExpression:
-	//	{IQLTerminalExpressionVariable} var=[IQLVariableDeclaration] | {IQLTerminalExpressionThis} "this" |
+	//	{IQLTerminalExpressionVariable} var=[types::JvmIdentifiableElement] | {IQLTerminalExpressionMethod}
+	//	method=[types::JvmOperation] args=IQLArgumentsList | {IQLTerminalExpressionThis} "this" |
 	//	{IQLTerminalExpressionSuper} "super" | {IQLTerminalExpressionParenthesis} "(" expr=IQLExpression ")" |
 	//	{IQLTerminalExpressionNew} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
 	//	argsMap=IQLArgumentsMap?) | IQLLiteralExpression;

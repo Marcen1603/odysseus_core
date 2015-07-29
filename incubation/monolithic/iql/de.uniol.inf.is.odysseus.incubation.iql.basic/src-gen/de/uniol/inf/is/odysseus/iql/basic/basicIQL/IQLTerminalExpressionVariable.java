@@ -2,6 +2,7 @@
  */
 package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
 
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -30,12 +31,12 @@ public interface IQLTerminalExpressionVariable extends IQLExpression
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Var</em>' reference.
-   * @see #setVar(IQLVariableDeclaration)
+   * @see #setVar(JvmIdentifiableElement)
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLTerminalExpressionVariable_Var()
    * @model
    * @generated
    */
-  IQLVariableDeclaration getVar();
+  JvmIdentifiableElement getVar();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable#getVar <em>Var</em>}' reference.
@@ -45,6 +46,6 @@ public interface IQLTerminalExpressionVariable extends IQLExpression
    * @see #getVar()
    * @generated
    */
-  void setVar(IQLVariableDeclaration value);
+  void setVar(JvmIdentifiableElement value);
 
 } // IQLTerminalExpressionVariable

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.odl.typing;
+package de.uniol.inf.is.odysseus.iql.basic.typing;
 
 
 import java.io.File;
@@ -9,10 +9,16 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AccessAOSourceParameter;
@@ -31,8 +37,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MetaAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PhysicalOperatorParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.RenameAttribute;
@@ -44,6 +48,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ValidatedFileNameParameter;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class ParameterFactory {
 	
@@ -81,7 +86,7 @@ public class ParameterFactory {
 		//addParameter(MatrixParameter.class, Double[][].class);
 		addParameter(MetaAttributeParameter.class, IMetaAttribute.class);
 		//addParameter(NestAggregateItemParameter.class, NestAggregateItem.class);
-		addParameter(OptionParameter.class, Option.class);
+		//addParameter(OptionParameter.class, Option.class);
 		addParameter(PhysicalOperatorParameter.class, IPhysicalOperator.class);
 		addParameter(PredicateParameter.class, IPredicate.class);
 		addParameter(ResolvedSDFAttributeParameter.class, SDFAttribute.class);
@@ -91,10 +96,8 @@ public class ParameterFactory {
 		addParameter(TimeParameter.class, TimeValueItem.class);
 		//addParameter(UncheckedExpressionParamter.class, String[].class);
 		//addParameter(VectorParameter.class, double[]);
-
-
 	}
-	
+		
 	public static void addParameter(Class<? extends IParameter<?>> parameterType, Class<?> valueType) {
 		parameters.add(parameterType);
 		parametersByType.put(parameterType, valueType);
@@ -113,5 +116,50 @@ public class ParameterFactory {
 	
 	public static Class<?> getParameterValue(Class<? extends IParameter<?>> parameterType) {
 		return parametersByType.get(parameterType);
+	}
+	
+	public static boolean isComplexParameterType(Class<? extends IParameter<?>> parameterType) {
+		Class<?> parameterValue = getParameterValue(parameterType);
+		if (parameterValue != null) {
+			if (parameterValue == Byte.class) {
+				return false;
+			} else if (parameterValue == Short.class) {
+				return false;
+			} else if (parameterValue == Integer.class) {
+				return false;
+			} else if (parameterValue == Long.class) {
+				return false;
+			} else if (parameterValue == Float.class) {
+				return false;
+			} else if (parameterValue == Double.class) {
+				return false;
+			} else if (parameterValue == Boolean.class) {
+				return false;
+			} else if (parameterValue == Character.class) {
+				return false;
+			} else if (parameterValue == String.class) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static Object toParameter(Object parameterValue,	Class<? extends IParameter<?>> parameterType, ILogicalOperator operator, ISession session, IDataDictionary dd) {
+		try {
+			IParameter<?> parameter = parameterType.newInstance();
+			parameter.setInputValue(parameterValue);
+			parameter.setCaller(session);
+			parameter.setDataDictionary(dd);
+			List<SDFSchema> schemata = new ArrayList<>();
+			for (LogicalSubscription subs : operator.getSubscribedToSource()) {
+				schemata.add(subs.getSchema());
+			}
+			IAttributeResolver attributeResolver = new DirectAttributeResolver(schemata);
+			parameter.setAttributeResolver(attributeResolver);
+			return parameter.getValue();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory
 import org.eclipse.xtext.common.types.JvmMember
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 
 class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLStatementCompiler, ODLTypeFactory>{
 	
@@ -147,10 +148,8 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 			
 			«FOR a : varStmts»
 				«IF a.init != null && a.init.argsMap != null && a.init.argsMap.elements.size>0»
-					«var type = a.^var.ref»
-					«IF type == null»
-					«type = a.^var.parameterType»
-					«ENDIF»
+					«var decl = a.^var as IQLVariableDeclaration»
+					«var type = decl.ref»
 					«createGetterMethod(type, a.init.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»
@@ -242,10 +241,8 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		
 			«FOR a : varStmts»
 				«IF a.init != null && a.init.argsMap != null && a.init.argsMap.elements.size>0»
-					«var type = a.^var.ref»
-					«IF type == null»
-					«type = a.^var.parameterType»
-					«ENDIF»
+					«var decl = a.^var as IQLVariableDeclaration»
+					«var type = decl.ref»
 					«createGetterMethod(type, a.init.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»

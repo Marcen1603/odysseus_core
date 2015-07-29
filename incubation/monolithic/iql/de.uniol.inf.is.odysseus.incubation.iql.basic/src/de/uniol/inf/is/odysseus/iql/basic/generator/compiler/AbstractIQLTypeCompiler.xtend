@@ -28,7 +28,9 @@ abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends I
 		} 
 		if (typeRef instanceof IQLArrayTypeRef) {
 			w = true
-			nodeText = nodeText.replace("[","").replace("]","").trim;
+			if (nodeText != null) {
+				nodeText = nodeText.replace("[","").replace("]","").trim;				
+			}
 			var arrayType = typeRef as IQLArrayTypeRef
 			if (arrayType.type.dimensions.size()>0) {
 				for (i : 0 ..< arrayType.type.dimensions.size) {

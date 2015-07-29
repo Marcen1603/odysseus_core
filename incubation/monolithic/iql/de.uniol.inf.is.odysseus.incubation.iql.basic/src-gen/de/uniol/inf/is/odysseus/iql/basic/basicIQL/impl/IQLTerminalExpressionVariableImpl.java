@@ -4,7 +4,6 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -12,6 +11,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -36,7 +37,7 @@ public class IQLTerminalExpressionVariableImpl extends IQLExpressionImpl impleme
    * @generated
    * @ordered
    */
-  protected IQLVariableDeclaration var;
+  protected JvmIdentifiableElement var;
 
   /**
    * <!-- begin-user-doc -->
@@ -64,12 +65,12 @@ public class IQLTerminalExpressionVariableImpl extends IQLExpressionImpl impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLVariableDeclaration getVar()
+  public JvmIdentifiableElement getVar()
   {
     if (var != null && var.eIsProxy())
     {
       InternalEObject oldVar = (InternalEObject)var;
-      var = (IQLVariableDeclaration)eResolveProxy(oldVar);
+      var = (JvmIdentifiableElement)eResolveProxy(oldVar);
       if (var != oldVar)
       {
         if (eNotificationRequired())
@@ -84,7 +85,7 @@ public class IQLTerminalExpressionVariableImpl extends IQLExpressionImpl impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLVariableDeclaration basicGetVar()
+  public JvmIdentifiableElement basicGetVar()
   {
     return var;
   }
@@ -94,9 +95,9 @@ public class IQLTerminalExpressionVariableImpl extends IQLExpressionImpl impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setVar(IQLVariableDeclaration newVar)
+  public void setVar(JvmIdentifiableElement newVar)
   {
-    IQLVariableDeclaration oldVar = var;
+    JvmIdentifiableElement oldVar = var;
     var = newVar;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_TERMINAL_EXPRESSION_VARIABLE__VAR, oldVar, var));
@@ -130,7 +131,7 @@ public class IQLTerminalExpressionVariableImpl extends IQLExpressionImpl impleme
     switch (featureID)
     {
       case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_VARIABLE__VAR:
-        setVar((IQLVariableDeclaration)newValue);
+        setVar((JvmIdentifiableElement)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -147,7 +148,7 @@ public class IQLTerminalExpressionVariableImpl extends IQLExpressionImpl impleme
     switch (featureID)
     {
       case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_VARIABLE__VAR:
-        setVar((IQLVariableDeclaration)null);
+        setVar((JvmIdentifiableElement)null);
         return;
     }
     super.eUnset(featureID);

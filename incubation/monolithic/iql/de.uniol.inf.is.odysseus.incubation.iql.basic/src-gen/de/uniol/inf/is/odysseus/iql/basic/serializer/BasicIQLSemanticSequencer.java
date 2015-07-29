@@ -54,7 +54,8 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef;
@@ -72,6 +73,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSwitchStatement;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionParenthesis;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionSuper;
@@ -85,6 +87,8 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLWhileStatement;
 import de.uniol.inf.is.odysseus.iql.basic.services.BasicIQLGrammarAccess;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.TypesPackage;
 import org.eclipse.xtext.serializer.acceptor.ISemanticSequenceAcceptor;
 import org.eclipse.xtext.serializer.acceptor.SequenceFeeder;
 import org.eclipse.xtext.serializer.diagnostic.ISemanticSequencerDiagnosticProvider;
@@ -726,10 +730,17 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_LONG:
+			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_ID:
 				if(context == grammarAccess.getIQLMetadataValueRule() ||
 				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleLong) semanticObject); 
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleID) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleInt) semanticObject); 
 					return; 
 				}
 				else break;
@@ -917,6 +928,33 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 					return; 
 				}
 				else break;
+			case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_METHOD:
+				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
+				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
+				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLEqualityExpressionRule() ||
+				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionRule() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getIQLTerminalExpressionRule() ||
+				   context == grammarAccess.getIQLUnaryExpressionRule() ||
+				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
+					sequence_IQLTerminalExpression(context, (IQLTerminalExpressionMethod) semanticObject); 
+					return; 
+				}
+				else break;
 			case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_NEW:
 				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
 				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
@@ -1081,12 +1119,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				}
 				else break;
 			case BasicIQLPackage.IQL_VARIABLE_DECLARATION:
-				if(context == grammarAccess.getIQLFormalParameterRule() ||
-				   context == grammarAccess.getJvmFormalParameterRule()) {
-					sequence_IQLFormalParameter(context, (IQLVariableDeclaration) semanticObject); 
-					return; 
-				}
-				else if(context == grammarAccess.getIQLVariableDeclarationRule()) {
+				if(context == grammarAccess.getIQLVariableDeclarationRule()) {
 					sequence_IQLVariableDeclaration(context, (IQLVariableDeclaration) semanticObject); 
 					return; 
 				}
@@ -1108,6 +1141,14 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				if(context == grammarAccess.getIQLStatementRule() ||
 				   context == grammarAccess.getIQLWhileStatementRule()) {
 					sequence_IQLWhileStatement(context, (IQLWhileStatement) semanticObject); 
+					return; 
+				}
+				else break;
+			}
+		else if(semanticObject.eClass().getEPackage() == TypesPackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
+			case TypesPackage.JVM_FORMAL_PARAMETER:
+				if(context == grammarAccess.getJvmFormalParameterRule()) {
+					sequence_JvmFormalParameter(context, (JvmFormalParameter) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1417,15 +1458,6 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		feeder.accept(grammarAccess.getIQLForStatementAccess().getUpdateExprIQLExpressionParserRuleCall_5_0(), semanticObject.getUpdateExpr());
 		feeder.accept(grammarAccess.getIQLForStatementAccess().getBodyIQLStatementParserRuleCall_7_0(), semanticObject.getBody());
 		feeder.finish();
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (parameterType=JvmTypeReference name=ID)
-	 */
-	protected void sequence_IQLFormalParameter(EObject context, IQLVariableDeclaration semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -1741,20 +1773,10 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (leftOperand=IQLMemberCallExpression_IQLArrayExpression_1_0_0 expr=IQLExpression)
+	 *     (leftOperand=IQLMemberCallExpression_IQLArrayExpression_1_0_0 expressions+=IQLExpression expressions+=IQLExpression?)
 	 */
 	protected void sequence_IQLMemberCallExpression(EObject context, IQLArrayExpression semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_ARRAY_EXPRESSION__LEFT_OPERAND) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_ARRAY_EXPRESSION__LEFT_OPERAND));
-			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_ARRAY_EXPRESSION__EXPR) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_ARRAY_EXPRESSION__EXPR));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0(), semanticObject.getLeftOperand());
-		feeder.accept(grammarAccess.getIQLMemberCallExpressionAccess().getExprIQLExpressionParserRuleCall_1_0_2_0(), semanticObject.getExpr());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -1866,12 +1888,28 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
+	 *     value=ID
+	 */
+	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleID semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_ID__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_ID__VALUE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_6_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     value=INT
 	 */
-	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleLong semanticObject) {
+	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleInt semanticObject) {
 		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_LONG__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_LONG__VALUE));
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_INT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_INT__VALUE));
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
@@ -1891,7 +1929,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueNullKeyword_6_1_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueNullKeyword_7_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
@@ -1923,27 +1961,17 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_5_1_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_5_0_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (name=ID value=IQLMetadataValue)
+	 *     (name=ID value=IQLMetadataValue?)
 	 */
 	protected void sequence_IQLMetadata(EObject context, IQLMetadata semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_METADATA__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_METADATA__NAME));
-			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_METADATA__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_METADATA__VALUE));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMetadataAccess().getNameIDTerminalRuleCall_0_0(), semanticObject.getName());
-		feeder.accept(grammarAccess.getIQLMetadataAccess().getValueIQLMetadataValueParserRuleCall_2_0(), semanticObject.getValue());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -1958,7 +1986,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (method=ID args=IQLArgumentsList)
+	 *     (method=[JvmOperation|ID] args=IQLArgumentsList)
 	 */
 	protected void sequence_IQLMethodSelection(EObject context, IQLMethodSelection semanticObject) {
 		if(errorAcceptor != null) {
@@ -1969,7 +1997,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMethodSelectionAccess().getMethodIDTerminalRuleCall_1_0(), semanticObject.getMethod());
+		feeder.accept(grammarAccess.getIQLMethodSelectionAccess().getMethodJvmOperationIDTerminalRuleCall_1_0_1(), semanticObject.getMethod());
 		feeder.accept(grammarAccess.getIQLMethodSelectionAccess().getArgsIQLArgumentsListParserRuleCall_2_0(), semanticObject.getArgs());
 		feeder.finish();
 	}
@@ -2131,6 +2159,25 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
+	 *     (method=[JvmOperation|ID] args=IQLArgumentsList)
+	 */
+	protected void sequence_IQLTerminalExpression(EObject context, IQLTerminalExpressionMethod semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_TERMINAL_EXPRESSION_METHOD__METHOD) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_TERMINAL_EXPRESSION_METHOD__METHOD));
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_TERMINAL_EXPRESSION_METHOD__ARGS) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_TERMINAL_EXPRESSION_METHOD__ARGS));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLTerminalExpressionAccess().getMethodJvmOperationIDTerminalRuleCall_1_1_0_1(), semanticObject.getMethod());
+		feeder.accept(grammarAccess.getIQLTerminalExpressionAccess().getArgsIQLArgumentsListParserRuleCall_1_2_0(), semanticObject.getArgs());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (ref=IQLArrayTypeRef | (ref=IQLSimpleTypeRef argsList=IQLArgumentsList argsMap=IQLArgumentsMap?))
 	 */
 	protected void sequence_IQLTerminalExpression(EObject context, IQLTerminalExpressionNew semanticObject) {
@@ -2149,7 +2196,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLTerminalExpressionAccess().getExprIQLExpressionParserRuleCall_3_2_0(), semanticObject.getExpr());
+		feeder.accept(grammarAccess.getIQLTerminalExpressionAccess().getExprIQLExpressionParserRuleCall_4_2_0(), semanticObject.getExpr());
 		feeder.finish();
 	}
 	
@@ -2174,7 +2221,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     var=[IQLVariableDeclaration|ID]
+	 *     var=[JvmIdentifiableElement|ID]
 	 */
 	protected void sequence_IQLTerminalExpression(EObject context, IQLTerminalExpressionVariable semanticObject) {
 		if(errorAcceptor != null) {
@@ -2183,7 +2230,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLTerminalExpressionAccess().getVarIQLVariableDeclarationIDTerminalRuleCall_0_1_0_1(), semanticObject.getVar());
+		feeder.accept(grammarAccess.getIQLTerminalExpressionAccess().getVarJvmIdentifiableElementIDTerminalRuleCall_0_1_0_1(), semanticObject.getVar());
 		feeder.finish();
 	}
 	
@@ -2297,7 +2344,17 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *     (ref=JvmTypeReference name=ID)
 	 */
 	protected void sequence_IQLVariableDeclaration(EObject context, IQLVariableDeclaration semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_VARIABLE_DECLARATION__REF) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_VARIABLE_DECLARATION__REF));
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_VARIABLE_DECLARATION__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_VARIABLE_DECLARATION__NAME));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLVariableDeclarationAccess().getRefJvmTypeReferenceParserRuleCall_1_0(), semanticObject.getRef());
+		feeder.accept(grammarAccess.getIQLVariableDeclarationAccess().getNameIDTerminalRuleCall_2_0(), semanticObject.getName());
+		feeder.finish();
 	}
 	
 	
@@ -2345,5 +2402,14 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		feeder.accept(grammarAccess.getIQLWhileStatementAccess().getPredicateIQLExpressionParserRuleCall_3_0(), semanticObject.getPredicate());
 		feeder.accept(grammarAccess.getIQLWhileStatementAccess().getBodyIQLStatementParserRuleCall_5_0(), semanticObject.getBody());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (parameterType=JvmTypeReference name=ID)
+	 */
+	protected void sequence_JvmFormalParameter(EObject context, JvmFormalParameter semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 }

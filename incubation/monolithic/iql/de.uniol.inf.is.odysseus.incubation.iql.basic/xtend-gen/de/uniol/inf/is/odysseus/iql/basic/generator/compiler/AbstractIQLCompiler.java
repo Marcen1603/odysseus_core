@@ -27,6 +27,7 @@ import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmMember;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
@@ -223,19 +224,12 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
             }
             if (_and_3) {
               _builder.append("\t");
-              IQLVariableDeclaration _var = a_1.getVar();
-              JvmTypeReference type = _var.getRef();
+              JvmIdentifiableElement _var = a_1.getVar();
+              IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
               _builder.newLineIfNotEmpty();
-              {
-                boolean _equals = Objects.equal(type, null);
-                if (_equals) {
-                  _builder.append("\t");
-                  IQLVariableDeclaration _var_1 = a_1.getVar();
-                  JvmTypeReference _parameterType = _var_1.getParameterType();
-                  _builder.append(type = _parameterType, "\t");
-                  _builder.newLineIfNotEmpty();
-                }
-              }
+              _builder.append("\t");
+              JvmTypeReference type = decl.getRef();
+              _builder.newLineIfNotEmpty();
               _builder.append("\t");
               IQLVariableInitialization _init_7 = a_1.getInit();
               IQLArgumentsMap _argsMap_8 = _init_7.getArgsMap();

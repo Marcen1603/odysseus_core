@@ -21,15 +21,16 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractIQLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
+import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
 
-public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<ODLExpressionParser, ODLTypeFactory, ODLLookUp> {
+public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<ODLExpressionParser, ODLTypeFactory, ODLLookUp, ODLScopeProvider> {
 
 	@Inject
 	public ODLTemplateProposalProvider(TemplateStore templateStore,
-			ContextTypeRegistry registry, ContextTypeIdHelper helper, ODLExpressionParser exprParser, ODLTypeFactory typeFactory, ODLLookUp lookUp) {
-		super(templateStore, registry, helper, exprParser, typeFactory, lookUp);
+			ContextTypeRegistry registry, ContextTypeIdHelper helper, ODLExpressionParser exprParser, ODLTypeFactory typeFactory, ODLLookUp lookUp, ODLScopeProvider scopeProvider) {
+		super(templateStore, registry, helper, exprParser, typeFactory, lookUp, scopeProvider);
 	}
 	
 	protected void createTemplates(String rule, EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -58,7 +59,7 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		descBuilder.append("on "+ methodName);
 		descBuilder.append("(");
 		if (op.getParameters() != null) {
-			descBuilder.append(toString(op.getParameters()));
+			descBuilder.append(toDescString(op.getParameters()));
 		}
 		descBuilder.append(")");
 				
@@ -87,10 +88,10 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 				b.append(", ");
 			}
 			JvmFormalParameter parameter =  parameters.get(i);
-			if (parameter.getParameterType().getSimpleName().equals("R")) {
-				b.append("${"+toString(parameter.getParameterType())+"}");
+			if (parameter.getParameterType().getSimpleName().length() == 1) {
+				b.append("${"+parameter.getParameterType().getSimpleName()+"}");
 			} else {
-				b.append(toString(parameter.getParameterType()));
+				b.append(toDescString(parameter.getParameterType()));
 			}
 			b.append(" " +parameters.get(i).getName());
 		}
@@ -111,14 +112,6 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		finishTemplate(template, templateContext, context, acceptor);	
 	}
 	
-	
-	protected String toString(JvmFormalParameter parameter) {
-		StringBuilder b = new StringBuilder();
-		b.append(toString(parameter.getParameterType()));
-		b.append(" ");
-		b.append(parameter.getName());
-		return b.toString();
-	}
 	
 	protected void createODLParameterProposals(TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		for (JvmTypeReference typeRef : factory.getAllParameterValues()) {

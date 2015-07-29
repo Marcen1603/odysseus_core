@@ -472,61 +472,6 @@ public interface BasicIQLPackage extends EPackage
   int IQL_ARRAY_TYPE_FEATURE_COUNT = TypesPackage.JVM_TYPE_FEATURE_COUNT + 2;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableDeclarationImpl <em>IQL Variable Declaration</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableDeclarationImpl
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLVariableDeclaration()
-   * @generated
-   */
-  int IQL_VARIABLE_DECLARATION = 8;
-
-  /**
-   * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_VARIABLE_DECLARATION__ANNOTATIONS = TypesPackage.JVM_FORMAL_PARAMETER__ANNOTATIONS;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_VARIABLE_DECLARATION__NAME = TypesPackage.JVM_FORMAL_PARAMETER__NAME;
-
-  /**
-   * The feature id for the '<em><b>Parameter Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_VARIABLE_DECLARATION__PARAMETER_TYPE = TypesPackage.JVM_FORMAL_PARAMETER__PARAMETER_TYPE;
-
-  /**
-   * The feature id for the '<em><b>Ref</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_VARIABLE_DECLARATION__REF = TypesPackage.JVM_FORMAL_PARAMETER_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>IQL Variable Declaration</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_VARIABLE_DECLARATION_FEATURE_COUNT = TypesPackage.JVM_FORMAL_PARAMETER_FEATURE_COUNT + 1;
-
-  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataListImpl <em>IQL Metadata List</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -534,7 +479,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataList()
    * @generated
    */
-  int IQL_METADATA_LIST = 9;
+  int IQL_METADATA_LIST = 8;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -562,7 +507,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadata()
    * @generated
    */
-  int IQL_METADATA = 10;
+  int IQL_METADATA = 9;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -599,7 +544,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValue()
    * @generated
    */
-  int IQL_METADATA_VALUE = 11;
+  int IQL_METADATA_VALUE = 10;
 
   /**
    * The number of structural features of the '<em>IQL Metadata Value</em>' class.
@@ -618,7 +563,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueMapElement()
    * @generated
    */
-  int IQL_METADATA_VALUE_MAP_ELEMENT = 12;
+  int IQL_METADATA_VALUE_MAP_ELEMENT = 11;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' containment reference.
@@ -655,7 +600,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLVariableInitialization()
    * @generated
    */
-  int IQL_VARIABLE_INITIALIZATION = 13;
+  int IQL_VARIABLE_INITIALIZATION = 12;
 
   /**
    * The feature id for the '<em><b>Args List</b></em>' containment reference.
@@ -701,7 +646,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLArgumentsList()
    * @generated
    */
-  int IQL_ARGUMENTS_LIST = 14;
+  int IQL_ARGUMENTS_LIST = 13;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -729,7 +674,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLArgumentsMap()
    * @generated
    */
-  int IQL_ARGUMENTS_MAP = 15;
+  int IQL_ARGUMENTS_MAP = 14;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -757,7 +702,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLArgumentsMapKeyValue()
    * @generated
    */
-  int IQL_ARGUMENTS_MAP_KEY_VALUE = 16;
+  int IQL_ARGUMENTS_MAP_KEY_VALUE = 15;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -794,7 +739,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLStatement()
    * @generated
    */
-  int IQL_STATEMENT = 17;
+  int IQL_STATEMENT = 16;
 
   /**
    * The number of structural features of the '<em>IQL Statement</em>' class.
@@ -813,7 +758,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLCasePart()
    * @generated
    */
-  int IQL_CASE_PART = 18;
+  int IQL_CASE_PART = 17;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' containment reference.
@@ -850,7 +795,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLExpression()
    * @generated
    */
-  int IQL_EXPRESSION = 19;
+  int IQL_EXPRESSION = 18;
 
   /**
    * The number of structural features of the '<em>IQL Expression</em>' class.
@@ -869,7 +814,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMemberSelection()
    * @generated
    */
-  int IQL_MEMBER_SELECTION = 20;
+  int IQL_MEMBER_SELECTION = 19;
 
   /**
    * The number of structural features of the '<em>IQL Member Selection</em>' class.
@@ -888,7 +833,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionMapKeyValue()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_MAP_KEY_VALUE = 21;
+  int IQL_LITERAL_EXPRESSION_MAP_KEY_VALUE = 20;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' containment reference.
@@ -925,7 +870,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLJava()
    * @generated
    */
-  int IQL_JAVA = 22;
+  int IQL_JAVA = 21;
 
   /**
    * The feature id for the '<em><b>Text</b></em>' attribute list.
@@ -962,7 +907,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLJavaKeywords()
    * @generated
    */
-  int IQL_JAVA_KEYWORDS = 23;
+  int IQL_JAVA_KEYWORDS = 22;
 
   /**
    * The feature id for the '<em><b>Keyword</b></em>' attribute.
@@ -990,7 +935,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLClass()
    * @generated
    */
-  int IQL_CLASS = 24;
+  int IQL_CLASS = 23;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1189,7 +1134,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLInterface()
    * @generated
    */
-  int IQL_INTERFACE = 25;
+  int IQL_INTERFACE = 24;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1379,7 +1324,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLAttribute()
    * @generated
    */
-  int IQL_ATTRIBUTE = 26;
+  int IQL_ATTRIBUTE = 25;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1533,7 +1478,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMethod()
    * @generated
    */
-  int IQL_METHOD = 27;
+  int IQL_METHOD = 26;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1741,7 +1686,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMethodDeclarationMember()
    * @generated
    */
-  int IQL_METHOD_DECLARATION_MEMBER = 28;
+  int IQL_METHOD_DECLARATION_MEMBER = 27;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1940,7 +1885,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLJavaMember()
    * @generated
    */
-  int IQL_JAVA_MEMBER = 29;
+  int IQL_JAVA_MEMBER = 28;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -2015,14 +1960,14 @@ public interface BasicIQLPackage extends EPackage
   int IQL_JAVA_MEMBER_FEATURE_COUNT = TypesPackage.JVM_MEMBER_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleLongImpl <em>IQL Metadata Value Single Long</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleIntImpl <em>IQL Metadata Value Single Int</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleLongImpl
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleLong()
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleIntImpl
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleInt()
    * @generated
    */
-  int IQL_METADATA_VALUE_SINGLE_LONG = 30;
+  int IQL_METADATA_VALUE_SINGLE_INT = 29;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2031,16 +1976,16 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_METADATA_VALUE_SINGLE_LONG__VALUE = IQL_METADATA_VALUE_FEATURE_COUNT + 0;
+  int IQL_METADATA_VALUE_SINGLE_INT__VALUE = IQL_METADATA_VALUE_FEATURE_COUNT + 0;
 
   /**
-   * The number of structural features of the '<em>IQL Metadata Value Single Long</em>' class.
+   * The number of structural features of the '<em>IQL Metadata Value Single Int</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IQL_METADATA_VALUE_SINGLE_LONG_FEATURE_COUNT = IQL_METADATA_VALUE_FEATURE_COUNT + 1;
+  int IQL_METADATA_VALUE_SINGLE_INT_FEATURE_COUNT = IQL_METADATA_VALUE_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleDoubleImpl <em>IQL Metadata Value Single Double</em>}' class.
@@ -2050,7 +1995,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleDouble()
    * @generated
    */
-  int IQL_METADATA_VALUE_SINGLE_DOUBLE = 31;
+  int IQL_METADATA_VALUE_SINGLE_DOUBLE = 30;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2078,7 +2023,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleString()
    * @generated
    */
-  int IQL_METADATA_VALUE_SINGLE_STRING = 32;
+  int IQL_METADATA_VALUE_SINGLE_STRING = 31;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2106,7 +2051,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleBoolean()
    * @generated
    */
-  int IQL_METADATA_VALUE_SINGLE_BOOLEAN = 33;
+  int IQL_METADATA_VALUE_SINGLE_BOOLEAN = 32;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2134,7 +2079,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleChar()
    * @generated
    */
-  int IQL_METADATA_VALUE_SINGLE_CHAR = 34;
+  int IQL_METADATA_VALUE_SINGLE_CHAR = 33;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2162,7 +2107,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleTypeRef()
    * @generated
    */
-  int IQL_METADATA_VALUE_SINGLE_TYPE_REF = 35;
+  int IQL_METADATA_VALUE_SINGLE_TYPE_REF = 34;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -2181,6 +2126,34 @@ public interface BasicIQLPackage extends EPackage
    * @ordered
    */
   int IQL_METADATA_VALUE_SINGLE_TYPE_REF_FEATURE_COUNT = IQL_METADATA_VALUE_FEATURE_COUNT + 1;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleIDImpl <em>IQL Metadata Value Single ID</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleIDImpl
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleID()
+   * @generated
+   */
+  int IQL_METADATA_VALUE_SINGLE_ID = 35;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_METADATA_VALUE_SINGLE_ID__VALUE = IQL_METADATA_VALUE_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>IQL Metadata Value Single ID</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_METADATA_VALUE_SINGLE_ID_FEATURE_COUNT = IQL_METADATA_VALUE_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleNullImpl <em>IQL Metadata Value Single Null</em>}' class.
@@ -2267,6 +2240,43 @@ public interface BasicIQLPackage extends EPackage
   int IQL_METADATA_VALUE_MAP_FEATURE_COUNT = IQL_METADATA_VALUE_FEATURE_COUNT + 1;
 
   /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableDeclarationImpl <em>IQL Variable Declaration</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableDeclarationImpl
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLVariableDeclaration()
+   * @generated
+   */
+  int IQL_VARIABLE_DECLARATION = 39;
+
+  /**
+   * The feature id for the '<em><b>Ref</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_VARIABLE_DECLARATION__REF = TypesPackage.JVM_IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_VARIABLE_DECLARATION__NAME = TypesPackage.JVM_IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>IQL Variable Declaration</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_VARIABLE_DECLARATION_FEATURE_COUNT = TypesPackage.JVM_IDENTIFIABLE_ELEMENT_FEATURE_COUNT + 2;
+
+  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLStatementBlockImpl <em>IQL Statement Block</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2274,7 +2284,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLStatementBlock()
    * @generated
    */
-  int IQL_STATEMENT_BLOCK = 39;
+  int IQL_STATEMENT_BLOCK = 40;
 
   /**
    * The feature id for the '<em><b>Statements</b></em>' containment reference list.
@@ -2302,7 +2312,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLJavaStatement()
    * @generated
    */
-  int IQL_JAVA_STATEMENT = 40;
+  int IQL_JAVA_STATEMENT = 41;
 
   /**
    * The feature id for the '<em><b>Text</b></em>' containment reference.
@@ -2330,7 +2340,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLIfStatement()
    * @generated
    */
-  int IQL_IF_STATEMENT = 41;
+  int IQL_IF_STATEMENT = 42;
 
   /**
    * The feature id for the '<em><b>Predicate</b></em>' containment reference.
@@ -2376,7 +2386,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLWhileStatement()
    * @generated
    */
-  int IQL_WHILE_STATEMENT = 42;
+  int IQL_WHILE_STATEMENT = 43;
 
   /**
    * The feature id for the '<em><b>Predicate</b></em>' containment reference.
@@ -2413,7 +2423,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLDoWhileStatement()
    * @generated
    */
-  int IQL_DO_WHILE_STATEMENT = 43;
+  int IQL_DO_WHILE_STATEMENT = 44;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -2450,7 +2460,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLForStatement()
    * @generated
    */
-  int IQL_FOR_STATEMENT = 44;
+  int IQL_FOR_STATEMENT = 45;
 
   /**
    * The feature id for the '<em><b>Var</b></em>' containment reference.
@@ -2505,7 +2515,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLForEachStatement()
    * @generated
    */
-  int IQL_FOR_EACH_STATEMENT = 45;
+  int IQL_FOR_EACH_STATEMENT = 46;
 
   /**
    * The feature id for the '<em><b>Var</b></em>' containment reference.
@@ -2551,7 +2561,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLSwitchStatement()
    * @generated
    */
-  int IQL_SWITCH_STATEMENT = 46;
+  int IQL_SWITCH_STATEMENT = 47;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' containment reference.
@@ -2597,7 +2607,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLExpressionStatement()
    * @generated
    */
-  int IQL_EXPRESSION_STATEMENT = 47;
+  int IQL_EXPRESSION_STATEMENT = 48;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -2625,7 +2635,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLVariableStatement()
    * @generated
    */
-  int IQL_VARIABLE_STATEMENT = 48;
+  int IQL_VARIABLE_STATEMENT = 49;
 
   /**
    * The feature id for the '<em><b>Var</b></em>' containment reference.
@@ -2662,7 +2672,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLConstructorCallStatement()
    * @generated
    */
-  int IQL_CONSTRUCTOR_CALL_STATEMENT = 49;
+  int IQL_CONSTRUCTOR_CALL_STATEMENT = 50;
 
   /**
    * The feature id for the '<em><b>Keyword</b></em>' attribute.
@@ -2699,7 +2709,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLBreakStatement()
    * @generated
    */
-  int IQL_BREAK_STATEMENT = 50;
+  int IQL_BREAK_STATEMENT = 51;
 
   /**
    * The number of structural features of the '<em>IQL Break Statement</em>' class.
@@ -2718,7 +2728,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLContinueStatement()
    * @generated
    */
-  int IQL_CONTINUE_STATEMENT = 51;
+  int IQL_CONTINUE_STATEMENT = 52;
 
   /**
    * The number of structural features of the '<em>IQL Continue Statement</em>' class.
@@ -2737,7 +2747,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLReturnStatement()
    * @generated
    */
-  int IQL_RETURN_STATEMENT = 52;
+  int IQL_RETURN_STATEMENT = 53;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -2765,7 +2775,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLAssignmentExpression()
    * @generated
    */
-  int IQL_ASSIGNMENT_EXPRESSION = 53;
+  int IQL_ASSIGNMENT_EXPRESSION = 54;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -2811,7 +2821,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLogicalOrExpression()
    * @generated
    */
-  int IQL_LOGICAL_OR_EXPRESSION = 54;
+  int IQL_LOGICAL_OR_EXPRESSION = 55;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -2857,7 +2867,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLogicalAndExpression()
    * @generated
    */
-  int IQL_LOGICAL_AND_EXPRESSION = 55;
+  int IQL_LOGICAL_AND_EXPRESSION = 56;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -2903,7 +2913,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLEqualityExpression()
    * @generated
    */
-  int IQL_EQUALITY_EXPRESSION = 56;
+  int IQL_EQUALITY_EXPRESSION = 57;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -2949,7 +2959,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLInstanceOfExpression()
    * @generated
    */
-  int IQL_INSTANCE_OF_EXPRESSION = 57;
+  int IQL_INSTANCE_OF_EXPRESSION = 58;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -2986,7 +2996,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLRelationalExpression()
    * @generated
    */
-  int IQL_RELATIONAL_EXPRESSION = 58;
+  int IQL_RELATIONAL_EXPRESSION = 59;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -3032,7 +3042,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLAdditiveExpression()
    * @generated
    */
-  int IQL_ADDITIVE_EXPRESSION = 59;
+  int IQL_ADDITIVE_EXPRESSION = 60;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -3078,7 +3088,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMultiplicativeExpression()
    * @generated
    */
-  int IQL_MULTIPLICATIVE_EXPRESSION = 60;
+  int IQL_MULTIPLICATIVE_EXPRESSION = 61;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -3124,7 +3134,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLPlusMinusExpression()
    * @generated
    */
-  int IQL_PLUS_MINUS_EXPRESSION = 61;
+  int IQL_PLUS_MINUS_EXPRESSION = 62;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' attribute.
@@ -3161,7 +3171,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLBooleanNotExpression()
    * @generated
    */
-  int IQL_BOOLEAN_NOT_EXPRESSION = 62;
+  int IQL_BOOLEAN_NOT_EXPRESSION = 63;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' attribute.
@@ -3198,7 +3208,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLPrefixExpression()
    * @generated
    */
-  int IQL_PREFIX_EXPRESSION = 63;
+  int IQL_PREFIX_EXPRESSION = 64;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' attribute.
@@ -3235,7 +3245,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTypeCastExpression()
    * @generated
    */
-  int IQL_TYPE_CAST_EXPRESSION = 64;
+  int IQL_TYPE_CAST_EXPRESSION = 65;
 
   /**
    * The feature id for the '<em><b>Target Ref</b></em>' containment reference.
@@ -3272,7 +3282,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLPostfixExpression()
    * @generated
    */
-  int IQL_POSTFIX_EXPRESSION = 65;
+  int IQL_POSTFIX_EXPRESSION = 66;
 
   /**
    * The feature id for the '<em><b>Operand</b></em>' containment reference.
@@ -3309,7 +3319,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLArrayExpression()
    * @generated
    */
-  int IQL_ARRAY_EXPRESSION = 66;
+  int IQL_ARRAY_EXPRESSION = 67;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -3321,13 +3331,13 @@ public interface BasicIQLPackage extends EPackage
   int IQL_ARRAY_EXPRESSION__LEFT_OPERAND = IQL_EXPRESSION_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Expr</b></em>' containment reference.
+   * The feature id for the '<em><b>Expressions</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IQL_ARRAY_EXPRESSION__EXPR = IQL_EXPRESSION_FEATURE_COUNT + 1;
+  int IQL_ARRAY_EXPRESSION__EXPRESSIONS = IQL_EXPRESSION_FEATURE_COUNT + 1;
 
   /**
    * The number of structural features of the '<em>IQL Array Expression</em>' class.
@@ -3346,7 +3356,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMemberSelectionExpression()
    * @generated
    */
-  int IQL_MEMBER_SELECTION_EXPRESSION = 67;
+  int IQL_MEMBER_SELECTION_EXPRESSION = 68;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -3383,7 +3393,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLAttributeSelection()
    * @generated
    */
-  int IQL_ATTRIBUTE_SELECTION = 68;
+  int IQL_ATTRIBUTE_SELECTION = 69;
 
   /**
    * The feature id for the '<em><b>Var</b></em>' reference.
@@ -3411,10 +3421,10 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMethodSelection()
    * @generated
    */
-  int IQL_METHOD_SELECTION = 69;
+  int IQL_METHOD_SELECTION = 70;
 
   /**
-   * The feature id for the '<em><b>Method</b></em>' attribute.
+   * The feature id for the '<em><b>Method</b></em>' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -3448,7 +3458,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTerminalExpressionVariable()
    * @generated
    */
-  int IQL_TERMINAL_EXPRESSION_VARIABLE = 70;
+  int IQL_TERMINAL_EXPRESSION_VARIABLE = 71;
 
   /**
    * The feature id for the '<em><b>Var</b></em>' reference.
@@ -3469,6 +3479,43 @@ public interface BasicIQLPackage extends EPackage
   int IQL_TERMINAL_EXPRESSION_VARIABLE_FEATURE_COUNT = IQL_EXPRESSION_FEATURE_COUNT + 1;
 
   /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTerminalExpressionMethodImpl <em>IQL Terminal Expression Method</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTerminalExpressionMethodImpl
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTerminalExpressionMethod()
+   * @generated
+   */
+  int IQL_TERMINAL_EXPRESSION_METHOD = 72;
+
+  /**
+   * The feature id for the '<em><b>Method</b></em>' reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_TERMINAL_EXPRESSION_METHOD__METHOD = IQL_EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Args</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_TERMINAL_EXPRESSION_METHOD__ARGS = IQL_EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>IQL Terminal Expression Method</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_TERMINAL_EXPRESSION_METHOD_FEATURE_COUNT = IQL_EXPRESSION_FEATURE_COUNT + 2;
+
+  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTerminalExpressionThisImpl <em>IQL Terminal Expression This</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3476,7 +3523,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTerminalExpressionThis()
    * @generated
    */
-  int IQL_TERMINAL_EXPRESSION_THIS = 71;
+  int IQL_TERMINAL_EXPRESSION_THIS = 73;
 
   /**
    * The number of structural features of the '<em>IQL Terminal Expression This</em>' class.
@@ -3495,7 +3542,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTerminalExpressionSuper()
    * @generated
    */
-  int IQL_TERMINAL_EXPRESSION_SUPER = 72;
+  int IQL_TERMINAL_EXPRESSION_SUPER = 74;
 
   /**
    * The number of structural features of the '<em>IQL Terminal Expression Super</em>' class.
@@ -3514,7 +3561,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTerminalExpressionParenthesis()
    * @generated
    */
-  int IQL_TERMINAL_EXPRESSION_PARENTHESIS = 73;
+  int IQL_TERMINAL_EXPRESSION_PARENTHESIS = 75;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' containment reference.
@@ -3542,7 +3589,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTerminalExpressionNew()
    * @generated
    */
-  int IQL_TERMINAL_EXPRESSION_NEW = 74;
+  int IQL_TERMINAL_EXPRESSION_NEW = 76;
 
   /**
    * The feature id for the '<em><b>Ref</b></em>' containment reference.
@@ -3588,7 +3635,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionInt()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_INT = 75;
+  int IQL_LITERAL_EXPRESSION_INT = 77;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -3616,7 +3663,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionDouble()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_DOUBLE = 76;
+  int IQL_LITERAL_EXPRESSION_DOUBLE = 78;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -3644,7 +3691,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionString()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_STRING = 77;
+  int IQL_LITERAL_EXPRESSION_STRING = 79;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -3672,7 +3719,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionBoolean()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_BOOLEAN = 78;
+  int IQL_LITERAL_EXPRESSION_BOOLEAN = 80;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -3700,7 +3747,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionChar()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_CHAR = 79;
+  int IQL_LITERAL_EXPRESSION_CHAR = 81;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -3728,7 +3775,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionRange()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_RANGE = 80;
+  int IQL_LITERAL_EXPRESSION_RANGE = 82;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -3756,7 +3803,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionNull()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_NULL = 81;
+  int IQL_LITERAL_EXPRESSION_NULL = 83;
 
   /**
    * The number of structural features of the '<em>IQL Literal Expression Null</em>' class.
@@ -3775,7 +3822,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionList()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_LIST = 82;
+  int IQL_LITERAL_EXPRESSION_LIST = 84;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -3803,7 +3850,7 @@ public interface BasicIQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLLiteralExpressionMap()
    * @generated
    */
-  int IQL_LITERAL_EXPRESSION_MAP = 83;
+  int IQL_LITERAL_EXPRESSION_MAP = 85;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -4035,27 +4082,6 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    */
   EAttribute getIQLArrayType_Dimensions();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration <em>IQL Variable Declaration</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>IQL Variable Declaration</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
-   * @generated
-   */
-  EClass getIQLVariableDeclaration();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration#getRef <em>Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Ref</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration#getRef()
-   * @see #getIQLVariableDeclaration()
-   * @generated
-   */
-  EReference getIQLVariableDeclaration_Ref();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList <em>IQL Metadata List</em>}'.
@@ -4521,25 +4547,25 @@ public interface BasicIQLPackage extends EPackage
   EReference getIQLJavaMember_Text();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong <em>IQL Metadata Value Single Long</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt <em>IQL Metadata Value Single Int</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>IQL Metadata Value Single Long</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong
+   * @return the meta object for class '<em>IQL Metadata Value Single Int</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt
    * @generated
    */
-  EClass getIQLMetadataValueSingleLong();
+  EClass getIQLMetadataValueSingleInt();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong#getValue <em>Value</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt#getValue <em>Value</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong#getValue()
-   * @see #getIQLMetadataValueSingleLong()
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt#getValue()
+   * @see #getIQLMetadataValueSingleInt()
    * @generated
    */
-  EAttribute getIQLMetadataValueSingleLong_Value();
+  EAttribute getIQLMetadataValueSingleInt_Value();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble <em>IQL Metadata Value Single Double</em>}'.
@@ -4647,6 +4673,27 @@ public interface BasicIQLPackage extends EPackage
   EReference getIQLMetadataValueSingleTypeRef_Value();
 
   /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID <em>IQL Metadata Value Single ID</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>IQL Metadata Value Single ID</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID
+   * @generated
+   */
+  EClass getIQLMetadataValueSingleID();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID#getValue()
+   * @see #getIQLMetadataValueSingleID()
+   * @generated
+   */
+  EAttribute getIQLMetadataValueSingleID_Value();
+
+  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull <em>IQL Metadata Value Single Null</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4708,6 +4755,38 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    */
   EReference getIQLMetadataValueMap_Elements();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration <em>IQL Variable Declaration</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>IQL Variable Declaration</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
+   * @generated
+   */
+  EClass getIQLVariableDeclaration();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration#getRef <em>Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Ref</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration#getRef()
+   * @see #getIQLVariableDeclaration()
+   * @generated
+   */
+  EReference getIQLVariableDeclaration_Ref();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration#getName()
+   * @see #getIQLVariableDeclaration()
+   * @generated
+   */
+  EAttribute getIQLVariableDeclaration_Name();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock <em>IQL Statement Block</em>}'.
@@ -5639,15 +5718,15 @@ public interface BasicIQLPackage extends EPackage
   EReference getIQLArrayExpression_LeftOperand();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression#getExpr <em>Expr</em>}'.
+   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression#getExpressions <em>Expressions</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Expr</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression#getExpr()
+   * @return the meta object for the containment reference list '<em>Expressions</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression#getExpressions()
    * @see #getIQLArrayExpression()
    * @generated
    */
-  EReference getIQLArrayExpression_Expr();
+  EReference getIQLArrayExpression_Expressions();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression <em>IQL Member Selection Expression</em>}'.
@@ -5713,15 +5792,15 @@ public interface BasicIQLPackage extends EPackage
   EClass getIQLMethodSelection();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection#getMethod <em>Method</em>}'.
+   * Returns the meta object for the reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection#getMethod <em>Method</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Method</em>'.
+   * @return the meta object for the reference '<em>Method</em>'.
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection#getMethod()
    * @see #getIQLMethodSelection()
    * @generated
    */
-  EAttribute getIQLMethodSelection_Method();
+  EReference getIQLMethodSelection_Method();
 
   /**
    * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection#getArgs <em>Args</em>}'.
@@ -5754,6 +5833,38 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    */
   EReference getIQLTerminalExpressionVariable_Var();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod <em>IQL Terminal Expression Method</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>IQL Terminal Expression Method</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod
+   * @generated
+   */
+  EClass getIQLTerminalExpressionMethod();
+
+  /**
+   * Returns the meta object for the reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod#getMethod <em>Method</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the reference '<em>Method</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod#getMethod()
+   * @see #getIQLTerminalExpressionMethod()
+   * @generated
+   */
+  EReference getIQLTerminalExpressionMethod_Method();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod#getArgs <em>Args</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Args</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod#getArgs()
+   * @see #getIQLTerminalExpressionMethod()
+   * @generated
+   */
+  EReference getIQLTerminalExpressionMethod_Args();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionThis <em>IQL Terminal Expression This</em>}'.
@@ -6217,24 +6328,6 @@ public interface BasicIQLPackage extends EPackage
     EAttribute IQL_ARRAY_TYPE__DIMENSIONS = eINSTANCE.getIQLArrayType_Dimensions();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableDeclarationImpl <em>IQL Variable Declaration</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableDeclarationImpl
-     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLVariableDeclaration()
-     * @generated
-     */
-    EClass IQL_VARIABLE_DECLARATION = eINSTANCE.getIQLVariableDeclaration();
-
-    /**
-     * The meta object literal for the '<em><b>Ref</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference IQL_VARIABLE_DECLARATION__REF = eINSTANCE.getIQLVariableDeclaration_Ref();
-
-    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataListImpl <em>IQL Metadata List</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -6629,14 +6722,14 @@ public interface BasicIQLPackage extends EPackage
     EReference IQL_JAVA_MEMBER__TEXT = eINSTANCE.getIQLJavaMember_Text();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleLongImpl <em>IQL Metadata Value Single Long</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleIntImpl <em>IQL Metadata Value Single Int</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleLongImpl
-     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleLong()
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleIntImpl
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleInt()
      * @generated
      */
-    EClass IQL_METADATA_VALUE_SINGLE_LONG = eINSTANCE.getIQLMetadataValueSingleLong();
+    EClass IQL_METADATA_VALUE_SINGLE_INT = eINSTANCE.getIQLMetadataValueSingleInt();
 
     /**
      * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
@@ -6644,7 +6737,7 @@ public interface BasicIQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute IQL_METADATA_VALUE_SINGLE_LONG__VALUE = eINSTANCE.getIQLMetadataValueSingleLong_Value();
+    EAttribute IQL_METADATA_VALUE_SINGLE_INT__VALUE = eINSTANCE.getIQLMetadataValueSingleInt_Value();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleDoubleImpl <em>IQL Metadata Value Single Double</em>}' class.
@@ -6737,6 +6830,24 @@ public interface BasicIQLPackage extends EPackage
     EReference IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE = eINSTANCE.getIQLMetadataValueSingleTypeRef_Value();
 
     /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleIDImpl <em>IQL Metadata Value Single ID</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleIDImpl
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLMetadataValueSingleID()
+     * @generated
+     */
+    EClass IQL_METADATA_VALUE_SINGLE_ID = eINSTANCE.getIQLMetadataValueSingleID();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute IQL_METADATA_VALUE_SINGLE_ID__VALUE = eINSTANCE.getIQLMetadataValueSingleID_Value();
+
+    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleNullImpl <em>IQL Metadata Value Single Null</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -6789,6 +6900,32 @@ public interface BasicIQLPackage extends EPackage
      * @generated
      */
     EReference IQL_METADATA_VALUE_MAP__ELEMENTS = eINSTANCE.getIQLMetadataValueMap_Elements();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableDeclarationImpl <em>IQL Variable Declaration</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLVariableDeclarationImpl
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLVariableDeclaration()
+     * @generated
+     */
+    EClass IQL_VARIABLE_DECLARATION = eINSTANCE.getIQLVariableDeclaration();
+
+    /**
+     * The meta object literal for the '<em><b>Ref</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_VARIABLE_DECLARATION__REF = eINSTANCE.getIQLVariableDeclaration_Ref();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute IQL_VARIABLE_DECLARATION__NAME = eINSTANCE.getIQLVariableDeclaration_Name();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLStatementBlockImpl <em>IQL Statement Block</em>}' class.
@@ -7543,12 +7680,12 @@ public interface BasicIQLPackage extends EPackage
     EReference IQL_ARRAY_EXPRESSION__LEFT_OPERAND = eINSTANCE.getIQLArrayExpression_LeftOperand();
 
     /**
-     * The meta object literal for the '<em><b>Expr</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Expressions</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference IQL_ARRAY_EXPRESSION__EXPR = eINSTANCE.getIQLArrayExpression_Expr();
+    EReference IQL_ARRAY_EXPRESSION__EXPRESSIONS = eINSTANCE.getIQLArrayExpression_Expressions();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMemberSelectionExpressionImpl <em>IQL Member Selection Expression</em>}' class.
@@ -7605,12 +7742,12 @@ public interface BasicIQLPackage extends EPackage
     EClass IQL_METHOD_SELECTION = eINSTANCE.getIQLMethodSelection();
 
     /**
-     * The meta object literal for the '<em><b>Method</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Method</b></em>' reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute IQL_METHOD_SELECTION__METHOD = eINSTANCE.getIQLMethodSelection_Method();
+    EReference IQL_METHOD_SELECTION__METHOD = eINSTANCE.getIQLMethodSelection_Method();
 
     /**
      * The meta object literal for the '<em><b>Args</b></em>' containment reference feature.
@@ -7637,6 +7774,32 @@ public interface BasicIQLPackage extends EPackage
      * @generated
      */
     EReference IQL_TERMINAL_EXPRESSION_VARIABLE__VAR = eINSTANCE.getIQLTerminalExpressionVariable_Var();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTerminalExpressionMethodImpl <em>IQL Terminal Expression Method</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTerminalExpressionMethodImpl
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTerminalExpressionMethod()
+     * @generated
+     */
+    EClass IQL_TERMINAL_EXPRESSION_METHOD = eINSTANCE.getIQLTerminalExpressionMethod();
+
+    /**
+     * The meta object literal for the '<em><b>Method</b></em>' reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_TERMINAL_EXPRESSION_METHOD__METHOD = eINSTANCE.getIQLTerminalExpressionMethod_Method();
+
+    /**
+     * The meta object literal for the '<em><b>Args</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_TERMINAL_EXPRESSION_METHOD__ARGS = eINSTANCE.getIQLTerminalExpressionMethod_Args();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTerminalExpressionThisImpl <em>IQL Terminal Expression This</em>}' class.

@@ -11,18 +11,19 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLPO;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeOperatorsFactory;
 
-public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory>{
+public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory, ODLTypeOperatorsFactory>{
 
 	@Inject
-	public ODLLookUp(ODLTypeFactory typeFactory) {
-		super(typeFactory);
+	public ODLLookUp(ODLTypeFactory typeFactory, ODLTypeOperatorsFactory typeOperatorsFactory) {
+		super(typeFactory, typeOperatorsFactory);
 	}
 
 	public Collection<JvmOperation> getOnMethods() {
 		JvmTypeReference typeRef = typeFactory.getTypeRef(AbstractODLPO.class);
 		Collection<JvmOperation> result = new HashSet<>();
-		for (JvmOperation op : super.getProtectedMethods(typeRef)) {
+		for (JvmOperation op : super.getProtectedMethods(typeRef, false)) {
 			if (op.getSimpleName().startsWith("on")) {
 				result.add(op);
 			}

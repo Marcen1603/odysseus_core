@@ -9,14 +9,18 @@ import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataMethodCompiler
 import java.util.Collection
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator
 import java.util.ArrayList
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator
 
 class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLStatementCompiler, QDLTypeFactory>{
+	
+	@Inject
+	QDLMetadataMethodCompiler methodCompiler;
 	
 	@Inject
 	new(QDLCompilerHelper helper, QDLTypeCompiler typeCompiler, QDLStatementCompiler stmtCompiler,QDLTypeFactory factory) {
@@ -28,7 +32,7 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 		builder.append(compileQuery(q, context))
 		context.addImport(AbstractQDLQuery.canonicalName)
 		context.addImport(Collection.canonicalName)
-		context.addImport(ILogicalOperator.canonicalName)
+		context.addImport(IQDLOperator.canonicalName)
 		context.addImport(ArrayList.canonicalName)
 		
 		for (String i : context.getImports) {
@@ -61,8 +65,8 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 				«ENDIF»
 			}
 			
-			public «Collection.simpleName»<«ILogicalOperator.simpleName»> execute() {
-			 	«Collection.simpleName»<«ILogicalOperator.simpleName»> operators = new «ArrayList.simpleName»<>();
+			public «Collection.simpleName»<«IQDLOperator.simpleName»<?>> execute() {
+			 	«Collection.simpleName»<«IQDLOperator.simpleName»<?>> operators = new «ArrayList.simpleName»<>();
 			 	«FOR stmt : block.statements»
 			 		«stmtCompiler.compile(stmt, context)»
 				«ENDFOR»			 	
@@ -70,10 +74,8 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 			}
 			
 			«FOR a : varStmts»
-				«var type = a.^var.ref»
-				«IF type == null»
-				«type = a.^var.parameterType»
-				«ENDIF»
+				«var decl = a.^var as IQLVariableDeclaration»
+				«var type = decl.ref»
 				«IF a.init != null && a.init.argsMap!= null && a.init.argsMap.elements.size>0»
 					«createGetterMethod(type, a.init.argsMap, context)»
 				«ELSEIF a.init != null && a.init.argsList!=null && (helper.isOperator(type))»	
@@ -88,22 +90,27 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 					«createGetterMethod(e.ref, e.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»
+			
+			«IF metadata»
+				«methodCompiler.compile(q.metadataList, context)»
+			«ENDIF»
 		} 
 		'''			
 	}
 	
 	override createGetterMethod(JvmTypeReference typeRef, IQLArgumentsMap map, QDLGeneratorContext context) {
 		if (helper.isOperator(typeRef)) {
+			var opName = helper.getLogicalOperatorName(typeRef)
+			context.addImport(factory.getLogicalOperator(factory.getShortName(typeRef, false)).canonicalName)
 			'''
 			
-			private «typeCompiler.compile(typeRef, context, false)» getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)» type, «Collection.simpleName»<«ILogicalOperator.simpleName»> operators«IF map != null && map.elements.size > 0», «map.elements.map[ el | super.compile(el, typeRef, context)].join(", ")»«ENDIF») {
+			private «typeCompiler.compile(typeRef, context, false)» getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)»<«opName»> type, «Collection.simpleName»<«IQDLOperator.simpleName»<?>> operators«IF map != null && map.elements.size > 0», «map.elements.map[ el | super.compile(el, typeRef, context)].join(", ")»«ENDIF») {
 				operators.add(type);
 				«IF map != null»
 					«FOR el :map.elements»
 						«var attrName = el.key»
 						«IF helper.isParameter(attrName, typeRef)»
-							«var setter = helper.getParameterSetter(attrName, typeRef)»
-							type.«setter»(«attrName»);
+							type.setParameter("«attrName»", «attrName»);
 						«ELSE»	
 							«var type = helper.getPropertyType(el.key, typeRef)»
 							«IF type !=null && helper.isSetter(el.key, typeRef, type)»

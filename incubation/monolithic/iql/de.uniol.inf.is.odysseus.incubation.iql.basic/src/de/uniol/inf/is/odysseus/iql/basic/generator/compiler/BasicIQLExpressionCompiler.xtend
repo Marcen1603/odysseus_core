@@ -6,12 +6,13 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.BasicIQLGeneratorCon
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.BasicIQLExpressionParser
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.lookup.BasicIQLLookUp
+import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.BasicIQLTypeOperatorsFactory
 
-class BasicIQLExpressionCompiler extends AbstractIQLExpressionCompiler<BasicIQLCompilerHelper, BasicIQLGeneratorContext, BasicIQLTypeCompiler, BasicIQLExpressionParser, BasicIQLTypeFactory, BasicIQLLookUp>{
+class BasicIQLExpressionCompiler extends AbstractIQLExpressionCompiler<BasicIQLCompilerHelper, BasicIQLGeneratorContext, BasicIQLTypeCompiler, BasicIQLExpressionParser, BasicIQLTypeFactory, BasicIQLLookUp, BasicIQLTypeOperatorsFactory>{
 	
 	@Inject
-	new(BasicIQLCompilerHelper helper, BasicIQLTypeCompiler typeCompiler, BasicIQLExpressionParser parser, BasicIQLTypeFactory factory, BasicIQLLookUp lookUp) {
-		super(helper, typeCompiler, parser, factory, lookUp)
+	new(BasicIQLCompilerHelper helper, BasicIQLTypeCompiler typeCompiler, BasicIQLExpressionParser parser, BasicIQLTypeFactory factory, BasicIQLLookUp lookUp, BasicIQLTypeOperatorsFactory typeOperatorsFactory) {
+		super(helper, typeCompiler, parser, factory, lookUp, typeOperatorsFactory)
 	}
 	
 	

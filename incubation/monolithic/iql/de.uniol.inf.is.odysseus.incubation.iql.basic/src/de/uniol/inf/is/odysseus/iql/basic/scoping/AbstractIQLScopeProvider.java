@@ -16,6 +16,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmField;
+import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
@@ -30,7 +33,9 @@ import org.eclipse.xtext.scoping.impl.ImportScope;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
@@ -45,16 +50,14 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
  * on how and when to use it
  */
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLScopeProvider extends AbstractDeclarativeScopeProvider {
+public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L extends IIQLLookUp, P extends IIQLExpressionParser> extends AbstractDeclarativeScopeProvider implements IIQLScopeProvider {
 
-	@Inject
-	protected IIQLExpressionParser exprParser;
+	protected P exprParser;
 	
 	@Inject
 	protected IQualifiedNameProvider qualifiedNameProvider;
 	
-	@Inject
-	protected IIQLLookUp lookUp;
+	protected L lookUp;
 
 	@Inject
 	protected IQualifiedNameConverter converter;
@@ -62,8 +65,14 @@ public abstract class AbstractIQLScopeProvider extends AbstractDeclarativeScopeP
 	@Inject
 	protected IJvmTypeProvider.Factory factory;
 	
-	@Inject
-	protected IIQLTypeFactory typeFactory;
+	protected T typeFactory;
+	
+	public AbstractIQLScopeProvider(T typeFactory, L lookUp, P exprParser) {
+		this.typeFactory = typeFactory;
+		this.lookUp = lookUp;
+		this.exprParser = exprParser;
+
+	}
 	
 	public IScope scope_IQLSimpleType_type(IQLFile file, EReference type) {	
 		Collection<JvmType> types = lookUp.getAllTypes(file.eResource());
@@ -95,26 +104,77 @@ public abstract class AbstractIQLScopeProvider extends AbstractDeclarativeScopeP
 	}
 	
 	public IScope scope_IQLTerminalExpressionVariable_var(IQLTerminalExpressionVariable expr, EReference type) {
-		Collection<IQLVariableDeclaration> vars = new ArrayList<>();
-		EObject container = expr.eContainer();
-		while (container != null && !(container instanceof IQLFile)) {
+		Collection<JvmIdentifiableElement> vars =  getScopeIQLTerminalExpressionVariable(expr);
+		return Scopes.scopeFor(vars, qualifiedNameProvider, IScope.NULLSCOPE);	
+	}
+	
+	@Override
+	public Collection<JvmIdentifiableElement> getScopeIQLTerminalExpressionVariable(EObject expr) {
+		Collection<JvmIdentifiableElement> vars = new ArrayList<>();
+		EObject container = expr;
+		while (container != null && !(container instanceof IQLTypeDef)) {
 			vars.addAll(EcoreUtil2.getAllContentsOfType(container, IQLVariableDeclaration.class));
+			vars.addAll(EcoreUtil2.getAllContentsOfType(container, JvmFormalParameter.class));
 			container = container.eContainer();
 		}
-		return Scopes.scopeFor(vars);
+		IQLTypeDef typeDef = EcoreUtil2.getContainerOfType(expr, IQLTypeDef.class);
+		vars.addAll(lookUp.getPublicAttributes(typeFactory.getTypeRef(typeDef), true));
+		vars.addAll(lookUp.getProtectedAttributes(typeFactory.getTypeRef(typeDef), true));
+		return vars;	
+	}
+	
+	public IScope scope_IQLTerminalExpressionMethod_method(IQLTerminalExpressionMethod expr, EReference type) {
+		Collection<JvmOperation> methods =  getScopeIQLTerminalExpressionMethod(expr);	
+		return Scopes.scopeFor(methods, qualifiedNameProvider, IScope.NULLSCOPE);
+	}
+	
+	@Override
+	public Collection<JvmOperation> getScopeIQLTerminalExpressionMethod(EObject expr) {
+		Collection<JvmOperation> methods = new ArrayList<>();
+		IQLTypeDef typeDef = EcoreUtil2.getContainerOfType(expr, IQLTypeDef.class);
+		methods.addAll(lookUp.getPublicMethods(typeFactory.getTypeRef(typeDef), true));
+		methods.addAll(lookUp.getProtectedMethods(typeFactory.getTypeRef(typeDef), true));
+		return methods;	
 	}
 	
 	public IScope scope_IQLAttributeSelection_var(IQLMemberSelectionExpression expr, EReference type) {
-		TypeResult result = exprParser.getType(expr.getLeftOperand());
-		Collection<JvmField> attributes = null;
-		if (!result.isNull()) {
-			attributes = lookUp.getPublicAttributes(result.getRef());
-		} else {
-			attributes = new HashSet<>();
-		}
+		Collection<JvmField> attributes = getScopeIQLAttributeSelection(expr);
 		return  Scopes.scopeFor(attributes, qualifiedNameProvider, IScope.NULLSCOPE);	
 	}
 	
+	@Override
+	public Collection<JvmField> getScopeIQLAttributeSelection(IQLMemberSelectionExpression expr) {
+		TypeResult result = exprParser.getType(expr.getLeftOperand());
+		Collection<JvmField> attributes = null;
+		if (!result.isNull()) {
+			attributes = lookUp.getPublicAttributes(result.getRef(), true);
+		} else {
+			attributes = new HashSet<>();
+		}
+		return attributes;
+	}
+	
+	
+	public IScope scope_IQLMethodSelection_method(IQLMemberSelectionExpression expr, EReference type) {
+		Collection<JvmOperation> methods = getScopeIQLMethodSelection(expr);
+		return Scopes.scopeFor(methods, qualifiedNameProvider, IScope.NULLSCOPE);	
+	}
+	
+	
+	@Override
+	public Collection<JvmOperation> getScopeIQLMethodSelection(IQLMemberSelectionExpression expr) {
+		TypeResult result = exprParser.getType(expr.getLeftOperand());
+		Collection<JvmOperation> methods = null;
+		if (!result.isNull()) {
+			methods = lookUp.getPublicMethods(result.getRef(), true);
+			if (exprParser.isThis(expr.getLeftOperand()) || exprParser.isSuper(expr.getLeftOperand())) {
+				methods.addAll(lookUp.getProtectedMethods(result.getRef(), true));
+			}
+		} else {
+			methods = new HashSet<>();
+		}
+		return methods;
+	}
 	
 	protected List<ImportNormalizer> createImportNormalizers(EObject obj) {
 		IQLFile file = EcoreUtil2.getContainerOfType(obj, IQLFile.class);

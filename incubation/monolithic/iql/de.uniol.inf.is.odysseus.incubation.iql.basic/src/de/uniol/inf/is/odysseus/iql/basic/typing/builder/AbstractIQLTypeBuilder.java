@@ -101,6 +101,10 @@ public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeFactory> implemen
 	protected String firstCharUpperCase(String s) {
 		return Character.toUpperCase(s.charAt(0)) + s.substring(1);
 	}
+	
+	protected String firstCharLowerCase(String s) {
+		return Character.toLowerCase(s.charAt(0)) + s.substring(1);
+	}
 
 	
 	protected ClasspathTypeProvider getTypeProvider() {

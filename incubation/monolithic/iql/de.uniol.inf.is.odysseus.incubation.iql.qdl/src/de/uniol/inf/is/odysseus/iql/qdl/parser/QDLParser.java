@@ -74,7 +74,7 @@ public class QDLParser extends AbstractIQLParser<QDLTypeFactory> {
 			IDataDictionary dd = DataDictionaryProvider.getDataDictionary(tenant);
 			
 			String script = generator.createOdysseusScript(qdlQuery, dd, session);
-			QDLServiceBinding.getExecutor().addQuery(script, "PQL", OdysseusRCPPlugIn.getActiveSession(), Context.empty());
+			QDLServiceBinding.getExecutor().addQuery(script, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), Context.empty());
 		}
 	}
 	

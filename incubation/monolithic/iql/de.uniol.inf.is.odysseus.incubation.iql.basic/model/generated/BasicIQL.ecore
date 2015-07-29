@@ -39,10 +39,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="dimensions" unique="false"
         upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IQLVariableDeclaration" eSuperTypes="platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmFormalParameter">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmTypeReference"
-        containment="true"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataList">
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
         eType="#//IQLMetadata" containment="true"/>
@@ -122,7 +118,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="text" eType="#//IQLJava"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleLong" eSuperTypes="#//IQLMetadataValue">
+  <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleInt" eSuperTypes="#//IQLMetadataValue">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleDouble" eSuperTypes="#//IQLMetadataValue">
@@ -141,6 +137,9 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmTypeReference"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleID" eSuperTypes="#//IQLMetadataValue">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleNull" eSuperTypes="#//IQLMetadataValue">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -151,6 +150,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueMap" eSuperTypes="#//IQLMetadataValue">
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
         eType="#//IQLMetadataValueMapElement" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IQLVariableDeclaration" eSuperTypes="platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmIdentifiableElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmTypeReference"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLStatementBlock" eSuperTypes="#//IQLStatement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
@@ -191,7 +195,7 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLForEachStatement" eSuperTypes="#//IQLStatement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="var" eType="#//IQLVariableDeclaration"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="var" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmIdentifiableElement"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="forExpression" eType="#//IQLExpression"
         containment="true"/>
@@ -211,7 +215,7 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLVariableStatement" eSuperTypes="#//IQLStatement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="var" eType="#//IQLVariableDeclaration"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="var" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmIdentifiableElement"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="init" eType="#//IQLVariableInitialization"
         containment="true"/>
@@ -311,8 +315,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="IQLArrayExpression" eSuperTypes="#//IQLExpression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="leftOperand" eType="#//IQLExpression"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//IQLExpression"
-        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="expressions" upperBound="-1"
+        eType="#//IQLExpression" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLMemberSelectionExpression" eSuperTypes="#//IQLExpression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="leftOperand" eType="#//IQLExpression"
@@ -324,12 +328,17 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="var" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmField"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLMethodSelection" eSuperTypes="#//IQLMemberSelection">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="method" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="method" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmOperation"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="args" eType="#//IQLArgumentsList"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLTerminalExpressionVariable" eSuperTypes="#//IQLExpression">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="var" eType="#//IQLVariableDeclaration"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="var" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmIdentifiableElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IQLTerminalExpressionMethod" eSuperTypes="#//IQLExpression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="method" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmOperation"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="args" eType="#//IQLArgumentsList"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLTerminalExpressionThis" eSuperTypes="#//IQLExpression"/>
   <eClassifiers xsi:type="ecore:EClass" name="IQLTerminalExpressionSuper" eSuperTypes="#//IQLExpression"/>

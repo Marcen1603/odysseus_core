@@ -17,12 +17,13 @@ import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeOperatorsFactory
 
-class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionParser, QDLTypeFactory, QDLLookUp>{
+class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionParser, QDLTypeFactory, QDLLookUp, QDLTypeOperatorsFactory>{
 		
 	@Inject
-	new(QDLCompilerHelper helper, QDLTypeCompiler typeCompiler, QDLExpressionParser exprParser, QDLTypeFactory factory, QDLLookUp lookUp) {
-		super(helper, typeCompiler, exprParser, factory, lookUp)
+	new(QDLCompilerHelper helper, QDLTypeCompiler typeCompiler, QDLExpressionParser exprParser, QDLTypeFactory factory, QDLLookUp lookUp, QDLTypeOperatorsFactory typeOperatorsFactory) {
+		super(helper, typeCompiler, exprParser, factory, lookUp, typeOperatorsFactory)
 	}
 	
 	override String compile(IQLExpression e, QDLGeneratorContext context) {
@@ -53,22 +54,25 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHel
 	
 	override String compile(IQLTerminalExpressionNew e, QDLGeneratorContext context) {		
 		if (helper.isOperator(e.ref)) {
+			var opName = helper.getLogicalOperatorName(e.ref)
 			if (e.argsMap != null && e.argsMap.elements.size > 0) {	
-				var constructor = lookUp.findConstructor(e.ref, e.argsList)
+				var constructor = lookUp.findConstructor(e.ref, e.argsList.elements.size)
+				var args = e.argsList.elements.size > 0
 				if (constructor != null) {
-					'''getOperator«factory.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»(«compile(e.argsList,constructor.parameters, context)»), operators,  «compile(e.argsMap,e.ref, context)»)'''
+					'''getOperator«factory.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«compile(e.argsList,constructor.parameters, context)»), operators,  «compile(e.argsMap,e.ref, context)»)'''
 				} else {
-					'''getOperator«factory.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»(«compile(e.argsList, context)»), operators,  «compile(e.argsMap,e.ref, context)»)'''
+					'''getOperator«factory.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«compile(e.argsList, context)»), operators,  «compile(e.argsMap,e.ref, context)»)'''
 				}		
 			} else if (e.argsList != null) {
-				var constructor = lookUp.findConstructor(e.ref, e.argsList)
+				var constructor = lookUp.findConstructor(e.ref, e.argsList.elements.size)
+				var args = e.argsList.elements.size > 0
 				if (constructor != null) {
-					'''getOperator«factory.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»(«compile(e.argsList,constructor.parameters, context)»), operators)'''
+					'''getOperator«factory.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«compile(e.argsList,constructor.parameters, context)»), operators)'''
 				} else {
-					'''getOperator«factory.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»(«compile(e.argsList, context)»), operators)'''
+					'''getOperator«factory.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«compile(e.argsList, context)»)>, operators)'''
 				}	
 			} else {
-				'''getOperator«factory.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»())'''
+				'''getOperator«factory.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»<«opName»>(new «opName»()), operators)'''
 			}
 		} else if (helper.isSource(e.ref)) {
 				'''getSource("«factory.getShortName(e.ref, false)»")'''
@@ -84,39 +88,32 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHel
 			if (helper.isSourceAttribute(left, name)) {
 				'''"«name»"'''
 			} else {
-				super.compile(expr, context);
+				super.compile(a, left, expr, context);
 			}
 		} else if (helper.isOperator(left)){
 			var pName = a.^var.simpleName;
 			if (helper.isParameter(pName, left)) {
 				if (expr.eContainer instanceof IQLAssignmentExpression) {
-					var setter = helper.getParameterSetter(pName, left);
-					'''«compile(expr.leftOperand, context)».«setter»'''
+					'''«compile(expr.leftOperand, context)».setParameter("«pName»",'''
 				} else {
-					var getter = helper.getParameterGetter(pName, left);
-					'''«compile(expr.leftOperand, context)».«getter»()'''
+					'''«compile(expr.leftOperand, context)».getParameter("«pName»")'''
 				}
 			} else {
-				super.compile(expr, context);
+				super.compile(a, left, expr, context);
 			}
 		} else {
-			super.compile(expr, context);
+			super.compile(a, left, expr, context);
 		}
 	}
 	
 	override String compile(IQLMethodSelection m,JvmTypeReference left, IQLMemberSelectionExpression expr, QDLGeneratorContext context) {	
 		if (helper.isOperator(left)){
 			if (helper.isParameterGetter(m, left)) {
-				var getter = helper.getParameterGetter(m, left)
-				'''«compile(expr.leftOperand, context)».«getter»()'''
+				var name = helper.getParameterOfGetter(m)
+				'''«compile(expr.leftOperand, context)».getParameter("«name»")'''
 			} else if (helper.isParameterSetter(m , left)) {
-				var setter = helper.getParameterSetter(m, left)				
-				var method = lookUp.findMethod(left, m.method, m.args)
-				if (method != null) {
-					'''«compile(expr.leftOperand, context)».«setter»(«compile(m.args, method.parameters, context)»)'''
-				} else {
-					'''«compile(expr.leftOperand, context)».«setter»(«compile(m.args, context)»)'''
-				}
+				var name = helper.getParameterOfSetter(m)
+				'''«compile(expr.leftOperand, context)».setParameter("«name»",«compile(m.args, m.method.parameters, context)»)'''
 			} else {
 				super.compile(m, left, expr, context);
 			}
@@ -127,12 +124,17 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHel
 	
 	override String compile(IQLAssignmentExpression expr, QDLGeneratorContext context) {	
 		if (expr.leftOperand instanceof IQLMemberSelectionExpression) {
+			var leftType = exprParser.getType(expr.leftOperand)
+			if (!leftType.^null){
+				context.expectedTypeRef = leftType.ref
+				exprParser.getType(expr.rightOperand, leftType.ref)
+			}
 			var selExpr = expr.leftOperand as IQLMemberSelectionExpression;
 			if (selExpr.rightOperand instanceof IQLAttributeSelection) {
 				var attr = selExpr.rightOperand as IQLAttributeSelection
 				var left = exprParser.getType(selExpr.leftOperand);
 				if (!left.isNull && helper.isOperator(left.ref) && helper.isParameter(attr.^var.simpleName, left.ref)) {
-					'''«compile(expr.leftOperand, context)»(«compile(expr.rightOperand, context)»)'''
+					'''«compile(expr.leftOperand, context)»«compile(expr.rightOperand, context)»)'''
 				} else {
 					super.compile(expr, context);
 				}

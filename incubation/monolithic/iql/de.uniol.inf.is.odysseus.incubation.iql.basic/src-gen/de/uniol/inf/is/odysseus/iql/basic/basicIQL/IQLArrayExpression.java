@@ -2,6 +2,7 @@
  */
 package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
 
+import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -12,7 +13,7 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression#getLeftOperand <em>Left Operand</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression#getExpr <em>Expr</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression#getExpressions <em>Expressions</em>}</li>
  * </ul>
  * </p>
  *
@@ -49,29 +50,19 @@ public interface IQLArrayExpression extends IQLExpression
   void setLeftOperand(IQLExpression value);
 
   /**
-   * Returns the value of the '<em><b>Expr</b></em>' containment reference.
+   * Returns the value of the '<em><b>Expressions</b></em>' containment reference list.
+   * The list contents are of type {@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Expr</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Expressions</em>' containment reference list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Expr</em>' containment reference.
-   * @see #setExpr(IQLExpression)
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLArrayExpression_Expr()
+   * @return the value of the '<em>Expressions</em>' containment reference list.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLArrayExpression_Expressions()
    * @model containment="true"
    * @generated
    */
-  IQLExpression getExpr();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression#getExpr <em>Expr</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Expr</em>' containment reference.
-   * @see #getExpr()
-   * @generated
-   */
-  void setExpr(IQLExpression value);
+  EList<IQLExpression> getExpressions();
 
 } // IQLArrayExpression

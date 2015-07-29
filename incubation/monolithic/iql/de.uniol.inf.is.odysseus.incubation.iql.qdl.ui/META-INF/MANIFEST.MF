@@ -19,7 +19,9 @@ Require-Bundle: de.uniol.inf.is.odysseus.iql.qdl;visibility:=reexport,
  org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.compare,
  de.uniol.inf.is.odysseus.rcp.base,
- de.uniol.inf.is.odysseus.core.server
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.core
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.iql.qdl.ui.quickfix,

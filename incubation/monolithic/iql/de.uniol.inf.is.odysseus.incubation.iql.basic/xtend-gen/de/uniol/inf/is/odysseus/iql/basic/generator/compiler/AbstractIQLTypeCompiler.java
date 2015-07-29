@@ -38,10 +38,13 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
     }
     if ((typeRef instanceof IQLArrayTypeRef)) {
       w = true;
-      String _replace = nodeText.replace("[", "");
-      String _replace_1 = _replace.replace("]", "");
-      String _trim = _replace_1.trim();
-      nodeText = _trim;
+      boolean _notEquals = (!Objects.equal(nodeText, null));
+      if (_notEquals) {
+        String _replace = nodeText.replace("[", "");
+        String _replace_1 = _replace.replace("]", "");
+        String _trim = _replace_1.trim();
+        nodeText = _trim;
+      }
       IQLArrayTypeRef arrayType = ((IQLArrayTypeRef) typeRef);
       IQLArrayType _type = arrayType.getType();
       EList<String> _dimensions = _type.getDimensions();

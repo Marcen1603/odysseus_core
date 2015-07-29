@@ -6,13 +6,20 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -22,7 +29,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLArrayExpressionImpl#getLeftOperand <em>Left Operand</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLArrayExpressionImpl#getExpr <em>Expr</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLArrayExpressionImpl#getExpressions <em>Expressions</em>}</li>
  * </ul>
  * </p>
  *
@@ -41,14 +48,14 @@ public class IQLArrayExpressionImpl extends IQLExpressionImpl implements IQLArra
   protected IQLExpression leftOperand;
 
   /**
-   * The cached value of the '{@link #getExpr() <em>Expr</em>}' containment reference.
+   * The cached value of the '{@link #getExpressions() <em>Expressions</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getExpr()
+   * @see #getExpressions()
    * @generated
    * @ordered
    */
-  protected IQLExpression expr;
+  protected EList<IQLExpression> expressions;
 
   /**
    * <!-- begin-user-doc -->
@@ -124,47 +131,13 @@ public class IQLArrayExpressionImpl extends IQLExpressionImpl implements IQLArra
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLExpression getExpr()
+  public EList<IQLExpression> getExpressions()
   {
-    return expr;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetExpr(IQLExpression newExpr, NotificationChain msgs)
-  {
-    IQLExpression oldExpr = expr;
-    expr = newExpr;
-    if (eNotificationRequired())
+    if (expressions == null)
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPR, oldExpr, newExpr);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
+      expressions = new EObjectContainmentEList<IQLExpression>(IQLExpression.class, this, BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPRESSIONS);
     }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setExpr(IQLExpression newExpr)
-  {
-    if (newExpr != expr)
-    {
-      NotificationChain msgs = null;
-      if (expr != null)
-        msgs = ((InternalEObject)expr).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPR, null, msgs);
-      if (newExpr != null)
-        msgs = ((InternalEObject)newExpr).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPR, null, msgs);
-      msgs = basicSetExpr(newExpr, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPR, newExpr, newExpr));
+    return expressions;
   }
 
   /**
@@ -179,8 +152,8 @@ public class IQLArrayExpressionImpl extends IQLExpressionImpl implements IQLArra
     {
       case BasicIQLPackage.IQL_ARRAY_EXPRESSION__LEFT_OPERAND:
         return basicSetLeftOperand(null, msgs);
-      case BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPR:
-        return basicSetExpr(null, msgs);
+      case BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPRESSIONS:
+        return ((InternalEList<?>)getExpressions()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -197,8 +170,8 @@ public class IQLArrayExpressionImpl extends IQLExpressionImpl implements IQLArra
     {
       case BasicIQLPackage.IQL_ARRAY_EXPRESSION__LEFT_OPERAND:
         return getLeftOperand();
-      case BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPR:
-        return getExpr();
+      case BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPRESSIONS:
+        return getExpressions();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -208,6 +181,7 @@ public class IQLArrayExpressionImpl extends IQLExpressionImpl implements IQLArra
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -216,8 +190,9 @@ public class IQLArrayExpressionImpl extends IQLExpressionImpl implements IQLArra
       case BasicIQLPackage.IQL_ARRAY_EXPRESSION__LEFT_OPERAND:
         setLeftOperand((IQLExpression)newValue);
         return;
-      case BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPR:
-        setExpr((IQLExpression)newValue);
+      case BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPRESSIONS:
+        getExpressions().clear();
+        getExpressions().addAll((Collection<? extends IQLExpression>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -236,8 +211,8 @@ public class IQLArrayExpressionImpl extends IQLExpressionImpl implements IQLArra
       case BasicIQLPackage.IQL_ARRAY_EXPRESSION__LEFT_OPERAND:
         setLeftOperand((IQLExpression)null);
         return;
-      case BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPR:
-        setExpr((IQLExpression)null);
+      case BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPRESSIONS:
+        getExpressions().clear();
         return;
     }
     super.eUnset(featureID);
@@ -255,8 +230,8 @@ public class IQLArrayExpressionImpl extends IQLExpressionImpl implements IQLArra
     {
       case BasicIQLPackage.IQL_ARRAY_EXPRESSION__LEFT_OPERAND:
         return leftOperand != null;
-      case BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPR:
-        return expr != null;
+      case BasicIQLPackage.IQL_ARRAY_EXPRESSION__EXPRESSIONS:
+        return expressions != null && !expressions.isEmpty();
     }
     return super.eIsSet(featureID);
   }

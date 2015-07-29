@@ -3,7 +3,7 @@
 package de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -13,18 +13,18 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>IQL Metadata Value Single Long</b></em>'.
+ * An implementation of the model object '<em><b>IQL Metadata Value Single Int</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleLongImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMetadataValueSingleIntImpl#getValue <em>Value</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class IQLMetadataValueSingleLongImpl extends IQLMetadataValueImpl implements IQLMetadataValueSingleLong
+public class IQLMetadataValueSingleIntImpl extends IQLMetadataValueImpl implements IQLMetadataValueSingleInt
 {
   /**
    * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
@@ -51,7 +51,7 @@ public class IQLMetadataValueSingleLongImpl extends IQLMetadataValueImpl impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  protected IQLMetadataValueSingleLongImpl()
+  protected IQLMetadataValueSingleIntImpl()
   {
     super();
   }
@@ -64,7 +64,7 @@ public class IQLMetadataValueSingleLongImpl extends IQLMetadataValueImpl impleme
   @Override
   protected EClass eStaticClass()
   {
-    return BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_LONG;
+    return BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_INT;
   }
 
   /**
@@ -87,7 +87,7 @@ public class IQLMetadataValueSingleLongImpl extends IQLMetadataValueImpl impleme
     int oldValue = value;
     value = newValue;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_LONG__VALUE, oldValue, value));
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT__VALUE, oldValue, value));
   }
 
   /**
@@ -100,7 +100,7 @@ public class IQLMetadataValueSingleLongImpl extends IQLMetadataValueImpl impleme
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_LONG__VALUE:
+      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT__VALUE:
         return getValue();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -116,7 +116,7 @@ public class IQLMetadataValueSingleLongImpl extends IQLMetadataValueImpl impleme
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_LONG__VALUE:
+      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT__VALUE:
         setValue((Integer)newValue);
         return;
     }
@@ -133,7 +133,7 @@ public class IQLMetadataValueSingleLongImpl extends IQLMetadataValueImpl impleme
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_LONG__VALUE:
+      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT__VALUE:
         setValue(VALUE_EDEFAULT);
         return;
     }
@@ -150,7 +150,7 @@ public class IQLMetadataValueSingleLongImpl extends IQLMetadataValueImpl impleme
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_LONG__VALUE:
+      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT__VALUE:
         return value != VALUE_EDEFAULT;
     }
     return super.eIsSet(featureID);
@@ -173,4 +173,4 @@ public class IQLMetadataValueSingleLongImpl extends IQLMetadataValueImpl impleme
     return result.toString();
   }
 
-} //IQLMetadataValueSingleLongImpl
+} //IQLMetadataValueSingleIntImpl

@@ -15,7 +15,6 @@ import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmFeature;
 import org.eclipse.xtext.common.types.JvmField;
-import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmMember;
@@ -154,16 +153,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
         T result = caseIQLArrayType(iqlArrayType);
         if (result == null) result = caseJvmType(iqlArrayType);
         if (result == null) result = caseJvmIdentifiableElement(iqlArrayType);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case BasicIQLPackage.IQL_VARIABLE_DECLARATION:
-      {
-        IQLVariableDeclaration iqlVariableDeclaration = (IQLVariableDeclaration)theEObject;
-        T result = caseIQLVariableDeclaration(iqlVariableDeclaration);
-        if (result == null) result = caseJvmFormalParameter(iqlVariableDeclaration);
-        if (result == null) result = caseJvmAnnotationTarget(iqlVariableDeclaration);
-        if (result == null) result = caseJvmIdentifiableElement(iqlVariableDeclaration);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -354,11 +343,11 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_LONG:
+      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT:
       {
-        IQLMetadataValueSingleLong iqlMetadataValueSingleLong = (IQLMetadataValueSingleLong)theEObject;
-        T result = caseIQLMetadataValueSingleLong(iqlMetadataValueSingleLong);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleLong);
+        IQLMetadataValueSingleInt iqlMetadataValueSingleInt = (IQLMetadataValueSingleInt)theEObject;
+        T result = caseIQLMetadataValueSingleInt(iqlMetadataValueSingleInt);
+        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleInt);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -402,6 +391,14 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_ID:
+      {
+        IQLMetadataValueSingleID iqlMetadataValueSingleID = (IQLMetadataValueSingleID)theEObject;
+        T result = caseIQLMetadataValueSingleID(iqlMetadataValueSingleID);
+        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleID);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_NULL:
       {
         IQLMetadataValueSingleNull iqlMetadataValueSingleNull = (IQLMetadataValueSingleNull)theEObject;
@@ -423,6 +420,14 @@ public class BasicIQLSwitch<T> extends Switch<T>
         IQLMetadataValueMap iqlMetadataValueMap = (IQLMetadataValueMap)theEObject;
         T result = caseIQLMetadataValueMap(iqlMetadataValueMap);
         if (result == null) result = caseIQLMetadataValue(iqlMetadataValueMap);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case BasicIQLPackage.IQL_VARIABLE_DECLARATION:
+      {
+        IQLVariableDeclaration iqlVariableDeclaration = (IQLVariableDeclaration)theEObject;
+        T result = caseIQLVariableDeclaration(iqlVariableDeclaration);
+        if (result == null) result = caseJvmIdentifiableElement(iqlVariableDeclaration);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -682,6 +687,14 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_METHOD:
+      {
+        IQLTerminalExpressionMethod iqlTerminalExpressionMethod = (IQLTerminalExpressionMethod)theEObject;
+        T result = caseIQLTerminalExpressionMethod(iqlTerminalExpressionMethod);
+        if (result == null) result = caseIQLExpression(iqlTerminalExpressionMethod);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_THIS:
       {
         IQLTerminalExpressionThis iqlTerminalExpressionThis = (IQLTerminalExpressionThis)theEObject;
@@ -914,22 +927,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIQLArrayType(IQLArrayType object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Variable Declaration</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Variable Declaration</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLVariableDeclaration(IQLVariableDeclaration object)
   {
     return null;
   }
@@ -1271,17 +1268,17 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Long</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Int</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Long</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Int</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLMetadataValueSingleLong(IQLMetadataValueSingleLong object)
+  public T caseIQLMetadataValueSingleInt(IQLMetadataValueSingleInt object)
   {
     return null;
   }
@@ -1367,6 +1364,22 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single ID</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single ID</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLMetadataValueSingleID(IQLMetadataValueSingleID object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Null</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1410,6 +1423,22 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIQLMetadataValueMap(IQLMetadataValueMap object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Variable Declaration</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Variable Declaration</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLVariableDeclaration(IQLVariableDeclaration object)
   {
     return null;
   }
@@ -1927,6 +1956,22 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Terminal Expression Method</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Terminal Expression Method</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLTerminalExpressionMethod(IQLTerminalExpressionMethod object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>IQL Terminal Expression This</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -2274,22 +2319,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseJvmTypeReference(JvmTypeReference object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Jvm Formal Parameter</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Jvm Formal Parameter</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseJvmFormalParameter(JvmFormalParameter object)
   {
     return null;
   }

@@ -2,6 +2,7 @@
  */
 package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
 
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -31,12 +32,12 @@ public interface IQLVariableStatement extends IQLStatement
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Var</em>' containment reference.
-   * @see #setVar(IQLVariableDeclaration)
+   * @see #setVar(JvmIdentifiableElement)
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLVariableStatement_Var()
    * @model containment="true"
    * @generated
    */
-  IQLVariableDeclaration getVar();
+  JvmIdentifiableElement getVar();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement#getVar <em>Var</em>}' containment reference.
@@ -46,7 +47,7 @@ public interface IQLVariableStatement extends IQLStatement
    * @see #getVar()
    * @generated
    */
-  void setVar(IQLVariableDeclaration value);
+  void setVar(JvmIdentifiableElement value);
 
   /**
    * Returns the value of the '<em><b>Init</b></em>' containment reference.

@@ -4,9 +4,11 @@
 package de.uniol.inf.is.odysseus.iql.odl;
 
 import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceFactory;
+import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
 
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompiler;
@@ -26,6 +28,7 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.IIQLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.IIQLTypeOperatorsFactory;
 import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGenerator;
 import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLCompiler;
@@ -35,22 +38,39 @@ import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLMetadataMethodComp
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLStatementCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.odl.linking.ODLLinkingService;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.parser.ODLParser;
+import de.uniol.inf.is.odysseus.iql.odl.postprocessor.ODLPostProcessor;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeOperatorsFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypingEntryPoint;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"restriction", "rawtypes"})
 public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractODLRuntimeModule {
 
+	public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {
+        return ODLPostProcessor.class;
+    }
+	
+	public Class<? extends IIQLTypeOperatorsFactory> bindTypeOperatorsFactory() {
+		return ODLTypeOperatorsFactory.class;
+	}
+	
+	@Override
+	public Class<? extends ILinkingService> bindILinkingService() {
+		return ODLLinkingService.class;
+	}
+	
+	
 	public Class<? extends IIQLExpressionParserContext> bindExpressionParserContext() {
 		return ODLExpressionParserContext.class;
 	}

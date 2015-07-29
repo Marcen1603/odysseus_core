@@ -14,6 +14,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.xtext.common.types.JvmOperation;
+
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>IQL Method Selection</b></em>'.
@@ -31,24 +33,14 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 public class IQLMethodSelectionImpl extends IQLMemberSelectionImpl implements IQLMethodSelection
 {
   /**
-   * The default value of the '{@link #getMethod() <em>Method</em>}' attribute.
+   * The cached value of the '{@link #getMethod() <em>Method</em>}' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getMethod()
    * @generated
    * @ordered
    */
-  protected static final String METHOD_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getMethod() <em>Method</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getMethod()
-   * @generated
-   * @ordered
-   */
-  protected String method = METHOD_EDEFAULT;
+  protected JvmOperation method;
 
   /**
    * The cached value of the '{@link #getArgs() <em>Args</em>}' containment reference.
@@ -86,7 +78,27 @@ public class IQLMethodSelectionImpl extends IQLMemberSelectionImpl implements IQ
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getMethod()
+  public JvmOperation getMethod()
+  {
+    if (method != null && method.eIsProxy())
+    {
+      InternalEObject oldMethod = (InternalEObject)method;
+      method = (JvmOperation)eResolveProxy(oldMethod);
+      if (method != oldMethod)
+      {
+        if (eNotificationRequired())
+          eNotify(new ENotificationImpl(this, Notification.RESOLVE, BasicIQLPackage.IQL_METHOD_SELECTION__METHOD, oldMethod, method));
+      }
+    }
+    return method;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public JvmOperation basicGetMethod()
   {
     return method;
   }
@@ -96,9 +108,9 @@ public class IQLMethodSelectionImpl extends IQLMemberSelectionImpl implements IQ
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setMethod(String newMethod)
+  public void setMethod(JvmOperation newMethod)
   {
-    String oldMethod = method;
+    JvmOperation oldMethod = method;
     method = newMethod;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_METHOD_SELECTION__METHOD, oldMethod, method));
@@ -179,7 +191,8 @@ public class IQLMethodSelectionImpl extends IQLMemberSelectionImpl implements IQ
     switch (featureID)
     {
       case BasicIQLPackage.IQL_METHOD_SELECTION__METHOD:
-        return getMethod();
+        if (resolve) return getMethod();
+        return basicGetMethod();
       case BasicIQLPackage.IQL_METHOD_SELECTION__ARGS:
         return getArgs();
     }
@@ -197,7 +210,7 @@ public class IQLMethodSelectionImpl extends IQLMemberSelectionImpl implements IQ
     switch (featureID)
     {
       case BasicIQLPackage.IQL_METHOD_SELECTION__METHOD:
-        setMethod((String)newValue);
+        setMethod((JvmOperation)newValue);
         return;
       case BasicIQLPackage.IQL_METHOD_SELECTION__ARGS:
         setArgs((IQLArgumentsList)newValue);
@@ -217,7 +230,7 @@ public class IQLMethodSelectionImpl extends IQLMemberSelectionImpl implements IQ
     switch (featureID)
     {
       case BasicIQLPackage.IQL_METHOD_SELECTION__METHOD:
-        setMethod(METHOD_EDEFAULT);
+        setMethod((JvmOperation)null);
         return;
       case BasicIQLPackage.IQL_METHOD_SELECTION__ARGS:
         setArgs((IQLArgumentsList)null);
@@ -237,28 +250,11 @@ public class IQLMethodSelectionImpl extends IQLMemberSelectionImpl implements IQ
     switch (featureID)
     {
       case BasicIQLPackage.IQL_METHOD_SELECTION__METHOD:
-        return METHOD_EDEFAULT == null ? method != null : !METHOD_EDEFAULT.equals(method);
+        return method != null;
       case BasicIQLPackage.IQL_METHOD_SELECTION__ARGS:
         return args != null;
     }
     return super.eIsSet(featureID);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (method: ");
-    result.append(method);
-    result.append(')');
-    return result.toString();
   }
 
 } //IQLMethodSelectionImpl

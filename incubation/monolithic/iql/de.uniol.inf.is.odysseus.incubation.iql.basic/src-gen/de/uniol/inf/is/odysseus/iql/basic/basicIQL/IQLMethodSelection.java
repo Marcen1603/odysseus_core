@@ -2,6 +2,7 @@
  */
 package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
 
+import org.eclipse.xtext.common.types.JvmOperation;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,30 +24,30 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
 public interface IQLMethodSelection extends IQLMemberSelection
 {
   /**
-   * Returns the value of the '<em><b>Method</b></em>' attribute.
+   * Returns the value of the '<em><b>Method</b></em>' reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Method</em>' attribute isn't clear,
+   * If the meaning of the '<em>Method</em>' reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Method</em>' attribute.
-   * @see #setMethod(String)
+   * @return the value of the '<em>Method</em>' reference.
+   * @see #setMethod(JvmOperation)
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLMethodSelection_Method()
    * @model
    * @generated
    */
-  String getMethod();
+  JvmOperation getMethod();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection#getMethod <em>Method</em>}' attribute.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection#getMethod <em>Method</em>}' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Method</em>' attribute.
+   * @param value the new value of the '<em>Method</em>' reference.
    * @see #getMethod()
    * @generated
    */
-  void setMethod(String value);
+  void setMethod(JvmOperation value);
 
   /**
    * Returns the value of the '<em><b>Args</b></em>' containment reference.

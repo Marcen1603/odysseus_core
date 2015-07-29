@@ -19,22 +19,25 @@ class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompilerHelpe
 	
 	override String compile(IQLVariableInitialization init, JvmTypeReference typeRef, QDLGeneratorContext context) {
 		if (helper.isOperator(typeRef)) {
+			var opName = helper.getLogicalOperatorName(typeRef)
 			if (init.argsMap != null && init.argsMap.elements.size > 0) {
-				var constructor = lookUp.findConstructor(typeRef, init.argsList)
+				var constructor = lookUp.findConstructor(typeRef, init.argsList.elements.size)
+				var args = init.argsList.elements.size > 0
 				if (constructor != null) {
-					'''getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»(«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
+					'''getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 				} else {
-					'''getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»(«exprCompiler.compile(init.argsList, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
+					'''getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 				}
 			} else if (init.argsList != null) {
-				var constructor = lookUp.findConstructor(typeRef, init.argsList)
+				var constructor = lookUp.findConstructor(typeRef, init.argsList.elements.size)
+				var args = init.argsList.elements.size > 0				
 				if (constructor != null) {
-					'''getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»(«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators)'''
+					'''getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators)'''
 				} else {
-					'''getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»(«exprCompiler.compile(init.argsList, context)»), operators)'''
+					'''getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList, context)»), operators)'''
 				}
 			} else {
-			super.compile(init, typeRef, context);
+				super.compile(init, typeRef, context);
 			}
 		} else if (helper.isSource(typeRef)) {
 			'''getSource("«factory.getShortName(typeRef, false)»")'''

@@ -26,9 +26,7 @@ import org.osgi.framework.FrameworkUtil;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
@@ -56,7 +54,7 @@ public abstract class AbstractIQLTypeFactory implements IIQLTypeFactory{
 	private Map<String, IQLFile> systemFiles = new HashMap<>();
 	private Map<String, IQLSystemType> systemTypes= new HashMap<>();
 
-	
+
 	@Override
 	public ResourceSet getSystemResourceSet() {
 		return systemResourceSet;
@@ -527,7 +525,7 @@ public abstract class AbstractIQLTypeFactory implements IIQLTypeFactory{
 	
 	@Override
 	public boolean isUserDefinedType(JvmType type, boolean array) {
-		return getInnerType(type, array) instanceof IQLClass || getInnerType(type, array) instanceof IQLInterface;
+		return getInnerType(type, array) instanceof IQLTypeDef;
 	}
 	
 	@Override

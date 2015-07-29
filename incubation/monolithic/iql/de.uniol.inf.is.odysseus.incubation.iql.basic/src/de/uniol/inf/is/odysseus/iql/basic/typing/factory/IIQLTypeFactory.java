@@ -74,9 +74,6 @@ public interface IIQLTypeFactory {
 	boolean isList(JvmTypeReference typeRef);
 	boolean isClonable(JvmTypeReference typeRef);
 	
-	int getArraySize(JvmType type);
-	
-	
-	
+	int getArraySize(JvmType type);	
 	
 }

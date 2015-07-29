@@ -1,17 +1,18 @@
 package de.uniol.inf.is.odysseus.iql.qdl.types.query;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
+
 
 public class QDLSubscribableWithPort {
 	private final int port;
-	private final ILogicalOperator op;
+	private final IQDLOperator<?> op;
 	
-	public QDLSubscribableWithPort(int port,ILogicalOperator op) {
+	public QDLSubscribableWithPort(int port,IQDLOperator<?> op) {
 		this.port = port;
 		this.op = op;
 	}
 	
-	public QDLSubscribableWithPort(ILogicalOperator op,int port) {
+	public QDLSubscribableWithPort(IQDLOperator<?> op,int port) {
 		this.port = port;
 		this.op = op;
 	}
@@ -20,7 +21,7 @@ public class QDLSubscribableWithPort {
 		return port;
 	}
 
-	public ILogicalOperator getOp() {
+	public IQDLOperator<?> getOp() {
 		return op;
 	}
 

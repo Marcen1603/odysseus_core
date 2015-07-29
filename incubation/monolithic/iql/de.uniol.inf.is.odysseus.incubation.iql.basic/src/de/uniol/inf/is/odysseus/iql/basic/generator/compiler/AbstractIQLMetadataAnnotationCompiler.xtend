@@ -5,7 +5,6 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean
@@ -15,6 +14,8 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueList
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt
 
 abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>> implements IIQLMetadataAnnotationCompiler<G>{
 	protected H helper;
@@ -39,8 +40,8 @@ abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelpe
 	}
 	
 	def String compile(IQLMetadataValue o, G c) {
-		if(o instanceof IQLMetadataValueSingleLong) {
-			return compile(o as IQLMetadataValueSingleLong, c);
+		if(o instanceof IQLMetadataValueSingleInt) {
+			return compile(o as IQLMetadataValueSingleInt, c);
 		} else if(o instanceof IQLMetadataValueSingleDouble) {
 			return compile(o as IQLMetadataValueSingleDouble, c);
 		} else if(o instanceof IQLMetadataValueSingleString) {
@@ -51,8 +52,10 @@ abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelpe
 			return compile(o as IQLMetadataValueSingleChar, c);
 		} else if(o instanceof IQLMetadataValueSingleNull) {
 			return compile(o as IQLMetadataValueSingleNull, c);
-		}else if(o instanceof IQLMetadataValueSingleTypeRef) {
+		} else if(o instanceof IQLMetadataValueSingleTypeRef) {
 			return compile(o as IQLMetadataValueSingleTypeRef, c);
+		} else if(o instanceof IQLMetadataValueSingleID) {
+			return compile(o as IQLMetadataValueSingleID, c);
 		}else if(o instanceof IQLMetadataValueList) {
 			return compile(o as IQLMetadataValueList, c);
 		} else if(o instanceof IQLMetadataValueMap) {
@@ -61,7 +64,7 @@ abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelpe
 		return "";	
 	}
 
-	def String compile(IQLMetadataValueSingleLong o, G c) {
+	def String compile(IQLMetadataValueSingleInt o, G c) {
 		'''«o.value»'''		
 	}
 	
@@ -90,6 +93,10 @@ abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelpe
 	
 	def String compile(IQLMetadataValueSingleTypeRef o, G c) {
 		'''«typeCompiler.compile(o.value, c, true)».class'''		
+	}
+	
+	def String compile(IQLMetadataValueSingleID o, G c) {
+		'''"«o.value»"'''		
 	}
 
 	def String compile(IQLMetadataValueList o, G c) {

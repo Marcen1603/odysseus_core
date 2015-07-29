@@ -73,7 +73,7 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 	
 	@Override
 	public String getMethodName(String name, JvmTypeReference typeRef) {
-		for (JvmOperation meth : lookUp.getPublicMethods(typeRef)) {
+		for (JvmOperation meth : lookUp.getPublicMethods(typeRef, false)) {
 			if (meth.getSimpleName().equalsIgnoreCase(name)) {
 				EList<JvmFormalParameter> parameters = meth.getParameters();
 				if (parameters != null && parameters.size() == 1) {
@@ -86,13 +86,13 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 	
 	@Override
 	public JvmTypeReference getPropertyType(String name, JvmTypeReference typeRef) {
-		for (JvmField attr : lookUp.getPublicAttributes(typeRef)) {
+		for (JvmField attr : lookUp.getPublicAttributes(typeRef, false)) {
 			if (attr.getSimpleName().equalsIgnoreCase(name)) {
 				return attr.getType();
 			}
 		}
 		
-		for (JvmOperation meth : lookUp.getPublicMethods(typeRef)) {
+		for (JvmOperation meth : lookUp.getPublicMethods(typeRef, false)) {
 			if (meth.getSimpleName().equalsIgnoreCase("set"+name)) {
 				EList<JvmFormalParameter> parameters = meth.getParameters();
 				if (parameters != null && parameters.size() == 1) {
@@ -105,7 +105,7 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 	
 	@Override
 	public boolean isPublicAttribute(String name, JvmTypeReference typeRef, JvmTypeReference parameter) {
-		for (JvmField attr : lookUp.getPublicAttributes(typeRef)) {			
+		for (JvmField attr : lookUp.getPublicAttributes(typeRef, false)) {			
 			if (attr.getSimpleName().equalsIgnoreCase(name) && factory.getLongName(attr.getType(), true).equals(factory.getLongName(parameter, true))) {
 				return true;
 			}
@@ -115,7 +115,7 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 	
 	@Override
 	public boolean isSetter(String property, JvmTypeReference typeRef, JvmTypeReference parameter) {
-		for (JvmOperation op : lookUp.getPublicMethods(typeRef)) {
+		for (JvmOperation op : lookUp.getPublicMethods(typeRef, false)) {
 			if (op.getSimpleName().equalsIgnoreCase("set"+property)) {
 				for (JvmFormalParameter p : op.getParameters()) {
 					String qName = factory.getLongName(p.getParameterType(), true);

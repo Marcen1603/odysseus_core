@@ -17,7 +17,6 @@ import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmFeature;
 import org.eclipse.xtext.common.types.JvmField;
-import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmMember;
@@ -130,11 +129,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLArrayTypeAdapter();
       }
       @Override
-      public Adapter caseIQLVariableDeclaration(IQLVariableDeclaration object)
-      {
-        return createIQLVariableDeclarationAdapter();
-      }
-      @Override
       public Adapter caseIQLMetadataList(IQLMetadataList object)
       {
         return createIQLMetadataListAdapter();
@@ -240,9 +234,9 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLJavaMemberAdapter();
       }
       @Override
-      public Adapter caseIQLMetadataValueSingleLong(IQLMetadataValueSingleLong object)
+      public Adapter caseIQLMetadataValueSingleInt(IQLMetadataValueSingleInt object)
       {
-        return createIQLMetadataValueSingleLongAdapter();
+        return createIQLMetadataValueSingleIntAdapter();
       }
       @Override
       public Adapter caseIQLMetadataValueSingleDouble(IQLMetadataValueSingleDouble object)
@@ -270,6 +264,11 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLMetadataValueSingleTypeRefAdapter();
       }
       @Override
+      public Adapter caseIQLMetadataValueSingleID(IQLMetadataValueSingleID object)
+      {
+        return createIQLMetadataValueSingleIDAdapter();
+      }
+      @Override
       public Adapter caseIQLMetadataValueSingleNull(IQLMetadataValueSingleNull object)
       {
         return createIQLMetadataValueSingleNullAdapter();
@@ -283,6 +282,11 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseIQLMetadataValueMap(IQLMetadataValueMap object)
       {
         return createIQLMetadataValueMapAdapter();
+      }
+      @Override
+      public Adapter caseIQLVariableDeclaration(IQLVariableDeclaration object)
+      {
+        return createIQLVariableDeclarationAdapter();
       }
       @Override
       public Adapter caseIQLStatementBlock(IQLStatementBlock object)
@@ -445,6 +449,11 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLTerminalExpressionVariableAdapter();
       }
       @Override
+      public Adapter caseIQLTerminalExpressionMethod(IQLTerminalExpressionMethod object)
+      {
+        return createIQLTerminalExpressionMethodAdapter();
+      }
+      @Override
       public Adapter caseIQLTerminalExpressionThis(IQLTerminalExpressionThis object)
       {
         return createIQLTerminalExpressionThisAdapter();
@@ -553,11 +562,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseJvmTypeReference(JvmTypeReference object)
       {
         return createJvmTypeReferenceAdapter();
-      }
-      @Override
-      public Adapter caseJvmFormalParameter(JvmFormalParameter object)
-      {
-        return createJvmFormalParameterAdapter();
       }
       @Override
       public Adapter caseJvmFeature(JvmFeature object)
@@ -717,21 +721,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIQLArrayTypeAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration <em>IQL Variable Declaration</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
-   * @generated
-   */
-  public Adapter createIQLVariableDeclarationAdapter()
   {
     return null;
   }
@@ -1052,16 +1041,16 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong <em>IQL Metadata Value Single Long</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt <em>IQL Metadata Value Single Int</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt
    * @generated
    */
-  public Adapter createIQLMetadataValueSingleLongAdapter()
+  public Adapter createIQLMetadataValueSingleIntAdapter()
   {
     return null;
   }
@@ -1142,6 +1131,21 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID <em>IQL Metadata Value Single ID</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID
+   * @generated
+   */
+  public Adapter createIQLMetadataValueSingleIDAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull <em>IQL Metadata Value Single Null</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -1182,6 +1186,21 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIQLMetadataValueMapAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration <em>IQL Variable Declaration</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
+   * @generated
+   */
+  public Adapter createIQLVariableDeclarationAdapter()
   {
     return null;
   }
@@ -1667,6 +1686,21 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod <em>IQL Terminal Expression Method</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod
+   * @generated
+   */
+  public Adapter createIQLTerminalExpressionMethodAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionThis <em>IQL Terminal Expression This</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -1992,21 +2026,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createJvmTypeReferenceAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.xtext.common.types.JvmFormalParameter <em>Jvm Formal Parameter</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.eclipse.xtext.common.types.JvmFormalParameter
-   * @generated
-   */
-  public Adapter createJvmFormalParameterAdapter()
   {
     return null;
   }

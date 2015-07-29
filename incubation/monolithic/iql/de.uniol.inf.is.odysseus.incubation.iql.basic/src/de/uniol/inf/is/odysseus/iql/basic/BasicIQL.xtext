@@ -82,12 +82,8 @@ ArrayBrackets :
 ;
 
 JvmFormalParameter returns types::JvmFormalParameter:
-	IQLFormalParameter
-;
+	parameterType=JvmTypeReference name=ID;
 
-IQLFormalParameter returns IQLVariableDeclaration:
-	parameterType=JvmTypeReference name=ID
-;
 
 IQLMethod returns types::JvmOperation:
 	{IQLMethod}		
@@ -115,7 +111,7 @@ IQLMetadataList:
 ;
 
 IQLMetadata:
-	name=ID '=' value=IQLMetadataValue
+	name=ID ('=' value=IQLMetadataValue)?
 ;
 
 IQLMetadataValue returns IQLMetadataValue:
@@ -123,12 +119,13 @@ IQLMetadataValue returns IQLMetadataValue:
 ;
 
 IQLMetadataValueSingle returns IQLMetadataValue:
-	{IQLMetadataValueSingleLong} value = INT|
+	{IQLMetadataValueSingleInt} value = INT|
 	{IQLMetadataValueSingleDouble} value = DOUBLE|
 	{IQLMetadataValueSingleString} value = STRING|
 	{IQLMetadataValueSingleBoolean} value = BOOLEAN|
 	{IQLMetadataValueSingleChar} value = CHAR |
-	{IQLMetadataValueSingleTypeRef} value = JvmTypeReference |
+	(=>({IQLMetadataValueSingleTypeRef} value = JvmTypeReference)) |	
+	{IQLMetadataValueSingleID} value = ID |
 	{IQLMetadataValueSingleNull} value = 'null'	
 ;
 
@@ -152,7 +149,8 @@ IQLMetadataValueMapElement:
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 
-IQLVariableDeclaration:
+IQLVariableDeclaration returns types::JvmIdentifiableElement:
+	{IQLVariableDeclaration}
 	ref=JvmTypeReference name=ID
 ;
 
@@ -181,7 +179,7 @@ IQLArgumentsMapKeyValue :
 
 
 IQLStatement:	
-	=>IQLStatementBlock |
+	IQLStatementBlock |
 	IQLExpressionStatement |
 	IQLIfStatement |
 	IQLWhileStatement |
@@ -189,7 +187,7 @@ IQLStatement:
 	IQLForStatement |
 	IQLForEachStatement	|
 	IQLSwitchStatement |	
-	=>IQLVariableStatement |
+	IQLVariableStatement |
 	IQLBreakStatement |
 	IQLContinueStatement |
 	IQLReturnStatement | 
@@ -376,7 +374,7 @@ OpPostfix:
 
 IQLMemberCallExpression returns IQLExpression:
 	IQLTerminalExpression
-	(=>({IQLArrayExpression.leftOperand=current} '[' expr=IQLExpression ']'))*
+	(=>({IQLArrayExpression.leftOperand=current} '[' expressions+=IQLExpression (',' expressions+=IQLExpression)? ']'))*
 	(=>({IQLMemberSelectionExpression.leftOperand=current} '.') rightOperand=(IQLAttributeSelection | IQLMethodSelection))*
 ;
 
@@ -388,11 +386,12 @@ IQLAttributeSelection returns IQLMemberSelection:
 
 IQLMethodSelection returns IQLMemberSelection:
 	{IQLMethodSelection}
-	method=ID args=IQLArgumentsList
+	method=[types::JvmOperation] args=IQLArgumentsList
 ;
 
 IQLTerminalExpression returns IQLExpression:
-    {IQLTerminalExpressionVariable} var=[IQLVariableDeclaration]  |
+    {IQLTerminalExpressionVariable} var=[types::JvmIdentifiableElement]  |
+    {IQLTerminalExpressionMethod} method=[types::JvmOperation] args=IQLArgumentsList  |
     {IQLTerminalExpressionThis} 'this'  |
     {IQLTerminalExpressionSuper} 'super'  |    
     {IQLTerminalExpressionParenthesis} '(' expr = IQLExpression ')'  |

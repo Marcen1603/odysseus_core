@@ -17,11 +17,13 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataMethodCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLMetadataMethodCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLStatementCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +31,7 @@ import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -38,6 +41,9 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
 public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLStatementCompiler, QDLTypeFactory> {
+  @Inject
+  private QDLMetadataMethodCompiler methodCompiler;
+  
   @Inject
   public QDLCompiler(final QDLCompilerHelper helper, final QDLTypeCompiler typeCompiler, final QDLStatementCompiler stmtCompiler, final QDLTypeFactory factory) {
     super(helper, typeCompiler, stmtCompiler, factory);
@@ -53,7 +59,7 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
       context.addImport(_canonicalName);
       String _canonicalName_1 = Collection.class.getCanonicalName();
       context.addImport(_canonicalName_1);
-      String _canonicalName_2 = ILogicalOperator.class.getCanonicalName();
+      String _canonicalName_2 = IQDLOperator.class.getCanonicalName();
       context.addImport(_canonicalName_2);
       String _canonicalName_3 = ArrayList.class.getCanonicalName();
       context.addImport(_canonicalName_3);
@@ -128,17 +134,17 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
       String _simpleName = Collection.class.getSimpleName();
       _builder.append(_simpleName, "\t");
       _builder.append("<");
-      String _simpleName_1 = ILogicalOperator.class.getSimpleName();
+      String _simpleName_1 = IQDLOperator.class.getSimpleName();
       _builder.append(_simpleName_1, "\t");
-      _builder.append("> execute() {");
+      _builder.append("<?>> execute() {");
       _builder.newLineIfNotEmpty();
       _builder.append("\t \t");
       String _simpleName_2 = Collection.class.getSimpleName();
       _builder.append(_simpleName_2, "\t \t");
       _builder.append("<");
-      String _simpleName_3 = ILogicalOperator.class.getSimpleName();
+      String _simpleName_3 = IQDLOperator.class.getSimpleName();
       _builder.append(_simpleName_3, "\t \t");
-      _builder.append("> operators = new ");
+      _builder.append("<?>> operators = new ");
       String _simpleName_4 = ArrayList.class.getSimpleName();
       _builder.append(_simpleName_4, "\t \t");
       _builder.append("<>();");
@@ -163,19 +169,12 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
       {
         for(final IQLVariableStatement a : varStmts) {
           _builder.append("\t");
-          IQLVariableDeclaration _var = a.getVar();
-          JvmTypeReference type = _var.getRef();
+          JvmIdentifiableElement _var = a.getVar();
+          IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
           _builder.newLineIfNotEmpty();
-          {
-            boolean _equals = Objects.equal(type, null);
-            if (_equals) {
-              _builder.append("\t");
-              IQLVariableDeclaration _var_1 = a.getVar();
-              JvmTypeReference _parameterType = _var_1.getParameterType();
-              _builder.append(type = _parameterType, "\t");
-              _builder.newLineIfNotEmpty();
-            }
-          }
+          _builder.append("\t");
+          JvmTypeReference type = decl.getRef();
+          _builder.newLineIfNotEmpty();
           {
             boolean _and = false;
             boolean _and_1 = false;
@@ -276,6 +275,17 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
           }
         }
       }
+      _builder.append("\t");
+      _builder.newLine();
+      {
+        if (metadata) {
+          _builder.append("\t");
+          IQLMetadataList _metadataList_1 = q.getMetadataList();
+          String _compile_1 = this.methodCompiler.compile(_metadataList_1, context);
+          _builder.append(_compile_1, "\t");
+          _builder.newLineIfNotEmpty();
+        }
+      }
       _builder.append("} ");
       _builder.newLine();
       _xblockexpression = _builder.toString();
@@ -287,116 +297,123 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
     CharSequence _xifexpression = null;
     boolean _isOperator = this.helper.isOperator(typeRef);
     if (_isOperator) {
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.newLine();
-      _builder.append("private ");
-      String _compile = this.typeCompiler.compile(typeRef, context, false);
-      _builder.append(_compile, "");
-      _builder.append(" getOperator");
-      String _shortName = this.factory.getShortName(typeRef, false);
-      _builder.append(_shortName, "");
-      int _hashCode = typeRef.hashCode();
-      _builder.append(_hashCode, "");
-      _builder.append("(");
-      String _compile_1 = this.typeCompiler.compile(typeRef, context, false);
-      _builder.append(_compile_1, "");
-      _builder.append(" type, ");
-      String _simpleName = Collection.class.getSimpleName();
-      _builder.append(_simpleName, "");
-      _builder.append("<");
-      String _simpleName_1 = ILogicalOperator.class.getSimpleName();
-      _builder.append(_simpleName_1, "");
-      _builder.append("> operators");
+      CharSequence _xblockexpression = null;
       {
-        boolean _and = false;
-        boolean _notEquals = (!Objects.equal(map, null));
-        if (!_notEquals) {
-          _and = false;
-        } else {
-          EList<IQLArgumentsMapKeyValue> _elements = map.getElements();
-          int _size = _elements.size();
-          boolean _greaterThan = (_size > 0);
-          _and = _greaterThan;
+        String opName = this.helper.getLogicalOperatorName(typeRef);
+        String _shortName = this.factory.getShortName(typeRef, false);
+        Class<? extends ILogicalOperator> _logicalOperator = this.factory.getLogicalOperator(_shortName);
+        String _canonicalName = _logicalOperator.getCanonicalName();
+        context.addImport(_canonicalName);
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.newLine();
+        _builder.append("private ");
+        String _compile = this.typeCompiler.compile(typeRef, context, false);
+        _builder.append(_compile, "");
+        _builder.append(" getOperator");
+        String _shortName_1 = this.factory.getShortName(typeRef, false);
+        _builder.append(_shortName_1, "");
+        int _hashCode = typeRef.hashCode();
+        _builder.append(_hashCode, "");
+        _builder.append("(");
+        String _compile_1 = this.typeCompiler.compile(typeRef, context, false);
+        _builder.append(_compile_1, "");
+        _builder.append("<");
+        _builder.append(opName, "");
+        _builder.append("> type, ");
+        String _simpleName = Collection.class.getSimpleName();
+        _builder.append(_simpleName, "");
+        _builder.append("<");
+        String _simpleName_1 = IQDLOperator.class.getSimpleName();
+        _builder.append(_simpleName_1, "");
+        _builder.append("<?>> operators");
+        {
+          boolean _and = false;
+          boolean _notEquals = (!Objects.equal(map, null));
+          if (!_notEquals) {
+            _and = false;
+          } else {
+            EList<IQLArgumentsMapKeyValue> _elements = map.getElements();
+            int _size = _elements.size();
+            boolean _greaterThan = (_size > 0);
+            _and = _greaterThan;
+          }
+          if (_and) {
+            _builder.append(", ");
+            EList<IQLArgumentsMapKeyValue> _elements_1 = map.getElements();
+            final Function1<IQLArgumentsMapKeyValue, String> _function = new Function1<IQLArgumentsMapKeyValue, String>() {
+              public String apply(final IQLArgumentsMapKeyValue el) {
+                return QDLCompiler.super.compile(el, typeRef, context);
+              }
+            };
+            List<String> _map = ListExtensions.<IQLArgumentsMapKeyValue, String>map(_elements_1, _function);
+            String _join = IterableExtensions.join(_map, ", ");
+            _builder.append(_join, "");
+          }
         }
-        if (_and) {
-          _builder.append(", ");
-          EList<IQLArgumentsMapKeyValue> _elements_1 = map.getElements();
-          final Function1<IQLArgumentsMapKeyValue, String> _function = new Function1<IQLArgumentsMapKeyValue, String>() {
-            public String apply(final IQLArgumentsMapKeyValue el) {
-              return QDLCompiler.super.compile(el, typeRef, context);
-            }
-          };
-          List<String> _map = ListExtensions.<IQLArgumentsMapKeyValue, String>map(_elements_1, _function);
-          String _join = IterableExtensions.join(_map, ", ");
-          _builder.append(_join, "");
-        }
-      }
-      _builder.append(") {");
-      _builder.newLineIfNotEmpty();
-      _builder.append("\t");
-      _builder.append("operators.add(type);");
-      _builder.newLine();
-      {
-        boolean _notEquals_1 = (!Objects.equal(map, null));
-        if (_notEquals_1) {
-          {
-            EList<IQLArgumentsMapKeyValue> _elements_2 = map.getElements();
-            for(final IQLArgumentsMapKeyValue el : _elements_2) {
-              _builder.append("\t");
-              String attrName = el.getKey();
-              _builder.newLineIfNotEmpty();
-              {
-                boolean _isParameter = this.helper.isParameter(attrName, typeRef);
-                if (_isParameter) {
-                  _builder.append("\t");
-                  String setter = this.helper.getParameterSetter(attrName, typeRef);
-                  _builder.newLineIfNotEmpty();
-                  _builder.append("\t");
-                  _builder.append("type.");
-                  _builder.append(setter, "\t");
-                  _builder.append("(");
-                  _builder.append(attrName, "\t");
-                  _builder.append(");");
-                  _builder.newLineIfNotEmpty();
-                } else {
-                  _builder.append("\t");
-                  String _key = el.getKey();
-                  JvmTypeReference type = this.helper.getPropertyType(_key, typeRef);
-                  _builder.newLineIfNotEmpty();
-                  {
-                    boolean _and_1 = false;
-                    boolean _notEquals_2 = (!Objects.equal(type, null));
-                    if (!_notEquals_2) {
-                      _and_1 = false;
-                    } else {
-                      String _key_1 = el.getKey();
-                      boolean _isSetter = this.helper.isSetter(_key_1, typeRef, type);
-                      _and_1 = _isSetter;
-                    }
-                    if (_and_1) {
-                      _builder.append("\t");
-                      String _key_2 = el.getKey();
-                      String _plus = ("set" + _key_2);
-                      String methodName = this.helper.getMethodName(_plus, typeRef);
-                      _builder.newLineIfNotEmpty();
-                      _builder.append("\t");
-                      _builder.append("type.");
-                      _builder.append(methodName, "\t");
-                      _builder.append("(");
-                      String _key_3 = el.getKey();
-                      _builder.append(_key_3, "\t");
-                      _builder.append(");");
-                      _builder.newLineIfNotEmpty();
-                    } else {
-                      _builder.append("\t");
-                      _builder.append("type.");
-                      String _key_4 = el.getKey();
-                      _builder.append(_key_4, "\t");
-                      _builder.append(" = ");
-                      String _key_5 = el.getKey();
-                      _builder.append(_key_5, "\t");
-                      _builder.append(";");
-                      _builder.newLineIfNotEmpty();
+        _builder.append(") {");
+        _builder.newLineIfNotEmpty();
+        _builder.append("\t");
+        _builder.append("operators.add(type);");
+        _builder.newLine();
+        {
+          boolean _notEquals_1 = (!Objects.equal(map, null));
+          if (_notEquals_1) {
+            {
+              EList<IQLArgumentsMapKeyValue> _elements_2 = map.getElements();
+              for(final IQLArgumentsMapKeyValue el : _elements_2) {
+                _builder.append("\t");
+                String attrName = el.getKey();
+                _builder.newLineIfNotEmpty();
+                {
+                  boolean _isParameter = this.helper.isParameter(attrName, typeRef);
+                  if (_isParameter) {
+                    _builder.append("\t");
+                    _builder.append("type.setParameter(\"");
+                    _builder.append(attrName, "\t");
+                    _builder.append("\", ");
+                    _builder.append(attrName, "\t");
+                    _builder.append(");");
+                    _builder.newLineIfNotEmpty();
+                  } else {
+                    _builder.append("\t");
+                    String _key = el.getKey();
+                    JvmTypeReference type = this.helper.getPropertyType(_key, typeRef);
+                    _builder.newLineIfNotEmpty();
+                    {
+                      boolean _and_1 = false;
+                      boolean _notEquals_2 = (!Objects.equal(type, null));
+                      if (!_notEquals_2) {
+                        _and_1 = false;
+                      } else {
+                        String _key_1 = el.getKey();
+                        boolean _isSetter = this.helper.isSetter(_key_1, typeRef, type);
+                        _and_1 = _isSetter;
+                      }
+                      if (_and_1) {
+                        _builder.append("\t");
+                        String _key_2 = el.getKey();
+                        String _plus = ("set" + _key_2);
+                        String methodName = this.helper.getMethodName(_plus, typeRef);
+                        _builder.newLineIfNotEmpty();
+                        _builder.append("\t");
+                        _builder.append("type.");
+                        _builder.append(methodName, "\t");
+                        _builder.append("(");
+                        String _key_3 = el.getKey();
+                        _builder.append(_key_3, "\t");
+                        _builder.append(");");
+                        _builder.newLineIfNotEmpty();
+                      } else {
+                        _builder.append("\t");
+                        _builder.append("type.");
+                        String _key_4 = el.getKey();
+                        _builder.append(_key_4, "\t");
+                        _builder.append(" = ");
+                        String _key_5 = el.getKey();
+                        _builder.append(_key_5, "\t");
+                        _builder.append(";");
+                        _builder.newLineIfNotEmpty();
+                      }
                     }
                   }
                 }
@@ -404,13 +421,14 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
             }
           }
         }
+        _builder.append("\t");
+        _builder.append("return type;");
+        _builder.newLine();
+        _builder.append("}");
+        _builder.newLine();
+        _xblockexpression = _builder;
       }
-      _builder.append("\t");
-      _builder.append("return type;");
-      _builder.newLine();
-      _builder.append("}");
-      _builder.newLine();
-      _xifexpression = _builder;
+      _xifexpression = _xblockexpression;
     } else {
       _xifexpression = super.createGetterMethod(typeRef, map, context);
     }

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator.compiler;
 
+import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue;
@@ -9,7 +10,8 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef;
@@ -17,6 +19,7 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataMethodC
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.basic.types.ID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,20 +60,34 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
           int _incrementAndGet = counter.incrementAndGet();
           String varName = (AbstractIQLMetadataMethodCompiler.METADATA_VALUE_VAR_NAME + Integer.valueOf(_incrementAndGet));
           _builder.newLineIfNotEmpty();
-          _builder.append("\t");
-          IQLMetadataValue _value = m.getValue();
-          String _compile = this.compile(_value, varName, counter, context);
-          _builder.append(_compile, "\t");
-          _builder.newLineIfNotEmpty();
-          _builder.append("\t");
-          _builder.append(AbstractIQLMetadataMethodCompiler.ADD_METADATA_METHOD_NAME, "\t");
-          _builder.append("(\"");
-          String _name = m.getName();
-          _builder.append(_name, "\t");
-          _builder.append("\",");
-          _builder.append(varName, "\t");
-          _builder.append(");");
-          _builder.newLineIfNotEmpty();
+          {
+            IQLMetadataValue _value = m.getValue();
+            boolean _notEquals = (!Objects.equal(_value, null));
+            if (_notEquals) {
+              _builder.append("\t");
+              IQLMetadataValue _value_1 = m.getValue();
+              String _compile = this.compile(_value_1, varName, counter, context);
+              _builder.append(_compile, "\t");
+              _builder.newLineIfNotEmpty();
+              _builder.append("\t");
+              _builder.append(AbstractIQLMetadataMethodCompiler.ADD_METADATA_METHOD_NAME, "\t");
+              _builder.append("(\"");
+              String _name = m.getName();
+              _builder.append(_name, "\t");
+              _builder.append("\",");
+              _builder.append(varName, "\t");
+              _builder.append(");");
+              _builder.newLineIfNotEmpty();
+            } else {
+              _builder.append("\t");
+              _builder.append(AbstractIQLMetadataMethodCompiler.ADD_METADATA_METHOD_NAME, "\t");
+              _builder.append("(\"");
+              String _name_1 = m.getName();
+              _builder.append(_name_1, "\t");
+              _builder.append("\",null);");
+              _builder.newLineIfNotEmpty();
+            }
+          }
         }
       }
       _builder.append("\t");
@@ -83,8 +100,8 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   }
   
   public String compile(final IQLMetadataValue o, final String varName, final AtomicInteger counter, final G context) {
-    if ((o instanceof IQLMetadataValueSingleLong)) {
-      return this.compile(((IQLMetadataValueSingleLong) o), varName, context);
+    if ((o instanceof IQLMetadataValueSingleInt)) {
+      return this.compile(((IQLMetadataValueSingleInt) o), varName, context);
     } else {
       if ((o instanceof IQLMetadataValueSingleDouble)) {
         return this.compile(((IQLMetadataValueSingleDouble) o), varName, context);
@@ -104,11 +121,15 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
                 if ((o instanceof IQLMetadataValueSingleTypeRef)) {
                   return this.compile(((IQLMetadataValueSingleTypeRef) o), varName, context);
                 } else {
-                  if ((o instanceof IQLMetadataValueList)) {
-                    return this.compile(((IQLMetadataValueList) o), varName, counter, context);
+                  if ((o instanceof IQLMetadataValueSingleID)) {
+                    return this.compile(((IQLMetadataValueSingleID) o), varName, context);
                   } else {
-                    if ((o instanceof IQLMetadataValueMap)) {
-                      return this.compile(((IQLMetadataValueMap) o), varName, counter, context);
+                    if ((o instanceof IQLMetadataValueList)) {
+                      return this.compile(((IQLMetadataValueList) o), varName, counter, context);
+                    } else {
+                      if ((o instanceof IQLMetadataValueMap)) {
+                        return this.compile(((IQLMetadataValueMap) o), varName, counter, context);
+                      }
                     }
                   }
                 }
@@ -121,9 +142,9 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
     return "";
   }
   
-  public String compile(final IQLMetadataValueSingleLong o, final String varName, final G context) {
+  public String compile(final IQLMetadataValueSingleInt o, final String varName, final G context) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("long ");
+    _builder.append("int ");
     _builder.append(varName, "");
     _builder.append(" = ");
     int _value = o.getValue();
@@ -184,6 +205,23 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
     _builder.append(varName, "");
     _builder.append(" = null;");
     return _builder.toString();
+  }
+  
+  public String compile(final IQLMetadataValueSingleID o, final String varName, final G context) {
+    String _xblockexpression = null;
+    {
+      String _canonicalName = ID.class.getCanonicalName();
+      context.addImport(_canonicalName);
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("ID ");
+      _builder.append(varName, "");
+      _builder.append(" = new ID(\"");
+      String _value = o.getValue();
+      _builder.append(_value, "");
+      _builder.append("\");");
+      _xblockexpression = _builder.toString();
+    }
+    return _xblockexpression;
   }
   
   public String compile(final IQLMetadataValueSingleTypeRef o, final String varName, final G context) {

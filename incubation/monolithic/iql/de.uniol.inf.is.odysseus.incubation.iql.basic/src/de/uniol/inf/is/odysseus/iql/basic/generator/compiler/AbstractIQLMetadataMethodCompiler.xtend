@@ -4,7 +4,6 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompiler
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleLong
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean
@@ -18,6 +17,9 @@ import java.util.List
 import java.util.ArrayList
 import java.util.Map
 import java.util.HashMap
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID
+import de.uniol.inf.is.odysseus.iql.basic.types.ID
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt
 
 abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>> implements IIQLMetadataMethodCompiler<G>{
 	
@@ -41,8 +43,12 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 		public void «CREATE_METADATA_METHOD_NAME»() {
 			«FOR m : o.elements»
 			«var varName = METADATA_VALUE_VAR_NAME+counter.incrementAndGet()»
+			«IF m.value != null» 
 			«compile(m.getValue(), varName, counter, context)»
 			«ADD_METADATA_METHOD_NAME»("«m.name»",«varName»);
+			«ELSE»
+			«ADD_METADATA_METHOD_NAME»("«m.name»",null);
+			«ENDIF»
 			«ENDFOR»
 			
 		}
@@ -50,8 +56,8 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 	}	
 	
 	def String compile(IQLMetadataValue o, String varName, AtomicInteger counter, G context) {
-		if(o instanceof IQLMetadataValueSingleLong) {
-			return compile(o as IQLMetadataValueSingleLong, varName, context);
+		if(o instanceof IQLMetadataValueSingleInt) {
+			return compile(o as IQLMetadataValueSingleInt, varName, context);
 		} else if(o instanceof IQLMetadataValueSingleDouble) {
 			return compile(o as IQLMetadataValueSingleDouble, varName, context);
 		} else if(o instanceof IQLMetadataValueSingleString) {
@@ -62,9 +68,11 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 			return compile(o as IQLMetadataValueSingleChar, varName, context);
 		} else if(o instanceof IQLMetadataValueSingleNull) {
 			return compile(o as IQLMetadataValueSingleNull, varName, context);
-		}else if(o instanceof IQLMetadataValueSingleTypeRef) {
+		} else if(o instanceof IQLMetadataValueSingleTypeRef) {
 			return compile(o as IQLMetadataValueSingleTypeRef, varName, context);
-		}else if(o instanceof IQLMetadataValueList) {
+		} else if(o instanceof IQLMetadataValueSingleID) {
+			return compile(o as IQLMetadataValueSingleID, varName, context);
+		} else if(o instanceof IQLMetadataValueList) {
 			return compile(o as IQLMetadataValueList, varName, counter, context);
 		} else if(o instanceof IQLMetadataValueMap) {
 			return compile(o as IQLMetadataValueMap, varName, counter, context);
@@ -72,8 +80,8 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 		return "";
 	}
 	
-	def String compile(IQLMetadataValueSingleLong o, String varName, G context) {
-		'''long «varName» = «o.value»;'''
+	def String compile(IQLMetadataValueSingleInt o, String varName, G context) {
+		'''int «varName» = «o.value»;'''
 	}
 	
 	def String compile(IQLMetadataValueSingleDouble o, String varName, G context) {
@@ -98,7 +106,11 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 		'''«Object.simpleName» «varName» = null;'''
 	}
 
-
+	def String compile(IQLMetadataValueSingleID o, String varName, G context) {
+		context.addImport(ID.canonicalName);
+		'''ID «varName» = new ID("«o.value»");'''
+	}
+	
 	def String compile(IQLMetadataValueSingleTypeRef o, String varName, G context) {
 		'''Class<?> «varName» = «typeCompiler.compile(o.value, context, true)».class; '''
 	}

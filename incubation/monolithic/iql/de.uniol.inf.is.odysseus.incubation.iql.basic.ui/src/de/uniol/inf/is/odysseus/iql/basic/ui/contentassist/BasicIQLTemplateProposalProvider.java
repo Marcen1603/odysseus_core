@@ -7,15 +7,16 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 
 import de.uniol.inf.is.odysseus.iql.basic.lookup.BasicIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.BasicIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
 
-public class BasicIQLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<BasicIQLExpressionParser, BasicIQLTypeFactory, BasicIQLLookUp> {
+public class BasicIQLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<BasicIQLExpressionParser, BasicIQLTypeFactory, BasicIQLLookUp, BasicIQLScopeProvider> {
 
 	@Inject
 	public BasicIQLTemplateProposalProvider(TemplateStore templateStore,
-			ContextTypeRegistry registry, ContextTypeIdHelper helper, BasicIQLExpressionParser exprParser, BasicIQLTypeFactory factory, BasicIQLLookUp lookUp) {
-		super(templateStore, registry, helper,exprParser, factory, lookUp);
+			ContextTypeRegistry registry, ContextTypeIdHelper helper, BasicIQLExpressionParser exprParser, BasicIQLTypeFactory factory, BasicIQLLookUp lookUp, BasicIQLScopeProvider scopeProvider) {
+		super(templateStore, registry, helper,exprParser, factory, lookUp, scopeProvider);
 	}
 
 }
