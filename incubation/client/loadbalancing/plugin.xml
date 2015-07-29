@@ -12,5 +12,25 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.commands.LockQuery"
+               label="Lock"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.command.LockQueryCommand"
+            id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.commands.LockQuery"
+            name="Lock Query">
+      </command>
+   </extension>
 
 </plugin>
