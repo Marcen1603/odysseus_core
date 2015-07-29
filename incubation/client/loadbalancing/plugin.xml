@@ -18,8 +18,18 @@
             allPopups="false"
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
          <command
-               commandId="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.commands.LockQuery"
-               label="Lock"
+               commandId="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.commands.ExcludeQueryFromLoadBalancing"
+               icon="icons/anchor.png"
+               style="push"
+               tooltip="Exclude from Load Balancing">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.query.QueryView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.ReIncludeQueryToLoadBalancingCommand"
+               icon="icons/removeanchor.png"
                style="push">
          </command>
       </menuContribution>
@@ -27,9 +37,14 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.command.LockQueryCommand"
-            id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.commands.LockQuery"
-            name="Lock Query">
+            defaultHandler="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.command.ExcludeQueryFromLoadBalancingCommand"
+            id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.commands.ExcludeQueryFromLoadBalancing"
+            name="Exclude Query From Load Balancing">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.command.ReIncludeQueryInLoadBalancingCommand"
+            id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.ReIncludeQueryToLoadBalancingCommand"
+            name="ReInclude Query To Load Balancing">
       </command>
    </extension>
 

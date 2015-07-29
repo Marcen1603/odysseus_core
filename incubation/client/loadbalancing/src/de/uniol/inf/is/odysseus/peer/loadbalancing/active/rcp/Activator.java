@@ -7,6 +7,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 
 public class Activator extends AbstractUIPlugin implements BundleActivator {
 	
@@ -17,6 +18,7 @@ public class Activator extends AbstractUIPlugin implements BundleActivator {
 
 
 	private static ILoadBalancingController controller;
+	private static IQueryViewDataProvider queryViewDataProvider;
 	private static ILoadBalancingLock lock;
 
 	static BundleContext getContext() {
@@ -78,6 +80,10 @@ public class Activator extends AbstractUIPlugin implements BundleActivator {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+	
+	public static IQueryViewDataProvider getQueryViewDataProvider() {
+		return queryViewDataProvider;
 	}
 	
 

@@ -26,6 +26,11 @@ public class LoadBalancingControl implements ILoadBalancingController {
 	private ILoadBalancingAllocator currentAllocator;
 	private ILoadBalancingAllocator chosenAllocator;
 	
+	
+	private ArrayList<Integer> excludedQueryIDs = Lists.newArrayList();
+	
+	
+	
 	private ArrayList<ILoadBalancingControllerListener> listeners = Lists.newArrayList();
 	
 	
@@ -34,6 +39,20 @@ public class LoadBalancingControl implements ILoadBalancingController {
 	private ILoadBalancingAllocatorRegistry allocators;
 	private ILoadBalancingStrategyRegistry strategies;
 	
+	
+	public synchronized void excludeQueryIdFromLoadBalancing(int queryID) {
+		if(!excludedQueryIDs.contains(queryID)) {
+			excludedQueryIDs.add(queryID);
+		}
+		notifyExcludedQueriesChanged();
+	}
+	
+	public synchronized void removeExcludedQueryID(int queryID) {
+		if(excludedQueryIDs.contains(queryID)) {
+			excludedQueryIDs.remove(new Integer(queryID));
+		}
+		notifyExcludedQueriesChanged();
+	}
 	
 	public void bindLoadBalancingStrategyRegistry(ILoadBalancingStrategyRegistry serv) {
 		this.strategies=serv;
@@ -178,6 +197,17 @@ public class LoadBalancingControl implements ILoadBalancingController {
 			listeners.remove(listener);
 		
 		
+	}
+	
+	private void notifyExcludedQueriesChanged() {
+		for(ILoadBalancingControllerListener listener : listeners) {
+			listener.notifyExcludedQueriesChanged(excludedQueryIDs);
+		}
+	}
+
+	@Override
+	public boolean isQueryIDExcludedFromLoadBalancing(int queryID) {
+		return excludedQueryIDs.contains(queryID);
 	}
 
 }
