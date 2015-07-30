@@ -39,8 +39,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SourceTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SinkTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
@@ -62,10 +63,21 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	private IPeerCommunicator peerCommunicator;
 	private List<QueryTransmissionHandler> transmissionHandlerList;
 	private IQueryPartController queryPartController;
+	private IExcludedQueriesRegistry excludedQueryRegistry;
 	
 
 	private MonitoringThread monitoringThread = null;
 	
+	
+	public void bindExcludedQueryRegistry(IExcludedQueriesRegistry serv) {
+		this.excludedQueryRegistry = serv;
+	}
+	
+	public void unbindExcludedQueryRegistry(IExcludedQueriesRegistry serv) {
+		if(this.excludedQueryRegistry==serv) {
+			this.excludedQueryRegistry = null;
+		}
+	}
 	
 	public void bindPeerCommunicator(IPeerCommunicator serv) {
 		this.peerCommunicator = serv;
@@ -242,6 +254,8 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	}
 
 	
+	
+	
 	@Override
 	public void triggerLoadBalancing(double cpuUsage, double memUsage, double netUsage) {
 		
@@ -260,9 +274,11 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 		
 		synchronized(threadManipulationLock) {
-			monitoringThread.removeListener(this);
-			monitoringThread.setInactive();
-			monitoringThread = null;
+			if(monitoringThread!=null) {
+				monitoringThread.removeListener(this);
+				monitoringThread.setInactive();
+				monitoringThread = null;
+			}
 		}
 		LOG.info("Re-Allocation of queries triggered.");
 					
@@ -272,10 +288,12 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 		PeerID localPeerID = networkManager.getLocalPeerID();
 		
+		Collection<Integer> queryIDs = getNotExcludedQueries();
 		
 		//Replaces Sources with Sender-Receiver constructs.
-		for(int queryID : executor.getLogicalQueryIds(getActiveSession())) {
-			SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor,queryPartController);
+		for(int queryID : queryIDs) {
+			//SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor,queryPartController);
+			SinkTransformer.replaceSinks(queryID, localPeerID, getActiveSession(), networkManager, executor, queryPartController);
 		}
 		
 		QueryCostMap allQueries = generateCostMapForAllQueries();
@@ -542,5 +560,26 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 		
 	}
+	
+	private Collection<Integer> getNotExcludedQueries() {
+		Collection<Integer> queryIDs =  executor.getLogicalQueryIds(getActiveSession());
+		Iterator<Integer> iter = queryIDs.iterator();
+		while(iter.hasNext()) {
+			int nextQId = iter.next();
+			if(excludedQueryRegistry.isQueryIDExcludedFromLoadBalancing(nextQId)) {
+				iter.remove();
+			}
+		}
+		return queryIDs;
+	}
+
+	@Override
+	public void forceLoadBalancing() throws LoadBalancingException {
+		
+		triggerLoadBalancing(DynamicLoadBalancingConstants.CPU_THRESHOLD+0.01, DynamicLoadBalancingConstants.MEM_THRESHOLD+0.01, DynamicLoadBalancingConstants.NET_THRESHOLD+0.01);
+		
+	}
 
 }
+
+

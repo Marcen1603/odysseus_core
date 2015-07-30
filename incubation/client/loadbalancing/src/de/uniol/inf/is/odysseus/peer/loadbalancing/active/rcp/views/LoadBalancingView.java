@@ -16,13 +16,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
 
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.IExcludedQueryRegistryListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingControllerListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLockListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.Activator;
 
-public class LoadBalancingView extends ViewPart implements ILoadBalancingControllerListener, ILoadBalancingLockListener {
+public class LoadBalancingView extends ViewPart implements ILoadBalancingControllerListener, ILoadBalancingLockListener, IExcludedQueryRegistryListener {
 	
 	private static final String CONTROL_NOT_BOUND = "Load Balancing Control not (yet) bound.";
 	
@@ -190,6 +191,22 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		if(lock==null || !lock.isLocked()) {
 			unlockButton.setEnabled(false);
 		}
+		
+		
+
+		Button forceButton = new Button(rightButtonComposite, SWT.NONE);
+		Image forceImage = Activator.getImageDescriptor("icons/force.png").createImage();
+		forceButton.setImage(forceImage);
+		forceButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ILoadBalancingController controller = Activator.getLoadBalancingController();
+
+				if (controller != null){
+					controller.forceLoadBalancing();;
+				}
+			}
+		});
 		
 		
 		

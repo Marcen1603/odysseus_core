@@ -13,11 +13,7 @@ public interface ILoadBalancingController {
 	public Set<String> getAvailableStrategies();
 	public Set<String> getAvailableAllocators();
 	
-	public void excludeQueryIdFromLoadBalancing(int queryID);
-	public void removeExcludedQueryID(int queryID);
-	public boolean isQueryIDExcludedFromLoadBalancing(int queryID);
-	
-	
+	public void forceLoadBalancing();
 	
 	public void addControllerListener(ILoadBalancingControllerListener listener);
 	public void removeControllerListener(ILoadBalancingControllerListener listener);

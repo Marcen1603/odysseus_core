@@ -768,4 +768,9 @@ public class SimpleLoadBalancingStrategy implements ILoadBalancingStrategy, ILoa
 		}
 	}
 
+	@Override
+	public void forceLoadBalancing() throws LoadBalancingException {
+		throw new LoadBalancingException("Not implemented.");
+	}
+
 }

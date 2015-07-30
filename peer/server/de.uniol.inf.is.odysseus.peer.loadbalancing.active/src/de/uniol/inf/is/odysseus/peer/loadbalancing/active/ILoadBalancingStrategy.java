@@ -63,6 +63,8 @@ public interface ILoadBalancingStrategy extends INamedInterface {
 		
 	}
 	
+	public void forceLoadBalancing() throws LoadBalancingException;
+	
 	/**
 	 * Sets the allocator to be used for handing over {@link ILogicalQueryPart}s.
 	 * @param allocator An implementation of {@link ILoadBalancingAllocator}.

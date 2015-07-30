@@ -7,6 +7,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 
 public class Activator extends AbstractUIPlugin implements BundleActivator {
@@ -20,9 +21,21 @@ public class Activator extends AbstractUIPlugin implements BundleActivator {
 	private static ILoadBalancingController controller;
 	private static IQueryViewDataProvider queryViewDataProvider;
 	private static ILoadBalancingLock lock;
+	private static IExcludedQueriesRegistry excludedQueryRegistry;
 
 	static BundleContext getContext() {
 		return context;
+	}
+	
+	
+	public void bindExcludedQueryRegistry(IExcludedQueriesRegistry serv) {
+		excludedQueryRegistry = serv;
+	}
+	
+	public void unbindExcludedQueryRegistry(IExcludedQueriesRegistry serv) {
+		if(excludedQueryRegistry==serv) {
+			excludedQueryRegistry=null;
+		}
 	}
 
 	/*
@@ -68,6 +81,10 @@ public class Activator extends AbstractUIPlugin implements BundleActivator {
 	
 	public static ILoadBalancingLock getLock() {
 		return lock;
+	}
+	
+	public static IExcludedQueriesRegistry getExcludedQueryRegistry() {
+		return excludedQueryRegistry;
 	}
 
 
