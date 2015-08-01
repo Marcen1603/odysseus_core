@@ -3,41 +3,42 @@ package de.uniol.inf.is.odysseus.badast.readers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-import de.uniol.inf.is.odysseus.badast.ABaDaStReader;
-import de.uniol.inf.is.odysseus.badast.AbstractBaDaStReader;
+import de.uniol.inf.is.odysseus.badast.ABaDaStRecorder;
+import de.uniol.inf.is.odysseus.badast.AbstractBaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.BaDaStException;
-import de.uniol.inf.is.odysseus.badast.IBaDaStReader;
+import de.uniol.inf.is.odysseus.badast.IBaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.KafkaProducerFactory;
 
 /**
- * BaDaSt readers act as subscriber for data sources and as publisher for Kafka. <br />
+ * BaDaSt recorders act as subscriber for data sources and as publisher for
+ * Kafka. <br />
  * <br />
- * This reader is for sources, which send data by TCP. It needs
+ * This recorder is for sources, which send data by TCP. It needs
  * {@link #SOURCENAME_CONFIG}, {@link #HOST_CONFIG} and {@link #PORT_CONFIG} as
- * entries of the configuration. {@link SBUFFERSIZE_CONFIG} can optionally be
- * set. The reader publishes the read bytes as byte arrays to Kafka.
+ * entries of the configuration. {@link #BUFFERSIZE_CONFIG} can optionally be
+ * set. The recorder publishes the read bytes as byte arrays to Kafka.
  * 
  * @author Michael Brand
  */
-@ABaDaStReader(type = BaDaStTCPClientReader.TYPE, parameters = {
-		BaDaStTCPClientReader.SOURCENAME_CONFIG,
-		BaDaStTCPClientReader.HOST_CONFIG, BaDaStTCPClientReader.PORT_CONFIG,
-		BaDaStTCPClientReader.BUFFERSIZE_CONFIG + " (optional)" })
-public class BaDaStTCPClientReader extends AbstractBaDaStReader<byte[]> {
+@ABaDaStRecorder(type = TCPRecorder.TYPE, parameters = {
+		TCPRecorder.SOURCENAME_CONFIG, TCPRecorder.HOST_CONFIG,
+		TCPRecorder.PORT_CONFIG, TCPRecorder.BUFFERSIZE_CONFIG + " (optional)" })
+public class TCPRecorder extends AbstractBaDaStRecorder<byte[]> {
 
 	/**
-	 * The type of the reader.
+	 * The type of the recorder.
 	 */
-	public static final String TYPE = "TCPClientReader";
+	public static final String TYPE = "TCPRecorder";
 
 	/**
 	 * The key for configuration, where the source name is set.
 	 */
-	public static final String SOURCENAME_CONFIG = AbstractBaDaStReader.SOURCENAME_CONFIG;
+	public static final String SOURCENAME_CONFIG = AbstractBaDaStRecorder.SOURCENAME_CONFIG;
 
 	/**
 	 * The key for configuration, where the host is set.
@@ -60,7 +61,7 @@ public class BaDaStTCPClientReader extends AbstractBaDaStReader<byte[]> {
 	public static final String BUFFERSIZE_DEFAULT = "1024";
 
 	/**
-	 * True, if the reader should continue reading; false, if {@link #close()}
+	 * True, if the recorder should continue reading; false, if {@link #close()}
 	 * is called.
 	 */
 	private boolean mContinueReading;
@@ -71,7 +72,7 @@ public class BaDaStTCPClientReader extends AbstractBaDaStReader<byte[]> {
 	}
 
 	@Override
-	public void startReading() throws BaDaStException {
+	public void start() throws BaDaStException {
 		this.mContinueReading = true;
 		final int buffersize = Integer.parseInt(this.getConfig().getProperty(
 				BUFFERSIZE_CONFIG, BUFFERSIZE_DEFAULT));
@@ -95,8 +96,11 @@ public class BaDaStTCPClientReader extends AbstractBaDaStReader<byte[]> {
 	}
 
 	@Override
-	public IBaDaStReader<byte[]> newInstance() {
-		return new BaDaStTCPClientReader();
+	public IBaDaStRecorder<byte[]> newInstance(Properties cfg)
+			throws BaDaStException {
+		TCPRecorder writer = new TCPRecorder();
+		writer.initialize(cfg);
+		return writer;
 	}
 
 	@Override

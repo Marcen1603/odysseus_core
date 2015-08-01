@@ -1,9 +1,5 @@
 package de.uniol.inf.is.odysseus.badast.internal;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServerStartable;
 
@@ -52,34 +48,6 @@ public class BaDaStApplication implements BundleActivator {
 	}
 
 	/**
-	 * The host name.
-	 */
-	private String mHost = "localhost";
-
-	/**
-	 * Gets the host.
-	 * 
-	 * @return The host name of the Kafka server.
-	 */
-	public String getHost() {
-		return this.mHost;
-	}
-
-	/**
-	 * The port number.
-	 */
-	private int mPort = 9092;
-
-	/**
-	 * Gets the port.
-	 * 
-	 * @return The port number of the Kafka server.
-	 */
-	public int getPort() {
-		return this.mPort;
-	}
-
-	/**
 	 * The Kafka Server.
 	 */
 	private KafkaServerStartable mKafkaServer;
@@ -100,7 +68,7 @@ public class BaDaStApplication implements BundleActivator {
 	 */
 	private void configureLogging() {
 		PropertyConfigurator.configure(BaDaStApplication.class.getClassLoader()
-				.getResource("config/log4j.properties"));
+				.getResource("log4j.properties"));
 	}
 
 	/**
@@ -108,22 +76,14 @@ public class BaDaStApplication implements BundleActivator {
 	 * /config/zookeeper.properties.
 	 */
 	private void startZooKeeperServer() {
-		final Properties props = new Properties();
-		try (InputStream stream = BaDaStApplication.class.getClassLoader()
-				.getResourceAsStream("config/zookeeper.properties")) {
-			props.load(stream);
-		} catch (IOException e) {
-			cLog.error("ZooKeeper failed!", e);
-			return;
-		}
-
 		new Thread("ZooKeeper Server") {
 
 			@Override
 			public void run() {
 				try {
 					QuorumPeerConfig qpConfig = new QuorumPeerConfig();
-					qpConfig.parseProperties(props);
+					qpConfig.parseProperties(BaDaStConfiguration
+							.getZooKeeperConfig());
 					ServerConfig sConfig = new ServerConfig();
 					sConfig.readFrom(qpConfig);
 					ZooKeeperServerMain server = new ZooKeeperServerMain();
@@ -154,28 +114,13 @@ public class BaDaStApplication implements BundleActivator {
 	 * /config/kafka.properties.
 	 */
 	private void startKafkaServer() {
-		final Properties props = new Properties();
-		try (InputStream stream = BaDaStApplication.class.getClassLoader()
-				.getResourceAsStream("config/kafka.properties")) {
-			props.load(stream);
-		} catch (IOException e) {
-			cLog.error("Kafka failed!", e);
-			return;
-		}
-
-		if (props.containsKey("host.name")) {
-			this.mHost = props.getProperty("host.name");
-		}
-		if (props.containsKey("port")) {
-			this.mPort = Integer.parseInt(props.getProperty("port"));
-		}
-
 		new Thread("Kafka Server") {
 
 			@Override
 			public void run() {
 				try {
-					KafkaConfig config = new KafkaConfig(props);
+					KafkaConfig config = new KafkaConfig(
+							BaDaStConfiguration.getKafkaConfig());
 					BaDaStApplication.this.mKafkaServer = new KafkaServerStartable(
 							config);
 					BaDaStApplication.this.mKafkaServer.startup();

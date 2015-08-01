@@ -1,10 +1,11 @@
 package de.uniol.inf.is.odysseus.badast;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
+
+import de.uniol.inf.is.odysseus.badast.internal.BaDaStConfiguration;
 
 /**
  * Factory to create {@link KafkaProducer}s.
@@ -26,15 +27,11 @@ public class KafkaProducerFactory {
 	 */
 	public static KafkaProducer<String, byte[]> createKafkaProducerByteArray(
 			String clientId) throws IOException {
-		Properties cfg = new Properties();
+		Properties cfg = BaDaStConfiguration.getProducerConfig();
 		cfg.put("client.id", clientId);
 		cfg.put("value.serializer",
 				"org.apache.kafka.common.serialization.ByteArraySerializer");
-		try (InputStream stream = KafkaProducerFactory.class.getClassLoader()
-				.getResourceAsStream("config/producer.properties")) {
-			cfg.load(stream);
-			return new KafkaProducer<>(cfg);
-		}
+		return new KafkaProducer<>(cfg);
 	}
 
 	/**
@@ -49,15 +46,11 @@ public class KafkaProducerFactory {
 	 */
 	public static KafkaProducer<String, String> createKafkaProducerString(
 			String clientId) throws IOException {
-		Properties cfg = new Properties();
+		Properties cfg = BaDaStConfiguration.getProducerConfig();
 		cfg.put("client.id", clientId);
 		cfg.put("value.serializer",
 				"org.apache.kafka.common.serialization.StringSerializer");
-		try (InputStream stream = KafkaProducerFactory.class.getClassLoader()
-				.getResourceAsStream("config/producer.properties")) {
-			cfg.load(stream);
-			return new KafkaProducer<>(cfg);
-		}
+		return new KafkaProducer<>(cfg);
 	}
 
 }

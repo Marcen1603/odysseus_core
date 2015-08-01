@@ -3,38 +3,40 @@ package de.uniol.inf.is.odysseus.badast.readers;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-import de.uniol.inf.is.odysseus.badast.ABaDaStReader;
-import de.uniol.inf.is.odysseus.badast.AbstractBaDaStReader;
+import de.uniol.inf.is.odysseus.badast.ABaDaStRecorder;
+import de.uniol.inf.is.odysseus.badast.AbstractBaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.BaDaStException;
-import de.uniol.inf.is.odysseus.badast.IBaDaStReader;
+import de.uniol.inf.is.odysseus.badast.IBaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.KafkaProducerFactory;
 
 /**
- * BaDaSt readers act as subscriber for data sources and as publisher for Kafka. <br />
+ * BaDaSt recorders act as subscriber for data sources and as publisher for
+ * Kafka. <br />
  * <br />
- * This reader is for file sources and needs {@link #SOURCENAME_CONFIG} and
+ * This recorder is for file sources and needs {@link #SOURCENAME_CONFIG} and
  * {@link #FILENAME_CONFIG} as entries of the configuration. It publishes the
  * read lines as Strings to Kafka.
  * 
  * @author Michael Brand
  */
-@ABaDaStReader(type = BaDaStFileReader.TYPE, parameters = {
-		BaDaStFileReader.SOURCENAME_CONFIG, BaDaStFileReader.FILENAME_CONFIG })
-public class BaDaStFileReader extends AbstractBaDaStReader<String> {
+@ABaDaStRecorder(type = FileRecorder.TYPE, parameters = {
+		FileRecorder.SOURCENAME_CONFIG, FileRecorder.FILENAME_CONFIG })
+public class FileRecorder extends AbstractBaDaStRecorder<String> {
 
 	/**
-	 * The type of the reader.
+	 * The type of the recorder.
 	 */
-	public static final String TYPE = "FileReader";
+	public static final String TYPE = "FileRecorder";
 
 	/**
 	 * The key for configuration, where the source name is set.
 	 */
-	public static final String SOURCENAME_CONFIG = AbstractBaDaStReader.SOURCENAME_CONFIG;
+	public static final String SOURCENAME_CONFIG = AbstractBaDaStRecorder.SOURCENAME_CONFIG;
 
 	/**
 	 * The key for configuration, where the file name is set.
@@ -42,7 +44,7 @@ public class BaDaStFileReader extends AbstractBaDaStReader<String> {
 	public static final String FILENAME_CONFIG = "filename";
 
 	/**
-	 * True, if the reader should continue reading; false, if {@link #close()}
+	 * True, if the recorder should continue reading; false, if {@link #close()}
 	 * is called.
 	 */
 	private boolean mContinueReading;
@@ -68,7 +70,7 @@ public class BaDaStFileReader extends AbstractBaDaStReader<String> {
 	}
 
 	@Override
-	public void startReading() throws BaDaStException {
+	public void start() throws BaDaStException {
 		validate();
 		this.mContinueReading = true;
 		try (BufferedReader reader = new BufferedReader(new FileReader(this
@@ -85,8 +87,11 @@ public class BaDaStFileReader extends AbstractBaDaStReader<String> {
 	}
 
 	@Override
-	public IBaDaStReader<String> newInstance() {
-		return new BaDaStFileReader();
+	public IBaDaStRecorder<String> newInstance(Properties cfg)
+			throws BaDaStException {
+		FileRecorder writer = new FileRecorder();
+		writer.initialize(cfg);
+		return writer;
 	}
 
 }

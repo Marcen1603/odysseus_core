@@ -16,22 +16,22 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.badast.ABaDaStReader;
-import de.uniol.inf.is.odysseus.badast.AbstractBaDaStReader;
+import de.uniol.inf.is.odysseus.badast.ABaDaStRecorder;
+import de.uniol.inf.is.odysseus.badast.AbstractBaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.BaDaStException;
-import de.uniol.inf.is.odysseus.badast.IBaDaStReader;
-import de.uniol.inf.is.odysseus.badast.readers.BaDaStFileReader;
-import de.uniol.inf.is.odysseus.badast.readers.BaDaStTCPClientReader;
+import de.uniol.inf.is.odysseus.badast.IBaDaStRecorder;
+import de.uniol.inf.is.odysseus.badast.readers.FileRecorder;
+import de.uniol.inf.is.odysseus.badast.readers.TCPRecorder;
 
 /**
  * Provider of OSGi console commands for the BaDaSt application. <br />
  * <br />
  * That commands are the following:<br />
- * - lsReaderTypes <br />
- * - lsReaders <br />
- * - createReader <br />
- * - startReader <br />
- * - closeReader <br />
+ * - lsRecorderTypes <br />
+ * - lsRecorders <br />
+ * - createRecorder <br />
+ * - startRecorder <br />
+ * - closeRecorder <br />
  * 
  * @author Michael Brand
  *
@@ -39,81 +39,83 @@ import de.uniol.inf.is.odysseus.badast.readers.BaDaStTCPClientReader;
 public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
-	 * The key for configuration, where the reader type is set.
+	 * The key for configuration, where the recorder type is set.
 	 */
-	public static final String TYPE_CONFIG = AbstractBaDaStReader.TYPE_CONFIG;
+	public static final String TYPE_CONFIG = AbstractBaDaStRecorder.TYPE_CONFIG;
 
 	/**
-	 * The key for configuration, where the reader name is set.
+	 * The key for configuration, where the recorder writer name is set.
 	 */
-	public static final String NAME_CONFIG = AbstractBaDaStReader.NAME_CONFIG;
+	public static final String NAME_CONFIG = AbstractBaDaStRecorder.NAME_CONFIG;
 
 	/**
 	 * The key for configuration, where the source name is set.
 	 */
-	public static final String SOURCENAME_CONFIG = AbstractBaDaStReader.SOURCENAME_CONFIG;
+	public static final String SOURCENAME_CONFIG = AbstractBaDaStRecorder.SOURCENAME_CONFIG;
 
 	/**
-	 * All available reader types. Key is the type, value is a not initialized
-	 * reader of that type.
+	 * All available recorder types. Key is the type, value is a not initialized
+	 * recorder of that type.
 	 */
-	private static final Map<String, IBaDaStReader<?>> cReaderTypes = Maps
+	private static final Map<String, IBaDaStRecorder<?>> cRecorderTypes = Maps
 			.newHashMap();
 
-	// Fill the mapping with all reader types, which are not bound by OSGi
+	// Fill the mapping with all recorder types, which are not bound by
+	// OSGi
 	static {
-		IBaDaStReader<String> fileReader = new BaDaStFileReader();
-		cReaderTypes.put(
-				BaDaStFileReader.class.getAnnotation(ABaDaStReader.class)
-						.type(), fileReader);
-		IBaDaStReader<byte[]> tcpClientReader = new BaDaStTCPClientReader();
-		cReaderTypes.put(
-				BaDaStTCPClientReader.class.getAnnotation(ABaDaStReader.class)
-						.type(), tcpClientReader);
+		IBaDaStRecorder<String> fileRecorder = new FileRecorder();
+		cRecorderTypes.put(
+				FileRecorder.class.getAnnotation(ABaDaStRecorder.class).type(),
+				fileRecorder);
+		IBaDaStRecorder<byte[]> tcpRecorder = new TCPRecorder();
+		cRecorderTypes.put(
+				TCPRecorder.class.getAnnotation(ABaDaStRecorder.class).type(),
+				tcpRecorder);
 	}
 
 	/**
-	 * Binds a BaDaSt reader.
+	 * Binds a recorder.
 	 * 
-	 * @param reader
-	 *            The implementation of {@link IBaDaStReader} with an unique
+	 * @param recorder
+	 *            The implementation of {@link IBaDaStRecorder} with an unique
 	 *            type to bind.
 	 */
-	public static void bindReader(IBaDaStReader<?> reader) {
-		cReaderTypes.put(reader.getClass().getAnnotation(ABaDaStReader.class)
-				.type(), reader);
+	public static void bindReader(IBaDaStRecorder<?> recorder) {
+		cRecorderTypes
+				.put(recorder.getClass().getAnnotation(ABaDaStRecorder.class)
+						.type(), recorder);
 	}
 
 	/**
-	 * Uninds a BaDaSt reader.
+	 * Uninds a recorder.
 	 * 
-	 * @param reader
-	 *            The implementation of {@link IBaDaStReader} to unbind.
+	 * @param recorder
+	 *            The implementation of {@link IBaDaStRecorder} to unbind.
 	 */
-	public static void unbindReader(IBaDaStReader<?> reader) {
-		cReaderTypes.remove(reader.getClass()
-				.getAnnotation(ABaDaStReader.class).type());
+	public static void unbindReader(IBaDaStRecorder<?> recorder) {
+		cRecorderTypes.remove(recorder.getClass()
+				.getAnnotation(ABaDaStRecorder.class).type());
 	}
 
 	/**
-	 * All available (already created) readers (initialized readers, not types).
-	 * Key is the name, value is an initialized reader with that name.
+	 * All available (already created) recorder (initialized recorders, not
+	 * types). Key is the name, value is an initialized recorder with that name.
 	 */
-	private static final Map<String, IBaDaStReader<?>> cReaders = Maps
+	private static final Map<String, IBaDaStRecorder<?>> cRecorders = Maps
 			.newHashMap();
 
 	/**
-	 * Lists all available reader types.
+	 * Lists all available recorder types.
 	 * 
 	 * @param ci
 	 *            No arguments needed.
 	 */
-	public void _lsReaderTypes(CommandInterpreter ci) {
-		ci.println("Available types of BaDaSt readers:\n");
-		for (String type : cReaderTypes.keySet()) {
+	public void _lsRecorderTypes(CommandInterpreter ci) {
+		ci.println("Available types of BaDaSt recorders:\n");
+		for (String type : cRecorderTypes.keySet()) {
 			ci.print(TYPE_CONFIG + " = " + type + ", parameters = ");
-			String[] params = cReaderTypes.get(type).getClass()
-					.getAnnotation(ABaDaStReader.class).parameters();
+			String[] params = cRecorderTypes.get(type).getClass()
+					.getAnnotation(ABaDaStRecorder.class).parameters();
 			if (params.length == 0) {
 				ci.print("None");
 			} else {
@@ -129,39 +131,39 @@ public class BaDaStCommandProvider implements CommandProvider {
 	}
 
 	/**
-	 * Lists all available (already created) readers (initialized readers, not
-	 * types).
+	 * Lists all available (already created) recorders (initialized recorders,
+	 * not types).
 	 * 
 	 * @param ci
 	 *            No arguments needed.
 	 */
-	public void _lsReaders(CommandInterpreter ci) {
-		ci.println("Available BaDaSt readers:\n");
-		if (cReaders.isEmpty()) {
+	public void _lsRecorders(CommandInterpreter ci) {
+		ci.println("Available BaDaSt recorders:\n");
+		if (cRecorders.isEmpty()) {
 			ci.println("None");
 			return;
 		}
-		for (String name : cReaders.keySet()) {
+		for (String name : cRecorders.keySet()) {
 			ci.println(NAME_CONFIG
 					+ " = "
 					+ name
 					+ ", "
 					+ TYPE_CONFIG
 					+ " = "
-					+ cReaders.get(name).getConfig()
-							.getProperty(AbstractBaDaStReader.TYPE_CONFIG));
+					+ cRecorders.get(name).getConfig()
+							.getProperty(AbstractBaDaStRecorder.TYPE_CONFIG));
 		}
 	}
 
 	/**
-	 * Creates and initializes a new reader.
+	 * Creates and initializes a new recorder.
 	 * 
 	 * @param ci
 	 *            All arguments should be key value pairs (key=value). Any key
 	 *            should be {@link #TYPE_CONFIG} and all other needed keys
-	 *            depend on the reader type.
+	 *            depend on the recorder type.
 	 */
-	public void _createReader(CommandInterpreter ci) {
+	public void _createRecorder(CommandInterpreter ci) {
 		Properties cfg = new Properties();
 		String argument;
 		while ((argument = ci.nextArgument()) != null) {
@@ -176,64 +178,63 @@ public class BaDaStCommandProvider implements CommandProvider {
 		try {
 			String type = cfg.getProperty(TYPE_CONFIG);
 			validateTypeShallExist(type);
-			IBaDaStReader<?> reader = cReaderTypes.get(type).newInstance();
-			reader.initialize(cfg);
+			IBaDaStRecorder<?> reader = cRecorderTypes.get(type).newInstance(
+					cfg);
 			validateNameShallNotExist(reader.getName());
-			cReaders.put(reader.getName(), reader);
-			ci.println("Created BaDaSt reader " + reader.getName());
+			cRecorders.put(reader.getName(), reader);
+			ci.println("Created BaDaSt recorder " + reader.getName());
 		} catch (BaDaStException e) {
 			ci.println(e.getMessage());
 		}
 	}
 
 	/**
-	 * Checks, if a given reader type is known.
+	 * Checks, if a given recorder type is known.
 	 * 
 	 * @param type
 	 *            The type to check.
 	 * @throws BaDaStException
-	 *             if {@link #cReaderTypes} does not contain the type as a key.
+	 *             if {@link #cRecorderTypes} does not contain the type as a
+	 *             key.
 	 */
 	private void validateTypeShallExist(String type) throws BaDaStException {
 		if (type == null) {
-			throw new BaDaStException("BaDaSt reader type is not set!");
-		} else if (!cReaderTypes.keySet().contains(type)) {
-			throw new BaDaStException(type
-					+ " is not a known BaDaSt reader type!");
+			throw new BaDaStException("Recorder type is not set!");
+		} else if (!cRecorderTypes.keySet().contains(type)) {
+			throw new BaDaStException(type + " is not a known recorder type!");
 		}
 	}
 
 	/**
-	 * Checks, if a given reader name is known.
+	 * Checks, if a given recorder name is known.
 	 * 
 	 * @param name
 	 *            The name to check.
 	 * @throws BaDaStException
-	 *             if {@link #cReaders} does not contain the name as a key.
+	 *             if {@link #cRecorders} does not contain the name as a key.
 	 */
 	private void validateNameShallExist(String name) throws BaDaStException {
-		if (!cReaders.keySet().contains(name)) {
-			throw new BaDaStException(name + " is not a known BaDaSt reader!");
+		if (!cRecorders.keySet().contains(name)) {
+			throw new BaDaStException(name + " is not a known recorder!");
 		}
 	}
 
 	/**
-	 * Checks, if a given reader type is still free to use.
+	 * Checks, if a given recorder type is still free to use.
 	 * 
 	 * @param name
 	 *            The name to check.
 	 * @throws BaDaStException
-	 *             if {@link #cReaders} does contain the type as a key.
+	 *             if {@link #cRecorders} does contain the type as a key.
 	 */
 	private void validateNameShallNotExist(String name) throws BaDaStException {
-		if (cReaders.keySet().contains(name)) {
-			throw new BaDaStException(name
-					+ " is an already created BaDaSt reader!");
+		if (cRecorders.keySet().contains(name)) {
+			throw new BaDaStException(name + " is an already created recorder!");
 		}
 	}
 
 	/**
-	 * Reads a reader name from a given key value argument.
+	 * Reads a recorder name from a given key value argument.
 	 * 
 	 * @param keyValueArgument
 	 *            The given key value argument.
@@ -253,7 +254,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 		String[] keyValue = keyValueArgument.split("=");
 		if (!keyValue[0].trim().equals(NAME_CONFIG)) {
 			throw new BaDaStException(keyValueArgument
-					+ " is not a valid key value argument for reader names! "
+					+ " is not a valid key value argument for recorder names! "
 					+ NAME_CONFIG + "=value");
 		}
 		return keyValue[1].trim();
@@ -288,13 +289,13 @@ public class BaDaStCommandProvider implements CommandProvider {
 	}
 
 	/**
-	 * Starts an existing reader.
+	 * Starts an existing recorder.
 	 * 
 	 * @param ci
 	 *            Should contain one key value argument "key=value", where key
 	 *            is {@link #NAME_CONFIG}.
 	 */
-	public void _startReader(final CommandInterpreter ci) {
+	public void _startRecorder(final CommandInterpreter ci) {
 		try {
 			final String name = readName(ci.nextArgument());
 			validateNameShallExist(name);
@@ -303,27 +304,27 @@ public class BaDaStCommandProvider implements CommandProvider {
 				@Override
 				public void run() {
 					try {
-						cReaders.get(name).startReading();
+						cRecorders.get(name).start();
 					} catch (BaDaStException e) {
 						ci.println(e.getMessage());
 					}
 				}
 
 			}.start();
-			ci.println("Started BaDaSt reader " + name);
+			ci.println("Started BaDaSt recorder " + name);
 		} catch (BaDaStException e) {
 			ci.println(e.getMessage());
 		}
 	}
 
 	/**
-	 * Closes and removes an existing reader.
+	 * Closes and removes an existing recorder.
 	 * 
 	 * @param ci
 	 *            Should contain one key value argument "key=value", where key
 	 *            is {@link #NAME_CONFIG}.
 	 */
-	public void _closeReader(CommandInterpreter ci) {
+	public void _closeRecorder(CommandInterpreter ci) {
 		String name;
 		try {
 			name = readName(ci.nextArgument());
@@ -334,13 +335,13 @@ public class BaDaStCommandProvider implements CommandProvider {
 		}
 
 		try {
-			cReaders.get(name).close();
+			cRecorders.get(name).close();
 		} catch (Exception e) {
-			ci.print("Could not close reader!");
+			ci.print("Could not close recorder!");
 			ci.println(e.getMessage());
 		} finally {
-			cReaders.remove(name);
-			ci.println("Removed BaDaSt reader " + name);
+			cRecorders.remove(name);
+			ci.println("Removed BaDaSt recorder " + name);
 		}
 	}
 
@@ -359,7 +360,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 
 				@Override
 				public void run() {
-					SimpleConsumer consumer = new SimpleConsumer("0", 9092,
+					SimpleConsumer consumer = new SimpleConsumer("localhost", 9092,
 							100000, 64 * 1024, clientid);
 					long readOffset = 0;
 					FetchRequest req = new FetchRequestBuilder()
@@ -418,14 +419,14 @@ public class BaDaStCommandProvider implements CommandProvider {
 		StringBuffer out = new StringBuffer(
 				"---Backup of Data Streams (BaDaSt) Commands---\n");
 		out.append(TAB
-				+ "lsReaderTypes - Lists all registered BaDaSt reader types.\n");
-		out.append(TAB + "lsReaders - Lists all created BaDaSt readers.\n");
+				+ "lsRecorderTypes - Lists all registered BaDaSt recorders types.\n");
+		out.append(TAB + "lsRecorders - Lists all created BaDaSt recorders.\n");
 		out.append(TAB
-				+ "createReader type=xyz key1=value1 ... keyn=valuen - Creates a new BaDaSt reader with the type of the BaDaSt reader and the needed parameters for that type all as key value pairs. Needed parameters can be viewed with lsReaderTypes\n");
+				+ "createRecorder type=xyz key1=value1 ... keyn=valuen - Creates a new BaDaSt recorder with the type of the recorder and the needed parameters for that type all as key value pairs. Needed parameters can be viewed with lsRecorderTypes\n");
 		out.append(TAB
-				+ "startReader name=xyz - Starts an existing BaDaSt reader with the name of the BaDaSt reader as a key value pair.\n");
+				+ "startRecorder name=xyz - Starts an existing BaDaSt recorder with the name of the recorder as a key value pair.\n");
 		out.append(TAB
-				+ "closeReader name=xyz - Closes and removes an existing BaDaSt reader with the name of the BaDaSt reader as a key value pair.\n");
+				+ "closeRecorder name=xyz - Closes and removes an existing BaDaSt recorder with the name of the recorder as a key value pair.\n");
 		out.append(TAB
 				+ "consume sourcename=xyz - Reads the backup of a given source from the Kafka server with the name of the source as a key value pair.\n");
 		return out.toString();

@@ -6,31 +6,31 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * BaDaSt reader classes need to have a distinct type, which identifies for
- * which type of data source the reader can be used. Additionally, each class
+ * BaDaSt recorder classes need to have a distinct type, which identifies for
+ * which type of data source the recorder can be used. Additionally, each class
  * needs parameters to configure the connection to the source. <br />
  * <br />
- * All implementations of {@link IBaDaStReader} need to be annotated with this
- * annotation.
+ * All implementations of {@link IBaDaStRecorder} need to be annotated with
+ * this annotation.
  * 
  * @author Michael Brand
  *
  */
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE })
-public @interface ABaDaStReader {
+public @interface ABaDaStRecorder {
 
 	/**
 	 * Gets the type.
 	 * 
-	 * @return A String identifying the reader type.
+	 * @return A String identifying the recorder type.
 	 */
 	public String type();
 
 	/**
-	 * Gets the parameters
+	 * Gets the parameters.
 	 * 
-	 * @return All keys of the configuration for that reader type.
+	 * @return All keys of the configuration for that recorder type.
 	 */
 	public String[] parameters();
 
