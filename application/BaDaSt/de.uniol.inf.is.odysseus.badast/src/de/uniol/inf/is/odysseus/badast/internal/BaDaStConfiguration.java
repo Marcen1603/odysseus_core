@@ -56,6 +56,7 @@ public class BaDaStConfiguration {
 		setZooKeeperDefaults();
 		setKafkaDefaults();
 		setProducerDefaults();
+		setBaDaStDefaults();
 
 		File file = new File(fileName);
 		try {
@@ -239,6 +240,26 @@ public class BaDaStConfiguration {
 		} catch (Exception e) {
 			cLog.error("Could not save BaDaSt config to file!", e);
 		}
+	}
+	
+	/**
+	 * Sets all default values for a BaDaSt server. All keys will begin with
+	 * "badast.".
+	 */
+	private static void setBaDaStDefaults() {
+		// the name of the badast host
+		cConfig.put("badast.host.name", "localhost");
+		// the port at which the clients will connect
+		cConfig.put("badast.clientPort", "6789");
+	}
+
+	/**
+	 * Gets the BaDaSt configuration.
+	 * 
+	 * @return All values for a BaDaSt server.
+	 */
+	public static Properties getBaDaStConfig() {
+		return getConfig("badast.");
 	}
 
 }

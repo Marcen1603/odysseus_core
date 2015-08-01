@@ -4,17 +4,13 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Properties;
-
-import kafka.api.FetchRequest;
-import kafka.api.FetchRequestBuilder;
-import kafka.javaapi.FetchResponse;
-import kafka.javaapi.consumer.SimpleConsumer;
-import kafka.message.MessageAndOffset;
+import java.util.Set;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.badast.ABaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.AbstractBaDaStRecorder;
@@ -22,6 +18,11 @@ import de.uniol.inf.is.odysseus.badast.BaDaStException;
 import de.uniol.inf.is.odysseus.badast.IBaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.readers.FileRecorder;
 import de.uniol.inf.is.odysseus.badast.readers.TCPRecorder;
+import kafka.api.FetchRequest;
+import kafka.api.FetchRequestBuilder;
+import kafka.javaapi.FetchResponse;
+import kafka.javaapi.consumer.SimpleConsumer;
+import kafka.message.MessageAndOffset;
 
 /**
  * Provider of OSGi console commands for the BaDaSt application. <br />
@@ -37,6 +38,11 @@ import de.uniol.inf.is.odysseus.badast.readers.TCPRecorder;
  *
  */
 public class BaDaStCommandProvider implements CommandProvider {
+
+	/**
+	 * The key for configuration, where the command to execute is set.
+	 */
+	protected static final String COMMAND_CONFIG = "command";
 
 	/**
 	 * The key for configuration, where the recorder type is set.
@@ -57,20 +63,15 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * All available recorder types. Key is the type, value is a not initialized
 	 * recorder of that type.
 	 */
-	private static final Map<String, IBaDaStRecorder<?>> cRecorderTypes = Maps
-			.newHashMap();
+	private static final Map<String, IBaDaStRecorder<?>> cRecorderTypes = Maps.newHashMap();
 
 	// Fill the mapping with all recorder types, which are not bound by
 	// OSGi
 	static {
 		IBaDaStRecorder<String> fileRecorder = new FileRecorder();
-		cRecorderTypes.put(
-				FileRecorder.class.getAnnotation(ABaDaStRecorder.class).type(),
-				fileRecorder);
+		cRecorderTypes.put(FileRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), fileRecorder);
 		IBaDaStRecorder<byte[]> tcpRecorder = new TCPRecorder();
-		cRecorderTypes.put(
-				TCPRecorder.class.getAnnotation(ABaDaStRecorder.class).type(),
-				tcpRecorder);
+		cRecorderTypes.put(TCPRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), tcpRecorder);
 	}
 
 	/**
@@ -81,9 +82,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            type to bind.
 	 */
 	public static void bindReader(IBaDaStRecorder<?> recorder) {
-		cRecorderTypes
-				.put(recorder.getClass().getAnnotation(ABaDaStRecorder.class)
-						.type(), recorder);
+		cRecorderTypes.put(recorder.getClass().getAnnotation(ABaDaStRecorder.class).type(), recorder);
 	}
 
 	/**
@@ -93,16 +92,40 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            The implementation of {@link IBaDaStRecorder} to unbind.
 	 */
 	public static void unbindReader(IBaDaStRecorder<?> recorder) {
-		cRecorderTypes.remove(recorder.getClass()
-				.getAnnotation(ABaDaStRecorder.class).type());
+		cRecorderTypes.remove(recorder.getClass().getAnnotation(ABaDaStRecorder.class).type());
 	}
 
 	/**
 	 * All available (already created) recorder (initialized recorders, not
 	 * types). Key is the name, value is an initialized recorder with that name.
 	 */
-	private static final Map<String, IBaDaStRecorder<?>> cRecorders = Maps
-			.newHashMap();
+	private static final Map<String, IBaDaStRecorder<?>> cRecorders = Maps.newHashMap();
+
+	/**
+	 * Lists all available recorder types.
+	 * 
+	 * @return A string containing all available recorder types (type = xyz,
+	 *         parameters = ...)
+	 */
+	private static String lsRecorderTypes() {
+		StringBuffer out = new StringBuffer();
+		for (String type : cRecorderTypes.keySet()) {
+			out.append(TYPE_CONFIG + " = " + type + ", parameters = ");
+			String[] params = cRecorderTypes.get(type).getClass().getAnnotation(ABaDaStRecorder.class).parameters();
+			if (params.length == 0) {
+				out.append("None");
+			} else {
+				for (int i = 0; i < params.length; i++) {
+					out.append(params[i]);
+					if (i < params.length - 1) {
+						out.append(", ");
+					}
+				}
+			}
+			out.append("\n");
+		}
+		return out.toString();
+	}
 
 	/**
 	 * Lists all available recorder types.
@@ -112,22 +135,23 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 */
 	public void _lsRecorderTypes(CommandInterpreter ci) {
 		ci.println("Available types of BaDaSt recorders:\n");
-		for (String type : cRecorderTypes.keySet()) {
-			ci.print(TYPE_CONFIG + " = " + type + ", parameters = ");
-			String[] params = cRecorderTypes.get(type).getClass()
-					.getAnnotation(ABaDaStRecorder.class).parameters();
-			if (params.length == 0) {
-				ci.print("None");
-			} else {
-				for (int i = 0; i < params.length; i++) {
-					ci.print(params[i]);
-					if (i < params.length - 1) {
-						ci.print(", ");
-					}
-				}
-			}
-			ci.println();
+		ci.println(lsRecorderTypes());
+	}
+
+	/**
+	 * Lists all available (already created) recorders (initialized recorders,
+	 * not types).
+	 * 
+	 * @return A string containing all available recorders (name = xyz, type =
+	 *         xyz)
+	 */
+	private static String lsRecorders() {
+		StringBuffer out = new StringBuffer();
+		for (String name : cRecorders.keySet()) {
+			out.append(NAME_CONFIG + " = " + name + ", " + TYPE_CONFIG + " = "
+					+ cRecorders.get(name).getConfig().getProperty(AbstractBaDaStRecorder.TYPE_CONFIG) + "\n");
 		}
+		return out.toString();
 	}
 
 	/**
@@ -141,18 +165,88 @@ public class BaDaStCommandProvider implements CommandProvider {
 		ci.println("Available BaDaSt recorders:\n");
 		if (cRecorders.isEmpty()) {
 			ci.println("None");
-			return;
+		} else {
+			ci.println(lsRecorders());
 		}
-		for (String name : cRecorders.keySet()) {
-			ci.println(NAME_CONFIG
-					+ " = "
-					+ name
-					+ ", "
-					+ TYPE_CONFIG
-					+ " = "
-					+ cRecorders.get(name).getConfig()
-							.getProperty(AbstractBaDaStRecorder.TYPE_CONFIG));
+	}
+
+	/**
+	 * Parses arguments.
+	 * 
+	 * @param ci
+	 *            All arguments should be key value pairs (key=value).
+	 * @return The key value pairs.
+	 * @throws BaDaStException
+	 *             if any error occurs.
+	 */
+	private static Properties parse(CommandInterpreter ci) throws BaDaStException {
+		Set<String> arguments = Sets.newHashSet();
+		String argument;
+		while ((argument = ci.nextArgument()) != null) {
+			arguments.add(argument);
 		}
+		String[] args = new String[arguments.size()];
+		arguments.toArray(args);
+		return parse(args);
+	}
+
+	/**
+	 * Parses arguments.
+	 * 
+	 * @param line
+	 *            All arguments should be key value pairs (key=value), each
+	 *            separated by a blank.
+	 * @return The key value pairs.
+	 * @throws BaDaStException
+	 *             if any error occurs.
+	 */
+	public static Properties parse(String line) throws BaDaStException {
+		String[] args = line.trim().split(" ");
+		return parse(args);
+	}
+
+	/**
+	 * Parses arguments.
+	 * 
+	 * @param line
+	 *            All arguments should be key value pairs (key=value).
+	 * @return The key value pairs.
+	 * @throws BaDaStException
+	 *             if any error occurs.
+	 */
+	private static Properties parse(String[] args) throws BaDaStException {
+		Properties cfg = new Properties();
+		for (String argument : args) {
+			if (!argument.contains("=")) {
+				throw new BaDaStException(argument + " is not a valid key value argument! key=value");
+			}
+			String[] keyValue = argument.split("=");
+			cfg.put(keyValue[0].trim().toLowerCase(), keyValue[1].trim());
+		}
+		return cfg;
+	}
+
+	/**
+	 * Creates and initializes a new recorder.
+	 * 
+	 * @param cfg
+	 *            Any key should be {@link #TYPE_CONFIG} and all other needed
+	 *            keys depend on the recorder type.
+	 * @return A success message or failure message.
+	 */
+	private static String createRecorder(Properties cfg) {
+		StringBuffer out = new StringBuffer();
+		try {
+			String type = cfg.getProperty(TYPE_CONFIG);
+			validateTypeShallExist(type);
+			IBaDaStRecorder<?> reader = cRecorderTypes.get(type).newInstance(cfg);
+			validateNameShallNotExist(reader.getName());
+			cRecorders.put(reader.getName(), reader);
+			out.append("Created BaDaSt recorder " + reader.getName());
+		} catch (BaDaStException e) {
+			out.append(e.getMessage());
+		}
+		return out.toString();
 	}
 
 	/**
@@ -164,25 +258,8 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            depend on the recorder type.
 	 */
 	public void _createRecorder(CommandInterpreter ci) {
-		Properties cfg = new Properties();
-		String argument;
-		while ((argument = ci.nextArgument()) != null) {
-			if (!argument.contains("=")) {
-				ci.println(argument
-						+ " is not a valid key value argument! key=value");
-			}
-			String[] keyValue = argument.split("=");
-			cfg.put(keyValue[0].trim().toLowerCase(), keyValue[1].trim());
-		}
-
 		try {
-			String type = cfg.getProperty(TYPE_CONFIG);
-			validateTypeShallExist(type);
-			IBaDaStRecorder<?> reader = cRecorderTypes.get(type).newInstance(
-					cfg);
-			validateNameShallNotExist(reader.getName());
-			cRecorders.put(reader.getName(), reader);
-			ci.println("Created BaDaSt recorder " + reader.getName());
+			ci.println(createRecorder(parse(ci)));
 		} catch (BaDaStException e) {
 			ci.println(e.getMessage());
 		}
@@ -197,7 +274,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *             if {@link #cRecorderTypes} does not contain the type as a
 	 *             key.
 	 */
-	private void validateTypeShallExist(String type) throws BaDaStException {
+	private static void validateTypeShallExist(String type) throws BaDaStException {
 		if (type == null) {
 			throw new BaDaStException("Recorder type is not set!");
 		} else if (!cRecorderTypes.keySet().contains(type)) {
@@ -213,7 +290,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * @throws BaDaStException
 	 *             if {@link #cRecorders} does not contain the name as a key.
 	 */
-	private void validateNameShallExist(String name) throws BaDaStException {
+	private static void validateNameShallExist(String name) throws BaDaStException {
 		if (!cRecorders.keySet().contains(name)) {
 			throw new BaDaStException(name + " is not a known recorder!");
 		}
@@ -227,65 +304,42 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * @throws BaDaStException
 	 *             if {@link #cRecorders} does contain the type as a key.
 	 */
-	private void validateNameShallNotExist(String name) throws BaDaStException {
+	private static void validateNameShallNotExist(String name) throws BaDaStException {
 		if (cRecorders.keySet().contains(name)) {
 			throw new BaDaStException(name + " is an already created recorder!");
 		}
 	}
 
 	/**
-	 * Reads a recorder name from a given key value argument.
+	 * Starts an existing recorder.
 	 * 
-	 * @param keyValueArgument
-	 *            The given key value argument.
-	 * @return The set name.
-	 * @throws BaDaStException
-	 *             if the argument is null or if it does not match "key=value",
-	 *             where key is {@link #NAME_CONFIG}.
+	 * @param ci
+	 *            Should contain one key value argument "key=value", where key
+	 *            is {@link #NAME_CONFIG}.
+	 * @return A success message or failure message.
 	 */
-	private String readName(String keyValueArgument) throws BaDaStException {
-		if (keyValueArgument == null) {
-			throw new BaDaStException("Key value argument is null!");
-		}
-		if (!keyValueArgument.contains("=")) {
-			throw new BaDaStException(keyValueArgument
-					+ " is not a valid key value argument! key=value");
-		}
-		String[] keyValue = keyValueArgument.split("=");
-		if (!keyValue[0].trim().equals(NAME_CONFIG)) {
-			throw new BaDaStException(keyValueArgument
-					+ " is not a valid key value argument for recorder names! "
-					+ NAME_CONFIG + "=value");
-		}
-		return keyValue[1].trim();
-	}
+	private static String startRecorder(Properties cfg) {
+		final StringBuffer out = new StringBuffer();
+		try {
+			final String name = cfg.getProperty(NAME_CONFIG);
+			validateNameShallExist(name);
+			new Thread(name) {
 
-	/**
-	 * Reads a source name from a given key value argument.
-	 * 
-	 * @param keyValueArgument
-	 *            The given key value argument.
-	 * @return The set source name.
-	 * @throws BaDaStException
-	 *             if the argument is null or if it does not match "key=value",
-	 *             where key is {@link #SOURCENAME_CONFIG}.
-	 */
-	private String readSourceName(String keyValueArgument)
-			throws BaDaStException {
-		if (keyValueArgument == null) {
-			throw new BaDaStException("Key value argument is null!");
+				@Override
+				public void run() {
+					try {
+						cRecorders.get(name).start();
+					} catch (BaDaStException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}.start();
+			out.append("Started BaDaSt recorder " + name);
+		} catch (BaDaStException e) {
+			out.append(e.getMessage());
 		}
-		if (!keyValueArgument.contains("=")) {
-			throw new BaDaStException(keyValueArgument
-					+ " is not a valid key value argument! key=value");
-		}
-		String[] keyValue = keyValueArgument.split("=");
-		if (!keyValue[0].trim().equals(SOURCENAME_CONFIG)) {
-			throw new BaDaStException(keyValueArgument
-					+ " is not a valid key value argument for source names! "
-					+ SOURCENAME_CONFIG + "=value");
-		}
-		return keyValue[1].trim();
+		return out.toString();
 	}
 
 	/**
@@ -297,24 +351,39 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 */
 	public void _startRecorder(final CommandInterpreter ci) {
 		try {
-			final String name = readName(ci.nextArgument());
-			validateNameShallExist(name);
-			new Thread(name) {
-
-				@Override
-				public void run() {
-					try {
-						cRecorders.get(name).start();
-					} catch (BaDaStException e) {
-						ci.println(e.getMessage());
-					}
-				}
-
-			}.start();
-			ci.println("Started BaDaSt recorder " + name);
+			ci.println(startRecorder(parse(ci)));
 		} catch (BaDaStException e) {
 			ci.println(e.getMessage());
 		}
+	}
+
+	/**
+	 * Closes and removes an existing recorder.
+	 * 
+	 * @param cfg
+	 *            Should contain one key value argument "key=value", where key
+	 *            is {@link #NAME_CONFIG}.
+	 * @return A success message or failure message.
+	 */
+	private static String closeRecorder(Properties cfg) {
+		StringBuffer out = new StringBuffer();
+		String name = cfg.getProperty(NAME_CONFIG);
+		try {
+			validateNameShallExist(name);
+		} catch (BaDaStException e) {
+			out.append(e.getMessage());
+			return out.toString();
+		}
+
+		try {
+			cRecorders.get(name).close();
+		} catch (Exception e) {
+			out.append("Could not close recorder! " + e.getMessage() + "\n");
+		} finally {
+			cRecorders.remove(name);
+			out.append("Removed BaDaSt recorder " + name);
+		}
+		return out.toString();
 	}
 
 	/**
@@ -325,23 +394,10 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            is {@link #NAME_CONFIG}.
 	 */
 	public void _closeRecorder(CommandInterpreter ci) {
-		String name;
 		try {
-			name = readName(ci.nextArgument());
-			validateNameShallExist(name);
+			ci.println(closeRecorder(parse(ci)));
 		} catch (BaDaStException e) {
 			ci.println(e.getMessage());
-			return;
-		}
-
-		try {
-			cRecorders.get(name).close();
-		} catch (Exception e) {
-			ci.print("Could not close recorder!");
-			ci.println(e.getMessage());
-		} finally {
-			cRecorders.remove(name);
-			ci.println("Removed BaDaSt recorder " + name);
 		}
 	}
 
@@ -353,42 +409,34 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            {@link #SOURCENAME_CONFIG}.
 	 */
 	public void _consume(final CommandInterpreter ci) {
-		final String clientid = "OSGiConsoleClient";
 		try {
-			final String sourcename = readSourceName(ci.nextArgument());
+			final String clientid = "OSGiConsoleClient";
+			final String sourcename = parse(ci).getProperty(SOURCENAME_CONFIG);
 			new Thread(sourcename) {
 
 				@Override
 				public void run() {
-					SimpleConsumer consumer = new SimpleConsumer("localhost", 9092,
-							100000, 64 * 1024, clientid);
+					SimpleConsumer consumer = new SimpleConsumer("localhost", 9092, 100000, 64 * 1024, clientid);
 					long readOffset = 0;
-					FetchRequest req = new FetchRequestBuilder()
-							.clientId(clientid)
-							.addFetch(sourcename, 0, 0, 100000).build();
+					FetchRequest req = new FetchRequestBuilder().clientId(clientid).addFetch(sourcename, 0, 0, 100000)
+							.build();
 					FetchResponse fetchResponse = consumer.fetch(req);
 
 					long numRead = 0;
-					for (MessageAndOffset messageAndOffset : fetchResponse
-							.messageSet(sourcename, 0)) {
+					for (MessageAndOffset messageAndOffset : fetchResponse.messageSet(sourcename, 0)) {
 						long currentOffset = messageAndOffset.offset();
 						if (currentOffset < readOffset) {
-							System.out.println("Found an old offset: "
-									+ currentOffset + " Expecting: "
-									+ readOffset);
+							System.out.println("Found an old offset: " + currentOffset + " Expecting: " + readOffset);
 							continue;
 						}
 						readOffset = messageAndOffset.nextOffset();
-						ByteBuffer payload = messageAndOffset.message()
-								.payload();
+						ByteBuffer payload = messageAndOffset.message().payload();
 
 						byte[] bytes = new byte[payload.limit()];
 						payload.get(bytes);
 						try {
-							System.out.println(String.valueOf(messageAndOffset
-									.offset())
-									+ ": "
-									+ new String(bytes, "UTF-8"));
+							System.out.println(
+									String.valueOf(messageAndOffset.offset()) + ": " + new String(bytes, "UTF-8"));
 						} catch (UnsupportedEncodingException e) {
 							ci.print("Could not encode message!");
 							ci.println(e.getMessage());
@@ -406,8 +454,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 				}
 
 			}.start();
-			ci.println("Reading the backup of source " + sourcename
-					+ " finished");
+			ci.println("Reading the backup of source " + sourcename + " finished");
 		} catch (BaDaStException e) {
 			ci.println(e.getMessage());
 		}
@@ -416,10 +463,8 @@ public class BaDaStCommandProvider implements CommandProvider {
 	@Override
 	public String getHelp() {
 		final String TAB = "	";
-		StringBuffer out = new StringBuffer(
-				"---Backup of Data Streams (BaDaSt) Commands---\n");
-		out.append(TAB
-				+ "lsRecorderTypes - Lists all registered BaDaSt recorders types.\n");
+		StringBuffer out = new StringBuffer("---Backup of Data Streams (BaDaSt) Commands---\n");
+		out.append(TAB + "lsRecorderTypes - Lists all registered BaDaSt recorders types.\n");
 		out.append(TAB + "lsRecorders - Lists all created BaDaSt recorders.\n");
 		out.append(TAB
 				+ "createRecorder type=xyz key1=value1 ... keyn=valuen - Creates a new BaDaSt recorder with the type of the recorder and the needed parameters for that type all as key value pairs. Needed parameters can be viewed with lsRecorderTypes\n");
@@ -430,6 +475,35 @@ public class BaDaStCommandProvider implements CommandProvider {
 		out.append(TAB
 				+ "consume sourcename=xyz - Reads the backup of a given source from the Kafka server with the name of the source as a key value pair.\n");
 		return out.toString();
+	}
+
+	/**
+	 * Executes a given BaDaSt command
+	 * 
+	 * @param command
+	 *            The command: either lsRecorderTypes, lsRecorders,
+	 *            createRecorder, startRecorder or closeRecorder.
+	 * @param args
+	 *            The arguments for the command.
+	 * @return A success or failure message.
+	 * @throws BaDaStException
+	 *             if the command in not known.
+	 */
+	public static String execute(String command, Properties args) throws BaDaStException {
+		switch (command) {
+		case "lsRecorderTypes":
+			return lsRecorderTypes();
+		case "lsRecorders":
+			return lsRecorders();
+		case "createRecorder":
+			return createRecorder(args);
+		case "startRecorder":
+			return startRecorder(args);
+		case "closeRecorder":
+			return closeRecorder(args);
+		default:
+			throw new BaDaStException(command + " is an unknown BaDaSt command!");
+		}
 	}
 
 }
