@@ -66,7 +66,7 @@ public abstract class AbstractDynamicFragmentPO<T extends IStreamObject<IMetaAtt
     @SuppressWarnings("unchecked")
     protected void process_next(T object, int port) {
         int outPort = this.route(object);
-        elementsSend[outPort]++;
+//        elementsSend[outPort]++;
         AbstractDynamicFragmentPO.log.trace("Routed " + object + " to output port " + outPort);
         this.transfer(object, outPort);
 
