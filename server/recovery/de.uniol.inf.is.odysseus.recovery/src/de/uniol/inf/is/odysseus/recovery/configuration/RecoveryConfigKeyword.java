@@ -100,7 +100,19 @@ public class RecoveryConfigKeyword extends AbstractPreParserKeyword {
 		return null;
 	}
 
-	// TODO javaDoc
+	/**
+	 * Parses the Odysseus Script parameter.
+	 * 
+	 * @param parameter
+	 *            The parameter to parse.
+	 * @param config
+	 *            An (empty) configuration to be filled with pared key-value
+	 *            pairs.
+	 * @return The name of the {@link IRecoveryExecutor} to use, which is meant
+	 *         within the parameter.
+	 * @throws OdysseusScriptException
+	 *             if any error occurs.
+	 */
 	private static String parseParameter(String parameter, Properties config) throws OdysseusScriptException {
 		String[] args = parameter.split(" ");
 		String name = args[0];

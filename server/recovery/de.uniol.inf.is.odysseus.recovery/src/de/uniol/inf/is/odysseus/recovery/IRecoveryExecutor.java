@@ -22,7 +22,14 @@ public interface IRecoveryExecutor {
 	 */
 	public String getName();
 
-	// TODO javaDoc
+	/**
+	 * Creates a new recovery executor with a given configuration.
+	 * 
+	 * @param config
+	 *            the configuration for the executor.
+	 * @return A new recovery executor of the same class but with set
+	 *         configuration.
+	 */
 	public IRecoveryExecutor newInstance(Properties config);
 
 	/**
