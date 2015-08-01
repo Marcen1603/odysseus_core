@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.recovery.gaprecovery;
 
 import java.util.List;
+import java.util.Properties;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
@@ -25,8 +26,7 @@ public class GapRecoveryExecutor implements IRecoveryExecutor {
 	 * is done globally.
 	 */
 	@Override
-	public void recover(List<Integer> queryIds, ISession caller,
-			List<ISysLogEntry> log) throws Exception {
+	public void recover(List<Integer> queryIds, ISession caller, List<ISysLogEntry> log) throws Exception {
 		// Nothing to do.
 	}
 
@@ -37,6 +37,11 @@ public class GapRecoveryExecutor implements IRecoveryExecutor {
 	@Override
 	public void activateBackup(List<Integer> queryIds, ISession caller) {
 		// Nothing to do.
+	}
+
+	@Override
+	public IRecoveryExecutor newInstance(Properties config) {
+		return new GapRecoveryExecutor();
 	}
 
 }

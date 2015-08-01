@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.recovery.configuration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +33,12 @@ public class RecoveryConfigKeyword extends AbstractPreParserKeyword {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory
-			.getLogger(RecoveryConfigKeyword.class);
+	private static final Logger cLog = LoggerFactory.getLogger(RecoveryConfigKeyword.class);
 
 	/**
 	 * All bound recovery executors.
 	 */
-	private static final Map<String, IRecoveryExecutor> cExecutors = Maps
-			.newConcurrentMap();
+	private static final Map<String, IRecoveryExecutor> cExecutors = Maps.newConcurrentMap();
 
 	/**
 	 * Gets a recovery executor by its name.
@@ -82,22 +81,39 @@ public class RecoveryConfigKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context, IServerExecutor executor)
-			throws OdysseusScriptException {
-		if (!getAllowedParameters(caller).contains(parameter)) {
-			throw new OdysseusScriptException("'" + parameter
-					+ "' is not a valid recovery configuaration!");
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context,
+			IServerExecutor executor) throws OdysseusScriptException {
+		Properties cfg = new Properties();
+		String name = parseParameter(parameter, cfg);
+		if (!getAllowedParameters(caller).contains(name)) {
+			throw new OdysseusScriptException("'" + parameter + "' is not a valid recovery configuaration!");
 		}
 
 	}
 
 	@Override
-	public List<IExecutorCommand> execute(Map<String, Object> variables,
-			String parameter, ISession caller, Context context,
-			IServerExecutor executor) throws OdysseusScriptException {
-		variables.put(getName(), cExecutors.get(parameter));
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller,
+			Context context, IServerExecutor executor) throws OdysseusScriptException {
+		Properties executorCfg = new Properties();
+		String executorName = parseParameter(parameter, executorCfg);
+		variables.put(getName(), cExecutors.get(executorName).newInstance(executorCfg));
 		return null;
+	}
+
+	// TODO javaDoc
+	private static String parseParameter(String parameter, Properties config) throws OdysseusScriptException {
+		String[] args = parameter.split(" ");
+		String name = args[0];
+		for (int i = 1; i < args.length; i++) {
+			String argument = args[i];
+			if (!argument.contains("=")) {
+				throw new OdysseusScriptException(argument + " is not a valid key value argument! key=value");
+			}
+			String[] keyValue = argument.split("=");
+			config.put(keyValue[0].trim().toLowerCase(), keyValue[1].trim());
+		}
+		return name;
+
 	}
 
 	@Override
@@ -112,23 +128,27 @@ public class RecoveryConfigKeyword extends AbstractPreParserKeyword {
 	 *            The given script.
 	 * @return A recovery executor, if the recovery configuration is set.
 	 */
-	public static Optional<IRecoveryExecutor> determineRecoveryExecutor(
-			String script) {
+	public static Optional<IRecoveryExecutor> determineRecoveryExecutor(String script) {
 		int beginKeyword = script.indexOf(RecoveryConfigKeyword.getName());
 		if (beginKeyword >= 0) {
 			int endLine = script.indexOf("\n", beginKeyword);
 			if (endLine == -1) {
 				endLine = script.length();
 			}
-			String keyWordPlusParameter = script.substring(beginKeyword,
-					endLine);
-			String parameter = keyWordPlusParameter.substring(
-					RecoveryConfigKeyword.getName().length(),
-					keyWordPlusParameter.length()).trim();
-			if (cExecutors.containsKey(parameter)) {
-				return Optional.of(cExecutors.get(parameter));
+			String keyWordPlusParameter = script.substring(beginKeyword, endLine);
+			String parameter = keyWordPlusParameter
+					.substring(RecoveryConfigKeyword.getName().length(), keyWordPlusParameter.length()).trim();
+			Properties cfg = new Properties();
+			String name = null;
+			try {
+				name = parseParameter(parameter, cfg);
+			} catch (OdysseusScriptException e) {
+				cLog.error("Unknown recovery executor: " + name);
+			}
+			if (cExecutors.containsKey(name)) {
+				return Optional.of(cExecutors.get(name).newInstance(cfg));
 			} else {
-				cLog.error("Unknown recovery executor: " + parameter);
+				cLog.error("Unknown recovery executor: " + name);
 			}
 		}
 		return Optional.absent();
