@@ -55,25 +55,73 @@ public class SourceStreamsRecoveryComponent implements IRecoveryComponent {
 	}
 
 	/**
-	 * Sends a command to the BaDaSt application in order to create a recorder
-	 * for the data source.
+	 * The host name of the BaDaSt server.
+	 */
+	private String mHost;
+
+	/**
+	 * The port number of the BaDaSt server.
+	 */
+	private int mPort;
+
+	/**
+	 * The name of the corresponding BaDaSt recorder.
+	 */
+	private String mBaDaStRecorder;
+
+	/**
+	 * Sends a command to the BaDaSt application in order to create and start a
+	 * recorder for the data source.
 	 * 
 	 * @param config
 	 *            The configuration for the BaDaSt recorder.
+	 * @return The name of the created BaDaSt recorder
 	 */
 	private void configureBaDaSt(Properties config) {
 		Properties badastCfg = BaDaStConfiguration.getBaDaStConfig();
-		String command = createCreateCommand(config);
-		String host = badastCfg.getProperty("host.name");
-		int port = Integer.parseInt(badastCfg.getProperty("clientPort"));
-		try (Socket clientSocket = new Socket(host, port);
+		this.mHost = badastCfg.getProperty("host.name");
+		this.mPort = Integer.parseInt(badastCfg.getProperty("clientPort"));
+		this.mBaDaStRecorder = sendCreateCommand(config);
+		sendStartCommand();
+	}
+
+	/**
+	 * Sends a command to the BaDaSt application.
+	 * 
+	 * @param command
+	 *            The command to send.
+	 * @return The answer from the BaDaSt server.
+	 */
+	private String sendComand(String command) {
+		try (Socket clientSocket = new Socket(this.mHost, this.mPort);
 				DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 				DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream())) {
 			outToServer.writeUTF(command);
 			String answer = inFromServer.readUTF();
 			cLog.debug("Info from BaDaSt: {}", answer);
+			return answer;
 		} catch (IOException e) {
-			cLog.error("Could not send command " + command + " to BaDaSt at " + host + ":" + port);
+			cLog.error("Could not send command " + command + " to BaDaSt at " + this.mHost + ":" + this.mPort, e);
+			return null;
+		}
+	}
+
+	/**
+	 * Sends a command to the BaDaSt application in order to create a recorder
+	 * for the data source.
+	 * 
+	 * @param config
+	 *            The configuration for the BaDaSt recorder.
+	 * @return The name of the created BaDaSt recorder.
+	 */
+	private String sendCreateCommand(Properties config) {
+		String answer = sendComand(createCreateCommand(config));
+		if (answer != null && answer.startsWith("Created BaDaSt recorder")) {
+			String[] split = answer.split(" ");
+			return split[split.length - 1];
+		} else {
+			cLog.error("Could not create BaDaSt recorder!");
+			return null;
 		}
 	}
 
@@ -83,10 +131,9 @@ public class SourceStreamsRecoveryComponent implements IRecoveryComponent {
 	 * 
 	 * @param config
 	 *            The configuration for the BaDaSt recorder.
-	 * @param A
-	 *            string to be sent to BaDaSt.
+	 * @return A string to be sent to BaDaSt.
 	 */
-	private String createCreateCommand(Properties config) {
+	private static String createCreateCommand(Properties config) {
 		StringBuffer out = new StringBuffer("command=createRecorder ");
 		Iterator<String> propsIter = config.stringPropertyNames().iterator();
 		while (propsIter.hasNext()) {
@@ -96,6 +143,26 @@ public class SourceStreamsRecoveryComponent implements IRecoveryComponent {
 				out.append(" ");
 			}
 		}
+		return out.toString();
+	}
+
+	/**
+	 * Sends a command to the BaDaSt application in order to start a recorder
+	 * for the data source.
+	 */
+	private void sendStartCommand() {
+		sendComand(createStartCommand());
+	}
+
+	/**
+	 * Creates a command for the BaDaSt application in order to start the
+	 * recorder for the data source.
+	 * 
+	 * @return A string to be sent to BaDaSt.
+	 */
+	private String createStartCommand() {
+		StringBuffer out = new StringBuffer("command=startRecorder ");
+		out.append("name=" + this.mBaDaStRecorder);
 		return out.toString();
 	}
 
