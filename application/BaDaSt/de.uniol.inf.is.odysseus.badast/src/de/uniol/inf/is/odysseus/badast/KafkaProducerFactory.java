@@ -5,8 +5,6 @@ import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 
-import de.uniol.inf.is.odysseus.badast.internal.BaDaStConfiguration;
-
 /**
  * Factory to create {@link KafkaProducer}s.
  * 
