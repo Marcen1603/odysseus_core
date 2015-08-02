@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.recovery;
 
 import java.util.List;
+import java.util.Properties;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
@@ -22,6 +23,16 @@ public interface IRecoveryComponent {
 	public String getName();
 
 	/**
+	 * Creates a new recovery component with a given configuration.
+	 * 
+	 * @param config
+	 *            the configuration for the component.
+	 * @return A new recovery component of the same class but with set
+	 *         configuration.
+	 */
+	public IRecoveryComponent newInstance(Properties config);
+
+	/**
 	 * Runs the recovery mechanism for given queries.
 	 * 
 	 * @param queryIds
@@ -34,8 +45,7 @@ public interface IRecoveryComponent {
 	 * @throws Exception
 	 *             if any error occurs.
 	 */
-	public void recover(List<Integer> queryIds, ISession caller,
-			List<ISysLogEntry> log) throws Exception;
+	public void recover(List<Integer> queryIds, ISession caller, List<ISysLogEntry> log) throws Exception;
 
 	/**
 	 * Activates the backup mechanism for given queries.
