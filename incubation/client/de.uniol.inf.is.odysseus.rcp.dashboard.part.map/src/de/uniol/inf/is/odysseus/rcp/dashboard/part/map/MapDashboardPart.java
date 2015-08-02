@@ -28,6 +28,8 @@ public class MapDashboardPart extends AbstractDashboardPart {
 	
 	private int updateInterval = 1000;
 	
+	private int layerCounter = 0;
+	
 	private HashMap<Integer,LayerConfiguration> layerMap = new HashMap<Integer,LayerConfiguration>();
 
 	@Override
@@ -51,7 +53,10 @@ public class MapDashboardPart extends AbstractDashboardPart {
 	public void setUpdateInterval(int updateInterval) {
 		this.updateInterval = updateInterval;
 	}
-	
+
+	public int getLayerCounter(){
+		return this.layerCounter;
+	}
 	public HashMap<Integer, LayerConfiguration> getLayerList(){
 		return layerMap;
 	}
@@ -63,11 +68,17 @@ public class MapDashboardPart extends AbstractDashboardPart {
 	public void deleteLayerFromMap(Integer id){
 		//this.layerMap.containsKey(id);
 		this.layerMap.remove(id);
+		layerCounter--;
 	}
 	
 	public void changeLayerOrder(Integer firstId, Integer secondId){
-
+		
 	}
+	
+	public void increaseLayerCounter(){
+		this.layerCounter++;
+	}
+	
 	
 	
 	
