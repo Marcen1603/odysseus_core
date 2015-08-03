@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
@@ -27,10 +28,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
@@ -184,6 +187,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    printQPController									- Prints Current Content of Query Part Controller\n");
 		sb.append("    verifyDependencies									- Verifies if all Dependencies are available\n");
 		sb.append("    extractState <LocalQueryId>							- Extracts first StatefulPO State from Query with Query ID\n");
+		sb.append("    dumpl <LocalQueryID>                                 - dumps logical plan of queryId\n");
 		return sb.toString();
 	}
 
@@ -524,6 +528,44 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	}
 	
 	
+	
+
+	public void _dumpl(CommandInterpreter ci) {
+		final String ERROR_USAGE = "Usage: dumpl <LocalQueryId>";
+
+		final String ERROR_QUERY = "Logical Query not found.";
+		
+		String localQueryIdString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(localQueryIdString)) {
+
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		int localQueryId;
+
+		try {
+			localQueryId = Integer.parseInt(localQueryIdString);
+		} catch (NumberFormatException e) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		ILogicalQuery query = executor.getLogicalQueryById(localQueryId, getActiveSession());
+		if(query==null){
+			ci.println(ERROR_QUERY);
+			return;
+		}
+		
+		SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
+		String plan = printer.createString(query.getLogicalPlan());
+		
+		ci.println(plan);
+
+	}
+	
+	
+	
 
 	protected int getSizeInBytesOfSerializable(Serializable obj) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -586,6 +628,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			traverseGraphAndPrintSubscriptions(source, ci);
 		}
 	}
+	
+	
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	/**

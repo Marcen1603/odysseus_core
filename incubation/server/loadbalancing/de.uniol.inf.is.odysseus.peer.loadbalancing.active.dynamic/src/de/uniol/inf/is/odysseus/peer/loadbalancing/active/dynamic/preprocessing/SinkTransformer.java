@@ -147,6 +147,13 @@ public class SinkTransformer {
 			if(logicalSink!=null) {
 				ISubscription logicalSubscription = getLogicalForPhysicalSubscription(subscr, logicalSink);
 				replaceLogicalSubscription(logicalSubscription,logicalSink,senderAO,receiverAO);
+				
+				ILogicalQuery oldQuery = executor.getLogicalQueryById(queryID, session);
+				ILogicalQuery newQuery = executor.getLogicalQueryById(newQueryID, session);
+				oldQuery.setLogicalPlan(senderAO, true);
+				newQuery.setLogicalPlan(logicalSink, true);
+				//TODO TopAO?
+				
 			}
 			else {
 				LOG.warn("Could not find logical Sink to physical Sink {}",sinkOperator.getName());
@@ -325,6 +332,7 @@ public class SinkTransformer {
 		receiverAO.setOutputSchema(schema.clone());
 		receiverAO.setSchema(schema.clone().getAttributes());
 		receiverAO.setName("JxtaReceiver " + sink.getName());
+		receiverAO.setSchemaName(schema.getURI());
 		return receiverAO;
 	}
 

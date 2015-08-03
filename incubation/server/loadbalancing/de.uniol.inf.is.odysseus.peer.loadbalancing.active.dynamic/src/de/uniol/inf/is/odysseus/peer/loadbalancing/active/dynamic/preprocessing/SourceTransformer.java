@@ -232,6 +232,7 @@ public class SourceTransformer {
 		receiverAO.setPeerID(peerID.toString());
 		receiverAO.setPipeID(pipeID.toString());
 		receiverAO.setSchema(source.getOutputSchema().clone().getAttributes());
+		receiverAO.setSchemaName(source.getOutputSchema().getURI());
 		receiverAO.setName("JxtaReceiver " + source.getName());
 		return receiverAO;
 	}

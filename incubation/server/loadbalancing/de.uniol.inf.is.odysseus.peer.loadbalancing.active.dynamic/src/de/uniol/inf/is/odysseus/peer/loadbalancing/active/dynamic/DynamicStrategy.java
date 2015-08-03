@@ -243,6 +243,10 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		HashMap<Integer, IPhysicalQuery> queries = new HashMap<Integer, IPhysicalQuery>();
 
 		for (int queryId : executor.getLogicalQueryIds(getActiveSession())) {
+			//Ignore excluded Quries.
+			if(excludedQueryRegistry.isQueryIDExcludedFromLoadBalancing(queryId))
+				continue;
+			
 			IPhysicalQuery query = executor.getExecutionPlan().getQueryById(
 					queryId);
 			if (query == null)
@@ -355,7 +359,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 					if(allocationMap.get(queryPart).equals(localPeerID)) {
 						LOG.warn("No other Peer wanted to take Query {}.",queryPartIDMapping.get(queryPart));
 					}
-					LOG.debug("({} goes to {}",queryPartIDMapping.get(queryPart),allocationMap.get(queryPart));
+					else {
+						LOG.debug("({} goes to Peer {}",queryPartIDMapping.get(queryPart),this.peerDictionary.getRemotePeerName(allocationMap.get(queryPart)));
+					}
 				}
 			}
 			

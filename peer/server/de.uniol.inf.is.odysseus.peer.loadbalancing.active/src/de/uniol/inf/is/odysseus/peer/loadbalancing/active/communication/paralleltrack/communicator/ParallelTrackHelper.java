@@ -90,7 +90,6 @@ public class ParallelTrackHelper {
 				String oldPipe = replacedPipes.get(sender.getPipeID());
 				PeerID destinationPeer = LoadBalancingHelper.toPeerID(sender.getPeerID());
 				peersForPipe.put(newPipe, destinationPeer);
-
 				dispatcher.sendCopyOperator(false, destinationPeer, oldPipe, newPipe, volunteeringPeer, deliveryFailedListener);
 			}
 		}
