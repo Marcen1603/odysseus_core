@@ -158,7 +158,7 @@ public class RecoveryConfigKeyword extends AbstractPreParserKeyword {
 				cLog.error("Unknown recovery executor: " + name);
 			}
 			if (cExecutors.containsKey(name)) {
-				return Optional.of(cExecutors.get(name).newInstance(cfg));
+				return Optional.of(cExecutors.get(name));
 			} else {
 				cLog.error("Unknown recovery executor: " + name);
 			}
