@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.recovery.querystate;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -545,11 +544,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		case UNDEF:
 			cExecutor.get().removeQuery(queryID, caller);
 		}
-	}
-
-	@Override
-	public IRecoveryComponent newInstance(Properties config) {
-		return new QueryStateRecoveryComponent();
 	}
 
 }

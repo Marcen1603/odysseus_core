@@ -1,13 +1,10 @@
 package de.uniol.inf.is.odysseus.recovery.rollbackrecovery;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.IRecoveryComponent;
@@ -38,30 +35,24 @@ public class RollbackRecoveryExecutor implements IRecoveryExecutor {
 	}
 
 	/**
-	 * The blank recovery component for the incoming data stream elements (to be
-	 * bound by OSGi).
+	 * The recovery component for the incoming data stream elements (to be bound
+	 * by OSGi).
 	 */
-	private static IRecoveryComponent cSourceStreamsComponent;
+	private static IRecoveryComponent cSourceRecoveryComponent;
 
 	// TODO RollbackRecoveryExecutor misses Operator Recovery
-
-	/**
-	 * The recovery components for the incoming data stream elements mapped to
-	 * the source name.
-	 */
-	private final Map<String, IRecoveryComponent> mSourceStreamComponents = Maps.newHashMap();
 
 	/**
 	 * Binds either a recovery component for the incoming data stream elements
 	 * or for the operator states.
 	 * 
 	 * @param component
-	 *            The component to bind, if its name matches "Source Streams" or
-	 *            "Operator Recovery".
+	 *            The component to bind, if its name matches "Source Recovery"
+	 *            or "Operator Recovery".
 	 */
 	public static void bindComponent(IRecoveryComponent component) {
-		if (component.getName().equals("Source Streams")) {
-			cSourceStreamsComponent = component;
+		if (component.getName().equals("Source Recovery")) {
+			cSourceRecoveryComponent = component;
 		}
 		// TODO RollbackRecoveryExecutor misses Operator Recovery
 	}
@@ -73,49 +64,23 @@ public class RollbackRecoveryExecutor implements IRecoveryExecutor {
 	 *            The component to unbind, if it has been bound before.
 	 */
 	public static void unbindComponent(IRecoveryComponent component) {
-		if (cSourceStreamsComponent != null && cSourceStreamsComponent.equals(component)) {
-			cSourceStreamsComponent = null;
+		if (cSourceRecoveryComponent.equals(component)) {
+			cSourceRecoveryComponent = null;
 		}
 		// TODO RollbackRecoveryExecutor misses Operator Recovery
 	}
 
+	/**
+	 * The configuration of the executor.
+	 */
+	@SuppressWarnings("unused")
+	private Properties mConfig;
+
 	@Override
 	public IRecoveryExecutor newInstance(Properties config) {
 		RollbackRecoveryExecutor executor = new RollbackRecoveryExecutor();
-		executor.configureSourceStreamsComponents(config);
+		executor.mConfig = config;
 		return executor;
-	}
-
-	/**
-	 * Configuration all needed source streams components
-	 * 
-	 * @param config
-	 *            The complete configuration for the recovery executor.
-	 */
-	private void configureSourceStreamsComponents(Properties config) {
-		final String prefix = "source";
-		Map<Integer, Properties> sourceStreamsConfigs = Maps.newHashMap();
-		for (String key : config.stringPropertyNames()) {
-			if (key.toLowerCase().startsWith(prefix)) {
-				int dotIndex = key.indexOf(".");
-				if (dotIndex != -1) {
-					int sourceNumber = Integer.parseInt(key.substring(prefix.length(), dotIndex));
-					Properties sourceStreamsConfig;
-					if (sourceStreamsConfigs.containsKey(sourceNumber)) {
-						sourceStreamsConfig = sourceStreamsConfigs.get(sourceNumber);
-					} else {
-						sourceStreamsConfig = new Properties();
-					}
-					sourceStreamsConfig.setProperty(key.substring(dotIndex + 1), config.getProperty(key));
-					sourceStreamsConfigs.put(sourceNumber, sourceStreamsConfig);
-				}
-			}
-		}
-		for (int sourceNumber : sourceStreamsConfigs.keySet()) {
-			String sourcename = sourceStreamsConfigs.get(sourceNumber).getProperty("sourcename");
-			this.mSourceStreamComponents.put(sourcename,
-					cSourceStreamsComponent.newInstance(sourceStreamsConfigs.get(sourceNumber)));
-		}
 	}
 
 	@Override
@@ -129,12 +94,12 @@ public class RollbackRecoveryExecutor implements IRecoveryExecutor {
 	 */
 	@Override
 	public void activateBackup(List<Integer> queryIds, ISession caller) {
-		if (cSourceStreamsComponent == null) {
-			cLog.error("RollBackRecovery executor misses Source Streams component!");
+		if (cSourceRecoveryComponent == null) {
+			cLog.error("RollBackRecovery executor misses Source Recovery component!");
 			return;
 		}
 		// TODO What about protection points?
-		cSourceStreamsComponent.activateBackup(queryIds, caller);
+		cSourceRecoveryComponent.activateBackup(queryIds, caller);
 		// TODO RollbackRecoveryExecutor misses Operator Recovery
 	}
 
