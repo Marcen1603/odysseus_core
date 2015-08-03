@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 
@@ -50,7 +51,7 @@ public class SourceTransformer {
 	@SuppressWarnings({ "rawtypes" })
 	public static void replaceSources(int queryID, PeerID localPeerID,
 			ISession session, IP2PNetworkManager networkManager,
-			IServerExecutor executor,IQueryPartController queryPartController) {
+			IServerExecutor executor,IQueryPartController queryPartController,IExcludedQueriesRegistry excludedQueriesRegistry) {
 		LOG.debug("Replacing Sources for Query {}", queryID);
 		List<ISource> sources = Lists.newArrayList();
 		Collection<IPhysicalOperator> operatorsInQuery = executor
@@ -81,13 +82,13 @@ public class SourceTransformer {
 			PipeID newPipe = IDFactory.newPipeID(networkManager
 					.getLocalPeerGroupID());
 			replaceSourceWithJxtaReceiver(source, localPeerID, newPipe,
-					queryID, executor, session,queryPartController,networkManager);
+					queryID, executor, session,queryPartController,networkManager,excludedQueriesRegistry);
 		}
 
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void replaceSourceWithJxtaReceiver(ISource sourceOperator,PeerID peerID, PipeID pipeID, int queryID, IServerExecutor executor, ISession session, IQueryPartController queryPartController, IP2PNetworkManager networkManager) {
+	private static void replaceSourceWithJxtaReceiver(ISource sourceOperator,PeerID peerID, PipeID pipeID, int queryID, IServerExecutor executor, ISession session, IQueryPartController queryPartController, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry) {
 		
 		ILogicalOperator logicalSource = getLogicalSourceToPhysicalSource(sourceOperator, queryID, executor, session);
 		
@@ -164,7 +165,7 @@ public class SourceTransformer {
 		}
 		queryPartController.addLocalQueryToShared(sharedQueryID, newQueryId);
 		
-		
+		excludedQueriesRegistry.excludeQueryIdFromLoadBalancing(newQueryId);
 	}
 	
 	@SuppressWarnings("rawtypes")

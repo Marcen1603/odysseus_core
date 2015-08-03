@@ -25,6 +25,10 @@ public class ControllablePhysicalSubscription<K> extends
 	public void setTarget(K target) {
 		super.setTarget(target);
 	}
+	
+	public void setSinkInPort(int port) {
+		super.setSinkInPort(port);
+	}
 
 	public boolean isSuspended() {
 		return getOpenCalls() == suspendCalls;

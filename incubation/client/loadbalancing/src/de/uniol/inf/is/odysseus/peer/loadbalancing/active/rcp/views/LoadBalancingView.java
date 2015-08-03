@@ -15,6 +15,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.IExcludedQueryRegistryListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
@@ -22,8 +24,16 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingControll
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLockListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.Activator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 
 public class LoadBalancingView extends ViewPart implements ILoadBalancingControllerListener, ILoadBalancingLockListener, IExcludedQueryRegistryListener {
+	
+
+	/***
+	 * Logger
+	 */
+	private static final Logger LOG = LoggerFactory
+			.getLogger(LoadBalancingView.class);
 	
 	private static final String CONTROL_NOT_BOUND = "Load Balancing Control not (yet) bound.";
 	
@@ -50,6 +60,7 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 
 		ILoadBalancingController controller = Activator.getLoadBalancingController();
 		ILoadBalancingLock lock = Activator.getLock();
+		IExcludedQueriesRegistry excludedQueryRegistry = Activator.getExcludedQueryRegistry();
 		
 		if(controller==null) {
 			createLabel(parent,CONTROL_NOT_BOUND);
@@ -61,6 +72,13 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 
 		if(lock!=null) {
 			lock.addListener(this);
+		}
+		
+		if(excludedQueryRegistry!=null) {
+			excludedQueryRegistry.addListener(this);
+		}
+		else {
+			LOG.error("Query Registry not bound!");
 		}
 		
 	}
@@ -237,6 +255,12 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		ILoadBalancingLock lock = Activator.getLock();
 		if(lock!=null) {
 			lock.removeListener(this);
+		}
+		
+
+		IExcludedQueriesRegistry excludedQueryRegistry = Activator.getExcludedQueryRegistry();
+		if(excludedQueryRegistry!=null) {
+			excludedQueryRegistry.addListener(this);
 		}
 		
 	}

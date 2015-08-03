@@ -71,6 +71,8 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 		this.target = target;
 	}	
 	
+	
+	
 	@Override
 	public int getSinkInPort() {
 		return sinkInPort;
@@ -79,6 +81,11 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	@Override
 	public int getSourceOutPort() {
 		return sourceOutPort;
+	}
+	
+	
+	protected void setSinkInPort(int port) {
+		this.sinkInPort = port;
 	}
 	
 	/**
@@ -101,7 +108,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 
 	// ACHTUNG: BEI DER GENERIERUNG VON HASHCODE UND EQUALS
 	// DARF NIEMALS EIN EQUALS AUF DEN TARGETS ERFOLGEN, DA DIE WIEDER IHRE 
-	// SUBSCRIPTIONS TESTEN WÜRDEN --> REKURSION --> STACK OVERFLOW!!
+	// SUBSCRIPTIONS TESTEN Wï¿½RDEN --> REKURSION --> STACK OVERFLOW!!
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

@@ -292,8 +292,8 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 		//Replaces Sources with Sender-Receiver constructs.
 		for(int queryID : queryIDs) {
-			//SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor,queryPartController);
-			SinkTransformer.replaceSinks(queryID, localPeerID, getActiveSession(), networkManager, executor, queryPartController);
+			//SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor,queryPartController,excludedQueryRegistry);
+			SinkTransformer.replaceSinks(queryID, localPeerID, getActiveSession(), networkManager, executor, queryPartController,excludedQueryRegistry);
 		}
 		
 		QueryCostMap allQueries = generateCostMapForAllQueries();
