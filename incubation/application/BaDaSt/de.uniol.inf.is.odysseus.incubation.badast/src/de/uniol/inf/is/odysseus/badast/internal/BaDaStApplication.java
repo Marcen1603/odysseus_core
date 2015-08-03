@@ -11,11 +11,10 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.zookeeper.server.ServerConfig;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
 import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.badast.BaDaStConfiguration;
 import de.uniol.inf.is.odysseus.badast.BaDaStException;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServerStartable;
@@ -30,7 +29,7 @@ import kafka.server.KafkaServerStartable;
  * @author Michael Brand
  *
  */
-public class BaDaStApplication implements BundleActivator {
+public class BaDaStApplication {
 
 	/**
 	 * The logger for this class.
@@ -62,7 +61,7 @@ public class BaDaStApplication implements BundleActivator {
 	/**
 	 * Starts first a ZooKeeper server and afterwards a Kafka server.
 	 */
-	private void run() {
+	public void start() {
 		configureLogging();
 		startZooKeeperServer();
 		wait_();
@@ -203,14 +202,10 @@ public class BaDaStApplication implements BundleActivator {
 		cLog.info("BaDaSt server started.");
 	}
 
-	@Override
-	public void start(BundleContext context) throws Exception {
-		cInstance = this;
-		run();
-	}
-
-	@Override
-	public void stop(BundleContext context) throws Exception {
+	/**
+	 * Stopps the application.
+	 */
+	public void stop() {
 		if (this.mKafkaServer != null) {
 			this.mKafkaServer.shutdown();
 		}
