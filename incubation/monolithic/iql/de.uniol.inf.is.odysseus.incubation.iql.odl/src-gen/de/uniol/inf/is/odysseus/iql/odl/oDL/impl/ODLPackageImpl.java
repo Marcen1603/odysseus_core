@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLPackage;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
+import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLTypeDefinition;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -17,6 +18,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
+import org.eclipse.xtext.common.types.TypesPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,6 +35,13 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
    * @generated
    */
   private EClass odlFileEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass odlTypeDefinitionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -128,6 +138,16 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
   public EClass getODLFile()
   {
     return odlFileEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getODLTypeDefinition()
+  {
+    return odlTypeDefinitionEClass;
   }
 
   /**
@@ -252,6 +272,8 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
     // Create classes and their features
     odlFileEClass = createEClass(ODL_FILE);
 
+    odlTypeDefinitionEClass = createEClass(ODL_TYPE_DEFINITION);
+
     odlOperatorEClass = createEClass(ODL_OPERATOR);
     createEReference(odlOperatorEClass, ODL_OPERATOR__METADATA_LIST);
 
@@ -291,6 +313,7 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
 
     // Obtain other dependent packages
     BasicIQLPackage theBasicIQLPackage = (BasicIQLPackage)EPackage.Registry.INSTANCE.getEPackage(BasicIQLPackage.eNS_URI);
+    TypesPackage theTypesPackage = (TypesPackage)EPackage.Registry.INSTANCE.getEPackage(TypesPackage.eNS_URI);
 
     // Create type parameters
 
@@ -298,12 +321,15 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
 
     // Add supertypes to classes
     odlFileEClass.getESuperTypes().add(theBasicIQLPackage.getIQLFile());
-    odlOperatorEClass.getESuperTypes().add(theBasicIQLPackage.getIQLTypeDef());
+    odlTypeDefinitionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLTypeDefinition());
+    odlOperatorEClass.getESuperTypes().add(theTypesPackage.getJvmGenericType());
     odlParameterEClass.getESuperTypes().add(theBasicIQLPackage.getIQLAttribute());
     odlMethodEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMethod());
 
     // Initialize classes and features; add operations and parameters
     initEClass(odlFileEClass, ODLFile.class, "ODLFile", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(odlTypeDefinitionEClass, ODLTypeDefinition.class, "ODLTypeDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(odlOperatorEClass, ODLOperator.class, "ODLOperator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getODLOperator_MetadataList(), theBasicIQLPackage.getIQLMetadataList(), null, "metadataList", null, 0, 1, ODLOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

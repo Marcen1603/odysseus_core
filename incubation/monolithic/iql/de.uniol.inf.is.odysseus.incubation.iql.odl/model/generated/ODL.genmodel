@@ -10,6 +10,7 @@
   <genPackages prefix="ODL" basePackage="de.uniol.inf.is.odysseus.iql.odl" disposableProviderFactory="true"
       fileExtensions="odl" ecorePackage="ODL.ecore#/">
     <genClasses ecoreClass="ODL.ecore#//ODLFile"/>
+    <genClasses ecoreClass="ODL.ecore#//ODLTypeDefinition"/>
     <genClasses ecoreClass="ODL.ecore#//ODLOperator">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ODL.ecore#//ODLOperator/metadataList"/>
     </genClasses>

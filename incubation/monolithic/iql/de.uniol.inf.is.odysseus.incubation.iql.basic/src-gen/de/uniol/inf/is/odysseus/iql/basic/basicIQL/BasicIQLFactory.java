@@ -32,13 +32,13 @@ public interface BasicIQLFactory extends EFactory
   IQLFile createIQLFile();
 
   /**
-   * Returns a new object of class '<em>IQL Type Def</em>'.
+   * Returns a new object of class '<em>IQL Type Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Type Def</em>'.
+   * @return a new object of class '<em>IQL Type Definition</em>'.
    * @generated
    */
-  IQLTypeDef createIQLTypeDef();
+  IQLTypeDefinition createIQLTypeDefinition();
 
   /**
    * Returns a new object of class '<em>IQL Namespace</em>'.

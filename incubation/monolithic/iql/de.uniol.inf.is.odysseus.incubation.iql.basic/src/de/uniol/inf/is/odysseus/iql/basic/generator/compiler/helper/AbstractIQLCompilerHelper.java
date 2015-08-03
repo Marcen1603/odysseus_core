@@ -20,16 +20,21 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends IIQLTypeFactory> implements IIQLCompilerHelper{
+public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends IIQLTypeFactory,  U extends IIQLTypeUtils> implements IIQLCompilerHelper{
 
 	protected L lookUp;
 	
-	protected F factory;
+	protected F typeFactory;
+
+	protected U typeUtils;
+
 	
-	public AbstractIQLCompilerHelper(L lookUp, F factory) {
+	public AbstractIQLCompilerHelper(L lookUp, F typeFactory, U typeUtils) {
 		this.lookUp = lookUp;
-		this.factory = factory;
+		this.typeUtils = typeUtils;
+		this.typeFactory = typeFactory;
 	}
 	
 	@Override
@@ -106,7 +111,7 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 	@Override
 	public boolean isPublicAttribute(String name, JvmTypeReference typeRef, JvmTypeReference parameter) {
 		for (JvmField attr : lookUp.getPublicAttributes(typeRef, false)) {			
-			if (attr.getSimpleName().equalsIgnoreCase(name) && factory.getLongName(attr.getType(), true).equals(factory.getLongName(parameter, true))) {
+			if (attr.getSimpleName().equalsIgnoreCase(name) && typeUtils.getLongName(attr.getType(), true).equals(typeUtils.getLongName(parameter, true))) {
 				return true;
 			}
 		}		
@@ -118,8 +123,8 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 		for (JvmOperation op : lookUp.getPublicMethods(typeRef, false)) {
 			if (op.getSimpleName().equalsIgnoreCase("set"+property)) {
 				for (JvmFormalParameter p : op.getParameters()) {
-					String qName = factory.getLongName(p.getParameterType(), true);
-					String qName2 = factory.getLongName(parameter, true);
+					String qName = typeUtils.getLongName(p.getParameterType(), true);
+					String qName2 = typeUtils.getLongName(parameter, true);
 					if (qName.equals(qName2)) {
 						return true;
 					}

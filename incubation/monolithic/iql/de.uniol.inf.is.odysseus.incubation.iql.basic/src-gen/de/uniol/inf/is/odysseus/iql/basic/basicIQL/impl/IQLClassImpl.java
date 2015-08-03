@@ -5,15 +5,24 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
+
 import org.eclipse.xtext.common.types.JvmTypeReference;
+
+import org.eclipse.xtext.common.types.impl.JvmGenericTypeImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,12 +32,13 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLClassImpl#getExtendedClass <em>Extended Class</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLClassImpl#getExtendedInterfaces <em>Extended Interfaces</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class IQLClassImpl extends IQLTypeDefImpl implements IQLClass
+public class IQLClassImpl extends JvmGenericTypeImpl implements IQLClass
 {
   /**
    * The cached value of the '{@link #getExtendedClass() <em>Extended Class</em>}' containment reference.
@@ -39,6 +49,16 @@ public class IQLClassImpl extends IQLTypeDefImpl implements IQLClass
    * @ordered
    */
   protected JvmTypeReference extendedClass;
+
+  /**
+   * The cached value of the '{@link #getExtendedInterfaces() <em>Extended Interfaces</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExtendedInterfaces()
+   * @generated
+   * @ordered
+   */
+  protected EList<JvmTypeReference> extendedInterfaces;
 
   /**
    * <!-- begin-user-doc -->
@@ -114,6 +134,20 @@ public class IQLClassImpl extends IQLTypeDefImpl implements IQLClass
    * <!-- end-user-doc -->
    * @generated
    */
+  public EList<JvmTypeReference> getExtendedInterfaces()
+  {
+    if (extendedInterfaces == null)
+    {
+      extendedInterfaces = new EObjectContainmentEList<JvmTypeReference>(JvmTypeReference.class, this, BasicIQLPackage.IQL_CLASS__EXTENDED_INTERFACES);
+    }
+    return extendedInterfaces;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -121,6 +155,8 @@ public class IQLClassImpl extends IQLTypeDefImpl implements IQLClass
     {
       case BasicIQLPackage.IQL_CLASS__EXTENDED_CLASS:
         return basicSetExtendedClass(null, msgs);
+      case BasicIQLPackage.IQL_CLASS__EXTENDED_INTERFACES:
+        return ((InternalEList<?>)getExtendedInterfaces()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -137,6 +173,8 @@ public class IQLClassImpl extends IQLTypeDefImpl implements IQLClass
     {
       case BasicIQLPackage.IQL_CLASS__EXTENDED_CLASS:
         return getExtendedClass();
+      case BasicIQLPackage.IQL_CLASS__EXTENDED_INTERFACES:
+        return getExtendedInterfaces();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -146,6 +184,7 @@ public class IQLClassImpl extends IQLTypeDefImpl implements IQLClass
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -153,6 +192,10 @@ public class IQLClassImpl extends IQLTypeDefImpl implements IQLClass
     {
       case BasicIQLPackage.IQL_CLASS__EXTENDED_CLASS:
         setExtendedClass((JvmTypeReference)newValue);
+        return;
+      case BasicIQLPackage.IQL_CLASS__EXTENDED_INTERFACES:
+        getExtendedInterfaces().clear();
+        getExtendedInterfaces().addAll((Collection<? extends JvmTypeReference>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -171,6 +214,9 @@ public class IQLClassImpl extends IQLTypeDefImpl implements IQLClass
       case BasicIQLPackage.IQL_CLASS__EXTENDED_CLASS:
         setExtendedClass((JvmTypeReference)null);
         return;
+      case BasicIQLPackage.IQL_CLASS__EXTENDED_INTERFACES:
+        getExtendedInterfaces().clear();
+        return;
     }
     super.eUnset(featureID);
   }
@@ -187,6 +233,8 @@ public class IQLClassImpl extends IQLTypeDefImpl implements IQLClass
     {
       case BasicIQLPackage.IQL_CLASS__EXTENDED_CLASS:
         return extendedClass != null;
+      case BasicIQLPackage.IQL_CLASS__EXTENDED_INTERFACES:
+        return extendedInterfaces != null && !extendedInterfaces.isEmpty();
     }
     return super.eIsSet(featureID);
   }

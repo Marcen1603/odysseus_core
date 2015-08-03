@@ -12,31 +12,36 @@ import org.eclipse.xtext.common.types.JvmFormalParameter
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
+import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory
 
-abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, S extends IIQLStatementCompiler<G>, F extends IIQLTypeFactory> implements IIQLCompiler<G>{
+abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, S extends IIQLStatementCompiler<G>, F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLCompiler<G>{
 	
 	protected H helper;
 	
 	protected T typeCompiler;
+	
+	protected F typeFactory;
 		
 	protected S stmtCompiler;
 		
-	protected F factory;
+	protected U typeUtils;
 		
-	new (H helper, T typeCompiler, S stmtCompiler, F factory) {
+	new (H helper, T typeCompiler, S stmtCompiler, F typeFactory, U typeUtils) {
 		this.helper = helper;
 		this.typeCompiler = typeCompiler;
 		this.stmtCompiler = stmtCompiler;	
-		this.factory = factory;
+		this.typeUtils = typeUtils;
+		this.typeFactory = typeFactory;
 	}
 	
-	override compile(IQLClass c, G context) {
+	override compile(IQLTypeDefinition typeDef, IQLClass c, G context) {
 		var builder = new StringBuilder()
-		builder.append(compileClass(c, context))
+		builder.append(compileClass(typeDef, c, context))
 		for (String i : context.imports) {
 			builder.insert(0, "import "+ i+ ";"+System.lineSeparator)
 		}
@@ -44,7 +49,7 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 	}
 	
 	
-	def String compileClass(IQLClass c, G context) {
+	def String compileClass(IQLTypeDefinition typeDef, IQLClass c, G context) {
 		var name = c.simpleName;
 		var superClass = c.extendedClass;
 		var interfaces = c.extendedInterfaces;
@@ -53,7 +58,7 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 		var varStmts = helper.getVarStatements(c)
 		
 		'''
-		«FOR j : c.javametadata»
+		«FOR j : typeDef.javametadata»
 		«var text = NodeModelUtils.getTokenText(NodeModelUtils.getNode(j.text))»
 		«text»
 		«ENDFOR»
@@ -87,21 +92,21 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 		'''
 	}
 	
-	override compile(IQLInterface interf, G context) {
+	override compile(IQLTypeDefinition typeDef,IQLInterface interf, G context) {
 		var builder = new StringBuilder()
-		builder.append(compileInterface(interf, context))
+		builder.append(compileInterface(typeDef, interf, context))
 		for (String i : context.imports) {
 			builder.insert(0, "import "+ i+ ";")
 		}
 		builder.toString	
 	}
 	
-	def String compileInterface(IQLInterface i, G context) {
+	def String compileInterface(IQLTypeDefinition typeDef,IQLInterface i, G context) {
 		var name = i.simpleName;
 		var interfaces = i.extendedInterfaces;
 		'''
 		
-		«FOR j : i.javametadata»
+		«FOR j : typeDef.javametadata»
 		«var text = NodeModelUtils.getTokenText(NodeModelUtils.getNode(j.text))»
 		«text»
 		«ENDFOR»
@@ -147,6 +152,7 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 			returnT = typeCompiler.compile(m.returnType, context, false)
 		}
 		'''
+		«IF m.isOverride»@Override«ENDIF»
 		public «returnT» «m.simpleName»(«IF m.parameters != null»«m.parameters.map[p | compile(p, context)].join(", ")»«ENDIF»)
 		«stmtCompiler.compile(m.body, context)»
 		
@@ -168,11 +174,11 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 	def createGetterMethod(JvmTypeReference typeRef, IQLArgumentsMap map, G context) {
 		'''
 		
-		private «typeCompiler.compile(typeRef, context, false)» get«factory.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)» type, «map.elements.map[ el | compile(el, typeRef, context)].join(", ")») {
+		private «typeCompiler.compile(typeRef, context, false)» get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)» type, «map.elements.map[ el | compile(el, typeRef, context)].join(", ")») {
 			«FOR el :map.elements»
 				«var type = helper.getPropertyType(el.key, typeRef)»
 				«IF type !=null && helper.isSetter(el.key, typeRef, type)»
-					«var methodName = helper.getMethodName("set"+el.key, typeRef)»				
+					«var methodName = helper.getMethodName("set"+el.key, typeRef)»
 					type.«methodName»(«el.key»);
 				«ELSE»
 					type.«el.key» = «el.key»;

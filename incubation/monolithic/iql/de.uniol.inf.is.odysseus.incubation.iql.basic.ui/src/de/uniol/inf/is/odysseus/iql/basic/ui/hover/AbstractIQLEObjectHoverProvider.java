@@ -8,35 +8,35 @@ import javax.inject.Inject;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public abstract class AbstractIQLEObjectHoverProvider<F extends IIQLTypeFactory, L extends IIQLLookUp> extends DefaultEObjectHoverProvider {
+public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L extends IIQLLookUp> extends DefaultEObjectHoverProvider {
 
-	protected F typeFactory;
 	protected L lookUp;
+	protected U typeUtils;
 
 	@Inject
 	private IQLQualifiedNameConverter converter;
 	
-	public AbstractIQLEObjectHoverProvider(F typeFactory, L lookUp) {
-		this.typeFactory = typeFactory;
+	public AbstractIQLEObjectHoverProvider(U typeUtils, L lookUp) {
+		this.typeUtils = typeUtils;
 		this.lookUp = lookUp;
 	}
 	
 	@Override
 	public String getFirstLine(EObject object) {
-		if (object instanceof IQLAttribute) {
-			return getFirstLineIQLAttribute((IQLAttribute) object);
+		if (object instanceof JvmField) {
+			return getFirstLineJvmField((JvmField) object);
 		} else if (object instanceof IQLArgumentsMapKeyValue) {
 			return getFirstLineIQLArgumentsMapKeyValue((IQLArgumentsMapKeyValue) object);
 		}else {
@@ -63,13 +63,13 @@ public abstract class AbstractIQLEObjectHoverProvider<F extends IIQLTypeFactory,
 		return keyValue.getKey() + " : "+"";
 	}
 	
-	protected String getFirstLineIQLAttribute(IQLAttribute attr) {
+	protected String getFirstLineJvmField(JvmField attr) {
 		return attr.getSimpleName()+ " : "+toString(attr.getType());
 	}
 	
 	private String toString(JvmTypeReference typeRef) {
 		StringBuilder b = new StringBuilder();
-		b.append(converter.toDisplayString(typeFactory.getShortName(typeRef, true)));
+		b.append(converter.toDisplayString(typeUtils.getShortName(typeRef, true)));
 		return b.toString();
 	}
 

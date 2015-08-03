@@ -32,6 +32,6 @@ public class ODLProposalProvider extends AbstractBasicIQLProposalProvider {
 	
 	@Override
 	protected Function<IEObjectDescription, ICompletionProposal> getProposalFactory(String ruleName, ContentAssistContext contentAssistContext) {		
-		return new ODLProposalCreator(factory, contentAssistContext, ruleName, converter, getValueConverter(), getLabelProvider(), getPriorityHelper(), getHover(), getConflictHelper());
+		return new ODLProposalBuilder(factory, contentAssistContext, ruleName, converter, getValueConverter(), getLabelProvider(), getPriorityHelper(), getHover(), getConflictHelper());
 	}
 }

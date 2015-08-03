@@ -5,7 +5,7 @@ package de.uniol.inf.is.odysseus.iql.odl.oDL.util;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 
 import de.uniol.inf.is.odysseus.iql.odl.oDL.*;
 
@@ -98,6 +98,11 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
         return createODLFileAdapter();
       }
       @Override
+      public Adapter caseODLTypeDefinition(ODLTypeDefinition object)
+      {
+        return createODLTypeDefinitionAdapter();
+      }
+      @Override
       public Adapter caseODLOperator(ODLOperator object)
       {
         return createODLOperatorAdapter();
@@ -116,6 +121,11 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseIQLFile(IQLFile object)
       {
         return createIQLFileAdapter();
+      }
+      @Override
+      public Adapter caseIQLTypeDefinition(IQLTypeDefinition object)
+      {
+        return createIQLTypeDefinitionAdapter();
       }
       @Override
       public Adapter caseJvmIdentifiableElement(JvmIdentifiableElement object)
@@ -156,11 +166,6 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseJvmGenericType(JvmGenericType object)
       {
         return createJvmGenericTypeAdapter();
-      }
-      @Override
-      public Adapter caseIQLTypeDef(IQLTypeDef object)
-      {
-        return createIQLTypeDefAdapter();
       }
       @Override
       public Adapter caseJvmFeature(JvmFeature object)
@@ -230,6 +235,21 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLTypeDefinition <em>Type Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLTypeDefinition
+   * @generated
+   */
+  public Adapter createODLTypeDefinitionAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator <em>Operator</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -285,6 +305,21 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIQLFileAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition <em>IQL Type Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
+   * @generated
+   */
+  public Adapter createIQLTypeDefinitionAdapter()
   {
     return null;
   }
@@ -405,21 +440,6 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createJvmGenericTypeAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef <em>IQL Type Def</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef
-   * @generated
-   */
-  public Adapter createIQLTypeDefAdapter()
   {
     return null;
   }

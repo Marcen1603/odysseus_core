@@ -17,8 +17,6 @@ public interface IIQLExpressionCompiler<G extends IIQLGeneratorContext> {
 	String compile(IQLArgumentsList list, G context);
 	
 	String compile(IQLArgumentsList list, EList<JvmFormalParameter> parameters, G context);
-
-	String compile(IQLArgumentsMap map, G context);
 	
 	String compile(IQLArgumentsMap map, JvmTypeReference type, G context);
 

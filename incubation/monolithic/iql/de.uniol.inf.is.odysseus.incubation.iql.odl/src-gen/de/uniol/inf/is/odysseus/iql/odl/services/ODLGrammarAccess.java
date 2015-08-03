@@ -25,13 +25,13 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cNamespacesAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNamespacesIQLNamespaceParserRuleCall_1_0 = (RuleCall)cNamespacesAssignment_1.eContents().get(0);
 		private final Assignment cElementsAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cElementsODLTypeDefsParserRuleCall_2_0 = (RuleCall)cElementsAssignment_2.eContents().get(0);
+		private final RuleCall cElementsODLTypeDefinitionParserRuleCall_2_0 = (RuleCall)cElementsAssignment_2.eContents().get(0);
 		
 		//ODLFile returns iql::IQLFile:
-		//	{ODLFile} namespaces+=IQLNamespace* elements+=ODLTypeDefs*;
+		//	{ODLFile} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*;
 		public ParserRule getRule() { return rule; }
 
-		//{ODLFile} namespaces+=IQLNamespace* elements+=ODLTypeDefs*
+		//{ODLFile} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*
 		public Group getGroup() { return cGroup; }
 
 		//{ODLFile}
@@ -43,72 +43,34 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		//IQLNamespace
 		public RuleCall getNamespacesIQLNamespaceParserRuleCall_1_0() { return cNamespacesIQLNamespaceParserRuleCall_1_0; }
 
-		//elements+=ODLTypeDefs*
+		//elements+=ODLTypeDefinition*
 		public Assignment getElementsAssignment_2() { return cElementsAssignment_2; }
 
-		//ODLTypeDefs
-		public RuleCall getElementsODLTypeDefsParserRuleCall_2_0() { return cElementsODLTypeDefsParserRuleCall_2_0; }
+		//ODLTypeDefinition
+		public RuleCall getElementsODLTypeDefinitionParserRuleCall_2_0() { return cElementsODLTypeDefinitionParserRuleCall_2_0; }
 	}
 
-	public class ODLTypeDefsElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ODLTypeDefs");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cIQLClassParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final RuleCall cIQLInterfaceParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		private final RuleCall cODLOperatorParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
-		
-		//ODLTypeDefs returns iql::IQLTypeDef:
-		//	IQLClass | => IQLInterface | ODLOperator;
-		public ParserRule getRule() { return rule; }
-
-		//=> IQLClass | => IQLInterface | ODLOperator
-		public Alternatives getAlternatives() { return cAlternatives; }
-
-		//=> IQLClass
-		public RuleCall getIQLClassParserRuleCall_0() { return cIQLClassParserRuleCall_0; }
-
-		//=> IQLInterface
-		public RuleCall getIQLInterfaceParserRuleCall_1() { return cIQLInterfaceParserRuleCall_1; }
-
-		//ODLOperator
-		public RuleCall getODLOperatorParserRuleCall_2() { return cODLOperatorParserRuleCall_2; }
-	}
-
-	public class ODLOperatorElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ODLOperator");
+	public class ODLTypeDefinitionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ODLTypeDefinition");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cODLOperatorAction_0 = (Action)cGroup.eContents().get(0);
+		private final Action cODLTypeDefinitionAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cJavametadataAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cJavametadataIQLJavaMetadataParserRuleCall_1_0 = (RuleCall)cJavametadataAssignment_1.eContents().get(0);
-		private final Keyword cOperatorKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Assignment cSimpleNameAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cSimpleNameIDTerminalRuleCall_3_0 = (RuleCall)cSimpleNameAssignment_3.eContents().get(0);
-		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
-		private final Keyword cLeftParenthesisKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cMetadataListAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cMetadataListIQLMetadataListParserRuleCall_4_1_0 = (RuleCall)cMetadataListAssignment_4_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_4_2 = (Keyword)cGroup_4.eContents().get(2);
-		private final Keyword cLeftCurlyBracketKeyword_5 = (Keyword)cGroup.eContents().get(5);
-		private final Assignment cMembersAssignment_6 = (Assignment)cGroup.eContents().get(6);
-		private final Alternatives cMembersAlternatives_6_0 = (Alternatives)cMembersAssignment_6.eContents().get(0);
-		private final RuleCall cMembersIQLAttributeParserRuleCall_6_0_0 = (RuleCall)cMembersAlternatives_6_0.eContents().get(0);
-		private final RuleCall cMembersIQLMethodParserRuleCall_6_0_1 = (RuleCall)cMembersAlternatives_6_0.eContents().get(1);
-		private final RuleCall cMembersODLParameterParserRuleCall_6_0_2 = (RuleCall)cMembersAlternatives_6_0.eContents().get(2);
-		private final RuleCall cMembersODLMethodParserRuleCall_6_0_3 = (RuleCall)cMembersAlternatives_6_0.eContents().get(3);
-		private final RuleCall cMembersIQLJavaMemberParserRuleCall_6_0_4 = (RuleCall)cMembersAlternatives_6_0.eContents().get(4);
-		private final Keyword cRightCurlyBracketKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Assignment cInnerAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final Alternatives cInnerAlternatives_2_0 = (Alternatives)cInnerAssignment_2.eContents().get(0);
+		private final RuleCall cInnerIQLClassParserRuleCall_2_0_0 = (RuleCall)cInnerAlternatives_2_0.eContents().get(0);
+		private final RuleCall cInnerIQLInterfaceParserRuleCall_2_0_1 = (RuleCall)cInnerAlternatives_2_0.eContents().get(1);
+		private final RuleCall cInnerODLOperatorParserRuleCall_2_0_2 = (RuleCall)cInnerAlternatives_2_0.eContents().get(2);
 		
-		//ODLOperator returns iql::IQLTypeDef:
-		//	{ODLOperator} javametadata+=IQLJavaMetadata* "operator" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? "{"
-		//	members+=(IQLAttribute | IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)* "}";
+		//ODLTypeDefinition returns iql::IQLTypeDefinition:
+		//	{ODLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator);
 		public ParserRule getRule() { return rule; }
 
-		//{ODLOperator} javametadata+=IQLJavaMetadata* "operator" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? "{"
-		//members+=(IQLAttribute | IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)* "}"
+		//{ODLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator)
 		public Group getGroup() { return cGroup; }
 
-		//{ODLOperator}
-		public Action getODLOperatorAction_0() { return cODLOperatorAction_0; }
+		//{ODLTypeDefinition}
+		public Action getODLTypeDefinitionAction_0() { return cODLTypeDefinitionAction_0; }
 
 		//javametadata+=IQLJavaMetadata*
 		public Assignment getJavametadataAssignment_1() { return cJavametadataAssignment_1; }
@@ -116,56 +78,106 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		//IQLJavaMetadata
 		public RuleCall getJavametadataIQLJavaMetadataParserRuleCall_1_0() { return cJavametadataIQLJavaMetadataParserRuleCall_1_0; }
 
+		//inner=(IQLClass | IQLInterface | ODLOperator)
+		public Assignment getInnerAssignment_2() { return cInnerAssignment_2; }
+
+		//IQLClass | IQLInterface | ODLOperator
+		public Alternatives getInnerAlternatives_2_0() { return cInnerAlternatives_2_0; }
+
+		//IQLClass
+		public RuleCall getInnerIQLClassParserRuleCall_2_0_0() { return cInnerIQLClassParserRuleCall_2_0_0; }
+
+		//IQLInterface
+		public RuleCall getInnerIQLInterfaceParserRuleCall_2_0_1() { return cInnerIQLInterfaceParserRuleCall_2_0_1; }
+
+		//ODLOperator
+		public RuleCall getInnerODLOperatorParserRuleCall_2_0_2() { return cInnerODLOperatorParserRuleCall_2_0_2; }
+	}
+
+	public class ODLOperatorElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ODLOperator");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cODLOperatorAction_0 = (Action)cGroup.eContents().get(0);
+		private final Keyword cOperatorKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cSimpleNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cSimpleNameIDTerminalRuleCall_2_0 = (RuleCall)cSimpleNameAssignment_2.eContents().get(0);
+		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
+		private final Keyword cLeftParenthesisKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cMetadataListAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
+		private final RuleCall cMetadataListIQLMetadataListParserRuleCall_3_1_0 = (RuleCall)cMetadataListAssignment_3_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_3_2 = (Keyword)cGroup_3.eContents().get(2);
+		private final Keyword cLeftCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		private final Assignment cMembersAssignment_5 = (Assignment)cGroup.eContents().get(5);
+		private final Alternatives cMembersAlternatives_5_0 = (Alternatives)cMembersAssignment_5.eContents().get(0);
+		private final RuleCall cMembersIQLAttributeParserRuleCall_5_0_0 = (RuleCall)cMembersAlternatives_5_0.eContents().get(0);
+		private final RuleCall cMembersIQLMethodParserRuleCall_5_0_1 = (RuleCall)cMembersAlternatives_5_0.eContents().get(1);
+		private final RuleCall cMembersODLParameterParserRuleCall_5_0_2 = (RuleCall)cMembersAlternatives_5_0.eContents().get(2);
+		private final RuleCall cMembersODLMethodParserRuleCall_5_0_3 = (RuleCall)cMembersAlternatives_5_0.eContents().get(3);
+		private final RuleCall cMembersIQLJavaMemberParserRuleCall_5_0_4 = (RuleCall)cMembersAlternatives_5_0.eContents().get(4);
+		private final Keyword cRightCurlyBracketKeyword_6 = (Keyword)cGroup.eContents().get(6);
+		
+		//ODLOperator returns types::JvmGenericType:
+		//	{ODLOperator} "operator" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? "{" members+=(IQLAttribute |
+		//	IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)* "}";
+		public ParserRule getRule() { return rule; }
+
+		//{ODLOperator} "operator" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? "{" members+=(IQLAttribute | IQLMethod |
+		//ODLParameter | ODLMethod | IQLJavaMember)* "}"
+		public Group getGroup() { return cGroup; }
+
+		//{ODLOperator}
+		public Action getODLOperatorAction_0() { return cODLOperatorAction_0; }
+
 		//"operator"
-		public Keyword getOperatorKeyword_2() { return cOperatorKeyword_2; }
+		public Keyword getOperatorKeyword_1() { return cOperatorKeyword_1; }
 
 		//simpleName=ID
-		public Assignment getSimpleNameAssignment_3() { return cSimpleNameAssignment_3; }
+		public Assignment getSimpleNameAssignment_2() { return cSimpleNameAssignment_2; }
 
 		//ID
-		public RuleCall getSimpleNameIDTerminalRuleCall_3_0() { return cSimpleNameIDTerminalRuleCall_3_0; }
+		public RuleCall getSimpleNameIDTerminalRuleCall_2_0() { return cSimpleNameIDTerminalRuleCall_2_0; }
 
 		//("(" metadataList=IQLMetadataList? ")")?
-		public Group getGroup_4() { return cGroup_4; }
+		public Group getGroup_3() { return cGroup_3; }
 
 		//"("
-		public Keyword getLeftParenthesisKeyword_4_0() { return cLeftParenthesisKeyword_4_0; }
+		public Keyword getLeftParenthesisKeyword_3_0() { return cLeftParenthesisKeyword_3_0; }
 
 		//metadataList=IQLMetadataList?
-		public Assignment getMetadataListAssignment_4_1() { return cMetadataListAssignment_4_1; }
+		public Assignment getMetadataListAssignment_3_1() { return cMetadataListAssignment_3_1; }
 
 		//IQLMetadataList
-		public RuleCall getMetadataListIQLMetadataListParserRuleCall_4_1_0() { return cMetadataListIQLMetadataListParserRuleCall_4_1_0; }
+		public RuleCall getMetadataListIQLMetadataListParserRuleCall_3_1_0() { return cMetadataListIQLMetadataListParserRuleCall_3_1_0; }
 
 		//")"
-		public Keyword getRightParenthesisKeyword_4_2() { return cRightParenthesisKeyword_4_2; }
+		public Keyword getRightParenthesisKeyword_3_2() { return cRightParenthesisKeyword_3_2; }
 
 		//"{"
-		public Keyword getLeftCurlyBracketKeyword_5() { return cLeftCurlyBracketKeyword_5; }
+		public Keyword getLeftCurlyBracketKeyword_4() { return cLeftCurlyBracketKeyword_4; }
 
 		//members+=(IQLAttribute | IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)*
-		public Assignment getMembersAssignment_6() { return cMembersAssignment_6; }
+		public Assignment getMembersAssignment_5() { return cMembersAssignment_5; }
 
 		//IQLAttribute | IQLMethod | ODLParameter | ODLMethod | IQLJavaMember
-		public Alternatives getMembersAlternatives_6_0() { return cMembersAlternatives_6_0; }
+		public Alternatives getMembersAlternatives_5_0() { return cMembersAlternatives_5_0; }
 
 		//IQLAttribute
-		public RuleCall getMembersIQLAttributeParserRuleCall_6_0_0() { return cMembersIQLAttributeParserRuleCall_6_0_0; }
+		public RuleCall getMembersIQLAttributeParserRuleCall_5_0_0() { return cMembersIQLAttributeParserRuleCall_5_0_0; }
 
 		//IQLMethod
-		public RuleCall getMembersIQLMethodParserRuleCall_6_0_1() { return cMembersIQLMethodParserRuleCall_6_0_1; }
+		public RuleCall getMembersIQLMethodParserRuleCall_5_0_1() { return cMembersIQLMethodParserRuleCall_5_0_1; }
 
 		//ODLParameter
-		public RuleCall getMembersODLParameterParserRuleCall_6_0_2() { return cMembersODLParameterParserRuleCall_6_0_2; }
+		public RuleCall getMembersODLParameterParserRuleCall_5_0_2() { return cMembersODLParameterParserRuleCall_5_0_2; }
 
 		//ODLMethod
-		public RuleCall getMembersODLMethodParserRuleCall_6_0_3() { return cMembersODLMethodParserRuleCall_6_0_3; }
+		public RuleCall getMembersODLMethodParserRuleCall_5_0_3() { return cMembersODLMethodParserRuleCall_5_0_3; }
 
 		//IQLJavaMember
-		public RuleCall getMembersIQLJavaMemberParserRuleCall_6_0_4() { return cMembersIQLJavaMemberParserRuleCall_6_0_4; }
+		public RuleCall getMembersIQLJavaMemberParserRuleCall_5_0_4() { return cMembersIQLJavaMemberParserRuleCall_5_0_4; }
 
 		//"}"
-		public Keyword getRightCurlyBracketKeyword_7() { return cRightCurlyBracketKeyword_7; }
+		public Keyword getRightCurlyBracketKeyword_6() { return cRightCurlyBracketKeyword_6; }
 	}
 
 	public class ODLParameterElements extends AbstractParserRuleElementFinder {
@@ -367,7 +379,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	
 	private final ODLFileElements pODLFile;
-	private final ODLTypeDefsElements pODLTypeDefs;
+	private final ODLTypeDefinitionElements pODLTypeDefinition;
 	private final ODLOperatorElements pODLOperator;
 	private final ODLParameterElements pODLParameter;
 	private final ODLMethodElements pODLMethod;
@@ -382,7 +394,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		this.grammar = internalFindGrammar(grammarProvider);
 		this.gaBasicIQL = gaBasicIQL;
 		this.pODLFile = new ODLFileElements();
-		this.pODLTypeDefs = new ODLTypeDefsElements();
+		this.pODLTypeDefinition = new ODLTypeDefinitionElements();
 		this.pODLOperator = new ODLOperatorElements();
 		this.pODLParameter = new ODLParameterElements();
 		this.pODLMethod = new ODLMethodElements();
@@ -416,7 +428,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//ODLFile returns iql::IQLFile:
-	//	{ODLFile} namespaces+=IQLNamespace* elements+=ODLTypeDefs*;
+	//	{ODLFile} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*;
 	public ODLFileElements getODLFileAccess() {
 		return pODLFile;
 	}
@@ -425,19 +437,19 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getODLFileAccess().getRule();
 	}
 
-	//ODLTypeDefs returns iql::IQLTypeDef:
-	//	IQLClass | => IQLInterface | ODLOperator;
-	public ODLTypeDefsElements getODLTypeDefsAccess() {
-		return pODLTypeDefs;
+	//ODLTypeDefinition returns iql::IQLTypeDefinition:
+	//	{ODLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator);
+	public ODLTypeDefinitionElements getODLTypeDefinitionAccess() {
+		return pODLTypeDefinition;
 	}
 	
-	public ParserRule getODLTypeDefsRule() {
-		return getODLTypeDefsAccess().getRule();
+	public ParserRule getODLTypeDefinitionRule() {
+		return getODLTypeDefinitionAccess().getRule();
 	}
 
-	//ODLOperator returns iql::IQLTypeDef:
-	//	{ODLOperator} javametadata+=IQLJavaMetadata* "operator" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? "{"
-	//	members+=(IQLAttribute | IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)* "}";
+	//ODLOperator returns types::JvmGenericType:
+	//	{ODLOperator} "operator" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? "{" members+=(IQLAttribute |
+	//	IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)* "}";
 	public ODLOperatorElements getODLOperatorAccess() {
 		return pODLOperator;
 	}
@@ -469,7 +481,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLFile:
-	//	("namespace" name=QualifiedName ";")? namespaces+=IQLNamespace* elements+=IQLTypeDefs*;
+	//	("namespace" name=QualifiedName ";")? namespaces+=IQLNamespace* elements+=IQLTypeDefinition*;
 	public BasicIQLGrammarAccess.IQLFileElements getIQLFileAccess() {
 		return gaBasicIQL.getIQLFileAccess();
 	}
@@ -478,14 +490,14 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLFileAccess().getRule();
 	}
 
-	//IQLTypeDefs returns IQLTypeDef:
-	//	IQLClass | IQLInterface;
-	public BasicIQLGrammarAccess.IQLTypeDefsElements getIQLTypeDefsAccess() {
-		return gaBasicIQL.getIQLTypeDefsAccess();
+	//IQLTypeDefinition:
+	//	{IQLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface);
+	public BasicIQLGrammarAccess.IQLTypeDefinitionElements getIQLTypeDefinitionAccess() {
+		return gaBasicIQL.getIQLTypeDefinitionAccess();
 	}
 	
-	public ParserRule getIQLTypeDefsRule() {
-		return getIQLTypeDefsAccess().getRule();
+	public ParserRule getIQLTypeDefinitionRule() {
+		return getIQLTypeDefinitionAccess().getRule();
 	}
 
 	//IQLNamespace:
@@ -498,10 +510,10 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLNamespaceAccess().getRule();
 	}
 
-	//IQLClass returns IQLTypeDef:
-	//	{IQLClass} javametadata+=IQLJavaMetadata* "class" simpleName=ID ("extends" extendedClass=JvmTypeReference)?
-	//	("implements" extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)? "{"
-	//	members+=(IQLAttribute | IQLMethod | IQLJavaMember)* "}";
+	//IQLClass returns types::JvmGenericType:
+	//	{IQLClass} "class" simpleName=ID ("extends" extendedClass=JvmTypeReference)? ("implements"
+	//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)? "{" members+=(IQLAttribute |
+	//	IQLMethod | IQLJavaMember)* "}";
 	public BasicIQLGrammarAccess.IQLClassElements getIQLClassAccess() {
 		return gaBasicIQL.getIQLClassAccess();
 	}
@@ -510,26 +522,15 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLClassAccess().getRule();
 	}
 
-	//IQLInterface returns IQLTypeDef:
-	//	{IQLInterface} javametadata+=IQLJavaMetadata* "interface" simpleName=ID ("extends"
-	//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)? "{"
-	//	members+=(IQLMethodDeclarationMember | IQLJavaMember)* "}";
+	//IQLInterface returns types::JvmGenericType:
+	//	{IQLInterface} "interface" simpleName=ID ("extends" extendedInterfaces+=JvmTypeReference (","
+	//	extendedInterfaces+=JvmTypeReference)?)? "{" members+=(IQLMethodDeclarationMember | IQLJavaMember)* "}";
 	public BasicIQLGrammarAccess.IQLInterfaceElements getIQLInterfaceAccess() {
 		return gaBasicIQL.getIQLInterfaceAccess();
 	}
 	
 	public ParserRule getIQLInterfaceRule() {
 		return getIQLInterfaceAccess().getRule();
-	}
-
-	//IQLTypeDef returns types::JvmGenericType:
-	//	{IQLTypeDef};
-	public BasicIQLGrammarAccess.IQLTypeDefElements getIQLTypeDefAccess() {
-		return gaBasicIQL.getIQLTypeDefAccess();
-	}
-	
-	public ParserRule getIQLTypeDefRule() {
-		return getIQLTypeDefAccess().getRule();
 	}
 
 	//IQLJavaMetadata:
@@ -636,8 +637,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMethod returns types::JvmOperation:
-	//	{IQLMethod} simpleName=ID ("(" (parameters+=JvmFormalParameter ("," parameters+=JvmFormalParameter)*)? ")")? (":"
-	//	returnType=JvmTypeReference)? body=IQLStatementBlock;
+	//	{IQLMethod} override?="override"? simpleName=ID ("(" (parameters+=JvmFormalParameter (","
+	//	parameters+=JvmFormalParameter)*)? ")")? (":" returnType=JvmTypeReference)? body=IQLStatementBlock;
 	public BasicIQLGrammarAccess.IQLMethodElements getIQLMethodAccess() {
 		return gaBasicIQL.getIQLMethodAccess();
 	}

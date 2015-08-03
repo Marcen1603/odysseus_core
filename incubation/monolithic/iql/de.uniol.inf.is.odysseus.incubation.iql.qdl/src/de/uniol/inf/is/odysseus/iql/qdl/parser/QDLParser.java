@@ -7,7 +7,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.HashSet;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,18 +30,19 @@ import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.services.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 
-public class QDLParser extends AbstractIQLParser<QDLTypeFactory> {
+public class QDLParser extends AbstractIQLParser<QDLTypeFactory, QDLTypeUtils> {
 	
 	private static final String LANGUAGE_NAME = "de.uniol.inf.is.odysseus.iql.qdl.QDL";
 	private static final String QUERIES_DIR = "queries";
 	
 	
 	@Inject
-	public QDLParser(QDLTypeFactory typeFactory) {
-		super(typeFactory);
+	public QDLParser(QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+		super(typeFactory, typeUtils);
 	}
 	
 	@Inject

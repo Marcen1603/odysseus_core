@@ -65,7 +65,7 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
     switch (eClass.getClassifierID())
     {
       case BasicIQLPackage.IQL_FILE: return createIQLFile();
-      case BasicIQLPackage.IQL_TYPE_DEF: return createIQLTypeDef();
+      case BasicIQLPackage.IQL_TYPE_DEFINITION: return createIQLTypeDefinition();
       case BasicIQLPackage.IQL_NAMESPACE: return createIQLNamespace();
       case BasicIQLPackage.IQL_JAVA_METADATA: return createIQLJavaMetadata();
       case BasicIQLPackage.IQL_SIMPLE_TYPE_REF: return createIQLSimpleTypeRef();
@@ -171,10 +171,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLTypeDef createIQLTypeDef()
+  public IQLTypeDefinition createIQLTypeDefinition()
   {
-    IQLTypeDefImpl iqlTypeDef = new IQLTypeDefImpl();
-    return iqlTypeDef;
+    IQLTypeDefinitionImpl iqlTypeDefinition = new IQLTypeDefinitionImpl();
+    return iqlTypeDefinition;
   }
 
   /**

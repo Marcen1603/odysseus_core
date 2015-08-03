@@ -25,6 +25,16 @@ public abstract class AbstractODLAO extends AbstractLogicalOperator implements I
 	
 	public AbstractODLAO(AbstractODLAO ao) {
 		super(ao);
+		
+	}
+	
+	@Override
+	public boolean isAllPhysicalInputSet() {
+		return super.isAllPhysicalInputSet() && validate();
+	}
+	
+	protected boolean validate() {
+		return true;
 	}
 	
 	@Override

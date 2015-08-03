@@ -14,9 +14,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLFile/namespaces"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLFile/elements"/>
     </genClasses>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLTypeDef">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTypeDef/javametadata"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTypeDef/extendedInterfaces"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLTypeDefinition">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTypeDefinition/javametadata"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTypeDefinition/inner"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLNamespace">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLNamespace/importedNamespace"/>
@@ -84,12 +84,16 @@
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLClass">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLClass/extendedClass"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLClass/extendedInterfaces"/>
     </genClasses>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLInterface"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLInterface">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLInterface/extendedInterfaces"/>
+    </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLAttribute">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLAttribute/init"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLMethod">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMethod/override"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMethod/body"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLMethodDeclarationMember"/>

@@ -3,7 +3,8 @@
 package de.uniol.inf.is.odysseus.iql.odl.oDL;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
+
+import org.eclipse.xtext.common.types.JvmGenericType;
 
 /**
  * <!-- begin-user-doc -->
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
  * @model
  * @generated
  */
-public interface ODLOperator extends IQLTypeDef
+public interface ODLOperator extends JvmGenericType
 {
   /**
    * Returns the value of the '<em><b>Metadata List</b></em>' containment reference.

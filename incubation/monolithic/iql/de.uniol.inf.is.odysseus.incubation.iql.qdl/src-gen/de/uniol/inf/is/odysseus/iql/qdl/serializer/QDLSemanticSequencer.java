@@ -80,7 +80,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionSuper;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionThis;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
@@ -91,6 +91,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFile;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.qdl.services.QDLGrammarAccess;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
@@ -257,9 +258,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				}
 				else break;
 			case BasicIQLPackage.IQL_CLASS:
-				if(context == grammarAccess.getIQLClassRule() ||
-				   context == grammarAccess.getIQLTypeDefsRule() ||
-				   context == grammarAccess.getQDLTypeDefsRule()) {
+				if(context == grammarAccess.getIQLClassRule()) {
 					sequence_IQLClass(context, (IQLClass) semanticObject); 
 					return; 
 				}
@@ -359,9 +358,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				}
 				else break;
 			case BasicIQLPackage.IQL_INTERFACE:
-				if(context == grammarAccess.getIQLInterfaceRule() ||
-				   context == grammarAccess.getIQLTypeDefsRule() ||
-				   context == grammarAccess.getQDLTypeDefsRule()) {
+				if(context == grammarAccess.getIQLInterfaceRule()) {
 					sequence_IQLInterface(context, (IQLInterface) semanticObject); 
 					return; 
 				}
@@ -1235,9 +1232,9 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_TYPE_DEF:
-				if(context == grammarAccess.getIQLTypeDefRule()) {
-					sequence_IQLTypeDef(context, (IQLTypeDef) semanticObject); 
+			case BasicIQLPackage.IQL_TYPE_DEFINITION:
+				if(context == grammarAccess.getIQLTypeDefinitionRule()) {
+					sequence_IQLTypeDefinition(context, (IQLTypeDefinition) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1298,9 +1295,14 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				}
 				else break;
 			case QDLPackage.QDL_QUERY:
-				if(context == grammarAccess.getQDLQueryRule() ||
-				   context == grammarAccess.getQDLTypeDefsRule()) {
+				if(context == grammarAccess.getQDLQueryRule()) {
 					sequence_QDLQuery(context, (QDLQuery) semanticObject); 
+					return; 
+				}
+				else break;
+			case QDLPackage.QDL_TYPE_DEFINITION:
+				if(context == grammarAccess.getQDLTypeDefinitionRule()) {
+					sequence_QDLTypeDefinition(context, (QDLTypeDefinition) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1384,7 +1386,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (namespaces+=IQLNamespace* elements+=QDLTypeDefs*)
+	 *     (namespaces+=IQLNamespace* elements+=QDLTypeDefinition*)
 	 */
 	protected void sequence_QDLFile(EObject context, QDLFile semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1393,9 +1395,18 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (javametadata+=IQLJavaMetadata* simpleName=ID metadataList=IQLMetadataList? statements=IQLStatementBlock)
+	 *     (simpleName=ID metadataList=IQLMetadataList? statements=IQLStatementBlock)
 	 */
 	protected void sequence_QDLQuery(EObject context, QDLQuery semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (javametadata+=IQLJavaMetadata* (inner=IQLClass | inner=IQLInterface | inner=QDLQuery))
+	 */
+	protected void sequence_QDLTypeDefinition(EObject context, QDLTypeDefinition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 }

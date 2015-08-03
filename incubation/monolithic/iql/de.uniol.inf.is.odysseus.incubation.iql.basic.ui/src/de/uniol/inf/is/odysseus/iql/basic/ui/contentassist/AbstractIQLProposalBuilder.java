@@ -6,11 +6,9 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.common.types.JvmField;
-import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmPrimitiveType;
-import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.conversion.IValueConverter;
 import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -23,6 +21,10 @@ import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 
 import com.google.common.base.Function;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttributeSelection;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
@@ -76,96 +78,30 @@ public class AbstractIQLProposalBuilder implements Function<IEObjectDescription,
 	public ICompletionProposal apply(IEObjectDescription candidate) {
 		EObject obj = candidate.getEObjectOrProxy();
 		
-		if (obj instanceof JvmOperation) {
+		if (obj instanceof JvmField) {
 			return null;
-		} else if (obj instanceof JvmField) {
+		} else if (obj instanceof JvmOperation) {
 			return null;
 		} else if (obj instanceof IQLVariableDeclaration) {
 			return null;
+		} else if (obj instanceof IQLMethodSelection) {
+			return null;
+		} else if (obj instanceof IQLAttributeSelection) {
+			return null;
+		} else if (obj instanceof IQLTerminalExpressionMethod) {
+			return null;
+		} else if (obj instanceof IQLTerminalExpressionVariable) {
+			return null;
 		} else if (obj instanceof JvmGenericType) {
 			return null;
-		} else if (obj instanceof JvmPrimitiveType) {
+		} else {
 			return apply((JvmPrimitiveType) obj, candidate);
-		}else {
-			return null;
 		}
 	}
 	public ICompletionProposal apply(JvmPrimitiveType type, IEObjectDescription candidate) {
 		return defaultApply(candidate, type.getSimpleName(), new StyledString(type.getSimpleName()));
 	}
 	
-	public ICompletionProposal apply(JvmGenericType type, IEObjectDescription candidate) {
-		StringBuilder b = new StringBuilder();
-		String simpleName = factory.getShortName(type, false);
-		String qualifiedName = converter.toDisplayString(factory.getLongName(type, false));
-		if (simpleName.equals(qualifiedName)) {
-			b.append(simpleName);	
-		} else {
-			b.append(simpleName+" - "+qualifiedName);	
-		}
-		
-		return defaultApply(candidate, simpleName, getStyledDisplayString(type, qualifiedName, simpleName));
-	}
-
-	
-	public ICompletionProposal apply(JvmOperation method, IEObjectDescription candidate) {
-		String simpleName = method.getSimpleName();
-
-		StringBuilder b = new StringBuilder();
-		b.append(method.getSimpleName());
-		b.append("(");
-		if (method.getParameters() != null) {
-			for (int i = 0; i<method.getParameters().size(); i++) {
-				if (i > 0) {
-					b.append(", ");
-				}
-				b.append(toString(method.getParameters().get(i)));
-			}
-		}
-		b.append(")");
-		if (method.getReturnType()!= null) {
-			b.append(" : " +toString(method.getReturnType()));
-		}		
-		return defaultApply(candidate, simpleName, new StyledString(b.toString()));
-	}
-	
-	public ICompletionProposal apply(JvmField field, IEObjectDescription candidate) {
-		String simpleName = field.getSimpleName();
-
-		StringBuilder b = new StringBuilder();
-		b.append(field.getSimpleName());
-		if (field.getType()!= null) {
-			b.append(" : " +toString(field.getType()));
-		}		
-		return defaultApply(candidate, simpleName, new StyledString(b.toString()));
-	}
-	
-	
-	public ICompletionProposal apply(IQLVariableDeclaration decl, IEObjectDescription candidate) {
-		String simpleName = decl.getName();
-
-		StringBuilder b = new StringBuilder();
-		b.append(decl.getName());
-		b.append(" : " +toString(decl.getRef()));
-		return defaultApply(candidate, simpleName, new StyledString(b.toString()));
-	}
-	
-
-	protected String toString(JvmTypeReference typeRef) {		
-		StringBuilder b = new StringBuilder();
-		b.append(converter.toDisplayString(factory.getLongName(typeRef, true)));
-		return b.toString();
-	}
-	
-	protected String toString(JvmFormalParameter parameter) {
-		StringBuilder b = new StringBuilder();
-		b.append(toString(parameter.getParameterType()));
-		b.append(" ");
-		b.append(parameter.getName());
-		return b.toString();
-	}
-
-
 	public ICompletionProposal defaultApply(IEObjectDescription candidate) {
 		if (candidate == null)
 			return null;

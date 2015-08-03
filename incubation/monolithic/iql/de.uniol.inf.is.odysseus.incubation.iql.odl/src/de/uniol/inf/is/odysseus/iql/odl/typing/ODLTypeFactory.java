@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.Platform;
@@ -24,8 +25,9 @@ import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLFactory;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
 
 
+
 @Singleton
-public class ODLTypeFactory extends AbstractIQLTypeFactory {
+public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils> {
 	public static final String VALUE_TYPE = "value";
 	public static final String KEY_TYPE = "key";
 	public static final String ELEMENT_TYPE = "element";
@@ -33,50 +35,64 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory {
 	private Map<String, JvmTypeReference> parametersByType = new HashMap<>();
 	private Map<String, List<JvmTypeReference>> parametersByValue = new HashMap<>();
 	
+	@Inject
+	public ODLTypeFactory(ODLTypeUtils typeUtils) {
+		super(typeUtils);
+	}
+	
 	@Override
 	public String getFileExtension() {
 		return "odl";
 	}
 	
-	
-	@SuppressWarnings("restriction")
-	@Override
-	public Collection<JvmType> createVisibleTypes(Resource context) {
-		Collection<JvmType> types = super.createVisibleTypes(context);
-		for (JvmTypeReference parameterValueType : parametersByType.values()) {
-			types.add(getInnerType(parameterValueType, false));
-		}
-		
-		for (List<JvmTypeReference> parameterTypes : parametersByValue.values()) {
-			for (JvmTypeReference parameterType : parameterTypes) {
-				types.add(getInnerType(parameterType, false));
+	public JvmTypeReference getMapKeyType(ODLParameter p) {
+		IQLMetadataList metadataList = p.getMetadataList();
+		if (metadataList != null) {
+			for (IQLMetadata metadata : metadataList.getElements()) {
+				if (metadata.getName().equalsIgnoreCase(KEY_TYPE) && metadata.getValue() instanceof IQLMetadataValueSingleTypeRef) {
+					IQLMetadataValueSingleTypeRef t = (IQLMetadataValueSingleTypeRef) metadata.getValue();				
+					return t.getValue();
+				}
 			}
 		}
-		for (Class<?> c : ODLDefaultTypes.getVisibleTypes()) {
-			types.add(typeReferences.findDeclaredType(c.getCanonicalName(), context));
-		}
-		return types;
+		return typeUtils.createTypeRef(String.class, getSystemResourceSet());
 	}
-	
-	@Override
-	public Collection<String> createImplicitImports() {
-		Collection<String> implicitImports = super.createImplicitImports();
-		for (JvmTypeReference parameterValueType : parametersByType.values()) {
-			implicitImports.add(getLongName(parameterValueType, false));
-		}
-		
-		for (List<JvmTypeReference> parameterTypes : parametersByValue.values()) {
-			for (JvmTypeReference parameterType : parameterTypes) {
-				implicitImports.add(getLongName(parameterType, false));
+
+
+	public JvmTypeReference getMapValueType(ODLParameter p) {
+		IQLMetadataList metadataList = p.getMetadataList();
+		if (metadataList != null) {
+			for (IQLMetadata metadata : metadataList.getElements()) {
+				if (metadata.getName().equalsIgnoreCase(VALUE_TYPE) && metadata.getValue() instanceof IQLMetadataValueSingleTypeRef) {
+					IQLMetadataValueSingleTypeRef t = (IQLMetadataValueSingleTypeRef) metadata.getValue();				
+					return t.getValue();
+				}
 			}
 		}
-		implicitImports.addAll(ODLDefaultTypes.getImplicitImports());	
-		return implicitImports;
+		return typeUtils.createTypeRef(Object.class, getSystemResourceSet());
 	}
 	
-	@Override
-	protected IQLFile createCleanSystemFile() {
-		return ODLFactory.eINSTANCE.createODLFile();
+	public JvmTypeReference getListElementType(ODLParameter p) {
+		JvmTypeReference typeRef = p.getType();
+		if (typeRef instanceof IQLArrayTypeRef) {
+			IQLArrayTypeRef arrayTypeRef = (IQLArrayTypeRef) typeRef;
+			if (arrayTypeRef.getType().getDimensions().size() > 1) {
+				return typeUtils.createTypeRef(List.class, getSystemResourceSet());
+			} else {
+				return typeUtils.createTypeRef(typeUtils.getInnerType(arrayTypeRef, false));
+			}
+		}
+
+		IQLMetadataList metadataList = p.getMetadataList();
+		if (metadataList != null) {
+			for (IQLMetadata metadata : metadataList.getElements()) {
+				if (metadata.getName().equalsIgnoreCase(ELEMENT_TYPE) && metadata.getValue() instanceof IQLMetadataValueSingleTypeRef) {
+					IQLMetadataValueSingleTypeRef t = (IQLMetadataValueSingleTypeRef) metadata.getValue();				
+					return t.getValue();
+				}
+			}
+		}
+		return typeUtils.createTypeRef(Object.class, getSystemResourceSet());
 	}
 	
 	@Override
@@ -91,79 +107,67 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory {
 		return bundles;
 	}
 	
+	
+	@SuppressWarnings("restriction")
+	@Override
+	public Collection<JvmType> createVisibleTypes(Resource context) {
+		Collection<JvmType> types = super.createVisibleTypes(context);
+		for (JvmTypeReference parameterValueType : parametersByType.values()) {
+			types.add(typeUtils.getInnerType(parameterValueType, false));
+		}
+		
+		for (List<JvmTypeReference> parameterTypes : parametersByValue.values()) {
+			for (JvmTypeReference parameterType : parameterTypes) {
+				types.add(typeUtils.getInnerType(parameterType, false));
+			}
+		}
+		for (Class<?> c : ODLDefaultTypes.getVisibleTypes()) {
+			types.add(typeReferences.findDeclaredType(c.getCanonicalName(), context));
+		}
+		return types;
+	}
+	
+	@Override
+	public Collection<String> createImplicitImports() {
+		Collection<String> implicitImports = super.createImplicitImports();
+		for (JvmTypeReference parameterValueType : parametersByType.values()) {
+			implicitImports.add(typeUtils.getLongName(parameterValueType, false));
+		}
+		
+		for (List<JvmTypeReference> parameterTypes : parametersByValue.values()) {
+			for (JvmTypeReference parameterType : parameterTypes) {
+				implicitImports.add(typeUtils.getLongName(parameterType, false));
+			}
+		}
+		implicitImports.addAll(ODLDefaultTypes.getImplicitImports());	
+		return implicitImports;
+	}
+	
+	@Override
+	protected IQLFile createCleanSystemFile() {
+		return ODLFactory.eINSTANCE.createODLFile();
+	}
+		
 
 	public void addParameter(JvmTypeReference parameterType, JvmTypeReference parameterValueType) {	
-		parametersByType.put(getLongName(parameterType, true),parameterValueType);
+		parametersByType.put(typeUtils.getLongName(parameterType, true),parameterValueType);
 		
-		List<JvmTypeReference> parameterTypes = parametersByValue.get(getLongName(parameterValueType, true));
+		List<JvmTypeReference> parameterTypes = parametersByValue.get(typeUtils.getLongName(parameterValueType, true));
 		if (parameterTypes == null) {
 			parameterTypes = new ArrayList<>();
-			parametersByValue.put(getLongName(parameterValueType, true), parameterTypes);
+			parametersByValue.put(typeUtils.getLongName(parameterValueType, true), parameterTypes);
 		}
 		parameterTypes.add(parameterType);
 		
 	}
 	
-
-	
 	public JvmTypeReference getParameterType(JvmTypeReference valueType) {
-		String qName = getLongName(valueType, true);
+		String qName = typeUtils.getLongName(valueType, false);
 		List<JvmTypeReference> parameters = parametersByValue.get(qName);
 		if (parameters != null && !parameters.isEmpty()) {
 			return parameters.get(0);
 		}
 		return null;
-	}
-	
-	public JvmTypeReference getListElementType(ODLParameter p) {
-		JvmTypeReference typeRef = p.getType();
-		if (typeRef instanceof IQLArrayTypeRef) {
-			IQLArrayTypeRef arrayTypeRef = (IQLArrayTypeRef) typeRef;
-			if (arrayTypeRef.getType().getDimensions().size() > 1) {
-				return getTypeRef(List.class);
-			} else {
-				return getTypeRef(getInnerType(arrayTypeRef, false));
-			}
-		}
-
-		IQLMetadataList metadataList = p.getMetadataList();
-		if (metadataList != null) {
-			for (IQLMetadata metadata : metadataList.getElements()) {
-				if (metadata.getName().equalsIgnoreCase(ELEMENT_TYPE) && metadata.getValue() instanceof IQLMetadataValueSingleTypeRef) {
-					IQLMetadataValueSingleTypeRef t = (IQLMetadataValueSingleTypeRef) metadata.getValue();				
-					return t.getValue();
-				}
-			}
-		}
-		return getTypeRef(Object.class);
-	}
-
-
-	public JvmTypeReference getMapKeyType(ODLParameter p) {
-		IQLMetadataList metadataList = p.getMetadataList();
-		if (metadataList != null) {
-			for (IQLMetadata metadata : metadataList.getElements()) {
-				if (metadata.getName().equalsIgnoreCase(KEY_TYPE) && metadata.getValue() instanceof IQLMetadataValueSingleTypeRef) {
-					IQLMetadataValueSingleTypeRef t = (IQLMetadataValueSingleTypeRef) metadata.getValue();				
-					return t.getValue();
-				}
-			}
-		}
-		return getTypeRef(String.class);
-	}
-
-
-	public JvmTypeReference getMapValueType(ODLParameter p) {
-		IQLMetadataList metadataList = p.getMetadataList();
-		if (metadataList != null) {
-			for (IQLMetadata metadata : metadataList.getElements()) {
-				if (metadata.getName().equalsIgnoreCase(VALUE_TYPE) && metadata.getValue() instanceof IQLMetadataValueSingleTypeRef) {
-					IQLMetadataValueSingleTypeRef t = (IQLMetadataValueSingleTypeRef) metadata.getValue();				
-					return t.getValue();
-				}
-			}
-		}
-		return getTypeRef(Object.class);
 	}
 
 

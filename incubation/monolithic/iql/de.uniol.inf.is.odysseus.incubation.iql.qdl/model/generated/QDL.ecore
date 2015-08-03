@@ -3,7 +3,8 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="qDL" nsURI="http://www.uniol.de/inf/is/odysseus/iql/qdl/QDL"
     nsPrefix="qDL">
   <eClassifiers xsi:type="ecore:EClass" name="QDLFile" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLFile"/>
-  <eClassifiers xsi:type="ecore:EClass" name="QDLQuery" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLTypeDef">
+  <eClassifiers xsi:type="ecore:EClass" name="QDLTypeDefinition" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLTypeDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="QDLQuery" eSuperTypes="platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmGenericType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="metadataList" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataList"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="statements" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLStatement"

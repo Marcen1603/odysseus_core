@@ -93,18 +93,10 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_TYPE_DEF:
+      case BasicIQLPackage.IQL_TYPE_DEFINITION:
       {
-        IQLTypeDef iqlTypeDef = (IQLTypeDef)theEObject;
-        T result = caseIQLTypeDef(iqlTypeDef);
-        if (result == null) result = caseJvmGenericType(iqlTypeDef);
-        if (result == null) result = caseJvmDeclaredType(iqlTypeDef);
-        if (result == null) result = caseJvmTypeParameterDeclarator(iqlTypeDef);
-        if (result == null) result = caseJvmMember(iqlTypeDef);
-        if (result == null) result = caseJvmComponentType(iqlTypeDef);
-        if (result == null) result = caseJvmAnnotationTarget(iqlTypeDef);
-        if (result == null) result = caseJvmType(iqlTypeDef);
-        if (result == null) result = caseJvmIdentifiableElement(iqlTypeDef);
+        IQLTypeDefinition iqlTypeDefinition = (IQLTypeDefinition)theEObject;
+        T result = caseIQLTypeDefinition(iqlTypeDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -265,7 +257,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
       {
         IQLClass iqlClass = (IQLClass)theEObject;
         T result = caseIQLClass(iqlClass);
-        if (result == null) result = caseIQLTypeDef(iqlClass);
         if (result == null) result = caseJvmGenericType(iqlClass);
         if (result == null) result = caseJvmDeclaredType(iqlClass);
         if (result == null) result = caseJvmTypeParameterDeclarator(iqlClass);
@@ -281,7 +272,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
       {
         IQLInterface iqlInterface = (IQLInterface)theEObject;
         T result = caseIQLInterface(iqlInterface);
-        if (result == null) result = caseIQLTypeDef(iqlInterface);
         if (result == null) result = caseJvmGenericType(iqlInterface);
         if (result == null) result = caseJvmDeclaredType(iqlInterface);
         if (result == null) result = caseJvmTypeParameterDeclarator(iqlInterface);
@@ -820,17 +810,17 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Type Def</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Type Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Type Def</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Type Definition</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLTypeDef(IQLTypeDef object)
+  public T caseIQLTypeDefinition(IQLTypeDefinition object)
   {
     return null;
   }
@@ -2180,6 +2170,22 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Jvm Type Reference</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Jvm Type Reference</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseJvmTypeReference(JvmTypeReference object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Jvm Identifiable Element</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -2191,6 +2197,22 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseJvmIdentifiableElement(JvmIdentifiableElement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Jvm Type</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Jvm Type</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseJvmType(JvmType object)
   {
     return null;
   }
@@ -2223,22 +2245,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseJvmMember(JvmMember object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Jvm Type</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Jvm Type</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseJvmType(JvmType object)
   {
     return null;
   }
@@ -2303,22 +2309,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseJvmGenericType(JvmGenericType object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Jvm Type Reference</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Jvm Type Reference</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseJvmTypeReference(JvmTypeReference object)
   {
     return null;
   }

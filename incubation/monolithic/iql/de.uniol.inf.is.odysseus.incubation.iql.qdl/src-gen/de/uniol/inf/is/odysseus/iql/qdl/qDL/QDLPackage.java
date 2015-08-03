@@ -9,6 +9,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
+import org.eclipse.xtext.common.types.TypesPackage;
+
 /**
  * <!-- begin-user-doc -->
  * The <b>Package</b> for the model.
@@ -105,167 +107,14 @@ public interface QDLPackage extends EPackage
   int QDL_FILE_FEATURE_COUNT = BasicIQLPackage.IQL_FILE_FEATURE_COUNT + 0;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLQueryImpl <em>Query</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLTypeDefinitionImpl <em>Type Definition</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLQueryImpl
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getQDLQuery()
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLTypeDefinitionImpl
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getQDLTypeDefinition()
    * @generated
    */
-  int QDL_QUERY = 1;
-
-  /**
-   * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__ANNOTATIONS = BasicIQLPackage.IQL_TYPE_DEF__ANNOTATIONS;
-
-  /**
-   * The feature id for the '<em><b>Declaring Type</b></em>' container reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__DECLARING_TYPE = BasicIQLPackage.IQL_TYPE_DEF__DECLARING_TYPE;
-
-  /**
-   * The feature id for the '<em><b>Visibility</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__VISIBILITY = BasicIQLPackage.IQL_TYPE_DEF__VISIBILITY;
-
-  /**
-   * The feature id for the '<em><b>Simple Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__SIMPLE_NAME = BasicIQLPackage.IQL_TYPE_DEF__SIMPLE_NAME;
-
-  /**
-   * The feature id for the '<em><b>Identifier</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__IDENTIFIER = BasicIQLPackage.IQL_TYPE_DEF__IDENTIFIER;
-
-  /**
-   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__DEPRECATED = BasicIQLPackage.IQL_TYPE_DEF__DEPRECATED;
-
-  /**
-   * The feature id for the '<em><b>Array Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__ARRAY_TYPE = BasicIQLPackage.IQL_TYPE_DEF__ARRAY_TYPE;
-
-  /**
-   * The feature id for the '<em><b>Super Types</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__SUPER_TYPES = BasicIQLPackage.IQL_TYPE_DEF__SUPER_TYPES;
-
-  /**
-   * The feature id for the '<em><b>Members</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__MEMBERS = BasicIQLPackage.IQL_TYPE_DEF__MEMBERS;
-
-  /**
-   * The feature id for the '<em><b>Abstract</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__ABSTRACT = BasicIQLPackage.IQL_TYPE_DEF__ABSTRACT;
-
-  /**
-   * The feature id for the '<em><b>Static</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__STATIC = BasicIQLPackage.IQL_TYPE_DEF__STATIC;
-
-  /**
-   * The feature id for the '<em><b>Final</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__FINAL = BasicIQLPackage.IQL_TYPE_DEF__FINAL;
-
-  /**
-   * The feature id for the '<em><b>Package Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__PACKAGE_NAME = BasicIQLPackage.IQL_TYPE_DEF__PACKAGE_NAME;
-
-  /**
-   * The feature id for the '<em><b>Type Parameters</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__TYPE_PARAMETERS = BasicIQLPackage.IQL_TYPE_DEF__TYPE_PARAMETERS;
-
-  /**
-   * The feature id for the '<em><b>Interface</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__INTERFACE = BasicIQLPackage.IQL_TYPE_DEF__INTERFACE;
-
-  /**
-   * The feature id for the '<em><b>Strict Floating Point</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__STRICT_FLOATING_POINT = BasicIQLPackage.IQL_TYPE_DEF__STRICT_FLOATING_POINT;
-
-  /**
-   * The feature id for the '<em><b>Anonymous</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int QDL_QUERY__ANONYMOUS = BasicIQLPackage.IQL_TYPE_DEF__ANONYMOUS;
+  int QDL_TYPE_DEFINITION = 1;
 
   /**
    * The feature id for the '<em><b>Javametadata</b></em>' containment reference list.
@@ -274,16 +123,188 @@ public interface QDLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int QDL_QUERY__JAVAMETADATA = BasicIQLPackage.IQL_TYPE_DEF__JAVAMETADATA;
+  int QDL_TYPE_DEFINITION__JAVAMETADATA = BasicIQLPackage.IQL_TYPE_DEFINITION__JAVAMETADATA;
 
   /**
-   * The feature id for the '<em><b>Extended Interfaces</b></em>' containment reference list.
+   * The feature id for the '<em><b>Inner</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int QDL_QUERY__EXTENDED_INTERFACES = BasicIQLPackage.IQL_TYPE_DEF__EXTENDED_INTERFACES;
+  int QDL_TYPE_DEFINITION__INNER = BasicIQLPackage.IQL_TYPE_DEFINITION__INNER;
+
+  /**
+   * The number of structural features of the '<em>Type Definition</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_TYPE_DEFINITION_FEATURE_COUNT = BasicIQLPackage.IQL_TYPE_DEFINITION_FEATURE_COUNT + 0;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLQueryImpl <em>Query</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLQueryImpl
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getQDLQuery()
+   * @generated
+   */
+  int QDL_QUERY = 2;
+
+  /**
+   * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__ANNOTATIONS = TypesPackage.JVM_GENERIC_TYPE__ANNOTATIONS;
+
+  /**
+   * The feature id for the '<em><b>Declaring Type</b></em>' container reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__DECLARING_TYPE = TypesPackage.JVM_GENERIC_TYPE__DECLARING_TYPE;
+
+  /**
+   * The feature id for the '<em><b>Visibility</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__VISIBILITY = TypesPackage.JVM_GENERIC_TYPE__VISIBILITY;
+
+  /**
+   * The feature id for the '<em><b>Simple Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__SIMPLE_NAME = TypesPackage.JVM_GENERIC_TYPE__SIMPLE_NAME;
+
+  /**
+   * The feature id for the '<em><b>Identifier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__IDENTIFIER = TypesPackage.JVM_GENERIC_TYPE__IDENTIFIER;
+
+  /**
+   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__DEPRECATED = TypesPackage.JVM_GENERIC_TYPE__DEPRECATED;
+
+  /**
+   * The feature id for the '<em><b>Array Type</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__ARRAY_TYPE = TypesPackage.JVM_GENERIC_TYPE__ARRAY_TYPE;
+
+  /**
+   * The feature id for the '<em><b>Super Types</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__SUPER_TYPES = TypesPackage.JVM_GENERIC_TYPE__SUPER_TYPES;
+
+  /**
+   * The feature id for the '<em><b>Members</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__MEMBERS = TypesPackage.JVM_GENERIC_TYPE__MEMBERS;
+
+  /**
+   * The feature id for the '<em><b>Abstract</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__ABSTRACT = TypesPackage.JVM_GENERIC_TYPE__ABSTRACT;
+
+  /**
+   * The feature id for the '<em><b>Static</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__STATIC = TypesPackage.JVM_GENERIC_TYPE__STATIC;
+
+  /**
+   * The feature id for the '<em><b>Final</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__FINAL = TypesPackage.JVM_GENERIC_TYPE__FINAL;
+
+  /**
+   * The feature id for the '<em><b>Package Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__PACKAGE_NAME = TypesPackage.JVM_GENERIC_TYPE__PACKAGE_NAME;
+
+  /**
+   * The feature id for the '<em><b>Type Parameters</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__TYPE_PARAMETERS = TypesPackage.JVM_GENERIC_TYPE__TYPE_PARAMETERS;
+
+  /**
+   * The feature id for the '<em><b>Interface</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__INTERFACE = TypesPackage.JVM_GENERIC_TYPE__INTERFACE;
+
+  /**
+   * The feature id for the '<em><b>Strict Floating Point</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__STRICT_FLOATING_POINT = TypesPackage.JVM_GENERIC_TYPE__STRICT_FLOATING_POINT;
+
+  /**
+   * The feature id for the '<em><b>Anonymous</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QDL_QUERY__ANONYMOUS = TypesPackage.JVM_GENERIC_TYPE__ANONYMOUS;
 
   /**
    * The feature id for the '<em><b>Metadata List</b></em>' containment reference.
@@ -292,7 +313,7 @@ public interface QDLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int QDL_QUERY__METADATA_LIST = BasicIQLPackage.IQL_TYPE_DEF_FEATURE_COUNT + 0;
+  int QDL_QUERY__METADATA_LIST = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 0;
 
   /**
    * The feature id for the '<em><b>Statements</b></em>' containment reference.
@@ -301,7 +322,7 @@ public interface QDLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int QDL_QUERY__STATEMENTS = BasicIQLPackage.IQL_TYPE_DEF_FEATURE_COUNT + 1;
+  int QDL_QUERY__STATEMENTS = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 1;
 
   /**
    * The number of structural features of the '<em>Query</em>' class.
@@ -310,7 +331,7 @@ public interface QDLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int QDL_QUERY_FEATURE_COUNT = BasicIQLPackage.IQL_TYPE_DEF_FEATURE_COUNT + 2;
+  int QDL_QUERY_FEATURE_COUNT = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLSubscribeExpressionImpl <em>IQL Subscribe Expression</em>}' class.
@@ -320,7 +341,7 @@ public interface QDLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLSubscribeExpression()
    * @generated
    */
-  int IQL_SUBSCRIBE_EXPRESSION = 2;
+  int IQL_SUBSCRIBE_EXPRESSION = 3;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -366,7 +387,7 @@ public interface QDLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLPortExpression()
    * @generated
    */
-  int IQL_PORT_EXPRESSION = 3;
+  int IQL_PORT_EXPRESSION = 4;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -414,6 +435,16 @@ public interface QDLPackage extends EPackage
    * @generated
    */
   EClass getQDLFile();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition <em>Type Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Type Definition</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition
+   * @generated
+   */
+  EClass getQDLTypeDefinition();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery <em>Query</em>}'.
@@ -565,6 +596,16 @@ public interface QDLPackage extends EPackage
      * @generated
      */
     EClass QDL_FILE = eINSTANCE.getQDLFile();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLTypeDefinitionImpl <em>Type Definition</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLTypeDefinitionImpl
+     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getQDLTypeDefinition()
+     * @generated
+     */
+    EClass QDL_TYPE_DEFINITION = eINSTANCE.getQDLTypeDefinition();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLQueryImpl <em>Query</em>}' class.

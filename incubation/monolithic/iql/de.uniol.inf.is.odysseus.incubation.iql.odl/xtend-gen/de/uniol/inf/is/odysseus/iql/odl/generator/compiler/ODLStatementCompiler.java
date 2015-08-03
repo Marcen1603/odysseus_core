@@ -7,13 +7,13 @@ import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 import javax.inject.Inject;
 
 @SuppressWarnings("all")
-public class ODLStatementCompiler extends AbstractIQLStatementCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLExpressionCompiler, ODLTypeFactory, ODLExpressionParser, ODLLookUp> {
+public class ODLStatementCompiler extends AbstractIQLStatementCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLExpressionCompiler, ODLTypeUtils, ODLExpressionParser, ODLLookUp> {
   @Inject
-  public ODLStatementCompiler(final ODLCompilerHelper helper, final ODLExpressionCompiler exprCompiler, final ODLTypeCompiler typeCompiler, final ODLTypeFactory factory, final ODLExpressionParser exprParser, final ODLLookUp lookUp) {
-    super(helper, exprCompiler, typeCompiler, factory, exprParser, lookUp);
+  public ODLStatementCompiler(final ODLCompilerHelper helper, final ODLExpressionCompiler exprCompiler, final ODLTypeCompiler typeCompiler, final ODLTypeUtils typeUtils, final ODLExpressionParser exprParser, final ODLLookUp lookUp) {
+    super(helper, exprCompiler, typeCompiler, typeUtils, exprParser, lookUp);
   }
 }

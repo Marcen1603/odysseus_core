@@ -17,9 +17,11 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmType;
+import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -30,17 +32,17 @@ import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.scoping.impl.ImportNormalizer;
 import org.eclipse.xtext.scoping.impl.ImportScope;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 
 /**
@@ -50,9 +52,11 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
  * on how and when to use it
  */
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L extends IIQLLookUp, P extends IIQLExpressionParser> extends AbstractDeclarativeScopeProvider implements IIQLScopeProvider {
+public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L extends IIQLLookUp, P extends IIQLExpressionParser, U extends IIQLTypeUtils> extends AbstractDeclarativeScopeProvider implements IIQLScopeProvider {
 
 	protected P exprParser;
+	
+	protected U typeUtils;
 	
 	@Inject
 	protected IQualifiedNameProvider qualifiedNameProvider;
@@ -67,10 +71,11 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	
 	protected T typeFactory;
 	
-	public AbstractIQLScopeProvider(T typeFactory, L lookUp, P exprParser) {
+	public AbstractIQLScopeProvider(T typeFactory, L lookUp, P exprParser, U typeUtils) {
 		this.typeFactory = typeFactory;
 		this.lookUp = lookUp;
 		this.exprParser = exprParser;
+		this.typeUtils = typeUtils;
 
 	}
 	
@@ -103,43 +108,52 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		return new ImportScope(createImportNormalizers(file), scope, null, type.getEReferenceType(), true);
 	}
 	
-	public IScope scope_IQLTerminalExpressionVariable_var(IQLTerminalExpressionVariable expr, EReference type) {
-		Collection<JvmIdentifiableElement> vars =  getScopeIQLTerminalExpressionVariable(expr);
+	public IScope scope_IQLTerminalExpressionVariable_var(IQLStatementBlock expr, EReference type) {
+		Collection<JvmIdentifiableElement> vars = getScopeIQLTerminalExpressionVariable(expr);
 		return Scopes.scopeFor(vars, qualifiedNameProvider, IScope.NULLSCOPE);	
 	}
 	
 	@Override
 	public Collection<JvmIdentifiableElement> getScopeIQLTerminalExpressionVariable(EObject expr) {
+		JvmGenericType type = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
+
 		Collection<JvmIdentifiableElement> vars = new ArrayList<>();
 		EObject container = expr;
-		while (container != null && !(container instanceof IQLTypeDef)) {
+		while (container != null && !(container instanceof JvmGenericType)) {
 			vars.addAll(EcoreUtil2.getAllContentsOfType(container, IQLVariableDeclaration.class));
 			vars.addAll(EcoreUtil2.getAllContentsOfType(container, JvmFormalParameter.class));
 			container = container.eContainer();
 		}
-		IQLTypeDef typeDef = EcoreUtil2.getContainerOfType(expr, IQLTypeDef.class);
-		vars.addAll(lookUp.getPublicAttributes(typeFactory.getTypeRef(typeDef), true));
-		vars.addAll(lookUp.getProtectedAttributes(typeFactory.getTypeRef(typeDef), true));
+		if (type instanceof IQLClass) {
+			IQLClass clazz = (IQLClass) type;
+			Collection<JvmTypeReference> importedTypes = typeFactory.getImportedTypes(expr);
+			vars.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
+			vars.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
+		}
 		return vars;	
 	}
 	
-	public IScope scope_IQLTerminalExpressionMethod_method(IQLTerminalExpressionMethod expr, EReference type) {
-		Collection<JvmOperation> methods =  getScopeIQLTerminalExpressionMethod(expr);	
+	public IScope scope_IQLTerminalExpressionMethod_method(IQLStatementBlock expr, EReference type) {
+		Collection<JvmOperation> methods = getScopeTerminalExpressionMethod(expr);
 		return Scopes.scopeFor(methods, qualifiedNameProvider, IScope.NULLSCOPE);
 	}
 	
 	@Override
-	public Collection<JvmOperation> getScopeIQLTerminalExpressionMethod(EObject expr) {
-		Collection<JvmOperation> methods = new ArrayList<>();
-		IQLTypeDef typeDef = EcoreUtil2.getContainerOfType(expr, IQLTypeDef.class);
-		methods.addAll(lookUp.getPublicMethods(typeFactory.getTypeRef(typeDef), true));
-		methods.addAll(lookUp.getProtectedMethods(typeFactory.getTypeRef(typeDef), true));
+	public Collection<JvmOperation> getScopeTerminalExpressionMethod(EObject expr) {
+		JvmGenericType type = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
+		Collection<JvmOperation> methods = new HashSet<>();
+		if (type instanceof IQLClass) {
+			IQLClass clazz = (IQLClass) type;
+			Collection<JvmTypeReference> importedTypes = typeFactory.getImportedTypes(expr);
+			methods.addAll(lookUp.getPublicMethods(typeUtils.createTypeRef(clazz), importedTypes,true));
+			methods.addAll(lookUp.getProtectedMethods(typeUtils.createTypeRef(clazz), importedTypes,true));
+		}
 		return methods;	
 	}
 	
 	public IScope scope_IQLAttributeSelection_var(IQLMemberSelectionExpression expr, EReference type) {
 		Collection<JvmField> attributes = getScopeIQLAttributeSelection(expr);
-		return  Scopes.scopeFor(attributes, qualifiedNameProvider, IScope.NULLSCOPE);	
+		return Scopes.scopeFor(attributes, qualifiedNameProvider, IScope.NULLSCOPE);	
 	}
 	
 	@Override
@@ -148,6 +162,9 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		Collection<JvmField> attributes = null;
 		if (!result.isNull()) {
 			attributes = lookUp.getPublicAttributes(result.getRef(), true);
+			if (exprParser.isThis(expr.getLeftOperand()) || exprParser.isSuper(expr.getLeftOperand())) {
+				attributes.addAll(lookUp.getProtectedAttributes(result.getRef(), true));
+			}
 		} else {
 			attributes = new HashSet<>();
 		}
@@ -156,7 +173,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	
 	
 	public IScope scope_IQLMethodSelection_method(IQLMemberSelectionExpression expr, EReference type) {
-		Collection<JvmOperation> methods = getScopeIQLMethodSelection(expr);
+		Collection<JvmOperation> methods = getScopeIQLMethodSelection(expr);		
 		return Scopes.scopeFor(methods, qualifiedNameProvider, IScope.NULLSCOPE);	
 	}
 	
@@ -174,6 +191,18 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 			methods = new HashSet<>();
 		}
 		return methods;
+	}
+	
+	protected Collection<String> getUsedNamespaces(EObject obj) {
+		Collection<String> namespaces = new HashSet<>();
+		IQLFile file = EcoreUtil2.getContainerOfType(obj, IQLFile.class);
+		namespaces.addAll(typeFactory.getImplicitImports());
+		for (IQLNamespace namespace : file.getNamespaces()) {
+			String name = namespace.getImportedNamespace();
+			name = name.replaceAll(IQLQualifiedNameConverter.DELIMITER, ".");
+			namespaces.add(name);
+		}
+		return namespaces;
 	}
 	
 	protected List<ImportNormalizer> createImportNormalizers(EObject obj) {

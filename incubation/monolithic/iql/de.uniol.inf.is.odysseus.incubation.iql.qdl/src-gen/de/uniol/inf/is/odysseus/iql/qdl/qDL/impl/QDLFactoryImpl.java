@@ -65,6 +65,7 @@ public class QDLFactoryImpl extends EFactoryImpl implements QDLFactory
     switch (eClass.getClassifierID())
     {
       case QDLPackage.QDL_FILE: return createQDLFile();
+      case QDLPackage.QDL_TYPE_DEFINITION: return createQDLTypeDefinition();
       case QDLPackage.QDL_QUERY: return createQDLQuery();
       case QDLPackage.IQL_SUBSCRIBE_EXPRESSION: return createIQLSubscribeExpression();
       case QDLPackage.IQL_PORT_EXPRESSION: return createIQLPortExpression();
@@ -82,6 +83,17 @@ public class QDLFactoryImpl extends EFactoryImpl implements QDLFactory
   {
     QDLFileImpl qdlFile = new QDLFileImpl();
     return qdlFile;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public QDLTypeDefinition createQDLTypeDefinition()
+  {
+    QDLTypeDefinitionImpl qdlTypeDefinition = new QDLTypeDefinitionImpl();
+    return qdlTypeDefinition;
   }
 
   /**

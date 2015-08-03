@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.iql.odl.typing.typeoperators;
+package de.uniol.inf.is.odysseus.iql.odl.typing.extension;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.ITypeOperators;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
-public class IPunctuationOperators implements ITypeOperators {
+public class PunctuationExtensions implements IIQLTypeExtensions {
 
 	@Override
 	public Class<?> getType() {
@@ -47,65 +47,4 @@ public class IPunctuationOperators implements ITypeOperators {
 		return punctuation.clone(new PointInTime(punctuation.getTime().getMainPoint()-1));
 	}
 
-	@Override
-	public boolean plusSupported() {
-		return true;
-	}
-
-	@Override
-	public boolean minusSupported() {
-		return true;
-	}
-
-	@Override
-	public boolean multiplySupported() {
-		return true;
-	}
-
-	@Override
-	public boolean divideSupported() {
-		return true;
-	}
-
-	@Override
-	public boolean moduloSupported() {
-		return true;
-	}
-
-	@Override
-	public boolean plusPrefixSupported() {
-		return true;
-	}
-
-	@Override
-	public boolean minusPrefixSupported() {
-		return true;
-	}
-
-	@Override
-	public boolean plusPostfixSupported() {
-		return true;
-	}
-
-	@Override
-	public boolean minusPostfixSupported() {
-		return true;
-	}
-
-	@Override
-	public boolean getSupported() {
-		return false;
-	}
-
-	@Override
-	public boolean hasExtensionAttribute(String name) {
-		return false;
-	}
-
-	@Override
-	public boolean hasExtensionMethod(String name, int args) {
-		return false;
-	}
-		
-	
 }

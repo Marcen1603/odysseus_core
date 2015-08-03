@@ -14,7 +14,6 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
@@ -27,10 +26,8 @@ import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 import org.eclipse.xtext.ui.editor.templates.DefaultTemplateProposalProvider;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
@@ -38,23 +35,25 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser, F extends IIQLTypeFactory, L extends IIQLLookUp, S extends IIQLScopeProvider> extends DefaultTemplateProposalProvider {
+public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser, F extends IIQLTypeFactory, L extends IIQLLookUp, S extends IIQLScopeProvider, U extends IIQLTypeUtils> extends DefaultTemplateProposalProvider {
 	protected E exprParser;
 	protected F factory;
 	protected L lookUp;
 	protected S scopeProvider;
-
+	protected U typeUtils;
 	
 	@Inject
 	private IQLQualifiedNameConverter converter;
 
-	public AbstractIQLTemplateProposalProvider(TemplateStore templateStore,	ContextTypeRegistry registry, ContextTypeIdHelper helper, E exprParser, F factory, L lookUp, S scopeProvider) {
+	public AbstractIQLTemplateProposalProvider(TemplateStore templateStore,	ContextTypeRegistry registry, ContextTypeIdHelper helper, E exprParser, F factory, L lookUp, S scopeProvider, U typeUtils) {
 		super(templateStore, registry, helper);
 		this.exprParser = exprParser;
 		this.factory = factory;
 		this.lookUp = lookUp;
 		this.scopeProvider = scopeProvider;
+		this.typeUtils = typeUtils;
 	}
 
 	@Override
@@ -67,7 +66,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 	protected void createTemplates(String rule, EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		if (node instanceof IQLTerminalExpressionNew) {
 			createIQLTerminalExpressionProposals(templateContext, context, acceptor);
-		} else if (node instanceof IQLTypeDef && rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.IQLAttribute")) {
+		} else if (rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.IQLAttribute")) {
 			createIQLAttributeProposals(templateContext, context, acceptor);
 		} else if (rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.IQLVariableDeclaration")) {
 			createIQLVariableDeclarationProposals(templateContext, context, acceptor);
@@ -130,19 +129,19 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 			} else if (el instanceof JvmFormalParameter) {
 				JvmFormalParameter parameter = (JvmFormalParameter) el;
 				createVariableTemplate(parameter.getName(), parameter.getParameterType(), templateContext, context, acceptor);
-			} else if (el instanceof IQLAttribute) {
-				IQLAttribute attr = (IQLAttribute) el;
+			} else if (el instanceof JvmField) {
+				JvmField attr = (JvmField) el;
 				createVariableTemplate(attr.getSimpleName(), attr.getType(), templateContext, context, acceptor);
 			}
 		}
 	}
 	
 	protected void createIQLTerminalExpressionMethodProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		Collection<JvmOperation> elements = scopeProvider.getScopeIQLTerminalExpressionMethod(node);
+		Collection<JvmOperation> elements = scopeProvider.getScopeTerminalExpressionMethod(node);
 
 		for (JvmOperation op : elements) {
 			createMethodTemplate(op, templateContext, context, acceptor);
-		}
+		}		
 	}
 	
 	protected void createIQLAttributeSelectionProposals(IQLMemberSelectionExpression expr, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -160,30 +159,30 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 	}
 	
 	protected void createIQLTerminalExpressionProposals(TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		for (JvmType type : lookUp.getAllInstantiateableTypes(context.getCurrentModel().eResource())) {
-			Collection<JvmExecutable> constructors =  lookUp.getDeclaredConstructors(factory.getTypeRef(type));
-			if (constructors.size() == 0) {
-				createConstructorTemplate(type, false, null, templateContext, context, acceptor);
-			} else {
-				for (JvmExecutable constructor : constructors) {
-					createConstructorTemplate(type, false, constructor.getParameters(),templateContext, context, acceptor);
-				}
-			}
-		}
+//		for (JvmType type : lookUp.getAllInstantiateableTypes(context.getCurrentModel().eResource())) {
+//			Collection<JvmExecutable> constructors =  lookUp.getDeclaredConstructors(typeUtils.createTypeRef(type));
+//			if (constructors.size() == 0) {
+//				createConstructorTemplate(type, false, null, templateContext, context, acceptor);
+//			} else {
+//				for (JvmExecutable constructor : constructors) {
+//					createConstructorTemplate(type, false, constructor.getParameters(),templateContext, context, acceptor);
+//				}
+//			}
+//		}
 	}
 	
 	
 	protected void createIQLVariableStatementProposals(TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		for (JvmType type : lookUp.getAllInstantiateableTypes(context.getCurrentModel().eResource())) {
-			Collection<JvmExecutable> constructors =  lookUp.getDeclaredConstructors(factory.getTypeRef(type));
-			if (constructors.size() == 0) {
-				createConstructorTemplate(type, true, null, templateContext, context, acceptor);
-			} else {
-				for (JvmExecutable constructor : constructors) {
-					createConstructorTemplate(type, true, constructor.getParameters(),templateContext, context, acceptor);
-				}
-			}
-		}
+//		for (JvmType type : lookUp.getAllInstantiateableTypes(context.getCurrentModel().eResource())) {
+//			Collection<JvmExecutable> constructors =  lookUp.getDeclaredConstructors(typeUtils.createTypeRef(type));
+//			if (constructors.size() == 0) {
+//				createConstructorTemplate(type, true, null, templateContext, context, acceptor);
+//			} else {
+//				for (JvmExecutable constructor : constructors) {
+//					createConstructorTemplate(type, true, constructor.getParameters(),templateContext, context, acceptor);
+//				}
+//			}
+//		}
 	}
 	
 	protected void createIQLVariableDeclarationProposals(TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -197,16 +196,16 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 		for (JvmType type : lookUp.getAllTypes(context.getCurrentModel().eResource())) {
 			createTypeTemplate(type, templateContext, context, acceptor);
 		}
-		for (JvmType type : lookUp.getAllInstantiateableTypes(context.getCurrentModel().eResource())) {
-			Collection<JvmExecutable> constructors =  lookUp.getDeclaredConstructors(factory.getTypeRef(type));
-			if (constructors.size() == 0) {
-				createConstructorTemplate(type, true, null, templateContext, context, acceptor);
-			} else {
-				for (JvmExecutable constructor : constructors) {
-					createConstructorTemplate(type, true, constructor.getParameters(),templateContext, context, acceptor);
-				}
-			}
-		}
+//		for (JvmType type : lookUp.getAllInstantiateableTypes(context.getCurrentModel().eResource())) {
+//			Collection<JvmExecutable> constructors =  lookUp.getDeclaredConstructors(typeUtils.createTypeRef(type));
+//			if (constructors.size() == 0) {
+//				createConstructorTemplate(type, true, null, templateContext, context, acceptor);
+//			} else {
+//				for (JvmExecutable constructor : constructors) {
+//					createConstructorTemplate(type, true, constructor.getParameters(),templateContext, context, acceptor);
+//				}
+//			}
+//		}
 	}
 	
 	protected void createMapEntryTemplate(String name, JvmTypeReference typeRef, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -226,8 +225,8 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 	}
 	
 	protected void createTypeTemplate(JvmType type, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		String simpleName = factory.getShortName(type, false);
-		String longName = factory.getLongName(type, false);
+		String simpleName = typeUtils.getShortName(type, false);
+		String longName = typeUtils.getLongName(type, false);
 			
 		StringBuilder patternBuilder = new StringBuilder();
 		patternBuilder.append(simpleName);
@@ -248,7 +247,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 		}
 		descBuilder.append(")");
 		
-		if (op.getReturnType() != null && !factory.isVoid(op.getReturnType())) {
+		if (op.getReturnType() != null && !typeUtils.isVoid(op.getReturnType())) {
 			descBuilder.append(" : " + toDescString(op.getReturnType()));
 		}
 		
@@ -306,7 +305,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 		}
 		patternBuilder.append(")");
 				
-		String longName = factory.getLongName(type, false);
+		String longName = typeUtils.getLongName(type, false);
 		String id = longName;
 		if (parameters != null) {
 			id = id+parameters.size();
@@ -347,7 +346,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 	
 	protected String toDescString(JvmTypeReference typeRef) {		
 		StringBuilder b = new StringBuilder();
-		b.append(converter.toDisplayString(factory.getShortName(typeRef, true)));
+		b.append(converter.toDisplayString(typeUtils.getShortName(typeRef, true)));
 		return b.toString();
 	}
 	

@@ -35,20 +35,20 @@ import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 
-public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory> {
+public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory, QDLTypeUtils> {
 	public static String[] OPERATORS_NAMESPACE = new String[]{"operators"};
 	private static final String[] SOURCES_NAMESPACE = new String[]{"sources"};
 	
 	
 	@Inject
-	public QDLTypeBuilder(QDLTypeFactory typeFactory) {
-		super(typeFactory);
+	public QDLTypeBuilder(QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+		super(typeFactory, typeUtils);
 	}
 
 	
 	public void addSource(ILogicalOperator source) {
 		String name = getSourceName(source);
-		JvmTypeReference superClass = typeFactory.getTypeRef(DefaultQDLSource.class);
+		JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLSource.class, typeFactory.getSystemResourceSet());
 
 		IQLClass sourceClass = BasicIQLFactory.eINSTANCE.createIQLClass();
 		sourceClass.setSimpleName(firstCharUpperCase(name));
@@ -58,12 +58,12 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory> {
 		for (SDFAttribute attr : source.getOutputSchema().getAttributes()) {
 			IQLAttribute attribute= BasicIQLFactory.eINSTANCE.createIQLAttribute();
 			attribute.setSimpleName(attr.getAttributeName().toUpperCase());
-			attribute.setType(typeFactory.getTypeRef(String.class));
+			attribute.setType(typeUtils.createTypeRef(String.class, typeFactory.getSystemResourceSet()));
 			sourceClass.getMembers().add(attribute);
 		}
 		IQLAttribute sourceAttr = BasicIQLFactory.eINSTANCE.createIQLAttribute();
 		sourceAttr.setSimpleName(firstCharLowerCase(name));
-		sourceAttr.setType(typeFactory.getTypeRef(sourceClass));
+		sourceAttr.setType(typeUtils.createTypeRef(sourceClass));
 		sourceClass.getMembers().add(sourceAttr);
 		
 		typeFactory.addSystemType(sourceClass, DefaultQDLSource.class);
@@ -83,7 +83,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory> {
 	@SuppressWarnings({ "unchecked" })
 	public void addOperator(IOperatorBuilder opBuilder) {
 		String name = firstCharUpperCase(opBuilder.getName().toLowerCase());
-		JvmTypeReference superClass = typeFactory.getTypeRef(DefaultQDLOperator.class);
+		JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLOperator.class, typeFactory.getSystemResourceSet());
 
 		IQLClass opClass = BasicIQLFactory.eINSTANCE.createIQLClass();
 		opClass.setSimpleName(name);
@@ -156,7 +156,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory> {
 		
 		JvmFormalParameter constructor1Arg = TypesFactory.eINSTANCE.createJvmFormalParameter();
 		constructor1Arg.setName("source");
-		constructor1Arg.setParameterType(typeFactory.getTypeRef(IQDLOperator.class));
+		constructor1Arg.setParameterType(typeUtils.createTypeRef(IQDLOperator.class, typeFactory.getSystemResourceSet()));
 		constructor1.getParameters().add(constructor1Arg);
 		opClass.getMembers().add(constructor1);
 		
@@ -165,12 +165,12 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory> {
 		
 		JvmFormalParameter constructor2Arg1 = TypesFactory.eINSTANCE.createJvmFormalParameter();
 		constructor2Arg1.setName("source1");
-		constructor2Arg1.setParameterType(typeFactory.getTypeRef(IQDLOperator.class));
+		constructor2Arg1.setParameterType(typeUtils.createTypeRef(IQDLOperator.class, typeFactory.getSystemResourceSet()));
 		constructor2.getParameters().add(constructor2Arg1);
 		
 		JvmFormalParameter constructor2Arg2 = TypesFactory.eINSTANCE.createJvmFormalParameter();
 		constructor2Arg2.setName("source2");
-		constructor2Arg2.setParameterType(typeFactory.getTypeRef(IQDLOperator.class));
+		constructor2Arg2.setParameterType(typeUtils.createTypeRef(IQDLOperator.class, typeFactory.getSystemResourceSet()));
 		constructor2.getParameters().add(constructor2Arg2);
 		
 		opClass.getMembers().add(constructor2);
@@ -202,7 +202,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory> {
 			arg.setParameterType(typeRef);
 			method.getParameters().add(arg);
 			
-			method.setReturnType(typeFactory.getTypeRef(Void.class));
+			method.setReturnType(typeUtils.createTypeRef(Void.class, typeFactory.getSystemResourceSet()));
 			return method;
 
 		}
@@ -214,7 +214,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory> {
 
 		if (typeRef != null) {
 			IQLMethod method = BasicIQLFactory.eINSTANCE.createIQLMethod();
-			if (typeFactory.isBoolean(typeRef)) {
+			if (typeUtils.isBoolean(typeRef)) {
 				method.setSimpleName("is"+firstCharUpperCase(parameterName.toLowerCase()));
 			} else {
 				method.setSimpleName("get"+firstCharUpperCase(parameterName.toLowerCase()));
@@ -229,11 +229,11 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory> {
 	
 	private JvmTypeReference createType(Class<?> parameterValue, boolean isList, boolean isMap) {
 		if (isMap) {
-			return typeFactory.getTypeRef(Map.class);
+			return typeUtils.createTypeRef(Map.class, typeFactory.getSystemResourceSet());
 		} else if (isMap) {
-			return typeFactory.getTypeRef(List.class);
+			return typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet());
 		} else {
-			JvmTypeReference typeRef = typeFactory.getTypeRef(parameterValue);
+			JvmTypeReference typeRef = typeUtils.createTypeRef(parameterValue, typeFactory.getSystemResourceSet());
 			return typeRef;
 		}
 	}

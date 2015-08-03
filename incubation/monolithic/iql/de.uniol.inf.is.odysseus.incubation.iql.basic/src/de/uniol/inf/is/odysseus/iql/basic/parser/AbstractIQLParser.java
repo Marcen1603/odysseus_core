@@ -48,9 +48,10 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLParser<F extends IIQLTypeFactory> implements IIQLParser{
+public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLParser{
 	
 	protected static final String EDIT_FOLDER = "edit";
 	protected static final String IQL_DIR = "iql";
@@ -69,10 +70,12 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory> implements II
 	@Inject
 	protected IOutputConfigurationProvider outputConfigurationProvider;
 	
+	protected U typeUtils;
 	protected F typeFactory;
-	
-	public AbstractIQLParser(F typeFactory) {
+
+	public AbstractIQLParser(F typeFactory, U typeUtils) {
 		this.typeFactory = typeFactory;
+		this.typeUtils = typeUtils;
 	}
 
 	protected String getIQLOutputPath() {
@@ -153,10 +156,10 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory> implements II
 	private Set<EObject> getUserDefinedTypes(EObject element) {
 		Set<EObject> userDefinedTypes = new HashSet<>();
 		for (JvmTypeReference typeRef : EcoreUtil2.getAllContentsOfType(element, JvmTypeReference.class)) {
-			if (typeFactory.getInnerType(typeRef, false) instanceof IQLClass) {
-				userDefinedTypes.addAll(getUserDefinedTypes((IQLClass)typeFactory.getInnerType(typeRef, false) ));
-			} else if (typeFactory.getInnerType(typeRef, false) instanceof IQLInterface) {
-				userDefinedTypes.addAll(getUserDefinedTypes((IQLInterface)typeFactory.getInnerType(typeRef, false) ));
+			if (typeUtils.getInnerType(typeRef, false) instanceof IQLClass) {
+				userDefinedTypes.addAll(getUserDefinedTypes((IQLClass)typeUtils.getInnerType(typeRef, false) ));
+			} else if (typeUtils.getInnerType(typeRef, false) instanceof IQLInterface) {
+				userDefinedTypes.addAll(getUserDefinedTypes((IQLInterface)typeUtils.getInnerType(typeRef, false) ));
 			}
 		}
 		return userDefinedTypes;
@@ -168,12 +171,12 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory> implements II
 		if (file.getName() == null) {
 			userDefinedTypes.add(c);
 			JvmTypeReference extendedClass = c.getExtendedClass();
-			if (extendedClass != null && typeFactory.getInnerType(extendedClass, false) instanceof IQLClass) {
-				userDefinedTypes.addAll(getUserDefinedTypes((IQLClass)typeFactory.getInnerType(extendedClass, false)));
+			if (extendedClass != null && typeUtils.getInnerType(extendedClass, false) instanceof IQLClass) {
+				userDefinedTypes.addAll(getUserDefinedTypes((IQLClass)typeUtils.getInnerType(extendedClass, false)));
 			}
 			for (JvmTypeReference extendedClassInterf : c.getExtendedInterfaces()) {
-				if (typeFactory.getInnerType(extendedClassInterf, false) instanceof IQLInterface) {
-					userDefinedTypes.addAll(getUserDefinedTypes((IQLInterface)typeFactory.getInnerType(extendedClassInterf, false)));
+				if (typeUtils.getInnerType(extendedClassInterf, false) instanceof IQLInterface) {
+					userDefinedTypes.addAll(getUserDefinedTypes((IQLInterface)typeUtils.getInnerType(extendedClassInterf, false)));
 				}
 			}
 		}
@@ -186,8 +189,8 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory> implements II
 		if (file.getName() == null) {
 			userDefinedTypes.add(i);
 			for (JvmTypeReference extendedClassInterf : i.getExtendedInterfaces()) {
-				if (typeFactory.getInnerType(extendedClassInterf, false) instanceof IQLInterface) {
-					userDefinedTypes.addAll(getUserDefinedTypes((IQLInterface)typeFactory.getInnerType(extendedClassInterf, false)));
+				if (typeUtils.getInnerType(extendedClassInterf, false) instanceof IQLInterface) {
+					userDefinedTypes.addAll(getUserDefinedTypes((IQLInterface)typeUtils.getInnerType(extendedClassInterf, false)));
 				}				
 			}
 		}

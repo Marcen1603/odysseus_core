@@ -28,12 +28,14 @@ import java.util.Map;
 
 
 
+
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
+
 
 
 
@@ -64,19 +66,20 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
 
 
 
-public class ODLParser extends AbstractIQLParser<ODLTypeFactory> {
+public class ODLParser extends AbstractIQLParser<ODLTypeFactory, ODLTypeUtils> {
 	
 	private static final String LANGUAGE_NAME = "de.uniol.inf.is.odysseus.iql.odl.ODL";
 	private static final String OPERATORS_DIR = "operators";
 
 	@Inject
-	public ODLParser(ODLTypeFactory typeFactory) {
-		super(typeFactory);
+	public ODLParser(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
+		super(typeFactory, typeUtils);
 	}
 
 	

@@ -80,7 +80,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionSuper;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionThis;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
@@ -240,8 +240,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				}
 				else break;
 			case BasicIQLPackage.IQL_CLASS:
-				if(context == grammarAccess.getIQLClassRule() ||
-				   context == grammarAccess.getIQLTypeDefsRule()) {
+				if(context == grammarAccess.getIQLClassRule()) {
 					sequence_IQLClass(context, (IQLClass) semanticObject); 
 					return; 
 				}
@@ -333,8 +332,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				}
 				else break;
 			case BasicIQLPackage.IQL_INTERFACE:
-				if(context == grammarAccess.getIQLInterfaceRule() ||
-				   context == grammarAccess.getIQLTypeDefsRule()) {
+				if(context == grammarAccess.getIQLInterfaceRule()) {
 					sequence_IQLInterface(context, (IQLInterface) semanticObject); 
 					return; 
 				}
@@ -1112,9 +1110,9 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_TYPE_DEF:
-				if(context == grammarAccess.getIQLTypeDefRule()) {
-					sequence_IQLTypeDef(context, (IQLTypeDef) semanticObject); 
+			case BasicIQLPackage.IQL_TYPE_DEFINITION:
+				if(context == grammarAccess.getIQLTypeDefinitionRule()) {
+					sequence_IQLTypeDefinition(context, (IQLTypeDefinition) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1318,7 +1316,6 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	/**
 	 * Constraint:
 	 *     (
-	 *         javametadata+=IQLJavaMetadata* 
 	 *         simpleName=ID 
 	 *         extendedClass=JvmTypeReference? 
 	 *         (extendedInterfaces+=JvmTypeReference extendedInterfaces+=JvmTypeReference?)? 
@@ -1407,7 +1404,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (name=QualifiedName? namespaces+=IQLNamespace* elements+=IQLTypeDefs*)
+	 *     (name=QualifiedName? namespaces+=IQLNamespace* elements+=IQLTypeDefinition*)
 	 */
 	protected void sequence_IQLFile(EObject context, IQLFile semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1473,7 +1470,6 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	/**
 	 * Constraint:
 	 *     (
-	 *         javametadata+=IQLJavaMetadata* 
 	 *         simpleName=ID 
 	 *         (extendedInterfaces+=JvmTypeReference extendedInterfaces+=JvmTypeReference?)? 
 	 *         (members+=IQLMethodDeclarationMember | members+=IQLJavaMember)*
@@ -2005,7 +2001,13 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (simpleName=ID (parameters+=JvmFormalParameter parameters+=JvmFormalParameter*)? returnType=JvmTypeReference? body=IQLStatementBlock)
+	 *     (
+	 *         override?='override'? 
+	 *         simpleName=ID 
+	 *         (parameters+=JvmFormalParameter parameters+=JvmFormalParameter*)? 
+	 *         returnType=JvmTypeReference? 
+	 *         body=IQLStatementBlock
+	 *     )
 	 */
 	protected void sequence_IQLMethod(EObject context, IQLMethod semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -2237,9 +2239,9 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     {IQLTypeDef}
+	 *     (javametadata+=IQLJavaMetadata* (inner=IQLClass | inner=IQLInterface))
 	 */
-	protected void sequence_IQLTypeDef(EObject context, IQLTypeDef semanticObject) {
+	protected void sequence_IQLTypeDefinition(EObject context, IQLTypeDefinition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

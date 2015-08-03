@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.iql.basic.typing.builder;
 
 import javax.inject.Inject;
 
+import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
 import org.eclipse.xtext.common.types.util.TypeReferences;
@@ -9,14 +10,14 @@ import org.eclipse.xtext.common.types.util.TypeReferences;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 
 
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeFactory> implements IIQLTypeBuilder {
+public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLTypeBuilder {
 
 	@Inject
 	protected IJvmTypeProvider.Factory typeProviderFactory;
@@ -25,9 +26,11 @@ public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeFactory> implemen
 	protected TypeReferences typeReferences;
 	
 	protected T typeFactory;
-	
-	public AbstractIQLTypeBuilder(T typeFactory) {
+	protected U typeUtils;
+
+	public AbstractIQLTypeBuilder(T typeFactory, U typeUtils) {
 		this.typeFactory = typeFactory;
+		this.typeUtils = typeUtils;
 	}	
 	
 	
@@ -40,13 +43,13 @@ public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeFactory> implemen
 	}
 	
 	private IQLSystemType createSystemType(String packageName, String simpleName, Class<?> javaType) {
-		IQLTypeDef typeDef = null;
+		JvmGenericType type = null;
 		if (javaType.isInterface()) {
-			typeDef = createInterfaceType(packageName, simpleName, javaType);
+			type = createInterfaceType(packageName, simpleName, javaType);
 		} else {
-			typeDef = createClassType(packageName, simpleName, javaType);
+			type = createClassType(packageName, simpleName, javaType);
 		}
-		return new IQLSystemType(typeDef, javaType);
+		return new IQLSystemType(type, javaType);
 	}
 	
 	private IQLInterface createInterfaceType(String packageName, String simpleName, Class<?> javaType) {

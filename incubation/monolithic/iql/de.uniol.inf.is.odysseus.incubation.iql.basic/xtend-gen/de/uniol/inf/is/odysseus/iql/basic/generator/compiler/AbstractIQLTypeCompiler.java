@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -16,14 +17,17 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.lib.ExclusiveRange;
 
 @SuppressWarnings("all")
-public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, E extends IIQLExpressionCompiler<G>, F extends IIQLTypeFactory> implements IIQLTypeCompiler<G> {
+public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, E extends IIQLExpressionCompiler<G>, F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLTypeCompiler<G> {
   protected H helper;
   
   protected F typeFactory;
   
-  public AbstractIQLTypeCompiler(final H helper, final F typeFactory) {
+  protected U typeUtils;
+  
+  public AbstractIQLTypeCompiler(final H helper, final F typeFactory, final U typeUtils) {
     this.helper = helper;
     this.typeFactory = typeFactory;
+    this.typeUtils = typeUtils;
   }
   
   public String compile(final JvmTypeReference typeRef, final G context, final boolean wrapper) {
@@ -95,7 +99,7 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
   public String compile(final JvmTypeReference typeRef, final G context, final String nodeText, final boolean wrapper) {
     String _xblockexpression = null;
     {
-      JvmType innerType = this.typeFactory.getInnerType(typeRef, false);
+      JvmType innerType = this.typeUtils.getInnerType(typeRef, false);
       boolean _isImportNeeded = this.typeFactory.isImportNeeded(innerType, nodeText);
       if (_isImportNeeded) {
         String _importName = this.typeFactory.getImportName(innerType);

@@ -6,9 +6,9 @@ import java.util.HashSet;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.ITypeOperators;
-import de.uniol.inf.is.odysseus.iql.odl.typing.typeoperators.IPunctuationOperators;
-import de.uniol.inf.is.odysseus.iql.odl.typing.typeoperators.TupleOperators;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
+import de.uniol.inf.is.odysseus.iql.odl.typing.extension.PunctuationExtensions;
+import de.uniol.inf.is.odysseus.iql.odl.typing.extension.TupleExtensions;
 
 public class ODLDefaultTypes {
 	
@@ -32,10 +32,10 @@ public class ODLDefaultTypes {
 		return implicitImports;
 	}
 	
-	public static Collection<ITypeOperators> getTypeOperators() {
-		Collection<ITypeOperators> result = new HashSet<>();
-		result.add(new TupleOperators());
-		result.add(new IPunctuationOperators());
+	public static Collection<IIQLTypeExtensions> getTypeOperators() {
+		Collection<IIQLTypeExtensions> result = new HashSet<>();
+		result.add(new TupleExtensions());
+		result.add(new PunctuationExtensions());
 		return result;
 	}
 

@@ -24,55 +24,76 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.IIQLTypeOperatorsFactory;
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.ITypeOperators;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQLTypeOperatorsFactory> implements IIQLLookUp{
+public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQLTypeExtensionsFactory, U extends IIQLTypeUtils> implements IIQLLookUp{
 	
 	@Inject
 	protected IResourceDescriptions resources;
 	
 	protected T typeFactory;
-	
+	protected U typeUtils;
+
 	protected F typeOperatosFactory;
 
 	
 	@Inject
 	protected IJvmTypeProvider.Factory typeProviderFactory;
 
-	public AbstractIQLLookUp(T typeFactory, F typeOperatosFactory) {
+	public AbstractIQLLookUp(T typeFactory, F typeOperatosFactory, U typeUtils) {
 		this.typeFactory = typeFactory;
 		this.typeOperatosFactory = typeOperatosFactory;
+		this.typeUtils = typeUtils;
 	}
 	
 	@Override
 	public Collection<JvmField> getPublicAttributes(JvmTypeReference typeRef, boolean extensionAttributes) {
-		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE};
-		return  findAttributes(typeRef, true, visibilities, extensionAttributes);
+		return getPublicAttributes(typeRef,new HashSet<JvmTypeReference>(),extensionAttributes);
 	}
 	
 	@Override
 	public Collection<JvmField> getProtectedAttributes(JvmTypeReference typeRef, boolean extensionAttributes) {
+		return getProtectedAttributes(typeRef,new HashSet<JvmTypeReference>(), extensionAttributes);
+	}
+	
+	@Override
+	public Collection<JvmField> getPublicAttributes(JvmTypeReference typeRef, Collection<JvmTypeReference> importedTypes,boolean extensionAttributes) {
+		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE};
+		Map<String, JvmField> attributes = new HashMap<>();
+
+		findAttributes(typeRef,attributes, true, visibilities, false,extensionAttributes);
+		for (JvmTypeReference importedType : importedTypes) {
+			findAttributes(importedType,attributes, true, visibilities, true, false);
+		}
+		return new HashSet<>(attributes.values());
+	}
+	
+	@Override
+	public Collection<JvmField> getProtectedAttributes(JvmTypeReference typeRef, Collection<JvmTypeReference> importedTypes, boolean extensionAttributes) {
 		int[] visibilities = new int[]{JvmVisibility.PROTECTED_VALUE};
-		return findAttributes(typeRef, true, visibilities, extensionAttributes);
+		Map<String, JvmField> attributes = new HashMap<>();
+
+		findAttributes(typeRef, attributes, true, visibilities, false,extensionAttributes);
+		for (JvmTypeReference importedType : importedTypes) {
+			findAttributes(importedType,attributes, true, visibilities, true, false);
+		}
+		return new HashSet<>(attributes.values());
 	}
 	
-	protected Collection<JvmField> findAttributes(JvmTypeReference typeRef,boolean deep, int[] visibilities, boolean extensionAttributes) {
-		Collection<JvmField> result = new HashSet<>();
-		JvmType type = typeFactory.getInnerType(typeRef, true);
+	protected void findAttributes(JvmTypeReference typeRef,Map<String, JvmField> attributes, boolean deep, int[] visibilities,boolean onlyStatic, boolean extensionAttributes) {
+		JvmType type = typeUtils.getInnerType(typeRef, true);
 		if (type instanceof JvmGenericType) {
-			result.addAll(findAttributes((JvmGenericType)type,typeRef, deep, visibilities, extensionAttributes));
+			findAttributes((JvmGenericType)type,typeRef,attributes, deep, visibilities, onlyStatic, extensionAttributes);
 		} 
-		return result;
 	}
 	
-	protected Collection<JvmField> findAttributes(JvmGenericType type,JvmTypeReference typeRef, boolean deep, int[] visibilities, boolean extensionAttributes) {		
-		Collection<JvmField> attributes = new HashSet<>();
+	protected void findAttributes(JvmGenericType type,JvmTypeReference typeRef, Map<String, JvmField> attributes, boolean deep, int[] visibilities, boolean onlyStatic,  boolean extensionAttributes) {		
 		for (JvmField attribute : type.getDeclaredFields()) {
 			boolean success = false;
-			if (typeFactory.isUserDefinedType(type, false)) {
+			if (typeUtils.isUserDefinedType(type, false)) {
 				success = true;
 			}			
 			int visibility = attribute.getVisibility().getValue();
@@ -82,69 +103,86 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 					break;
 				}
 			}
+			if (onlyStatic && !attribute.isStatic()) {
+				success = false;
+			}
 			if (success) {
-				if (typeFactory.isUserDefinedType(type, false) || !typeFactory.isArray(attribute.getType())) {
-					attributes.add(attribute);
+				if (!attributes.containsKey(attribute.getSimpleName()) && (typeUtils.isUserDefinedType(type, false) || !typeUtils.isArray(attribute.getType()))) {
+					attributes.put(attribute.getSimpleName(), attribute);
 				}
 			}
 		}
-		if (extensionAttributes) {
-			ITypeOperators typeOperators = typeOperatosFactory.getTypeOperators(typeRef);
-			if (typeOperators != null) {
-				JvmTypeReference typeR = typeOperatosFactory.getTypeOperators(typeOperators);
-				Collection<JvmField> col = findAttributes(typeR, false, visibilities, false);
-				for (JvmField attr : col) {
-					if (typeOperators.hasExtensionAttribute(attr.getSimpleName())) {
-						attributes.add(attr);
-					}
+		if (extensionAttributes && typeOperatosFactory.hasTypeExtensions(typeRef)) {
+			Collection<JvmField> col = typeOperatosFactory.getAllExtensionAttributes(typeRef, visibilities);
+			for (JvmField attr : col) {
+				if (!attributes.containsKey(attr.getSimpleName())) {
+					attributes.put(attr.getSimpleName(), attr);
 				}
-			}
+			}			
 		}
-		if (deep && type.getExtendedClass()!= null && type != type.getExtendedClass()) {
-			attributes.addAll(findAttributes(type.getExtendedClass(), deep, visibilities, extensionAttributes));
+		if (deep && type.getExtendedClass()!= null && type != type.getExtendedClass()) {			
+			findAttributes(type.getExtendedClass(), attributes, deep, visibilities, onlyStatic, extensionAttributes);
 		}
 		if (deep) {
 			for (JvmTypeReference interf : type.getExtendedInterfaces()) {
 				if (interf != type) {
-					attributes.addAll(findAttributes(interf, deep, visibilities, extensionAttributes));
+					findAttributes(interf, attributes, deep, visibilities,  onlyStatic,  extensionAttributes);
 				}
 			}	
-		}	
-		return attributes;
+		}
+		boolean isObject = typeUtils.getLongName(type, true).equals(Object.class.getCanonicalName());
+		if (!isObject && deep && type.getExtendedClass() == null && !type.getExtendedInterfaces().iterator().hasNext()) {
+			findAttributes(typeUtils.createTypeRef(Object.class, typeFactory.getSystemResourceSet()),attributes, deep, visibilities, onlyStatic,  extensionAttributes);
+		}
 	}
-
-	
 	
 	@Override
 	public Collection<JvmOperation> getPublicMethods(JvmTypeReference typeRef, boolean extensionMethods) {
-		Map<String, JvmOperation> methods = new HashMap<>();
-		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE};
-		findMethods(typeRef, methods, true, visibilities, extensionMethods);
-		return new HashSet<>(methods.values());
+		return getPublicMethods(typeRef, new HashSet<JvmTypeReference>(),  extensionMethods);
 	}
 	
 	@Override
 	public Collection<JvmOperation> getProtectedMethods(JvmTypeReference typeRef, boolean extensionMethods) {
+		return getProtectedMethods(typeRef,new HashSet<JvmTypeReference>(), extensionMethods);
+	}
+	
+	
+	@Override
+	public Collection<JvmOperation> getPublicMethods(JvmTypeReference typeRef,Collection<JvmTypeReference> importedTypes,boolean extensionMethods) {
+		Map<String, JvmOperation> methods = new HashMap<>();
+		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE};
+		findMethods(typeRef, methods, true, visibilities, false, extensionMethods);
+		for (JvmTypeReference importedType : importedTypes) {
+			findMethods(importedType, methods, true, visibilities, true, false);
+		}
+		return new HashSet<>(methods.values());
+	}
+	
+	@Override
+	public Collection<JvmOperation> getProtectedMethods(JvmTypeReference typeRef,Collection<JvmTypeReference> importedTypes,boolean extensionMethods) {
 		Map<String, JvmOperation> methods = new HashMap<>();
 		int[] visibilities = new int[]{JvmVisibility.PROTECTED_VALUE};
-		findMethods(typeRef, methods, true, visibilities, extensionMethods);
+		findMethods(typeRef, methods, true, visibilities, false, extensionMethods);
+		for (JvmTypeReference importedType : importedTypes) {
+			findMethods(importedType, methods, true, visibilities, true, false);
+		}
 		return new HashSet<>(methods.values());
 	}
 	
 	
-	protected void findMethods(JvmTypeReference typeRef, Map<String, JvmOperation> methods, boolean deep, int[] visibilities, boolean extensionMethods) {
-		JvmType type = typeFactory.getInnerType(typeRef, true);
+	protected void findMethods(JvmTypeReference typeRef, Map<String, JvmOperation> methods, boolean deep, int[] visibilities, boolean onlyStatic,  boolean extensionMethods) {
+		JvmType type = typeUtils.getInnerType(typeRef, true);
 		if (type instanceof JvmGenericType) {
-			findMethods((JvmGenericType)type,typeRef,methods, deep, visibilities, extensionMethods);
+			findMethods((JvmGenericType)type,typeRef,methods, deep, visibilities,onlyStatic, extensionMethods);
 		} 
 	}	
 	
-	protected void findMethods(JvmGenericType type,JvmTypeReference typeRef, Map<String, JvmOperation> methods, boolean deep, int[] visibilities, boolean extensionMethods) {	
+	protected void findMethods(JvmGenericType type,JvmTypeReference typeRef, Map<String, JvmOperation> methods, boolean deep, int[] visibilities, boolean onlyStatic,  boolean extensionMethods) {	
 		for (JvmOperation method : type.getDeclaredOperations()) {
 			boolean success = false;
-			if (typeFactory.isUserDefinedType(type, false)) {
+			if (typeUtils.isUserDefinedType(type, false)) {
 				success = true;
-			}			
+			}
 			int visibility = method.getVisibility().getValue();
 			for (int v : visibilities) {
 				if (visibility == v) {
@@ -152,37 +190,41 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 					break;
 				}
 			}
+			if (onlyStatic && !method.isStatic()) {
+				success = false;
+			}
 			if (success) {
 				String methodId = createExecutableID(method);
-				if (typeFactory.isUserDefinedType(type, false) || (!arrayUsedInMethod(method) && !methods.containsKey(methodId))) {
+				if (typeUtils.isUserDefinedType(type, false) || (!arrayUsedInMethod(method) && !methods.containsKey(methodId))) {
 					methods.put(methodId, method);
 				}
 			}
 		}
-		if (extensionMethods) {
-			ITypeOperators typeOperators = typeOperatosFactory.getTypeOperators(typeRef);
-			if (typeOperators != null) {
-				JvmTypeReference typeR = typeOperatosFactory.getTypeOperators(typeOperators);
-				Map<String, JvmOperation> methodsMap = new HashMap<>();
-				findMethods(typeR,methodsMap, false, visibilities, false);
-				for (JvmOperation op : methodsMap.values()) {
-					String methodId = createExecutableID(op);
-					if (!methods.containsKey(methodId) && typeOperators.hasExtensionMethod(op.getSimpleName(), op.getParameters().size())) {
-						methods.put(methodId, op);
-					}
+		if (extensionMethods && typeOperatosFactory.hasTypeExtensions(typeRef)) {
+			Collection<JvmOperation> col = typeOperatosFactory.getAllExtensionMethods(typeRef,visibilities);
+			for (JvmOperation op : col) {
+				String methodId = createExecutableID(op);
+				if (!methods.containsKey(methodId)) {
+					methods.put(methodId, op);
 				}
 			}
+		
 		}
 		if (deep && type.getExtendedClass()!= null && type != type.getExtendedClass()) {
-			findMethods(type.getExtendedClass(), methods, deep, visibilities, extensionMethods);
+			findMethods(type.getExtendedClass(), methods, deep, visibilities, onlyStatic, extensionMethods);
 		}
 		if (deep) {
 			for (JvmTypeReference interf : type.getExtendedInterfaces()) {
 				if (interf != type) {
-					findMethods(interf, methods, deep, visibilities, extensionMethods);
+					findMethods(interf, methods, deep, visibilities, onlyStatic, extensionMethods);
 				}
 			}
-		}		
+		}
+		
+		boolean isObject = typeUtils.getLongName(type, true).equals(Object.class.getCanonicalName());
+		if (!isObject && deep && type.getExtendedClass() == null && !type.getExtendedInterfaces().iterator().hasNext()) {
+			findMethods(typeUtils.createTypeRef(Object.class, typeFactory.getSystemResourceSet()), methods, deep, visibilities,onlyStatic,  extensionMethods);
+		}
 	}
 	
 		
@@ -201,7 +243,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	}
 	
 	protected void findConstructors(JvmTypeReference typeRef, Map<String, JvmExecutable> constructors, boolean deep) {
-		JvmType type = typeFactory.getInnerType(typeRef, true);
+		JvmType type = typeUtils.getInnerType(typeRef, true);
 		if (type instanceof JvmGenericType) {
 			findConstructors((JvmGenericType)type,constructors, deep);
 		} 
@@ -210,18 +252,18 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	protected void findConstructors(JvmGenericType type, Map<String, JvmExecutable> constructors, boolean deep) {	
 		for (JvmConstructor constructor : type.getDeclaredConstructors()) {
 			int visibility = constructor.getVisibility().getValue();
-			if (visibility!=JvmVisibility.PRIVATE_VALUE && visibility!=JvmVisibility.PROTECTED_VALUE&& (typeFactory.isUserDefinedType(type, false) || visibility!=JvmVisibility.DEFAULT_VALUE)) {
+			if (visibility!=JvmVisibility.PRIVATE_VALUE && visibility!=JvmVisibility.PROTECTED_VALUE&& (typeUtils.isUserDefinedType(type, false) || visibility!=JvmVisibility.DEFAULT_VALUE)) {
 				String constructorId = createExecutableID(constructor);
 				if (!arrayUsedInExecutable(constructor) && !constructors.containsKey(constructorId)) {
 					constructors.put(constructorId, constructor);
 				}
 			}
 		}
-		if (typeFactory.isUserDefinedType(type, false)) {
+		if (typeUtils.isUserDefinedType(type, false)) {
 			for (JvmOperation constructor : type.getDeclaredOperations()) {
-				if (constructor.getSimpleName().equalsIgnoreCase(type.getSimpleName())) {
+				if (constructor.getSimpleName() != null && constructor.getSimpleName().equalsIgnoreCase(type.getSimpleName())) {
 					int visibility = constructor.getVisibility().getValue();
-					if (visibility!=JvmVisibility.PRIVATE_VALUE && visibility!=JvmVisibility.PROTECTED_VALUE && (typeFactory.isUserDefinedType(type, false) || visibility!=JvmVisibility.DEFAULT_VALUE)) {
+					if (visibility!=JvmVisibility.PRIVATE_VALUE && visibility!=JvmVisibility.PROTECTED_VALUE && (typeUtils.isUserDefinedType(type, false) || visibility!=JvmVisibility.DEFAULT_VALUE)) {
 						String constructorId = createExecutableID(constructor);
 						if (!constructors.containsKey(constructorId)) {
 							constructors.put(constructorId, constructor);
@@ -270,7 +312,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		for (JvmType type : getAllTypes(context)) {
 			if (type instanceof JvmGenericType) {
 				JvmGenericType genericType = (JvmGenericType) type;
-				if (genericType.isInstantiateable() || typeFactory.isUserDefinedType(genericType, false)) {
+				if (genericType.isInstantiateable() || typeUtils.isUserDefinedType(genericType, false)) {
 					result.add(genericType);
 				}
 			}
@@ -294,8 +336,8 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		if (!isArraySizeEqual(targetRef, typeRef)) {
 			return false;
 		}	
-		String targetName = typeFactory.getLongName(targetRef, false, false);
-		String typeName = typeFactory.getLongName(typeRef, false, false);
+		String targetName = typeUtils.getLongName(targetRef, false, false);
+		String typeName = typeUtils.getLongName(typeRef, false, false);
 		
 		if (targetName.equalsIgnoreCase(typeName)) {
 			return true;
@@ -308,7 +350,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 			return ClassUtils.isAssignable(getPrimitive(typeName), getWrapper(targetName), true);
 		}
 		
-		JvmType innerType = typeFactory.getInnerType(typeRef, false);
+		JvmType innerType = typeUtils.getInnerType(typeRef, false);
 		if (innerType instanceof JvmGenericType) {
 			JvmGenericType genericType = (JvmGenericType) innerType;
 			if (genericType.getExtendedClass() != null) {
@@ -330,7 +372,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	@Override
 	public Map<String, JvmTypeReference> getProperties(JvmTypeReference typeRef) {
 		Map<String, JvmTypeReference> result = new HashMap<>();
-		Collection<JvmField> attributes = getPublicAttributes(typeRef, false);
+		Collection<JvmField> attributes = getPublicAttributes(typeRef, new HashSet<JvmTypeReference>(),false);
 		for (JvmField attr : attributes) {
 			result.put(attr.getSimpleName(), attr.getType());			
 		}
@@ -345,8 +387,8 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	
 	protected Collection<JvmOperation> getPublicSetters(JvmTypeReference typeRef) {
 		Collection<JvmOperation> result = new HashSet<>();
-		for (JvmOperation op : getPublicMethods(typeRef, false)) {
-			if (op.getSimpleName().startsWith("set") && op.getParameters().size() == 1 && (op.getReturnType() == null || typeFactory.isVoid(typeRef))){
+		for (JvmOperation op : getPublicMethods(typeRef,new HashSet<JvmTypeReference>(), false)) {
+			if (op.getSimpleName().startsWith("set") && op.getParameters().size() == 1 && (op.getReturnType() == null || typeUtils.isVoid(typeRef))){
 				result.add(op);
 			}
 		}
@@ -354,7 +396,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	}
 	
 	protected boolean isAssignable(JvmTypeReference targetRef, JvmType type) {
-		return isAssignable(targetRef, typeFactory.getTypeRef(type));
+		return isAssignable(targetRef, typeUtils.createTypeRef(type));
 	}
 	
 	
@@ -413,16 +455,16 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	}
 		
 	protected boolean isArraySizeEqual(JvmTypeReference targetRef, JvmTypeReference typeRef) {
-		return isArraySizeEqual(typeFactory.getInnerType(targetRef, true), typeFactory.getInnerType(typeRef, true));
+		return isArraySizeEqual(typeUtils.getInnerType(targetRef, true), typeUtils.getInnerType(typeRef, true));
 	}
 	
 	protected boolean isArraySizeEqual(JvmType target, JvmType type) {
-		return typeFactory.getArraySize(target) == typeFactory.getArraySize(type);
+		return typeUtils.getArraySize(target) == typeUtils.getArraySize(type);
 	}	
 	
 	protected boolean arrayUsedInExecutable(JvmExecutable exe) {
 		for (JvmFormalParameter p : exe.getParameters()) {
-			if (typeFactory.isArray(p.getParameterType())) {
+			if (typeUtils.isArray(p.getParameterType())) {
 				return true;
 			}
 		}
@@ -431,11 +473,11 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	
 	protected boolean arrayUsedInMethod(JvmOperation method) {
 		for (JvmFormalParameter p : method.getParameters()) {
-			if (typeFactory.isArray(p.getParameterType())) {
+			if (typeUtils.isArray(p.getParameterType())) {
 				return true;
 			}
 		}
-		if (method.getReturnType() != null && typeFactory.isArray(method.getReturnType())) {
+		if (method.getReturnType() != null && typeUtils.isArray(method.getReturnType())) {
 			return true;
 		}
 		return false;

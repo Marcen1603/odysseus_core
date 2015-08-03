@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
@@ -27,6 +28,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,20 +44,20 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
-public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLStatementCompiler, QDLTypeFactory> {
+public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLStatementCompiler, QDLTypeFactory, QDLTypeUtils> {
   @Inject
   private QDLMetadataMethodCompiler methodCompiler;
   
   @Inject
-  public QDLCompiler(final QDLCompilerHelper helper, final QDLTypeCompiler typeCompiler, final QDLStatementCompiler stmtCompiler, final QDLTypeFactory factory) {
-    super(helper, typeCompiler, stmtCompiler, factory);
+  public QDLCompiler(final QDLCompilerHelper helper, final QDLTypeCompiler typeCompiler, final QDLStatementCompiler stmtCompiler, final QDLTypeFactory typeFactory, final QDLTypeUtils typeUtils) {
+    super(helper, typeCompiler, stmtCompiler, typeFactory, typeUtils);
   }
   
-  public String compile(final QDLQuery q, final QDLGeneratorContext context) {
+  public String compile(final IQLTypeDefinition typeDef, final QDLQuery q, final QDLGeneratorContext context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
-      String _compileQuery = this.compileQuery(q, context);
+      String _compileQuery = this.compileQuery(typeDef, q, context);
       builder.append(_compileQuery);
       String _canonicalName = AbstractQDLQuery.class.getCanonicalName();
       context.addImport(_canonicalName);
@@ -76,7 +78,7 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
     return _xblockexpression;
   }
   
-  public String compileQuery(final QDLQuery q, final QDLGeneratorContext context) {
+  public String compileQuery(final IQLTypeDefinition typeDef, final QDLQuery q, final QDLGeneratorContext context) {
     String _xblockexpression = null;
     {
       String name = q.getSimpleName();
@@ -90,7 +92,7 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
       StringConcatenation _builder = new StringConcatenation();
       _builder.newLine();
       {
-        EList<IQLJavaMetadata> _javametadata = q.getJavametadata();
+        EList<IQLJavaMetadata> _javametadata = typeDef.getJavametadata();
         for(final IQLJavaMetadata j : _javametadata) {
           IQLJava _text = j.getText();
           ICompositeNode _node = NodeModelUtils.getNode(_text);
@@ -141,7 +143,7 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
       _builder.append("<?>> execute() {");
       _builder.newLineIfNotEmpty();
       {
-        Collection<String> _sources = this.factory.getSources();
+        Collection<String> _sources = this.typeFactory.getSources();
         for(final String source : _sources) {
           _builder.append("\t \t");
           String _canonicalName = StreamAO.class.getCanonicalName();
@@ -328,8 +330,8 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
       CharSequence _xblockexpression = null;
       {
         String opName = this.helper.getLogicalOperatorName(typeRef);
-        String _shortName = this.factory.getShortName(typeRef, false);
-        Class<? extends ILogicalOperator> _logicalOperator = this.factory.getLogicalOperator(_shortName);
+        String _shortName = this.typeUtils.getShortName(typeRef, false);
+        Class<? extends ILogicalOperator> _logicalOperator = this.typeFactory.getLogicalOperator(_shortName);
         String _canonicalName = _logicalOperator.getCanonicalName();
         context.addImport(_canonicalName);
         StringConcatenation _builder = new StringConcatenation();
@@ -338,7 +340,7 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
         String _compile = this.typeCompiler.compile(typeRef, context, false);
         _builder.append(_compile, "");
         _builder.append(" getOperator");
-        String _shortName_1 = this.factory.getShortName(typeRef, false);
+        String _shortName_1 = this.typeUtils.getShortName(typeRef, false);
         _builder.append(_shortName_1, "");
         int _hashCode = typeRef.hashCode();
         _builder.append(_hashCode, "");

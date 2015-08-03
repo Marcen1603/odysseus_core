@@ -65,6 +65,7 @@ public class ODLFactoryImpl extends EFactoryImpl implements ODLFactory
     switch (eClass.getClassifierID())
     {
       case ODLPackage.ODL_FILE: return createODLFile();
+      case ODLPackage.ODL_TYPE_DEFINITION: return createODLTypeDefinition();
       case ODLPackage.ODL_OPERATOR: return createODLOperator();
       case ODLPackage.ODL_PARAMETER: return createODLParameter();
       case ODLPackage.ODL_METHOD: return createODLMethod();
@@ -82,6 +83,17 @@ public class ODLFactoryImpl extends EFactoryImpl implements ODLFactory
   {
     ODLFileImpl odlFile = new ODLFileImpl();
     return odlFile;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ODLTypeDefinition createODLTypeDefinition()
+  {
+    ODLTypeDefinitionImpl odlTypeDefinition = new ODLTypeDefinitionImpl();
+    return odlTypeDefinition;
   }
 
   /**

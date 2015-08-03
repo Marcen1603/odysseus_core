@@ -1,21 +1,21 @@
 package de.uniol.inf.is.odysseus.iql.basic.typing;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
+import org.eclipse.xtext.common.types.JvmGenericType;
 
 public class IQLSystemType {
 	
-	private final IQLTypeDef iqlTypeDef;
+	private final JvmGenericType iqlTypeDef;
 	
 	private final Class<?> javaType;
 	
 	
-	public IQLSystemType(IQLTypeDef iqlTypeDef, Class<?> javaType) {
+	public IQLSystemType(JvmGenericType iqlTypeDef, Class<?> javaType) {
 		this.iqlTypeDef = iqlTypeDef;
 		this.javaType = javaType;
 	}
 
 
-	public IQLTypeDef getIqlTypeDef() {
+	public JvmGenericType getIqlTypeDef() {
 		return iqlTypeDef;
 	}
 

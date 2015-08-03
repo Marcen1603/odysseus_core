@@ -5,7 +5,7 @@ import org.eclipse.xtext.naming.QualifiedName;
 
 
 public class IQLQualifiedNameConverter implements IQualifiedNameConverter {
-	private static final String DELIMITER = "::";
+	public static final String DELIMITER = "::";
 	
 	
 	@Override

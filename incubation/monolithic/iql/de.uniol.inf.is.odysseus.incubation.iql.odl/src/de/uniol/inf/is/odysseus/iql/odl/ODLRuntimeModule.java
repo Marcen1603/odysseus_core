@@ -8,7 +8,6 @@ import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceFactory;
-import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
 
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompiler;
@@ -27,8 +26,9 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.IIQLExpressionParserContext;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.IIQLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGenerator;
 import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLCompiler;
@@ -41,7 +41,6 @@ import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHel
 import de.uniol.inf.is.odysseus.iql.odl.linking.ODLLinkingService;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.parser.ODLParser;
-import de.uniol.inf.is.odysseus.iql.odl.postprocessor.ODLPostProcessor;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser;
@@ -49,6 +48,7 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypingEntryPoint;
 
 /**
@@ -57,11 +57,11 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypingEntryPoint;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractODLRuntimeModule {
 
-	public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {
-        return ODLPostProcessor.class;
-    }
+	public Class<? extends IIQLTypeUtils> bindTypeUtils() {
+		return ODLTypeUtils.class;
+	}
 	
-	public Class<? extends IIQLTypeOperatorsFactory> bindTypeOperatorsFactory() {
+	public Class<? extends IIQLTypeExtensionsFactory> bindTypeOperatorsFactory() {
 		return ODLTypeOperatorsFactory.class;
 	}
 	
@@ -151,7 +151,6 @@ public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractO
 		  return IQLResourceFactory.class;
 	}
 	
-	@SuppressWarnings("restriction")
 	@Override
 	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
 		return ODLClasspathTypeProviderFactory.class;

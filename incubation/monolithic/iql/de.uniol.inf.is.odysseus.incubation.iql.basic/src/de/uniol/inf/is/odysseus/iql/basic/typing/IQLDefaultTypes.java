@@ -7,10 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.ITypeOperators;
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.impl.CollectionOperators;
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.impl.ListOperators;
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.impl.ObjectOperators;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl.CollectionExtensions;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl.ListExtensions;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl.ObjectExtensions;
 
 public class IQLDefaultTypes {
 	
@@ -30,14 +30,16 @@ public class IQLDefaultTypes {
 		Collection<String> implicitImports = new HashSet<>();
 		implicitImports.add("java.util.*");
 		implicitImports.add("java.lang.*");
+		implicitImports.add("java.lang.System");
+		implicitImports.add("de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter");
 		return implicitImports;
 	}
 	
-	public static Collection<ITypeOperators> getTypeOperators() {
-		Collection<ITypeOperators> result = new HashSet<>();
-		result.add(new CollectionOperators());
-		result.add(new ListOperators());
-		result.add(new ObjectOperators());
+	public static Collection<IIQLTypeExtensions> getTypeExtensions() {
+		Collection<IIQLTypeExtensions> result = new HashSet<>();
+		result.add(new CollectionExtensions());
+		result.add(new ListExtensions());
+		result.add(new ObjectExtensions());
 		return result;
 	}
 

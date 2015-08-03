@@ -5,8 +5,6 @@ package de.uniol.inf.is.odysseus.iql.qdl.qDL.impl;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefImpl;
-
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 
@@ -17,6 +15,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import org.eclipse.xtext.common.types.impl.JvmGenericTypeImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,7 +32,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class QDLQueryImpl extends IQLTypeDefImpl implements QDLQuery
+public class QDLQueryImpl extends JvmGenericTypeImpl implements QDLQuery
 {
   /**
    * The cached value of the '{@link #getMetadataList() <em>Metadata List</em>}' containment reference.

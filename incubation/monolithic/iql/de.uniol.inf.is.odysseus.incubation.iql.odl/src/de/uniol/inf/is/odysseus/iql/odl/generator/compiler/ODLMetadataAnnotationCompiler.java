@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 
 
 
+
 import javax.inject.Inject;
 
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -40,8 +41,9 @@ import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHel
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 
-public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotationCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler>{
+public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotationCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLTypeUtils>{
 	
 
 	private static String AO_DEFAULT_DOC = "IQL user operator";
@@ -51,8 +53,8 @@ public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
 	private ODLTypeFactory typeFactory;
 	
 	@Inject
-	public ODLMetadataAnnotationCompiler(ODLCompilerHelper helper,ODLTypeCompiler typeCompiler) {
-		super(helper, typeCompiler);
+	public ODLMetadataAnnotationCompiler(ODLCompilerHelper helper,ODLTypeCompiler typeCompiler, ODLTypeUtils typeUtils) {
+		super(helper, typeCompiler, typeUtils);
 	}
 	
 	
@@ -114,10 +116,10 @@ public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
 		if (!elements.containsKey("optional")) {
 			elements.put("optional", parameter.isOptional()+"");
 		}
-		if (typeFactory.isList(parameter.getType()) && !elements.containsKey("isList")) {
+		if (typeUtils.isList(parameter.getType()) && !elements.containsKey("isList")) {
 			elements.put("isList", "true");	
 		}
-		if (typeFactory.isMap(parameter.getType()) && !elements.containsKey("isMap")) {
+		if (typeUtils.isMap(parameter.getType()) && !elements.containsKey("isMap")) {
 			elements.put("isMap", "true");				
 		}
 		if (elements.containsKey(ODLTypeFactory.KEY_TYPE)) {

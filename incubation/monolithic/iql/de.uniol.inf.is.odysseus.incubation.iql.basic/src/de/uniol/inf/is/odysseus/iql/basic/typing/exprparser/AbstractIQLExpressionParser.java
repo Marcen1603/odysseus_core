@@ -3,18 +3,16 @@ package de.uniol.inf.is.odysseus.iql.basic.typing.exprparser;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAdditiveExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttributeSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLBooleanNotExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLEqualityExpression;
@@ -46,30 +44,29 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionSuper;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionThis;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.types.Range;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.IIQLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L extends IIQLLookUp, C extends IIQLExpressionParserContext> implements IIQLExpressionParser {
+public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L extends IIQLLookUp, C extends IIQLExpressionParserContext, U extends IIQLTypeUtils> implements IIQLExpressionParser {
 
 	
 	protected L lookUp;
 	protected T typeFactory;
 	protected C exprParserContext;
+	protected U typeUtils;
 
-	public AbstractIQLExpressionParser(T typeFactory, L lookUp, C exprParserContext) {
+	public AbstractIQLExpressionParser(T typeFactory, L lookUp, C exprParserContext, U typeUtils) {
 		this.typeFactory = typeFactory;
 		this.lookUp = lookUp;
 		this.exprParserContext = exprParserContext;
+		this.typeUtils = typeUtils;
 	}
 	
-
-	@Inject
-	private IQLExpressionParserHelper helper;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -158,7 +155,7 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		if (expectedType != null) {
 			return new TypeResult(expectedType);
 		} else {
-			return new TypeResult(typeFactory.getTypeRef("double"));
+			return new TypeResult(typeUtils.createTypeRef("double", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
@@ -167,13 +164,13 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		if (expectedType != null) {
 			return new TypeResult(expectedType);
 		} else {
-			return new TypeResult(typeFactory.getTypeRef("int"));
+			return new TypeResult(typeUtils.createTypeRef("int", typeFactory.getSystemResourceSet()));
 		}
 	}
 
 	
 	public TypeResult getType(IQLLiteralExpressionString expr, C context) {
-		return new TypeResult(typeFactory.getTypeRef(String.class));
+		return new TypeResult(typeUtils.createTypeRef(String.class, typeFactory.getSystemResourceSet()));
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionBoolean expr, C context) {
@@ -181,12 +178,12 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		if (expectedType != null) {
 			return new TypeResult(expectedType);
 		} else {
-			return new TypeResult(typeFactory.getTypeRef("boolean"));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionRange expr, C context) {
-		return new TypeResult(typeFactory.getTypeRef(Range.class));
+		return new TypeResult(typeUtils.createTypeRef(Range.class, typeFactory.getSystemResourceSet()));
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionChar expr, C context) {
@@ -194,7 +191,7 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		if (expectedType != null) {
 			return new TypeResult(expectedType);
 		} else {
-			return new TypeResult(typeFactory.getTypeRef("char"));
+			return new TypeResult(typeUtils.createTypeRef("char", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
@@ -203,19 +200,19 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionList expr, C context) {
-		return new TypeResult(typeFactory.getTypeRef(List.class));
+		return new TypeResult(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()));
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionMap expr, C context) {
-		return new TypeResult(typeFactory.getTypeRef(Map.class));
+		return new TypeResult(typeUtils.createTypeRef(Map.class, typeFactory.getSystemResourceSet()));
 	}
 	
 	public TypeResult getType(IQLTerminalExpressionVariable expr, C context) {
 		JvmTypeReference type = null;
 		if (expr.getVar() instanceof IQLVariableDeclaration) {
 			type = ((IQLVariableDeclaration) expr.getVar()).getRef();
-		} else if (expr.getVar() instanceof IQLAttribute) {
-			type = ((IQLAttribute) expr.getVar()).getType();
+		} else if (expr.getVar() instanceof JvmField) {
+			type = ((JvmField) expr.getVar()).getType();
 		} else if (expr.getVar() instanceof JvmFormalParameter) {
 			type = ((JvmFormalParameter) expr.getVar()).getParameterType();
 		}
@@ -257,7 +254,7 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		if (expectedType != null) {
 			return new TypeResult(expectedType);
 		} else {
-			return new TypeResult(typeFactory.getTypeRef("boolean"));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
@@ -278,24 +275,24 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 	}
 	
 	public TypeResult getType(IQLTerminalExpressionThis expr, C context) {		
-		IQLTypeDef c = EcoreUtil2.getContainerOfType(expr, IQLTypeDef.class);
-		return new TypeResult(typeFactory.getTypeRef(c));
+		JvmGenericType c = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
+		return new TypeResult(typeUtils.createTypeRef(c));
 	}
 	
 	public TypeResult getType(IQLTerminalExpressionSuper expr, C context) {
-		IQLTypeDef c = EcoreUtil2.getContainerOfType(expr, IQLTypeDef.class);
+		JvmGenericType c = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
 		return new TypeResult(c.getExtendedClass());
 	}
 	
 	@Override
 	public TypeResult getThisType(EObject obj) {
-		IQLTypeDef c = EcoreUtil2.getContainerOfType(obj, IQLTypeDef.class);
-		return new TypeResult(typeFactory.getTypeRef(c));
+		JvmGenericType c = EcoreUtil2.getContainerOfType(obj, JvmGenericType.class);
+		return new TypeResult(typeUtils.createTypeRef(c));
 	}
 
 	@Override
 	public TypeResult getSuperType(EObject obj) {
-		IQLTypeDef c = EcoreUtil2.getContainerOfType(obj, IQLTypeDef.class);
+		JvmGenericType c = EcoreUtil2.getContainerOfType(obj, JvmGenericType.class);
 		return new TypeResult(c.getExtendedClass());
 	}
 	
@@ -314,7 +311,7 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		if (expectedType != null) {
 			return new TypeResult(expectedType);
 		} else {
-			return new TypeResult(typeFactory.getTypeRef("boolean"));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
@@ -323,7 +320,7 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		if (expectedType != null) {
 			return new TypeResult(expectedType);
 		} else {
-			return new TypeResult(typeFactory.getTypeRef("boolean"));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
@@ -332,7 +329,7 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		if (expectedType != null) {
 			return new TypeResult(expectedType);
 		} else {
-			return new TypeResult(typeFactory.getTypeRef("boolean"));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
@@ -341,7 +338,7 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		if (expectedType != null) {
 			return new TypeResult(expectedType);
 		} else {
-			return new TypeResult(typeFactory.getTypeRef("boolean"));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
@@ -350,7 +347,7 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		if (expectedType != null) {
 			return new TypeResult(expectedType);
 		} else {
-			return new TypeResult(typeFactory.getTypeRef("boolean"));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
@@ -367,10 +364,10 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		TypeResult right = getType(expr.getRightOperand(), context);
 		
 		if (!left.isNull() && !right.isNull()) {
-			if (expr.getOp().equals("+") && (typeFactory.isString(left.getRef())||typeFactory.isString(right.getRef()))) {
-				return new TypeResult(typeFactory.getTypeRef(String.class));
+			if (expr.getOp().equals("+") && (typeUtils.isString(left.getRef())||typeUtils.isString(right.getRef()))) {
+				return new TypeResult(typeUtils.createTypeRef(String.class, typeFactory.getSystemResourceSet()));
 			} else {
-				return new TypeResult(helper.determineType(left.getRef(), right.getRef()));
+				return new TypeResult(determineType(left.getRef(), right.getRef()));
 			}
 		} else {
 			return new TypeResult();
@@ -386,11 +383,23 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		TypeResult right = getType(expr.getRightOperand(), context);
 		
 		if (!left.isNull() && !right.isNull()) {
-			return new TypeResult(helper.determineType(left.getRef(), right.getRef()));
+			return new TypeResult(determineType(left.getRef(), right.getRef()));
 		} else {
 			return new TypeResult();
 		}
 		
+	}
+	
+	protected JvmTypeReference determineType(JvmTypeReference left, JvmTypeReference right) {
+		if (typeUtils.isDouble(left) || typeUtils.isDouble(right)) {
+			return typeUtils.createTypeRef("double", typeFactory.getSystemResourceSet());
+		} else if (typeUtils.isFloat(left) || typeUtils.isFloat(right)) {
+			return typeUtils.createTypeRef("float", typeFactory.getSystemResourceSet());
+		} else if (typeUtils.isLong(left) || typeUtils.isLong(right)) {
+			return typeUtils.createTypeRef("long", typeFactory.getSystemResourceSet());
+		} else {
+			return typeUtils.createTypeRef("int", typeFactory.getSystemResourceSet());		
+		}
 	}
 	
 }

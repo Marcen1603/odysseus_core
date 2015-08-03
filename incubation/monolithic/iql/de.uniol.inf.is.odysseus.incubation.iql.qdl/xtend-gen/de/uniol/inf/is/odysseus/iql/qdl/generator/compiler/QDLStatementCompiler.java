@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -22,10 +22,10 @@ import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 @SuppressWarnings("all")
-public class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionCompiler, QDLTypeFactory, QDLExpressionParser, QDLLookUp> {
+public class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionCompiler, QDLTypeUtils, QDLExpressionParser, QDLLookUp> {
   @Inject
-  public QDLStatementCompiler(final QDLCompilerHelper helper, final QDLExpressionCompiler exprCompiler, final QDLTypeCompiler typeCompiler, final QDLTypeFactory factory, final QDLExpressionParser exprParser, final QDLLookUp lookUp) {
-    super(helper, exprCompiler, typeCompiler, factory, exprParser, lookUp);
+  public QDLStatementCompiler(final QDLCompilerHelper helper, final QDLExpressionCompiler exprCompiler, final QDLTypeCompiler typeCompiler, final QDLTypeUtils typeUtils, final QDLExpressionParser exprParser, final QDLLookUp lookUp) {
+    super(helper, exprCompiler, typeCompiler, typeUtils, exprParser, lookUp);
   }
   
   public String compile(final IQLVariableInitialization init, final JvmTypeReference typeRef, final QDLGeneratorContext context) {
@@ -64,7 +64,7 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompil
             if (_notEquals_1) {
               StringConcatenation _builder = new StringConcatenation();
               _builder.append("getOperator");
-              String _shortName = this.factory.getShortName(typeRef, false);
+              String _shortName = this.typeUtils.getShortName(typeRef, false);
               _builder.append(_shortName, "");
               int _hashCode = typeRef.hashCode();
               _builder.append(_hashCode, "");
@@ -94,7 +94,7 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompil
             } else {
               StringConcatenation _builder_1 = new StringConcatenation();
               _builder_1.append("getOperator");
-              String _shortName_1 = this.factory.getShortName(typeRef, false);
+              String _shortName_1 = this.typeUtils.getShortName(typeRef, false);
               _builder_1.append(_shortName_1, "");
               int _hashCode_1 = typeRef.hashCode();
               _builder_1.append(_hashCode_1, "");
@@ -144,7 +144,7 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompil
               if (_notEquals_2) {
                 StringConcatenation _builder = new StringConcatenation();
                 _builder.append("getOperator");
-                String _shortName = this.factory.getShortName(typeRef, false);
+                String _shortName = this.typeUtils.getShortName(typeRef, false);
                 _builder.append(_shortName, "");
                 int _hashCode = typeRef.hashCode();
                 _builder.append(_hashCode, "");
@@ -170,7 +170,7 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompil
               } else {
                 StringConcatenation _builder_1 = new StringConcatenation();
                 _builder_1.append("getOperator");
-                String _shortName_1 = this.factory.getShortName(typeRef, false);
+                String _shortName_1 = this.typeUtils.getShortName(typeRef, false);
                 _builder_1.append(_shortName_1, "");
                 int _hashCode_1 = typeRef.hashCode();
                 _builder_1.append(_hashCode_1, "");
@@ -210,7 +210,7 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompil
       if (_isSource) {
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("getSource(\"");
-        String _shortName = this.factory.getShortName(typeRef, false);
+        String _shortName = this.typeUtils.getShortName(typeRef, false);
         _builder.append(_shortName, "");
         _builder.append("\")");
         _xifexpression_1 = _builder.toString();

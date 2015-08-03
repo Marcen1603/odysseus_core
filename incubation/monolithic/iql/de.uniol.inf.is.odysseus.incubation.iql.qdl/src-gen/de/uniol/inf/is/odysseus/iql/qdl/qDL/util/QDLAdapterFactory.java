@@ -4,7 +4,7 @@ package de.uniol.inf.is.odysseus.iql.qdl.qDL.util;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.*;
 
@@ -93,6 +93,11 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
         return createQDLFileAdapter();
       }
       @Override
+      public Adapter caseQDLTypeDefinition(QDLTypeDefinition object)
+      {
+        return createQDLTypeDefinitionAdapter();
+      }
+      @Override
       public Adapter caseQDLQuery(QDLQuery object)
       {
         return createQDLQueryAdapter();
@@ -111,6 +116,11 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseIQLFile(IQLFile object)
       {
         return createIQLFileAdapter();
+      }
+      @Override
+      public Adapter caseIQLTypeDefinition(IQLTypeDefinition object)
+      {
+        return createIQLTypeDefinitionAdapter();
       }
       @Override
       public Adapter caseJvmIdentifiableElement(JvmIdentifiableElement object)
@@ -153,11 +163,6 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
         return createJvmGenericTypeAdapter();
       }
       @Override
-      public Adapter caseIQLTypeDef(IQLTypeDef object)
-      {
-        return createIQLTypeDefAdapter();
-      }
-      @Override
       public Adapter caseIQLExpression(IQLExpression object)
       {
         return createIQLExpressionAdapter();
@@ -195,6 +200,21 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createQDLFileAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition <em>Type Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition
+   * @generated
+   */
+  public Adapter createQDLTypeDefinitionAdapter()
   {
     return null;
   }
@@ -255,6 +275,21 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIQLFileAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition <em>IQL Type Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
+   * @generated
+   */
+  public Adapter createIQLTypeDefinitionAdapter()
   {
     return null;
   }
@@ -375,21 +410,6 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createJvmGenericTypeAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef <em>IQL Type Def</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef
-   * @generated
-   */
-  public Adapter createIQLTypeDefAdapter()
   {
     return null;
   }

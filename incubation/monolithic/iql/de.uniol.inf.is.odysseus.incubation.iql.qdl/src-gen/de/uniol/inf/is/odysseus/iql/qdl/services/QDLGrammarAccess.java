@@ -25,13 +25,13 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cNamespacesAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNamespacesIQLNamespaceParserRuleCall_1_0 = (RuleCall)cNamespacesAssignment_1.eContents().get(0);
 		private final Assignment cElementsAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cElementsQDLTypeDefsParserRuleCall_2_0 = (RuleCall)cElementsAssignment_2.eContents().get(0);
+		private final RuleCall cElementsQDLTypeDefinitionParserRuleCall_2_0 = (RuleCall)cElementsAssignment_2.eContents().get(0);
 		
 		//QDLFile returns iql::IQLFile:
-		//	{QDLFile} namespaces+=IQLNamespace* elements+=QDLTypeDefs*;
+		//	{QDLFile} namespaces+=IQLNamespace* elements+=QDLTypeDefinition*;
 		public ParserRule getRule() { return rule; }
 
-		//{QDLFile} namespaces+=IQLNamespace* elements+=QDLTypeDefs*
+		//{QDLFile} namespaces+=IQLNamespace* elements+=QDLTypeDefinition*
 		public Group getGroup() { return cGroup; }
 
 		//{QDLFile}
@@ -43,65 +43,34 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		//IQLNamespace
 		public RuleCall getNamespacesIQLNamespaceParserRuleCall_1_0() { return cNamespacesIQLNamespaceParserRuleCall_1_0; }
 
-		//elements+=QDLTypeDefs*
+		//elements+=QDLTypeDefinition*
 		public Assignment getElementsAssignment_2() { return cElementsAssignment_2; }
 
-		//QDLTypeDefs
-		public RuleCall getElementsQDLTypeDefsParserRuleCall_2_0() { return cElementsQDLTypeDefsParserRuleCall_2_0; }
+		//QDLTypeDefinition
+		public RuleCall getElementsQDLTypeDefinitionParserRuleCall_2_0() { return cElementsQDLTypeDefinitionParserRuleCall_2_0; }
 	}
 
-	public class QDLTypeDefsElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "QDLTypeDefs");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cIQLClassParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final RuleCall cIQLInterfaceParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		private final RuleCall cQDLQueryParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
-		
-		//QDLTypeDefs returns iql::IQLTypeDef:
-		//	IQLClass | => IQLInterface | QDLQuery;
-		public ParserRule getRule() { return rule; }
-
-		//=> IQLClass | => IQLInterface | QDLQuery
-		public Alternatives getAlternatives() { return cAlternatives; }
-
-		//=> IQLClass
-		public RuleCall getIQLClassParserRuleCall_0() { return cIQLClassParserRuleCall_0; }
-
-		//=> IQLInterface
-		public RuleCall getIQLInterfaceParserRuleCall_1() { return cIQLInterfaceParserRuleCall_1; }
-
-		//QDLQuery
-		public RuleCall getQDLQueryParserRuleCall_2() { return cQDLQueryParserRuleCall_2; }
-	}
-
-	public class QDLQueryElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "QDLQuery");
+	public class QDLTypeDefinitionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "QDLTypeDefinition");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cQDLQueryAction_0 = (Action)cGroup.eContents().get(0);
+		private final Action cQDLTypeDefinitionAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cJavametadataAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cJavametadataIQLJavaMetadataParserRuleCall_1_0 = (RuleCall)cJavametadataAssignment_1.eContents().get(0);
-		private final Keyword cQueryKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Assignment cSimpleNameAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cSimpleNameIDTerminalRuleCall_3_0 = (RuleCall)cSimpleNameAssignment_3.eContents().get(0);
-		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
-		private final Keyword cLeftParenthesisKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cMetadataListAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cMetadataListIQLMetadataListParserRuleCall_4_1_0 = (RuleCall)cMetadataListAssignment_4_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_4_2 = (Keyword)cGroup_4.eContents().get(2);
-		private final Assignment cStatementsAssignment_5 = (Assignment)cGroup.eContents().get(5);
-		private final RuleCall cStatementsIQLStatementBlockParserRuleCall_5_0 = (RuleCall)cStatementsAssignment_5.eContents().get(0);
+		private final Assignment cInnerAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final Alternatives cInnerAlternatives_2_0 = (Alternatives)cInnerAssignment_2.eContents().get(0);
+		private final RuleCall cInnerIQLClassParserRuleCall_2_0_0 = (RuleCall)cInnerAlternatives_2_0.eContents().get(0);
+		private final RuleCall cInnerIQLInterfaceParserRuleCall_2_0_1 = (RuleCall)cInnerAlternatives_2_0.eContents().get(1);
+		private final RuleCall cInnerQDLQueryParserRuleCall_2_0_2 = (RuleCall)cInnerAlternatives_2_0.eContents().get(2);
 		
-		//QDLQuery returns iql::IQLTypeDef:
-		//	{QDLQuery} javametadata+=IQLJavaMetadata* "query" simpleName=ID ("(" metadataList=IQLMetadataList? ")")?
-		//	statements=IQLStatementBlock;
+		//QDLTypeDefinition returns iql::IQLTypeDefinition:
+		//	{QDLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery);
 		public ParserRule getRule() { return rule; }
 
-		//{QDLQuery} javametadata+=IQLJavaMetadata* "query" simpleName=ID ("(" metadataList=IQLMetadataList? ")")?
-		//statements=IQLStatementBlock
+		//{QDLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery)
 		public Group getGroup() { return cGroup; }
 
-		//{QDLQuery}
-		public Action getQDLQueryAction_0() { return cQDLQueryAction_0; }
+		//{QDLTypeDefinition}
+		public Action getQDLTypeDefinitionAction_0() { return cQDLTypeDefinitionAction_0; }
 
 		//javametadata+=IQLJavaMetadata*
 		public Assignment getJavametadataAssignment_1() { return cJavametadataAssignment_1; }
@@ -109,35 +78,76 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		//IQLJavaMetadata
 		public RuleCall getJavametadataIQLJavaMetadataParserRuleCall_1_0() { return cJavametadataIQLJavaMetadataParserRuleCall_1_0; }
 
+		//inner=(IQLClass | IQLInterface | QDLQuery)
+		public Assignment getInnerAssignment_2() { return cInnerAssignment_2; }
+
+		//IQLClass | IQLInterface | QDLQuery
+		public Alternatives getInnerAlternatives_2_0() { return cInnerAlternatives_2_0; }
+
+		//IQLClass
+		public RuleCall getInnerIQLClassParserRuleCall_2_0_0() { return cInnerIQLClassParserRuleCall_2_0_0; }
+
+		//IQLInterface
+		public RuleCall getInnerIQLInterfaceParserRuleCall_2_0_1() { return cInnerIQLInterfaceParserRuleCall_2_0_1; }
+
+		//QDLQuery
+		public RuleCall getInnerQDLQueryParserRuleCall_2_0_2() { return cInnerQDLQueryParserRuleCall_2_0_2; }
+	}
+
+	public class QDLQueryElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "QDLQuery");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cQDLQueryAction_0 = (Action)cGroup.eContents().get(0);
+		private final Keyword cQueryKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cSimpleNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cSimpleNameIDTerminalRuleCall_2_0 = (RuleCall)cSimpleNameAssignment_2.eContents().get(0);
+		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
+		private final Keyword cLeftParenthesisKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cMetadataListAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
+		private final RuleCall cMetadataListIQLMetadataListParserRuleCall_3_1_0 = (RuleCall)cMetadataListAssignment_3_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_3_2 = (Keyword)cGroup_3.eContents().get(2);
+		private final Assignment cStatementsAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cStatementsIQLStatementBlockParserRuleCall_4_0 = (RuleCall)cStatementsAssignment_4.eContents().get(0);
+		
+		//QDLQuery returns types::JvmGenericType:
+		//	{QDLQuery} "query" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? statements=IQLStatementBlock;
+		public ParserRule getRule() { return rule; }
+
+		//{QDLQuery} "query" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? statements=IQLStatementBlock
+		public Group getGroup() { return cGroup; }
+
+		//{QDLQuery}
+		public Action getQDLQueryAction_0() { return cQDLQueryAction_0; }
+
 		//"query"
-		public Keyword getQueryKeyword_2() { return cQueryKeyword_2; }
+		public Keyword getQueryKeyword_1() { return cQueryKeyword_1; }
 
 		//simpleName=ID
-		public Assignment getSimpleNameAssignment_3() { return cSimpleNameAssignment_3; }
+		public Assignment getSimpleNameAssignment_2() { return cSimpleNameAssignment_2; }
 
 		//ID
-		public RuleCall getSimpleNameIDTerminalRuleCall_3_0() { return cSimpleNameIDTerminalRuleCall_3_0; }
+		public RuleCall getSimpleNameIDTerminalRuleCall_2_0() { return cSimpleNameIDTerminalRuleCall_2_0; }
 
 		//("(" metadataList=IQLMetadataList? ")")?
-		public Group getGroup_4() { return cGroup_4; }
+		public Group getGroup_3() { return cGroup_3; }
 
 		//"("
-		public Keyword getLeftParenthesisKeyword_4_0() { return cLeftParenthesisKeyword_4_0; }
+		public Keyword getLeftParenthesisKeyword_3_0() { return cLeftParenthesisKeyword_3_0; }
 
 		//metadataList=IQLMetadataList?
-		public Assignment getMetadataListAssignment_4_1() { return cMetadataListAssignment_4_1; }
+		public Assignment getMetadataListAssignment_3_1() { return cMetadataListAssignment_3_1; }
 
 		//IQLMetadataList
-		public RuleCall getMetadataListIQLMetadataListParserRuleCall_4_1_0() { return cMetadataListIQLMetadataListParserRuleCall_4_1_0; }
+		public RuleCall getMetadataListIQLMetadataListParserRuleCall_3_1_0() { return cMetadataListIQLMetadataListParserRuleCall_3_1_0; }
 
 		//")"
-		public Keyword getRightParenthesisKeyword_4_2() { return cRightParenthesisKeyword_4_2; }
+		public Keyword getRightParenthesisKeyword_3_2() { return cRightParenthesisKeyword_3_2; }
 
 		//statements=IQLStatementBlock
-		public Assignment getStatementsAssignment_5() { return cStatementsAssignment_5; }
+		public Assignment getStatementsAssignment_4() { return cStatementsAssignment_4; }
 
 		//IQLStatementBlock
-		public RuleCall getStatementsIQLStatementBlockParserRuleCall_5_0() { return cStatementsIQLStatementBlockParserRuleCall_5_0; }
+		public RuleCall getStatementsIQLStatementBlockParserRuleCall_4_0() { return cStatementsIQLStatementBlockParserRuleCall_4_0; }
 	}
 
 	public class IQLAssignmentExpressionElements extends AbstractParserRuleElementFinder {
@@ -309,7 +319,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	
 	private final QDLFileElements pQDLFile;
-	private final QDLTypeDefsElements pQDLTypeDefs;
+	private final QDLTypeDefinitionElements pQDLTypeDefinition;
 	private final QDLQueryElements pQDLQuery;
 	private final IQLAssignmentExpressionElements pIQLAssignmentExpression;
 	private final IQLSubscribeExpressionElements pIQLSubscribeExpression;
@@ -326,7 +336,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		this.grammar = internalFindGrammar(grammarProvider);
 		this.gaBasicIQL = gaBasicIQL;
 		this.pQDLFile = new QDLFileElements();
-		this.pQDLTypeDefs = new QDLTypeDefsElements();
+		this.pQDLTypeDefinition = new QDLTypeDefinitionElements();
 		this.pQDLQuery = new QDLQueryElements();
 		this.pIQLAssignmentExpression = new IQLAssignmentExpressionElements();
 		this.pIQLSubscribeExpression = new IQLSubscribeExpressionElements();
@@ -362,7 +372,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//QDLFile returns iql::IQLFile:
-	//	{QDLFile} namespaces+=IQLNamespace* elements+=QDLTypeDefs*;
+	//	{QDLFile} namespaces+=IQLNamespace* elements+=QDLTypeDefinition*;
 	public QDLFileElements getQDLFileAccess() {
 		return pQDLFile;
 	}
@@ -371,19 +381,18 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getQDLFileAccess().getRule();
 	}
 
-	//QDLTypeDefs returns iql::IQLTypeDef:
-	//	IQLClass | => IQLInterface | QDLQuery;
-	public QDLTypeDefsElements getQDLTypeDefsAccess() {
-		return pQDLTypeDefs;
+	//QDLTypeDefinition returns iql::IQLTypeDefinition:
+	//	{QDLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery);
+	public QDLTypeDefinitionElements getQDLTypeDefinitionAccess() {
+		return pQDLTypeDefinition;
 	}
 	
-	public ParserRule getQDLTypeDefsRule() {
-		return getQDLTypeDefsAccess().getRule();
+	public ParserRule getQDLTypeDefinitionRule() {
+		return getQDLTypeDefinitionAccess().getRule();
 	}
 
-	//QDLQuery returns iql::IQLTypeDef:
-	//	{QDLQuery} javametadata+=IQLJavaMetadata* "query" simpleName=ID ("(" metadataList=IQLMetadataList? ")")?
-	//	statements=IQLStatementBlock;
+	//QDLQuery returns types::JvmGenericType:
+	//	{QDLQuery} "query" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? statements=IQLStatementBlock;
 	public QDLQueryElements getQDLQueryAccess() {
 		return pQDLQuery;
 	}
@@ -435,7 +444,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLFile:
-	//	("namespace" name=QualifiedName ";")? namespaces+=IQLNamespace* elements+=IQLTypeDefs*;
+	//	("namespace" name=QualifiedName ";")? namespaces+=IQLNamespace* elements+=IQLTypeDefinition*;
 	public BasicIQLGrammarAccess.IQLFileElements getIQLFileAccess() {
 		return gaBasicIQL.getIQLFileAccess();
 	}
@@ -444,14 +453,14 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLFileAccess().getRule();
 	}
 
-	//IQLTypeDefs returns IQLTypeDef:
-	//	IQLClass | IQLInterface;
-	public BasicIQLGrammarAccess.IQLTypeDefsElements getIQLTypeDefsAccess() {
-		return gaBasicIQL.getIQLTypeDefsAccess();
+	//IQLTypeDefinition:
+	//	{IQLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface);
+	public BasicIQLGrammarAccess.IQLTypeDefinitionElements getIQLTypeDefinitionAccess() {
+		return gaBasicIQL.getIQLTypeDefinitionAccess();
 	}
 	
-	public ParserRule getIQLTypeDefsRule() {
-		return getIQLTypeDefsAccess().getRule();
+	public ParserRule getIQLTypeDefinitionRule() {
+		return getIQLTypeDefinitionAccess().getRule();
 	}
 
 	//IQLNamespace:
@@ -464,10 +473,10 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLNamespaceAccess().getRule();
 	}
 
-	//IQLClass returns IQLTypeDef:
-	//	{IQLClass} javametadata+=IQLJavaMetadata* "class" simpleName=ID ("extends" extendedClass=JvmTypeReference)?
-	//	("implements" extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)? "{"
-	//	members+=(IQLAttribute | IQLMethod | IQLJavaMember)* "}";
+	//IQLClass returns types::JvmGenericType:
+	//	{IQLClass} "class" simpleName=ID ("extends" extendedClass=JvmTypeReference)? ("implements"
+	//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)? "{" members+=(IQLAttribute |
+	//	IQLMethod | IQLJavaMember)* "}";
 	public BasicIQLGrammarAccess.IQLClassElements getIQLClassAccess() {
 		return gaBasicIQL.getIQLClassAccess();
 	}
@@ -476,26 +485,15 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLClassAccess().getRule();
 	}
 
-	//IQLInterface returns IQLTypeDef:
-	//	{IQLInterface} javametadata+=IQLJavaMetadata* "interface" simpleName=ID ("extends"
-	//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)? "{"
-	//	members+=(IQLMethodDeclarationMember | IQLJavaMember)* "}";
+	//IQLInterface returns types::JvmGenericType:
+	//	{IQLInterface} "interface" simpleName=ID ("extends" extendedInterfaces+=JvmTypeReference (","
+	//	extendedInterfaces+=JvmTypeReference)?)? "{" members+=(IQLMethodDeclarationMember | IQLJavaMember)* "}";
 	public BasicIQLGrammarAccess.IQLInterfaceElements getIQLInterfaceAccess() {
 		return gaBasicIQL.getIQLInterfaceAccess();
 	}
 	
 	public ParserRule getIQLInterfaceRule() {
 		return getIQLInterfaceAccess().getRule();
-	}
-
-	//IQLTypeDef returns types::JvmGenericType:
-	//	{IQLTypeDef};
-	public BasicIQLGrammarAccess.IQLTypeDefElements getIQLTypeDefAccess() {
-		return gaBasicIQL.getIQLTypeDefAccess();
-	}
-	
-	public ParserRule getIQLTypeDefRule() {
-		return getIQLTypeDefAccess().getRule();
 	}
 
 	//IQLJavaMetadata:
@@ -602,8 +600,8 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMethod returns types::JvmOperation:
-	//	{IQLMethod} simpleName=ID ("(" (parameters+=JvmFormalParameter ("," parameters+=JvmFormalParameter)*)? ")")? (":"
-	//	returnType=JvmTypeReference)? body=IQLStatementBlock;
+	//	{IQLMethod} override?="override"? simpleName=ID ("(" (parameters+=JvmFormalParameter (","
+	//	parameters+=JvmFormalParameter)*)? ")")? (":" returnType=JvmTypeReference)? body=IQLStatementBlock;
 	public BasicIQLGrammarAccess.IQLMethodElements getIQLMethodAccess() {
 		return gaBasicIQL.getIQLMethodAccess();
 	}

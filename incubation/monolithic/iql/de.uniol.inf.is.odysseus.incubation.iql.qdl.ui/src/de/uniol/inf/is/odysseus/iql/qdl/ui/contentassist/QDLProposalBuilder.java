@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.odl.ui.contentassist;
+package de.uniol.inf.is.odysseus.iql.qdl.ui.contentassist;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.xtext.conversion.IValueConverterService;
@@ -9,12 +9,12 @@ import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractIQLProposalBuilder;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
 
 
-public class ODLProposalCreator extends AbstractIQLProposalBuilder {
+public class QDLProposalBuilder extends AbstractIQLProposalBuilder {
 
-	public ODLProposalCreator(ODLTypeFactory factory, ContentAssistContext contentAssistContext,
+	public QDLProposalBuilder(QDLTypeFactory factory, ContentAssistContext contentAssistContext,
 			String ruleName, IQLQualifiedNameConverter qualifiedNameConverter,
 			IValueConverterService valueConverterService,
 			ILabelProvider labelProvider,

@@ -105,167 +105,14 @@ public interface BasicIQLPackage extends EPackage
   int IQL_FILE_FEATURE_COUNT = 3;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefImpl <em>IQL Type Def</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefinitionImpl <em>IQL Type Definition</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefImpl
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTypeDef()
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefinitionImpl
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTypeDefinition()
    * @generated
    */
-  int IQL_TYPE_DEF = 1;
-
-  /**
-   * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__ANNOTATIONS = TypesPackage.JVM_GENERIC_TYPE__ANNOTATIONS;
-
-  /**
-   * The feature id for the '<em><b>Declaring Type</b></em>' container reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__DECLARING_TYPE = TypesPackage.JVM_GENERIC_TYPE__DECLARING_TYPE;
-
-  /**
-   * The feature id for the '<em><b>Visibility</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__VISIBILITY = TypesPackage.JVM_GENERIC_TYPE__VISIBILITY;
-
-  /**
-   * The feature id for the '<em><b>Simple Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__SIMPLE_NAME = TypesPackage.JVM_GENERIC_TYPE__SIMPLE_NAME;
-
-  /**
-   * The feature id for the '<em><b>Identifier</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__IDENTIFIER = TypesPackage.JVM_GENERIC_TYPE__IDENTIFIER;
-
-  /**
-   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__DEPRECATED = TypesPackage.JVM_GENERIC_TYPE__DEPRECATED;
-
-  /**
-   * The feature id for the '<em><b>Array Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__ARRAY_TYPE = TypesPackage.JVM_GENERIC_TYPE__ARRAY_TYPE;
-
-  /**
-   * The feature id for the '<em><b>Super Types</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__SUPER_TYPES = TypesPackage.JVM_GENERIC_TYPE__SUPER_TYPES;
-
-  /**
-   * The feature id for the '<em><b>Members</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__MEMBERS = TypesPackage.JVM_GENERIC_TYPE__MEMBERS;
-
-  /**
-   * The feature id for the '<em><b>Abstract</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__ABSTRACT = TypesPackage.JVM_GENERIC_TYPE__ABSTRACT;
-
-  /**
-   * The feature id for the '<em><b>Static</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__STATIC = TypesPackage.JVM_GENERIC_TYPE__STATIC;
-
-  /**
-   * The feature id for the '<em><b>Final</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__FINAL = TypesPackage.JVM_GENERIC_TYPE__FINAL;
-
-  /**
-   * The feature id for the '<em><b>Package Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__PACKAGE_NAME = TypesPackage.JVM_GENERIC_TYPE__PACKAGE_NAME;
-
-  /**
-   * The feature id for the '<em><b>Type Parameters</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__TYPE_PARAMETERS = TypesPackage.JVM_GENERIC_TYPE__TYPE_PARAMETERS;
-
-  /**
-   * The feature id for the '<em><b>Interface</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__INTERFACE = TypesPackage.JVM_GENERIC_TYPE__INTERFACE;
-
-  /**
-   * The feature id for the '<em><b>Strict Floating Point</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__STRICT_FLOATING_POINT = TypesPackage.JVM_GENERIC_TYPE__STRICT_FLOATING_POINT;
-
-  /**
-   * The feature id for the '<em><b>Anonymous</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_TYPE_DEF__ANONYMOUS = TypesPackage.JVM_GENERIC_TYPE__ANONYMOUS;
+  int IQL_TYPE_DEFINITION = 1;
 
   /**
    * The feature id for the '<em><b>Javametadata</b></em>' containment reference list.
@@ -274,25 +121,25 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_TYPE_DEF__JAVAMETADATA = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 0;
+  int IQL_TYPE_DEFINITION__JAVAMETADATA = 0;
 
   /**
-   * The feature id for the '<em><b>Extended Interfaces</b></em>' containment reference list.
+   * The feature id for the '<em><b>Inner</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IQL_TYPE_DEF__EXTENDED_INTERFACES = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 1;
+  int IQL_TYPE_DEFINITION__INNER = 1;
 
   /**
-   * The number of structural features of the '<em>IQL Type Def</em>' class.
+   * The number of structural features of the '<em>IQL Type Definition</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IQL_TYPE_DEF_FEATURE_COUNT = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 2;
+  int IQL_TYPE_DEFINITION_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLNamespaceImpl <em>IQL Namespace</em>}' class.
@@ -944,7 +791,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__ANNOTATIONS = IQL_TYPE_DEF__ANNOTATIONS;
+  int IQL_CLASS__ANNOTATIONS = TypesPackage.JVM_GENERIC_TYPE__ANNOTATIONS;
 
   /**
    * The feature id for the '<em><b>Declaring Type</b></em>' container reference.
@@ -953,7 +800,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__DECLARING_TYPE = IQL_TYPE_DEF__DECLARING_TYPE;
+  int IQL_CLASS__DECLARING_TYPE = TypesPackage.JVM_GENERIC_TYPE__DECLARING_TYPE;
 
   /**
    * The feature id for the '<em><b>Visibility</b></em>' attribute.
@@ -962,7 +809,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__VISIBILITY = IQL_TYPE_DEF__VISIBILITY;
+  int IQL_CLASS__VISIBILITY = TypesPackage.JVM_GENERIC_TYPE__VISIBILITY;
 
   /**
    * The feature id for the '<em><b>Simple Name</b></em>' attribute.
@@ -971,7 +818,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__SIMPLE_NAME = IQL_TYPE_DEF__SIMPLE_NAME;
+  int IQL_CLASS__SIMPLE_NAME = TypesPackage.JVM_GENERIC_TYPE__SIMPLE_NAME;
 
   /**
    * The feature id for the '<em><b>Identifier</b></em>' attribute.
@@ -980,7 +827,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__IDENTIFIER = IQL_TYPE_DEF__IDENTIFIER;
+  int IQL_CLASS__IDENTIFIER = TypesPackage.JVM_GENERIC_TYPE__IDENTIFIER;
 
   /**
    * The feature id for the '<em><b>Deprecated</b></em>' attribute.
@@ -989,7 +836,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__DEPRECATED = IQL_TYPE_DEF__DEPRECATED;
+  int IQL_CLASS__DEPRECATED = TypesPackage.JVM_GENERIC_TYPE__DEPRECATED;
 
   /**
    * The feature id for the '<em><b>Array Type</b></em>' containment reference.
@@ -998,7 +845,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__ARRAY_TYPE = IQL_TYPE_DEF__ARRAY_TYPE;
+  int IQL_CLASS__ARRAY_TYPE = TypesPackage.JVM_GENERIC_TYPE__ARRAY_TYPE;
 
   /**
    * The feature id for the '<em><b>Super Types</b></em>' containment reference list.
@@ -1007,7 +854,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__SUPER_TYPES = IQL_TYPE_DEF__SUPER_TYPES;
+  int IQL_CLASS__SUPER_TYPES = TypesPackage.JVM_GENERIC_TYPE__SUPER_TYPES;
 
   /**
    * The feature id for the '<em><b>Members</b></em>' containment reference list.
@@ -1016,7 +863,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__MEMBERS = IQL_TYPE_DEF__MEMBERS;
+  int IQL_CLASS__MEMBERS = TypesPackage.JVM_GENERIC_TYPE__MEMBERS;
 
   /**
    * The feature id for the '<em><b>Abstract</b></em>' attribute.
@@ -1025,7 +872,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__ABSTRACT = IQL_TYPE_DEF__ABSTRACT;
+  int IQL_CLASS__ABSTRACT = TypesPackage.JVM_GENERIC_TYPE__ABSTRACT;
 
   /**
    * The feature id for the '<em><b>Static</b></em>' attribute.
@@ -1034,7 +881,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__STATIC = IQL_TYPE_DEF__STATIC;
+  int IQL_CLASS__STATIC = TypesPackage.JVM_GENERIC_TYPE__STATIC;
 
   /**
    * The feature id for the '<em><b>Final</b></em>' attribute.
@@ -1043,7 +890,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__FINAL = IQL_TYPE_DEF__FINAL;
+  int IQL_CLASS__FINAL = TypesPackage.JVM_GENERIC_TYPE__FINAL;
 
   /**
    * The feature id for the '<em><b>Package Name</b></em>' attribute.
@@ -1052,7 +899,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__PACKAGE_NAME = IQL_TYPE_DEF__PACKAGE_NAME;
+  int IQL_CLASS__PACKAGE_NAME = TypesPackage.JVM_GENERIC_TYPE__PACKAGE_NAME;
 
   /**
    * The feature id for the '<em><b>Type Parameters</b></em>' containment reference list.
@@ -1061,7 +908,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__TYPE_PARAMETERS = IQL_TYPE_DEF__TYPE_PARAMETERS;
+  int IQL_CLASS__TYPE_PARAMETERS = TypesPackage.JVM_GENERIC_TYPE__TYPE_PARAMETERS;
 
   /**
    * The feature id for the '<em><b>Interface</b></em>' attribute.
@@ -1070,7 +917,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__INTERFACE = IQL_TYPE_DEF__INTERFACE;
+  int IQL_CLASS__INTERFACE = TypesPackage.JVM_GENERIC_TYPE__INTERFACE;
 
   /**
    * The feature id for the '<em><b>Strict Floating Point</b></em>' attribute.
@@ -1079,7 +926,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__STRICT_FLOATING_POINT = IQL_TYPE_DEF__STRICT_FLOATING_POINT;
+  int IQL_CLASS__STRICT_FLOATING_POINT = TypesPackage.JVM_GENERIC_TYPE__STRICT_FLOATING_POINT;
 
   /**
    * The feature id for the '<em><b>Anonymous</b></em>' attribute.
@@ -1088,25 +935,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__ANONYMOUS = IQL_TYPE_DEF__ANONYMOUS;
-
-  /**
-   * The feature id for the '<em><b>Javametadata</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_CLASS__JAVAMETADATA = IQL_TYPE_DEF__JAVAMETADATA;
-
-  /**
-   * The feature id for the '<em><b>Extended Interfaces</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_CLASS__EXTENDED_INTERFACES = IQL_TYPE_DEF__EXTENDED_INTERFACES;
+  int IQL_CLASS__ANONYMOUS = TypesPackage.JVM_GENERIC_TYPE__ANONYMOUS;
 
   /**
    * The feature id for the '<em><b>Extended Class</b></em>' containment reference.
@@ -1115,7 +944,16 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS__EXTENDED_CLASS = IQL_TYPE_DEF_FEATURE_COUNT + 0;
+  int IQL_CLASS__EXTENDED_CLASS = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Extended Interfaces</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_CLASS__EXTENDED_INTERFACES = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 1;
 
   /**
    * The number of structural features of the '<em>IQL Class</em>' class.
@@ -1124,7 +962,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_CLASS_FEATURE_COUNT = IQL_TYPE_DEF_FEATURE_COUNT + 1;
+  int IQL_CLASS_FEATURE_COUNT = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLInterfaceImpl <em>IQL Interface</em>}' class.
@@ -1143,7 +981,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__ANNOTATIONS = IQL_TYPE_DEF__ANNOTATIONS;
+  int IQL_INTERFACE__ANNOTATIONS = TypesPackage.JVM_GENERIC_TYPE__ANNOTATIONS;
 
   /**
    * The feature id for the '<em><b>Declaring Type</b></em>' container reference.
@@ -1152,7 +990,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__DECLARING_TYPE = IQL_TYPE_DEF__DECLARING_TYPE;
+  int IQL_INTERFACE__DECLARING_TYPE = TypesPackage.JVM_GENERIC_TYPE__DECLARING_TYPE;
 
   /**
    * The feature id for the '<em><b>Visibility</b></em>' attribute.
@@ -1161,7 +999,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__VISIBILITY = IQL_TYPE_DEF__VISIBILITY;
+  int IQL_INTERFACE__VISIBILITY = TypesPackage.JVM_GENERIC_TYPE__VISIBILITY;
 
   /**
    * The feature id for the '<em><b>Simple Name</b></em>' attribute.
@@ -1170,7 +1008,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__SIMPLE_NAME = IQL_TYPE_DEF__SIMPLE_NAME;
+  int IQL_INTERFACE__SIMPLE_NAME = TypesPackage.JVM_GENERIC_TYPE__SIMPLE_NAME;
 
   /**
    * The feature id for the '<em><b>Identifier</b></em>' attribute.
@@ -1179,7 +1017,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__IDENTIFIER = IQL_TYPE_DEF__IDENTIFIER;
+  int IQL_INTERFACE__IDENTIFIER = TypesPackage.JVM_GENERIC_TYPE__IDENTIFIER;
 
   /**
    * The feature id for the '<em><b>Deprecated</b></em>' attribute.
@@ -1188,7 +1026,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__DEPRECATED = IQL_TYPE_DEF__DEPRECATED;
+  int IQL_INTERFACE__DEPRECATED = TypesPackage.JVM_GENERIC_TYPE__DEPRECATED;
 
   /**
    * The feature id for the '<em><b>Array Type</b></em>' containment reference.
@@ -1197,7 +1035,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__ARRAY_TYPE = IQL_TYPE_DEF__ARRAY_TYPE;
+  int IQL_INTERFACE__ARRAY_TYPE = TypesPackage.JVM_GENERIC_TYPE__ARRAY_TYPE;
 
   /**
    * The feature id for the '<em><b>Super Types</b></em>' containment reference list.
@@ -1206,7 +1044,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__SUPER_TYPES = IQL_TYPE_DEF__SUPER_TYPES;
+  int IQL_INTERFACE__SUPER_TYPES = TypesPackage.JVM_GENERIC_TYPE__SUPER_TYPES;
 
   /**
    * The feature id for the '<em><b>Members</b></em>' containment reference list.
@@ -1215,7 +1053,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__MEMBERS = IQL_TYPE_DEF__MEMBERS;
+  int IQL_INTERFACE__MEMBERS = TypesPackage.JVM_GENERIC_TYPE__MEMBERS;
 
   /**
    * The feature id for the '<em><b>Abstract</b></em>' attribute.
@@ -1224,7 +1062,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__ABSTRACT = IQL_TYPE_DEF__ABSTRACT;
+  int IQL_INTERFACE__ABSTRACT = TypesPackage.JVM_GENERIC_TYPE__ABSTRACT;
 
   /**
    * The feature id for the '<em><b>Static</b></em>' attribute.
@@ -1233,7 +1071,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__STATIC = IQL_TYPE_DEF__STATIC;
+  int IQL_INTERFACE__STATIC = TypesPackage.JVM_GENERIC_TYPE__STATIC;
 
   /**
    * The feature id for the '<em><b>Final</b></em>' attribute.
@@ -1242,7 +1080,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__FINAL = IQL_TYPE_DEF__FINAL;
+  int IQL_INTERFACE__FINAL = TypesPackage.JVM_GENERIC_TYPE__FINAL;
 
   /**
    * The feature id for the '<em><b>Package Name</b></em>' attribute.
@@ -1251,7 +1089,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__PACKAGE_NAME = IQL_TYPE_DEF__PACKAGE_NAME;
+  int IQL_INTERFACE__PACKAGE_NAME = TypesPackage.JVM_GENERIC_TYPE__PACKAGE_NAME;
 
   /**
    * The feature id for the '<em><b>Type Parameters</b></em>' containment reference list.
@@ -1260,7 +1098,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__TYPE_PARAMETERS = IQL_TYPE_DEF__TYPE_PARAMETERS;
+  int IQL_INTERFACE__TYPE_PARAMETERS = TypesPackage.JVM_GENERIC_TYPE__TYPE_PARAMETERS;
 
   /**
    * The feature id for the '<em><b>Interface</b></em>' attribute.
@@ -1269,7 +1107,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__INTERFACE = IQL_TYPE_DEF__INTERFACE;
+  int IQL_INTERFACE__INTERFACE = TypesPackage.JVM_GENERIC_TYPE__INTERFACE;
 
   /**
    * The feature id for the '<em><b>Strict Floating Point</b></em>' attribute.
@@ -1278,7 +1116,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__STRICT_FLOATING_POINT = IQL_TYPE_DEF__STRICT_FLOATING_POINT;
+  int IQL_INTERFACE__STRICT_FLOATING_POINT = TypesPackage.JVM_GENERIC_TYPE__STRICT_FLOATING_POINT;
 
   /**
    * The feature id for the '<em><b>Anonymous</b></em>' attribute.
@@ -1287,16 +1125,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__ANONYMOUS = IQL_TYPE_DEF__ANONYMOUS;
-
-  /**
-   * The feature id for the '<em><b>Javametadata</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_INTERFACE__JAVAMETADATA = IQL_TYPE_DEF__JAVAMETADATA;
+  int IQL_INTERFACE__ANONYMOUS = TypesPackage.JVM_GENERIC_TYPE__ANONYMOUS;
 
   /**
    * The feature id for the '<em><b>Extended Interfaces</b></em>' containment reference list.
@@ -1305,7 +1134,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE__EXTENDED_INTERFACES = IQL_TYPE_DEF__EXTENDED_INTERFACES;
+  int IQL_INTERFACE__EXTENDED_INTERFACES = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 0;
 
   /**
    * The number of structural features of the '<em>IQL Interface</em>' class.
@@ -1314,7 +1143,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_INTERFACE_FEATURE_COUNT = IQL_TYPE_DEF_FEATURE_COUNT + 0;
+  int IQL_INTERFACE_FEATURE_COUNT = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLAttributeImpl <em>IQL Attribute</em>}' class.
@@ -1661,13 +1490,22 @@ public interface BasicIQLPackage extends EPackage
   int IQL_METHOD__STRICT_FLOATING_POINT = TypesPackage.JVM_OPERATION__STRICT_FLOATING_POINT;
 
   /**
+   * The feature id for the '<em><b>Override</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_METHOD__OVERRIDE = TypesPackage.JVM_OPERATION_FEATURE_COUNT + 0;
+
+  /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IQL_METHOD__BODY = TypesPackage.JVM_OPERATION_FEATURE_COUNT + 0;
+  int IQL_METHOD__BODY = TypesPackage.JVM_OPERATION_FEATURE_COUNT + 1;
 
   /**
    * The number of structural features of the '<em>IQL Method</em>' class.
@@ -1676,7 +1514,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_METHOD_FEATURE_COUNT = TypesPackage.JVM_OPERATION_FEATURE_COUNT + 1;
+  int IQL_METHOD_FEATURE_COUNT = TypesPackage.JVM_OPERATION_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMethodDeclarationMemberImpl <em>IQL Method Declaration Member</em>}' class.
@@ -3915,36 +3753,36 @@ public interface BasicIQLPackage extends EPackage
   EReference getIQLFile_Elements();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef <em>IQL Type Def</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition <em>IQL Type Definition</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>IQL Type Def</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef
+   * @return the meta object for class '<em>IQL Type Definition</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
    * @generated
    */
-  EClass getIQLTypeDef();
+  EClass getIQLTypeDefinition();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef#getJavametadata <em>Javametadata</em>}'.
+   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition#getJavametadata <em>Javametadata</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference list '<em>Javametadata</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef#getJavametadata()
-   * @see #getIQLTypeDef()
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition#getJavametadata()
+   * @see #getIQLTypeDefinition()
    * @generated
    */
-  EReference getIQLTypeDef_Javametadata();
+  EReference getIQLTypeDefinition_Javametadata();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef#getExtendedInterfaces <em>Extended Interfaces</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition#getInner <em>Inner</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Extended Interfaces</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef#getExtendedInterfaces()
-   * @see #getIQLTypeDef()
+   * @return the meta object for the containment reference '<em>Inner</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition#getInner()
+   * @see #getIQLTypeDefinition()
    * @generated
    */
-  EReference getIQLTypeDef_ExtendedInterfaces();
+  EReference getIQLTypeDefinition_Inner();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace <em>IQL Namespace</em>}'.
@@ -4464,6 +4302,17 @@ public interface BasicIQLPackage extends EPackage
   EReference getIQLClass_ExtendedClass();
 
   /**
+   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass#getExtendedInterfaces <em>Extended Interfaces</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Extended Interfaces</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass#getExtendedInterfaces()
+   * @see #getIQLClass()
+   * @generated
+   */
+  EReference getIQLClass_ExtendedInterfaces();
+
+  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface <em>IQL Interface</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4472,6 +4321,17 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    */
   EClass getIQLInterface();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface#getExtendedInterfaces <em>Extended Interfaces</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Extended Interfaces</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface#getExtendedInterfaces()
+   * @see #getIQLInterface()
+   * @generated
+   */
+  EReference getIQLInterface_ExtendedInterfaces();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute <em>IQL Attribute</em>}'.
@@ -4503,6 +4363,17 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    */
   EClass getIQLMethod();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod#isOverride <em>Override</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Override</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod#isOverride()
+   * @see #getIQLMethod()
+   * @generated
+   */
+  EAttribute getIQLMethod_Override();
 
   /**
    * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod#getBody <em>Body</em>}'.
@@ -6186,14 +6057,14 @@ public interface BasicIQLPackage extends EPackage
     EReference IQL_FILE__ELEMENTS = eINSTANCE.getIQLFile_Elements();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefImpl <em>IQL Type Def</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefinitionImpl <em>IQL Type Definition</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefImpl
-     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTypeDef()
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefinitionImpl
+     * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLPackageImpl#getIQLTypeDefinition()
      * @generated
      */
-    EClass IQL_TYPE_DEF = eINSTANCE.getIQLTypeDef();
+    EClass IQL_TYPE_DEFINITION = eINSTANCE.getIQLTypeDefinition();
 
     /**
      * The meta object literal for the '<em><b>Javametadata</b></em>' containment reference list feature.
@@ -6201,15 +6072,15 @@ public interface BasicIQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference IQL_TYPE_DEF__JAVAMETADATA = eINSTANCE.getIQLTypeDef_Javametadata();
+    EReference IQL_TYPE_DEFINITION__JAVAMETADATA = eINSTANCE.getIQLTypeDefinition_Javametadata();
 
     /**
-     * The meta object literal for the '<em><b>Extended Interfaces</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Inner</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference IQL_TYPE_DEF__EXTENDED_INTERFACES = eINSTANCE.getIQLTypeDef_ExtendedInterfaces();
+    EReference IQL_TYPE_DEFINITION__INNER = eINSTANCE.getIQLTypeDefinition_Inner();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLNamespaceImpl <em>IQL Namespace</em>}' class.
@@ -6648,6 +6519,14 @@ public interface BasicIQLPackage extends EPackage
     EReference IQL_CLASS__EXTENDED_CLASS = eINSTANCE.getIQLClass_ExtendedClass();
 
     /**
+     * The meta object literal for the '<em><b>Extended Interfaces</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_CLASS__EXTENDED_INTERFACES = eINSTANCE.getIQLClass_ExtendedInterfaces();
+
+    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLInterfaceImpl <em>IQL Interface</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -6656,6 +6535,14 @@ public interface BasicIQLPackage extends EPackage
      * @generated
      */
     EClass IQL_INTERFACE = eINSTANCE.getIQLInterface();
+
+    /**
+     * The meta object literal for the '<em><b>Extended Interfaces</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_INTERFACE__EXTENDED_INTERFACES = eINSTANCE.getIQLInterface_ExtendedInterfaces();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLAttributeImpl <em>IQL Attribute</em>}' class.
@@ -6684,6 +6571,14 @@ public interface BasicIQLPackage extends EPackage
      * @generated
      */
     EClass IQL_METHOD = eINSTANCE.getIQLMethod();
+
+    /**
+     * The meta object literal for the '<em><b>Override</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute IQL_METHOD__OVERRIDE = eINSTANCE.getIQLMethod_Override();
 
     /**
      * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.

@@ -20,26 +20,26 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLCasePart
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization
 import org.eclipse.xtext.common.types.JvmTypeReference
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
 
-abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, F extends IIQLTypeFactory, P extends IIQLExpressionParser, L extends IIQLLookUp> implements IIQLStatementCompiler<G>{
+abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, U extends IIQLTypeUtils, P extends IIQLExpressionParser, L extends IIQLLookUp> implements IIQLStatementCompiler<G>{
 	protected H helper;
 	protected E exprCompiler;
 	protected T typeCompiler;
-	protected F factory;
 	protected P exprParser;
 	protected L lookUp;
+	protected U typeUtils;
 	
 	
-	new (H helper, E exprCompiler, T typeCompiler, F factory, P exprParser, L lookUp) {
+	new (H helper, E exprCompiler, T typeCompiler, U typeUtils, P exprParser, L lookUp) {
 		this.helper = helper;
 		this.exprCompiler = exprCompiler;
 		this.typeCompiler = typeCompiler;
-		this.factory = factory;
+		this.typeUtils = typeUtils;
 		this.exprParser = exprParser;
 		this.lookUp = lookUp;	
 				
@@ -195,7 +195,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	def String compile(IQLConstructorCallStatement s, G c) {
 		var type = helper.getClass(s);
 		if (type != null) {
-			var typeRef = factory.getTypeRef(type)
+			var typeRef = typeUtils.createTypeRef(type)
 			if (s.keyword.equalsIgnoreCase("super")) {
 				typeRef = type.extendedClass
 			} 
@@ -220,9 +220,9 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 		if (init.argsMap != null && init.argsMap.elements.size > 0) {
 			var constructor = lookUp.findConstructor(typeRef, init.argsList.elements.size)
 			if (constructor != null) {
-				result = '''get«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, constructor.parameters,context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
+				result = '''get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, constructor.parameters,context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			} else {
-				result = '''get«factory.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
+				result = '''get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			}
 		} else if (init.argsList != null) {
 			var constructor = lookUp.findConstructor(typeRef, init.argsList.elements.size)

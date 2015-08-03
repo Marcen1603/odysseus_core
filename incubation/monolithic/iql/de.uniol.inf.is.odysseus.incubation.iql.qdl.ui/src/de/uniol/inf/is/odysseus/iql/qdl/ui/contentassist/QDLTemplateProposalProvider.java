@@ -50,6 +50,7 @@ import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 
 
 
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
@@ -66,16 +67,17 @@ import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.services.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
-public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<QDLExpressionParser, QDLTypeFactory, QDLLookUp, QDLScopeProvider> {
+public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<QDLExpressionParser, QDLTypeFactory, QDLLookUp, QDLScopeProvider, QDLTypeUtils> {
 
 	@Inject
 	public QDLTemplateProposalProvider(TemplateStore templateStore,
-			ContextTypeRegistry registry, ContextTypeIdHelper helper, QDLExpressionParser exprParser, QDLTypeFactory factory, QDLLookUp lookUp, QDLScopeProvider scopeProvider) {
-		super(templateStore, registry, helper, exprParser, factory, lookUp, scopeProvider);
+			ContextTypeRegistry registry, ContextTypeIdHelper helper, QDLExpressionParser exprParser, QDLTypeFactory factory, QDLLookUp lookUp, QDLScopeProvider scopeProvider, QDLTypeUtils typeUtils) {
+		super(templateStore, registry, helper, exprParser, factory, lookUp, scopeProvider, typeUtils);
 	}
 	
 	
@@ -124,8 +126,8 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 			typeRef = newExpr.getRef();
 		}
 		if (factory.isOperator(typeRef)) {
-			IOperatorBuilder builder = factory.getOperatorBuilder(factory.getShortName(typeRef, false));
-			IParameter<?> parameter = factory.getOperatorParameter(factory.getShortName(typeRef, false), node.getKey());
+			IOperatorBuilder builder = factory.getOperatorBuilder(typeUtils.getShortName(typeRef, false));
+			IParameter<?> parameter = factory.getOperatorParameter(typeUtils.getShortName(typeRef, false), node.getKey());
 			if (parameter.getPossibleValueMethod() != null && parameter.getPossibleValueMethod().length()>0) {
 				createParameterPossibleValueTemplates(builder, parameter, templateContext, context, acceptor);
 			}

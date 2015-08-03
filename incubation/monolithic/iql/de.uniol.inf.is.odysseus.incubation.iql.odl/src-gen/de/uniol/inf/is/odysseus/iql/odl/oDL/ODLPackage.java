@@ -9,6 +9,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
+import org.eclipse.xtext.common.types.TypesPackage;
+
 /**
  * <!-- begin-user-doc -->
  * The <b>Package</b> for the model.
@@ -105,167 +107,14 @@ public interface ODLPackage extends EPackage
   int ODL_FILE_FEATURE_COUNT = BasicIQLPackage.IQL_FILE_FEATURE_COUNT + 0;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLOperatorImpl <em>Operator</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLTypeDefinitionImpl <em>Type Definition</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLOperatorImpl
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLOperator()
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLTypeDefinitionImpl
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLTypeDefinition()
    * @generated
    */
-  int ODL_OPERATOR = 1;
-
-  /**
-   * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__ANNOTATIONS = BasicIQLPackage.IQL_TYPE_DEF__ANNOTATIONS;
-
-  /**
-   * The feature id for the '<em><b>Declaring Type</b></em>' container reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__DECLARING_TYPE = BasicIQLPackage.IQL_TYPE_DEF__DECLARING_TYPE;
-
-  /**
-   * The feature id for the '<em><b>Visibility</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__VISIBILITY = BasicIQLPackage.IQL_TYPE_DEF__VISIBILITY;
-
-  /**
-   * The feature id for the '<em><b>Simple Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__SIMPLE_NAME = BasicIQLPackage.IQL_TYPE_DEF__SIMPLE_NAME;
-
-  /**
-   * The feature id for the '<em><b>Identifier</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__IDENTIFIER = BasicIQLPackage.IQL_TYPE_DEF__IDENTIFIER;
-
-  /**
-   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__DEPRECATED = BasicIQLPackage.IQL_TYPE_DEF__DEPRECATED;
-
-  /**
-   * The feature id for the '<em><b>Array Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__ARRAY_TYPE = BasicIQLPackage.IQL_TYPE_DEF__ARRAY_TYPE;
-
-  /**
-   * The feature id for the '<em><b>Super Types</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__SUPER_TYPES = BasicIQLPackage.IQL_TYPE_DEF__SUPER_TYPES;
-
-  /**
-   * The feature id for the '<em><b>Members</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__MEMBERS = BasicIQLPackage.IQL_TYPE_DEF__MEMBERS;
-
-  /**
-   * The feature id for the '<em><b>Abstract</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__ABSTRACT = BasicIQLPackage.IQL_TYPE_DEF__ABSTRACT;
-
-  /**
-   * The feature id for the '<em><b>Static</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__STATIC = BasicIQLPackage.IQL_TYPE_DEF__STATIC;
-
-  /**
-   * The feature id for the '<em><b>Final</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__FINAL = BasicIQLPackage.IQL_TYPE_DEF__FINAL;
-
-  /**
-   * The feature id for the '<em><b>Package Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__PACKAGE_NAME = BasicIQLPackage.IQL_TYPE_DEF__PACKAGE_NAME;
-
-  /**
-   * The feature id for the '<em><b>Type Parameters</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__TYPE_PARAMETERS = BasicIQLPackage.IQL_TYPE_DEF__TYPE_PARAMETERS;
-
-  /**
-   * The feature id for the '<em><b>Interface</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__INTERFACE = BasicIQLPackage.IQL_TYPE_DEF__INTERFACE;
-
-  /**
-   * The feature id for the '<em><b>Strict Floating Point</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__STRICT_FLOATING_POINT = BasicIQLPackage.IQL_TYPE_DEF__STRICT_FLOATING_POINT;
-
-  /**
-   * The feature id for the '<em><b>Anonymous</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_OPERATOR__ANONYMOUS = BasicIQLPackage.IQL_TYPE_DEF__ANONYMOUS;
+  int ODL_TYPE_DEFINITION = 1;
 
   /**
    * The feature id for the '<em><b>Javametadata</b></em>' containment reference list.
@@ -274,16 +123,188 @@ public interface ODLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ODL_OPERATOR__JAVAMETADATA = BasicIQLPackage.IQL_TYPE_DEF__JAVAMETADATA;
+  int ODL_TYPE_DEFINITION__JAVAMETADATA = BasicIQLPackage.IQL_TYPE_DEFINITION__JAVAMETADATA;
 
   /**
-   * The feature id for the '<em><b>Extended Interfaces</b></em>' containment reference list.
+   * The feature id for the '<em><b>Inner</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ODL_OPERATOR__EXTENDED_INTERFACES = BasicIQLPackage.IQL_TYPE_DEF__EXTENDED_INTERFACES;
+  int ODL_TYPE_DEFINITION__INNER = BasicIQLPackage.IQL_TYPE_DEFINITION__INNER;
+
+  /**
+   * The number of structural features of the '<em>Type Definition</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_TYPE_DEFINITION_FEATURE_COUNT = BasicIQLPackage.IQL_TYPE_DEFINITION_FEATURE_COUNT + 0;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLOperatorImpl <em>Operator</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLOperatorImpl
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLOperator()
+   * @generated
+   */
+  int ODL_OPERATOR = 2;
+
+  /**
+   * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__ANNOTATIONS = TypesPackage.JVM_GENERIC_TYPE__ANNOTATIONS;
+
+  /**
+   * The feature id for the '<em><b>Declaring Type</b></em>' container reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__DECLARING_TYPE = TypesPackage.JVM_GENERIC_TYPE__DECLARING_TYPE;
+
+  /**
+   * The feature id for the '<em><b>Visibility</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__VISIBILITY = TypesPackage.JVM_GENERIC_TYPE__VISIBILITY;
+
+  /**
+   * The feature id for the '<em><b>Simple Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__SIMPLE_NAME = TypesPackage.JVM_GENERIC_TYPE__SIMPLE_NAME;
+
+  /**
+   * The feature id for the '<em><b>Identifier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__IDENTIFIER = TypesPackage.JVM_GENERIC_TYPE__IDENTIFIER;
+
+  /**
+   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__DEPRECATED = TypesPackage.JVM_GENERIC_TYPE__DEPRECATED;
+
+  /**
+   * The feature id for the '<em><b>Array Type</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__ARRAY_TYPE = TypesPackage.JVM_GENERIC_TYPE__ARRAY_TYPE;
+
+  /**
+   * The feature id for the '<em><b>Super Types</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__SUPER_TYPES = TypesPackage.JVM_GENERIC_TYPE__SUPER_TYPES;
+
+  /**
+   * The feature id for the '<em><b>Members</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__MEMBERS = TypesPackage.JVM_GENERIC_TYPE__MEMBERS;
+
+  /**
+   * The feature id for the '<em><b>Abstract</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__ABSTRACT = TypesPackage.JVM_GENERIC_TYPE__ABSTRACT;
+
+  /**
+   * The feature id for the '<em><b>Static</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__STATIC = TypesPackage.JVM_GENERIC_TYPE__STATIC;
+
+  /**
+   * The feature id for the '<em><b>Final</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__FINAL = TypesPackage.JVM_GENERIC_TYPE__FINAL;
+
+  /**
+   * The feature id for the '<em><b>Package Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__PACKAGE_NAME = TypesPackage.JVM_GENERIC_TYPE__PACKAGE_NAME;
+
+  /**
+   * The feature id for the '<em><b>Type Parameters</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__TYPE_PARAMETERS = TypesPackage.JVM_GENERIC_TYPE__TYPE_PARAMETERS;
+
+  /**
+   * The feature id for the '<em><b>Interface</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__INTERFACE = TypesPackage.JVM_GENERIC_TYPE__INTERFACE;
+
+  /**
+   * The feature id for the '<em><b>Strict Floating Point</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__STRICT_FLOATING_POINT = TypesPackage.JVM_GENERIC_TYPE__STRICT_FLOATING_POINT;
+
+  /**
+   * The feature id for the '<em><b>Anonymous</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_OPERATOR__ANONYMOUS = TypesPackage.JVM_GENERIC_TYPE__ANONYMOUS;
 
   /**
    * The feature id for the '<em><b>Metadata List</b></em>' containment reference.
@@ -292,7 +313,7 @@ public interface ODLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ODL_OPERATOR__METADATA_LIST = BasicIQLPackage.IQL_TYPE_DEF_FEATURE_COUNT + 0;
+  int ODL_OPERATOR__METADATA_LIST = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 0;
 
   /**
    * The number of structural features of the '<em>Operator</em>' class.
@@ -301,7 +322,7 @@ public interface ODLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ODL_OPERATOR_FEATURE_COUNT = BasicIQLPackage.IQL_TYPE_DEF_FEATURE_COUNT + 1;
+  int ODL_OPERATOR_FEATURE_COUNT = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLParameterImpl <em>Parameter</em>}' class.
@@ -311,7 +332,7 @@ public interface ODLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLParameter()
    * @generated
    */
-  int ODL_PARAMETER = 2;
+  int ODL_PARAMETER = 3;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -492,7 +513,7 @@ public interface ODLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLMethod()
    * @generated
    */
-  int ODL_METHOD = 3;
+  int ODL_METHOD = 4;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -675,6 +696,15 @@ public interface ODLPackage extends EPackage
   int ODL_METHOD__STRICT_FLOATING_POINT = BasicIQLPackage.IQL_METHOD__STRICT_FLOATING_POINT;
 
   /**
+   * The feature id for the '<em><b>Override</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ODL_METHOD__OVERRIDE = BasicIQLPackage.IQL_METHOD__OVERRIDE;
+
+  /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -720,6 +750,16 @@ public interface ODLPackage extends EPackage
    * @generated
    */
   EClass getODLFile();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLTypeDefinition <em>Type Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Type Definition</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLTypeDefinition
+   * @generated
+   */
+  EClass getODLTypeDefinition();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator <em>Operator</em>}'.
@@ -849,6 +889,16 @@ public interface ODLPackage extends EPackage
      * @generated
      */
     EClass ODL_FILE = eINSTANCE.getODLFile();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLTypeDefinitionImpl <em>Type Definition</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLTypeDefinitionImpl
+     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLTypeDefinition()
+     * @generated
+     */
+    EClass ODL_TYPE_DEFINITION = eINSTANCE.getODLTypeDefinition();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLOperatorImpl <em>Operator</em>}' class.

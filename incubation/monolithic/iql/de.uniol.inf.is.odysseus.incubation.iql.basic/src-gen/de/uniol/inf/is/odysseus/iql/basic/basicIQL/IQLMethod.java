@@ -12,6 +12,7 @@ import org.eclipse.xtext.common.types.JvmOperation;
  * <p>
  * The following features are supported:
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod#isOverride <em>Override</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod#getBody <em>Body</em>}</li>
  * </ul>
  * </p>
@@ -22,6 +23,32 @@ import org.eclipse.xtext.common.types.JvmOperation;
  */
 public interface IQLMethod extends JvmOperation
 {
+  /**
+   * Returns the value of the '<em><b>Override</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Override</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Override</em>' attribute.
+   * @see #setOverride(boolean)
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLMethod_Override()
+   * @model
+   * @generated
+   */
+  boolean isOverride();
+
+  /**
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod#isOverride <em>Override</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Override</em>' attribute.
+   * @see #isOverride()
+   * @generated
+   */
+  void setOverride(boolean value);
+
   /**
    * Returns the value of the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->

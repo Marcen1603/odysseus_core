@@ -3,21 +3,21 @@ package de.uniol.inf.is.odysseus.iql.odl.typing;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.AbstractIQLTypeOperatorsFactory;
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.ITypeOperators;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.AbstractIQLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
 @Singleton
-public class ODLTypeOperatorsFactory extends AbstractIQLTypeOperatorsFactory<ODLTypeFactory> {
+public class ODLTypeOperatorsFactory extends AbstractIQLTypeExtensionsFactory<ODLTypeFactory, ODLTypeUtils> {
 
 	@Inject
-	public ODLTypeOperatorsFactory(ODLTypeFactory typeFactory) {
-		super(typeFactory);
+	public ODLTypeOperatorsFactory(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
+		super(typeFactory, typeUtils);
 		init();
 	}
 	
 	private void init() {
-		for (ITypeOperators operators : ODLDefaultTypes.getTypeOperators()) {
-			this.addTypeOperators(operators);
+		for (IIQLTypeExtensions operators : ODLDefaultTypes.getTypeOperators()) {
+			this.addTypeExtensions(operators);
 		}
 	}
 

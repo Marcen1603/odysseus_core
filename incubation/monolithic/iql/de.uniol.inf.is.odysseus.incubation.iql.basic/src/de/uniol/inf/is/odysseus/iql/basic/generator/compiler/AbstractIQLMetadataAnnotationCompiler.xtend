@@ -16,14 +16,17 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
 
-abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>> implements IIQLMetadataAnnotationCompiler<G>{
+abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, U extends IIQLTypeUtils> implements IIQLMetadataAnnotationCompiler<G>{
 	protected H helper;
 	protected T typeCompiler;
+	protected U typeUtils;
 	
-	new (H helper, T typeCompiler) {
+	new (H helper, T typeCompiler, U typeUtils) {
 		this.helper = helper;
-		this.typeCompiler = typeCompiler;		
+		this.typeCompiler = typeCompiler;	
+		this.typeUtils = typeUtils;			
 	}
 	
 

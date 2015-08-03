@@ -32,6 +32,6 @@ public class QDLProposalProvider extends AbstractBasicIQLProposalProvider {
 	
 	@Override
 	protected Function<IEObjectDescription, ICompletionProposal> getProposalFactory(String ruleName, ContentAssistContext contentAssistContext) {		
-		return new QDLProposalCreator(factory, contentAssistContext, ruleName, converter, getValueConverter(), getLabelProvider(), getPriorityHelper(), getHover(), getConflictHelper());
+		return new QDLProposalBuilder(factory, contentAssistContext, ruleName, converter, getValueConverter(), getLabelProvider(), getPriorityHelper(), getHover(), getConflictHelper());
 	}
 }

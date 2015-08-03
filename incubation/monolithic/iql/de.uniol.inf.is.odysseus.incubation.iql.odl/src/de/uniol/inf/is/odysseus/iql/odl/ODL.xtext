@@ -4,20 +4,22 @@ generate oDL "http://www.uniol.de/inf/is/odysseus/iql/odl/ODL"
 
 
 import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as iql
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
 ODLFile returns iql::IQLFile:
 	{ODLFile}
 	namespaces+=IQLNamespace*
-	(elements+=ODLTypeDefs)*
+	(elements+=ODLTypeDefinition)*
 ;
 
-ODLTypeDefs returns iql::IQLTypeDef:
-	=>IQLClass | =>IQLInterface | ODLOperator
-;
-
-ODLOperator returns iql::IQLTypeDef:
-	{ODLOperator}
+ODLTypeDefinition returns iql::IQLTypeDefinition:
+	{ODLTypeDefinition}
 	(javametadata+=IQLJavaMetadata)*
+	inner=(IQLClass | IQLInterface | ODLOperator)
+; 
+
+ODLOperator returns  types::JvmGenericType:
+	{ODLOperator}
 	'operator' simpleName=ID ('(' (metadataList=IQLMetadataList)? ')')? '{'
 		members += (IQLAttribute | IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)*
 	'}'		

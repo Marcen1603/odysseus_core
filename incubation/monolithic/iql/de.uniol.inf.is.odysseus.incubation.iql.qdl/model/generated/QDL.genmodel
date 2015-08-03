@@ -10,6 +10,7 @@
   <genPackages prefix="QDL" basePackage="de.uniol.inf.is.odysseus.iql.qdl" disposableProviderFactory="true"
       fileExtensions="qdl" ecorePackage="QDL.ecore#/">
     <genClasses ecoreClass="QDL.ecore#//QDLFile"/>
+    <genClasses ecoreClass="QDL.ecore#//QDLTypeDefinition"/>
     <genClasses ecoreClass="QDL.ecore#//QDLQuery">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//QDLQuery/metadataList"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//QDLQuery/statements"/>

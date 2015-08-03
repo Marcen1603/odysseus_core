@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFile;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -17,6 +18,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
+import org.eclipse.xtext.common.types.TypesPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,6 +35,13 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
    * @generated
    */
   private EClass qdlFileEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass qdlTypeDefinitionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -128,6 +138,16 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
   public EClass getQDLFile()
   {
     return qdlFileEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getQDLTypeDefinition()
+  {
+    return qdlTypeDefinitionEClass;
   }
 
   /**
@@ -272,6 +292,8 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
     // Create classes and their features
     qdlFileEClass = createEClass(QDL_FILE);
 
+    qdlTypeDefinitionEClass = createEClass(QDL_TYPE_DEFINITION);
+
     qdlQueryEClass = createEClass(QDL_QUERY);
     createEReference(qdlQueryEClass, QDL_QUERY__METADATA_LIST);
     createEReference(qdlQueryEClass, QDL_QUERY__STATEMENTS);
@@ -313,6 +335,7 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
 
     // Obtain other dependent packages
     BasicIQLPackage theBasicIQLPackage = (BasicIQLPackage)EPackage.Registry.INSTANCE.getEPackage(BasicIQLPackage.eNS_URI);
+    TypesPackage theTypesPackage = (TypesPackage)EPackage.Registry.INSTANCE.getEPackage(TypesPackage.eNS_URI);
 
     // Create type parameters
 
@@ -320,12 +343,15 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
 
     // Add supertypes to classes
     qdlFileEClass.getESuperTypes().add(theBasicIQLPackage.getIQLFile());
-    qdlQueryEClass.getESuperTypes().add(theBasicIQLPackage.getIQLTypeDef());
+    qdlTypeDefinitionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLTypeDefinition());
+    qdlQueryEClass.getESuperTypes().add(theTypesPackage.getJvmGenericType());
     iqlSubscribeExpressionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLExpression());
     iqlPortExpressionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLExpression());
 
     // Initialize classes and features; add operations and parameters
     initEClass(qdlFileEClass, QDLFile.class, "QDLFile", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(qdlTypeDefinitionEClass, QDLTypeDefinition.class, "QDLTypeDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(qdlQueryEClass, QDLQuery.class, "QDLQuery", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getQDLQuery_MetadataList(), theBasicIQLPackage.getIQLMetadataList(), null, "metadataList", null, 0, 1, QDLQuery.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

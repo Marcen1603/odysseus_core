@@ -8,7 +8,6 @@ import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceFactory;
-import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor;
 
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompiler;
@@ -27,8 +26,9 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.IIQLExpressionParserContext;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.basic.typing.typeoperators.IIQLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGenerator;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLCompiler;
@@ -41,7 +41,6 @@ import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHel
 import de.uniol.inf.is.odysseus.iql.qdl.linking.QDLLinkingService;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.parser.QDLParser;
-import de.uniol.inf.is.odysseus.iql.qdl.postprocessor.QDLPostProcessor;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser;
@@ -49,6 +48,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypingEntryPoint;
 
 
@@ -58,11 +58,11 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypingEntryPoint;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQDLRuntimeModule {
 
-	public Class<? extends IXtext2EcorePostProcessor> bindIXtext2EcorePostProcessor() {
-        return QDLPostProcessor.class;
-    }
+	public Class<? extends IIQLTypeUtils> bindTypeUtils() {
+		return QDLTypeUtils.class;
+	}
 	
-	public Class<? extends IIQLTypeOperatorsFactory> bindTypeOperatorsFactory() {
+	public Class<? extends IIQLTypeExtensionsFactory> bindTypeOperatorsFactory() {
 		return QDLTypeOperatorsFactory.class;
 	}
 	

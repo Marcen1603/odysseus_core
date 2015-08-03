@@ -18,17 +18,17 @@ import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 public class ODLSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected ODLGrammarAccess grammarAccess;
-	protected AbstractElementAlias match_IQLMethod___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q;
+	protected AbstractElementAlias match_IQLMethod___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q;
 	protected AbstractElementAlias match_ODLMethod___LeftParenthesisKeyword_2_1_0_RightParenthesisKeyword_2_1_2__q;
-	protected AbstractElementAlias match_ODLOperator___LeftParenthesisKeyword_4_0_RightParenthesisKeyword_4_2__q;
+	protected AbstractElementAlias match_ODLOperator___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q;
 	protected AbstractElementAlias match_ODLParameter___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (ODLGrammarAccess) access;
-		match_IQLMethod___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getIQLMethodAccess().getLeftParenthesisKeyword_2_0()), new TokenAlias(false, false, grammarAccess.getIQLMethodAccess().getRightParenthesisKeyword_2_2()));
+		match_IQLMethod___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getIQLMethodAccess().getLeftParenthesisKeyword_3_0()), new TokenAlias(false, false, grammarAccess.getIQLMethodAccess().getRightParenthesisKeyword_3_2()));
 		match_ODLMethod___LeftParenthesisKeyword_2_1_0_RightParenthesisKeyword_2_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getODLMethodAccess().getLeftParenthesisKeyword_2_1_0()), new TokenAlias(false, false, grammarAccess.getODLMethodAccess().getRightParenthesisKeyword_2_1_2()));
-		match_ODLOperator___LeftParenthesisKeyword_4_0_RightParenthesisKeyword_4_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getODLOperatorAccess().getLeftParenthesisKeyword_4_0()), new TokenAlias(false, false, grammarAccess.getODLOperatorAccess().getRightParenthesisKeyword_4_2()));
+		match_ODLOperator___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getODLOperatorAccess().getLeftParenthesisKeyword_3_0()), new TokenAlias(false, false, grammarAccess.getODLOperatorAccess().getRightParenthesisKeyword_3_2()));
 		match_ODLParameter___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getODLParameterAccess().getLeftParenthesisKeyword_3_0()), new TokenAlias(false, false, grammarAccess.getODLParameterAccess().getRightParenthesisKeyword_3_2()));
 	}
 	
@@ -44,12 +44,12 @@ public class ODLSyntacticSequencer extends AbstractSyntacticSequencer {
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if(match_IQLMethod___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q.equals(syntax))
-				emit_IQLMethod___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			if(match_IQLMethod___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q.equals(syntax))
+				emit_IQLMethod___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_ODLMethod___LeftParenthesisKeyword_2_1_0_RightParenthesisKeyword_2_1_2__q.equals(syntax))
 				emit_ODLMethod___LeftParenthesisKeyword_2_1_0_RightParenthesisKeyword_2_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if(match_ODLOperator___LeftParenthesisKeyword_4_0_RightParenthesisKeyword_4_2__q.equals(syntax))
-				emit_ODLOperator___LeftParenthesisKeyword_4_0_RightParenthesisKeyword_4_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if(match_ODLOperator___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q.equals(syntax))
+				emit_ODLOperator___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_ODLParameter___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q.equals(syntax))
 				emit_ODLParameter___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
@@ -60,7 +60,7 @@ public class ODLSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * Syntax:
 	 *     ('(' ')')?
 	 */
-	protected void emit_IQLMethod___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_IQLMethod___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
@@ -76,7 +76,7 @@ public class ODLSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * Syntax:
 	 *     ('(' ')')?
 	 */
-	protected void emit_ODLOperator___LeftParenthesisKeyword_4_0_RightParenthesisKeyword_4_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_ODLOperator___LeftParenthesisKeyword_3_0_RightParenthesisKeyword_3_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

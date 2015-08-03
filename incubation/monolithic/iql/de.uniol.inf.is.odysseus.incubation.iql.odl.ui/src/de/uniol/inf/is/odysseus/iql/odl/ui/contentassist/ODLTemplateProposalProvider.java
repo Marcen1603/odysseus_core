@@ -17,32 +17,32 @@ import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateAcceptor;
 import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractIQLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 
-public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<ODLExpressionParser, ODLTypeFactory, ODLLookUp, ODLScopeProvider> {
+public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<ODLExpressionParser, ODLTypeFactory, ODLLookUp, ODLScopeProvider, ODLTypeUtils> {
 
 	@Inject
 	public ODLTemplateProposalProvider(TemplateStore templateStore,
-			ContextTypeRegistry registry, ContextTypeIdHelper helper, ODLExpressionParser exprParser, ODLTypeFactory typeFactory, ODLLookUp lookUp, ODLScopeProvider scopeProvider) {
-		super(templateStore, registry, helper, exprParser, typeFactory, lookUp, scopeProvider);
+			ContextTypeRegistry registry, ContextTypeIdHelper helper, ODLExpressionParser exprParser, ODLTypeFactory typeFactory, ODLLookUp lookUp, ODLScopeProvider scopeProvider,ODLTypeUtils typeUtils) {
+		super(templateStore, registry, helper, exprParser, typeFactory, lookUp, scopeProvider, typeUtils);
 	}
 	
 	protected void createTemplates(String rule, EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		super.createTemplates(rule, node, templateContext, context, acceptor);
 		if (node instanceof ODLParameter) {
 			createODLParameterProposals(templateContext, context, acceptor);
-		}  else if (node instanceof IQLTypeDef && rule.equals("de.uniol.inf.is.odysseus.iql.odl.ODL.ODLMethod")) {
-			createODLMethodProposals((IQLTypeDef) node, templateContext, context, acceptor);
+		}  else if (rule.equals("de.uniol.inf.is.odysseus.iql.odl.ODL.ODLMethod")) {
+			createODLMethodProposals(node, templateContext, context, acceptor);
 		}		
 	}
 	
-	protected void createODLMethodProposals(IQLTypeDef node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+	protected void createODLMethodProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		for (ODLParameter parameter : EcoreUtil2.getAllContentsOfType(node, ODLParameter.class)) {
 			createValidationMethodTemplate(parameter, templateContext, context, acceptor);
 		}
@@ -121,10 +121,10 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 	
 	protected void createParameterTemplate(JvmTypeReference typeRef, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		JvmTypeReference parameterType = factory.getParameterType(typeRef);
-		String parameterTypeName = factory.getShortName(parameterType, false);
+		String parameterTypeName = typeUtils.getShortName(parameterType, false);
 		
-		String simpleName = factory.getShortName(typeRef, false);
-		String longName = factory.getLongName(typeRef, false);
+		String simpleName = typeUtils.getShortName(typeRef, false);
+		String longName = typeUtils.getLongName(typeRef, false);
 			
 		StringBuilder patternBuilder = new StringBuilder();
 		patternBuilder.append(simpleName);

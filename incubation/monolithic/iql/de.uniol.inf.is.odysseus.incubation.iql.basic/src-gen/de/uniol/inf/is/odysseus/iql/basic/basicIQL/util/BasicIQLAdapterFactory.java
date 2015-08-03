@@ -94,9 +94,9 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLFileAdapter();
       }
       @Override
-      public Adapter caseIQLTypeDef(IQLTypeDef object)
+      public Adapter caseIQLTypeDefinition(IQLTypeDefinition object)
       {
-        return createIQLTypeDefAdapter();
+        return createIQLTypeDefinitionAdapter();
       }
       @Override
       public Adapter caseIQLNamespace(IQLNamespace object)
@@ -519,9 +519,19 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLLiteralExpressionMapAdapter();
       }
       @Override
+      public Adapter caseJvmTypeReference(JvmTypeReference object)
+      {
+        return createJvmTypeReferenceAdapter();
+      }
+      @Override
       public Adapter caseJvmIdentifiableElement(JvmIdentifiableElement object)
       {
         return createJvmIdentifiableElementAdapter();
+      }
+      @Override
+      public Adapter caseJvmType(JvmType object)
+      {
+        return createJvmTypeAdapter();
       }
       @Override
       public Adapter caseJvmAnnotationTarget(JvmAnnotationTarget object)
@@ -532,11 +542,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseJvmMember(JvmMember object)
       {
         return createJvmMemberAdapter();
-      }
-      @Override
-      public Adapter caseJvmType(JvmType object)
-      {
-        return createJvmTypeAdapter();
       }
       @Override
       public Adapter caseJvmComponentType(JvmComponentType object)
@@ -557,11 +562,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseJvmGenericType(JvmGenericType object)
       {
         return createJvmGenericTypeAdapter();
-      }
-      @Override
-      public Adapter caseJvmTypeReference(JvmTypeReference object)
-      {
-        return createJvmTypeReferenceAdapter();
       }
       @Override
       public Adapter caseJvmFeature(JvmFeature object)
@@ -621,16 +621,16 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef <em>IQL Type Def</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition <em>IQL Type Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
    * @generated
    */
-  public Adapter createIQLTypeDefAdapter()
+  public Adapter createIQLTypeDefinitionAdapter()
   {
     return null;
   }
@@ -1896,6 +1896,21 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.xtext.common.types.JvmTypeReference <em>Jvm Type Reference</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.xtext.common.types.JvmTypeReference
+   * @generated
+   */
+  public Adapter createJvmTypeReferenceAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link org.eclipse.xtext.common.types.JvmIdentifiableElement <em>Jvm Identifiable Element</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -1906,6 +1921,21 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createJvmIdentifiableElementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.xtext.common.types.JvmType <em>Jvm Type</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.xtext.common.types.JvmType
+   * @generated
+   */
+  public Adapter createJvmTypeAdapter()
   {
     return null;
   }
@@ -1936,21 +1966,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createJvmMemberAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.xtext.common.types.JvmType <em>Jvm Type</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.eclipse.xtext.common.types.JvmType
-   * @generated
-   */
-  public Adapter createJvmTypeAdapter()
   {
     return null;
   }
@@ -2011,21 +2026,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createJvmGenericTypeAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.xtext.common.types.JvmTypeReference <em>Jvm Type Reference</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.eclipse.xtext.common.types.JvmTypeReference
-   * @generated
-   */
-  public Adapter createJvmTypeReferenceAdapter()
   {
     return null;
   }

@@ -13,12 +13,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 
-public class BasicIQLParser extends AbstractIQLParser<BasicIQLTypeFactory> {
+public class BasicIQLParser extends AbstractIQLParser<BasicIQLTypeFactory, BasicIQLTypeUtils> {
 
 	@Inject
-	public BasicIQLParser(BasicIQLTypeFactory typeFactory) {
-		super(typeFactory);
+	public BasicIQLParser(BasicIQLTypeFactory typeFactory, BasicIQLTypeUtils typeUtils) {
+		super(typeFactory, typeUtils);
 	}
 
 	@Override

@@ -3,22 +3,22 @@ grammar de.uniol.inf.is.odysseus.iql.qdl.QDL with de.uniol.inf.is.odysseus.iql.b
 generate qDL "http://www.uniol.de/inf/is/odysseus/iql/qdl/QDL"
 
 import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as iql
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
 QDLFile returns iql::IQLFile:
 	{QDLFile}
 	namespaces+=IQLNamespace*
-	(elements+=QDLTypeDefs)*
+	(elements+=QDLTypeDefinition)*
 ;
 
-QDLTypeDefs returns iql::IQLTypeDef:
-	=>IQLClass | =>IQLInterface | QDLQuery
-;
-
-
-
-QDLQuery returns iql::IQLTypeDef:
-	{QDLQuery}
+QDLTypeDefinition returns iql::IQLTypeDefinition:
+	{QDLTypeDefinition}
 	(javametadata+=IQLJavaMetadata)*
+	inner=(IQLClass | IQLInterface | QDLQuery)
+; 
+
+QDLQuery returns types::JvmGenericType:
+	{QDLQuery}
 	'query' simpleName=ID ('(' (metadataList=IQLMetadataList)? ')')?
 	statements=IQLStatementBlock
 ;

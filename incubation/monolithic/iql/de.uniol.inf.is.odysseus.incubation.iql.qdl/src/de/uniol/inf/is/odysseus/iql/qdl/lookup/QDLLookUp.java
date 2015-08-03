@@ -13,19 +13,20 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 
-public class QDLLookUp extends AbstractIQLLookUp<QDLTypeFactory, QDLTypeOperatorsFactory>{
+public class QDLLookUp extends AbstractIQLLookUp<QDLTypeFactory, QDLTypeOperatorsFactory, QDLTypeUtils>{
 
 
 	@Inject
-	public QDLLookUp(QDLTypeFactory typeFactory, QDLTypeOperatorsFactory typeOperatorsFactory) {
-		super(typeFactory, typeOperatorsFactory);
+	public QDLLookUp(QDLTypeFactory typeFactory, QDLTypeOperatorsFactory typeOperatorsFactory, QDLTypeUtils typeUtils) {
+		super(typeFactory, typeOperatorsFactory, typeUtils);
 	}
 
 	public Collection<JvmType> getTypesWihtoutOperators(Resource context) {
 		Collection<JvmType> types = super.getAllTypes(context);
 		Collection<JvmType> result = new HashSet<>();
-		JvmTypeReference logicalOp = typeFactory.getTypeRef(ILogicalOperator.class);
+		JvmTypeReference logicalOp = typeUtils.createTypeRef(ILogicalOperator.class, typeFactory.getSystemResourceSet());
 		for (JvmType type : types) {
 			if (isAssignable(logicalOp, type)) {
 				result.add(type);

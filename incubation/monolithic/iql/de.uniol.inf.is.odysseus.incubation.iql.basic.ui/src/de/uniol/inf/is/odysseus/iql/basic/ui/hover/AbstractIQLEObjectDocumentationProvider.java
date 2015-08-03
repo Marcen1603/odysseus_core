@@ -9,14 +9,17 @@ import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvide
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 
-public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLTypeFactory> extends MultiLineCommentDocumentationProvider {
+public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLTypeFactory, U extends IIQLTypeUtils> extends MultiLineCommentDocumentationProvider {
 
+	protected U typeUtils;
 	protected F typeFactory;
-	
-	public AbstractIQLEObjectDocumentationProvider(F typeFactory) {
+
+	public AbstractIQLEObjectDocumentationProvider(F typeFactory, U typeUtils) {
 		this.typeFactory = typeFactory;
+		this.typeUtils = typeUtils;
 	}
 	
 	@Override

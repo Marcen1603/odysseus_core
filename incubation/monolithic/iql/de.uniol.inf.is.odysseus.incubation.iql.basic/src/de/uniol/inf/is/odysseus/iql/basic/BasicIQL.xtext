@@ -8,36 +8,33 @@ import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 IQLFile:
 	('namespace' name=QualifiedName ';')?
 	namespaces+=IQLNamespace*
-	(elements+=IQLTypeDefs)*
+	(elements+=IQLTypeDefinition)*
 ;
 
-IQLTypeDefs returns IQLTypeDef:
-	=>IQLClass | IQLInterface
-;	
+IQLTypeDefinition:
+	{IQLTypeDefinition}
+	(javametadata+=IQLJavaMetadata)*
+	inner=(IQLClass | IQLInterface)
+; 
+
 
 IQLNamespace :
 	'use' importedNamespace = QualifiedNameWithWildcard ';'
 ;
 
-IQLClass returns IQLTypeDef:
+IQLClass returns types::JvmGenericType:
 	{IQLClass}
-	(javametadata+=IQLJavaMetadata)*
 	'class' simpleName=ID ('extends' extendedClass=JvmTypeReference)? ('implements' extendedInterfaces+=JvmTypeReference (',' extendedInterfaces+=JvmTypeReference)?)? '{'
 		members += (IQLAttribute | IQLMethod | IQLJavaMember)*
 	'}'	
 ;
 
-IQLInterface returns IQLTypeDef:
+IQLInterface returns types::JvmGenericType:
 	{IQLInterface}
-	(javametadata+=IQLJavaMetadata)*
 	'interface' simpleName=ID ('extends' extendedInterfaces+=JvmTypeReference (',' extendedInterfaces+=JvmTypeReference)?)? '{'
 		members += (IQLMethodDeclarationMember | IQLJavaMember )*
 	'}'	
 ;
-
-IQLTypeDef returns types::JvmGenericType:
-	{IQLTypeDef}
-; 
 
 IQLJavaMetadata:
 	{IQLJavaMetadata}
@@ -87,6 +84,7 @@ JvmFormalParameter returns types::JvmFormalParameter:
 
 IQLMethod returns types::JvmOperation:
 	{IQLMethod}		
+	(override?='override')?
 	simpleName=ID ('(' (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? ')')? (':' returnType=JvmTypeReference)?
 	body=IQLStatementBlock
 ;

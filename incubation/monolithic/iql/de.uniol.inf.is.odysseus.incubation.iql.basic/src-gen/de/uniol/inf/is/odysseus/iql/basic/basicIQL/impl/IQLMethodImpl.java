@@ -23,6 +23,7 @@ import org.eclipse.xtext.common.types.impl.JvmOperationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMethodImpl#isOverride <em>Override</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMethodImpl#getBody <em>Body</em>}</li>
  * </ul>
  * </p>
@@ -31,6 +32,26 @@ import org.eclipse.xtext.common.types.impl.JvmOperationImpl;
  */
 public class IQLMethodImpl extends JvmOperationImpl implements IQLMethod
 {
+  /**
+   * The default value of the '{@link #isOverride() <em>Override</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isOverride()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean OVERRIDE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isOverride() <em>Override</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isOverride()
+   * @generated
+   * @ordered
+   */
+  protected boolean override = OVERRIDE_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -60,6 +81,29 @@ public class IQLMethodImpl extends JvmOperationImpl implements IQLMethod
   protected EClass eStaticClass()
   {
     return BasicIQLPackage.Literals.IQL_METHOD;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isOverride()
+  {
+    return override;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOverride(boolean newOverride)
+  {
+    boolean oldOverride = override;
+    override = newOverride;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_METHOD__OVERRIDE, oldOverride, override));
   }
 
   /**
@@ -136,6 +180,8 @@ public class IQLMethodImpl extends JvmOperationImpl implements IQLMethod
   {
     switch (featureID)
     {
+      case BasicIQLPackage.IQL_METHOD__OVERRIDE:
+        return isOverride();
       case BasicIQLPackage.IQL_METHOD__BODY:
         return getBody();
     }
@@ -152,6 +198,9 @@ public class IQLMethodImpl extends JvmOperationImpl implements IQLMethod
   {
     switch (featureID)
     {
+      case BasicIQLPackage.IQL_METHOD__OVERRIDE:
+        setOverride((Boolean)newValue);
+        return;
       case BasicIQLPackage.IQL_METHOD__BODY:
         setBody((IQLStatement)newValue);
         return;
@@ -169,6 +218,9 @@ public class IQLMethodImpl extends JvmOperationImpl implements IQLMethod
   {
     switch (featureID)
     {
+      case BasicIQLPackage.IQL_METHOD__OVERRIDE:
+        setOverride(OVERRIDE_EDEFAULT);
+        return;
       case BasicIQLPackage.IQL_METHOD__BODY:
         setBody((IQLStatement)null);
         return;
@@ -186,10 +238,29 @@ public class IQLMethodImpl extends JvmOperationImpl implements IQLMethod
   {
     switch (featureID)
     {
+      case BasicIQLPackage.IQL_METHOD__OVERRIDE:
+        return override != OVERRIDE_EDEFAULT;
       case BasicIQLPackage.IQL_METHOD__BODY:
         return body != null;
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (override: ");
+    result.append(override);
+    result.append(')');
+    return result.toString();
   }
 
 } //IQLMethodImpl

@@ -4,7 +4,8 @@ package de.uniol.inf.is.odysseus.iql.qdl.qDL;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
+
+import org.eclipse.xtext.common.types.JvmGenericType;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,7 +24,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
  * @model
  * @generated
  */
-public interface QDLQuery extends IQLTypeDef
+public interface QDLQuery extends JvmGenericType
 {
   /**
    * Returns the value of the '<em><b>Metadata List</b></em>' containment reference.

@@ -32,6 +32,15 @@ public interface QDLFactory extends EFactory
   QDLFile createQDLFile();
 
   /**
+   * Returns a new object of class '<em>Type Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Type Definition</em>'.
+   * @generated
+   */
+  QDLTypeDefinition createQDLTypeDefinition();
+
+  /**
    * Returns a new object of class '<em>Query</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

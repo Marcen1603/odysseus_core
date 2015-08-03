@@ -4,8 +4,6 @@ package de.uniol.inf.is.odysseus.iql.odl.oDL.impl;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefImpl;
-
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLPackage;
 
@@ -16,6 +14,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import org.eclipse.xtext.common.types.impl.JvmGenericTypeImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -30,7 +30,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class ODLOperatorImpl extends IQLTypeDefImpl implements ODLOperator
+public class ODLOperatorImpl extends JvmGenericTypeImpl implements ODLOperator
 {
   /**
    * The cached value of the '{@link #getMetadataList() <em>Metadata List</em>}' containment reference.

@@ -11,18 +11,18 @@ import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLPO;
 
-public class ODLExpressionParser extends AbstractIQLExpressionParser<ODLTypeFactory, ODLLookUp, ODLExpressionParserContext>{
+public class ODLExpressionParser extends AbstractIQLExpressionParser<ODLTypeFactory, ODLLookUp, ODLExpressionParserContext, ODLTypeUtils>{
 
 	@Inject
-	public ODLExpressionParser(ODLTypeFactory typeFactory, ODLLookUp lookUp, ODLExpressionParserContext context) {
-		super(typeFactory, lookUp, context);
+	public ODLExpressionParser(ODLTypeFactory typeFactory, ODLLookUp lookUp, ODLExpressionParserContext context,ODLTypeUtils typeUtils) {
+		super(typeFactory, lookUp, context, typeUtils);
 	}
 	
 	@Override
 	public TypeResult getType(IQLTerminalExpressionSuper expr, ODLExpressionParserContext context) {
 		ODLOperator operator = EcoreUtil2.getContainerOfType(expr, ODLOperator.class);
 		if (operator != null) {
-			return new TypeResult(typeFactory.getTypeRef(AbstractODLPO.class));
+			return new TypeResult(typeUtils.createTypeRef(AbstractODLPO.class, typeFactory.getSystemResourceSet()));
 		} else {
 			return super.getType(expr, context);
 		}

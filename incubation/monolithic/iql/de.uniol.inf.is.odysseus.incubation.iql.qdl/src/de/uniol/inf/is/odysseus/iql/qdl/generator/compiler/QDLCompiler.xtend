@@ -18,20 +18,22 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils
 
-class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLStatementCompiler, QDLTypeFactory>{
+class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLStatementCompiler, QDLTypeFactory, QDLTypeUtils>{
 	
 	@Inject
 	QDLMetadataMethodCompiler methodCompiler;
 	
 	@Inject
-	new(QDLCompilerHelper helper, QDLTypeCompiler typeCompiler, QDLStatementCompiler stmtCompiler,QDLTypeFactory factory) {
-		super(helper, typeCompiler, stmtCompiler, factory)
+	new(QDLCompilerHelper helper, QDLTypeCompiler typeCompiler, QDLStatementCompiler stmtCompiler, QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+		super(helper, typeCompiler, stmtCompiler, typeFactory, typeUtils)
 	}
 	
-	def String compile(QDLQuery q, QDLGeneratorContext context) {
+	def String compile(IQLTypeDefinition typeDef,QDLQuery q, QDLGeneratorContext context) {
 		var builder = new StringBuilder()
-		builder.append(compileQuery(q, context))
+		builder.append(compileQuery(typeDef, q, context))
 		context.addImport(AbstractQDLQuery.canonicalName)
 		context.addImport(Collection.canonicalName)
 		context.addImport(IQDLOperator.canonicalName)
@@ -43,7 +45,7 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 		builder.toString
 	}
 	
-	def String compileQuery(QDLQuery q, QDLGeneratorContext context) {
+	def String compileQuery(IQLTypeDefinition typeDef, QDLQuery q, QDLGeneratorContext context) {
 		var name = q.simpleName
 		var superClass = AbstractQDLQuery.simpleName
 		var metadata = q.metadataList != null
@@ -53,7 +55,7 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 		
 		'''
 		
-		«FOR j : q.javametadata»
+		«FOR j : typeDef.javametadata»
 		«var text = NodeModelUtils.getTokenText(NodeModelUtils.getNode(j.text))»
 		«text»
 		«ENDFOR»
@@ -68,7 +70,7 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 			}
 			
 			public «Collection.simpleName»<«IQDLOperator.simpleName»<?>> execute() {
-			 	«FOR source : factory.sources»
+			 	«FOR source : typeFactory.sources»
 			 		«context.addImport(StreamAO.canonicalName)»
 			 		«context.addImport(DefaultQDLSource.canonicalName)»			 		
 			 		«DefaultQDLSource.simpleName»<«StreamAO.simpleName»> «source» = getSource("«source»");
@@ -108,10 +110,10 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 	override createGetterMethod(JvmTypeReference typeRef, IQLArgumentsMap map, QDLGeneratorContext context) {
 		if (helper.isOperator(typeRef)) {
 			var opName = helper.getLogicalOperatorName(typeRef)
-			context.addImport(factory.getLogicalOperator(factory.getShortName(typeRef, false)).canonicalName)
+			context.addImport(typeFactory.getLogicalOperator(typeUtils.getShortName(typeRef, false)).canonicalName)
 			'''
 			
-			private «typeCompiler.compile(typeRef, context, false)» getOperator«factory.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)»<«opName»> type, «Collection.simpleName»<«IQDLOperator.simpleName»<?>> operators«IF map != null && map.elements.size > 0», «map.elements.map[ el | super.compile(el, typeRef, context)].join(", ")»«ENDIF») {
+			private «typeCompiler.compile(typeRef, context, false)» getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)»<«opName»> type, «Collection.simpleName»<«IQDLOperator.simpleName»<?>> operators«IF map != null && map.elements.size > 0», «map.elements.map[ el | super.compile(el, typeRef, context)].join(", ")»«ENDIF») {
 				operators.add(type);
 				«IF map != null»
 					«FOR el :map.elements»

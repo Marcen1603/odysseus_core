@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.Platform;
@@ -28,9 +29,11 @@ import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
 
 
+
 @Singleton
-public class QDLTypeFactory extends AbstractIQLTypeFactory {
+public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils> {
 	
+
 	private Map<String, ILogicalOperator> sources = new HashMap<String, ILogicalOperator>();	
 	private Map<String, IQLClass> sourceTypes = new HashMap<String, IQLClass>();
 
@@ -41,16 +44,32 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory {
 
 	private Set<Class<?>> parameterValueTypes = new HashSet<>();
 	
+	@Inject
+	public QDLTypeFactory(QDLTypeUtils typeUtils) {
+		super(typeUtils);
+	}
+	
+	@Override
+	public Collection<Bundle> getDependencies(IQLFile file) {
+		Collection<Bundle> bundles = super.getDependencies(file);
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.slf4j"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core.server"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.iql.qdl"));
+		return bundles;
+	}
+	
 	@Override
 	public String getFileExtension() {
 		return "qdl";
 	}
 
 	@Override
-	protected IQLFile createCleanSystemFile() {
-		
+	protected IQLFile createCleanSystemFile() {		
 		return QDLFactory.eINSTANCE.createQDLFile();
 	}
+	
+	
 	@SuppressWarnings("restriction")
 	@Override
 	public Collection<JvmType> createVisibleTypes(Resource context) {
@@ -184,38 +203,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory {
 		}
 		return false;
 	}
-	
-	@Override
-	public Collection<Bundle> getDependencies(IQLFile file) {
-		Collection<Bundle> bundles = super.getDependencies(file);
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.slf4j"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core.server"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.iql.qdl"));
-		return bundles;
-	}
 
-	public boolean isOperator(JvmTypeReference typeRef) {
-		if (getInnerType(typeRef, true) instanceof IQLClass) {
-			JvmGenericType clazz = (JvmGenericType) getInnerType(typeRef, true);
-			if (clazz.getExtendedClass() != null) {
-				JvmTypeReference superClass = getTypeRef(DefaultQDLOperator.class);
-				return getLongName(clazz.getExtendedClass(), false).equals(getLongName(superClass, false));
-			}
-		} 
-		return false;	
-	}
-
-	public boolean isSource(JvmTypeReference typeRef) {
-		if (getInnerType(typeRef, true) instanceof IQLClass) {
-			JvmGenericType clazz = (JvmGenericType) getInnerType(typeRef, true);
-			if (clazz.getExtendedClass() != null) {
-				JvmTypeReference superClass = getTypeRef(DefaultQDLSource.class);
-				return getLongName(clazz.getExtendedClass(), false).equals(getLongName(superClass, false));	
-			}
-		} 
-		return false;
-	}
 
 	public void setParameterValueTypes(Set<Class<?>> parameterValueTypes) {
 		this.parameterValueTypes.addAll(parameterValueTypes);
@@ -229,5 +217,26 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory {
 		return this.operators.get(name.toLowerCase());
 	}
 
+	public boolean isOperator(JvmTypeReference typeRef) {
+		if (typeUtils.getInnerType(typeRef, true) instanceof IQLClass) {
+			JvmGenericType clazz = (JvmGenericType) typeUtils.getInnerType(typeRef, true);
+			if (clazz.getExtendedClass() != null) {
+				JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLOperator.class, getSystemResourceSet());
+				return typeUtils.getLongName(clazz.getExtendedClass(), false).equals(typeUtils.getLongName(superClass, false));
+			}
+		} 
+		return false;	
+	}
+
+	public boolean isSource(JvmTypeReference typeRef) {
+		if (typeUtils.getInnerType(typeRef, true) instanceof IQLClass) {
+			JvmGenericType clazz = (JvmGenericType) typeUtils.getInnerType(typeRef, true);
+			if (clazz.getExtendedClass() != null) {
+				JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLSource.class, getSystemResourceSet());
+				return typeUtils.getLongName(clazz.getExtendedClass(), false).equals(typeUtils.getLongName(superClass, false));	
+			}
+		} 
+		return false;
+	}
 	
 }

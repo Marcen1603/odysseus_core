@@ -16,14 +16,15 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.AbstractIQLEObjectDocumentationProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 
-public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumentationProvider<QDLTypeFactory> {
+public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumentationProvider<QDLTypeFactory, QDLTypeUtils> {
 
 	private static String BREAK = "<br>";
 	
 	@Inject
-	public QDLEObjectDocumentationProvider(QDLTypeFactory typeFactory) {
-		super(typeFactory);
+	public QDLEObjectDocumentationProvider(QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+		super(typeFactory, typeUtils);
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumenta
 			typeRef = expr.getRef();
 		}
 		if (typeFactory.isOperator(typeRef)) {
-			Parameter parameter = typeFactory.getOperatorParameterType(typeFactory.getShortName(typeRef, false), keyValue.getKey());
+			Parameter parameter = typeFactory.getOperatorParameterType(typeUtils.getShortName(typeRef, false), keyValue.getKey());
 			if (parameter != null) {
 				return createParameterDocu(parameter);
 			} else {
@@ -50,7 +51,7 @@ public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumenta
 	
 	@Override
 	protected String getDocumentationJvmGenericType(JvmGenericType type) {		
-		if (typeFactory.isOperator(typeFactory.getTypeRef(type))) {
+		if (typeFactory.isOperator(typeUtils.createTypeRef(type))) {
 			IOperatorBuilder b = typeFactory.getOperatorBuilder(type.getSimpleName());
 			return createOperatorDocu(b);
 		} else {
@@ -61,8 +62,8 @@ public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumenta
 	@Override
 	protected String getDocumentationJvmField(JvmField attr) {	
 		JvmGenericType genericType = EcoreUtil2.getContainerOfType(attr, JvmGenericType.class);
-		if (typeFactory.isOperator(typeFactory.getTypeRef(genericType))) {
-			Parameter parameter = typeFactory.getOperatorParameterType(typeFactory.getShortName(genericType, false), attr.getSimpleName());
+		if (typeFactory.isOperator(typeUtils.createTypeRef(genericType))) {
+			Parameter parameter = typeFactory.getOperatorParameterType(typeUtils.getShortName(genericType, false), attr.getSimpleName());
 			if (parameter != null) {
 				return createParameterDocu(parameter);
 			} else {
@@ -76,7 +77,7 @@ public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumenta
 	@Override
 	protected String getDocumentationJvmOperation(JvmOperation method) {		
 		JvmGenericType genericType = EcoreUtil2.getContainerOfType(method, JvmGenericType.class);
-		if (typeFactory.isOperator(typeFactory.getTypeRef(genericType))) {
+		if (typeFactory.isOperator(typeUtils.createTypeRef(genericType))) {
 			String parameterName = "";
 			if (method.getSimpleName().startsWith("set")) {
 				parameterName = method.getSimpleName().substring(3);
@@ -85,7 +86,7 @@ public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumenta
 			} else if (method.getSimpleName().startsWith("is")) {
 				parameterName = method.getSimpleName().substring(2);
 			}
-			Parameter parameter = typeFactory.getOperatorParameterType(typeFactory.getShortName(genericType, false), parameterName);
+			Parameter parameter = typeFactory.getOperatorParameterType(typeUtils.getShortName(genericType, false), parameterName);
 			if (parameter != null) {
 				return createParameterDocu(parameter);
 			} else {

@@ -7,17 +7,17 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.AbstractIQLTypeBuilder;
 
-public class ODLTypeBuilder extends AbstractIQLTypeBuilder<ODLTypeFactory> {
+public class ODLTypeBuilder extends AbstractIQLTypeBuilder<ODLTypeFactory, ODLTypeUtils> {
 
 	@Inject
-	public ODLTypeBuilder(ODLTypeFactory typeFactory) {
-		super(typeFactory);
+	public ODLTypeBuilder(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
+		super(typeFactory, typeUtils);
 	}
 	
 	public void addParameter(Class<? extends IParameter<?>> parameterType, Class<?> parameterValueType) {
 				
-		JvmTypeReference pType = typeFactory.getTypeRef(parameterType);
-		JvmTypeReference vType = typeFactory.getTypeRef(parameterValueType);
+		JvmTypeReference pType = typeUtils.createTypeRef(parameterType, typeFactory.getSystemResourceSet());
+		JvmTypeReference vType = typeUtils.createTypeRef(parameterValueType, typeFactory.getSystemResourceSet());
 
 		typeFactory.addParameter(pType, vType);
 		

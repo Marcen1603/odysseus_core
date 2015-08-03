@@ -13,12 +13,16 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 
 public interface IIQLLookUp {
 	
+	Collection<JvmField> getPublicAttributes(JvmTypeReference typeRef, Collection<JvmTypeReference> importedTypes, boolean extensionAttributes);
+	Collection<JvmField> getProtectedAttributes(JvmTypeReference typeRef,Collection<JvmTypeReference> importedTypes, boolean extensionAttributes);
 	Collection<JvmField> getPublicAttributes(JvmTypeReference typeRef, boolean extensionAttributes);
 	Collection<JvmField> getProtectedAttributes(JvmTypeReference typeRef, boolean extensionAttributes);
 
+	Collection<JvmOperation> getPublicMethods(JvmTypeReference typeRef,Collection<JvmTypeReference> importedTypes,boolean extensionMethods);	
+	Collection<JvmOperation> getProtectedMethods(JvmTypeReference typeRef,Collection<JvmTypeReference> importedTypes, boolean extensionMethods);		
 	Collection<JvmOperation> getPublicMethods(JvmTypeReference typeRef, boolean extensionMethods);	
 	Collection<JvmOperation> getProtectedMethods(JvmTypeReference typeRef, boolean extensionMethods);		
-	
+
 	Collection<JvmExecutable> getPublicConstructors(JvmTypeReference typeRef);
 	Collection<JvmExecutable> getDeclaredConstructors(JvmTypeReference typeRef);
 	JvmExecutable findConstructor(JvmTypeReference typeRef,	int arguments);

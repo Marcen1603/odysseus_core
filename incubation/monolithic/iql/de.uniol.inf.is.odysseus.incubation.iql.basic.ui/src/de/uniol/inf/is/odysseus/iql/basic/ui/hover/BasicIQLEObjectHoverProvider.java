@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.iql.basic.ui.hover;
 import javax.inject.Inject;
 
 import de.uniol.inf.is.odysseus.iql.basic.lookup.BasicIQLLookUp;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 
-public class BasicIQLEObjectHoverProvider extends AbstractIQLEObjectHoverProvider<BasicIQLTypeFactory, BasicIQLLookUp> {
+public class BasicIQLEObjectHoverProvider extends AbstractIQLEObjectHoverProvider<BasicIQLTypeUtils, BasicIQLLookUp> {
 
 	@Inject
-	public BasicIQLEObjectHoverProvider(BasicIQLTypeFactory typeFactory, BasicIQLLookUp lookUp) {
-		super(typeFactory, lookUp);
+	public BasicIQLEObjectHoverProvider(BasicIQLTypeUtils typeUtils, BasicIQLLookUp lookUp) {
+		super(typeUtils, lookUp);
 	}
 
 }

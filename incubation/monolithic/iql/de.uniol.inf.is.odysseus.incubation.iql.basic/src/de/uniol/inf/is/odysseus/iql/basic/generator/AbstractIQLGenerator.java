@@ -13,6 +13,7 @@ import org.eclipse.xtext.generator.IGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
 
@@ -47,14 +48,19 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected void doGenerate(IQLFile file, IFileSystemAccess fsa, String outputFolder) {
-		for (IQLClass c : EcoreUtil2.getAllContentsOfType(file, IQLClass.class)) {
-			fsa.generateFile(outputFolder+c.getSimpleName() + ".java", compiler.compile(c, (G)context.cleanCopy()));
+		for (IQLTypeDefinition typeDef : EcoreUtil2.getAllContentsOfType(file, IQLTypeDefinition.class)) {
+			doGenerate(typeDef, fsa, outputFolder);
+			
 		}
-		
-		for (IQLInterface i : EcoreUtil2.getAllContentsOfType(file, IQLInterface.class)) {
-			fsa.generateFile(outputFolder+i.getSimpleName() + ".java", compiler.compile(i, (G)context.cleanCopy()));
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void doGenerate(IQLTypeDefinition typeDef, IFileSystemAccess fsa, String outputFolder) {
+		if (typeDef.getInner() instanceof IQLClass) {
+			fsa.generateFile(outputFolder+typeDef.getInner().getSimpleName() + ".java", compiler.compile(typeDef, (IQLClass)typeDef.getInner(), (G)context.cleanCopy()));
+		} else if (typeDef.getInner() instanceof IQLInterface) {
+			fsa.generateFile(outputFolder+typeDef.getInner().getSimpleName() + ".java", compiler.compile(typeDef, (IQLInterface)typeDef.getInner(), (G)context.cleanCopy()));
 		}
 	}
 	

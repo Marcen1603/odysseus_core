@@ -9,28 +9,29 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.AbstractIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 
-public class QDLCompilerHelper extends AbstractIQLCompilerHelper<QDLLookUp, QDLTypeFactory> {
+public class QDLCompilerHelper extends AbstractIQLCompilerHelper<QDLLookUp, QDLTypeFactory, QDLTypeUtils> {
 	
 	@Inject
-	public QDLCompilerHelper(QDLLookUp lookUp, QDLTypeFactory factory) {
-		super(lookUp, factory);
+	public QDLCompilerHelper(QDLLookUp lookUp, QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+		super(lookUp, typeFactory, typeUtils);
 	}
 	
 	public boolean isSource(JvmTypeReference typeRef) {
-		return factory.isSource(typeRef);
+		return typeFactory.isSource(typeRef);
 	}
 	
 	public boolean isSourceAttribute(JvmTypeReference typeRef, String name) {
-		return factory.isSourceAttribute(factory.getShortName(typeRef, false), name);
+		return typeFactory.isSourceAttribute(typeUtils.getShortName(typeRef, false), name);
 	}
 	
 	public boolean isOperator(JvmTypeReference typeRef) {
-		return factory.isOperator(typeRef);
+		return typeFactory.isOperator(typeRef);
 	}
 	
 	public boolean isParameter(String parameter, JvmTypeReference opType) {
-		return factory.isParameter(parameter, factory.getShortName(opType, false));
+		return typeFactory.isParameter(parameter, typeUtils.getShortName(opType, false));
 	}
 	
 	public String getParameterOfGetter(IQLMethodSelection m) {
@@ -59,27 +60,11 @@ public class QDLCompilerHelper extends AbstractIQLCompilerHelper<QDLLookUp, QDLT
 		String parameter = getParameterOfSetter(m);
 		return methodName.startsWith("set") && isParameter(parameter, opType);
 	}
-	
-//	public String getParameterSetter(String parameter, JvmTypeReference opType) {
-//		return factory.getParameterSetterName(parameter, factory.getShortName(opType, false));
-//	}
-//	
-//	public String getParameterGetter(String parameter, JvmTypeReference opType) {
-//		return factory.getParameterGetterName(parameter, factory.getShortName(opType, false));
-//	}
-	
-//	public String getParameterGetter(IQLMethodSelection m,JvmTypeReference opType) {
-//		return getParameterGetter(m.getMethod().getSimpleName().substring(3), opType);
-//	}
-//	
-//	public String getParameterSetter(IQLMethodSelection m,JvmTypeReference opType) {
-//		return getParameterSetter(m.getMethod().getSimpleName().substring(3), opType);
-//
-//	}
+
 	
 	public String getLogicalOperatorName(JvmTypeReference typeRef) {
-		String name = factory.getShortName(typeRef, false);
-		Class<? extends ILogicalOperator> op = factory.getLogicalOperator(name);
+		String name = typeUtils.getShortName(typeRef, false);
+		Class<? extends ILogicalOperator> op = typeFactory.getLogicalOperator(name);
 		if (op != null) {
 			return op.getSimpleName();
 		}

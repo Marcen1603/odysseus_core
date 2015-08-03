@@ -15,16 +15,19 @@ import com.google.inject.Inject;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 
-public abstract class AbstractIQLQualifiedNameProvider extends DefaultDeclarativeQualifiedNameProvider implements IQualifiedNameProvider{
+public abstract class AbstractIQLQualifiedNameProvider<U extends IIQLTypeUtils> extends DefaultDeclarativeQualifiedNameProvider implements IQualifiedNameProvider{
 	@Inject
 	private IQualifiedNameConverter converter;
 	
-	@Inject
-	private IIQLTypeFactory factory;
+	protected U typeUtils;
 	
+	
+	public AbstractIQLQualifiedNameProvider(U typeUtils) {
+		this.typeUtils = typeUtils;
+	}
 	
 	@Override
 	public QualifiedName getFullyQualifiedName(EObject obj) {
@@ -33,10 +36,14 @@ public abstract class AbstractIQLQualifiedNameProvider extends DefaultDeclarativ
 			return converter.toQualifiedName(field.getSimpleName());
 		} else if (obj instanceof JvmOperation) {
 			JvmOperation op = (JvmOperation)obj;
-			return converter.toQualifiedName(op.getSimpleName());
+			if (op.getSimpleName() != null) {
+				return converter.toQualifiedName(op.getSimpleName());
+			} else {
+				return QualifiedName.create();
+			}
 		} else if (obj instanceof JvmGenericType) {
 			JvmGenericType type = (JvmGenericType)obj;
-			return converter.toQualifiedName(factory.getLongName(type, false));
+			return converter.toQualifiedName(typeUtils.getLongName(type, false));
 		} else if (obj instanceof JvmPrimitiveType) {
 			JvmPrimitiveType type = (JvmPrimitiveType)obj;
 			return converter.toQualifiedName(type.getSimpleName());

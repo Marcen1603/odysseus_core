@@ -13,7 +13,7 @@ public interface IIQLScopeProvider {
 
 	Collection<JvmIdentifiableElement> getScopeIQLTerminalExpressionVariable(EObject expr);
 
-	Collection<JvmOperation> getScopeIQLTerminalExpressionMethod(EObject expr);
+	Collection<JvmOperation> getScopeTerminalExpressionMethod(EObject expr);
 
 	Collection<JvmOperation> getScopeIQLMethodSelection(IQLMemberSelectionExpression expr);
 

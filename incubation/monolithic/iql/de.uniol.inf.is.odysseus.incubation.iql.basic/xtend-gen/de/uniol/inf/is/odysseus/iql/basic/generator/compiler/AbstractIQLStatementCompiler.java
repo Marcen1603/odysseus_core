@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmExecutable;
@@ -44,24 +44,24 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 @SuppressWarnings("all")
-public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, F extends IIQLTypeFactory, P extends IIQLExpressionParser, L extends IIQLLookUp> implements IIQLStatementCompiler<G> {
+public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, U extends IIQLTypeUtils, P extends IIQLExpressionParser, L extends IIQLLookUp> implements IIQLStatementCompiler<G> {
   protected H helper;
   
   protected E exprCompiler;
   
   protected T typeCompiler;
   
-  protected F factory;
-  
   protected P exprParser;
   
   protected L lookUp;
   
-  public AbstractIQLStatementCompiler(final H helper, final E exprCompiler, final T typeCompiler, final F factory, final P exprParser, final L lookUp) {
+  protected U typeUtils;
+  
+  public AbstractIQLStatementCompiler(final H helper, final E exprCompiler, final T typeCompiler, final U typeUtils, final P exprParser, final L lookUp) {
     this.helper = helper;
     this.exprCompiler = exprCompiler;
     this.typeCompiler = typeCompiler;
-    this.factory = factory;
+    this.typeUtils = typeUtils;
     this.exprParser = exprParser;
     this.lookUp = lookUp;
   }
@@ -470,7 +470,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
       if (_notEquals) {
         String _xblockexpression_1 = null;
         {
-          JvmTypeReference typeRef = this.factory.getTypeRef(type);
+          JvmTypeReference typeRef = this.typeUtils.createTypeRef(type);
           String _keyword = s.getKeyword();
           boolean _equalsIgnoreCase = _keyword.equalsIgnoreCase("super");
           if (_equalsIgnoreCase) {
@@ -565,7 +565,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
       if (_notEquals_1) {
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("get");
-        String _shortName = this.factory.getShortName(typeRef, false);
+        String _shortName = this.typeUtils.getShortName(typeRef, false);
         _builder.append(_shortName, "");
         int _hashCode = typeRef.hashCode();
         _builder.append(_hashCode, "");
@@ -586,7 +586,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
       } else {
         StringConcatenation _builder_1 = new StringConcatenation();
         _builder_1.append("get");
-        String _shortName_1 = this.factory.getShortName(typeRef, false);
+        String _shortName_1 = this.typeUtils.getShortName(typeRef, false);
         _builder_1.append(_shortName_1, "");
         int _hashCode_1 = typeRef.hashCode();
         _builder_1.append(_hashCode_1, "");

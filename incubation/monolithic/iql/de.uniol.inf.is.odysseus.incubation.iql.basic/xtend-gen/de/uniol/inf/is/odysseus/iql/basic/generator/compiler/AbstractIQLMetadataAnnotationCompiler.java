@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataAnnotat
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -27,14 +28,17 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
-public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>> implements IIQLMetadataAnnotationCompiler<G> {
+public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, U extends IIQLTypeUtils> implements IIQLMetadataAnnotationCompiler<G> {
   protected H helper;
   
   protected T typeCompiler;
   
-  public AbstractIQLMetadataAnnotationCompiler(final H helper, final T typeCompiler) {
+  protected U typeUtils;
+  
+  public AbstractIQLMetadataAnnotationCompiler(final H helper, final T typeCompiler, final U typeUtils) {
     this.helper = helper;
     this.typeCompiler = typeCompiler;
+    this.typeUtils = typeUtils;
   }
   
   public String compile(final IQLMetadataList o, final G c) {

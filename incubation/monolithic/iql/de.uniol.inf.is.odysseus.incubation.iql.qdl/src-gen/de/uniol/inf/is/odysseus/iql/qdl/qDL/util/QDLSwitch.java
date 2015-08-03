@@ -4,7 +4,7 @@ package de.uniol.inf.is.odysseus.iql.qdl.qDL.util;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.*;
 
@@ -93,11 +93,18 @@ public class QDLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case QDLPackage.QDL_TYPE_DEFINITION:
+      {
+        QDLTypeDefinition qdlTypeDefinition = (QDLTypeDefinition)theEObject;
+        T result = caseQDLTypeDefinition(qdlTypeDefinition);
+        if (result == null) result = caseIQLTypeDefinition(qdlTypeDefinition);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case QDLPackage.QDL_QUERY:
       {
         QDLQuery qdlQuery = (QDLQuery)theEObject;
         T result = caseQDLQuery(qdlQuery);
-        if (result == null) result = caseIQLTypeDef(qdlQuery);
         if (result == null) result = caseJvmGenericType(qdlQuery);
         if (result == null) result = caseJvmDeclaredType(qdlQuery);
         if (result == null) result = caseJvmTypeParameterDeclarator(qdlQuery);
@@ -141,6 +148,22 @@ public class QDLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseQDLFile(QDLFile object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Type Definition</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Type Definition</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseQDLTypeDefinition(QDLTypeDefinition object)
   {
     return null;
   }
@@ -205,6 +228,22 @@ public class QDLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIQLFile(IQLFile object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Type Definition</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Type Definition</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLTypeDefinition(IQLTypeDefinition object)
   {
     return null;
   }
@@ -333,22 +372,6 @@ public class QDLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseJvmGenericType(JvmGenericType object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Type Def</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Type Def</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLTypeDef(IQLTypeDef object)
   {
     return null;
   }

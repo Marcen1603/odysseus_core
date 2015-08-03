@@ -4,10 +4,11 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDef;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
@@ -15,28 +16,29 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
-import org.eclipse.xtext.common.types.JvmTypeReference;
-
-import org.eclipse.xtext.common.types.impl.JvmGenericTypeImpl;
+import org.eclipse.xtext.common.types.JvmGenericType;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>IQL Type Def</b></em>'.
+ * An implementation of the model object '<em><b>IQL Type Definition</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefImpl#getJavametadata <em>Javametadata</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefImpl#getExtendedInterfaces <em>Extended Interfaces</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefinitionImpl#getJavametadata <em>Javametadata</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefinitionImpl#getInner <em>Inner</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class IQLTypeDefImpl extends JvmGenericTypeImpl implements IQLTypeDef
+public class IQLTypeDefinitionImpl extends MinimalEObjectImpl.Container implements IQLTypeDefinition
 {
   /**
    * The cached value of the '{@link #getJavametadata() <em>Javametadata</em>}' containment reference list.
@@ -49,21 +51,21 @@ public class IQLTypeDefImpl extends JvmGenericTypeImpl implements IQLTypeDef
   protected EList<IQLJavaMetadata> javametadata;
 
   /**
-   * The cached value of the '{@link #getExtendedInterfaces() <em>Extended Interfaces</em>}' containment reference list.
+   * The cached value of the '{@link #getInner() <em>Inner</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getExtendedInterfaces()
+   * @see #getInner()
    * @generated
    * @ordered
    */
-  protected EList<JvmTypeReference> extendedInterfaces;
+  protected JvmGenericType inner;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected IQLTypeDefImpl()
+  protected IQLTypeDefinitionImpl()
   {
     super();
   }
@@ -76,7 +78,7 @@ public class IQLTypeDefImpl extends JvmGenericTypeImpl implements IQLTypeDef
   @Override
   protected EClass eStaticClass()
   {
-    return BasicIQLPackage.Literals.IQL_TYPE_DEF;
+    return BasicIQLPackage.Literals.IQL_TYPE_DEFINITION;
   }
 
   /**
@@ -88,7 +90,7 @@ public class IQLTypeDefImpl extends JvmGenericTypeImpl implements IQLTypeDef
   {
     if (javametadata == null)
     {
-      javametadata = new EObjectContainmentEList<IQLJavaMetadata>(IQLJavaMetadata.class, this, BasicIQLPackage.IQL_TYPE_DEF__JAVAMETADATA);
+      javametadata = new EObjectContainmentEList<IQLJavaMetadata>(IQLJavaMetadata.class, this, BasicIQLPackage.IQL_TYPE_DEFINITION__JAVAMETADATA);
     }
     return javametadata;
   }
@@ -98,13 +100,47 @@ public class IQLTypeDefImpl extends JvmGenericTypeImpl implements IQLTypeDef
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<JvmTypeReference> getExtendedInterfaces()
+  public JvmGenericType getInner()
   {
-    if (extendedInterfaces == null)
+    return inner;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetInner(JvmGenericType newInner, NotificationChain msgs)
+  {
+    JvmGenericType oldInner = inner;
+    inner = newInner;
+    if (eNotificationRequired())
     {
-      extendedInterfaces = new EObjectContainmentEList<JvmTypeReference>(JvmTypeReference.class, this, BasicIQLPackage.IQL_TYPE_DEF__EXTENDED_INTERFACES);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_TYPE_DEFINITION__INNER, oldInner, newInner);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
     }
-    return extendedInterfaces;
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setInner(JvmGenericType newInner)
+  {
+    if (newInner != inner)
+    {
+      NotificationChain msgs = null;
+      if (inner != null)
+        msgs = ((InternalEObject)inner).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_TYPE_DEFINITION__INNER, null, msgs);
+      if (newInner != null)
+        msgs = ((InternalEObject)newInner).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_TYPE_DEFINITION__INNER, null, msgs);
+      msgs = basicSetInner(newInner, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_TYPE_DEFINITION__INNER, newInner, newInner));
   }
 
   /**
@@ -117,10 +153,10 @@ public class IQLTypeDefImpl extends JvmGenericTypeImpl implements IQLTypeDef
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_TYPE_DEF__JAVAMETADATA:
+      case BasicIQLPackage.IQL_TYPE_DEFINITION__JAVAMETADATA:
         return ((InternalEList<?>)getJavametadata()).basicRemove(otherEnd, msgs);
-      case BasicIQLPackage.IQL_TYPE_DEF__EXTENDED_INTERFACES:
-        return ((InternalEList<?>)getExtendedInterfaces()).basicRemove(otherEnd, msgs);
+      case BasicIQLPackage.IQL_TYPE_DEFINITION__INNER:
+        return basicSetInner(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -135,10 +171,10 @@ public class IQLTypeDefImpl extends JvmGenericTypeImpl implements IQLTypeDef
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_TYPE_DEF__JAVAMETADATA:
+      case BasicIQLPackage.IQL_TYPE_DEFINITION__JAVAMETADATA:
         return getJavametadata();
-      case BasicIQLPackage.IQL_TYPE_DEF__EXTENDED_INTERFACES:
-        return getExtendedInterfaces();
+      case BasicIQLPackage.IQL_TYPE_DEFINITION__INNER:
+        return getInner();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -154,13 +190,12 @@ public class IQLTypeDefImpl extends JvmGenericTypeImpl implements IQLTypeDef
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_TYPE_DEF__JAVAMETADATA:
+      case BasicIQLPackage.IQL_TYPE_DEFINITION__JAVAMETADATA:
         getJavametadata().clear();
         getJavametadata().addAll((Collection<? extends IQLJavaMetadata>)newValue);
         return;
-      case BasicIQLPackage.IQL_TYPE_DEF__EXTENDED_INTERFACES:
-        getExtendedInterfaces().clear();
-        getExtendedInterfaces().addAll((Collection<? extends JvmTypeReference>)newValue);
+      case BasicIQLPackage.IQL_TYPE_DEFINITION__INNER:
+        setInner((JvmGenericType)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -176,11 +211,11 @@ public class IQLTypeDefImpl extends JvmGenericTypeImpl implements IQLTypeDef
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_TYPE_DEF__JAVAMETADATA:
+      case BasicIQLPackage.IQL_TYPE_DEFINITION__JAVAMETADATA:
         getJavametadata().clear();
         return;
-      case BasicIQLPackage.IQL_TYPE_DEF__EXTENDED_INTERFACES:
-        getExtendedInterfaces().clear();
+      case BasicIQLPackage.IQL_TYPE_DEFINITION__INNER:
+        setInner((JvmGenericType)null);
         return;
     }
     super.eUnset(featureID);
@@ -196,12 +231,12 @@ public class IQLTypeDefImpl extends JvmGenericTypeImpl implements IQLTypeDef
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_TYPE_DEF__JAVAMETADATA:
+      case BasicIQLPackage.IQL_TYPE_DEFINITION__JAVAMETADATA:
         return javametadata != null && !javametadata.isEmpty();
-      case BasicIQLPackage.IQL_TYPE_DEF__EXTENDED_INTERFACES:
-        return extendedInterfaces != null && !extendedInterfaces.isEmpty();
+      case BasicIQLPackage.IQL_TYPE_DEFINITION__INNER:
+        return inner != null;
     }
     return super.eIsSet(featureID);
   }
 
-} //IQLTypeDefImpl
+} //IQLTypeDefinitionImpl
