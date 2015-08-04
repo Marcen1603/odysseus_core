@@ -11,6 +11,8 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.zookeeper.server.ServerConfig;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
 import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,7 @@ import de.uniol.inf.is.odysseus.badast.BaDaStException;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServerStartable;
 
+// TODO Replace Kafka source code with Kafka jar file. First try to do it resulted in run-time errors for the Kafka server.
 /**
  * BaDaSt - Backup of Data Streams application. <br />
  * <br />
@@ -29,7 +32,7 @@ import kafka.server.KafkaServerStartable;
  * @author Michael Brand
  *
  */
-public class BaDaStApplication {
+public class BaDaStApplication implements IApplication {
 
 	/**
 	 * The logger for this class.
@@ -202,9 +205,7 @@ public class BaDaStApplication {
 		cLog.info("BaDaSt server started.");
 	}
 
-	/**
-	 * Stopps the application.
-	 */
+	@Override
 	public void stop() {
 		if (this.mKafkaServer != null) {
 			this.mKafkaServer.shutdown();
@@ -212,6 +213,13 @@ public class BaDaStApplication {
 		if (cInstance != null && cInstance == this) {
 			cInstance = null;
 		}
+	}
+
+	@Override
+	public Object start(IApplicationContext context) throws Exception {
+		context.applicationRunning();
+		(cInstance = this).start();
+		return IApplicationContext.EXIT_ASYNC_RESULT;
 	}
 
 }
