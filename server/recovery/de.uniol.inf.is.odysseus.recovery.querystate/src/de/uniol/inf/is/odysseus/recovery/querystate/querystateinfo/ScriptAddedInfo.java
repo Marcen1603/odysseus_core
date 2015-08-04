@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
+import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
 
 /**
  * All information needed to recover a query added event (normal queries as well

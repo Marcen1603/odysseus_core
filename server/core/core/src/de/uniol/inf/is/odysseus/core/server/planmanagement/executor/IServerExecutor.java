@@ -21,9 +21,6 @@ import java.util.Map;
 
 import javax.security.auth.login.Configuration;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableCollection;
-
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -33,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManag
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
-import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
@@ -203,18 +199,6 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
 	
 	ICompiler getCompiler();
-
-	/**
-	 * Returns the data fragmentation strategy by the given name, if it is bound.
-	 * @author Michael Brand
-	 */
-	Optional<IDataFragmentation> getDataFragmentation(String name);
-
-	/**
-	 * Returns a collection of the names of all bound data fragmentation strategies.
-	 * @author Michael Brand
-	 */
-	ImmutableCollection<String> getDataFragmentationNames();
 
 	// Facade for Compiler
 	public List<IExecutorCommand> translateQuery(String query, String parserID,

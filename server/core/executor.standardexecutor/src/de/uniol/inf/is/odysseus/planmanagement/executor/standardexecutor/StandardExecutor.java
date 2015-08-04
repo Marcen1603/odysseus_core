@@ -89,7 +89,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterParserID;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterRecoveryConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.SLADictionary;
@@ -273,6 +275,12 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		if (parameters.get(ParameterDoDistribute.class).getValue()) {
 			queries = distributeQueries(parameters, user, queries);
 		}
+		
+		// Recovery handler to modify the query plan
+		ParameterRecoveryConfiguration recoveryConfiguration;
+		if((recoveryConfiguration = parameters.get(ParameterRecoveryConfiguration.class)) != ParameterRecoveryConfiguration.NoConfiguration) {
+			queries = prepareRecovery(recoveryConfiguration, parameters, user, queries);
+		}
 
 		// Wrap queries again
 		for (ILogicalQuery q : queries) {
@@ -388,6 +396,18 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			return Lists.newArrayList();
 		}
 
+		return queries;
+	}
+	
+	private List<ILogicalQuery> prepareRecovery(ParameterRecoveryConfiguration config,
+			QueryBuildConfiguration parameters, ISession caller,
+			List<ILogicalQuery> queries) {
+		LOG.debug("Beginning preparation for recovery");
+		IRecoveryExecutor recoveryExecutor;
+		if ((recoveryExecutor = getRecoveryExecutor(config.getRecoveryExecutor())) != null) {
+			LOG.debug("Using  {} for recovery" , recoveryExecutor.getName());
+			return recoveryExecutor.newInstance(config.getConfiguration()).activateBackup(parameters, caller, queries);
+		}
 		return queries;
 	}
 

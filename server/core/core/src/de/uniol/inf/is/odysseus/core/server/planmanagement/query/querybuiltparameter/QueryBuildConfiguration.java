@@ -96,6 +96,9 @@ public class QueryBuildConfiguration extends
 		if (!contains(PreTransformationHandlerParameter.class)) {
 			set(new PreTransformationHandlerParameter());
 		}
+		if (!contains(ParameterRecoveryConfiguration.class)) {
+			set(ParameterRecoveryConfiguration.NoConfiguration);
+		}
 	}
 
 	public void setExecutor(IExecutor executor) {

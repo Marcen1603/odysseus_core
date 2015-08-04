@@ -33,13 +33,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -61,7 +59,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvide
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
-import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.IQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
@@ -104,6 +101,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IPlanReoptimizeL
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
@@ -156,15 +154,11 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	private static Map<String, Class<? extends IPreTransformationHandler>> preTransformationHandlerMap = Maps
 			.newHashMap();
 	private IQueryDistributor queryDistributor;
-
+	
 	/**
-	 * Mapping (name -> implementation) of all integrated data fragmentation
-	 * strategies.
-	 * 
-	 * @author Michael Brand
+	 * Recovery strategies.
 	 */
-	private Map<String, IDataFragmentation> dataFragmentationStrategies = Maps
-			.newHashMap();
+	private static final Set<IRecoveryExecutor> recoveryExecutors = Sets.newHashSet();
 
 	/**
 	 * Konfiguration der Ausf�hrungsumgebung
@@ -433,58 +427,22 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public final IQueryDistributor getQueryDistributor() {
 		return queryDistributor;
 	}
-
-	/**
-	 * Binds the referenced {@link IDataFragmentation}. <br />
-	 * Called by OSGI-DS.
-	 * 
-	 * @see #unbindDataFragmentation(IDataFragmentation)
-	 * @param dfStrategy
-	 *            An instance of an {@link IDataFragmentation} implementation.
-	 * @author Michael Brand
-	 */
-	public final void bindDataFragmentation(IDataFragmentation dfStrategy) {
-
-		dataFragmentationStrategies.put(dfStrategy.getName(), dfStrategy);
-		LOG.trace("Data fragmentation strategy bound '{}'",
-				dfStrategy.getName());
-
+	
+	public static void bindRecoveryExecutor(IRecoveryExecutor recExec) {
+		recoveryExecutors.add(recExec);
 	}
-
-	/**
-	 * Unbinds an referenced {@link IDataFragmentation}, if
-	 * <code>dfStrategy</code> is the binded one. <br />
-	 * Called by OSGI-DS.
-	 * 
-	 * @see #bindDataFragmentation(IDataFragmentation)
-	 * @param dfStrategy
-	 *            An instance of an {@link IDataFragmentation} implementation.
-	 * @author Michael Brand
-	 */
-	public final void unbindDataFragmentation(IDataFragmentation dfStrategy) {
-
-		String strategyName = dfStrategy.getName();
-		if (dataFragmentationStrategies.containsKey(strategyName)) {
-
-			dataFragmentationStrategies.remove(strategyName);
-			LOG.trace("Data fragmentation strategy unbound '{}'", strategyName);
-
+	
+	public static void unbindRecoveryExecutor(IRecoveryExecutor recExec) {
+		recoveryExecutors.remove(recExec);
+	}
+	
+	public static IRecoveryExecutor getRecoveryExecutor(String name) {
+		for(IRecoveryExecutor recExec : recoveryExecutors) {
+			if(recExec.getName().equals(name)) {
+				return recExec;
+			}
 		}
-
-	}
-
-	@Override
-	public final ImmutableCollection<String> getDataFragmentationNames() {
-
-		return ImmutableSet.copyOf(dataFragmentationStrategies.keySet());
-
-	}
-
-	@Override
-	public final Optional<IDataFragmentation> getDataFragmentation(String name) {
-
-		return Optional.fromNullable(dataFragmentationStrategies.get(name));
-
+		return null;
 	}
 
 	/**

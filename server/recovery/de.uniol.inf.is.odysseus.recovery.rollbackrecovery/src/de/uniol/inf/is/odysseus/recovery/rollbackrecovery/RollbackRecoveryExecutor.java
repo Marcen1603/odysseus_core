@@ -6,10 +6,12 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
+import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
+import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.recovery.IRecoveryComponent;
-import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
-import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 
 /**
  * The rollback recovery executor represents a recovery strategy, which backups
@@ -35,24 +37,24 @@ public class RollbackRecoveryExecutor implements IRecoveryExecutor {
 	}
 
 	/**
-	 * The recovery component for the incoming data stream elements (to be bound
-	 * by OSGi).
+	 * The not initialized recovery component for the incoming data stream
+	 * elements (to be bound by OSGi).
 	 */
-	private static IRecoveryComponent cSourceRecoveryComponent;
+	private static IRecoveryComponent cIncomingElementsComponent;
 
 	// TODO RollbackRecoveryExecutor misses Operator Recovery
 
 	/**
 	 * Binds either a recovery component for the incoming data stream elements
 	 * or for the operator states.
-	 * 
+	 *
 	 * @param component
-	 *            The component to bind, if its name matches "Source Recovery"
+	 *            The component to bind, if its name matches "Incoming Elements"
 	 *            or "Operator Recovery".
 	 */
 	public static void bindComponent(IRecoveryComponent component) {
-		if (component.getName().equals("Source Recovery")) {
-			cSourceRecoveryComponent = component;
+		if (component.getName().equals("Incoming Elements")) {
+			cIncomingElementsComponent = component;
 		}
 		// TODO RollbackRecoveryExecutor misses Operator Recovery
 	}
@@ -64,22 +66,21 @@ public class RollbackRecoveryExecutor implements IRecoveryExecutor {
 	 *            The component to unbind, if it has been bound before.
 	 */
 	public static void unbindComponent(IRecoveryComponent component) {
-		if (cSourceRecoveryComponent.equals(component)) {
-			cSourceRecoveryComponent = null;
+		if (cIncomingElementsComponent.equals(component)) {
+			cIncomingElementsComponent = null;
 		}
 		// TODO RollbackRecoveryExecutor misses Operator Recovery
 	}
 
 	/**
-	 * The configuration of the executor.
+	 * The initialized recovery component for the incoming data stream elements.
 	 */
-	@SuppressWarnings("unused")
-	private Properties mConfig;
+	private IRecoveryComponent mSourceRecoveryComponent;
 
 	@Override
 	public IRecoveryExecutor newInstance(Properties config) {
 		RollbackRecoveryExecutor executor = new RollbackRecoveryExecutor();
-		executor.mConfig = config;
+		executor.mSourceRecoveryComponent = cIncomingElementsComponent.newInstance(config);
 		return executor;
 	}
 
@@ -93,13 +94,13 @@ public class RollbackRecoveryExecutor implements IRecoveryExecutor {
 	 * is done globally.
 	 */
 	@Override
-	public void activateBackup(List<Integer> queryIds, ISession caller) {
-		if (cSourceRecoveryComponent == null) {
-			cLog.error("RollBackRecovery executor misses Source Recovery component!");
-			return;
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
+		if (this.mSourceRecoveryComponent == null) {
+			cLog.error("RollBackRecovery executor misses Incoming Elements recovery component!");
+			return queries;
 		}
 		// TODO What about protection points?
-		cSourceRecoveryComponent.activateBackup(queryIds, caller);
+		return this.mSourceRecoveryComponent.activateBackup(qbConfig, caller, queries);
 		// TODO RollbackRecoveryExecutor misses Operator Recovery
 	}
 

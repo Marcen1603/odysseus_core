@@ -2,7 +2,7 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.recovery.rollbackrecovery.RollbackRecoveryExecutor">
    <implementation class="de.uniol.inf.is.odysseus.recovery.rollbackrecovery.RollbackRecoveryExecutor"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor"/>
    </service>
-   <reference bind="bindComponent" cardinality="1..n" interface="de.uniol.inf.is.odysseus.recovery.IRecoveryComponent" name="IRecoveryComponent" policy="dynamic" unbind="unbindComponent"/>
+   <reference bind="bindComponent" cardinality="1..n" interface="de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent" name="IRecoveryComponent" policy="dynamic" unbind="unbindComponent"/>
 </scr:component>

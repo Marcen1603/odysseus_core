@@ -25,7 +25,7 @@
    <reference bind="bindSystemMonitorFactory" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory" name="ISystemMonitorFactory" policy="dynamic" unbind="unbindSystemMonitorFactory"/>
    <reference bind="bindQueryBuildConfiguration" cardinality="1..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate" name="IQueryBuildConfigurationTemplate" policy="dynamic" unbind="unbindQueryBuildConfiguration"/>
    <reference bind="bindUserManagement" cardinality="1..n" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement" name="IUserManagement" policy="dynamic" unbind="unbindUserManagement"/>
-   <reference bind="bindDataFragmentation" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation" name="IDataFragmentation" policy="dynamic" unbind="unbindDataFragmentation"/>
    <reference bind="bindQueryDistributor" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.distribution.IQueryDistributor" name="IQueryDistributor" policy="static" unbind="unbindQueryDistributor"/>
    <reference bind="bindPreTransformationHandler" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler" name="IPreTransformationHandler" policy="dynamic" unbind="unbindPreTransformationHandler"/>
+   <reference bind="bindRecoveryExecutor" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor" name="IRecoveryExecutor" policy="dynamic" unbind="unbindRecoveryExecutor"/>
 </scr:component>

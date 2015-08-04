@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.OdysseusDefaultsPreParserK
 import de.uniol.inf.is.odysseus.script.parser.keyword.OptimizePredicatesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ReloadFromLogPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ResumeOnErrorPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.TrafoOptionPreParserKeyword;
@@ -54,6 +55,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(TrafoOptionPreParserKeyword.TRAFOOPTION, TrafoOptionPreParserKeyword.class);
 		keywords.put(QueryPriorityPreParserKeyword.NAME, QueryPriorityPreParserKeyword.class);
 		keywords.put(MaxSheddingFactorPreParserKeyword.SHEDDING_FACTOR_NAME, MaxSheddingFactorPreParserKeyword.class);
+		keywords.put(RecoveryConfigKeyword.getName(), RecoveryConfigKeyword.class);
 		return keywords;
 	}
 

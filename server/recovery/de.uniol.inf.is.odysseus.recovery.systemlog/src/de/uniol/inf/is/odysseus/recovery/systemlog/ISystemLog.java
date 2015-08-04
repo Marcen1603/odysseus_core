@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
+
 /**
  * Service to log system events like startup and shutdown. <br />
  * See {@link ISysLogEntry} for how log entries look like and

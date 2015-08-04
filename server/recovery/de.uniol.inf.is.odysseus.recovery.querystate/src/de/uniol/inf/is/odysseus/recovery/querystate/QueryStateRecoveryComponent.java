@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
@@ -23,19 +24,19 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
+import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
+import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.recovery.IRecoveryComponent;
-import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
-import de.uniol.inf.is.odysseus.recovery.configuration.RecoveryConfigKeyword;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.AbstractQueryStateInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.ScriptAddedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryRemovedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryStateChangedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.SourceRemovedInfo;
-import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
+import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
 
 /**
  * The query state recovery component handles the backup and recovery of queries
@@ -248,8 +249,9 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * Global recovery component. Not to be called for certain queries.
 	 */
 	@Override
-	public void activateBackup(List<Integer> queryIds, ISession caller) {
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
 		// Nothing to do.
+		return queries;
 	}
 
 	/**
@@ -349,12 +351,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 				.determineRecoveryExecutor(script);
 		if (usedRecoveryExecutor.isPresent()) {
 			info.setRecoveryExecutor(usedRecoveryExecutor.get().getName());
-			// TODO Configuration of RecoveryExecutor needs to be saved
-
-			// Call the recovery executor
-			cLog.debug("Calling recovery executor '{}'", usedRecoveryExecutor
-					.get().getName());
-			usedRecoveryExecutor.get().activateBackup(queryIds, user);
 		}
 		cSystemLog.get().write(QueryStateLogTag.SCRIPT_ADDED.toString(),
 				System.currentTimeMillis(), info.toBase64Binary());

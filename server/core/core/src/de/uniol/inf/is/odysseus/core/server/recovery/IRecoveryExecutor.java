@@ -1,10 +1,11 @@
-package de.uniol.inf.is.odysseus.recovery;
+package de.uniol.inf.is.odysseus.core.server.recovery;
 
 import java.util.List;
 import java.util.Properties;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 
 /**
  * A recovery executor represents a complete recovery strategy by calling
@@ -50,12 +51,17 @@ public interface IRecoveryExecutor {
 	/**
 	 * Activates the backup mechanism for given queries.
 	 * 
-	 * @param queryIds
-	 *            The ids of the queries.
+	 * @param qbConfig
+	 *            The used query build configuration.
 	 * @param caller
-	 *            The caller is a session for the same user, who backed up the
+	 *            The caller is a session of the user, who wants to back up the
 	 *            data.
+	 * @param queries
+	 *            The queries.
+	 * @return {@code queries} either modified for recovery or not. Depends on
+	 *         the used recovery strategy.
 	 */
-	public void activateBackup(List<Integer> queryIds, ISession caller);
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
+			List<ILogicalQuery> queries);
 
 }

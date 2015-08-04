@@ -76,6 +76,7 @@ Export-Package:
  de.uniol.inf.is.odysseus.core.server.planmanagement.query,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter,
  de.uniol.inf.is.odysseus.core.server.predicate,
+ de.uniol.inf.is.odysseus.core.server.recovery,
  de.uniol.inf.is.odysseus.core.server.scheduler,
  de.uniol.inf.is.odysseus.core.server.scheduler.event,
  de.uniol.inf.is.odysseus.core.server.scheduler.exception,

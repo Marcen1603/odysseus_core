@@ -3,9 +3,11 @@ package de.uniol.inf.is.odysseus.recovery.gaprecovery;
 import java.util.List;
 import java.util.Properties;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
+import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
-import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 
 /**
  * The gap recovery executor represents a recovery strategy, which backups and
@@ -35,8 +37,9 @@ public class GapRecoveryExecutor implements IRecoveryExecutor {
 	 * is done globally.
 	 */
 	@Override
-	public void activateBackup(List<Integer> queryIds, ISession caller) {
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
 		// Nothing to do.
+		return queries;
 	}
 
 	@Override

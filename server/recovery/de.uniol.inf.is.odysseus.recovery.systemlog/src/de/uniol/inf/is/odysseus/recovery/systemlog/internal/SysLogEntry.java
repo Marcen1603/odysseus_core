@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.recovery.systemlog.internal;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
+import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 
 /**
  * Entry within a system log contains a tag identifying the action, a time stamp

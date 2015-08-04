@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
+import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLogListener;
 import de.uniol.inf.is.odysseus.recovery.systemlog.SystemLogConfiguration;

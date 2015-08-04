@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.configuration;
+package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,8 +14,10 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterRecoveryConfiguration;
+import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -96,7 +98,8 @@ public class RecoveryConfigKeyword extends AbstractPreParserKeyword {
 			Context context, IServerExecutor executor) throws OdysseusScriptException {
 		Properties executorCfg = new Properties();
 		String executorName = parseParameter(parameter, executorCfg);
-		variables.put(getName(), cExecutors.get(executorName).newInstance(executorCfg));
+		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
+		settings.add(new ParameterRecoveryConfiguration(executorName, executorCfg));
 		return null;
 	}
 

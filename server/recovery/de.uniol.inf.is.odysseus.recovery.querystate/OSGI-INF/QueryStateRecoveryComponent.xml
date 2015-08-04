@@ -5,6 +5,6 @@
    <reference bind="bindServerExecutor" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindServerExecutor"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener"/>
-      <provide interface="de.uniol.inf.is.odysseus.recovery.IRecoveryComponent"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent"/>
    </service>
 </scr:component>

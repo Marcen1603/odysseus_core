@@ -24,7 +24,6 @@
       <import plugin="de.uniol.inf.is.odysseus.core.server"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="de.uniol.inf.is.odysseus.recovery.systemlog" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.recovery" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -36,13 +35,6 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.recovery.systemstatelogger"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.recovery"
          download-size="0"
          install-size="0"
          version="0.0.0"
