@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.jxta.peer.PeerID;
@@ -37,6 +37,14 @@ public class QueryTransmissionHandler implements IPeerLockContainerListener, ILo
 	private List<IQueryTransmissionHandlerListener> listeners = Lists.newArrayList();
 	
 	private boolean lbResult = false;
+	
+	public int getQueryId() {
+		return queryId;
+	}
+	
+	public PeerID getSlavePeerID() {
+		return slavePeerId;
+	}
 
 	public QueryTransmissionHandler(int queryIdToTransmit, PeerID destinationPeerId, ILoadBalancingCommunicator communicator,IPeerCommunicator peerCommunicator, ILoadBalancingLock lock) {
 		LOG.debug("New Transmission Handler for Query Id {}",queryIdToTransmit);
@@ -80,12 +88,7 @@ public class QueryTransmissionHandler implements IPeerLockContainerListener, ILo
 	@Override
 	public void notifyLockingFailed() {
 		LOG.debug("{} - Locking other peers failed.",queryId);
-		Iterator<IQueryTransmissionHandlerListener> iter = listeners.iterator();
-		while(iter.hasNext()) {
-			IQueryTransmissionHandlerListener listener = iter.next();
-			iter.remove();
-			listener.tranmissionFailed(this);
-		}
+		tellListeners(false);
 	}
 
 	@Override
@@ -98,11 +101,16 @@ public class QueryTransmissionHandler implements IPeerLockContainerListener, ILo
 	@Override
 	public void notifyReleasingFinished() {
 		LOG.debug("{} - Releasing other peers done.",queryId);
-		Iterator<IQueryTransmissionHandlerListener> iter = listeners.iterator();
-		while(iter.hasNext()) {
-			IQueryTransmissionHandlerListener listener = iter.next();
-			iter.remove();
-			if(lbResult) {
+		tellListeners(lbResult);
+		
+	}
+	
+	private synchronized void tellListeners(boolean success) {
+		List<IQueryTransmissionHandlerListener> listenerCopy = new ArrayList<IQueryTransmissionHandlerListener>(listeners);
+		
+		for(IQueryTransmissionHandlerListener listener : listenerCopy) {
+		
+			if(success) {
 				listener.transmissionSuccessful(this);
 			}
 			else {
@@ -110,8 +118,6 @@ public class QueryTransmissionHandler implements IPeerLockContainerListener, ILo
 			}
 			
 		}
-		
-		
 	}
 
 	@Override

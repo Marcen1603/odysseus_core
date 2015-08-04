@@ -79,6 +79,19 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	private static IServerExecutor executor;
 	private static ILoadBalancingCommunicatorRegistry communicatorRegistry;
 	private static ILoadBalancingController loadBalancingControl;
+	private static IQueryPartController queryPartController;
+	
+	
+	public static void bindQueryPartController(IQueryPartController serv) {
+		queryPartController=serv;
+	}
+	
+	public static void unbindQueryPartController(IQueryPartController serv) {
+		if(queryPartController==serv) {
+			queryPartController=null;
+		}
+	}
+	
 
 	// called by OSGi-DS
 	public static void bindPeerDictionary(IPeerDictionary serv) {
@@ -188,6 +201,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    verifyDependencies									- Verifies if all Dependencies are available\n");
 		sb.append("    extractState <LocalQueryId>							- Extracts first StatefulPO State from Query with Query ID\n");
 		sb.append("    dumpl <LocalQueryID>                                 - dumps logical plan of queryId\n");
+		sb.append("    sharedQueryInfo <LocalQueryID>   					- prints Info aboutd shared Query For QueryId\n");
 		return sb.toString();
 	}
 
@@ -561,6 +575,54 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		String plan = printer.createString(query.getLogicalPlan());
 		
 		ci.println(plan);
+
+	}
+	
+
+
+	public void _sharedQueryInfo(CommandInterpreter ci) {
+		final String ERROR_USAGE = "Usage: dumpl <LocalQueryId>";
+
+		final String ERROR_QUERY = "Logical Query not found.";
+		
+		String localQueryIdString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(localQueryIdString)) {
+
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		int localQueryId;
+
+		try {
+			localQueryId = Integer.parseInt(localQueryIdString);
+		} catch (NumberFormatException e) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		ILogicalQuery query = executor.getLogicalQueryById(localQueryId, getActiveSession());
+		if(query==null){
+			ci.println(ERROR_QUERY);
+			return;
+		}
+		
+		ID sharedQueryID = queryPartController.getSharedQueryID(localQueryId);
+		if(sharedQueryID==null) {
+			ci.println("Shared Query ID is null.");
+		}
+		else {
+			ci.println("Shared Query ID:"+sharedQueryID.toString());
+			ci.println("Local IDs in shared Query:");
+			for(Integer qid : queryPartController.getLocalIds(sharedQueryID)) {
+				ci.print(qid);
+				if(queryPartController.isMasterForQuery(qid)) {
+					ci.print("(Master)");
+				}
+				ci.print(" ");
+			}
+			ci.println();
+		}
 
 	}
 	

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.jxta.peer.PeerID;
 
@@ -120,7 +121,8 @@ public class RepeatingMessageSend extends RepeatingJobThread {
 	 */
 	public synchronized void notifyListeners() {
 		LOG.error("Notifying listeners");
-		for (IMessageDeliveryFailedListener listener : listeners) {
+		List<IMessageDeliveryFailedListener> listenersCopy = new ArrayList<IMessageDeliveryFailedListener>(listeners);
+		for (IMessageDeliveryFailedListener listener : listenersCopy) {
 			listener.update(message, peerID);
 		}
 	}

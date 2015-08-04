@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
@@ -39,6 +40,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SharedQueryIDModifier;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SinkTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
@@ -296,8 +298,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 		//Replaces Sources with Sender-Receiver constructs.
 		for(int queryID : queryIDs) {
+			SharedQueryIDModifier.addSharedQueryIDIfNeccessary(queryID, executor, queryPartController, networkManager, getActiveSession());
 			//SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor,queryPartController,excludedQueryRegistry);
-			SinkTransformer.replaceSinks(queryID, localPeerID, getActiveSession(), networkManager, executor, queryPartController,excludedQueryRegistry);
+			//SinkTransformer.replaceSinks(queryID, localPeerID, getActiveSession(), networkManager, executor, queryPartController,excludedQueryRegistry);
 		}
 		
 		QueryCostMap allQueries = generateCostMapForAllQueries();
@@ -504,56 +507,33 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 
 	@Override
 	public void tranmissionFailed(QueryTransmissionHandler transmission) {
-		Iterator<QueryTransmissionHandler> iter = findTransmissionInList(transmission);
-		if(iter==null) {
-			return;
-		}
-		if(iter.hasNext()) {
-			iter.next().initiateTransmission(this);
+		transmission.removeListener(this);
+		transmissionHandlerList.remove(transmission);
+		LOG.error("Transmission of Query {} to Peer {} failed.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
+		if(transmissionHandlerList.size()>0) {
+				transmissionHandlerList.get(0).initiateTransmission(this);
 		}
 		else {
-			if(transmissionHandlerList.size()>0) {
-				transmissionHandlerList.get(0).initiateTransmission(this);
+				LOG.info("Tried to transfer all Queries.");
+				//TODO Restart monitoring Thread. and retry sendind failed Queries?
 			}
-			else {
-				LOG.warn("Last transmission returned Error, but no other transmission is in List.");
-			}
-		}
 	}
 
 	@Override
 	public void transmissionSuccessful(QueryTransmissionHandler transmission) {
-		Iterator<QueryTransmissionHandler> iter = findTransmissionInList(transmission);
-		if(iter==null) {
-			return;
-		}
-		iter.remove();
-		if(iter.hasNext()) {
-			iter.next().initiateTransmission(this);
+		transmission.removeListener(this);
+		transmissionHandlerList.remove(transmission);
+
+		LOG.error("Transmission of Query {} to Peer {} successful.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
+		if(transmissionHandlerList.size()>0) {
+				transmissionHandlerList.get(0).initiateTransmission(this);
 		}
 		else {
-			if(transmissionHandlerList.size()>0) {
-				transmissionHandlerList.get(0).initiateTransmission(this);
+				LOG.info("Tried to transfer all Queries.");
+				//TODO Restart monitoring Thread. and retry sendind failed Queries?
 			}
-			else {
-				LOG.info("All Queries transferred.");
-				//TODO Restart monitoring Thread.
-			}
-		}
-		transmissionHandlerList.remove(transmission);
-		
 	}
-	
 
-	private Iterator<QueryTransmissionHandler> findTransmissionInList(QueryTransmissionHandler transmission) {
-		Iterator<QueryTransmissionHandler> iter = transmissionHandlerList.iterator();
-		while(iter.hasNext()) {
-			if(iter.next()==transmission) {
-				return iter;
-			}
-		}
-		return null;
-	}
 
 	@Override
 	public void localLockFailed(QueryTransmissionHandler transmission) {
