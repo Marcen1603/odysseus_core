@@ -102,6 +102,7 @@ public class SinkTransformer {
 		int newQueryID=0;
 		boolean firstSubscription = true;
 		
+		Collection<ILogicalOperator> addedSenders = Lists.newArrayList();
 		
 		while(iter.hasNext()){
 			
@@ -133,6 +134,7 @@ public class SinkTransformer {
 			}
 			
 			JxtaSenderAO senderAO = createJxtaSenderAO(sinkOperator, peerID, newPipe);
+			addedSenders.add(senderAO);
 			JxtaSenderPO senderPO;
 			
 			try {
@@ -148,11 +150,46 @@ public class SinkTransformer {
 				ISubscription logicalSubscription = getLogicalForPhysicalSubscription(subscr, logicalSink);
 				replaceLogicalSubscription(logicalSubscription,logicalSink,senderAO,receiverAO);
 				
-				ILogicalQuery oldQuery = executor.getLogicalQueryById(queryID, session);
-				ILogicalQuery newQuery = executor.getLogicalQueryById(newQueryID, session);
-				oldQuery.setLogicalPlan(senderAO, true);
-				newQuery.setLogicalPlan(logicalSink, true);
+				ILogicalQuery oldLogicalQuery = executor.getLogicalQueryById(queryID, session);
+				ILogicalQuery newLogicalQuery = executor.getLogicalQueryById(newQueryID, session);
+				IPhysicalQuery newPhysicalQuery = executor.getExecutionPlan().getQueryById(newQueryID);
+				
 				//TODO TopAO?
+				
+				newLogicalQuery.setParserId(oldLogicalQuery.getParserId());
+				newLogicalQuery.setPriority(oldLogicalQuery.getPriority());
+				newLogicalQuery.setName(oldLogicalQuery.getName()+"_SINK");
+				
+				Collection<ILogicalOperator> oldSink = Lists.newArrayList();
+				oldSink.add(logicalSink);
+				
+				
+				TopAO oldTop = RestructHelper.generateTopAO(addedSenders);
+				TopAO newTop = RestructHelper.generateTopAO(oldSink);
+				
+				oldLogicalQuery.setLogicalPlan(oldTop, true);
+				
+				newLogicalQuery.setLogicalPlan(newTop, true);
+				newPhysicalQuery.setLogicalQuery(newLogicalQuery);
+				
+				List<ILogicalOperator> operatorsInNewQuery = Lists.newArrayList();
+				List<ILogicalOperator> operatorsInOldQuery = Lists.newArrayList();
+				
+				RestructHelper.collectOperators(newTop, operatorsInNewQuery);
+				RestructHelper.collectOperators(oldTop, operatorsInOldQuery);
+				
+				for(ILogicalOperator op : operatorsInNewQuery) {
+					op.removeAllOwners();
+					op.addOwner(newLogicalQuery);
+				}
+				
+
+				for(ILogicalOperator op : operatorsInOldQuery) {
+					op.removeAllOwners();
+					op.addOwner(oldLogicalQuery);
+				}
+				
+				
 				
 			}
 			else {
@@ -214,7 +251,7 @@ public class SinkTransformer {
 	private static void replaceLogicalSubscription(ISubscription logicalSubscription, ILogicalOperator sink, ILogicalOperator senderAO,ILogicalOperator receiverAO) {
 		ILogicalOperator source = (ILogicalOperator) logicalSubscription.getTarget();
 		int sinkInPort = logicalSubscription.getSinkInPort();
-		int sourceOutPort = logicalSubscription.getSinkInPort();
+		int sourceOutPort = logicalSubscription.getSourceOutPort();
 		
 		source.unsubscribeSink(sink, sinkInPort, sourceOutPort, logicalSubscription.getSchema());
 
