@@ -7,13 +7,12 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -196,26 +195,30 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			public void widgetSelected(SelectionEvent e) {
 				String layerCase = layerTypeCombo.getText();
 
+				for( Control c : layerDependedComp.getChildren()) {
+					c.dispose();
+				}
+				
 				switch (layerCase) {
-				case "BasicLayer":
+				case "BASICLAYER":
 
 					Label gridSizeLabel = DashboardPartUtil.createLabel(layerDependedComp, "Grid Size");
 					Text gridSizeText = DashboardPartUtil.createText(layerDependedComp, "5");
 					gridSizeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-					layerDependedComp.redraw();
-					layerDependedComp.update();
 					break;
 
 				case "OMS_LAYER":
 					break;
+					
+				default:
+					LOG.error("Unknown layer type '{}'", layerCase);
+					break;
 				}
+				
+				addingShell.layout();
 			}
 		});
-		
-
-
-		
 
 		Button confirmButton = new Button(buttonComp, SWT.PUSH | SWT.CENTER);
 		confirmButton.setText("Confirm");
