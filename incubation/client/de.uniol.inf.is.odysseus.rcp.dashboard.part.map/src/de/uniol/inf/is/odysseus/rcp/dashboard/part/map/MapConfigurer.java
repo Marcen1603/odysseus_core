@@ -144,7 +144,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		}
 	}
 
-	private void createAddButton(Composite parent) {
+	private void createAddButton(final Composite parent) {
 
 		final Button addingButton = new Button(parent, SWT.PUSH);
 		addingButton.setText("Add");
@@ -172,7 +172,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		basisComp.setLayout(new GridLayout(2, false));
 		basisComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Composite layerDependedComp = new Composite(addingShell, SWT.NONE);
+		final Composite layerDependedComp = new Composite(addingShell, SWT.NONE);
 		layerDependedComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		layerDependedComp.setLayout(new GridLayout(2, false));
 
@@ -181,14 +181,14 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		buttonComp.setLayout(new GridLayout(2, false));
 
 		Label addingTitleLabel = DashboardPartUtil.createLabel(basisComp, "Title");
-		Text addingTitleText = DashboardPartUtil.createText(basisComp, "");
+		final Text addingTitleText = DashboardPartUtil.createText(basisComp, "");
 		addingTitleText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label addingTitleType = DashboardPartUtil.createLabel(basisComp, "Type");
 
 		// TODO MAKE IT GENERATED
 		String[] layerTypes = { LayerTypes.BASICLAYER.toString(), LayerTypes.OSM_LAYER.toString() };
-		Combo layerTypeCombo = DashboardPartUtil.createCombo(basisComp, layerTypes);
+		final Combo layerTypeCombo = DashboardPartUtil.createCombo(basisComp, layerTypes);
 		layerTypeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		layerTypeCombo.addSelectionListener(new SelectionAdapter() {
 
@@ -247,7 +247,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		addingShell.open();
 	}
 
-	private void createDeleteButton(Composite parent) {
+	private void createDeleteButton(final Composite parent) {
 
 		Button deleteButton = new Button(parent, SWT.PUSH);
 		deleteButton.setText("Delete");
@@ -266,9 +266,9 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	}
 
 	@SuppressWarnings("unused")
-	private void createDeleteShell(Composite parent, int layerId) {
+	private void createDeleteShell(Composite parent, final int layerId) {
 
-		Shell deleteShell = new Shell(parent.getShell(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
+		final Shell deleteShell = new Shell(parent.getShell(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
 		deleteShell.setText("Delete Layer");
 		deleteShell.setSize(200, 100);
 		deleteShell.setLayout(new GridLayout(1, false));
@@ -310,7 +310,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	}
 
 	private void createWarningShell(Composite topComposite, String text) {
-		Shell warningShell = new Shell(topComposite.getShell(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM | SWT.CENTER);
+		final Shell warningShell = new Shell(topComposite.getShell(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM | SWT.CENTER);
 		warningShell.setText("Warning");
 		warningShell.setSize(200, 100);
 		warningShell.setLayout(new GridLayout(1, false));
@@ -331,7 +331,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		warningShell.open();
 	}
 
-	private void createConfigurateButton(Composite parent) {
+	private void createConfigurateButton(final Composite parent) {
 		final Button configurateButton = new Button(parent, SWT.PUSH);
 		configurateButton.setText("Configurate");
 		configurateButton.setLayoutData(new GridData(80, 20));
@@ -366,7 +366,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		configurateShell.open();
 	}
 
-	private void createOrderButtons(Composite parent) {
+	private void createOrderButtons(final Composite parent) {
 		Button topButton = new Button(parent, SWT.PUSH);
 		topButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		topButton.setText("Top");
