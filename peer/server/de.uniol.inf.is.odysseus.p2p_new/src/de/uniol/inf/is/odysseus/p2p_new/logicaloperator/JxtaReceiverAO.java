@@ -33,6 +33,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	private String peerID;
 	
 	private SDFSchema assignedSchema;
+	
 	private String schemaName;
 	private String basetimeUnit;
 	private SourceAdvertisement importedSrcAdvertisement;
@@ -53,6 +54,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		this.importedSrcAdvertisement = other.importedSrcAdvertisement;
 		
 		setParameterInfos(other.getParameterInfos());
+		appendToAssignedSchema(basetimeUnit);
 	}
 
 	@Override
@@ -119,6 +121,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		}
 		
 		appendToAssignedSchema(basetimeUnit);
+		
 		addParameterInfo("SCHEMA", schemaToString(assignedSchema.getAttributes()));
 	}
 	
@@ -141,6 +144,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 			constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, baseTimeunit));
 			assignedSchema = SDFSchemaFactory.createNewWithContraints(constraints, assignedSchema);
 			
+			// Workaround
 			List<SDFMetaSchema> metaSchemaList = Lists.newArrayList();
 			metaSchemaList.addAll(TimeInterval.schema);
 			assignedSchema = SDFSchemaFactory.createNewWithMetaSchema(assignedSchema, metaSchemaList );
