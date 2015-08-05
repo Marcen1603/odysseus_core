@@ -669,13 +669,19 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	public List<String> getMetaAttributeNames() {
 		List<String> list = new ArrayList<String>();
-		for (SDFMetaSchema m : metaschema) {
-			list.add(m.getMetaAttribute().getName());
+		if( metaschema != null ) {
+			for (SDFMetaSchema m : metaschema) {
+				list.add(m.getMetaAttribute().getName());
+			}
 		}
 		return list;
 	}
 
 	public Pair<Integer, Integer> indexOfMetaAttribute(SDFAttribute curAttribute) {
+		if( metaschema == null ) { 
+			return null;
+		}
+		
 		for (int i = 0; i < metaschema.size(); i++) {
 			int index = metaschema.get(i).indexOf(curAttribute);
 			if (index >= 0) {
