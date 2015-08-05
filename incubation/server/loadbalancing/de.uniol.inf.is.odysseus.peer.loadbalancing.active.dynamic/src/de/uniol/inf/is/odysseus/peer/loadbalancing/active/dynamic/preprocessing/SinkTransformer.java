@@ -31,7 +31,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -350,8 +352,12 @@ public class SinkTransformer {
 		List<ILogicalOperator> operatorList = Lists.newArrayList();
 		operatorList.add(receiverAO);
 		TopAO top = RestructHelper.generateTopAO(operatorList);
+		
+		List<IQueryBuildSetting<?>> settings = Lists.newArrayList();
+		settings.add(new ParameterQueryName("AwesomeQuery"));
+
 		int queryIdForNewQuery = executor.addQuery(top, session, executor
-				.getBuildConfigForQuery(logicalQuery).getName());
+				.getBuildConfigForQuery(logicalQuery).getName(), settings);
 		
 		
 
