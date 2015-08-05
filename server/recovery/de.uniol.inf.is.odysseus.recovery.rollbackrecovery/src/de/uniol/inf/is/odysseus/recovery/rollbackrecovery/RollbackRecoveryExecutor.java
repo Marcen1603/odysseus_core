@@ -66,7 +66,7 @@ public class RollbackRecoveryExecutor implements IRecoveryExecutor {
 	 *            The component to unbind, if it has been bound before.
 	 */
 	public static void unbindComponent(IRecoveryComponent component) {
-		if (cIncomingElementsComponent.equals(component)) {
+		if (component.equals(cIncomingElementsComponent)) {
 			cIncomingElementsComponent = null;
 		}
 		// TODO RollbackRecoveryExecutor misses Operator Recovery
