@@ -122,7 +122,6 @@ IQLMetadataValueSingle returns IQLMetadataValue:
 	{IQLMetadataValueSingleString} value = STRING|
 	{IQLMetadataValueSingleBoolean} value = BOOLEAN|
 	{IQLMetadataValueSingleChar} value = CHAR |
-	(=>({IQLMetadataValueSingleID} value = ID)) |
 	{IQLMetadataValueSingleTypeRef} value = JvmTypeReference |	
 	{IQLMetadataValueSingleNull} value = 'null'	
 ;
@@ -371,29 +370,21 @@ OpPostfix:
 ;	
 
 IQLMemberCallExpression returns IQLExpression:
-	IQLTerminalExpression
+	IQLOtherExpressions
 	(=>({IQLArrayExpression.leftOperand=current} '[' expressions+=IQLExpression (',' expressions+=IQLExpression)? ']'))*
-	(=>({IQLMemberSelectionExpression.leftOperand=current} '.') rightOperand=(IQLAttributeSelection | IQLMethodSelection))*
+	(=>({IQLMemberSelectionExpression.leftOperand=current} '.') sel=IQLMemberSelection)*
 ;
 
-
-IQLAttributeSelection returns IQLMemberSelection:
-	{IQLAttributeSelection}
-	var=[types::JvmField]
+IQLMemberSelection:
+	member=[types::JvmMember] (args=IQLArgumentsList)?
 ;
 
-IQLMethodSelection returns IQLMemberSelection:
-	{IQLMethodSelection}
-	method=[types::JvmOperation] args=IQLArgumentsList
-;
-
-IQLTerminalExpression returns IQLExpression:
-    {IQLTerminalExpressionVariable} var=[types::JvmIdentifiableElement]  |
-    {IQLTerminalExpressionMethod} method=[types::JvmOperation] args=IQLArgumentsList  |
-    {IQLTerminalExpressionThis} 'this'  |
-    {IQLTerminalExpressionSuper} 'super'  |    
-    {IQLTerminalExpressionParenthesis} '(' expr = IQLExpression ')'  |
-    {IQLTerminalExpressionNew} 'new' ((ref=IQLArrayTypeRef) | (ref=IQLSimpleTypeRef argsList=IQLArgumentsList  (argsMap=IQLArgumentsMap)?)) |
+IQLOtherExpressions returns IQLExpression:
+    {IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement] (args=IQLArgumentsList)?  |
+    {IQLThisExpression} 'this'  |
+    {IQLSuperExpression} 'super'  |    
+    {IQLParenthesisExpression} '(' expr = IQLExpression ')'  |
+    {IQLNewExpression} 'new' ((ref=IQLArrayTypeRef) | (ref=IQLSimpleTypeRef argsList=IQLArgumentsList  (argsMap=IQLArgumentsMap)?)) |
     IQLLiteralExpression
 ; 
 

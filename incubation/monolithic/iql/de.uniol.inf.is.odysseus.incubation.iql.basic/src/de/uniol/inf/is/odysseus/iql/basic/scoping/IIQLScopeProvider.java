@@ -3,20 +3,24 @@ package de.uniol.inf.is.odysseus.iql.basic.scoping;
 import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.common.types.JvmField;
-import org.eclipse.xtext.common.types.JvmIdentifiableElement;
-import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.common.types.JvmType;
+import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.resource.IEObjectDescription;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 
 public interface IIQLScopeProvider {
 
-	Collection<JvmIdentifiableElement> getScopeIQLTerminalExpressionVariable(EObject expr);
+	Collection<IEObjectDescription> getIQLJvmElementCallExpression(EObject expr);
 
-	Collection<JvmOperation> getScopeTerminalExpressionMethod(EObject expr);
+	Collection<IEObjectDescription> getScopeIQLMemberSelection(IQLMemberSelectionExpression expr);
+	
+	Collection<IEObjectDescription> getScopeIQLMethodSelection(JvmTypeReference typeRef, boolean isThis, boolean isSuper);
 
-	Collection<JvmOperation> getScopeIQLMethodSelection(IQLMemberSelectionExpression expr);
+	Collection<IEObjectDescription> getScopeIQLAttributeSelection(JvmTypeReference typeRef, boolean isThis, boolean isSuper);
 
-	Collection<JvmField> getScopeIQLAttributeSelection(IQLMemberSelectionExpression expr);
+	Collection<JvmType> getAllTypes(EObject node);
+	
+	Collection<String> getUsedNamespaces(EObject obj);
 
 }

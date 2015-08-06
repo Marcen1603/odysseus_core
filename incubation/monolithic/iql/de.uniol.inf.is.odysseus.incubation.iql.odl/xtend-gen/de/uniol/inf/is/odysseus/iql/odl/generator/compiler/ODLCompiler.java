@@ -5,14 +5,15 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
@@ -24,6 +25,7 @@ import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLMetadataAnnotation
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLStatementCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
@@ -35,7 +37,6 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -53,6 +54,9 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLStatementCompiler, ODLTypeFactory, ODLTypeUtils> {
   @Inject
   private ODLMetadataAnnotationCompiler metadataAnnotationCompiler;
+  
+  @Inject
+  private ODLLookUp lookUp;
   
   @Inject
   public ODLCompiler(final ODLCompilerHelper helper, final ODLTypeCompiler typeCompiler, final ODLStatementCompiler stmtCompiler, final ODLTypeFactory factory, final ODLTypeUtils typeUtils) {
@@ -132,7 +136,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       String opName = (_simpleName + ODLCompilerHelper.AO_OPERATOR);
       String superClass = AbstractODLAO.class.getSimpleName();
       Collection<ODLParameter> parameters = this.helper.getParameters(o);
-      Collection<IQLTerminalExpressionNew> newExpressions = this.helper.getNewExpressions(o);
+      Collection<IQLNewExpression> newExpressions = this.helper.getNewExpressions(o);
       Collection<IQLVariableStatement> varStmts = this.helper.getVarStatements(o);
       Collection<ODLMethod> odlmethods = this.helper.getODLMethods(o);
       StringConcatenation _builder = new StringConcatenation();
@@ -319,7 +323,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.append("\t");
       _builder.newLine();
       {
-        for(final IQLTerminalExpressionNew e : newExpressions) {
+        for(final IQLNewExpression e : newExpressions) {
           {
             boolean _and = false;
             IQLArgumentsMap _argsMap = e.getArgsMap();
@@ -501,8 +505,9 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       Class<?> read = this.helper.determineReadType(o);
       Class<?> write = read;
       Class<IMetaAttribute> meta = IMetaAttribute.class;
-      Collection<IQLTerminalExpressionNew> newExpressions = this.helper.getNewExpressions(o);
+      Collection<IQLNewExpression> newExpressions = this.helper.getNewExpressions(o);
       Collection<IQLVariableStatement> varStmts = this.helper.getVarStatements(o);
+      AbstractPipe.OutputMode outputmode = this.helper.determineOutputMode(o);
       String _canonicalName = superClass.getCanonicalName();
       context.addImport(_canonicalName);
       String _canonicalName_1 = read.getCanonicalName();
@@ -511,6 +516,9 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       context.addImport(_canonicalName_2);
       String _canonicalName_3 = meta.getCanonicalName();
       context.addImport(_canonicalName_3);
+      Class<? extends AbstractPipe.OutputMode> _class = outputmode.getClass();
+      String _canonicalName_4 = _class.getCanonicalName();
+      context.addImport(_canonicalName_4);
       StringConcatenation _builder = new StringConcatenation();
       _builder.newLine();
       {
@@ -617,11 +625,36 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.newLine();
       _builder.append("\t");
       _builder.newLine();
+      _builder.append("\t");
+      _builder.append("@");
+      String _simpleName_7 = Override.class.getSimpleName();
+      _builder.append(_simpleName_7, "\t");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t");
+      _builder.append("public ");
+      String _simpleName_8 = AbstractPipe.OutputMode.class.getSimpleName();
+      _builder.append(_simpleName_8, "\t");
+      _builder.append(" getOutputMode() {");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t\t");
+      _builder.append("return ");
+      String _simpleName_9 = AbstractPipe.OutputMode.class.getSimpleName();
+      _builder.append(_simpleName_9, "\t\t");
+      _builder.append(".");
+      String _string = outputmode.toString();
+      _builder.append(_string, "\t\t");
+      _builder.append(";");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t");
+      _builder.append("}");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.newLine();
       {
         for(final ODLParameter p_2 : parameters) {
           _builder.append("\t");
-          String _simpleName_7 = p_2.getSimpleName();
-          String pName = this.helper.firstCharUpperCase(_simpleName_7);
+          String _simpleName_10 = p_2.getSimpleName();
+          String pName = this.helper.firstCharUpperCase(_simpleName_10);
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
           JvmTypeReference _type = p_2.getType();
@@ -637,8 +670,8 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           _builder.append("\t");
           _builder.append("\t");
           _builder.append("return this.");
-          String _simpleName_8 = p_2.getSimpleName();
-          _builder.append(_simpleName_8, "\t\t");
+          String _simpleName_11 = p_2.getSimpleName();
+          _builder.append(_simpleName_11, "\t\t");
           _builder.append(";");
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
@@ -649,7 +682,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.append("\t");
       _builder.newLine();
       {
-        for(final IQLTerminalExpressionNew e : newExpressions) {
+        for(final IQLNewExpression e : newExpressions) {
           {
             boolean _and = false;
             IQLArgumentsMap _argsMap = e.getArgsMap();
@@ -881,31 +914,54 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       } else {
         String _xifexpression_2 = null;
         boolean _and_4 = false;
-        boolean _isAo_2 = context.isAo();
-        boolean _not = (!_isAo_2);
-        if (!_not) {
+        boolean _isOn = m.isOn();
+        if (!_isOn) {
           _and_4 = false;
         } else {
-          boolean _isOn = m.isOn();
-          _and_4 = _isOn;
+          boolean _or = false;
+          boolean _and_5 = false;
+          boolean _isAo_2 = context.isAo();
+          boolean _not = (!_isAo_2);
+          if (!_not) {
+            _and_5 = false;
+          } else {
+            String _simpleName_3 = m.getSimpleName();
+            boolean _hasOnMethod = this.lookUp.hasOnMethod(_simpleName_3, false);
+            _and_5 = _hasOnMethod;
+          }
+          if (_and_5) {
+            _or = true;
+          } else {
+            boolean _and_6 = false;
+            boolean _isAo_3 = context.isAo();
+            if (!_isAo_3) {
+              _and_6 = false;
+            } else {
+              String _simpleName_4 = m.getSimpleName();
+              boolean _hasOnMethod_1 = this.lookUp.hasOnMethod(_simpleName_4, true);
+              _and_6 = _hasOnMethod_1;
+            }
+            _or = _and_6;
+          }
+          _and_4 = _or;
         }
         if (_and_4) {
           String _xblockexpression = null;
           {
             String className = this.helper.getClassName(m);
             String returnT = "";
-            boolean _and_5 = false;
+            boolean _and_7 = false;
             JvmTypeReference _returnType = m.getReturnType();
-            boolean _equals_1 = Objects.equal(_returnType, null);
-            if (!_equals_1) {
-              _and_5 = false;
+            boolean _notEquals_1 = (!Objects.equal(_returnType, null));
+            if (!_notEquals_1) {
+              _and_7 = false;
             } else {
-              String _simpleName_3 = m.getSimpleName();
-              boolean _equalsIgnoreCase = _simpleName_3.equalsIgnoreCase(className);
+              String _simpleName_5 = m.getSimpleName();
+              boolean _equalsIgnoreCase = _simpleName_5.equalsIgnoreCase(className);
               boolean _not_1 = (!_equalsIgnoreCase);
-              _and_5 = _not_1;
+              _and_7 = _not_1;
             }
-            if (_and_5) {
+            if (_and_7) {
               JvmTypeReference _returnType_1 = m.getReturnType();
               String _compile_2 = this.typeCompiler.compile(_returnType_1, context, false);
               returnT = _compile_2;
@@ -916,14 +972,14 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
             _builder_2.append("public ");
             _builder_2.append(returnT, "");
             _builder_2.append(" on");
-            String _simpleName_4 = m.getSimpleName();
-            String _firstCharUpperCase = this.helper.firstCharUpperCase(_simpleName_4);
+            String _simpleName_6 = m.getSimpleName();
+            String _firstCharUpperCase = this.helper.firstCharUpperCase(_simpleName_6);
             _builder_2.append(_firstCharUpperCase, "");
             _builder_2.append("(");
             {
               EList<JvmFormalParameter> _parameters = m.getParameters();
-              boolean _notEquals_1 = (!Objects.equal(_parameters, null));
-              if (_notEquals_1) {
+              boolean _notEquals_2 = (!Objects.equal(_parameters, null));
+              if (_notEquals_2) {
                 EList<JvmFormalParameter> _parameters_1 = m.getParameters();
                 final Function1<JvmFormalParameter, String> _function = new Function1<JvmFormalParameter, String>() {
                   public String apply(final JvmFormalParameter p) {
@@ -965,52 +1021,20 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       if (_isList) {
         String _xblockexpression_1 = null;
         {
-          JvmTypeReference listElement = this.typeFactory.getListElementType(p);
           String _canonicalName = IQLUtils.class.getCanonicalName();
           context.addImport(_canonicalName);
-          String _xifexpression_1 = null;
-          boolean _isClonable = this.typeUtils.isClonable(listElement);
-          if (_isClonable) {
-            StringConcatenation _builder = new StringConcatenation();
-            _builder.append("this.");
-            _builder.append(name, "");
-            _builder.append(" = ");
-            String _simpleName = IQLUtils.class.getSimpleName();
-            _builder.append(_simpleName, "");
-            _builder.append(".createEmptyList();");
-            _builder.newLineIfNotEmpty();
-            _builder.append("for (");
-            String _compile = this.typeCompiler.compile(listElement, context, false);
-            _builder.append(_compile, "");
-            _builder.append(" e : ");
-            _builder.append(varName, "");
-            _builder.append(".get");
-            _builder.append(pName, "");
-            _builder.append("()) {");
-            _builder.newLineIfNotEmpty();
-            _builder.append("\t");
-            _builder.append("this.");
-            _builder.append(name, "\t");
-            _builder.append(".add(e.clone()); ");
-            _builder.newLineIfNotEmpty();
-            _builder.append("}");
-            _builder.newLine();
-            _xifexpression_1 = _builder.toString();
-          } else {
-            StringConcatenation _builder_1 = new StringConcatenation();
-            _builder_1.append("this.");
-            _builder_1.append(name, "");
-            _builder_1.append(" = ");
-            String _simpleName_1 = IQLUtils.class.getSimpleName();
-            _builder_1.append(_simpleName_1, "");
-            _builder_1.append(".createList(");
-            _builder_1.append(varName, "");
-            _builder_1.append(".get");
-            _builder_1.append(pName, "");
-            _builder_1.append("());");
-            _xifexpression_1 = _builder_1.toString();
-          }
-          _xblockexpression_1 = _xifexpression_1;
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("this.");
+          _builder.append(name, "");
+          _builder.append(" = ");
+          String _simpleName = IQLUtils.class.getSimpleName();
+          _builder.append(_simpleName, "");
+          _builder.append(".createList(");
+          _builder.append(varName, "");
+          _builder.append(".get");
+          _builder.append(pName, "");
+          _builder.append("());");
+          _xblockexpression_1 = _builder.toString();
         }
         _xifexpression = _xblockexpression_1;
       } else {
@@ -1019,86 +1043,20 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
         if (_isMap) {
           String _xblockexpression_2 = null;
           {
-            JvmTypeReference key = this.typeFactory.getMapKeyType(p);
-            JvmTypeReference value = this.typeFactory.getMapValueType(p);
             String _canonicalName = IQLUtils.class.getCanonicalName();
             context.addImport(_canonicalName);
-            String _xifexpression_2 = null;
-            boolean _or = false;
-            boolean _isClonable = this.typeUtils.isClonable(key);
-            if (_isClonable) {
-              _or = true;
-            } else {
-              boolean _isClonable_1 = this.typeUtils.isClonable(value);
-              _or = _isClonable_1;
-            }
-            if (_or) {
-              String _xblockexpression_3 = null;
-              {
-                String _canonicalName_1 = Map.Entry.class.getCanonicalName();
-                context.addImport(_canonicalName_1);
-                StringConcatenation _builder = new StringConcatenation();
-                _builder.append("this.");
-                _builder.append(name, "");
-                _builder.append(" = ");
-                String _simpleName = IQLUtils.class.getSimpleName();
-                _builder.append(_simpleName, "");
-                _builder.append(".createEmptyMap();");
-                _builder.newLineIfNotEmpty();
-                _builder.append("for (");
-                String _canonicalName_2 = Map.Entry.class.getCanonicalName();
-                _builder.append(_canonicalName_2, "");
-                _builder.append("<");
-                String _compile = this.typeCompiler.compile(key, context, true);
-                _builder.append(_compile, "");
-                _builder.append(",");
-                String _compile_1 = this.typeCompiler.compile(value, context, true);
-                _builder.append(_compile_1, "");
-                _builder.append("> e : ");
-                _builder.append(varName, "");
-                _builder.append(".get");
-                _builder.append(pName, "");
-                _builder.append("().entrySet()) {");
-                _builder.newLineIfNotEmpty();
-                _builder.append("\t");
-                _builder.append("this.");
-                _builder.append(name, "\t");
-                _builder.append(".put(e.getKey()");
-                {
-                  boolean _isClonable_2 = this.typeUtils.isClonable(key);
-                  if (_isClonable_2) {
-                    _builder.append(".clone()");
-                  }
-                }
-                _builder.append(",e.getValue()");
-                {
-                  boolean _isClonable_3 = this.typeUtils.isClonable(value);
-                  if (_isClonable_3) {
-                    _builder.append(".clone()");
-                  }
-                }
-                _builder.append("); ");
-                _builder.newLineIfNotEmpty();
-                _builder.append("}");
-                _builder.newLine();
-                _xblockexpression_3 = _builder.toString();
-              }
-              _xifexpression_2 = _xblockexpression_3;
-            } else {
-              StringConcatenation _builder = new StringConcatenation();
-              _builder.append("this.");
-              _builder.append(name, "");
-              _builder.append(" = ");
-              String _simpleName = IQLUtils.class.getSimpleName();
-              _builder.append(_simpleName, "");
-              _builder.append(".createMap(");
-              _builder.append(varName, "");
-              _builder.append(".get");
-              _builder.append(pName, "");
-              _builder.append("());");
-              _xifexpression_2 = _builder.toString();
-            }
-            _xblockexpression_2 = _xifexpression_2;
+            StringConcatenation _builder = new StringConcatenation();
+            _builder.append("this.");
+            _builder.append(name, "");
+            _builder.append(" = ");
+            String _simpleName = IQLUtils.class.getSimpleName();
+            _builder.append(_simpleName, "");
+            _builder.append(".createMap(");
+            _builder.append(varName, "");
+            _builder.append(".get");
+            _builder.append(pName, "");
+            _builder.append("());");
+            _xblockexpression_2 = _builder.toString();
           }
           _xifexpression_1 = _xblockexpression_2;
         } else {

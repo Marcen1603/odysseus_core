@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator;
 
 
+import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLPO;
 
@@ -21,12 +24,6 @@ public abstract class AbstractODLPO<R extends IStreamObject<?>, W extends IStrea
 
 	}
 
-
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.INPUT;
-	}
-	
 	@Override
 	protected void process_open() {
 		onProcessOpen();
@@ -76,6 +73,26 @@ public abstract class AbstractODLPO<R extends IStreamObject<?>, W extends IStrea
 	
 	protected void onProcessPuncutation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
+	}
+	
+	@Override
+	protected void newSourceSubscribed(AbstractPhysicalSubscription<ISource<? extends R>> sub) {
+		onSourceSubscribed(sub);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	protected void onSourceSubscribed(Subscription subscription) {
+
+	}
+	
+	@Override
+	protected void sourceUnsubscribed(AbstractPhysicalSubscription<ISource<? extends R>> sub) {
+		onSourceUnsubscribed(sub);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	protected void onSourceUnsubscribed(Subscription subscription) {
+
 	}
 
 

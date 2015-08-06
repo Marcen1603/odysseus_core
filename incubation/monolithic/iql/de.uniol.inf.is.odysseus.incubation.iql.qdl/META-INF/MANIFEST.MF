@@ -5,6 +5,7 @@ Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.iql.qdl;singleton:=true
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: de.uniol.inf.is.odysseus.iql.qdl.Activator
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.xbase;resolution:=optional;visibility:=reexport,
  org.eclipse.xtext.generator;resolution:=optional,
@@ -13,22 +14,22 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.emf.mwe.utils;resolution:=optional,
  org.eclipse.emf.mwe2.launch;resolution:=optional,
  org.eclipse.equinox.common;bundle-version="3.6.0",
- de.uniol.inf.is.odysseus.iql.basic;bundle-version="1.0.0",
  org.eclipse.xtext.util,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
  org.antlr.runtime,
+ de.uniol.inf.is.odysseus.iql.basic;bundle-version="1.0.0",
  org.eclipse.xtext.common.types,
  org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  org.eclipse.xtext.xbase.lib,
- de.uniol.inf.is.odysseus.rcp.base,
  org.eclipse.osgi,
  org.eclipse.core.runtime,
- de.uniol.inf.is.odysseus.parser.pql.generator,
  org.eclipse.core.resources,
  org.eclipse.xtext.common.types.ui,
+ de.uniol.inf.is.odysseus.rcp.base,
+ de.uniol.inf.is.odysseus.parser.pql.generator,
  de.uniol.inf.is.odysseus.script.parser
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -43,6 +44,7 @@ Export-Package: de.uniol.inf.is.odysseus.iql.qdl,
  de.uniol.inf.is.odysseus.iql.qdl.qDL.util,
  de.uniol.inf.is.odysseus.iql.qdl.scoping,
  de.uniol.inf.is.odysseus.iql.qdl.serializer,
+ de.uniol.inf.is.odysseus.iql.qdl.service,
  de.uniol.inf.is.odysseus.iql.qdl.services,
  de.uniol.inf.is.odysseus.iql.qdl.typing,
  de.uniol.inf.is.odysseus.iql.qdl.validation

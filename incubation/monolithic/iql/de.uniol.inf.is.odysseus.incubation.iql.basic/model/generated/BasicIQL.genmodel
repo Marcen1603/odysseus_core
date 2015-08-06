@@ -70,7 +70,10 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLCasePart/body"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLExpression"/>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLMemberSelection"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLMemberSelection">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMemberSelection/member"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMemberSelection/args"/>
+    </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionMapKeyValue">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLiteralExpressionMapKeyValue/key"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLLiteralExpressionMapKeyValue/value"/>
@@ -114,9 +117,6 @@
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleChar">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleChar/value"/>
-    </genClasses>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleID">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLMetadataValueSingleID/value"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLMetadataValueSingleTypeRef">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMetadataValueSingleTypeRef/value"/>
@@ -250,31 +250,21 @@
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLMemberSelectionExpression">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMemberSelectionExpression/leftOperand"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMemberSelectionExpression/rightOperand"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMemberSelectionExpression/sel"/>
     </genClasses>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLAttributeSelection">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLAttributeSelection/var"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLJvmElementCallExpression">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLJvmElementCallExpression/element"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLJvmElementCallExpression/args"/>
     </genClasses>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLMethodSelection">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMethodSelection/method"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLMethodSelection/args"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLThisExpression"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLSuperExpression"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLParenthesisExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLParenthesisExpression/expr"/>
     </genClasses>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionVariable">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionVariable/var"/>
-    </genClasses>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionMethod">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionMethod/method"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionMethod/args"/>
-    </genClasses>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionThis"/>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionSuper"/>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionParenthesis">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionParenthesis/expr"/>
-    </genClasses>
-    <genClasses ecoreClass="BasicIQL.ecore#//IQLTerminalExpressionNew">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionNew/ref"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionNew/argsList"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTerminalExpressionNew/argsMap"/>
+    <genClasses ecoreClass="BasicIQL.ecore#//IQLNewExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLNewExpression/ref"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLNewExpression/argsList"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLNewExpression/argsMap"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLLiteralExpressionInt">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLLiteralExpressionInt/value"/>

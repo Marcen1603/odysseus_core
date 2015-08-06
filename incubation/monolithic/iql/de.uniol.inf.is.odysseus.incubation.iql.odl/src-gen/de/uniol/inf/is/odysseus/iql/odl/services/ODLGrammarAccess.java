@@ -703,9 +703,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 
 	//IQLMetadataValueSingle returns IQLMetadataValue:
 	//	{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
-	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR | =>
-	//	({IQLMetadataValueSingleID} value=ID) | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
-	//	{IQLMetadataValueSingleNull} value="null";
+	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR |
+	//	{IQLMetadataValueSingleTypeRef} value=JvmTypeReference | {IQLMetadataValueSingleNull} value="null";
 	public BasicIQLGrammarAccess.IQLMetadataValueSingleElements getIQLMetadataValueSingleAccess() {
 		return gaBasicIQL.getIQLMetadataValueSingleAccess();
 	}
@@ -1178,9 +1177,9 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMemberCallExpression returns IQLExpression:
-	//	IQLTerminalExpression => ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
+	//	IQLOtherExpressions => ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
 	//	expressions+=IQLExpression)? "]")* (=> ({IQLMemberSelectionExpression.leftOperand=current} ".")
-	//	rightOperand=(IQLAttributeSelection | IQLMethodSelection))*;
+	//	sel=IQLMemberSelection)*;
 	public BasicIQLGrammarAccess.IQLMemberCallExpressionElements getIQLMemberCallExpressionAccess() {
 		return gaBasicIQL.getIQLMemberCallExpressionAccess();
 	}
@@ -1189,38 +1188,27 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLMemberCallExpressionAccess().getRule();
 	}
 
-	//IQLAttributeSelection returns IQLMemberSelection:
-	//	{IQLAttributeSelection} var=[types::JvmField];
-	public BasicIQLGrammarAccess.IQLAttributeSelectionElements getIQLAttributeSelectionAccess() {
-		return gaBasicIQL.getIQLAttributeSelectionAccess();
+	//IQLMemberSelection:
+	//	member=[types::JvmMember] args=IQLArgumentsList?;
+	public BasicIQLGrammarAccess.IQLMemberSelectionElements getIQLMemberSelectionAccess() {
+		return gaBasicIQL.getIQLMemberSelectionAccess();
 	}
 	
-	public ParserRule getIQLAttributeSelectionRule() {
-		return getIQLAttributeSelectionAccess().getRule();
+	public ParserRule getIQLMemberSelectionRule() {
+		return getIQLMemberSelectionAccess().getRule();
 	}
 
-	//IQLMethodSelection returns IQLMemberSelection:
-	//	{IQLMethodSelection} method=[types::JvmOperation] args=IQLArgumentsList;
-	public BasicIQLGrammarAccess.IQLMethodSelectionElements getIQLMethodSelectionAccess() {
-		return gaBasicIQL.getIQLMethodSelectionAccess();
+	//IQLOtherExpressions returns IQLExpression:
+	//	{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement] args=IQLArgumentsList? | {IQLThisExpression}
+	//	"this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" | {IQLNewExpression}
+	//	"new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList argsMap=IQLArgumentsMap?) |
+	//	IQLLiteralExpression;
+	public BasicIQLGrammarAccess.IQLOtherExpressionsElements getIQLOtherExpressionsAccess() {
+		return gaBasicIQL.getIQLOtherExpressionsAccess();
 	}
 	
-	public ParserRule getIQLMethodSelectionRule() {
-		return getIQLMethodSelectionAccess().getRule();
-	}
-
-	//IQLTerminalExpression returns IQLExpression:
-	//	{IQLTerminalExpressionVariable} var=[types::JvmIdentifiableElement] | {IQLTerminalExpressionMethod}
-	//	method=[types::JvmOperation] args=IQLArgumentsList | {IQLTerminalExpressionThis} "this" |
-	//	{IQLTerminalExpressionSuper} "super" | {IQLTerminalExpressionParenthesis} "(" expr=IQLExpression ")" |
-	//	{IQLTerminalExpressionNew} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
-	//	argsMap=IQLArgumentsMap?) | IQLLiteralExpression;
-	public BasicIQLGrammarAccess.IQLTerminalExpressionElements getIQLTerminalExpressionAccess() {
-		return gaBasicIQL.getIQLTerminalExpressionAccess();
-	}
-	
-	public ParserRule getIQLTerminalExpressionRule() {
-		return getIQLTerminalExpressionAccess().getRule();
+	public ParserRule getIQLOtherExpressionsRule() {
+		return getIQLOtherExpressionsAccess().getRule();
 	}
 
 	//IQLLiteralExpression returns IQLExpression:

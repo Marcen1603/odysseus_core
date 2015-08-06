@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueList
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
 
@@ -57,8 +56,6 @@ abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelpe
 			return compile(o as IQLMetadataValueSingleNull, c);
 		} else if(o instanceof IQLMetadataValueSingleTypeRef) {
 			return compile(o as IQLMetadataValueSingleTypeRef, c);
-		} else if(o instanceof IQLMetadataValueSingleID) {
-			return compile(o as IQLMetadataValueSingleID, c);
 		}else if(o instanceof IQLMetadataValueList) {
 			return compile(o as IQLMetadataValueList, c);
 		} else if(o instanceof IQLMetadataValueMap) {
@@ -98,9 +95,6 @@ abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelpe
 		'''«typeCompiler.compile(o.value, c, true)».class'''		
 	}
 	
-	def String compile(IQLMetadataValueSingleID o, G c) {
-		'''"«o.value»"'''		
-	}
 
 	def String compile(IQLMetadataValueList o, G c) {
 		'''{«o.elements.map[e | compile(e, c)].join(", ")»}'''		

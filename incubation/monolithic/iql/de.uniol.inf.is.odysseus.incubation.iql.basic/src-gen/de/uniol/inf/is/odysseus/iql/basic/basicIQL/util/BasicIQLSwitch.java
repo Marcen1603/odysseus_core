@@ -373,14 +373,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_ID:
-      {
-        IQLMetadataValueSingleID iqlMetadataValueSingleID = (IQLMetadataValueSingleID)theEObject;
-        T result = caseIQLMetadataValueSingleID(iqlMetadataValueSingleID);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleID);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF:
       {
         IQLMetadataValueSingleTypeRef iqlMetadataValueSingleTypeRef = (IQLMetadataValueSingleTypeRef)theEObject;
@@ -653,67 +645,43 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_ATTRIBUTE_SELECTION:
+      case BasicIQLPackage.IQL_JVM_ELEMENT_CALL_EXPRESSION:
       {
-        IQLAttributeSelection iqlAttributeSelection = (IQLAttributeSelection)theEObject;
-        T result = caseIQLAttributeSelection(iqlAttributeSelection);
-        if (result == null) result = caseIQLMemberSelection(iqlAttributeSelection);
+        IQLJvmElementCallExpression iqlJvmElementCallExpression = (IQLJvmElementCallExpression)theEObject;
+        T result = caseIQLJvmElementCallExpression(iqlJvmElementCallExpression);
+        if (result == null) result = caseIQLExpression(iqlJvmElementCallExpression);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_METHOD_SELECTION:
+      case BasicIQLPackage.IQL_THIS_EXPRESSION:
       {
-        IQLMethodSelection iqlMethodSelection = (IQLMethodSelection)theEObject;
-        T result = caseIQLMethodSelection(iqlMethodSelection);
-        if (result == null) result = caseIQLMemberSelection(iqlMethodSelection);
+        IQLThisExpression iqlThisExpression = (IQLThisExpression)theEObject;
+        T result = caseIQLThisExpression(iqlThisExpression);
+        if (result == null) result = caseIQLExpression(iqlThisExpression);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_VARIABLE:
+      case BasicIQLPackage.IQL_SUPER_EXPRESSION:
       {
-        IQLTerminalExpressionVariable iqlTerminalExpressionVariable = (IQLTerminalExpressionVariable)theEObject;
-        T result = caseIQLTerminalExpressionVariable(iqlTerminalExpressionVariable);
-        if (result == null) result = caseIQLExpression(iqlTerminalExpressionVariable);
+        IQLSuperExpression iqlSuperExpression = (IQLSuperExpression)theEObject;
+        T result = caseIQLSuperExpression(iqlSuperExpression);
+        if (result == null) result = caseIQLExpression(iqlSuperExpression);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_METHOD:
+      case BasicIQLPackage.IQL_PARENTHESIS_EXPRESSION:
       {
-        IQLTerminalExpressionMethod iqlTerminalExpressionMethod = (IQLTerminalExpressionMethod)theEObject;
-        T result = caseIQLTerminalExpressionMethod(iqlTerminalExpressionMethod);
-        if (result == null) result = caseIQLExpression(iqlTerminalExpressionMethod);
+        IQLParenthesisExpression iqlParenthesisExpression = (IQLParenthesisExpression)theEObject;
+        T result = caseIQLParenthesisExpression(iqlParenthesisExpression);
+        if (result == null) result = caseIQLExpression(iqlParenthesisExpression);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_THIS:
+      case BasicIQLPackage.IQL_NEW_EXPRESSION:
       {
-        IQLTerminalExpressionThis iqlTerminalExpressionThis = (IQLTerminalExpressionThis)theEObject;
-        T result = caseIQLTerminalExpressionThis(iqlTerminalExpressionThis);
-        if (result == null) result = caseIQLExpression(iqlTerminalExpressionThis);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_SUPER:
-      {
-        IQLTerminalExpressionSuper iqlTerminalExpressionSuper = (IQLTerminalExpressionSuper)theEObject;
-        T result = caseIQLTerminalExpressionSuper(iqlTerminalExpressionSuper);
-        if (result == null) result = caseIQLExpression(iqlTerminalExpressionSuper);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_PARENTHESIS:
-      {
-        IQLTerminalExpressionParenthesis iqlTerminalExpressionParenthesis = (IQLTerminalExpressionParenthesis)theEObject;
-        T result = caseIQLTerminalExpressionParenthesis(iqlTerminalExpressionParenthesis);
-        if (result == null) result = caseIQLExpression(iqlTerminalExpressionParenthesis);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_NEW:
-      {
-        IQLTerminalExpressionNew iqlTerminalExpressionNew = (IQLTerminalExpressionNew)theEObject;
-        T result = caseIQLTerminalExpressionNew(iqlTerminalExpressionNew);
-        if (result == null) result = caseIQLExpression(iqlTerminalExpressionNew);
+        IQLNewExpression iqlNewExpression = (IQLNewExpression)theEObject;
+        T result = caseIQLNewExpression(iqlNewExpression);
+        if (result == null) result = caseIQLExpression(iqlNewExpression);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1338,22 +1306,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single ID</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single ID</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLMetadataValueSingleID(IQLMetadataValueSingleID object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Type Ref</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1898,129 +1850,81 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Attribute Selection</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Jvm Element Call Expression</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Attribute Selection</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Jvm Element Call Expression</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLAttributeSelection(IQLAttributeSelection object)
+  public T caseIQLJvmElementCallExpression(IQLJvmElementCallExpression object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Method Selection</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL This Expression</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Method Selection</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL This Expression</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLMethodSelection(IQLMethodSelection object)
+  public T caseIQLThisExpression(IQLThisExpression object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Terminal Expression Variable</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Super Expression</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Terminal Expression Variable</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Super Expression</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLTerminalExpressionVariable(IQLTerminalExpressionVariable object)
+  public T caseIQLSuperExpression(IQLSuperExpression object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Terminal Expression Method</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Parenthesis Expression</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Terminal Expression Method</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Parenthesis Expression</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLTerminalExpressionMethod(IQLTerminalExpressionMethod object)
+  public T caseIQLParenthesisExpression(IQLParenthesisExpression object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Terminal Expression This</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL New Expression</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Terminal Expression This</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL New Expression</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLTerminalExpressionThis(IQLTerminalExpressionThis object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Terminal Expression Super</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Terminal Expression Super</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLTerminalExpressionSuper(IQLTerminalExpressionSuper object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Terminal Expression Parenthesis</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Terminal Expression Parenthesis</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLTerminalExpressionParenthesis(IQLTerminalExpressionParenthesis object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Terminal Expression New</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Terminal Expression New</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLTerminalExpressionNew(IQLTerminalExpressionNew object)
+  public T caseIQLNewExpression(IQLNewExpression object)
   {
     return null;
   }

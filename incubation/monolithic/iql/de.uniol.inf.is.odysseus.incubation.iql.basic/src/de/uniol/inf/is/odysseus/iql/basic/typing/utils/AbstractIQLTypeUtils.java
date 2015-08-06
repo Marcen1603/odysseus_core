@@ -8,11 +8,16 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmArrayType;
+import org.eclipse.xtext.common.types.JvmLowerBound;
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmPrimitiveType;
 import org.eclipse.xtext.common.types.JvmType;
+import org.eclipse.xtext.common.types.JvmTypeConstraint;
+import org.eclipse.xtext.common.types.JvmTypeParameter;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.common.types.util.TypeReferences;
+import org.eclipse.xtext.common.types.JvmUpperBound;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
@@ -21,16 +26,18 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
 
 @SuppressWarnings("restriction")
 public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	
+
 	@Inject
-	protected TypeReferences typeReferences;
+	protected IQLClasspathTypeProviderFactory typeProviderFactory;
 	
 	@Override
 	public JvmTypeReference createTypeRef(Class<?> javaType, Notifier context) {
-		JvmType type = typeReferences.findDeclaredType(javaType, context);
+		JvmType type = typeProviderFactory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(context)).findTypeByName(javaType.getCanonicalName());
 		if (type != null) {
 			return createTypeRef(type);
 		}
@@ -40,7 +47,7 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	
 	@Override
 	public JvmTypeReference createTypeRef(String name, Notifier context) {
-		JvmType type = typeReferences.findDeclaredType(name, context);
+		JvmType type = typeProviderFactory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(context)).findTypeByName(name);
 		if (type != null) {
 			return createTypeRef(type);
 		}
@@ -119,6 +126,18 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 			} else if (type instanceof JvmArrayType && !array) {
 				JvmArrayType arrayType = (JvmArrayType) type;	
 				return getLongName(arrayType.getComponentType(), array);
+			} else if (type instanceof JvmTypeParameter) {
+				JvmTypeParameter typeParameter = (JvmTypeParameter) type;
+				for (JvmTypeConstraint constraint : typeParameter.getConstraints()) {
+					if (constraint instanceof JvmUpperBound) {
+						JvmUpperBound upperBound = (JvmUpperBound) constraint;
+						return getLongName(upperBound.getTypeReference(), array);
+					} else if (constraint instanceof JvmLowerBound) {
+						JvmLowerBound lowerBound = (JvmLowerBound) constraint;
+						return getLongName(lowerBound.getTypeReference(), array);
+					}
+				}
+				return type.getIdentifier();
 			} else {
 				return type.getIdentifier();
 			}
@@ -137,7 +156,7 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 			} else if (typeRef instanceof IQLArrayTypeRef) {
 				return getShortName(typeRef.getType(), array);			
 			} else {
-				return typeRef.getSimpleName();
+				return getShortName(typeRef.getType(), array);			
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -167,7 +186,19 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 				JvmArrayType arrayType = (JvmArrayType) type;	
 				return getShortName(arrayType.getComponentType(), array);
 				
-			}else {
+			} else if (type instanceof JvmTypeParameter) {
+				JvmTypeParameter typeParameter = (JvmTypeParameter) type;
+				for (JvmTypeConstraint constraint : typeParameter.getConstraints()) {
+					if (constraint instanceof JvmUpperBound) {
+						JvmUpperBound upperBound = (JvmUpperBound) constraint;
+						return getShortName(upperBound.getTypeReference(), array);
+					} else if (constraint instanceof JvmLowerBound) {
+						JvmLowerBound lowerBound = (JvmLowerBound) constraint;
+						return getShortName(lowerBound.getTypeReference(), array);
+					}
+				}
+				return type.getSimpleName();
+			} else {
 				return type.getSimpleName();
 			}
 		} catch (Exception e) {
@@ -347,6 +378,8 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	public boolean isArray(JvmTypeReference typeRef) {
 		if (getInnerType(typeRef, true) instanceof JvmArrayType) {
 			return true;
+		} else if (getInnerType(typeRef, true) instanceof IQLArrayType) {
+			return true;
 		} else {
 			return false;
 		}
@@ -381,6 +414,38 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	@Override
 	public boolean isUserDefinedType(JvmType type, boolean array) {
 		return getInnerType(type, array) instanceof IQLClass | getInnerType(type, array) instanceof IQLInterface;
+	}
+	
+	@Override
+	public boolean isSetter(JvmOperation method) {
+		boolean name = method.getSimpleName().startsWith("set");		
+		boolean returnType = method.getReturnType() == null || getShortName(method.getReturnType(), true).equals("void");
+		boolean parameters = method.getParameters().size() == 1;
+		return name && returnType && parameters;
+	}
+
+	@Override
+	public boolean isGetter(JvmOperation method) {
+		boolean name =  method.getSimpleName().startsWith("get") || method.getSimpleName().startsWith("is");
+		boolean returnType = method.getReturnType() != null;
+		boolean parameters = method.getParameters().size() == 0;
+		return name && returnType && parameters;
+	}
+	
+
+
+	@Override
+	public String getNameWithoutSetterPrefix(JvmOperation method) {		
+		return method.getSimpleName().substring(3);
+	}
+
+	@Override
+	public String getNameWithoutGetterPrefix(JvmOperation method) {
+		if (method.getSimpleName().startsWith("get")) {
+			return method.getSimpleName().substring(3);
+		} else {
+			return method.getSimpleName().substring(2);
+		}
 	}
 
 }

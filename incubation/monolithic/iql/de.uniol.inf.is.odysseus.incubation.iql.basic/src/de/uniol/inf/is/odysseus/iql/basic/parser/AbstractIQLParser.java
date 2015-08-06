@@ -231,28 +231,25 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	}
 	
 	protected Collection<String> createClassPathEntries(Collection<Resource> resources) {
-		Collection<Bundle> bundles = new HashSet<>();
-		for (Resource res : resources) {
-			IQLFile file = (IQLFile) res.getContents().get(0);
-			bundles.addAll(typeFactory.getDependencies(file));
-		}
+		Collection<Bundle> bundles = typeFactory.getDependencies();	
 		
 		Collection<String> entries = new ArrayList<>();
 		for (Bundle bundle : bundles) {
 			File file = getPluginDir(bundle);
-			entries.add(file.getAbsolutePath()+File.separator+"bin");
-			entries.add(file.getParentFile().getAbsolutePath());
-			if (bundle instanceof AbstractBundle) {
-				try {
-					String[] classPathEntries = ((AbstractBundle) bundle).getBundleData().getClassPath();
-					for (String e : classPathEntries) {
-						entries.add(file.getAbsolutePath()+File.separator+e);
-					}
-				} catch (BundleException e) {
-					throw new QueryParseException("error while adding classpath entries of bundle " +bundle.getSymbolicName(),e);
-				}								
+			if (file != null) {
+				entries.add(file.getAbsolutePath()+File.separator+"bin");
+				entries.add(file.getParentFile().getAbsolutePath());
+				if (bundle instanceof AbstractBundle) {
+					try {
+						String[] classPathEntries = ((AbstractBundle) bundle).getBundleData().getClassPath();
+						for (String e : classPathEntries) {
+							entries.add(file.getAbsolutePath()+File.separator+e);
+						}
+					} catch (BundleException e) {
+						throw new QueryParseException("error while adding classpath entries of bundle " +bundle.getSymbolicName(),e);
+					}								
+				}
 			}
-
 		}		
 		return entries;	
 	}
@@ -263,7 +260,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 			URL url = FileLocator.toFileURL(FileLocator.find(bundle, new Path(""), null));
 			return new File(url.toURI());
 		} catch (Exception e) {
-			throw new QueryParseException("error while locating directory of bundle " +bundle.getSymbolicName(),e);
+			return null;
 		}
 	}
 

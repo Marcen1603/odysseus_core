@@ -2,10 +2,10 @@ package de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper;
 
 import javax.inject.Inject;
 
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.AbstractIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
@@ -34,8 +34,8 @@ public class QDLCompilerHelper extends AbstractIQLCompilerHelper<QDLLookUp, QDLT
 		return typeFactory.isParameter(parameter, typeUtils.getShortName(opType, false));
 	}
 	
-	public String getParameterOfGetter(IQLMethodSelection m) {
-		String methodName = m.getMethod().getSimpleName();
+	public String getParameterOfGetter(JvmOperation method) {
+		String methodName = method.getSimpleName();
 		if (methodName.startsWith("is")) {
 			return methodName.substring(2);
 		} else {
@@ -43,21 +43,21 @@ public class QDLCompilerHelper extends AbstractIQLCompilerHelper<QDLLookUp, QDLT
 		}
 	}
 	
-	public String getParameterOfSetter(IQLMethodSelection m) {
-		String methodName = m.getMethod().getSimpleName();
+	public String getParameterOfSetter(JvmOperation method) {
+		String methodName = method.getSimpleName();
 		return methodName.substring(3);
 
 	}
 	
-	public boolean isParameterGetter(IQLMethodSelection m,JvmTypeReference opType) {
-		String methodName = m.getMethod().getSimpleName();
-		String parameter = getParameterOfGetter(m);
+	public boolean isParameterGetter(JvmOperation method, JvmTypeReference opType) {
+		String methodName = method.getSimpleName();
+		String parameter = getParameterOfGetter(method);
 		return (methodName.startsWith("get") || methodName.startsWith("is")) && isParameter(parameter, opType);
 	}
 	
-	public boolean isParameterSetter(IQLMethodSelection m,JvmTypeReference opType) {
-		String methodName = m.getMethod().getSimpleName();
-		String parameter = getParameterOfSetter(m);
+	public boolean isParameterSetter(JvmOperation method,JvmTypeReference opType) {
+		String methodName = method.getSimpleName();
+		String parameter = getParameterOfSetter(method);
 		return methodName.startsWith("set") && isParameter(parameter, opType);
 	}
 

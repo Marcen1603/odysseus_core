@@ -68,6 +68,78 @@ public interface QDLFactory extends EFactory
   IQLPortExpression createIQLPortExpression();
 
   /**
+   * Returns a new object of class '<em>IQL Metadata Value Single Int</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Metadata Value Single Int</em>'.
+   * @generated
+   */
+  IQLMetadataValueSingleInt createIQLMetadataValueSingleInt();
+
+  /**
+   * Returns a new object of class '<em>IQL Metadata Value Single Double</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Metadata Value Single Double</em>'.
+   * @generated
+   */
+  IQLMetadataValueSingleDouble createIQLMetadataValueSingleDouble();
+
+  /**
+   * Returns a new object of class '<em>IQL Metadata Value Single String</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Metadata Value Single String</em>'.
+   * @generated
+   */
+  IQLMetadataValueSingleString createIQLMetadataValueSingleString();
+
+  /**
+   * Returns a new object of class '<em>IQL Metadata Value Single Boolean</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Metadata Value Single Boolean</em>'.
+   * @generated
+   */
+  IQLMetadataValueSingleBoolean createIQLMetadataValueSingleBoolean();
+
+  /**
+   * Returns a new object of class '<em>IQL Metadata Value Single Char</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Metadata Value Single Char</em>'.
+   * @generated
+   */
+  IQLMetadataValueSingleChar createIQLMetadataValueSingleChar();
+
+  /**
+   * Returns a new object of class '<em>Metadata Value Single ID</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Metadata Value Single ID</em>'.
+   * @generated
+   */
+  QDLMetadataValueSingleID createQDLMetadataValueSingleID();
+
+  /**
+   * Returns a new object of class '<em>IQL Metadata Value Single Type Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Metadata Value Single Type Ref</em>'.
+   * @generated
+   */
+  IQLMetadataValueSingleTypeRef createIQLMetadataValueSingleTypeRef();
+
+  /**
+   * Returns a new object of class '<em>IQL Metadata Value Single Null</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Metadata Value Single Null</em>'.
+   * @generated
+   */
+  IQLMetadataValueSingleNull createIQLMetadataValueSingleNull();
+
+  /**
    * Returns the package supported by this factory.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

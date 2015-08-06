@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.iql.basic.typing.factory;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -16,16 +18,36 @@ import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmPrimitiveType;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.service.packageadmin.ExportedPackage;
+import org.osgi.service.packageadmin.PackageAdmin;
 
+
+
+
+
+
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+
+
+
+
+
+
+
+
+import de.uniol.inf.is.odysseus.iql.basic.Activator;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
+import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLDefaultTypes;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
@@ -33,25 +55,28 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 
 
-@SuppressWarnings("restriction")
-public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils> implements IIQLTypeFactory{
+@SuppressWarnings({ "restriction", "deprecation" })
+public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends IIQLServiceObserver> implements IIQLTypeFactory{
 
 	@Inject
 	private XtextResourceSet systemResourceSet;
-
+	
 	@Inject
-	protected TypeReferences typeReferences;
+	protected IQLClasspathTypeProviderFactory typeProviderFactory;
 	
 	protected U typeUtils;
+	
+	protected I serviceObserver;
+
 
 	@Inject
 	IIQLTypingEntryPoint entryPoint;
-	
-	public AbstractIQLTypeFactory(U typeUtils) {
+		
+	public AbstractIQLTypeFactory(U typeUtils, I serviceObserver) {
 		this.typeUtils = typeUtils;
+		this.serviceObserver = serviceObserver;
 	}
 	
-	private Map<Resource, Collection<JvmType>> resourceTypes = new HashMap<>();
 	
 	private Map<String, IQLFile> systemFiles = new HashMap<>();
 	private Map<String, IQLSystemType> systemTypes= new HashMap<>();
@@ -83,13 +108,8 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils> implements
 
 	
 	@Override
-	public Collection<JvmType> getVisibleTypes(Resource context) {
-		Collection<JvmType> result = resourceTypes.get(context);
-		if (result == null) {
-			result = createVisibleTypes(context);
-			resourceTypes.put(context, result);
-		}
-		return result;
+	public Collection<JvmType> getVisibleTypes(Collection<String> usedNamespaces, Resource context) {
+		return createVisibleTypes(usedNamespaces, context);
 	}
 	
 	@Override
@@ -104,7 +124,10 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils> implements
 		for (JvmGenericType systemType : getSystemTypes()) {
 			implicitImports.add(systemType.getPackageName()+"."+systemType.getSimpleName());
 		}
+		
 		implicitImports.addAll(IQLDefaultTypes.getImplicitImports());		
+		implicitImports.addAll(serviceObserver.getImplicitImports());		
+
 		return implicitImports;
 	}
 		
@@ -118,7 +141,6 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils> implements
 	
 	@Override
 	public IQLSystemType addSystemType(JvmGenericType type, Class<?> javaType) {
-		resourceTypes.clear();
 		IQLSystemType systemType=  new IQLSystemType(type, javaType);
 		systemTypes.put(systemType.getIqlTypeDef().getPackageName()+"."+systemType.getIqlTypeDef().getSimpleName(), systemType);		
 		String packageName = type.getPackageName();
@@ -149,35 +171,83 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils> implements
 		}
 	}
 		
-	public Collection<JvmType> createVisibleTypes(Resource context) {
+	public Collection<JvmType> createVisibleTypes(Collection<String> usedNamespaces, Resource context) {
 		Collection<JvmType> result = new HashSet<>();
 		result.addAll(getPrimitives(context));
 		result.addAll(getSystemTypes());
 		
 		for (Class<?> c : IQLDefaultTypes.getVisibleTypes()) {
-			result.add(typeReferences.findDeclaredType(c.getCanonicalName(), context));
+			result.add(getType(c.getCanonicalName(), context));
 		}
+		
+		for (Class<?> c : serviceObserver.getVisibleTypes()) {
+			result.add(getType(c.getCanonicalName(), context));
+		}
+		
+		for (String namespace : usedNamespaces) {
+			if (namespace.endsWith("*")) {
+				String packageName = namespace.substring(0, namespace.length()-2);
+				result.addAll(getTypesOfPackage(packageName, context));
+			} else {
+				result.add(getType(namespace, context));
+			}
+		}
+		
 		return result;
 	}	
+	
+	public JvmType getType(String name, Notifier context) {
+		return typeProviderFactory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(context)).findTypeByName(name);
+	}
 		
+	public Collection<JvmType> getTypesOfPackage(String packageName, Resource context) {
+		Collection<JvmType> result = new HashSet<>();
+
+		Reflections reflections = new Reflections(packageName, new SubTypesScanner(false));
+		for (Class<?> c : reflections.getSubTypesOf(Object.class)) {
+			String str = c.getCanonicalName();
+			if (str != null) {
+				result.add(getType(c.getCanonicalName(), context));
+			}
+		}
+		return result;
+	}
+	
+	public Collection<JvmType> getTypesOfBundle(Bundle bundle, Resource context) {
+		Collection<JvmType> result = new HashSet<>();
+
+		BundleWiring bundleWiring = Activator.getContext().getBundle().adapt(BundleWiring.class);
+		Collection<String> resources = bundleWiring.listResources("/", "*.class", BundleWiring.LISTRESOURCES_RECURSE);
+
+		for (String resource : resources) {
+		    URL localResource = bundle.getEntry(resource);
+		    if (localResource != null) {
+		        String className = resource.replaceAll("/", ".").replace(".class", "").replace("bin.", "");
+		        result.add(getType(className, context));
+		    }
+		}
+		return result;
+	}
+	
+	
 	private Collection<JvmType> getPrimitives(Resource context) {
 		Collection<JvmType> result = new HashSet<>();
-		result.add(typeReferences.findDeclaredType("byte", context));
-		result.add(typeReferences.findDeclaredType("short", context));
-		result.add(typeReferences.findDeclaredType("int", context));
-		result.add(typeReferences.findDeclaredType("long", context));
-		result.add(typeReferences.findDeclaredType("float", context));
-		result.add(typeReferences.findDeclaredType("double", context));
-		result.add(typeReferences.findDeclaredType("boolean", context));
-		result.add(typeReferences.findDeclaredType("char", context));
-		result.add(typeReferences.findDeclaredType(Byte.class, context));
-		result.add(typeReferences.findDeclaredType(Short.class, context));
-		result.add(typeReferences.findDeclaredType(Integer.class, context));
-		result.add(typeReferences.findDeclaredType(Long.class, context));
-		result.add(typeReferences.findDeclaredType(Float.class, context));
-		result.add(typeReferences.findDeclaredType(Double.class, context));
-		result.add(typeReferences.findDeclaredType(Boolean.class, context));
-		result.add(typeReferences.findDeclaredType(Character.class, context));
+		result.add(getType("byte", context));
+		result.add(getType("short", context));
+		result.add(getType("int", context));
+		result.add(getType("long", context));
+		result.add(getType("float", context));
+		result.add(getType("double", context));
+		result.add(getType("boolean", context));
+		result.add(getType("char", context));
+		result.add(getType(Byte.class.getCanonicalName(), context));
+		result.add(getType(Short.class.getCanonicalName(), context));
+		result.add(getType(Integer.class.getCanonicalName(), context));
+		result.add(getType(Long.class.getCanonicalName(), context));
+		result.add(getType(Float.class.getCanonicalName(), context));
+		result.add(getType(Double.class.getCanonicalName(), context));
+		result.add(getType(Boolean.class.getCanonicalName(), context));
+		result.add(getType(Character.class.getCanonicalName(), context));
 		return result;
 	}
 	
@@ -210,36 +280,17 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils> implements
 	}
 	
 	@Override
-	public Collection<Bundle> getDependencies(IQLFile file) {
+	public Collection<Bundle> getDependencies() {
 		Collection<Bundle> bundles = new HashSet<>();
 		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.iql.basic"));
-		
-		for (JvmTypeReference type : EcoreUtil2.getAllContentsOfType(file, JvmTypeReference.class)) {
-			addDependancy(type, bundles);
-		}		
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core.server"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.slf4j"));
+		bundles.addAll(this.serviceObserver.getDependencies());
 		return bundles;
 	}
+
 	
-	private void addDependancy(JvmTypeReference typeRef, Collection<Bundle> bundles) {
-		String name = typeUtils.getLongName(typeRef, false);
-		if (isSystemType(name)) {
-			IQLSystemType systemType = getSystemType(name);
-			Bundle bundle = FrameworkUtil.getBundle(systemType.getJavaType());
-			if (bundle != null) {
-				bundles.add(bundle);
-			}
-		} else if (!typeUtils.isUserDefinedType(typeRef, false)) {
-			try {
-				Class<?> c = Class.forName(typeUtils.getLongName(typeRef, false));
-				Bundle bundle = FrameworkUtil.getBundle(c);
-				if (bundle != null) {
-					bundles.add(bundle);
-				}
-			} catch (ClassNotFoundException e) {
-				//e.printStackTrace();
-			}
-		}
-	}
 	
 	@Override
 	public String getImportName(JvmType type) {		
@@ -318,6 +369,26 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils> implements
 		} else {
 			return name;
 		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Collection<String> getJavaPackages() {
+		Collection<String> result = new HashSet<>();
+		
+		ServiceReference ref = Activator.getContext().getServiceReference(PackageAdmin.class.getName());
+		PackageAdmin packageAdmin = (PackageAdmin) Activator.getContext().getService(ref);
+		
+		for (Bundle bundle : getDependencies()) {
+			try {
+				for (ExportedPackage p : packageAdmin.getExportedPackages(bundle)) {
+					result.add(p.getName());
+				}
+			} catch (IllegalArgumentException | SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 	
 }

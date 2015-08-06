@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
 
 public interface IIQLTypeFactory {
 		
-	Collection<Bundle> getDependencies(IQLFile file);
+	Collection<Bundle> getDependencies();
 	String getImportName(JvmType type);	
 	String getSimpleName(JvmType type,  String text, boolean wrapper, boolean array);
 
@@ -29,7 +29,7 @@ public interface IIQLTypeFactory {
 	Collection<IQLFile> getSystemFiles();	
 	ResourceSet getSystemResourceSet();
 	
-	Collection<JvmType> getVisibleTypes(Resource context);
+	Collection<JvmType> getVisibleTypes(Collection<String> usedNamespaces, Resource context);
 	Collection<String> getImplicitImports();
 
 	IQLSystemType addSystemType(JvmGenericType type, Class<?> javaType);
@@ -40,4 +40,6 @@ public interface IIQLTypeFactory {
 	boolean isImportNeeded(JvmType type, String text);
 	
 	Collection<JvmTypeReference> getImportedTypes(EObject obj);
+	
+	Collection<String> getJavaPackages();
 }

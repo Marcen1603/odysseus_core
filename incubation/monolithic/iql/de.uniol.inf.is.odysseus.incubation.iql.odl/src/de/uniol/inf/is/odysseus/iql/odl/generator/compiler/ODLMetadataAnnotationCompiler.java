@@ -68,6 +68,7 @@ public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
 				}
 			}
 		}
+		
 		if (!elements.containsKey("name")) {
 			elements.put("name", "\""+operator.getSimpleName()+"\"");
 		}
@@ -112,7 +113,7 @@ public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
 			if (parameterType != null) {
 				elements.put("type", typeCompiler.compile(parameterType, context,  true)+".class");
 			}
-		}
+		} 
 		if (!elements.containsKey("optional")) {
 			elements.put("optional", parameter.isOptional()+"");
 		}
@@ -122,8 +123,8 @@ public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
 		if (typeUtils.isMap(parameter.getType()) && !elements.containsKey("isMap")) {
 			elements.put("isMap", "true");				
 		}
-		if (elements.containsKey(ODLTypeFactory.KEY_TYPE)) {
-			elements.put("keytype", elements.get(ODLTypeFactory.KEY_TYPE));				
+		if (elements.containsKey(ODLTypeFactory.PARAMETER_KEY_TYPE)) {
+			elements.put(ODLTypeFactory.PARAMETER_KEY_TYPE, elements.get(ODLTypeFactory.PARAMETER_KEY_TYPE));				
 		}
 		
 		StringBuilder b = new StringBuilder();

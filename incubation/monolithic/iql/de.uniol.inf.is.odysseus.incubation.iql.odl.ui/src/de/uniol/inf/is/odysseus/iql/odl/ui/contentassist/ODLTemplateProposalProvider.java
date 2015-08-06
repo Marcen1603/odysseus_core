@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.iql.odl.ui.contentassist;
 
 
+
+
 import javax.inject.Inject;
 
 import org.eclipse.emf.common.util.EList;
@@ -17,13 +19,16 @@ import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateAcceptor;
 import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractIQLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
+import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+
 
 public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<ODLExpressionParser, ODLTypeFactory, ODLLookUp, ODLScopeProvider, ODLTypeUtils> {
 
@@ -35,11 +40,53 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 	
 	protected void createTemplates(String rule, EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		super.createTemplates(rule, node, templateContext, context, acceptor);
-		if (node instanceof ODLParameter) {
+		if (node instanceof ODLParameter && rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.JvmTypeReference")) {
 			createODLParameterProposals(templateContext, context, acceptor);
 		}  else if (rule.equals("de.uniol.inf.is.odysseus.iql.odl.ODL.ODLMethod")) {
 			createODLMethodProposals(node, templateContext, context, acceptor);
 		}		
+	}
+	
+	@Override
+	protected void createIQLMetadataProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		ODLParameter parameter = EcoreUtil2.getContainerOfType(node, ODLParameter.class);
+		if (parameter != null) {
+			for (String str : lookUp.getParameterMetadataKeys()) {
+				createMetadataTemplate(str, templateContext, context, acceptor);
+			}
+		}
+		
+		ODLOperator op = EcoreUtil2.getContainerOfType(node, ODLOperator.class);
+		if (op != null) {
+			for (String str : lookUp.getOperatorMetadataKeys()) {
+				createMetadataTemplate(str, templateContext, context, acceptor);
+			}
+		}
+		
+		super.createIQLMetadataProposals(node, templateContext, context, acceptor);
+	}
+	
+	@Override
+	protected void createIQLMetadataValueProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		ODLParameter parameter = EcoreUtil2.getContainerOfType(node, ODLParameter.class);
+		if (parameter != null) {
+			IQLMetadata metadata = EcoreUtil2.getContainerOfType(node, IQLMetadata.class);
+			if (metadata != null) {
+				if (metadata.getName().equals(ODLTypeFactory.PARAMETER_TYPE)) {
+					for (JvmTypeReference typeRef : factory.getAllParameterTypes()) {
+						createTypeTemplate(typeUtils.getInnerType(typeRef, false), templateContext, context, acceptor);
+					}
+				}
+			}
+		}
+		super.createIQLMetadataValueProposals(node, templateContext, context, acceptor);
+	}
+	
+	protected void createMetadataValueTemplate(String name, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		String id = name;
+		Template template = createTemplate(name, "", id, name);
+		finishTemplate(template, templateContext, context, acceptor);
+	
 	}
 	
 	protected void createODLMethodProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -62,14 +109,22 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 			descBuilder.append(toDescString(op.getParameters()));
 		}
 		descBuilder.append(")");
-				
+		if (op.getReturnType() != null && !typeUtils.isVoid(op.getReturnType())) {
+			descBuilder.append(" : " + toDescString(op.getReturnType()));
+		}	
+		
 		StringBuilder patternBuilder = new StringBuilder();
 		patternBuilder.append("on "+ methodName);
 		patternBuilder.append("(");
 		if (op.getParameters() != null) {
 			patternBuilder.append(toOnMethodPattern(op.getParameters()));
 		}
-		patternBuilder.append(") {"+System.lineSeparator());
+		patternBuilder.append(") ");
+		if (op.getReturnType() != null && !typeUtils.isVoid(op.getReturnType())) {
+			patternBuilder.append(": " + toDescString(op.getReturnType()));
+		}		
+		patternBuilder.append("{"+System.lineSeparator());
+
 		patternBuilder.append("\t${}"+System.lineSeparator());
 		patternBuilder.append("}");
 
@@ -88,11 +143,7 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 				b.append(", ");
 			}
 			JvmFormalParameter parameter =  parameters.get(i);
-			if (parameter.getParameterType().getSimpleName().length() == 1) {
-				b.append("${"+parameter.getParameterType().getSimpleName()+"}");
-			} else {
-				b.append(toDescString(parameter.getParameterType()));
-			}
+			b.append(toDescString(parameter.getParameterType()));
 			b.append(" " +parameters.get(i).getName());
 		}
 		return b.toString();
@@ -133,6 +184,16 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		String id = longName;
 		Template template = createTemplate(simpleName, parameterTypeName, id, pattern);
 		finishTemplate(template, templateContext, context, acceptor);	
+	}
+	
+	protected void createMetadataTemplate(String name, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		String desc = name.toLowerCase();
+		desc = desc+ " = " + name.toLowerCase();
+		String pattern = name.toLowerCase(); 
+		pattern = pattern +" = ${"+name.toLowerCase()+"}"; 
+		String id = name;
+		Template template = createTemplate(desc, "", id, pattern);
+		finishTemplate(template, templateContext, context, acceptor);
 	}
 
 }

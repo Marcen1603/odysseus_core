@@ -4,10 +4,18 @@ package de.uniol.inf.is.odysseus.iql.qdl.qDL.impl;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleBoolean;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleChar;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleDouble;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleInt;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleNull;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleString;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleTypeRef;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFile;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLMetadataValueSingleID;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition;
@@ -63,6 +71,62 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
    * @generated
    */
   private EClass iqlPortExpressionEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass iqlMetadataValueSingleIntEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass iqlMetadataValueSingleDoubleEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass iqlMetadataValueSingleStringEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass iqlMetadataValueSingleBooleanEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass iqlMetadataValueSingleCharEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass qdlMetadataValueSingleIDEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass iqlMetadataValueSingleTypeRefEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass iqlMetadataValueSingleNullEClass = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -265,6 +329,166 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getIQLMetadataValueSingleInt()
+  {
+    return iqlMetadataValueSingleIntEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getIQLMetadataValueSingleInt_Value()
+  {
+    return (EAttribute)iqlMetadataValueSingleIntEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIQLMetadataValueSingleDouble()
+  {
+    return iqlMetadataValueSingleDoubleEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getIQLMetadataValueSingleDouble_Value()
+  {
+    return (EAttribute)iqlMetadataValueSingleDoubleEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIQLMetadataValueSingleString()
+  {
+    return iqlMetadataValueSingleStringEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getIQLMetadataValueSingleString_Value()
+  {
+    return (EAttribute)iqlMetadataValueSingleStringEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIQLMetadataValueSingleBoolean()
+  {
+    return iqlMetadataValueSingleBooleanEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getIQLMetadataValueSingleBoolean_Value()
+  {
+    return (EAttribute)iqlMetadataValueSingleBooleanEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIQLMetadataValueSingleChar()
+  {
+    return iqlMetadataValueSingleCharEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getIQLMetadataValueSingleChar_Value()
+  {
+    return (EAttribute)iqlMetadataValueSingleCharEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getQDLMetadataValueSingleID()
+  {
+    return qdlMetadataValueSingleIDEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getQDLMetadataValueSingleID_Value()
+  {
+    return (EAttribute)qdlMetadataValueSingleIDEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIQLMetadataValueSingleTypeRef()
+  {
+    return iqlMetadataValueSingleTypeRefEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getIQLMetadataValueSingleTypeRef_Value()
+  {
+    return (EReference)iqlMetadataValueSingleTypeRefEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIQLMetadataValueSingleNull()
+  {
+    return iqlMetadataValueSingleNullEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getIQLMetadataValueSingleNull_Value()
+  {
+    return (EAttribute)iqlMetadataValueSingleNullEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public QDLFactory getQDLFactory()
   {
     return (QDLFactory)getEFactoryInstance();
@@ -307,6 +531,30 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
     createEReference(iqlPortExpressionEClass, IQL_PORT_EXPRESSION__LEFT_OPERAND);
     createEAttribute(iqlPortExpressionEClass, IQL_PORT_EXPRESSION__OP);
     createEReference(iqlPortExpressionEClass, IQL_PORT_EXPRESSION__RIGHT_OPERAND);
+
+    iqlMetadataValueSingleIntEClass = createEClass(IQL_METADATA_VALUE_SINGLE_INT);
+    createEAttribute(iqlMetadataValueSingleIntEClass, IQL_METADATA_VALUE_SINGLE_INT__VALUE);
+
+    iqlMetadataValueSingleDoubleEClass = createEClass(IQL_METADATA_VALUE_SINGLE_DOUBLE);
+    createEAttribute(iqlMetadataValueSingleDoubleEClass, IQL_METADATA_VALUE_SINGLE_DOUBLE__VALUE);
+
+    iqlMetadataValueSingleStringEClass = createEClass(IQL_METADATA_VALUE_SINGLE_STRING);
+    createEAttribute(iqlMetadataValueSingleStringEClass, IQL_METADATA_VALUE_SINGLE_STRING__VALUE);
+
+    iqlMetadataValueSingleBooleanEClass = createEClass(IQL_METADATA_VALUE_SINGLE_BOOLEAN);
+    createEAttribute(iqlMetadataValueSingleBooleanEClass, IQL_METADATA_VALUE_SINGLE_BOOLEAN__VALUE);
+
+    iqlMetadataValueSingleCharEClass = createEClass(IQL_METADATA_VALUE_SINGLE_CHAR);
+    createEAttribute(iqlMetadataValueSingleCharEClass, IQL_METADATA_VALUE_SINGLE_CHAR__VALUE);
+
+    qdlMetadataValueSingleIDEClass = createEClass(QDL_METADATA_VALUE_SINGLE_ID);
+    createEAttribute(qdlMetadataValueSingleIDEClass, QDL_METADATA_VALUE_SINGLE_ID__VALUE);
+
+    iqlMetadataValueSingleTypeRefEClass = createEClass(IQL_METADATA_VALUE_SINGLE_TYPE_REF);
+    createEReference(iqlMetadataValueSingleTypeRefEClass, IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE);
+
+    iqlMetadataValueSingleNullEClass = createEClass(IQL_METADATA_VALUE_SINGLE_NULL);
+    createEAttribute(iqlMetadataValueSingleNullEClass, IQL_METADATA_VALUE_SINGLE_NULL__VALUE);
   }
 
   /**
@@ -347,6 +595,14 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
     qdlQueryEClass.getESuperTypes().add(theTypesPackage.getJvmGenericType());
     iqlSubscribeExpressionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLExpression());
     iqlPortExpressionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLExpression());
+    iqlMetadataValueSingleIntEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMetadataValue());
+    iqlMetadataValueSingleDoubleEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMetadataValue());
+    iqlMetadataValueSingleStringEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMetadataValue());
+    iqlMetadataValueSingleBooleanEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMetadataValue());
+    iqlMetadataValueSingleCharEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMetadataValue());
+    qdlMetadataValueSingleIDEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMetadataValue());
+    iqlMetadataValueSingleTypeRefEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMetadataValue());
+    iqlMetadataValueSingleNullEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMetadataValue());
 
     // Initialize classes and features; add operations and parameters
     initEClass(qdlFileEClass, QDLFile.class, "QDLFile", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -366,6 +622,30 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
     initEReference(getIQLPortExpression_LeftOperand(), theBasicIQLPackage.getIQLExpression(), null, "leftOperand", null, 0, 1, IQLPortExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getIQLPortExpression_Op(), ecorePackage.getEString(), "op", null, 0, 1, IQLPortExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getIQLPortExpression_RightOperand(), theBasicIQLPackage.getIQLExpression(), null, "rightOperand", null, 0, 1, IQLPortExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(iqlMetadataValueSingleIntEClass, IQLMetadataValueSingleInt.class, "IQLMetadataValueSingleInt", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIQLMetadataValueSingleInt_Value(), ecorePackage.getEInt(), "value", null, 0, 1, IQLMetadataValueSingleInt.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(iqlMetadataValueSingleDoubleEClass, IQLMetadataValueSingleDouble.class, "IQLMetadataValueSingleDouble", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIQLMetadataValueSingleDouble_Value(), ecorePackage.getEDouble(), "value", null, 0, 1, IQLMetadataValueSingleDouble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(iqlMetadataValueSingleStringEClass, IQLMetadataValueSingleString.class, "IQLMetadataValueSingleString", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIQLMetadataValueSingleString_Value(), ecorePackage.getEString(), "value", null, 0, 1, IQLMetadataValueSingleString.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(iqlMetadataValueSingleBooleanEClass, IQLMetadataValueSingleBoolean.class, "IQLMetadataValueSingleBoolean", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIQLMetadataValueSingleBoolean_Value(), ecorePackage.getEBoolean(), "value", null, 0, 1, IQLMetadataValueSingleBoolean.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(iqlMetadataValueSingleCharEClass, IQLMetadataValueSingleChar.class, "IQLMetadataValueSingleChar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIQLMetadataValueSingleChar_Value(), ecorePackage.getEChar(), "value", null, 0, 1, IQLMetadataValueSingleChar.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(qdlMetadataValueSingleIDEClass, QDLMetadataValueSingleID.class, "QDLMetadataValueSingleID", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getQDLMetadataValueSingleID_Value(), ecorePackage.getEString(), "value", null, 0, 1, QDLMetadataValueSingleID.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(iqlMetadataValueSingleTypeRefEClass, IQLMetadataValueSingleTypeRef.class, "IQLMetadataValueSingleTypeRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getIQLMetadataValueSingleTypeRef_Value(), theTypesPackage.getJvmTypeReference(), null, "value", null, 0, 1, IQLMetadataValueSingleTypeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(iqlMetadataValueSingleNullEClass, IQLMetadataValueSingleNull.class, "IQLMetadataValueSingleNull", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIQLMetadataValueSingleNull_Value(), ecorePackage.getEString(), "value", null, 0, 1, IQLMetadataValueSingleNull.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Create resource
     createResource(eNS_URI);

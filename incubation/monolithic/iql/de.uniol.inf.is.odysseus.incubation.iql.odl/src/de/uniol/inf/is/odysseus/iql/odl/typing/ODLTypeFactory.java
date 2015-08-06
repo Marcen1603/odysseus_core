@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.iql.odl.typing;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -15,29 +16,25 @@ import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.osgi.framework.Bundle;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.AbstractIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLFactory;
-import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
+import de.uniol.inf.is.odysseus.iql.odl.service.ODLServiceObserver;
 
 
 
 @Singleton
-public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils> {
-	public static final String VALUE_TYPE = "value";
-	public static final String KEY_TYPE = "key";
-	public static final String ELEMENT_TYPE = "element";
-	
+public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils, ODLServiceObserver> {
+	public static final String PARAMETER_KEY_TYPE = "keytype";
+	public static final String PARAMETER_TYPE = "type";
+	public static final String OPERATOR_OUTPUT_MODE = "outputMode";
+
 	private Map<String, JvmTypeReference> parametersByType = new HashMap<>();
 	private Map<String, List<JvmTypeReference>> parametersByValue = new HashMap<>();
 	
 	@Inject
-	public ODLTypeFactory(ODLTypeUtils typeUtils) {
-		super(typeUtils);
+	public ODLTypeFactory(ODLTypeUtils typeUtils, ODLServiceObserver serviceObserver) {
+		super(typeUtils, serviceObserver);
 	}
 	
 	@Override
@@ -45,73 +42,21 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils> {
 		return "odl";
 	}
 	
-	public JvmTypeReference getMapKeyType(ODLParameter p) {
-		IQLMetadataList metadataList = p.getMetadataList();
-		if (metadataList != null) {
-			for (IQLMetadata metadata : metadataList.getElements()) {
-				if (metadata.getName().equalsIgnoreCase(KEY_TYPE) && metadata.getValue() instanceof IQLMetadataValueSingleTypeRef) {
-					IQLMetadataValueSingleTypeRef t = (IQLMetadataValueSingleTypeRef) metadata.getValue();				
-					return t.getValue();
-				}
-			}
-		}
-		return typeUtils.createTypeRef(String.class, getSystemResourceSet());
-	}
-
-
-	public JvmTypeReference getMapValueType(ODLParameter p) {
-		IQLMetadataList metadataList = p.getMetadataList();
-		if (metadataList != null) {
-			for (IQLMetadata metadata : metadataList.getElements()) {
-				if (metadata.getName().equalsIgnoreCase(VALUE_TYPE) && metadata.getValue() instanceof IQLMetadataValueSingleTypeRef) {
-					IQLMetadataValueSingleTypeRef t = (IQLMetadataValueSingleTypeRef) metadata.getValue();				
-					return t.getValue();
-				}
-			}
-		}
-		return typeUtils.createTypeRef(Object.class, getSystemResourceSet());
-	}
-	
-	public JvmTypeReference getListElementType(ODLParameter p) {
-		JvmTypeReference typeRef = p.getType();
-		if (typeRef instanceof IQLArrayTypeRef) {
-			IQLArrayTypeRef arrayTypeRef = (IQLArrayTypeRef) typeRef;
-			if (arrayTypeRef.getType().getDimensions().size() > 1) {
-				return typeUtils.createTypeRef(List.class, getSystemResourceSet());
-			} else {
-				return typeUtils.createTypeRef(typeUtils.getInnerType(arrayTypeRef, false));
-			}
-		}
-
-		IQLMetadataList metadataList = p.getMetadataList();
-		if (metadataList != null) {
-			for (IQLMetadata metadata : metadataList.getElements()) {
-				if (metadata.getName().equalsIgnoreCase(ELEMENT_TYPE) && metadata.getValue() instanceof IQLMetadataValueSingleTypeRef) {
-					IQLMetadataValueSingleTypeRef t = (IQLMetadataValueSingleTypeRef) metadata.getValue();				
-					return t.getValue();
-				}
-			}
-		}
-		return typeUtils.createTypeRef(Object.class, getSystemResourceSet());
-	}
 	
 	@Override
-	public Collection<Bundle> getDependencies(IQLFile file) {
-		Collection<Bundle> bundles = super.getDependencies(file);
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.slf4j"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core.server"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.iql.odl"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.ruleengine"));
+	public Collection<Bundle> getDependencies() {
+		Collection<Bundle> bundles = super.getDependencies();
 		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.transform"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.ruleengine"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.mep"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.iql.odl"));
 		return bundles;
 	}
 	
 	
-	@SuppressWarnings("restriction")
 	@Override
-	public Collection<JvmType> createVisibleTypes(Resource context) {
-		Collection<JvmType> types = super.createVisibleTypes(context);
+	public Collection<JvmType> createVisibleTypes(Collection<String> usedNamespaces, Resource context) {
+		Collection<JvmType> types = super.createVisibleTypes(usedNamespaces, context);
 		for (JvmTypeReference parameterValueType : parametersByType.values()) {
 			types.add(typeUtils.getInnerType(parameterValueType, false));
 		}
@@ -122,7 +67,8 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils> {
 			}
 		}
 		for (Class<?> c : ODLDefaultTypes.getVisibleTypes()) {
-			types.add(typeReferences.findDeclaredType(c.getCanonicalName(), context));
+			JvmType t = getType(c.getCanonicalName(), context);
+			types.add(t);
 		}
 		return types;
 	}
@@ -175,6 +121,14 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils> {
 		return parametersByType.values();
 	}
 
-
+	public Collection<JvmTypeReference> getAllParameterTypes() {
+		Collection<JvmTypeReference> result = new HashSet<>();
+		for (List<JvmTypeReference> list : parametersByValue.values()) {
+			for (JvmTypeReference typeRef : list) {
+				result.add(typeRef);
+			}
+		}
+		return result;
+	}
 	
 }

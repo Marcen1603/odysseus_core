@@ -98,7 +98,6 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_STRING: return createIQLMetadataValueSingleString();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN: return createIQLMetadataValueSingleBoolean();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_CHAR: return createIQLMetadataValueSingleChar();
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_ID: return createIQLMetadataValueSingleID();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF: return createIQLMetadataValueSingleTypeRef();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_NULL: return createIQLMetadataValueSingleNull();
       case BasicIQLPackage.IQL_METADATA_VALUE_LIST: return createIQLMetadataValueList();
@@ -133,14 +132,11 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
       case BasicIQLPackage.IQL_POSTFIX_EXPRESSION: return createIQLPostfixExpression();
       case BasicIQLPackage.IQL_ARRAY_EXPRESSION: return createIQLArrayExpression();
       case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION: return createIQLMemberSelectionExpression();
-      case BasicIQLPackage.IQL_ATTRIBUTE_SELECTION: return createIQLAttributeSelection();
-      case BasicIQLPackage.IQL_METHOD_SELECTION: return createIQLMethodSelection();
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_VARIABLE: return createIQLTerminalExpressionVariable();
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_METHOD: return createIQLTerminalExpressionMethod();
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_THIS: return createIQLTerminalExpressionThis();
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_SUPER: return createIQLTerminalExpressionSuper();
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_PARENTHESIS: return createIQLTerminalExpressionParenthesis();
-      case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_NEW: return createIQLTerminalExpressionNew();
+      case BasicIQLPackage.IQL_JVM_ELEMENT_CALL_EXPRESSION: return createIQLJvmElementCallExpression();
+      case BasicIQLPackage.IQL_THIS_EXPRESSION: return createIQLThisExpression();
+      case BasicIQLPackage.IQL_SUPER_EXPRESSION: return createIQLSuperExpression();
+      case BasicIQLPackage.IQL_PARENTHESIS_EXPRESSION: return createIQLParenthesisExpression();
+      case BasicIQLPackage.IQL_NEW_EXPRESSION: return createIQLNewExpression();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_INT: return createIQLLiteralExpressionInt();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_DOUBLE: return createIQLLiteralExpressionDouble();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_STRING: return createIQLLiteralExpressionString();
@@ -534,17 +530,6 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLMetadataValueSingleID createIQLMetadataValueSingleID()
-  {
-    IQLMetadataValueSingleIDImpl iqlMetadataValueSingleID = new IQLMetadataValueSingleIDImpl();
-    return iqlMetadataValueSingleID;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public IQLMetadataValueSingleTypeRef createIQLMetadataValueSingleTypeRef()
   {
     IQLMetadataValueSingleTypeRefImpl iqlMetadataValueSingleTypeRef = new IQLMetadataValueSingleTypeRefImpl();
@@ -919,10 +904,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLAttributeSelection createIQLAttributeSelection()
+  public IQLJvmElementCallExpression createIQLJvmElementCallExpression()
   {
-    IQLAttributeSelectionImpl iqlAttributeSelection = new IQLAttributeSelectionImpl();
-    return iqlAttributeSelection;
+    IQLJvmElementCallExpressionImpl iqlJvmElementCallExpression = new IQLJvmElementCallExpressionImpl();
+    return iqlJvmElementCallExpression;
   }
 
   /**
@@ -930,10 +915,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLMethodSelection createIQLMethodSelection()
+  public IQLThisExpression createIQLThisExpression()
   {
-    IQLMethodSelectionImpl iqlMethodSelection = new IQLMethodSelectionImpl();
-    return iqlMethodSelection;
+    IQLThisExpressionImpl iqlThisExpression = new IQLThisExpressionImpl();
+    return iqlThisExpression;
   }
 
   /**
@@ -941,10 +926,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLTerminalExpressionVariable createIQLTerminalExpressionVariable()
+  public IQLSuperExpression createIQLSuperExpression()
   {
-    IQLTerminalExpressionVariableImpl iqlTerminalExpressionVariable = new IQLTerminalExpressionVariableImpl();
-    return iqlTerminalExpressionVariable;
+    IQLSuperExpressionImpl iqlSuperExpression = new IQLSuperExpressionImpl();
+    return iqlSuperExpression;
   }
 
   /**
@@ -952,10 +937,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLTerminalExpressionMethod createIQLTerminalExpressionMethod()
+  public IQLParenthesisExpression createIQLParenthesisExpression()
   {
-    IQLTerminalExpressionMethodImpl iqlTerminalExpressionMethod = new IQLTerminalExpressionMethodImpl();
-    return iqlTerminalExpressionMethod;
+    IQLParenthesisExpressionImpl iqlParenthesisExpression = new IQLParenthesisExpressionImpl();
+    return iqlParenthesisExpression;
   }
 
   /**
@@ -963,43 +948,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLTerminalExpressionThis createIQLTerminalExpressionThis()
+  public IQLNewExpression createIQLNewExpression()
   {
-    IQLTerminalExpressionThisImpl iqlTerminalExpressionThis = new IQLTerminalExpressionThisImpl();
-    return iqlTerminalExpressionThis;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLTerminalExpressionSuper createIQLTerminalExpressionSuper()
-  {
-    IQLTerminalExpressionSuperImpl iqlTerminalExpressionSuper = new IQLTerminalExpressionSuperImpl();
-    return iqlTerminalExpressionSuper;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLTerminalExpressionParenthesis createIQLTerminalExpressionParenthesis()
-  {
-    IQLTerminalExpressionParenthesisImpl iqlTerminalExpressionParenthesis = new IQLTerminalExpressionParenthesisImpl();
-    return iqlTerminalExpressionParenthesis;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLTerminalExpressionNew createIQLTerminalExpressionNew()
-  {
-    IQLTerminalExpressionNewImpl iqlTerminalExpressionNew = new IQLTerminalExpressionNewImpl();
-    return iqlTerminalExpressionNew;
+    IQLNewExpressionImpl iqlNewExpression = new IQLNewExpressionImpl();
+    return iqlNewExpression;
   }
 
   /**

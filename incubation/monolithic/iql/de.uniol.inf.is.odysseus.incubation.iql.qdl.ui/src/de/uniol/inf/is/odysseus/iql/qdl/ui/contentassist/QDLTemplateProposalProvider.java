@@ -51,20 +51,22 @@ import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 
 
 
+
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractIQLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLScopeProvider;
-import de.uniol.inf.is.odysseus.iql.qdl.services.QDLServiceBinding;
+import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
@@ -118,7 +120,7 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 	@Override
 	protected void createIQLArgumentsMapKeyValueExprProposals(IQLArgumentsMapKeyValue node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		IQLVariableStatement stmt = EcoreUtil2.getContainerOfType(node, IQLVariableStatement.class);
-		IQLTerminalExpressionNew newExpr = EcoreUtil2.getContainerOfType(node, IQLTerminalExpressionNew.class);	
+		IQLNewExpression newExpr = EcoreUtil2.getContainerOfType(node, IQLNewExpression.class);	
 		JvmTypeReference typeRef = null;
 		if (stmt != null) {
 			typeRef = ((IQLVariableDeclaration) stmt.getVar()).getRef();

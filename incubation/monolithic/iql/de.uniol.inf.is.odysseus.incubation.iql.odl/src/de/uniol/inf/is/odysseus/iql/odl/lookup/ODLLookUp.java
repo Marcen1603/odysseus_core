@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.iql.odl.lookup;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -8,7 +9,10 @@ import javax.inject.Inject;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAO;
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLPO;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeOperatorsFactory;
@@ -22,14 +26,59 @@ public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory, ODLTypeOperator
 	}
 
 	public Collection<JvmOperation> getOnMethods() {
-		JvmTypeReference typeRef = typeUtils.createTypeRef(AbstractODLPO.class, typeFactory.getSystemResourceSet());
 		Collection<JvmOperation> result = new HashSet<>();
-		for (JvmOperation op : super.getProtectedMethods(typeRef, false)) {
+
+		JvmTypeReference poTypeRef = typeUtils.createTypeRef(AbstractODLPO.class, typeFactory.getSystemResourceSet());
+		for (JvmOperation op : super.getProtectedMethods(poTypeRef, false)) {
+			if (op.getSimpleName().startsWith("on")) {
+				result.add(op);
+			}
+		}
+		
+		JvmTypeReference aoTypeRef = typeUtils.createTypeRef(AbstractODLAO.class, typeFactory.getSystemResourceSet());
+		for (JvmOperation op : super.getProtectedMethods(aoTypeRef, false)) {
 			if (op.getSimpleName().startsWith("on")) {
 				result.add(op);
 			}
 		}
 		return result;
+	}
+
+	public Collection<String> getOperatorMetadataKeys() {
+		Collection<String> result = new HashSet<>();
+		for(Method method : LogicalOperator.class.getDeclaredMethods()) {
+			result.add(method.getName());
+		}
+		result.add("outputmode");
+		result.add("persistent");
+		return result;
+	}
+	
+
+	public Collection<String> getParameterMetadataKeys() {
+		Collection<String> result = new HashSet<>();
+		for(Method method : Parameter.class.getDeclaredMethods()) {
+			result.add(method.getName());
+		}
+		return result;
+	}
+
+	public boolean hasOnMethod(String name, boolean ao) {
+		if (ao) {
+			for (Method method : AbstractODLAO.class.getDeclaredMethods()) {
+				if (method.getName().equalsIgnoreCase("on"+name)) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			for (Method method : AbstractODLPO.class.getDeclaredMethods()) {
+				if (method.getName().equalsIgnoreCase("on"+name)) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 }

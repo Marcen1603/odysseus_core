@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.types.IQLUtils
-import java.util.Map.Entry
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory
 import org.eclipse.xtext.common.types.JvmMember
@@ -24,12 +23,16 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils
+import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode
 
 class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLStatementCompiler, ODLTypeFactory, ODLTypeUtils>{
 	
 	@Inject
 	private ODLMetadataAnnotationCompiler metadataAnnotationCompiler
 
+	@Inject
+	private ODLLookUp lookUp;
 	
 	@Inject
 	new(ODLCompilerHelper helper, ODLTypeCompiler typeCompiler, ODLStatementCompiler stmtCompiler, ODLTypeFactory factory, ODLTypeUtils typeUtils) {
@@ -185,11 +188,13 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		var meta = IMetaAttribute
 		var newExpressions = helper.getNewExpressions(o);
 		var varStmts = helper.getVarStatements(o);
+		var outputmode = helper.determineOutputMode(o);
 	
 		context.addImport(superClass.canonicalName)
 		context.addImport(read.canonicalName)
 		context.addImport(write.canonicalName)
 		context.addImport(meta.canonicalName)
+		context.addImport(outputmode.class.canonicalName)		
 		'''
 
 		«FOR j : typeDef.javametadata»
@@ -219,6 +224,11 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 				«FOR p : parameters»
 					«createCloneStatements(p, "ao", context)»
 				«ENDFOR»
+			}
+			
+			@«Override.simpleName»
+			public «OutputMode.simpleName» getOutputMode() {
+				return «OutputMode.simpleName».«outputmode.toString»;
 			}
 			
 			«FOR p : parameters»
@@ -283,10 +293,10 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 			protected boolean validate()
 				«stmtCompiler.compile(m.body, context)»	
 			'''	
-		} else if (!context.ao && m.on){
+		} else if (m.on && (!context.ao && lookUp.hasOnMethod(m.simpleName, false) || context.ao && lookUp.hasOnMethod(m.simpleName, true))){
 			var className = helper.getClassName(m);
 			var returnT = "";
-			if (m.returnType == null && !m.simpleName.equalsIgnoreCase(className)) {
+			if (m.returnType != null && !m.simpleName.equalsIgnoreCase(className)) {
 				returnT = typeCompiler.compile(m.returnType, context, false)
 			}
 			'''
@@ -303,33 +313,12 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		var type = p.type
 		
 		if (typeUtils.isList(type)) {
-			var listElement = typeFactory.getListElementType(p)
 			context.addImport(IQLUtils.canonicalName)			
-			if(typeUtils.isClonable(listElement)) {				
-				'''
-				this.«name» = «IQLUtils.simpleName».createEmptyList();
-				for («typeCompiler.compile(listElement, context, false)» e : «varName».get«pName»()) {
-					this.«name».add(e.clone()); 
-				}
-				'''
-			} else {
-				'''this.«name» = «IQLUtils.simpleName».createList(«varName».get«pName»());'''
-			}
+			'''this.«name» = «IQLUtils.simpleName».createList(«varName».get«pName»());'''
+
 		} else if (typeUtils.isMap(type)) {
-			var key = typeFactory.getMapKeyType(p)
-			var value = typeFactory.getMapValueType(p)
 			context.addImport(IQLUtils.canonicalName)				
-			if  (typeUtils.isClonable(key) || typeUtils.isClonable(value)) {
-				context.addImport(Entry.canonicalName)				
-				'''
-				this.«name» = «IQLUtils.simpleName».createEmptyMap();
-				for («Entry.canonicalName»<«typeCompiler.compile(key,context, true)»,«typeCompiler.compile(value,context, true)»> e : «varName».get«pName»().entrySet()) {
-					this.«name».put(e.getKey()«IF typeUtils.isClonable(key)».clone()«ENDIF»,e.getValue()«IF typeUtils.isClonable(value)».clone()«ENDIF»); 
-				}
-				'''
-			} else {
-				'''this.«name» = «IQLUtils.simpleName».createMap(«varName».get«pName»());'''
-			}			
+			'''this.«name» = «IQLUtils.simpleName».createMap(«varName».get«pName»());'''		
 		} else if (typeUtils.isClonable(type)) {
 			'''this.«name» = «varName».get«pName»().clone();'''
 		} else {

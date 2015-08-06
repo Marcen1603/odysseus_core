@@ -17,8 +17,6 @@ import java.util.List
 import java.util.ArrayList
 import java.util.Map
 import java.util.HashMap
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID
-import de.uniol.inf.is.odysseus.iql.basic.types.ID
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt
 
 abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>> implements IIQLMetadataMethodCompiler<G>{
@@ -70,8 +68,6 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 			return compile(o as IQLMetadataValueSingleNull, varName, context);
 		} else if(o instanceof IQLMetadataValueSingleTypeRef) {
 			return compile(o as IQLMetadataValueSingleTypeRef, varName, context);
-		} else if(o instanceof IQLMetadataValueSingleID) {
-			return compile(o as IQLMetadataValueSingleID, varName, context);
 		} else if(o instanceof IQLMetadataValueList) {
 			return compile(o as IQLMetadataValueList, varName, counter, context);
 		} else if(o instanceof IQLMetadataValueMap) {
@@ -104,11 +100,6 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 
 	def String compile(IQLMetadataValueSingleNull o, String varName, G context) {
 		'''«Object.simpleName» «varName» = null;'''
-	}
-
-	def String compile(IQLMetadataValueSingleID o, String varName, G context) {
-		context.addImport(ID.canonicalName);
-		'''ID «varName» = new ID("«o.value»");'''
 	}
 	
 	def String compile(IQLMetadataValueSingleTypeRef o, String varName, G context) {

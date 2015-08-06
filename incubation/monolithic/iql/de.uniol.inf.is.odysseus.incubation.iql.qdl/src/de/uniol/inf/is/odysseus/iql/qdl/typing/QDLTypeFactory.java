@@ -25,13 +25,14 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.AbstractIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
 
 
 
 @Singleton
-public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils> {
+public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServiceObserver> {
 	
 
 	private Map<String, ILogicalOperator> sources = new HashMap<String, ILogicalOperator>();	
@@ -45,16 +46,13 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils> {
 	private Set<Class<?>> parameterValueTypes = new HashSet<>();
 	
 	@Inject
-	public QDLTypeFactory(QDLTypeUtils typeUtils) {
-		super(typeUtils);
+	public QDLTypeFactory(QDLTypeUtils typeUtils, QDLServiceObserver serviceObserver) {
+		super(typeUtils, serviceObserver);
 	}
 	
 	@Override
-	public Collection<Bundle> getDependencies(IQLFile file) {
-		Collection<Bundle> bundles = super.getDependencies(file);
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.slf4j"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core"));
-		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.core.server"));
+	public Collection<Bundle> getDependencies() {
+		Collection<Bundle> bundles =super.getDependencies();
 		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.iql.qdl"));
 		return bundles;
 	}
@@ -70,18 +68,17 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils> {
 	}
 	
 	
-	@SuppressWarnings("restriction")
 	@Override
-	public Collection<JvmType> createVisibleTypes(Resource context) {
-		Collection<JvmType> types = super.createVisibleTypes(context);
+	public Collection<JvmType> createVisibleTypes(Collection<String> usedNamespaces, Resource context) {
+		Collection<JvmType> types = super.createVisibleTypes(usedNamespaces, context);
 		for (Class<?> parameterValueType : parameterValueTypes) {
-			JvmType t = typeReferences.findDeclaredType(parameterValueType.getCanonicalName(), context);
+			JvmType t = getType(parameterValueType.getCanonicalName(), context);
 			if (t != null) {
 				types.add(t);
 			}
 		}
 		for (Class<?> c : QDLDefaultTypes.getVisibleTypes()) {
-			types.add(typeReferences.findDeclaredType(c.getCanonicalName(), context));
+			types.add(getType(c.getCanonicalName(), context));
 		}
 		return types;
 	}

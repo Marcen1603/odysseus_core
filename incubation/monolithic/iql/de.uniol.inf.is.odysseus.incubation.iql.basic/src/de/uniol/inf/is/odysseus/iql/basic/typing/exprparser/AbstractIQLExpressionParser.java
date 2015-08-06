@@ -8,16 +8,17 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmGenericType;
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAdditiveExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttributeSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLBooleanNotExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLEqualityExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInstanceOfExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionBoolean;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionDouble;
@@ -29,20 +30,16 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionRange;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionString;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLogicalAndExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLogicalOrExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMultiplicativeExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLParenthesisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPlusMinusExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPostfixExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPrefixExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLRelationalExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionParenthesis;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionSuper;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionThis;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
@@ -114,18 +111,16 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 			return getType((IQLArrayExpression)expr, context);
 		} else if (expr instanceof IQLMemberSelectionExpression) {
 			return getType((IQLMemberSelectionExpression)expr, context);
-		} else if (expr instanceof IQLTerminalExpressionVariable) {
-			return getType((IQLTerminalExpressionVariable)expr, context);
-		} else if (expr instanceof IQLTerminalExpressionMethod) {
-			return getType((IQLTerminalExpressionMethod)expr, context);
-		} else if (expr instanceof IQLTerminalExpressionThis) {
-			return getType((IQLTerminalExpressionThis)expr, context);
-		} else if (expr instanceof IQLTerminalExpressionSuper) {
-			return getType((IQLTerminalExpressionSuper)expr, context);
-		} else if (expr instanceof IQLTerminalExpressionParenthesis) {
-			return getType((IQLTerminalExpressionParenthesis)expr, context);
-		} else if (expr instanceof IQLTerminalExpressionNew) {
-			return getType((IQLTerminalExpressionNew)expr, context);
+		} else if (expr instanceof IQLJvmElementCallExpression) {
+			return getType((IQLJvmElementCallExpression)expr, context);
+		} else if (expr instanceof IQLThisExpression) {
+			return getType((IQLThisExpression)expr, context);
+		} else if (expr instanceof IQLSuperExpression) {
+			return getType((IQLSuperExpression)expr, context);
+		} else if (expr instanceof IQLParenthesisExpression) {
+			return getType((IQLParenthesisExpression)expr, context);
+		} else if (expr instanceof IQLNewExpression) {
+			return getType((IQLNewExpression)expr, context);
 		} else if (expr instanceof IQLLiteralExpressionDouble) {
 			return getType((IQLLiteralExpressionDouble)expr, context);
 		} else if (expr instanceof IQLLiteralExpressionInt) {
@@ -207,23 +202,22 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		return new TypeResult(typeUtils.createTypeRef(Map.class, typeFactory.getSystemResourceSet()));
 	}
 	
-	public TypeResult getType(IQLTerminalExpressionVariable expr, C context) {
+	public TypeResult getType(IQLJvmElementCallExpression expr, C context) {
 		JvmTypeReference type = null;
-		if (expr.getVar() instanceof IQLVariableDeclaration) {
-			type = ((IQLVariableDeclaration) expr.getVar()).getRef();
-		} else if (expr.getVar() instanceof JvmField) {
-			type = ((JvmField) expr.getVar()).getType();
-		} else if (expr.getVar() instanceof JvmFormalParameter) {
-			type = ((JvmFormalParameter) expr.getVar()).getParameterType();
+		if (expr.getElement() instanceof IQLVariableDeclaration) {
+			type = ((IQLVariableDeclaration) expr.getElement()).getRef();
+		} else if (expr.getElement() instanceof JvmField) {
+			type = ((JvmField) expr.getElement()).getType();
+		} else if (expr.getElement() instanceof JvmFormalParameter) {
+			type = ((JvmFormalParameter) expr.getElement()).getParameterType();
+		} else if (expr.getElement() instanceof JvmOperation) {
+			type = ((JvmOperation) expr.getElement()).getReturnType();
 		}
 		return new TypeResult(type);
 	}
+
 	
-	public TypeResult getType(IQLTerminalExpressionMethod expr, C context) {
-		return new TypeResult(expr.getMethod().getReturnType());
-	}
-	
-	public TypeResult getType(IQLTerminalExpressionParenthesis expr, C context) {
+	public TypeResult getType(IQLParenthesisExpression expr, C context) {
 		return getType(expr.getExpr(), context);
 	}
 	
@@ -232,13 +226,10 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 	}
 	
 	public TypeResult getType(IQLMemberSelectionExpression expr, C context) {
-		IQLMemberSelection sel = expr.getRightOperand();
-		if (sel instanceof IQLAttributeSelection) {
-			IQLAttributeSelection attr = (IQLAttributeSelection) sel;
-			return new TypeResult(((JvmField)attr.getVar()).getType());		
-		} else if (sel instanceof IQLMethodSelection) {
-			IQLMethodSelection meth = (IQLMethodSelection) sel;
-			return new TypeResult(meth.getMethod().getReturnType());
+		if (expr.getSel().getMember() instanceof JvmField) {
+			return new TypeResult(((JvmField)expr.getSel().getMember()).getType());		
+		} else if (expr.getSel().getMember() instanceof JvmOperation) {
+			return new TypeResult(((JvmOperation)expr.getSel().getMember()).getReturnType());		
 		} else {
 			return new TypeResult();
 		}
@@ -270,16 +261,16 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		return new TypeResult(expr.getTargetRef());
 	}
 	
-	public TypeResult getType(IQLTerminalExpressionNew expr, C context) {
+	public TypeResult getType(IQLNewExpression expr, C context) {
 		return new TypeResult(expr.getRef());
 	}
 	
-	public TypeResult getType(IQLTerminalExpressionThis expr, C context) {		
+	public TypeResult getType(IQLThisExpression expr, C context) {		
 		JvmGenericType c = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
 		return new TypeResult(typeUtils.createTypeRef(c));
 	}
 	
-	public TypeResult getType(IQLTerminalExpressionSuper expr, C context) {
+	public TypeResult getType(IQLSuperExpression expr, C context) {
 		JvmGenericType c = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
 		return new TypeResult(c.getExtendedClass());
 	}
@@ -298,12 +289,12 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 	
 	@Override
 	public boolean isThis(EObject obj) {
-		return obj instanceof IQLTerminalExpressionThis;
+		return obj instanceof IQLThisExpression;
 	}
 
 	@Override
 	public boolean isSuper(EObject obj) {
-		return obj instanceof IQLTerminalExpressionSuper;
+		return obj instanceof IQLSuperExpression;
 	}
 	
 	public TypeResult getType(IQLRelationalExpression expr, C context) {

@@ -3,6 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.iql.qdl;
 
+import org.eclipse.xtext.common.types.xtext.ClasspathBasedTypeScopeProvider;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -21,7 +22,9 @@ import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.parser.IIQLParser;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
+import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
@@ -43,6 +46,8 @@ import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.parser.QDLParser;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLQualifiedNameProvider;
+import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeBuilder;
@@ -58,6 +63,26 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypingEntryPoint;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQDLRuntimeModule {
 
+	
+	@Override
+	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
+		return QDLClasspathTypeProviderFactory.class;
+	}
+		
+	@Override
+	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
+		return ClasspathBasedTypeScopeProvider.class;
+	}
+	
+	
+	public Class<? extends IIQLServiceObserver> bindIQLServiceObserver() {
+		return QDLServiceObserver.class;
+	}
+	
+	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
+		return QDLScopeProvider.class;
+	}
+	
 	public Class<? extends IIQLTypeUtils> bindTypeUtils() {
 		return QDLTypeUtils.class;
 	}
@@ -153,13 +178,7 @@ public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQ
 	public Class<? extends XtextResourceFactory> bindXtextResourceFactory() {
 		  return IQLResourceFactory.class;
 	}
-	
-	@SuppressWarnings("restriction")
-	@Override
-	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
-		return QDLClasspathTypeProviderFactory.class;
-	}
-	
+
 	public Class<? extends IIQLGeneratorContext> bindGeneratorContext() {
 		  return QDLGeneratorContext.class;
 	}

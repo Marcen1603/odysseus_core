@@ -5,12 +5,10 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttributeSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext;
@@ -29,6 +27,7 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmMember;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
@@ -110,7 +109,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
     return _xblockexpression;
   }
   
-  public String compile(final IQLTerminalExpressionNew e, final QDLGeneratorContext context) {
+  public String compile(final IQLNewExpression e, final QDLGeneratorContext context) {
     String _xifexpression = null;
     JvmTypeReference _ref = e.getRef();
     boolean _isOperator = this.helper.isOperator(_ref);
@@ -341,14 +340,13 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
     return _xifexpression;
   }
   
-  public String compile(final IQLAttributeSelection a, final JvmTypeReference left, final IQLMemberSelectionExpression expr, final QDLGeneratorContext context) {
+  public String compile(final IQLMemberSelectionExpression e, final JvmTypeReference left, final JvmField field, final QDLGeneratorContext c) {
     String _xifexpression = null;
     boolean _isSource = this.helper.isSource(left);
     if (_isSource) {
       String _xblockexpression = null;
       {
-        JvmField _var = a.getVar();
-        String name = _var.getSimpleName();
+        String name = field.getSimpleName();
         String _xifexpression_1 = null;
         boolean _isSourceAttribute = this.helper.isSourceAttribute(left, name);
         if (_isSourceAttribute) {
@@ -358,7 +356,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
           _builder.append("\"");
           _xifexpression_1 = _builder.toString();
         } else {
-          _xifexpression_1 = super.compile(a, left, expr, context);
+          _xifexpression_1 = super.compile(e, left, field, c);
         }
         _xblockexpression = _xifexpression_1;
       }
@@ -369,46 +367,45 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
       if (_isOperator) {
         String _xblockexpression_1 = null;
         {
-          JvmField _var = a.getVar();
-          String pName = _var.getSimpleName();
+          String pName = field.getSimpleName();
           String _xifexpression_2 = null;
           boolean _isParameter = this.helper.isParameter(pName, left);
           if (_isParameter) {
             StringConcatenation _builder = new StringConcatenation();
-            IQLExpression _leftOperand = expr.getLeftOperand();
-            String _compile = this.compile(_leftOperand, context);
+            IQLExpression _leftOperand = e.getLeftOperand();
+            String _compile = this.compile(_leftOperand, c);
             _builder.append(_compile, "");
             _builder.append(".getParameter(\"");
             _builder.append(pName, "");
             _builder.append("\")");
             _xifexpression_2 = _builder.toString();
           } else {
-            _xifexpression_2 = super.compile(a, left, expr, context);
+            _xifexpression_2 = super.compile(e, left, field, c);
           }
           _xblockexpression_1 = _xifexpression_2;
         }
         _xifexpression_1 = _xblockexpression_1;
       } else {
-        _xifexpression_1 = super.compile(a, left, expr, context);
+        _xifexpression_1 = super.compile(e, left, field, c);
       }
       _xifexpression = _xifexpression_1;
     }
     return _xifexpression;
   }
   
-  public String compile(final IQLMethodSelection m, final JvmTypeReference left, final IQLMemberSelectionExpression expr, final QDLGeneratorContext context) {
+  public String compile(final IQLMemberSelectionExpression e, final JvmTypeReference left, final JvmOperation method, final QDLGeneratorContext c) {
     String _xifexpression = null;
     boolean _isOperator = this.helper.isOperator(left);
     if (_isOperator) {
       String _xifexpression_1 = null;
-      boolean _isParameterGetter = this.helper.isParameterGetter(m, left);
+      boolean _isParameterGetter = this.helper.isParameterGetter(method, left);
       if (_isParameterGetter) {
         String _xblockexpression = null;
         {
-          String name = this.helper.getParameterOfGetter(m);
+          String name = this.helper.getParameterOfGetter(method);
           StringConcatenation _builder = new StringConcatenation();
-          IQLExpression _leftOperand = expr.getLeftOperand();
-          String _compile = this.compile(_leftOperand, context);
+          IQLExpression _leftOperand = e.getLeftOperand();
+          String _compile = this.compile(_leftOperand, c);
           _builder.append(_compile, "");
           _builder.append(".getParameter(\"");
           _builder.append(name, "");
@@ -418,106 +415,94 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
         _xifexpression_1 = _xblockexpression;
       } else {
         String _xifexpression_2 = null;
-        boolean _isParameterSetter = this.helper.isParameterSetter(m, left);
+        boolean _isParameterSetter = this.helper.isParameterSetter(method, left);
         if (_isParameterSetter) {
           String _xblockexpression_1 = null;
           {
-            String name = this.helper.getParameterOfSetter(m);
+            String name = this.helper.getParameterOfSetter(method);
             StringConcatenation _builder = new StringConcatenation();
-            IQLExpression _leftOperand = expr.getLeftOperand();
-            String _compile = this.compile(_leftOperand, context);
+            IQLExpression _leftOperand = e.getLeftOperand();
+            String _compile = this.compile(_leftOperand, c);
             _builder.append(_compile, "");
             _builder.append(".setParameter(\"");
             _builder.append(name, "");
             _builder.append("\",");
-            IQLArgumentsList _args = m.getArgs();
-            JvmOperation _method = m.getMethod();
-            EList<JvmFormalParameter> _parameters = _method.getParameters();
-            String _compile_1 = this.compile(_args, _parameters, context);
+            IQLMemberSelection _sel = e.getSel();
+            IQLArgumentsList _args = _sel.getArgs();
+            EList<JvmFormalParameter> _parameters = method.getParameters();
+            String _compile_1 = this.compile(_args, _parameters, c);
             _builder.append(_compile_1, "");
             _builder.append(")");
             _xblockexpression_1 = _builder.toString();
           }
           _xifexpression_2 = _xblockexpression_1;
         } else {
-          _xifexpression_2 = super.compile(m, left, expr, context);
+          _xifexpression_2 = super.compile(e, left, method, c);
         }
         _xifexpression_1 = _xifexpression_2;
       }
       _xifexpression = _xifexpression_1;
     } else {
-      _xifexpression = super.compile(m, left, expr, context);
+      _xifexpression = super.compile(e, left, method, c);
     }
     return _xifexpression;
   }
   
   public String compileAssignmentExpr(final IQLAssignmentExpression e, final IQLMemberSelectionExpression selExpr, final QDLGeneratorContext c) {
-    String _xblockexpression = null;
-    {
-      IQLExpression _leftOperand = e.getLeftOperand();
-      TypeResult leftType = this.exprParser.getType(_leftOperand);
-      boolean _isNull = leftType.isNull();
-      boolean _not = (!_isNull);
-      if (_not) {
-        JvmTypeReference _ref = leftType.getRef();
-        c.setExpectedTypeRef(_ref);
-      }
-      String _xifexpression = null;
-      IQLMemberSelection _rightOperand = selExpr.getRightOperand();
-      if ((_rightOperand instanceof IQLAttributeSelection)) {
-        String _xblockexpression_1 = null;
-        {
-          IQLMemberSelection _rightOperand_1 = selExpr.getRightOperand();
-          IQLAttributeSelection attr = ((IQLAttributeSelection) _rightOperand_1);
-          IQLExpression _leftOperand_1 = selExpr.getLeftOperand();
-          TypeResult left = this.exprParser.getType(_leftOperand_1);
-          String _xifexpression_1 = null;
-          boolean _and = false;
-          boolean _and_1 = false;
-          boolean _isNull_1 = left.isNull();
-          boolean _not_1 = (!_isNull_1);
-          if (!_not_1) {
-            _and_1 = false;
-          } else {
-            JvmTypeReference _ref_1 = left.getRef();
-            boolean _isOperator = this.helper.isOperator(_ref_1);
-            _and_1 = _isOperator;
-          }
-          if (!_and_1) {
-            _and = false;
-          } else {
-            JvmField _var = attr.getVar();
-            String _simpleName = _var.getSimpleName();
-            JvmTypeReference _ref_2 = left.getRef();
-            boolean _isParameter = this.helper.isParameter(_simpleName, _ref_2);
-            _and = _isParameter;
-          }
-          if (_and) {
-            StringConcatenation _builder = new StringConcatenation();
-            IQLExpression _leftOperand_2 = selExpr.getLeftOperand();
-            String _compile = this.compile(_leftOperand_2, c);
-            _builder.append(_compile, "");
-            _builder.append(".setParameter(\"");
-            JvmField _var_1 = attr.getVar();
-            String _simpleName_1 = _var_1.getSimpleName();
-            _builder.append(_simpleName_1, "");
-            _builder.append("\",");
-            IQLExpression _rightOperand_2 = e.getRightOperand();
-            String _compile_1 = this.compile(_rightOperand_2, c);
-            _builder.append(_compile_1, "");
-            _builder.append(")");
-            _xifexpression_1 = _builder.toString();
-          } else {
-            _xifexpression_1 = super.compileAssignmentExpr(e, selExpr, c);
-          }
-          _xblockexpression_1 = _xifexpression_1;
+    String _xifexpression = null;
+    IQLMemberSelection _sel = selExpr.getSel();
+    JvmMember _member = _sel.getMember();
+    if ((_member instanceof JvmField)) {
+      String _xblockexpression = null;
+      {
+        IQLMemberSelection _sel_1 = selExpr.getSel();
+        JvmMember _member_1 = _sel_1.getMember();
+        JvmField field = ((JvmField) _member_1);
+        IQLExpression _leftOperand = selExpr.getLeftOperand();
+        TypeResult left = this.exprParser.getType(_leftOperand);
+        String _xifexpression_1 = null;
+        boolean _and = false;
+        boolean _and_1 = false;
+        boolean _isNull = left.isNull();
+        boolean _not = (!_isNull);
+        if (!_not) {
+          _and_1 = false;
+        } else {
+          JvmTypeReference _ref = left.getRef();
+          boolean _isOperator = this.helper.isOperator(_ref);
+          _and_1 = _isOperator;
         }
-        _xifexpression = _xblockexpression_1;
-      } else {
-        _xifexpression = super.compileAssignmentExpr(e, selExpr, c);
+        if (!_and_1) {
+          _and = false;
+        } else {
+          String _simpleName = field.getSimpleName();
+          JvmTypeReference _ref_1 = left.getRef();
+          boolean _isParameter = this.helper.isParameter(_simpleName, _ref_1);
+          _and = _isParameter;
+        }
+        if (_and) {
+          StringConcatenation _builder = new StringConcatenation();
+          IQLExpression _leftOperand_1 = selExpr.getLeftOperand();
+          String _compile = this.compile(_leftOperand_1, c);
+          _builder.append(_compile, "");
+          _builder.append(".setParameter(\"");
+          String _simpleName_1 = field.getSimpleName();
+          _builder.append(_simpleName_1, "");
+          _builder.append("\",");
+          IQLExpression _rightOperand = e.getRightOperand();
+          String _compile_1 = this.compile(_rightOperand, c);
+          _builder.append(_compile_1, "");
+          _builder.append(")");
+          _xifexpression_1 = _builder.toString();
+        } else {
+          _xifexpression_1 = super.compileAssignmentExpr(e, selExpr, c);
+        }
+        _xblockexpression = _xifexpression_1;
       }
-      _xblockexpression = _xifexpression;
+      _xifexpression = _xblockexpression;
+    } else {
+      _xifexpression = super.compileAssignmentExpr(e, selExpr, c);
     }
-    return _xblockexpression;
+    return _xifexpression;
   }
 }

@@ -65,13 +65,13 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 
 	
 	@Override
-	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
-		return ClasspathBasedTypeScopeProvider.class;
+	public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {
+		return IQLXtextEditorCallback.class;
 	}
 	
 	@Override
-	public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {
-		return IQLXtextEditorCallback.class;
+	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
+		return ClasspathBasedTypeScopeProvider.class;
 	}
 	
 	@Override

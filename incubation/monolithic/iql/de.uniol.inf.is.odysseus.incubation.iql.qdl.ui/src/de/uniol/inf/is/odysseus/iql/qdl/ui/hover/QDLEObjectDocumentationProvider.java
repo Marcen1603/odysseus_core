@@ -11,7 +11,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.AbstractIQLEObjectDocumentationProvider;
@@ -31,7 +31,7 @@ public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumenta
 	protected String getDocumentationIQLArgumentsMapKeyValue(IQLArgumentsMapKeyValue keyValue) {		
 		JvmTypeReference typeRef = null;
 		IQLVariableStatement stmt = EcoreUtil2.getContainerOfType(keyValue, IQLVariableStatement.class);
-		IQLTerminalExpressionNew expr = EcoreUtil2.getContainerOfType(keyValue, IQLTerminalExpressionNew.class);
+		IQLNewExpression expr = EcoreUtil2.getContainerOfType(keyValue, IQLNewExpression.class);
 		if (stmt != null) {
 			typeRef = ((IQLVariableDeclaration)stmt.getVar()).getRef();
 		} else {

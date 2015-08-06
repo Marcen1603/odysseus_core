@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFac
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-@SuppressWarnings("restriction")
+@SuppressWarnings({ "restriction" })
 public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQLTypeExtensionsFactory, U extends IIQLTypeUtils> implements IIQLLookUp{
 	
 	@Inject
@@ -296,20 +296,20 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	
 	
 	@Override
-	public Collection<JvmType> getAllTypes(Resource context) {
+	public Collection<JvmType> getAllTypes(Collection<String> usedNamespaces, Resource context) {
 		Collection<JvmType> types = new HashSet<>();
 		Collection<IQLFile> files = getAllFiles(context);
 		for (IQLFile file : files) {
 			types.addAll(EcoreUtil2.getAllContentsOfType(file, JvmType.class));	
 		}
-		types.addAll(typeFactory.getVisibleTypes(context));
+		types.addAll(typeFactory.getVisibleTypes(usedNamespaces, context));
 		return types;
 	}
 	
 	@Override
-	public Collection<JvmType> getAllInstantiateableTypes(Resource context) {
+	public Collection<JvmType> getAllInstantiateableTypes(Collection<String> usedNamespaces, Resource context) {
 		Collection<JvmType> result = new HashSet<>();
-		for (JvmType type : getAllTypes(context)) {
+		for (JvmType type : getAllTypes(usedNamespaces, context)) {
 			if (type instanceof JvmGenericType) {
 				JvmGenericType genericType = (JvmGenericType) type;
 				if (genericType.isInstantiateable() || typeUtils.isUserDefinedType(genericType, false)) {
@@ -321,9 +321,9 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	}
 	
 	@Override
-	public Collection<JvmType> getAllAssignableTypes(JvmTypeReference target, Resource context) {
+	public Collection<JvmType> getAllAssignableTypes(JvmTypeReference target, Collection<String> usedNamespaces,Resource context) {
 		Collection<JvmType> result = new HashSet<>();
-		for (JvmType type : getAllTypes(context)) {
+		for (JvmType type : getAllTypes(usedNamespaces, context)) {
 			if (isAssignable(target, type)) {
 				result.add(type);
 			}
@@ -498,6 +498,16 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		return files;
 	}
 	
+	
+	@Override
+	public Collection<String> getAllNamespaces() {
+		Collection<String> result = new HashSet<>();
+		for (Package p : Package.getPackages()) {
+			result.add(p.getName());
+		}
+		result.addAll(typeFactory.getJavaPackages());
+		return result;
+	}
 
 	
 

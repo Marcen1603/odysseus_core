@@ -9,9 +9,9 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
@@ -87,7 +87,7 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
       boolean metadata = (!Objects.equal(_metadataList, null));
       IQLStatement _statements = q.getStatements();
       IQLStatementBlock block = ((IQLStatementBlock) _statements);
-      Collection<IQLTerminalExpressionNew> newExpressions = this.helper.getNewExpressions(q);
+      Collection<IQLNewExpression> newExpressions = this.helper.getNewExpressions(q);
       Collection<IQLVariableStatement> varStmts = this.helper.getVarStatements(q);
       StringConcatenation _builder = new StringConcatenation();
       _builder.newLine();
@@ -269,7 +269,7 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
       _builder.append("\t\t");
       _builder.newLine();
       {
-        for(final IQLTerminalExpressionNew e : newExpressions) {
+        for(final IQLNewExpression e : newExpressions) {
           {
             boolean _and_4 = false;
             IQLArgumentsMap _argsMap_4 = e.getArgsMap();

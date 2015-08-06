@@ -13,7 +13,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
@@ -47,7 +47,7 @@ public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L
 	protected String getFirstLineIQLArgumentsMapKeyValue(IQLArgumentsMapKeyValue keyValue) {
 		JvmTypeReference typeRef = null;
 		IQLVariableStatement stmt = EcoreUtil2.getContainerOfType(keyValue, IQLVariableStatement.class);
-		IQLTerminalExpressionNew expr = EcoreUtil2.getContainerOfType(keyValue, IQLTerminalExpressionNew.class);
+		IQLNewExpression expr = EcoreUtil2.getContainerOfType(keyValue, IQLNewExpression.class);
 		if (stmt != null) {
 			typeRef = ((IQLVariableDeclaration)stmt.getVar()).getRef();
 		} else {

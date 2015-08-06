@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttributeSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLBooleanNotExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLBreakStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLCasePart;
@@ -35,6 +34,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaKeywords;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionBoolean;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionDouble;
@@ -58,16 +58,16 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclarationMember;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMultiplicativeExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLParenthesisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPlusMinusExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPostfixExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPrefixExpression;
@@ -77,13 +77,9 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSwitchStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionParenthesis;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionSuper;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionThis;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
@@ -351,13 +347,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass iqlMetadataValueSingleIDEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass iqlMetadataValueSingleTypeRefEClass = null;
 
   /**
@@ -596,56 +585,35 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass iqlAttributeSelectionEClass = null;
+  private EClass iqlJvmElementCallExpressionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass iqlMethodSelectionEClass = null;
+  private EClass iqlThisExpressionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass iqlTerminalExpressionVariableEClass = null;
+  private EClass iqlSuperExpressionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass iqlTerminalExpressionMethodEClass = null;
+  private EClass iqlParenthesisExpressionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass iqlTerminalExpressionThisEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass iqlTerminalExpressionSuperEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass iqlTerminalExpressionParenthesisEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass iqlTerminalExpressionNewEClass = null;
+  private EClass iqlNewExpressionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1241,6 +1209,26 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getIQLMemberSelection_Member()
+  {
+    return (EReference)iqlMemberSelectionEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getIQLMemberSelection_Args()
+  {
+    return (EReference)iqlMemberSelectionEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getIQLLiteralExpressionMapKeyValue()
   {
     return iqlLiteralExpressionMapKeyValueEClass;
@@ -1544,26 +1532,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
   public EAttribute getIQLMetadataValueSingleChar_Value()
   {
     return (EAttribute)iqlMetadataValueSingleCharEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getIQLMetadataValueSingleID()
-  {
-    return iqlMetadataValueSingleIDEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getIQLMetadataValueSingleID_Value()
-  {
-    return (EAttribute)iqlMetadataValueSingleIDEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2581,7 +2549,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLMemberSelectionExpression_RightOperand()
+  public EReference getIQLMemberSelectionExpression_Sel()
   {
     return (EReference)iqlMemberSelectionExpressionEClass.getEStructuralFeatures().get(1);
   }
@@ -2591,9 +2559,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getIQLAttributeSelection()
+  public EClass getIQLJvmElementCallExpression()
   {
-    return iqlAttributeSelectionEClass;
+    return iqlJvmElementCallExpressionEClass;
   }
 
   /**
@@ -2601,9 +2569,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLAttributeSelection_Var()
+  public EReference getIQLJvmElementCallExpression_Element()
   {
-    return (EReference)iqlAttributeSelectionEClass.getEStructuralFeatures().get(0);
+    return (EReference)iqlJvmElementCallExpressionEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2611,9 +2579,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getIQLMethodSelection()
+  public EReference getIQLJvmElementCallExpression_Args()
   {
-    return iqlMethodSelectionEClass;
+    return (EReference)iqlJvmElementCallExpressionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -2621,9 +2589,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLMethodSelection_Method()
+  public EClass getIQLThisExpression()
   {
-    return (EReference)iqlMethodSelectionEClass.getEStructuralFeatures().get(0);
+    return iqlThisExpressionEClass;
   }
 
   /**
@@ -2631,9 +2599,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLMethodSelection_Args()
+  public EClass getIQLSuperExpression()
   {
-    return (EReference)iqlMethodSelectionEClass.getEStructuralFeatures().get(1);
+    return iqlSuperExpressionEClass;
   }
 
   /**
@@ -2641,9 +2609,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getIQLTerminalExpressionVariable()
+  public EClass getIQLParenthesisExpression()
   {
-    return iqlTerminalExpressionVariableEClass;
+    return iqlParenthesisExpressionEClass;
   }
 
   /**
@@ -2651,9 +2619,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLTerminalExpressionVariable_Var()
+  public EReference getIQLParenthesisExpression_Expr()
   {
-    return (EReference)iqlTerminalExpressionVariableEClass.getEStructuralFeatures().get(0);
+    return (EReference)iqlParenthesisExpressionEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2661,9 +2629,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getIQLTerminalExpressionMethod()
+  public EClass getIQLNewExpression()
   {
-    return iqlTerminalExpressionMethodEClass;
+    return iqlNewExpressionEClass;
   }
 
   /**
@@ -2671,9 +2639,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLTerminalExpressionMethod_Method()
+  public EReference getIQLNewExpression_Ref()
   {
-    return (EReference)iqlTerminalExpressionMethodEClass.getEStructuralFeatures().get(0);
+    return (EReference)iqlNewExpressionEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2681,9 +2649,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLTerminalExpressionMethod_Args()
+  public EReference getIQLNewExpression_ArgsList()
   {
-    return (EReference)iqlTerminalExpressionMethodEClass.getEStructuralFeatures().get(1);
+    return (EReference)iqlNewExpressionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -2691,79 +2659,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getIQLTerminalExpressionThis()
+  public EReference getIQLNewExpression_ArgsMap()
   {
-    return iqlTerminalExpressionThisEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getIQLTerminalExpressionSuper()
-  {
-    return iqlTerminalExpressionSuperEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getIQLTerminalExpressionParenthesis()
-  {
-    return iqlTerminalExpressionParenthesisEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getIQLTerminalExpressionParenthesis_Expr()
-  {
-    return (EReference)iqlTerminalExpressionParenthesisEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getIQLTerminalExpressionNew()
-  {
-    return iqlTerminalExpressionNewEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getIQLTerminalExpressionNew_Ref()
-  {
-    return (EReference)iqlTerminalExpressionNewEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getIQLTerminalExpressionNew_ArgsList()
-  {
-    return (EReference)iqlTerminalExpressionNewEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getIQLTerminalExpressionNew_ArgsMap()
-  {
-    return (EReference)iqlTerminalExpressionNewEClass.getEStructuralFeatures().get(2);
+    return (EReference)iqlNewExpressionEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -3031,6 +2929,8 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     iqlExpressionEClass = createEClass(IQL_EXPRESSION);
 
     iqlMemberSelectionEClass = createEClass(IQL_MEMBER_SELECTION);
+    createEReference(iqlMemberSelectionEClass, IQL_MEMBER_SELECTION__MEMBER);
+    createEReference(iqlMemberSelectionEClass, IQL_MEMBER_SELECTION__ARGS);
 
     iqlLiteralExpressionMapKeyValueEClass = createEClass(IQL_LITERAL_EXPRESSION_MAP_KEY_VALUE);
     createEReference(iqlLiteralExpressionMapKeyValueEClass, IQL_LITERAL_EXPRESSION_MAP_KEY_VALUE__KEY);
@@ -3076,9 +2976,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
 
     iqlMetadataValueSingleCharEClass = createEClass(IQL_METADATA_VALUE_SINGLE_CHAR);
     createEAttribute(iqlMetadataValueSingleCharEClass, IQL_METADATA_VALUE_SINGLE_CHAR__VALUE);
-
-    iqlMetadataValueSingleIDEClass = createEClass(IQL_METADATA_VALUE_SINGLE_ID);
-    createEAttribute(iqlMetadataValueSingleIDEClass, IQL_METADATA_VALUE_SINGLE_ID__VALUE);
 
     iqlMetadataValueSingleTypeRefEClass = createEClass(IQL_METADATA_VALUE_SINGLE_TYPE_REF);
     createEReference(iqlMetadataValueSingleTypeRefEClass, IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE);
@@ -3214,33 +3111,23 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
 
     iqlMemberSelectionExpressionEClass = createEClass(IQL_MEMBER_SELECTION_EXPRESSION);
     createEReference(iqlMemberSelectionExpressionEClass, IQL_MEMBER_SELECTION_EXPRESSION__LEFT_OPERAND);
-    createEReference(iqlMemberSelectionExpressionEClass, IQL_MEMBER_SELECTION_EXPRESSION__RIGHT_OPERAND);
+    createEReference(iqlMemberSelectionExpressionEClass, IQL_MEMBER_SELECTION_EXPRESSION__SEL);
 
-    iqlAttributeSelectionEClass = createEClass(IQL_ATTRIBUTE_SELECTION);
-    createEReference(iqlAttributeSelectionEClass, IQL_ATTRIBUTE_SELECTION__VAR);
+    iqlJvmElementCallExpressionEClass = createEClass(IQL_JVM_ELEMENT_CALL_EXPRESSION);
+    createEReference(iqlJvmElementCallExpressionEClass, IQL_JVM_ELEMENT_CALL_EXPRESSION__ELEMENT);
+    createEReference(iqlJvmElementCallExpressionEClass, IQL_JVM_ELEMENT_CALL_EXPRESSION__ARGS);
 
-    iqlMethodSelectionEClass = createEClass(IQL_METHOD_SELECTION);
-    createEReference(iqlMethodSelectionEClass, IQL_METHOD_SELECTION__METHOD);
-    createEReference(iqlMethodSelectionEClass, IQL_METHOD_SELECTION__ARGS);
+    iqlThisExpressionEClass = createEClass(IQL_THIS_EXPRESSION);
 
-    iqlTerminalExpressionVariableEClass = createEClass(IQL_TERMINAL_EXPRESSION_VARIABLE);
-    createEReference(iqlTerminalExpressionVariableEClass, IQL_TERMINAL_EXPRESSION_VARIABLE__VAR);
+    iqlSuperExpressionEClass = createEClass(IQL_SUPER_EXPRESSION);
 
-    iqlTerminalExpressionMethodEClass = createEClass(IQL_TERMINAL_EXPRESSION_METHOD);
-    createEReference(iqlTerminalExpressionMethodEClass, IQL_TERMINAL_EXPRESSION_METHOD__METHOD);
-    createEReference(iqlTerminalExpressionMethodEClass, IQL_TERMINAL_EXPRESSION_METHOD__ARGS);
+    iqlParenthesisExpressionEClass = createEClass(IQL_PARENTHESIS_EXPRESSION);
+    createEReference(iqlParenthesisExpressionEClass, IQL_PARENTHESIS_EXPRESSION__EXPR);
 
-    iqlTerminalExpressionThisEClass = createEClass(IQL_TERMINAL_EXPRESSION_THIS);
-
-    iqlTerminalExpressionSuperEClass = createEClass(IQL_TERMINAL_EXPRESSION_SUPER);
-
-    iqlTerminalExpressionParenthesisEClass = createEClass(IQL_TERMINAL_EXPRESSION_PARENTHESIS);
-    createEReference(iqlTerminalExpressionParenthesisEClass, IQL_TERMINAL_EXPRESSION_PARENTHESIS__EXPR);
-
-    iqlTerminalExpressionNewEClass = createEClass(IQL_TERMINAL_EXPRESSION_NEW);
-    createEReference(iqlTerminalExpressionNewEClass, IQL_TERMINAL_EXPRESSION_NEW__REF);
-    createEReference(iqlTerminalExpressionNewEClass, IQL_TERMINAL_EXPRESSION_NEW__ARGS_LIST);
-    createEReference(iqlTerminalExpressionNewEClass, IQL_TERMINAL_EXPRESSION_NEW__ARGS_MAP);
+    iqlNewExpressionEClass = createEClass(IQL_NEW_EXPRESSION);
+    createEReference(iqlNewExpressionEClass, IQL_NEW_EXPRESSION__REF);
+    createEReference(iqlNewExpressionEClass, IQL_NEW_EXPRESSION__ARGS_LIST);
+    createEReference(iqlNewExpressionEClass, IQL_NEW_EXPRESSION__ARGS_MAP);
 
     iqlLiteralExpressionIntEClass = createEClass(IQL_LITERAL_EXPRESSION_INT);
     createEAttribute(iqlLiteralExpressionIntEClass, IQL_LITERAL_EXPRESSION_INT__VALUE);
@@ -3316,7 +3203,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     iqlMetadataValueSingleStringEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleBooleanEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleCharEClass.getESuperTypes().add(this.getIQLMetadataValue());
-    iqlMetadataValueSingleIDEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleTypeRefEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleNullEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueListEClass.getESuperTypes().add(this.getIQLMetadataValue());
@@ -3351,14 +3237,11 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     iqlPostfixExpressionEClass.getESuperTypes().add(this.getIQLExpression());
     iqlArrayExpressionEClass.getESuperTypes().add(this.getIQLExpression());
     iqlMemberSelectionExpressionEClass.getESuperTypes().add(this.getIQLExpression());
-    iqlAttributeSelectionEClass.getESuperTypes().add(this.getIQLMemberSelection());
-    iqlMethodSelectionEClass.getESuperTypes().add(this.getIQLMemberSelection());
-    iqlTerminalExpressionVariableEClass.getESuperTypes().add(this.getIQLExpression());
-    iqlTerminalExpressionMethodEClass.getESuperTypes().add(this.getIQLExpression());
-    iqlTerminalExpressionThisEClass.getESuperTypes().add(this.getIQLExpression());
-    iqlTerminalExpressionSuperEClass.getESuperTypes().add(this.getIQLExpression());
-    iqlTerminalExpressionParenthesisEClass.getESuperTypes().add(this.getIQLExpression());
-    iqlTerminalExpressionNewEClass.getESuperTypes().add(this.getIQLExpression());
+    iqlJvmElementCallExpressionEClass.getESuperTypes().add(this.getIQLExpression());
+    iqlThisExpressionEClass.getESuperTypes().add(this.getIQLExpression());
+    iqlSuperExpressionEClass.getESuperTypes().add(this.getIQLExpression());
+    iqlParenthesisExpressionEClass.getESuperTypes().add(this.getIQLExpression());
+    iqlNewExpressionEClass.getESuperTypes().add(this.getIQLExpression());
     iqlLiteralExpressionIntEClass.getESuperTypes().add(this.getIQLExpression());
     iqlLiteralExpressionDoubleEClass.getESuperTypes().add(this.getIQLExpression());
     iqlLiteralExpressionStringEClass.getESuperTypes().add(this.getIQLExpression());
@@ -3435,6 +3318,8 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     initEClass(iqlExpressionEClass, IQLExpression.class, "IQLExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(iqlMemberSelectionEClass, IQLMemberSelection.class, "IQLMemberSelection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getIQLMemberSelection_Member(), theTypesPackage.getJvmMember(), null, "member", null, 0, 1, IQLMemberSelection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIQLMemberSelection_Args(), this.getIQLArgumentsList(), null, "args", null, 0, 1, IQLMemberSelection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlLiteralExpressionMapKeyValueEClass, IQLLiteralExpressionMapKeyValue.class, "IQLLiteralExpressionMapKeyValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIQLLiteralExpressionMapKeyValue_Key(), this.getIQLExpression(), null, "key", null, 0, 1, IQLLiteralExpressionMapKeyValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3480,9 +3365,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
 
     initEClass(iqlMetadataValueSingleCharEClass, IQLMetadataValueSingleChar.class, "IQLMetadataValueSingleChar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIQLMetadataValueSingleChar_Value(), ecorePackage.getEChar(), "value", null, 0, 1, IQLMetadataValueSingleChar.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(iqlMetadataValueSingleIDEClass, IQLMetadataValueSingleID.class, "IQLMetadataValueSingleID", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getIQLMetadataValueSingleID_Value(), ecorePackage.getEString(), "value", null, 0, 1, IQLMetadataValueSingleID.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlMetadataValueSingleTypeRefEClass, IQLMetadataValueSingleTypeRef.class, "IQLMetadataValueSingleTypeRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIQLMetadataValueSingleTypeRef_Value(), theTypesPackage.getJvmTypeReference(), null, "value", null, 0, 1, IQLMetadataValueSingleTypeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3618,33 +3500,23 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
 
     initEClass(iqlMemberSelectionExpressionEClass, IQLMemberSelectionExpression.class, "IQLMemberSelectionExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIQLMemberSelectionExpression_LeftOperand(), this.getIQLExpression(), null, "leftOperand", null, 0, 1, IQLMemberSelectionExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLMemberSelectionExpression_RightOperand(), this.getIQLMemberSelection(), null, "rightOperand", null, 0, 1, IQLMemberSelectionExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIQLMemberSelectionExpression_Sel(), this.getIQLMemberSelection(), null, "sel", null, 0, 1, IQLMemberSelectionExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(iqlAttributeSelectionEClass, IQLAttributeSelection.class, "IQLAttributeSelection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIQLAttributeSelection_Var(), theTypesPackage.getJvmField(), null, "var", null, 0, 1, IQLAttributeSelection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(iqlJvmElementCallExpressionEClass, IQLJvmElementCallExpression.class, "IQLJvmElementCallExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getIQLJvmElementCallExpression_Element(), theTypesPackage.getJvmIdentifiableElement(), null, "element", null, 0, 1, IQLJvmElementCallExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIQLJvmElementCallExpression_Args(), this.getIQLArgumentsList(), null, "args", null, 0, 1, IQLJvmElementCallExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(iqlMethodSelectionEClass, IQLMethodSelection.class, "IQLMethodSelection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIQLMethodSelection_Method(), theTypesPackage.getJvmOperation(), null, "method", null, 0, 1, IQLMethodSelection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLMethodSelection_Args(), this.getIQLArgumentsList(), null, "args", null, 0, 1, IQLMethodSelection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(iqlThisExpressionEClass, IQLThisExpression.class, "IQLThisExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-    initEClass(iqlTerminalExpressionVariableEClass, IQLTerminalExpressionVariable.class, "IQLTerminalExpressionVariable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIQLTerminalExpressionVariable_Var(), theTypesPackage.getJvmIdentifiableElement(), null, "var", null, 0, 1, IQLTerminalExpressionVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(iqlSuperExpressionEClass, IQLSuperExpression.class, "IQLSuperExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-    initEClass(iqlTerminalExpressionMethodEClass, IQLTerminalExpressionMethod.class, "IQLTerminalExpressionMethod", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIQLTerminalExpressionMethod_Method(), theTypesPackage.getJvmOperation(), null, "method", null, 0, 1, IQLTerminalExpressionMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLTerminalExpressionMethod_Args(), this.getIQLArgumentsList(), null, "args", null, 0, 1, IQLTerminalExpressionMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(iqlParenthesisExpressionEClass, IQLParenthesisExpression.class, "IQLParenthesisExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getIQLParenthesisExpression_Expr(), this.getIQLExpression(), null, "expr", null, 0, 1, IQLParenthesisExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(iqlTerminalExpressionThisEClass, IQLTerminalExpressionThis.class, "IQLTerminalExpressionThis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(iqlTerminalExpressionSuperEClass, IQLTerminalExpressionSuper.class, "IQLTerminalExpressionSuper", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(iqlTerminalExpressionParenthesisEClass, IQLTerminalExpressionParenthesis.class, "IQLTerminalExpressionParenthesis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIQLTerminalExpressionParenthesis_Expr(), this.getIQLExpression(), null, "expr", null, 0, 1, IQLTerminalExpressionParenthesis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(iqlTerminalExpressionNewEClass, IQLTerminalExpressionNew.class, "IQLTerminalExpressionNew", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIQLTerminalExpressionNew_Ref(), theTypesPackage.getJvmTypeReference(), null, "ref", null, 0, 1, IQLTerminalExpressionNew.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLTerminalExpressionNew_ArgsList(), this.getIQLArgumentsList(), null, "argsList", null, 0, 1, IQLTerminalExpressionNew.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLTerminalExpressionNew_ArgsMap(), this.getIQLArgumentsMap(), null, "argsMap", null, 0, 1, IQLTerminalExpressionNew.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(iqlNewExpressionEClass, IQLNewExpression.class, "IQLNewExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getIQLNewExpression_Ref(), theTypesPackage.getJvmTypeReference(), null, "ref", null, 0, 1, IQLNewExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIQLNewExpression_ArgsList(), this.getIQLArgumentsList(), null, "argsList", null, 0, 1, IQLNewExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIQLNewExpression_ArgsMap(), this.getIQLArgumentsMap(), null, "argsMap", null, 0, 1, IQLNewExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlLiteralExpressionIntEClass, IQLLiteralExpressionInt.class, "IQLLiteralExpressionInt", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIQLLiteralExpressionInt_Value(), ecorePackage.getEInt(), "value", null, 0, 1, IQLLiteralExpressionInt.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

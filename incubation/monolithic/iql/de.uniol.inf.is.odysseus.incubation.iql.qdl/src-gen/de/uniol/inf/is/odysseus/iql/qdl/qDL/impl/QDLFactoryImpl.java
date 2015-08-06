@@ -69,6 +69,14 @@ public class QDLFactoryImpl extends EFactoryImpl implements QDLFactory
       case QDLPackage.QDL_QUERY: return createQDLQuery();
       case QDLPackage.IQL_SUBSCRIBE_EXPRESSION: return createIQLSubscribeExpression();
       case QDLPackage.IQL_PORT_EXPRESSION: return createIQLPortExpression();
+      case QDLPackage.IQL_METADATA_VALUE_SINGLE_INT: return createIQLMetadataValueSingleInt();
+      case QDLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE: return createIQLMetadataValueSingleDouble();
+      case QDLPackage.IQL_METADATA_VALUE_SINGLE_STRING: return createIQLMetadataValueSingleString();
+      case QDLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN: return createIQLMetadataValueSingleBoolean();
+      case QDLPackage.IQL_METADATA_VALUE_SINGLE_CHAR: return createIQLMetadataValueSingleChar();
+      case QDLPackage.QDL_METADATA_VALUE_SINGLE_ID: return createQDLMetadataValueSingleID();
+      case QDLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF: return createIQLMetadataValueSingleTypeRef();
+      case QDLPackage.IQL_METADATA_VALUE_SINGLE_NULL: return createIQLMetadataValueSingleNull();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -127,6 +135,94 @@ public class QDLFactoryImpl extends EFactoryImpl implements QDLFactory
   {
     IQLPortExpressionImpl iqlPortExpression = new IQLPortExpressionImpl();
     return iqlPortExpression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLMetadataValueSingleInt createIQLMetadataValueSingleInt()
+  {
+    IQLMetadataValueSingleIntImpl iqlMetadataValueSingleInt = new IQLMetadataValueSingleIntImpl();
+    return iqlMetadataValueSingleInt;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLMetadataValueSingleDouble createIQLMetadataValueSingleDouble()
+  {
+    IQLMetadataValueSingleDoubleImpl iqlMetadataValueSingleDouble = new IQLMetadataValueSingleDoubleImpl();
+    return iqlMetadataValueSingleDouble;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLMetadataValueSingleString createIQLMetadataValueSingleString()
+  {
+    IQLMetadataValueSingleStringImpl iqlMetadataValueSingleString = new IQLMetadataValueSingleStringImpl();
+    return iqlMetadataValueSingleString;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLMetadataValueSingleBoolean createIQLMetadataValueSingleBoolean()
+  {
+    IQLMetadataValueSingleBooleanImpl iqlMetadataValueSingleBoolean = new IQLMetadataValueSingleBooleanImpl();
+    return iqlMetadataValueSingleBoolean;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLMetadataValueSingleChar createIQLMetadataValueSingleChar()
+  {
+    IQLMetadataValueSingleCharImpl iqlMetadataValueSingleChar = new IQLMetadataValueSingleCharImpl();
+    return iqlMetadataValueSingleChar;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public QDLMetadataValueSingleID createQDLMetadataValueSingleID()
+  {
+    QDLMetadataValueSingleIDImpl qdlMetadataValueSingleID = new QDLMetadataValueSingleIDImpl();
+    return qdlMetadataValueSingleID;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLMetadataValueSingleTypeRef createIQLMetadataValueSingleTypeRef()
+  {
+    IQLMetadataValueSingleTypeRefImpl iqlMetadataValueSingleTypeRef = new IQLMetadataValueSingleTypeRefImpl();
+    return iqlMetadataValueSingleTypeRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLMetadataValueSingleNull createIQLMetadataValueSingleNull()
+  {
+    IQLMetadataValueSingleNullImpl iqlMetadataValueSingleNull = new IQLMetadataValueSingleNullImpl();
+    return iqlMetadataValueSingleNull;
   }
 
   /**

@@ -8,8 +8,8 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 
 public interface IIQLCompilerHelper {
@@ -18,7 +18,7 @@ public interface IIQLCompilerHelper {
 	
 	String getClassName(EObject obj);
 	
-	Collection<IQLTerminalExpressionNew> getNewExpressions(EObject obj);
+	Collection<IQLNewExpression> getNewExpressions(EObject obj);
 	
 	Collection<IQLAttribute> getAttributes(EObject obj);
 	Collection<IQLVariableStatement> getVarStatements(EObject obj);

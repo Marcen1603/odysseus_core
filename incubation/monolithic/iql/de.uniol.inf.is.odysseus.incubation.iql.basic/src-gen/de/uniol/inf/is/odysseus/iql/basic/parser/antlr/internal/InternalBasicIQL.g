@@ -1595,56 +1595,25 @@ ruleIQLMetadataValueSingle returns [EObject current=null]
 
 )
 ))
-    |((((
-)(
-(
-RULE_ID
-
-)
-)))=>((
-    {
-        $current = forceCreateModelElement(
-            grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleIDAction_5_0_0(),
-            $current);
-    }
-)(
-(
-		lv_value_11_0=RULE_ID
-		{
-			newLeafNode(lv_value_11_0, grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_5_0_1_0()); 
-		}
-		{
-	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getIQLMetadataValueSingleRule());
-	        }
-       		setWithLastConsumed(
-       			$current, 
-       			"value",
-        		lv_value_11_0, 
-        		"ID");
-	    }
-
-)
-)))
     |((
     {
         $current = forceCreateModelElement(
-            grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleTypeRefAction_6_0(),
+            grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleTypeRefAction_5_0(),
             $current);
     }
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_6_1_0()); 
+	        newCompositeNode(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_5_1_0()); 
 	    }
-		lv_value_13_0=ruleJvmTypeReference		{
+		lv_value_11_0=ruleJvmTypeReference		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getIQLMetadataValueSingleRule());
 	        }
        		set(
        			$current, 
        			"value",
-        		lv_value_13_0, 
+        		lv_value_11_0, 
         		"JvmTypeReference");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -1654,21 +1623,21 @@ RULE_ID
     |((
     {
         $current = forceCreateModelElement(
-            grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleNullAction_7_0(),
+            grammarAccess.getIQLMetadataValueSingleAccess().getIQLMetadataValueSingleNullAction_6_0(),
             $current);
     }
 )(
 (
-		lv_value_15_0=	'null' 
+		lv_value_13_0=	'null' 
     {
-        newLeafNode(lv_value_15_0, grammarAccess.getIQLMetadataValueSingleAccess().getValueNullKeyword_7_1_0());
+        newLeafNode(lv_value_13_0, grammarAccess.getIQLMetadataValueSingleAccess().getValueNullKeyword_6_1_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getIQLMetadataValueSingleRule());
 	        }
-       		setWithLastConsumed($current, "value", lv_value_15_0, "null");
+       		setWithLastConsumed($current, "value", lv_value_13_0, "null");
 	    }
 
 )
@@ -4738,11 +4707,11 @@ ruleIQLMemberCallExpression returns [EObject current=null]
     @after { leaveRule(); }:
 (
     { 
-        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getIQLTerminalExpressionParserRuleCall_0()); 
+        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getIQLOtherExpressionsParserRuleCall_0()); 
     }
-    this_IQLTerminalExpression_0=ruleIQLTerminalExpression
+    this_IQLOtherExpressions_0=ruleIQLOtherExpressions
     { 
-        $current = $this_IQLTerminalExpression_0.current; 
+        $current = $this_IQLOtherExpressions_0.current; 
         afterParserOrEnumRuleCall();
     }
 ((((
@@ -4825,38 +4794,20 @@ ruleIQLExpression
     }
 ))(
 (
-(
 		{ 
-	        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getRightOperandIQLAttributeSelectionParserRuleCall_2_1_0_0()); 
+	        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getSelIQLMemberSelectionParserRuleCall_2_1_0()); 
 	    }
-		lv_rightOperand_9_1=ruleIQLAttributeSelection		{
+		lv_sel_9_0=ruleIQLMemberSelection		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getIQLMemberCallExpressionRule());
 	        }
        		set(
        			$current, 
-       			"rightOperand",
-        		lv_rightOperand_9_1, 
-        		"IQLAttributeSelection");
+       			"sel",
+        		lv_sel_9_0, 
+        		"IQLMemberSelection");
 	        afterParserOrEnumRuleCall();
 	    }
-
-    |		{ 
-	        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getRightOperandIQLMethodSelectionParserRuleCall_2_1_0_1()); 
-	    }
-		lv_rightOperand_9_2=ruleIQLMethodSelection		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getIQLMemberCallExpressionRule());
-	        }
-       		set(
-       			$current, 
-       			"rightOperand",
-        		lv_rightOperand_9_2, 
-        		"IQLMethodSelection");
-	        afterParserOrEnumRuleCall();
-	    }
-
-)
 
 )
 ))*)
@@ -4866,87 +4817,99 @@ ruleIQLExpression
 
 
 
-// Entry rule entryRuleIQLAttributeSelection
-entryRuleIQLAttributeSelection returns [EObject current=null] 
+// Entry rule entryRuleIQLMemberSelection
+entryRuleIQLMemberSelection returns [EObject current=null] 
 	:
-	{ newCompositeNode(grammarAccess.getIQLAttributeSelectionRule()); }
-	 iv_ruleIQLAttributeSelection=ruleIQLAttributeSelection 
-	 { $current=$iv_ruleIQLAttributeSelection.current; } 
+	{ newCompositeNode(grammarAccess.getIQLMemberSelectionRule()); }
+	 iv_ruleIQLMemberSelection=ruleIQLMemberSelection 
+	 { $current=$iv_ruleIQLMemberSelection.current; } 
 	 EOF 
 ;
 
-// Rule IQLAttributeSelection
-ruleIQLAttributeSelection returns [EObject current=null] 
+// Rule IQLMemberSelection
+ruleIQLMemberSelection returns [EObject current=null] 
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
 ((
-    {
-        $current = forceCreateModelElement(
-            grammarAccess.getIQLAttributeSelectionAccess().getIQLAttributeSelectionAction_0(),
-            $current);
-    }
-)(
 (
 		{
 			if ($current==null) {
-	            $current = createModelElement(grammarAccess.getIQLAttributeSelectionRule());
+	            $current = createModelElement(grammarAccess.getIQLMemberSelectionRule());
 	        }
         }
-	otherlv_1=RULE_ID
+	otherlv_0=RULE_ID
 	{
-		newLeafNode(otherlv_1, grammarAccess.getIQLAttributeSelectionAccess().getVarJvmFieldCrossReference_1_0()); 
-	}
-
-)
-))
-;
-
-
-
-
-
-// Entry rule entryRuleIQLMethodSelection
-entryRuleIQLMethodSelection returns [EObject current=null] 
-	:
-	{ newCompositeNode(grammarAccess.getIQLMethodSelectionRule()); }
-	 iv_ruleIQLMethodSelection=ruleIQLMethodSelection 
-	 { $current=$iv_ruleIQLMethodSelection.current; } 
-	 EOF 
-;
-
-// Rule IQLMethodSelection
-ruleIQLMethodSelection returns [EObject current=null] 
-    @init { enterRule(); 
-    }
-    @after { leaveRule(); }:
-((
-    {
-        $current = forceCreateModelElement(
-            grammarAccess.getIQLMethodSelectionAccess().getIQLMethodSelectionAction_0(),
-            $current);
-    }
-)(
-(
-		{
-			if ($current==null) {
-	            $current = createModelElement(grammarAccess.getIQLMethodSelectionRule());
-	        }
-        }
-	otherlv_1=RULE_ID
-	{
-		newLeafNode(otherlv_1, grammarAccess.getIQLMethodSelectionAccess().getMethodJvmOperationCrossReference_1_0()); 
+		newLeafNode(otherlv_0, grammarAccess.getIQLMemberSelectionAccess().getMemberJvmMemberCrossReference_0_0()); 
 	}
 
 )
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIQLMethodSelectionAccess().getArgsIQLArgumentsListParserRuleCall_2_0()); 
+	        newCompositeNode(grammarAccess.getIQLMemberSelectionAccess().getArgsIQLArgumentsListParserRuleCall_1_0()); 
+	    }
+		lv_args_1_0=ruleIQLArgumentsList		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getIQLMemberSelectionRule());
+	        }
+       		set(
+       			$current, 
+       			"args",
+        		lv_args_1_0, 
+        		"IQLArgumentsList");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)?)
+;
+
+
+
+
+
+// Entry rule entryRuleIQLOtherExpressions
+entryRuleIQLOtherExpressions returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getIQLOtherExpressionsRule()); }
+	 iv_ruleIQLOtherExpressions=ruleIQLOtherExpressions 
+	 { $current=$iv_ruleIQLOtherExpressions.current; } 
+	 EOF 
+;
+
+// Rule IQLOtherExpressions
+ruleIQLOtherExpressions returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(((
+    {
+        $current = forceCreateModelElement(
+            grammarAccess.getIQLOtherExpressionsAccess().getIQLJvmElementCallExpressionAction_0_0(),
+            $current);
+    }
+)(
+(
+		{
+			if ($current==null) {
+	            $current = createModelElement(grammarAccess.getIQLOtherExpressionsRule());
+	        }
+        }
+	otherlv_1=RULE_ID
+	{
+		newLeafNode(otherlv_1, grammarAccess.getIQLOtherExpressionsAccess().getElementJvmIdentifiableElementCrossReference_0_1_0()); 
+	}
+
+)
+)(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getIQLOtherExpressionsAccess().getArgsIQLArgumentsListParserRuleCall_0_2_0()); 
 	    }
 		lv_args_2_0=ruleIQLArgumentsList		{
 	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getIQLMethodSelectionRule());
+	            $current = createModelElementForParent(grammarAccess.getIQLOtherExpressionsRule());
 	        }
        		set(
        			$current, 
@@ -4957,163 +4920,85 @@ ruleIQLMethodSelection returns [EObject current=null]
 	    }
 
 )
-))
-;
-
-
-
-
-
-// Entry rule entryRuleIQLTerminalExpression
-entryRuleIQLTerminalExpression returns [EObject current=null] 
-	:
-	{ newCompositeNode(grammarAccess.getIQLTerminalExpressionRule()); }
-	 iv_ruleIQLTerminalExpression=ruleIQLTerminalExpression 
-	 { $current=$iv_ruleIQLTerminalExpression.current; } 
-	 EOF 
-;
-
-// Rule IQLTerminalExpression
-ruleIQLTerminalExpression returns [EObject current=null] 
-    @init { enterRule(); 
-    }
-    @after { leaveRule(); }:
-(((
-    {
-        $current = forceCreateModelElement(
-            grammarAccess.getIQLTerminalExpressionAccess().getIQLTerminalExpressionVariableAction_0_0(),
-            $current);
-    }
-)(
-(
-		{
-			if ($current==null) {
-	            $current = createModelElement(grammarAccess.getIQLTerminalExpressionRule());
-	        }
-        }
-	otherlv_1=RULE_ID
-	{
-		newLeafNode(otherlv_1, grammarAccess.getIQLTerminalExpressionAccess().getVarJvmIdentifiableElementCrossReference_0_1_0()); 
-	}
-
-)
-))
+)?)
     |((
     {
         $current = forceCreateModelElement(
-            grammarAccess.getIQLTerminalExpressionAccess().getIQLTerminalExpressionMethodAction_1_0(),
+            grammarAccess.getIQLOtherExpressionsAccess().getIQLThisExpressionAction_1_0(),
             $current);
     }
-)(
-(
-		{
-			if ($current==null) {
-	            $current = createModelElement(grammarAccess.getIQLTerminalExpressionRule());
-	        }
-        }
-	otherlv_3=RULE_ID
-	{
-		newLeafNode(otherlv_3, grammarAccess.getIQLTerminalExpressionAccess().getMethodJvmOperationCrossReference_1_1_0()); 
-	}
-
-)
-)(
-(
-		{ 
-	        newCompositeNode(grammarAccess.getIQLTerminalExpressionAccess().getArgsIQLArgumentsListParserRuleCall_1_2_0()); 
-	    }
-		lv_args_4_0=ruleIQLArgumentsList		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getIQLTerminalExpressionRule());
-	        }
-       		set(
-       			$current, 
-       			"args",
-        		lv_args_4_0, 
-        		"IQLArgumentsList");
-	        afterParserOrEnumRuleCall();
-	    }
-
-)
-))
-    |((
+)	otherlv_4='this' 
     {
-        $current = forceCreateModelElement(
-            grammarAccess.getIQLTerminalExpressionAccess().getIQLTerminalExpressionThisAction_2_0(),
-            $current);
-    }
-)	otherlv_6='this' 
-    {
-    	newLeafNode(otherlv_6, grammarAccess.getIQLTerminalExpressionAccess().getThisKeyword_2_1());
+    	newLeafNode(otherlv_4, grammarAccess.getIQLOtherExpressionsAccess().getThisKeyword_1_1());
     }
 )
     |((
     {
         $current = forceCreateModelElement(
-            grammarAccess.getIQLTerminalExpressionAccess().getIQLTerminalExpressionSuperAction_3_0(),
+            grammarAccess.getIQLOtherExpressionsAccess().getIQLSuperExpressionAction_2_0(),
             $current);
     }
-)	otherlv_8='super' 
+)	otherlv_6='super' 
     {
-    	newLeafNode(otherlv_8, grammarAccess.getIQLTerminalExpressionAccess().getSuperKeyword_3_1());
+    	newLeafNode(otherlv_6, grammarAccess.getIQLOtherExpressionsAccess().getSuperKeyword_2_1());
     }
 )
     |((
     {
         $current = forceCreateModelElement(
-            grammarAccess.getIQLTerminalExpressionAccess().getIQLTerminalExpressionParenthesisAction_4_0(),
+            grammarAccess.getIQLOtherExpressionsAccess().getIQLParenthesisExpressionAction_3_0(),
             $current);
     }
-)	otherlv_10='(' 
+)	otherlv_8='(' 
     {
-    	newLeafNode(otherlv_10, grammarAccess.getIQLTerminalExpressionAccess().getLeftParenthesisKeyword_4_1());
+    	newLeafNode(otherlv_8, grammarAccess.getIQLOtherExpressionsAccess().getLeftParenthesisKeyword_3_1());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIQLTerminalExpressionAccess().getExprIQLExpressionParserRuleCall_4_2_0()); 
+	        newCompositeNode(grammarAccess.getIQLOtherExpressionsAccess().getExprIQLExpressionParserRuleCall_3_2_0()); 
 	    }
-		lv_expr_11_0=ruleIQLExpression		{
+		lv_expr_9_0=ruleIQLExpression		{
 	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getIQLTerminalExpressionRule());
+	            $current = createModelElementForParent(grammarAccess.getIQLOtherExpressionsRule());
 	        }
        		set(
        			$current, 
        			"expr",
-        		lv_expr_11_0, 
+        		lv_expr_9_0, 
         		"IQLExpression");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)	otherlv_12=')' 
+)	otherlv_10=')' 
     {
-    	newLeafNode(otherlv_12, grammarAccess.getIQLTerminalExpressionAccess().getRightParenthesisKeyword_4_3());
+    	newLeafNode(otherlv_10, grammarAccess.getIQLOtherExpressionsAccess().getRightParenthesisKeyword_3_3());
     }
 )
     |((
     {
         $current = forceCreateModelElement(
-            grammarAccess.getIQLTerminalExpressionAccess().getIQLTerminalExpressionNewAction_5_0(),
+            grammarAccess.getIQLOtherExpressionsAccess().getIQLNewExpressionAction_4_0(),
             $current);
     }
-)	otherlv_14='new' 
+)	otherlv_12='new' 
     {
-    	newLeafNode(otherlv_14, grammarAccess.getIQLTerminalExpressionAccess().getNewKeyword_5_1());
+    	newLeafNode(otherlv_12, grammarAccess.getIQLOtherExpressionsAccess().getNewKeyword_4_1());
     }
 ((
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIQLTerminalExpressionAccess().getRefIQLArrayTypeRefParserRuleCall_5_2_0_0()); 
+	        newCompositeNode(grammarAccess.getIQLOtherExpressionsAccess().getRefIQLArrayTypeRefParserRuleCall_4_2_0_0()); 
 	    }
-		lv_ref_15_0=ruleIQLArrayTypeRef		{
+		lv_ref_13_0=ruleIQLArrayTypeRef		{
 	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getIQLTerminalExpressionRule());
+	            $current = createModelElementForParent(grammarAccess.getIQLOtherExpressionsRule());
 	        }
        		set(
        			$current, 
        			"ref",
-        		lv_ref_15_0, 
+        		lv_ref_13_0, 
         		"IQLArrayTypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -5123,16 +5008,16 @@ ruleIQLTerminalExpression returns [EObject current=null]
     |((
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIQLTerminalExpressionAccess().getRefIQLSimpleTypeRefParserRuleCall_5_2_1_0_0()); 
+	        newCompositeNode(grammarAccess.getIQLOtherExpressionsAccess().getRefIQLSimpleTypeRefParserRuleCall_4_2_1_0_0()); 
 	    }
-		lv_ref_16_0=ruleIQLSimpleTypeRef		{
+		lv_ref_14_0=ruleIQLSimpleTypeRef		{
 	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getIQLTerminalExpressionRule());
+	            $current = createModelElementForParent(grammarAccess.getIQLOtherExpressionsRule());
 	        }
        		set(
        			$current, 
        			"ref",
-        		lv_ref_16_0, 
+        		lv_ref_14_0, 
         		"IQLSimpleTypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -5141,16 +5026,16 @@ ruleIQLTerminalExpression returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIQLTerminalExpressionAccess().getArgsListIQLArgumentsListParserRuleCall_5_2_1_1_0()); 
+	        newCompositeNode(grammarAccess.getIQLOtherExpressionsAccess().getArgsListIQLArgumentsListParserRuleCall_4_2_1_1_0()); 
 	    }
-		lv_argsList_17_0=ruleIQLArgumentsList		{
+		lv_argsList_15_0=ruleIQLArgumentsList		{
 	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getIQLTerminalExpressionRule());
+	            $current = createModelElementForParent(grammarAccess.getIQLOtherExpressionsRule());
 	        }
        		set(
        			$current, 
        			"argsList",
-        		lv_argsList_17_0, 
+        		lv_argsList_15_0, 
         		"IQLArgumentsList");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -5159,16 +5044,16 @@ ruleIQLTerminalExpression returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIQLTerminalExpressionAccess().getArgsMapIQLArgumentsMapParserRuleCall_5_2_1_2_0()); 
+	        newCompositeNode(grammarAccess.getIQLOtherExpressionsAccess().getArgsMapIQLArgumentsMapParserRuleCall_4_2_1_2_0()); 
 	    }
-		lv_argsMap_18_0=ruleIQLArgumentsMap		{
+		lv_argsMap_16_0=ruleIQLArgumentsMap		{
 	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getIQLTerminalExpressionRule());
+	            $current = createModelElementForParent(grammarAccess.getIQLOtherExpressionsRule());
 	        }
        		set(
        			$current, 
        			"argsMap",
-        		lv_argsMap_18_0, 
+        		lv_argsMap_16_0, 
         		"IQLArgumentsMap");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -5177,11 +5062,11 @@ ruleIQLTerminalExpression returns [EObject current=null]
 )?)))
     |
     { 
-        newCompositeNode(grammarAccess.getIQLTerminalExpressionAccess().getIQLLiteralExpressionParserRuleCall_6()); 
+        newCompositeNode(grammarAccess.getIQLOtherExpressionsAccess().getIQLLiteralExpressionParserRuleCall_5()); 
     }
-    this_IQLLiteralExpression_19=ruleIQLLiteralExpression
+    this_IQLLiteralExpression_17=ruleIQLLiteralExpression
     { 
-        $current = $this_IQLLiteralExpression_19.current; 
+        $current = $this_IQLLiteralExpression_17.current; 
         afterParserOrEnumRuleCall();
     }
 )

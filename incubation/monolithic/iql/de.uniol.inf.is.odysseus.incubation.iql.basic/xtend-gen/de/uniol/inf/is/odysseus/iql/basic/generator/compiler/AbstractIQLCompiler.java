@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclarationMember;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
@@ -81,7 +81,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       String name = c.getSimpleName();
       JvmTypeReference superClass = c.getExtendedClass();
       EList<JvmTypeReference> interfaces = c.getExtendedInterfaces();
-      Collection<IQLTerminalExpressionNew> newExpressions = this.helper.getNewExpressions(c);
+      Collection<IQLNewExpression> newExpressions = this.helper.getNewExpressions(c);
       Collection<IQLAttribute> attributes = this.helper.getAttributes(c);
       Collection<IQLVariableStatement> varStmts = this.helper.getVarStatements(c);
       StringConcatenation _builder = new StringConcatenation();
@@ -136,7 +136,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       _builder.append("\t");
       _builder.newLine();
       {
-        for(final IQLTerminalExpressionNew e : newExpressions) {
+        for(final IQLNewExpression e : newExpressions) {
           {
             boolean _and = false;
             IQLArgumentsMap _argsMap = e.getArgsMap();

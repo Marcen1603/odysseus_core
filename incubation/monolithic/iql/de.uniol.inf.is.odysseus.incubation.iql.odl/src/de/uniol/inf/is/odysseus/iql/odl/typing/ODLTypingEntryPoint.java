@@ -15,7 +15,7 @@ public class ODLTypingEntryPoint extends AbstractIQLTypingEntryPoint<ODLTypeBuil
 		super(builder);
 		this.initParameters();
 	}
-	
+		
 	
 	private void initParameters() {
 		for (Class<? extends IParameter<?>> element : ParameterFactory.getParameters()) {

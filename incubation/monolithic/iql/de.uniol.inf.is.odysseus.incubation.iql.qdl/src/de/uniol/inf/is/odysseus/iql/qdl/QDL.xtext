@@ -43,3 +43,14 @@ IQLPortExpression returns iql::IQLExpression:
 IQLSubscribe:
 	'->' | '<-'
 ;
+
+IQLMetadataValueSingle returns iql::IQLMetadataValue:
+	{IQLMetadataValueSingleInt} value = INT|
+	{IQLMetadataValueSingleDouble} value = DOUBLE|
+	{IQLMetadataValueSingleString} value = STRING|
+	{IQLMetadataValueSingleBoolean} value = BOOLEAN|
+	{IQLMetadataValueSingleChar} value = CHAR |
+	(=>({QDLMetadataValueSingleID} value = ID)) |
+	{IQLMetadataValueSingleTypeRef} value = JvmTypeReference |	
+	{IQLMetadataValueSingleNull} value = 'null'	
+;

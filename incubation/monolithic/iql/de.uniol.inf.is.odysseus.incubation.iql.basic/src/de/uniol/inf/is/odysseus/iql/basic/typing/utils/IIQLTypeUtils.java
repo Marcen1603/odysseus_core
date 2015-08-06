@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.iql.basic.typing.utils;
 
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
@@ -51,4 +52,11 @@ public interface IIQLTypeUtils {
 	Class<?> getJavaType(String name);
 	boolean isPrimitive(JvmTypeReference parameterType);
 	boolean isPrimitive(JvmType type);
+	
+	boolean isSetter(JvmOperation method);
+	boolean isGetter(JvmOperation method);
+	
+	String getNameWithoutSetterPrefix(JvmOperation method);
+	String getNameWithoutGetterPrefix(JvmOperation method);
+
 }

@@ -329,15 +329,6 @@ public interface BasicIQLFactory extends EFactory
   IQLMetadataValueSingleChar createIQLMetadataValueSingleChar();
 
   /**
-   * Returns a new object of class '<em>IQL Metadata Value Single ID</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Metadata Value Single ID</em>'.
-   * @generated
-   */
-  IQLMetadataValueSingleID createIQLMetadataValueSingleID();
-
-  /**
    * Returns a new object of class '<em>IQL Metadata Value Single Type Ref</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -644,76 +635,49 @@ public interface BasicIQLFactory extends EFactory
   IQLMemberSelectionExpression createIQLMemberSelectionExpression();
 
   /**
-   * Returns a new object of class '<em>IQL Attribute Selection</em>'.
+   * Returns a new object of class '<em>IQL Jvm Element Call Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Attribute Selection</em>'.
+   * @return a new object of class '<em>IQL Jvm Element Call Expression</em>'.
    * @generated
    */
-  IQLAttributeSelection createIQLAttributeSelection();
+  IQLJvmElementCallExpression createIQLJvmElementCallExpression();
 
   /**
-   * Returns a new object of class '<em>IQL Method Selection</em>'.
+   * Returns a new object of class '<em>IQL This Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Method Selection</em>'.
+   * @return a new object of class '<em>IQL This Expression</em>'.
    * @generated
    */
-  IQLMethodSelection createIQLMethodSelection();
+  IQLThisExpression createIQLThisExpression();
 
   /**
-   * Returns a new object of class '<em>IQL Terminal Expression Variable</em>'.
+   * Returns a new object of class '<em>IQL Super Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Terminal Expression Variable</em>'.
+   * @return a new object of class '<em>IQL Super Expression</em>'.
    * @generated
    */
-  IQLTerminalExpressionVariable createIQLTerminalExpressionVariable();
+  IQLSuperExpression createIQLSuperExpression();
 
   /**
-   * Returns a new object of class '<em>IQL Terminal Expression Method</em>'.
+   * Returns a new object of class '<em>IQL Parenthesis Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Terminal Expression Method</em>'.
+   * @return a new object of class '<em>IQL Parenthesis Expression</em>'.
    * @generated
    */
-  IQLTerminalExpressionMethod createIQLTerminalExpressionMethod();
+  IQLParenthesisExpression createIQLParenthesisExpression();
 
   /**
-   * Returns a new object of class '<em>IQL Terminal Expression This</em>'.
+   * Returns a new object of class '<em>IQL New Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Terminal Expression This</em>'.
+   * @return a new object of class '<em>IQL New Expression</em>'.
    * @generated
    */
-  IQLTerminalExpressionThis createIQLTerminalExpressionThis();
-
-  /**
-   * Returns a new object of class '<em>IQL Terminal Expression Super</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Terminal Expression Super</em>'.
-   * @generated
-   */
-  IQLTerminalExpressionSuper createIQLTerminalExpressionSuper();
-
-  /**
-   * Returns a new object of class '<em>IQL Terminal Expression Parenthesis</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Terminal Expression Parenthesis</em>'.
-   * @generated
-   */
-  IQLTerminalExpressionParenthesis createIQLTerminalExpressionParenthesis();
-
-  /**
-   * Returns a new object of class '<em>IQL Terminal Expression New</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Terminal Expression New</em>'.
-   * @generated
-   */
-  IQLTerminalExpressionNew createIQLTerminalExpressionNew();
+  IQLNewExpression createIQLNewExpression();
 
   /**
    * Returns a new object of class '<em>IQL Literal Expression Int</em>'.

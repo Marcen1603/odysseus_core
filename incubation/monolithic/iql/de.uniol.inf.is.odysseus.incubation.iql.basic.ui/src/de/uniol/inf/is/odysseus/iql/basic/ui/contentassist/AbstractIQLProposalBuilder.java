@@ -21,10 +21,11 @@ import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 
 import com.google.common.base.Function;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttributeSelection;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
+
+
+
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
@@ -84,13 +85,9 @@ public class AbstractIQLProposalBuilder implements Function<IEObjectDescription,
 			return null;
 		} else if (obj instanceof IQLVariableDeclaration) {
 			return null;
-		} else if (obj instanceof IQLMethodSelection) {
+		} else if (obj instanceof IQLMemberSelectionExpression) {
 			return null;
-		} else if (obj instanceof IQLAttributeSelection) {
-			return null;
-		} else if (obj instanceof IQLTerminalExpressionMethod) {
-			return null;
-		} else if (obj instanceof IQLTerminalExpressionVariable) {
+		} else if (obj instanceof IQLJvmElementCallExpression) {
 			return null;
 		} else if (obj instanceof JvmGenericType) {
 			return null;

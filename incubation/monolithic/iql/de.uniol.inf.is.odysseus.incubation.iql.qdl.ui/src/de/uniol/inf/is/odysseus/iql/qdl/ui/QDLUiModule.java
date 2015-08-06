@@ -63,14 +63,15 @@ public class QDLUiModule extends de.uniol.inf.is.odysseus.iql.qdl.ui.AbstractQDL
 		return QDLTemplateProposalProvider.class;
 	}
 
-	@Override
-	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
-		return ClasspathBasedTypeScopeProvider.class;
-	}
 
 	@Override
 	public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {
 		return IQLXtextEditorCallback.class;
+	}
+	
+	@Override
+	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
+		return ClasspathBasedTypeScopeProvider.class;
 	}
 	
 	@Override

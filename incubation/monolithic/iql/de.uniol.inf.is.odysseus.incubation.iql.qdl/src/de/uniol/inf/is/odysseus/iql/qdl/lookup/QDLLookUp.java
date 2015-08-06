@@ -23,8 +23,8 @@ public class QDLLookUp extends AbstractIQLLookUp<QDLTypeFactory, QDLTypeOperator
 		super(typeFactory, typeOperatorsFactory, typeUtils);
 	}
 
-	public Collection<JvmType> getTypesWihtoutOperators(Resource context) {
-		Collection<JvmType> types = super.getAllTypes(context);
+	public Collection<JvmType> getTypesWihtoutOperators(Collection<String> usedNamespaces, Resource context) {
+		Collection<JvmType> types = super.getAllTypes(usedNamespaces, context);
 		Collection<JvmType> result = new HashSet<>();
 		JvmTypeReference logicalOp = typeUtils.createTypeRef(ILogicalOperator.class, typeFactory.getSystemResourceSet());
 		for (JvmType type : types) {

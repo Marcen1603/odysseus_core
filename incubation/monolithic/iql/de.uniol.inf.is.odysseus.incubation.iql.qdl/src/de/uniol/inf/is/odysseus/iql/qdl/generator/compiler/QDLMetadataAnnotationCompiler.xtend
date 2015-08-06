@@ -5,6 +5,8 @@ import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHel
 import javax.inject.Inject
 import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLMetadataValueSingleID
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue
 
 class QDLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotationCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLTypeUtils>{
 	
@@ -13,5 +15,16 @@ class QDLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotationCompile
 		super(helper, typeCompiler, typeUtils)
 	}
 	
+	override String compile(IQLMetadataValue o, QDLGeneratorContext c) {
+		if(o instanceof QDLMetadataValueSingleID) {
+			return compile(o as QDLMetadataValueSingleID, c);
+		} else {
+			super.compile(o,c)
+		}
+	}
+	
+	def String compile(QDLMetadataValueSingleID o, QDLGeneratorContext c) {
+		'''"«o.value»"'''		
+	}
 	
 }

@@ -5,14 +5,15 @@ import javax.inject.Singleton;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.service.BasicIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 
 @Singleton
-public class BasicIQLTypeFactory extends AbstractIQLTypeFactory<BasicIQLTypeUtils> {
+public class BasicIQLTypeFactory extends AbstractIQLTypeFactory<BasicIQLTypeUtils, BasicIQLServiceObserver> {
 
 	@Inject
-	public BasicIQLTypeFactory(BasicIQLTypeUtils typeUtils) {
-		super(typeUtils);
+	public BasicIQLTypeFactory(BasicIQLTypeUtils typeUtils,BasicIQLServiceObserver serviceObserver) {
+		super(typeUtils, serviceObserver);
 	}
 
 	@Override

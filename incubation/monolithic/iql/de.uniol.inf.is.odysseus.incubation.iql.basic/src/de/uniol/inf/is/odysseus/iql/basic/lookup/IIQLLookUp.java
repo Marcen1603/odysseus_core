@@ -27,9 +27,11 @@ public interface IIQLLookUp {
 	Collection<JvmExecutable> getDeclaredConstructors(JvmTypeReference typeRef);
 	JvmExecutable findConstructor(JvmTypeReference typeRef,	int arguments);
 	
-	Collection<JvmType> getAllTypes(Resource context);	
-	Collection<JvmType> getAllInstantiateableTypes(Resource context);	
-	Collection<JvmType> getAllAssignableTypes(JvmTypeReference target,Resource context);
+	Collection<JvmType> getAllTypes(Collection<String> usedNamespaces, Resource context);	
+	Collection<JvmType> getAllInstantiateableTypes(Collection<String> usedNamespaces, Resource context);	
+	Collection<JvmType> getAllAssignableTypes(JvmTypeReference target, Collection<String> usedNamespaces, Resource context);
+
+	Collection<String> getAllNamespaces();
 
 	
 	boolean isAssignable(JvmTypeReference targetRef, JvmTypeReference typeRef);	

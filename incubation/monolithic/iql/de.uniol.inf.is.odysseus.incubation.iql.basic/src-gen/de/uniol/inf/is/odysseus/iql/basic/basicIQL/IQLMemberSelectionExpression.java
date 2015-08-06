@@ -12,7 +12,7 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression#getLeftOperand <em>Left Operand</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression#getRightOperand <em>Right Operand</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression#getSel <em>Sel</em>}</li>
  * </ul>
  * </p>
  *
@@ -49,29 +49,29 @@ public interface IQLMemberSelectionExpression extends IQLExpression
   void setLeftOperand(IQLExpression value);
 
   /**
-   * Returns the value of the '<em><b>Right Operand</b></em>' containment reference.
+   * Returns the value of the '<em><b>Sel</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Right Operand</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Sel</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Right Operand</em>' containment reference.
-   * @see #setRightOperand(IQLMemberSelection)
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLMemberSelectionExpression_RightOperand()
+   * @return the value of the '<em>Sel</em>' containment reference.
+   * @see #setSel(IQLMemberSelection)
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLMemberSelectionExpression_Sel()
    * @model containment="true"
    * @generated
    */
-  IQLMemberSelection getRightOperand();
+  IQLMemberSelection getSel();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression#getRightOperand <em>Right Operand</em>}' containment reference.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression#getSel <em>Sel</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Right Operand</em>' containment reference.
-   * @see #getRightOperand()
+   * @param value the new value of the '<em>Sel</em>' containment reference.
+   * @see #getSel()
    * @generated
    */
-  void setRightOperand(IQLMemberSelection value);
+  void setSel(IQLMemberSelection value);
 
 } // IQLMemberSelectionExpression

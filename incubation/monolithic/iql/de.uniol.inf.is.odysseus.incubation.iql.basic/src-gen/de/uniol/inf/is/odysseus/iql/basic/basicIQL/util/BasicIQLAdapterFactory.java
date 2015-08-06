@@ -259,11 +259,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLMetadataValueSingleCharAdapter();
       }
       @Override
-      public Adapter caseIQLMetadataValueSingleID(IQLMetadataValueSingleID object)
-      {
-        return createIQLMetadataValueSingleIDAdapter();
-      }
-      @Override
       public Adapter caseIQLMetadataValueSingleTypeRef(IQLMetadataValueSingleTypeRef object)
       {
         return createIQLMetadataValueSingleTypeRefAdapter();
@@ -434,44 +429,29 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLMemberSelectionExpressionAdapter();
       }
       @Override
-      public Adapter caseIQLAttributeSelection(IQLAttributeSelection object)
+      public Adapter caseIQLJvmElementCallExpression(IQLJvmElementCallExpression object)
       {
-        return createIQLAttributeSelectionAdapter();
+        return createIQLJvmElementCallExpressionAdapter();
       }
       @Override
-      public Adapter caseIQLMethodSelection(IQLMethodSelection object)
+      public Adapter caseIQLThisExpression(IQLThisExpression object)
       {
-        return createIQLMethodSelectionAdapter();
+        return createIQLThisExpressionAdapter();
       }
       @Override
-      public Adapter caseIQLTerminalExpressionVariable(IQLTerminalExpressionVariable object)
+      public Adapter caseIQLSuperExpression(IQLSuperExpression object)
       {
-        return createIQLTerminalExpressionVariableAdapter();
+        return createIQLSuperExpressionAdapter();
       }
       @Override
-      public Adapter caseIQLTerminalExpressionMethod(IQLTerminalExpressionMethod object)
+      public Adapter caseIQLParenthesisExpression(IQLParenthesisExpression object)
       {
-        return createIQLTerminalExpressionMethodAdapter();
+        return createIQLParenthesisExpressionAdapter();
       }
       @Override
-      public Adapter caseIQLTerminalExpressionThis(IQLTerminalExpressionThis object)
+      public Adapter caseIQLNewExpression(IQLNewExpression object)
       {
-        return createIQLTerminalExpressionThisAdapter();
-      }
-      @Override
-      public Adapter caseIQLTerminalExpressionSuper(IQLTerminalExpressionSuper object)
-      {
-        return createIQLTerminalExpressionSuperAdapter();
-      }
-      @Override
-      public Adapter caseIQLTerminalExpressionParenthesis(IQLTerminalExpressionParenthesis object)
-      {
-        return createIQLTerminalExpressionParenthesisAdapter();
-      }
-      @Override
-      public Adapter caseIQLTerminalExpressionNew(IQLTerminalExpressionNew object)
-      {
-        return createIQLTerminalExpressionNewAdapter();
+        return createIQLNewExpressionAdapter();
       }
       @Override
       public Adapter caseIQLLiteralExpressionInt(IQLLiteralExpressionInt object)
@@ -1116,21 +1096,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID <em>IQL Metadata Value Single ID</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID
-   * @generated
-   */
-  public Adapter createIQLMetadataValueSingleIDAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef <em>IQL Metadata Value Single Type Ref</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -1641,121 +1606,76 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttributeSelection <em>IQL Attribute Selection</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression <em>IQL Jvm Element Call Expression</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttributeSelection
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression
    * @generated
    */
-  public Adapter createIQLAttributeSelectionAdapter()
+  public Adapter createIQLJvmElementCallExpressionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection <em>IQL Method Selection</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression <em>IQL This Expression</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression
    * @generated
    */
-  public Adapter createIQLMethodSelectionAdapter()
+  public Adapter createIQLThisExpressionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable <em>IQL Terminal Expression Variable</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression <em>IQL Super Expression</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression
    * @generated
    */
-  public Adapter createIQLTerminalExpressionVariableAdapter()
+  public Adapter createIQLSuperExpressionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod <em>IQL Terminal Expression Method</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLParenthesisExpression <em>IQL Parenthesis Expression</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLParenthesisExpression
    * @generated
    */
-  public Adapter createIQLTerminalExpressionMethodAdapter()
+  public Adapter createIQLParenthesisExpressionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionThis <em>IQL Terminal Expression This</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression <em>IQL New Expression</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionThis
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression
    * @generated
    */
-  public Adapter createIQLTerminalExpressionThisAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionSuper <em>IQL Terminal Expression Super</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionSuper
-   * @generated
-   */
-  public Adapter createIQLTerminalExpressionSuperAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionParenthesis <em>IQL Terminal Expression Parenthesis</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionParenthesis
-   * @generated
-   */
-  public Adapter createIQLTerminalExpressionParenthesisAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew <em>IQL Terminal Expression New</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew
-   * @generated
-   */
-  public Adapter createIQLTerminalExpressionNewAdapter()
+  public Adapter createIQLNewExpressionAdapter()
   {
     return null;
   }

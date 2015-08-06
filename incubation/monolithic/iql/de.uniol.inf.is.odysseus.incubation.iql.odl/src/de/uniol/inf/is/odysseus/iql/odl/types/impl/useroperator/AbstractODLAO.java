@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLAO;
 
@@ -28,13 +29,14 @@ public abstract class AbstractODLAO extends AbstractLogicalOperator implements I
 		
 	}
 	
+
 	@Override
-	public boolean isAllPhysicalInputSet() {
-		return super.isAllPhysicalInputSet() && validate();
+	public boolean isValid() {
+		return validate();
 	}
-	
+
 	protected boolean validate() {
-		return true;
+		return super.isValid();
 	}
 	
 	@Override
@@ -49,6 +51,15 @@ public abstract class AbstractODLAO extends AbstractLogicalOperator implements I
 			valueList = new ArrayList<>();
 		}
 		valueList.add(value);
+	}
+	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		return onCreateOutputSchema(pos);
+	}
+	
+	protected SDFSchema onCreateOutputSchema(int pos) {
+		return super.getOutputSchemaIntern(pos);
 	}
 
 }

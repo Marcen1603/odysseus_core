@@ -5,8 +5,11 @@ package de.uniol.inf.is.odysseus.iql.basic.scoping;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -26,12 +29,16 @@ import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.resource.EObjectDescription;
+import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.scoping.impl.ImportNormalizer;
 import org.eclipse.xtext.scoping.impl.ImportScope;
+import org.eclipse.xtext.scoping.impl.SimpleScope;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
@@ -67,7 +74,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	protected IQualifiedNameConverter converter;
 	
 	@Inject
-	protected IJvmTypeProvider.Factory factory;
+	protected IQLClasspathTypeProviderFactory factory;
 	
 	protected T typeFactory;
 	
@@ -80,123 +87,186 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	}
 	
 	public IScope scope_IQLSimpleType_type(IQLFile file, EReference type) {	
-		Collection<JvmType> types = lookUp.getAllTypes(file.eResource());
-
-		IScope parentScope = null;
+		Collection<JvmType> types = getAllTypes(file);
+		
 		IJvmTypeProvider provider = factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(file));
-		if (provider instanceof ClasspathTypeProvider) {
-			parentScope = new IQLClasspathBasedTypeScope((ClasspathTypeProvider) provider, converter, null);
-		} else {
-			parentScope = super.delegateGetScope(file, type);
-		}	
+		IScope parentScope = new IQLClasspathBasedTypeScope((ClasspathTypeProvider) provider, converter, null);
+	
 		IScope scope =  Scopes.scopeFor(types, qualifiedNameProvider, parentScope);
 		return new ImportScope(createImportNormalizers(file), scope, null, type.getEReferenceType(), true);
 	}
 	
 	public IScope scope_IQLArrayType_type(IQLFile file, EReference type) {	
-		Collection<JvmType> types = lookUp.getAllTypes(file.eResource());
+		Collection<JvmType> types = getAllTypes(file);
 
-		IScope parentScope = null;
+
 		IJvmTypeProvider provider = factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(file));
-		if (provider instanceof ClasspathTypeProvider) {
-			parentScope = new IQLClasspathBasedTypeScope((ClasspathTypeProvider) provider, converter, null);
-		} else {
-			parentScope = super.delegateGetScope(file, type);
-		}	
-		
+		IScope parentScope = new IQLClasspathBasedTypeScope((ClasspathTypeProvider) provider, converter, null);
 		IScope scope =  Scopes.scopeFor(types, qualifiedNameProvider, parentScope);
 		return new ImportScope(createImportNormalizers(file), scope, null, type.getEReferenceType(), true);
 	}
 	
-	public IScope scope_IQLTerminalExpressionVariable_var(IQLStatementBlock expr, EReference type) {
-		Collection<JvmIdentifiableElement> vars = getScopeIQLTerminalExpressionVariable(expr);
-		return Scopes.scopeFor(vars, qualifiedNameProvider, IScope.NULLSCOPE);	
+	@Override
+	public Collection<JvmType> getAllTypes(EObject node) {
+		IQLFile file =  EcoreUtil2.getContainerOfType(node, IQLFile.class);		
+		Collection<JvmType> types = lookUp.getAllTypes(getUsedNamespaces(file), file.eResource());
+		return types;
+	}
+
+	
+	public IScope scope_IQLJvmElementCallExpression_element(IQLStatementBlock expr, EReference type) {
+		Collection<IEObjectDescription> elements = getIQLJvmElementCallExpression(expr);
+		return new SimpleScope(elements);
 	}
 	
 	@Override
-	public Collection<JvmIdentifiableElement> getScopeIQLTerminalExpressionVariable(EObject expr) {
+	public Collection<IEObjectDescription> getIQLJvmElementCallExpression(EObject expr) {
 		JvmGenericType type = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
 
-		Collection<JvmIdentifiableElement> vars = new ArrayList<>();
+		Collection<JvmIdentifiableElement> elements = new HashSet<>();
 		EObject container = expr;
 		while (container != null && !(container instanceof JvmGenericType)) {
-			vars.addAll(EcoreUtil2.getAllContentsOfType(container, IQLVariableDeclaration.class));
-			vars.addAll(EcoreUtil2.getAllContentsOfType(container, JvmFormalParameter.class));
+			elements.addAll(EcoreUtil2.getAllContentsOfType(container, IQLVariableDeclaration.class));
+			elements.addAll(EcoreUtil2.getAllContentsOfType(container, JvmFormalParameter.class));
 			container = container.eContainer();
 		}
 		if (type instanceof IQLClass) {
 			IQLClass clazz = (IQLClass) type;
 			Collection<JvmTypeReference> importedTypes = typeFactory.getImportedTypes(expr);
-			vars.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
-			vars.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
+			elements.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
+			elements.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
+		
+			elements.addAll(lookUp.getPublicMethods(typeUtils.createTypeRef(clazz), importedTypes,true));
+			elements.addAll(lookUp.getProtectedMethods(typeUtils.createTypeRef(clazz), importedTypes,true));
+
 		}
-		return vars;	
+			
+		Map<String, Pair<JvmOperation, JvmOperation>> properties = new HashMap<>();
+		Collection<IEObjectDescription> result = new HashSet<>();
+		for (JvmIdentifiableElement element : elements) {
+			if (elements instanceof JvmOperation) {
+				JvmOperation method = (JvmOperation) element;
+				if (typeUtils.isSetter(method)) {
+					String name = typeUtils.getNameWithoutSetterPrefix(method);
+					Pair<JvmOperation, JvmOperation> pair = properties.get(name);
+					if (pair == null) {
+						pair = new Pair<JvmOperation, JvmOperation>();
+						properties.put(name, pair);
+					}
+					pair.setE1(method);
+				} else if (typeUtils.isGetter(method)) {
+					String name = typeUtils.getNameWithoutGetterPrefix(method);
+					Pair<JvmOperation, JvmOperation> pair = properties.get(name);
+					if (pair == null) {
+						pair = new Pair<JvmOperation, JvmOperation>();
+						properties.put(name, pair);
+					}
+					pair.setE2(method);
+				}
+			} 			
+			result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(element), element));
+		}
+		for (Entry<String, Pair<JvmOperation, JvmOperation>> entry : properties.entrySet()) {
+			if (entry.getValue().getE1() != null && entry.getValue().getE2() != null) {
+				String name = firstCharLowerCase(entry.getKey());
+				result.add(EObjectDescription.create(name, entry.getValue().getE1()));
+				result.add(EObjectDescription.create(name, entry.getValue().getE2()));
+			}
+		}
+		return result;
+	}	
+	
+	
+	public IScope scope_IQLMemberSelectionExpression_member(IQLMemberSelectionExpression expr, EReference type) {		
+		Collection<IEObjectDescription> elements = new HashSet<>();
+		elements.addAll(getScopeIQLMemberSelection(expr));		
+		return new SimpleScope(elements);
 	}
 	
-	public IScope scope_IQLTerminalExpressionMethod_method(IQLStatementBlock expr, EReference type) {
-		Collection<JvmOperation> methods = getScopeTerminalExpressionMethod(expr);
-		return Scopes.scopeFor(methods, qualifiedNameProvider, IScope.NULLSCOPE);
+	
+	@Override
+	public Collection<IEObjectDescription> getScopeIQLMemberSelection(IQLMemberSelectionExpression expr) {
+		Collection<IEObjectDescription> result = new HashSet<>();
+		TypeResult typeResult = exprParser.getType(expr.getLeftOperand());
+		
+		if (typeUtils.isArray(typeResult.getRef())) {
+			result.addAll(getScopeIQLAttributeSelection(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()), false, false));
+			result.addAll(getScopeIQLMethodSelection(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()), false, false));
+
+		} else {
+			boolean isThis = exprParser.isThis(expr.getLeftOperand());
+			boolean isSuper = exprParser.isSuper(expr.getLeftOperand());
+			
+			result.addAll(getScopeIQLAttributeSelection(typeResult.getRef(),isThis, isSuper));
+			result.addAll(getScopeIQLMethodSelection(typeResult.getRef(),isThis, isSuper));
+
+		}
+		return result;
 	}
 	
 	@Override
-	public Collection<JvmOperation> getScopeTerminalExpressionMethod(EObject expr) {
-		JvmGenericType type = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
-		Collection<JvmOperation> methods = new HashSet<>();
-		if (type instanceof IQLClass) {
-			IQLClass clazz = (IQLClass) type;
-			Collection<JvmTypeReference> importedTypes = typeFactory.getImportedTypes(expr);
-			methods.addAll(lookUp.getPublicMethods(typeUtils.createTypeRef(clazz), importedTypes,true));
-			methods.addAll(lookUp.getProtectedMethods(typeUtils.createTypeRef(clazz), importedTypes,true));
-		}
-		return methods;	
-	}
-	
-	public IScope scope_IQLAttributeSelection_var(IQLMemberSelectionExpression expr, EReference type) {
-		Collection<JvmField> attributes = getScopeIQLAttributeSelection(expr);
-		return Scopes.scopeFor(attributes, qualifiedNameProvider, IScope.NULLSCOPE);	
-	}
-	
-	@Override
-	public Collection<JvmField> getScopeIQLAttributeSelection(IQLMemberSelectionExpression expr) {
-		TypeResult result = exprParser.getType(expr.getLeftOperand());
+	public Collection<IEObjectDescription> getScopeIQLAttributeSelection(JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
 		Collection<JvmField> attributes = null;
-		if (!result.isNull()) {
-			attributes = lookUp.getPublicAttributes(result.getRef(), true);
-			if (exprParser.isThis(expr.getLeftOperand()) || exprParser.isSuper(expr.getLeftOperand())) {
-				attributes.addAll(lookUp.getProtectedAttributes(result.getRef(), true));
-			}
-		} else {
-			attributes = new HashSet<>();
+		attributes = lookUp.getPublicAttributes(typeRef, true);
+		if (isThis || isSuper) {
+			attributes.addAll(lookUp.getProtectedAttributes(typeRef, true));
 		}
-		return attributes;
-	}
-	
-	
-	public IScope scope_IQLMethodSelection_method(IQLMemberSelectionExpression expr, EReference type) {
-		Collection<JvmOperation> methods = getScopeIQLMethodSelection(expr);		
-		return Scopes.scopeFor(methods, qualifiedNameProvider, IScope.NULLSCOPE);	
+		Collection<IEObjectDescription> result = new HashSet<>();
+		for (JvmField attribute : attributes) {
+			result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(attribute), attribute));
+		}
+		return result;
 	}
 	
 	
 	@Override
-	public Collection<JvmOperation> getScopeIQLMethodSelection(IQLMemberSelectionExpression expr) {
-		TypeResult result = exprParser.getType(expr.getLeftOperand());
+	public Collection<IEObjectDescription> getScopeIQLMethodSelection(JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
 		Collection<JvmOperation> methods = null;
-		if (!result.isNull()) {
-			methods = lookUp.getPublicMethods(result.getRef(), true);
-			if (exprParser.isThis(expr.getLeftOperand()) || exprParser.isSuper(expr.getLeftOperand())) {
-				methods.addAll(lookUp.getProtectedMethods(result.getRef(), true));
-			}
-		} else {
-			methods = new HashSet<>();
+		methods = lookUp.getPublicMethods(typeRef, true);
+		if (isThis || isSuper) {
+			methods.addAll(lookUp.getProtectedMethods(typeRef, true));
 		}
-		return methods;
+		Map<String, Pair<JvmOperation, JvmOperation>> properties = new HashMap<>();
+		Collection<IEObjectDescription> result = new HashSet<>();
+		for (JvmOperation method : methods) {
+			if (typeUtils.isSetter(method)) {
+				String name = typeUtils.getNameWithoutSetterPrefix(method);
+				Pair<JvmOperation, JvmOperation> pair = properties.get(name);
+				if (pair == null) {
+					pair = new Pair<JvmOperation, JvmOperation>();
+					properties.put(name, pair);
+				}
+				pair.setE1(method);
+			} else if (typeUtils.isGetter(method)) {
+				String name = typeUtils.getNameWithoutGetterPrefix(method);
+				Pair<JvmOperation, JvmOperation> pair = properties.get(name);
+				if (pair == null) {
+					pair = new Pair<JvmOperation, JvmOperation>();
+					properties.put(name, pair);
+				}
+				pair.setE2(method);
+			}			
+			result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(method), method));
+		}
+		for (Entry<String, Pair<JvmOperation, JvmOperation>> entry : properties.entrySet()) {
+			if (entry.getValue().getE1() != null && entry.getValue().getE2() != null) {
+				String name = firstCharLowerCase(entry.getKey());
+				result.add(EObjectDescription.create(name, entry.getValue().getE1()));
+				result.add(EObjectDescription.create(name, entry.getValue().getE2()));
+			}
+		}
+		return result;
 	}
 	
-	protected Collection<String> getUsedNamespaces(EObject obj) {
+	protected String firstCharLowerCase(String s) {
+		return Character.toLowerCase(s.charAt(0)) + s.substring(1);
+	}
+	
+	@Override
+	public Collection<String> getUsedNamespaces(EObject obj) {
 		Collection<String> namespaces = new HashSet<>();
 		IQLFile file = EcoreUtil2.getContainerOfType(obj, IQLFile.class);
-		namespaces.addAll(typeFactory.getImplicitImports());
+		//namespaces.addAll(typeFactory.getImplicitImports());
 		for (IQLNamespace namespace : file.getNamespaces()) {
 			String name = namespace.getImportedNamespace();
 			name = name.replaceAll(IQLQualifiedNameConverter.DELIMITER, ".");

@@ -7,6 +7,9 @@ import javax.inject.Inject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.AbstractIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
@@ -33,7 +36,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 
 	public boolean hasValidateMethod(ODLOperator operator, ODLParameter parameter) {
 		for (ODLMethod method : EcoreUtil2.getAllContentsOfType(operator, ODLMethod.class)) {
-			if (method.isValidate() && method.getSimpleName().equalsIgnoreCase(parameter.getSimpleName())) {
+			if (method.isValidate() && method.getSimpleName() != null && method.getSimpleName().equalsIgnoreCase(parameter.getSimpleName())) {
 				return true;
 			}
 		}
@@ -53,7 +56,17 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 				}
 			}
 		}
-		return null;
+		return Tuple.class;
 	}
 
+	public OutputMode determineOutputMode(ODLOperator operator) {
+		if (operator.getMetadataList() != null) {
+			for (IQLMetadata metadata : operator.getMetadataList().getElements()) {
+				if (metadata.equals(ODLTypeFactory.OPERATOR_OUTPUT_MODE)) {
+					return OutputMode.MODIFIED_INPUT;
+				}
+			}
+		}
+		return OutputMode.MODIFIED_INPUT;
+	}
 }

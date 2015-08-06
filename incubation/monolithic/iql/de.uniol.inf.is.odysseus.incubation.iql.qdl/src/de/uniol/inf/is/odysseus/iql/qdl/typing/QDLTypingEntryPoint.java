@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.AbstractIQLTypingEntryPoint;
-import de.uniol.inf.is.odysseus.iql.qdl.services.QDLServiceBinding;
+import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 @Singleton
@@ -24,11 +24,13 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<QDLTypeBuil
 
 	@Inject
 	public QDLTypingEntryPoint(QDLTypeBuilder creator) {
-		super(creator);
+		super(creator);	
 		initOperators();
-		initSources();
-
+		initSources();		
 	}
+	
+
+	
 	
 
 	private void initSources() {

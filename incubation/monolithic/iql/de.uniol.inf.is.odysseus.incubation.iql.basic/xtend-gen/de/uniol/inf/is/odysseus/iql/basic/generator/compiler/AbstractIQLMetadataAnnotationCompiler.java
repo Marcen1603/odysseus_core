@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
@@ -90,15 +89,11 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
                 if ((o instanceof IQLMetadataValueSingleTypeRef)) {
                   return this.compile(((IQLMetadataValueSingleTypeRef) o), c);
                 } else {
-                  if ((o instanceof IQLMetadataValueSingleID)) {
-                    return this.compile(((IQLMetadataValueSingleID) o), c);
+                  if ((o instanceof IQLMetadataValueList)) {
+                    return this.compile(((IQLMetadataValueList) o), c);
                   } else {
-                    if ((o instanceof IQLMetadataValueList)) {
-                      return this.compile(((IQLMetadataValueList) o), c);
-                    } else {
-                      if ((o instanceof IQLMetadataValueMap)) {
-                        return this.compile(((IQLMetadataValueMap) o), c);
-                      }
+                    if ((o instanceof IQLMetadataValueMap)) {
+                      return this.compile(((IQLMetadataValueMap) o), c);
                     }
                   }
                 }
@@ -163,15 +158,6 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
     String _compile = this.typeCompiler.compile(_value, c, true);
     _builder.append(_compile, "");
     _builder.append(".class");
-    return _builder.toString();
-  }
-  
-  public String compile(final IQLMetadataValueSingleID o, final G c) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("\"");
-    String _value = o.getValue();
-    _builder.append(_value, "");
-    _builder.append("\"");
     return _builder.toString();
   }
   

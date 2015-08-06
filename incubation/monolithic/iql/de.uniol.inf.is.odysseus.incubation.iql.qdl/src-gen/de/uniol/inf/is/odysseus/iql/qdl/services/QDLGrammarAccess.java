@@ -316,6 +316,156 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		//"<-"
 		public Keyword getLessThanSignHyphenMinusKeyword_1() { return cLessThanSignHyphenMinusKeyword_1; }
 	}
+
+	public class IQLMetadataValueSingleElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLMetadataValueSingle");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Action cIQLMetadataValueSingleIntAction_0_0 = (Action)cGroup_0.eContents().get(0);
+		private final Assignment cValueAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
+		private final RuleCall cValueINTTerminalRuleCall_0_1_0 = (RuleCall)cValueAssignment_0_1.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Action cIQLMetadataValueSingleDoubleAction_1_0 = (Action)cGroup_1.eContents().get(0);
+		private final Assignment cValueAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cValueDOUBLETerminalRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
+		private final Action cIQLMetadataValueSingleStringAction_2_0 = (Action)cGroup_2.eContents().get(0);
+		private final Assignment cValueAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cValueSTRINGTerminalRuleCall_2_1_0 = (RuleCall)cValueAssignment_2_1.eContents().get(0);
+		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
+		private final Action cIQLMetadataValueSingleBooleanAction_3_0 = (Action)cGroup_3.eContents().get(0);
+		private final Assignment cValueAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
+		private final RuleCall cValueBOOLEANTerminalRuleCall_3_1_0 = (RuleCall)cValueAssignment_3_1.eContents().get(0);
+		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
+		private final Action cIQLMetadataValueSingleCharAction_4_0 = (Action)cGroup_4.eContents().get(0);
+		private final Assignment cValueAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
+		private final RuleCall cValueCHARTerminalRuleCall_4_1_0 = (RuleCall)cValueAssignment_4_1.eContents().get(0);
+		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
+		private final Group cGroup_5_0 = (Group)cGroup_5.eContents().get(0);
+		private final Action cQDLMetadataValueSingleIDAction_5_0_0 = (Action)cGroup_5_0.eContents().get(0);
+		private final Assignment cValueAssignment_5_0_1 = (Assignment)cGroup_5_0.eContents().get(1);
+		private final RuleCall cValueIDTerminalRuleCall_5_0_1_0 = (RuleCall)cValueAssignment_5_0_1.eContents().get(0);
+		private final Group cGroup_6 = (Group)cAlternatives.eContents().get(6);
+		private final Action cIQLMetadataValueSingleTypeRefAction_6_0 = (Action)cGroup_6.eContents().get(0);
+		private final Assignment cValueAssignment_6_1 = (Assignment)cGroup_6.eContents().get(1);
+		private final RuleCall cValueJvmTypeReferenceParserRuleCall_6_1_0 = (RuleCall)cValueAssignment_6_1.eContents().get(0);
+		private final Group cGroup_7 = (Group)cAlternatives.eContents().get(7);
+		private final Action cIQLMetadataValueSingleNullAction_7_0 = (Action)cGroup_7.eContents().get(0);
+		private final Assignment cValueAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
+		private final Keyword cValueNullKeyword_7_1_0 = (Keyword)cValueAssignment_7_1.eContents().get(0);
+		
+		//IQLMetadataValueSingle returns iql::IQLMetadataValue:
+		//	{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
+		//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR | =>
+		//	({QDLMetadataValueSingleID} value=ID) | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
+		//	{IQLMetadataValueSingleNull} value="null";
+		public ParserRule getRule() { return rule; }
+
+		//{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
+		//value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR | =>
+		//({QDLMetadataValueSingleID} value=ID) | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
+		//{IQLMetadataValueSingleNull} value="null"
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//{IQLMetadataValueSingleInt} value=INT
+		public Group getGroup_0() { return cGroup_0; }
+
+		//{IQLMetadataValueSingleInt}
+		public Action getIQLMetadataValueSingleIntAction_0_0() { return cIQLMetadataValueSingleIntAction_0_0; }
+
+		//value=INT
+		public Assignment getValueAssignment_0_1() { return cValueAssignment_0_1; }
+
+		//INT
+		public RuleCall getValueINTTerminalRuleCall_0_1_0() { return cValueINTTerminalRuleCall_0_1_0; }
+
+		//{IQLMetadataValueSingleDouble} value=DOUBLE
+		public Group getGroup_1() { return cGroup_1; }
+
+		//{IQLMetadataValueSingleDouble}
+		public Action getIQLMetadataValueSingleDoubleAction_1_0() { return cIQLMetadataValueSingleDoubleAction_1_0; }
+
+		//value=DOUBLE
+		public Assignment getValueAssignment_1_1() { return cValueAssignment_1_1; }
+
+		//DOUBLE
+		public RuleCall getValueDOUBLETerminalRuleCall_1_1_0() { return cValueDOUBLETerminalRuleCall_1_1_0; }
+
+		//{IQLMetadataValueSingleString} value=STRING
+		public Group getGroup_2() { return cGroup_2; }
+
+		//{IQLMetadataValueSingleString}
+		public Action getIQLMetadataValueSingleStringAction_2_0() { return cIQLMetadataValueSingleStringAction_2_0; }
+
+		//value=STRING
+		public Assignment getValueAssignment_2_1() { return cValueAssignment_2_1; }
+
+		//STRING
+		public RuleCall getValueSTRINGTerminalRuleCall_2_1_0() { return cValueSTRINGTerminalRuleCall_2_1_0; }
+
+		//{IQLMetadataValueSingleBoolean} value=BOOLEAN
+		public Group getGroup_3() { return cGroup_3; }
+
+		//{IQLMetadataValueSingleBoolean}
+		public Action getIQLMetadataValueSingleBooleanAction_3_0() { return cIQLMetadataValueSingleBooleanAction_3_0; }
+
+		//value=BOOLEAN
+		public Assignment getValueAssignment_3_1() { return cValueAssignment_3_1; }
+
+		//BOOLEAN
+		public RuleCall getValueBOOLEANTerminalRuleCall_3_1_0() { return cValueBOOLEANTerminalRuleCall_3_1_0; }
+
+		//{IQLMetadataValueSingleChar} value=CHAR
+		public Group getGroup_4() { return cGroup_4; }
+
+		//{IQLMetadataValueSingleChar}
+		public Action getIQLMetadataValueSingleCharAction_4_0() { return cIQLMetadataValueSingleCharAction_4_0; }
+
+		//value=CHAR
+		public Assignment getValueAssignment_4_1() { return cValueAssignment_4_1; }
+
+		//CHAR
+		public RuleCall getValueCHARTerminalRuleCall_4_1_0() { return cValueCHARTerminalRuleCall_4_1_0; }
+
+		//=> ({QDLMetadataValueSingleID} value=ID)
+		public Group getGroup_5() { return cGroup_5; }
+
+		//{QDLMetadataValueSingleID} value=ID
+		public Group getGroup_5_0() { return cGroup_5_0; }
+
+		//{QDLMetadataValueSingleID}
+		public Action getQDLMetadataValueSingleIDAction_5_0_0() { return cQDLMetadataValueSingleIDAction_5_0_0; }
+
+		//value=ID
+		public Assignment getValueAssignment_5_0_1() { return cValueAssignment_5_0_1; }
+
+		//ID
+		public RuleCall getValueIDTerminalRuleCall_5_0_1_0() { return cValueIDTerminalRuleCall_5_0_1_0; }
+
+		//{IQLMetadataValueSingleTypeRef} value=JvmTypeReference
+		public Group getGroup_6() { return cGroup_6; }
+
+		//{IQLMetadataValueSingleTypeRef}
+		public Action getIQLMetadataValueSingleTypeRefAction_6_0() { return cIQLMetadataValueSingleTypeRefAction_6_0; }
+
+		//value=JvmTypeReference
+		public Assignment getValueAssignment_6_1() { return cValueAssignment_6_1; }
+
+		//JvmTypeReference
+		public RuleCall getValueJvmTypeReferenceParserRuleCall_6_1_0() { return cValueJvmTypeReferenceParserRuleCall_6_1_0; }
+
+		//{IQLMetadataValueSingleNull} value="null"
+		public Group getGroup_7() { return cGroup_7; }
+
+		//{IQLMetadataValueSingleNull}
+		public Action getIQLMetadataValueSingleNullAction_7_0() { return cIQLMetadataValueSingleNullAction_7_0; }
+
+		//value="null"
+		public Assignment getValueAssignment_7_1() { return cValueAssignment_7_1; }
+
+		//"null"
+		public Keyword getValueNullKeyword_7_1_0() { return cValueNullKeyword_7_1_0; }
+	}
 	
 	
 	private final QDLFileElements pQDLFile;
@@ -325,6 +475,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	private final IQLSubscribeExpressionElements pIQLSubscribeExpression;
 	private final IQLPortExpressionElements pIQLPortExpression;
 	private final IQLSubscribeElements pIQLSubscribe;
+	private final IQLMetadataValueSingleElements pIQLMetadataValueSingle;
 	
 	private final Grammar grammar;
 
@@ -342,6 +493,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pIQLSubscribeExpression = new IQLSubscribeExpressionElements();
 		this.pIQLPortExpression = new IQLPortExpressionElements();
 		this.pIQLSubscribe = new IQLSubscribeElements();
+		this.pIQLMetadataValueSingle = new IQLMetadataValueSingleElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -441,6 +593,19 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getIQLSubscribeRule() {
 		return getIQLSubscribeAccess().getRule();
+	}
+
+	//IQLMetadataValueSingle returns iql::IQLMetadataValue:
+	//	{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
+	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR | =>
+	//	({QDLMetadataValueSingleID} value=ID) | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
+	//	{IQLMetadataValueSingleNull} value="null";
+	public IQLMetadataValueSingleElements getIQLMetadataValueSingleAccess() {
+		return pIQLMetadataValueSingle;
+	}
+	
+	public ParserRule getIQLMetadataValueSingleRule() {
+		return getIQLMetadataValueSingleAccess().getRule();
 	}
 
 	//IQLFile:
@@ -662,19 +827,6 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getIQLMetadataValueRule() {
 		return getIQLMetadataValueAccess().getRule();
-	}
-
-	//IQLMetadataValueSingle returns IQLMetadataValue:
-	//	{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
-	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR | =>
-	//	({IQLMetadataValueSingleID} value=ID) | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
-	//	{IQLMetadataValueSingleNull} value="null";
-	public BasicIQLGrammarAccess.IQLMetadataValueSingleElements getIQLMetadataValueSingleAccess() {
-		return gaBasicIQL.getIQLMetadataValueSingleAccess();
-	}
-	
-	public ParserRule getIQLMetadataValueSingleRule() {
-		return getIQLMetadataValueSingleAccess().getRule();
 	}
 
 	//IQLMetadataValueList returns IQLMetadataValue:
@@ -1130,9 +1282,9 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMemberCallExpression returns IQLExpression:
-	//	IQLTerminalExpression => ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
+	//	IQLOtherExpressions => ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
 	//	expressions+=IQLExpression)? "]")* (=> ({IQLMemberSelectionExpression.leftOperand=current} ".")
-	//	rightOperand=(IQLAttributeSelection | IQLMethodSelection))*;
+	//	sel=IQLMemberSelection)*;
 	public BasicIQLGrammarAccess.IQLMemberCallExpressionElements getIQLMemberCallExpressionAccess() {
 		return gaBasicIQL.getIQLMemberCallExpressionAccess();
 	}
@@ -1141,38 +1293,27 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLMemberCallExpressionAccess().getRule();
 	}
 
-	//IQLAttributeSelection returns IQLMemberSelection:
-	//	{IQLAttributeSelection} var=[types::JvmField];
-	public BasicIQLGrammarAccess.IQLAttributeSelectionElements getIQLAttributeSelectionAccess() {
-		return gaBasicIQL.getIQLAttributeSelectionAccess();
+	//IQLMemberSelection:
+	//	member=[types::JvmMember] args=IQLArgumentsList?;
+	public BasicIQLGrammarAccess.IQLMemberSelectionElements getIQLMemberSelectionAccess() {
+		return gaBasicIQL.getIQLMemberSelectionAccess();
 	}
 	
-	public ParserRule getIQLAttributeSelectionRule() {
-		return getIQLAttributeSelectionAccess().getRule();
+	public ParserRule getIQLMemberSelectionRule() {
+		return getIQLMemberSelectionAccess().getRule();
 	}
 
-	//IQLMethodSelection returns IQLMemberSelection:
-	//	{IQLMethodSelection} method=[types::JvmOperation] args=IQLArgumentsList;
-	public BasicIQLGrammarAccess.IQLMethodSelectionElements getIQLMethodSelectionAccess() {
-		return gaBasicIQL.getIQLMethodSelectionAccess();
+	//IQLOtherExpressions returns IQLExpression:
+	//	{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement] args=IQLArgumentsList? | {IQLThisExpression}
+	//	"this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" | {IQLNewExpression}
+	//	"new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList argsMap=IQLArgumentsMap?) |
+	//	IQLLiteralExpression;
+	public BasicIQLGrammarAccess.IQLOtherExpressionsElements getIQLOtherExpressionsAccess() {
+		return gaBasicIQL.getIQLOtherExpressionsAccess();
 	}
 	
-	public ParserRule getIQLMethodSelectionRule() {
-		return getIQLMethodSelectionAccess().getRule();
-	}
-
-	//IQLTerminalExpression returns IQLExpression:
-	//	{IQLTerminalExpressionVariable} var=[types::JvmIdentifiableElement] | {IQLTerminalExpressionMethod}
-	//	method=[types::JvmOperation] args=IQLArgumentsList | {IQLTerminalExpressionThis} "this" |
-	//	{IQLTerminalExpressionSuper} "super" | {IQLTerminalExpressionParenthesis} "(" expr=IQLExpression ")" |
-	//	{IQLTerminalExpressionNew} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
-	//	argsMap=IQLArgumentsMap?) | IQLLiteralExpression;
-	public BasicIQLGrammarAccess.IQLTerminalExpressionElements getIQLTerminalExpressionAccess() {
-		return gaBasicIQL.getIQLTerminalExpressionAccess();
-	}
-	
-	public ParserRule getIQLTerminalExpressionRule() {
-		return getIQLTerminalExpressionAccess().getRule();
+	public ParserRule getIQLOtherExpressionsRule() {
+		return getIQLOtherExpressionsAccess().getRule();
 	}
 
 	//IQLLiteralExpression returns IQLExpression:

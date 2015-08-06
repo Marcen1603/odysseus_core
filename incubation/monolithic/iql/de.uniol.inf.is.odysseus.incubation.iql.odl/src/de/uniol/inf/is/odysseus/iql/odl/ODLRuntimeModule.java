@@ -3,6 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.iql.odl;
 
+import org.eclipse.xtext.common.types.xtext.ClasspathBasedTypeScopeProvider;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -21,7 +22,9 @@ import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.parser.IIQLParser;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
+import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
@@ -43,6 +46,8 @@ import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.parser.ODLParser;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLQualifiedNameProvider;
+import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.odl.service.ODLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeBuilder;
@@ -57,6 +62,25 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypingEntryPoint;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractODLRuntimeModule {
 
+	@Override
+	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
+		return ODLClasspathTypeProviderFactory.class;
+	}
+	
+	@Override
+	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
+		return ClasspathBasedTypeScopeProvider.class;
+	}
+	
+	
+	public Class<? extends IIQLServiceObserver> bindIQLServiceObserver() {
+		return ODLServiceObserver.class;
+	}
+	
+	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
+		return ODLScopeProvider.class;
+	}
+	
 	public Class<? extends IIQLTypeUtils> bindTypeUtils() {
 		return ODLTypeUtils.class;
 	}
@@ -151,10 +175,6 @@ public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractO
 		  return IQLResourceFactory.class;
 	}
 	
-	@Override
-	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
-		return ODLClasspathTypeProviderFactory.class;
-	}
 
 	public Class<? extends IIQLGeneratorContext> bindGeneratorContext() {
 		  return ODLGeneratorContext.class;

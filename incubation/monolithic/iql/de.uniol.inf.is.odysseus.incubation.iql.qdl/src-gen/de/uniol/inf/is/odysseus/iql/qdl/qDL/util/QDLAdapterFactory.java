@@ -4,6 +4,7 @@ package de.uniol.inf.is.odysseus.iql.qdl.qDL.util;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.*;
@@ -113,6 +114,46 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
         return createIQLPortExpressionAdapter();
       }
       @Override
+      public Adapter caseIQLMetadataValueSingleInt(IQLMetadataValueSingleInt object)
+      {
+        return createIQLMetadataValueSingleIntAdapter();
+      }
+      @Override
+      public Adapter caseIQLMetadataValueSingleDouble(IQLMetadataValueSingleDouble object)
+      {
+        return createIQLMetadataValueSingleDoubleAdapter();
+      }
+      @Override
+      public Adapter caseIQLMetadataValueSingleString(IQLMetadataValueSingleString object)
+      {
+        return createIQLMetadataValueSingleStringAdapter();
+      }
+      @Override
+      public Adapter caseIQLMetadataValueSingleBoolean(IQLMetadataValueSingleBoolean object)
+      {
+        return createIQLMetadataValueSingleBooleanAdapter();
+      }
+      @Override
+      public Adapter caseIQLMetadataValueSingleChar(IQLMetadataValueSingleChar object)
+      {
+        return createIQLMetadataValueSingleCharAdapter();
+      }
+      @Override
+      public Adapter caseQDLMetadataValueSingleID(QDLMetadataValueSingleID object)
+      {
+        return createQDLMetadataValueSingleIDAdapter();
+      }
+      @Override
+      public Adapter caseIQLMetadataValueSingleTypeRef(IQLMetadataValueSingleTypeRef object)
+      {
+        return createIQLMetadataValueSingleTypeRefAdapter();
+      }
+      @Override
+      public Adapter caseIQLMetadataValueSingleNull(IQLMetadataValueSingleNull object)
+      {
+        return createIQLMetadataValueSingleNullAdapter();
+      }
+      @Override
       public Adapter caseIQLFile(IQLFile object)
       {
         return createIQLFileAdapter();
@@ -166,6 +207,11 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseIQLExpression(IQLExpression object)
       {
         return createIQLExpressionAdapter();
+      }
+      @Override
+      public Adapter caseIQLMetadataValue(IQLMetadataValue object)
+      {
+        return createIQLMetadataValueAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object)
@@ -260,6 +306,126 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIQLPortExpressionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleInt <em>IQL Metadata Value Single Int</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleInt
+   * @generated
+   */
+  public Adapter createIQLMetadataValueSingleIntAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleDouble <em>IQL Metadata Value Single Double</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleDouble
+   * @generated
+   */
+  public Adapter createIQLMetadataValueSingleDoubleAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleString <em>IQL Metadata Value Single String</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleString
+   * @generated
+   */
+  public Adapter createIQLMetadataValueSingleStringAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleBoolean <em>IQL Metadata Value Single Boolean</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleBoolean
+   * @generated
+   */
+  public Adapter createIQLMetadataValueSingleBooleanAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleChar <em>IQL Metadata Value Single Char</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleChar
+   * @generated
+   */
+  public Adapter createIQLMetadataValueSingleCharAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLMetadataValueSingleID <em>Metadata Value Single ID</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLMetadataValueSingleID
+   * @generated
+   */
+  public Adapter createQDLMetadataValueSingleIDAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleTypeRef <em>IQL Metadata Value Single Type Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleTypeRef
+   * @generated
+   */
+  public Adapter createIQLMetadataValueSingleTypeRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleNull <em>IQL Metadata Value Single Null</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleNull
+   * @generated
+   */
+  public Adapter createIQLMetadataValueSingleNullAdapter()
   {
     return null;
   }
@@ -425,6 +591,21 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIQLExpressionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue <em>IQL Metadata Value</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue
+   * @generated
+   */
+  public Adapter createIQLMetadataValueAdapter()
   {
     return null;
   }

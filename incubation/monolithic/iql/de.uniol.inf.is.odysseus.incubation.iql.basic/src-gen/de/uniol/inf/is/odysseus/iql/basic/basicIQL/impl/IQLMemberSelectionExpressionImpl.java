@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMemberSelectionExpressionImpl#getLeftOperand <em>Left Operand</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMemberSelectionExpressionImpl#getRightOperand <em>Right Operand</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLMemberSelectionExpressionImpl#getSel <em>Sel</em>}</li>
  * </ul>
  * </p>
  *
@@ -42,14 +42,14 @@ public class IQLMemberSelectionExpressionImpl extends IQLExpressionImpl implemen
   protected IQLExpression leftOperand;
 
   /**
-   * The cached value of the '{@link #getRightOperand() <em>Right Operand</em>}' containment reference.
+   * The cached value of the '{@link #getSel() <em>Sel</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getRightOperand()
+   * @see #getSel()
    * @generated
    * @ordered
    */
-  protected IQLMemberSelection rightOperand;
+  protected IQLMemberSelection sel;
 
   /**
    * <!-- begin-user-doc -->
@@ -125,9 +125,9 @@ public class IQLMemberSelectionExpressionImpl extends IQLExpressionImpl implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLMemberSelection getRightOperand()
+  public IQLMemberSelection getSel()
   {
-    return rightOperand;
+    return sel;
   }
 
   /**
@@ -135,13 +135,13 @@ public class IQLMemberSelectionExpressionImpl extends IQLExpressionImpl implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetRightOperand(IQLMemberSelection newRightOperand, NotificationChain msgs)
+  public NotificationChain basicSetSel(IQLMemberSelection newSel, NotificationChain msgs)
   {
-    IQLMemberSelection oldRightOperand = rightOperand;
-    rightOperand = newRightOperand;
+    IQLMemberSelection oldSel = sel;
+    sel = newSel;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__RIGHT_OPERAND, oldRightOperand, newRightOperand);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__SEL, oldSel, newSel);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -152,20 +152,20 @@ public class IQLMemberSelectionExpressionImpl extends IQLExpressionImpl implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setRightOperand(IQLMemberSelection newRightOperand)
+  public void setSel(IQLMemberSelection newSel)
   {
-    if (newRightOperand != rightOperand)
+    if (newSel != sel)
     {
       NotificationChain msgs = null;
-      if (rightOperand != null)
-        msgs = ((InternalEObject)rightOperand).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__RIGHT_OPERAND, null, msgs);
-      if (newRightOperand != null)
-        msgs = ((InternalEObject)newRightOperand).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__RIGHT_OPERAND, null, msgs);
-      msgs = basicSetRightOperand(newRightOperand, msgs);
+      if (sel != null)
+        msgs = ((InternalEObject)sel).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__SEL, null, msgs);
+      if (newSel != null)
+        msgs = ((InternalEObject)newSel).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__SEL, null, msgs);
+      msgs = basicSetSel(newSel, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__RIGHT_OPERAND, newRightOperand, newRightOperand));
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__SEL, newSel, newSel));
   }
 
   /**
@@ -180,8 +180,8 @@ public class IQLMemberSelectionExpressionImpl extends IQLExpressionImpl implemen
     {
       case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__LEFT_OPERAND:
         return basicSetLeftOperand(null, msgs);
-      case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__RIGHT_OPERAND:
-        return basicSetRightOperand(null, msgs);
+      case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__SEL:
+        return basicSetSel(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -198,8 +198,8 @@ public class IQLMemberSelectionExpressionImpl extends IQLExpressionImpl implemen
     {
       case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__LEFT_OPERAND:
         return getLeftOperand();
-      case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__RIGHT_OPERAND:
-        return getRightOperand();
+      case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__SEL:
+        return getSel();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -217,8 +217,8 @@ public class IQLMemberSelectionExpressionImpl extends IQLExpressionImpl implemen
       case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__LEFT_OPERAND:
         setLeftOperand((IQLExpression)newValue);
         return;
-      case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__RIGHT_OPERAND:
-        setRightOperand((IQLMemberSelection)newValue);
+      case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__SEL:
+        setSel((IQLMemberSelection)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -237,8 +237,8 @@ public class IQLMemberSelectionExpressionImpl extends IQLExpressionImpl implemen
       case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__LEFT_OPERAND:
         setLeftOperand((IQLExpression)null);
         return;
-      case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__RIGHT_OPERAND:
-        setRightOperand((IQLMemberSelection)null);
+      case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__SEL:
+        setSel((IQLMemberSelection)null);
         return;
     }
     super.eUnset(featureID);
@@ -256,8 +256,8 @@ public class IQLMemberSelectionExpressionImpl extends IQLExpressionImpl implemen
     {
       case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__LEFT_OPERAND:
         return leftOperand != null;
-      case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__RIGHT_OPERAND:
-        return rightOperand != null;
+      case BasicIQLPackage.IQL_MEMBER_SELECTION_EXPRESSION__SEL:
+        return sel != null;
     }
     return super.eIsSet(featureID);
   }

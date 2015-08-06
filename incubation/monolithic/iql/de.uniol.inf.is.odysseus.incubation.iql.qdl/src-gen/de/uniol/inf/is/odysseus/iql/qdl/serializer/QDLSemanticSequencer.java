@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttributeSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLBooleanNotExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLBreakStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLCasePart;
@@ -33,6 +32,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaKeywords;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionBoolean;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionDouble;
@@ -45,25 +45,19 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionRange;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionString;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLogicalAndExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLogicalOrExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleID;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclarationMember;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMultiplicativeExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLParenthesisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPlusMinusExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPostfixExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPrefixExpression;
@@ -72,13 +66,9 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLReturnStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSwitchStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionParenthesis;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionSuper;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionThis;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionVariable;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
@@ -86,9 +76,17 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLWhileStatement;
 import de.uniol.inf.is.odysseus.iql.basic.serializer.BasicIQLSemanticSequencer;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleBoolean;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleChar;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleDouble;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleInt;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleNull;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleString;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleTypeRef;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFile;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLMetadataValueSingleID;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition;
@@ -209,12 +207,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 			case BasicIQLPackage.IQL_ATTRIBUTE:
 				if(context == grammarAccess.getIQLAttributeRule()) {
 					sequence_IQLAttribute(context, (IQLAttribute) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_ATTRIBUTE_SELECTION:
-				if(context == grammarAccess.getIQLAttributeSelectionRule()) {
-					sequence_IQLAttributeSelection(context, (IQLAttributeSelection) semanticObject); 
 					return; 
 				}
 				else break;
@@ -394,6 +386,37 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
+			case BasicIQLPackage.IQL_JVM_ELEMENT_CALL_EXPRESSION:
+				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
+				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
+				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLEqualityExpressionRule() ||
+				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
+				   context == grammarAccess.getIQLPortExpressionRule() ||
+				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionRule() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
+				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLUnaryExpressionRule() ||
+				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
+					sequence_IQLOtherExpressions(context, (IQLJvmElementCallExpression) semanticObject); 
+					return; 
+				}
+				else break;
 			case BasicIQLPackage.IQL_LITERAL_EXPRESSION_BOOLEAN:
 				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
 				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
@@ -412,6 +435,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
 				   context == grammarAccess.getIQLPortExpressionRule() ||
 				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -419,7 +443,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
 					sequence_IQLLiteralExpression(context, (IQLLiteralExpressionBoolean) semanticObject); 
@@ -444,6 +467,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
 				   context == grammarAccess.getIQLPortExpressionRule() ||
 				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -451,7 +475,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
 					sequence_IQLLiteralExpression(context, (IQLLiteralExpressionChar) semanticObject); 
@@ -476,6 +499,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
 				   context == grammarAccess.getIQLPortExpressionRule() ||
 				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -483,7 +507,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
 					sequence_IQLLiteralExpression(context, (IQLLiteralExpressionDouble) semanticObject); 
@@ -508,6 +531,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
 				   context == grammarAccess.getIQLPortExpressionRule() ||
 				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -515,7 +539,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
 					sequence_IQLLiteralExpression(context, (IQLLiteralExpressionInt) semanticObject); 
@@ -541,6 +564,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
 				   context == grammarAccess.getIQLPortExpressionRule() ||
 				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -548,7 +572,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
 					sequence_IQLLiteralExpressionList(context, (IQLLiteralExpressionList) semanticObject); 
@@ -574,6 +597,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
 				   context == grammarAccess.getIQLPortExpressionRule() ||
 				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -581,7 +605,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
 					sequence_IQLLiteralExpressionMap(context, (IQLLiteralExpressionMap) semanticObject); 
@@ -612,6 +635,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
 				   context == grammarAccess.getIQLPortExpressionRule() ||
 				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -619,7 +643,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
 					sequence_IQLLiteralExpression(context, (IQLLiteralExpressionNull) semanticObject); 
@@ -644,6 +667,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
 				   context == grammarAccess.getIQLPortExpressionRule() ||
 				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -651,7 +675,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
 					sequence_IQLLiteralExpression(context, (IQLLiteralExpressionRange) semanticObject); 
@@ -676,6 +699,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
 				   context == grammarAccess.getIQLPortExpressionRule() ||
 				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -683,7 +707,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
 					sequence_IQLLiteralExpression(context, (IQLLiteralExpressionString) semanticObject); 
@@ -717,6 +740,12 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0()) {
 					sequence_IQLLogicalOrExpression(context, (IQLLogicalOrExpression) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_MEMBER_SELECTION:
+				if(context == grammarAccess.getIQLMemberSelectionRule()) {
+					sequence_IQLMemberSelection(context, (IQLMemberSelection) semanticObject); 
 					return; 
 				}
 				else break;
@@ -781,62 +810,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleBoolean) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_CHAR:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleChar) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleDouble) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_ID:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleID) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleInt) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_NULL:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleNull) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_STRING:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleString) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleTypeRef) semanticObject); 
-					return; 
-				}
-				else break;
 			case BasicIQLPackage.IQL_METHOD:
 				if(context == grammarAccess.getIQLMethodRule()) {
 					sequence_IQLMethod(context, (IQLMethod) semanticObject); 
@@ -846,12 +819,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 			case BasicIQLPackage.IQL_METHOD_DECLARATION_MEMBER:
 				if(context == grammarAccess.getIQLMethodDeclarationMemberRule()) {
 					sequence_IQLMethodDeclarationMember(context, (IQLMethodDeclarationMember) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_METHOD_SELECTION:
-				if(context == grammarAccess.getIQLMethodSelectionRule()) {
-					sequence_IQLMethodSelection(context, (IQLMethodSelection) semanticObject); 
 					return; 
 				}
 				else break;
@@ -883,6 +850,68 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 			case BasicIQLPackage.IQL_NAMESPACE:
 				if(context == grammarAccess.getIQLNamespaceRule()) {
 					sequence_IQLNamespace(context, (IQLNamespace) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_NEW_EXPRESSION:
+				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
+				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
+				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLEqualityExpressionRule() ||
+				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
+				   context == grammarAccess.getIQLPortExpressionRule() ||
+				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionRule() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
+				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLUnaryExpressionRule() ||
+				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
+					sequence_IQLOtherExpressions(context, (IQLNewExpression) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_PARENTHESIS_EXPRESSION:
+				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
+				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
+				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLEqualityExpressionRule() ||
+				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
+				   context == grammarAccess.getIQLPortExpressionRule() ||
+				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionRule() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
+				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLUnaryExpressionRule() ||
+				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
+					sequence_IQLOtherExpressions(context, (IQLParenthesisExpression) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1013,6 +1042,37 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
+			case BasicIQLPackage.IQL_SUPER_EXPRESSION:
+				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
+				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
+				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLEqualityExpressionRule() ||
+				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
+				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
+				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
+				   context == grammarAccess.getIQLPortExpressionRule() ||
+				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionRule() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
+				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
+				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
+				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLUnaryExpressionRule() ||
+				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
+					sequence_IQLOtherExpressions(context, (IQLSuperExpression) semanticObject); 
+					return; 
+				}
+				else break;
 			case BasicIQLPackage.IQL_SWITCH_STATEMENT:
 				if(context == grammarAccess.getIQLStatementRule() ||
 				   context == grammarAccess.getIQLSwitchStatementRule()) {
@@ -1020,7 +1080,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_METHOD:
+			case BasicIQLPackage.IQL_THIS_EXPRESSION:
 				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
 				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
@@ -1037,6 +1097,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLOtherExpressionsRule() ||
 				   context == grammarAccess.getIQLPortExpressionRule() ||
 				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -1044,165 +1105,9 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
 				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
-					sequence_IQLTerminalExpression(context, (IQLTerminalExpressionMethod) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_NEW:
-				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
-				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
-				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLEqualityExpressionRule() ||
-				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLPortExpressionRule() ||
-				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionRule() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
-				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
-				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
-					sequence_IQLTerminalExpression(context, (IQLTerminalExpressionNew) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_PARENTHESIS:
-				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
-				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
-				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLEqualityExpressionRule() ||
-				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLPortExpressionRule() ||
-				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionRule() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
-				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
-				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
-					sequence_IQLTerminalExpression(context, (IQLTerminalExpressionParenthesis) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_SUPER:
-				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
-				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
-				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLEqualityExpressionRule() ||
-				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLPortExpressionRule() ||
-				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionRule() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
-				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
-				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
-					sequence_IQLTerminalExpression(context, (IQLTerminalExpressionSuper) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_THIS:
-				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
-				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
-				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLEqualityExpressionRule() ||
-				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLPortExpressionRule() ||
-				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionRule() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
-				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
-				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
-					sequence_IQLTerminalExpression(context, (IQLTerminalExpressionThis) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_TERMINAL_EXPRESSION_VARIABLE:
-				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
-				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
-				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLEqualityExpressionRule() ||
-				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLPortExpressionRule() ||
-				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionRule() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
-				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
-				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLTerminalExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
-					sequence_IQLTerminalExpression(context, (IQLTerminalExpressionVariable) semanticObject); 
+					sequence_IQLOtherExpressions(context, (IQLThisExpression) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1266,6 +1171,55 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				else break;
 			}
 		else if(semanticObject.eClass().getEPackage() == QDLPackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
+			case QDLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleBoolean) semanticObject); 
+					return; 
+				}
+				else break;
+			case QDLPackage.IQL_METADATA_VALUE_SINGLE_CHAR:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleChar) semanticObject); 
+					return; 
+				}
+				else break;
+			case QDLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleDouble) semanticObject); 
+					return; 
+				}
+				else break;
+			case QDLPackage.IQL_METADATA_VALUE_SINGLE_INT:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleInt) semanticObject); 
+					return; 
+				}
+				else break;
+			case QDLPackage.IQL_METADATA_VALUE_SINGLE_NULL:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleNull) semanticObject); 
+					return; 
+				}
+				else break;
+			case QDLPackage.IQL_METADATA_VALUE_SINGLE_STRING:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleString) semanticObject); 
+					return; 
+				}
+				else break;
+			case QDLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleTypeRef) semanticObject); 
+					return; 
+				}
+				else break;
 			case QDLPackage.IQL_PORT_EXPRESSION:
 				if(context == grammarAccess.getIQLAssignmentExpressionRule() ||
 				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
@@ -1291,6 +1245,13 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 			case QDLPackage.QDL_FILE:
 				if(context == grammarAccess.getQDLFileRule()) {
 					sequence_QDLFile(context, (QDLFile) semanticObject); 
+					return; 
+				}
+				else break;
+			case QDLPackage.QDL_METADATA_VALUE_SINGLE_ID:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (QDLMetadataValueSingleID) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1336,6 +1297,134 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 		feeder.accept(grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0(), semanticObject.getLeftOperand());
 		feeder.accept(grammarAccess.getIQLAssignmentExpressionAccess().getOpOpAssignParserRuleCall_1_0_0_1_0(), semanticObject.getOp());
 		feeder.accept(grammarAccess.getIQLAssignmentExpressionAccess().getRightOperandIQLAssignmentExpressionParserRuleCall_1_1_0(), semanticObject.getRightOperand());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     value=BOOLEAN
+	 */
+	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleBoolean semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_BOOLEAN__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_BOOLEAN__VALUE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueBOOLEANTerminalRuleCall_3_1_0(), semanticObject.isValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     value=CHAR
+	 */
+	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleChar semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_CHAR__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_CHAR__VALUE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueCHARTerminalRuleCall_4_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     value=DOUBLE
+	 */
+	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleDouble semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_DOUBLE__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_DOUBLE__VALUE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueDOUBLETerminalRuleCall_1_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     value=INT
+	 */
+	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleInt semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_INT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_INT__VALUE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueINTTerminalRuleCall_0_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     value='null'
+	 */
+	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleNull semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_NULL__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_NULL__VALUE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueNullKeyword_7_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     value=STRING
+	 */
+	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleString semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_STRING__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_STRING__VALUE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueSTRINGTerminalRuleCall_2_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     value=JvmTypeReference
+	 */
+	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleTypeRef semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_6_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     value=ID
+	 */
+	protected void sequence_IQLMetadataValueSingle(EObject context, QDLMetadataValueSingleID semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.QDL_METADATA_VALUE_SINGLE_ID__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.QDL_METADATA_VALUE_SINGLE_ID__VALUE));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_5_0_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	

@@ -15,8 +15,8 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTerminalExpressionNew;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
@@ -62,8 +62,8 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 	}
 	
 	@Override
-	public Collection<IQLTerminalExpressionNew> getNewExpressions(EObject obj) {
-		return EcoreUtil2.getAllContentsOfType(obj, IQLTerminalExpressionNew.class);
+	public Collection<IQLNewExpression> getNewExpressions(EObject obj) {
+		return EcoreUtil2.getAllContentsOfType(obj, IQLNewExpression.class);
 	}
 
 	@Override
