@@ -33,6 +33,11 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 	}
 
 	/**
+	 * The key for the sourcename key value pair.
+	 */
+	private static final String KEY_SOURCENAME = "sourcename";
+
+	/**
 	 * Parses the Odysseus Script parameter.
 	 * 
 	 * @param parameter
@@ -54,6 +59,10 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 			String[] keyValue = argument.split("=");
 			config.put(keyValue[0].trim().toLowerCase(), keyValue[1].trim());
 		}
+		if (config.getProperty(KEY_SOURCENAME) == null) {
+			throw new OdysseusScriptException("Missing key 'sourcename' for "
+					+ getName());
+		}
 		return config;
 
 	}
@@ -70,9 +79,14 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 			String parameter, ISession caller, Context context,
 			IServerExecutor executor) throws OdysseusScriptException {
 		Properties config = parseParameter(parameter);
-		String sourcename = config.getProperty("sourcename");
+		String sourcename = config.getProperty(KEY_SOURCENAME);
 		String recorder = BaDaStSender.sendCreateCommand(config);
+		if (recorder == null) {
+			throw new OdysseusScriptException(
+					"Could not create BaDaSt recorder!");
+		}
 		BaDaStRecorderRegistry.register(sourcename, recorder);
+		BaDaStSender.sendStartCommand(recorder);
 		return null;
 	}
 
