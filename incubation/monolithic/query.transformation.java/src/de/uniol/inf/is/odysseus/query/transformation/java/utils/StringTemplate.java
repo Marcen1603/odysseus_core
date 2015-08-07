@@ -11,7 +11,7 @@ public class StringTemplate {
 	private ST st;
 	
 	public StringTemplate(String folder, String templateFile){
-		 group = new STGroupDir(folder,'$','$');
+		 group = new STGroupDir("templates/"+folder,'$','$');
 		 setSt(group.getInstanceOf(templateFile));
 	}
 	

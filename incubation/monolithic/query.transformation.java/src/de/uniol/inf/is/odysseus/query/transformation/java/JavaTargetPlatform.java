@@ -60,7 +60,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		sinkOPs = new ArrayList<ILogicalOperator>();
 	
 		//Start Odysseus index
-		updateProgressBar(15, "Run index on Odysseus codepath");
+		updateProgressBar(15, "Index the Odysseus codepath");
 		OdysseusIndex.search(parameter.getOdysseusPath());
 	
 		bodyCode = new StringBuilder();

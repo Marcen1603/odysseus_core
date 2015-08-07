@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.query.transformation.java.filewriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,11 +16,14 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.transformation.java.mainstructure.JavaMainstructure;
+import de.uniol.inf.is.odysseus.query.transformation.java.Activator;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.GenerateAntBuildFile;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.UnZip;
 
 
@@ -29,7 +33,6 @@ public class JavaFileWrite {
 	private File file;
 	private FileWriter writer;
 	private String tempPath;
-	private JavaMainstructure mainStructure;
 	TransformationParameter parameter;
 	private Set<String> importList = new HashSet<String>();
 	private List<String> copyJars = new ArrayList<String>();
@@ -37,11 +40,12 @@ public class JavaFileWrite {
 	private String bodyCode;
 	private String startCode;
 	
+	private static Logger LOG = LoggerFactory.getLogger(JavaFileWrite.class);
+	
 	
 	public JavaFileWrite(String fileName, TransformationParameter parameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode){
 		this.fileName = fileName;
 		this.tempPath = parameter.getTempDirectory();
-		this.mainStructure = new JavaMainstructure();
 		this.parameter = parameter;
 		this.importList = importList;
 		this.osgiBindCode = osgiBindCode;
@@ -73,7 +77,23 @@ public class JavaFileWrite {
 	 */
 	private void unzipProjectTemplate(){
 		UnZip unZip = new UnZip();
-    	unZip.unZipIt(parameter.getOdysseusPath()+"\\incubation\\monolithic\\query.transformation.java\\templates\\"+"JavaProject.zip",tempPath);
+		
+		Bundle bundle = Activator.getContext().getBundle();
+	
+		URL fileURL = bundle.getEntry("templates/java/JavaProject.zip");
+		File file = null;
+		try {
+		    file = new File(FileLocator.resolve(fileURL).toURI());
+		}catch (IOException | URISyntaxException e1) {
+		    e1.printStackTrace();
+		}
+		
+		if(file != null){
+			unZip.unZipIt(file.getAbsolutePath(),tempPath);
+		}else{
+			LOG.error("Project file not found!");
+		}
+    	
 		
 	}
 	
@@ -89,14 +109,18 @@ public class JavaFileWrite {
 			file.createNewFile();
 			writer = new FileWriter(file); 
 			
-				writePackage();
-				writeImports();
-					writeClassTop();
-					writeBody(osgiBindCode);
-					writeBody(bodyCode);
-					writeBody(startCode);
-				writeBottom();
-				
+			//sort importList for nice look
+			TreeSet<String> sortList = new TreeSet<String>( Collections.reverseOrder() );
+			sortList.addAll(importList);
+			
+			StringTemplate javaMain = new StringTemplate("java","javaMain");
+			javaMain.getSt().add("importList", sortList);
+			javaMain.getSt().add("osgiBindCode", osgiBindCode);
+			javaMain.getSt().add("bodyCode", bodyCode);
+			javaMain.getSt().add("startCode", startCode);
+			
+			writer.write(javaMain.getSt().render()); 
+			
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {
@@ -142,32 +166,6 @@ public class JavaFileWrite {
 	
 	private void copyOdysseusJar(){
 		generateJarExport(importList,parameter.getTempDirectory());
-	}
-	
-	private void writeImports() throws IOException{
-		//sort the imports for nice look
-		TreeSet<String> sortList = new TreeSet<String>( Collections.reverseOrder() );
-		sortList.addAll(importList);
-	
-		for(String imp : sortList){
-			 writer.write("import "+imp+";\n"); 
-		}
-	}
-	
-	private void writeClassTop() throws IOException{
-		 writer.write(mainStructure.getClassTop()); 
-	}
-	
-	private void writeBody(String bodyText) throws IOException{
-		 writer.write(bodyText); 
-	}
-	
-	private void writeBottom() throws IOException{
-		 writer.write(mainStructure.getClassBottom()); 
-	}
-	
-	private void writePackage() throws IOException{
-		 writer.write(mainStructure.getPackage()); 
 	}
 	
 	

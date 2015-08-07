@@ -33,7 +33,7 @@ public class JavaProjectOperator extends AbstractTransformationOperator{
 		int[] restrictList = projectAO.determineRestrictList();
 		
 	
-		StringTemplate relationalProjectPOTemplate = new StringTemplate("relationalProjectPO");
+		StringTemplate relationalProjectPOTemplate = new StringTemplate("java","relationalProjectPO");
 		
 		relationalProjectPOTemplate.getSt().add("restrictList", restrictList);
 		relationalProjectPOTemplate.getSt().add("operatorVariable", operatorVariable);

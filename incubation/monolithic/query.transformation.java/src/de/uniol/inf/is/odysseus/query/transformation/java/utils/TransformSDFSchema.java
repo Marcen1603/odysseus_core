@@ -20,7 +20,7 @@ public class TransformSDFSchema {
 		StringBuilder code = new StringBuilder();
 		
 	
-		StringTemplate sdfSchemaTemplate = new StringTemplate("sdfSchema");
+		StringTemplate sdfSchemaTemplate = new StringTemplate("java","sdfSchema");
 		sdfSchemaTemplate.getSt().add("operatorVariable", operatorVariable);
 		sdfSchemaTemplate.getSt().add("schemaURI", schema.getURI());
 		sdfSchemaTemplate.getSt().add("className", className);
