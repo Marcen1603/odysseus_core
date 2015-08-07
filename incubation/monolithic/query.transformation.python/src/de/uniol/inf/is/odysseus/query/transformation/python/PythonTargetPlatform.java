@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.query.transformation.python;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.transformation.python.filewrite.PythonFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.AbstractTargetPlatform;
 
@@ -22,7 +24,7 @@ public class PythonTargetPlatform extends AbstractTargetPlatform{
 
 	@Override
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
-			TransformationParameter parameter) {
+			TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue){
 		// TODO Auto-generated method stub
 		
 		

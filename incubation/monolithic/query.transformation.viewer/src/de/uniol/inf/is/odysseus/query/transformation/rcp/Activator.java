@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.transformation.viewer;
+package de.uniol.inf.is.odysseus.query.transformation.rcp;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

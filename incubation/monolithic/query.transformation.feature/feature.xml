@@ -24,7 +24,7 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.transformation.viewer"
+         id="de.uniol.inf.is.odysseus.query.transformation.rcp"
          download-size="0"
          install-size="0"
          version="0.0.0"

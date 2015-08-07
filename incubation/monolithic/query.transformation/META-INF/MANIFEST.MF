@@ -18,6 +18,7 @@ Service-Component: OSGI-INF/OperatorRegistry.xml, OSGI-INF/ExecutorServiceBindin
  OSGI-INF/TargetPlatformRegistry.xml
 Export-Package: de.uniol.inf.is.odysseus.query.transformation.compiler,
  de.uniol.inf.is.odysseus.query.transformation.main,
+ de.uniol.inf.is.odysseus.query.transformation.modell,
  de.uniol.inf.is.odysseus.query.transformation.operator,
  de.uniol.inf.is.odysseus.query.transformation.operator.registry,
  de.uniol.inf.is.odysseus.query.transformation.target.platform,

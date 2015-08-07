@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.transformation.viewer.commands;
+package de.uniol.inf.is.odysseus.query.transformation.rcp.commands;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.query.transformation.viewer.gui.ExportQueryDialog;
+import de.uniol.inf.is.odysseus.query.transformation.rcp.window.QueryTransformationWindow;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.commands.AbstractQueryCommand;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
@@ -20,6 +20,7 @@ public class ExportQueryCommand extends AbstractQueryCommand {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		
 		List<Object> selections = SelectionProvider.getSelection(event);
 		
 		for (Object selection : selections) {
@@ -27,8 +28,10 @@ public class ExportQueryCommand extends AbstractQueryCommand {
 			if (executor != null) {
 				int queryId = (Integer)selection;
 		
-				ExportQueryDialog transformationDialog = new ExportQueryDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), queryId);
-				transformationDialog.open();
+				QueryTransformationWindow window = new QueryTransformationWindow(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),queryId);
+				window.show();
+				
 						
 			} else {
 				LOG.error("Executor is not set");

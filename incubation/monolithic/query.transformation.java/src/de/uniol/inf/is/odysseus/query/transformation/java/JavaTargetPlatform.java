@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -18,6 +19,7 @@ import de.uniol.inf.is.odysseus.query.transformation.java.mapping.Transformation
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIBindings;
+import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.IOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.registry.OperatorRegistry;
@@ -34,8 +36,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	
 	private List<ILogicalOperator> sourceOPs;
 	private List<ILogicalOperator> sinkOPs;
-
 	
+
 	@Override
 	public String getTargetPlatformName() {
 		return targetPlatformName;
@@ -45,7 +47,12 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
-			TransformationParameter parameter) {
+			TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> progressBarQueue) throws InterruptedException {
+		this.setProgressBarQueue(progressBarQueue);
+		
+		//add userfeedback
+		updateProgressBar(10, "Start the transformation");
+		
 		//clear transformation infos
 		TransformationInformation.clear();
 		
@@ -53,6 +60,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		sinkOPs = new ArrayList<ILogicalOperator>();
 	
 		//Start Odysseus index
+		updateProgressBar(15, "Run index on Odysseus codepath");
 		OdysseusIndex.search(parameter.getOdysseusPath());
 	
 		bodyCode = new StringBuilder();
@@ -74,11 +82,13 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 		sourceOPs = findSourcesVisitor.getResult();
 	
+		
 		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
 		
 		walkTroughLogicalPlan(sourceOPs,parameter);
 		
 		//generate code for osgi binds
+		updateProgressBar(70, "Generate OSGI emulation code");
 		osgiBindCode = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath());
 		
 		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
@@ -88,14 +98,17 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 		importList.addAll(startStreams.getImports());
 	
+		updateProgressBar(75, "Create Java files");
 		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBindCode,bodyCode.toString(),startStreams.getCode());
 		
 		try {
+			updateProgressBar(80, "Create Java project");
 			javaFileWrite.createProject();
 	
+			updateProgressBar(85, "Compile the Java project");
 			ExecuteShellComand.compileJavaProgram(parameter.getTempDirectory());	
 			
-			
+			updateProgressBar(100, "Transformation finish");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -103,10 +116,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 	}
 	
-	
-	
-	
-	private void walkTroughLogicalPlan(List<ILogicalOperator> operatorSources,TransformationParameter parameter){
+
+	private void walkTroughLogicalPlan(List<ILogicalOperator> operatorSources,TransformationParameter parameter) throws InterruptedException{
 		
 		for(ILogicalOperator sourceOperator: operatorSources){
 				generateCode(sourceOperator,parameter);
@@ -114,7 +125,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 	}
 	
-	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter){
+	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter) throws InterruptedException{
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 		
 	
@@ -123,7 +134,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 			if(!TransformationInformation.getInstance().isOperatorAdded(operator)){
 				
-			
+				this.getProgressBarQueue().put(new ProgressBarUpdate(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName()));
+				
 				//reg the operator to generate a uniq operatorVariable
 				TransformationInformation.getInstance().addOperator(operator);
 

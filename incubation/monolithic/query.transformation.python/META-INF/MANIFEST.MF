@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.python.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.query.transformation.compiler,
+ de.uniol.inf.is.odysseus.query.transformation.modell,
  de.uniol.inf.is.odysseus.query.transformation.operator,
  de.uniol.inf.is.odysseus.query.transformation.operator.registry,
  de.uniol.inf.is.odysseus.query.transformation.target.platform,

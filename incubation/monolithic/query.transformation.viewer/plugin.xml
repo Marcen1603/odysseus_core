@@ -17,7 +17,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="de.uniol.inf.is.odysseus.query.transformation.viewer.commands.ExportQueryCommand"
+            defaultHandler="de.uniol.inf.is.odysseus.query.transformation.rcp.commands.ExportQueryCommand"
             id="de.uniol.inf.is.odysseus.query.transformation.viewer.commands.ExportQueryCommand"
             name="Export Query">
       </command>

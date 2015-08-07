@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.query.transformation.main;
 
+import java.util.concurrent.BlockingQueue;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.ITargetPlatform;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.registry.TargetPlatformRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.utils.ExecutorServiceBinding;
@@ -18,7 +21,7 @@ public class QueryTransformation {
 	private static Logger LOG = LoggerFactory.getLogger(QueryTransformation.class);
 	
 	@SuppressWarnings("unchecked")
-	public static void startQueryTransformation(TransformationParameter parameter){
+	public static void startQueryTransformation(TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue ){
 		
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
 		
@@ -34,7 +37,12 @@ public class QueryTransformation {
 	
 		ITargetPlatform targetPlatform = TargetPlatformRegistry.getTargetPlatform(parameter.getProgramLanguage());
 		
-		targetPlatform.convertQueryToStandaloneSystem(savedPlan, parameter);
+		try {
+			targetPlatform.convertQueryToStandaloneSystem(savedPlan, parameter, queue);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	
 
 	}
