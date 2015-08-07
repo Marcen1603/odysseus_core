@@ -385,6 +385,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 					}
 					
 					importedSources.put(advertisement, realSrcNameToUse);
+					ILogicalOperator op = query.getLogicalPlan();
+					SDFSchema outputSchema = op.getOutputSchema();
+					outputSchema.setMetaSchema(advertisement.getMetaSchemata());
+					op.setOutputSchema(outputSchema);
 					getDataDictionary().setStream(realSrcNameToUse, query.getLogicalPlan(), SessionManagementService.getActiveSession());
 				} else {
 					throw new PeerException("Could not import '" + realSrcNameToUse + "' since the parser did not return a runnable query");
