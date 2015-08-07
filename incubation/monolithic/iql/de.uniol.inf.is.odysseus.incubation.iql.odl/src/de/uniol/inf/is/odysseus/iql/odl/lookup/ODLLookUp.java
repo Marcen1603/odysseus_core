@@ -11,6 +11,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAO;
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLPO;
@@ -49,8 +50,8 @@ public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory, ODLTypeOperator
 		for(Method method : LogicalOperator.class.getDeclaredMethods()) {
 			result.add(method.getName());
 		}
-		result.add("outputmode");
-		result.add("persistent");
+		result.add(ODLTypeFactory.OPERATOR_OUTPUT_MODE);
+		result.add(ODLTypeFactory.OPERATOR_PERSISTENT);
 		return result;
 	}
 	
@@ -79,6 +80,10 @@ public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory, ODLTypeOperator
 			}
 			return false;
 		}
+	}
+
+	public OutputMode[] getOutputModeValues() {
+		return OutputMode.values();
 	}
 
 }

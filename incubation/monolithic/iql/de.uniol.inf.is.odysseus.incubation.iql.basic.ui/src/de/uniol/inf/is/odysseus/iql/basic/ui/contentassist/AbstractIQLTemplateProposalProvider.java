@@ -242,11 +242,11 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 		StringBuilder patternBuilder = new StringBuilder();
 		patternBuilder.append(name);
 		if (name.equalsIgnoreCase(op.getSimpleName())) {
-			patternBuilder.append("(");
-			if (op.getParameters() != null) {
+			if (op.getParameters() != null && op.getParameters().size() > 0) {
+				patternBuilder.append("(");
 				patternBuilder.append(toPattern(op.getParameters()));
+				patternBuilder.append(")");
 			}
-			patternBuilder.append(")");
 		}		
 
 		String id = name;

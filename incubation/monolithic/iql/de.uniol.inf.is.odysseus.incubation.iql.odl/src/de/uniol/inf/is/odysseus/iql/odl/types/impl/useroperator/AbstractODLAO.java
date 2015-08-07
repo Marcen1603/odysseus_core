@@ -32,11 +32,15 @@ public abstract class AbstractODLAO extends AbstractLogicalOperator implements I
 
 	@Override
 	public boolean isValid() {
-		return validate();
+		return validateParameters() && validate();
 	}
 
 	protected boolean validate() {
 		return super.isValid();
+	}
+	
+	protected boolean validateParameters() {
+		return true;
 	}
 	
 	@Override

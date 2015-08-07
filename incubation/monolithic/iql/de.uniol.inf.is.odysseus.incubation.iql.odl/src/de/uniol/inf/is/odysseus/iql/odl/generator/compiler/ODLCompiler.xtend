@@ -25,6 +25,10 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates
+import java.util.List
+import java.util.ArrayList
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate
 
 class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLStatementCompiler, ODLTypeFactory, ODLTypeUtils>{
 	
@@ -84,12 +88,25 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		var newExpressions = helper.getNewExpressions(o);
 		var varStmts = helper.getVarStatements(o);
 		var odlmethods = helper.getODLMethods(o);
-		
+		var hasPredicate = helper.hasPredicate(o);
+		var predicates = helper.getPredicates(o);
+		var predicateArrays = helper.getPredicateArrays(o);
+		var parametersToValidate = new ArrayList();
+		for (p : parameters) {
+			if (helper.hasValidateMethod(o, p)) {
+				parametersToValidate.add(p);
+			}
+		}
+		if (hasPredicate) {
+			context.addImport(IHasPredicates.canonicalName)
+			context.addImport(List.canonicalName)
+			context.addImport(ArrayList.canonicalName)			
+		}
 		'''
 		
 		@SuppressWarnings("all")
 		@«LogicalOperator.simpleName»(«metadataAnnotationCompiler.getAOAnnotationElements(o, context)»)
-		public class «opName» extends «superClass» {
+		public class «opName» extends «superClass»«IF hasPredicate» implements «IHasPredicates.simpleName»«ENDIF» {
 			«FOR p : parameters»
 				«compile(p, context)»
 			«ENDFOR»
@@ -108,13 +125,9 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 			«FOR p : parameters»
 				«var pName = helper.firstCharUpperCase(p.simpleName)»
 				«var type = typeCompiler.compile(p.type, context, false)»
-				«var validate = helper.hasValidateMethod(o, p)»
 				@«Parameter.simpleName»(«metadataAnnotationCompiler.getParameterAnnotationElements(p, context)»)
 				public void set«pName»(«type» «p.simpleName») {
 					this.«p.simpleName» = «p.simpleName»;
-					«IF validate»
-					this.validate«p.simpleName»();
-					«ENDIF»
 				}
 			«ENDFOR»
 			
@@ -130,11 +143,33 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 			«compile(m, context)»
 			«ENDFOR»
 			
+			«IF parametersToValidate.size > 0»
+			@Override
+			protected boolean validateParameters() {
+				return «parametersToValidate.map[p | "this.validate"+p.simpleName+"()"].join("&&")»;
+			}
+			«ENDIF»
+			
 			@Override
 			public «superClass» clone() {
 				return new «opName»(this);
 			}
 			
+			«IF hasPredicate»
+			@Override
+			public «List.simpleName»<IPredicate<?>> getPredicates() {
+				«List.simpleName» result = new «ArrayList.simpleName»<>();
+				«FOR pred : predicates»
+				result.add(this.«pred»);
+				«ENDFOR»
+				«FOR pred : predicateArrays»
+				for («IPredicate.simpleName» p : «pred») {
+					result.add(p);	
+				}
+				«ENDFOR»
+				return result;
+			}
+			«ENDIF»
 			«FOR e : newExpressions»
 				«IF e.argsMap != null && e.argsMap.elements.size > 0»
 					«createGetterMethod(e.ref, e.argsMap, context)»
@@ -293,11 +328,13 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 			protected boolean validate()
 				«stmtCompiler.compile(m.body, context)»	
 			'''	
-		} else if (m.on && (!context.ao && lookUp.hasOnMethod(m.simpleName, false) || context.ao && lookUp.hasOnMethod(m.simpleName, true))){
+		} else if (!m.validate && m.on && (!context.ao && lookUp.hasOnMethod(m.simpleName, false) || context.ao && lookUp.hasOnMethod(m.simpleName, true))){
 			var className = helper.getClassName(m);
 			var returnT = "";
 			if (m.returnType != null && !m.simpleName.equalsIgnoreCase(className)) {
 				returnT = typeCompiler.compile(m.returnType, context, false)
+			} else if (m.returnType == null && !m.simpleName.equalsIgnoreCase(className)) {
+				returnT = "void"
 			}
 			'''
 			@Override

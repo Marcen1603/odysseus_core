@@ -28,6 +28,7 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils, ODLServ
 	public static final String PARAMETER_KEY_TYPE = "keytype";
 	public static final String PARAMETER_TYPE = "type";
 	public static final String OPERATOR_OUTPUT_MODE = "outputMode";
+	public static final String OPERATOR_PERSISTENT = "persistent";
 
 	private Map<String, JvmTypeReference> parametersByType = new HashMap<>();
 	private Map<String, List<JvmTypeReference>> parametersByValue = new HashMap<>();

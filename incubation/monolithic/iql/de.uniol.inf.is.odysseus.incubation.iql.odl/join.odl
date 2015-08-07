@@ -1,0 +1,30 @@
+operator OJoin(outputMode = "INPUT"){
+	
+	parameter IPredicate predicate;
+	
+	on createOutputSchema(int arg0) : SDFSchema{
+		SDFSchema left = getSubscribedToSource(0).schema;
+		SDFSchema right = getSubscribedToSource(1).schema;
+		return join(left, right);
+	}
+	
+	on processOpen() {
+		predicate.init();
+	}	
+	
+//	on processPuncutation(IPunctuation arg0, int arg1) {
+//		if (arg0.isHeartbeat) {
+//			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
+//		}
+//		this.transferFunction.sendPunctuation(punctuation);
+//		this.transferFunction.newElement(punctuation, port);
+//	}
+//	
+//	on processNext(Tuple arg0, int arg1) {
+//		predicate.init();
+//		if (predicate.evaluate(arg0)) {
+//			sendStreamElement(arg0);
+//		}
+//	}		
+	
+}

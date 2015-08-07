@@ -3,9 +3,11 @@ package de.uniol.inf.is.odysseus.iql.odl.generator.compiler;
 import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
@@ -35,6 +37,7 @@ import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLPO;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.inject.Inject;
@@ -139,6 +142,24 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       Collection<IQLNewExpression> newExpressions = this.helper.getNewExpressions(o);
       Collection<IQLVariableStatement> varStmts = this.helper.getVarStatements(o);
       Collection<ODLMethod> odlmethods = this.helper.getODLMethods(o);
+      boolean hasPredicate = this.helper.hasPredicate(o);
+      Collection<String> predicates = this.helper.getPredicates(o);
+      Collection<String> predicateArrays = this.helper.getPredicateArrays(o);
+      ArrayList<ODLParameter> parametersToValidate = new ArrayList<ODLParameter>();
+      for (final ODLParameter p : parameters) {
+        boolean _hasValidateMethod = this.helper.hasValidateMethod(o, p);
+        if (_hasValidateMethod) {
+          parametersToValidate.add(p);
+        }
+      }
+      if (hasPredicate) {
+        String _canonicalName = IHasPredicates.class.getCanonicalName();
+        context.addImport(_canonicalName);
+        String _canonicalName_1 = List.class.getCanonicalName();
+        context.addImport(_canonicalName_1);
+        String _canonicalName_2 = ArrayList.class.getCanonicalName();
+        context.addImport(_canonicalName_2);
+      }
       StringConcatenation _builder = new StringConcatenation();
       _builder.newLine();
       _builder.append("@SuppressWarnings(\"all\")");
@@ -155,12 +176,19 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.append(opName, "");
       _builder.append(" extends ");
       _builder.append(superClass, "");
+      {
+        if (hasPredicate) {
+          _builder.append(" implements ");
+          String _simpleName_2 = IHasPredicates.class.getSimpleName();
+          _builder.append(_simpleName_2, "");
+        }
+      }
       _builder.append(" {");
       _builder.newLineIfNotEmpty();
       {
-        for(final ODLParameter p : parameters) {
+        for(final ODLParameter p_1 : parameters) {
           _builder.append("\t");
-          String _compile = this.compile(p, context);
+          String _compile = this.compile(p_1, context);
           _builder.append(_compile, "\t");
           _builder.newLineIfNotEmpty();
         }
@@ -191,9 +219,9 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.append("super(ao);");
       _builder.newLine();
       {
-        for(final ODLParameter p_1 : parameters) {
+        for(final ODLParameter p_2 : parameters) {
           _builder.append("\t\t");
-          String _createCloneStatements = this.createCloneStatements(p_1, "ao", context);
+          String _createCloneStatements = this.createCloneStatements(p_2, "ao", context);
           _builder.append(_createCloneStatements, "\t\t");
           _builder.newLineIfNotEmpty();
         }
@@ -204,24 +232,21 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.append("\t");
       _builder.newLine();
       {
-        for(final ODLParameter p_2 : parameters) {
+        for(final ODLParameter p_3 : parameters) {
           _builder.append("\t");
-          String _simpleName_2 = p_2.getSimpleName();
-          String pName = this.helper.firstCharUpperCase(_simpleName_2);
+          String _simpleName_3 = p_3.getSimpleName();
+          String pName = this.helper.firstCharUpperCase(_simpleName_3);
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
-          JvmTypeReference _type = p_2.getType();
+          JvmTypeReference _type = p_3.getType();
           String type = this.typeCompiler.compile(_type, context, false);
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
-          boolean validate = this.helper.hasValidateMethod(o, p_2);
-          _builder.newLineIfNotEmpty();
-          _builder.append("\t");
           _builder.append("@");
-          String _simpleName_3 = Parameter.class.getSimpleName();
-          _builder.append(_simpleName_3, "\t");
+          String _simpleName_4 = Parameter.class.getSimpleName();
+          _builder.append(_simpleName_4, "\t");
           _builder.append("(");
-          String _parameterAnnotationElements = this.metadataAnnotationCompiler.getParameterAnnotationElements(p_2, context);
+          String _parameterAnnotationElements = this.metadataAnnotationCompiler.getParameterAnnotationElements(p_3, context);
           _builder.append(_parameterAnnotationElements, "\t");
           _builder.append(")");
           _builder.newLineIfNotEmpty();
@@ -231,31 +256,20 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           _builder.append("(");
           _builder.append(type, "\t");
           _builder.append(" ");
-          String _simpleName_4 = p_2.getSimpleName();
-          _builder.append(_simpleName_4, "\t");
+          String _simpleName_5 = p_3.getSimpleName();
+          _builder.append(_simpleName_5, "\t");
           _builder.append(") {");
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
           _builder.append("\t");
           _builder.append("this.");
-          String _simpleName_5 = p_2.getSimpleName();
-          _builder.append(_simpleName_5, "\t\t");
-          _builder.append(" = ");
-          String _simpleName_6 = p_2.getSimpleName();
+          String _simpleName_6 = p_3.getSimpleName();
           _builder.append(_simpleName_6, "\t\t");
+          _builder.append(" = ");
+          String _simpleName_7 = p_3.getSimpleName();
+          _builder.append(_simpleName_7, "\t\t");
           _builder.append(";");
           _builder.newLineIfNotEmpty();
-          {
-            if (validate) {
-              _builder.append("\t");
-              _builder.append("\t");
-              _builder.append("this.validate");
-              String _simpleName_7 = p_2.getSimpleName();
-              _builder.append(_simpleName_7, "\t\t");
-              _builder.append("();");
-              _builder.newLineIfNotEmpty();
-            }
-          }
           _builder.append("\t");
           _builder.append("}");
           _builder.newLine();
@@ -264,13 +278,13 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.append("\t");
       _builder.newLine();
       {
-        for(final ODLParameter p_3 : parameters) {
+        for(final ODLParameter p_4 : parameters) {
           _builder.append("\t");
-          String _simpleName_8 = p_3.getSimpleName();
+          String _simpleName_8 = p_4.getSimpleName();
           String pName_1 = this.helper.firstCharUpperCase(_simpleName_8);
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
-          JvmTypeReference _type_1 = p_3.getType();
+          JvmTypeReference _type_1 = p_4.getType();
           String type_1 = this.typeCompiler.compile(_type_1, context, false);
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
@@ -283,7 +297,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           _builder.append("\t");
           _builder.append("\t");
           _builder.append("return this.");
-          String _simpleName_9 = p_3.getSimpleName();
+          String _simpleName_9 = p_4.getSimpleName();
           _builder.append(_simpleName_9, "\t\t");
           _builder.append(";");
           _builder.newLineIfNotEmpty();
@@ -300,6 +314,38 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           String _compile_1 = this.compile(m, context);
           _builder.append(_compile_1, "\t");
           _builder.newLineIfNotEmpty();
+        }
+      }
+      _builder.append("\t");
+      _builder.newLine();
+      {
+        int _size = parametersToValidate.size();
+        boolean _greaterThan = (_size > 0);
+        if (_greaterThan) {
+          _builder.append("\t");
+          _builder.append("@Override");
+          _builder.newLine();
+          _builder.append("\t");
+          _builder.append("protected boolean validateParameters() {");
+          _builder.newLine();
+          _builder.append("\t");
+          _builder.append("\t");
+          _builder.append("return ");
+          final Function1<ODLParameter, String> _function = new Function1<ODLParameter, String>() {
+            public String apply(final ODLParameter p) {
+              String _simpleName = p.getSimpleName();
+              String _plus = ("this.validate" + _simpleName);
+              return (_plus + "()");
+            }
+          };
+          List<String> _map = ListExtensions.<ODLParameter, String>map(parametersToValidate, _function);
+          String _join = IterableExtensions.join(_map, "&&");
+          _builder.append(_join, "\t\t");
+          _builder.append(";");
+          _builder.newLineIfNotEmpty();
+          _builder.append("\t");
+          _builder.append("}");
+          _builder.newLine();
         }
       }
       _builder.append("\t");
@@ -323,6 +369,67 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.append("\t");
       _builder.newLine();
       {
+        if (hasPredicate) {
+          _builder.append("\t");
+          _builder.append("@Override");
+          _builder.newLine();
+          _builder.append("\t");
+          _builder.append("public ");
+          String _simpleName_10 = List.class.getSimpleName();
+          _builder.append(_simpleName_10, "\t");
+          _builder.append("<IPredicate<?>> getPredicates() {");
+          _builder.newLineIfNotEmpty();
+          _builder.append("\t");
+          _builder.append("\t");
+          String _simpleName_11 = List.class.getSimpleName();
+          _builder.append(_simpleName_11, "\t\t");
+          _builder.append(" result = new ");
+          String _simpleName_12 = ArrayList.class.getSimpleName();
+          _builder.append(_simpleName_12, "\t\t");
+          _builder.append("<>();");
+          _builder.newLineIfNotEmpty();
+          {
+            for(final String pred : predicates) {
+              _builder.append("\t");
+              _builder.append("\t");
+              _builder.append("result.add(this.");
+              _builder.append(pred, "\t\t");
+              _builder.append(");");
+              _builder.newLineIfNotEmpty();
+            }
+          }
+          {
+            for(final String pred_1 : predicateArrays) {
+              _builder.append("\t");
+              _builder.append("\t");
+              _builder.append("for (");
+              String _simpleName_13 = IPredicate.class.getSimpleName();
+              _builder.append(_simpleName_13, "\t\t");
+              _builder.append(" p : ");
+              _builder.append(pred_1, "\t\t");
+              _builder.append(") {");
+              _builder.newLineIfNotEmpty();
+              _builder.append("\t");
+              _builder.append("\t");
+              _builder.append("\t");
+              _builder.append("result.add(p);\t");
+              _builder.newLine();
+              _builder.append("\t");
+              _builder.append("\t");
+              _builder.append("}");
+              _builder.newLine();
+            }
+          }
+          _builder.append("\t");
+          _builder.append("\t");
+          _builder.append("return result;");
+          _builder.newLine();
+          _builder.append("\t");
+          _builder.append("}");
+          _builder.newLine();
+        }
+      }
+      {
         for(final IQLNewExpression e : newExpressions) {
           {
             boolean _and = false;
@@ -333,9 +440,9 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
             } else {
               IQLArgumentsMap _argsMap_1 = e.getArgsMap();
               EList<IQLArgumentsMapKeyValue> _elements = _argsMap_1.getElements();
-              int _size = _elements.size();
-              boolean _greaterThan = (_size > 0);
-              _and = _greaterThan;
+              int _size_1 = _elements.size();
+              boolean _greaterThan_1 = (_size_1 > 0);
+              _and = _greaterThan_1;
             }
             if (_and) {
               _builder.append("\t");
@@ -371,9 +478,9 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
               IQLVariableInitialization _init_2 = a.getInit();
               IQLArgumentsMap _argsMap_4 = _init_2.getArgsMap();
               EList<IQLArgumentsMapKeyValue> _elements_1 = _argsMap_4.getElements();
-              int _size_1 = _elements_1.size();
-              boolean _greaterThan_1 = (_size_1 > 0);
-              _and_1 = _greaterThan_1;
+              int _size_2 = _elements_1.size();
+              boolean _greaterThan_2 = (_size_2 > 0);
+              _and_1 = _greaterThan_2;
             }
             if (_and_1) {
               _builder.append("\t");
@@ -410,9 +517,9 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
               IQLVariableInitialization _init_6 = a_1.getInit();
               IQLArgumentsMap _argsMap_7 = _init_6.getArgsMap();
               EList<IQLArgumentsMapKeyValue> _elements_2 = _argsMap_7.getElements();
-              int _size_2 = _elements_2.size();
-              boolean _greaterThan_2 = (_size_2 > 0);
-              _and_3 = _greaterThan_2;
+              int _size_3 = _elements_2.size();
+              boolean _greaterThan_3 = (_size_3 > 0);
+              _and_3 = _greaterThan_3;
             }
             if (_and_3) {
               _builder.append("\t");
@@ -914,34 +1021,42 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       } else {
         String _xifexpression_2 = null;
         boolean _and_4 = false;
-        boolean _isOn = m.isOn();
-        if (!_isOn) {
+        boolean _and_5 = false;
+        boolean _isValidate_2 = m.isValidate();
+        boolean _not = (!_isValidate_2);
+        if (!_not) {
+          _and_5 = false;
+        } else {
+          boolean _isOn = m.isOn();
+          _and_5 = _isOn;
+        }
+        if (!_and_5) {
           _and_4 = false;
         } else {
           boolean _or = false;
-          boolean _and_5 = false;
+          boolean _and_6 = false;
           boolean _isAo_2 = context.isAo();
-          boolean _not = (!_isAo_2);
-          if (!_not) {
-            _and_5 = false;
+          boolean _not_1 = (!_isAo_2);
+          if (!_not_1) {
+            _and_6 = false;
           } else {
             String _simpleName_3 = m.getSimpleName();
             boolean _hasOnMethod = this.lookUp.hasOnMethod(_simpleName_3, false);
-            _and_5 = _hasOnMethod;
+            _and_6 = _hasOnMethod;
           }
-          if (_and_5) {
+          if (_and_6) {
             _or = true;
           } else {
-            boolean _and_6 = false;
+            boolean _and_7 = false;
             boolean _isAo_3 = context.isAo();
             if (!_isAo_3) {
-              _and_6 = false;
+              _and_7 = false;
             } else {
               String _simpleName_4 = m.getSimpleName();
               boolean _hasOnMethod_1 = this.lookUp.hasOnMethod(_simpleName_4, true);
-              _and_6 = _hasOnMethod_1;
+              _and_7 = _hasOnMethod_1;
             }
-            _or = _and_6;
+            _or = _and_7;
           }
           _and_4 = _or;
         }
@@ -950,21 +1065,36 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           {
             String className = this.helper.getClassName(m);
             String returnT = "";
-            boolean _and_7 = false;
+            boolean _and_8 = false;
             JvmTypeReference _returnType = m.getReturnType();
             boolean _notEquals_1 = (!Objects.equal(_returnType, null));
             if (!_notEquals_1) {
-              _and_7 = false;
+              _and_8 = false;
             } else {
               String _simpleName_5 = m.getSimpleName();
               boolean _equalsIgnoreCase = _simpleName_5.equalsIgnoreCase(className);
-              boolean _not_1 = (!_equalsIgnoreCase);
-              _and_7 = _not_1;
+              boolean _not_2 = (!_equalsIgnoreCase);
+              _and_8 = _not_2;
             }
-            if (_and_7) {
+            if (_and_8) {
               JvmTypeReference _returnType_1 = m.getReturnType();
               String _compile_2 = this.typeCompiler.compile(_returnType_1, context, false);
               returnT = _compile_2;
+            } else {
+              boolean _and_9 = false;
+              JvmTypeReference _returnType_2 = m.getReturnType();
+              boolean _equals_1 = Objects.equal(_returnType_2, null);
+              if (!_equals_1) {
+                _and_9 = false;
+              } else {
+                String _simpleName_6 = m.getSimpleName();
+                boolean _equalsIgnoreCase_1 = _simpleName_6.equalsIgnoreCase(className);
+                boolean _not_3 = (!_equalsIgnoreCase_1);
+                _and_9 = _not_3;
+              }
+              if (_and_9) {
+                returnT = "void";
+              }
             }
             StringConcatenation _builder_2 = new StringConcatenation();
             _builder_2.append("@Override");
@@ -972,8 +1102,8 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
             _builder_2.append("public ");
             _builder_2.append(returnT, "");
             _builder_2.append(" on");
-            String _simpleName_6 = m.getSimpleName();
-            String _firstCharUpperCase = this.helper.firstCharUpperCase(_simpleName_6);
+            String _simpleName_7 = m.getSimpleName();
+            String _firstCharUpperCase = this.helper.firstCharUpperCase(_simpleName_7);
             _builder_2.append(_firstCharUpperCase, "");
             _builder_2.append("(");
             {

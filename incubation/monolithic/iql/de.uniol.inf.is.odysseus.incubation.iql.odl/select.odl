@@ -1,0 +1,20 @@
+operator OSelect(outputMode = "INPUT"){
+	
+	parameter IPredicate predicate;
+	
+	on processOpen() {
+		predicate.init();
+	}	
+	
+	on processPuncutation(IPunctuation arg0, int arg1) {
+		sendPunctuation(arg0);
+	}
+	
+	on processNext(Tuple arg0, int arg1) {
+		predicate.init();
+		if (predicate.evaluate(arg0)) {
+			sendStreamElement(arg0);
+		}
+	}		
+	
+}

@@ -263,6 +263,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
     IQLExpression _forExpression = s.getForExpression();
     String _compile_1 = this.exprCompiler.compile(_forExpression, c);
     _builder.append(_compile_1, "");
+    _builder.append(")");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     IQLStatement _body = s.getBody();

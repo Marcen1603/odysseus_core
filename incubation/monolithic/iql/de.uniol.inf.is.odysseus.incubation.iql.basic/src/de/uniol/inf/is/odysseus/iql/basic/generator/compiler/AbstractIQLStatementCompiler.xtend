@@ -133,7 +133,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	
 	def String compile(IQLForEachStatement s, G c) {
 		'''
-		for («compile(s.^var as IQLVariableDeclaration, c)» : «exprCompiler.compile(s.forExpression, c)»
+		for («compile(s.^var as IQLVariableDeclaration, c)» : «exprCompiler.compile(s.forExpression, c)»)
 			«compile(s.body, c)»
 		'''
 	}

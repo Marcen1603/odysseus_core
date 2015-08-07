@@ -19,6 +19,7 @@ import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateAcceptor;
 import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractIQLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
@@ -75,6 +76,18 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 				if (metadata.getName().equals(ODLTypeFactory.PARAMETER_TYPE)) {
 					for (JvmTypeReference typeRef : factory.getAllParameterTypes()) {
 						createTypeTemplate(typeUtils.getInnerType(typeRef, false), templateContext, context, acceptor);
+					}
+				}
+			}
+		}
+		
+		ODLOperator operator = EcoreUtil2.getContainerOfType(node, ODLOperator.class);
+		if (operator != null) {
+			IQLMetadata metadata = EcoreUtil2.getContainerOfType(node, IQLMetadata.class);
+			if (metadata != null) {
+				if (metadata.getName().equals(ODLTypeFactory.OPERATOR_OUTPUT_MODE)) {
+					for (OutputMode mode : lookUp.getOutputModeValues()) {
+						createMetadataValueTemplate("\""+mode.toString()+"\"", templateContext, context, acceptor);
 					}
 				}
 			}
@@ -187,10 +200,10 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 	}
 	
 	protected void createMetadataTemplate(String name, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		String desc = name.toLowerCase();
-		desc = desc+ " = " + name.toLowerCase();
-		String pattern = name.toLowerCase(); 
-		pattern = pattern +" = ${"+name.toLowerCase()+"}"; 
+		String desc = name;
+		desc = desc+ " = " + name;
+		String pattern = name; 
+		pattern = pattern +" = ${"+name+"}"; 
 		String id = name;
 		Template template = createTemplate(desc, "", id, pattern);
 		finishTemplate(template, templateContext, context, acceptor);

@@ -56,19 +56,28 @@ public abstract class AbstractIQLLinkingService extends DefaultLinkingService{
 				EObject obj = desc.getEObjectOrProxy();
 				if (obj instanceof JvmField) {
 					result = obj;
-				} else if (obj instanceof JvmOperation) {
-					JvmOperation op = (JvmOperation) obj;
-					if(expr.getArgs() != null && expr.getArgs().getElements().size() == op.getParameters().size()) {
-						result = obj;
-						break;
-					} else if (typeUtils.isGetter(op) && !(expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
-						result = obj;
-					} else if (typeUtils.isSetter(op) && (expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
-						result = obj;
-					} else if (result == null) {
-						result = obj;
-					}
+					break;
 				} 
+			}
+		}
+		if (result == null) {
+			for (IEObjectDescription desc : eObjectDescriptions) {
+				if (qualifiedNameConverter.toString(desc.getQualifiedName()).equalsIgnoreCase(crossRefString)) {
+					EObject obj = desc.getEObjectOrProxy();
+					if (obj instanceof JvmOperation) {
+						JvmOperation op = (JvmOperation) obj;
+						if(expr.getArgs() != null && expr.getArgs().getElements().size() == op.getParameters().size()) {
+							result = obj;
+							break;
+						} else if (typeUtils.isGetter(op) && !(expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
+							result = obj;
+						} else if (typeUtils.isSetter(op) && (expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
+							result = obj;
+						} else if (result == null) {
+							result = obj;
+						}
+					} 
+				}
 			}
 		}
 		return Collections.singletonList(result);
@@ -83,28 +92,35 @@ public abstract class AbstractIQLLinkingService extends DefaultLinkingService{
 				EObject obj = desc.getEObjectOrProxy();
 				if (obj instanceof IQLVariableDeclaration) {
 					result = obj;
+					break;
 				} else if (obj instanceof JvmFormalParameter) {
-					if (result == null) {
-						result = obj;
-					}
+					result = obj;
+					break;
 				} else if (obj instanceof JvmField) {
-					if (result == null) {
-						result = obj;
-					}
-				} else if (obj instanceof JvmOperation) {
-					JvmOperation op = (JvmOperation) obj;
-					if(expr.getArgs() != null && expr.getArgs().getElements().size() == op.getParameters().size()) {
-						result = obj;
-						break;
-					} else if (typeUtils.isGetter(op) && !(expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
-						result = obj;
-					} else if (typeUtils.isSetter(op) && (expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
-						result = obj;
-					} else if (result == null) {
-						result = obj;
+					result = obj;
+				} 
+			}
+		}
+		if (result == null) {
+			for (IEObjectDescription desc : eObjectDescriptions) {
+				if (qualifiedNameConverter.toString(desc.getQualifiedName()).equalsIgnoreCase(crossRefString)) {
+					EObject obj = desc.getEObjectOrProxy();
+					if (obj instanceof JvmOperation) {
+						JvmOperation op = (JvmOperation) obj;
+						if(expr.getArgs() != null && expr.getArgs().getElements().size() == op.getParameters().size()) {
+							result = obj;
+							break;
+						} else if (typeUtils.isGetter(op) && !(expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
+							result = obj;
+						} else if (typeUtils.isSetter(op) && (expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
+							result = obj;
+						} else if (result == null) {
+							result = obj;
+						}
 					}
 				}
 			}
+			
 		}
 		return Collections.singletonList(result);
 	}

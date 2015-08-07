@@ -148,8 +148,10 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 	def String compile(IQLMethod m, G context) {
 		var className = helper.getClassName(m);
 		var returnT = "";
-		if (m.returnType == null && !m.simpleName.equalsIgnoreCase(className)) {
+		if (m.returnType != null && !m.simpleName.equalsIgnoreCase(className)) {
 			returnT = typeCompiler.compile(m.returnType, context, false)
+		} else if (m.returnType == null && !m.simpleName.equalsIgnoreCase(className)) {
+			returnT = "void"
 		}
 		'''
 		«IF m.isOverride»@Override«ENDIF»

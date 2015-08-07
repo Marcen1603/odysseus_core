@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmField;
+import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
 
@@ -37,7 +39,9 @@ public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L
 	public String getFirstLine(EObject object) {
 		if (object instanceof JvmField) {
 			return getFirstLineJvmField((JvmField) object);
-		} else if (object instanceof IQLArgumentsMapKeyValue) {
+		} else if (object instanceof JvmOperation) {
+			return getFirstLineJvmField((JvmOperation) object);
+		}else if (object instanceof IQLArgumentsMapKeyValue) {
 			return getFirstLineIQLArgumentsMapKeyValue((IQLArgumentsMapKeyValue) object);
 		}else {
 			return super.getFirstLine(object);
@@ -65,6 +69,27 @@ public abstract class AbstractIQLEObjectHoverProvider<U extends IIQLTypeUtils, L
 	
 	protected String getFirstLineJvmField(JvmField attr) {
 		return attr.getSimpleName()+ " : "+toString(attr.getType());
+	}
+	
+	protected String getFirstLineJvmField(JvmOperation op) {
+		StringBuilder b = new StringBuilder();
+		b.append(op.getSimpleName());
+		b.append("(");
+		if (op.getParameters() != null) {
+			int i = 0; 
+			for (JvmFormalParameter parameter : op.getParameters()) {
+				if (i > 0 ){
+					b.append(", ");
+				}
+				i++;
+				b.append(toString(parameter.getParameterType()) +" "+parameter.getName());
+			}
+		}
+		b.append(")");
+		if (op.getReturnType() != null) {
+			b.append(" : "+toString(op.getReturnType()));
+		}
+		return b.toString();
 	}
 	
 	private String toString(JvmTypeReference typeRef) {

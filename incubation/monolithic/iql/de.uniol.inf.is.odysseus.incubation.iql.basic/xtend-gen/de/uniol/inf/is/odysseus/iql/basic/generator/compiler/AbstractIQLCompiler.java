@@ -398,8 +398,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       String returnT = "";
       boolean _and = false;
       JvmTypeReference _returnType = m.getReturnType();
-      boolean _equals = Objects.equal(_returnType, null);
-      if (!_equals) {
+      boolean _notEquals = (!Objects.equal(_returnType, null));
+      if (!_notEquals) {
         _and = false;
       } else {
         String _simpleName = m.getSimpleName();
@@ -411,6 +411,21 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
         JvmTypeReference _returnType_1 = m.getReturnType();
         String _compile = this.typeCompiler.compile(_returnType_1, context, false);
         returnT = _compile;
+      } else {
+        boolean _and_1 = false;
+        JvmTypeReference _returnType_2 = m.getReturnType();
+        boolean _equals = Objects.equal(_returnType_2, null);
+        if (!_equals) {
+          _and_1 = false;
+        } else {
+          String _simpleName_1 = m.getSimpleName();
+          boolean _equalsIgnoreCase_1 = _simpleName_1.equalsIgnoreCase(className);
+          boolean _not_1 = (!_equalsIgnoreCase_1);
+          _and_1 = _not_1;
+        }
+        if (_and_1) {
+          returnT = "void";
+        }
       }
       StringConcatenation _builder = new StringConcatenation();
       {
@@ -423,13 +438,13 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       _builder.append("public ");
       _builder.append(returnT, "");
       _builder.append(" ");
-      String _simpleName_1 = m.getSimpleName();
-      _builder.append(_simpleName_1, "");
+      String _simpleName_2 = m.getSimpleName();
+      _builder.append(_simpleName_2, "");
       _builder.append("(");
       {
         EList<JvmFormalParameter> _parameters = m.getParameters();
-        boolean _notEquals = (!Objects.equal(_parameters, null));
-        if (_notEquals) {
+        boolean _notEquals_1 = (!Objects.equal(_parameters, null));
+        if (_notEquals_1) {
           EList<JvmFormalParameter> _parameters_1 = m.getParameters();
           final Function1<JvmFormalParameter, String> _function = new Function1<JvmFormalParameter, String>() {
             public String apply(final JvmFormalParameter p) {

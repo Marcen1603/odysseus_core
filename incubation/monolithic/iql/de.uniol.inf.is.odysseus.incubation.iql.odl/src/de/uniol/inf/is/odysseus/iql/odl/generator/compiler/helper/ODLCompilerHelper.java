@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.inject.Inject;
 
@@ -8,8 +9,10 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.AbstractIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
@@ -62,11 +65,43 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 	public OutputMode determineOutputMode(ODLOperator operator) {
 		if (operator.getMetadataList() != null) {
 			for (IQLMetadata metadata : operator.getMetadataList().getElements()) {
-				if (metadata.equals(ODLTypeFactory.OPERATOR_OUTPUT_MODE)) {
-					return OutputMode.MODIFIED_INPUT;
-				}
+				if (metadata.getValue() instanceof IQLMetadataValueSingleString) {
+					String value = ((IQLMetadataValueSingleString)metadata.getValue()).getValue();					
+					try {
+						return OutputMode.valueOf(value);
+					}catch (Exception e) {
+						
+					}
+				}				
 			}
 		}
 		return OutputMode.MODIFIED_INPUT;
+	}
+
+	public boolean hasPredicate(ODLOperator operator) {
+		return !getPredicates(operator).isEmpty() || !getPredicateArrays(operator).isEmpty();
+	}
+
+	public Collection<String> getPredicates(ODLOperator operator) {
+		Collection<String> predicates = new HashSet<>();
+		for (ODLParameter parameter : EcoreUtil2.getAllContentsOfType(operator, ODLParameter.class)) {
+			if (typeUtils.getLongName(parameter.getType(), true).equals(IPredicate.class.getCanonicalName())) {
+				predicates.add(parameter.getSimpleName());
+			}
+		}
+		return predicates;
+	}
+	
+	public Collection<String> getPredicateArrays(ODLOperator operator) {
+		Collection<String> predicates = new HashSet<>();
+		for (ODLParameter parameter : EcoreUtil2.getAllContentsOfType(operator, ODLParameter.class)) {
+			if (typeUtils.isArray(parameter.getType())) {
+				if (typeUtils.getLongName(parameter.getType(), false).equals(IPredicate.class.getCanonicalName())) {
+					predicates.add(parameter.getSimpleName());
+				}
+
+			}
+		}
+		return predicates;
 	}
 }

@@ -24,6 +24,9 @@ public class ObjectExtensions implements IIQLTypeExtensions {
 		 LoggerFactory.getLogger(obj.getClass()).error(text);
 	}
 	
+	public static void print(Object obj, String text) {
+		 System.out.print(text);
+	}
 	
 	@Override
 	public Class<?> getType() {
