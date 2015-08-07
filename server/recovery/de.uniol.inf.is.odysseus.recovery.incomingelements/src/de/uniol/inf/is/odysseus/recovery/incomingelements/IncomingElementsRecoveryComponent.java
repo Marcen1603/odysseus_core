@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IOperatorWalker;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.kafkaconsumer.BaDaStSender;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.logicaloperator.SourceSyncAO;
 
 /**
@@ -41,7 +42,8 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory.getLogger(IncomingElementsRecoveryComponent.class);
+	private static final Logger cLog = LoggerFactory
+			.getLogger(IncomingElementsRecoveryComponent.class);
 
 	/**
 	 * The server executor, if bound.
@@ -78,13 +80,14 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	}
 
 	@Override
-	public void recover(List<Integer> queryIds, ISession caller, List<ISysLogEntry> log) throws Exception {
+	public void recover(List<Integer> queryIds, ISession caller,
+			List<ISysLogEntry> log) throws Exception {
 		// TODO implement SourceStreamsRecoveryComponent.recover
 	}
 
 	@Override
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
-			List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
+			ISession caller, List<ILogicalQuery> queries) {
 		if (!cExecutor.isPresent()) {
 			cLog.error("No executor bound!");
 			return queries;
@@ -106,33 +109,35 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	 * @param executor
 	 *            A present executor.
 	 */
-	private void insertSourceSyncOperators(ILogicalQuery query, ISession caller, IServerExecutor executor) {
-		LogicalGraphWalker graphWalker = new LogicalGraphWalker(collectOperators(query.getLogicalPlan()));
+	private void insertSourceSyncOperators(ILogicalQuery query,
+			ISession caller, IServerExecutor executor) {
+		LogicalGraphWalker graphWalker = new LogicalGraphWalker(
+				collectOperators(query.getLogicalPlan()));
 		graphWalker.walk(new IOperatorWalker<ILogicalOperator>() {
 
 			@Override
 			public void walk(ILogicalOperator operator) {
-				// TODO There should be a better way to determine a source and
-				// it's resource. Interface?
-				String recorder = null;
-				if (AbstractAccessAO.class.isInstance(operator)
-						&& IncomingElementsRecoveryComponent.this.mBaDaStRecorders.keySet()
-								.contains(((AbstractAccessAO) operator).getAccessAOName().getResourceName())) {
-					recorder = mBaDaStRecorders.get(((AbstractAccessAO) operator).getAccessAOName().getResourceName());
-				} else
-					if (StreamAO.class.isInstance(operator) && IncomingElementsRecoveryComponent.this.mBaDaStRecorders
-							.keySet().contains(((StreamAO) operator).getStreamname().getResourceName())) {
-					recorder = mBaDaStRecorders.get(((StreamAO) operator).getStreamname().getResourceName());
-				}
-
-				if (recorder != null) {
+				// TODO Works only with AccessAO, not with StreamAO,
+				// because I need the protocol and data handler
+				if (AccessAO.class.isInstance(operator)
+						&& IncomingElementsRecoveryComponent.this.mBaDaStRecorders
+								.keySet().contains(
+										((AbstractAccessAO) operator)
+												.getAccessAOName()
+												.getResourceName())) {
+					AccessAO access = (AccessAO) operator;
 					SourceSyncAO syncAO = new SourceSyncAO();
-					syncAO.setBaDaStRecorder(recorder);
-					Collection<LogicalSubscription> subs = Lists.newArrayList(operator.getSubscriptions());
+					syncAO.setBaDaStRecorder(IncomingElementsRecoveryComponent.this.mBaDaStRecorders
+							.get(access.getAccessAOName().getResourceName()));
+					syncAO.setSource(access);
+					Collection<LogicalSubscription> subs = Lists
+							.newArrayList(operator.getSubscriptions());
 					operator.unsubscribeFromAllSinks();
-					syncAO.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
+					syncAO.subscribeToSource(operator, 0, 0,
+							operator.getOutputSchema());
 					for (LogicalSubscription sub : subs) {
-						syncAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(),
+						syncAO.subscribeSink(sub.getTarget(),
+								sub.getSinkInPort(), sub.getSourceOutPort(),
 								sub.getSchema());
 					}
 				}
@@ -148,7 +153,8 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	 *            The logical plan.
 	 * @return All operators within the logical plan.
 	 */
-	private static List<ILogicalOperator> collectOperators(ILogicalOperator logicalPlan) {
+	private static List<ILogicalOperator> collectOperators(
+			ILogicalOperator logicalPlan) {
 		List<ILogicalOperator> operators = Lists.newArrayList();
 		collectOperatorsRecursive(logicalPlan, operators);
 		return operators;
@@ -164,7 +170,8 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	 *            All already collected operators.
 	 * @return All operators within the logical plan.
 	 */
-	private static void collectOperatorsRecursive(ILogicalOperator operator, List<ILogicalOperator> operators) {
+	private static void collectOperatorsRecursive(ILogicalOperator operator,
+			List<ILogicalOperator> operators) {
 		operators.add(operator);
 		for (LogicalSubscription sub : operator.getSubscribedToSource()) {
 			collectOperatorsRecursive(sub.getTarget(), operators);
@@ -176,8 +183,14 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 		IncomingElementsRecoveryComponent component = new IncomingElementsRecoveryComponent();
 		Map<String, Properties> sourceConfigurations = determineSourceConfigurations(config);
 		for (String sourcename : sourceConfigurations.keySet()) {
-			component.mBaDaStRecorders.put(sourcename,
-					BaDaStSender.sendCreateCommand(sourceConfigurations.get(sourcename)));
+			String badastRecorder = BaDaStSender
+					.sendCreateCommand(sourceConfigurations.get(sourcename));
+			component.mBaDaStRecorders.put(sourcename, badastRecorder);
+			component.mDataHandlers.put(
+					sourcename,
+					sourceConfigurations.get(sourcename).getProperty(
+							"datahandler"));
+			BaDaStSender.sendStartCommand(badastRecorder);
 		}
 		return component;
 	}
@@ -190,29 +203,36 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	 * @return The configurations of the BaDaSt recorders mapped to the source
 	 *         names.
 	 */
-	private static Map<String, Properties> determineSourceConfigurations(Properties config) {
+	private static Map<String, Properties> determineSourceConfigurations(
+			Properties config) {
 		final String prefix = "source";
 		Map<Integer, Properties> sourceStreamsConfigsTmp = Maps.newHashMap();
 		for (String key : config.stringPropertyNames()) {
 			if (key.toLowerCase().startsWith(prefix)) {
 				int dotIndex = key.indexOf(".");
 				if (dotIndex != -1) {
-					int sourceNumber = Integer.parseInt(key.substring(prefix.length(), dotIndex));
+					int sourceNumber = Integer.parseInt(key.substring(
+							prefix.length(), dotIndex));
 					Properties sourceStreamsConfig;
 					if (sourceStreamsConfigsTmp.containsKey(sourceNumber)) {
-						sourceStreamsConfig = sourceStreamsConfigsTmp.get(sourceNumber);
+						sourceStreamsConfig = sourceStreamsConfigsTmp
+								.get(sourceNumber);
 					} else {
 						sourceStreamsConfig = new Properties();
 					}
-					sourceStreamsConfig.setProperty(key.substring(dotIndex + 1), config.getProperty(key));
-					sourceStreamsConfigsTmp.put(sourceNumber, sourceStreamsConfig);
+					sourceStreamsConfig.setProperty(
+							key.substring(dotIndex + 1),
+							config.getProperty(key));
+					sourceStreamsConfigsTmp.put(sourceNumber,
+							sourceStreamsConfig);
 				}
 			}
 		}
 
 		Map<String, Properties> out = Maps.newHashMap();
 		for (int sourceNumber : sourceStreamsConfigsTmp.keySet()) {
-			String sourcename = sourceStreamsConfigsTmp.get(sourceNumber).getProperty("sourcename");
+			String sourcename = sourceStreamsConfigsTmp.get(sourceNumber)
+					.getProperty("sourcename");
 			out.put(sourcename, sourceStreamsConfigsTmp.get(sourceNumber));
 		}
 		return out;
@@ -222,5 +242,10 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	 * The name of the BaDaSt recorders mapped to the source names.
 	 */
 	private final Map<String, String> mBaDaStRecorders = Maps.newHashMap();
+
+	/**
+	 * The name of the data handlers mapped to the source names.
+	 */
+	private final Map<String, String> mDataHandlers = Maps.newHashMap();
 
 }

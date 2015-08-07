@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.incomingelements;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.kafkaconsumer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
