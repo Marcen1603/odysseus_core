@@ -10,14 +10,19 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
 import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
@@ -25,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IOperatorWalker;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStRecorderRegistry;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStSender;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceSyncAO;
 
 /**
@@ -36,7 +42,8 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloper
  * @author Michael Brand
  *
  */
-public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
+public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
+		IQueryAddedListener, IDataDictionaryListener {
 
 	/**
 	 * The logger for this class.
@@ -50,6 +57,12 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	private static Optional<IServerExecutor> cExecutor = Optional.absent();
 
 	/**
+	 * All data dictionaries, where this component listens to.
+	 */
+	private static Set<IDataDictionary> cUsedDataDictionaries = Sets
+			.newHashSet();
+
+	/**
 	 * Binds an implementation of the server executor.
 	 * 
 	 * @param executor
@@ -58,6 +71,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	public void bindServerExecutor(IExecutor executor) {
 		if (IServerExecutor.class.isInstance(executor)) {
 			cExecutor = Optional.of((IServerExecutor) executor);
+			((IServerExecutor) executor).addQueryAddedListener(this);
 		}
 	}
 
@@ -70,6 +84,11 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	public void unbindServerExecutor(IExecutor executor) {
 		if (cExecutor.isPresent() && cExecutor.get() == executor) {
 			cExecutor = Optional.absent();
+			((IServerExecutor) executor).removeQueryAddedListener(this);
+			for (IDataDictionary usedDict : cUsedDataDictionaries) {
+				usedDict.removeListener(this);
+			}
+			cUsedDataDictionaries.clear();
 		}
 	}
 
@@ -185,6 +204,46 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent {
 	@Override
 	public IRecoveryComponent newInstance(Properties config) {
 		return new IncomingElementsRecoveryComponent();
+	}
+
+	@Override
+	public void queryAddedEvent(String query, List<Integer> queryIds,
+			QueryBuildConfiguration buildConfig, String parserID,
+			ISession user, Context context) {
+		// Get data dictionary news
+		IDataDictionary dict = cExecutor.get().getDataDictionary(user);
+		if (!cUsedDataDictionaries.contains(dict)) {
+			dict.addListener(this);
+			cUsedDataDictionaries.add(dict);
+		}
+	}
+	
+	@Override
+	public void removedViewDefinition(IDataDictionary sender, String name,
+			ILogicalOperator op) {
+		// name is user.sourcename
+		String sourcename = name;
+		int dotIndex = name.indexOf('.');
+		if(dotIndex != -1) {
+			sourcename = name.substring(dotIndex + 1);
+		}
+		
+		// Stop the BaDaSt recorder
+		String recorder = BaDaStRecorderRegistry.getRecorder(sourcename);
+		if(recorder != null) {
+			BaDaStSender.sendCloseCommand(recorder);
+		}
+	}
+
+	@Override
+	public void addedViewDefinition(IDataDictionary sender, String name,
+			ILogicalOperator op) {
+		// Nothing to do
+	}
+
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {
+		// Nothing to do
 	}
 
 }
