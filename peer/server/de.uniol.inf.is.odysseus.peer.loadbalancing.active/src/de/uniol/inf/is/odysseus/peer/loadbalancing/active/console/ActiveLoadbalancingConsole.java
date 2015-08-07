@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
@@ -29,6 +30,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -202,6 +206,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    extractState <LocalQueryId>							- Extracts first StatefulPO State from Query with Query ID\n");
 		sb.append("    dumpl <LocalQueryID>                                 - dumps logical plan of queryId\n");
 		sb.append("    sharedQueryInfo <LocalQueryID>   					- prints Info aboutd shared Query For QueryId\n");
+		sb.append("    showLogicalSchemaInfo <LocalQueryID>   				- prints Schema Information of all logical Operators in Query.\n");
+		
 		return sb.toString();
 	}
 
@@ -395,6 +401,75 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			}
 		}
 		ci.println(ERROR_NOTFOUND + peerName);
+	}
+	
+	public void _showLogicalSchemaInfo(CommandInterpreter ci) {
+		final String ERROR_USAGE = "Usage: dumpl <LocalQueryId>";
+
+		final String ERROR_QUERY = "Logical Query not found.";
+		
+		String localQueryIdString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(localQueryIdString)) {
+
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		int localQueryId;
+
+		try {
+			localQueryId = Integer.parseInt(localQueryIdString);
+		} catch (NumberFormatException e) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+		ILogicalQuery query = null;
+		try {
+			query = executor.getLogicalQueryById(localQueryId, getActiveSession());
+		}
+		catch(Exception e) {
+			ci.println(ERROR_QUERY);
+			return;
+		}
+		if(query==null){
+			ci.println(ERROR_QUERY);
+			return;
+		}
+		List<ILogicalOperator> operatorList = Lists.newArrayList();
+		RestructHelper.collectOperators(query.getLogicalPlan(), operatorList);
+		for(ILogicalOperator op : operatorList) {
+			
+			ci.println("Operator:" + op.getName());
+			ci.println("IN:");
+			for(int i=0;i<op.getNumberOfInputs();i++) {
+				SDFSchema schema = op.getInputSchema(i);
+				ci.println("("+i+") SCHEMA: " + schema.toString());
+				
+				List<SDFMetaSchema> metaschema = schema.getMetaschema();
+				StringBuilder sb = new StringBuilder();
+				for(SDFMetaSchema metaAttribute : metaschema) {
+					sb.append(" || ");
+					sb.append(metaAttribute.toString());
+				}
+				ci.println("("+i+") META: " + sb.toString());
+			}
+			
+			ci.println("OUT:");
+			for(Integer i : op.getOutputSchemaMap().keySet()) {
+				
+				SDFSchema schema = op.getOutputSchema(i);
+				ci.println("("+i+") SCHEMA: " + schema.toString());
+				
+				List<SDFMetaSchema> metaschema = schema.getMetaschema();
+				StringBuilder sb = new StringBuilder();
+				for(SDFMetaSchema metaAttribute : metaschema) {
+					sb.append(" || ");
+					sb.append(metaAttribute.toString());
+				}
+				ci.println("("+i+") META: " + sb.toString());
+			}
+			
+		}
 	}
 
 	public void _testSendState(CommandInterpreter ci) {
