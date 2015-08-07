@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+// TODO update javaDoc
 /**
  * Rule to transform an {@link SourceSyncAO} into a physical operator.
  * 
@@ -22,14 +23,14 @@ public class TSourceSyncAORule extends AbstractTransformationRule<SourceSyncAO> 
 	}
 
 	@Override
-	public void execute(SourceSyncAO logical, TransformationConfiguration config) throws RuleException {
-
+	public void execute(SourceSyncAO logical, TransformationConfiguration config)
+			throws RuleException {
 		defaultExecute(logical, new SourceSyncPO<>(logical), config, true, true);
-
 	}
 
 	@Override
-	public boolean isExecutable(SourceSyncAO logical, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(SourceSyncAO logical,
+			TransformationConfiguration transformConfig) {
 		return logical.isAllPhysicalInputSet();
 	}
 

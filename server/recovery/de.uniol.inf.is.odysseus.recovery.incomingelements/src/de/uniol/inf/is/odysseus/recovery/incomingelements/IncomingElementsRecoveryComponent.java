@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -141,18 +140,14 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 
 			@Override
 			public void walk(ILogicalOperator operator) {
-				// TODO Works only with AccessAO, not with StreamAO,
+				// TODO Works only with AbstractAccessAO, not with StreamAO,
 				// because I need the protocol and data handler
-				if (AccessAO.class.isInstance(operator)
+				if (AbstractAccessAO.class.isInstance(operator)
 						&& mRecordedSources
 								.contains(((AbstractAccessAO) operator)
 										.getAccessAOName().getResourceName())) {
-					AccessAO access = (AccessAO) operator;
-					SourceSyncAO syncAO = new SourceSyncAO();
-					syncAO.setBaDaStRecorder(BaDaStRecorderRegistry
-							.getRecorder(access.getAccessAOName()
-									.getResourceName()));
-					syncAO.setSource(access);
+					AbstractAccessAO access = (AbstractAccessAO) operator;
+					SourceSyncAO syncAO = new SourceSyncAO(access);
 					Collection<LogicalSubscription> subs = Lists
 							.newArrayList(operator.getSubscriptions());
 					operator.unsubscribeFromAllSinks();
@@ -217,20 +212,20 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 			cUsedDataDictionaries.add(dict);
 		}
 	}
-	
+
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name,
 			ILogicalOperator op) {
 		// name is user.sourcename
 		String sourcename = name;
 		int dotIndex = name.indexOf('.');
-		if(dotIndex != -1) {
+		if (dotIndex != -1) {
 			sourcename = name.substring(dotIndex + 1);
 		}
-		
+
 		// Stop the BaDaSt recorder
 		String recorder = BaDaStRecorderRegistry.getRecorder(sourcename);
-		if(recorder != null) {
+		if (recorder != null) {
 			BaDaStSender.sendCloseCommand(recorder);
 		}
 	}

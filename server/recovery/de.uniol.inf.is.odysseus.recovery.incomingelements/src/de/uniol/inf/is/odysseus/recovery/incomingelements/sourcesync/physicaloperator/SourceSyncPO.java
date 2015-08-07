@@ -14,13 +14,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStSender;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.IKafkaConsumer;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.KafkaConsumerAccess;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceSyncAO;
@@ -28,9 +28,11 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloper
 /**
  * Physical operator to be placed directly after source access operators. <br />
  * <br />
- * In the case of backup, it TODO update javaDoc <br />
+ * In the phase of backup, it transfers all incoming elements. But it adjusts
+ * it's offset as a Kafka consumer: It reads stored elements from Kafka server
+ * and checks which offset the first element of process_next has. <br />
  * <br />
- * In the case of recovery, it acts as a BaDaSt consumer and pushes data stream
+ * In the case of recovery, it acts as a Kafka consumer and pushes data stream
  * elements from there into the DSMS. Elements from the original source will be
  * discarded in this time. But they are not lost, since this operator is also
  * always in backup mode.
@@ -44,14 +46,9 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 		AbstractPipe<T, T> implements IStatefulPO, IKafkaConsumer {
 
 	/**
-	 * The name of the source to synchronize.
+	 * The access to the source to be synchronized.
 	 */
-	private final String mSourcename;
-
-	/**
-	 * The name of the BaDaSt recorder to use.
-	 */
-	private final String mRecorder;
+	private final AbstractAccessAO mAccess;
 
 	/**
 	 * True, if the first element (or punctuation) has been processed.
@@ -149,39 +146,28 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 	// cast of data handler
 	public SourceSyncPO(SourceSyncAO logical) {
 		super();
-		this.mRecorder = logical.getBaDaStRecorder();
-		AccessAO sourceAccess = logical.getSource();
-		this.mSourcename = sourceAccess.getAccessAOName().getResourceName();
+		this.mAccess = logical.getSource();
 		this.mDataHandler = (IDataHandler<T>) DataHandlerRegistry
-				.getDataHandler(sourceAccess.getDataHandler(),
-						sourceAccess.getOutputSchema());
-		OptionMap options = new OptionMap(sourceAccess.getOptions());
+				.getDataHandler(this.mAccess.getDataHandler(),
+						this.mAccess.getOutputSchema());
+		OptionMap options = new OptionMap(this.mAccess.getOptions());
 		IAccessPattern access = IAccessPattern.PUSH;
-		if (sourceAccess.getWrapper().toLowerCase().contains("pull")) {
-			// TODO not so nice!
+		if (this.mAccess.getWrapper().toLowerCase().contains("pull")) {
+			// TODO Better way to determine the AccessPattern?
 			access = IAccessPattern.PULL;
 		}
 		this.mProtocolHandler = (IProtocolHandler<T>) ProtocolHandlerRegistry
-				.getInstance(sourceAccess.getProtocolHandler(),
+				.getInstance(this.mAccess.getProtocolHandler(),
 						ITransportDirection.IN, access, options,
 						this.mDataHandler);
 		this.mProtocolHandler.setTransfer(this.mTransferHandler);
-		this.mKafkaAccess = new KafkaConsumerAccess(this.mSourcename, this);
+		this.mKafkaAccess = new KafkaConsumerAccess(this.mAccess
+				.getAccessAOName().getResourceName(), this);
 	}
 
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
-	}
-
-	@Override
-	protected void process_close() {
-		// TODO workaround. Recorder should be closed, if the last query using
-		// it is removed.
-		BaDaStSender.sendCloseCommand(this.mRecorder);
-		this.mFirstElementProcessed = false;
-		this.mOffset = -1l;
-		this.mReference = null;
 	}
 
 	@Override
@@ -191,7 +177,19 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 		}
 		@SuppressWarnings("unchecked")
 		SourceSyncPO<T> other = (SourceSyncPO<T>) obj;
-		return this.mRecorder.equals(other.mRecorder);
+		return this.mAccess.equals(other.mAccess);
+	}
+	
+	@Override
+	protected void process_open() throws OpenFailedException {
+		this.mFirstElementProcessed = false;
+		super.process_open();
+	}
+	
+	@Override
+	protected void process_close() {
+		this.mOffset = -1l;
+		super.process_close();
 	}
 
 	@Override
@@ -200,7 +198,10 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 		synchronized (this.mOffset) {
 			if (!this.mFirstElementProcessed) {
 				this.mFirstElementProcessed = true;
-				adjustOffset(object);
+				if(this.mOffset == -1) {
+					// first element not processed AND offset not -1 means offset has been loaded as operator state
+					adjustOffset(object);
+				}
 			}
 		}
 	}
@@ -211,7 +212,9 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 		synchronized (this.mOffset) {
 			if (!this.mFirstElementProcessed) {
 				this.mFirstElementProcessed = true;
-				adjustOffset(punctuation);
+				if(this.mOffset == -1) {
+					adjustOffset(punctuation);
+				}
 			}
 		}
 	}
@@ -247,7 +250,6 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 	public void onNewMessage(ByteBuffer message, long offset) throws Throwable {
 		synchronized (this.mCurrentOffset) {
 			this.mCurrentOffset = offset;
-			// TODO caller id is what?
 			this.mProtocolHandler.process(0, message);
 		}
 	}
