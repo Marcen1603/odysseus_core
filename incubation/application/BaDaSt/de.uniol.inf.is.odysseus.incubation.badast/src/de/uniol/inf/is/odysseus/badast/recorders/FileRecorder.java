@@ -77,9 +77,10 @@ public class FileRecorder extends AbstractBaDaStRecorder<String> {
 				.getConfig().getProperty(FILENAME_CONFIG)))) {
 			String line;
 			while ((line = reader.readLine()) != null && this.mContinueReading) {
+				String out = line + "\n";
 				this.getProducer().send(
 						new ProducerRecord<String, String>(this.getConfig()
-								.getProperty(SOURCENAME_CONFIG), line));
+								.getProperty(SOURCENAME_CONFIG), out));
 			}
 		} catch (Exception e) {
 			throw new BaDaStException("Could not read from file source!", e);

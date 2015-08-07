@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.badast.recorders;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.Socket;
 import java.util.Properties;
 
@@ -79,16 +79,14 @@ public class TCPRecorder extends AbstractBaDaStRecorder<byte[]> {
 		try (Socket clientSocket = new Socket(this.getConfig().getProperty(
 				HOST_CONFIG), Integer.parseInt(this.getConfig().getProperty(
 				PORT_CONFIG)));
-				InputStream inStream = clientSocket.getInputStream()) {
+				BufferedInputStream inStream = new BufferedInputStream(
+						clientSocket.getInputStream(), buffersize)) {
 			while (this.mContinueReading) {
-				if (inStream.available() >= buffersize) {
-					byte[] readBytes = new byte[inStream.available()];
-					inStream.read(readBytes);
-					this.getProducer()
-							.send(new ProducerRecord<String, byte[]>(
-									this.getConfig().getProperty(
-											SOURCENAME_CONFIG), readBytes));
-				}
+				byte[] readBytes = new byte[buffersize];
+				inStream.read(readBytes);
+				this.getProducer().send(
+						new ProducerRecord<String, byte[]>(this.getConfig()
+								.getProperty(SOURCENAME_CONFIG), readBytes));
 			}
 		} catch (Exception e) {
 			throw new BaDaStException("Could not read from server!", e);
