@@ -399,7 +399,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
 			receiverOperator.setPipeID(advertisement.getPipeID().toString());
-			receiverOperator.setOutputSchema(advertisement.getOutputSchema());
+			SDFSchema outputSchema = advertisement.getOutputSchema();
+			outputSchema.setMetaSchema(advertisement.getMetaSchemata());
+			receiverOperator.setOutputSchema(outputSchema);
 			receiverOperator.setBaseTimeunit(advertisement.getBaseTimeunit());
 			receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
 			receiverOperator.setSchemaName(advertisement.getOutputSchema().getURI());
@@ -833,6 +835,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		srcAdvertisement.setPeerID(P2PNetworkManagerService.getInstance().getLocalPeerID());
 		srcAdvertisement.setPQLText(pqlGenerator.generatePQLStatement(stream));
 		srcAdvertisement.setOutputSchema(stream.getOutputSchema());
+		srcAdvertisement.setMetaSchemata(stream.getOutputSchema().getMetaschema());
 		Optional<String> optBaseTimeunitString = getBaseTimeunitString(stream.getOutputSchema());
 		if( optBaseTimeunitString.isPresent() ) {
 			srcAdvertisement.setBaseTimeunit(optBaseTimeunitString.get());
@@ -855,6 +858,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		SourceAdvertisement viewAdvertisement = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
 		viewAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManagerService.getInstance().getLocalPeerGroupID()));
 		viewAdvertisement.setOutputSchema(view.getOutputSchema());
+		viewAdvertisement.setMetaSchemata(view.getOutputSchema().getMetaschema());
 		viewAdvertisement.setPipeID(pipeID);
 		viewAdvertisement.setName(removeUserFromName(viewName));
 		viewAdvertisement.setPeerID(P2PNetworkManagerService.getInstance().getLocalPeerID());

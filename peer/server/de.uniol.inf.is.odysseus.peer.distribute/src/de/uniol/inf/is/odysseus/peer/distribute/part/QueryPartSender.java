@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
@@ -362,7 +363,9 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 
 						final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
 						receiverOperator.setPipeID(advertisement.getPipeID().toString());
-						receiverOperator.setOutputSchema(advertisement.getOutputSchema());
+						SDFSchema outputSchema = advertisement.getOutputSchema();
+						outputSchema.setMetaSchema(advertisement.getMetaSchemata());
+						receiverOperator.setOutputSchema(outputSchema);
 						receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
 						receiverOperator.setBaseTimeunit(advertisement.getBaseTimeunit());
 						receiverOperator.setSchemaName(advertisement.getOutputSchema().getURI());

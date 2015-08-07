@@ -163,7 +163,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			Collection<SDFAttribute> attributes1) {
 		this(uri, type, null, attributes1, null, false);
 	}
-
+	
 	SDFSchema(String uri, Class<? extends IStreamObject> type,
 			Collection<SDFAttribute> attributes1, SDFSchema schema) {
 		this(uri, type, schema.constraints, attributes1, schema.metaschema, schema.outOfOrder);
@@ -185,6 +185,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 				currentSchema.constraints, currentSchema.getAttributes(),
 				metaSchema, currentSchema.outOfOrder);
 	}
+	
 
 	SDFSchema(SDFSchema schema, boolean outOfOrder) {
 		this(schema.getURI(), schema.type, schema.constraints, schema
@@ -675,6 +676,10 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			}
 		}
 		return list;
+	}
+	
+	public void setMetaSchema(List<SDFMetaSchema> metaSchema) {
+		this.metaschema = metaSchema;
 	}
 
 	public Pair<Integer, Integer> indexOfMetaAttribute(SDFAttribute curAttribute) {

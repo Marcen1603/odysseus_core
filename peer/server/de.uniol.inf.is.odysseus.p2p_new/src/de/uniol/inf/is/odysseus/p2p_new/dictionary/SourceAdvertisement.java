@@ -30,6 +30,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.p2p_new.service.P2PNetworkManagerService;
@@ -54,14 +55,20 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	private static final String PIPEID_TAG = "pipeid";
 	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
 	private static final String BASETIMEUNIT_TAG = "baseTimeunit";
+	private static final String METASCHEMA_TAG = "metaschemata";
+	private static final String METAELEMENT_TAG = "metaelement";
+
+	private static final Object METASCHEMA_DATATYPE_TAG = "metaschema_datatype";
 
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, NAME_TAG, PEER_ID_TAG };
+
 
 	private ID id;
 	private String name;
 	private PipeID pipeID;
 	private PeerID peerID;
 	private SDFSchema outputSchema;
+	private List<SDFMetaSchema> metaschemata;
 	private String baseTimeunit;
 	private String pqlText;
 
@@ -87,6 +94,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		pipeID = srcAdvertisement.pipeID;
 		peerID = srcAdvertisement.peerID;
 		outputSchema = srcAdvertisement.outputSchema;
+		metaschemata = srcAdvertisement.metaschemata;
 		pqlText = srcAdvertisement.pqlText;
 		baseTimeunit = srcAdvertisement.baseTimeunit;
 	}
@@ -131,6 +139,16 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		if( !Strings.isNullOrEmpty(baseTimeunit)) {
 			appendElement(doc, BASETIMEUNIT_TAG, baseTimeunit);
 		}
+		
+		for(SDFMetaSchema metaSchema : metaschemata) {
+			Element<?> metaSchemataElement = appendElement(doc, METASCHEMA_TAG, metaSchema.getURI());
+			appendElement(metaSchemataElement,METAELEMENT_TAG,metaSchema.getMetaAttribute().getName());
+			for (final SDFAttribute attr : metaSchema) {
+				appendElement(metaSchemataElement, attr.getAttributeName(), attr.getDatatype().getURI());
+			}	
+		}
+		
+		
 	}
 
 	@Override
@@ -148,6 +166,14 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 
 	public SDFSchema getOutputSchema() {
 		return outputSchema;
+	}
+	
+	public void setMetaSchemata(List<SDFMetaSchema> metaSchema)  {
+		this.metaschemata = metaSchema;
+	}
+	
+	public List<SDFMetaSchema> getMetaSchemata() {
+		return this.metaschemata;
 	}
 
 	public void setPipeID(PipeID pipeID) {
@@ -253,6 +279,11 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		} else if (elem.getName().equals(BASETIMEUNIT_TAG)) {
 			setBaseTimeunit(elem.getTextValue());
 
+		} else if(elem.getName().equals(METASCHEMA_TAG)) {
+			if(metaschemata==null) {
+				metaschemata = Lists.newArrayList();
+			}
+			metaschemata.add(handleMetaSchemaTag(elem,getName()));
 		}
 	}
 	
@@ -288,5 +319,44 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 
 		return SDFSchemaFactory.createNewTupleSchema(root.getTextValue(), attributes);
 	}
+	
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static SDFMetaSchema handleMetaSchemaTag(TextElement<?> root, String viewName) {
+		final Enumeration<?> children = root.getChildren();
+		Class metaAttributeClass=null;
+		Class dataTypeClass=null;
+		final List<SDFAttribute> attributes = Lists.newArrayList();
+		while (children.hasMoreElements()) {
+			final TextElement<?> elem = (TextElement<?>) children.nextElement();
+			if(elem.getName().equals(METAELEMENT_TAG)) {
+				try {
+					metaAttributeClass = Class.forName(elem.getValue());
+				} catch (ClassNotFoundException e) {
+					LOG.error("Class for MetaElement not found: {}",elem.getValue());
+					e.printStackTrace();
+				}
+			} else {
+				if(elem.getName().equals(METASCHEMA_DATATYPE_TAG)) {
+					try {
+						dataTypeClass = Class.forName(elem.getValue());
+					} catch (ClassNotFoundException e) {
+						LOG.error("Class for MetaSchemaDatatype not found: {}",elem.getValue());
+						e.printStackTrace();
+					}
+				}
+				else {
+				
+					final SDFAttribute attr = new SDFAttribute(viewName, elem.getKey(), ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getDatatype(elem.getTextValue()), null, null, null);
+					attributes.add(attr);
+				}
+			}
+		}
+		
+		return SDFSchemaFactory.createNewMetaSchema(viewName, dataTypeClass, attributes, metaAttributeClass);
+		
+
+	}
+
 
 }
