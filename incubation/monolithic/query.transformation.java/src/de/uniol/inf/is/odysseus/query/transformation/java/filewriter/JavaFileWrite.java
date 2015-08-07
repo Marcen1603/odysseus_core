@@ -33,10 +33,10 @@ public class JavaFileWrite {
 	private File file;
 	private FileWriter writer;
 	private String tempPath;
-	TransformationParameter parameter;
+	private TransformationParameter parameter;
 	private Set<String> importList = new HashSet<String>();
 	private List<String> copyJars = new ArrayList<String>();
-	private String osgiBindCode ;
+	private String osgiBindCode;
 	private String bodyCode;
 	private String startCode;
 	
@@ -72,9 +72,6 @@ public class JavaFileWrite {
 	}
 	
 	
-	/*
-	 * TODO only works for eclipse odysseus
-	 */
 	private void unzipProjectTemplate(){
 		UnZip unZip = new UnZip();
 		
@@ -94,7 +91,6 @@ public class JavaFileWrite {
 			LOG.error("Project file not found!");
 		}
     	
-		
 	}
 	
 	private void createMainJavaFile(){
@@ -109,7 +105,7 @@ public class JavaFileWrite {
 			file.createNewFile();
 			writer = new FileWriter(file); 
 			
-			//sort importList for nice look
+			//sort importList for nice look 
 			TreeSet<String> sortList = new TreeSet<String>( Collections.reverseOrder() );
 			sortList.addAll(importList);
 			
@@ -154,7 +150,12 @@ public class JavaFileWrite {
 		try {
 			projectFile.createNewFile();
 			FileWriter buildProjectWriter = new FileWriter(projectFile); 
-			buildProjectWriter.write(getCodeForClassPathFile());
+			
+			StringTemplate javaJarList = new StringTemplate("java","javaClasspath");
+			javaJarList.getSt().add("jarList", copyJars);
+	
+			buildProjectWriter.write(javaJarList.getSt().render());
+			
 			buildProjectWriter.flush();
 			buildProjectWriter.close();
 		} catch (IOException e) {
@@ -169,47 +170,8 @@ public class JavaFileWrite {
 	}
 	
 	
-	private String getCodeForClassPathFile(){
-		StringBuilder code = new StringBuilder();
-		
-		
-		code.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		code.append("\n");
-		code.append("<classpath>");
-		code.append("\n");
-		code.append("<classpathentry kind=\"src\" path=\"src\"/>");
-		code.append("\n");
-		code.append("<classpathentry exported=\"true\" kind=\"con\" path=\"org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7\"/>");
-		code.append("\n");
-		code.append("<classpathentry kind=\"lib\" path=\"lib\"/>");
-		code.append("\n");
-		
-		code.append("<classpathentry kind=\"lib\" path=\"lib/slf4j-log4j12-1.6.4.jar\"/>");
-		code.append("\n");
-		code.append("<classpathentry kind=\"lib\" path=\"lib/slf4j-api-1.6.4.jar\"/>");
-		code.append("\n");
-		code.append("<classpathentry kind=\"lib\" path=\"lib/log4j-1.2.16.jar\"/>");
-		code.append("\n");
-		
-		
-		for(String imporJar : copyJars){
-			code.append("<classpathentry kind=\"lib\" path=\"lib/"+imporJar+"\"/>");
-			code.append("\n");
-		}
-		
-	
-		code.append("classpathentry kind=\"output\" path=\"build\"/>");
-		code.append("\n");
-		code.append("</classpath>");
-		code.append("\n");
-
-		
-		return code.toString();
-	}
-	
-	
 	/*
-	 * TODO only works with eclipse odysseus
+	 * TODO only works with eclipse odysseus?
 	 */
 	private  void generateJarExport(Set<String> importList ,String tempPath){
 		Map<String,String> bundles = new HashMap<String, String>();
