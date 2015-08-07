@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.badast.readers;
+package de.uniol.inf.is.odysseus.badast.recorders;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
