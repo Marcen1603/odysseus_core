@@ -127,7 +127,7 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		// Get correct information
 		DeviationInformation info = getInfoForTuple(tuple);
 
-		if (info != null && !(this.maxRelativeChange > 0) || (this.maxRelativeChange > 0 && hadLittleChange.get(gId))) {
+		if (info != null && (!(this.maxRelativeChange > 0) || (this.maxRelativeChange > 0 && hadLittleChange.get(gId)))) {
 			if (info.counter > this.tuplesToWait) {
 				this.startToDeliver.put(gId, true);
 			}
@@ -215,6 +215,9 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 	private DeviationInformation getInfoForTuple(T tuple) {
 		Long gId = groupProcessor.getGroupID(tuple);
 		Map<PointInTime, DeviationInformation> infoMap = this.deviationInfo.get(gId);
+		if (tuple == null) {
+			return null;
+		}
 		PointInTime tupleStartTime = tuple.getMetadata().getStart();
 
 		// Search for the newest information which fits
