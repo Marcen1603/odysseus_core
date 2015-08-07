@@ -28,11 +28,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -207,6 +209,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    dumpl <LocalQueryID>                                 - dumps logical plan of queryId\n");
 		sb.append("    sharedQueryInfo <LocalQueryID>   					- prints Info aboutd shared Query For QueryId\n");
 		sb.append("    showLogicalSchemaInfo <LocalQueryID>   				- prints Schema Information of all logical Operators in Query.\n");
+		sb.append("    printMetadataRegistry                                - Print currently registered Metadata names.\n");
+		sb.append("    showSourceInfo                                       - Shows Information about installed Sources\n");
 		
 		return sb.toString();
 	}
@@ -369,6 +373,26 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		loadBalancingControl.stopLoadBalancing();
 
 	}
+	
+	public void _showSourceInfo(CommandInterpreter ci) {
+		List<ViewInformation> sources = executor.getStreamsAndViewsInformation(getActiveSession());
+		
+		for(ViewInformation source : sources) {
+			ci.println();
+			ci.println("Source Name:" + source.getName());
+			ci.println("Output Schema: " + source.getOutputSchema().toString());
+			
+			List<SDFMetaSchema> metaschemata = source.getOutputSchema().getMetaschema();
+			StringBuilder sb = new StringBuilder();
+			for(SDFMetaSchema metaAttribute : metaschemata) {
+				sb.append(" || ");
+				sb.append(metaAttribute.toString());
+			}
+			ci.println("META-Schema: " + sb.toString());
+			ci.println();
+			
+		}
+	}
 
 	/**
 	 * Manually install State sender (returns a PipeID which can be used to
@@ -469,6 +493,13 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 				ci.println("("+i+") META: " + sb.toString());
 			}
 			
+		}
+	}
+	
+	public void _printMetadataRegistry(CommandInterpreter ci) {
+		ci.println("Currently Registered (not combined) names in Metadata Registry:");
+		for(String name : MetadataRegistry.getNames()) {
+			ci.println(name);
 		}
 	}
 
