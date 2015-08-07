@@ -33,7 +33,7 @@ public class JavaFileWrite {
 	private File file;
 	private FileWriter writer;
 	private String tempPath;
-	private TransformationParameter parameter;
+	private TransformationParameter transformationParameter;
 	private Set<String> importList = new HashSet<String>();
 	private List<String> copyJars = new ArrayList<String>();
 	private String osgiBindCode;
@@ -43,10 +43,10 @@ public class JavaFileWrite {
 	private static Logger LOG = LoggerFactory.getLogger(JavaFileWrite.class);
 	
 	
-	public JavaFileWrite(String fileName, TransformationParameter parameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode){
+	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode){
 		this.fileName = fileName;
-		this.tempPath = parameter.getTempDirectory();
-		this.parameter = parameter;
+		this.tempPath = transformationParameter.getTempDirectory();
+		this.transformationParameter = transformationParameter;
 		this.importList = importList;
 		this.osgiBindCode = osgiBindCode;
 		this.bodyCode = bodyCode;
@@ -134,7 +134,7 @@ public class JavaFileWrite {
 		try {
 			buildFile.createNewFile();
 			FileWriter buildWriter = new FileWriter(buildFile); 
-			buildWriter.write(buildFileGenerator.getCodeForAntBuild(parameter, copyJars  ));
+			buildWriter.write(buildFileGenerator.getCodeForAntBuild(transformationParameter, copyJars  ));
 			buildWriter.flush();
 			buildWriter.close();
 		} catch (IOException e) {
@@ -145,11 +145,11 @@ public class JavaFileWrite {
 	}
 	
 	private void createClassFile(){
-		File projectFile = new File(tempPath+"\\.classpath");
+		File classpathFile = new File(tempPath+"\\.classpath");
 		
 		try {
-			projectFile.createNewFile();
-			FileWriter buildProjectWriter = new FileWriter(projectFile); 
+			classpathFile.createNewFile();
+			FileWriter buildProjectWriter = new FileWriter(classpathFile); 
 			
 			StringTemplate javaJarList = new StringTemplate("java","javaClasspath");
 			javaJarList.getSt().add("jarList", copyJars);
@@ -166,7 +166,7 @@ public class JavaFileWrite {
 	
 	
 	private void copyOdysseusJar(){
-		generateJarExport(importList,parameter.getTempDirectory());
+		generateJarExport(importList,transformationParameter.getTempDirectory());
 	}
 	
 	
@@ -196,7 +196,6 @@ public class JavaFileWrite {
 			}
 		}
 		
-		System.out.println("");
 		for (Map.Entry<String, String> entry : bundles.entrySet())
 		{
 

@@ -35,9 +35,6 @@ public class CreateDefaultCode {
 		return sdfSchema;
 	}
 	
-	
-	
-	
 	public static CodeFragmentInfo codeForAccessFrameworkNeu(ProtocolHandlerParameter protocolHandlerParameter, Map<String,String> optionMap, ILogicalOperator operator, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 	
@@ -56,8 +53,7 @@ public class CreateDefaultCode {
 		return codeFragmentInfo;
 	}
 	
-	
-	
+
 	public static CodeFragmentInfo codeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
