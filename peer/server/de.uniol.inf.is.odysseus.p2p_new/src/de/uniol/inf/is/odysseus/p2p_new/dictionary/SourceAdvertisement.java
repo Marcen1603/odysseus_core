@@ -283,7 +283,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 			if(metaschemata==null) {
 				metaschemata = Lists.newArrayList();
 			}
-			metaschemata.add(handleMetaSchemaTag(elem,getName()));
+			metaschemata.add(handleMetaSchemaTag(elem,elem.getValue()));
 		}
 	}
 	
