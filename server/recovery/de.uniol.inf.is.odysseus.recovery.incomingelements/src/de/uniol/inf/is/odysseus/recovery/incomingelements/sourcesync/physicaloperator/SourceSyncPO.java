@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.incomingelements.physicaloperator;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -20,19 +20,17 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.kafkaconsumer.BaDaStSender;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.kafkaconsumer.IKafkaConsumer;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.kafkaconsumer.KafkaConsumerAccess;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.logicaloperator.SourceSyncAO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStSender;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.IKafkaConsumer;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.KafkaConsumerAccess;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceSyncAO;
 
-// TODO To be tested!
 /**
  * Physical operator to be placed directly after source access operators. <br />
  * <br />
- * In the phase of backup, it controls a BaDaSt recorder by starting and closing
- * it. <br />
+ * In the case of backup, it TODO update javaDoc <br />
  * <br />
- * In the phase of recovery, it acts as a BaDaSt consumer and pushes data stream
+ * In the case of recovery, it acts as a BaDaSt consumer and pushes data stream
  * elements from there into the DSMS. Elements from the original source will be
  * discarded in this time. But they are not lost, since this operator is also
  * always in backup mode.

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.incomingelements.logicaloperator;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;

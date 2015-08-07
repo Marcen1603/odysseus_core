@@ -1,8 +1,8 @@
-package de.uniol.inf.is.odysseus.recovery.incomingelements.transform;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.logicaloperator.SourceSyncAO;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.physicaloperator.SourceSyncPO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceSyncAO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.SourceSyncPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

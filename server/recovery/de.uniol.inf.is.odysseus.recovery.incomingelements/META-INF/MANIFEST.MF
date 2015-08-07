@@ -12,6 +12,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.recovery.systemlog,
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.ruleengine,
- org.apache.kafka;bundle-version="0.8.2"
-Service-Component: OSGI-INF/IncomingElementsRecoveryComponent.xml
-Export-Package: de.uniol.inf.is.odysseus.recovery.incomingelements.kafkaconsumer
+ org.apache.kafka;bundle-version="0.8.2",
+ de.uniol.inf.is.odysseus.script.parser
+Service-Component: OSGI-INF/IncomingElementsRecoveryComponent.xml,
+ OSGI-INF/BaDaStKeywordProvider.xml
+Export-Package: de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder

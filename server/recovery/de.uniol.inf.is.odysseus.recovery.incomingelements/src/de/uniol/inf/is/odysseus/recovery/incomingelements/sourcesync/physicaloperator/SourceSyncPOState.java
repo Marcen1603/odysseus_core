@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.incomingelements.physicaloperator;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
