@@ -57,8 +57,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	private static final String BASETIMEUNIT_TAG = "baseTimeunit";
 	private static final String METASCHEMA_TAG = "metaschemata";
 	private static final String METAELEMENT_TAG = "metaelement";
-
-	private static final Object METASCHEMA_DATATYPE_TAG = "metaschema_datatype";
+	private static final String METASCHEMA_DATATYPE_TAG = "metadatatype";
 
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, NAME_TAG, PEER_ID_TAG };
 
@@ -143,6 +142,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		for(SDFMetaSchema metaSchema : metaschemata) {
 			Element<?> metaSchemataElement = appendElement(doc, METASCHEMA_TAG, metaSchema.getURI());
 			appendElement(metaSchemataElement,METAELEMENT_TAG,metaSchema.getMetaAttribute().getName());
+			appendElement(metaSchemataElement,METASCHEMA_DATATYPE_TAG,metaSchema.getType().getName());
 			for (final SDFAttribute attr : metaSchema) {
 				appendElement(metaSchemataElement, attr.getAttributeName(), attr.getDatatype().getURI());
 			}	
