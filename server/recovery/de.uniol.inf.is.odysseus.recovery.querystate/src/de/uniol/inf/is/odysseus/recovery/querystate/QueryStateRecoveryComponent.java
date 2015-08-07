@@ -320,6 +320,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 			for (IDataDictionary usedDict : cUsedDataDictionaries.keySet()) {
 				usedDict.removeListener(this);
 			}
+			cUsedDataDictionaries.clear();
 		}
 	}
 
