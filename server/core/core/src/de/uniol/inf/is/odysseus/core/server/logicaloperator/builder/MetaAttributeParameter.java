@@ -24,17 +24,27 @@ public class MetaAttributeParameter extends AbstractParameter<IMetaAttribute> {
 						.getMetadataType((String) inputValue);
 			}
 
-		} else {
-
-			@SuppressWarnings("unchecked")
-			List<String> list = (List<String>) inputValue;
-			SortedSet<String> sortedSet = new TreeSet<>();
-			for (String e : list) {
-				IMetaAttribute m = MetadataRegistry.tryCreateMetadataInstance(e);
-
-				sortedSet.addAll(MetadataRegistry.toClassNames(Arrays.asList(m.getClasses())));
+		} else if(inputValue instanceof List) {
+			
+				@SuppressWarnings("unchecked")
+				List<String> list = (List<String>) inputValue;
+				SortedSet<String> sortedSet = new TreeSet<>();
+				for (String e : list) {
+					IMetaAttribute m = MetadataRegistry.tryCreateMetadataInstance(e);
+	
+					sortedSet.addAll(MetadataRegistry.toClassNames(Arrays.asList(m.getClasses())));
+				}
+				metaAttribute = MetadataRegistry.getMetadataType(sortedSet);
 			}
-			metaAttribute = MetadataRegistry.getMetadataType(sortedSet);
+			
+			else {
+				String typeOfInputValue = inputValue.getClass().getSimpleName();
+				metaAttribute = MetadataRegistry
+						.getMetadataTypeByName(typeOfInputValue);
+				if (metaAttribute == null) {
+					metaAttribute = MetadataRegistry
+							.getMetadataType(typeOfInputValue);
+			}
 		}
 
 		if (metaAttribute == null) {

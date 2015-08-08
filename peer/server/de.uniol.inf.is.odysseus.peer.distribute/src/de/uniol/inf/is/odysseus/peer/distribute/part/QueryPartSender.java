@@ -331,6 +331,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 				access.setPipeID(pipeID.toString());
 				access.setSchema(sourceOp.getOutputSchema().getAttributes());
 				access.setSchemaName(sourceOp.getOutputSchema().getURI());
+				access.setMetaschemata(sourceOp.getOutputSchema().getMetaschema());
 				access.setPeerID(allocationMap.get(sourceQueryPart).toString());
 				return access;
 			}
