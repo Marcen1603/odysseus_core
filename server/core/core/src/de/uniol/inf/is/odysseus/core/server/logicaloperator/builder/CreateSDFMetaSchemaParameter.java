@@ -64,9 +64,9 @@ public class CreateSDFMetaSchemaParameter extends AbstractParameter<SDFMetaSchem
 		if(l1.size()==4) {
 			List<List<?>> attributeList;
 			attributeList = (List<List<?>>) l1.get(l1.size() - 1);
-				l1.remove(l1.size() - 1);
 			List<SDFAttribute> attributes = resolveAttributeList(attributeList);
-			List<String> l1AsStrings = (List<String>)l1;
+		
+			List<String> l1AsStrings = (List<String>)l1.subList(0, 3);
 			
 			
 			try {
