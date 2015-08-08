@@ -59,6 +59,7 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 
 		List<?> l1 = (List<?>) inputValue;
 		List<List<String>> constraintList = null;
+		
 		if (l1.get(l1.size() - 1) instanceof List) {
 			constraintList = (List<List<String>>) l1.get(l1.size() - 1);
 			l1.remove(l1.size() - 1);
