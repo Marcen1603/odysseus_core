@@ -214,6 +214,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("     printMetadataRegistry                                - Print currently registered Metadata names.\n");
 		sb.append("     showSourceInfo                                       - Shows Information about installed Sources\n");
 		sb.append("     lockStatus                                           - Shows status of Load Balancing Lock\n");
+		sb.append("     qv                                                   - Shows a Console based QueryView\n");
 		sb.append("\n");
 		sb.append("   Control LoadBalancing\n");
 		sb.append("     initLB <strategyname> <allocatorname>	- Initiate Loadbalancing with load balancing strategy <strategyname> and load balancing allocator <allocatorname>\n");
@@ -268,6 +269,27 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			ci.println("[" + i + "] " + operator.getName());
 		}
 	}
+	
+	public void _qv(CommandInterpreter ci) {
+		
+		ci.println("Current Queries:");
+		ci.println("ID | Name | Status | Parser | Startzeit");
+		
+		for(IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(query.getID());
+			sb.append(" |");
+			sb.append(query.getName());
+			sb.append(" | ");
+			sb.append(query.getState());
+			sb.append(" | ");
+			sb.append(query.getParserId());
+			sb.append(" | ");
+			sb.append(query.getQueryStartTS());
+			ci.println(sb.toString());
+		}
+	}
+	
 	
 	public void _forceUnlock(CommandInterpreter ci) {
 		if(lock==null) {
