@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceSyncAO;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.SourceSyncPO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.BaDaStAccessAO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.BaDaStAccessPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -10,12 +10,12 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 // TODO update javaDoc
 /**
- * Rule to transform an {@link SourceSyncAO} into a physical operator.
+ * Rule to transform an {@link BaDaStAccessAO} into a physical operator.
  * 
  * @author Michael Brand
  *
  */
-public class TSourceSyncAORule extends AbstractTransformationRule<SourceSyncAO> {
+public class TBaDaStAccessAORule extends AbstractTransformationRule<BaDaStAccessAO> {
 
 	@Override
 	public int getPriority() {
@@ -23,19 +23,27 @@ public class TSourceSyncAORule extends AbstractTransformationRule<SourceSyncAO> 
 	}
 
 	@Override
-	public void execute(SourceSyncAO logical, TransformationConfiguration config)
+	public void execute(BaDaStAccessAO logical, TransformationConfiguration config)
 			throws RuleException {
-		defaultExecute(logical, new SourceSyncPO<>(logical), config, true, true);
+		BaDaStAccessPO<?> po;
+		if(logical.isInRecoveryMode()) {
+			// TODO new PO
+			po = new BaDaStAccessPO<>(logical);
+		} else {
+			po = new BaDaStAccessPO<>(logical);
+		}
+		defaultExecute(logical, po, config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(SourceSyncAO logical,
+	public boolean isExecutable(BaDaStAccessAO logical,
 			TransformationConfiguration transformConfig) {
 		return logical.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
+		// TODO change name
 		return "SourceSyncAO -> SourceSyncPO";
 	}
 
@@ -45,8 +53,8 @@ public class TSourceSyncAORule extends AbstractTransformationRule<SourceSyncAO> 
 	}
 
 	@Override
-	public Class<? super SourceSyncAO> getConditionClass() {
-		return SourceSyncAO.class;
+	public Class<? super BaDaStAccessAO> getConditionClass() {
+		return BaDaStAccessAO.class;
 	}
 
 }

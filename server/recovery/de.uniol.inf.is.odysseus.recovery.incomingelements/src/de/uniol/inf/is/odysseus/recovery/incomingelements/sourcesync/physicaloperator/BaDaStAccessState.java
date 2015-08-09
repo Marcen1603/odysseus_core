@@ -4,13 +4,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 
 /**
- * State for {@link SourceSyncPO}s. Contains only the offset for the Kafka
- * Consumer.
+ * State for {@link BaDaStAccessPO}s. Contains one object: <br />
+ * The index of the data stream element stored on the Kafka server, which is the first to process, or {@code -1l}, if no offset is set.
  * 
  * @author Michael Brand
  *
  */
-public class SourceSyncPOState extends AbstractOperatorState implements
+public class BaDaStAccessState extends AbstractOperatorState implements
 		IOperatorState {
 
 	/**
@@ -26,7 +26,7 @@ public class SourceSyncPOState extends AbstractOperatorState implements
 	/**
 	 * Gets the offset for the Kafka consumer.
 	 * 
-	 * @return The offset or -1, if none is set.
+	 * @return The index of the data stream element stored on the Kafka server, which is the first to process, or {@code -1l}, if no offset is set.
 	 */
 	public long getOffset() {
 		return this.mOffset;
@@ -36,9 +36,9 @@ public class SourceSyncPOState extends AbstractOperatorState implements
 	 * Creates a new state.
 	 * 
 	 * @param offset
-	 *            The offset or -1, if none is set.
+	 *           The index of the data stream element stored on the Kafka server, which is the first to process, or {@code -1l}, if no offset is set.
 	 */
-	public SourceSyncPOState(long offset) {
+	public BaDaStAccessState(long offset) {
 		this.mOffset = offset;
 	}
 

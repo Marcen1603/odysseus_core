@@ -17,6 +17,15 @@ public class BaDaStRecorderRegistry {
 	 * All registered BaDaSt recorders (their names) mapped to the source names.
 	 */
 	private static final Map<String, String> cRecorders = Maps.newHashMap();
+	
+	// if Odysseus has been crashed, some recorders may exist, when Odysseus restarts
+	static {
+		Set<String> existingRecorders = BaDaStSender.sendLsRecordersComand();
+		for(String recorder : existingRecorders) {
+			// each recorder name has the pattern recordertype_sourcename
+			register(recorder.split("_")[1].trim(), recorder);
+		}
+	}
 
 	/**
 	 * Registers a BaDaSt recorder for a given source.

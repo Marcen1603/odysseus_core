@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.util.IOperatorWalker;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStRecorderRegistry;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStSender;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceSyncAO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.BaDaStAccessAO;
 
 /**
  * The incoming elements recovery component handles the backup and recovery of
@@ -110,23 +110,25 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 			return queries;
 		}
 		for (ILogicalQuery query : queries) {
-			insertSourceSyncOperators(query, caller, cExecutor.get());
+			insertSourceSyncOperators(query, false, caller, cExecutor.get());
 		}
 		return queries;
 	}
 
 	/**
-	 * Inserts a {@link SourceSyncAO} for each source access operator, if there
+	 * Inserts a {@link BaDaStAccessAO} for each source access operator, if there
 	 * is a recorder for the source.
 	 * 
 	 * @param query
 	 *            The logical query to modify.
+	 *            @param recoveryMode
+	 *            True, if data stream elements shall be recovered from BaDaSt.
 	 * @param caller
 	 *            The user, which created the query.
 	 * @param executor
 	 *            A present executor.
 	 */
-	private void insertSourceSyncOperators(ILogicalQuery query,
+	private void insertSourceSyncOperators(ILogicalQuery query, final boolean recoveryMode,
 			ISession caller, IServerExecutor executor) {
 		LogicalGraphWalker graphWalker = new LogicalGraphWalker(
 				collectOperators(query.getLogicalPlan()));
@@ -146,15 +148,15 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 						&& mRecordedSources
 								.contains(((AbstractAccessAO) operator)
 										.getAccessAOName().getResourceName())) {
-					AbstractAccessAO access = (AbstractAccessAO) operator;
-					SourceSyncAO syncAO = new SourceSyncAO(access);
+					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
+					BaDaStAccessAO badastAccess = new BaDaStAccessAO(sourceAccess, recoveryMode);
 					Collection<LogicalSubscription> subs = Lists
 							.newArrayList(operator.getSubscriptions());
 					operator.unsubscribeFromAllSinks();
-					syncAO.subscribeToSource(operator, 0, 0,
+					badastAccess.subscribeToSource(operator, 0, 0,
 							operator.getOutputSchema());
 					for (LogicalSubscription sub : subs) {
-						syncAO.subscribeSink(sub.getTarget(),
+						badastAccess.subscribeSink(sub.getTarget(),
 								sub.getSinkInPort(), sub.getSourceOutPort(),
 								sub.getSchema());
 					}

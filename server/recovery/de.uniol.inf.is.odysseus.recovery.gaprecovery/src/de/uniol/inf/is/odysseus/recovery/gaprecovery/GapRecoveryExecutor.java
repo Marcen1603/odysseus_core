@@ -5,8 +5,8 @@ import java.util.Properties;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.recovery.AbstractRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
-import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Michael Brand
  *
  */
-public class GapRecoveryExecutor implements IRecoveryExecutor {
+public class GapRecoveryExecutor extends AbstractRecoveryExecutor {
 
 	@Override
 	public String getName() {
@@ -28,8 +28,10 @@ public class GapRecoveryExecutor implements IRecoveryExecutor {
 	 * is done globally.
 	 */
 	@Override
-	public void recover(List<Integer> queryIds, ISession caller, List<ISysLogEntry> log) throws Exception {
+	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
+			ISession caller, List<ILogicalQuery> queries) {
 		// Nothing to do.
+		return queries;
 	}
 
 	/**
@@ -37,14 +39,17 @@ public class GapRecoveryExecutor implements IRecoveryExecutor {
 	 * is done globally.
 	 */
 	@Override
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
+			ISession caller, List<ILogicalQuery> queries) {
 		// Nothing to do.
 		return queries;
 	}
 
 	@Override
 	public IRecoveryExecutor newInstance(Properties config) {
-		return new GapRecoveryExecutor();
+		GapRecoveryExecutor instance = new GapRecoveryExecutor();
+		instance.mConfig = config;
+		return instance;
 	}
 
 }

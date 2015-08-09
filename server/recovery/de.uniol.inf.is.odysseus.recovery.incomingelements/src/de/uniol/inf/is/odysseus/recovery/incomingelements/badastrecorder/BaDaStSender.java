@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * Helper class to send commands to BaDaSt per TCP. Host and port are set in
@@ -22,7 +25,8 @@ public class BaDaStSender {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory.getLogger(BaDaStSender.class);
+	private static final Logger cLog = LoggerFactory
+			.getLogger(BaDaStSender.class);
 
 	/**
 	 * The host name of the BaDaSt server.
@@ -52,14 +56,17 @@ public class BaDaStSender {
 	 */
 	public static String sendComand(String command) {
 		try (Socket clientSocket = new Socket(cHost, cPort);
-				DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-				DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream())) {
+				DataOutputStream outToServer = new DataOutputStream(
+						clientSocket.getOutputStream());
+				DataInputStream inFromServer = new DataInputStream(
+						clientSocket.getInputStream())) {
 			outToServer.writeUTF(command);
 			String answer = inFromServer.readUTF();
 			cLog.debug("Info from BaDaSt: {}", answer);
 			return answer;
 		} catch (IOException e) {
-			cLog.error("Could not send command " + command + " to BaDaSt at " + cHost + ":" + cPort, e);
+			cLog.error("Could not send command " + command + " to BaDaSt at "
+					+ cHost + ":" + cPort, e);
 			return null;
 		}
 	}
@@ -152,6 +159,28 @@ public class BaDaStSender {
 		StringBuffer out = new StringBuffer("command=closeRecorder ");
 		out.append("name=" + recorder);
 		return out.toString();
+	}
+
+	/**
+	 * Sends a command to the BaDaSt application in order to list all existing
+	 * recorders.
+	 * 
+	 * @return A set of all existing recorders, with the following pattern for
+	 *         each set entry: <br />
+	 *         recordertype_sourcename.
+	 */
+	public static Set<String> sendLsRecordersComand() {
+		Set<String> out = Sets.newHashSet();
+		String[] lines = sendComand("command=lsRecorders").split("\n");
+		for (String line : lines) {
+			// pattern for each line: name = xyz, type = xyz
+			int equalityIndex = line.indexOf('=');
+			int commaIndex = line.indexOf(',');
+			if (equalityIndex != -1 && commaIndex > equalityIndex) {
+				out.add(line.substring(equalityIndex + 1, commaIndex).trim());
+			}
+		}
+		return out;
 	}
 
 }

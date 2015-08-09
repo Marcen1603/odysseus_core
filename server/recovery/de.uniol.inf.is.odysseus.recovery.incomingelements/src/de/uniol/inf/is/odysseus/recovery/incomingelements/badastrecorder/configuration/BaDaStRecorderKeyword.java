@@ -80,13 +80,16 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 			IServerExecutor executor) throws OdysseusScriptException {
 		Properties config = parseParameter(parameter);
 		String sourcename = config.getProperty(KEY_SOURCENAME);
-		String recorder = BaDaStSender.sendCreateCommand(config);
+		String recorder = BaDaStRecorderRegistry.getRecorder(sourcename);
 		if (recorder == null) {
-			throw new OdysseusScriptException(
-					"Could not create BaDaSt recorder!");
+			recorder = BaDaStSender.sendCreateCommand(config);
+			if (recorder == null) {
+				throw new OdysseusScriptException(
+						"Could not create BaDaSt recorder!");
+			}
+			BaDaStRecorderRegistry.register(sourcename, recorder);
+			BaDaStSender.sendStartCommand(recorder);
 		}
-		BaDaStRecorderRegistry.register(sourcename, recorder);
-		BaDaStSender.sendStartCommand(recorder);
 		return null;
 	}
 

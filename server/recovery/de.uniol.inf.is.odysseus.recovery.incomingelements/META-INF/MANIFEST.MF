@@ -13,7 +13,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.transform,
  de.uniol.inf.is.odysseus.ruleengine,
  org.apache.kafka;bundle-version="0.8.2",
- de.uniol.inf.is.odysseus.script.parser
-Service-Component: OSGI-INF/IncomingElementsRecoveryComponent.xml,
- OSGI-INF/BaDaStKeywordProvider.xml
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.relational_interval
+Service-Component: OSGI-INF/IncomingElementsRecoveryComponent.xml,OSGI-INF/BaDaStKeywordProvider.xml
 Export-Package: de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder

@@ -23,51 +23,57 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.IKafkaConsumer;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.KafkaConsumerAccess;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceSyncAO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.BaDaStAccessAO;
 
 /**
- * Physical operator to be placed directly after source access operators. <br />
+ * Physical operator to be placed directly after source
+ * access operators. <br />
  * <br />
- * In the phase of backup, it transfers all incoming elements. But it adjusts
- * it's offset as a Kafka consumer: It reads stored elements from Kafka server
- * and checks which offset the first element of process_next has. <br />
+ * It transfers all incoming elements without delay. But it adjusts it's offset
+ * as a Kafka consumer: It reads stored elements from Kafka server and checks
+ * which offset the first element of process_next has (means which index has
+ * this element on the Kafka server). All elements with a lower index shall not
+ * be considered for this operator/query in case of recovery, because they are
+ * not processed. <br />
  * <br />
- * In the case of recovery, it acts as a Kafka consumer and pushes data stream
- * elements from there into the DSMS. Elements from the original source will be
- * discarded in this time. But they are not lost, since this operator is also
- * always in backup mode.
+ * TODO this javaDoc is for the other PO In the case of recovery, it acts as a
+ * Kafka consumer and pushes data stream elements from there into the DSMS.
+ * Elements from the original source will be discarded in this time. But they
+ * are not lost, since this operator is also always in backup mode.
  * 
  * @author Michael Brand
  *
  * @param <T>
  *            The type of stream objects to process.
  */
-public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
+public class BaDaStAccessPO<T extends IStreamObject<IMetaAttribute>> extends
 		AbstractPipe<T, T> implements IStatefulPO, IKafkaConsumer {
 
 	/**
-	 * The access to the source to be synchronized.
+	 * The access to the source, which is recorded by BaDaSt.
 	 */
-	private final AbstractAccessAO mAccess;
+	private final AbstractAccessAO mSourceAccess;
 
 	/**
-	 * True, if the first element (or punctuation) has been processed.
+	 * True, if the first element (or punctuation) from {@link #mSourceAccess}
+	 * has been processed.
 	 */
 	private boolean mFirstElementProcessed = false;
 
 	/**
-	 * Reference should be the first element to be backed up. So the
-	 * corresponding offset will be stored in the state of this operator.
+	 * Reference is the first element to be backed up. So the index of
+	 * {@link #mReference} stored on the Kafka server will be stored within
+	 * {@link BaDaStAccessState}.
 	 */
 	private IStreamable mReference;
 
 	/**
-	 * The corresponding offset of {@link #mReference}.
+	 * The index of {@link #mReference} stored on the Kafka server.
 	 */
 	private Long mOffset = -1l;
 
 	/**
-	 * The corresponding offset of the last element processed by
+	 * The index of the last element processed by
 	 * {@link #onNewMessage(ByteBuffer, long)}.
 	 */
 	private Long mCurrentOffset = -1l;
@@ -88,23 +94,28 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 	private final KafkaConsumerAccess mKafkaAccess;
 
 	/**
-	 * Transfer handler for the objects from Kafka. Not for the objects from the
-	 * source operator.
+	 * Transfer handler for the objects from Kafka server. Not for the objects
+	 * from the source operator.
 	 */
 	private final ITransferHandler<T> mTransferHandler = new ITransferHandler<T>() {
 
 		/**
-		 * Adjusts the offset as a Kafka Consumer.
+		 * Adjusts the offset as a Kafka Consumer. <br />
+		 * <br />
+		 * Reference should be the first element to be backed up. So the index
+		 * of {@link #mReference} stored on the Kafka server will be stored
+		 * within {@link BaDaStAccessState}. All elements with a lower offset
+		 * are not relevant.
 		 * 
-		 * @see SourceSyncPO#adjustOffset(IStreamable)
+		 * @see BaDaStAccessPO#adjustOffset(IStreamable)
 		 * @param object
 		 *            The currently read data stream element.
 		 * 
 		 */
 		private void adjustOffset(IStreamable object) {
-			if (SourceSyncPO.this.mReference.equals(object)) {
-				SourceSyncPO.this.mOffset = SourceSyncPO.this.mCurrentOffset;
-				SourceSyncPO.this.mKafkaAccess.interrupt();
+			if (BaDaStAccessPO.this.mReference.equals(object)) {
+				BaDaStAccessPO.this.mOffset = BaDaStAccessPO.this.mCurrentOffset;
+				BaDaStAccessPO.this.mKafkaAccess.interrupt();
 			}
 		}
 
@@ -130,13 +141,13 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 
 		@Override
 		public String getName() {
-			return SourceSyncPO.this.getName();
+			return BaDaStAccessPO.this.getName();
 		}
 
 	};
 
 	/**
-	 * Creates a new {@link SourceSyncPO}.
+	 * Creates a new {@link BaDaStAccessPO}.
 	 * 
 	 * @param logical
 	 *            A logical operator to be transformed to this physical
@@ -144,24 +155,24 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 	 */
 	@SuppressWarnings("unchecked")
 	// cast of data handler
-	public SourceSyncPO(SourceSyncAO logical) {
+	public BaDaStAccessPO(BaDaStAccessAO logical) {
 		super();
-		this.mAccess = logical.getSource();
+		this.mSourceAccess = logical.getSource();
 		this.mDataHandler = (IDataHandler<T>) DataHandlerRegistry
-				.getDataHandler(this.mAccess.getDataHandler(),
-						this.mAccess.getOutputSchema());
-		OptionMap options = new OptionMap(this.mAccess.getOptions());
+				.getDataHandler(this.mSourceAccess.getDataHandler(),
+						this.mSourceAccess.getOutputSchema());
+		OptionMap options = new OptionMap(this.mSourceAccess.getOptions());
 		IAccessPattern access = IAccessPattern.PUSH;
-		if (this.mAccess.getWrapper().toLowerCase().contains("pull")) {
+		if (this.mSourceAccess.getWrapper().toLowerCase().contains("pull")) {
 			// TODO Better way to determine the AccessPattern?
 			access = IAccessPattern.PULL;
 		}
 		this.mProtocolHandler = (IProtocolHandler<T>) ProtocolHandlerRegistry
-				.getInstance(this.mAccess.getProtocolHandler(),
+				.getInstance(this.mSourceAccess.getProtocolHandler(),
 						ITransportDirection.IN, access, options,
 						this.mDataHandler);
 		this.mProtocolHandler.setTransfer(this.mTransferHandler);
-		this.mKafkaAccess = new KafkaConsumerAccess(this.mAccess
+		this.mKafkaAccess = new KafkaConsumerAccess(this.mSourceAccess
 				.getAccessAOName().getResourceName(), this);
 	}
 
@@ -172,20 +183,20 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator obj) {
-		if (obj == null || !SourceSyncPO.class.isInstance(obj)) {
+		if (obj == null || !BaDaStAccessPO.class.isInstance(obj)) {
 			return false;
 		}
 		@SuppressWarnings("unchecked")
-		SourceSyncPO<T> other = (SourceSyncPO<T>) obj;
-		return this.mAccess.equals(other.mAccess);
+		BaDaStAccessPO<T> other = (BaDaStAccessPO<T>) obj;
+		return this.mSourceAccess.equals(other.mSourceAccess);
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		this.mFirstElementProcessed = false;
 		super.process_open();
 	}
-	
+
 	@Override
 	protected void process_close() {
 		this.mOffset = -1l;
@@ -198,8 +209,9 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 		synchronized (this.mOffset) {
 			if (!this.mFirstElementProcessed) {
 				this.mFirstElementProcessed = true;
-				if(this.mOffset == -1) {
-					// first element not processed AND offset not -1 means offset has been loaded as operator state
+				if (this.mOffset == -1) {
+					// first element not processed AND offset not -1 means
+					// offset has been loaded as operator state
 					adjustOffset(object);
 				}
 			}
@@ -212,7 +224,9 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 		synchronized (this.mOffset) {
 			if (!this.mFirstElementProcessed) {
 				this.mFirstElementProcessed = true;
-				if(this.mOffset == -1) {
+				if (this.mOffset == -1) {
+					// first element not processed AND offset not -1 means
+					// offset has been loaded as operator state
 					adjustOffset(punctuation);
 				}
 			}
@@ -222,9 +236,10 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 	/**
 	 * Adjusts the offset as a Kafka Consumer. <br />
 	 * <br />
-	 * Reference should be the first element to be backed up. So the
-	 * corresponding offset will be stored in the state of this operator. All
-	 * elements with a lower offset are not relevant.
+	 * Reference should be the first element to be backed up. So the index of
+	 * {@link #mReference} stored on the Kafka server will be stored within
+	 * {@link BaDaStAccessState}. All elements with a lower offset are not
+	 * relevant.
 	 * 
 	 * @see #onNewMessage(ByteBuffer, long)
 	 * @param reference
@@ -238,12 +253,12 @@ public class SourceSyncPO<T extends IStreamObject<IMetaAttribute>> extends
 
 	@Override
 	public IOperatorState getState() {
-		return new SourceSyncPOState(this.mOffset);
+		return new BaDaStAccessState(this.mOffset);
 	}
 
 	@Override
 	public void setState(Serializable state) {
-		this.mOffset = ((SourceSyncPOState) state).getOffset();
+		this.mOffset = ((BaDaStAccessState) state).getOffset();
 	}
 
 	@Override

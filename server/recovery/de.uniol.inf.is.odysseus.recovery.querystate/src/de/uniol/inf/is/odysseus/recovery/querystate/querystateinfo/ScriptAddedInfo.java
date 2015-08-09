@@ -4,18 +4,17 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
 
 /**
  * All information needed to recover a query added event (normal queries as well
  * as source definitions). <br />
  * To write those information to the system log and to read them,
- * {@link #toBase64Binary()} and {@link AbstractQueryStateInfo#fromBase64Binary(String)} can be used.
+ * {@link #toBase64Binary()} and
+ * {@link AbstractQueryStateInfo#fromBase64Binary(String)} can be used.
  * 
  * @author Michael Brand
  *
@@ -107,32 +106,6 @@ public class ScriptAddedInfo extends AbstractQueryStateInfo {
 			c.put(key, this.mContext.get(key));
 		}
 		return c;
-	}
-
-	/**
-	 * The recovery executor, if set.
-	 */
-	private Optional<String> mExecutorName = Optional.absent();
-
-	/**
-	 * Gets the recovery executor.
-	 * 
-	 * @return The name of the used {@link IRecoveryExecutor}, if a recovery
-	 *         strategy was selected.
-	 */
-	public Optional<String> getRecoveryExecutor() {
-		return this.mExecutorName;
-	}
-
-	/**
-	 * Sets the recovery executor.
-	 * 
-	 * @param executor
-	 *            The name of the used {@link IRecoveryExecutor}, if a recovery
-	 *            strategy was selected.
-	 */
-	public void setRecoveryExecutor(String executor) {
-		this.mExecutorName = Optional.fromNullable(executor);
 	}
 
 	/**

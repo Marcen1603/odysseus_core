@@ -275,11 +275,13 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		if (parameters.get(ParameterDoDistribute.class).getValue()) {
 			queries = distributeQueries(parameters, user, queries);
 		}
-		
+
 		// Recovery handler to modify the query plan
 		ParameterRecoveryConfiguration recoveryConfiguration;
-		if((recoveryConfiguration = parameters.get(ParameterRecoveryConfiguration.class)) != ParameterRecoveryConfiguration.NoConfiguration) {
-			queries = prepareRecovery(recoveryConfiguration, parameters, user, queries);
+		if ((recoveryConfiguration = parameters
+				.get(ParameterRecoveryConfiguration.class)) != ParameterRecoveryConfiguration.NoConfiguration) {
+			queries = prepareRecovery(recoveryConfiguration, parameters, user,
+					queries);
 		}
 
 		// Wrap queries again
@@ -398,15 +400,24 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 		return queries;
 	}
-	
-	private List<ILogicalQuery> prepareRecovery(ParameterRecoveryConfiguration config,
+
+	private List<ILogicalQuery> prepareRecovery(
+			ParameterRecoveryConfiguration config,
 			QueryBuildConfiguration parameters, ISession caller,
 			List<ILogicalQuery> queries) {
 		LOG.debug("Beginning preparation for recovery");
-		IRecoveryExecutor recoveryExecutor;
-		if ((recoveryExecutor = getRecoveryExecutor(config.getRecoveryExecutor())) != null) {
-			LOG.debug("Using  {} for recovery" , recoveryExecutor.getName());
-			return recoveryExecutor.newInstance(config.getConfiguration()).activateBackup(parameters, caller, queries);
+		IRecoveryExecutor recoveryExecutor = getRecoveryExecutor(config
+				.getRecoveryExecutor());
+		if (recoveryExecutor != null) {
+			LOG.debug("Using  {} for recovery", recoveryExecutor.getName());
+			recoveryExecutor = recoveryExecutor.newInstance(config
+					.getConfiguration());
+			if (recoveryExecutor.isRecoveryNeeded()) {
+				return recoveryExecutor.recover(parameters, caller, queries);
+			} else {
+				return recoveryExecutor.activateBackup(parameters, caller,
+						queries);
+			}
 		}
 		return queries;
 	}
@@ -664,7 +675,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 						newQueries, new OptimizationConfiguration(
 								buildConfiguration), user);
 				List<Integer> queryIds = collectQueryIds(addedQueries);
-				fireQueryAddedEvent(query, queryIds, buildConfiguration, parserID, user, context);
+				fireQueryAddedEvent(query, queryIds, buildConfiguration,
+						parserID, user, context);
 				Collection<Integer> createdQueries = new ArrayList<Integer>();
 				for (IPhysicalQuery p : addedQueries) {
 					createdQueries.add(p.getID());
@@ -682,11 +694,10 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			throw e;
 		}
 	}
-	
-	private List<Integer> collectQueryIds(
-			Collection<IPhysicalQuery> queries) {
+
+	private List<Integer> collectQueryIds(Collection<IPhysicalQuery> queries) {
 		List<Integer> ids = Lists.newArrayList();
-		for(IPhysicalQuery query: queries) {
+		for (IPhysicalQuery query : queries) {
 			ids.add(query.getID());
 		}
 		return ids;
@@ -852,7 +863,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		if (buildConfigurationName == null) {
 			buildConfigurationName = "Standard";
 		}
-		IQueryBuildConfigurationTemplate settings = getQueryBuildConfiguration(buildConfigurationName).clone();
+		IQueryBuildConfigurationTemplate settings = getQueryBuildConfiguration(
+				buildConfigurationName).clone();
 
 		ArrayList<IQueryBuildSetting<?>> newSettings = new ArrayList<IQueryBuildSetting<?>>(
 				settings.getConfiguration());
@@ -865,8 +877,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 					if (overwrite.getClass() == setting.getClass()) {
 						newSettings.remove(setting);
 					}
-					newSettings.add(overwrite);
 				}
+				newSettings.add(overwrite);
 			}
 		}
 
@@ -942,9 +954,11 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		config.setExecutor(this);
 		config.getTransformationConfiguration().setOption(
 				IServerExecutor.class.getName(), this);
-		
+
 		for (IQueryBuildSetting<?> iQueryBuildSetting : newSettings) {
-			config.getTransformationConfiguration().setOption(iQueryBuildSetting.getClass().getName(), iQueryBuildSetting);
+			config.getTransformationConfiguration()
+					.setOption(iQueryBuildSetting.getClass().getName(),
+							iQueryBuildSetting);
 		}
 
 		config = validateBuildParameters(config);
@@ -985,7 +999,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			validateUserRight(queryToRemove, caller,
 					ExecutorPermission.REMOVE_QUERY);
 			try {
-				LOG.debug("Try to get lock on execution plan "+executionPlanLock);
+				LOG.debug("Try to get lock on execution plan "
+						+ executionPlanLock);
 				executionPlanLock.lock();
 				getOptimizer().beforeQueryRemove(queryToRemove,
 						this.executionPlan, null, getDataDictionary(caller));
@@ -1253,7 +1268,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		// deadlock!
 		if (!queryToStop.isMarkedAsStopping()) {
 			queryToStop.setAsStopping(true);
-			LOG.debug("Try to stop query "+queryToStop.getID());
+			LOG.debug("Try to stop query " + queryToStop.getID());
 			try {
 				this.executionPlanLock.lock();
 				getOptimizer().beforeQueryStop(queryToStop, this.executionPlan);
@@ -1266,8 +1281,10 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 					LOG.info("Query "
 							+ queryToStop.getID()
 							+ " stopped. Execution time "
-							+ (queryToStop.getQueryStartTS()>0?(System.currentTimeMillis() - queryToStop
-									.getQueryStartTS()) + " ms": "undefined"));
+							+ (queryToStop.getQueryStartTS() > 0 ? (System
+									.currentTimeMillis() - queryToStop
+									.getQueryStartTS())
+									+ " ms" : "undefined"));
 					firePlanModificationEvent(new QueryPlanModificationEvent(
 							this, PlanModificationEventType.QUERY_STOP,
 							queryToStop));

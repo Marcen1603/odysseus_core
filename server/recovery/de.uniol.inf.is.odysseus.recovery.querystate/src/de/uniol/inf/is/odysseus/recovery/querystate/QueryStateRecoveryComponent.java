@@ -24,14 +24,15 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.recovery.AbstractRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.AbstractQueryStateInfo;
-import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.ScriptAddedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryRemovedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryStateChangedInfo;
+import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.ScriptAddedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.SourceRemovedInfo;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
@@ -94,12 +95,15 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 
 			@Override
 			public void run() {
-				if (cSystemLog.isPresent()) {
-					cLog.debug("Starting recovery...");
-					recoverFromLog(cSystemLog.get().read(lastStartup));
-					cLog.debug("Recovery finished.");
-				} else {
+				if (!cSystemLog.isPresent()) {
 					cLog.error("Could not start recovery, because no system log is bound!");
+				} else if (!cExecutor.isPresent()) {
+					cLog.error("Could not start recovery, because no executor is bound!");
+				} else {
+					cLog.debug("Starting recovery...");
+					recoverFromLog(cSystemLog.get().read(lastStartup),
+							cExecutor.get());
+					cLog.debug("Recovery finished.");
 				}
 			}
 
@@ -126,7 +130,8 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 						cLog.error("Could not start backup, because no executor is bound!");
 					} else {
 						cLog.debug("Starting backup...");
-						backupScript(query, queryIds, parserId, user, context);
+						backupScript(query, queryIds, parserId, user, context,
+								cExecutor.get());
 						cLog.debug("Backup finished.");
 					}
 				}
@@ -249,7 +254,8 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * Global recovery component. Not to be called for certain queries.
 	 */
 	@Override
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
+			ISession caller, List<ILogicalQuery> queries) {
 		// Nothing to do.
 		return queries;
 	}
@@ -325,8 +331,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	}
 
 	/**
-	 * Backups a new script (new source definition and/or query). <br />
-	 * Precondition: system log and executor are bound.
+	 * Backups a new script (new source definition and/or query).
 	 * 
 	 * @param script
 	 *            The script to backup.
@@ -339,26 +344,24 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 *            The caller.
 	 * @param context
 	 *            The context.
+	 * @param executor
+	 *            A present executor.
 	 */
 	private void backupScript(String script, List<Integer> queryIds,
-			String parserId, ISession user, Context context) {
+			String parserId, ISession user, Context context,
+			IServerExecutor executor) {
 		ScriptAddedInfo info = new ScriptAddedInfo();
 		info.setContext(context);
 		info.setParserId(parserId);
 		info.setQueryIds(queryIds);
 		info.setQueryText(script);
 		info.setSession(user);
-		Optional<IRecoveryExecutor> usedRecoveryExecutor = RecoveryConfigKeyword
-				.determineRecoveryExecutor(script);
-		if (usedRecoveryExecutor.isPresent()) {
-			info.setRecoveryExecutor(usedRecoveryExecutor.get().getName());
-		}
 		cSystemLog.get().write(QueryStateLogTag.SCRIPT_ADDED.toString(),
 				System.currentTimeMillis(), info.toBase64Binary());
 
 		// Get data dictionary news
 		if (!cUsedDataDictionaries.values().contains(user)) {
-			IDataDictionary dict = cExecutor.get().getDataDictionary(user);
+			IDataDictionary dict = executor.getDataDictionary(user);
 			dict.addListener(this);
 			cUsedDataDictionaries.put(dict, user);
 		}
@@ -423,13 +426,15 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	}
 
 	/**
-	 * Starts the recovery process. <br />
-	 * Precondition: executor is bound.
+	 * Starts the recovery process.
 	 * 
 	 * @param log
 	 *            All system log entries to recover.
+	 * @param executor
+	 *            A present executor.
 	 */
-	private static void recoverFromLog(List<ISysLogEntry> log) {
+	private static void recoverFromLog(List<ISysLogEntry> log,
+			IServerExecutor executor) {
 		// Mapping of the last seen log entry (the contained info, but not yet
 		// recovered) for each query (state change or removal, not creation).
 		Map<Integer, QueryStateChangedInfo> lastSeenEntries = Maps.newHashMap();
@@ -445,10 +450,10 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 						entry.getTag()).get();
 				switch (enumEntry) {
 				case SCRIPT_ADDED:
-					recoverScript(entry, log);
+					recoverScript(entry, log, executor);
 					break;
 				case SOURCE_REMOVED:
-					recoverSourceRemoval(entry);
+					recoverSourceRemoval(entry, executor);
 					break;
 				case QUERY_REMOVED:
 				case QUERYSTATE_CHANGED:
@@ -460,88 +465,102 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 			}
 		}
 		for (int queryId : lastSeenEntries.keySet()) {
-			recoverQueryStateChange(lastSeenEntries.get(queryId));
+			recoverQueryStateChange(lastSeenEntries.get(queryId), executor);
 		}
 	}
 
 	/**
 	 * Recovers a script, which was backuped by
-	 * {@link #backupScript(String, List, String, ISession, Context)}. <br />
-	 * Precondition: executor is bound and entry has a comment.
+	 * {@link #backupScript(String, List, String, ISession, Context)}.
 	 * 
 	 * @param entry
 	 *            The entry representing a backuped script.
 	 * @param log
 	 *            All system log entries to recover.
+	 * @param executor
+	 *            A present executor.
 	 */
-	private static void recoverScript(ISysLogEntry entry, List<ISysLogEntry> log) {
+	private static void recoverScript(ISysLogEntry entry,
+			List<ISysLogEntry> log, IServerExecutor executor) {
 		ScriptAddedInfo info = (ScriptAddedInfo) AbstractQueryStateInfo
 				.fromBase64Binary(entry.getComment().get());
-		cExecutor.get().addQuery(info.getQueryText(), info.getParserId(),
+		// TODO problem is, that the query build configuration is only used for
+		// the outer Odysseus-Script query. But there, the RecoveryConfigKeyword
+		// is not executed. Within the inner queries (e.g., PQL), the keyword is
+		// executed, but the query build configuration is set to normal
+		// workaround is to modify the script.
+		String modifiedQueryText = insertRecoveryNeededArgument(info
+				.getQueryText());
+		executor.addQuery(modifiedQueryText, info.getParserId(),
 				info.getSession(), info.getContext());
-		if (info.getRecoveryExecutor().isPresent()) {
-			// Call the recovery executor
-			Optional<IRecoveryExecutor> recoveryExecutor = RecoveryConfigKeyword
-					.getRecoveryExecutor(info.getRecoveryExecutor().get());
-			if (!recoveryExecutor.isPresent()) {
-				cLog.error("Logged recovery executor '"
-						+ info.getRecoveryExecutor().get()
-						+ "' is not available!");
-				return;
-			}
-			cLog.debug("Calling recovery executor '{}'", recoveryExecutor.get()
-					.getName());
-			try {
-				recoveryExecutor.get().recover(info.getQueryIds(),
-						info.getSession(), log);
-			} catch (Exception e) {
-				cLog.error("Error while calling recovery executor '"
-						+ recoveryExecutor.get().getName() + "'", e);
-			}
-		}
 	}
 
 	/**
-	 * Recovers a source removal event (removes the source again). <br />
-	 * Precondition: executor is bound and entry has a comment.
+	 * Inserts "recoveryneeded=true" as key value argument for the used recovery
+	 * executor into the script to be executed.
+	 * 
+	 * @param queryText
+	 *            The script.
+	 * @return A modified script.
+	 */
+	private static String insertRecoveryNeededArgument(String queryText) {
+		String toInsert = " " + AbstractRecoveryExecutor.RECOVERY_NEEDED_KEY
+				+ "=true";
+		int keywordIndex = queryText.indexOf(RecoveryConfigKeyword.getName());
+		int endLineIndex = queryText.indexOf("\n", keywordIndex) - 1;
+		if (keywordIndex != -1 && endLineIndex > keywordIndex) {
+			StringBuffer out = new StringBuffer();
+			out.append(queryText.substring(0, endLineIndex));
+			out.append(toInsert);
+			out.append(queryText.substring(endLineIndex));
+			return out.toString();
+		}
+		return queryText;
+	}
+
+	/**
+	 * Recovers a source removal event (removes the source again).
 	 * 
 	 * @param entry
 	 *            The entry representing a source removal.
+	 * @param executor
+	 *            A present executor.
 	 */
-	private static void recoverSourceRemoval(ISysLogEntry entry) {
+	private static void recoverSourceRemoval(ISysLogEntry entry,
+			IServerExecutor executor) {
 		SourceRemovedInfo info = (SourceRemovedInfo) AbstractQueryStateInfo
 				.fromBase64Binary(entry.getComment().get());
-		cExecutor.get().removeViewOrStream(info.getSourceName(),
-				info.getSession());
+		executor.removeViewOrStream(info.getSourceName(), info.getSession());
 	}
 
 	/**
-	 * Recovers a query state change event (changes the query state again). <br />
-	 * Precondition: executor is bound and entry has a comment.
+	 * Recovers a query state change event (changes the query state again).
 	 * 
 	 * @param info
 	 *            The info representing a query state change.
+	 * @param executor
+	 *            A present executor.
 	 */
-	private static void recoverQueryStateChange(QueryStateChangedInfo info) {
+	private static void recoverQueryStateChange(QueryStateChangedInfo info,
+			IServerExecutor executor) {
 		int queryID = info.getQueryId();
 		ISession caller = info.getSession();
 		switch (info.getQueryState()) {
 		case INACTIVE:
-			cExecutor.get().stopQuery(queryID, caller);
+			executor.stopQuery(queryID, caller);
 			break;
 		case PARTIAL:
-			cExecutor.get().partialQuery(queryID, info.getSheddingFactor(),
-					caller);
+			executor.partialQuery(queryID, info.getSheddingFactor(), caller);
 			break;
 		case PARTIAL_SUSPENDED:
 		case SUSPENDED:
-			cExecutor.get().suspendQuery(queryID, caller);
+			executor.suspendQuery(queryID, caller);
 			break;
 		case RUNNING:
-			cExecutor.get().startQuery(queryID, caller);
+			executor.startQuery(queryID, caller);
 			break;
 		case UNDEF:
-			cExecutor.get().removeQuery(queryID, caller);
+			executor.removeQuery(queryID, caller);
 		}
 	}
 

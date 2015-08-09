@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.recovery.AbstractRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
-import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -24,12 +24,13 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Michael Brand
  *
  */
-public class RollbackRecoveryExecutor implements IRecoveryExecutor {
+public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory.getLogger(RollbackRecoveryExecutor.class);
+	private static final Logger cLog = LoggerFactory
+			.getLogger(RollbackRecoveryExecutor.class);
 
 	@Override
 	public String getName() {
@@ -80,13 +81,17 @@ public class RollbackRecoveryExecutor implements IRecoveryExecutor {
 	@Override
 	public IRecoveryExecutor newInstance(Properties config) {
 		RollbackRecoveryExecutor executor = new RollbackRecoveryExecutor();
-		executor.mSourceRecoveryComponent = cIncomingElementsComponent.newInstance(config);
+		executor.mConfig = config;
+		executor.mSourceRecoveryComponent = cIncomingElementsComponent
+				.newInstance(config);
 		return executor;
 	}
 
 	@Override
-	public void recover(List<Integer> queryIds, ISession caller, List<ISysLogEntry> log) throws Exception {
+	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
+			ISession caller, List<ILogicalQuery> queries) {
 		// TODO implement RollbackRecoveryExecutor.recover
+		return queries;
 	}
 
 	/**
@@ -94,13 +99,15 @@ public class RollbackRecoveryExecutor implements IRecoveryExecutor {
 	 * is done globally.
 	 */
 	@Override
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
+			ISession caller, List<ILogicalQuery> queries) {
 		if (this.mSourceRecoveryComponent == null) {
 			cLog.error("RollBackRecovery executor misses Incoming Elements recovery component!");
 			return queries;
 		}
 		// TODO What about protection points?
-		return this.mSourceRecoveryComponent.activateBackup(qbConfig, caller, queries);
+		return this.mSourceRecoveryComponent.activateBackup(qbConfig, caller,
+				queries);
 		// TODO RollbackRecoveryExecutor misses Operator Recovery
 	}
 
