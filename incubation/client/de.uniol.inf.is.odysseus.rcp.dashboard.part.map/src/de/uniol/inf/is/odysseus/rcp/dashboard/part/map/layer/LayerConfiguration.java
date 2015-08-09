@@ -10,7 +10,7 @@ public class LayerConfiguration {
 		
 	}
 	
-	//TODO CHANGE THIS TYPE FROM STRING TO LAYERTYPE
+
 	public LayerConfiguration(boolean visibility, String title, String type){
 		this.visibility = visibility;
 		this.title  = title;
