@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
-import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IOperatorWalker;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
@@ -97,9 +96,10 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	}
 
 	@Override
-	public void recover(List<Integer> queryIds, ISession caller,
-			List<ISysLogEntry> log) throws Exception {
+	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
+			ISession caller, List<ILogicalQuery> queries) {
 		// TODO implement SourceStreamsRecoveryComponent.recover
+		return queries;
 	}
 
 	@Override
@@ -116,20 +116,21 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	}
 
 	/**
-	 * Inserts a {@link BaDaStAccessAO} for each source access operator, if there
-	 * is a recorder for the source.
+	 * Inserts a {@link BaDaStAccessAO} for each source access operator, if
+	 * there is a recorder for the source.
 	 * 
 	 * @param query
 	 *            The logical query to modify.
-	 *            @param recoveryMode
+	 * @param recoveryMode
 	 *            True, if data stream elements shall be recovered from BaDaSt.
 	 * @param caller
 	 *            The user, which created the query.
 	 * @param executor
 	 *            A present executor.
 	 */
-	private void insertSourceSyncOperators(ILogicalQuery query, final boolean recoveryMode,
-			ISession caller, IServerExecutor executor) {
+	private void insertSourceSyncOperators(ILogicalQuery query,
+			final boolean recoveryMode, ISession caller,
+			IServerExecutor executor) {
 		LogicalGraphWalker graphWalker = new LogicalGraphWalker(
 				collectOperators(query.getLogicalPlan()));
 		graphWalker.walk(new IOperatorWalker<ILogicalOperator>() {
@@ -149,7 +150,8 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 								.contains(((AbstractAccessAO) operator)
 										.getAccessAOName().getResourceName())) {
 					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
-					BaDaStAccessAO badastAccess = new BaDaStAccessAO(sourceAccess, recoveryMode);
+					BaDaStAccessAO badastAccess = new BaDaStAccessAO(
+							sourceAccess, recoveryMode);
 					Collection<LogicalSubscription> subs = Lists
 							.newArrayList(operator.getSubscriptions());
 					operator.unsubscribeFromAllSinks();

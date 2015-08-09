@@ -36,17 +36,18 @@ public interface IRecoveryComponent {
 	/**
 	 * Runs the recovery mechanism for given queries.
 	 * 
-	 * @param queryIds
-	 *            The ids of the queries.
+	 * @param qbConfig
+	 *            The used query build configuration.
 	 * @param caller
-	 *            The caller is a session for the same user, who backed up the
+	 *            The caller is a session of the user, who wants to back up the
 	 *            data.
-	 * @param log
-	 *            All system log entries to recover.
-	 * @throws Exception
-	 *             if any error occurs.
+	 * @param queries
+	 *            The queries.
+	 * @return {@code queries} either modified for recovery or not. Depends on
+	 *         the used recovery strategy.
 	 */
-	public void recover(List<Integer> queryIds, ISession caller, List<ISysLogEntry> log) throws Exception;
+	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
+			ISession caller, List<ILogicalQuery> queries);
 
 	/**
 	 * Activates the backup mechanism for given queries.
@@ -61,7 +62,7 @@ public interface IRecoveryComponent {
 	 * @return {@code queries} either modified for recovery or not. Depends on
 	 *         the used recovery strategy.
 	 */
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
-			List<ILogicalQuery> queries);
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
+			ISession caller, List<ILogicalQuery> queries);
 
 }

@@ -245,9 +245,10 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * Global recovery component. Not to be called for certain queries.
 	 */
 	@Override
-	public void recover(List<Integer> queryIds, ISession caller,
-			List<ISysLogEntry> log) throws Exception {
+	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
+			ISession caller, List<ILogicalQuery> queries) {
 		// Nothing to do.
+		return queries;
 	}
 
 	/**
