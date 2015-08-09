@@ -49,6 +49,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunic
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateReceiver;
@@ -86,6 +87,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	private static ILoadBalancingCommunicatorRegistry communicatorRegistry;
 	private static ILoadBalancingController loadBalancingControl;
 	private static IQueryPartController queryPartController;
+	private static ILoadBalancingLock lock;
 	
 	
 	public static void bindQueryPartController(IQueryPartController serv) {
@@ -98,6 +100,15 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 	}
 	
+	public static void bindLoadBalancingLock(ILoadBalancingLock serv) {
+		lock = serv;
+	}
+	
+	public static void unbindLoadBalancingLock(ILoadBalancingLock serv) {
+		if(lock==serv) {
+			lock=null;
+		}
+	}
 
 	// called by OSGi-DS
 	public static void bindPeerDictionary(IPeerDictionary serv) {
@@ -186,35 +197,43 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("---Active Loadbalancing commands---\n");
-		sb.append("    lsParts		              		- Lists all queryParts installed on peer with ids\n");
-		sb.append("    lsLBStrategies	              		- Lists all available load balancing strategies\n");
-		sb.append("    lsLBAllocators	              		- Lists all available load balancing allocators\n");
-		sb.append("    lsLBCommunicators                    - Lists all available load balancing communicators\n");
-		sb.append("    initLB <strategyname> <allocatorname>	- Initiate Loadbalancing with load balancing strategy <strategyname> and load balancing allocator <allocatorname>\n");
-		sb.append("    stopLB                            - Stops the Load Balancing\n");
+		sb.append("\n");
+		sb.append("   Diagnostic Commands\n");
+		sb.append("     lsParts		              		- Lists all queryParts installed on peer with ids\n");
+		sb.append("     lsLBStrategies	              		- Lists all available load balancing strategies\n");
+		sb.append("     lsLBAllocators	              		- Lists all available load balancing allocators\n");
+		sb.append("     lsLBCommunicators                    - Lists all available load balancing communicators\n");
+		sb.append("     testLog                                              - Outputs different log levels.\n");
+		sb.append("     listStatefolOperators <queryID>                      - Lists all statefol Operators in a query (useful to determine order)\n");
+		sb.append("     printSubscriptions <queryId>                         - Prints detais about all Subscriptions in a query.\n");
+		sb.append("     printQPController									- Prints Current Content of Query Part Controller\n");
+		sb.append("     verifyDependencies									- Verifies if all Dependencies are available\n");
+		sb.append("     dumpl <LocalQueryID>                                 - dumps logical plan of queryId\n");
+		sb.append("     sharedQueryInfo <LocalQueryID>   					- prints Info aboutd shared Query For QueryId\n");
+		sb.append("     showLogicalSchemaInfo <LocalQueryID>   				- prints Schema Information of all logical Operators in Query.\n");
+		sb.append("     printMetadataRegistry                                - Print currently registered Metadata names.\n");
+		sb.append("     showSourceInfo                                       - Shows Information about installed Sources\n");
+		sb.append("     lockStatus                                           - Shows status of Load Balancing Lock\n");
+		sb.append("\n");
+		sb.append("   Control LoadBalancing\n");
+		sb.append("     initLB <strategyname> <allocatorname>	- Initiate Loadbalancing with load balancing strategy <strategyname> and load balancing allocator <allocatorname>\n");
+		sb.append("     stopLB                            - Stops the Load Balancing\n");
+		sb.append("\n");
+		sb.append("   Debug LoadBalancing\n");
 		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Sender\n");
 		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver\n");
 		sb.append("    installStateSender <peerID>                          - Installs new MovingStateSender to PeerID\n");
 		sb.append("    installStateReceiver <peerID> <pipeID>               - Installs new MovingStateReceiver with peer and pipeID\n");
 		sb.append("    sendData <pipeID>                                    - Sends Data to MovingStateSender with pipeID\n");
-		sb.append("    testLog                                              - Outputs different log levels.\n");
 		sb.append("    testSendState <pipeID> <LocalQueryId>              - Sends state of first StatefulPO in Query to pipe\n");
 		sb.append("    testInjectState <pipeID> <LocalQueryId>              - Injects received state from pipe to first statefol Operator in query.\n");
-		sb.append("    listStatefolOperators <queryID>                      - Lists all statefol Operators in a query (useful to determine order)\n");
-		sb.append("    printSubscriptions <queryId>                         - Prints detais about all Subscriptions in a query.\n");
 		sb.append("    sendLongString <pipeID>                              - Sends a 100MB big String to test Buffers.\n");
-		sb.append("    printQPController									- Prints Current Content of Query Part Controller\n");
-		sb.append("    verifyDependencies									- Verifies if all Dependencies are available\n");
 		sb.append("    extractState <LocalQueryId>							- Extracts first StatefulPO State from Query with Query ID\n");
-		sb.append("    dumpl <LocalQueryID>                                 - dumps logical plan of queryId\n");
-		sb.append("    sharedQueryInfo <LocalQueryID>   					- prints Info aboutd shared Query For QueryId\n");
-		sb.append("    showLogicalSchemaInfo <LocalQueryID>   				- prints Schema Information of all logical Operators in Query.\n");
-		sb.append("    printMetadataRegistry                                - Print currently registered Metadata names.\n");
-		sb.append("    showSourceInfo                                       - Shows Information about installed Sources\n");
-		
+		sb.append("    forceUnlock                                          - forces Load Balancing Lock to unlock\n");
 		return sb.toString();
 	}
-
+	
+	
 	/**
 	 * Lists all Stateful Operators in a particular query.
 	 * 
@@ -247,6 +266,26 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		for (IStatefulPO statefulOp : statefulList) {
 			IPhysicalOperator operator = (IPhysicalOperator) statefulOp;
 			ci.println("[" + i + "] " + operator.getName());
+		}
+	}
+	
+	public void _forceUnlock(CommandInterpreter ci) {
+		if(lock==null) {
+			ci.println("Lock is null.");
+		}
+		else {
+			lock.forceUnlock();
+			ci.println("Unlocking of Peer forced.");
+			ci.println("Cuurent Lock Status:" + lock.isLocked());
+		}
+	}
+	
+	public void _lockStatus(CommandInterpreter ci) {
+		if(lock==null) {
+			ci.println("Lock is null.");
+		}
+		else {
+			ci.println("Cuurent Lock Status:" + lock.isLocked());
 		}
 	}
 	
