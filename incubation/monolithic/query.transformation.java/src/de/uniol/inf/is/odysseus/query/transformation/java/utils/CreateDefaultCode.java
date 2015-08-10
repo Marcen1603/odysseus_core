@@ -134,8 +134,6 @@ public class CreateDefaultCode {
 	public static CodeFragmentInfo generateSubscription(ILogicalOperator operator) {
 		CodeFragmentInfo codeFragmentInfo =  new CodeFragmentInfo();
 		
-		StringBuilder code = new StringBuilder();
-	
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 		
 		Collection<LogicalSubscription> subscriptionSourceList = operator.getSubscribedToSource();
@@ -157,29 +155,16 @@ public class CreateDefaultCode {
 			
 					 String  targetOp =  TransformationInformation.getInstance().getVariable(targetLogicalOP);
 					  if(!targetOp.equals("")){
-						  targetOpMap.put(targetOp,sub);
-						  
-						  code.append("\n");
-							code.append("\n");
-							code.append(operatorVariable+"PO.subscribeToSource("+targetOp+"PO, "+sub.getSinkInPort()+", "+sub.getSourceOutPort()+", "+targetOp+"PO.getOutputSchema());");
-							code.append("\n");
+						  targetOpMap.put(targetOp,sub);		
 					  }	
 				   }
 		   }
 		   
 			
-			StringTemplate startCodeTemplate = new StringTemplate("java","subscribeToSource");
-			startCodeTemplate.getSt().add("operatorVariable", operatorVariable);  
-			startCodeTemplate.getSt().add("targetOpMap", targetOpMap);  
+		StringTemplate startCodeTemplate = new StringTemplate("java","subscribeToSource");
+		startCodeTemplate.getSt().add("operatorVariable", operatorVariable);  
+		startCodeTemplate.getSt().add("targetOpMap", targetOpMap);  
 			
-	System.out.println(startCodeTemplate.getSt().render());
-		code.append("\n");
-		code.append("\n");
-		code.append("\n");
-		
-		
-		
-		
 		codeFragmentInfo.addCode(startCodeTemplate.getSt().render());
 		
 		return codeFragmentInfo;
