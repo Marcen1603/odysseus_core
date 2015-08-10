@@ -57,9 +57,6 @@ public class CreateDefaultCode {
 	public static CodeFragmentInfo codeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
-		
-		StringBuilder code = new StringBuilder();
-		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(forOperator);
 		
 		SDFSchema schema = timestampAO.getInputSchema();
@@ -71,19 +68,23 @@ public class CreateDefaultCode {
 				int posEnd = timestampAO.hasEndTimestamp() ? timestampAO
 						.getInputSchema()
 						.indexOf(timestampAO.getEndTimestamp()) : -1;
-						
-			code.append("RelationalTimestampAttributeTimeIntervalMFactory "+operatorVariable+"MetaUpdater = new RelationalTimestampAttributeTimeIntervalMFactory("+pos+", "+posEnd+","+ clearEnd+","+ timestampAO.getDateFormat()+","+timestampAO.getTimezone()+","+ timestampAO.getLocale()+","+timestampAO.getFactor()+","+ timestampAO.getOffset()+");");
-			code.append("\n");
-			code.append("((IMetadataInitializer) "+operatorVariable+"PO).addMetadataUpdater("+operatorVariable+"MetaUpdater);");
+				
+			StringTemplate relationalTimestampAttributeTimeIntervalMFactoryTemplate = new StringTemplate("java","relationalTimestampAttributeTimeIntervalMFactory");
+			
+			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("operatorVariable", operatorVariable);			
+			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("pos", pos);	
+			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("posEnd", posEnd);	
+			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("clearEnd", clearEnd);	
+			relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().add("timestampAO", timestampAO);	
+			
+			codeFragmentInfo.addImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
+			codeFragmentInfo.addImport(IMetadataInitializer.class.getName());
+			
+			codeFragmentInfo.addCode(relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().render());
+			
 			}
 			
 		}
-		codeFragmentInfo.addImport(RelationalTimestampAttributeTimeIntervalMFactory.class.getName());
-		codeFragmentInfo.addImport(IMetadataInitializer.class.getName());
-		
-		codeFragmentInfo.addCode(code.toString());
-		
-
 	
 		return codeFragmentInfo;
 		
