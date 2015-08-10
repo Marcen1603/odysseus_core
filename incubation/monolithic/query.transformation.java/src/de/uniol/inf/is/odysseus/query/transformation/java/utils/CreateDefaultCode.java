@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -92,46 +91,33 @@ public class CreateDefaultCode {
 	public static CodeFragmentInfo codeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs){
 		CodeFragmentInfo startFragment = new CodeFragmentInfo();
 		
-		StringBuilder code = new StringBuilder();
-		code.append("\n");
-		code.append("\n");
-		code.append("ArrayList<IPhysicalOperator> physicalOperatorList = new ArrayList<IPhysicalOperator>();");
-		code.append("\n");
-		code.append("physicalOperatorList.add("+TransformationInformation.getInstance().getVariable(sourceOPs.get(0))+"PO);");
-		code.append("\n");
-		code.append("IOperatorOwner operatorOwner = new PhysicalQuery(physicalOperatorList);");
-		code.append("\n");
-		code.append("\n");
-	
-		//add owner to op
-		for (Entry<ILogicalOperator, String> entry : TransformationInformation.getInstance().getOperatorList().entrySet())
-		{
-			code.append(entry.getValue()+"PO.addOwner(operatorOwner);");
-			code.append("\n");
-		}
-	
-		//Open on sink ops
-		for(ILogicalOperator sinkOp : sinkOPs){
-				code.append(TransformationInformation.getInstance().getVariable(sinkOp)+"PO.open(operatorOwner);");
-				code.append("\n");
-		}
+		String firstOP = TransformationInformation.getInstance().getVariable(sourceOPs.get(0));
+		
+		List<String> sinkOpList = new ArrayList<String>();
+		boolean createWhileFragment = false;
 		
 		if(sourceOPs.get(0) instanceof StreamAO){
-			//TODO keine schleife notwendig? siehe SelectorThread?
+			
 		}else{
-			code.append("\n");
-			code.append("while("+TransformationInformation.getInstance().getVariable(sourceOPs.get(0))+"PO.hasNext()){");
-			code.append("\n");
-			code.append(TransformationInformation.getInstance().getVariable(sourceOPs.get(0))+"PO.transferNext();");
-			code.append("\n");
-			code.append("}");
-			code.append("\n");
-			code.append("\n");
+			createWhileFragment = true;
+			
 		}
 		
+		//Open on sink ops
+		for(ILogicalOperator sinkOp : sinkOPs){
+					sinkOpList.add(TransformationInformation.getInstance().getVariable(sinkOp));
 	
+		}
 		
-		startFragment.addCode(code.toString());
+		StringTemplate startCodeTemplate = new StringTemplate("java","startCode");
+		startCodeTemplate.getSt().add("firstOP", firstOP);
+		startCodeTemplate.getSt().add("operatorList",TransformationInformation.getInstance().getOperatorList());
+		startCodeTemplate.getSt().add("sinkOpList",sinkOpList);
+		startCodeTemplate.getSt().add("createWhileFragment",createWhileFragment);
+		startCodeTemplate.getSt().add("sourceOP",TransformationInformation.getInstance().getVariable(sourceOPs.get(0)));
+		
+	
+		startFragment.addCode(startCodeTemplate.getSt().render());
 		
 		startFragment.addImport(IPhysicalOperator.class.getName());
 		startFragment.addImport(ArrayList.class.getName());
@@ -141,7 +127,6 @@ public class CreateDefaultCode {
 	
 		
 		return startFragment;
-		
 	}
 	
 	
