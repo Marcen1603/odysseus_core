@@ -33,7 +33,7 @@ public class MessageXMLParser {
 	public void parse() {
 		try {
 			//URL url = new URL(XML_URL);
-			URL url = FileLocator.toFileURL(FrameworkUtil.getBundle(getClass()).getEntry("."));
+			URL url = FileLocator.toFileURL(FrameworkUtil.getBundle(getClass()).getEntry("/"));
 			url = new URL(url + "msg/nmea.xml");
 			InputStream inputStream = url.openConnection().getInputStream();
 
