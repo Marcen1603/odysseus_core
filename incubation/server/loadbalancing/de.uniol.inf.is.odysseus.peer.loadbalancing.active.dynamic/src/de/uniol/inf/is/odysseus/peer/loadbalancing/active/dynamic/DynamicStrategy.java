@@ -403,11 +403,11 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				queryCommunicatorMapping.put(queryId, inactiveQueryCommunicator);
 			}
 			if(!hasStatefulOperator(queryId)) {
-				ILoadBalancingCommunicator inactiveQueryCommunicator = communicatorRegistry.getCommunicator(DynamicLoadBalancingConstants.STATELESS_QUERIES_COMMUNICATOR_NAME);
-				queryCommunicatorMapping.put(queryId, inactiveQueryCommunicator);
+				ILoadBalancingCommunicator parallelTrackCommunicator = communicatorRegistry.getCommunicator(DynamicLoadBalancingConstants.STATELESS_QUERIES_COMMUNICATOR_NAME);
+				queryCommunicatorMapping.put(queryId, parallelTrackCommunicator);
 			}
-			ILoadBalancingCommunicator inactiveQueryCommunicator = communicatorRegistry.getCommunicator(DynamicLoadBalancingConstants.STATELESS_QUERIES_COMMUNICATOR_NAME);
-			queryCommunicatorMapping.put(queryId, inactiveQueryCommunicator);
+			ILoadBalancingCommunicator movingStateCommunicator = communicatorRegistry.getCommunicator(DynamicLoadBalancingConstants.STATEFUL_QUERIES_COMMUNICATOR_NAME);
+			queryCommunicatorMapping.put(queryId, movingStateCommunicator);
 			
 		}
 		
