@@ -18,13 +18,13 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 	private Point downCoords;
 	private Coordinate downPosition;
 	private ScreenManager screenManager;
-	private StreamMapEditorPart editor;
+	private MapDashboardPart mapDashboardPart;
 
 	private Rectangle mouseSelection = null;
 
-	public MapMouseListener(ScreenManager screenManager, StreamMapEditorPart editor) {
+	public MapMouseListener(ScreenManager screenManager, MapDashboardPart mapDashboardPart) {
 		this.screenManager = screenManager;
-		this.editor = editor;
+		this.mapDashboardPart = mapDashboardPart;
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
-		if (!editor.isRectangleZoom()) {
+		if (!mapDashboardPart.isRectangleZoom()) {
 			if (e.button == 1){
 //				screenManager.zoomIn(new Point(mouseCoords.x, mouseCoords.y));
 			}else if (e.button == 3){
@@ -54,7 +54,7 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 
 	@Override
 	public void mouseDown(MouseEvent e) {
-		if (!editor.isRectangleZoom()) {
+		if (!mapDashboardPart.isRectangleZoom()) {
 			if (e.button == 1 && (e.stateMask & SWT.CTRL) != 0) {
 //				screenManager.setCenterPosition(screenManager
 //						.getCursorPosition());
@@ -73,7 +73,7 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 
 	@Override
 	public void mouseUp(MouseEvent e) {
-		if (!editor.isRectangleZoom()) {
+		if (!mapDashboardPart.isRectangleZoom()) {
 			if (e.count == 1) {
 				handleDrag(e);
 			}
@@ -91,7 +91,7 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 
 	@Override
 	public void mouseMove(MouseEvent e) {
-		if (!editor.isRectangleZoom()) {
+		if (!mapDashboardPart.isRectangleZoom()) {
 			handlePosition(e);
 			handleDrag(e);
 		}
@@ -105,6 +105,7 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 		}
 	}
 
+	//TODO Warum ist hier was auskommentiert, aber nur hier?
 	@Override
 	public void mouseScrolled(MouseEvent e) {
 //		if (!editor.isRectangleZoom()) {
@@ -122,7 +123,7 @@ public class MapMouseListener implements MouseListener, MouseWheelListener,
 	}
 
 	private void handleDrag(MouseEvent e) {
-		if (!editor.isRectangleZoom()) {
+		if (!mapDashboardPart.isRectangleZoom()) {
 			if (downCoords != null) {
 				int tx = downCoords.x - e.x;
 				int ty = downCoords.y - e.y;

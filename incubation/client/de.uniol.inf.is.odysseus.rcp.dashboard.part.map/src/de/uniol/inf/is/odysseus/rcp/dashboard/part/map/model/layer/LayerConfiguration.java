@@ -6,7 +6,6 @@ public abstract class LayerConfiguration implements Serializable{
 
 	private static final long serialVersionUID = -3897708132891607334L;
     
-	private String group = null;
 	private String name = null;
 
 	public LayerConfiguration() {
@@ -17,22 +16,7 @@ public abstract class LayerConfiguration implements Serializable{
     }
 	
 	public LayerConfiguration(LayerConfiguration toCopy) {
-		this.name = toCopy.name;
-		this.group = toCopy.group;		
-	}
-
-	/**
-	 * @return the group
-	 */
-	public String getGroup() {
-		return group;
-	}
-
-	/**
-	 * @param group the group to set
-	 */
-	public void setGroup(String group) {
-		this.group = group;
+		this.name = toCopy.name;		
 	}
 
 	/**

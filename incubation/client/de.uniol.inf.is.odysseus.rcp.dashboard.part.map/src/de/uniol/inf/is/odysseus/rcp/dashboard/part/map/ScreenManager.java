@@ -53,7 +53,7 @@ public class ScreenManager {
 	private static final Color WHITE = Display.getCurrent().getSystemColor(
 			SWT.COLOR_WHITE);
 
-	private StreamMapEditorPart editor;
+	private MapDashboardPart mapDashboardPart;
 	private ScreenTransformation transformation;
 	private Canvas canvas;
 
@@ -70,7 +70,7 @@ public class ScreenManager {
 	
 	private CoordinateReferenceSystem crs;
 	
-	// mapSizeScreenCoord;
+	// mapSizeScreenCoord
 	private int widthHalf, heightHalf = 175;
 	private int height;
 	private int srid = -1;
@@ -84,14 +84,14 @@ public class ScreenManager {
 	
 	
 	public ScreenManager(ScreenTransformation transformation,
-			StreamMapEditorPart editor) {
+			MapDashboardPart mapDashboardPart) {
 		this.interval = new TimeInterval();
 		this.interval.setStart(PointInTime.getZeroTime());
 		this.maxInterval = new TimeInterval();
 		this.transformation = transformation;
 		this.transformation.setScreenManager(this);
-		this.editor = editor;
-		setSRID(editor.getMapEditorModel().getSRID());
+		this.mapDashboardPart = mapDashboardPart;
+		setSRID(mapDashboardPart.getMapEditorModel().getSRID());
 		ProjCoordinate p = new ProjCoordinate(0, 0);
 		if (this.crs != null)
 			this.crs.getProjection().project(new ProjCoordinate(0, 0), p);
@@ -154,7 +154,7 @@ public class ScreenManager {
 		Canvas canvas = new Canvas(parent, SWT.DOUBLE_BUFFERED);
 		canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		canvas.setBackground(WHITE);
-		canvas.addPaintListener(new GeometryPaintListener(editor));
+		canvas.addPaintListener(new GeometryPaintListener(mapDashboardPart));
 
 		canvas.addKeyListener(new KeyListener() {
 
@@ -178,7 +178,7 @@ public class ScreenManager {
 
 		});
 
-		mouseListener = new MapMouseListener(this, editor);
+		mouseListener = new MapMouseListener(this, mapDashboardPart);
 		canvas.addMouseListener(mouseListener);
 		canvas.addMouseMoveListener(mouseListener);
 		canvas.addMouseWheelListener(mouseListener);

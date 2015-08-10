@@ -42,8 +42,8 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.MapDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.StreamMapEditorPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.LayerTypeRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.RasterLayer;
@@ -74,8 +74,8 @@ public class MapEditorModel extends ModelObject {
 
 	private int srid;
 
-	public void init(StreamMapEditorPart editor) {
-		this.screenManager = editor.getScreenManager();
+	public void init(MapDashboardPart mapDashboardPart) {
+		this.screenManager = mapDashboardPart.getScreenManager();
 		for (LayerUpdater layerUpdater : connections.values()) {
 			screenManager.addPropertyChangeListener(layerUpdater);
 			screenManager.addConnection(layerUpdater);
@@ -90,177 +90,177 @@ public class MapEditorModel extends ModelObject {
 		screenManager.redraw();
 	}
 
-	/**
-	 * If a saved file is used
-	 * 
-	 * @param file
-	 *            The used file
-	 * @param editor
-	 * @return Loaded MapEditorModel
-	 */
-	@SuppressWarnings("unchecked")
-	public static MapEditorModel open(IFile file, StreamMapEditorPart editor) {
-		iFile = file;
-		MapEditorModel newModel = new MapEditorModel();
-		String output = "";
-		InputStream is = null;
-		try {
-			is = file.getContents();
-			BufferedReader in = new BufferedReader(new InputStreamReader(is));
-			String inputLine;
+//	/**
+//	 * If a saved file is used
+//	 * 
+//	 * @param file
+//	 *            The used file
+//	 * @param editor
+//	 * @return Loaded MapEditorModel
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public static MapEditorModel open(IFile file, MapDashboardPart mapDashboardPart) {
+//		iFile = file;
+//		MapEditorModel newModel = new MapEditorModel();
+//		String output = "";
+//		InputStream is = null;
+//		try {
+//			is = file.getContents();
+//			BufferedReader in = new BufferedReader(new InputStreamReader(is));
+//			String inputLine;
+//
+//			while ((inputLine = in.readLine()) != null) {
+//				output += inputLine;
+//			}
+//
+//			in.close();
+//
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (CoreException e) {
+//			e.printStackTrace();
+//		} finally {
+//			if (is != null) {
+//				try {
+//					is.close();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//
+//		LOG.debug(output);
+//		newModel.setProject(file.getProject());
+//
+//		if (output.isEmpty()) {
+//			return newModel;
+//		}
+//		PersistentMapEditorModel persistentModel = getGson().fromJson(output, PersistentMapEditorModel.class);
+//
+//		if (persistentModel.getSrid() != null)
+//			newModel.srid = persistentModel.getSrid();
+//		IServerExecutor executor = (IServerExecutor) OdysseusRCPPlugIn.getExecutor();
+//		if (persistentModel.getQueries() != null)
+//
+//			for (PersistentQuery pquery : persistentModel.getQueries()) {
+//				if (pquery instanceof QueryFile) {
+//					QueryFile query = (QueryFile) pquery;
+//					IFile nativeFile = newModel.getProject().getFile(query.filename);
+//					newModel.addFile(nativeFile);
+//					run(nativeFile);
+//				} else if (pquery instanceof QueryString) {
+//
+//					QueryString query = (QueryString) pquery;
+//
+//					LOG.debug("Reload Query: " + query);
+//
+//					String[] qLines = new String[3];
+//					qLines[0] = "#TRANSCFG " + query.transformation;
+//					qLines[1] = "#PARSER " + query.parser;
+//					qLines[2] = "#QUERY " + query.text;
+//
+//					boolean exists = false;
+//					// No multiple definition of a Stream.
+//					for (IPhysicalQuery phyQuery : executor.getExecutionPlan().getQueries()) {
+//						if (phyQuery.getLogicalQuery().getQueryText().equals(query.text)) {
+//							exists = true;
+//						}
+//					}
+//					if (!exists) {
+//						execute(qLines);
+//					}
+//
+//					for (IPhysicalQuery phyQuery : executor.getExecutionPlan().getQueries()) {
+//						if (phyQuery.getLogicalQuery().getQueryText().equals(query.text)) {
+//							List<IPhysicalOperator> ops = phyQuery.getRoots();
+//
+//							@SuppressWarnings({ "rawtypes" })
+//							DefaultStreamConnection connection = new DefaultStreamConnection(ops);
+//							newModel.addConnection(connection, phyQuery, mapDashboardPart);
+//						}
+//					}
+//				}
+//			}
+//
+//		if (persistentModel.getLayers() != null) {
+//			for (LayerConfiguration layerConf : persistentModel.getLayers()) {
+//				LOG.debug("Reload Layer: " + layerConf.getName());
+//				newModel.addLayer(layerConf);
+//			}
+//		}
+//		return newModel;
+//	}
 
-			while ((inputLine = in.readLine()) != null) {
-				output += inputLine;
-			}
-
-			in.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
-			e.printStackTrace();
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		LOG.debug(output);
-		newModel.setProject(file.getProject());
-
-		if (output.isEmpty()) {
-			return newModel;
-		}
-		PersistentMapEditorModel persistentModel = getGson().fromJson(output, PersistentMapEditorModel.class);
-
-		if (persistentModel.getSrid() != null)
-			newModel.srid = persistentModel.getSrid();
-		IServerExecutor executor = (IServerExecutor) OdysseusRCPPlugIn.getExecutor();
-		if (persistentModel.getQueries() != null)
-
-			for (PersistentQuery pquery : persistentModel.getQueries()) {
-				if (pquery instanceof QueryFile) {
-					QueryFile query = (QueryFile) pquery;
-					IFile nativeFile = newModel.getProject().getFile(query.filename);
-					newModel.addFile(nativeFile);
-					run(nativeFile);
-				} else if (pquery instanceof QueryString) {
-
-					QueryString query = (QueryString) pquery;
-
-					LOG.debug("Reload Query: " + query);
-
-					String[] qLines = new String[3];
-					qLines[0] = "#TRANSCFG " + query.transformation;
-					qLines[1] = "#PARSER " + query.parser;
-					qLines[2] = "#QUERY " + query.text;
-
-					boolean exists = false;
-					// No multiple definition of a Stream.
-					for (IPhysicalQuery phyQuery : executor.getExecutionPlan().getQueries()) {
-						if (phyQuery.getLogicalQuery().getQueryText().equals(query.text)) {
-							exists = true;
-						}
-					}
-					if (!exists) {
-						execute(qLines);
-					}
-
-					for (IPhysicalQuery phyQuery : executor.getExecutionPlan().getQueries()) {
-						if (phyQuery.getLogicalQuery().getQueryText().equals(query.text)) {
-							List<IPhysicalOperator> ops = phyQuery.getRoots();
-
-							@SuppressWarnings({ "rawtypes" })
-							DefaultStreamConnection connection = new DefaultStreamConnection(ops);
-							newModel.addConnection(connection, phyQuery, editor);
-						}
-					}
-				}
-			}
-
-		if (persistentModel.getLayers() != null) {
-			for (LayerConfiguration layerConf : persistentModel.getLayers()) {
-				LOG.debug("Reload Layer: " + layerConf.getName());
-				newModel.addLayer(layerConf);
-			}
-		}
-		return newModel;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Gson getGson() {
-		// Layers
-		GsonBuilder gsonbuilder = new GsonBuilder().setPrettyPrinting();
-		RuntimeTypeAdapterFactory layerConfigurationFactory = RuntimeTypeAdapterFactory.of(LayerConfiguration.class);
-		layerConfigurationFactory.registerSubtype(VectorLayerConfiguration.class);
-		layerConfigurationFactory.registerSubtype(RasterLayerConfiguration.class);
-
-		// // Thematic layers
-		// layerConfigurationFactory
-		// .registerSubtype(HeatmapLayerConfiguration.class);
-		// layerConfigurationFactory
-		// .registerSubtype(TracemapLayerConfiguration.class);
-
-		gsonbuilder.registerTypeAdapterFactory(layerConfigurationFactory);
-
-		// Queries
-		RuntimeTypeAdapterFactory persistentQueryFactory = RuntimeTypeAdapterFactory.of(PersistentQuery.class);
-		persistentQueryFactory.registerSubtype(QueryFile.class);
-		persistentQueryFactory.registerSubtype(QueryString.class);
-		gsonbuilder.registerTypeAdapterFactory(persistentQueryFactory);
-		return gsonbuilder.create();
-	}
-
-	/**
-	 * Saves the map as JSON in the file. All parts of the LayerConfigurations
-	 * have to be serializable
-	 * 
-	 * @param file
-	 */
-	public void save(IFile file) {
-		StringBuilder configuration = new StringBuilder();
-
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file.getLocation().toOSString()));
-			PersistentMapEditorModel persistentModel = new PersistentMapEditorModel();
-			persistentModel.setSrid(this.srid);
-			for (IFile qryfile : qryFileList) {
-				QueryFile queryfile = new QueryFile();
-				queryfile.filename = qryfile.getName();
-				persistentModel.addQuery(queryfile);
-			}
-
-			for (LayerUpdater connection : connections.values()) {
-				String queryText = connection.getQuery().getQueryText();
-				String queryParser = connection.getQuery().getParserId();
-				QueryString pquery = new QueryString();
-
-				pquery.transformation = "Standard";
-				pquery.parser = queryParser;
-				pquery.text = queryText;
-
-				persistentModel.addQuery(pquery);
-			}
-
-			persistentModel.addLayers(layers);
-
-			Gson gson = getGson();
-			String jsonString = gson.toJson(persistentModel);
-			configuration.append(jsonString);
-
-			LOG.debug("Save " + configuration.toString());
-			bw.write(configuration.toString());
-			bw.flush();
-			bw.close();
-			file.refreshLocal(IResource.DEPTH_INFINITE, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	@SuppressWarnings({ "rawtypes", "unchecked" })
+//	private static Gson getGson() {
+//		// Layers
+//		GsonBuilder gsonbuilder = new GsonBuilder().setPrettyPrinting();
+//		RuntimeTypeAdapterFactory layerConfigurationFactory = RuntimeTypeAdapterFactory.of(LayerConfiguration.class);
+//		layerConfigurationFactory.registerSubtype(VectorLayerConfiguration.class);
+//		layerConfigurationFactory.registerSubtype(RasterLayerConfiguration.class);
+//
+//		// // Thematic layers
+//		// layerConfigurationFactory
+//		// .registerSubtype(HeatmapLayerConfiguration.class);
+//		// layerConfigurationFactory
+//		// .registerSubtype(TracemapLayerConfiguration.class);
+//
+//		gsonbuilder.registerTypeAdapterFactory(layerConfigurationFactory);
+//
+//		// Queries
+//		RuntimeTypeAdapterFactory persistentQueryFactory = RuntimeTypeAdapterFactory.of(PersistentQuery.class);
+//		persistentQueryFactory.registerSubtype(QueryFile.class);
+//		persistentQueryFactory.registerSubtype(QueryString.class);
+//		gsonbuilder.registerTypeAdapterFactory(persistentQueryFactory);
+//		return gsonbuilder.create();
+//	}
+//
+//	/**
+//	 * Saves the map as JSON in the file. All parts of the LayerConfigurations
+//	 * have to be serializable
+//	 * 
+//	 * @param file
+//	 */
+//	public void save(IFile file) {
+//		StringBuilder configuration = new StringBuilder();
+//
+//		try {
+//			BufferedWriter bw = new BufferedWriter(new FileWriter(file.getLocation().toOSString()));
+//			PersistentMapEditorModel persistentModel = new PersistentMapEditorModel();
+//			persistentModel.setSrid(this.srid);
+//			for (IFile qryfile : qryFileList) {
+//				QueryFile queryfile = new QueryFile();
+//				queryfile.filename = qryfile.getName();
+//				persistentModel.addQuery(queryfile);
+//			}
+//
+//			for (LayerUpdater connection : connections.values()) {
+//				String queryText = connection.getQuery().getQueryText();
+//				String queryParser = connection.getQuery().getParserId();
+//				QueryString pquery = new QueryString();
+//
+//				pquery.transformation = "Standard";
+//				pquery.parser = queryParser;
+//				pquery.text = queryText;
+//
+//				persistentModel.addQuery(pquery);
+//			}
+//
+//			persistentModel.addLayers(layers);
+//
+//			Gson gson = getGson();
+//			String jsonString = gson.toJson(persistentModel);
+//			configuration.append(jsonString);
+//
+//			LOG.debug("Save " + configuration.toString());
+//			bw.write(configuration.toString());
+//			bw.flush();
+//			bw.close();
+//			file.refreshLocal(IResource.DEPTH_INFINITE, null);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * Checks the type of the layerConfiguration and calls the right method to
@@ -375,100 +375,157 @@ public class MapEditorModel extends ModelObject {
 	//
 	// return layer;
 	// }
-
-	// TODO THIS SHOULD BE DONE BY THE DASHBOARDPART
-	public void addConnection(IStreamConnection<Object> connection, IPhysicalQuery query, StreamMapEditorPart editor) {
-		LOG.debug("Add Connection: " + query.getLogicalQuery().getQueryText());
-
-		if (!connections.containsKey(String.valueOf(query.hashCode()))) {
-
-			LayerUpdater updater = new LayerUpdater(editor, query, connection);
-			connections.put(String.valueOf(query.hashCode()), updater);
-			if (screenManager != null) {
-				// If this Model is not opened by a file
-				screenManager.addPropertyChangeListener(updater);
-				screenManager.addConnection(updater);
-			}
-
-			LOG.debug("Bind Query: " + query.getID());
-			LOG.debug("Bind Query: " + query.getLogicalQuery().getQueryText());
-		}
-		firePropertyChange(MAP, null, this);
-	}
-
-	public LinkedList<ILayer> getLayers() {
-		return layers;
-	}
-
-	public Collection<LayerUpdater> getConnectionCollection() {
-		return connections.values();
-	}
-
-	private static void run(final IFile queryFile) {
-		try {
-			// Datei oeffnen
-			if (!queryFile.isSynchronized(IResource.DEPTH_ZERO))
-				queryFile.refreshLocal(IResource.DEPTH_ZERO, null);
-
-			// Datei einlesen
-			ArrayList<String> lines = new ArrayList<String>();
-			BufferedReader br = new BufferedReader(new InputStreamReader(queryFile.getContents()));
-			String line = br.readLine();
-			while (line != null) {
-				lines.add(line);
-				line = br.readLine();
-			}
-			br.close();
-
-			execute(lines.toArray(new String[lines.size()]));
-
-		} catch (Exception ex) {
-			LOG.error("Exception during running query file", ex);
-
-			new ExceptionWindow(ex);
-		}
-	}
-
-	public static void execute(final String[] text) {
-		try {
-			ISession user = OdysseusRCPPlugIn.getActiveSession();
-			OdysseusRCPEditorTextPlugIn.getExecutor().addQuery(concat(text), "OdysseusScript", user, Context.empty());
-		} catch (PlanManagementException ex) {
-			LOG.error("Exception during executing script", ex);
-			if (!ex.getRootMessage().contains("multiple")) {
-				MessageDialog.openError(getCurrentShell(), ex.getMessage(), ex.getRootMessage());
-			}
-		}
-	}
-
-	//TODO CHange this to Dashboard Composite later
-	private static Shell getCurrentShell() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	}
-
-	private static String concat(String[] text) {
-		StringBuilder sb = new StringBuilder();
-		for (String line : text) {
-			sb.append(line).append("\n");
-		}
-		return sb.toString();
-	}
-
+	
 	public void removeLayer(ILayer layer) {
 		layers.remove(layer);
 		firePropertyChange(MAP, null, this);
 	}
 
-	//TODO This shouldn't be needed after the Dashboardpart is handling the queries
-	public void removeConnection(LayerUpdater connection) {
-		String key = String.valueOf(connection.getQuery().hashCode());
-		for (ILayer layer : connections.get(key)) {
-			removeLayer(layer);
+	public void layerUp(ILayer layer) {
+		LinkedList<ILayer> group = layers;
+		if (group.contains(layer)) {
+			int positionOrign = group.lastIndexOf(layer);
+			int positionNext = positionOrign + 1;
+			if (positionNext < group.size()) {
+				ILayer tmp = group.get(positionOrign);
+				ILayer tmp1 = group.get(positionNext);
+
+				group.set(positionNext, tmp);
+				group.set(positionOrign, tmp1);
+			}
 		}
-		connections.remove(key);
-		screenManager.removeConnection(connection);
-		firePropertyChange(MAP, null, this);
 	}
+	
+	public void layerTop(ILayer layer){
+		LinkedList<ILayer> group = layers;
+		if (group.contains(layer)) {
+			int positionOrign = group.lastIndexOf(layer);
+			int positionTop = group.size();
+			if (positionTop != positionOrign) {
+				ILayer tmp = group.get(positionOrign);
+				ILayer tmp1 = group.get(positionTop);
+
+				group.set(positionTop, tmp);
+				group.set(positionOrign, tmp1);
+			}
+		}
+	}
+
+	public void layerDown(ILayer layer) {
+		LinkedList<ILayer> group = layers;
+		if (group.contains(layer)) {
+			int positionOrign = group.lastIndexOf(layer);
+			int positionNext = positionOrign - 1;
+			if (positionNext >= 0) {
+				ILayer tmp = group.get(positionOrign);
+				ILayer tmp1 = group.get(positionNext);
+
+				group.set(positionNext, tmp);
+				group.set(positionOrign, tmp1);
+			}
+		}
+	}
+	
+	public void layerBottom(ILayer layer){
+		LinkedList<ILayer> group = layers;
+		if (group.contains(layer)) {
+			int positionOrign = group.lastIndexOf(layer);
+			int positionBottom= 0;
+			if (positionBottom != positionOrign) {
+				ILayer tmp = group.get(positionOrign);
+				ILayer tmp1 = group.get(positionBottom);
+
+				group.set(positionBottom, tmp);
+				group.set(positionOrign, tmp1);
+			}
+		}
+	}
+
+	//TODO This should be handled by the Edit-Button later
+	public void rename(ILayer layer, String name) {
+		layer.setName(name);
+	}
+
+	// TODO THIS SHOULD BE DONE BY THE DASHBOARDPART
+//	public void addConnection(IStreamConnection<Object> connection, IPhysicalQuery query, MapDashboardPart mapDashboardPart) {
+//		LOG.debug("Add Connection: " + query.getLogicalQuery().getQueryText());
+//
+//		if (!connections.containsKey(String.valueOf(query.hashCode()))) {
+//
+//			LayerUpdater updater = new LayerUpdater(mapDashboardPart, query, connection);
+//			connections.put(String.valueOf(query.hashCode()), updater);
+//			if (screenManager != null) {
+//				// If this Model is not opened by a file
+//				screenManager.addPropertyChangeListener(updater);
+//				screenManager.addConnection(updater);
+//			}
+//
+//			LOG.debug("Bind Query: " + query.getID());
+//			LOG.debug("Bind Query: " + query.getLogicalQuery().getQueryText());
+//		}
+//		firePropertyChange(MAP, null, this);
+//	}
+
+//	private static void run(final IFile queryFile) {
+//		try {
+//			// Datei oeffnen
+//			if (!queryFile.isSynchronized(IResource.DEPTH_ZERO))
+//				queryFile.refreshLocal(IResource.DEPTH_ZERO, null);
+//
+//			// Datei einlesen
+//			ArrayList<String> lines = new ArrayList<String>();
+//			BufferedReader br = new BufferedReader(new InputStreamReader(queryFile.getContents()));
+//			String line = br.readLine();
+//			while (line != null) {
+//				lines.add(line);
+//				line = br.readLine();
+//			}
+//			br.close();
+//
+//			execute(lines.toArray(new String[lines.size()]));
+//
+//		} catch (Exception ex) {
+//			LOG.error("Exception during running query file", ex);
+//
+//			new ExceptionWindow(ex);
+//		}
+//	}
+//
+//	public static void execute(final String[] text) {
+//		try {
+//			ISession user = OdysseusRCPPlugIn.getActiveSession();
+//			OdysseusRCPEditorTextPlugIn.getExecutor().addQuery(concat(text), "OdysseusScript", user, Context.empty());
+//		} catch (PlanManagementException ex) {
+//			LOG.error("Exception during executing script", ex);
+//			if (!ex.getRootMessage().contains("multiple")) {
+//				MessageDialog.openError(getCurrentShell(), ex.getMessage(), ex.getRootMessage());
+//			}
+//		}
+//	}
+
+//	//TODO CHange this to Dashboard Composite later
+//	private static Shell getCurrentShell() {
+//		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+//	}
+//
+//	private static String concat(String[] text) {
+//		StringBuilder sb = new StringBuilder();
+//		for (String line : text) {
+//			sb.append(line).append("\n");
+//		}
+//		return sb.toString();
+//	}
+
+//	//TODO This shouldn't be needed after the Dashboardpart is handling the queries
+//	public void removeConnection(LayerUpdater connection) {
+//		String key = String.valueOf(connection.getQuery().hashCode());
+//		for (ILayer layer : connections.get(key)) {
+//			removeLayer(layer);
+//		}
+//		connections.remove(key);
+//		screenManager.removeConnection(connection);
+//		firePropertyChange(MAP, null, this);
+//	}
 
 	public void addFile(IFile file) {
 		this.qryFileList.add(file);
@@ -490,41 +547,6 @@ public class MapEditorModel extends ModelObject {
 
 	public void setProject(IProject project) {
 		this.project = project;
-	}
-
-	public void layerUp(ILayer layer) {
-		LinkedList<ILayer> group = layers;
-		if (group.contains(layer)) {
-			int positionOrign = group.lastIndexOf(layer);
-			int positionNext = positionOrign + 1;
-			if (positionNext < group.size()) {
-				ILayer tmp = group.get(positionOrign);
-				ILayer tmp1 = group.get(positionNext);
-
-				group.set(positionNext, tmp);
-				group.set(positionOrign, tmp1);
-			}
-		}
-	}
-
-	public void layerDown(ILayer layer) {
-		LinkedList<ILayer> group = layers;
-		if (group.contains(layer)) {
-			int positionOrign = group.lastIndexOf(layer);
-			int positionNext = positionOrign - 1;
-			if (positionNext >= 0) {
-				ILayer tmp = group.get(positionOrign);
-				ILayer tmp1 = group.get(positionNext);
-
-				group.set(positionNext, tmp);
-				group.set(positionOrign, tmp1);
-			}
-		}
-	}
-
-	//TODO This should be handled by the Edit-Button later
-	public void rename(ILayer layer, String name) {
-		layer.setName(name);
 	}
 
 	public String[] getLayerNameList() {
@@ -559,4 +581,11 @@ public class MapEditorModel extends ModelObject {
 		return iFile;
 	}
 
+	public LinkedList<ILayer> getLayers() {
+		return layers;
+	}
+
+	public Collection<LayerUpdater> getConnectionCollection() {
+		return connections.values();
+	}
 }

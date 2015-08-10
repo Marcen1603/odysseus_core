@@ -43,16 +43,16 @@ final class GeometryPaintListener implements PaintListener {
 	/**
 	 * 
 	 */
-	private final StreamMapEditorPart streamMapEditor;
+	private final MapDashboardPart mapDashboardPart;
 
-	public GeometryPaintListener(StreamMapEditorPart streamMapEditor) {
-		this.streamMapEditor = streamMapEditor;
+	public GeometryPaintListener(MapDashboardPart mapDashboardPart) {
+		this.mapDashboardPart = mapDashboardPart;
 	} 
 
 	@Override
 	public void paintControl(PaintEvent e) {
 		e.gc.setAntialias(SWT.ON);
-		for (ILayer layer : this.streamMapEditor.getMapEditorModel().getLayers()) {
+		for (ILayer layer : this.mapDashboardPart.getMapEditorModel().getLayers()) {
 			if(layer != null && layer.isActive()){
 				layer.draw(e.gc);
 			}
@@ -62,10 +62,10 @@ final class GeometryPaintListener implements PaintListener {
 //			}
 		}
 		e.gc.setForeground(ColorManager.getInstance().getColor(new RGB(0,0,0)));
-		Canvas canvas = this.streamMapEditor.getScreenManager().getCanvas();
-		double scale = this.streamMapEditor.getScreenManager().getScale();
+		Canvas canvas = this.mapDashboardPart.getScreenManager().getCanvas();
+		double scale = this.mapDashboardPart.getScreenManager().getScale();
 		Point dpi = canvas.getDisplay().getDPI();
-		Point screenSize = this.streamMapEditor.getScreenManager().getCanvas().getSize();
+		Point screenSize = this.mapDashboardPart.getScreenManager().getCanvas().getSize();
 		@SuppressWarnings("unused")
 		Coordinate sizeInCm = new Coordinate(screenSize.x / dpi.x * 25.4, screenSize.x / dpi.x * 25.4);
 		int dpcm = (int) Math.floor(dpi.x / 2.54);
@@ -77,11 +77,11 @@ final class GeometryPaintListener implements PaintListener {
 		e.gc.drawLine(xpos - 100 + dpcm -1, ypos , xpos - 100 + dpcm -1, ypos - 10);
 		e.gc.drawString("Scale: " + (scale * dpcm), xpos - 200, ypos - 80);
 		e.gc.drawString("Scale: " + (scale), xpos - 200, ypos - 40);
-		if (this.streamMapEditor.getScreenManager().getMouseSelection() != null){
+		if (this.mapDashboardPart.getScreenManager().getMouseSelection() != null){
 			e.gc.setAlpha(90);
-			e.gc.fillRectangle(this.streamMapEditor.getScreenManager().getMouseSelection());
-			e.gc.drawRectangle(this.streamMapEditor.getScreenManager().getMouseSelection());
+			e.gc.fillRectangle(this.mapDashboardPart.getScreenManager().getMouseSelection());
+			e.gc.drawRectangle(this.mapDashboardPart.getScreenManager().getMouseSelection());
 		}
-		streamMapEditor.getScreenManager().setRenderComplete(true);
+		mapDashboardPart.getScreenManager().setRenderComplete(true);
 	}
 }
