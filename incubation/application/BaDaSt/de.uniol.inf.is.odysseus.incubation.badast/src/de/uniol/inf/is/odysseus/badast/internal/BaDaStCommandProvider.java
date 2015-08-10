@@ -414,20 +414,22 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * Consumes a given topic from the Kafka server.
 	 * 
 	 * @param ci
-	 *            Should contain one argument "key=value", where key is
-	 *            {@link #SOURCENAME_CONFIG}.
+	 *            Should contain two arguments "key=value", where key 1 is
+	 *            {@link #SOURCENAME_CONFIG} and key 2 is {@code offset}.
 	 */
 	public void _consume(final CommandInterpreter ci) {
 		try {
 			final String clientid = "OSGiConsoleClient";
-			final String sourcename = parse(ci).getProperty(SOURCENAME_CONFIG);
+			Properties cfg = parse(ci);
+			final String sourcename = cfg.getProperty(SOURCENAME_CONFIG);
+			final long offset = Long.parseLong(cfg.getProperty("offset", "0"));
 			new Thread(sourcename) {
 
 				@Override
 				public void run() {
 					SimpleConsumer consumer = new SimpleConsumer("localhost", 9092, 100000, 64 * 1024, clientid);
-					long readOffset = 0;
-					FetchRequest req = new FetchRequestBuilder().clientId(clientid).addFetch(sourcename, 0, 0, 100000)
+					long readOffset = offset;
+					FetchRequest req = new FetchRequestBuilder().clientId(clientid).addFetch(sourcename, 0, readOffset, 100000)
 							.build();
 					FetchResponse fetchResponse = consumer.fetch(req);
 
@@ -483,7 +485,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 		out.append(TAB
 				+ "closeRecorder name=xyz - Closes and removes an existing BaDaSt recorder with the name of the recorder as a key value pair.\n");
 		out.append(TAB
-				+ "consume sourcename=xyz - Reads the backup of a given source from the Kafka server with the name of the source as a key value pair.\n");
+				+ "consume sourcename=xyz offset=i - Reads the backup of a given source from the Kafka server with the name of the source as a key value pair.\n");
 		return out.toString();
 	}
 
