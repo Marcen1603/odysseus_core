@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
@@ -25,7 +26,7 @@ public class JavaReceiverOperator extends AbstractTransformationOperator{
 	@Override
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 		CodeFragmentInfo receiverPO = new CodeFragmentInfo();
-		StringBuilder code = new StringBuilder();
+		
 		StreamAO streamAO = (StreamAO)operator;
 		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
@@ -35,33 +36,23 @@ public class JavaReceiverOperator extends AbstractTransformationOperator{
 
 		AccessAO accessAO = (AccessAO)logicalPlan;
 		
-	
-		 String transportHandler = accessAO.getTransportHandler();
-		 String dataHandler = accessAO.getDataHandler();
-		 String wrapper = accessAO.getWrapper();
-		 String protocolHandler = accessAO.getProtocolHandler();
-		 ITransportDirection direction = ITransportDirection.IN;
+		String transportHandler = accessAO.getTransportHandler();
+		String dataHandler = accessAO.getDataHandler();
+		String wrapper = accessAO.getWrapper();
+		String protocolHandler = accessAO.getProtocolHandler();
+		ITransportDirection direction = ITransportDirection.IN;
 		 
-		 ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
+		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
-		 CodeFragmentInfo codeAccessFramwork = CreateDefaultCode.codeForAccessFrameworkNeu(protocolHandlerParameter, accessAO.getOptionsMap(),operator, direction);
-		 receiverPO.addCodeFragmentInfo(codeAccessFramwork);
+		CodeFragmentInfo codeAccessFramwork = CreateDefaultCode.codeForAccessFrameworkNeu(protocolHandlerParameter, accessAO.getOptionsMap(),operator, direction);
+		receiverPO.addCodeFragmentInfo(codeAccessFramwork);
 		 
-		 
-		//now create the AccessPO
-			code.append("ReceiverPO "+operatorVariable+"PO = new ReceiverPO("+operatorVariable+"ProtocolHandler);");
-			code.append("\n");
-			code.append(operatorVariable+"PO.setOutputSchema("+operatorVariable+"SDFSchema);");
-			code.append("\n");
-			code.append("\n");
-		 
+		StringTemplate receiverPOTemplate = new StringTemplate("java","receiverPO");
+		receiverPOTemplate.getSt().add("operatorVariable", operatorVariable);
 			
-			receiverPO.addCode(code.toString());
-	
-			receiverPO.addImport(ReceiverPO.class.getName());
-
-			receiverPO.addImport(IOException.class.getName());
-			
+		receiverPO.addCode(receiverPOTemplate.getSt().render());
+		receiverPO.addImport(ReceiverPO.class.getName());
+		receiverPO.addImport(IOException.class.getName());
 			
 		return receiverPO;
 	}

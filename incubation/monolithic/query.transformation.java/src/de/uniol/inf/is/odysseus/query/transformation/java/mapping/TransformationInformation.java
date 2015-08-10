@@ -124,7 +124,7 @@ public class TransformationInformation {
 	}
 
 
-	synchronized int getUniqueId()
+	private synchronized int getUniqueId()
 	{  
 		 return uniqueId++;
 	   

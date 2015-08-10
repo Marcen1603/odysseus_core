@@ -26,6 +26,8 @@ public class TransformSDFSchema {
 		sdfSchemaTemplate.getSt().add("className", className);
 		sdfSchemaTemplate.getSt().add("sdfAttributes", schema.getAttributes());
 		
+	
+		
 		code.append(sdfSchemaTemplate.getSt().render());
 		
 	

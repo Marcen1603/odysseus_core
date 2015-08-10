@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWi
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFSchema;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
@@ -23,7 +24,6 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 		CodeFragmentInfo slidingWindow = new CodeFragmentInfo();
 		
-	
 		StringBuilder code = new StringBuilder();
 
 		String operatorVariable = TransformationInformation.getInstance()
@@ -36,24 +36,22 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 		TimeValueItem windowAdvance = windowAO.getWindowAdvance();
 		SDFSchema inputSchema = windowAO.getInputSchema();
 		
-		 CodeFragmentInfo sdfInputSchema  = TransformSDFSchema.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
-		 code.append(sdfInputSchema.getCode());
-	
-		 code.append("SlidingAdvanceTimeWindowTIPO "+operatorVariable+"PO = new SlidingAdvanceTimeWindowTIPO(");
-		 code.append("TimeUnit."+baseTimeUnit.toString().toUpperCase()+",");
-		 code.append("new TimeValueItem("+windowSize.getTime()+",TimeUnit.valueOf(\""+windowSize.getUnit().toString()+"\")),");
-		 code.append("new TimeValueItem("+windowAdvance.getTime()+",TimeUnit.valueOf(\""+windowAdvance.getUnit().toString()+"\")),");
-	     code.append(operatorVariable+"InputSchemaSDFSchema");
-		 code.append(");");
-		
+		CodeFragmentInfo sdfInputSchema  = TransformSDFSchema.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
+		code.append(sdfInputSchema.getCode());
+		 
+		StringTemplate slidingAdvanceTimeWindowTIPOTemplate = new StringTemplate("java","slidingAdvanceTimeWindowTIPO");
+		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("windowSize", windowSize);
+		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("windowAdvance", windowAdvance);
+		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("baseTimeUnit", baseTimeUnit);
+		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("operatorVariable", operatorVariable);
+		 
+		code.append(slidingAdvanceTimeWindowTIPOTemplate.getSt().render());
 	
 		slidingWindow.addCode(code.toString());
 		slidingWindow.addImport(TimeValueItem.class.getName());
 		slidingWindow.addImport(TimeUnit.class.getName());
 		slidingWindow.addImport(WindowType.class.getName());
 
-		
-	
 		return slidingWindow;
 	}
 
