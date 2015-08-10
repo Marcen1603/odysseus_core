@@ -68,15 +68,17 @@ public class NestedKeyValueObject<T extends IMetaAttribute> extends KeyValueObje
 		for(int i = 0; i < path.length - 1; i++) {
 			map = (Map<String, Object>) map.get(path[i]);
 		}		
-		Object oldAttribute = (Object) map.get(path[path.length - 1]);
+		
+		String leafKey = path[path.length - 1];
+		Object oldAttribute = (Object) map.get(leafKey);
 		if (oldAttribute != null && !(oldAttribute instanceof Collection)) {
 			throw new RuntimeException("Cannot add value to non collection type");
 		}
 		
 		if (oldAttribute == null) {
-			map.put(key, new ArrayList<Object>());
+			map.put(leafKey, new ArrayList<Object>());
 		}
-		((Collection<Object>) map.get(key)).add(value);
+		((Collection<Object>) map.get(leafKey)).add(value);
 	}
 
 	/**
