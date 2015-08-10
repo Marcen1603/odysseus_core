@@ -248,7 +248,21 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 				if (obj instanceof MultiHashMap)
 					mapDepthFirstSearch(kvObject, newRoot,(MultiHashMap) obj);
 				else
-					kvObject.setAttribute(newRoot, obj);
+				{
+					Object existingAttribute = kvObject.getAttribute(newRoot); 
+					if (existingAttribute == null)
+						kvObject.setAttribute(newRoot, obj);
+					else
+					{
+						if (!(existingAttribute instanceof List))
+						{
+							kvObject.setAttribute(newRoot, null);
+							kvObject.addAttributeValue(newRoot, existingAttribute);
+						}
+						
+						kvObject.addAttributeValue(newRoot, obj);
+					}
+				}
 			}
 		}
 	}
@@ -289,7 +303,8 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
            	return result.size() > 0 ? result.remove(0) : null;
         }
         catch (Exception e)
-        {        	
+        {
+        	e.printStackTrace();
         }
         return null;
     }
@@ -306,6 +321,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
     	for (Object obj : list)
     	{    	
     		Element node = doc.createElement(itemName);
+    		root.appendChild(node);
     		
     		if (obj instanceof Map)
     			addMapToNode(doc, node, (Map<String, Object>) obj);
