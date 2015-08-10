@@ -27,49 +27,38 @@ public class TransformProtocolHandler {
 	public static CodeFragmentInfo getCodeForProtocolHandlerNeu(ProtocolHandlerParameter protocolHandlerParameter, String operatorVariable, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		Set<String> imports = new HashSet<String>();
-		
 
+		boolean openwrapper = false;
+		
 		String wrapper = "";
 		if(protocolHandlerParameter.getWrapper().equals("GenericPull")){
 			 wrapper = "IAccessPattern.PULL";
+			 openwrapper = true;
 			
 		}else{
 			 wrapper = "IAccessPattern.PUSH";
 		}
 		imports.add(IAccessPattern.class.getName());
 		
-
 		TransformationInformation.getInstance().addDataHandler(protocolHandlerParameter.getDataHandler());
 		TransformationInformation.getInstance().addProtocolHandler(protocolHandlerParameter.getProtocolHandler());
 		TransformationInformation.getInstance().addTransportHandler(protocolHandlerParameter.getTransportHandler());
-		
-		
-		
-		StringBuilder code = new StringBuilder();
-		code.append("\n");
-		code.append("IProtocolHandler "+operatorVariable+"ProtocolHandler =  protocolhandlerregistry.getInstance(\""+protocolHandlerParameter.getProtocolHandler()+"\", ITransportDirection."+direction.toString()+", "+wrapper+", "+operatorVariable+"ParameterInfo"+",  datahandlerregistry.getDataHandler(\""+protocolHandlerParameter.getDataHandler()+"\","+ operatorVariable+"SDFSchema));");
-		code.append("\n");
-		code.append("ITransportHandler "+ operatorVariable+"TransportHandler = transporthandlerregistry.getInstance(\""+protocolHandlerParameter.getTransportHandler()+"\","+operatorVariable+"ProtocolHandler," +operatorVariable+"ParameterInfo);");
-		code.append("\n");
-		code.append(operatorVariable+"ProtocolHandler.setTransportHandler("+operatorVariable+"TransportHandler);");
-		code.append("\n");
-		
-		if(wrapper.equals("IAccessPattern.PULL")){
-			code.append(operatorVariable+"TransportHandler.processInOpen();");
-		}
-		
-		code.append("\n");
-		code.append("\n");
+	
+		StringTemplate protocolHandlerTemplate = new StringTemplate("java","protocolHandler");
+	
+		protocolHandlerTemplate.getSt().add("operatorVariable", operatorVariable);
+		protocolHandlerTemplate.getSt().add("protocolHandlerParameter", protocolHandlerParameter);
+		protocolHandlerTemplate.getSt().add("wrapper", wrapper);
+		protocolHandlerTemplate.getSt().add("openwrapper", openwrapper);
+		protocolHandlerTemplate.getSt().add("direction", direction);
 		
 		//add imports
 		imports.add(IProtocolHandler.class.getName());
 		imports.add(ITransportHandler.class.getName());
 		imports.add(FileHandler.class.getName());
-		
 	 
-		codeFragmentInfo.setCode(code.toString());
+		codeFragmentInfo.setCode(protocolHandlerTemplate.getSt().render());
 		codeFragmentInfo.setImports(imports);
-		
 		
 		return codeFragmentInfo;
 	}
