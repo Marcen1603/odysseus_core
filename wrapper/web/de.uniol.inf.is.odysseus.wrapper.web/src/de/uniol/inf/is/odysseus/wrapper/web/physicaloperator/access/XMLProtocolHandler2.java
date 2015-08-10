@@ -18,13 +18,10 @@ package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,8 +62,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.util.ByteBufferBackedInputStream;
-
-//import org.apache.commons.collections15.MultiMap;
 
 /**
  * XML Protocol Handler which transforms a complete xml document into a nested key-value object and vice versa
@@ -171,8 +166,6 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 
     @Override public void process(long callerId, ByteBuffer message) 
     {
-        String msg = new String(message.array(), Charset.forName("UTF-8"));
-
         try {
             getTransfer().transfer(parseXml(new ByteBufferBackedInputStream(message)));
         }
@@ -230,6 +223,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 		targetMap.put(key, value);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void mapDepthFirstSearch(NestedKeyValueObject<? extends IMetaAttribute> kvObject, String root, MultiHashMap<String, Object> map)
 	{
 		for (Entry<String, Collection<Object>> e : map.entrySet())
@@ -246,7 +240,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 			for (Object obj : values)
 			{
 				if (obj instanceof MultiHashMap)
-					mapDepthFirstSearch(kvObject, newRoot,(MultiHashMap) obj);
+					mapDepthFirstSearch(kvObject, newRoot,(MultiHashMap<String, Object>) obj);
 				else
 				{
 					Object existingAttribute = kvObject.getAttribute(newRoot); 
@@ -372,6 +366,8 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
     	try {
 			transformer.transform(domSource, new StreamResult(strWriter));
 			String str = strWriter.toString();
+			
+//			System.out.println(str);
 			
 			if (output != null)
 				output.write(str);

@@ -82,12 +82,15 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.wrapper.optriscamera.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.nmea.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.s100.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.spatial.client.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.lms1xx.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.actisense.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.sensormanagement.common.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.sensormanagement.server.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.ivef.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
