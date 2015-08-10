@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -138,6 +139,9 @@ public class CreateDefaultCode {
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 		
 		Collection<LogicalSubscription> subscriptionSourceList = operator.getSubscribedToSource();
+		
+		Map<String,LogicalSubscription> targetOpMap = new HashMap<String,LogicalSubscription>();
+		
 			
 		   if(!subscriptionSourceList.isEmpty()){
 			   for(LogicalSubscription sub : subscriptionSourceList){
@@ -153,6 +157,8 @@ public class CreateDefaultCode {
 			
 					 String  targetOp =  TransformationInformation.getInstance().getVariable(targetLogicalOP);
 					  if(!targetOp.equals("")){
+						  targetOpMap.put(targetOp,sub);
+						  
 						  code.append("\n");
 							code.append("\n");
 							code.append(operatorVariable+"PO.subscribeToSource("+targetOp+"PO, "+sub.getSinkInPort()+", "+sub.getSourceOutPort()+", "+targetOp+"PO.getOutputSchema());");
@@ -160,13 +166,21 @@ public class CreateDefaultCode {
 					  }	
 				   }
 		   }
-		
-
+		   
+			
+			StringTemplate startCodeTemplate = new StringTemplate("java","subscribeToSource");
+			startCodeTemplate.getSt().add("operatorVariable", operatorVariable);  
+			startCodeTemplate.getSt().add("targetOpMap", targetOpMap);  
+			
+	System.out.println(startCodeTemplate.getSt().render());
 		code.append("\n");
 		code.append("\n");
 		code.append("\n");
 		
-		codeFragmentInfo.addCode(code.toString());
+		
+		
+		
+		codeFragmentInfo.addCode(startCodeTemplate.getSt().render());
 		
 		return codeFragmentInfo;
 	}
