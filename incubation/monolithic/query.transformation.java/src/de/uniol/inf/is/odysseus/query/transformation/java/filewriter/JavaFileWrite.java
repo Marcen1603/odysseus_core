@@ -179,6 +179,7 @@ public class JavaFileWrite {
 		for(String neededClass : importList){
 			String path;
 			try {
+				
 				Bundle neededBundel = org.osgi.framework.FrameworkUtil.getBundle(Class.forName(neededClass));
 				if(neededBundel != null){				
 					URL entryss = neededBundel.getEntry(".project");
