@@ -1,0 +1,37 @@
+operator OProject(outputMode ="MODIFIED_INPUT"){	
+	
+	parameter(type=ResolvedSDFAttributeParameter) SDFAttribute[] attributes;
+					
+	validate attributes {
+		if (attributes.isEmpty()) {
+			error("attribute have to be set");
+			return false;
+		}
+		return true;
+	}
+	
+	
+	
+	
+	on createOutputSchema(int port) : SDFSchema{
+		return SDFSchemaFactory::createNewWithAttributes(attributes, getInputSchema(port));
+	}
+		
+	on processPuncutation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation);
+	}
+	
+		
+	on processNext(Tuple tuple, int port) {
+		Tuple out = createEmptyTupleWithMeta(attributes.size(), tuple, tuple.requiresDeepClone());
+		int i = 0;
+		for (SDFAttribute attr : attributes) {
+			int index = getInputSchema(port).indexOf(attr);
+			out[i++] = tuple[index];
+		}
+		sendStreamElement(out);
+	}
+	
+		
+	
+}

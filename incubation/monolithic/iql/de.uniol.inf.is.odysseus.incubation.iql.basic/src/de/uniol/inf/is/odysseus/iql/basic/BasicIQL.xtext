@@ -369,10 +369,10 @@ OpPostfix:
 	"++" | "--"
 ;	
 
+
 IQLMemberCallExpression returns IQLExpression:
-	IQLOtherExpressions
-	(=>({IQLArrayExpression.leftOperand=current} '[' expressions+=IQLExpression (',' expressions+=IQLExpression)? ']'))*
-	(=>({IQLMemberSelectionExpression.leftOperand=current} '.') sel=IQLMemberSelection)*
+	IQLOtherExpressions	
+	(=>({IQLArrayExpression.leftOperand=current} '[' expressions+=IQLExpression (',' expressions+=IQLExpression)? ']') | =>({IQLMemberSelectionExpression.leftOperand=current} '.') sel=IQLMemberSelection)*
 ;
 
 IQLMemberSelection:
@@ -380,7 +380,7 @@ IQLMemberSelection:
 ;
 
 IQLOtherExpressions returns IQLExpression:
-    {IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement] (args=IQLArgumentsList)?  |
+    {IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement | QualifiedName] (args=IQLArgumentsList)?  |
     {IQLThisExpression} 'this'  |
     {IQLSuperExpression} 'super'  |    
     {IQLParenthesisExpression} '(' expr = IQLExpression ')'  |

@@ -403,5 +403,25 @@
             extensions="odl">
     </provider>
   </extension>
+     <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="de.uniol.inf.is.odysseus.iql.odl.ui.wizard.ODLWizard"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            icon="icons/text.gif"
+            id="de.uniol.inf.is.odysseus.iql.odl.ui.wizard.ODLWizard"
+            name="ODL File"
+            project="false">
+      </wizard>
+   </extension>
+         <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            type="new"
+            wizardId="de.uniol.inf.is.odysseus.iql.odl.ui.wizard.ODLWizard">
+         <enablement></enablement>
+      </commonWizard>
+   </extension>
 
 </plugin>

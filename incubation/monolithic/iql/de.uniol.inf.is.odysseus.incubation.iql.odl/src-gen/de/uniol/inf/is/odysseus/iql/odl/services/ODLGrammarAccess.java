@@ -1177,8 +1177,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMemberCallExpression returns IQLExpression:
-	//	IQLOtherExpressions => ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
-	//	expressions+=IQLExpression)? "]")* (=> ({IQLMemberSelectionExpression.leftOperand=current} ".")
+	//	IQLOtherExpressions (=> ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
+	//	expressions+=IQLExpression)? "]") | => ({IQLMemberSelectionExpression.leftOperand=current} ".")
 	//	sel=IQLMemberSelection)*;
 	public BasicIQLGrammarAccess.IQLMemberCallExpressionElements getIQLMemberCallExpressionAccess() {
 		return gaBasicIQL.getIQLMemberCallExpressionAccess();
@@ -1199,10 +1199,10 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLOtherExpressions returns IQLExpression:
-	//	{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement] args=IQLArgumentsList? | {IQLThisExpression}
-	//	"this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" | {IQLNewExpression}
-	//	"new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList argsMap=IQLArgumentsMap?) |
-	//	IQLLiteralExpression;
+	//	{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
+	//	{IQLThisExpression} "this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" |
+	//	{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
+	//	argsMap=IQLArgumentsMap?) | IQLLiteralExpression;
 	public BasicIQLGrammarAccess.IQLOtherExpressionsElements getIQLOtherExpressionsAccess() {
 		return gaBasicIQL.getIQLOtherExpressionsAccess();
 	}

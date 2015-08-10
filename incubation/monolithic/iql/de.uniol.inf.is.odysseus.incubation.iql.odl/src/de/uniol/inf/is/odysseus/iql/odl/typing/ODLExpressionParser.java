@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.AbstractIQLExpressionParser;
@@ -13,11 +12,11 @@ import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLPO;
 
-public class ODLExpressionParser extends AbstractIQLExpressionParser<ODLTypeFactory, ODLLookUp, ODLExpressionParserContext, ODLTypeUtils>{
+public class ODLExpressionParser extends AbstractIQLExpressionParser<ODLTypeFactory, ODLLookUp, ODLExpressionParserContext, ODLTypeUtils, ODLTypeExtensionsFactory>{
 
 	@Inject
-	public ODLExpressionParser(ODLTypeFactory typeFactory, ODLLookUp lookUp, ODLExpressionParserContext context,ODLTypeUtils typeUtils) {
-		super(typeFactory, lookUp, context, typeUtils);
+	public ODLExpressionParser(ODLTypeFactory typeFactory, ODLLookUp lookUp, ODLExpressionParserContext context,ODLTypeUtils typeUtils, ODLTypeExtensionsFactory typeExtensionsFactory) {
+		super(typeFactory, lookUp, context, typeUtils, typeExtensionsFactory);
 	}
 	
 	@Override

@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.iql.basic.scoping;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
-import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmPrimitiveType;
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider;
@@ -41,8 +41,8 @@ public abstract class AbstractIQLQualifiedNameProvider<U extends IIQLTypeUtils> 
 			} else {
 				return QualifiedName.create();
 			}
-		} else if (obj instanceof JvmGenericType) {
-			JvmGenericType type = (JvmGenericType)obj;
+		} else if (obj instanceof JvmDeclaredType) {
+			JvmDeclaredType type = (JvmDeclaredType)obj;
 			return converter.toQualifiedName(typeUtils.getLongName(type, false));
 		} else if (obj instanceof JvmPrimitiveType) {
 			JvmPrimitiveType type = (JvmPrimitiveType)obj;

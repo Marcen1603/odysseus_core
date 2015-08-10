@@ -23,6 +23,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculato
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLSemanticHighlightingCalculator;
+import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLProposalProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectDocumentationProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectHoverProvider;
@@ -36,6 +37,12 @@ public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.Abst
 	public BasicIQLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
+	
+	@Override
+	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.IContentProposalProvider> bindIContentProposalProvider() {
+		return BasicIQLProposalProvider.class;
+	}
+
 	
 	public Class<? extends IEObjectHover> bindIEObjectHover() {
 		return IQLDispatchingEObjectTextHover.class;

@@ -40,4 +40,9 @@ public class IQLQualifiedNameConverter implements IQualifiedNameConverter {
 		return s.replace("\\.", DELIMITER);
 	}
 
+
+	public String toJavaString(String text) {
+		return text.replace(DELIMITER, ".");
+	}
+
 }

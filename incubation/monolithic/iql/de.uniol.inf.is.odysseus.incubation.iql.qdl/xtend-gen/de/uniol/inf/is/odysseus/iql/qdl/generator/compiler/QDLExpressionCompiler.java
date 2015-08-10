@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.QDLSubscribableWithPort;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
@@ -32,9 +32,9 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 @SuppressWarnings("all")
-public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionParser, QDLTypeUtils, QDLLookUp, QDLTypeOperatorsFactory> {
+public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionParser, QDLTypeUtils, QDLLookUp, QDLTypeExtensionsFactory> {
   @Inject
-  public QDLExpressionCompiler(final QDLCompilerHelper helper, final QDLTypeCompiler typeCompiler, final QDLExpressionParser exprParser, final QDLTypeUtils typeUtils, final QDLLookUp lookUp, final QDLTypeOperatorsFactory typeOperatorsFactory) {
+  public QDLExpressionCompiler(final QDLCompilerHelper helper, final QDLTypeCompiler typeCompiler, final QDLExpressionParser exprParser, final QDLTypeUtils typeUtils, final QDLLookUp lookUp, final QDLTypeExtensionsFactory typeOperatorsFactory) {
     super(helper, typeCompiler, exprParser, typeUtils, lookUp, typeOperatorsFactory);
   }
   
@@ -137,12 +137,11 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
             JvmTypeReference _ref_2 = e.getRef();
             IQLArgumentsList _argsList = e.getArgsList();
             EList<IQLExpression> _elements_1 = _argsList.getElements();
-            int _size_1 = _elements_1.size();
-            JvmExecutable constructor = this.lookUp.findConstructor(_ref_2, _size_1);
+            JvmExecutable constructor = this.lookUp.findConstructor(_ref_2, _elements_1);
             IQLArgumentsList _argsList_1 = e.getArgsList();
             EList<IQLExpression> _elements_2 = _argsList_1.getElements();
-            int _size_2 = _elements_2.size();
-            boolean args = (_size_2 > 0);
+            int _size_1 = _elements_2.size();
+            boolean args = (_size_1 > 0);
             String _xifexpression_2 = null;
             boolean _notEquals_1 = (!Objects.equal(constructor, null));
             if (_notEquals_1) {
@@ -226,12 +225,11 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
               JvmTypeReference _ref_2 = e.getRef();
               IQLArgumentsList _argsList_1 = e.getArgsList();
               EList<IQLExpression> _elements_1 = _argsList_1.getElements();
-              int _size_1 = _elements_1.size();
-              JvmExecutable constructor = this.lookUp.findConstructor(_ref_2, _size_1);
+              JvmExecutable constructor = this.lookUp.findConstructor(_ref_2, _elements_1);
               IQLArgumentsList _argsList_2 = e.getArgsList();
               EList<IQLExpression> _elements_2 = _argsList_2.getElements();
-              int _size_2 = _elements_2.size();
-              boolean args = (_size_2 > 0);
+              int _size_1 = _elements_2.size();
+              boolean args = (_size_1 > 0);
               String _xifexpression_3 = null;
               boolean _notEquals_2 = (!Objects.equal(constructor, null));
               if (_notEquals_2) {

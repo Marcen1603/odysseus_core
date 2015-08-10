@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHove
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLSemanticHighlightingCalculator;
+import de.uniol.inf.is.odysseus.iql.qdl.ui.contentassist.QDLProposalProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.contentassist.QDLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.hover.QDLEObjectDocumentationProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.hover.QDLEObjectHoverProvider;
@@ -36,6 +37,12 @@ public class QDLUiModule extends de.uniol.inf.is.odysseus.iql.qdl.ui.AbstractQDL
 	public QDLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
+	
+	@Override
+	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.IContentProposalProvider> bindIContentProposalProvider() {
+		return QDLProposalProvider.class;
+	}
+	
 	
 	public Class<? extends IEObjectHover> bindIEObjectHover() {
 		return IQLDispatchingEObjectTextHover.class;

@@ -44,10 +44,18 @@ public abstract class AbstractODLPO<R extends IStreamObject<?>, W extends IStrea
 	}
 	
 	@Override
+	public void process_done(int port) {
+		onProcessDone(port);
+	}
+	
+	@Override
 	public void process_close() {
 		onProcessClose();
 	}
 	
+	protected void onInit() {
+
+	}
 	
 	protected void onProcessOpen() {
 
@@ -61,6 +69,9 @@ public abstract class AbstractODLPO<R extends IStreamObject<?>, W extends IStrea
 
 	}
 	
+	protected void onProcessDone(int port) {
+
+	}
 	
 	@Override
 	protected void process_next(R object, int port) {

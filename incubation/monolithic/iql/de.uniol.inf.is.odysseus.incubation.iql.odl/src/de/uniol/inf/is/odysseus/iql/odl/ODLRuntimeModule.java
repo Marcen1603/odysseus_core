@@ -22,7 +22,9 @@ import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.parser.IIQLParser;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.DefaultIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
@@ -52,7 +54,7 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypingEntryPoint;
 
@@ -62,6 +64,10 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypingEntryPoint;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractODLRuntimeModule {
 
+	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
+		return DefaultIQLMethodFinder.class;
+	}
+	
 	@Override
 	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
 		return ODLClasspathTypeProviderFactory.class;
@@ -86,7 +92,7 @@ public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractO
 	}
 	
 	public Class<? extends IIQLTypeExtensionsFactory> bindTypeOperatorsFactory() {
-		return ODLTypeOperatorsFactory.class;
+		return ODLTypeExtensionsFactory.class;
 	}
 	
 	@Override

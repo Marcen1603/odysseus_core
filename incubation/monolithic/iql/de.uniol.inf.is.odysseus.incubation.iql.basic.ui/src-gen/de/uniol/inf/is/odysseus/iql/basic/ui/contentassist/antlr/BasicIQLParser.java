@@ -57,6 +57,7 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getOpUnaryPlusMinusAccess().getAlternatives(), "rule__OpUnaryPlusMinus__Alternatives");
 					put(grammarAccess.getOpPrefixAccess().getAlternatives(), "rule__OpPrefix__Alternatives");
 					put(grammarAccess.getOpPostfixAccess().getAlternatives(), "rule__OpPostfix__Alternatives");
+					put(grammarAccess.getIQLMemberCallExpressionAccess().getAlternatives_1(), "rule__IQLMemberCallExpression__Alternatives_1");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives(), "rule__IQLOtherExpressions__Alternatives");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives_4_2(), "rule__IQLOtherExpressions__Alternatives_4_2");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getAlternatives(), "rule__IQLLiteralExpression__Alternatives");
@@ -179,12 +180,12 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLUnaryExpressionAccess().getGroup_4_1(), "rule__IQLUnaryExpression__Group_4_1__0");
 					put(grammarAccess.getIQLUnaryExpressionAccess().getGroup_4_1_0(), "rule__IQLUnaryExpression__Group_4_1_0__0");
 					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup(), "rule__IQLMemberCallExpression__Group__0");
-					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_1(), "rule__IQLMemberCallExpression__Group_1__0");
 					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_1_0(), "rule__IQLMemberCallExpression__Group_1_0__0");
-					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_1_0_3(), "rule__IQLMemberCallExpression__Group_1_0_3__0");
-					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_2(), "rule__IQLMemberCallExpression__Group_2__0");
-					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_2_0(), "rule__IQLMemberCallExpression__Group_2_0__0");
-					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_2_0_0(), "rule__IQLMemberCallExpression__Group_2_0_0__0");
+					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_1_0_0(), "rule__IQLMemberCallExpression__Group_1_0_0__0");
+					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_1_0_0_3(), "rule__IQLMemberCallExpression__Group_1_0_0_3__0");
+					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_1_1(), "rule__IQLMemberCallExpression__Group_1_1__0");
+					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_1_1_0(), "rule__IQLMemberCallExpression__Group_1_1_0__0");
+					put(grammarAccess.getIQLMemberCallExpressionAccess().getGroup_1_1_0_0(), "rule__IQLMemberCallExpression__Group_1_1_0_0__0");
 					put(grammarAccess.getIQLMemberSelectionAccess().getGroup(), "rule__IQLMemberSelection__Group__0");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getGroup_0(), "rule__IQLOtherExpressions__Group_0__0");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getGroup_1(), "rule__IQLOtherExpressions__Group_1__0");
@@ -327,9 +328,9 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLUnaryExpressionAccess().getTargetRefAssignment_3_0_0_2(), "rule__IQLUnaryExpression__TargetRefAssignment_3_0_0_2");
 					put(grammarAccess.getIQLUnaryExpressionAccess().getOperandAssignment_3_1(), "rule__IQLUnaryExpression__OperandAssignment_3_1");
 					put(grammarAccess.getIQLUnaryExpressionAccess().getOpAssignment_4_1_0_1(), "rule__IQLUnaryExpression__OpAssignment_4_1_0_1");
-					put(grammarAccess.getIQLMemberCallExpressionAccess().getExpressionsAssignment_1_0_2(), "rule__IQLMemberCallExpression__ExpressionsAssignment_1_0_2");
-					put(grammarAccess.getIQLMemberCallExpressionAccess().getExpressionsAssignment_1_0_3_1(), "rule__IQLMemberCallExpression__ExpressionsAssignment_1_0_3_1");
-					put(grammarAccess.getIQLMemberCallExpressionAccess().getSelAssignment_2_1(), "rule__IQLMemberCallExpression__SelAssignment_2_1");
+					put(grammarAccess.getIQLMemberCallExpressionAccess().getExpressionsAssignment_1_0_0_2(), "rule__IQLMemberCallExpression__ExpressionsAssignment_1_0_0_2");
+					put(grammarAccess.getIQLMemberCallExpressionAccess().getExpressionsAssignment_1_0_0_3_1(), "rule__IQLMemberCallExpression__ExpressionsAssignment_1_0_0_3_1");
+					put(grammarAccess.getIQLMemberCallExpressionAccess().getSelAssignment_1_1_1(), "rule__IQLMemberCallExpression__SelAssignment_1_1_1");
 					put(grammarAccess.getIQLMemberSelectionAccess().getMemberAssignment_0(), "rule__IQLMemberSelection__MemberAssignment_0");
 					put(grammarAccess.getIQLMemberSelectionAccess().getArgsAssignment_1(), "rule__IQLMemberSelection__ArgsAssignment_1");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getElementAssignment_0_1(), "rule__IQLOtherExpressions__ElementAssignment_0_1");

@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -57,15 +58,17 @@ public class QDLParser extends AbstractIQLParser<QDLTypeFactory, QDLTypeUtils> {
 
 	@Override
 	public void parse(IQLFile file, IProject project) {
+		ResourceSet resourceSet = EcoreUtil2.getResourceSet(file);
 		for (QDLQuery query : EcoreUtil2.getAllContentsOfType(file, QDLQuery.class)) {
 			String outputPath = getIQLOutputPath()+QUERIES_DIR+File.separator+query.getSimpleName();
 			cleanUpDir(outputPath);
-
-			Collection<Resource> resources = createNecessaryIQLFiles(outputPath,query);
+			
+			Collection<Resource> resources = createNecessaryIQLFiles(resourceSet, outputPath,query);
 			generateJavaFiles(resources);
-
+			deleteResources(resources);
+			
 			copyAndMoveUserEditiedFiles(project, outputPath);
-			compileJavaFiles(outputPath, createClassPathEntries(resources));
+			compileJavaFiles(outputPath, createClassPathEntries(resourceSet, resources));
 			
 			IQDLQuery qdlQuery = loadQuery(query,resources);
 						

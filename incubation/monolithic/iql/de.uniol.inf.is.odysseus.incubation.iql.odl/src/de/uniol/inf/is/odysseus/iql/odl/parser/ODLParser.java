@@ -29,12 +29,15 @@ import java.util.Map;
 
 
 
+
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
+
 
 
 
@@ -85,16 +88,19 @@ public class ODLParser extends AbstractIQLParser<ODLTypeFactory, ODLTypeUtils> {
 	
 	@Override
 	public void parse(IQLFile file, IProject project) {	
+		ResourceSet resourceSet = EcoreUtil2.getResourceSet(file);
+
 		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(file, ODLOperator.class)) {
 			String outputPath = getIQLOutputPath()+OPERATORS_DIR+File.separator+operator.getSimpleName();
 			
 			cleanUpDir(outputPath);
 			
-			Collection<Resource> resources = createNecessaryIQLFiles(outputPath,operator);
+			Collection<Resource> resources = createNecessaryIQLFiles(resourceSet, outputPath,operator);
 			generateJavaFiles(resources);
-
+			deleteResources(resources);
+			
 			copyAndMoveUserEditiedFiles(project, outputPath);
-			compileJavaFiles(outputPath, createClassPathEntries(resources));
+			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator), resources));
 			loadOperator(operator, resources);
 		}
 	}

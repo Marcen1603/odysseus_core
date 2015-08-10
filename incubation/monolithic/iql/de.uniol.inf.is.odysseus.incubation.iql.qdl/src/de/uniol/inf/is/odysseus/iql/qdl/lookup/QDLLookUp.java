@@ -12,14 +12,14 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 
-public class QDLLookUp extends AbstractIQLLookUp<QDLTypeFactory, QDLTypeOperatorsFactory, QDLTypeUtils>{
+public class QDLLookUp extends AbstractIQLLookUp<QDLTypeFactory, QDLTypeExtensionsFactory, QDLTypeUtils>{
 
 
 	@Inject
-	public QDLLookUp(QDLTypeFactory typeFactory, QDLTypeOperatorsFactory typeOperatorsFactory, QDLTypeUtils typeUtils) {
+	public QDLLookUp(QDLTypeFactory typeFactory, QDLTypeExtensionsFactory typeOperatorsFactory, QDLTypeUtils typeUtils) {
 		super(typeFactory, typeOperatorsFactory, typeUtils);
 	}
 

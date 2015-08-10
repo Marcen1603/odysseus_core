@@ -2887,92 +2887,97 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLMemberCallExpression");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final RuleCall cIQLOtherExpressionsParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
-		private final Action cIQLArrayExpressionLeftOperandAction_1_0_0 = (Action)cGroup_1_0.eContents().get(0);
-		private final Keyword cLeftSquareBracketKeyword_1_0_1 = (Keyword)cGroup_1_0.eContents().get(1);
-		private final Assignment cExpressionsAssignment_1_0_2 = (Assignment)cGroup_1_0.eContents().get(2);
-		private final RuleCall cExpressionsIQLExpressionParserRuleCall_1_0_2_0 = (RuleCall)cExpressionsAssignment_1_0_2.eContents().get(0);
-		private final Group cGroup_1_0_3 = (Group)cGroup_1_0.eContents().get(3);
-		private final Keyword cCommaKeyword_1_0_3_0 = (Keyword)cGroup_1_0_3.eContents().get(0);
-		private final Assignment cExpressionsAssignment_1_0_3_1 = (Assignment)cGroup_1_0_3.eContents().get(1);
-		private final RuleCall cExpressionsIQLExpressionParserRuleCall_1_0_3_1_0 = (RuleCall)cExpressionsAssignment_1_0_3_1.eContents().get(0);
-		private final Keyword cRightSquareBracketKeyword_1_0_4 = (Keyword)cGroup_1_0.eContents().get(4);
-		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
-		private final Group cGroup_2_0 = (Group)cGroup_2.eContents().get(0);
-		private final Group cGroup_2_0_0 = (Group)cGroup_2_0.eContents().get(0);
-		private final Action cIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0 = (Action)cGroup_2_0_0.eContents().get(0);
-		private final Keyword cFullStopKeyword_2_0_0_1 = (Keyword)cGroup_2_0_0.eContents().get(1);
-		private final Assignment cSelAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cSelIQLMemberSelectionParserRuleCall_2_1_0 = (RuleCall)cSelAssignment_2_1.eContents().get(0);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Group cGroup_1_0 = (Group)cAlternatives_1.eContents().get(0);
+		private final Group cGroup_1_0_0 = (Group)cGroup_1_0.eContents().get(0);
+		private final Action cIQLArrayExpressionLeftOperandAction_1_0_0_0 = (Action)cGroup_1_0_0.eContents().get(0);
+		private final Keyword cLeftSquareBracketKeyword_1_0_0_1 = (Keyword)cGroup_1_0_0.eContents().get(1);
+		private final Assignment cExpressionsAssignment_1_0_0_2 = (Assignment)cGroup_1_0_0.eContents().get(2);
+		private final RuleCall cExpressionsIQLExpressionParserRuleCall_1_0_0_2_0 = (RuleCall)cExpressionsAssignment_1_0_0_2.eContents().get(0);
+		private final Group cGroup_1_0_0_3 = (Group)cGroup_1_0_0.eContents().get(3);
+		private final Keyword cCommaKeyword_1_0_0_3_0 = (Keyword)cGroup_1_0_0_3.eContents().get(0);
+		private final Assignment cExpressionsAssignment_1_0_0_3_1 = (Assignment)cGroup_1_0_0_3.eContents().get(1);
+		private final RuleCall cExpressionsIQLExpressionParserRuleCall_1_0_0_3_1_0 = (RuleCall)cExpressionsAssignment_1_0_0_3_1.eContents().get(0);
+		private final Keyword cRightSquareBracketKeyword_1_0_0_4 = (Keyword)cGroup_1_0_0.eContents().get(4);
+		private final Group cGroup_1_1 = (Group)cAlternatives_1.eContents().get(1);
+		private final Group cGroup_1_1_0 = (Group)cGroup_1_1.eContents().get(0);
+		private final Group cGroup_1_1_0_0 = (Group)cGroup_1_1_0.eContents().get(0);
+		private final Action cIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0 = (Action)cGroup_1_1_0_0.eContents().get(0);
+		private final Keyword cFullStopKeyword_1_1_0_0_1 = (Keyword)cGroup_1_1_0_0.eContents().get(1);
+		private final Assignment cSelAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
+		private final RuleCall cSelIQLMemberSelectionParserRuleCall_1_1_1_0 = (RuleCall)cSelAssignment_1_1_1.eContents().get(0);
 		
 		//IQLMemberCallExpression returns IQLExpression:
-		//	IQLOtherExpressions => ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
-		//	expressions+=IQLExpression)? "]")* (=> ({IQLMemberSelectionExpression.leftOperand=current} ".")
+		//	IQLOtherExpressions (=> ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
+		//	expressions+=IQLExpression)? "]") | => ({IQLMemberSelectionExpression.leftOperand=current} ".")
 		//	sel=IQLMemberSelection)*;
 		public ParserRule getRule() { return rule; }
 
-		//IQLOtherExpressions => ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
-		//expressions+=IQLExpression)? "]")* (=> ({IQLMemberSelectionExpression.leftOperand=current} ".")
+		//IQLOtherExpressions (=> ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
+		//expressions+=IQLExpression)? "]") | => ({IQLMemberSelectionExpression.leftOperand=current} ".")
 		//sel=IQLMemberSelection)*
 		public Group getGroup() { return cGroup; }
 
 		//IQLOtherExpressions
 		public RuleCall getIQLOtherExpressionsParserRuleCall_0() { return cIQLOtherExpressionsParserRuleCall_0; }
 
-		//=> ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression ("," expressions+=IQLExpression)? "]")*
-		public Group getGroup_1() { return cGroup_1; }
+		//(=> ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression ("," expressions+=IQLExpression)? "]") | =>
+		//({IQLMemberSelectionExpression.leftOperand=current} ".") sel=IQLMemberSelection)*
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
-		//{IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression ("," expressions+=IQLExpression)? "]"
+		//=> ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression ("," expressions+=IQLExpression)? "]")
 		public Group getGroup_1_0() { return cGroup_1_0; }
 
+		//{IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression ("," expressions+=IQLExpression)? "]"
+		public Group getGroup_1_0_0() { return cGroup_1_0_0; }
+
 		//{IQLArrayExpression.leftOperand=current}
-		public Action getIQLArrayExpressionLeftOperandAction_1_0_0() { return cIQLArrayExpressionLeftOperandAction_1_0_0; }
+		public Action getIQLArrayExpressionLeftOperandAction_1_0_0_0() { return cIQLArrayExpressionLeftOperandAction_1_0_0_0; }
 
 		//"["
-		public Keyword getLeftSquareBracketKeyword_1_0_1() { return cLeftSquareBracketKeyword_1_0_1; }
+		public Keyword getLeftSquareBracketKeyword_1_0_0_1() { return cLeftSquareBracketKeyword_1_0_0_1; }
 
 		//expressions+=IQLExpression
-		public Assignment getExpressionsAssignment_1_0_2() { return cExpressionsAssignment_1_0_2; }
+		public Assignment getExpressionsAssignment_1_0_0_2() { return cExpressionsAssignment_1_0_0_2; }
 
 		//IQLExpression
-		public RuleCall getExpressionsIQLExpressionParserRuleCall_1_0_2_0() { return cExpressionsIQLExpressionParserRuleCall_1_0_2_0; }
+		public RuleCall getExpressionsIQLExpressionParserRuleCall_1_0_0_2_0() { return cExpressionsIQLExpressionParserRuleCall_1_0_0_2_0; }
 
 		//("," expressions+=IQLExpression)?
-		public Group getGroup_1_0_3() { return cGroup_1_0_3; }
+		public Group getGroup_1_0_0_3() { return cGroup_1_0_0_3; }
 
 		//","
-		public Keyword getCommaKeyword_1_0_3_0() { return cCommaKeyword_1_0_3_0; }
+		public Keyword getCommaKeyword_1_0_0_3_0() { return cCommaKeyword_1_0_0_3_0; }
 
 		//expressions+=IQLExpression
-		public Assignment getExpressionsAssignment_1_0_3_1() { return cExpressionsAssignment_1_0_3_1; }
+		public Assignment getExpressionsAssignment_1_0_0_3_1() { return cExpressionsAssignment_1_0_0_3_1; }
 
 		//IQLExpression
-		public RuleCall getExpressionsIQLExpressionParserRuleCall_1_0_3_1_0() { return cExpressionsIQLExpressionParserRuleCall_1_0_3_1_0; }
+		public RuleCall getExpressionsIQLExpressionParserRuleCall_1_0_0_3_1_0() { return cExpressionsIQLExpressionParserRuleCall_1_0_0_3_1_0; }
 
 		//"]"
-		public Keyword getRightSquareBracketKeyword_1_0_4() { return cRightSquareBracketKeyword_1_0_4; }
+		public Keyword getRightSquareBracketKeyword_1_0_0_4() { return cRightSquareBracketKeyword_1_0_0_4; }
 
-		//(=> ({IQLMemberSelectionExpression.leftOperand=current} ".") sel=IQLMemberSelection)*
-		public Group getGroup_2() { return cGroup_2; }
+		//=> ({IQLMemberSelectionExpression.leftOperand=current} ".") sel=IQLMemberSelection
+		public Group getGroup_1_1() { return cGroup_1_1; }
 
 		//=> ({IQLMemberSelectionExpression.leftOperand=current} ".")
-		public Group getGroup_2_0() { return cGroup_2_0; }
+		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
 
 		//{IQLMemberSelectionExpression.leftOperand=current} "."
-		public Group getGroup_2_0_0() { return cGroup_2_0_0; }
+		public Group getGroup_1_1_0_0() { return cGroup_1_1_0_0; }
 
 		//{IQLMemberSelectionExpression.leftOperand=current}
-		public Action getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() { return cIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0; }
+		public Action getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() { return cIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0; }
 
 		//"."
-		public Keyword getFullStopKeyword_2_0_0_1() { return cFullStopKeyword_2_0_0_1; }
+		public Keyword getFullStopKeyword_1_1_0_0_1() { return cFullStopKeyword_1_1_0_0_1; }
 
 		//sel=IQLMemberSelection
-		public Assignment getSelAssignment_2_1() { return cSelAssignment_2_1; }
+		public Assignment getSelAssignment_1_1_1() { return cSelAssignment_1_1_1; }
 
 		//IQLMemberSelection
-		public RuleCall getSelIQLMemberSelectionParserRuleCall_2_1_0() { return cSelIQLMemberSelectionParserRuleCall_2_1_0; }
+		public RuleCall getSelIQLMemberSelectionParserRuleCall_1_1_1_0() { return cSelIQLMemberSelectionParserRuleCall_1_1_1_0; }
 	}
 
 	public class IQLMemberSelectionElements extends AbstractParserRuleElementFinder {
@@ -3014,7 +3019,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Action cIQLJvmElementCallExpressionAction_0_0 = (Action)cGroup_0.eContents().get(0);
 		private final Assignment cElementAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
 		private final CrossReference cElementJvmIdentifiableElementCrossReference_0_1_0 = (CrossReference)cElementAssignment_0_1.eContents().get(0);
-		private final RuleCall cElementJvmIdentifiableElementIDTerminalRuleCall_0_1_0_1 = (RuleCall)cElementJvmIdentifiableElementCrossReference_0_1_0.eContents().get(1);
+		private final RuleCall cElementJvmIdentifiableElementQualifiedNameParserRuleCall_0_1_0_1 = (RuleCall)cElementJvmIdentifiableElementCrossReference_0_1_0.eContents().get(1);
 		private final Assignment cArgsAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
 		private final RuleCall cArgsIQLArgumentsListParserRuleCall_0_2_0 = (RuleCall)cArgsAssignment_0_2.eContents().get(0);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
@@ -3045,32 +3050,32 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cIQLLiteralExpressionParserRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
 		
 		//IQLOtherExpressions returns IQLExpression:
-		//	{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement] args=IQLArgumentsList? | {IQLThisExpression}
-		//	"this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" | {IQLNewExpression}
-		//	"new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList argsMap=IQLArgumentsMap?) |
-		//	IQLLiteralExpression;
+		//	{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
+		//	{IQLThisExpression} "this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" |
+		//	{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
+		//	argsMap=IQLArgumentsMap?) | IQLLiteralExpression;
 		public ParserRule getRule() { return rule; }
 
-		//{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement] args=IQLArgumentsList? | {IQLThisExpression}
-		//"this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" | {IQLNewExpression}
-		//"new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList argsMap=IQLArgumentsMap?) |
-		//IQLLiteralExpression
+		//{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
+		//{IQLThisExpression} "this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" |
+		//{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
+		//argsMap=IQLArgumentsMap?) | IQLLiteralExpression
 		public Alternatives getAlternatives() { return cAlternatives; }
 
-		//{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement] args=IQLArgumentsList?
+		//{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList?
 		public Group getGroup_0() { return cGroup_0; }
 
 		//{IQLJvmElementCallExpression}
 		public Action getIQLJvmElementCallExpressionAction_0_0() { return cIQLJvmElementCallExpressionAction_0_0; }
 
-		//element=[types::JvmIdentifiableElement]
+		//element=[types::JvmIdentifiableElement|QualifiedName]
 		public Assignment getElementAssignment_0_1() { return cElementAssignment_0_1; }
 
-		//[types::JvmIdentifiableElement]
+		//[types::JvmIdentifiableElement|QualifiedName]
 		public CrossReference getElementJvmIdentifiableElementCrossReference_0_1_0() { return cElementJvmIdentifiableElementCrossReference_0_1_0; }
 
-		//ID
-		public RuleCall getElementJvmIdentifiableElementIDTerminalRuleCall_0_1_0_1() { return cElementJvmIdentifiableElementIDTerminalRuleCall_0_1_0_1; }
+		//QualifiedName
+		public RuleCall getElementJvmIdentifiableElementQualifiedNameParserRuleCall_0_1_0_1() { return cElementJvmIdentifiableElementQualifiedNameParserRuleCall_0_1_0_1; }
 
 		//args=IQLArgumentsList?
 		public Assignment getArgsAssignment_0_2() { return cArgsAssignment_0_2; }
@@ -4855,8 +4860,8 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMemberCallExpression returns IQLExpression:
-	//	IQLOtherExpressions => ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
-	//	expressions+=IQLExpression)? "]")* (=> ({IQLMemberSelectionExpression.leftOperand=current} ".")
+	//	IQLOtherExpressions (=> ({IQLArrayExpression.leftOperand=current} "[" expressions+=IQLExpression (","
+	//	expressions+=IQLExpression)? "]") | => ({IQLMemberSelectionExpression.leftOperand=current} ".")
 	//	sel=IQLMemberSelection)*;
 	public IQLMemberCallExpressionElements getIQLMemberCallExpressionAccess() {
 		return pIQLMemberCallExpression;
@@ -4877,10 +4882,10 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLOtherExpressions returns IQLExpression:
-	//	{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement] args=IQLArgumentsList? | {IQLThisExpression}
-	//	"this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" | {IQLNewExpression}
-	//	"new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList argsMap=IQLArgumentsMap?) |
-	//	IQLLiteralExpression;
+	//	{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
+	//	{IQLThisExpression} "this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" |
+	//	{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
+	//	argsMap=IQLArgumentsMap?) | IQLLiteralExpression;
 	public IQLOtherExpressionsElements getIQLOtherExpressionsAccess() {
 		return pIQLOtherExpressions;
 	}

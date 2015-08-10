@@ -21,7 +21,7 @@ class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompilerHelpe
 		if (helper.isOperator(typeRef)) {
 			var opName = helper.getLogicalOperatorName(typeRef)
 			if (init.argsMap != null && init.argsMap.elements.size > 0) {
-				var constructor = lookUp.findConstructor(typeRef, init.argsList.elements.size)
+				var constructor = lookUp.findConstructor(typeRef, init.argsList.elements)
 				var args = init.argsList.elements.size > 0
 				if (constructor != null) {
 					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
@@ -29,7 +29,7 @@ class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompilerHelpe
 					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 				}
 			} else if (init.argsList != null) {
-				var constructor = lookUp.findConstructor(typeRef, init.argsList.elements.size)
+				var constructor = lookUp.findConstructor(typeRef, init.argsList.elements)
 				var args = init.argsList.elements.size > 0				
 				if (constructor != null) {
 					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators)'''

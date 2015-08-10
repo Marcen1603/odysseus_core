@@ -104,4 +104,13 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		}
 		return predicates;
 	}
+
+	public boolean hasInitMethod(ODLOperator operator) {
+		for (IQLMethod method : EcoreUtil2.getAllContentsOfType(operator, IQLMethod.class)) {
+			if (method.getSimpleName() != null && method.getSimpleName().equals("init") && method.getParameters().size() == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

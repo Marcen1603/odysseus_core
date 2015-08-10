@@ -480,8 +480,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
           }
           IQLArgumentsList _args = s.getArgs();
           EList<IQLExpression> _elements = _args.getElements();
-          int _size = _elements.size();
-          JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _size);
+          JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _elements);
           String _xifexpression_1 = null;
           boolean _notEquals_1 = (!Objects.equal(constructor, null));
           if (_notEquals_1) {
@@ -560,8 +559,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
     if (_and) {
       IQLArgumentsList _argsList = init.getArgsList();
       EList<IQLExpression> _elements_1 = _argsList.getElements();
-      int _size_1 = _elements_1.size();
-      JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _size_1);
+      JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _elements_1);
       boolean _notEquals_1 = (!Objects.equal(constructor, null));
       if (_notEquals_1) {
         StringConcatenation _builder = new StringConcatenation();
@@ -611,8 +609,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
       if (_notEquals_2) {
         IQLArgumentsList _argsList_4 = init.getArgsList();
         EList<IQLExpression> _elements_2 = _argsList_4.getElements();
-        int _size_2 = _elements_2.size();
-        JvmExecutable constructor_1 = this.lookUp.findConstructor(typeRef, _size_2);
+        JvmExecutable constructor_1 = this.lookUp.findConstructor(typeRef, _elements_2);
         boolean _notEquals_3 = (!Objects.equal(constructor_1, null));
         if (_notEquals_3) {
           StringConcatenation _builder_2 = new StringConcatenation();

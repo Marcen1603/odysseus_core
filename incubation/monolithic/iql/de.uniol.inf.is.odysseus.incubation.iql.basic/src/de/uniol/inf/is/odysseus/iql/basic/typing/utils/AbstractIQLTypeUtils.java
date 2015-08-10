@@ -80,23 +80,15 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	@Override
 	public boolean isPrimitive(JvmType type) {
 		return type instanceof JvmPrimitiveType;
-	}
-		
+	}		
 
 	@Override
 	public String getLongName(JvmTypeReference typeRef, boolean array) {
-		return getLongName(typeRef, array, true);
-	}
-	
-	@Override
-	public String getLongName(JvmTypeReference typeRef, boolean array, boolean parameterized) {
 		try {
 			if (typeRef instanceof IQLSimpleTypeRef) {
 				return getLongName(typeRef.getType(), array);
 			} else if (typeRef instanceof IQLArrayTypeRef) {
 				return getLongName(typeRef.getType(), array);		
-			} else if (parameterized) {
-				return typeRef.getIdentifier();
 			} else {
 				return getLongName(typeRef.getType(), array);
 			}
@@ -246,6 +238,18 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 		} else if (type instanceof JvmArrayType && !array) {
 			JvmArrayType arrayType = (JvmArrayType) type;
 			return getInnerType(arrayType.getComponentType(), array);
+		} else if (type instanceof JvmTypeParameter) {
+			JvmTypeParameter typeParameter = (JvmTypeParameter) type;
+			for (JvmTypeConstraint constraint : typeParameter.getConstraints()) {
+				if (constraint instanceof JvmUpperBound) {
+					JvmUpperBound upperBound = (JvmUpperBound) constraint;
+					return getInnerType(upperBound.getTypeReference(), array);
+				} else if (constraint instanceof JvmLowerBound) {
+					JvmLowerBound lowerBound = (JvmLowerBound) constraint;
+					return getInnerType(lowerBound.getTypeReference(), array);
+				}
+			}
+			return type;
 		}else {
 			return type;
 		}

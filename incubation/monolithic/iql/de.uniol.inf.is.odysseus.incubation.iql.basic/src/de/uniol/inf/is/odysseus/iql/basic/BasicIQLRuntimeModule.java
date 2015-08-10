@@ -32,8 +32,10 @@ import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.DefaultIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.BasicIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
@@ -57,6 +59,10 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
  */
 @SuppressWarnings({"restriction", "rawtypes"})
 public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.AbstractBasicIQLRuntimeModule {
+	
+	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
+		return DefaultIQLMethodFinder.class;
+	}
 	
 	@Override
 	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {

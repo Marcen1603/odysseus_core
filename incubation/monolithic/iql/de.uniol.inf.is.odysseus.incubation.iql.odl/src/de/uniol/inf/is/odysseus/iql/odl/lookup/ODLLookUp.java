@@ -16,13 +16,13 @@ import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAO;
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLPO;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 
-public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory, ODLTypeOperatorsFactory, ODLTypeUtils>{
+public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory, ODLTypeExtensionsFactory, ODLTypeUtils>{
 
 	@Inject
-	public ODLLookUp(ODLTypeFactory typeFactory, ODLTypeOperatorsFactory typeOperatorsFactory,ODLTypeUtils typeUtils) {
+	public ODLLookUp(ODLTypeFactory typeFactory, ODLTypeExtensionsFactory typeOperatorsFactory,ODLTypeUtils typeUtils) {
 		super(typeFactory, typeOperatorsFactory, typeUtils);
 	}
 

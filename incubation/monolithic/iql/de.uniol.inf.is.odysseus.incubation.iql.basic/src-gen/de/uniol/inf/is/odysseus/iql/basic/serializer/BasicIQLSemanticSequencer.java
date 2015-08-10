@@ -155,8 +155,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -372,8 +372,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -400,8 +400,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -428,8 +428,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -456,8 +456,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -484,8 +484,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -513,8 +513,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -542,8 +542,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -576,8 +576,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -604,8 +604,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -632,8 +632,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -687,7 +687,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLRelationalExpressionRule() ||
@@ -832,8 +833,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -859,8 +860,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -997,8 +998,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -1031,8 +1032,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
 				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
+				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
 				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
 				   context == grammarAccess.getIQLOtherExpressionsRule() ||
@@ -1710,7 +1711,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (leftOperand=IQLMemberCallExpression_IQLArrayExpression_1_0_0 expressions+=IQLExpression expressions+=IQLExpression?)
+	 *     (leftOperand=IQLMemberCallExpression_IQLArrayExpression_1_0_0_0 expressions+=IQLExpression expressions+=IQLExpression?)
 	 */
 	protected void sequence_IQLMemberCallExpression(EObject context, IQLArrayExpression semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1719,7 +1720,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (leftOperand=IQLMemberCallExpression_IQLMemberSelectionExpression_2_0_0_0 sel=IQLMemberSelection)
+	 *     (leftOperand=IQLMemberCallExpression_IQLMemberSelectionExpression_1_1_0_0_0 sel=IQLMemberSelection)
 	 */
 	protected void sequence_IQLMemberCallExpression(EObject context, IQLMemberSelectionExpression semanticObject) {
 		if(errorAcceptor != null) {
@@ -1730,8 +1731,8 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0(), semanticObject.getLeftOperand());
-		feeder.accept(grammarAccess.getIQLMemberCallExpressionAccess().getSelIQLMemberSelectionParserRuleCall_2_1_0(), semanticObject.getSel());
+		feeder.accept(grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0(), semanticObject.getLeftOperand());
+		feeder.accept(grammarAccess.getIQLMemberCallExpressionAccess().getSelIQLMemberSelectionParserRuleCall_1_1_1_0(), semanticObject.getSel());
 		feeder.finish();
 	}
 	
@@ -1976,7 +1977,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (element=[JvmIdentifiableElement|ID] args=IQLArgumentsList?)
+	 *     (element=[JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList?)
 	 */
 	protected void sequence_IQLOtherExpressions(EObject context, IQLJvmElementCallExpression semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

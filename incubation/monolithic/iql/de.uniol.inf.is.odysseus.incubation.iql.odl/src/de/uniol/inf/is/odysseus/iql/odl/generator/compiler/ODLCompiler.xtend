@@ -224,7 +224,8 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		var newExpressions = helper.getNewExpressions(o);
 		var varStmts = helper.getVarStatements(o);
 		var outputmode = helper.determineOutputMode(o);
-	
+		var hasInit = helper.hasInitMethod(o);
+		
 		context.addImport(superClass.canonicalName)
 		context.addImport(read.canonicalName)
 		context.addImport(write.canonicalName)
@@ -239,7 +240,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		@SuppressWarnings("all")
 		public class «opName» extends «superClass.simpleName»<«read.simpleName»<«meta.simpleName»>,«write.simpleName»<«meta.simpleName»>> {
 			
-			«FOR m : o.members»			
+			«FOR m : o.members»	
 			«compile(m, context)»
 			«ENDFOR»
 			
@@ -252,6 +253,9 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 				«FOR p : parameters»
 					«createCloneStatements(p, "po", context)»
 				«ENDFOR»
+				«IF hasInit»
+					onInit();
+				«ENDIF»
 			}
 			
 			public «opName»(«aoName» ao) {
@@ -259,6 +263,9 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 				«FOR p : parameters»
 					«createCloneStatements(p, "ao", context)»
 				«ENDFOR»
+				«IF hasInit»
+					onInit();
+				«ENDIF»
 			}
 			
 			@«Override.simpleName»
@@ -321,12 +328,14 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 			'''
 			private boolean validate«m.simpleName»()
 				«stmtCompiler.compile(m.body, context)»	
+			
 			'''	
 		} else if (m.validate && m.simpleName == null && context.isAo) {
 			'''
 			@Override
 			protected boolean validate()
 				«stmtCompiler.compile(m.body, context)»	
+			
 			'''	
 		} else if (!m.validate && m.on && (!context.ao && lookUp.hasOnMethod(m.simpleName, false) || context.ao && lookUp.hasOnMethod(m.simpleName, true))){
 			var className = helper.getClassName(m);
@@ -340,6 +349,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 			@Override
 			public «returnT» on«helper.firstCharUpperCase(m.simpleName)»(«IF m.parameters != null»«m.parameters.map[p | compile(p, context)].join(", ")»«ENDIF»)
 				«stmtCompiler.compile(m.body, context)»	
+			
 			'''	
 		} 
 	}

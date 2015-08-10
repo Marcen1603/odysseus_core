@@ -7,10 +7,10 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.extension.AbstractIQLTypeExtens
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
 @Singleton
-public class ODLTypeOperatorsFactory extends AbstractIQLTypeExtensionsFactory<ODLTypeFactory, ODLTypeUtils> {
+public class ODLTypeExtensionsFactory extends AbstractIQLTypeExtensionsFactory<ODLTypeFactory, ODLTypeUtils> {
 
 	@Inject
-	public ODLTypeOperatorsFactory(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
+	public ODLTypeExtensionsFactory(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 		init();
 	}

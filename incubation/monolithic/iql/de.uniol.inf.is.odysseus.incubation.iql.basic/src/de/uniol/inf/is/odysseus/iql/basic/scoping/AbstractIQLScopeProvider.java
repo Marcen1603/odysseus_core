@@ -17,18 +17,19 @@ import javax.inject.Inject;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
-import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
-import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
@@ -90,19 +91,17 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		Collection<JvmType> types = getAllTypes(file);
 		
 		IJvmTypeProvider provider = factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(file));
-		IScope parentScope = new IQLClasspathBasedTypeScope((ClasspathTypeProvider) provider, converter, null);
-	
-		IScope scope =  Scopes.scopeFor(types, qualifiedNameProvider, parentScope);
+		IScope parentScope =  Scopes.scopeFor(types, qualifiedNameProvider, IScope.NULLSCOPE);
+		IScope scope = new IQLClasspathBasedTypeScope((IQLClasspathTypeProvider) provider,parentScope, converter, null);
 		return new ImportScope(createImportNormalizers(file), scope, null, type.getEReferenceType(), true);
 	}
 	
 	public IScope scope_IQLArrayType_type(IQLFile file, EReference type) {	
 		Collection<JvmType> types = getAllTypes(file);
 
-
 		IJvmTypeProvider provider = factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(file));
-		IScope parentScope = new IQLClasspathBasedTypeScope((ClasspathTypeProvider) provider, converter, null);
-		IScope scope =  Scopes.scopeFor(types, qualifiedNameProvider, parentScope);
+		IScope parentScope =  Scopes.scopeFor(types, qualifiedNameProvider, IScope.NULLSCOPE);
+		IScope scope = new IQLClasspathBasedTypeScope((IQLClasspathTypeProvider) provider, parentScope, converter, null);
 		return new ImportScope(createImportNormalizers(file), scope, null, type.getEReferenceType(), true);
 	}
 	
@@ -112,7 +111,25 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		Collection<JvmType> types = lookUp.getAllTypes(getUsedNamespaces(file), file.eResource());
 		return types;
 	}
+	
 
+	@Override
+	public Collection<IEObjectDescription> getTypes(EObject node) {
+		ResourceSet set = EcoreUtil2.getResourceSet(node);
+		IScope scope = new IQLClasspathBasedTypeScope((IQLClasspathTypeProvider) factory.createTypeProvider(set), IScope.NULLSCOPE, converter, null);
+		Map<QualifiedName, IEObjectDescription> result = new HashMap<>();
+		for (IEObjectDescription e : scope.getAllElements()) {
+			result.put(e.getQualifiedName(), e);
+		}		
+		
+		for (JvmType type : getAllTypes(node)) {
+			QualifiedName qName = converter.toQualifiedName(typeUtils.getLongName(type, false));
+			if (!result.containsKey(qName)) {
+				result.put(qName, EObjectDescription.create(qName, type));
+			}
+		}
+		return result.values();
+	}
 	
 	public IScope scope_IQLJvmElementCallExpression_element(IQLStatementBlock expr, EReference type) {
 		Collection<IEObjectDescription> elements = getIQLJvmElementCallExpression(expr);
@@ -121,11 +138,11 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	
 	@Override
 	public Collection<IEObjectDescription> getIQLJvmElementCallExpression(EObject expr) {
-		JvmGenericType type = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
+		JvmDeclaredType type = EcoreUtil2.getContainerOfType(expr, JvmDeclaredType.class);
 
 		Collection<JvmIdentifiableElement> elements = new HashSet<>();
 		EObject container = expr;
-		while (container != null && !(container instanceof JvmGenericType)) {
+		while (container != null && !(container instanceof JvmDeclaredType)) {
 			elements.addAll(EcoreUtil2.getAllContentsOfType(container, IQLVariableDeclaration.class));
 			elements.addAll(EcoreUtil2.getAllContentsOfType(container, JvmFormalParameter.class));
 			container = container.eContainer();
@@ -144,7 +161,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		Map<String, Pair<JvmOperation, JvmOperation>> properties = new HashMap<>();
 		Collection<IEObjectDescription> result = new HashSet<>();
 		for (JvmIdentifiableElement element : elements) {
-			if (elements instanceof JvmOperation) {
+			if (element instanceof JvmOperation) {
 				JvmOperation method = (JvmOperation) element;
 				if (typeUtils.isSetter(method)) {
 					String name = typeUtils.getNameWithoutSetterPrefix(method);
@@ -162,6 +179,10 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 						properties.put(name, pair);
 					}
 					pair.setE2(method);
+				} 
+				if (method.isStatic()) {
+					JvmDeclaredType declaredType = (JvmDeclaredType) method.eContainer();
+					result.add(EObjectDescription.create(declaredType.getSimpleName()+IQLQualifiedNameConverter.DELIMITER+qualifiedNameProvider.getFullyQualifiedName(method), method));
 				}
 			} 			
 			result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(element), element));
@@ -177,7 +198,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	}	
 	
 	
-	public IScope scope_IQLMemberSelectionExpression_member(IQLMemberSelectionExpression expr, EReference type) {		
+	public IScope scope_IQLMemberSelection_member(IQLMemberSelectionExpression expr, EReference type) {		
 		Collection<IEObjectDescription> elements = new HashSet<>();
 		elements.addAll(getScopeIQLMemberSelection(expr));		
 		return new SimpleScope(elements);
@@ -245,7 +266,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 					properties.put(name, pair);
 				}
 				pair.setE2(method);
-			}			
+			} 
 			result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(method), method));
 		}
 		for (Entry<String, Pair<JvmOperation, JvmOperation>> entry : properties.entrySet()) {
@@ -266,7 +287,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	public Collection<String> getUsedNamespaces(EObject obj) {
 		Collection<String> namespaces = new HashSet<>();
 		IQLFile file = EcoreUtil2.getContainerOfType(obj, IQLFile.class);
-		//namespaces.addAll(typeFactory.getImplicitImports());
+		namespaces.addAll(typeFactory.getImplicitImports());
 		for (IQLNamespace namespace : file.getNamespaces()) {
 			String name = namespace.getImportedNamespace();
 			name = name.replaceAll(IQLQualifiedNameConverter.DELIMITER, ".");
@@ -277,15 +298,17 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	
 	protected List<ImportNormalizer> createImportNormalizers(EObject obj) {
 		IQLFile file = EcoreUtil2.getContainerOfType(obj, IQLFile.class);
-		List<ImportNormalizer> imports = new ArrayList<>();		
-		Set<String> wildCards = new TreeSet<>();	
+		List<ImportNormalizer> result = new ArrayList<>();	
+		Set<QualifiedName > imports = new HashSet<>();	
+		Set<QualifiedName > wildCards = new TreeSet<>();	
 		for (IQLNamespace namespace : file.getNamespaces()) {
 			String name = namespace.getImportedNamespace();
 			boolean wildcard = name.endsWith("*");
 			if (wildcard) {
-				wildCards.add(name);
+				name = name.substring(0, name.lastIndexOf(IQLQualifiedNameConverter.DELIMITER+"*"));
+				wildCards.add(converter.toQualifiedName(name));
 			} else {
-				imports.add(new IQLImportNormalizer(converter.toQualifiedName(name), wildcard, true));
+				imports.add(converter.toQualifiedName(name));
 			}
 		}
 		
@@ -293,16 +316,22 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 			boolean wildcard = name.endsWith("*");
 			if (wildcard) {
 				name = name.substring(0, name.lastIndexOf(".*"));
-				wildCards.add(name);
+				wildCards.add(converter.toQualifiedName(name));
 			} else {
-				imports.add(new IQLImportNormalizer(converter.toQualifiedName(name), wildcard, true));
+				imports.add(converter.toQualifiedName(name));
 			}
 		}
 		
-		for (String name : wildCards) {
-			imports.add(new IQLImportNormalizer(converter.toQualifiedName(name), true, true));
+		for (QualifiedName name : imports) {
+			if (!wildCards.contains(name.skipLast(1))) {
+				result.add(new IQLImportNormalizer(name, false, true));
+			} 
 		}
 		
-		return imports;
+		for (QualifiedName name : wildCards) {
+			result.add(new IQLImportNormalizer(name, true, true));
+		}
+		
+		return result;
 	} 
 }

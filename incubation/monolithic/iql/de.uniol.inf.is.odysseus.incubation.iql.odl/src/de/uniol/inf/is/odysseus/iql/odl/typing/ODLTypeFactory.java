@@ -51,6 +51,10 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils, ODLServ
 		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.ruleengine"));
 		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.mep"));
 		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.iql.odl"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.sweeparea"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.server.intervalapproach"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.relational.base"));
+		bundles.add(Platform.getBundle("de.uniol.inf.is.odysseus.intervalapproach"));
 		return bundles;
 	}
 	

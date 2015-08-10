@@ -143,7 +143,7 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 
 		String id = op.getSimpleName();
 		if (op.getParameters() != null) {
-			id = id+op.getParameters().size();
+			id = id+methodFinder.createExecutableID(op);
 		}
 		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
 		finishTemplate(template, templateContext, context, acceptor);

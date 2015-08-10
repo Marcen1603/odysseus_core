@@ -53,12 +53,11 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompil
           {
             IQLArgumentsList _argsList = init.getArgsList();
             EList<IQLExpression> _elements_1 = _argsList.getElements();
-            int _size_1 = _elements_1.size();
-            JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _size_1);
+            JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _elements_1);
             IQLArgumentsList _argsList_1 = init.getArgsList();
             EList<IQLExpression> _elements_2 = _argsList_1.getElements();
-            int _size_2 = _elements_2.size();
-            boolean args = (_size_2 > 0);
+            int _size_1 = _elements_2.size();
+            boolean args = (_size_1 > 0);
             String _xifexpression_2 = null;
             boolean _notEquals_1 = (!Objects.equal(constructor, null));
             if (_notEquals_1) {
@@ -133,12 +132,11 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompil
             {
               IQLArgumentsList _argsList_1 = init.getArgsList();
               EList<IQLExpression> _elements_1 = _argsList_1.getElements();
-              int _size_1 = _elements_1.size();
-              JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _size_1);
+              JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _elements_1);
               IQLArgumentsList _argsList_2 = init.getArgsList();
               EList<IQLExpression> _elements_2 = _argsList_2.getElements();
-              int _size_2 = _elements_2.size();
-              boolean args = (_size_2 > 0);
+              int _size_1 = _elements_2.size();
+              boolean args = (_size_1 > 0);
               String _xifexpression_3 = null;
               boolean _notEquals_2 = (!Objects.equal(constructor, null));
               if (_notEquals_2) {

@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
@@ -47,7 +48,11 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 	
 	@Inject
 	private IQLQualifiedNameConverter converter;
-
+	
+	@Inject
+	protected IIQLMethodFinder methodFinder;
+	
+	
 	public AbstractIQLTemplateProposalProvider(TemplateStore templateStore,	ContextTypeRegistry registry, ContextTypeIdHelper helper, E exprParser, F factory, L lookUp, S scopeProvider, U typeUtils) {
 		super(templateStore, registry, helper);
 		this.exprParser = exprParser;
@@ -65,11 +70,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 	}
 	
 	protected void createTemplates(String rule, EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		if (rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.IQLAttribute")) {
-			createIQLAttributeProposals(node, templateContext, context, acceptor);
-		} else if (rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.IQLVariableDeclaration")) {
-			createIQLVariableDeclarationProposals(node, templateContext, context, acceptor);
-		} else if (rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.IQLVariableStatement")) {
+		if (rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.IQLVariableStatement")) {
 			createIQLVariableStatementProposals(templateContext, context, acceptor);
 		} else if (node instanceof IQLMemberSelectionExpression) {
 			createIQLMemberSelectionProposals((IQLMemberSelectionExpression) node, templateContext, context, acceptor);
@@ -83,9 +84,9 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 			createIQLMetadataValueProposals(node, templateContext, context, acceptor);
 		} else if (node instanceof IQLArgumentsMapKeyValue && rule.equals("de.uniol.inf.is.odysseus.iql.basic.BasicIQL.IQLExpression")) {
 			createIQLArgumentsMapKeyValueExprProposals((IQLArgumentsMapKeyValue) node, templateContext, context, acceptor);
-		}  else if (node instanceof IQLNamespace) {
+		} else if (node instanceof IQLNamespace) {
 			createIQLNamespaceProposals(node, templateContext, context, acceptor);
-		}    	
+		}     	
 	}
 	
 	protected void createIQLNamespaceProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -144,7 +145,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 			} else if (el instanceof JvmOperation) {
 				JvmOperation op = (JvmOperation) el;
 				if (op.getSimpleName() != null) {
-					createMethodTemplate(op.getSimpleName(), op, templateContext, context, acceptor);
+					createMethodTemplate(converter.toString(desc.getQualifiedName()), op, templateContext, context, acceptor);
 				}
 			}
 		}
@@ -166,21 +167,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 			}
 		}		
 	}
-	
-	
-	protected void createIQLVariableDeclarationProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		for (JvmType type : scopeProvider.getAllTypes(node)) {
-			createTypeTemplate(type, templateContext, context, acceptor);
-		}
-	}
-	
-	
-	protected void createIQLAttributeProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		for (JvmType type : scopeProvider.getAllTypes(node)) {
-			createTypeTemplate(type, templateContext, context, acceptor);
-		}
-	}
-	
+		
 	protected void createNamespaceTemplate(String name, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		StringBuilder descBuilder = new StringBuilder();
 		descBuilder.append(name);
@@ -209,9 +196,10 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 		finishTemplate(template, templateContext, context, acceptor);	
 	}
 	
+	
 	protected void createTypeTemplate(JvmType type, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		String simpleName = typeUtils.getShortName(type, false);
-		String longName = typeUtils.getLongName(type, false);
+		String longName =  typeUtils.getLongName(type, false);
 			
 		StringBuilder patternBuilder = new StringBuilder();
 		patternBuilder.append(simpleName);
@@ -251,7 +239,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 
 		String id = name;
 		if (op.getParameters() != null) {
-			id = id+op.getParameters().size();
+			id = id+methodFinder.createExecutableID(op);
 		}
 		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
 		finishTemplate(template, templateContext, context, acceptor);
@@ -266,39 +254,6 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 		patternBuilder.append(name);
 
 		String id = name;
-		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
-		finishTemplate(template, templateContext, context, acceptor);
-	}
-
-	
-	protected void createConstructorTemplate(JvmType type, boolean var,  EList<JvmFormalParameter> parameters,TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		StringBuilder descBuilder = new StringBuilder();
-		descBuilder.append(type.getSimpleName());
-		if (var) {
-			descBuilder.append(" var ");
-		}
-		descBuilder.append("(");
-		if (parameters != null) {
-			descBuilder.append(toDescString(parameters));
-		}
-		descBuilder.append(")");
-		
-		StringBuilder patternBuilder = new StringBuilder();
-		patternBuilder.append(type.getSimpleName());
-		if (var) {
-			patternBuilder.append(" ${var}");
-		}
-		patternBuilder.append("(");
-		if (parameters != null) {
-			patternBuilder.append(toPattern(parameters));
-		}
-		patternBuilder.append(")");
-				
-		String longName = typeUtils.getLongName(type, false);
-		String id = longName;
-		if (parameters != null) {
-			id = id+parameters.size();
-		}
 		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
 		finishTemplate(template, templateContext, context, acceptor);
 	}

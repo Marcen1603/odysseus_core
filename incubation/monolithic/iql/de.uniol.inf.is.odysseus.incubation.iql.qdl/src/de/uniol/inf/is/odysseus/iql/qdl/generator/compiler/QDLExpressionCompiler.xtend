@@ -13,16 +13,16 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeOperatorsFactory
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression
 import org.eclipse.xtext.common.types.JvmField
 import org.eclipse.xtext.common.types.JvmOperation
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeExtensionsFactory
 
-class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionParser, QDLTypeUtils, QDLLookUp, QDLTypeOperatorsFactory>{
+class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionParser, QDLTypeUtils, QDLLookUp, QDLTypeExtensionsFactory>{
 		
 	@Inject
-	new(QDLCompilerHelper helper, QDLTypeCompiler typeCompiler, QDLExpressionParser exprParser, QDLTypeUtils typeUtils, QDLLookUp lookUp, QDLTypeOperatorsFactory typeOperatorsFactory) {
+	new(QDLCompilerHelper helper, QDLTypeCompiler typeCompiler, QDLExpressionParser exprParser, QDLTypeUtils typeUtils, QDLLookUp lookUp, QDLTypeExtensionsFactory typeOperatorsFactory) {
 		super(helper, typeCompiler, exprParser, typeUtils, lookUp, typeOperatorsFactory)
 	}
 	
@@ -56,7 +56,7 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHel
 		if (helper.isOperator(e.ref)) {
 			var opName = helper.getLogicalOperatorName(e.ref)
 			if (e.argsMap != null && e.argsMap.elements.size > 0) {	
-				var constructor = lookUp.findConstructor(e.ref, e.argsList.elements.size)
+				var constructor = lookUp.findConstructor(e.ref, e.argsList.elements)
 				var args = e.argsList.elements.size > 0
 				if (constructor != null) {
 					'''getOperator«typeUtils.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«compile(e.argsList,constructor.parameters, context)»), operators,  «compile(e.argsMap,e.ref, context)»)'''
@@ -64,7 +64,7 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHel
 					'''getOperator«typeUtils.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«compile(e.argsList, context)»), operators,  «compile(e.argsMap,e.ref, context)»)'''
 				}		
 			} else if (e.argsList != null) {
-				var constructor = lookUp.findConstructor(e.ref, e.argsList.elements.size)
+				var constructor = lookUp.findConstructor(e.ref, e.argsList.elements)
 				var args = e.argsList.elements.size > 0
 				if (constructor != null) {
 					'''getOperator«typeUtils.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«compile(e.argsList,constructor.parameters, context)»), operators)'''

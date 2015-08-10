@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmPrimitiveType;
 import org.eclipse.xtext.common.types.JvmType;
@@ -32,6 +33,9 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
+
+
+
 
 
 
@@ -60,9 +64,12 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 
 	@Inject
 	private XtextResourceSet systemResourceSet;
-	
+		
 	@Inject
 	protected IQLClasspathTypeProviderFactory typeProviderFactory;
+	
+	@Inject
+	protected IQLQualifiedNameConverter converter;
 	
 	protected U typeUtils;
 	
@@ -189,7 +196,10 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 				String packageName = namespace.substring(0, namespace.length()-2);
 				result.addAll(getTypesOfPackage(packageName, context));
 			} else {
-				result.add(getType(namespace, context));
+				JvmType t = getType(namespace, context);
+				if (t != null) {
+					result.add(t);
+				}
 			}
 		}
 		
@@ -197,7 +207,8 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 	}	
 	
 	public JvmType getType(String name, Notifier context) {
-		return typeProviderFactory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(context)).findTypeByName(name);
+		ResourceSet set = EcoreUtil2.getResourceSet(context);
+		return typeProviderFactory.findOrCreateTypeProvider(set).findTypeByName(name);
 	}
 		
 	public Collection<JvmType> getTypesOfPackage(String packageName, Resource context) {
@@ -307,10 +318,11 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 	@Override
 	public String getSimpleName(JvmType type, String text, boolean wrapper, boolean array) {
 		String qualifiedName = typeUtils.getLongName(type, array);	
+		String simpleName = typeUtils.getShortName(type, array);	
 		IQLSystemType systemType = this.getSystemType(qualifiedName);
 		if (systemType != null) {
 			if (!isImportNeeded(type, text)) {
-				return text;
+				return converter.toJavaString(text);
 			} else {
 				Class<?> javaType = systemType.getJavaType();
 				return javaType.getSimpleName();
@@ -326,27 +338,36 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 					return javaType.getSimpleName();
 				}
 			} else if (text != null){
-				return text;
+				return converter.toJavaString(text);
 			} else {
-				return qualifiedName;
+				return simpleName;
 			}
 		}
 	}
 	
 	@Override
 	public boolean isImportNeeded(JvmType type, String text) {
-		if (typeUtils.isUserDefinedType(type, false)) {
-			return false;
-		} else if (typeUtils.isPrimitive(type)) {
-			return false;
-		}else {
-			try {
-				Class.forName(text);
+		if (type instanceof JvmDeclaredType) {
+			JvmDeclaredType declaredType = (JvmDeclaredType) type;
+			if (typeUtils.isUserDefinedType(declaredType, false)) {
 				return false;
-			} catch (Exception e) {
-				return true;
+			} else if (typeUtils.isPrimitive(declaredType)) {
+				return false;
+			} else if (declaredType.getPackageName() == null) {
+				return false;
+			} else {
+				try {
+					Class.forName(text);
+					return false;
+				} catch (Exception e) {
+					return true;
+				}
 			}
+			
+		} else {
+			return false;
 		}
+
 	}
 	
 	protected String toWrapper(String name) {

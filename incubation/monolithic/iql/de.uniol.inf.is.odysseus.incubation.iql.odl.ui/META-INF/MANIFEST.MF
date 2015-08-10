@@ -19,7 +19,9 @@ Require-Bundle: de.uniol.inf.is.odysseus.iql.odl;visibility:=reexport,
  org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.compare,
  de.uniol.inf.is.odysseus.rcp.base,
- de.uniol.inf.is.odysseus.core.server
+ de.uniol.inf.is.odysseus.core.server,
+ org.eclipse.pde.ui;bundle-version="3.6.100",
+ org.apache.commons.io
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.iql.odl.ui.quickfix,
@@ -27,3 +29,4 @@ Export-Package: de.uniol.inf.is.odysseus.iql.odl.ui.quickfix,
  de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.antlr,
  de.uniol.inf.is.odysseus.iql.odl.ui.internal
 Bundle-Activator: de.uniol.inf.is.odysseus.iql.odl.ui.internal.ODLActivator
+Service-Component: OSGI-INF/ODLTemplateService.xml

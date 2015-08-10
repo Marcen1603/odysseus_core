@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.iql.basic.ui.hover;
 
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
-import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
 
@@ -30,14 +30,14 @@ public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLType
 			return getDocumentationJvmField((JvmField) object);
 		} else if (object instanceof JvmOperation) {
 			return getDocumentationJvmOperation((JvmOperation) object);
-		} else if (object instanceof JvmGenericType) {
-			return getDocumentationJvmGenericType((JvmGenericType) object);
+		} else if (object instanceof JvmDeclaredType) {
+			return getDocumentationJvmDeclaredType((JvmDeclaredType) object);
 		}else {
 			return super.getDocumentation(object);
 		}
 	}
 	
-	protected String getDocumentationJvmGenericType(JvmGenericType type) {		
+	protected String getDocumentationJvmDeclaredType(JvmDeclaredType type) {		
 		return "";
 	}
 	

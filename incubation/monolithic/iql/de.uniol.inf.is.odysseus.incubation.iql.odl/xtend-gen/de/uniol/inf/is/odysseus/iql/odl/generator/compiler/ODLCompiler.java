@@ -615,6 +615,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       Collection<IQLNewExpression> newExpressions = this.helper.getNewExpressions(o);
       Collection<IQLVariableStatement> varStmts = this.helper.getVarStatements(o);
       AbstractPipe.OutputMode outputmode = this.helper.determineOutputMode(o);
+      boolean hasInit = this.helper.hasInitMethod(o);
       String _canonicalName = superClass.getCanonicalName();
       context.addImport(_canonicalName);
       String _canonicalName_1 = read.getCanonicalName();
@@ -704,6 +705,13 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           _builder.newLineIfNotEmpty();
         }
       }
+      {
+        if (hasInit) {
+          _builder.append("\t\t");
+          _builder.append("onInit();");
+          _builder.newLine();
+        }
+      }
       _builder.append("\t");
       _builder.append("}");
       _builder.newLine();
@@ -725,6 +733,13 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           String _createCloneStatements_1 = this.createCloneStatements(p_1, "ao", context);
           _builder.append(_createCloneStatements_1, "\t\t");
           _builder.newLineIfNotEmpty();
+        }
+      }
+      {
+        if (hasInit) {
+          _builder.append("\t\t");
+          _builder.append("onInit();");
+          _builder.newLine();
         }
       }
       _builder.append("\t");
@@ -986,6 +1001,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.append(_compile, "\t");
       _builder.append("\t");
       _builder.newLineIfNotEmpty();
+      _builder.newLine();
       _xifexpression = _builder.toString();
     } else {
       String _xifexpression_1 = null;
@@ -1017,6 +1033,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
         _builder_1.append(_compile_1, "\t");
         _builder_1.append("\t");
         _builder_1.newLineIfNotEmpty();
+        _builder_1.newLine();
         _xifexpression_1 = _builder_1.toString();
       } else {
         String _xifexpression_2 = null;
@@ -1129,6 +1146,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
             _builder_2.append(_compile_3, "\t");
             _builder_2.append("\t");
             _builder_2.newLineIfNotEmpty();
+            _builder_2.newLine();
             _xblockexpression = _builder_2.toString();
           }
           _xifexpression_2 = _xblockexpression;

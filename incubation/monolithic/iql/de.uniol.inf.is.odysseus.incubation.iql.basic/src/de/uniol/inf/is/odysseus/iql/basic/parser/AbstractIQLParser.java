@@ -19,17 +19,23 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
 import org.eclipse.osgi.framework.internal.core.AbstractBundle;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
@@ -57,6 +63,8 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	protected static final String IQL_DIR = "iql";
 	protected static final String JAVA_VERSION = "1.7";
 	
+	@Inject
+	private IJavaProjectProvider javaProjectProvider;
 	
 	@Inject 
 	protected Provider<ResourceSet> resourceSetProvider;
@@ -113,7 +121,16 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	
 	protected abstract String getLanguageName();
 	
-	protected Collection<Resource> createNecessaryIQLFiles(String outputPath, EObject element) {
+	protected void deleteResources(Collection<Resource> resources) {
+		for (Resource res : resources) {
+			try {
+				res.delete(new HashMap<>());
+			} catch (IOException e) {
+			}
+		}
+	}
+	
+	protected Collection<Resource> createNecessaryIQLFiles(ResourceSet resourceSet, String outputPath, EObject element) {
 		Collection<EObject> userDefinedTypes = getUserDefinedTypes(element);
 		userDefinedTypes.add(element);
 		Map<IQLFile, StringBuilder> fileBuilders = new HashMap<>();
@@ -130,7 +147,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 			builder.append(getNodeText(type)+System.lineSeparator());
 		}
 		Collection<Resource> resources = new HashSet<>();
-		ResourceSet resourceSet = resourceSetProvider.get();
+		//ResourceSet resourceSet = resourceSetProvider.get();
 		for (Entry<IQLFile, StringBuilder> entry : fileBuilders.entrySet()) {
 			String text = entry.getValue().toString();
 			String path = outputPath+getFilePath(entry.getKey());
@@ -204,7 +221,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 			writer.print(text);
 		} catch (FileNotFoundException e) {
 			throw new QueryParseException("error while creating query file",e);
-		} 
+		}
 		return resourceSet.getResource(URI.createURI(file.toURI().toString()), true);
 	}
 	
@@ -230,10 +247,23 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 		BatchCompiler.compile("-"+JAVA_VERSION+" -classpath "+classPath+" "+path,new PrintWriter(System.out),new PrintWriter(System.err),null);
 	}
 	
-	protected Collection<String> createClassPathEntries(Collection<Resource> resources) {
+	protected Collection<String> createClassPathEntries(ResourceSet set, Collection<Resource> resources) {
 		Collection<Bundle> bundles = typeFactory.getDependencies();	
 		
 		Collection<String> entries = new ArrayList<>();
+
+		IJavaProject project = javaProjectProvider.getJavaProject(set);
+		if (project != null) {
+			try {
+				IPath path = project.getOutputLocation();
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				IFolder folder = root.getFolder(path);
+				entries.add(folder.getLocation().toFile().getAbsolutePath());
+			} catch (JavaModelException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		for (Bundle bundle : bundles) {
 			File file = getPluginDir(bundle);
 			if (file != null) {
@@ -250,7 +280,9 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 					}								
 				}
 			}
-		}		
+		}	
+		
+		
 		return entries;	
 	}
 	

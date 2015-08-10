@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.iql.basic.types.Range;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl.CollectionExtensions;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl.ListExtensions;
@@ -23,6 +25,9 @@ public class IQLDefaultTypes {
 		types.add(ArrayList.class);
 		types.add(Map.class);
 		types.add(HashMap.class);
+		types.add(Iterator.class);
+		types.add(Range.class);
+
 		return types;
 	}
 	
@@ -31,7 +36,8 @@ public class IQLDefaultTypes {
 		implicitImports.add("java.util.*");
 		implicitImports.add("java.lang.*");
 		implicitImports.add("java.lang.System");
-		implicitImports.add("de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter");
+		implicitImports.add(Range.class.getCanonicalName());
+
 		return implicitImports;
 	}
 	

@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.common.types.JvmGenericType;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.osgi.framework.Bundle;
@@ -216,7 +216,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 
 	public boolean isOperator(JvmTypeReference typeRef) {
 		if (typeUtils.getInnerType(typeRef, true) instanceof IQLClass) {
-			JvmGenericType clazz = (JvmGenericType) typeUtils.getInnerType(typeRef, true);
+			JvmDeclaredType clazz = (JvmDeclaredType) typeUtils.getInnerType(typeRef, true);
 			if (clazz.getExtendedClass() != null) {
 				JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLOperator.class, getSystemResourceSet());
 				return typeUtils.getLongName(clazz.getExtendedClass(), false).equals(typeUtils.getLongName(superClass, false));
@@ -227,7 +227,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 
 	public boolean isSource(JvmTypeReference typeRef) {
 		if (typeUtils.getInnerType(typeRef, true) instanceof IQLClass) {
-			JvmGenericType clazz = (JvmGenericType) typeUtils.getInnerType(typeRef, true);
+			JvmDeclaredType clazz = (JvmDeclaredType) typeUtils.getInnerType(typeRef, true);
 			if (clazz.getExtendedClass() != null) {
 				JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLSource.class, getSystemResourceSet());
 				return typeUtils.getLongName(clazz.getExtendedClass(), false).equals(typeUtils.getLongName(superClass, false));	

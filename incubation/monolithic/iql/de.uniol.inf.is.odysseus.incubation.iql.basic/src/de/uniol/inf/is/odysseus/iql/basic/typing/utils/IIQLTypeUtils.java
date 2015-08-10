@@ -16,7 +16,6 @@ public interface IIQLTypeUtils {
 		
 	String getLongName(JvmTypeReference typeRef, boolean array);
 	String getLongName(JvmType type, boolean array);
-	String getLongName(JvmTypeReference typeRef, boolean array,	boolean parameterized);
 
 	String getShortName(JvmTypeReference typeRef, boolean array);
 	String getShortName(JvmType type, boolean array);

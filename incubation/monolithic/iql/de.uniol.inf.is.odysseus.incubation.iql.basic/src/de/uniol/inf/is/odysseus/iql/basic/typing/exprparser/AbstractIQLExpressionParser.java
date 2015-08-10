@@ -5,14 +5,18 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmArrayType;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
-import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAdditiveExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLBooleanNotExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLEqualityExpression;
@@ -46,22 +50,25 @@ import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.types.Range;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
 import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.IIQLExpressionParserContext;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L extends IIQLLookUp, C extends IIQLExpressionParserContext, U extends IIQLTypeUtils> implements IIQLExpressionParser {
+public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L extends IIQLLookUp, C extends IIQLExpressionParserContext, U extends IIQLTypeUtils, E extends IIQLTypeExtensionsFactory> implements IIQLExpressionParser {
 
 	
 	protected L lookUp;
 	protected T typeFactory;
 	protected C exprParserContext;
 	protected U typeUtils;
+	protected E typeExtensionsFactory;
 
-	public AbstractIQLExpressionParser(T typeFactory, L lookUp, C exprParserContext, U typeUtils) {
+	public AbstractIQLExpressionParser(T typeFactory, L lookUp, C exprParserContext, U typeUtils, E typeExtensionsFactory) {
 		this.typeFactory = typeFactory;
 		this.lookUp = lookUp;
 		this.exprParserContext = exprParserContext;
 		this.typeUtils = typeUtils;
+		this.typeExtensionsFactory = typeExtensionsFactory;
 	}
 	
 	
@@ -221,8 +228,55 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		return getType(expr.getExpr(), context);
 	}
 	
+	private boolean isRange(IQLExpression expr, C context) {
+		TypeResult result = getType(expr, context);
+		if (!result.isNull() && typeUtils.getLongName(result.getRef(), true).equalsIgnoreCase(Range.class.getCanonicalName())) {
+			return true;
+		}
+		return false;
+	}
+	
 	public TypeResult getType(IQLArrayExpression expr, C context) {
-		return getType(expr.getLeftOperand(), context);
+		TypeResult result =  getType(expr.getLeftOperand(), context);
+		JvmType innerType = typeUtils.getInnerType(result.getRef(), true);
+		if (innerType instanceof JvmArrayType) {
+			JvmArrayType arrayType = (JvmArrayType) innerType;
+			if (expr.getExpressions().size() > 1 || (expr.getExpressions().size() == 1 && isRange(expr.getExpressions().get(0), context))) {
+				return new TypeResult(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()));
+			} else if (arrayType.getDimensions()==1) {
+				return new TypeResult(typeUtils.createTypeRef(arrayType.getComponentType()));
+			} else {
+				IQLArrayType type = BasicIQLFactory.eINSTANCE.createIQLArrayType();
+				type.setType(arrayType.getComponentType());
+				for (int i = 0; i< arrayType.getDimensions()-1; i++) {
+					type.getDimensions().add("[]");
+				}
+				return new TypeResult(typeUtils.createTypeRef(type));
+			}
+		} else if (innerType instanceof IQLArrayType) {
+			IQLArrayType arrayType = (IQLArrayType) innerType;
+			if (expr.getExpressions().size() > 1 || (expr.getExpressions().size() == 1 && isRange(expr.getExpressions().get(0), context))) {
+				return new TypeResult(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()));
+			} else if (arrayType.getDimensions().size()==1) {
+				return new TypeResult(typeUtils.createTypeRef(arrayType.getType()));
+			} else {
+				IQLArrayType type = BasicIQLFactory.eINSTANCE.createIQLArrayType();
+				type.setType(arrayType.getType());
+				for (int i = 0; i< arrayType.getDimensions().size()-1; i++) {
+					type.getDimensions().add("[]");
+				}
+				return new TypeResult(typeUtils.createTypeRef(type));
+			}
+		} else if (typeExtensionsFactory.hasTypeExtensions(result.getRef(),"get",2)) {
+			JvmOperation op = typeExtensionsFactory.getMethod(result.getRef(), "get", 2);
+			if (op != null) {
+				return new TypeResult(op.getReturnType());
+			} else {
+				return new TypeResult();
+			}
+		} else {
+			return new TypeResult();
+		}
 	}
 	
 	public TypeResult getType(IQLMemberSelectionExpression expr, C context) {
@@ -266,24 +320,24 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 	}
 	
 	public TypeResult getType(IQLThisExpression expr, C context) {		
-		JvmGenericType c = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
+		JvmDeclaredType c = EcoreUtil2.getContainerOfType(expr, JvmDeclaredType.class);
 		return new TypeResult(typeUtils.createTypeRef(c));
 	}
 	
 	public TypeResult getType(IQLSuperExpression expr, C context) {
-		JvmGenericType c = EcoreUtil2.getContainerOfType(expr, JvmGenericType.class);
+		JvmDeclaredType c = EcoreUtil2.getContainerOfType(expr, JvmDeclaredType.class);
 		return new TypeResult(c.getExtendedClass());
 	}
 	
 	@Override
 	public TypeResult getThisType(EObject obj) {
-		JvmGenericType c = EcoreUtil2.getContainerOfType(obj, JvmGenericType.class);
+		JvmDeclaredType c = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
 		return new TypeResult(typeUtils.createTypeRef(c));
 	}
 
 	@Override
 	public TypeResult getSuperType(EObject obj) {
-		JvmGenericType c = EcoreUtil2.getContainerOfType(obj, JvmGenericType.class);
+		JvmDeclaredType c = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
 		return new TypeResult(c.getExtendedClass());
 	}
 	

@@ -76,7 +76,7 @@ public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
 			elements.put("minInputPorts", "1");
 		}
 		if (!elements.containsKey("maxInputPorts")) {
-			elements.put("maxInputPorts", "1");	
+			elements.put("maxInputPorts", ""+Integer.MAX_VALUE);	
 		}
 		if (!elements.containsKey("doc")) {
 			elements.put("doc", "\""+AO_DEFAULT_DOC+"\"");	

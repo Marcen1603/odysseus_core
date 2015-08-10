@@ -2,12 +2,14 @@ package de.uniol.inf.is.odysseus.iql.basic.linking;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmOperation;
@@ -21,6 +23,8 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelection;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
+import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
@@ -36,14 +40,24 @@ public abstract class AbstractIQLLinkingService extends DefaultLinkingService{
 	@Inject
 	protected IIQLTypeUtils typeUtils;
 	
+	@Inject
+	protected IIQLMethodFinder methodFinder;
+	
+	@Inject
+	protected IIQLLookUp lookUp;
+	
 	@Override
 	public List<EObject> getLinkedObjects(EObject context, EReference ref, INode node) throws IllegalNodeException {
+		List<EObject> result = null;
 		if (context instanceof IQLMemberSelection) {
-			return getLinkedObjectsIQLMemberSelection((IQLMemberSelection)context, ref, node);
+			result = getLinkedObjectsIQLMemberSelection((IQLMemberSelection)context, ref, node);
 		} else if (context instanceof IQLJvmElementCallExpression) {
-			return getLinkedObjectsIQLJvmElementCallExpression((IQLJvmElementCallExpression)context, ref, node);
-		} else {
+			result =  getLinkedObjectsIQLJvmElementCallExpression((IQLJvmElementCallExpression)context, ref, node);
+		}
+		if (result == null || result.isEmpty()) {
 			return super.getLinkedObjects(context, ref, node);
+		} else {
+			return result;
 		}
 	}
 	
@@ -61,31 +75,44 @@ public abstract class AbstractIQLLinkingService extends DefaultLinkingService{
 			}
 		}
 		if (result == null) {
+			Collection<JvmOperation> methods = new HashSet<>();
 			for (IEObjectDescription desc : eObjectDescriptions) {
-				if (qualifiedNameConverter.toString(desc.getQualifiedName()).equalsIgnoreCase(crossRefString)) {
-					EObject obj = desc.getEObjectOrProxy();
-					if (obj instanceof JvmOperation) {
-						JvmOperation op = (JvmOperation) obj;
-						if(expr.getArgs() != null && expr.getArgs().getElements().size() == op.getParameters().size()) {
-							result = obj;
-							break;
-						} else if (typeUtils.isGetter(op) && !(expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
-							result = obj;
-						} else if (typeUtils.isSetter(op) && (expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
-							result = obj;
-						} else if (result == null) {
-							result = obj;
-						}
-					} 
+				EObject obj = desc.getEObjectOrProxy();
+				if (obj instanceof JvmOperation) {
+					methods.add((JvmOperation) obj);
 				}
 			}
+			if (expr.getArgs() != null) {				
+				result = methodFinder.findMethod(methods, crossRefString, expr.getArgs().getElements());
+			} else if (!isAssignment(expr)) {
+				result = methodFinder.findMethod(methods, "get"+crossRefString, 0);
+				if (result == null) {
+					result = methodFinder.findMethod(methods, "is"+crossRefString, 0);
+				}
+			} else if (isAssignment(expr)) {
+				result = methodFinder.findMethod(methods, "set"+crossRefString,1 );
+			} 
+			if (result == null) {
+				result = methodFinder.findMethod(methods, crossRefString);
+			}
 		}
-		return Collections.singletonList(result);
+		if (result != null) {
+			return Collections.singletonList(result);
+		} else {
+			return null;
+		}
 	}
+	
+	private boolean isAssignment(EObject obj) {
+		IQLAssignmentExpression expr = EcoreUtil2.getContainerOfType(obj, IQLAssignmentExpression.class);
+		return expr != null;
+	}
+	
 	
 	protected List<EObject> getLinkedObjectsIQLJvmElementCallExpression(IQLJvmElementCallExpression expr, EReference ref, INode node) throws IllegalNodeException {
 		Collection<IEObjectDescription> eObjectDescriptions = scopeProvider.getIQLJvmElementCallExpression(expr);
-		String crossRefString = getCrossRefNodeAsString(node);
+		String[] splits = getCrossRefNodeAsString(node).split(IQLQualifiedNameConverter.DELIMITER);
+		String crossRefString = splits[splits.length-1];
 		EObject result = null;
 		for (IEObjectDescription desc : eObjectDescriptions) {
 			if (qualifiedNameConverter.toString(desc.getQualifiedName()).equalsIgnoreCase(crossRefString)) {
@@ -102,26 +129,32 @@ public abstract class AbstractIQLLinkingService extends DefaultLinkingService{
 			}
 		}
 		if (result == null) {
+			Collection<JvmOperation> methods = new HashSet<>();
 			for (IEObjectDescription desc : eObjectDescriptions) {
-				if (qualifiedNameConverter.toString(desc.getQualifiedName()).equalsIgnoreCase(crossRefString)) {
-					EObject obj = desc.getEObjectOrProxy();
-					if (obj instanceof JvmOperation) {
-						JvmOperation op = (JvmOperation) obj;
-						if(expr.getArgs() != null && expr.getArgs().getElements().size() == op.getParameters().size()) {
-							result = obj;
-							break;
-						} else if (typeUtils.isGetter(op) && !(expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
-							result = obj;
-						} else if (typeUtils.isSetter(op) && (expr.eContainer().eContainer() instanceof IQLAssignmentExpression)) {
-							result = obj;
-						} else if (result == null) {
-							result = obj;
-						}
-					}
+				EObject obj = desc.getEObjectOrProxy();
+				if (obj instanceof JvmOperation) {
+					methods.add((JvmOperation) obj);
 				}
 			}
 			
+			if (expr.getArgs() != null) {				
+				result = methodFinder.findMethod(methods, crossRefString, expr.getArgs().getElements());
+			} else if (!isAssignment(expr)) {
+				result = methodFinder.findMethod(methods, "get"+crossRefString, 0);
+				if (result == null) {
+					result = methodFinder.findMethod(methods, "is"+crossRefString, 0);
+				}
+			} else if (isAssignment(expr)) {
+				result = methodFinder.findMethod(methods, "set"+crossRefString, 1);
+			}
+			if (result == null) {
+				result = methodFinder.findMethod(methods, crossRefString);
+			}
 		}
-		return Collections.singletonList(result);
+		if (result != null) {
+			return Collections.singletonList(result);
+		} else {
+			return null;
+		}
 	}
 }

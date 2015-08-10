@@ -5162,7 +5162,7 @@ ruleIQLMemberCallExpression returns [EObject current=null]
         $current = $this_IQLOtherExpressions_0.current; 
         afterParserOrEnumRuleCall();
     }
-((((
+(((((
 )	'[' 
 (
 (
@@ -5177,17 +5177,17 @@ ruleIQLExpression
 ))=>((
     {
         $current = forceCreateModelElementAndSet(
-            grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0(),
+            grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0(),
             $current);
     }
 )	otherlv_2='[' 
     {
-    	newLeafNode(otherlv_2, grammarAccess.getIQLMemberCallExpressionAccess().getLeftSquareBracketKeyword_1_0_1());
+    	newLeafNode(otherlv_2, grammarAccess.getIQLMemberCallExpressionAccess().getLeftSquareBracketKeyword_1_0_0_1());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getExpressionsIQLExpressionParserRuleCall_1_0_2_0()); 
+	        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getExpressionsIQLExpressionParserRuleCall_1_0_0_2_0()); 
 	    }
 		lv_expressions_3_0=ruleIQLExpression		{
 	        if ($current==null) {
@@ -5204,12 +5204,12 @@ ruleIQLExpression
 )
 )(	otherlv_4=',' 
     {
-    	newLeafNode(otherlv_4, grammarAccess.getIQLMemberCallExpressionAccess().getCommaKeyword_1_0_3_0());
+    	newLeafNode(otherlv_4, grammarAccess.getIQLMemberCallExpressionAccess().getCommaKeyword_1_0_0_3_0());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getExpressionsIQLExpressionParserRuleCall_1_0_3_1_0()); 
+	        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getExpressionsIQLExpressionParserRuleCall_1_0_0_3_1_0()); 
 	    }
 		lv_expressions_5_0=ruleIQLExpression		{
 	        if ($current==null) {
@@ -5226,24 +5226,25 @@ ruleIQLExpression
 )
 ))?	otherlv_6=']' 
     {
-    	newLeafNode(otherlv_6, grammarAccess.getIQLMemberCallExpressionAccess().getRightSquareBracketKeyword_1_0_4());
+    	newLeafNode(otherlv_6, grammarAccess.getIQLMemberCallExpressionAccess().getRightSquareBracketKeyword_1_0_0_4());
     }
-))*(((((
+))
+    |(((((
 )	'.' 
 ))=>((
     {
         $current = forceCreateModelElementAndSet(
-            grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_2_0_0_0(),
+            grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0(),
             $current);
     }
 )	otherlv_8='.' 
     {
-    	newLeafNode(otherlv_8, grammarAccess.getIQLMemberCallExpressionAccess().getFullStopKeyword_2_0_0_1());
+    	newLeafNode(otherlv_8, grammarAccess.getIQLMemberCallExpressionAccess().getFullStopKeyword_1_1_0_0_1());
     }
 ))(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getSelIQLMemberSelectionParserRuleCall_2_1_0()); 
+	        newCompositeNode(grammarAccess.getIQLMemberCallExpressionAccess().getSelIQLMemberSelectionParserRuleCall_1_1_1_0()); 
 	    }
 		lv_sel_9_0=ruleIQLMemberSelection		{
 	        if ($current==null) {
@@ -5258,7 +5259,7 @@ ruleIQLExpression
 	    }
 
 )
-))*)
+)))*)
 ;
 
 
@@ -5344,10 +5345,12 @@ ruleIQLOtherExpressions returns [EObject current=null]
 	            $current = createModelElement(grammarAccess.getIQLOtherExpressionsRule());
 	        }
         }
-	otherlv_1=RULE_ID
-	{
-		newLeafNode(otherlv_1, grammarAccess.getIQLOtherExpressionsAccess().getElementJvmIdentifiableElementCrossReference_0_1_0()); 
-	}
+		{ 
+	        newCompositeNode(grammarAccess.getIQLOtherExpressionsAccess().getElementJvmIdentifiableElementCrossReference_0_1_0()); 
+	    }
+		ruleQualifiedName		{ 
+	        afterParserOrEnumRuleCall();
+	    }
 
 )
 )(

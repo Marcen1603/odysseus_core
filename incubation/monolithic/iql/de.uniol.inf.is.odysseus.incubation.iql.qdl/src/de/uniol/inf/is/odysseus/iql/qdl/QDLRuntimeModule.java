@@ -22,7 +22,9 @@ import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.parser.IIQLParser;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.DefaultIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
@@ -52,7 +54,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeOperatorsFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypingEntryPoint;
 
@@ -63,6 +65,9 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypingEntryPoint;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQDLRuntimeModule {
 
+	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
+		return DefaultIQLMethodFinder.class;
+	}
 	
 	@Override
 	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
@@ -88,7 +93,7 @@ public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQ
 	}
 	
 	public Class<? extends IIQLTypeExtensionsFactory> bindTypeOperatorsFactory() {
-		return QDLTypeOperatorsFactory.class;
+		return QDLTypeExtensionsFactory.class;
 	}
 	
 	@Override

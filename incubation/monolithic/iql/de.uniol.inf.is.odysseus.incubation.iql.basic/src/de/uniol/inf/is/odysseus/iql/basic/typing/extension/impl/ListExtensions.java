@@ -36,42 +36,38 @@ public class ListExtensions extends CollectionExtensions {
 		return result;
 	}
 	
-	public static <T> T set(List<T> col, T element, int index) {
-		return col.set(index, element);
+	public static <T> void set(List<T> col, T element, int index) {
+		try {
+			col.set(index, element);
+		} catch (Exception e) {
+			col.add(index, element);
+		}
 	}
 	
-	public static <T> List<T> set(List<T> col, Collection<T> elements, Object ... indices) {
+	
+	
+	public static <T> void set(List<T> col, Collection<T> elements, Object ... indices) {
 		Iterator<T> it = elements.iterator();
 		for (Object index : indices) {
 			if (index instanceof Range) {
 				Range range = (Range) index;
 				int counter = range.getFrom();
 				while (counter<= range.getTo()) {
-					col.set(counter, it.next());
+					try {
+						col.set(counter, it.next());
+					} catch (Exception e) {
+						col.add(counter, it.next());
+					}
 					counter++;
 				}
 			} else {
-				col.set((int) index, it.next());
+				try {
+					col.set((int) index, it.next());
+				} catch (Exception e) {
+					col.add((int) index, it.next());
+				}
 			}
 		}
-		return col;
 	}
 
-	
-	public static <T> List<T> set(List<T> col, Object ... indices) {
-		List<T> result = new ArrayList<>();
-		for (Object index : indices) {
-			if (index instanceof Range) {
-				Range range = (Range) index;
-				int counter = range.getFrom();
-				while (counter<= range.getTo()) {
-					result.add(col.get(counter));
-					counter++;
-				}
-			} else {
-				result.add(col.get((int) index));
-			}
-		}
-		return result;
-	}
 }
