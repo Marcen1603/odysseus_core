@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
@@ -25,28 +22,16 @@ public class TransformCSVParameter {
 
 public static CodeFragmentInfo getCodeForParameterInfoNeu(Map<String, String> optionMap, String operatorVariable){
 		CodeFragmentInfo codeFragmentInfo= new CodeFragmentInfo();
-		Set<String> imports = new HashSet<String>();
-	
-		StringBuilder code = new StringBuilder();
 		
-		imports.add(OptionMap.class.getName());
+		StringTemplate optionMapTemplate = new StringTemplate("java","optionMap");
+		optionMapTemplate.getSt().add("operatorVariable", operatorVariable);
+		optionMapTemplate.getSt().add("optionMap", optionMap);
 		
-		code.append("OptionMap "+operatorVariable+"ParameterInfo = new OptionMap();");
-		code.append("\n");
+		codeFragmentInfo.addCode(optionMapTemplate.getSt().render().replace("\\", "\\\\"));
 	
-			for (Map.Entry<String, String> entry : optionMap.entrySet())
-			{
-			    String value = entry.getValue().replace("\\", "\\\\");
-			    code.append(operatorVariable+"ParameterInfo.setOption(\""+entry.getKey()+"\",\""+ value+"\");");
-				code.append("\n");
-			}
-	
-		codeFragmentInfo.addCode(code.toString());
-		
-		codeFragmentInfo.addImports(imports);
+		codeFragmentInfo.addImport(OptionMap.class.getName());
 		
 		return codeFragmentInfo;
-		
 	}
 
 }
