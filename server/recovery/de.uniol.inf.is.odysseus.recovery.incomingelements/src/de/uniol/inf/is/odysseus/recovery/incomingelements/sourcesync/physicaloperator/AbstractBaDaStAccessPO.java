@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.KafkaCo
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.BaDaStAccessAO;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.transform.TBaDaStAccessAORule;
 
+// TODO Good idea to have two different POs? In recovery mode, backup is still needed.
 /**
  * Physical operator to be placed directly after source access operators. <br />
  * <br />

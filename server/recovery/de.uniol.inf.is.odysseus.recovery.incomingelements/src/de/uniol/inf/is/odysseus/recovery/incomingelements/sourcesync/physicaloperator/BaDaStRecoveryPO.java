@@ -135,7 +135,8 @@ public class BaDaStRecoveryPO<T extends IStreamObject<IMetaAttribute>> extends
 	@SuppressWarnings("unchecked")
 	// cast from IStreamable to T
 	private void transferIfLive(IStreamable object, int port) {
-		// TODO This needs to be tested!
+		// TODO Live mode after recovery: Need to be tested, if it is possible
+		// to get live again.
 		if (this.mLiveProcessing) {
 			if (object.isPunctuation()) {
 				this.sendPunctuation((IPunctuation) object, port);

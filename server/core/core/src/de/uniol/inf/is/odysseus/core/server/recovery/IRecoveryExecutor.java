@@ -65,7 +65,6 @@ public interface IRecoveryExecutor {
 	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
 			ISession caller, List<ILogicalQuery> queries);
 	
-	// TODO I think activateBackup has to be called every time?
 	/**
 	 * Checks, if a recovery is needed.
 	 * @return True, if {@link #recover(QueryBuildConfiguration, ISession, List)} should be called. <br />

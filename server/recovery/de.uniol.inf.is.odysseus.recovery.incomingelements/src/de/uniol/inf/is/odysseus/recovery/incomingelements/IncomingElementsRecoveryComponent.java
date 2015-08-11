@@ -95,6 +95,15 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 		return "Incoming Elements";
 	}
 
+	/**
+	 * A set of all queries, which are a currently recovered. This means, they
+	 * are an outcome of
+	 * {@link #recover(QueryBuildConfiguration, ISession, List)}, but they are
+	 * not yet an income of
+	 * {@link #activateBackup(QueryBuildConfiguration, ISession, List)}.
+	 */
+	private final Set<ILogicalQuery> mCurrentlyRecoveredQueries = Sets.newHashSet();
+
 	@Override
 	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
 			ISession caller, List<ILogicalQuery> queries) {
@@ -105,6 +114,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 		for (ILogicalQuery query : queries) {
 			insertSourceSyncOperators(query, true, caller, cExecutor.get());
 		}
+		mCurrentlyRecoveredQueries.addAll(queries);
 		return queries;
 	}
 
@@ -116,7 +126,11 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 			return queries;
 		}
 		for (ILogicalQuery query : queries) {
-			insertSourceSyncOperators(query, false, caller, cExecutor.get());
+			if(this.mCurrentlyRecoveredQueries.contains(query)) {
+				this.mCurrentlyRecoveredQueries.remove(query);
+			} else {
+				insertSourceSyncOperators(query, false, caller, cExecutor.get());
+			}
 		}
 		return queries;
 	}

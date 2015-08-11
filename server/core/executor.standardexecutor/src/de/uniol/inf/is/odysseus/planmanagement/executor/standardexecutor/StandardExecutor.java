@@ -401,25 +401,50 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		return queries;
 	}
 
+	/**
+	 * Preparation for recovery means the following. <br />
+	 * <br />
+	 * If an {@link IRecoveryExecutor} has been set by Odysseus Script and just
+	 * a backup is needed,
+	 * {@link IRecoveryExecutor#activateBackup(QueryBuildConfiguration, ISession, List)}
+	 * will be called. <br />
+	 * <br />
+	 * If an {@link IRecoveryExecutor} has been set by Odysseus Script and a
+	 * recovery is needed (Odysseus has been crashed),
+	 * {@link IRecoveryExecutor#recover(QueryBuildConfiguration, ISession, List)}
+	 * will be called BEFORE
+	 * {@link IRecoveryExecutor#activateBackup(QueryBuildConfiguration, ISession, List)}
+	 * .
+	 * 
+	 * @param parameter
+	 *            The used {@link ParameterRecoveryConfiguration} with the
+	 *            {@link IRecoveryExecutor} and it's configuration.
+	 * @param parameters
+	 *            The used {@link QueryBuildConfiguration}.
+	 * @param caller
+	 *            The user.
+	 * @param queries
+	 *            The queries to add.
+	 * @return For backup/recovery issues modified queries.
+	 */
 	private List<ILogicalQuery> prepareRecovery(
-			ParameterRecoveryConfiguration config,
+			ParameterRecoveryConfiguration parameter,
 			QueryBuildConfiguration parameters, ISession caller,
 			List<ILogicalQuery> queries) {
 		LOG.debug("Beginning preparation for recovery");
-		IRecoveryExecutor recoveryExecutor = getRecoveryExecutor(config
+		List<ILogicalQuery> tmpQueries = Lists.newArrayList(queries);
+		IRecoveryExecutor recoveryExecutor = getRecoveryExecutor(parameter
 				.getRecoveryExecutor());
 		if (recoveryExecutor != null) {
 			LOG.debug("Using  {} for recovery", recoveryExecutor.getName());
-			recoveryExecutor = recoveryExecutor.newInstance(config
+			recoveryExecutor = recoveryExecutor.newInstance(parameter
 					.getConfiguration());
 			if (recoveryExecutor.isRecoveryNeeded()) {
-				return recoveryExecutor.recover(parameters, caller, queries);
-			} else {
-				return recoveryExecutor.activateBackup(parameters, caller,
-						queries);
+				tmpQueries = recoveryExecutor.recover(parameters, caller, tmpQueries);
 			}
+			return recoveryExecutor.activateBackup(parameters, caller, tmpQueries);
 		}
-		return queries;
+		return tmpQueries;
 	}
 
 	private void setQueryBuildParameters(ILogicalQuery query,
