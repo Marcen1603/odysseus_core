@@ -246,6 +246,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("    sendLongString <pipeID>                              - Sends a 100MB big String to test Buffers.\n");
 		sb.append("    extractState <LocalQueryId>							- Extracts first StatefulPO State from Query with Query ID\n");
 		sb.append("    forceUnlock                                          - forces Load Balancing Lock to unlock\n");
+		sb.append("    testCommunicator <communicatorName> <queryId> <PeerName> - Tries to send Query with chosen communicator to chosen peer.\n");
 		return sb.toString();
 	}
 	
@@ -303,6 +304,64 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			sb.append(query.getQueryStartTS());
 			ci.println(sb.toString());
 		}
+	}
+	
+	public void _testCommunicator(CommandInterpreter ci) {
+
+		Preconditions.checkNotNull(communicatorRegistry, "Communicator Registry not bound.");
+		Preconditions.checkNotNull(peerDictionary,"Peer Dictionary not bound.");
+		
+		final String ERROR_USAGE = "Usage: testCommunciator <communicatorName> <queryID> <otherPeerName>";
+		final String ERROR_COMMUNICATOR = "Error: Communicator not found.";
+		final String ERROR_PEER = "Error: Peer unknown";
+		
+		String communicatorName = ci.nextArgument();
+		if (Strings.isNullOrEmpty(communicatorName)) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+		
+		ILoadBalancingCommunicator communicator = communicatorRegistry.getCommunicator(communicatorName);
+		
+		if(communicator==null) {
+			ci.println(ERROR_COMMUNICATOR);
+			return;
+		}
+
+		String localQueryIdString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(localQueryIdString)) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		int localQueryId;
+
+		try {
+			localQueryId = Integer.parseInt(localQueryIdString);
+		} catch (NumberFormatException e) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+		
+		String peerName = ci.nextArgument();
+		if (Strings.isNullOrEmpty(peerName)) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+		PeerID pid = null;
+		for(PeerID pidFromList : peerDictionary.getRemotePeerIDs()) {
+			if(peerDictionary.getRemotePeerName(pidFromList).equals(peerName)) {
+				pid = pidFromList;
+				break;
+			}
+		}
+		if(pid==null) {
+			ci.println(ERROR_PEER);
+			return;
+		}
+		ci.println("Initiating transfer.");
+		communicator.initiateLoadBalancing(pid, localQueryId);
+		
 	}
 	
 	
