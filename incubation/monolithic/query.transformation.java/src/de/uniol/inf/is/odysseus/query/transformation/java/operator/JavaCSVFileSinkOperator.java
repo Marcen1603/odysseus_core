@@ -36,7 +36,7 @@ public class JavaCSVFileSinkOperator extends AbstractTransformationOperator{
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
 		
-		CodeFragmentInfo codeAccessFramwork = CreateDefaultCode.codeForAccessFrameworkNeu(protocolHandlerParameter, csvFileSinkOP.getOptionsMap(),operator, direction);
+		CodeFragmentInfo codeAccessFramwork = CreateDefaultCode.codeForAccessFramework(protocolHandlerParameter, csvFileSinkOP.getOptionsMap(),operator, direction);
 		csvFileSink.addCodeFragmentInfo(codeAccessFramwork);
 		
 		

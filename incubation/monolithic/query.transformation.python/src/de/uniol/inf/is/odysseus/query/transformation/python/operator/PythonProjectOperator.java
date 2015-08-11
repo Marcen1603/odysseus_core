@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 public class PythonProjectOperator extends AbstractTransformationOperator {
 	
-	PythonProjectOperator(){
+	public PythonProjectOperator(){
 		super(PythonProjectOperator.class, "ProjectAO","Python");
 	}
 	

@@ -45,7 +45,7 @@ public class CreateDefaultCode {
 		return sdfSchema;
 	}
 	
-	public static CodeFragmentInfo codeForAccessFrameworkNeu(ProtocolHandlerParameter protocolHandlerParameter, Map<String,String> optionMap, ILogicalOperator operator, ITransportDirection direction){
+	public static CodeFragmentInfo codeForAccessFramework(ProtocolHandlerParameter protocolHandlerParameter, Map<String,String> optionMap, ILogicalOperator operator, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 	
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);

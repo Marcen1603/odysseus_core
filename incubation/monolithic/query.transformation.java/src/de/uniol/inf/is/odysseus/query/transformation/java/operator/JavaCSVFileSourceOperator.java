@@ -41,7 +41,7 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
 		
-		csvFileSource.addCodeFragmentInfo(CreateDefaultCode.codeForAccessFrameworkNeu(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
+		csvFileSource.addCodeFragmentInfo(CreateDefaultCode.codeForAccessFramework(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
 		
 		TimestampAO timestampAO = Utils.createTimestampAO(operator, null);
 		

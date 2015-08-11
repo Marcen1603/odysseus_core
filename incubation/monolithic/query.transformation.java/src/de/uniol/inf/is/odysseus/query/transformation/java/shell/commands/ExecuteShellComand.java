@@ -14,14 +14,12 @@ public class ExecuteShellComand {
 		p = Runtime.getRuntime().exec("cmd /c ant -f "+tempDirectory);
 		p.waitFor();
 		
-		
 		StringBuilder okLine = new StringBuilder();
 		StringBuilder errorLine = new StringBuilder();
 		BufferedReader reader = 
 			         new BufferedReader(new InputStreamReader(p.getInputStream()));
 		
 		//no error
-		
 		String line = "";			
 			    while ((line = reader.readLine())!= null) {
 			    	okLine.append(line + "\n");
@@ -58,7 +56,6 @@ public class ExecuteShellComand {
 		//p.waitFor();
 		
 	
-		
 		StringBuilder okLine = new StringBuilder();
 		StringBuilder errorLine = new StringBuilder();
 		BufferedReader reader = 
