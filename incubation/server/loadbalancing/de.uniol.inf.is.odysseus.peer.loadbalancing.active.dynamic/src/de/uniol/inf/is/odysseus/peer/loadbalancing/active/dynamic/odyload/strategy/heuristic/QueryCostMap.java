@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.QueryLoadInformation;
 
 
 public class QueryCostMap implements Cloneable {
@@ -128,8 +131,8 @@ public class QueryCostMap implements Cloneable {
 	
 
 	public double getCosts() {
-		Double generalCosts = internalCostMap.size() * DynamicLoadBalancingConstants.WEIGHT_GENERAL_COSTS;
-		Double individualCostsTotal = individualCostSum * DynamicLoadBalancingConstants.WEIGHT_INDIVIDUAL_COSTS;
+		Double generalCosts = internalCostMap.size() * OdyLoadConstants.WEIGHT_GENERAL_COSTS;
+		Double individualCostsTotal = individualCostSum * OdyLoadConstants.WEIGHT_INDIVIDUAL_COSTS;
 		return generalCosts + individualCostsTotal;
 	}
 	

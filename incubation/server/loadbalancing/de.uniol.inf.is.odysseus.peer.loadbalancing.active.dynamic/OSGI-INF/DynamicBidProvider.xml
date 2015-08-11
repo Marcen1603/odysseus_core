@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.loadbalancing.active.DynamicBidProvider">
-   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.DynamicAllocationBidProvider"/>
+   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.allocator.DynamicAllocationBidProvider"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider"/>
    </service>

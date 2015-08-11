@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy;
 
 public class QueryLoadInformation implements Cloneable {
 	private int queryId;

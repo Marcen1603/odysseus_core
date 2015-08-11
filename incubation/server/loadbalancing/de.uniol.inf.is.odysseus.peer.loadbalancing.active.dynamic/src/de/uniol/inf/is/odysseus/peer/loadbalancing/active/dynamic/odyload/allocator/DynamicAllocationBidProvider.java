@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.allocator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -50,7 +51,7 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 
 	@Override
 	public String getName() {
-		return DynamicLoadBalancingConstants.BID_PROVIDER_NAME;
+		return OdyLoadConstants.BID_PROVIDER_NAME;
 	}
 
 	@Override
@@ -90,9 +91,9 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 			// To avoid other peers overloading themselves, the fallback values
 			// Should be 1.0/infinite. For testing purpose other values can be
 			// choosen.
-			neededCpuLoad = DynamicLoadBalancingConstants.FALLBACK_CPU_COSTS;
-			neededMemLoad = DynamicLoadBalancingConstants.FALLBACK_MEM_COSTS;
-			neededNetLoad = DynamicLoadBalancingConstants.FALLBACK_NET_COSTS;
+			neededCpuLoad = OdyLoadConstants.FALLBACK_CPU_COSTS;
+			neededMemLoad = OdyLoadConstants.FALLBACK_MEM_COSTS;
+			neededNetLoad = OdyLoadConstants.FALLBACK_NET_COSTS;
 		}
 
 		LOG.debug("needed Cpu Load:{}", neededCpuLoad);
@@ -112,8 +113,8 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 
 		//FIXME Remove Workaround ;)
 		// This prevents peer from overloading itself.
-		if (freeCpuAfterLoadBalancing <= (1.0-DynamicLoadBalancingConstants.CPU_THRESHOLD) || freeMemAfterLoadBalancing <=  (1.0-DynamicLoadBalancingConstants.MEM_THRESHOLD)
-				|| freeNetAfterLoadBalancing <= (1.0-DynamicLoadBalancingConstants.NET_THRESHOLD)) {
+		if (freeCpuAfterLoadBalancing <= (1.0-OdyLoadConstants.CPU_THRESHOLD) || freeMemAfterLoadBalancing <=  (1.0-OdyLoadConstants.MEM_THRESHOLD)
+				|| freeNetAfterLoadBalancing <= (1.0-OdyLoadConstants.NET_THRESHOLD)) {
 			LOG.debug("Not bidding to QueryPart is this would overload Peer:");
 			return Optional.absent();
 		}

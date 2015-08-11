@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
 
-public class DynamicLoadBalancingConstants {
+public class OdyLoadConstants {
 
 	
 			//Monitoring Thread Constants (Trigger)

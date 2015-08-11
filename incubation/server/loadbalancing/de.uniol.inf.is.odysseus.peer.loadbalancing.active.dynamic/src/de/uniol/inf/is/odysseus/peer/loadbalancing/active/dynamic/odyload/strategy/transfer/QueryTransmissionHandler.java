@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionHandlerListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.IPeerLockContainerListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.PeerLockContainer;

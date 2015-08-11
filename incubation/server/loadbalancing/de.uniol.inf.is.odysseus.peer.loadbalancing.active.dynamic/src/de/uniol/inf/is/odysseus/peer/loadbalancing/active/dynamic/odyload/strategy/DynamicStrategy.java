@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +40,14 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThreadListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQuerySelectionStrategy;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionHandlerListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.GreedyQuerySelector;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.QueryCostMap;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.SimulatedAnnealingQuerySelector;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer.QueryTransmissionHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SharedQueryIDModifier;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
@@ -237,7 +245,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 
 	@Override
 	public String getName() {
-		return DynamicLoadBalancingConstants.STRATEGY_NAME;
+		return OdyLoadConstants.STRATEGY_NAME;
 	}
 
 	private HashMap<Integer, IPhysicalQuery> getPhysicalQueries() {
@@ -288,9 +296,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 		LOG.info("Re-Allocation of queries triggered.");
 					
-		double cpuLoadToRemove = Math.max(0.0, cpuUsage-DynamicLoadBalancingConstants.CPU_THRESHOLD);
-		double memLoadToRemove = Math.max(0.0, memUsage-DynamicLoadBalancingConstants.MEM_THRESHOLD);
-		double netLoadToRemove = Math.max(0.0, netUsage-DynamicLoadBalancingConstants.NET_THRESHOLD);
+		double cpuLoadToRemove = Math.max(0.0, cpuUsage-OdyLoadConstants.CPU_THRESHOLD);
+		double memLoadToRemove = Math.max(0.0, memUsage-OdyLoadConstants.MEM_THRESHOLD);
+		double netLoadToRemove = Math.max(0.0, netUsage-OdyLoadConstants.NET_THRESHOLD);
 		
 		PeerID localPeerID = networkManager.getLocalPeerID();
 		
@@ -403,14 +411,14 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		HashMap<Integer,ILoadBalancingCommunicator> queryCommunicatorMapping = new HashMap<Integer,ILoadBalancingCommunicator>();
 		for (int queryId : queryIds) {
 			if(!isActive(queryId)) {
-				ILoadBalancingCommunicator inactiveQueryCommunicator = communicatorRegistry.getCommunicator(DynamicLoadBalancingConstants.INACTIVE_QUERIES_COMMUNICATOR_NAME);
+				ILoadBalancingCommunicator inactiveQueryCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.INACTIVE_QUERIES_COMMUNICATOR_NAME);
 				queryCommunicatorMapping.put(queryId, inactiveQueryCommunicator);
 			}
 			if(!hasStatefulOperator(queryId)) {
-				ILoadBalancingCommunicator parallelTrackCommunicator = communicatorRegistry.getCommunicator(DynamicLoadBalancingConstants.STATELESS_QUERIES_COMMUNICATOR_NAME);
+				ILoadBalancingCommunicator parallelTrackCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.STATELESS_QUERIES_COMMUNICATOR_NAME);
 				queryCommunicatorMapping.put(queryId, parallelTrackCommunicator);
 			}
-			ILoadBalancingCommunicator movingStateCommunicator = communicatorRegistry.getCommunicator(DynamicLoadBalancingConstants.STATEFUL_QUERIES_COMMUNICATOR_NAME);
+			ILoadBalancingCommunicator movingStateCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.STATEFUL_QUERIES_COMMUNICATOR_NAME);
 			queryCommunicatorMapping.put(queryId, movingStateCommunicator);
 			
 		}
@@ -453,7 +461,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 			Collection<IPhysicalOperator> operatorsInQuery = queries.get(queryId).getAllOperators();
 			IPhysicalCost queryCost = physicalCostModel.estimateCost(operatorsInQuery);
 			
-			double cpuLoad = queryCost.getCpuSum()/(cpuMax*DynamicLoadBalancingConstants.CPU_LOAD_COSTMODEL_FACTOR);
+			double cpuLoad = queryCost.getCpuSum()/(cpuMax*OdyLoadConstants.CPU_LOAD_COSTMODEL_FACTOR);
 			double netLoad = queryCost.getNetworkSum()/netMax;
 			double memLoad = queryCost.getMemorySum()/memMax;
 				
@@ -503,7 +511,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 		
 		
-		return (DynamicLoadBalancingConstants.WEIGHT_RECEIVERS*numberOfReceivers)+(DynamicLoadBalancingConstants.WEIGHT_SENDERS*numberOfSenders)+(DynamicLoadBalancingConstants.WEIGHT_STATE*memoryForStates);
+		return (OdyLoadConstants.WEIGHT_RECEIVERS*numberOfReceivers)+(OdyLoadConstants.WEIGHT_SENDERS*numberOfSenders)+(OdyLoadConstants.WEIGHT_STATE*memoryForStates);
 		
 	}
 
@@ -548,8 +556,8 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	@Override
 	public void localLockFailed(QueryTransmissionHandler transmission) {
 		try {
-			LOG.debug("Acquiring Local Lock failed. Waiting for {} milliseconds.",DynamicLoadBalancingConstants.WAITING_TIME_FOR_LOCAL_LOCK);
-			Thread.sleep(DynamicLoadBalancingConstants.WAITING_TIME_FOR_LOCAL_LOCK);
+			LOG.debug("Acquiring Local Lock failed. Waiting for {} milliseconds.",OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
+			Thread.sleep(OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
 			transmission.initiateTransmission(this);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -573,7 +581,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	@Override
 	public void forceLoadBalancing() throws LoadBalancingException {
 		
-		triggerLoadBalancing(DynamicLoadBalancingConstants.CPU_THRESHOLD+0.01, DynamicLoadBalancingConstants.MEM_THRESHOLD+0.01, DynamicLoadBalancingConstants.NET_THRESHOLD+0.01);
+		triggerLoadBalancing(OdyLoadConstants.CPU_THRESHOLD+0.01, OdyLoadConstants.MEM_THRESHOLD+0.01, OdyLoadConstants.NET_THRESHOLD+0.01);
 		
 	}
 

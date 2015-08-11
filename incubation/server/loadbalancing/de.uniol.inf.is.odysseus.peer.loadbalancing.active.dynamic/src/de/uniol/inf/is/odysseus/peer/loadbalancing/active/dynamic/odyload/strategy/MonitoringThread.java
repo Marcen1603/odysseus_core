@@ -1,10 +1,12 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy;
 
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThreadListener;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -64,7 +66,7 @@ public class MonitoringThread extends Thread {
 			LOG.info("MEM usage is {}",memUsage);
 			LOG.info("NET usage is {}",netUsage);
 			
-			if(cpuUsage>=DynamicLoadBalancingConstants.CPU_THRESHOLD || memUsage>=DynamicLoadBalancingConstants.MEM_THRESHOLD || netUsage>=DynamicLoadBalancingConstants.NET_THRESHOLD) {
+			if(cpuUsage>=OdyLoadConstants.CPU_THRESHOLD || memUsage>=OdyLoadConstants.MEM_THRESHOLD || netUsage>=OdyLoadConstants.NET_THRESHOLD) {
 				this.isActive = false;
 				ArrayList<IMonitoringThreadListener> copyOfListenerList =  new ArrayList<IMonitoringThreadListener>(listenerList);
 				for(IMonitoringThreadListener listener : copyOfListenerList) {
@@ -75,7 +77,7 @@ public class MonitoringThread extends Thread {
 				
 			//Wait for update interval.
 			try {
-				Thread.sleep(DynamicLoadBalancingConstants.UPDATE_INTERVAL);
+				Thread.sleep(OdyLoadConstants.UPDATE_INTERVAL);
 			}
 			catch (InterruptedException e) {
 				LOG.error(e.getMessage());

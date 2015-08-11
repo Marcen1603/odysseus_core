@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.allocator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.SurveyBasedAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 
 public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 	
@@ -55,7 +56,7 @@ public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 
 	@Override
 	public String getName() {
-		return DynamicLoadBalancingConstants.ALLOCATOR_NAME;
+		return OdyLoadConstants.ALLOCATOR_NAME;
 	}
 
 	@Override
@@ -102,11 +103,11 @@ public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 	private List<String> createAllocationParameters() {
 		ArrayList<String> parameters = new ArrayList<String>();
 		
-		int latencyWeight = DynamicLoadBalancingConstants.SURVEY_LATENCY_WEIGHT;
-		int bidWeight = DynamicLoadBalancingConstants.SURVEY_BID_WEIGHT;
+		int latencyWeight = OdyLoadConstants.SURVEY_LATENCY_WEIGHT;
+		int bidWeight = OdyLoadConstants.SURVEY_BID_WEIGHT;
 		//Own bid should not be used, as we try to move Query Parts away in Load Balancing :)
-		String isOwnBidUsed = DynamicLoadBalancingConstants.SURVEY_USE_OWN_BID;
-		String bidProviderName = DynamicLoadBalancingConstants.BID_PROVIDER_NAME;
+		String isOwnBidUsed = OdyLoadConstants.SURVEY_USE_OWN_BID;
+		String bidProviderName = OdyLoadConstants.BID_PROVIDER_NAME;
 		
 		parameters.add(""+latencyWeight);
 		parameters.add(""+bidWeight);

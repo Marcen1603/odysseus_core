@@ -1,4 +1,7 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces;
+
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer.QueryTransmissionHandler;
+
 
 public interface IQueryTransmissionHandlerListener {
 	public void localLockFailed(QueryTransmissionHandler transmission);
