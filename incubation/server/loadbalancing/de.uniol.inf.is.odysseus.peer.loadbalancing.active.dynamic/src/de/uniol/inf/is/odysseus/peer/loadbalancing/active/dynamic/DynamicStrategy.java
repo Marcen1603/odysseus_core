@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
@@ -64,6 +65,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	private List<QueryTransmissionHandler> transmissionHandlerList;
 	private IQueryPartController queryPartController;
 	private IExcludedQueriesRegistry excludedQueryRegistry;
+	private List<Integer> failedTransmissionQueryIDs;
 	
 
 	private MonitoringThread monitoringThread = null;
@@ -386,6 +388,8 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 			e.printStackTrace();
 		}
 		
+		failedTransmissionQueryIDs = Lists.newArrayList();
+		
 		if(transmissionHandlerList!=null && transmissionHandlerList.size()>0) {
 			transmissionHandlerList.get(0).initiateTransmission(this);
 		}
@@ -507,13 +511,18 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	public void tranmissionFailed(QueryTransmissionHandler transmission) {
 		transmission.removeListener(this);
 		transmissionHandlerList.remove(transmission);
+		failedTransmissionQueryIDs.add(transmission.getQueryId());
 		LOG.error("Transmission of Query {} to Peer {} failed.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
 		if(transmissionHandlerList.size()>0) {
 				transmissionHandlerList.get(0).initiateTransmission(this);
 		}
 		else {
 				LOG.info("Tried to transfer all Queries.");
-				//TODO Restart monitoring Thread. and retry sendind failed Queries?
+				for(Integer queryID : failedTransmissionQueryIDs) {
+					LOG.warn("Query ID {} failed to transmit.",queryID);
+				}
+
+				lock.releaseLocalLock();
 			}
 	}
 
@@ -528,7 +537,10 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 		else {
 				LOG.info("Tried to transfer all Queries.");
-				//TODO Restart monitoring Thread. and retry sendind failed Queries?
+				for(Integer queryID : failedTransmissionQueryIDs) {
+					LOG.warn("Query ID {} failed to transmit.",queryID);
+				}
+				lock.releaseLocalLock();
 			}
 	}
 
@@ -536,6 +548,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	@Override
 	public void localLockFailed(QueryTransmissionHandler transmission) {
 		try {
+			LOG.debug("Acquiring Local Lock failed. Waiting for {} milliseconds.",DynamicLoadBalancingConstants.WAITING_TIME_FOR_LOCAL_LOCK);
 			Thread.sleep(DynamicLoadBalancingConstants.WAITING_TIME_FOR_LOCAL_LOCK);
 			transmission.initiateTransmission(this);
 		} catch (InterruptedException e) {
