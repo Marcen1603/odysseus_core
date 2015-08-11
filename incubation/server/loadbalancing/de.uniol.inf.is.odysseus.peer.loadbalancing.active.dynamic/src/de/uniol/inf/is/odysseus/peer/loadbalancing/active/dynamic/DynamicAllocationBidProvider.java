@@ -112,7 +112,7 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 
 		//FIXME Remove Workaround ;)
 		// This prevents peer from overloading itself.
-		if (freeCpuAfterLoadBalancing <= (1.0-DynamicLoadBalancingConstants.CPU_THRESHOLD) || freeMemAfterLoadBalancing <= 0.3 //(1.0-DynamicLoadBalancingConstants.MEM_THRESHOLD)
+		if (freeCpuAfterLoadBalancing <= (1.0-DynamicLoadBalancingConstants.CPU_THRESHOLD) || freeMemAfterLoadBalancing <=  (1.0-DynamicLoadBalancingConstants.MEM_THRESHOLD)
 				|| freeNetAfterLoadBalancing <= (1.0-DynamicLoadBalancingConstants.NET_THRESHOLD)) {
 			LOG.debug("Not bidding to QueryPart is this would overload Peer:");
 			return Optional.absent();

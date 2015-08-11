@@ -6,7 +6,7 @@ public class DynamicLoadBalancingConstants {
 			//Monitoring Thread Constants (Trigger)
 			public static final long UPDATE_INTERVAL = 10000;
 			public static final double CPU_THRESHOLD = 0.7;
-			public static final double MEM_THRESHOLD = 0.25;
+			public static final double MEM_THRESHOLD = 0.7;
 			public static final double NET_THRESHOLD = 0.7;
 	
 			
