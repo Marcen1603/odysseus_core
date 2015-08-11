@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  */
 public abstract class AbstractQueryStateInfo implements Serializable {
 
-	// TODO Chance to log the human readable information
+	// XXX SystemLog: Chance to log the human readable information
 
 	/**
 	 * The version of this class for serialization.

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.configuration;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder;
 
 import java.util.List;
 import java.util.Map;
@@ -8,8 +8,6 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStRecorderRegistry;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStSender;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 

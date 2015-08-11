@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.badast.BaDaStException;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServerStartable;
 
-// TODO Replace Kafka source code with Kafka jar file. First try to do it resulted in run-time errors for the Kafka server.
+// XXX Replace Kafka source code with Kafka jar file. First try to do it resulted in run-time errors for the Kafka server.
 /**
  * BaDaSt - Backup of Data Streams application. <br />
  * <br />

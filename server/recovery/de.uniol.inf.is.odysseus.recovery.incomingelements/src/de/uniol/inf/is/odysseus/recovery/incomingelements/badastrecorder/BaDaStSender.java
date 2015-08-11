@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+
 /**
  * Helper class to send commands to BaDaSt per TCP. Host and port are set in
  * badast.conf.
@@ -31,21 +33,14 @@ public class BaDaStSender {
 	/**
 	 * The host name of the BaDaSt server.
 	 */
-	private static String cHost;
+	private static String cHost = OdysseusConfiguration.get("badast.host.name",
+			"localhost");
 
 	/**
 	 * The port number of the BaDaSt server.
 	 */
-	private static int cPort;
-
-	static {
-		// TODO need to read it out from BaDaStConfiguration
-		// Properties badastCfg = BaDaStConfiguration.getBaDaStConfig();
-		// this.mHost = badastCfg.getProperty("host.name");
-		// this.mPort = Integer.parseInt(badastCfg.getProperty("clientPort"));
-		cHost = "localhost";
-		cPort = 6789;
-	}
+	private static int cPort = OdysseusConfiguration.getInt(
+			"badast.clientPort", 6789);
 
 	/**
 	 * Sends a command to the BaDaSt application.

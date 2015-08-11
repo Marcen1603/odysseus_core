@@ -90,8 +90,14 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	@Override
 	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
 			ISession caller, List<ILogicalQuery> queries) {
-		// TODO implement RollbackRecoveryExecutor.recover
-		return queries;
+		if (this.mSourceRecoveryComponent == null) {
+			cLog.error("RollBackRecovery executor misses Incoming Elements recovery component!");
+			return queries;
+		}
+		// TODO What about protection points?
+		return this.mSourceRecoveryComponent.recover(qbConfig, caller,
+				queries);
+		// TODO RollbackRecoveryExecutor misses Operator Recovery
 	}
 
 	/**

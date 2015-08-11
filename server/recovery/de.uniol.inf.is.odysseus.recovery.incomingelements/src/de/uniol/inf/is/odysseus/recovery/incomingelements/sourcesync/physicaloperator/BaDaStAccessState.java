@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 
 /**
- * State for {@link BaDaStAccessPO}s. Contains one object: <br />
+ * State for {@link BaDaStBackupPO}s. Contains one object: <br />
  * The index of the data stream element stored on the Kafka server, which is the first to process, or {@code -1l}, if no offset is set.
  * 
  * @author Michael Brand

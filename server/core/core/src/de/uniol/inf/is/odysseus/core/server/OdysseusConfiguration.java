@@ -212,9 +212,13 @@ public class OdysseusConfiguration {
 		
 		props.setProperty(DEFAULT_UPDATE_SITE, "http://odysseus.informatik.uni-oldenburg.de/update/");
 		
-		// System log
-		props.put("systemlogThresholdMilliseconds", (long) (Math.pow(10, 3)
-				* Math.pow(60, 2) * 24 * 30)); // 30 days in milliseconds
+		// System log, Kafka and BaDaSt
+		props.setProperty("systemlogThresholdMilliseconds", String.valueOf((long) (Math.pow(10, 3)
+				* Math.pow(60, 2) * 24 * 30))); // 30 days in milliseconds
+		props.setProperty("kafka.host.name", "localhost");
+		props.setProperty("kafka.clientPort", "9092");
+		props.setProperty("badast.host.name", "localhost");
+		props.setProperty("badast.clientPort", "6789");
 	}
 
 	private static void savePropertyFile(String odysseusHome) {

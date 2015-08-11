@@ -2,20 +2,23 @@ package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.BaDaStAccessAO;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.BaDaStAccessPO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.AbstractBaDaStAccessPO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.BaDaStBackupPO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.BaDaStRecoveryPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-// TODO update javaDoc
 /**
- * Rule to transform an {@link BaDaStAccessAO} into a physical operator.
+ * Rule to transform an {@link BaDaStAccessAO} into a physical operator:
+ * {@link BaDaStBackupPO} or {@link BaDaStRecoveryPO}.
  * 
  * @author Michael Brand
  *
  */
-public class TBaDaStAccessAORule extends AbstractTransformationRule<BaDaStAccessAO> {
+public class TBaDaStAccessAORule extends
+		AbstractTransformationRule<BaDaStAccessAO> {
 
 	@Override
 	public int getPriority() {
@@ -23,14 +26,13 @@ public class TBaDaStAccessAORule extends AbstractTransformationRule<BaDaStAccess
 	}
 
 	@Override
-	public void execute(BaDaStAccessAO logical, TransformationConfiguration config)
-			throws RuleException {
-		BaDaStAccessPO<?> po;
-		if(logical.isInRecoveryMode()) {
-			// TODO new PO
-			po = new BaDaStAccessPO<>(logical);
+	public void execute(BaDaStAccessAO logical,
+			TransformationConfiguration config) throws RuleException {
+		AbstractBaDaStAccessPO<?> po;
+		if (logical.isInRecoveryMode()) {
+			po = new BaDaStRecoveryPO<>(logical);
 		} else {
-			po = new BaDaStAccessPO<>(logical);
+			po = new BaDaStBackupPO<>(logical);
 		}
 		defaultExecute(logical, po, config, true, true);
 	}
@@ -43,8 +45,7 @@ public class TBaDaStAccessAORule extends AbstractTransformationRule<BaDaStAccess
 
 	@Override
 	public String getName() {
-		// TODO change name
-		return "SourceSyncAO -> SourceSyncPO";
+		return "SourceSyncAO -> BaDaStBackupPO | BaDaStRecoveryPO";
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.configuration;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder;
 
 import java.util.Map;
 

@@ -61,7 +61,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		IPlanModificationListener {
 
 	/*
-	 * TODO QueryStateRecoveryComponent-Optimization For now, this component
+	 * XXX QueryStateRecoveryComponent-Optimization: For now, this component
 	 * reads the relevant entries as a history and restores them ignoring the
 	 * future. So a source may be added are directly dropped during recovery.
 	 * The reason is, that the complete Odysseus script (may contain more than
@@ -485,8 +485,9 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 			List<ISysLogEntry> log, IServerExecutor executor) {
 		ScriptAddedInfo info = (ScriptAddedInfo) AbstractQueryStateInfo
 				.fromBase64Binary(entry.getComment().get());
-		// TODO problem is, that the query build configuration is only used for
-		// the outer Odysseus-Script query. But there, the RecoveryConfigKeyword
+		// XXX QueryBuildConfiguration and RecoveryNeeded: Problem is, that the
+		// query build configuration is only used for the outer Odysseus-Script
+		// query. But there, the RecoveryConfigKeyword
 		// is not executed. Within the inner queries (e.g., PQL), the keyword is
 		// executed, but the query build configuration is set to normal
 		// workaround is to modify the script.

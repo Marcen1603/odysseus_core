@@ -98,7 +98,13 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	@Override
 	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
 			ISession caller, List<ILogicalQuery> queries) {
-		// TODO implement SourceStreamsRecoveryComponent.recover
+		if (!cExecutor.isPresent()) {
+			cLog.error("No executor bound!");
+			return queries;
+		}
+		for (ILogicalQuery query : queries) {
+			insertSourceSyncOperators(query, true, caller, cExecutor.get());
+		}
 		return queries;
 	}
 
@@ -143,7 +149,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 
 			@Override
 			public void walk(ILogicalOperator operator) {
-				// TODO Works only with AbstractAccessAO, not with StreamAO,
+				// XXX Works only with AbstractAccessAO, not with StreamAO,
 				// because I need the protocol and data handler
 				if (AbstractAccessAO.class.isInstance(operator)
 						&& mRecordedSources
