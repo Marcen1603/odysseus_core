@@ -18,7 +18,6 @@ public class ProtocolHandlerParameter {
 		this.protocolHandler = protocolHandler;
 	}
 
-	
 	public String getFilename() {
 		return filename;
 	}
