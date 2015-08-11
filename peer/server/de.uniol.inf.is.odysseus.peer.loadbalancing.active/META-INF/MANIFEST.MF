@@ -33,9 +33,11 @@ Export-Package: de.uniol.inf.is.odysseus.peer.loadbalancing.active,
  de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator,
  de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces
 Import-Package: de.uniol.inf.is.odysseus.peer.distribute.util,
+ de.uniol.inf.is.odysseus.peer.resource,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule
-Service-Component: OSGI-INF/LoadBalancingCommunicatorRegistry.xml,OSGI-INF/LoadBalancingStrategyRegistry.xml,OSGI-INF/LoadBalancingAllocatorRegistry.xml,OSGI-INF/LoadBalancingRuleProvider.xml,OSGI-INF/ParallelTrackCommunicator.xml,OSGI-INF/LoadBalancingConsole.xml,OSGI-INF/MovingStateCommunicator.xml,OSGI-INF/InactiveQueryCommunicator.xml,OSGI-INF/LoadBalancingQueryManager.xml,OSGI-INF/OsgiServiceManager.xml,OSGI-INF/LoadBalancingLock.xml,OSGI-INF/LoadBalancingController.xml,
- OSGI-INF/ExcludedQueryRegistry.xml
+Service-Component: OSGI-INF/LoadBalancingCommunicatorRegistry.xml,OSGI-INF/LoadBalancingStrategyRegistry.xml,OSGI-INF/LoadBalancingAllocatorRegistry.xml,
+ OSGI-INF/LoadBalancingRuleProvider.xml,OSGI-INF/ParallelTrackCommunicator.xml,OSGI-INF/LoadBalancingConsole.xml,OSGI-INF/MovingStateCommunicator.xml,OSGI-INF/InactiveQueryCommunicator.xml,OSGI-INF/LoadBalancingQueryManager.xml,OSGI-INF/OsgiServiceManager.xml,OSGI-INF/LoadBalancingLock.xml,OSGI-INF/LoadBalancingController.xml,OSGI-INF/ExcludedQueryRegistry.xml,
+ OSGI-INF/LoadLogger.xml
