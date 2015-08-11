@@ -54,7 +54,7 @@ public class JavaImportAnalyse {
 			for(String clazz : clazzToSearchList){
 				String importString ="";
 				
-				for(Path file : OdysseusIndex.getOdysseusIndex()){
+				for(Path file : OdysseusIndex.getInstance().getOdysseusIndex()){
 					if(file.getFileName().toString().equals(clazz+".java")){
 						importString = ReadJavaImports.getImportForFile(file.toString());
 						importList.add(importString);

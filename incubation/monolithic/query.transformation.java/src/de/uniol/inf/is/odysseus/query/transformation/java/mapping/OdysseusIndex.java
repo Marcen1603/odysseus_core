@@ -14,9 +14,16 @@ public class OdysseusIndex {
 	
 	private static List<Path> odysseusIndex = new ArrayList<Path>();
 	private static boolean init = false;
+	private static OdysseusIndex instance = null;
 	
+	public static OdysseusIndex getInstance() {
+		if (instance == null) {
+			instance = new OdysseusIndex();
+		}
+		return instance;
+	}
 	
-	public static void search(String odysseusPath){
+	public void search(String odysseusPath){
 		if(!init){
 			// create a FileFinder instance with a naming pattern
 			FileFinder finder = new FileFinder("*.java");
@@ -39,13 +46,14 @@ public class OdysseusIndex {
 		}
 	}
 	
-	public static List<Path> getOdysseusIndex(){
+	public List<Path> getOdysseusIndex(){
 		return odysseusIndex;
 		
 	}
 	
-	public static void creadOdysseusIndex(){
+	public void clearOdysseusIndex(){
 		odysseusIndex.clear();
 		init = false;
+		instance = null;
 	}
 }

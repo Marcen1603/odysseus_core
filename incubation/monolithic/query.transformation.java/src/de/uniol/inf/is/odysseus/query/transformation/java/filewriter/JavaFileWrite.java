@@ -22,12 +22,13 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.Activator;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.GenerateAntBuildFile;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.UnZip;
 
 
+//TODO add mac support
 public class JavaFileWrite {
+	
 	
 	private String fileName;
 	private File file;
@@ -77,6 +78,7 @@ public class JavaFileWrite {
 		
 		Bundle bundle = Activator.getContext().getBundle();
 	
+		
 		URL fileURL = bundle.getEntry("templates/java/JavaProject.zip");
 		File file = null;
 		try {
@@ -127,14 +129,16 @@ public class JavaFileWrite {
 	
 	
 	private void createBuildScript(){
-		//generate build.xml
-		GenerateAntBuildFile buildFileGenerator = new GenerateAntBuildFile();
-	
+
 		File buildFile = new File(tempPath+"\\build.xml");
 		try {
 			buildFile.createNewFile();
 			FileWriter buildWriter = new FileWriter(buildFile); 
-			buildWriter.write(buildFileGenerator.getCodeForAntBuild(transformationParameter, copyJars  ));
+			
+			StringTemplate javaAntBuildTemplate = new StringTemplate("java","javaAntBuild");
+			javaAntBuildTemplate.getSt().add("copyJars", copyJars);
+			
+			buildWriter.write(javaAntBuildTemplate.getSt().render());
 			buildWriter.flush();
 			buildWriter.close();
 		} catch (IOException e) {

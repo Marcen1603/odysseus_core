@@ -41,7 +41,7 @@ public class JavaSelectOperator extends AbstractTransformationOperator{
 		
 		TransformationInformation.getInstance().addMEPFunction(mepExpression);
 		
-		StringTemplate selectTemplate = new StringTemplate("java","selectPO");
+		StringTemplate selectTemplate = new StringTemplate("operator","selectPO");
 		selectTemplate.getSt().add("operatorVariable", operatorVariable);
 		selectTemplate.getSt().add("predicateValue", predicateValue);
 		

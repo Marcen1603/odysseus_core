@@ -45,7 +45,7 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 		
 		TimestampAO timestampAO = Utils.createTimestampAO(operator, null);
 		
-		StringTemplate accessPOTemplate = new StringTemplate("java","accessPO");
+		StringTemplate accessPOTemplate = new StringTemplate("operator","accessPO");
 		accessPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		csvFileSource.addCode(accessPOTemplate.getSt().render());
 	

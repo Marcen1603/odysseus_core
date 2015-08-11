@@ -61,7 +61,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	
 		//Start Odysseus index
 		updateProgressBar(15, "Index the Odysseus codepath");
-		OdysseusIndex.search(parameter.getOdysseusPath());
+		OdysseusIndex.getInstance().search(parameter.getOdysseusPath());
 	
 		bodyCode = new StringBuilder();
 

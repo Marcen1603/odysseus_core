@@ -82,6 +82,8 @@ public class JavaEmulateOSGIBindings {
 		code.append("\n");
 		code.append("\n");
 		
+
+		
 		//First create code for registry
 		for(Component cp : registryList){
 			Class<?> stringClass;
@@ -95,13 +97,17 @@ public class JavaEmulateOSGIBindings {
 				neededImportList.add(cp.getImplementation().getClazz());
 				code.append(stringClass.getSimpleName()+" " + stringClass.getSimpleName().toLowerCase()+" = new "+stringClass.getSimpleName()+"();");
 				code.append("\n");
-				
+			
+
+	
 			} catch (ClassNotFoundException e) {
 				//bundle is to imported 
 				e.printStackTrace();
 			}
 		
 		}
+		
+		
 		
 		//MEP Funktion
 		Map<String, String> neededMEPFunctions = TransformationInformation.getInstance().getNeededMEPFunctions();

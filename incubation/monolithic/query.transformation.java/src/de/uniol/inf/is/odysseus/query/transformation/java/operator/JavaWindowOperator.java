@@ -8,8 +8,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWi
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.TransformSDFSchema;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
@@ -36,10 +36,10 @@ public class JavaWindowOperator extends AbstractTransformationOperator {
 		TimeValueItem windowAdvance = windowAO.getWindowAdvance();
 		SDFSchema inputSchema = windowAO.getInputSchema();
 		
-		CodeFragmentInfo sdfInputSchema  = TransformSDFSchema.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
+		CodeFragmentInfo sdfInputSchema  = CreateDefaultCode.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
 		code.append(sdfInputSchema.getCode());
 		 
-		StringTemplate slidingAdvanceTimeWindowTIPOTemplate = new StringTemplate("java","slidingAdvanceTimeWindowTIPO");
+		StringTemplate slidingAdvanceTimeWindowTIPOTemplate = new StringTemplate("operator","slidingAdvanceTimeWindowTIPO");
 		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("windowSize", windowSize);
 		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("windowAdvance", windowAdvance);
 		slidingAdvanceTimeWindowTIPOTemplate.getSt().add("baseTimeUnit", baseTimeUnit);

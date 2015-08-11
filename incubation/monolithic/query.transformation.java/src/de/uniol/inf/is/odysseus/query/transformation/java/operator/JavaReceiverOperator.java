@@ -47,7 +47,7 @@ public class JavaReceiverOperator extends AbstractTransformationOperator{
 		CodeFragmentInfo codeAccessFramwork = CreateDefaultCode.codeForAccessFrameworkNeu(protocolHandlerParameter, accessAO.getOptionsMap(),operator, direction);
 		receiverPO.addCodeFragmentInfo(codeAccessFramwork);
 		 
-		StringTemplate receiverPOTemplate = new StringTemplate("java","receiverPO");
+		StringTemplate receiverPOTemplate = new StringTemplate("operator","receiverPO");
 		receiverPOTemplate.getSt().add("operatorVariable", operatorVariable);
 			
 		receiverPO.addCode(receiverPOTemplate.getSt().render());
