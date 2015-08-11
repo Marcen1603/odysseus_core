@@ -62,7 +62,8 @@ public abstract class AbstractIQLLinkingService extends DefaultLinkingService{
 	}
 	
 	protected List<EObject> getLinkedObjectsIQLMemberSelection(IQLMemberSelection expr, EReference ref, INode node) throws IllegalNodeException {
-		Collection<IEObjectDescription> eObjectDescriptions = scopeProvider.getScopeIQLMemberSelection((IQLMemberSelectionExpression) expr.eContainer());
+		IQLMemberSelectionExpression container = (IQLMemberSelectionExpression) expr.eContainer();
+		Collection<IEObjectDescription> eObjectDescriptions = scopeProvider.getScopeIQLMemberSelection(container);
 		String crossRefString = getCrossRefNodeAsString(node);
 		EObject result = null;
 		for (IEObjectDescription desc : eObjectDescriptions) {

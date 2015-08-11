@@ -89,9 +89,9 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
     new BasicIQLSwitch<Adapter>()
     {
       @Override
-      public Adapter caseIQLFile(IQLFile object)
+      public Adapter caseIQLModel(IQLModel object)
       {
-        return createIQLFileAdapter();
+        return createIQLModelAdapter();
       }
       @Override
       public Adapter caseIQLTypeDefinition(IQLTypeDefinition object)
@@ -252,11 +252,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseIQLMetadataValueSingleBoolean(IQLMetadataValueSingleBoolean object)
       {
         return createIQLMetadataValueSingleBooleanAdapter();
-      }
-      @Override
-      public Adapter caseIQLMetadataValueSingleChar(IQLMetadataValueSingleChar object)
-      {
-        return createIQLMetadataValueSingleCharAdapter();
       }
       @Override
       public Adapter caseIQLMetadataValueSingleTypeRef(IQLMetadataValueSingleTypeRef object)
@@ -474,11 +469,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
         return createIQLLiteralExpressionBooleanAdapter();
       }
       @Override
-      public Adapter caseIQLLiteralExpressionChar(IQLLiteralExpressionChar object)
-      {
-        return createIQLLiteralExpressionCharAdapter();
-      }
-      @Override
       public Adapter caseIQLLiteralExpressionRange(IQLLiteralExpressionRange object)
       {
         return createIQLLiteralExpressionRangeAdapter();
@@ -586,16 +576,16 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
 
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile <em>IQL File</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel <em>IQL Model</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel
    * @generated
    */
-  public Adapter createIQLFileAdapter()
+  public Adapter createIQLModelAdapter()
   {
     return null;
   }
@@ -1076,21 +1066,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIQLMetadataValueSingleBooleanAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar <em>IQL Metadata Value Single Char</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar
-   * @generated
-   */
-  public Adapter createIQLMetadataValueSingleCharAdapter()
   {
     return null;
   }
@@ -1736,21 +1711,6 @@ public class BasicIQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIQLLiteralExpressionBooleanAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionChar <em>IQL Literal Expression Char</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionChar
-   * @generated
-   */
-  public Adapter createIQLLiteralExpressionCharAdapter()
   {
     return null;
   }

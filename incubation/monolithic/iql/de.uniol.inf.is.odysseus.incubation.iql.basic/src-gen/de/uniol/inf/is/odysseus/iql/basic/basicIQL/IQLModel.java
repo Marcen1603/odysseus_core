@@ -8,23 +8,23 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>IQL File</b></em>'.
+ * A representation of the model object '<em><b>IQL Model</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile#getName <em>Name</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile#getNamespaces <em>Namespaces</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile#getElements <em>Elements</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel#getName <em>Name</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel#getNamespaces <em>Namespaces</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel#getElements <em>Elements</em>}</li>
  * </ul>
  * </p>
  *
- * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLFile()
+ * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLModel()
  * @model
  * @generated
  */
-public interface IQLFile extends EObject
+public interface IQLModel extends EObject
 {
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -36,14 +36,14 @@ public interface IQLFile extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Name</em>' attribute.
    * @see #setName(String)
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLFile_Name()
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLModel_Name()
    * @model
    * @generated
    */
   String getName();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile#getName <em>Name</em>}' attribute.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel#getName <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Name</em>' attribute.
@@ -62,7 +62,7 @@ public interface IQLFile extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Namespaces</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLFile_Namespaces()
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLModel_Namespaces()
    * @model containment="true"
    * @generated
    */
@@ -78,10 +78,10 @@ public interface IQLFile extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Elements</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLFile_Elements()
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLModel_Elements()
    * @model containment="true"
    * @generated
    */
   EList<IQLTypeDefinition> getElements();
 
-} // IQLFile
+} // IQLModel

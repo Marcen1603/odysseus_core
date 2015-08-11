@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueList
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap
@@ -18,6 +17,8 @@ import java.util.ArrayList
 import java.util.Map
 import java.util.HashMap
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
+import javax.inject.Inject
 
 abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>> implements IIQLMetadataMethodCompiler<G>{
 	
@@ -28,6 +29,9 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 	protected H helper;
 	
 	protected T typeCompiler;
+	
+	@Inject
+	protected IIQLTypeUtils typeUtils;
 	
 	new (H helper, T typeCompiler) {
 		this.helper = helper;
@@ -62,8 +66,6 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 			return compile(o as IQLMetadataValueSingleString, varName, context);
 		} else if(o instanceof IQLMetadataValueSingleBoolean) {
 			return compile(o as IQLMetadataValueSingleBoolean, varName, context);
-		} else if(o instanceof IQLMetadataValueSingleChar) {
-			return compile(o as IQLMetadataValueSingleChar, varName, context);
 		} else if(o instanceof IQLMetadataValueSingleNull) {
 			return compile(o as IQLMetadataValueSingleNull, varName, context);
 		} else if(o instanceof IQLMetadataValueSingleTypeRef) {
@@ -86,17 +88,21 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 
 	
 	def String compile(IQLMetadataValueSingleString o, String varName, G context) {
-		'''String «varName» = "«o.value»";'''
+		if (context.expectedTypeRef != null) {
+			if (typeUtils.isCharacter(context.expectedTypeRef)) {
+				return "String "+varName+" = '"+o.value+"';"				
+			} else {
+				'''String «varName» = "«o.value»";'''
+			}
+		} else {
+			'''String «varName» = "«o.value»";'''
+		}
 	}
 	
 	def String compile(IQLMetadataValueSingleBoolean o, String varName, G context) {
 		'''boolean «varName» = «o.value»;'''
 	}
 
-	
-	def String compile(IQLMetadataValueSingleChar o, String varName, G context) {
-		'''char «varName» = '«o.value»'; '''
-	}
 
 	def String compile(IQLMetadataValueSingleNull o, String varName, G context) {
 		'''«Object.simpleName» «varName» = null;'''

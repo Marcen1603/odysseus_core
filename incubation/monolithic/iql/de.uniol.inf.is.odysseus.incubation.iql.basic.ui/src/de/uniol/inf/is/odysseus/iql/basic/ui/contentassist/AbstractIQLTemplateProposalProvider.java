@@ -141,7 +141,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 				createVariableTemplate(parameter.getName(), parameter.getParameterType(), templateContext, context, acceptor);
 			} else if (el instanceof JvmField) {
 				JvmField attr = (JvmField) el;
-				createVariableTemplate(attr.getSimpleName(), attr.getType(), templateContext, context, acceptor);
+				createVariableTemplate(converter.toString(desc.getQualifiedName()), attr.getType(), templateContext, context, acceptor);
 			} else if (el instanceof JvmOperation) {
 				JvmOperation op = (JvmOperation) el;
 				if (op.getSimpleName() != null) {

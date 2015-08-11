@@ -5,6 +5,15 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
@@ -30,6 +39,27 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<QDLTypeBuil
 	}
 	
 
+	private void refresProjects() {
+		final IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
+				.getProjects();
+		if (projects != null && projects.length > 0) {
+			Job job = new Job("Build projects") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					for (IProject project : projects) {
+						try {
+							project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+						} catch (CoreException e) {
+						}
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule(); 
+		}      
+			
+		
+	}
 	
 	
 
@@ -56,6 +86,7 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<QDLTypeBuil
 	@Override
 	public void onNewOperator(IOperatorBuilder operatorBuilder) {
 		builder.addOperator(operatorBuilder);
+		refresProjects();
 	}
 	
 	@Override
@@ -71,11 +102,13 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<QDLTypeBuil
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name,ILogicalOperator op) {
 		builder.addSource(op);
+		refresProjects();
 	}
 
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name,ILogicalOperator op) {
 		builder.removeSource(op);
+		refresProjects();
 	}
 
 	@Override

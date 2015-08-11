@@ -3,8 +3,8 @@
 package de.uniol.inf.is.odysseus.iql.odl.oDL.util;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 
 import de.uniol.inf.is.odysseus.iql.odl.oDL.*;
@@ -90,11 +90,11 @@ public class ODLSwitch<T> extends Switch<T>
   {
     switch (classifierID)
     {
-      case ODLPackage.ODL_FILE:
+      case ODLPackage.ODL_MODEL:
       {
-        ODLFile odlFile = (ODLFile)theEObject;
-        T result = caseODLFile(odlFile);
-        if (result == null) result = caseIQLFile(odlFile);
+        ODLModel odlModel = (ODLModel)theEObject;
+        T result = caseODLModel(odlModel);
+        if (result == null) result = caseIQLModel(odlModel);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -154,17 +154,17 @@ public class ODLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>File</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Model</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>File</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Model</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseODLFile(ODLFile object)
+  public T caseODLModel(ODLModel object)
   {
     return null;
   }
@@ -234,17 +234,17 @@ public class ODLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL File</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Model</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL File</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Model</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLFile(IQLFile object)
+  public T caseIQLModel(IQLModel object)
   {
     return null;
   }

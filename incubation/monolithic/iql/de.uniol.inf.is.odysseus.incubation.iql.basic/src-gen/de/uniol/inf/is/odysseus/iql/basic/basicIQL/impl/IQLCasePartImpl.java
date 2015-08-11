@@ -7,14 +7,21 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLCasePart;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -24,7 +31,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLCasePartImpl#getExpr <em>Expr</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLCasePartImpl#getBody <em>Body</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLCasePartImpl#getStatements <em>Statements</em>}</li>
  * </ul>
  * </p>
  *
@@ -43,14 +50,14 @@ public class IQLCasePartImpl extends MinimalEObjectImpl.Container implements IQL
   protected IQLExpression expr;
 
   /**
-   * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
+   * The cached value of the '{@link #getStatements() <em>Statements</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getBody()
+   * @see #getStatements()
    * @generated
    * @ordered
    */
-  protected IQLStatement body;
+  protected EList<IQLStatement> statements;
 
   /**
    * <!-- begin-user-doc -->
@@ -126,47 +133,13 @@ public class IQLCasePartImpl extends MinimalEObjectImpl.Container implements IQL
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLStatement getBody()
+  public EList<IQLStatement> getStatements()
   {
-    return body;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetBody(IQLStatement newBody, NotificationChain msgs)
-  {
-    IQLStatement oldBody = body;
-    body = newBody;
-    if (eNotificationRequired())
+    if (statements == null)
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_CASE_PART__BODY, oldBody, newBody);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
+      statements = new EObjectContainmentEList<IQLStatement>(IQLStatement.class, this, BasicIQLPackage.IQL_CASE_PART__STATEMENTS);
     }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setBody(IQLStatement newBody)
-  {
-    if (newBody != body)
-    {
-      NotificationChain msgs = null;
-      if (body != null)
-        msgs = ((InternalEObject)body).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_CASE_PART__BODY, null, msgs);
-      if (newBody != null)
-        msgs = ((InternalEObject)newBody).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_CASE_PART__BODY, null, msgs);
-      msgs = basicSetBody(newBody, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_CASE_PART__BODY, newBody, newBody));
+    return statements;
   }
 
   /**
@@ -181,8 +154,8 @@ public class IQLCasePartImpl extends MinimalEObjectImpl.Container implements IQL
     {
       case BasicIQLPackage.IQL_CASE_PART__EXPR:
         return basicSetExpr(null, msgs);
-      case BasicIQLPackage.IQL_CASE_PART__BODY:
-        return basicSetBody(null, msgs);
+      case BasicIQLPackage.IQL_CASE_PART__STATEMENTS:
+        return ((InternalEList<?>)getStatements()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -199,8 +172,8 @@ public class IQLCasePartImpl extends MinimalEObjectImpl.Container implements IQL
     {
       case BasicIQLPackage.IQL_CASE_PART__EXPR:
         return getExpr();
-      case BasicIQLPackage.IQL_CASE_PART__BODY:
-        return getBody();
+      case BasicIQLPackage.IQL_CASE_PART__STATEMENTS:
+        return getStatements();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -210,6 +183,7 @@ public class IQLCasePartImpl extends MinimalEObjectImpl.Container implements IQL
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -218,8 +192,9 @@ public class IQLCasePartImpl extends MinimalEObjectImpl.Container implements IQL
       case BasicIQLPackage.IQL_CASE_PART__EXPR:
         setExpr((IQLExpression)newValue);
         return;
-      case BasicIQLPackage.IQL_CASE_PART__BODY:
-        setBody((IQLStatement)newValue);
+      case BasicIQLPackage.IQL_CASE_PART__STATEMENTS:
+        getStatements().clear();
+        getStatements().addAll((Collection<? extends IQLStatement>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -238,8 +213,8 @@ public class IQLCasePartImpl extends MinimalEObjectImpl.Container implements IQL
       case BasicIQLPackage.IQL_CASE_PART__EXPR:
         setExpr((IQLExpression)null);
         return;
-      case BasicIQLPackage.IQL_CASE_PART__BODY:
-        setBody((IQLStatement)null);
+      case BasicIQLPackage.IQL_CASE_PART__STATEMENTS:
+        getStatements().clear();
         return;
     }
     super.eUnset(featureID);
@@ -257,8 +232,8 @@ public class IQLCasePartImpl extends MinimalEObjectImpl.Container implements IQL
     {
       case BasicIQLPackage.IQL_CASE_PART__EXPR:
         return expr != null;
-      case BasicIQLPackage.IQL_CASE_PART__BODY:
-        return body != null;
+      case BasicIQLPackage.IQL_CASE_PART__STATEMENTS:
+        return statements != null && !statements.isEmpty();
     }
     return super.eIsSet(featureID);
   }

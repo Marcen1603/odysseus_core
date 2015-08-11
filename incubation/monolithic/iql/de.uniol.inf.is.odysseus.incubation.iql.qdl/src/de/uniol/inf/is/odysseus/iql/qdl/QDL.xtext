@@ -5,8 +5,8 @@ generate qDL "http://www.uniol.de/inf/is/odysseus/iql/qdl/QDL"
 import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as iql
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
-QDLFile returns iql::IQLFile:
-	{QDLFile}
+QDLModel returns iql::IQLModel:
+	{QDLModel}
 	namespaces+=IQLNamespace*
 	(elements+=QDLTypeDefinition)*
 ;
@@ -49,7 +49,6 @@ IQLMetadataValueSingle returns iql::IQLMetadataValue:
 	{IQLMetadataValueSingleDouble} value = DOUBLE|
 	{IQLMetadataValueSingleString} value = STRING|
 	{IQLMetadataValueSingleBoolean} value = BOOLEAN|
-	{IQLMetadataValueSingleChar} value = CHAR |
 	(=>({QDLMetadataValueSingleID} value = ID)) |
 	{IQLMetadataValueSingleTypeRef} value = JvmTypeReference |	
 	{IQLMetadataValueSingleNull} value = 'null'	

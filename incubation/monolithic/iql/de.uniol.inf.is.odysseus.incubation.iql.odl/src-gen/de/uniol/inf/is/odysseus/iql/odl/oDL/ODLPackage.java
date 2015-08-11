@@ -61,14 +61,14 @@ public interface ODLPackage extends EPackage
   ODLPackage eINSTANCE = de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl.init();
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLFileImpl <em>File</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelImpl <em>Model</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLFileImpl
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLFile()
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelImpl
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLModel()
    * @generated
    */
-  int ODL_FILE = 0;
+  int ODL_MODEL = 0;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -77,7 +77,7 @@ public interface ODLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ODL_FILE__NAME = BasicIQLPackage.IQL_FILE__NAME;
+  int ODL_MODEL__NAME = BasicIQLPackage.IQL_MODEL__NAME;
 
   /**
    * The feature id for the '<em><b>Namespaces</b></em>' containment reference list.
@@ -86,7 +86,7 @@ public interface ODLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ODL_FILE__NAMESPACES = BasicIQLPackage.IQL_FILE__NAMESPACES;
+  int ODL_MODEL__NAMESPACES = BasicIQLPackage.IQL_MODEL__NAMESPACES;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -95,16 +95,16 @@ public interface ODLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ODL_FILE__ELEMENTS = BasicIQLPackage.IQL_FILE__ELEMENTS;
+  int ODL_MODEL__ELEMENTS = BasicIQLPackage.IQL_MODEL__ELEMENTS;
 
   /**
-   * The number of structural features of the '<em>File</em>' class.
+   * The number of structural features of the '<em>Model</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ODL_FILE_FEATURE_COUNT = BasicIQLPackage.IQL_FILE_FEATURE_COUNT + 0;
+  int ODL_MODEL_FEATURE_COUNT = BasicIQLPackage.IQL_MODEL_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLTypeDefinitionImpl <em>Type Definition</em>}' class.
@@ -742,14 +742,14 @@ public interface ODLPackage extends EPackage
 
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLFile <em>File</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel <em>Model</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>File</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLFile
+   * @return the meta object for class '<em>Model</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel
    * @generated
    */
-  EClass getODLFile();
+  EClass getODLModel();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLTypeDefinition <em>Type Definition</em>}'.
@@ -881,14 +881,14 @@ public interface ODLPackage extends EPackage
   interface Literals
   {
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLFileImpl <em>File</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelImpl <em>Model</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLFileImpl
-     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLFile()
+     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelImpl
+     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLModel()
      * @generated
      */
-    EClass ODL_FILE = eINSTANCE.getODLFile();
+    EClass ODL_MODEL = eINSTANCE.getODLModel();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLTypeDefinitionImpl <em>Type Definition</em>}' class.

@@ -2,9 +2,9 @@ package de.uniol.inf.is.odysseus.iql.qdl.types.impl.query;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
-public class DefaultQDLSource<T extends ILogicalOperator> extends AbstractQDLSource<T> {
+public class DefaultQDLSource extends AbstractQDLSource {
 
-	public DefaultQDLSource(T operator) {
+	public DefaultQDLSource(ILogicalOperator operator) {
 		super(operator);
 	}
 

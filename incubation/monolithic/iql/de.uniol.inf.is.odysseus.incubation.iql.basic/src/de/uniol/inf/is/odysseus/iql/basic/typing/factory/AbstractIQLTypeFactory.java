@@ -44,9 +44,10 @@ import org.reflections.scanners.SubTypesScanner;
 
 
 
+
 import de.uniol.inf.is.odysseus.iql.basic.Activator;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
@@ -85,7 +86,7 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 	}
 	
 	
-	private Map<String, IQLFile> systemFiles = new HashMap<>();
+	private Map<String, IQLModel> systemFiles = new HashMap<>();
 	private Map<String, IQLSystemType> systemTypes= new HashMap<>();
 
 	
@@ -93,8 +94,8 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 	public Collection<JvmTypeReference> getImportedTypes(EObject obj) {
 		Collection<String> imports = new HashSet<>();
 		imports.addAll(getImplicitImports());
-		IQLFile file = EcoreUtil2.getContainerOfType(obj, IQLFile.class);
-		for (IQLNamespace namespace : file.getNamespaces()) {
+		IQLModel model = EcoreUtil2.getContainerOfType(obj, IQLModel.class);
+		for (IQLNamespace namespace : model.getNamespaces()) {
 			imports.add(namespace.getImportedNamespace().replace(IQLQualifiedNameConverter.DELIMITER, "."));
 		}
 		
@@ -140,18 +141,18 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 		
 	
 	@Override
-	public Collection<IQLFile> getSystemFiles() {
+	public Collection<IQLModel> getSystemFiles() {
 		return systemFiles.values();
 	}
 	
-	protected abstract IQLFile createCleanSystemFile();
+	protected abstract IQLModel createCleanSystemFile();
 	
 	@Override
 	public IQLSystemType addSystemType(JvmGenericType type, Class<?> javaType) {
 		IQLSystemType systemType=  new IQLSystemType(type, javaType);
 		systemTypes.put(systemType.getIqlTypeDef().getPackageName()+"."+systemType.getIqlTypeDef().getSimpleName(), systemType);		
 		String packageName = type.getPackageName();
-		IQLFile systemFile = systemFiles.get(packageName);
+		IQLModel systemFile = systemFiles.get(packageName);
 		if (systemFile == null) {
 			systemFile = createCleanSystemFile();		
 			systemFile.setName(packageName);
@@ -168,7 +169,7 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 		IQLSystemType systemType = systemTypes.remove(name);
 		if (systemType != null) {
 			String packageName = systemType.getIqlTypeDef().getPackageName();
-			IQLFile systemFile = systemFiles.get(packageName);
+			IQLModel systemFile = systemFiles.get(packageName);
 			if (systemFile != null) {
 				systemFile.getElements().remove(systemType.getIqlTypeDef());
 				if (systemFile.getElements().size() == 0) {
@@ -276,7 +277,7 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 	}
 
 	@Override
-	public IQLFile getSystemFile(String fileName) {
+	public IQLModel getSystemFile(String fileName) {
 		return systemFiles.get(fileName);
 	}
 		
@@ -350,7 +351,7 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 		if (type instanceof JvmDeclaredType) {
 			JvmDeclaredType declaredType = (JvmDeclaredType) type;
 			if (typeUtils.isUserDefinedType(declaredType, false)) {
-				return false;
+				return true;
 			} else if (typeUtils.isPrimitive(declaredType)) {
 				return false;
 			} else if (declaredType.getPackageName() == null) {

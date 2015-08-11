@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueList
@@ -50,8 +49,6 @@ abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelpe
 			return compile(o as IQLMetadataValueSingleString, c);
 		} else if(o instanceof IQLMetadataValueSingleBoolean) {
 			return compile(o as IQLMetadataValueSingleBoolean, c);
-		} else if(o instanceof IQLMetadataValueSingleChar) {
-			return compile(o as IQLMetadataValueSingleChar, c);
 		} else if(o instanceof IQLMetadataValueSingleNull) {
 			return compile(o as IQLMetadataValueSingleNull, c);
 		} else if(o instanceof IQLMetadataValueSingleTypeRef) {
@@ -74,18 +71,22 @@ abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelpe
 	}
 	
 	def String compile(IQLMetadataValueSingleString o, G c) {
-		'''"«o.value»"'''		
+		if (c.expectedTypeRef != null) {
+			if (typeUtils.isCharacter(c.expectedTypeRef)) {
+				return "'"+o.value+"'"				
+			} else {
+				'''"«o.value»"'''
+			}
+		} else {
+			'''"«o.value»"'''
+		}
 	}
 	
 	def String compile(IQLMetadataValueSingleBoolean o, G c) {
 		'''«o.value»'''		
 	}
 	
-	def String compile(IQLMetadataValueSingleChar o, G c) {
-		'''
-		'«o.value»'
-		'''	
-	}
+
 
 	def String compile(IQLMetadataValueSingleNull o, G c) {
 		'''null'''		

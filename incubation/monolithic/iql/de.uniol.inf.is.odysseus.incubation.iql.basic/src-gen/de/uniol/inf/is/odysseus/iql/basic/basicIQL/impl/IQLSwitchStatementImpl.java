@@ -32,7 +32,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLSwitchStatementImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLSwitchStatementImpl#getCases <em>Cases</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLSwitchStatementImpl#getDefault <em>Default</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLSwitchStatementImpl#getStatements <em>Statements</em>}</li>
  * </ul>
  * </p>
  *
@@ -61,14 +61,14 @@ public class IQLSwitchStatementImpl extends IQLStatementImpl implements IQLSwitc
   protected EList<IQLCasePart> cases;
 
   /**
-   * The cached value of the '{@link #getDefault() <em>Default</em>}' containment reference.
+   * The cached value of the '{@link #getStatements() <em>Statements</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getDefault()
+   * @see #getStatements()
    * @generated
    * @ordered
    */
-  protected IQLStatement default_;
+  protected EList<IQLStatement> statements;
 
   /**
    * <!-- begin-user-doc -->
@@ -158,47 +158,13 @@ public class IQLSwitchStatementImpl extends IQLStatementImpl implements IQLSwitc
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLStatement getDefault()
+  public EList<IQLStatement> getStatements()
   {
-    return default_;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetDefault(IQLStatement newDefault, NotificationChain msgs)
-  {
-    IQLStatement oldDefault = default_;
-    default_ = newDefault;
-    if (eNotificationRequired())
+    if (statements == null)
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_SWITCH_STATEMENT__DEFAULT, oldDefault, newDefault);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
+      statements = new EObjectContainmentEList<IQLStatement>(IQLStatement.class, this, BasicIQLPackage.IQL_SWITCH_STATEMENT__STATEMENTS);
     }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDefault(IQLStatement newDefault)
-  {
-    if (newDefault != default_)
-    {
-      NotificationChain msgs = null;
-      if (default_ != null)
-        msgs = ((InternalEObject)default_).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_SWITCH_STATEMENT__DEFAULT, null, msgs);
-      if (newDefault != null)
-        msgs = ((InternalEObject)newDefault).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_SWITCH_STATEMENT__DEFAULT, null, msgs);
-      msgs = basicSetDefault(newDefault, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_SWITCH_STATEMENT__DEFAULT, newDefault, newDefault));
+    return statements;
   }
 
   /**
@@ -215,8 +181,8 @@ public class IQLSwitchStatementImpl extends IQLStatementImpl implements IQLSwitc
         return basicSetExpr(null, msgs);
       case BasicIQLPackage.IQL_SWITCH_STATEMENT__CASES:
         return ((InternalEList<?>)getCases()).basicRemove(otherEnd, msgs);
-      case BasicIQLPackage.IQL_SWITCH_STATEMENT__DEFAULT:
-        return basicSetDefault(null, msgs);
+      case BasicIQLPackage.IQL_SWITCH_STATEMENT__STATEMENTS:
+        return ((InternalEList<?>)getStatements()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -235,8 +201,8 @@ public class IQLSwitchStatementImpl extends IQLStatementImpl implements IQLSwitc
         return getExpr();
       case BasicIQLPackage.IQL_SWITCH_STATEMENT__CASES:
         return getCases();
-      case BasicIQLPackage.IQL_SWITCH_STATEMENT__DEFAULT:
-        return getDefault();
+      case BasicIQLPackage.IQL_SWITCH_STATEMENT__STATEMENTS:
+        return getStatements();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -259,8 +225,9 @@ public class IQLSwitchStatementImpl extends IQLStatementImpl implements IQLSwitc
         getCases().clear();
         getCases().addAll((Collection<? extends IQLCasePart>)newValue);
         return;
-      case BasicIQLPackage.IQL_SWITCH_STATEMENT__DEFAULT:
-        setDefault((IQLStatement)newValue);
+      case BasicIQLPackage.IQL_SWITCH_STATEMENT__STATEMENTS:
+        getStatements().clear();
+        getStatements().addAll((Collection<? extends IQLStatement>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -282,8 +249,8 @@ public class IQLSwitchStatementImpl extends IQLStatementImpl implements IQLSwitc
       case BasicIQLPackage.IQL_SWITCH_STATEMENT__CASES:
         getCases().clear();
         return;
-      case BasicIQLPackage.IQL_SWITCH_STATEMENT__DEFAULT:
-        setDefault((IQLStatement)null);
+      case BasicIQLPackage.IQL_SWITCH_STATEMENT__STATEMENTS:
+        getStatements().clear();
         return;
     }
     super.eUnset(featureID);
@@ -303,8 +270,8 @@ public class IQLSwitchStatementImpl extends IQLStatementImpl implements IQLSwitc
         return expr != null;
       case BasicIQLPackage.IQL_SWITCH_STATEMENT__CASES:
         return cases != null && !cases.isEmpty();
-      case BasicIQLPackage.IQL_SWITCH_STATEMENT__DEFAULT:
-        return default_ != null;
+      case BasicIQLPackage.IQL_SWITCH_STATEMENT__STATEMENTS:
+        return statements != null && !statements.isEmpty();
     }
     return super.eIsSet(featureID);
   }

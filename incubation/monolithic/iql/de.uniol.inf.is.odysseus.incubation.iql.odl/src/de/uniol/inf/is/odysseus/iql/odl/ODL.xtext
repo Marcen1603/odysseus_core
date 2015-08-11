@@ -6,8 +6,8 @@ generate oDL "http://www.uniol.de/inf/is/odysseus/iql/odl/ODL"
 import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as iql
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
 
-ODLFile returns iql::IQLFile:
-	{ODLFile}
+ODLModel returns iql::IQLModel:
+	{ODLModel}
 	namespaces+=IQLNamespace*
 	(elements+=ODLTypeDefinition)*
 ;

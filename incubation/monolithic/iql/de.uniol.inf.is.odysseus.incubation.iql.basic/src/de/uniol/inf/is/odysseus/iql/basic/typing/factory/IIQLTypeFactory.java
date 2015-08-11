@@ -10,7 +10,7 @@ import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.osgi.framework.Bundle;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
 
 
@@ -25,8 +25,8 @@ public interface IIQLTypeFactory {
 	
 	String getFileExtension();
 	boolean isSystemFile(String fileName);
-	IQLFile getSystemFile(String fileName);
-	Collection<IQLFile> getSystemFiles();	
+	IQLModel getSystemFile(String fileName);
+	Collection<IQLModel> getSystemFiles();	
 	ResourceSet getSystemResourceSet();
 	
 	Collection<JvmType> getVisibleTypes(Collection<String> usedNamespaces, Resource context);

@@ -285,6 +285,12 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 		String name = getLongName(typeRef, true);		
 		return name.equals(Float.class.getCanonicalName()) || name.equals("float");
 	}
+	
+	@Override
+	public boolean isCharacter(JvmTypeReference typeRef) {
+		String name = getLongName(typeRef, true);		
+		return name.equals(Character.class.getCanonicalName()) || name.equals("char");
+	}
 
 	@Override
 	public boolean isDouble(JvmTypeReference typeRef) {
@@ -297,6 +303,13 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 		String name = getLongName(typeRef, true);		
 		return (wrapper && name.equals(Byte.class.getCanonicalName())) || (!wrapper && name.equals("byte"));
 	}
+	
+	@Override
+	public boolean isCharacter(JvmTypeReference typeRef, boolean wrapper) {
+		String name = getLongName(typeRef, true);		
+		return (wrapper && name.equals(Character.class.getCanonicalName())) || (!wrapper && name.equals("char"));
+	}
+	
 	
 	@Override
 	public boolean isShort(JvmTypeReference typeRef, boolean wrapper) {

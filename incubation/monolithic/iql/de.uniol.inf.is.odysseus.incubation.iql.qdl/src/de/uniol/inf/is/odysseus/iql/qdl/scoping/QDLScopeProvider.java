@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.iql.qdl.scoping;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -17,7 +18,9 @@ import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.AbstractIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
@@ -42,12 +45,54 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<QDLTypeFactory, Q
 		if (type instanceof QDLQuery) {
 			QDLQuery query = (QDLQuery) type;
 			Collection<JvmIdentifiableElement> elements = new HashSet<>();
+			Set<String> vars = new HashSet<>();
 			EObject container = expr;
+			EObject lastContainer = null;
 			while (container != null && !(container instanceof JvmDeclaredType)) {
-				elements.addAll(EcoreUtil2.getAllContentsOfType(container, IQLVariableDeclaration.class));
-				elements.addAll(EcoreUtil2.getAllContentsOfType(container, JvmFormalParameter.class));
+				for (EObject obj : container.eContents()) {
+					if (container instanceof IQLStatementBlock && obj == lastContainer) {
+						break;
+					}
+					if (obj instanceof IQLVariableDeclaration) {
+						IQLVariableDeclaration var = (IQLVariableDeclaration) obj;
+						if (!vars.contains(var.getName())) {
+							vars.add(var.getName());
+							elements.add(var);
+						}
+					} else if (obj instanceof JvmFormalParameter) {
+						JvmFormalParameter parameter = (JvmFormalParameter) obj;
+						if (!vars.contains(parameter.getName())) {
+							vars.add(parameter.getName());
+							elements.add(parameter);
+						}
+					} else if (obj instanceof IQLVariableStatement) {
+						for (IQLVariableDeclaration var : EcoreUtil2.getAllContentsOfType(obj, IQLVariableDeclaration.class)) {
+							if (!vars.contains(var.getName())) {
+								vars.add(var.getName());
+								elements.add(var);
+							}
+						}
+						for (JvmFormalParameter parameter : EcoreUtil2.getAllContentsOfType(obj, JvmFormalParameter.class)) {
+							if (!vars.contains(parameter.getName())) {
+								vars.add(parameter.getName());
+								elements.add(parameter);
+							}
+						}
+					}					
+				}
+				
+				lastContainer = container;
 				container = container.eContainer();
 			}
+			
+			for (IQLClass source : typeFactory.getSourceTypes()) {
+				for (JvmField attr : lookUp.getPublicAttributes(typeUtils.createTypeRef(source), false)) {
+					if (attr.getSimpleName().equalsIgnoreCase(source.getSimpleName())) {
+						elements.add(attr);
+					}
+				}
+			}
+			
 			Collection<JvmTypeReference> importedTypes = typeFactory.getImportedTypes(expr);
 			elements.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(query), importedTypes, true));
 			elements.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(query), importedTypes, true));
@@ -77,10 +122,16 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<QDLTypeFactory, Q
 					if (method.isStatic()) {
 						JvmDeclaredType declaredType = (JvmDeclaredType) method.eContainer();
 						result.add(EObjectDescription.create(declaredType.getSimpleName()+IQLQualifiedNameConverter.DELIMITER+qualifiedNameProvider.getFullyQualifiedName(method), method));
+					} else if (element instanceof JvmField) {
+						JvmField field = (JvmField) element;
+						if (field.isStatic()) {
+							JvmDeclaredType declaredType = (JvmDeclaredType) element.eContainer();
+							result.add(EObjectDescription.create(declaredType.getSimpleName()+IQLQualifiedNameConverter.DELIMITER+qualifiedNameProvider.getFullyQualifiedName(field), field));
+						}
 					}
 				} 
 				result.add(EObjectDescription.create(qualifiedNameProvider.getFullyQualifiedName(element), element));
-			}
+			} 
 			return result;
 		} else {
 			return super.getIQLJvmElementCallExpression(expr);

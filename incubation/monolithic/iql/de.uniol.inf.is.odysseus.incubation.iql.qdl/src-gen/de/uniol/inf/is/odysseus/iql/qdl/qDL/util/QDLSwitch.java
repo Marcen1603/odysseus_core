@@ -3,8 +3,8 @@
 package de.uniol.inf.is.odysseus.iql.qdl.qDL.util;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.*;
@@ -86,11 +86,11 @@ public class QDLSwitch<T> extends Switch<T>
   {
     switch (classifierID)
     {
-      case QDLPackage.QDL_FILE:
+      case QDLPackage.QDL_MODEL:
       {
-        QDLFile qdlFile = (QDLFile)theEObject;
-        T result = caseQDLFile(qdlFile);
-        if (result == null) result = caseIQLFile(qdlFile);
+        QDLModel qdlModel = (QDLModel)theEObject;
+        T result = caseQDLModel(qdlModel);
+        if (result == null) result = caseIQLModel(qdlModel);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -165,14 +165,6 @@ public class QDLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case QDLPackage.IQL_METADATA_VALUE_SINGLE_CHAR:
-      {
-        IQLMetadataValueSingleChar iqlMetadataValueSingleChar = (IQLMetadataValueSingleChar)theEObject;
-        T result = caseIQLMetadataValueSingleChar(iqlMetadataValueSingleChar);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleChar);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case QDLPackage.QDL_METADATA_VALUE_SINGLE_ID:
       {
         QDLMetadataValueSingleID qdlMetadataValueSingleID = (QDLMetadataValueSingleID)theEObject;
@@ -202,17 +194,17 @@ public class QDLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>File</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Model</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>File</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Model</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseQDLFile(QDLFile object)
+  public T caseQDLModel(QDLModel object)
   {
     return null;
   }
@@ -346,22 +338,6 @@ public class QDLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Char</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Char</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLMetadataValueSingleChar(IQLMetadataValueSingleChar object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Metadata Value Single ID</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -410,17 +386,17 @@ public class QDLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL File</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Model</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL File</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Model</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLFile(IQLFile object)
+  public T caseIQLModel(IQLModel object)
   {
     return null;
   }

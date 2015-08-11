@@ -23,13 +23,13 @@ public interface QDLFactory extends EFactory
   QDLFactory eINSTANCE = de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLFactoryImpl.init();
 
   /**
-   * Returns a new object of class '<em>File</em>'.
+   * Returns a new object of class '<em>Model</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>File</em>'.
+   * @return a new object of class '<em>Model</em>'.
    * @generated
    */
-  QDLFile createQDLFile();
+  QDLModel createQDLModel();
 
   /**
    * Returns a new object of class '<em>Type Definition</em>'.
@@ -102,15 +102,6 @@ public interface QDLFactory extends EFactory
    * @generated
    */
   IQLMetadataValueSingleBoolean createIQLMetadataValueSingleBoolean();
-
-  /**
-   * Returns a new object of class '<em>IQL Metadata Value Single Char</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Metadata Value Single Char</em>'.
-   * @generated
-   */
-  IQLMetadataValueSingleChar createIQLMetadataValueSingleChar();
 
   /**
    * Returns a new object of class '<em>Metadata Value Single ID</em>'.

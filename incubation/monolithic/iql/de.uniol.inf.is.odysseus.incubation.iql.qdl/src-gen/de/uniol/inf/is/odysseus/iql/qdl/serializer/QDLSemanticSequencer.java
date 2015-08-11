@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLContinueStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLDoWhileStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLEqualityExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpressionStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForEachStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLIfStatement;
@@ -34,7 +33,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionBoolean;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionDouble;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionInt;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionList;
@@ -54,6 +52,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclarationMember;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMultiplicativeExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
@@ -77,7 +76,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLWhileStatement;
 import de.uniol.inf.is.odysseus.iql.basic.serializer.BasicIQLSemanticSequencer;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleBoolean;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleChar;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleDouble;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleInt;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleNull;
@@ -85,8 +83,8 @@ import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleString;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleTypeRef;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFile;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLMetadataValueSingleID;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition;
@@ -301,12 +299,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_FILE:
-				if(context == grammarAccess.getIQLFileRule()) {
-					sequence_IQLFile(context, (IQLFile) semanticObject); 
-					return; 
-				}
-				else break;
 			case BasicIQLPackage.IQL_FOR_EACH_STATEMENT:
 				if(context == grammarAccess.getIQLForEachStatementRule() ||
 				   context == grammarAccess.getIQLStatementRule()) {
@@ -446,38 +438,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				   context == grammarAccess.getIQLUnaryExpressionRule() ||
 				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
 					sequence_IQLLiteralExpression(context, (IQLLiteralExpressionBoolean) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_LITERAL_EXPRESSION_CHAR:
-				if(context == grammarAccess.getIQLAdditiveExpressionRule() ||
-				   context == grammarAccess.getIQLAdditiveExpressionAccess().getIQLAdditiveExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLAssignmentExpressionRule() ||
-				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLEqualityExpressionRule() ||
-				   context == grammarAccess.getIQLEqualityExpressionAccess().getIQLEqualityExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLExpressionRule() ||
-				   context == grammarAccess.getIQLLiteralExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalAndExpressionAccess().getIQLLogicalAndExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionRule() ||
-				   context == grammarAccess.getIQLLogicalOrExpressionAccess().getIQLLogicalOrExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionRule() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLArrayExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLMemberCallExpressionAccess().getIQLMemberSelectionExpressionLeftOperandAction_1_1_0_0_0() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionRule() ||
-				   context == grammarAccess.getIQLMultiplicativeExpressionAccess().getIQLMultiplicativeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLOtherExpressionsRule() ||
-				   context == grammarAccess.getIQLPortExpressionRule() ||
-				   context == grammarAccess.getIQLPortExpressionAccess().getIQLPortExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionRule() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() ||
-				   context == grammarAccess.getIQLRelationalExpressionAccess().getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() ||
-				   context == grammarAccess.getIQLSubscribeExpressionRule() ||
-				   context == grammarAccess.getIQLSubscribeExpressionAccess().getIQLSubscribeExpressionLeftOperandAction_1_0_0_0() ||
-				   context == grammarAccess.getIQLUnaryExpressionRule() ||
-				   context == grammarAccess.getIQLUnaryExpressionAccess().getIQLPostfixExpressionOperandAction_4_1_0_0()) {
-					sequence_IQLLiteralExpression(context, (IQLLiteralExpressionChar) semanticObject); 
 					return; 
 				}
 				else break;
@@ -820,6 +780,12 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 			case BasicIQLPackage.IQL_METHOD_DECLARATION_MEMBER:
 				if(context == grammarAccess.getIQLMethodDeclarationMemberRule()) {
 					sequence_IQLMethodDeclarationMember(context, (IQLMethodDeclarationMember) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_MODEL:
+				if(context == grammarAccess.getIQLModelRule()) {
+					sequence_IQLModel(context, (IQLModel) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1179,13 +1145,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case QDLPackage.IQL_METADATA_VALUE_SINGLE_CHAR:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleChar) semanticObject); 
-					return; 
-				}
-				else break;
 			case QDLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE:
 				if(context == grammarAccess.getIQLMetadataValueRule() ||
 				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
@@ -1243,16 +1202,16 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case QDLPackage.QDL_FILE:
-				if(context == grammarAccess.getQDLFileRule()) {
-					sequence_QDLFile(context, (QDLFile) semanticObject); 
-					return; 
-				}
-				else break;
 			case QDLPackage.QDL_METADATA_VALUE_SINGLE_ID:
 				if(context == grammarAccess.getIQLMetadataValueRule() ||
 				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
 					sequence_IQLMetadataValueSingle(context, (QDLMetadataValueSingleID) semanticObject); 
+					return; 
+				}
+				else break;
+			case QDLPackage.QDL_MODEL:
+				if(context == grammarAccess.getQDLModelRule()) {
+					sequence_QDLModel(context, (QDLModel) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1320,22 +1279,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     value=CHAR
-	 */
-	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleChar semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_CHAR__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_CHAR__VALUE));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueCHARTerminalRuleCall_4_1_0(), semanticObject.getValue());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Constraint:
 	 *     value=DOUBLE
 	 */
 	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleDouble semanticObject) {
@@ -1377,7 +1320,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueNullKeyword_7_1_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueNullKeyword_6_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
@@ -1409,7 +1352,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_6_1_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueJvmTypeReferenceParserRuleCall_5_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
@@ -1425,7 +1368,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_5_0_1_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueIDTerminalRuleCall_4_0_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
@@ -1478,7 +1421,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	 * Constraint:
 	 *     (namespaces+=IQLNamespace* elements+=QDLTypeDefinition*)
 	 */
-	protected void sequence_QDLFile(EObject context, QDLFile semanticObject) {
+	protected void sequence_QDLModel(EObject context, QDLModel semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

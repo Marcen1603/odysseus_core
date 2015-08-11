@@ -18,24 +18,24 @@ import de.uniol.inf.is.odysseus.iql.basic.services.BasicIQLGrammarAccess;
 public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	
-	public class ODLFileElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ODLFile");
+	public class ODLModelElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ODLModel");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cODLFileAction_0 = (Action)cGroup.eContents().get(0);
+		private final Action cODLModelAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cNamespacesAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNamespacesIQLNamespaceParserRuleCall_1_0 = (RuleCall)cNamespacesAssignment_1.eContents().get(0);
 		private final Assignment cElementsAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cElementsODLTypeDefinitionParserRuleCall_2_0 = (RuleCall)cElementsAssignment_2.eContents().get(0);
 		
-		//ODLFile returns iql::IQLFile:
-		//	{ODLFile} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*;
+		//ODLModel returns iql::IQLModel:
+		//	{ODLModel} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*;
 		public ParserRule getRule() { return rule; }
 
-		//{ODLFile} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*
+		//{ODLModel} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*
 		public Group getGroup() { return cGroup; }
 
-		//{ODLFile}
-		public Action getODLFileAction_0() { return cODLFileAction_0; }
+		//{ODLModel}
+		public Action getODLModelAction_0() { return cODLModelAction_0; }
 
 		//namespaces+=IQLNamespace*
 		public Assignment getNamespacesAssignment_1() { return cNamespacesAssignment_1; }
@@ -378,7 +378,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	
-	private final ODLFileElements pODLFile;
+	private final ODLModelElements pODLModel;
 	private final ODLTypeDefinitionElements pODLTypeDefinition;
 	private final ODLOperatorElements pODLOperator;
 	private final ODLParameterElements pODLParameter;
@@ -393,7 +393,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		BasicIQLGrammarAccess gaBasicIQL) {
 		this.grammar = internalFindGrammar(grammarProvider);
 		this.gaBasicIQL = gaBasicIQL;
-		this.pODLFile = new ODLFileElements();
+		this.pODLModel = new ODLModelElements();
 		this.pODLTypeDefinition = new ODLTypeDefinitionElements();
 		this.pODLOperator = new ODLOperatorElements();
 		this.pODLParameter = new ODLParameterElements();
@@ -427,14 +427,14 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	
-	//ODLFile returns iql::IQLFile:
-	//	{ODLFile} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*;
-	public ODLFileElements getODLFileAccess() {
-		return pODLFile;
+	//ODLModel returns iql::IQLModel:
+	//	{ODLModel} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*;
+	public ODLModelElements getODLModelAccess() {
+		return pODLModel;
 	}
 	
-	public ParserRule getODLFileRule() {
-		return getODLFileAccess().getRule();
+	public ParserRule getODLModelRule() {
+		return getODLModelAccess().getRule();
 	}
 
 	//ODLTypeDefinition returns iql::IQLTypeDefinition:
@@ -480,14 +480,14 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getODLMethodAccess().getRule();
 	}
 
-	//IQLFile:
+	//IQLModel:
 	//	("namespace" name=QualifiedName ";")? namespaces+=IQLNamespace* elements+=IQLTypeDefinition*;
-	public BasicIQLGrammarAccess.IQLFileElements getIQLFileAccess() {
-		return gaBasicIQL.getIQLFileAccess();
+	public BasicIQLGrammarAccess.IQLModelElements getIQLModelAccess() {
+		return gaBasicIQL.getIQLModelAccess();
 	}
 	
-	public ParserRule getIQLFileRule() {
-		return getIQLFileAccess().getRule();
+	public ParserRule getIQLModelRule() {
+		return getIQLModelAccess().getRule();
 	}
 
 	//IQLTypeDefinition:
@@ -703,8 +703,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 
 	//IQLMetadataValueSingle returns IQLMetadataValue:
 	//	{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
-	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleChar} value=CHAR |
-	//	{IQLMetadataValueSingleTypeRef} value=JvmTypeReference | {IQLMetadataValueSingleNull} value="null";
+	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference
+	//	| {IQLMetadataValueSingleNull} value="null";
 	public BasicIQLGrammarAccess.IQLMetadataValueSingleElements getIQLMetadataValueSingleAccess() {
 		return gaBasicIQL.getIQLMetadataValueSingleAccess();
 	}
@@ -852,7 +852,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLDoWhileStatement returns IQLStatement:
-	//	{IQLDoWhileStatement} "do" body=IQLStatement "while" "(" predicate=IQLExpression ")";
+	//	{IQLDoWhileStatement} "do" body=IQLStatement "while" "(" predicate=IQLExpression ")" ";";
 	public BasicIQLGrammarAccess.IQLDoWhileStatementElements getIQLDoWhileStatementAccess() {
 		return gaBasicIQL.getIQLDoWhileStatementAccess();
 	}
@@ -884,7 +884,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 
 	//IQLSwitchStatement returns IQLStatement:
 	//	{IQLSwitchStatement} "switch" "(" expr=IQLExpression ")" "{" cases+=IQLCasePart* ("default" ":"
-	//	default=IQLStatement)? "}";
+	//	statements+=IQLStatement*)? "}";
 	public BasicIQLGrammarAccess.IQLSwitchStatementElements getIQLSwitchStatementAccess() {
 		return gaBasicIQL.getIQLSwitchStatementAccess();
 	}
@@ -894,7 +894,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLCasePart:
-	//	{IQLCasePart} "case" expr=IQLLiteralExpression ":" body=IQLStatement;
+	//	{IQLCasePart} "case" expr=IQLLiteralExpression ":" statements+=IQLStatement*;
 	public BasicIQLGrammarAccess.IQLCasePartElements getIQLCasePartAccess() {
 		return gaBasicIQL.getIQLCasePartAccess();
 	}
@@ -1213,9 +1213,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 
 	//IQLLiteralExpression returns IQLExpression:
 	//	{IQLLiteralExpressionInt} value=INT | {IQLLiteralExpressionDouble} value=DOUBLE | {IQLLiteralExpressionString}
-	//	value=STRING | {IQLLiteralExpressionBoolean} value=BOOLEAN | {IQLLiteralExpressionChar} value=CHAR |
-	//	{IQLLiteralExpressionRange} value=RANGE | {IQLLiteralExpressionNull} "null" | => IQLLiteralExpressionList |
-	//	IQLLiteralExpressionMap;
+	//	value=STRING | {IQLLiteralExpressionBoolean} value=BOOLEAN | {IQLLiteralExpressionRange} value=RANGE |
+	//	{IQLLiteralExpressionNull} "null" | => IQLLiteralExpressionList | IQLLiteralExpressionMap;
 	public BasicIQLGrammarAccess.IQLLiteralExpressionElements getIQLLiteralExpressionAccess() {
 		return gaBasicIQL.getIQLLiteralExpressionAccess();
 	}
@@ -1295,10 +1294,10 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLJavaText:
-	//	ID | BOOLEAN | DOUBLE | STRING | CHAR | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/" | "/=" | "%" |
-	//	"%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" | "|" | "|=" | "^"
-	//	| "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" | ")" | "." | ":" |
-	//	";" | "," | "null";
+	//	ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/" | "/=" | "%" | "%=" |
+	//	"++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" | "|" | "|=" | "^" | "^="
+	//	| "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" | ")" | "." | ":" | ";" |
+	//	"," | "null";
 	public BasicIQLGrammarAccess.IQLJavaTextElements getIQLJavaTextAccess() {
 		return gaBasicIQL.getIQLJavaTextAccess();
 	}
@@ -1337,12 +1336,6 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	//	"0".."9"* "." "0".."9"+;
 	public TerminalRule getDOUBLERule() {
 		return gaBasicIQL.getDOUBLERule();
-	} 
-
-	//terminal CHAR returns ecore::EChar:
-	//	"\'" ("\\" ("b" | "t" | "n" | "f" | "r" | "u" | "\'" | "\\") | !("\\" | "\'")) "\'";
-	public TerminalRule getCHARRule() {
-		return gaBasicIQL.getCHARRule();
 	} 
 
 	//terminal ID:

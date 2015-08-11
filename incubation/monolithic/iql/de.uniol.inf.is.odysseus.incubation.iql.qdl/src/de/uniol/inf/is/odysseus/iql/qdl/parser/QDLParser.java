@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.parser.AbstractIQLParser;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
@@ -57,7 +57,7 @@ public class QDLParser extends AbstractIQLParser<QDLTypeFactory, QDLTypeUtils> {
 
 
 	@Override
-	public void parse(IQLFile file, IProject project) {
+	public void parse(IQLModel file, IProject project) {
 		ResourceSet resourceSet = EcoreUtil2.getResourceSet(file);
 		for (QDLQuery query : EcoreUtil2.getAllContentsOfType(file, QDLQuery.class)) {
 			String outputPath = getIQLOutputPath()+QUERIES_DIR+File.separator+query.getSimpleName();

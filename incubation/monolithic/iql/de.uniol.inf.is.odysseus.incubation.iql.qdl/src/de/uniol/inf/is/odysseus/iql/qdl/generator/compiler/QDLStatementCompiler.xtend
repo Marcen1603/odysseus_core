@@ -19,22 +19,21 @@ class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompilerHelpe
 	
 	override String compile(IQLVariableInitialization init, JvmTypeReference typeRef, QDLGeneratorContext context) {
 		if (helper.isOperator(typeRef)) {
-			var opName = helper.getLogicalOperatorName(typeRef)
 			if (init.argsMap != null && init.argsMap.elements.size > 0) {
-				var constructor = lookUp.findConstructor(typeRef, init.argsList.elements)
+				var constructor = lookUp.findPublicConstructor(typeRef, init.argsList.elements)
 				var args = init.argsList.elements.size > 0
 				if (constructor != null) {
-					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
+					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»("«typeUtils.getShortName(typeRef, false)»"«IF args», «ENDIF»«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 				} else {
-					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
+					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»("«typeUtils.getShortName(typeRef, false)»"«IF args», «ENDIF»«exprCompiler.compile(init.argsList, context)»), operators, «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 				}
 			} else if (init.argsList != null) {
-				var constructor = lookUp.findConstructor(typeRef, init.argsList.elements)
+				var constructor = lookUp.findPublicConstructor(typeRef, init.argsList.elements)
 				var args = init.argsList.elements.size > 0				
 				if (constructor != null) {
-					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators)'''
+					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»("«typeUtils.getShortName(typeRef, false)»"«IF args», «ENDIF»«exprCompiler.compile(init.argsList,constructor.parameters, context)»), operators)'''
 				} else {
-					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»<«opName»>(new «opName»()«IF args», «ENDIF»«exprCompiler.compile(init.argsList, context)»), operators)'''
+					'''getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, false)»("«typeUtils.getShortName(typeRef, false)»"«IF args», «ENDIF»«exprCompiler.compile(init.argsList, context)»), operators)'''
 				}
 			} else {
 				super.compile(init, typeRef, context);

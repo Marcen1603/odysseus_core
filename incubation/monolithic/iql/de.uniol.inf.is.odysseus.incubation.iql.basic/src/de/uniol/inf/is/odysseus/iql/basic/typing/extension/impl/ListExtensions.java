@@ -69,5 +69,9 @@ public class ListExtensions extends CollectionExtensions {
 			}
 		}
 	}
+	
+	public static <T> int length(List<T> list) {
+		return list.size();
+	}
 
 }

@@ -32,14 +32,16 @@ public interface IIQLTypeUtils {
 	boolean isLong(JvmTypeReference typeRef, boolean wrapper);
 	boolean isFloat(JvmTypeReference typeRef, boolean wrapper);
 	boolean isDouble(JvmTypeReference typeRef, boolean wrapper);
-	
+	boolean isCharacter(JvmTypeReference typeRef, boolean wrapper);
+
 	boolean isByte(JvmTypeReference typeRef);
 	boolean isShort(JvmTypeReference typeRef);
 	boolean isInt(JvmTypeReference typeRef);
 	boolean isLong(JvmTypeReference typeRef);
 	boolean isFloat(JvmTypeReference typeRef);
 	boolean isDouble(JvmTypeReference typeRef);
-	
+	boolean isCharacter(JvmTypeReference typeRef);
+
 	boolean isString(JvmTypeReference typeRef);	
 	boolean isBoolean(JvmTypeReference typeRef);
 	

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator.compiler;
 
+import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue;
@@ -7,7 +8,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull;
@@ -80,21 +80,17 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
           if ((o instanceof IQLMetadataValueSingleBoolean)) {
             return this.compile(((IQLMetadataValueSingleBoolean) o), c);
           } else {
-            if ((o instanceof IQLMetadataValueSingleChar)) {
-              return this.compile(((IQLMetadataValueSingleChar) o), c);
+            if ((o instanceof IQLMetadataValueSingleNull)) {
+              return this.compile(((IQLMetadataValueSingleNull) o), c);
             } else {
-              if ((o instanceof IQLMetadataValueSingleNull)) {
-                return this.compile(((IQLMetadataValueSingleNull) o), c);
+              if ((o instanceof IQLMetadataValueSingleTypeRef)) {
+                return this.compile(((IQLMetadataValueSingleTypeRef) o), c);
               } else {
-                if ((o instanceof IQLMetadataValueSingleTypeRef)) {
-                  return this.compile(((IQLMetadataValueSingleTypeRef) o), c);
+                if ((o instanceof IQLMetadataValueList)) {
+                  return this.compile(((IQLMetadataValueList) o), c);
                 } else {
-                  if ((o instanceof IQLMetadataValueList)) {
-                    return this.compile(((IQLMetadataValueList) o), c);
-                  } else {
-                    if ((o instanceof IQLMetadataValueMap)) {
-                      return this.compile(((IQLMetadataValueMap) o), c);
-                    }
+                  if ((o instanceof IQLMetadataValueMap)) {
+                    return this.compile(((IQLMetadataValueMap) o), c);
                   }
                 }
               }
@@ -121,28 +117,41 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
   }
   
   public String compile(final IQLMetadataValueSingleString o, final G c) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("\"");
-    String _value = o.getValue();
-    _builder.append(_value, "");
-    _builder.append("\"");
-    return _builder.toString();
+    String _xifexpression = null;
+    JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
+    boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
+    if (_notEquals) {
+      String _xifexpression_1 = null;
+      JvmTypeReference _expectedTypeRef_1 = c.getExpectedTypeRef();
+      boolean _isCharacter = this.typeUtils.isCharacter(_expectedTypeRef_1);
+      if (_isCharacter) {
+        String _value = o.getValue();
+        String _plus = ("\'" + _value);
+        return (_plus + "\'");
+      } else {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("\"");
+        String _value_1 = o.getValue();
+        _builder.append(_value_1, "");
+        _builder.append("\"");
+        _xifexpression_1 = _builder.toString();
+      }
+      _xifexpression = _xifexpression_1;
+    } else {
+      StringConcatenation _builder_1 = new StringConcatenation();
+      _builder_1.append("\"");
+      String _value_2 = o.getValue();
+      _builder_1.append(_value_2, "");
+      _builder_1.append("\"");
+      _xifexpression = _builder_1.toString();
+    }
+    return _xifexpression;
   }
   
   public String compile(final IQLMetadataValueSingleBoolean o, final G c) {
     StringConcatenation _builder = new StringConcatenation();
     boolean _isValue = o.isValue();
     _builder.append(_isValue, "");
-    return _builder.toString();
-  }
-  
-  public String compile(final IQLMetadataValueSingleChar o, final G c) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("\'");
-    char _value = o.getValue();
-    _builder.append(_value, "");
-    _builder.append("\'");
-    _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
   

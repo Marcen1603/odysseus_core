@@ -67,7 +67,7 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLJavaAccess().getAlternatives_1(), "rule__IQLJava__Alternatives_1");
 					put(grammarAccess.getIQLJavaTextAccess().getAlternatives(), "rule__IQLJavaText__Alternatives");
 					put(grammarAccess.getIQLJavaKeywordsAccess().getKeywordAlternatives_1_0(), "rule__IQLJavaKeywords__KeywordAlternatives_1_0");
-					put(grammarAccess.getODLFileAccess().getGroup(), "rule__ODLFile__Group__0");
+					put(grammarAccess.getODLModelAccess().getGroup(), "rule__ODLModel__Group__0");
 					put(grammarAccess.getODLTypeDefinitionAccess().getGroup(), "rule__ODLTypeDefinition__Group__0");
 					put(grammarAccess.getODLOperatorAccess().getGroup(), "rule__ODLOperator__Group__0");
 					put(grammarAccess.getODLOperatorAccess().getGroup_3(), "rule__ODLOperator__Group_3__0");
@@ -79,8 +79,8 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getODLMethodAccess().getGroup_2_1_1(), "rule__ODLMethod__Group_2_1_1__0");
 					put(grammarAccess.getODLMethodAccess().getGroup_2_1_1_1(), "rule__ODLMethod__Group_2_1_1_1__0");
 					put(grammarAccess.getODLMethodAccess().getGroup_2_2(), "rule__ODLMethod__Group_2_2__0");
-					put(grammarAccess.getIQLFileAccess().getGroup(), "rule__IQLFile__Group__0");
-					put(grammarAccess.getIQLFileAccess().getGroup_0(), "rule__IQLFile__Group_0__0");
+					put(grammarAccess.getIQLModelAccess().getGroup(), "rule__IQLModel__Group__0");
+					put(grammarAccess.getIQLModelAccess().getGroup_0(), "rule__IQLModel__Group_0__0");
 					put(grammarAccess.getIQLTypeDefinitionAccess().getGroup(), "rule__IQLTypeDefinition__Group__0");
 					put(grammarAccess.getIQLNamespaceAccess().getGroup(), "rule__IQLNamespace__Group__0");
 					put(grammarAccess.getIQLClassAccess().getGroup(), "rule__IQLClass__Group__0");
@@ -115,7 +115,6 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getGroup_3(), "rule__IQLMetadataValueSingle__Group_3__0");
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getGroup_4(), "rule__IQLMetadataValueSingle__Group_4__0");
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getGroup_5(), "rule__IQLMetadataValueSingle__Group_5__0");
-					put(grammarAccess.getIQLMetadataValueSingleAccess().getGroup_6(), "rule__IQLMetadataValueSingle__Group_6__0");
 					put(grammarAccess.getIQLMetadataValueListAccess().getGroup(), "rule__IQLMetadataValueList__Group__0");
 					put(grammarAccess.getIQLMetadataValueListAccess().getGroup_2(), "rule__IQLMetadataValueList__Group_2__0");
 					put(grammarAccess.getIQLMetadataValueListAccess().getGroup_2_1(), "rule__IQLMetadataValueList__Group_2_1__0");
@@ -214,7 +213,6 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLLiteralExpressionAccess().getGroup_3(), "rule__IQLLiteralExpression__Group_3__0");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getGroup_4(), "rule__IQLLiteralExpression__Group_4__0");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getGroup_5(), "rule__IQLLiteralExpression__Group_5__0");
-					put(grammarAccess.getIQLLiteralExpressionAccess().getGroup_6(), "rule__IQLLiteralExpression__Group_6__0");
 					put(grammarAccess.getIQLLiteralExpressionListAccess().getGroup(), "rule__IQLLiteralExpressionList__Group__0");
 					put(grammarAccess.getIQLLiteralExpressionListAccess().getGroup_2(), "rule__IQLLiteralExpressionList__Group_2__0");
 					put(grammarAccess.getIQLLiteralExpressionListAccess().getGroup_2_1(), "rule__IQLLiteralExpressionList__Group_2_1__0");
@@ -227,8 +225,8 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getQualifiedNameAccess().getGroup_1(), "rule__QualifiedName__Group_1__0");
 					put(grammarAccess.getIQLJavaAccess().getGroup(), "rule__IQLJava__Group__0");
 					put(grammarAccess.getIQLJavaKeywordsAccess().getGroup(), "rule__IQLJavaKeywords__Group__0");
-					put(grammarAccess.getODLFileAccess().getNamespacesAssignment_1(), "rule__ODLFile__NamespacesAssignment_1");
-					put(grammarAccess.getODLFileAccess().getElementsAssignment_2(), "rule__ODLFile__ElementsAssignment_2");
+					put(grammarAccess.getODLModelAccess().getNamespacesAssignment_1(), "rule__ODLModel__NamespacesAssignment_1");
+					put(grammarAccess.getODLModelAccess().getElementsAssignment_2(), "rule__ODLModel__ElementsAssignment_2");
 					put(grammarAccess.getODLTypeDefinitionAccess().getJavametadataAssignment_1(), "rule__ODLTypeDefinition__JavametadataAssignment_1");
 					put(grammarAccess.getODLTypeDefinitionAccess().getInnerAssignment_2(), "rule__ODLTypeDefinition__InnerAssignment_2");
 					put(grammarAccess.getODLOperatorAccess().getSimpleNameAssignment_2(), "rule__ODLOperator__SimpleNameAssignment_2");
@@ -247,9 +245,9 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getODLMethodAccess().getParametersAssignment_2_1_1_1_1(), "rule__ODLMethod__ParametersAssignment_2_1_1_1_1");
 					put(grammarAccess.getODLMethodAccess().getReturnTypeAssignment_2_2_1(), "rule__ODLMethod__ReturnTypeAssignment_2_2_1");
 					put(grammarAccess.getODLMethodAccess().getBodyAssignment_3(), "rule__ODLMethod__BodyAssignment_3");
-					put(grammarAccess.getIQLFileAccess().getNameAssignment_0_1(), "rule__IQLFile__NameAssignment_0_1");
-					put(grammarAccess.getIQLFileAccess().getNamespacesAssignment_1(), "rule__IQLFile__NamespacesAssignment_1");
-					put(grammarAccess.getIQLFileAccess().getElementsAssignment_2(), "rule__IQLFile__ElementsAssignment_2");
+					put(grammarAccess.getIQLModelAccess().getNameAssignment_0_1(), "rule__IQLModel__NameAssignment_0_1");
+					put(grammarAccess.getIQLModelAccess().getNamespacesAssignment_1(), "rule__IQLModel__NamespacesAssignment_1");
+					put(grammarAccess.getIQLModelAccess().getElementsAssignment_2(), "rule__IQLModel__ElementsAssignment_2");
 					put(grammarAccess.getIQLTypeDefinitionAccess().getJavametadataAssignment_1(), "rule__IQLTypeDefinition__JavametadataAssignment_1");
 					put(grammarAccess.getIQLTypeDefinitionAccess().getInnerAssignment_2(), "rule__IQLTypeDefinition__InnerAssignment_2");
 					put(grammarAccess.getIQLNamespaceAccess().getImportedNamespaceAssignment_1(), "rule__IQLNamespace__ImportedNamespaceAssignment_1");
@@ -294,7 +292,6 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getValueAssignment_3_1(), "rule__IQLMetadataValueSingle__ValueAssignment_3_1");
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getValueAssignment_4_1(), "rule__IQLMetadataValueSingle__ValueAssignment_4_1");
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getValueAssignment_5_1(), "rule__IQLMetadataValueSingle__ValueAssignment_5_1");
-					put(grammarAccess.getIQLMetadataValueSingleAccess().getValueAssignment_6_1(), "rule__IQLMetadataValueSingle__ValueAssignment_6_1");
 					put(grammarAccess.getIQLMetadataValueListAccess().getElementsAssignment_2_0(), "rule__IQLMetadataValueList__ElementsAssignment_2_0");
 					put(grammarAccess.getIQLMetadataValueListAccess().getElementsAssignment_2_1_1(), "rule__IQLMetadataValueList__ElementsAssignment_2_1_1");
 					put(grammarAccess.getIQLMetadataValueMapAccess().getElementsAssignment_2_0(), "rule__IQLMetadataValueMap__ElementsAssignment_2_0");
@@ -330,9 +327,9 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLForEachStatementAccess().getBodyAssignment_7(), "rule__IQLForEachStatement__BodyAssignment_7");
 					put(grammarAccess.getIQLSwitchStatementAccess().getExprAssignment_3(), "rule__IQLSwitchStatement__ExprAssignment_3");
 					put(grammarAccess.getIQLSwitchStatementAccess().getCasesAssignment_6(), "rule__IQLSwitchStatement__CasesAssignment_6");
-					put(grammarAccess.getIQLSwitchStatementAccess().getDefaultAssignment_7_2(), "rule__IQLSwitchStatement__DefaultAssignment_7_2");
+					put(grammarAccess.getIQLSwitchStatementAccess().getStatementsAssignment_7_2(), "rule__IQLSwitchStatement__StatementsAssignment_7_2");
 					put(grammarAccess.getIQLCasePartAccess().getExprAssignment_2(), "rule__IQLCasePart__ExprAssignment_2");
-					put(grammarAccess.getIQLCasePartAccess().getBodyAssignment_4(), "rule__IQLCasePart__BodyAssignment_4");
+					put(grammarAccess.getIQLCasePartAccess().getStatementsAssignment_4(), "rule__IQLCasePart__StatementsAssignment_4");
 					put(grammarAccess.getIQLExpressionStatementAccess().getExpressionAssignment_1(), "rule__IQLExpressionStatement__ExpressionAssignment_1");
 					put(grammarAccess.getIQLVariableStatementAccess().getVarAssignment_1(), "rule__IQLVariableStatement__VarAssignment_1");
 					put(grammarAccess.getIQLVariableStatementAccess().getInitAssignment_2(), "rule__IQLVariableStatement__InitAssignment_2");
@@ -380,7 +377,6 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLLiteralExpressionAccess().getValueAssignment_2_1(), "rule__IQLLiteralExpression__ValueAssignment_2_1");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getValueAssignment_3_1(), "rule__IQLLiteralExpression__ValueAssignment_3_1");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getValueAssignment_4_1(), "rule__IQLLiteralExpression__ValueAssignment_4_1");
-					put(grammarAccess.getIQLLiteralExpressionAccess().getValueAssignment_5_1(), "rule__IQLLiteralExpression__ValueAssignment_5_1");
 					put(grammarAccess.getIQLLiteralExpressionListAccess().getElementsAssignment_2_0(), "rule__IQLLiteralExpressionList__ElementsAssignment_2_0");
 					put(grammarAccess.getIQLLiteralExpressionListAccess().getElementsAssignment_2_1_1(), "rule__IQLLiteralExpressionList__ElementsAssignment_2_1_1");
 					put(grammarAccess.getIQLLiteralExpressionMapAccess().getElementsAssignment_2_0(), "rule__IQLLiteralExpressionMap__ElementsAssignment_2_0");
@@ -400,7 +396,7 @@ public class ODLParser extends AbstractContentAssistParser {
 	protected Collection<FollowElement> getFollowElements(AbstractInternalContentAssistParser parser) {
 		try {
 			de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.antlr.internal.InternalODLParser typedParser = (de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.antlr.internal.InternalODLParser) parser;
-			typedParser.entryRuleODLFile();
+			typedParser.entryRuleODLModel();
 			return typedParser.getFollowElements();
 		} catch(RecognitionException ex) {
 			throw new RuntimeException(ex);

@@ -42,11 +42,11 @@ public class OdysseusScriptGenerator {
 		query.setDataDictionary(dd);
 		query.setSession(session);		
 		
-		Collection<IQDLOperator<?>> operators = query.execute();
-		for (IQDLOperator<?> operator : operators) {
+		Collection<IQDLOperator> operators = query.execute();
+		for (IQDLOperator operator : operators) {
 			setParameters(operator, session, dd);
 		}
-		Collection<IQDLOperator<?>> roots = getRoots(operators);
+		Collection<IQDLOperator> roots = getRoots(operators);
 		TopAO topAO = createTopAO(roots);
 		String pql = QDLServiceBinding.getPQLGenerator().generatePQLStatement(topAO);	
 		String script = setPreParserKeywords(query, pql);
@@ -107,7 +107,7 @@ public class OdysseusScriptGenerator {
 
 	
 	@SuppressWarnings({ "unchecked" })
-	private void setParameters(IQDLOperator<?> operator, ISession session, IDataDictionary dd) {		
+	private void setParameters(IQDLOperator operator, ISession session, IDataDictionary dd) {		
 		Class<? extends ILogicalOperator> opClass = factory.getOperatorBuilder(operator.getLogicalOperator().getName()).getOperatorClass();
 		BeanInfo beanInfo = null;
 		try {
@@ -190,19 +190,19 @@ public class OdysseusScriptGenerator {
 	}
 	
 
-	public TopAO createTopAO(Collection<IQDLOperator<?>> sources) {
+	public TopAO createTopAO(Collection<IQDLOperator> sources) {
 		TopAO topAO = new TopAO();
 		int i = 0; 
-		for (IQDLOperator<?> op : sources) {
+		for (IQDLOperator op : sources) {
 			topAO.subscribeToSource(op.getLogicalOperator(), i++, 0, op.getLogicalOperator().getOutputSchema());
 		}
 		return topAO;
 	}
 
 	
-	private Collection<IQDLOperator<?>> getRoots(Collection<IQDLOperator<?>> operators) {
-		Collection<IQDLOperator<?>> roots = new HashSet<>();
-		for (IQDLOperator<?> op : operators) {
+	private Collection<IQDLOperator> getRoots(Collection<IQDLOperator> operators) {
+		Collection<IQDLOperator> roots = new HashSet<>();
+		for (IQDLOperator op : operators) {
 			if (op.getLogicalOperator().getSubscriptions().size() == 0) {
 				roots.add(op);
 			}

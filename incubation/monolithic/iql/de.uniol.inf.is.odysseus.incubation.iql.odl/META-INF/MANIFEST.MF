@@ -54,6 +54,7 @@ Export-Package: de.uniol.inf.is.odysseus.iql.odl,
  de.uniol.inf.is.odysseus.iql.odl.services,
  de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator,
  de.uniol.inf.is.odysseus.iql.odl.typing,
+ de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods,
  de.uniol.inf.is.odysseus.iql.odl.validation
 Service-Component: OSGI-INF/ODLServiceBinding.xml
 

@@ -1,0 +1,155 @@
+operator OMap(outputMode = "NEW_ELEMENT"){	
+	parameter NamedExpression[] expressions;	
+	RelationalExpression[] relationalExpressions = [];
+	SDFExpression[] sdfExpressions = [];
+	
+	
+	on init {
+		for (NamedExpression expr : expressions) {
+			sdfExpressions += expr.expression;
+		}
+		
+		
+		for (SDFExpression expr : sdfExpressions) {			
+			relationalExpressions += new RelationalExpression(expr.clone);
+		}				
+	}	
+	
+	
+	
+	on processOpen() {
+		for (RelationalExpression expr : relationalExpressions) {	
+			expr.initVars(getInputSchema(0));			
+		}		
+	}
+	
+	on processNext(Tuple tuple, int port) {
+		boolean nullValueOccured = false;
+		
+		Tuple result = createEmptyTupleWithMeta(this.getOutputSchema().size(), tuple, tuple.requiresDeepClone);
+		
+		for (int i = 0; i < this.relationalExpressions.length; ++i) {
+			Object expr = relationalExpressions[i].evaluate(tuple, getSessions(), null);
+			
+			result[i] = expr;
+			if (expr == null) {
+				nullValueOccured = true;
+			}		
+		}
+		if (!nullValueOccured || nullValueOccured) {
+			sendStreamElement(result);
+		}
+	}
+	
+	
+	
+	
+	on processPunctuation(IPunctuation punctuation, int port) {
+		sendPunctuation(punctuation, port);
+	}
+	
+	on createOutputSchema(int port) : SDFSchema{
+		SDFAttribute[] attrs = [];
+		for (NamedExpression expr : expressions) {
+						
+			SDFAttribute attr = null;
+			IExpression mepExpression = expr.expression	.getMEPExpression();
+			boolean isOnlyAttribute = false;
+			
+			String exprString = expr.expression.toString();
+			exprString = exprString.replace('b', '_').replace(')', '_');
+			String lastString = null;
+			String toSplit = exprString;
+						
+			String[] split = splitURL(toSplit);	
+				
+			SDFElement elem = null;
+			if (split[1] != null && split[1].length() > 0) {
+				elem = new SDFElement(split[0], split[1]);
+			} else {
+				elem = new SDFElement(null, split[0]);
+			}
+			
+			SDFAttribute[] inAttribs = expr.expression.getAllAttributes();
+			for (SDFAttribute attributeToCheck : inAttribs) {
+				SDFAttribute attribute = null;
+				String attributeURI = attributeToCheck.getURI();
+				if (attributeURI.startsWith("__")) {
+					String realAttributeName = attributeURI.substring(attributeURI.indexOf(".") + 1);
+					split = splitURL(realAttributeName);
+					if (split.length > 1) {
+						attribute = new SDFAttribute(split[0], split[1],attributeToCheck);
+					} else {
+						attribute = new SDFAttribute(null, split[0],attributeToCheck);
+					}
+				} else {
+					attribute = attributeToCheck;
+				}
+				if (attribute.equalsCQL(elem)) {
+					if (lastString != null) {
+						String attrName = "";
+						if (elem.getURIWithoutQualName() != null)
+							attrName = elem.getURIWithoutQualName()	+ "."+ elem.getQualName();
+						else
+							attrName = elem.getQualName();
+						attr = new SDFAttribute(lastString, attrName, attribute.getDatatype(),attribute.getUnit(),attribute.getDtConstraints());
+					} else {
+						attr = new SDFAttribute(elem.getURIWithoutQualName(),elem.getQualName(),attribute.getDatatype(),attribute.getUnit(),attribute.getDtConstraints());
+					}
+					isOnlyAttribute = true;
+				}
+			}
+			if (isOnlyAttribute) {
+				if (!"".equals(expr.name)) {
+					if (attr != null && attr.getSourceName() != null && !attr.getSourceName().startsWith("__")) {
+							attr = new SDFAttribute(attr.getSourceName(),expr.name, attr);
+					} else {
+							attr = new SDFAttribute(null, expr.name, attr);
+					}
+				}
+			}
+			
+			
+			if (attr == null) {
+				if (mepExpression.getReturnType() == SDFDatatype::TUPLE) {
+					int card = mepExpression.getReturnTypeCard();
+					for (int i = 0; i < card; i++) {
+							String name = "";
+							if(!"".equals(expr.name))
+								name = expr.name;
+							else
+								name = exprString;
+							attr = new SDFAttribute(null, name + "_" + i,mepExpression.getReturnType(i), null, null,null);
+							attrs.add(attr);
+						}
+
+					} else {
+						SDFDatatype retType = mepExpression.getReturnType();						
+						String name = "";
+							if(!"".equals(expr.name))
+								name = expr.name;
+							else
+								name = exprString;
+						attr = new SDFAttribute(null, name,retType, null, null, null);
+						attrs.add(attr);
+					}
+			} else {
+				attrs.add(attr);
+			}
+		}
+		SDFSchema newSchema = SDFSchemaFactory::createNewWithAttributes(attrs, getInputSchema(port));
+		return SDFSchema::changeSourceName(newSchema,getInputSchema(port).getURI(), false);
+	}
+	
+	
+	requiresDeepClone(): boolean {
+		for (RelationalExpression expr : relationalExpressions) {			
+			if(expr.getType.requiresDeepClone) {
+				return true;
+			}
+		}
+		return false;
+	}	
+	
+	
+}

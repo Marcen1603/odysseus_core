@@ -5,8 +5,8 @@ package de.uniol.inf.is.odysseus.iql.odl.oDL.impl;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLFactory;
-import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLFile;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
+import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLPackage;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
@@ -34,7 +34,7 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass odlFileEClass = null;
+  private EClass odlModelEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -135,9 +135,9 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getODLFile()
+  public EClass getODLModel()
   {
-    return odlFileEClass;
+    return odlModelEClass;
   }
 
   /**
@@ -270,7 +270,7 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
     isCreated = true;
 
     // Create classes and their features
-    odlFileEClass = createEClass(ODL_FILE);
+    odlModelEClass = createEClass(ODL_MODEL);
 
     odlTypeDefinitionEClass = createEClass(ODL_TYPE_DEFINITION);
 
@@ -320,14 +320,14 @@ public class ODLPackageImpl extends EPackageImpl implements ODLPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    odlFileEClass.getESuperTypes().add(theBasicIQLPackage.getIQLFile());
+    odlModelEClass.getESuperTypes().add(theBasicIQLPackage.getIQLModel());
     odlTypeDefinitionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLTypeDefinition());
     odlOperatorEClass.getESuperTypes().add(theTypesPackage.getJvmGenericType());
     odlParameterEClass.getESuperTypes().add(theBasicIQLPackage.getIQLAttribute());
     odlMethodEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMethod());
 
     // Initialize classes and features; add operations and parameters
-    initEClass(odlFileEClass, ODLFile.class, "ODLFile", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEClass(odlModelEClass, ODLModel.class, "ODLModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(odlTypeDefinitionEClass, ODLTypeDefinition.class, "ODLTypeDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

@@ -30,6 +30,7 @@ import java.util.Map;
 
 
 
+
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
@@ -37,6 +38,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
+
 
 
 
@@ -63,7 +65,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuil
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.parser.AbstractIQLParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
@@ -87,10 +89,10 @@ public class ODLParser extends AbstractIQLParser<ODLTypeFactory, ODLTypeUtils> {
 
 	
 	@Override
-	public void parse(IQLFile file, IProject project) {	
-		ResourceSet resourceSet = EcoreUtil2.getResourceSet(file);
+	public void parse(IQLModel model, IProject project) {	
+		ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
 
-		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(file, ODLOperator.class)) {
+		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
 			String outputPath = getIQLOutputPath()+OPERATORS_DIR+File.separator+operator.getSimpleName();
 			
 			cleanUpDir(outputPath);

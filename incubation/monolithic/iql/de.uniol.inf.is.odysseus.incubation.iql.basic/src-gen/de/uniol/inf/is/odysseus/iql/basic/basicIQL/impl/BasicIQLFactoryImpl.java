@@ -64,7 +64,7 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
   {
     switch (eClass.getClassifierID())
     {
-      case BasicIQLPackage.IQL_FILE: return createIQLFile();
+      case BasicIQLPackage.IQL_MODEL: return createIQLModel();
       case BasicIQLPackage.IQL_TYPE_DEFINITION: return createIQLTypeDefinition();
       case BasicIQLPackage.IQL_NAMESPACE: return createIQLNamespace();
       case BasicIQLPackage.IQL_JAVA_METADATA: return createIQLJavaMetadata();
@@ -97,7 +97,6 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE: return createIQLMetadataValueSingleDouble();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_STRING: return createIQLMetadataValueSingleString();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN: return createIQLMetadataValueSingleBoolean();
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_CHAR: return createIQLMetadataValueSingleChar();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF: return createIQLMetadataValueSingleTypeRef();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_NULL: return createIQLMetadataValueSingleNull();
       case BasicIQLPackage.IQL_METADATA_VALUE_LIST: return createIQLMetadataValueList();
@@ -141,7 +140,6 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_DOUBLE: return createIQLLiteralExpressionDouble();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_STRING: return createIQLLiteralExpressionString();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_BOOLEAN: return createIQLLiteralExpressionBoolean();
-      case BasicIQLPackage.IQL_LITERAL_EXPRESSION_CHAR: return createIQLLiteralExpressionChar();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_RANGE: return createIQLLiteralExpressionRange();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_NULL: return createIQLLiteralExpressionNull();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_LIST: return createIQLLiteralExpressionList();
@@ -156,10 +154,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLFile createIQLFile()
+  public IQLModel createIQLModel()
   {
-    IQLFileImpl iqlFile = new IQLFileImpl();
-    return iqlFile;
+    IQLModelImpl iqlModel = new IQLModelImpl();
+    return iqlModel;
   }
 
   /**
@@ -512,17 +510,6 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
   {
     IQLMetadataValueSingleBooleanImpl iqlMetadataValueSingleBoolean = new IQLMetadataValueSingleBooleanImpl();
     return iqlMetadataValueSingleBoolean;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLMetadataValueSingleChar createIQLMetadataValueSingleChar()
-  {
-    IQLMetadataValueSingleCharImpl iqlMetadataValueSingleChar = new IQLMetadataValueSingleCharImpl();
-    return iqlMetadataValueSingleChar;
   }
 
   /**
@@ -996,17 +983,6 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
   {
     IQLLiteralExpressionBooleanImpl iqlLiteralExpressionBoolean = new IQLLiteralExpressionBooleanImpl();
     return iqlLiteralExpressionBoolean;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLLiteralExpressionChar createIQLLiteralExpressionChar()
-  {
-    IQLLiteralExpressionCharImpl iqlLiteralExpressionChar = new IQLLiteralExpressionCharImpl();
-    return iqlLiteralExpressionChar;
   }
 
   /**

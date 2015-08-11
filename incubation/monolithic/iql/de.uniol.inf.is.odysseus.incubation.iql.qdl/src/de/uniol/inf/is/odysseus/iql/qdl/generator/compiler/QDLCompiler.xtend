@@ -69,13 +69,13 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 				«ENDIF»
 			}
 			
-			public «Collection.simpleName»<«IQDLOperator.simpleName»<?>> execute() {
+			public «Collection.simpleName»<«IQDLOperator.simpleName»> execute() {
 			 	«FOR source : typeFactory.sources»
 			 		«context.addImport(StreamAO.canonicalName)»
 			 		«context.addImport(DefaultQDLSource.canonicalName)»			 		
-			 		«DefaultQDLSource.simpleName»<«StreamAO.simpleName»> «source» = getSource("«source»");
+			 		«DefaultQDLSource.simpleName» «source» = getSource("«source»");
 				«ENDFOR»
-			 	«Collection.simpleName»<«IQDLOperator.simpleName»<?>> operators = new «ArrayList.simpleName»<>();
+			 	«Collection.simpleName»<«IQDLOperator.simpleName»> operators = new «ArrayList.simpleName»<>();
 			 	«FOR stmt : block.statements»
 			 		«stmtCompiler.compile(stmt, context)»
 				«ENDFOR»			 	
@@ -109,11 +109,9 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 	
 	override createGetterMethod(JvmTypeReference typeRef, IQLArgumentsMap map, QDLGeneratorContext context) {
 		if (helper.isOperator(typeRef)) {
-			var opName = helper.getLogicalOperatorName(typeRef)
-			context.addImport(typeFactory.getLogicalOperator(typeUtils.getShortName(typeRef, false)).canonicalName)
 			'''
 			
-			private «typeCompiler.compile(typeRef, context, false)» getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)»<«opName»> type, «Collection.simpleName»<«IQDLOperator.simpleName»<?>> operators«IF map != null && map.elements.size > 0», «map.elements.map[ el | super.compile(el, typeRef, context)].join(", ")»«ENDIF») {
+			private «typeCompiler.compile(typeRef, context, false)» getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)» type, «Collection.simpleName»<«IQDLOperator.simpleName»> operators«IF map != null && map.elements.size > 0», «map.elements.map[ el | super.compile(el, typeRef, context)].join(", ")»«ENDIF») {
 				operators.add(type);
 				«IF map != null»
 					«FOR el :map.elements»

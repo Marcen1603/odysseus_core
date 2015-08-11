@@ -10,17 +10,9 @@ operator OProject(outputMode ="MODIFIED_INPUT"){
 		return true;
 	}
 	
-	
-	
-	
-	on createOutputSchema(int port) : SDFSchema{
-		return SDFSchemaFactory::createNewWithAttributes(attributes, getInputSchema(port));
-	}
-		
-	on processPuncutation(IPunctuation punctuation, int port) {
+	on processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
-	}
-	
+	}	
 		
 	on processNext(Tuple tuple, int port) {
 		Tuple out = createEmptyTupleWithMeta(attributes.size(), tuple, tuple.requiresDeepClone());
@@ -29,9 +21,18 @@ operator OProject(outputMode ="MODIFIED_INPUT"){
 			int index = getInputSchema(port).indexOf(attr);
 			out[i++] = tuple[index];
 		}
+		
 		sendStreamElement(out);
 	}
 	
-		
 	
+	on createOutputSchema(int port) : SDFSchema{
+		return SDFSchemaFactory::createNewWithAttributes(attributes, getInputSchema(port));		
+	}
+	
+	on init() {
+			
+	}
+		
 }
+

@@ -13,10 +13,7 @@ public class IQLUtils {
 	public static List createList(Object ... obj) {
 		return new ArrayList<Object>(Arrays.asList(obj));
 	}
-	
-	public static List createList(List obj) {
-		return new ArrayList<Object>(obj);
-	}
+
 	
 	public static List createEmptyList() {
 		return new ArrayList<Object>();

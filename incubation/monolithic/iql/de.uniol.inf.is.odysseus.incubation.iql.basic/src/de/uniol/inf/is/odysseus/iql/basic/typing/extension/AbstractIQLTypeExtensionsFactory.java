@@ -19,12 +19,15 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
+import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
+import de.uniol.inf.is.odysseus.iql.basic.service.IIQLService;
+import de.uniol.inf.is.odysseus.iql.basic.service.IQLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.basic.typing.IQLDefaultTypes;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLTypeExtensionsFactory {
+public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLTypeExtensionsFactory, IQLServiceBinding.Listener {
 	private Map<String, Collection<IIQLTypeExtensions>> typeExtensions = new HashMap<>();
 	private Map<IIQLTypeExtensions, JvmTypeReference> typeExtensionsRefs = new HashMap<>();
 
@@ -33,6 +36,9 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 
 	@Inject
 	protected IIQLMethodFinder methodFinder;
+	
+	@Inject
+	protected IIQLLookUp lookUp;
 
 	public AbstractIQLTypeExtensionsFactory(F typeFactory, U typeUtils) {
 		this.typeFactory = typeFactory;
@@ -44,6 +50,10 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 	private void init() {
 		for (IIQLTypeExtensions extensions : IQLDefaultTypes.getTypeExtensions()) {
 			this.addTypeExtensions(extensions);
+		}
+		IQLServiceBinding.getInstance().addListener(this);
+		for (IIQLService service : IQLServiceBinding.getInstance().getServices()) {
+			onServiceAdded(service);
 		}
 	}
 
@@ -168,22 +178,28 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 		return getTypeExtensions(typeRef, method, args) != null;
 	}
 	
+	
+	protected JvmTypeReference getExtendedType(JvmDeclaredType declaredType) {
+		return declaredType.getExtendedClass();
+	}
+	
 	private IIQLTypeExtensions findTypeExtensions(JvmTypeReference typeRef, String attribute) {
+		if (typeUtils.isArray(typeRef)) {
+			typeRef = typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet());
+		}
+		
 		JvmType innerType = typeUtils.getInnerType(typeRef, true);
 
 		String name = typeUtils.getLongName(innerType, true);
 		Collection<IIQLTypeExtensions> col = typeExtensions.get(name);
 		if (col != null) {
 			for (IIQLTypeExtensions extensions : col) {
-				Class<?> type = extensions.getType();
-				if (type.getCanonicalName().equalsIgnoreCase(name)) {
-					try {
-						Field field = extensions.getClass().getDeclaredField(attribute);
-						if (field.getName().equalsIgnoreCase(attribute)) {
-							return extensions;
-						}
-					} catch (NoSuchFieldException | SecurityException e) {
+				try {
+					Field field = extensions.getClass().getDeclaredField(attribute);
+					if (field.getName().equalsIgnoreCase(attribute)) {
+						return extensions;
 					}
+				} catch (NoSuchFieldException | SecurityException e) {
 				}
 			}
 		}
@@ -196,8 +212,10 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 					return extensions;
 				}
 			}
-			if (declaredType.getExtendedClass() != null) {
-				return findTypeExtensions(declaredType.getExtendedClass(), attribute);
+
+			JvmTypeReference extendedType = getExtendedType(declaredType);
+			if (extendedType!= null) {
+				return findTypeExtensions(extendedType, attribute);
 			}
 			
 			boolean isObject = typeUtils.getLongName(declaredType, true).equals(Object.class.getCanonicalName());
@@ -209,6 +227,10 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 	}
 	
 	private IIQLTypeExtensions findTypeExtensions(JvmTypeReference typeRef, String method, int args) {
+		if (typeUtils.isArray(typeRef)) {
+			typeRef = typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet());
+		}
+		
 		JvmType innerType = typeUtils.getInnerType(typeRef, true);
 
 		String name = typeUtils.getLongName(innerType, true);
@@ -217,7 +239,8 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 		if (col != null) {
 			for (IIQLTypeExtensions extensions : col) {
 				JvmTypeReference typeExtRef = typeExtensionsRefs.get(extensions);
-				JvmOperation op = methodFinder.findDeclaredMethod(typeExtRef, method, args-1);
+				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeExtRef, true);
+				JvmOperation op = methodFinder.findMethod(methods, method, args-1);
 				if (op != null) {
 					return extensions;
 				}
@@ -232,10 +255,11 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 					return extensions;
 				}
 			}
-			if (declaredType.getExtendedClass() != null) {
-				return findTypeExtensions(declaredType.getExtendedClass(), method, args);
+			JvmTypeReference extendedType = getExtendedType(declaredType);
+			if (extendedType!= null) {
+				return findTypeExtensions(extendedType, method, args);
 			}
-			
+
 			boolean isObject = typeUtils.getLongName(declaredType, true).equals(Object.class.getCanonicalName());
 			if (!isObject && declaredType.getExtendedClass() == null && !declaredType.getExtendedInterfaces().iterator().hasNext()) {
 				return findTypeExtensions(typeUtils.createTypeRef(Object.class, typeFactory.getSystemResourceSet()), method, args);
@@ -245,14 +269,20 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 	}
 	
 	private IIQLTypeExtensions findTypeExtensions(JvmTypeReference typeRef, String methodName, List<IQLExpression> arguments) {
+		if (typeUtils.isArray(typeRef)) {
+			typeRef = typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet());
+		}
+		
 		JvmType innerType = typeUtils.getInnerType(typeRef, true);
-
+		
 		String name = typeUtils.getLongName(innerType, true);
 		Collection<IIQLTypeExtensions> col = typeExtensions.get(name);
 
 		if (col != null) {
 			for (IIQLTypeExtensions extensions : col) {
-				JvmOperation op = methodFinder.findDeclaredMethod(typeExtensionsRefs.get(extensions), methodName, arguments);
+				JvmTypeReference extRef = typeExtensionsRefs.get(extensions);
+				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(extRef, true);
+				JvmOperation op = methodFinder.findMethod(methods, methodName, arguments);
 				if (op != null) {
 					return extensions;
 				}				
@@ -267,8 +297,9 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 					return extensions;
 				}
 			}
-			if (declaredType.getExtendedClass() != null) {
-				return findTypeExtensions(declaredType.getExtendedClass(), methodName, arguments);
+			JvmTypeReference extendedType = getExtendedType(declaredType);
+			if (extendedType!= null) {
+				return findTypeExtensions(extendedType, methodName, arguments);
 			}
 			
 			boolean isObject = typeUtils.getLongName(declaredType, true).equals(Object.class.getCanonicalName());
@@ -327,7 +358,24 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 	public JvmOperation getMethod(JvmTypeReference typeRef, String method,	List<IQLExpression> arguments) {
 		JvmTypeReference ext = typeExtensionsRefs.get(findTypeExtensions(typeRef, method, arguments));
 		JvmDeclaredType type = (JvmDeclaredType)  typeUtils.getInnerType(ext, false);
-		return methodFinder.findDeclaredMethod(type, method, arguments);
+		Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeUtils.createTypeRef(type), true);
+		return methodFinder.findMethod(methods, method, arguments);
+	}
+
+
+	@Override
+	public void onServiceAdded(IIQLService service) {
+		for (IIQLTypeExtensions typeExt : service.getTypeExtensions()) {
+			this.addTypeExtensions(typeExt);
+		}
+	}
+
+
+	@Override
+	public void onServiceRemoved(IIQLService service) {
+		for (IIQLTypeExtensions typeExt : service.getTypeExtensions()) {
+			this.removeTypeExtensions(typeExt);
+		}
 	}
 
 }

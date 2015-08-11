@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 
 public interface IQDLQuery {
 	
-	public Collection<IQDLOperator<?>> execute();
+	public Collection<IQDLOperator> execute();
 	
 	public List<IPair<String, Object>> getMetadata();
 	

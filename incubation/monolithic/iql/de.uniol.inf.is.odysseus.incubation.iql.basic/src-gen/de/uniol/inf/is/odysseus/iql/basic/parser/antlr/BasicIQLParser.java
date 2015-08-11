@@ -25,7 +25,7 @@ public class BasicIQLParser extends org.eclipse.xtext.parser.antlr.AbstractAntlr
 	
 	@Override 
 	protected String getDefaultRuleName() {
-		return "IQLFile";
+		return "IQLModel";
 	}
 	
 	public BasicIQLGrammarAccess getGrammarAccess() {

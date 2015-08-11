@@ -25,7 +25,7 @@ public class ODLParser extends org.eclipse.xtext.parser.antlr.AbstractAntlrParse
 	
 	@Override 
 	protected String getDefaultRuleName() {
-		return "ODLFile";
+		return "ODLModel";
 	}
 	
 	public ODLGrammarAccess getGrammarAccess() {

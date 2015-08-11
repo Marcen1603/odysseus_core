@@ -25,7 +25,7 @@ public class QDLParser extends org.eclipse.xtext.parser.antlr.AbstractAntlrParse
 	
 	@Override 
 	protected String getDefaultRuleName() {
-		return "QDLFile";
+		return "QDLModel";
 	}
 	
 	public QDLGrammarAccess getGrammarAccess() {

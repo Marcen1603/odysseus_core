@@ -114,186 +114,33 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
     JvmTypeReference _ref = e.getRef();
     boolean _isOperator = this.helper.isOperator(_ref);
     if (_isOperator) {
-      String _xblockexpression = null;
-      {
-        JvmTypeReference _ref_1 = e.getRef();
-        String opName = this.helper.getLogicalOperatorName(_ref_1);
-        String _xifexpression_1 = null;
-        boolean _and = false;
-        IQLArgumentsMap _argsMap = e.getArgsMap();
-        boolean _notEquals = (!Objects.equal(_argsMap, null));
-        if (!_notEquals) {
-          _and = false;
-        } else {
-          IQLArgumentsMap _argsMap_1 = e.getArgsMap();
-          EList<IQLArgumentsMapKeyValue> _elements = _argsMap_1.getElements();
-          int _size = _elements.size();
-          boolean _greaterThan = (_size > 0);
-          _and = _greaterThan;
-        }
-        if (_and) {
-          String _xblockexpression_1 = null;
-          {
-            JvmTypeReference _ref_2 = e.getRef();
-            IQLArgumentsList _argsList = e.getArgsList();
-            EList<IQLExpression> _elements_1 = _argsList.getElements();
-            JvmExecutable constructor = this.lookUp.findConstructor(_ref_2, _elements_1);
-            IQLArgumentsList _argsList_1 = e.getArgsList();
-            EList<IQLExpression> _elements_2 = _argsList_1.getElements();
-            int _size_1 = _elements_2.size();
-            boolean args = (_size_1 > 0);
-            String _xifexpression_2 = null;
-            boolean _notEquals_1 = (!Objects.equal(constructor, null));
-            if (_notEquals_1) {
-              StringConcatenation _builder = new StringConcatenation();
-              _builder.append("getOperator");
-              JvmTypeReference _ref_3 = e.getRef();
-              String _shortName = this.typeUtils.getShortName(_ref_3, false);
-              _builder.append(_shortName, "");
-              JvmTypeReference _ref_4 = e.getRef();
-              int _hashCode = _ref_4.hashCode();
-              _builder.append(_hashCode, "");
-              _builder.append("(new ");
-              JvmTypeReference _ref_5 = e.getRef();
-              String _compile = this.typeCompiler.compile(_ref_5, context, false);
-              _builder.append(_compile, "");
-              _builder.append("<");
-              _builder.append(opName, "");
-              _builder.append(">(new ");
-              _builder.append(opName, "");
-              _builder.append("()");
-              {
-                if (args) {
-                  _builder.append(", ");
-                }
-              }
-              IQLArgumentsList _argsList_2 = e.getArgsList();
-              EList<JvmFormalParameter> _parameters = constructor.getParameters();
-              String _compile_1 = this.compile(_argsList_2, _parameters, context);
-              _builder.append(_compile_1, "");
-              _builder.append("), operators,  ");
-              IQLArgumentsMap _argsMap_2 = e.getArgsMap();
-              JvmTypeReference _ref_6 = e.getRef();
-              String _compile_2 = this.compile(_argsMap_2, _ref_6, context);
-              _builder.append(_compile_2, "");
-              _builder.append(")");
-              _xifexpression_2 = _builder.toString();
-            } else {
-              StringConcatenation _builder_1 = new StringConcatenation();
-              _builder_1.append("getOperator");
-              JvmTypeReference _ref_7 = e.getRef();
-              String _shortName_1 = this.typeUtils.getShortName(_ref_7, false);
-              _builder_1.append(_shortName_1, "");
-              JvmTypeReference _ref_8 = e.getRef();
-              int _hashCode_1 = _ref_8.hashCode();
-              _builder_1.append(_hashCode_1, "");
-              _builder_1.append("(new ");
-              JvmTypeReference _ref_9 = e.getRef();
-              String _compile_3 = this.typeCompiler.compile(_ref_9, context, false);
-              _builder_1.append(_compile_3, "");
-              _builder_1.append("<");
-              _builder_1.append(opName, "");
-              _builder_1.append(">(new ");
-              _builder_1.append(opName, "");
-              _builder_1.append("()");
-              {
-                if (args) {
-                  _builder_1.append(", ");
-                }
-              }
-              IQLArgumentsList _argsList_3 = e.getArgsList();
-              String _compile_4 = this.compile(_argsList_3, context);
-              _builder_1.append(_compile_4, "");
-              _builder_1.append("), operators,  ");
-              IQLArgumentsMap _argsMap_3 = e.getArgsMap();
-              JvmTypeReference _ref_10 = e.getRef();
-              String _compile_5 = this.compile(_argsMap_3, _ref_10, context);
-              _builder_1.append(_compile_5, "");
-              _builder_1.append(")");
-              _xifexpression_2 = _builder_1.toString();
-            }
-            _xblockexpression_1 = _xifexpression_2;
-          }
-          _xifexpression_1 = _xblockexpression_1;
-        } else {
-          String _xifexpression_2 = null;
+      String _xifexpression_1 = null;
+      boolean _and = false;
+      IQLArgumentsMap _argsMap = e.getArgsMap();
+      boolean _notEquals = (!Objects.equal(_argsMap, null));
+      if (!_notEquals) {
+        _and = false;
+      } else {
+        IQLArgumentsMap _argsMap_1 = e.getArgsMap();
+        EList<IQLArgumentsMapKeyValue> _elements = _argsMap_1.getElements();
+        int _size = _elements.size();
+        boolean _greaterThan = (_size > 0);
+        _and = _greaterThan;
+      }
+      if (_and) {
+        String _xblockexpression = null;
+        {
+          JvmTypeReference _ref_1 = e.getRef();
           IQLArgumentsList _argsList = e.getArgsList();
-          boolean _notEquals_1 = (!Objects.equal(_argsList, null));
+          EList<IQLExpression> _elements_1 = _argsList.getElements();
+          JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref_1, _elements_1);
+          IQLArgumentsList _argsList_1 = e.getArgsList();
+          EList<IQLExpression> _elements_2 = _argsList_1.getElements();
+          int _size_1 = _elements_2.size();
+          boolean args = (_size_1 > 0);
+          String _xifexpression_2 = null;
+          boolean _notEquals_1 = (!Objects.equal(constructor, null));
           if (_notEquals_1) {
-            String _xblockexpression_2 = null;
-            {
-              JvmTypeReference _ref_2 = e.getRef();
-              IQLArgumentsList _argsList_1 = e.getArgsList();
-              EList<IQLExpression> _elements_1 = _argsList_1.getElements();
-              JvmExecutable constructor = this.lookUp.findConstructor(_ref_2, _elements_1);
-              IQLArgumentsList _argsList_2 = e.getArgsList();
-              EList<IQLExpression> _elements_2 = _argsList_2.getElements();
-              int _size_1 = _elements_2.size();
-              boolean args = (_size_1 > 0);
-              String _xifexpression_3 = null;
-              boolean _notEquals_2 = (!Objects.equal(constructor, null));
-              if (_notEquals_2) {
-                StringConcatenation _builder = new StringConcatenation();
-                _builder.append("getOperator");
-                JvmTypeReference _ref_3 = e.getRef();
-                String _shortName = this.typeUtils.getShortName(_ref_3, false);
-                _builder.append(_shortName, "");
-                JvmTypeReference _ref_4 = e.getRef();
-                int _hashCode = _ref_4.hashCode();
-                _builder.append(_hashCode, "");
-                _builder.append("(new ");
-                JvmTypeReference _ref_5 = e.getRef();
-                String _compile = this.typeCompiler.compile(_ref_5, context, false);
-                _builder.append(_compile, "");
-                _builder.append("<");
-                _builder.append(opName, "");
-                _builder.append(">(new ");
-                _builder.append(opName, "");
-                _builder.append("()");
-                {
-                  if (args) {
-                    _builder.append(", ");
-                  }
-                }
-                IQLArgumentsList _argsList_3 = e.getArgsList();
-                EList<JvmFormalParameter> _parameters = constructor.getParameters();
-                String _compile_1 = this.compile(_argsList_3, _parameters, context);
-                _builder.append(_compile_1, "");
-                _builder.append("), operators)");
-                _xifexpression_3 = _builder.toString();
-              } else {
-                StringConcatenation _builder_1 = new StringConcatenation();
-                _builder_1.append("getOperator");
-                JvmTypeReference _ref_6 = e.getRef();
-                String _shortName_1 = this.typeUtils.getShortName(_ref_6, false);
-                _builder_1.append(_shortName_1, "");
-                JvmTypeReference _ref_7 = e.getRef();
-                int _hashCode_1 = _ref_7.hashCode();
-                _builder_1.append(_hashCode_1, "");
-                _builder_1.append("(new ");
-                JvmTypeReference _ref_8 = e.getRef();
-                String _compile_2 = this.typeCompiler.compile(_ref_8, context, false);
-                _builder_1.append(_compile_2, "");
-                _builder_1.append("<");
-                _builder_1.append(opName, "");
-                _builder_1.append(">(new ");
-                _builder_1.append(opName, "");
-                _builder_1.append("()");
-                {
-                  if (args) {
-                    _builder_1.append(", ");
-                  }
-                }
-                IQLArgumentsList _argsList_4 = e.getArgsList();
-                String _compile_3 = this.compile(_argsList_4, context);
-                _builder_1.append(_compile_3, "");
-                _builder_1.append(")>, operators)");
-                _xifexpression_3 = _builder_1.toString();
-              }
-              _xblockexpression_2 = _xifexpression_3;
-            }
-            _xifexpression_2 = _xblockexpression_2;
-          } else {
             StringConcatenation _builder = new StringConcatenation();
             _builder.append("getOperator");
             JvmTypeReference _ref_2 = e.getRef();
@@ -306,34 +153,181 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
             JvmTypeReference _ref_4 = e.getRef();
             String _compile = this.typeCompiler.compile(_ref_4, context, false);
             _builder.append(_compile, "");
-            _builder.append("<");
-            _builder.append(opName, "");
-            _builder.append(">(new ");
-            _builder.append(opName, "");
-            _builder.append("()), operators)");
+            _builder.append("(\"");
+            JvmTypeReference _ref_5 = e.getRef();
+            String _shortName_1 = this.typeUtils.getShortName(_ref_5, false);
+            _builder.append(_shortName_1, "");
+            _builder.append("\"");
+            {
+              if (args) {
+                _builder.append(", ");
+              }
+            }
+            IQLArgumentsList _argsList_2 = e.getArgsList();
+            EList<JvmFormalParameter> _parameters = constructor.getParameters();
+            String _compile_1 = this.compile(_argsList_2, _parameters, context);
+            _builder.append(_compile_1, "");
+            _builder.append("), operators,  ");
+            IQLArgumentsMap _argsMap_2 = e.getArgsMap();
+            JvmTypeReference _ref_6 = e.getRef();
+            String _compile_2 = this.compile(_argsMap_2, _ref_6, context);
+            _builder.append(_compile_2, "");
+            _builder.append(")");
             _xifexpression_2 = _builder.toString();
+          } else {
+            StringConcatenation _builder_1 = new StringConcatenation();
+            _builder_1.append("getOperator");
+            JvmTypeReference _ref_7 = e.getRef();
+            String _shortName_2 = this.typeUtils.getShortName(_ref_7, false);
+            _builder_1.append(_shortName_2, "");
+            JvmTypeReference _ref_8 = e.getRef();
+            int _hashCode_1 = _ref_8.hashCode();
+            _builder_1.append(_hashCode_1, "");
+            _builder_1.append("(new ");
+            JvmTypeReference _ref_9 = e.getRef();
+            String _compile_3 = this.typeCompiler.compile(_ref_9, context, false);
+            _builder_1.append(_compile_3, "");
+            _builder_1.append("(\"");
+            JvmTypeReference _ref_10 = e.getRef();
+            String _shortName_3 = this.typeUtils.getShortName(_ref_10, false);
+            _builder_1.append(_shortName_3, "");
+            _builder_1.append("\"");
+            {
+              if (args) {
+                _builder_1.append(", ");
+              }
+            }
+            IQLArgumentsList _argsList_3 = e.getArgsList();
+            String _compile_4 = this.compile(_argsList_3, context);
+            _builder_1.append(_compile_4, "");
+            _builder_1.append("), operators,  ");
+            IQLArgumentsMap _argsMap_3 = e.getArgsMap();
+            JvmTypeReference _ref_11 = e.getRef();
+            String _compile_5 = this.compile(_argsMap_3, _ref_11, context);
+            _builder_1.append(_compile_5, "");
+            _builder_1.append(")");
+            _xifexpression_2 = _builder_1.toString();
           }
-          _xifexpression_1 = _xifexpression_2;
+          _xblockexpression = _xifexpression_2;
         }
-        _xblockexpression = _xifexpression_1;
-      }
-      _xifexpression = _xblockexpression;
-    } else {
-      String _xifexpression_1 = null;
-      JvmTypeReference _ref_1 = e.getRef();
-      boolean _isSource = this.helper.isSource(_ref_1);
-      if (_isSource) {
-        StringConcatenation _builder = new StringConcatenation();
-        _builder.append("getSource(\"");
-        JvmTypeReference _ref_2 = e.getRef();
-        String _shortName = this.typeUtils.getShortName(_ref_2, false);
-        _builder.append(_shortName, "");
-        _builder.append("\")");
-        _xifexpression_1 = _builder.toString();
+        _xifexpression_1 = _xblockexpression;
       } else {
-        _xifexpression_1 = super.compile(e, context);
+        String _xifexpression_2 = null;
+        IQLArgumentsList _argsList = e.getArgsList();
+        boolean _notEquals_1 = (!Objects.equal(_argsList, null));
+        if (_notEquals_1) {
+          String _xblockexpression_1 = null;
+          {
+            JvmTypeReference _ref_1 = e.getRef();
+            IQLArgumentsList _argsList_1 = e.getArgsList();
+            EList<IQLExpression> _elements_1 = _argsList_1.getElements();
+            JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref_1, _elements_1);
+            IQLArgumentsList _argsList_2 = e.getArgsList();
+            EList<IQLExpression> _elements_2 = _argsList_2.getElements();
+            int _size_1 = _elements_2.size();
+            boolean args = (_size_1 > 0);
+            String _xifexpression_3 = null;
+            boolean _notEquals_2 = (!Objects.equal(constructor, null));
+            if (_notEquals_2) {
+              StringConcatenation _builder = new StringConcatenation();
+              _builder.append("getOperator");
+              JvmTypeReference _ref_2 = e.getRef();
+              String _shortName = this.typeUtils.getShortName(_ref_2, false);
+              _builder.append(_shortName, "");
+              JvmTypeReference _ref_3 = e.getRef();
+              int _hashCode = _ref_3.hashCode();
+              _builder.append(_hashCode, "");
+              _builder.append("(new ");
+              JvmTypeReference _ref_4 = e.getRef();
+              String _compile = this.typeCompiler.compile(_ref_4, context, false);
+              _builder.append(_compile, "");
+              _builder.append("(\"");
+              JvmTypeReference _ref_5 = e.getRef();
+              String _shortName_1 = this.typeUtils.getShortName(_ref_5, false);
+              _builder.append(_shortName_1, "");
+              _builder.append("\"");
+              {
+                if (args) {
+                  _builder.append(", ");
+                }
+              }
+              IQLArgumentsList _argsList_3 = e.getArgsList();
+              EList<JvmFormalParameter> _parameters = constructor.getParameters();
+              String _compile_1 = this.compile(_argsList_3, _parameters, context);
+              _builder.append(_compile_1, "");
+              _builder.append("), operators)");
+              _xifexpression_3 = _builder.toString();
+            } else {
+              StringConcatenation _builder_1 = new StringConcatenation();
+              _builder_1.append("getOperator");
+              JvmTypeReference _ref_6 = e.getRef();
+              String _shortName_2 = this.typeUtils.getShortName(_ref_6, false);
+              _builder_1.append(_shortName_2, "");
+              JvmTypeReference _ref_7 = e.getRef();
+              int _hashCode_1 = _ref_7.hashCode();
+              _builder_1.append(_hashCode_1, "");
+              _builder_1.append("(new ");
+              JvmTypeReference _ref_8 = e.getRef();
+              String _compile_2 = this.typeCompiler.compile(_ref_8, context, false);
+              _builder_1.append(_compile_2, "");
+              _builder_1.append("(\"");
+              JvmTypeReference _ref_9 = e.getRef();
+              String _shortName_3 = this.typeUtils.getShortName(_ref_9, false);
+              _builder_1.append(_shortName_3, "");
+              _builder_1.append("\"");
+              {
+                if (args) {
+                  _builder_1.append(", ");
+                }
+              }
+              IQLArgumentsList _argsList_4 = e.getArgsList();
+              String _compile_3 = this.compile(_argsList_4, context);
+              _builder_1.append(_compile_3, "");
+              _builder_1.append(")>, operators)");
+              _xifexpression_3 = _builder_1.toString();
+            }
+            _xblockexpression_1 = _xifexpression_3;
+          }
+          _xifexpression_2 = _xblockexpression_1;
+        } else {
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("getOperator");
+          JvmTypeReference _ref_1 = e.getRef();
+          String _shortName = this.typeUtils.getShortName(_ref_1, false);
+          _builder.append(_shortName, "");
+          JvmTypeReference _ref_2 = e.getRef();
+          int _hashCode = _ref_2.hashCode();
+          _builder.append(_hashCode, "");
+          _builder.append("(new ");
+          JvmTypeReference _ref_3 = e.getRef();
+          String _compile = this.typeCompiler.compile(_ref_3, context, false);
+          _builder.append(_compile, "");
+          _builder.append("(\"");
+          JvmTypeReference _ref_4 = e.getRef();
+          String _shortName_1 = this.typeUtils.getShortName(_ref_4, false);
+          _builder.append(_shortName_1, "");
+          _builder.append("\"), operators)");
+          _xifexpression_2 = _builder.toString();
+        }
+        _xifexpression_1 = _xifexpression_2;
       }
       _xifexpression = _xifexpression_1;
+    } else {
+      String _xifexpression_3 = null;
+      JvmTypeReference _ref_5 = e.getRef();
+      boolean _isSource = this.helper.isSource(_ref_5);
+      if (_isSource) {
+        StringConcatenation _builder_1 = new StringConcatenation();
+        _builder_1.append("getSource(\"");
+        JvmTypeReference _ref_6 = e.getRef();
+        String _shortName_2 = this.typeUtils.getShortName(_ref_6, false);
+        _builder_1.append(_shortName_2, "");
+        _builder_1.append("\")");
+        _xifexpression_3 = _builder_1.toString();
+      } else {
+        _xifexpression_3 = super.compile(e, context);
+      }
+      _xifexpression = _xifexpression_3;
     }
     return _xifexpression;
   }
@@ -448,9 +442,17 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
   
   public String compileAssignmentExpr(final IQLAssignmentExpression e, final IQLMemberSelectionExpression selExpr, final QDLGeneratorContext c) {
     String _xifexpression = null;
-    IQLMemberSelection _sel = selExpr.getSel();
-    JvmMember _member = _sel.getMember();
-    if ((_member instanceof JvmField)) {
+    boolean _and = false;
+    String _op = e.getOp();
+    boolean _equals = _op.equals("=");
+    if (!_equals) {
+      _and = false;
+    } else {
+      IQLMemberSelection _sel = selExpr.getSel();
+      JvmMember _member = _sel.getMember();
+      _and = (_member instanceof JvmField);
+    }
+    if (_and) {
       String _xblockexpression = null;
       {
         IQLMemberSelection _sel_1 = selExpr.getSel();
@@ -459,26 +461,26 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
         IQLExpression _leftOperand = selExpr.getLeftOperand();
         TypeResult left = this.exprParser.getType(_leftOperand);
         String _xifexpression_1 = null;
-        boolean _and = false;
         boolean _and_1 = false;
+        boolean _and_2 = false;
         boolean _isNull = left.isNull();
         boolean _not = (!_isNull);
         if (!_not) {
-          _and_1 = false;
+          _and_2 = false;
         } else {
           JvmTypeReference _ref = left.getRef();
           boolean _isOperator = this.helper.isOperator(_ref);
-          _and_1 = _isOperator;
+          _and_2 = _isOperator;
         }
-        if (!_and_1) {
-          _and = false;
+        if (!_and_2) {
+          _and_1 = false;
         } else {
           String _simpleName = field.getSimpleName();
           JvmTypeReference _ref_1 = left.getRef();
           boolean _isParameter = this.helper.isParameter(_simpleName, _ref_1);
-          _and = _isParameter;
+          _and_1 = _isParameter;
         }
-        if (_and) {
+        if (_and_1) {
           StringConcatenation _builder = new StringConcatenation();
           IQLExpression _leftOperand_1 = selExpr.getLeftOperand();
           String _compile = this.compile(_leftOperand_1, c);

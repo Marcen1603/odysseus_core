@@ -64,7 +64,7 @@ public class QDLFactoryImpl extends EFactoryImpl implements QDLFactory
   {
     switch (eClass.getClassifierID())
     {
-      case QDLPackage.QDL_FILE: return createQDLFile();
+      case QDLPackage.QDL_MODEL: return createQDLModel();
       case QDLPackage.QDL_TYPE_DEFINITION: return createQDLTypeDefinition();
       case QDLPackage.QDL_QUERY: return createQDLQuery();
       case QDLPackage.IQL_SUBSCRIBE_EXPRESSION: return createIQLSubscribeExpression();
@@ -73,7 +73,6 @@ public class QDLFactoryImpl extends EFactoryImpl implements QDLFactory
       case QDLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE: return createIQLMetadataValueSingleDouble();
       case QDLPackage.IQL_METADATA_VALUE_SINGLE_STRING: return createIQLMetadataValueSingleString();
       case QDLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN: return createIQLMetadataValueSingleBoolean();
-      case QDLPackage.IQL_METADATA_VALUE_SINGLE_CHAR: return createIQLMetadataValueSingleChar();
       case QDLPackage.QDL_METADATA_VALUE_SINGLE_ID: return createQDLMetadataValueSingleID();
       case QDLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF: return createIQLMetadataValueSingleTypeRef();
       case QDLPackage.IQL_METADATA_VALUE_SINGLE_NULL: return createIQLMetadataValueSingleNull();
@@ -87,10 +86,10 @@ public class QDLFactoryImpl extends EFactoryImpl implements QDLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public QDLFile createQDLFile()
+  public QDLModel createQDLModel()
   {
-    QDLFileImpl qdlFile = new QDLFileImpl();
-    return qdlFile;
+    QDLModelImpl qdlModel = new QDLModelImpl();
+    return qdlModel;
   }
 
   /**
@@ -179,17 +178,6 @@ public class QDLFactoryImpl extends EFactoryImpl implements QDLFactory
   {
     IQLMetadataValueSingleBooleanImpl iqlMetadataValueSingleBoolean = new IQLMetadataValueSingleBooleanImpl();
     return iqlMetadataValueSingleBoolean;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLMetadataValueSingleChar createIQLMetadataValueSingleChar()
-  {
-    IQLMetadataValueSingleCharImpl iqlMetadataValueSingleChar = new IQLMetadataValueSingleCharImpl();
-    return iqlMetadataValueSingleChar;
   }
 
   /**

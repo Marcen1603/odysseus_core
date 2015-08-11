@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLImportScope;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractBasicIQLProposalProvider;
 
@@ -81,6 +82,11 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	public void completeIQLArrayType_Type(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 
 	}
+	
+	@Override
+	public void completeIQLMemberSelection_Member(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+
+	}
 
 	@Override
 	public void completeIQLOtherExpressions_Ref(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
@@ -92,13 +98,19 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 					JvmDeclaredType declaredType = (JvmDeclaredType) resolved;
 					if (lookUp.isInstantiateable(declaredType)) {
 						createConstructorProposal(null, obj, scope, model, context, acceptor);
-						for (JvmExecutable constructor : lookUp.getConstructors(typeUtils.createTypeRef(declaredType))) {
+						for (JvmExecutable constructor : lookUp.getPublicConstructors(typeUtils.createTypeRef(declaredType))) {
 							createConstructorProposal(constructor, obj, scope, model, context, acceptor);
 						}
 					} 
 				} 
 			}
+		}  else {
+			super.completeIQLOtherExpressions_Ref(model, assignment, context, acceptor);
 		}
+	}
+	
+	@Override
+	public void completeIQLOtherExpressions_Element(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 	}
 	
 	protected void createConstructorProposal(JvmExecutable constructor, IEObjectDescription obj,IScope scope, EObject model, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
@@ -133,7 +145,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 		for (IEObjectDescription obj :  scopeProvider.getTypes(model)) {
 			String proposalStr = obj.getQualifiedName().getLastSegment();
 			String displayString = obj.getQualifiedName().getLastSegment()+ " - " +converter.toString(obj.getQualifiedName());
-
+			
 			ConfigurableCompletionProposal proposal = (ConfigurableCompletionProposal) createCompletionProposal(proposalStr , displayString, getImage(model), context);
 			if (proposal != null) {
 				proposal.setAdditionalProposalInfo(obj.getQualifiedName());
@@ -145,7 +157,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	
 	
 	public static class FQNShortener extends ReplacementTextApplier {
-		private final IScope scope;
+		private final IQLImportScope scope;
 		private final Resource context;
 		private final IQualifiedNameConverter qualifiedNameConverter;
 		private final ITextViewer viewer;
@@ -153,7 +165,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 
 		public FQNShortener(Resource context, IScope scope, IQualifiedNameConverter qualifiedNameConverter, ITextViewer viewer) {
 			this.context = context;
-			this.scope = scope;
+			this.scope = (IQLImportScope) scope;
 			this.qualifiedNameConverter = qualifiedNameConverter;
 			this.viewer = viewer;
 		}
@@ -220,7 +232,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 				return;
 			}
 			IEObjectDescription description = scope.getSingleElement(qualifiedName.skipFirst(qualifiedName.getSegmentCount() - 1));
-			if (description != null) {
+			if (description != null || scope.hasConflict(qualifiedName.skipFirst(qualifiedName.getSegmentCount() - 1))) {
 				// there exists a conflict - insert fully qualified name
 				proposal.setCursorPosition(replacementString.length());
 				document.replace(proposal.getReplacementOffset(), proposal.getReplacementLength(),qualifiedNameConverter.toString(qualifiedNameConverter.toQualifiedName(replacementString)));

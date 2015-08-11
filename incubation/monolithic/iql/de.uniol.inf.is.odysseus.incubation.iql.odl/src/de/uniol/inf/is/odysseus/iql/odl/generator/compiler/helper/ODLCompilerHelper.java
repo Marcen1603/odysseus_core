@@ -113,4 +113,33 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		}
 		return false;
 	}
+
+	public boolean hasOperatorValidate(ODLOperator operator) {
+		for (ODLMethod method : EcoreUtil2.getAllContentsOfType(operator, ODLMethod.class)) {
+			if (method.isValidate() &&  method.getSimpleName() == null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasProcessNext(ODLOperator operator) {
+		for (IQLMethod method : EcoreUtil2.getAllContentsOfType(operator, IQLMethod.class)) {
+			if (method.getSimpleName() != null && method.getSimpleName().equals("process_next") && method.getParameters().size() == 2) {
+				return true;
+			} else if (method.getSimpleName() != null && method.getSimpleName().equals("processNext") && method.getParameters().size() == 2) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasProcessPunctuation(ODLOperator operator) {
+		for (IQLMethod method : EcoreUtil2.getAllContentsOfType(operator, IQLMethod.class)) {
+			if (method.getSimpleName() != null && method.getSimpleName().equals("processPunctuation") && method.getParameters().size() == 2) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

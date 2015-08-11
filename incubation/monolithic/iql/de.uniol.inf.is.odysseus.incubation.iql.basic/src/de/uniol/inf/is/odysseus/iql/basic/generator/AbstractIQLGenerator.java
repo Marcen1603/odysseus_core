@@ -11,8 +11,8 @@ import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.IGenerator;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
@@ -39,8 +39,8 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 				outputFolder = getOutputFolder(input);
 			}
 			for (EObject obj : input.getContents()) {
-				if (obj instanceof IQLFile) {
-					doGenerate((IQLFile) obj, fsa, outputFolder);
+				if (obj instanceof IQLModel) {
+					doGenerate((IQLModel) obj, fsa, outputFolder);
 				}
 			}
 		} catch (Exception e) {
@@ -48,8 +48,8 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 		}
 	}
 	
-	protected void doGenerate(IQLFile file, IFileSystemAccess fsa, String outputFolder) {
-		for (IQLTypeDefinition typeDef : EcoreUtil2.getAllContentsOfType(file, IQLTypeDefinition.class)) {
+	protected void doGenerate(IQLModel model, IFileSystemAccess fsa, String outputFolder) {
+		for (IQLTypeDefinition typeDef : EcoreUtil2.getAllContentsOfType(model, IQLTypeDefinition.class)) {
 			doGenerate(typeDef, fsa, outputFolder);
 			
 		}

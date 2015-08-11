@@ -12,7 +12,7 @@ import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 
 import com.google.inject.Inject;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 
 
@@ -22,10 +22,10 @@ public class IQLLinkingResource extends LazyLinkingResource {
 	@Inject
 	private IIQLTypeFactory typeFactory;
 	
-	private IQLFile systemFile;
+	private IQLModel systemFile;
 	
 	
-	public void setSystemFile(IQLFile systemFile) {
+	public void setSystemFile(IQLModel systemFile) {
 		this.systemFile = systemFile;
 	}
 	
@@ -40,7 +40,7 @@ public class IQLLinkingResource extends LazyLinkingResource {
 
 	private void ensureSystemFilesArePresent() {
 		ResourceSet resourceSet = getResourceSet();
-		for (IQLFile systemFile : typeFactory.getSystemFiles()) {
+		for (IQLModel systemFile : typeFactory.getSystemFiles()) {
 			resourceSet.getResource(createURI(systemFile.getName(), typeFactory.getFileExtension()), true);
 		}
 	}

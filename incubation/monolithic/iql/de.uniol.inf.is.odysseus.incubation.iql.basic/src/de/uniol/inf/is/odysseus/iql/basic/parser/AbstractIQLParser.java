@@ -50,8 +50,8 @@ import com.google.inject.Provider;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
@@ -133,9 +133,9 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	protected Collection<Resource> createNecessaryIQLFiles(ResourceSet resourceSet, String outputPath, EObject element) {
 		Collection<EObject> userDefinedTypes = getUserDefinedTypes(element);
 		userDefinedTypes.add(element);
-		Map<IQLFile, StringBuilder> fileBuilders = new HashMap<>();
+		Map<IQLModel, StringBuilder> fileBuilders = new HashMap<>();
 		for (EObject type : userDefinedTypes) {
-			IQLFile containerFile = EcoreUtil2.getContainerOfType(type, IQLFile.class);
+			IQLModel containerFile = EcoreUtil2.getContainerOfType(type, IQLModel.class);
 			StringBuilder builder = fileBuilders.get(containerFile);
 			if (builder == null) {
 				builder = new StringBuilder();
@@ -148,7 +148,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 		}
 		Collection<Resource> resources = new HashSet<>();
 		//ResourceSet resourceSet = resourceSetProvider.get();
-		for (Entry<IQLFile, StringBuilder> entry : fileBuilders.entrySet()) {
+		for (Entry<IQLModel, StringBuilder> entry : fileBuilders.entrySet()) {
 			String text = entry.getValue().toString();
 			String path = outputPath+getFilePath(entry.getKey());
 			resources.add(createIQLFile(path, text, resourceSet));
@@ -156,7 +156,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 		return resources;
 	}
 	
-	private String getFilePath(IQLFile file) {
+	private String getFilePath(IQLModel file) {
 		URI uri = file.eResource().getURI();
 		StringBuilder builder = new StringBuilder();
 		for (int i = 2; i< uri.segmentCount(); i++) {
@@ -184,7 +184,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	
 	private Set<EObject> getUserDefinedTypes(IQLClass c) {
 		Set<EObject> userDefinedTypes = new HashSet<>();
-		IQLFile file = EcoreUtil2.getContainerOfType(c, IQLFile.class);
+		IQLModel file = EcoreUtil2.getContainerOfType(c, IQLModel.class);
 		if (file.getName() == null) {
 			userDefinedTypes.add(c);
 			JvmTypeReference extendedClass = c.getExtendedClass();
@@ -202,7 +202,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	
 	private Set<EObject> getUserDefinedTypes(IQLInterface i) {
 		Set<EObject> userDefinedTypes = new HashSet<>();
-		IQLFile file = EcoreUtil2.getContainerOfType(i, IQLFile.class);
+		IQLModel file = EcoreUtil2.getContainerOfType(i, IQLModel.class);
 		if (file.getName() == null) {
 			userDefinedTypes.add(i);
 			for (JvmTypeReference extendedClassInterf : i.getExtendedInterfaces()) {

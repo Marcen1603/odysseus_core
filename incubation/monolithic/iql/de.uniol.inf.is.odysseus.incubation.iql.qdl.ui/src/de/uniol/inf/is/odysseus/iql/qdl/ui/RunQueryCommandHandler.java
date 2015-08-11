@@ -19,7 +19,7 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import de.uniol.inf.is.odysseus.iql.basic.parser.IIQLParser;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFile;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.internal.QDLActivator;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionErrorDialog;
 
@@ -35,19 +35,19 @@ public class RunQueryCommandHandler extends AbstractHandler{
         IFileEditorInput input = (IFileEditorInput)editor.getEditorInput() ;
         final IProject project = input.getFile().getProject();
         
-        editor.getDocument().modify(new IUnitOfWork<QDLFile, XtextResource>() {
+        editor.getDocument().modify(new IUnitOfWork<QDLModel, XtextResource>() {
 
 			@Override
-			public QDLFile exec(XtextResource state) throws Exception {
+			public QDLModel exec(XtextResource state) throws Exception {
 				EObject obj = state.getParseResult().getRootASTElement();
-				execute((QDLFile)obj, project);
+				execute((QDLModel)obj, project);
 				return null;
 			}
 		});
         return null;
 	}
 	
-	private void execute(final QDLFile file, final IProject project) {
+	private void execute(final QDLModel file, final IProject project) {
         Job job = new Job("Parsing and Executing Query") {
             @Override
             protected IStatus run(IProgressMonitor monitor) {

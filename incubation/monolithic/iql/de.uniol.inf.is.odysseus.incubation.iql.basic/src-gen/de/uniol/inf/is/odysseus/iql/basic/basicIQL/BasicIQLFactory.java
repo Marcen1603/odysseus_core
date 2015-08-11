@@ -23,13 +23,13 @@ public interface BasicIQLFactory extends EFactory
   BasicIQLFactory eINSTANCE = de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.BasicIQLFactoryImpl.init();
 
   /**
-   * Returns a new object of class '<em>IQL File</em>'.
+   * Returns a new object of class '<em>IQL Model</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL File</em>'.
+   * @return a new object of class '<em>IQL Model</em>'.
    * @generated
    */
-  IQLFile createIQLFile();
+  IQLModel createIQLModel();
 
   /**
    * Returns a new object of class '<em>IQL Type Definition</em>'.
@@ -318,15 +318,6 @@ public interface BasicIQLFactory extends EFactory
    * @generated
    */
   IQLMetadataValueSingleBoolean createIQLMetadataValueSingleBoolean();
-
-  /**
-   * Returns a new object of class '<em>IQL Metadata Value Single Char</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Metadata Value Single Char</em>'.
-   * @generated
-   */
-  IQLMetadataValueSingleChar createIQLMetadataValueSingleChar();
 
   /**
    * Returns a new object of class '<em>IQL Metadata Value Single Type Ref</em>'.
@@ -714,15 +705,6 @@ public interface BasicIQLFactory extends EFactory
    * @generated
    */
   IQLLiteralExpressionBoolean createIQLLiteralExpressionBoolean();
-
-  /**
-   * Returns a new object of class '<em>IQL Literal Expression Char</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Literal Expression Char</em>'.
-   * @generated
-   */
-  IQLLiteralExpressionChar createIQLLiteralExpressionChar();
 
   /**
    * Returns a new object of class '<em>IQL Literal Expression Range</em>'.

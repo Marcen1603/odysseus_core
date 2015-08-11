@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLDoWhileStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLEqualityExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpressionStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForEachStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLForStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLIfStatement;
@@ -36,7 +35,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionBoolean;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionDouble;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionInt;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionList;
@@ -56,7 +54,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull;
@@ -64,6 +61,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclarationMember;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMultiplicativeExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
@@ -109,7 +107,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass iqlFileEClass = null;
+  private EClass iqlModelEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -334,13 +332,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * @generated
    */
   private EClass iqlMetadataValueSingleBooleanEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass iqlMetadataValueSingleCharEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -648,13 +639,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass iqlLiteralExpressionCharEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass iqlLiteralExpressionRangeEClass = null;
 
   /**
@@ -749,9 +733,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getIQLFile()
+  public EClass getIQLModel()
   {
-    return iqlFileEClass;
+    return iqlModelEClass;
   }
 
   /**
@@ -759,9 +743,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getIQLFile_Name()
+  public EAttribute getIQLModel_Name()
   {
-    return (EAttribute)iqlFileEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)iqlModelEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -769,9 +753,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLFile_Namespaces()
+  public EReference getIQLModel_Namespaces()
   {
-    return (EReference)iqlFileEClass.getEStructuralFeatures().get(1);
+    return (EReference)iqlModelEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -779,9 +763,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLFile_Elements()
+  public EReference getIQLModel_Elements()
   {
-    return (EReference)iqlFileEClass.getEStructuralFeatures().get(2);
+    return (EReference)iqlModelEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1179,7 +1163,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLCasePart_Body()
+  public EReference getIQLCasePart_Statements()
   {
     return (EReference)iqlCasePartEClass.getEStructuralFeatures().get(1);
   }
@@ -1512,26 +1496,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
   public EAttribute getIQLMetadataValueSingleBoolean_Value()
   {
     return (EAttribute)iqlMetadataValueSingleBooleanEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getIQLMetadataValueSingleChar()
-  {
-    return iqlMetadataValueSingleCharEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getIQLMetadataValueSingleChar_Value()
-  {
-    return (EAttribute)iqlMetadataValueSingleCharEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1909,7 +1873,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getIQLSwitchStatement_Default()
+  public EReference getIQLSwitchStatement_Statements()
   {
     return (EReference)iqlSwitchStatementEClass.getEStructuralFeatures().get(2);
   }
@@ -2749,26 +2713,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getIQLLiteralExpressionChar()
-  {
-    return iqlLiteralExpressionCharEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getIQLLiteralExpressionChar_Value()
-  {
-    return (EAttribute)iqlLiteralExpressionCharEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getIQLLiteralExpressionRange()
   {
     return iqlLiteralExpressionRangeEClass;
@@ -2864,10 +2808,10 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     isCreated = true;
 
     // Create classes and their features
-    iqlFileEClass = createEClass(IQL_FILE);
-    createEAttribute(iqlFileEClass, IQL_FILE__NAME);
-    createEReference(iqlFileEClass, IQL_FILE__NAMESPACES);
-    createEReference(iqlFileEClass, IQL_FILE__ELEMENTS);
+    iqlModelEClass = createEClass(IQL_MODEL);
+    createEAttribute(iqlModelEClass, IQL_MODEL__NAME);
+    createEReference(iqlModelEClass, IQL_MODEL__NAMESPACES);
+    createEReference(iqlModelEClass, IQL_MODEL__ELEMENTS);
 
     iqlTypeDefinitionEClass = createEClass(IQL_TYPE_DEFINITION);
     createEReference(iqlTypeDefinitionEClass, IQL_TYPE_DEFINITION__JAVAMETADATA);
@@ -2924,7 +2868,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
 
     iqlCasePartEClass = createEClass(IQL_CASE_PART);
     createEReference(iqlCasePartEClass, IQL_CASE_PART__EXPR);
-    createEReference(iqlCasePartEClass, IQL_CASE_PART__BODY);
+    createEReference(iqlCasePartEClass, IQL_CASE_PART__STATEMENTS);
 
     iqlExpressionEClass = createEClass(IQL_EXPRESSION);
 
@@ -2973,9 +2917,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
 
     iqlMetadataValueSingleBooleanEClass = createEClass(IQL_METADATA_VALUE_SINGLE_BOOLEAN);
     createEAttribute(iqlMetadataValueSingleBooleanEClass, IQL_METADATA_VALUE_SINGLE_BOOLEAN__VALUE);
-
-    iqlMetadataValueSingleCharEClass = createEClass(IQL_METADATA_VALUE_SINGLE_CHAR);
-    createEAttribute(iqlMetadataValueSingleCharEClass, IQL_METADATA_VALUE_SINGLE_CHAR__VALUE);
 
     iqlMetadataValueSingleTypeRefEClass = createEClass(IQL_METADATA_VALUE_SINGLE_TYPE_REF);
     createEReference(iqlMetadataValueSingleTypeRefEClass, IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE);
@@ -3026,7 +2967,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     iqlSwitchStatementEClass = createEClass(IQL_SWITCH_STATEMENT);
     createEReference(iqlSwitchStatementEClass, IQL_SWITCH_STATEMENT__EXPR);
     createEReference(iqlSwitchStatementEClass, IQL_SWITCH_STATEMENT__CASES);
-    createEReference(iqlSwitchStatementEClass, IQL_SWITCH_STATEMENT__DEFAULT);
+    createEReference(iqlSwitchStatementEClass, IQL_SWITCH_STATEMENT__STATEMENTS);
 
     iqlExpressionStatementEClass = createEClass(IQL_EXPRESSION_STATEMENT);
     createEReference(iqlExpressionStatementEClass, IQL_EXPRESSION_STATEMENT__EXPRESSION);
@@ -3141,9 +3082,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     iqlLiteralExpressionBooleanEClass = createEClass(IQL_LITERAL_EXPRESSION_BOOLEAN);
     createEAttribute(iqlLiteralExpressionBooleanEClass, IQL_LITERAL_EXPRESSION_BOOLEAN__VALUE);
 
-    iqlLiteralExpressionCharEClass = createEClass(IQL_LITERAL_EXPRESSION_CHAR);
-    createEAttribute(iqlLiteralExpressionCharEClass, IQL_LITERAL_EXPRESSION_CHAR__VALUE);
-
     iqlLiteralExpressionRangeEClass = createEClass(IQL_LITERAL_EXPRESSION_RANGE);
     createEAttribute(iqlLiteralExpressionRangeEClass, IQL_LITERAL_EXPRESSION_RANGE__VALUE);
 
@@ -3202,7 +3140,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     iqlMetadataValueSingleDoubleEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleStringEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleBooleanEClass.getESuperTypes().add(this.getIQLMetadataValue());
-    iqlMetadataValueSingleCharEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleTypeRefEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueSingleNullEClass.getESuperTypes().add(this.getIQLMetadataValue());
     iqlMetadataValueListEClass.getESuperTypes().add(this.getIQLMetadataValue());
@@ -3246,17 +3183,16 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     iqlLiteralExpressionDoubleEClass.getESuperTypes().add(this.getIQLExpression());
     iqlLiteralExpressionStringEClass.getESuperTypes().add(this.getIQLExpression());
     iqlLiteralExpressionBooleanEClass.getESuperTypes().add(this.getIQLExpression());
-    iqlLiteralExpressionCharEClass.getESuperTypes().add(this.getIQLExpression());
     iqlLiteralExpressionRangeEClass.getESuperTypes().add(this.getIQLExpression());
     iqlLiteralExpressionNullEClass.getESuperTypes().add(this.getIQLExpression());
     iqlLiteralExpressionListEClass.getESuperTypes().add(this.getIQLExpression());
     iqlLiteralExpressionMapEClass.getESuperTypes().add(this.getIQLExpression());
 
     // Initialize classes and features; add operations and parameters
-    initEClass(iqlFileEClass, IQLFile.class, "IQLFile", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getIQLFile_Name(), ecorePackage.getEString(), "name", null, 0, 1, IQLFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLFile_Namespaces(), this.getIQLNamespace(), null, "namespaces", null, 0, -1, IQLFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLFile_Elements(), this.getIQLTypeDefinition(), null, "elements", null, 0, -1, IQLFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(iqlModelEClass, IQLModel.class, "IQLModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIQLModel_Name(), ecorePackage.getEString(), "name", null, 0, 1, IQLModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIQLModel_Namespaces(), this.getIQLNamespace(), null, "namespaces", null, 0, -1, IQLModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIQLModel_Elements(), this.getIQLTypeDefinition(), null, "elements", null, 0, -1, IQLModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlTypeDefinitionEClass, IQLTypeDefinition.class, "IQLTypeDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIQLTypeDefinition_Javametadata(), this.getIQLJavaMetadata(), null, "javametadata", null, 0, -1, IQLTypeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3313,7 +3249,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
 
     initEClass(iqlCasePartEClass, IQLCasePart.class, "IQLCasePart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIQLCasePart_Expr(), this.getIQLExpression(), null, "expr", null, 0, 1, IQLCasePart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLCasePart_Body(), this.getIQLStatement(), null, "body", null, 0, 1, IQLCasePart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIQLCasePart_Statements(), this.getIQLStatement(), null, "statements", null, 0, -1, IQLCasePart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlExpressionEClass, IQLExpression.class, "IQLExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -3362,9 +3298,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
 
     initEClass(iqlMetadataValueSingleBooleanEClass, IQLMetadataValueSingleBoolean.class, "IQLMetadataValueSingleBoolean", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIQLMetadataValueSingleBoolean_Value(), ecorePackage.getEBoolean(), "value", null, 0, 1, IQLMetadataValueSingleBoolean.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(iqlMetadataValueSingleCharEClass, IQLMetadataValueSingleChar.class, "IQLMetadataValueSingleChar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getIQLMetadataValueSingleChar_Value(), ecorePackage.getEChar(), "value", null, 0, 1, IQLMetadataValueSingleChar.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlMetadataValueSingleTypeRefEClass, IQLMetadataValueSingleTypeRef.class, "IQLMetadataValueSingleTypeRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIQLMetadataValueSingleTypeRef_Value(), theTypesPackage.getJvmTypeReference(), null, "value", null, 0, 1, IQLMetadataValueSingleTypeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3415,7 +3348,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     initEClass(iqlSwitchStatementEClass, IQLSwitchStatement.class, "IQLSwitchStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIQLSwitchStatement_Expr(), this.getIQLExpression(), null, "expr", null, 0, 1, IQLSwitchStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getIQLSwitchStatement_Cases(), this.getIQLCasePart(), null, "cases", null, 0, -1, IQLSwitchStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLSwitchStatement_Default(), this.getIQLStatement(), null, "default", null, 0, 1, IQLSwitchStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIQLSwitchStatement_Statements(), this.getIQLStatement(), null, "statements", null, 0, -1, IQLSwitchStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlExpressionStatementEClass, IQLExpressionStatement.class, "IQLExpressionStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIQLExpressionStatement_Expression(), this.getIQLExpression(), null, "expression", null, 0, 1, IQLExpressionStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3529,9 +3462,6 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
 
     initEClass(iqlLiteralExpressionBooleanEClass, IQLLiteralExpressionBoolean.class, "IQLLiteralExpressionBoolean", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIQLLiteralExpressionBoolean_Value(), ecorePackage.getEBoolean(), "value", null, 0, 1, IQLLiteralExpressionBoolean.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(iqlLiteralExpressionCharEClass, IQLLiteralExpressionChar.class, "IQLLiteralExpressionChar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getIQLLiteralExpressionChar_Value(), ecorePackage.getEChar(), "value", null, 0, 1, IQLLiteralExpressionChar.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlLiteralExpressionRangeEClass, IQLLiteralExpressionRange.class, "IQLLiteralExpressionRange", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIQLLiteralExpressionRange_Value(), ecorePackage.getEString(), "value", null, 0, 1, IQLLiteralExpressionRange.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

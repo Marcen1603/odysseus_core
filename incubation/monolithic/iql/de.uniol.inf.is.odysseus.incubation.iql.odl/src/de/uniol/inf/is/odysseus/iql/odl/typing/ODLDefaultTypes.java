@@ -6,19 +6,26 @@ import java.util.HashSet;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.types.MepFunctions;
+import de.uniol.inf.is.odysseus.iql.odl.typing.extension.ODLUtils;
 import de.uniol.inf.is.odysseus.iql.odl.typing.extension.PunctuationExtensions;
+import de.uniol.inf.is.odysseus.iql.odl.typing.extension.TransferExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.typing.extension.TupleExtensions;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
@@ -44,6 +51,13 @@ public class ODLDefaultTypes {
 		types.add(TITransferArea.class);	
 		types.add(RelationalMergeFunction.class);	
 		types.add(MetadataRegistry.class);
+		types.add(RelationalExpression.class);
+		types.add(SDFExpression.class);
+		types.add(SDFElement.class);
+		types.add(ODLUtils.class);
+		types.add(SDFDatatype.class);
+		types.add(AbstractPhysicalSubscription.class);
+
 		return types;
 	}
 	
@@ -68,7 +82,13 @@ public class ODLDefaultTypes {
 		implicitImports.add(RelationalMergeFunction.class.getCanonicalName());
 		implicitImports.add(MetadataRegistry.class.getCanonicalName());
 		implicitImports.add(SDFSchemaFactory.class.getCanonicalName());
-		
+		implicitImports.add(RelationalExpression.class.getCanonicalName());
+		implicitImports.add(SDFExpression.class.getCanonicalName());
+		implicitImports.add(SDFElement.class.getCanonicalName());
+		implicitImports.add(ODLUtils.class.getCanonicalName());
+		implicitImports.add(SDFDatatype.class.getCanonicalName());
+		implicitImports.add(AbstractPhysicalSubscription.class.getCanonicalName());
+
 		return implicitImports;
 	}
 	
@@ -76,6 +96,7 @@ public class ODLDefaultTypes {
 		Collection<IIQLTypeExtensions> result = new HashSet<>();
 		result.add(new TupleExtensions());
 		result.add(new PunctuationExtensions());
+		result.add(new TransferExtensions());
 		return result;
 	}
 

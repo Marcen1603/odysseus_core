@@ -6,7 +6,7 @@ operator OSelect(outputMode = "INPUT"){
 		predicate.init;
 	}	
 	
-	on processPuncutation(IPunctuation punctuation, int port) {
+	on processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
 	}
 	
@@ -14,7 +14,6 @@ operator OSelect(outputMode = "INPUT"){
 		if (predicate.evaluate(tuple)) {
 			sendStreamElement(tuple);
 		}
-	}	
-		
+	}		
 	
 }

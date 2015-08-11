@@ -16,7 +16,7 @@ import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.osgi.framework.Bundle;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.AbstractIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLFactory;
 import de.uniol.inf.is.odysseus.iql.odl.service.ODLServiceObserver;
@@ -95,8 +95,8 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils, ODLServ
 	}
 	
 	@Override
-	protected IQLFile createCleanSystemFile() {
-		return ODLFactory.eINSTANCE.createODLFile();
+	protected IQLModel createCleanSystemFile() {
+		return ODLFactory.eINSTANCE.createODLModel();
 	}
 		
 

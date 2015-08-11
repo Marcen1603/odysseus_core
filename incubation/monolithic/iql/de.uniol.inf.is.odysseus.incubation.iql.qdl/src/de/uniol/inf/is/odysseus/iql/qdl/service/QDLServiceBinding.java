@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.iql.qdl.service;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.service.IQLServiceBinding;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
@@ -80,5 +82,17 @@ public class QDLServiceBinding extends IQLServiceBinding {
 	
 	public static IOperatorBuilderFactory getOperatorBuilderFactory() {
 		return operatorBuilderFactory;
+	}
+
+	public static ILogicalOperator createOperator(String operator) {
+		for (IOperatorBuilder builder : operatorBuilderFactory.getOperatorBuilder()) {
+			if (builder.getName().equalsIgnoreCase(operator)) {
+				try {
+					return builder.getOperatorClass().newInstance();
+				} catch (InstantiationException | IllegalAccessException e) {
+				}
+			}
+		}
+		return null;
 	}
 }

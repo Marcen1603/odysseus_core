@@ -2,7 +2,7 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="qDL" nsURI="http://www.uniol.de/inf/is/odysseus/iql/qdl/QDL"
     nsPrefix="qDL">
-  <eClassifiers xsi:type="ecore:EClass" name="QDLFile" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLFile"/>
+  <eClassifiers xsi:type="ecore:EClass" name="QDLModel" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLModel"/>
   <eClassifiers xsi:type="ecore:EClass" name="QDLTypeDefinition" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLTypeDefinition"/>
   <eClassifiers xsi:type="ecore:EClass" name="QDLQuery" eSuperTypes="platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmGenericType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="metadataList" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataList"
@@ -35,9 +35,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleBoolean" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleChar" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EChar"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="QDLMetadataValueSingleID" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

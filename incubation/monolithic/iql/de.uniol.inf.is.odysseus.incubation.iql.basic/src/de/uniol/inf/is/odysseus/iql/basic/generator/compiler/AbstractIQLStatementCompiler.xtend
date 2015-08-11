@@ -120,7 +120,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 		'''
 		do
 			«compile(s.body, c)»
-		while(«exprCompiler.compile(s.predicate, c)»)
+		while(«exprCompiler.compile(s.predicate, c)»);
 		'''
 	}
 	
@@ -144,9 +144,11 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 			«FOR ca : s.cases»
 				«compile(ca, c)»
 			«ENDFOR»
-			«IF s.^default != null»
+			«IF s.statements != null && s.statements.size > 0»
 				default :
-					«compile(s.^default, c)»
+					«FOR stmt : s.statements»
+						«compile(stmt, c)»
+					«ENDFOR»
 			«ENDIF»
 		}
 		'''
@@ -155,7 +157,9 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	def String compile(IQLCasePart cp, G c) {
 		'''
 		case «exprCompiler.compile(cp.expr, c)» :
-			«compile(cp.body, c)»
+			«FOR stmt : cp.statements»
+				«compile(stmt, c)»
+			«ENDFOR»
 		'''	
 	}
 	
@@ -167,9 +171,11 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 			var right = exprParser.getType(s.init.value, leftType);
 			if (right.isNull || lookUp.isAssignable(leftType, right.ref)){
 				'''«compile(leftVar, c)»«IF s.init != null» = «compile(s.init, leftType, c)»«ENDIF»;'''
-			} else {
+			} else if (right.isNull || lookUp.isCastable(leftType, right.ref)){
 				var target = typeCompiler.compile(leftType, c, false)
 				'''«compile(leftVar, c)»«IF s.init != null» = ((«target»)«compile(s.init, leftType, c)»«ENDIF»);'''
+			} else {
+				'''«compile(leftVar, c)»«IF s.init != null» = «compile(s.init, leftType, c)»«ENDIF»;'''				
 			}					
 		} else if (s.init != null) {
 			'''«compile(leftVar, c)» = «compile(s.init, leftType, c)»;'''
@@ -218,14 +224,14 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 		var result = "";
 		context.expectedTypeRef = typeRef		
 		if (init.argsMap != null && init.argsMap.elements.size > 0) {
-			var constructor = lookUp.findConstructor(typeRef, init.argsList.elements)
+			var constructor = lookUp.findPublicConstructor(typeRef, init.argsList.elements)
 			if (constructor != null) {
 				result = '''get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, constructor.parameters,context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			} else {
 				result = '''get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			}
 		} else if (init.argsList != null) {
-			var constructor = lookUp.findConstructor(typeRef, init.argsList.elements)
+			var constructor = lookUp.findPublicConstructor(typeRef, init.argsList.elements)
 			if (constructor != null) {
 				result = '''new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList,constructor.parameters, context)»)'''			
 			} else {

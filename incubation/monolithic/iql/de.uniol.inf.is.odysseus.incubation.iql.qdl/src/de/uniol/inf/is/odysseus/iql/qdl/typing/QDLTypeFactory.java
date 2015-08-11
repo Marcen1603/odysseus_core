@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.AbstractIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceObserver;
@@ -63,8 +63,8 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 	}
 
 	@Override
-	protected IQLFile createCleanSystemFile() {		
-		return QDLFactory.eINSTANCE.createQDLFile();
+	protected IQLModel createCleanSystemFile() {		
+		return QDLFactory.eINSTANCE.createQDLModel();
 	}
 	
 	

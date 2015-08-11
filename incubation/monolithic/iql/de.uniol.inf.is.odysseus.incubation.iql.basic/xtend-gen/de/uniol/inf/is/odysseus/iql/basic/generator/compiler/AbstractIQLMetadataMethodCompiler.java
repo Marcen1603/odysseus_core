@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull;
@@ -18,11 +17,13 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataMethodC
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -36,6 +37,9 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   protected H helper;
   
   protected T typeCompiler;
+  
+  @Inject
+  protected IIQLTypeUtils typeUtils;
   
   public AbstractIQLMetadataMethodCompiler(final H helper, final T typeCompiler) {
     this.helper = helper;
@@ -110,21 +114,17 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
           if ((o instanceof IQLMetadataValueSingleBoolean)) {
             return this.compile(((IQLMetadataValueSingleBoolean) o), varName, context);
           } else {
-            if ((o instanceof IQLMetadataValueSingleChar)) {
-              return this.compile(((IQLMetadataValueSingleChar) o), varName, context);
+            if ((o instanceof IQLMetadataValueSingleNull)) {
+              return this.compile(((IQLMetadataValueSingleNull) o), varName, context);
             } else {
-              if ((o instanceof IQLMetadataValueSingleNull)) {
-                return this.compile(((IQLMetadataValueSingleNull) o), varName, context);
+              if ((o instanceof IQLMetadataValueSingleTypeRef)) {
+                return this.compile(((IQLMetadataValueSingleTypeRef) o), varName, context);
               } else {
-                if ((o instanceof IQLMetadataValueSingleTypeRef)) {
-                  return this.compile(((IQLMetadataValueSingleTypeRef) o), varName, context);
+                if ((o instanceof IQLMetadataValueList)) {
+                  return this.compile(((IQLMetadataValueList) o), varName, counter, context);
                 } else {
-                  if ((o instanceof IQLMetadataValueList)) {
-                    return this.compile(((IQLMetadataValueList) o), varName, counter, context);
-                  } else {
-                    if ((o instanceof IQLMetadataValueMap)) {
-                      return this.compile(((IQLMetadataValueMap) o), varName, counter, context);
-                    }
+                  if ((o instanceof IQLMetadataValueMap)) {
+                    return this.compile(((IQLMetadataValueMap) o), varName, counter, context);
                   }
                 }
               }
@@ -159,14 +159,39 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   }
   
   public String compile(final IQLMetadataValueSingleString o, final String varName, final G context) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("String ");
-    _builder.append(varName, "");
-    _builder.append(" = \"");
-    String _value = o.getValue();
-    _builder.append(_value, "");
-    _builder.append("\";");
-    return _builder.toString();
+    String _xifexpression = null;
+    JvmTypeReference _expectedTypeRef = context.getExpectedTypeRef();
+    boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
+    if (_notEquals) {
+      String _xifexpression_1 = null;
+      JvmTypeReference _expectedTypeRef_1 = context.getExpectedTypeRef();
+      boolean _isCharacter = this.typeUtils.isCharacter(_expectedTypeRef_1);
+      if (_isCharacter) {
+        String _value = o.getValue();
+        String _plus = ((("String " + varName) + " = \'") + _value);
+        return (_plus + "\';");
+      } else {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("String ");
+        _builder.append(varName, "");
+        _builder.append(" = \"");
+        String _value_1 = o.getValue();
+        _builder.append(_value_1, "");
+        _builder.append("\";");
+        _xifexpression_1 = _builder.toString();
+      }
+      _xifexpression = _xifexpression_1;
+    } else {
+      StringConcatenation _builder_1 = new StringConcatenation();
+      _builder_1.append("String ");
+      _builder_1.append(varName, "");
+      _builder_1.append(" = \"");
+      String _value_2 = o.getValue();
+      _builder_1.append(_value_2, "");
+      _builder_1.append("\";");
+      _xifexpression = _builder_1.toString();
+    }
+    return _xifexpression;
   }
   
   public String compile(final IQLMetadataValueSingleBoolean o, final String varName, final G context) {
@@ -177,17 +202,6 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
     boolean _isValue = o.isValue();
     _builder.append(_isValue, "");
     _builder.append(";");
-    return _builder.toString();
-  }
-  
-  public String compile(final IQLMetadataValueSingleChar o, final String varName, final G context) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("char ");
-    _builder.append(varName, "");
-    _builder.append(" = \'");
-    char _value = o.getValue();
-    _builder.append(_value, "");
-    _builder.append("\'; ");
     return _builder.toString();
   }
   

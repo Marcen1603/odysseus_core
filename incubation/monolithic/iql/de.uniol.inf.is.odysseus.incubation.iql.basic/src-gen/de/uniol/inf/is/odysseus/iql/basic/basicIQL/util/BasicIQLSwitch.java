@@ -86,10 +86,10 @@ public class BasicIQLSwitch<T> extends Switch<T>
   {
     switch (classifierID)
     {
-      case BasicIQLPackage.IQL_FILE:
+      case BasicIQLPackage.IQL_MODEL:
       {
-        IQLFile iqlFile = (IQLFile)theEObject;
-        T result = caseIQLFile(iqlFile);
+        IQLModel iqlModel = (IQLModel)theEObject;
+        T result = caseIQLModel(iqlModel);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -362,14 +362,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
         IQLMetadataValueSingleBoolean iqlMetadataValueSingleBoolean = (IQLMetadataValueSingleBoolean)theEObject;
         T result = caseIQLMetadataValueSingleBoolean(iqlMetadataValueSingleBoolean);
         if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleBoolean);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_CHAR:
-      {
-        IQLMetadataValueSingleChar iqlMetadataValueSingleChar = (IQLMetadataValueSingleChar)theEObject;
-        T result = caseIQLMetadataValueSingleChar(iqlMetadataValueSingleChar);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleChar);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -717,14 +709,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_LITERAL_EXPRESSION_CHAR:
-      {
-        IQLLiteralExpressionChar iqlLiteralExpressionChar = (IQLLiteralExpressionChar)theEObject;
-        T result = caseIQLLiteralExpressionChar(iqlLiteralExpressionChar);
-        if (result == null) result = caseIQLExpression(iqlLiteralExpressionChar);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_RANGE:
       {
         IQLLiteralExpressionRange iqlLiteralExpressionRange = (IQLLiteralExpressionRange)theEObject;
@@ -762,17 +746,17 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL File</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Model</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL File</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Model</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLFile(IQLFile object)
+  public T caseIQLModel(IQLModel object)
   {
     return null;
   }
@@ -1285,22 +1269,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIQLMetadataValueSingleBoolean(IQLMetadataValueSingleBoolean object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Char</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Char</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLMetadataValueSingleChar(IQLMetadataValueSingleChar object)
   {
     return null;
   }
@@ -1989,22 +1957,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIQLLiteralExpressionBoolean(IQLLiteralExpressionBoolean object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Literal Expression Char</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Literal Expression Char</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLLiteralExpressionChar(IQLLiteralExpressionChar object)
   {
     return null;
   }

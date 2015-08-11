@@ -23,13 +23,13 @@ public interface ODLFactory extends EFactory
   ODLFactory eINSTANCE = de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLFactoryImpl.init();
 
   /**
-   * Returns a new object of class '<em>File</em>'.
+   * Returns a new object of class '<em>Model</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>File</em>'.
+   * @return a new object of class '<em>Model</em>'.
    * @generated
    */
-  ODLFile createODLFile();
+  ODLModel createODLModel();
 
   /**
    * Returns a new object of class '<em>Type Definition</em>'.

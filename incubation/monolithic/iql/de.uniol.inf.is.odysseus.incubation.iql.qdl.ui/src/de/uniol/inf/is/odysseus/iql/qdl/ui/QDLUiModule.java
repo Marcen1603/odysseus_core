@@ -20,6 +20,7 @@ import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
+import de.uniol.inf.is.odysseus.iql.basic.ui.IQLXtextEditorCallback;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLHighlightingConfiguration;
@@ -85,21 +86,5 @@ public class QDLUiModule extends de.uniol.inf.is.odysseus.iql.qdl.ui.AbstractQDL
 	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
 		return QDLClasspathTypeProviderFactory.class;
 	}
-	
-	
-	private static class IQLXtextEditorCallback extends NatureAddingEditorCallback{
-		@Inject
-		private ToggleXtextNatureAction toggleNature;
-		
-		@Override
-		public void afterCreatePartControl(XtextEditor editor) {
-			IResource resource = editor.getResource();
-			if (resource != null) {
-				IProject project = resource.getProject();
-				if (project != null && project.isAccessible() && !project.isHidden() && !toggleNature.hasNature(project)) {
-					toggleNature.toggleNature(project);
-				}
-			}			
-		}		
-	}
+
 }

@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.service.BasicIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 
@@ -22,8 +22,8 @@ public class BasicIQLTypeFactory extends AbstractIQLTypeFactory<BasicIQLTypeUtil
 	}
 
 	@Override
-	protected IQLFile createCleanSystemFile() {
-		return BasicIQLFactory.eINSTANCE.createIQLFile();
+	protected IQLModel createCleanSystemFile() {
+		return BasicIQLFactory.eINSTANCE.createIQLModel();
 	}
 	
 }

@@ -19,7 +19,12 @@ import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.ui.editor.validation.ValidatingEditorCallback;
 
+import com.google.inject.Binder;
+import com.google.inject.name.Names;
+
+import de.uniol.inf.is.odysseus.iql.basic.ui.IQLXtextEditorCallback;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.ui.coloring.ODLHighlightingConfiguration;
@@ -37,6 +42,10 @@ import de.uniol.inf.is.odysseus.iql.odl.ui.hover.ODLEObjectHoverProvider;
 public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODLUiModule {
 	public ODLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	
+	public void validateOnEditorOpen(Binder binder) {
+		binder.bind(IXtextEditorCallback.class).annotatedWith(Names.named("WHOCARES")).to(ValidatingEditorCallback.class);
 	}
 	
 	@Override
@@ -84,21 +93,5 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 	@Override
 	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
 		return ODLClasspathTypeProviderFactory.class;
-	}
-
-	private static class IQLXtextEditorCallback extends NatureAddingEditorCallback{
-		@Inject
-		private ToggleXtextNatureAction toggleNature;
-		
-		@Override
-		public void afterCreatePartControl(XtextEditor editor) {
-			IResource resource = editor.getResource();
-			if (resource != null) {
-				IProject project = resource.getProject();
-				if (project != null && project.isAccessible() && !project.isHidden() && !toggleNature.hasNature(project)) {
-					toggleNature.toggleNature(project);
-				}
-			}			
-		}		
 	}
 }

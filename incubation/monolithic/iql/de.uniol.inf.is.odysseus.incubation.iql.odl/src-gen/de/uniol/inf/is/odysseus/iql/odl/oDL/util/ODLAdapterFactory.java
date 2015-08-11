@@ -3,8 +3,8 @@
 package de.uniol.inf.is.odysseus.iql.odl.oDL.util;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 
 import de.uniol.inf.is.odysseus.iql.odl.oDL.*;
@@ -93,9 +93,9 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
     new ODLSwitch<Adapter>()
     {
       @Override
-      public Adapter caseODLFile(ODLFile object)
+      public Adapter caseODLModel(ODLModel object)
       {
-        return createODLFileAdapter();
+        return createODLModelAdapter();
       }
       @Override
       public Adapter caseODLTypeDefinition(ODLTypeDefinition object)
@@ -118,9 +118,9 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
         return createODLMethodAdapter();
       }
       @Override
-      public Adapter caseIQLFile(IQLFile object)
+      public Adapter caseIQLModel(IQLModel object)
       {
-        return createIQLFileAdapter();
+        return createIQLModelAdapter();
       }
       @Override
       public Adapter caseIQLTypeDefinition(IQLTypeDefinition object)
@@ -220,16 +220,16 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
 
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLFile <em>File</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel <em>Model</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLFile
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel
    * @generated
    */
-  public Adapter createODLFileAdapter()
+  public Adapter createODLModelAdapter()
   {
     return null;
   }
@@ -295,16 +295,16 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile <em>IQL File</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel <em>IQL Model</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLFile
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel
    * @generated
    */
-  public Adapter createIQLFileAdapter()
+  public Adapter createIQLModelAdapter()
   {
     return null;
   }

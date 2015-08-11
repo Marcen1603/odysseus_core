@@ -27,8 +27,9 @@ public interface IIQLLookUp {
 	Collection<JvmOperation> getPublicMethods(JvmTypeReference typeRef, boolean extensionMethods);	
 	Collection<JvmOperation> getProtectedMethods(JvmTypeReference typeRef, boolean extensionMethods);		
 
-	Collection<JvmExecutable> getConstructors(JvmTypeReference typeRef);
+	Collection<JvmExecutable> getPublicConstructors(JvmTypeReference typeRef);
 	JvmExecutable findConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments);
+	JvmExecutable findPublicConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments);
 
 	Collection<JvmType> getAllTypes(Collection<String> usedNamespaces, Resource context);	
 	Collection<JvmType> getAllInstantiateableTypes(Collection<String> usedNamespaces, Resource context);	
@@ -38,9 +39,12 @@ public interface IIQLLookUp {
 
 	
 	boolean isAssignable(JvmTypeReference targetRef, JvmTypeReference typeRef);	
+	boolean isCastable(JvmTypeReference targetRef, JvmTypeReference typeRef);	
+
 	
 	Map<String, JvmTypeReference> getProperties(JvmTypeReference typeRef);
 	boolean isInstantiateable(JvmDeclaredType declaredType);
+	Collection<JvmOperation> getDeclaredPublicMethods(JvmTypeReference typeRef,	boolean onlyStatic);
 
 
 }

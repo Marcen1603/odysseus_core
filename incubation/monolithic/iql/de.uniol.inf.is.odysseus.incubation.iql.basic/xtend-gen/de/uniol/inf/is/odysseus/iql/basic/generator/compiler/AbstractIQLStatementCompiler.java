@@ -224,7 +224,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
     IQLExpression _predicate = s.getPredicate();
     String _compile_1 = this.exprCompiler.compile(_predicate, c);
     _builder.append(_compile_1, "");
-    _builder.append(")");
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
@@ -291,18 +291,31 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
       }
     }
     {
-      IQLStatement _default = s.getDefault();
-      boolean _notEquals = (!Objects.equal(_default, null));
-      if (_notEquals) {
+      boolean _and = false;
+      EList<IQLStatement> _statements = s.getStatements();
+      boolean _notEquals = (!Objects.equal(_statements, null));
+      if (!_notEquals) {
+        _and = false;
+      } else {
+        EList<IQLStatement> _statements_1 = s.getStatements();
+        int _size = _statements_1.size();
+        boolean _greaterThan = (_size > 0);
+        _and = _greaterThan;
+      }
+      if (_and) {
         _builder.append("\t");
         _builder.append("default :");
         _builder.newLine();
-        _builder.append("\t");
-        _builder.append("\t");
-        IQLStatement _default_1 = s.getDefault();
-        String _compile_2 = this.compile(_default_1, c);
-        _builder.append(_compile_2, "\t\t");
-        _builder.newLineIfNotEmpty();
+        {
+          EList<IQLStatement> _statements_2 = s.getStatements();
+          for(final IQLStatement stmt : _statements_2) {
+            _builder.append("\t");
+            _builder.append("\t");
+            String _compile_2 = this.compile(stmt, c);
+            _builder.append(_compile_2, "\t\t");
+            _builder.newLineIfNotEmpty();
+          }
+        }
       }
     }
     _builder.append("}");
@@ -318,11 +331,15 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
     _builder.append(_compile, "");
     _builder.append(" :");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    IQLStatement _body = cp.getBody();
-    String _compile_1 = this.compile(_body, c);
-    _builder.append(_compile_1, "\t");
-    _builder.newLineIfNotEmpty();
+    {
+      EList<IQLStatement> _statements = cp.getStatements();
+      for(final IQLStatement stmt : _statements) {
+        _builder.append("\t");
+        String _compile_1 = this.compile(stmt, c);
+        _builder.append(_compile_1, "\t");
+        _builder.newLineIfNotEmpty();
+      }
+    }
     return _builder.toString();
   }
   
@@ -386,9 +403,40 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
             _builder.append(";");
             _xifexpression_1 = _builder.toString();
           } else {
-            String _xblockexpression_2 = null;
-            {
-              String target = this.typeCompiler.compile(leftType, c, false);
+            String _xifexpression_2 = null;
+            boolean _or_1 = false;
+            boolean _isNull_1 = right.isNull();
+            if (_isNull_1) {
+              _or_1 = true;
+            } else {
+              JvmTypeReference _ref_1 = right.getRef();
+              boolean _isCastable = this.lookUp.isCastable(leftType, _ref_1);
+              _or_1 = _isCastable;
+            }
+            if (_or_1) {
+              String _xblockexpression_2 = null;
+              {
+                String target = this.typeCompiler.compile(leftType, c, false);
+                StringConcatenation _builder_1 = new StringConcatenation();
+                String _compile_2 = this.compile(leftVar, c);
+                _builder_1.append(_compile_2, "");
+                {
+                  IQLVariableInitialization _init_6 = s.getInit();
+                  boolean _notEquals_2 = (!Objects.equal(_init_6, null));
+                  if (_notEquals_2) {
+                    _builder_1.append(" = ((");
+                    _builder_1.append(target, "");
+                    _builder_1.append(")");
+                    IQLVariableInitialization _init_7 = s.getInit();
+                    String _compile_3 = this.compile(_init_7, leftType, c);
+                    _builder_1.append(_compile_3, "");
+                  }
+                }
+                _builder_1.append(");");
+                _xblockexpression_2 = _builder_1.toString();
+              }
+              _xifexpression_2 = _xblockexpression_2;
+            } else {
               StringConcatenation _builder_1 = new StringConcatenation();
               String _compile_2 = this.compile(leftVar, c);
               _builder_1.append(_compile_2, "");
@@ -396,18 +444,16 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
                 IQLVariableInitialization _init_6 = s.getInit();
                 boolean _notEquals_2 = (!Objects.equal(_init_6, null));
                 if (_notEquals_2) {
-                  _builder_1.append(" = ((");
-                  _builder_1.append(target, "");
-                  _builder_1.append(")");
+                  _builder_1.append(" = ");
                   IQLVariableInitialization _init_7 = s.getInit();
                   String _compile_3 = this.compile(_init_7, leftType, c);
                   _builder_1.append(_compile_3, "");
                 }
               }
-              _builder_1.append(");");
-              _xblockexpression_2 = _builder_1.toString();
+              _builder_1.append(";");
+              _xifexpression_2 = _builder_1.toString();
             }
-            _xifexpression_1 = _xblockexpression_2;
+            _xifexpression_1 = _xifexpression_2;
           }
           _xblockexpression_1 = _xifexpression_1;
         }
@@ -559,7 +605,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
     if (_and) {
       IQLArgumentsList _argsList = init.getArgsList();
       EList<IQLExpression> _elements_1 = _argsList.getElements();
-      JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _elements_1);
+      JvmExecutable constructor = this.lookUp.findPublicConstructor(typeRef, _elements_1);
       boolean _notEquals_1 = (!Objects.equal(constructor, null));
       if (_notEquals_1) {
         StringConcatenation _builder = new StringConcatenation();
@@ -609,7 +655,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
       if (_notEquals_2) {
         IQLArgumentsList _argsList_4 = init.getArgsList();
         EList<IQLExpression> _elements_2 = _argsList_4.getElements();
-        JvmExecutable constructor_1 = this.lookUp.findConstructor(typeRef, _elements_2);
+        JvmExecutable constructor_1 = this.lookUp.findPublicConstructor(typeRef, _elements_2);
         boolean _notEquals_3 = (!Objects.equal(constructor_1, null));
         if (_notEquals_3) {
           StringConcatenation _builder_2 = new StringConcatenation();

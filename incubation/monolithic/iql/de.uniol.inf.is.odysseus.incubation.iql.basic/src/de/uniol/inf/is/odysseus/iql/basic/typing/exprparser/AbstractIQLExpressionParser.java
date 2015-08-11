@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInstanceOfExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionBoolean;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionChar;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionDouble;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionInt;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLLiteralExpressionList;
@@ -136,8 +135,6 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 			return getType((IQLLiteralExpressionString)expr, context);
 		} else if (expr instanceof IQLLiteralExpressionBoolean) {
 			return getType((IQLLiteralExpressionBoolean)expr, context);
-		} else if (expr instanceof IQLLiteralExpressionChar) {
-			return getType((IQLLiteralExpressionChar)expr, context);
 		} else if (expr instanceof IQLLiteralExpressionRange) {
 			return getType((IQLLiteralExpressionRange)expr, context);
 		} else if (expr instanceof IQLLiteralExpressionNull) {
@@ -188,14 +185,6 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		return new TypeResult(typeUtils.createTypeRef(Range.class, typeFactory.getSystemResourceSet()));
 	}
 	
-	public TypeResult getType(IQLLiteralExpressionChar expr, C context) {
-		JvmTypeReference expectedType = context.getExpectedTypeRef();
-		if (expectedType != null) {
-			return new TypeResult(expectedType);
-		} else {
-			return new TypeResult(typeUtils.createTypeRef("char", typeFactory.getSystemResourceSet()));
-		}
-	}
 	
 	public TypeResult getType(IQLLiteralExpressionNull expr, C context) {
 		return new TypeResult();

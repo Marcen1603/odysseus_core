@@ -5,13 +5,11 @@ import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHel
 import javax.inject.Inject
 import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator
-import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAORule
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration
-import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLPO
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory
@@ -23,20 +21,25 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils
-import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates
 import java.util.List
 import java.util.ArrayList
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate
+import java.util.Map
+import java.util.HashMap
+import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLAO
+import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.EventMethodsFactory
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLPO
 
 class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLStatementCompiler, ODLTypeFactory, ODLTypeUtils>{
 	
 	@Inject
 	private ODLMetadataAnnotationCompiler metadataAnnotationCompiler
 
-	@Inject
-	private ODLLookUp lookUp;
 	
 	@Inject
 	new(ODLCompilerHelper helper, ODLTypeCompiler typeCompiler, ODLStatementCompiler stmtCompiler, ODLTypeFactory factory, ODLTypeUtils typeUtils) {
@@ -47,7 +50,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		context.ao = true	
 		var builder = new StringBuilder()
 		builder.append(compileAOIntern(o, context))
-		context.addImport(AbstractODLAO.canonicalName)	
+		context.addImport(AbstractLogicalOperator.canonicalName)	
 		context.addImport(LogicalOperatorCategory.canonicalName)	
 		context.addImport(LogicalOperator.canonicalName)	
 		context.addImport(Parameter.canonicalName)	
@@ -83,7 +86,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 	
 	def String compileAOIntern(ODLOperator o, ODLGeneratorContext context) {	
 		var opName = o.simpleName+ODLCompilerHelper.AO_OPERATOR
-		var superClass = AbstractODLAO.simpleName;
+		var superClass = AbstractLogicalOperator.simpleName;
 		var parameters = helper.getParameters(o);
 		var newExpressions = helper.getNewExpressions(o);
 		var varStmts = helper.getVarStatements(o);
@@ -91,25 +94,32 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		var hasPredicate = helper.hasPredicate(o);
 		var predicates = helper.getPredicates(o);
 		var predicateArrays = helper.getPredicateArrays(o);
+		var operatorValidate = helper.hasOperatorValidate(o);
 		var parametersToValidate = new ArrayList();
 		for (p : parameters) {
 			if (helper.hasValidateMethod(o, p)) {
 				parametersToValidate.add(p);
 			}
 		}
+		context.addImport(List.canonicalName)
+		context.addImport(ArrayList.canonicalName)
+		context.addImport(Map.canonicalName)
+		context.addImport(HashMap.canonicalName)
+		context.addImport(IODLAO.canonicalName)
+
 		if (hasPredicate) {
-			context.addImport(IHasPredicates.canonicalName)
-			context.addImport(List.canonicalName)
-			context.addImport(ArrayList.canonicalName)			
+			context.addImport(IHasPredicates.canonicalName)			
 		}
 		'''
 		
 		@SuppressWarnings("all")
 		@«LogicalOperator.simpleName»(«metadataAnnotationCompiler.getAOAnnotationElements(o, context)»)
-		public class «opName» extends «superClass»«IF hasPredicate» implements «IHasPredicates.simpleName»«ENDIF» {
+		public class «opName» extends «superClass» implements «IODLAO.simpleName»«IF hasPredicate», «IHasPredicates.simpleName»«ENDIF» {
 			«FOR p : parameters»
 				«compile(p, context)»
 			«ENDFOR»
+			
+			private «Map.simpleName»<«String.simpleName», «List.simpleName»<«Object.simpleName»>> metadata = new «HashMap.simpleName»<>();
 			
 			public «opName»() {
 				super();
@@ -143,8 +153,14 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 			«compile(m, context)»
 			«ENDFOR»
 			
-			«IF parametersToValidate.size > 0»
+			«IF operatorValidate ||  parametersToValidate.size > 0»
 			@Override
+			public boolean isValid() {
+				return super.isValid()«IF operatorValidate» && validate()«ENDIF»«IF parametersToValidate.size > 0» && validateParameters()«ENDIF»;
+			}
+			«ENDIF»
+			
+			«IF parametersToValidate.size > 0»
 			protected boolean validateParameters() {
 				return «parametersToValidate.map[p | "this.validate"+p.simpleName+"()"].join("&&")»;
 			}
@@ -189,6 +205,20 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 					«createGetterMethod(type, a.init.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»
+			
+			@Override
+			public «Map.simpleName»<«String.simpleName», «List.simpleName»<«Object.simpleName»>> getMetadata() {
+				return metadata;
+			}
+
+			@Override
+			public void addMetadata(«String.simpleName» key, «Object.simpleName» value) {
+				«List.simpleName»<«Object.simpleName»> valueList = metadata.get(key);
+				if (valueList == null) {
+					valueList = new «ArrayList.simpleName»<>();
+				}
+				valueList.add(value);
+			}
 		}
 		'''
 	}	
@@ -217,7 +247,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		var aoName = o.simpleName+ODLCompilerHelper.AO_OPERATOR		
 		var parameters = helper.getParameters(o)
 		var attributes = helper.getAttributes(o)	
-		var superClass = AbstractODLPO	
+		var superClass = AbstractPipe	
 		var read = helper.determineReadType(o)
 		var write = read
 		var meta = IMetaAttribute
@@ -225,12 +255,17 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		var varStmts = helper.getVarStatements(o);
 		var outputmode = helper.determineOutputMode(o);
 		var hasInit = helper.hasInitMethod(o);
+		var hasProcessNext = helper.hasProcessNext(o);
+		var hasProcessPunctuation = helper.hasProcessPunctuation(o);
 		
 		context.addImport(superClass.canonicalName)
 		context.addImport(read.canonicalName)
 		context.addImport(write.canonicalName)
 		context.addImport(meta.canonicalName)
 		context.addImport(outputmode.class.canonicalName)		
+		context.addImport(IODLPO.canonicalName)		
+		context.addImport(IPunctuation.canonicalName)		
+		
 		'''
 
 		«FOR j : typeDef.javametadata»
@@ -238,7 +273,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		«text»
 		«ENDFOR»
 		@SuppressWarnings("all")
-		public class «opName» extends «superClass.simpleName»<«read.simpleName»<«meta.simpleName»>,«write.simpleName»<«meta.simpleName»>> {
+		public class «opName» extends «superClass.simpleName»<«read.simpleName»<«meta.simpleName»>,«write.simpleName»<«meta.simpleName»>> implements «IODLPO.simpleName»<«read.simpleName»<«meta.simpleName»>,«write.simpleName»<«meta.simpleName»>> {
 			
 			«FOR m : o.members»	
 			«compile(m, context)»
@@ -253,18 +288,14 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 				«FOR p : parameters»
 					«createCloneStatements(p, "po", context)»
 				«ENDFOR»
-				«IF hasInit»
-					onInit();
-				«ENDIF»
 			}
 			
 			public «opName»(«aoName» ao) {
-				super(ao);
 				«FOR p : parameters»
 					«createCloneStatements(p, "ao", context)»
 				«ENDFOR»
 				«IF hasInit»
-					onInit();
+					init();
 				«ENDIF»
 			}
 			
@@ -280,6 +311,22 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 					return this.«p.simpleName»;
 				}
 			«ENDFOR»
+			
+			«IF !hasProcessPunctuation»
+			@Override
+			public void processPunctuation(«IPunctuation.simpleName» punctuation, int port) {
+				sendPunctuation(punctuation);
+			}
+			
+			«ENDIF»
+			
+			«IF !hasProcessNext»
+			@Override
+			protected void process_next(«read.simpleName» object, int port) {
+				transfer(object);
+			}
+			
+			«ENDIF»
 			
 			«FOR e : newExpressions»
 				«IF e.argsMap != null && e.argsMap.elements.size > 0»
@@ -332,22 +379,24 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 			'''	
 		} else if (m.validate && m.simpleName == null && context.isAo) {
 			'''
-			@Override
 			protected boolean validate()
 				«stmtCompiler.compile(m.body, context)»	
 			
 			'''	
-		} else if (!m.validate && m.on && (!context.ao && lookUp.hasOnMethod(m.simpleName, false) || context.ao && lookUp.hasOnMethod(m.simpleName, true))){
+		} else if (m.on && ((context.ao && EventMethodsFactory.getInstance.hasEventMethod(true, m.simpleName, m.parameters)) ||  (!context.ao && EventMethodsFactory.getInstance.hasEventMethod(false, m.simpleName, m.parameters)))){
 			var className = helper.getClassName(m);
 			var returnT = "";
+			var eventMethod = EventMethodsFactory.getInstance.getEventMethod(context.ao, m.simpleName, m.parameters);
 			if (m.returnType != null && !m.simpleName.equalsIgnoreCase(className)) {
 				returnT = typeCompiler.compile(m.returnType, context, false)
 			} else if (m.returnType == null && !m.simpleName.equalsIgnoreCase(className)) {
 				returnT = "void"
 			}
 			'''
+			«IF eventMethod.isOverride»
 			@Override
-			public «returnT» on«helper.firstCharUpperCase(m.simpleName)»(«IF m.parameters != null»«m.parameters.map[p | compile(p, context)].join(", ")»«ENDIF»)
+			«ENDIF»
+			public «returnT» «eventMethod.methodName»(«IF m.parameters != null»«m.parameters.map[p | compile(p, context)].join(", ")»«ENDIF»)
 				«stmtCompiler.compile(m.body, context)»	
 			
 			'''	

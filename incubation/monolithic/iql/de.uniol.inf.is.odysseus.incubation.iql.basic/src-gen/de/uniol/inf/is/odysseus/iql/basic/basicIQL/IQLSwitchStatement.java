@@ -14,7 +14,7 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSwitchStatement#getExpr <em>Expr</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSwitchStatement#getCases <em>Cases</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSwitchStatement#getDefault <em>Default</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSwitchStatement#getStatements <em>Statements</em>}</li>
  * </ul>
  * </p>
  *
@@ -67,29 +67,19 @@ public interface IQLSwitchStatement extends IQLStatement
   EList<IQLCasePart> getCases();
 
   /**
-   * Returns the value of the '<em><b>Default</b></em>' containment reference.
+   * Returns the value of the '<em><b>Statements</b></em>' containment reference list.
+   * The list contents are of type {@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Default</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Statements</em>' containment reference list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Default</em>' containment reference.
-   * @see #setDefault(IQLStatement)
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLSwitchStatement_Default()
+   * @return the value of the '<em>Statements</em>' containment reference list.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLSwitchStatement_Statements()
    * @model containment="true"
    * @generated
    */
-  IQLStatement getDefault();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSwitchStatement#getDefault <em>Default</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Default</em>' containment reference.
-   * @see #getDefault()
-   * @generated
-   */
-  void setDefault(IQLStatement value);
+  EList<IQLStatement> getStatements();
 
 } // IQLSwitchStatement

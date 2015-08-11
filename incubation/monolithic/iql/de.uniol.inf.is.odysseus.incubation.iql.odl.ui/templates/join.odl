@@ -1,32 +1,32 @@
 operator OJoin(outputMode = "NEW_ELEMENT"){	
 	
-	parameter IPredicate joinPredicate;
-		
+	parameter IPredicate joinPredicate;		
 	
 	ITimeIntervalSweepArea[] areas = [];
 	ITransferArea transferFunction;	
 	IDataMergeFunction dataMerge;
 	IMetadataMergeFunction metadataMerge;
 	
-	
-	on init {
 		
-	}	
-	
+	on init {
+		areas[0] = new JoinTISweepArea();
+		areas[0].queryPredicate = joinPredicate;
+							
+		areas[1] = new JoinTISweepArea();
+		areas[1].queryPredicate = joinPredicate;
+	}		
 		
 	on createOutputSchema(int arg0) : SDFSchema{
 		SDFSchema left = getSubscribedToSource(0).schema;
 		SDFSchema right = getSubscribedToSource(1).schema;		
 		return SDFSchema::join(left, right);
-	}							
+	}
+			
+			
+	
 	
 	on processOpen {
-		areas[0] = new JoinTISweepArea();
-		areas[0].queryPredicate = joinPredicate;	
-				
-		areas[1] = new JoinTISweepArea();
-		areas[1].queryPredicate = joinPredicate;
-						
+			
 		transferFunction = new TITransferArea();
 		transferFunction.init(this, this.getSubscribedToSource.size);		
 		
@@ -39,9 +39,7 @@ operator OJoin(outputMode = "NEW_ELEMENT"){
 		joinPredicate.init();
 		areas[0].clear;
 		areas[1].clear;
-	}		
-	
-	
+	}
 	
 	on processDone(int port) {
 		this.transferFunction.done(port);
@@ -68,7 +66,7 @@ operator OJoin(outputMode = "NEW_ELEMENT"){
 	}	
 	
 	
-	on processPuncutation(IPunctuation punctuation, int port) {
+	on processPunctuation(IPunctuation punctuation, int port) {
 		if (punctuation.isHeartbeat) {
 			this.areas[getOtherPort(port)].purgeElementsBefore(punctuation.getTime);		
 		}

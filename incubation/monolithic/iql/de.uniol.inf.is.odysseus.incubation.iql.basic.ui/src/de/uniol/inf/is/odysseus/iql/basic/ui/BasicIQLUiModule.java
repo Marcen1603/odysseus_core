@@ -3,17 +3,10 @@
  */
 package de.uniol.inf.is.odysseus.iql.basic.ui;
 
-import javax.inject.Inject;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.xtext.builder.nature.NatureAddingEditorCallback;
-import org.eclipse.xtext.builder.nature.ToggleXtextNatureAction;
 import org.eclipse.xtext.common.types.xtext.ClasspathBasedTypeScopeProvider;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
-import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
@@ -42,7 +35,7 @@ public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.Abst
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.IContentProposalProvider> bindIContentProposalProvider() {
 		return BasicIQLProposalProvider.class;
 	}
-
+	
 	
 	public Class<? extends IEObjectHover> bindIEObjectHover() {
 		return IQLDispatchingEObjectTextHover.class;
@@ -84,20 +77,4 @@ public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.Abst
 		return ClasspathBasedTypeScopeProvider.class;
 	}
 
-	
-	private static class IQLXtextEditorCallback extends NatureAddingEditorCallback{
-		@Inject
-		private ToggleXtextNatureAction toggleNature;
-		
-		@Override
-		public void afterCreatePartControl(XtextEditor editor) {
-			IResource resource = editor.getResource();
-			if (resource != null) {
-				IProject project = resource.getProject();
-				if (project != null && project.isAccessible() && !project.isHidden() && !toggleNature.hasNature(project)) {
-					toggleNature.toggleNature(project);
-				}
-			}			
-		}		
-	}
 }
