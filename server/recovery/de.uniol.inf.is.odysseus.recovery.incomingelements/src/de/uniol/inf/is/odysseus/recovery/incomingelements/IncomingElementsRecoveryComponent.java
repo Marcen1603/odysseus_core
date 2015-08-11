@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.util.IOperatorWalker;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStRecorderRegistry;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStSender;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.BaDaStAccessAO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
 
 /**
  * The incoming elements recovery component handles the backup and recovery of
@@ -102,7 +102,8 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	 * not yet an income of
 	 * {@link #activateBackup(QueryBuildConfiguration, ISession, List)}.
 	 */
-	private final Set<ILogicalQuery> mCurrentlyRecoveredQueries = Sets.newHashSet();
+	private final Set<ILogicalQuery> mCurrentlyRecoveredQueries = Sets
+			.newHashSet();
 
 	@Override
 	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
@@ -126,7 +127,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 			return queries;
 		}
 		for (ILogicalQuery query : queries) {
-			if(this.mCurrentlyRecoveredQueries.contains(query)) {
+			if (this.mCurrentlyRecoveredQueries.contains(query)) {
 				this.mCurrentlyRecoveredQueries.remove(query);
 			} else {
 				insertSourceSyncOperators(query, false, caller, cExecutor.get());
@@ -170,15 +171,15 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 								.contains(((AbstractAccessAO) operator)
 										.getAccessAOName().getResourceName())) {
 					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
-					BaDaStAccessAO badastAccess = new BaDaStAccessAO(
+					SourceRecoveryAO sourceRecovery = new SourceRecoveryAO(
 							sourceAccess, recoveryMode);
 					Collection<LogicalSubscription> subs = Lists
 							.newArrayList(operator.getSubscriptions());
 					operator.unsubscribeFromAllSinks();
-					badastAccess.subscribeToSource(operator, 0, 0,
+					sourceRecovery.subscribeToSource(operator, 0, 0,
 							operator.getOutputSchema());
 					for (LogicalSubscription sub : subs) {
-						badastAccess.subscribeSink(sub.getTarget(),
+						sourceRecovery.subscribeSink(sub.getTarget(),
 								sub.getSinkInPort(), sub.getSourceOutPort(),
 								sub.getSchema());
 					}

@@ -1,17 +1,17 @@
 package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 
 /**
- * State for {@link BaDaStBackupPO}s. Contains one object: <br />
- * The index of the data stream element stored on the Kafka server, which is the first to process, or {@code -1l}, if no offset is set.
+ * State for source recovery operators ({@link SourceBackupPO} and
+ * {@link SourceRecoveryPO}). Contains one object: <br />
+ * The offset of the data stream element stored on the Kafka server, which is
+ * the first to recover.
  * 
  * @author Michael Brand
  *
  */
-public class BaDaStAccessState extends AbstractOperatorState implements
-		IOperatorState {
+public class SourceRecoveryState extends AbstractOperatorState {
 
 	/**
 	 * The version of this class for serialization.
@@ -26,7 +26,8 @@ public class BaDaStAccessState extends AbstractOperatorState implements
 	/**
 	 * Gets the offset for the Kafka consumer.
 	 * 
-	 * @return The index of the data stream element stored on the Kafka server, which is the first to process, or {@code -1l}, if no offset is set.
+	 * @return The offset of the data stream element stored on the Kafka server,
+	 *         which is the first to recover.
 	 */
 	public long getOffset() {
 		return this.mOffset;
@@ -36,9 +37,10 @@ public class BaDaStAccessState extends AbstractOperatorState implements
 	 * Creates a new state.
 	 * 
 	 * @param offset
-	 *           The index of the data stream element stored on the Kafka server, which is the first to process, or {@code -1l}, if no offset is set.
+	 *            The offset of the data stream element stored on the Kafka
+	 *            server, which is the first to recover.
 	 */
-	public BaDaStAccessState(long offset) {
+	public SourceRecoveryState(long offset) {
 		this.mOffset = offset;
 	}
 

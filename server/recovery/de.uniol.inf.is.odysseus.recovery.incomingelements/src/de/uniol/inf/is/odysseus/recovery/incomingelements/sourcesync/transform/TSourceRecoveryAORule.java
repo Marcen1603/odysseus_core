@@ -1,24 +1,24 @@
 package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.BaDaStAccessAO;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.AbstractBaDaStAccessPO;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.BaDaStBackupPO;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.BaDaStRecoveryPO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.AbstractSourceRecoveryPO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.SourceBackupPO;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.SourceRecoveryPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * Rule to transform an {@link BaDaStAccessAO} into a physical operator:
- * {@link BaDaStBackupPO} or {@link BaDaStRecoveryPO}.
+ * Rule to transform an {@link SourceRecoveryAO} into an
+ * {@link AbstractSourceRecoveryPO}.
  * 
  * @author Michael Brand
  *
  */
-public class TBaDaStAccessAORule extends
-		AbstractTransformationRule<BaDaStAccessAO> {
+public class TSourceRecoveryAORule extends
+		AbstractTransformationRule<SourceRecoveryAO> {
 
 	@Override
 	public int getPriority() {
@@ -26,26 +26,26 @@ public class TBaDaStAccessAORule extends
 	}
 
 	@Override
-	public void execute(BaDaStAccessAO logical,
+	public void execute(SourceRecoveryAO logical,
 			TransformationConfiguration config) throws RuleException {
-		AbstractBaDaStAccessPO<?> po;
+		AbstractSourceRecoveryPO<?> po;
 		if (logical.isInRecoveryMode()) {
-			po = new BaDaStRecoveryPO<>(logical);
+			po = new SourceRecoveryPO<>(logical);
 		} else {
-			po = new BaDaStBackupPO<>(logical);
+			po = new SourceBackupPO<>(logical);
 		}
 		defaultExecute(logical, po, config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(BaDaStAccessAO logical,
+	public boolean isExecutable(SourceRecoveryAO logical,
 			TransformationConfiguration transformConfig) {
 		return logical.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
-		return "SourceSyncAO -> BaDaStBackupPO | BaDaStRecoveryPO";
+		return "SourceRecoveryAO -> SourceBackupPO | SourceRecoveryPO";
 	}
 
 	@Override
@@ -54,8 +54,8 @@ public class TBaDaStAccessAORule extends
 	}
 
 	@Override
-	public Class<? super BaDaStAccessAO> getConditionClass() {
-		return BaDaStAccessAO.class;
+	public Class<? super SourceRecoveryAO> getConditionClass() {
+		return SourceRecoveryAO.class;
 	}
 
 }
