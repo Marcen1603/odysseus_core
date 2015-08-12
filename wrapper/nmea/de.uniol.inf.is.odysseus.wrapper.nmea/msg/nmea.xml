@@ -19,7 +19,7 @@
 		<Field Name="Heading" BitOffset="8" BitLength="16" Format="Heading" Unsigned="true" Unit="Degrees" Scale="0.0057295779513082332" Description="0..2*pi, resolution = 0.0001" />
 		<Field Name="Deviation" BitOffset="24" BitLength="16" Format="Heading" Unsigned="false" Unit="Degrees" Scale="0.0057295779513082332" Description="" />
 		<Field Name="Variation" BitOffset="40" BitLength="16" Format="Heading" Unsigned="false" Unit="Degrees" Scale="0.0057295779513082332" Description="-pi..pi, resolution = 0.0001" />
-		<Field Name="Reference" BitOffset="56" BitLength="3" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="">
+		<Field Name="Reference" BitOffset="56" BitLength="2" Format="Enum" Unsigned="true" Unit="Enum" Scale="1" Description="">
 			<Value Value="0" Name="True" />
             <Value Value="1" Name="Magnetic" />
 		</Field>
