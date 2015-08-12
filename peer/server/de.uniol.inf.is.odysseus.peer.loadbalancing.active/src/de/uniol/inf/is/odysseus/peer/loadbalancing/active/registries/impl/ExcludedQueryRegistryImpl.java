@@ -14,6 +14,7 @@ public class ExcludedQueryRegistryImpl implements IExcludedQueriesRegistry{
 	private ArrayList<IExcludedQueryRegistryListener> listeners = Lists.newArrayList();
 	
 
+	@Override
 	public synchronized void excludeQueryIdFromLoadBalancing(int queryID) {
 		if(!excludedQueryIDs.contains(queryID)) {
 			excludedQueryIDs.add(queryID);
@@ -21,6 +22,7 @@ public class ExcludedQueryRegistryImpl implements IExcludedQueriesRegistry{
 		notifyExcludedQueriesChanged();
 	}
 	
+	@Override
 	public synchronized void removeExcludedQueryID(int queryID) {
 		if(excludedQueryIDs.contains(queryID)) {
 			excludedQueryIDs.remove(new Integer(queryID));

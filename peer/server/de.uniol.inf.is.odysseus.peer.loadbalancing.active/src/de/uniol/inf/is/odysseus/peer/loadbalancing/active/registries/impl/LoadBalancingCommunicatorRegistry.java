@@ -11,22 +11,26 @@ public class LoadBalancingCommunicatorRegistry implements ILoadBalancingCommunic
 	HashMap<String,ILoadBalancingCommunicator> communicators = new HashMap<String,ILoadBalancingCommunicator>();
 	
 	
+	@Override
 	public void bindCommunicator(ILoadBalancingCommunicator serv) {
 		if(!communicators.containsKey(serv.getName())) {
 			communicators.put(serv.getName(), serv);
 		}
 	}
 	
+	@Override
 	public void unbindCommunicator(ILoadBalancingCommunicator serv) {
 		if(communicators.containsKey(serv.getName())) {
 			communicators.remove(serv.getName());
 		}
 	}
 	
+	@Override
 	public ILoadBalancingCommunicator getCommunicator(String name) {
 		return communicators.get(name);
 	}
 	
+	@Override
 	public boolean isCommunicatorBound(String name) {
 		return communicators.containsKey(name);
 	}

@@ -90,16 +90,16 @@ public class LoadBalancingControl implements ILoadBalancingController {
 	public synchronized String getSelectedLoadBalancingStrategy() {
 		if(this.currentStrategy==null)
 			return "";
-		else
-			return currentStrategy.getName();
+		
+		return currentStrategy.getName();
 	}
 
 	@Override
 	public synchronized String getSelectedLoadBalancingAllocator() {
 		if(this.currentAllocator==null)
 			return "";
-		else
-			return currentAllocator.getName();
+		
+		return currentAllocator.getName();
 	}
 
 	@Override

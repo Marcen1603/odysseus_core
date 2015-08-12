@@ -89,7 +89,7 @@ public class MovingStateHelper {
 		LOG.debug("Sending state for " + operator.toString() + " on pipe "
 				+ pipe);
 		IOperatorState stateObject = operator.getState();
-		Serializable state = (Serializable)stateObject.getSerializedState();
+		Serializable state = stateObject.getSerializedState();
 		LOG.debug("Got state.");
 		sender.sendData(state);
 		LOG.debug("Data sent.");

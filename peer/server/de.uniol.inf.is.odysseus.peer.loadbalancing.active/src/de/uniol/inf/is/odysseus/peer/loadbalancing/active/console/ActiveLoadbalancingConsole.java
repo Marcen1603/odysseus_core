@@ -710,7 +710,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		try {
 			MovingStateHelper.startBuffering(physicalOp);
 			IOperatorState stateObject = statefulOp.getState();
-			state = (Serializable)stateObject.getSerializedState();
+			state = stateObject.getSerializedState();
 			MovingStateHelper.stopBuffering(physicalOp);
 		} catch (de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.LoadBalancingException e1) {
 			ci.print("Error while Stopping or Starting Buffering.");
@@ -784,7 +784,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			long curTime = System.currentTimeMillis();
 			ci.println("Estimation took "+(curTime-startTime)+" ms.");
 			startTime = System.currentTimeMillis();
-			state = (Serializable)stateObject.getSerializedState();
+			state = stateObject.getSerializedState();
 			int realSize = getSizeInBytesOfSerializable(state);
 			curTime = System.currentTimeMillis();
 			ci.println("Real State Size (after serialization:)" + realSize);
@@ -797,9 +797,9 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		
 		if(state==null) {
 			ci.println(ERROR_NO_STATE);
-		}
-		ci.println(state.toString());
-		
+		} else {
+			ci.println(state.toString());
+		}		
 		ci.println("Data sent.");
 
 	}
