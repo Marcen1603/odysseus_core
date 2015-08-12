@@ -148,22 +148,16 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	final private POEvent doneEvent = new POEvent(this, POEventType.Done);
-	final private POEvent openInitEvent = new POEvent(this,
-			POEventType.OpenInit);
-	final private POEvent openDoneEvent = new POEvent(this,
-			POEventType.OpenDone);
-	final private POEvent pushInitEvent = new POEvent(this,
-			POEventType.PushInit);
-	final private POEvent pushDoneEvent = new POEvent(this,
-			POEventType.PushDone);
+	final private POEvent openInitEvent = new POEvent(this, POEventType.OpenInit);
+	final private POEvent openDoneEvent = new POEvent(this, POEventType.OpenDone);
+	final private POEvent pushInitEvent = new POEvent(this, POEventType.PushInit);
+	final private POEvent pushDoneEvent = new POEvent(this, POEventType.PushDone);
 	// final private POEvent pushListInitEvent = new POEvent(this,
 	// POEventType.PushListInit);
 	// final private POEvent pushListDoneEvent = new POEvent(this,
 	// POEventType.PushListDone);
-	final private POEvent closeInitEvent = new POEvent(this,
-			POEventType.CloseInit);
-	final private POEvent closeDoneEvent = new POEvent(this,
-			POEventType.CloseDone);
+	final private POEvent closeInitEvent = new POEvent(this, POEventType.CloseInit);
+	final private POEvent closeDoneEvent = new POEvent(this, POEventType.CloseDone);
 
 	private AtomicBoolean blocked = new AtomicBoolean(false);
 
@@ -179,8 +173,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 	public AbstractSource() {
 		this.ownerHandler = new OwnerHandler();
-		infoService = InfoServiceFactory.getInfoService(AbstractSource.class
-				.getName());
+		infoService = InfoServiceFactory.getInfoService(AbstractSource.class.getName());
 	}
 
 	public AbstractSource(AbstractSource<T> source) {
@@ -291,23 +284,29 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	synchronized public void open(IOperatorOwner owner)
-			throws OpenFailedException {
-		if (!isOpen()) {
-			fire(openInitEvent);
-			process_open();
-			fire(openDoneEvent);
+	synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
+		openCloseLock.lock();
+		try {
+			if (!isOpen()) {
+				fire(openInitEvent);
+				process_open();
+				fire(openDoneEvent);
+			}
+
+			open.set(true);
+
+			reconnectSinks();
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			openCloseLock.unlock();
 		}
-
-		open.set(true);
-
-		reconnectSinks();
 	}
 
 	@Override
 	public void open(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
-			List<IOperatorOwner> forOwners) throws OpenFailedException {
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
+					throws OpenFailedException {
 
 		openCloseLock.lock();
 		try {
@@ -320,11 +319,10 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 			// otherwise top operator cannot be opened
 			if (caller != null) {
 				// Find subscription for caller
-				AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
-						caller, sourcePort, sinkPort);
+				AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(caller, sourcePort,
+						sinkPort);
 				if (sub == null) {
-					throw new OpenFailedException(
-							"Open called from an unsubscribed sink " + caller);
+					throw new OpenFailedException("Open called from an unsubscribed sink " + caller);
 				}
 				// Add Subscription to the list of active subscriptions
 				addActiveSubscription(sub);
@@ -377,8 +375,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		}
 	}
 
-	private void addActiveSubscription(
-			AbstractPhysicalSubscription<ISink<? super T>> sub) {
+	private void addActiveSubscription(AbstractPhysicalSubscription<ISink<? super T>> sub) {
 		// Handle multiple open calls{
 		if (!activeSinkSubscriptions.contains(sub)) {
 			this.activeSinkSubscriptions.add(sub);
@@ -391,22 +388,18 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		}
 	}
 
-	protected void newReceiver(
-			AbstractPhysicalSubscription<ISink<? super T>> sink) {
+	protected void newReceiver(AbstractPhysicalSubscription<ISink<? super T>> sink) {
 		// can be overwritten if needed
 	}
 
-	private void removeActiveSubscription(
-			AbstractPhysicalSubscription<ISink<? super T>> sub) {
+	private void removeActiveSubscription(AbstractPhysicalSubscription<ISink<? super T>> sub) {
 		if (activeSinkSubscriptions.contains(sub)) {
-			consumerCount.put(sub.getSourceOutPort(),
-					consumerCount.get(sub.getSourceOutPort()) - 1);
+			consumerCount.put(sub.getSourceOutPort(), consumerCount.get(sub.getSourceOutPort()) - 1);
 			this.activeSinkSubscriptions.remove(sub);
 		}
 	}
 
-	public void replaceActiveSubscription(
-			AbstractPhysicalSubscription<ISink<? super T>> oldSub,
+	public void replaceActiveSubscription(AbstractPhysicalSubscription<ISink<? super T>> oldSub,
 			AbstractPhysicalSubscription<ISink<? super T>> newSub) {
 		// necessary to not lose tuples here
 		locker.lock();
@@ -415,8 +408,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		locker.unlock();
 	}
 
-	public void replaceActiveSubscriptions(
-			Set<AbstractPhysicalSubscription<ISink<? super T>>> oldSubs,
+	public void replaceActiveSubscriptions(Set<AbstractPhysicalSubscription<ISink<? super T>>> oldSubs,
 			Set<AbstractPhysicalSubscription<ISink<? super T>>> newSubs) {
 		locker.lock();
 		for (AbstractPhysicalSubscription<ISink<? super T>> oldSub : oldSubs) {
@@ -437,8 +429,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
 		for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
-			sub.getTarget()
-					.processPunctuation(punctuation, sub.getSinkInPort());
+			sub.getTarget().processPunctuation(punctuation, sub.getSinkInPort());
 		}
 	}
 
@@ -447,8 +438,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		if (!suppressPunctuation) {
 			for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
 				if (sub.getSourceOutPort() == outPort) {
-					sub.getTarget().processPunctuation(punctuation,
-							sub.getSinkInPort());
+					sub.getTarget().processPunctuation(punctuation, sub.getSinkInPort());
 				}
 			}
 		}
@@ -471,13 +461,12 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected void transfer(T object, int sourceOutPort,
-			AbstractPhysicalSubscription<ISink<? super T>> sink) {
+	protected void transfer(T object, int sourceOutPort, AbstractPhysicalSubscription<ISink<? super T>> sink) {
 		if (sink.getSourceOutPort() == sourceOutPort) {
 			try {
-				
-				sink.process((IStreamObject)object);
-				
+
+				sink.process((IStreamObject) object);
+
 			} catch (Throwable e) {
 				// Send object that could not be processed to the error port
 				e.printStackTrace();
@@ -520,20 +509,20 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// transfer(object, 0);
 	// }
 
-//	public boolean needsClone(int port) {
-//		return !hasSingleConsumer(port);
-//	}
+	// public boolean needsClone(int port) {
+	// return !hasSingleConsumer(port);
+	// }
 
 	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String,
 	// etc.)
 	// MUST override this method (else there will be a ClassCastException)
-//	@SuppressWarnings("unchecked")
-//	protected T cloneIfNessessary(T object, int port) {
-//		if (needsClone(port)) {
-//			object = (T) ((IClone) object).clone();
-//		}
-//		return object;
-//	}
+	// @SuppressWarnings("unchecked")
+	// protected T cloneIfNessessary(T object, int port) {
+	// if (needsClone(port)) {
+	// object = (T) ((IClone) object).clone();
+	// }
+	// return object;
+	// }
 
 	// ------------------------------------------------------------------------
 	// CLOSE
@@ -543,6 +532,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	public void close(IOperatorOwner id) {
 		try {
 			openCloseLock.lock();
+			// this method is called, if the query contains only the source
+			// other queries may contain this source as part --> So do not close in every case
 			doLocalClose();
 		} finally {
 			openCloseLock.unlock();
@@ -551,17 +542,14 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 	@Override
 	public void close(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
-			List<IOperatorOwner> forOwners) {
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) {
 		try {
 			openCloseLock.lock();
 
 			getLogger().trace("CLOSE " + getName());
-			AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
-					caller, sourcePort, sinkPort);
+			AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(caller, sourcePort, sinkPort);
 			if (sub == null) {
-				throw new RuntimeException(
-						"Close called from an unsubscribed sink ");
+				throw new RuntimeException("Close called from an unsubscribed sink ");
 			}
 			getLogger().trace("Closing from " + sub);
 			// Hint: Multiple Open calls can occur per subscription because of
@@ -575,19 +563,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 			// if this subscription has no more callers, remove it from
 			// the set of activeSubscriptions
 			if (sub.getOpenCalls() == 0) {
-
-				// The are some sink, that are not connected by open (because
-				// they
-				// will never
-				// call close) kept in list connectedSinks
-				// If all by open connected subscriptions are removed, close
-				// operator
-				if ((activeSinkSubscriptions.size() - 1) == connectedSinks
-						.size()) {
-					getLogger().trace("Closing " + toString());
-					doLocalClose();
-					getLogger().trace("Closing " + toString()+ " done");
-				}
+				doLocalClose();
 				removeActiveSubscription(sub);
 				// Close all sinks that are not connected by open
 				if (activeSinkSubscriptions.size() == connectedSinks.size()) {
@@ -602,11 +578,21 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	private void doLocalClose() {
-		fire(this.closeInitEvent);
-		this.process_close();
-		open.set(false);
-		stopMonitoring();
-		fire(this.closeDoneEvent);
+		// The are some sink, that are not connected by open (because
+		// they
+		// will never
+		// call close) kept in list connectedSinks
+		// If all by open connected subscriptions are removed, close
+		// operator
+		if ((activeSinkSubscriptions.size() - 1) == connectedSinks.size()) {
+			getLogger().trace("Closing " + toString());
+			fire(this.closeInitEvent);
+			this.process_close();
+			open.set(false);
+			stopMonitoring();
+			fire(this.closeDoneEvent);
+			getLogger().trace("Closing " + toString() + " done");
+		}
 	}
 
 	protected void process_close() {
@@ -695,36 +681,28 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// ------------------------------------------------------------------------
 	@Override
 	public void suspend(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
-			List<IOperatorOwner> forOwners) {
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) {
 		if (isOpen()) {
-			AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
-					caller, sourcePort, sinkPort);
+			AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(caller, sourcePort, sinkPort);
 			if (sub instanceof ControllablePhysicalSubscription) {
-				((ControllablePhysicalSubscription<ISink<? super T>>) sub)
-						.suspend();
+				((ControllablePhysicalSubscription<ISink<? super T>>) sub).suspend();
 			} else {
-				sendError("This query cannot be suspended",
-						new RuntimeException(
-								"Query is not in controllable mode!"));
+				sendError("This query cannot be suspended", new RuntimeException("Query is not in controllable mode!"));
 			}
 		}
 	}
 
 	@Override
 	public void resume(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
-			List<IOperatorOwner> forOwners) {
-		AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
-				caller, sourcePort, sinkPort);
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) {
+		AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(caller, sourcePort, sinkPort);
 		if (sub instanceof ControllablePhysicalSubscription) {
 			ControllablePhysicalSubscription<ISink<? super T>> csub = (ControllablePhysicalSubscription<ISink<? super T>>) sub;
 			if (csub.isSuspended()) {
 				csub.resume();
 			}
 		} else {
-			sendError("This query cannot be resumed", new RuntimeException(
-					"Query is not in controllable mode!"));
+			sendError("This query cannot be resumed", new RuntimeException("Query is not in controllable mode!"));
 		}
 	}
 
@@ -732,11 +710,10 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// Subscription management
 	// ------------------------------------------------------------------------
 
-	private AbstractPhysicalSubscription<ISink<? super T>> findSinkInSubscription(
-			IPhysicalOperator o, int sourcePort, int sinkPort) {
+	private AbstractPhysicalSubscription<ISink<? super T>> findSinkInSubscription(IPhysicalOperator o, int sourcePort,
+			int sinkPort) {
 		for (AbstractPhysicalSubscription<ISink<? super T>> sub : this.sinkSubscriptions) {
-			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort
-					&& sub.getSinkInPort() == sinkPort) {
+			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort && sub.getSinkInPort() == sinkPort) {
 				return sub;
 			}
 		}
@@ -744,8 +721,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	final public void subscribeSink(ISink<? super T> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema, boolean asActive, int openCount) {
+	final public void subscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema,
+			boolean asActive, int openCount) {
 		// TODO: Make configurable
 		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
@@ -763,14 +740,12 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	final public void subscribeSink(ISink<? super T> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
+	final public void subscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false, 0);
 	}
 
 	@Override
-	public void connectSink(ISink<? super T> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
+	public void connectSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
@@ -780,15 +755,13 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(new ControllablePhysicalSubscription<ISink<? super T>>(
-				sink, sinkInPort, sourceOutPort, schema));
+	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+		unsubscribeSink(
+				new ControllablePhysicalSubscription<ISink<? super T>>(sink, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
-	public void disconnectSink(ISink<? super T> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
+	public void disconnectSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		// unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
@@ -807,20 +780,17 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		activeSinkSubscriptions.clear();
 	}
 
-	public boolean isActive(
-			AbstractPhysicalSubscription<ISink<? super T>> subscription) {
+	public boolean isActive(AbstractPhysicalSubscription<ISink<? super T>> subscription) {
 		return this.activeSinkSubscriptions.contains(subscription);
 	}
 
 	@Override
-	public void unsubscribeSink(
-			AbstractPhysicalSubscription<ISink<? super T>> subscription) {
+	public void unsubscribeSink(AbstractPhysicalSubscription<ISink<? super T>> subscription) {
 		getLogger().trace("Unsubscribe from Sink " + subscription.getTarget());
 		boolean subContained = this.sinkSubscriptions.remove(subscription);
 		removeActiveSubscription(subscription);
 		if (subContained) {
-			subscription.getTarget().unsubscribeFromSource(this,
-					subscription.getSinkInPort(),
+			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkInPort(),
 					subscription.getSourceOutPort(), subscription.getSchema());
 		}
 	}
@@ -862,8 +832,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")"
-				+ (blocked.get() ? "b" : "");
+		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")" + (blocked.get() ? "b" : "");
 	}
 
 	@Override
@@ -931,7 +900,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	public String getOwnerIDs() {
 		return ownerHandler.getOwnerIDs();
 	}
-	
+
 	@Override
 	public List<ISession> getSessions() {
 		return ownerHandler.getSessions();

@@ -121,7 +121,7 @@ public class ExecutionPlan implements IExecutionPlan {
 	
 	@Override
 	public boolean isEmpty() {
-		return this.queries != null && this.queries.size() > 0;
+		return this.queries == null || this.queries.size() == 0;
 	}
 
 	/*
