@@ -162,14 +162,14 @@ public class TupleStreamGenerator {
 		tuple.setAttribute( 1, persons.getNewId());
 
 		// name
-		tuple.setAttribute( 2, personGenerator.m_stName);
+		tuple.setAttribute( 2,  personGenerator.m_stName.flip().toString()) ;
 
 		// email
-		tuple.setAttribute( 3, personGenerator.m_stEmail);
+		tuple.setAttribute( 3, personGenerator.m_stEmail.flip().toString());
 
 		// creditcard
 		if (personGenerator.has_creditcard) {
-			tuple.setAttribute( 4, personGenerator.m_stCreditcard);
+			tuple.setAttribute( 4, personGenerator.m_stCreditcard.flip().toString());
 		}
 
 		if (personGenerator.has_address) {
