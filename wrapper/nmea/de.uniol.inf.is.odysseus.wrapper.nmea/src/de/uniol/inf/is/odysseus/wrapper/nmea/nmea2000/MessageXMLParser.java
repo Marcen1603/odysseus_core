@@ -21,10 +21,8 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.nmea2000.model.Field;
 import de.uniol.inf.is.odysseus.wrapper.nmea.nmea2000.model.Message;
 import de.uniol.inf.is.odysseus.wrapper.nmea.nmea2000.model.Value;
 
-public class MessageXMLParser {
-
-	private static final String XML_URL = "platform:/plugin/de.uniol.inf.is.odysseus.wrapper.nmea/msg/nmea.xml";
-	
+public class MessageXMLParser 
+{
 	public static final MessageXMLParser INSTANCE = new MessageXMLParser();
 
 	private MessageXMLParser() {
