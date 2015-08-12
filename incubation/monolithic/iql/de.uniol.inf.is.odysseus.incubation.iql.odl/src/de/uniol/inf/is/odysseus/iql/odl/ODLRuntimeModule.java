@@ -22,9 +22,11 @@ import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.parser.IIQLParser;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
-import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.DefaultIQLMethodFinder;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLNullJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
@@ -64,8 +66,12 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypingEntryPoint;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractODLRuntimeModule {
 
-	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
-		return DefaultIQLMethodFinder.class;
+	public Class<? extends IIQLJdtTypeProviderFactory> bindJdtTypeProviderFactory() {
+		return IQLNullJdtTypeProviderFactory.class;
+	}
+	
+	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
+		return ODLScopeProvider.class;
 	}
 	
 	@Override
@@ -79,14 +85,14 @@ public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractO
 	}
 	
 	
+	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
+		return DefaultIQLMethodFinder.class;
+	}
+	
 	public Class<? extends IIQLServiceObserver> bindIQLServiceObserver() {
 		return ODLServiceObserver.class;
 	}
-	
-	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
-		return ODLScopeProvider.class;
-	}
-	
+
 	public Class<? extends IIQLTypeUtils> bindTypeUtils() {
 		return ODLTypeUtils.class;
 	}

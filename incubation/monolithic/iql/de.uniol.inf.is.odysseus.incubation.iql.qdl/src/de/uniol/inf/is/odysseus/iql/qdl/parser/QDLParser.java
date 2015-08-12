@@ -11,34 +11,25 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.EcoreUtil2;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.parser.AbstractIQLParser;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 
 public class QDLParser extends AbstractIQLParser<QDLTypeFactory, QDLTypeUtils> {
 	
 	private static final String LANGUAGE_NAME = "de.uniol.inf.is.odysseus.iql.qdl.QDL";
-	private static final String QUERIES_DIR = "queries";
+	protected static final String QUERIES_DIR = "queries";
 	
 	
 	@Inject
@@ -47,42 +38,16 @@ public class QDLParser extends AbstractIQLParser<QDLTypeFactory, QDLTypeUtils> {
 	}
 	
 	@Inject
-	private OdysseusScriptGenerator generator;
+	protected OdysseusScriptGenerator generator;
 	
 	@Override
 	public List<IExecutorCommand> parse(String text, IDataDictionary dd, ISession session, Context context) throws QueryParseException {
 		return null;
 	}
 
-
-
-	@Override
-	public void parse(IQLModel file, IProject project) {
-		ResourceSet resourceSet = EcoreUtil2.getResourceSet(file);
-		for (QDLQuery query : EcoreUtil2.getAllContentsOfType(file, QDLQuery.class)) {
-			String outputPath = getIQLOutputPath()+QUERIES_DIR+File.separator+query.getSimpleName();
-			cleanUpDir(outputPath);
-			
-			Collection<Resource> resources = createNecessaryIQLFiles(resourceSet, outputPath,query);
-			generateJavaFiles(resources);
-			deleteResources(resources);
-			
-			copyAndMoveUserEditiedFiles(project, outputPath);
-			compileJavaFiles(outputPath, createClassPathEntries(resourceSet, resources));
-			
-			IQDLQuery qdlQuery = loadQuery(query,resources);
-						
-			ISession session = OdysseusRCPPlugIn.getActiveSession();
-			ITenant tenant = UserManagementProvider.getDefaultTenant();
-			IDataDictionary dd = DataDictionaryProvider.getDataDictionary(tenant);
-			
-			String script = generator.createOdysseusScript(qdlQuery, dd, session);
-			QDLServiceBinding.getExecutor().addQuery(script, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), Context.empty());
-		}
-	}
 	
 	@SuppressWarnings("unchecked")
-	private IQDLQuery loadQuery(QDLQuery query, Collection<Resource> resources) {
+	protected IQDLQuery loadQuery(QDLQuery query, Collection<Resource> resources) {
 		try {
 			Collection<URL> urls = new HashSet<>();
 			for (Resource res : resources) {

@@ -3,9 +3,13 @@ package de.uniol.inf.is.odysseus.iql.odl.lookup;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
+
+import org.eclipse.xtext.common.types.JvmArrayType;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
@@ -14,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeExtensionsFactory;
@@ -66,6 +71,24 @@ public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory, ODLTypeExtensio
 
 	public OutputMode[] getOutputModeValues() {
 		return OutputMode.values();
+	}
+	
+	public boolean isMap(JvmTypeReference typeRef) {
+		return isAssignable(typeUtils.createTypeRef(Map.class, typeFactory.getSystemResourceSet()), typeRef);
+	}
+	
+	public boolean isClonable(JvmTypeReference typeRef) {
+		return methodFinder.findMethod(getPublicMethods(typeRef, false), "clone", 0, true) != null;
+	}
+	
+	public boolean isList(JvmTypeReference typeRef) {
+		if (typeUtils.getInnerType(typeRef, true) instanceof IQLArrayType) {
+			return true;
+		} else if (typeUtils.getInnerType(typeRef, true) instanceof JvmArrayType) {
+			return true;
+		} else {
+			return isAssignable(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()), typeRef);
+		}
 	}
 
 }

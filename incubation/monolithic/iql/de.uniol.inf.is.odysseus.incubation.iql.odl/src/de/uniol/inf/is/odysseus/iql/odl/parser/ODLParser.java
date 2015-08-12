@@ -33,11 +33,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.EcoreUtil2;
 
 
 
@@ -65,7 +62,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuil
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.parser.AbstractIQLParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
@@ -80,7 +76,7 @@ import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
 public class ODLParser extends AbstractIQLParser<ODLTypeFactory, ODLTypeUtils> {
 	
 	private static final String LANGUAGE_NAME = "de.uniol.inf.is.odysseus.iql.odl.ODL";
-	private static final String OPERATORS_DIR = "operators";
+	protected static final String OPERATORS_DIR = "operators";
 
 	@Inject
 	public ODLParser(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
@@ -88,29 +84,9 @@ public class ODLParser extends AbstractIQLParser<ODLTypeFactory, ODLTypeUtils> {
 	}
 
 	
-	@Override
-	public void parse(IQLModel model, IProject project) {	
-		ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
-
-		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
-			String outputPath = getIQLOutputPath()+OPERATORS_DIR+File.separator+operator.getSimpleName();
-			
-			cleanUpDir(outputPath);
-			
-			Collection<Resource> resources = createNecessaryIQLFiles(resourceSet, outputPath,operator);
-			generateJavaFiles(resources);
-			deleteResources(resources);
-			
-			copyAndMoveUserEditiedFiles(project, outputPath);
-			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator), resources));
-			loadOperator(operator, resources);
-		}
-	}
-
-
 	
 	@SuppressWarnings("unchecked")
-	private void loadOperator(ODLOperator operator, Collection<Resource> resources) {
+	protected void loadOperator(ODLOperator operator, Collection<Resource> resources) {
 		try {
 			Collection<URL> urls = new HashSet<>();
 			for (Resource res : resources) {

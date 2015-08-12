@@ -32,10 +32,12 @@ import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.DefaultIQLMethodFinder;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLNullJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.BasicIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
@@ -60,8 +62,12 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.AbstractBasicIQLRuntimeModule {
 	
-	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
-		return DefaultIQLMethodFinder.class;
+	public Class<? extends IIQLJdtTypeProviderFactory> bindJdtTypeProviderFactory() {
+		return IQLNullJdtTypeProviderFactory.class;
+	}
+	
+	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
+		return BasicIQLScopeProvider.class;
 	}
 	
 	@Override
@@ -72,15 +78,16 @@ public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.Ab
 	@Override
 	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
 		return ClasspathBasedTypeScopeProvider.class;
+	}	
+	
+
+	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
+		return DefaultIQLMethodFinder.class;
 	}
 	
 	public Class<? extends IIQLServiceObserver> bindIQLServiceObserver() {
 		return BasicIQLServiceObserver.class;
-	}
-	
-	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
-		return BasicIQLScopeProvider.class;
-	}
+	}	
 	
 	public Class<? extends IIQLTypeUtils> bindTypeUtils() {
 		return BasicIQLTypeUtils.class;
@@ -155,8 +162,7 @@ public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.Ab
 	
 	public Class<? extends IQualifiedNameConverter> bindQualifiedNameConverter() {
 		return IQLQualifiedNameConverter.class;
-	}	
-	
+	}		
 
 	@Override
 	public Class<? extends XtextResource> bindXtextResource() {

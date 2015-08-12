@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
@@ -16,12 +17,14 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.scoping.IScope;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.AbstractIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
@@ -36,7 +39,6 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<QDLTypeFactory, Q
 	public QDLScopeProvider(QDLTypeFactory typeFactory, QDLLookUp lookUp,QDLExpressionParser exprParser, QDLTypeUtils typeUtils) {
 		super(typeFactory, lookUp, exprParser, typeUtils);
 	}
-	
 
 
 	@Override	
@@ -136,6 +138,13 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<QDLTypeFactory, Q
 		} else {
 			return super.getIQLJvmElementCallExpression(expr);
 		}	
+	}
+
+
+
+	@Override
+	protected IScope getJdtScope(ResourceSet set,IIQLJdtTypeProvider typeProvider) {
+		return IScope.NULLSCOPE;
 	}
 	
 }

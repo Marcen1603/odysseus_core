@@ -1,12 +1,9 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator;
 
 
-import java.io.File;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.IGenerator;
 
@@ -33,11 +30,11 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 
 	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
+		doGenerate(input, fsa, "");
+	}
+	
+	protected void doGenerate(Resource input, IFileSystemAccess fsa, String outputFolder) {
 		try {
-			String outputFolder = "";
-			if (fsa instanceof EclipseResourceFileSystemAccess2) {
-				outputFolder = getOutputFolder(input);
-			}
 			for (EObject obj : input.getContents()) {
 				if (obj instanceof IQLModel) {
 					doGenerate((IQLModel) obj, fsa, outputFolder);
@@ -63,14 +60,4 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 			fsa.generateFile(outputFolder+typeDef.getInner().getSimpleName() + ".java", compiler.compile(typeDef, (IQLInterface)typeDef.getInner(), (G)context.cleanCopy()));
 		}
 	}
-	
-	private String getOutputFolder(Resource res) {
-		StringBuilder b = new StringBuilder();
-		for (int i = 2; i < res.getURI().segmentCount()-1; i++) {
-			b.append(res.getURI().segment(i));
-		}
-		return b.toString()+File.separator;
-	}
-	
-
 }

@@ -47,10 +47,6 @@ public interface IIQLTypeUtils {
 	
 	boolean isVoid(JvmTypeReference typeRef);
 
-	boolean isMap(JvmTypeReference typeRef);
-	boolean isList(JvmTypeReference typeRef);
-	boolean isClonable(JvmTypeReference typeRef);
-	Class<?> getJavaType(String name);
 	boolean isPrimitive(JvmTypeReference parameterType);
 	boolean isPrimitive(JvmType type);
 	
@@ -59,5 +55,8 @@ public interface IIQLTypeUtils {
 	
 	String getNameWithoutSetterPrefix(JvmOperation method);
 	String getNameWithoutGetterPrefix(JvmOperation method);
+	
+	boolean isImportNeeded(JvmType type, String text);
+
 
 }

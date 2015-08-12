@@ -8,7 +8,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.iql.basic.Activator
 Eclipse-BuddyPolicy: registered
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
- org.eclipse.xtext.xbase;resolution:=optional;visibility:=reexport,
  org.eclipse.xtext.generator;resolution:=optional,
  org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional,
  org.eclipse.emf.codegen.ecore;resolution:=optional,
@@ -21,15 +20,14 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.antlr.runtime,
  org.eclipse.xtext.common.types,
  org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
- org.eclipse.xtext.xbase.lib,
- org.eclipse.xtext.ui,
- org.eclipse.xtext.common.types.ui,
- org.eclipse.jdt.core;bundle-version="3.7.3",
  org.apache.commons.lang,
- org.eclipse.xtext.builder,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j
+ de.uniol.inf.is.odysseus.slf4j,
+ org.eclipse.osgi,
+ org.eclipse.core.runtime,
+ org.eclipse.jdt.core;bundle-version="3.7.3",
+ org.eclipse.xtext.xbase;bundle-version="2.7.3"
 Import-Package: org.apache.commons.io,
  org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

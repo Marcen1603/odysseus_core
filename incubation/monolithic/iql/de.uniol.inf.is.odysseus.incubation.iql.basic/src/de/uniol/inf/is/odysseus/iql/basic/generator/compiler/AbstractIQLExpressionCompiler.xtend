@@ -503,9 +503,8 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	def String compile(IQLJvmElementCallExpression e, JvmField field,  G c) {
 		if (field.isStatic) {
 			var containerType = field.eContainer as JvmDeclaredType
-			var javaType = typeUtils.getJavaType(typeUtils.getLongName(containerType, false))
-			c.addImport(javaType.canonicalName)
-			'''«javaType.simpleName».«field.simpleName»'''
+			var typeRef = typeUtils.createTypeRef(containerType)
+			'''«typeCompiler.compile(typeRef, c, true)».«field.simpleName»'''
 		} else {
 			'''«field.simpleName»'''
 		}
@@ -533,9 +532,8 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 			'''«typeOps.class.simpleName».«method.simpleName»(this«IF method.parameters.size > 0», «ENDIF»«compile(m.args, method.parameters, c)»)'''
 		} else if (method.isStatic) {
 			var containerType = method.eContainer as JvmDeclaredType
-			var javaType = typeUtils.getJavaType(typeUtils.getLongName(containerType, false))
-			c.addImport(javaType.canonicalName)
-			'''«javaType.simpleName».«method.simpleName»(«compile(m.args,method.parameters, c)»)'''			
+			var typeRef = typeUtils.createTypeRef(containerType)
+			'''«typeCompiler.compile(typeRef, c, true)».«method.simpleName»(«compile(m.args,method.parameters, c)»)'''			
 		} else {
 			'''«method.simpleName»(«IF m.args != null»«compile(m.args, c)»«ENDIF»)'''
 		}

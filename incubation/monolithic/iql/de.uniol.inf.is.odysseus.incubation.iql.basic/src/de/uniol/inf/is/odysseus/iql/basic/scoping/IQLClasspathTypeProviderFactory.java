@@ -11,7 +11,7 @@ import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
 public class IQLClasspathTypeProviderFactory extends ClasspathTypeProviderFactory {
 		
 	@Inject
-	private IQLJdtTypeProviderFactory jdtTypeProviderFactory;
+	private IIQLJdtTypeProviderFactory jdtTypeProviderFactory;
 	
 	@Inject
 	public IQLClasspathTypeProviderFactory(ClassLoader classLoader) {
@@ -20,7 +20,7 @@ public class IQLClasspathTypeProviderFactory extends ClasspathTypeProviderFactor
 	
 	@Override
 	protected ClasspathTypeProvider createClasspathTypeProvider(ResourceSet resourceSet) {
-		return new IQLClasspathTypeProvider(jdtTypeProviderFactory.createTypeProvider(resourceSet), IQLClasspathTypeProviderFactory.class.getClassLoader(), resourceSet, getIndexedJvmTypeAccess());
+		return new IQLClasspathTypeProvider(jdtTypeProviderFactory.createJdtTypeProvider(resourceSet), IQLClasspathTypeProviderFactory.class.getClassLoader(), resourceSet, getIndexedJvmTypeAccess());
 	}
 	
 }

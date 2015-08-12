@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.iql.basic.ui;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.common.types.xtext.ClasspathBasedTypeScopeProvider;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
@@ -13,24 +14,65 @@ import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLProposalProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLTemplateProposalProvider;
+import de.uniol.inf.is.odysseus.iql.basic.ui.generator.BasicIQLUiGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectDocumentationProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectHoverProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
+import de.uniol.inf.is.odysseus.iql.basic.ui.parser.BasicIQLUiParser;
+import de.uniol.inf.is.odysseus.iql.basic.ui.parser.IIQLUiParser;
+import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.BasicIQLUiScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
 
 /**
  * Use this class to register components to be used within the IDE.
  */
 @SuppressWarnings("restriction")
 public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.AbstractBasicIQLUiModule {
+	
+	public static final String EDIT_FOLDER = "edit";
+
 	public BasicIQLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
 	
+	public Class<? extends IGenerator> bindGenerator() {
+		return BasicIQLUiGenerator.class;
+	}
+
+	
+	public Class<? extends IIQLJdtTypeProviderFactory> bindJdtTypeProviderFactory() {
+		return IQLJdtTypeProviderFactory.class;
+	}
+	
+	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
+		return BasicIQLUiScopeProvider.class;
+	}
+	
+	public Class<? extends org.eclipse.xtext.scoping.IScopeProvider> bindIScopeProvider() {
+		return BasicIQLUiScopeProvider.class;
+	}
+	
+	public Class<? extends IIQLUiParser> bindIQLUiParser() {
+		return BasicIQLUiParser.class;
+	}
+	
+	@Override
+	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
+		return IQLClasspathTypeProviderFactory.class;
+	}
+	
+	@Override
+	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
+		return ClasspathBasedTypeScopeProvider.class;
+	}
+		
 	@Override
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.IContentProposalProvider> bindIContentProposalProvider() {
 		return BasicIQLProposalProvider.class;
@@ -65,16 +107,6 @@ public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.Abst
 	@Override
 	public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {
 		return IQLXtextEditorCallback.class;
-	}
-	
-	@Override
-	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
-		return IQLClasspathTypeProviderFactory.class;
-	}
-	
-	@Override
-	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
-		return ClasspathBasedTypeScopeProvider.class;
 	}
 
 }

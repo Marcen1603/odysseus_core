@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAORule
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.types.IQLUtils
@@ -34,12 +33,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
 import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLPO
+import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp
 
 class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLStatementCompiler, ODLTypeFactory, ODLTypeUtils>{
 	
 	@Inject
 	private ODLMetadataAnnotationCompiler metadataAnnotationCompiler
-
+	
+	@Inject
+	private ODLLookUp lookUp;
 	
 	@Inject
 	new(ODLCompilerHelper helper, ODLTypeCompiler typeCompiler, ODLStatementCompiler stmtCompiler, ODLTypeFactory factory, ODLTypeUtils typeUtils) {
@@ -250,7 +252,8 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		var superClass = AbstractPipe	
 		var read = helper.determineReadType(o)
 		var write = read
-		var meta = IMetaAttribute
+		var meta = helper.determineMetadataType(o)
+		
 		var newExpressions = helper.getNewExpressions(o);
 		var varStmts = helper.getVarStatements(o);
 		var outputmode = helper.determineOutputMode(o);
@@ -259,9 +262,6 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		var hasProcessPunctuation = helper.hasProcessPunctuation(o);
 		
 		context.addImport(superClass.canonicalName)
-		context.addImport(read.canonicalName)
-		context.addImport(write.canonicalName)
-		context.addImport(meta.canonicalName)
 		context.addImport(outputmode.class.canonicalName)		
 		context.addImport(IODLPO.canonicalName)		
 		context.addImport(IPunctuation.canonicalName)		
@@ -273,7 +273,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		«text»
 		«ENDFOR»
 		@SuppressWarnings("all")
-		public class «opName» extends «superClass.simpleName»<«read.simpleName»<«meta.simpleName»>,«write.simpleName»<«meta.simpleName»>> implements «IODLPO.simpleName»<«read.simpleName»<«meta.simpleName»>,«write.simpleName»<«meta.simpleName»>> {
+		public class «opName» extends «superClass.simpleName»<«typeCompiler.compile(read, context, false)»<«typeCompiler.compile(meta, context, false)»>,«typeCompiler.compile(write, context, false)»<«typeCompiler.compile(meta, context, false)»>> implements «IODLPO.simpleName»<«typeCompiler.compile(read, context, false)»<«typeCompiler.compile(meta, context, false)»>,«typeCompiler.compile(write, context, false)»<«typeCompiler.compile(meta, context, false)»>> {
 			
 			«FOR m : o.members»	
 			«compile(m, context)»
@@ -322,7 +322,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 			
 			«IF !hasProcessNext»
 			@Override
-			protected void process_next(«read.simpleName» object, int port) {
+			protected void process_next(«typeCompiler.compile(read, context, false)» object, int port) {
 				transfer(object);
 			}
 			
@@ -408,14 +408,14 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		var pName = helper.firstCharUpperCase(name)
 		var type = p.type
 		
-		if (typeUtils.isList(type)) {
+		if (lookUp.isList(type)) {
 			context.addImport(IQLUtils.canonicalName)			
 			'''this.«name» = «IQLUtils.simpleName».createList(«varName».get«pName»());'''
 
-		} else if (typeUtils.isMap(type)) {
+		} else if (lookUp.isMap(type)) {
 			context.addImport(IQLUtils.canonicalName)				
 			'''this.«name» = «IQLUtils.simpleName».createMap(«varName».get«pName»());'''		
-		} else if (typeUtils.isClonable(type)) {
+		} else if (lookUp.isClonable(type)) {
 			'''this.«name» = «varName».get«pName»().clone();'''
 		} else {
 			'''this.«name» = «varName».get«pName»();'''

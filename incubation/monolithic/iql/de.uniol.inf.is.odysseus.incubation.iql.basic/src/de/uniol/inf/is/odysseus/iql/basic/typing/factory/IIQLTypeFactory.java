@@ -17,11 +17,11 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
 
 
 public interface IIQLTypeFactory {
-		
-	Collection<Bundle> getDependencies();
+	
 	String getImportName(JvmType type);	
 	String getSimpleName(JvmType type,  String text, boolean wrapper, boolean array);
-
+		
+	Collection<Bundle> getDependencies();
 	
 	String getFileExtension();
 	boolean isSystemFile(String fileName);
@@ -37,7 +37,6 @@ public interface IIQLTypeFactory {
 	
 	IQLSystemType getSystemType(String name);
 	boolean isSystemType(String name);
-	boolean isImportNeeded(JvmType type, String text);
 	
 	Collection<JvmTypeReference> getImportedTypes(EObject obj);
 	

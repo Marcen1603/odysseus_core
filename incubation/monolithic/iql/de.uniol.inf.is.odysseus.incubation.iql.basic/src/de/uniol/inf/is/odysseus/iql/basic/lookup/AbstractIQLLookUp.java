@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.ClassUtils;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmConstructor;
@@ -445,7 +446,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		
 		boolean isObject = typeUtils.getLongName(typeRef, true).equals(Object.class.getCanonicalName());
 		if (!isObject) {
-			boolean result = isCastable(targetRef, typeUtils.createTypeRef(Object.class, typeFactory.getSystemResourceSet()));
+			boolean result = isAssignable(targetRef, typeUtils.createTypeRef(Object.class, typeFactory.getSystemResourceSet()));
 			if (result) {
 				return true;
 			}
@@ -574,12 +575,14 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		for (IResourceDescription res : resources.getAllResourceDescriptions()) {
 			Resource r = EcoreUtil2.getResource(context, res.getURI().toString());
 			if (r.getContents().size() > 0) {
-				files.add((IQLModel) r.getContents().get(0));
+				EObject obj = r.getContents().get(0);
+				if (obj instanceof IQLModel) {
+					files.add((IQLModel)obj);
+				}
 			}
 		}
 		return files;
-	}
-	
+	}	
 	
 	@Override
 	public Collection<String> getAllNamespaces() {
@@ -590,8 +593,6 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		result.addAll(typeFactory.getJavaPackages());
 		return result;
 	}
-
-	
 
 
 }

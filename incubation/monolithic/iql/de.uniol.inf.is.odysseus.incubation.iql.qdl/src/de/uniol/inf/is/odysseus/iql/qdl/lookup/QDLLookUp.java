@@ -5,12 +5,14 @@ import java.util.HashSet;
 
 import javax.inject.Inject;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.common.types.JvmType;
-import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.resource.IResourceDescription;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
@@ -23,15 +25,18 @@ public class QDLLookUp extends AbstractIQLLookUp<QDLTypeFactory, QDLTypeExtensio
 		super(typeFactory, typeOperatorsFactory, typeUtils);
 	}
 
-	public Collection<JvmType> getTypesWihtoutOperators(Collection<String> usedNamespaces, Resource context) {
-		Collection<JvmType> types = super.getAllTypes(usedNamespaces, context);
-		Collection<JvmType> result = new HashSet<>();
-		JvmTypeReference logicalOp = typeUtils.createTypeRef(ILogicalOperator.class, typeFactory.getSystemResourceSet());
-		for (JvmType type : types) {
-			if (isAssignable(logicalOp, type)) {
-				result.add(type);
+	@Override
+	protected Collection<IQLModel> getAllFiles(Resource context) {
+		Collection<IQLModel> files = new HashSet<>();
+		for (IResourceDescription res : resources.getAllResourceDescriptions()) {
+			Resource r = EcoreUtil2.getResource(context, res.getURI().toString());
+			if (r.getContents().size() > 0) {
+				EObject obj = r.getContents().get(0);
+				if (obj instanceof QDLModel) {
+					files.add((IQLModel)obj);
+				}
 			}
 		}
-		return result;
+		return files;
 	}
 }

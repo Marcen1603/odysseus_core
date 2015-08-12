@@ -1,15 +1,12 @@
 package de.uniol.inf.is.odysseus.iql.basic.typing.utils;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmArrayType;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmLowerBound;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmPrimitiveType;
@@ -34,6 +31,31 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 
 	@Inject
 	protected IQLClasspathTypeProviderFactory typeProviderFactory;
+	
+	@Override
+	public boolean isImportNeeded(JvmType type, String text) {
+		if (type instanceof JvmDeclaredType) {
+			JvmDeclaredType declaredType = (JvmDeclaredType) type;
+			if (isUserDefinedType(declaredType, false)) {
+				return false;
+			} else if (isPrimitive(declaredType)) {
+				return false;
+			} else if (declaredType.getPackageName() == null) {
+				return false;
+			} else {
+				try {
+					Class.forName(text);
+					return false;
+				} catch (Exception e) {
+					return true;
+				}
+			}
+			
+		} else {
+			return false;
+		}
+	}
+	
 	
 	@Override
 	public JvmTypeReference createTypeRef(Class<?> javaType, Notifier context) {
@@ -62,15 +84,7 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 		simpleTypeRef.setType(simpleType);
 		return simpleTypeRef;
 	}
-	
-	@Override
-	public Class<?> getJavaType(String name) {
-		try {
-			return Class.forName(name);
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
-	}	
+
 	
 	@Override
 	public boolean isPrimitive(JvmTypeReference parameterType) {
@@ -359,37 +373,6 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 		return name.equals(String.class.getCanonicalName());
 	}	
 	
-	@Override
-	public boolean isMap(JvmTypeReference typeRef) {
-		if (isUserDefinedType(typeRef, false)) {
-			return false;
-		} else {
-			Class<?> c = getJavaType(getLongName(typeRef, true));
-			if (c != null) {
-				return Map.class.isAssignableFrom(c);
-			} else {
-				return false;
-			}
-		}
-	}
-	
-	@Override
-	public boolean isList(JvmTypeReference typeRef) {
-		if (isUserDefinedType(typeRef, true)) {
-			return false;
-		} else if (getInnerType(typeRef, true) instanceof IQLArrayType) {
-			return true;
-		} else if (getInnerType(typeRef, true) instanceof JvmArrayType) {
-			return true;
-		} else {
-			Class<?> c = getJavaType(getLongName(typeRef, true));
-			if (c != null) {
-				return List.class.isAssignableFrom(c);
-			} else {
-				return false;
-			}
-		}
-	}
 	
 	@Override
 	public boolean isArray(JvmTypeReference typeRef) {
@@ -399,27 +382,6 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 			return true;
 		} else {
 			return false;
-		}
-	}
-	
-	
-	@Override
-	public boolean isClonable(JvmTypeReference typeRef) {
-		if (isUserDefinedType(typeRef, false)) {
-			return false;
-		} else {
-			Class<?> c = getJavaType(getLongName(typeRef, true));
-			if (c != null) {
-				try {
-					Method m = c.getMethod("clone");
-					return Modifier.isPublic(m.getModifiers());
-				} catch (NoSuchMethodException | SecurityException e) {
-					//e.printStackTrace();
-					return false;
-				}	
-			} else {
-				return false;
-			}
 		}
 	}
 	

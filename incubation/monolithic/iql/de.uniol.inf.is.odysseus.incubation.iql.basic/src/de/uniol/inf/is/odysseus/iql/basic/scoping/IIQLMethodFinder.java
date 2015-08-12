@@ -20,4 +20,6 @@ public interface IIQLMethodFinder {
 
 	String createExecutableID(JvmExecutable exe);
 
+	JvmOperation findMethod(Collection<JvmOperation> methods, String name,int args, boolean hasReturnType);
+
 }

@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.iql.odl.generator.compiler;
 
 import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -29,6 +28,7 @@ import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLMetadataAnnotation
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLStatementCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
@@ -62,6 +62,9 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLStatementCompiler, ODLTypeFactory, ODLTypeUtils> {
   @Inject
   private ODLMetadataAnnotationCompiler metadataAnnotationCompiler;
+  
+  @Inject
+  private ODLLookUp lookUp;
   
   @Inject
   public ODLCompiler(final ODLCompilerHelper helper, final ODLTypeCompiler typeCompiler, final ODLStatementCompiler stmtCompiler, final ODLTypeFactory factory, final ODLTypeUtils typeUtils) {
@@ -743,9 +746,9 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       Collection<ODLParameter> parameters = this.helper.getParameters(o);
       Collection<IQLAttribute> attributes = this.helper.getAttributes(o);
       Class<AbstractPipe> superClass = AbstractPipe.class;
-      Class<?> read = this.helper.determineReadType(o);
-      Class<?> write = read;
-      Class<IMetaAttribute> meta = IMetaAttribute.class;
+      JvmTypeReference read = this.helper.determineReadType(o);
+      JvmTypeReference write = read;
+      JvmTypeReference meta = this.helper.determineMetadataType(o);
       Collection<IQLNewExpression> newExpressions = this.helper.getNewExpressions(o);
       Collection<IQLVariableStatement> varStmts = this.helper.getVarStatements(o);
       AbstractPipe.OutputMode outputmode = this.helper.determineOutputMode(o);
@@ -754,19 +757,13 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       boolean hasProcessPunctuation = this.helper.hasProcessPunctuation(o);
       String _canonicalName = superClass.getCanonicalName();
       context.addImport(_canonicalName);
-      String _canonicalName_1 = read.getCanonicalName();
-      context.addImport(_canonicalName_1);
-      String _canonicalName_2 = write.getCanonicalName();
-      context.addImport(_canonicalName_2);
-      String _canonicalName_3 = meta.getCanonicalName();
-      context.addImport(_canonicalName_3);
       Class<? extends AbstractPipe.OutputMode> _class = outputmode.getClass();
-      String _canonicalName_4 = _class.getCanonicalName();
-      context.addImport(_canonicalName_4);
-      String _canonicalName_5 = IODLPO.class.getCanonicalName();
-      context.addImport(_canonicalName_5);
-      String _canonicalName_6 = IPunctuation.class.getCanonicalName();
-      context.addImport(_canonicalName_6);
+      String _canonicalName_1 = _class.getCanonicalName();
+      context.addImport(_canonicalName_1);
+      String _canonicalName_2 = IODLPO.class.getCanonicalName();
+      context.addImport(_canonicalName_2);
+      String _canonicalName_3 = IPunctuation.class.getCanonicalName();
+      context.addImport(_canonicalName_3);
       StringConcatenation _builder = new StringConcatenation();
       _builder.newLine();
       {
@@ -788,32 +785,32 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       String _simpleName_2 = superClass.getSimpleName();
       _builder.append(_simpleName_2, "");
       _builder.append("<");
-      String _simpleName_3 = read.getSimpleName();
+      String _compile = this.typeCompiler.compile(read, context, false);
+      _builder.append(_compile, "");
+      _builder.append("<");
+      String _compile_1 = this.typeCompiler.compile(meta, context, false);
+      _builder.append(_compile_1, "");
+      _builder.append(">,");
+      String _compile_2 = this.typeCompiler.compile(write, context, false);
+      _builder.append(_compile_2, "");
+      _builder.append("<");
+      String _compile_3 = this.typeCompiler.compile(meta, context, false);
+      _builder.append(_compile_3, "");
+      _builder.append(">> implements ");
+      String _simpleName_3 = IODLPO.class.getSimpleName();
       _builder.append(_simpleName_3, "");
       _builder.append("<");
-      String _simpleName_4 = meta.getSimpleName();
-      _builder.append(_simpleName_4, "");
+      String _compile_4 = this.typeCompiler.compile(read, context, false);
+      _builder.append(_compile_4, "");
+      _builder.append("<");
+      String _compile_5 = this.typeCompiler.compile(meta, context, false);
+      _builder.append(_compile_5, "");
       _builder.append(">,");
-      String _simpleName_5 = write.getSimpleName();
-      _builder.append(_simpleName_5, "");
+      String _compile_6 = this.typeCompiler.compile(write, context, false);
+      _builder.append(_compile_6, "");
       _builder.append("<");
-      String _simpleName_6 = meta.getSimpleName();
-      _builder.append(_simpleName_6, "");
-      _builder.append(">> implements ");
-      String _simpleName_7 = IODLPO.class.getSimpleName();
-      _builder.append(_simpleName_7, "");
-      _builder.append("<");
-      String _simpleName_8 = read.getSimpleName();
-      _builder.append(_simpleName_8, "");
-      _builder.append("<");
-      String _simpleName_9 = meta.getSimpleName();
-      _builder.append(_simpleName_9, "");
-      _builder.append(">,");
-      String _simpleName_10 = write.getSimpleName();
-      _builder.append(_simpleName_10, "");
-      _builder.append("<");
-      String _simpleName_11 = meta.getSimpleName();
-      _builder.append(_simpleName_11, "");
+      String _compile_7 = this.typeCompiler.compile(meta, context, false);
+      _builder.append(_compile_7, "");
       _builder.append(">> {");
       _builder.newLineIfNotEmpty();
       _builder.append("\t");
@@ -822,8 +819,8 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
         EList<JvmMember> _members = o.getMembers();
         for(final JvmMember m : _members) {
           _builder.append("\t");
-          String _compile = this.compile(m, context);
-          _builder.append(_compile, "\t");
+          String _compile_8 = this.compile(m, context);
+          _builder.append(_compile_8, "\t");
           _builder.newLineIfNotEmpty();
         }
       }
@@ -894,19 +891,19 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.newLine();
       _builder.append("\t");
       _builder.append("@");
-      String _simpleName_12 = Override.class.getSimpleName();
-      _builder.append(_simpleName_12, "\t");
+      String _simpleName_4 = Override.class.getSimpleName();
+      _builder.append(_simpleName_4, "\t");
       _builder.newLineIfNotEmpty();
       _builder.append("\t");
       _builder.append("public ");
-      String _simpleName_13 = AbstractPipe.OutputMode.class.getSimpleName();
-      _builder.append(_simpleName_13, "\t");
+      String _simpleName_5 = AbstractPipe.OutputMode.class.getSimpleName();
+      _builder.append(_simpleName_5, "\t");
       _builder.append(" getOutputMode() {");
       _builder.newLineIfNotEmpty();
       _builder.append("\t\t");
       _builder.append("return ");
-      String _simpleName_14 = AbstractPipe.OutputMode.class.getSimpleName();
-      _builder.append(_simpleName_14, "\t\t");
+      String _simpleName_6 = AbstractPipe.OutputMode.class.getSimpleName();
+      _builder.append(_simpleName_6, "\t\t");
       _builder.append(".");
       String _string = outputmode.toString();
       _builder.append(_string, "\t\t");
@@ -920,8 +917,8 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       {
         for(final ODLParameter p_2 : parameters) {
           _builder.append("\t");
-          String _simpleName_15 = p_2.getSimpleName();
-          String pName = this.helper.firstCharUpperCase(_simpleName_15);
+          String _simpleName_7 = p_2.getSimpleName();
+          String pName = this.helper.firstCharUpperCase(_simpleName_7);
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
           JvmTypeReference _type = p_2.getType();
@@ -937,8 +934,8 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           _builder.append("\t");
           _builder.append("\t");
           _builder.append("return this.");
-          String _simpleName_16 = p_2.getSimpleName();
-          _builder.append(_simpleName_16, "\t\t");
+          String _simpleName_8 = p_2.getSimpleName();
+          _builder.append(_simpleName_8, "\t\t");
           _builder.append(";");
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
@@ -955,8 +952,8 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           _builder.newLine();
           _builder.append("\t");
           _builder.append("public void processPunctuation(");
-          String _simpleName_17 = IPunctuation.class.getSimpleName();
-          _builder.append(_simpleName_17, "\t");
+          String _simpleName_9 = IPunctuation.class.getSimpleName();
+          _builder.append(_simpleName_9, "\t");
           _builder.append(" punctuation, int port) {");
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
@@ -979,8 +976,8 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           _builder.newLine();
           _builder.append("\t");
           _builder.append("protected void process_next(");
-          String _simpleName_18 = read.getSimpleName();
-          _builder.append(_simpleName_18, "\t");
+          String _compile_9 = this.typeCompiler.compile(read, context, false);
+          _builder.append(_compile_9, "\t");
           _builder.append(" object, int port) {");
           _builder.newLineIfNotEmpty();
           _builder.append("\t");
@@ -1361,7 +1358,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       String pName = this.helper.firstCharUpperCase(name);
       JvmTypeReference type = p.getType();
       String _xifexpression = null;
-      boolean _isList = this.typeUtils.isList(type);
+      boolean _isList = this.lookUp.isList(type);
       if (_isList) {
         String _xblockexpression_1 = null;
         {
@@ -1383,7 +1380,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
         _xifexpression = _xblockexpression_1;
       } else {
         String _xifexpression_1 = null;
-        boolean _isMap = this.typeUtils.isMap(type);
+        boolean _isMap = this.lookUp.isMap(type);
         if (_isMap) {
           String _xblockexpression_2 = null;
           {
@@ -1405,7 +1402,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
           _xifexpression_1 = _xblockexpression_2;
         } else {
           String _xifexpression_2 = null;
-          boolean _isClonable = this.typeUtils.isClonable(type);
+          boolean _isClonable = this.lookUp.isClonable(type);
           if (_isClonable) {
             StringConcatenation _builder = new StringConcatenation();
             _builder.append("this.");

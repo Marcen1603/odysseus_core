@@ -18,7 +18,7 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
-import de.uniol.inf.is.odysseus.iql.basic.parser.IIQLParser;
+import de.uniol.inf.is.odysseus.iql.basic.ui.parser.IIQLUiParser;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.internal.QDLActivator;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionErrorDialog;
@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.rcp.exception.ExceptionErrorDialog;
 public class RunQueryCommandHandler extends AbstractHandler{
 	
 	@Inject
-	private IIQLParser parser;
+	private IIQLUiParser parser;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

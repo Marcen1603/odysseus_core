@@ -26,7 +26,6 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -88,21 +87,28 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 
 	}
 	
+	protected abstract IScope getJdtScope(ResourceSet set, IIQLJdtTypeProvider typeProvider);
+	
 	public IScope scope_IQLSimpleType_type(IQLModel model, EReference type) {	
 		Collection<JvmType> types = getAllTypes(model);
 		
-		IJvmTypeProvider provider = factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(model));
+		IQLClasspathTypeProvider provider = (IQLClasspathTypeProvider) factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(model));
+		IScope jdtTypeScope = getJdtScope(EcoreUtil2.getResourceSet(model), provider.getJdtTypeProvider());
+		
 		IScope parentScope =  Scopes.scopeFor(types, qualifiedNameProvider, IScope.NULLSCOPE);
-		IScope scope = new IQLClasspathBasedTypeScope((IQLClasspathTypeProvider) provider,parentScope, converter, null);
+		IScope scope = new IQLClasspathBasedTypeScope(provider,parentScope,jdtTypeScope, converter, null);
 		return new IQLImportScope(createImportNormalizers(model), scope, null, type.getEReferenceType(), true);
 	}
 	
 	public IScope scope_IQLArrayType_type(IQLModel model, EReference type) {	
 		Collection<JvmType> types = getAllTypes(model);
 
-		IJvmTypeProvider provider = factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(model));
+		IQLClasspathTypeProvider provider = (IQLClasspathTypeProvider) factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(model));
+
+		IScope jdtTypeScope = getJdtScope(EcoreUtil2.getResourceSet(model), provider.getJdtTypeProvider());
 		IScope parentScope =  Scopes.scopeFor(types, qualifiedNameProvider, IScope.NULLSCOPE);
-		IScope scope = new IQLClasspathBasedTypeScope((IQLClasspathTypeProvider) provider, parentScope, converter, null);
+		
+		IScope scope = new IQLClasspathBasedTypeScope(provider, parentScope,jdtTypeScope, converter, null);
 		return new IQLImportScope(createImportNormalizers(model), scope, null, type.getEReferenceType(), true);
 	}
 	
@@ -116,8 +122,10 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 
 	@Override
 	public Collection<IEObjectDescription> getTypes(EObject node) {
-		ResourceSet set = EcoreUtil2.getResourceSet(node);
-		IScope scope = new IQLClasspathBasedTypeScope((IQLClasspathTypeProvider) factory.createTypeProvider(set), IScope.NULLSCOPE, converter, null);
+		IQLClasspathTypeProvider provider = (IQLClasspathTypeProvider) factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(node));
+		IScope jdtTypeScope = getJdtScope(EcoreUtil2.getResourceSet(node), provider.getJdtTypeProvider());
+
+		IScope scope = new IQLClasspathBasedTypeScope(provider, IScope.NULLSCOPE, jdtTypeScope, converter, null);
 		Map<QualifiedName, IEObjectDescription> result = new HashMap<>();
 		for (IEObjectDescription e : scope.getAllElements()) {
 			result.put(e.getQualifiedName(), e);

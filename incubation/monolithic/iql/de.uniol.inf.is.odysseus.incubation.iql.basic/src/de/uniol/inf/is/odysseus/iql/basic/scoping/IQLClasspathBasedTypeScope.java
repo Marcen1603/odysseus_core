@@ -7,7 +7,6 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.xtext.ClasspathBasedTypeScope;
-import org.eclipse.xtext.common.types.xtext.ui.JdtBasedSimpleTypeScope;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
@@ -19,22 +18,22 @@ import com.google.common.base.Predicate;
 @SuppressWarnings("restriction")
 public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 
-	private JdtBasedSimpleTypeScope jdTScope;
+	private IScope jdtScope;
 	
 	private IScope parentScope;
 
 	
-	public IQLClasspathBasedTypeScope(IQLClasspathTypeProvider typeProvider,IScope parentScope,
+	public IQLClasspathBasedTypeScope(IQLClasspathTypeProvider typeProvider,IScope parentScope,IScope jdtScope,
 			IQualifiedNameConverter qualifiedNameConverter,
 			Predicate<IEObjectDescription> filter) {
 		super(typeProvider, qualifiedNameConverter, filter);
 		this.parentScope = parentScope;
-		jdTScope = new IQLJdtBasedTypeScope(typeProvider.getJdtTypeProvider(), qualifiedNameConverter, filter);
+		this.jdtScope = jdtScope;
 	}
 	
 	@Override
 	public IEObjectDescription getSingleElement(QualifiedName name) {
-		IEObjectDescription result = jdTScope.getSingleElement(name);
+		IEObjectDescription result = jdtScope.getSingleElement(name);
 		if (result == null) {
 			result = super.getSingleElement(name);
 		}
@@ -47,7 +46,7 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 	
 	@Override
 	public IEObjectDescription getSingleElement(EObject object) {
-		IEObjectDescription result = jdTScope.getSingleElement(object);
+		IEObjectDescription result = jdtScope.getSingleElement(object);
 		if (result == null) {
 			result = super.getSingleElement(object);
 		}
@@ -61,7 +60,7 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 	public Iterable<IEObjectDescription> getElements(QualifiedName name) {
 		Map<QualifiedName, IEObjectDescription> result = new HashMap<>();
 		
-		for (IEObjectDescription obj : jdTScope.getElements(name)) {
+		for (IEObjectDescription obj : jdtScope.getElements(name)) {
 			result.put(obj.getQualifiedName(), obj);
 		}
 		
@@ -82,7 +81,7 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 	public Iterable<IEObjectDescription> getElements(EObject object) {
 		Map<QualifiedName, IEObjectDescription> result = new HashMap<>();
 		
-		for (IEObjectDescription obj : jdTScope.getElements(object)) {
+		for (IEObjectDescription obj : jdtScope.getElements(object)) {
 			result.put(obj.getQualifiedName(), obj);
 		}
 		
@@ -103,7 +102,7 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 	public Iterable<IEObjectDescription> getAllElements() {
 		Map<QualifiedName, IEObjectDescription> result = new HashMap<>();
 		
-		for (IEObjectDescription obj : jdTScope.getAllElements()) {
+		for (IEObjectDescription obj : jdtScope.getAllElements()) {
 			result.put(obj.getQualifiedName(), obj);
 		}
 		

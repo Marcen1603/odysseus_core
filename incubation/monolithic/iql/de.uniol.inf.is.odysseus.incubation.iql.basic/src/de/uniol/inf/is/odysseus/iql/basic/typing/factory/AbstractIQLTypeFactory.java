@@ -14,9 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmGenericType;
-import org.eclipse.xtext.common.types.JvmPrimitiveType;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.resource.XtextResourceSet;
@@ -33,6 +31,7 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
+
 
 
 
@@ -101,9 +100,11 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 		
 		Collection<JvmTypeReference> result = new HashSet<>();
 		for (String i : imports) {
-			JvmTypeReference typeRef = typeUtils.createTypeRef(i, getSystemResourceSet());
-			if (typeRef != null) {
-				result.add(typeRef);
+			if (!i.endsWith("*")) {
+				JvmTypeReference typeRef = typeUtils.createTypeRef(i, EcoreUtil2.getResourceSet(obj));
+				if (typeRef != null) {
+					result.add(typeRef);
+				}
 			}
 		}
 		return result;
@@ -322,54 +323,30 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 		String simpleName = typeUtils.getShortName(type, array);	
 		IQLSystemType systemType = this.getSystemType(qualifiedName);
 		if (systemType != null) {
-			if (!isImportNeeded(type, text)) {
+			if (!typeUtils.isImportNeeded(type, text)) {
 				return converter.toJavaString(text);
 			} else {
 				Class<?> javaType = systemType.getJavaType();
 				return javaType.getSimpleName();
 			}
 		} else {
-			Class<?> javaType = typeUtils.getJavaType(qualifiedName);
-			if (wrapper && type instanceof JvmPrimitiveType) {
+			Class<?> javaType = null;
+			try {
+				javaType =  Class.forName(qualifiedName);
+			} catch (ClassNotFoundException e) {
+			}
+			if (wrapper && typeUtils.isPrimitive(type)) {
 				return toWrapper(qualifiedName);
+			} else if (!typeUtils.isImportNeeded(type, text)) {
+				return text;				
 			} else if (javaType != null) {
-				if (!isImportNeeded(type, text)) {
-					return text;
-				} else {
-					return javaType.getSimpleName();
-				}
-			} else if (text != null){
-				return converter.toJavaString(text);
+				return javaType.getSimpleName();
 			} else {
 				return simpleName;
 			}
 		}
 	}
 	
-	@Override
-	public boolean isImportNeeded(JvmType type, String text) {
-		if (type instanceof JvmDeclaredType) {
-			JvmDeclaredType declaredType = (JvmDeclaredType) type;
-			if (typeUtils.isUserDefinedType(declaredType, false)) {
-				return true;
-			} else if (typeUtils.isPrimitive(declaredType)) {
-				return false;
-			} else if (declaredType.getPackageName() == null) {
-				return false;
-			} else {
-				try {
-					Class.forName(text);
-					return false;
-				} catch (Exception e) {
-					return true;
-				}
-			}
-			
-		} else {
-			return false;
-		}
-
-	}
 	
 	protected String toWrapper(String name) {
 		if (name.equals("byte")) {

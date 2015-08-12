@@ -3,36 +3,39 @@
  */
 package de.uniol.inf.is.odysseus.iql.odl.ui;
 
-import javax.inject.Inject;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.xtext.builder.nature.NatureAddingEditorCallback;
-import org.eclipse.xtext.builder.nature.ToggleXtextNatureAction;
 import org.eclipse.xtext.common.types.xtext.ClasspathBasedTypeScopeProvider;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
-import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
-import org.eclipse.xtext.ui.editor.validation.ValidatingEditorCallback;
 
-import com.google.inject.Binder;
-import com.google.inject.name.Names;
 
+
+
+
+
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.IQLXtextEditorCallback;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
+import de.uniol.inf.is.odysseus.iql.basic.ui.parser.IIQLUiParser;
+import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.ui.coloring.ODLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.odl.ui.coloring.ODLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.ODLProposalProvider;
 import de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.ODLTemplateProposalProvider;
+import de.uniol.inf.is.odysseus.iql.odl.ui.generator.ODLUiGenerator;
 import de.uniol.inf.is.odysseus.iql.odl.ui.hover.ODLEObjectDocumentationProvider;
 import de.uniol.inf.is.odysseus.iql.odl.ui.hover.ODLEObjectHoverProvider;
+import de.uniol.inf.is.odysseus.iql.odl.ui.parser.ODLUiParser;
+import de.uniol.inf.is.odysseus.iql.odl.ui.scoping.ODLUiScopeProvider;
 
 
 /**
@@ -44,8 +47,34 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 		super(plugin);
 	}
 	
-	public void validateOnEditorOpen(Binder binder) {
-		binder.bind(IXtextEditorCallback.class).annotatedWith(Names.named("WHOCARES")).to(ValidatingEditorCallback.class);
+	public Class<? extends IGenerator> bindGenerator() {
+		return ODLUiGenerator.class;
+	}
+	
+	public Class<? extends IIQLJdtTypeProviderFactory> bindIQLJdtTypeProviderFactory() {
+		return IQLJdtTypeProviderFactory.class;
+	}
+	
+	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
+		return ODLUiScopeProvider.class;
+	}
+	
+	public Class<? extends org.eclipse.xtext.scoping.IScopeProvider> bindIScopeProvider() {
+		return ODLUiScopeProvider.class;
+	}
+	
+	public Class<? extends IIQLUiParser> bindIQLUiParser() {
+		return ODLUiParser.class;
+	}
+	
+	@Override
+	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
+		return ODLClasspathTypeProviderFactory.class;
+	}
+	
+	@Override
+	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
+		return ClasspathBasedTypeScopeProvider.class;
 	}
 	
 	@Override
@@ -83,15 +112,5 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 	@Override
 	public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {
 		return IQLXtextEditorCallback.class;
-	}
-	
-	@Override
-	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
-		return ClasspathBasedTypeScopeProvider.class;
-	}
-	
-	@Override
-	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
-		return ODLClasspathTypeProviderFactory.class;
 	}
 }

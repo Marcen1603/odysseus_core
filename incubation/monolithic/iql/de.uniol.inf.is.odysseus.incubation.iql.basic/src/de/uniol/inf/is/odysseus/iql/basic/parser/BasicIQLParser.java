@@ -4,14 +4,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IProject;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 
@@ -22,11 +20,6 @@ public class BasicIQLParser extends AbstractIQLParser<BasicIQLTypeFactory, Basic
 		super(typeFactory, typeUtils);
 	}
 
-	@Override
-	public void parse(IQLModel model, IProject project) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	protected String getLanguageName() {

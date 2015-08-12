@@ -46,5 +46,4 @@ public interface IIQLLookUp {
 	boolean isInstantiateable(JvmDeclaredType declaredType);
 	Collection<JvmOperation> getDeclaredPublicMethods(JvmTypeReference typeRef,	boolean onlyStatic);
 
-
 }

@@ -59,7 +59,7 @@ abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends I
 	
 	def String compile(JvmTypeReference typeRef, G context, String nodeText, boolean wrapper) {
 		var innerType = typeUtils.getInnerType(typeRef, false)
-		if (typeFactory.isImportNeeded(innerType, nodeText)) {
+		if (typeUtils.isImportNeeded(innerType, nodeText)) {
 			context.addImport(typeFactory.getImportName(innerType));
 		} 
 		'''«typeFactory.getSimpleName(innerType, nodeText, wrapper, false)»'''		

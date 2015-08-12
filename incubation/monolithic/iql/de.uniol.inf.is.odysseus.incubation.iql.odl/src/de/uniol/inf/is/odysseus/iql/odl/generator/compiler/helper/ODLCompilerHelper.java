@@ -7,8 +7,10 @@ import javax.inject.Inject;
 
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
@@ -50,16 +52,15 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		return EcoreUtil2.getAllContentsOfType(operator, ODLMethod.class);
 	}
 
-	public Class<?> determineReadType(ODLOperator operator) {
+	public JvmTypeReference determineReadType(ODLOperator operator) {
 		for (IQLMethod method : EcoreUtil2.getAllContentsOfType(operator, IQLMethod.class)) {
 			if (method.getSimpleName() != null && method.getSimpleName().equals("processNext")) {
 				JvmFormalParameter parameter = method.getParameters().get(0);
-				if (parameter != null) {
-					return typeUtils.getJavaType(typeUtils.getLongName(parameter.getParameterType(), false));
-				}
+				return parameter.getParameterType();
+
 			}
 		}
-		return Tuple.class;
+		return typeUtils.createTypeRef(Tuple.class, typeFactory.getSystemResourceSet());
 	}
 
 	public OutputMode determineOutputMode(ODLOperator operator) {
@@ -141,5 +142,9 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 			}
 		}
 		return false;
+	}
+
+	public JvmTypeReference determineMetadataType(ODLOperator operator) {
+		return typeUtils.createTypeRef(IMetaAttribute.class, typeFactory.getSystemResourceSet());
 	}
 }

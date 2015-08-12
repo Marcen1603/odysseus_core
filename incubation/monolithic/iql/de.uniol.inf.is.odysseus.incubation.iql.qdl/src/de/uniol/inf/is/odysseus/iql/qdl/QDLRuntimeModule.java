@@ -22,9 +22,11 @@ import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.parser.IIQLParser;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
-import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.DefaultIQLMethodFinder;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLNullJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
@@ -65,8 +67,12 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypingEntryPoint;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQDLRuntimeModule {
 
-	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
-		return DefaultIQLMethodFinder.class;
+	public Class<? extends IIQLJdtTypeProviderFactory> bindJdtTypeProviderFactory() {
+		return IQLNullJdtTypeProviderFactory.class;
+	}
+	
+	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
+		return QDLScopeProvider.class;
 	}
 	
 	@Override
@@ -78,14 +84,14 @@ public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQ
 	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
 		return ClasspathBasedTypeScopeProvider.class;
 	}
+
 	
+	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
+		return DefaultIQLMethodFinder.class;
+	}	
 	
 	public Class<? extends IIQLServiceObserver> bindIQLServiceObserver() {
 		return QDLServiceObserver.class;
-	}
-	
-	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
-		return QDLScopeProvider.class;
 	}
 	
 	public Class<? extends IIQLTypeUtils> bindTypeUtils() {

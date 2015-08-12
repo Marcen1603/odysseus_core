@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.basic.scoping;
+package de.uniol.inf.is.odysseus.iql.basic.ui.scoping;
 
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.access.jdt.IJdtTypeProvider;
@@ -10,15 +10,17 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 
 import com.google.common.base.Predicate;
 
+import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProvider;
+
 @SuppressWarnings("restriction")
 public class IQLJdtBasedTypeScope extends JdtBasedSimpleTypeScope {
 
 
 	
-	public IQLJdtBasedTypeScope(IJdtTypeProvider typeProvider,
+	public IQLJdtBasedTypeScope(IIQLJdtTypeProvider typeProvider,
 			IQualifiedNameConverter qualifiedNameConverter,
 			Predicate<IEObjectDescription> filter) {
-		super(typeProvider, qualifiedNameConverter, filter);
+		super((IJdtTypeProvider) typeProvider, qualifiedNameConverter, filter);
 	}
 	
 	@Override

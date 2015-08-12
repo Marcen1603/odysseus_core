@@ -16,26 +16,16 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
 import org.eclipse.osgi.framework.internal.core.AbstractBundle;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
@@ -44,7 +34,6 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
-import com.google.common.io.Files;
 import com.google.inject.Provider;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
@@ -59,12 +48,9 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 @SuppressWarnings("restriction")
 public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLParser{
 	
-	protected static final String EDIT_FOLDER = "edit";
 	protected static final String IQL_DIR = "iql";
 	protected static final String JAVA_VERSION = "1.7";
 	
-	@Inject
-	private IJavaProjectProvider javaProjectProvider;
 	
 	@Inject 
 	protected Provider<ResourceSet> resourceSetProvider;
@@ -98,26 +84,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 			//e.printStackTrace();
 		}
 	}
-	
-	protected void copyAndMoveUserEditiedFiles(IProject project, String path) {
-		IFolder folder = project.getFolder(EDIT_FOLDER);
-		if (folder.exists()) {
-			try {
-				for (IResource res : folder.members()) {
-					File from = new File(res.getRawLocationURI());					
-					java.net.URI uri = folder.getRawLocationURI().relativize(res.getRawLocationURI());					
-					File to = new File(path+File.separator+uri.toString());
-					if (to.exists()) {
-						Files.copy(from, to);
-					}
-				}
-			} catch (CoreException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}		
-	}	
+		
 	
 	protected abstract String getLanguageName();
 	
@@ -250,20 +217,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	protected Collection<String> createClassPathEntries(ResourceSet set, Collection<Resource> resources) {
 		Collection<Bundle> bundles = typeFactory.getDependencies();	
 		
-		Collection<String> entries = new ArrayList<>();
-
-		IJavaProject project = javaProjectProvider.getJavaProject(set);
-		if (project != null) {
-			try {
-				IPath path = project.getOutputLocation();
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				IFolder folder = root.getFolder(path);
-				entries.add(folder.getLocation().toFile().getAbsolutePath());
-			} catch (JavaModelException e) {
-				e.printStackTrace();
-			}
-		}
-		
+		Collection<String> entries = new ArrayList<>();		
 		for (Bundle bundle : bundles) {
 			File file = getPluginDir(bundle);
 			if (file != null) {

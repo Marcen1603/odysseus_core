@@ -1899,16 +1899,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       {
         EObject _eContainer = field.eContainer();
         JvmDeclaredType containerType = ((JvmDeclaredType) _eContainer);
-        String _longName = this.typeUtils.getLongName(containerType, false);
-        Class<?> javaType = this.typeUtils.getJavaType(_longName);
-        String _canonicalName = javaType.getCanonicalName();
-        c.addImport(_canonicalName);
+        JvmTypeReference typeRef = this.typeUtils.createTypeRef(containerType);
         StringConcatenation _builder = new StringConcatenation();
-        String _simpleName = javaType.getSimpleName();
-        _builder.append(_simpleName, "");
+        String _compile = this.typeCompiler.compile(typeRef, c, true);
+        _builder.append(_compile, "");
         _builder.append(".");
-        String _simpleName_1 = field.getSimpleName();
-        _builder.append(_simpleName_1, "");
+        String _simpleName = field.getSimpleName();
+        _builder.append(_simpleName, "");
         _xblockexpression = _builder.toString();
       }
       _xifexpression = _xblockexpression;
@@ -2003,21 +2000,18 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           {
             EObject _eContainer = method.eContainer();
             JvmDeclaredType containerType = ((JvmDeclaredType) _eContainer);
-            String _longName = this.typeUtils.getLongName(containerType, false);
-            Class<?> javaType = this.typeUtils.getJavaType(_longName);
-            String _canonicalName = javaType.getCanonicalName();
-            c.addImport(_canonicalName);
+            JvmTypeReference typeRef = this.typeUtils.createTypeRef(containerType);
             StringConcatenation _builder = new StringConcatenation();
-            String _simpleName_1 = javaType.getSimpleName();
-            _builder.append(_simpleName_1, "");
+            String _compile = this.typeCompiler.compile(typeRef, c, true);
+            _builder.append(_compile, "");
             _builder.append(".");
-            String _simpleName_2 = method.getSimpleName();
-            _builder.append(_simpleName_2, "");
+            String _simpleName_1 = method.getSimpleName();
+            _builder.append(_simpleName_1, "");
             _builder.append("(");
             IQLArgumentsList _args_2 = m.getArgs();
             EList<JvmFormalParameter> _parameters = method.getParameters();
-            String _compile = this.compile(_args_2, _parameters, c);
-            _builder.append(_compile, "");
+            String _compile_1 = this.compile(_args_2, _parameters, c);
+            _builder.append(_compile_1, "");
             _builder.append(")");
             _xblockexpression_2 = _builder.toString();
           }
