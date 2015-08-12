@@ -4,7 +4,7 @@
 	 <extension
          point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
       <dashboardPart
-            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.map.MapDashboardPart"
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart"
             configClass="de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapConfigurer"
             name="Map">
       </dashboardPart>

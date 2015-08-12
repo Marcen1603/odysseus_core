@@ -10,7 +10,7 @@ public class RasterLayerConfiguration extends LayerConfiguration {
 	private static final long serialVersionUID = -1186631268002859663L;
 	
 	private String url = null;
-	private String format = null;
+	private String format = "RESTFUL Tile Server";
 	private int minZoom = 0;
 	private int maxZoom = 0;
 	private int tileSizeX = 0;
@@ -26,7 +26,7 @@ public class RasterLayerConfiguration extends LayerConfiguration {
 	public RasterLayerConfiguration(RasterLayerConfiguration toCopy) {
 		super(toCopy);
 		this.url = toCopy.url;
-		this.format = toCopy.format;
+		//this.format = toCopy.format;
 		this.minZoom = toCopy.minZoom;
 		this.maxZoom = toCopy.maxZoom;
 		this.tileSizeX = toCopy.tileSizeX;

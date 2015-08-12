@@ -21,6 +21,9 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.NullConfiguration;
 
+/**
+ * Layer which displays a tile grid
+ */
 public class BasicLayer extends AbstractLayer<NullConfiguration>{
 
     private static final long serialVersionUID = -5707296757822008243L;
@@ -39,14 +42,30 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 		this.name = "Basic";
 		this.active = false;
     }
-
-	@Override
-	public void setName(String name) {
-	}
 	
 	private BasicLayer(NullConfiguration configuration) {
 		super(configuration);
 		this.active = false;
+    }
+	
+	@Override
+    public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
+		this.screenmanager = screenManager;
+		this.transformation = screenManager.getTransformation();
+		
+		this.display = screenManager.getDisplay();
+		this.canvas = screenManager.getCanvas();
+		
+		waitBackground = new Color(display, 160, 160, 160);
+		waitForeground = new Color(display, 200, 200, 200);	
+		
+		canvas.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				BasicLayer.this.widgetDisposed(e);
+			}
+		});
+		this.active = true;
     }
 	
 	@Override
@@ -67,7 +86,6 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 	}
 	
 	private void paintTile(GC gc, int x, int y, int dx, int dy) {
-		
 		gc.setForeground(waitBackground);
 		int[] pointArray = new int[8];
 		int[][] xy = new int[4][];
@@ -88,26 +106,10 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 	}
 
 	@Override
-    public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
-		this.screenmanager = screenManager;
-		this.transformation = screenManager.getTransformation();
-		
-		this.display = screenManager.getDisplay();
-		this.canvas = screenManager.getCanvas();
-		
-		waitBackground = new Color(display, 160, 160, 160);
-		waitForeground = new Color(display, 200, 200, 200);	
-		
-		canvas.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				BasicLayer.this.widgetDisposed(e);
-			}
-		});
-		this.active = true;
-    }
-
-
+	public void setName(String name) {
+		//This should always be called Basic
+	}
+	
 	@Override
     public String[] getSupportedDatatypes() {
 	    return null;

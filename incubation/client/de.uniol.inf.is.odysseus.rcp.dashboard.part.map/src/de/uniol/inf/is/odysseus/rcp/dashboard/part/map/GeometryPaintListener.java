@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 
 /** 

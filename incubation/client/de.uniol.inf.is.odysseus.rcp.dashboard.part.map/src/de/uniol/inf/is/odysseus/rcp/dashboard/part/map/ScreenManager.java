@@ -44,14 +44,13 @@ import com.vividsolutions.jts.geom.Envelope;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 
 public class ScreenManager {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ScreenManager.class);
-	private static final Color WHITE = Display.getCurrent().getSystemColor(
-			SWT.COLOR_WHITE);
+	private static final Logger LOG = LoggerFactory.getLogger(ScreenManager.class);
+	private static final Color WHITE = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 
 	private MapDashboardPart mapDashboardPart;
 	private ScreenTransformation transformation;
@@ -64,27 +63,28 @@ public class ScreenManager {
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private MapMouseListener mouseListener;
-	
+
 	private Coordinate centerEPSG = new Coordinate(0, 0);
 	private Coordinate centerUV = new Coordinate(0, 0);
-	
+
 	private CoordinateReferenceSystem crs;
-	
+
 	// mapSizeScreenCoord
 	private int widthHalf, heightHalf = 175;
 	private int height;
 	private int srid = -1;
+	private int milliseconds = 20;
 
 	private double scale = 100000;
 	private double zoomincrement = 1.5;
-	
+
 	private boolean renderComplete;
 
 	private String infoText;
-	
-	
-	public ScreenManager(ScreenTransformation transformation,
-			MapDashboardPart mapDashboardPart) {
+
+	private Renderer renderer = null;
+
+	public ScreenManager(ScreenTransformation transformation, MapDashboardPart mapDashboardPart) {
 		this.interval = new TimeInterval();
 		this.interval.setStart(PointInTime.getZeroTime());
 		this.maxInterval = new TimeInterval();
@@ -114,7 +114,6 @@ public class ScreenManager {
 		return srid;
 	}
 
-
 	public Coordinate getCenter() {
 		return (Coordinate) this.centerEPSG.clone();
 	}
@@ -126,7 +125,6 @@ public class ScreenManager {
 			centerEPSG.x = -centerUV.x * scale;
 			centerEPSG.y = (centerUV.y) * scale;
 		}
-		
 		this.pcs.firePropertyChange("centerUV", oldCenterUV, centerUV);
 	}
 
@@ -137,7 +135,7 @@ public class ScreenManager {
 	public double getScale() {
 		return this.scale;
 	}
-	
+
 	protected void setOffset(int width, int height) {
 		this.height = height;
 		this.widthHalf = (int) (0.5d * width);
@@ -148,9 +146,8 @@ public class ScreenManager {
 	public int[] getOffset() {
 		return new int[] { widthHalf, heightHalf };
 	}
-	
 
-	protected Canvas createCanvas(Composite parent) {
+	public Canvas createCanvas(Composite parent) {
 		Canvas canvas = new Canvas(parent, SWT.DOUBLE_BUFFERED);
 		canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		canvas.setBackground(WHITE);
@@ -239,8 +236,6 @@ public class ScreenManager {
 		env.expandBy(widthHalf * scale, heightHalf * scale);
 		return env;
 	}
-	
-	
 
 	public void zoomToExtend(ILayer layer) {
 		Envelope env = layer.getEnvelope();
@@ -256,8 +251,7 @@ public class ScreenManager {
 		scale *= Math.ceil(scaleInt);
 		if (scale > 0) {
 			// This should always be the case, if there is an environment
-			setCenterUV((int) Math.floor((env.centre().x / scale * (-1))),
-					(int) Math.floor((env.centre().y / scale)));
+			setCenterUV((int) Math.floor((env.centre().x / scale * (-1))), (int) Math.floor((env.centre().y / scale)));
 		} else {
 			scale = 1;
 		}
@@ -283,8 +277,7 @@ public class ScreenManager {
 		PointInTime oldIntervalStart = this.interval.getStart();
 		this.interval.setStart(intervalStart);
 		System.out.println(this.interval);
-		this.pcs.firePropertyChange("intervalStart", oldIntervalStart,
-				this.interval.getStart());
+		this.pcs.firePropertyChange("intervalStart", oldIntervalStart, this.interval.getStart());
 	}
 
 	public PointInTime getIntervalEnd() {
@@ -295,8 +288,7 @@ public class ScreenManager {
 		PointInTime oldIntervalEnd = this.interval.getEnd();
 		this.interval.setEnd(intervalEnd);
 		System.out.println(this.interval);
-		this.pcs.firePropertyChange("intervalEnd", oldIntervalEnd,
-				this.interval.getEnd());
+		this.pcs.firePropertyChange("intervalEnd", oldIntervalEnd, this.interval.getEnd());
 	}
 
 	public ITimeInterval getMaxInterval() {
@@ -306,8 +298,7 @@ public class ScreenManager {
 	public void setMaxInterval(ITimeInterval maxInterval) {
 		ITimeInterval oldMaxInterval = this.maxInterval;
 		this.maxInterval = maxInterval;
-		this.pcs.firePropertyChange("maxInterval", oldMaxInterval,
-				this.maxInterval);
+		this.pcs.firePropertyChange("maxInterval", oldMaxInterval, this.maxInterval);
 	}
 
 	public PointInTime getMaxIntervalStart() {
@@ -322,10 +313,8 @@ public class ScreenManager {
 			// If the puffer deleted something, we have to update the interval
 			this.interval.setStart(maxIntervalStart);
 		}
-		this.pcs.firePropertyChange("maxIntervalStart", oldMaxIntervalStart,
-				this.maxInterval.getStart());
-		this.pcs.firePropertyChange("maxInterval", oldInterval,
-				this.maxInterval);
+		this.pcs.firePropertyChange("maxIntervalStart", oldMaxIntervalStart, this.maxInterval.getStart());
+		this.pcs.firePropertyChange("maxInterval", oldInterval, this.maxInterval);
 	}
 
 	public PointInTime getMaxIntervalEnd() {
@@ -343,10 +332,8 @@ public class ScreenManager {
 		}
 		PointInTime oldMaxIntervalEnd = this.maxInterval.getEnd();
 		this.maxInterval.setEnd(maxIntervalEnd.plus(1));
-		this.pcs.firePropertyChange("maxIntervalEnd", oldMaxIntervalEnd,
-				this.maxInterval.getEnd());
-		this.pcs.firePropertyChange("maxInterval", oldInterval,
-				this.maxInterval);
+		this.pcs.firePropertyChange("maxIntervalEnd", oldMaxIntervalEnd, this.maxInterval.getEnd());
+		this.pcs.firePropertyChange("maxInterval", oldInterval, this.maxInterval);
 	}
 
 	public void zoomOut(Point pivot) {
@@ -378,8 +365,7 @@ public class ScreenManager {
 		Coordinate c1 = (Coordinate) c.clone();
 		c1.x *= zoomincrement;
 		c1.y *= zoomincrement;
-		Coordinate p = new Coordinate((pivot.x - widthHalf),
-				(pivot.y - heightHalf));
+		Coordinate p = new Coordinate((pivot.x - widthHalf), (pivot.y - heightHalf));
 		double dx = Math.max(p.x, c.x) - Math.min(p.x, c.x);
 		double dy = Math.max(p.y, c.y) - Math.min(p.y, c.y);
 		Coordinate nc = new Coordinate();
@@ -421,18 +407,13 @@ public class ScreenManager {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	public void addPropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(propertyName, listener);
 	}
 
-	public void removePropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
+	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(propertyName, listener);
 	}
-
-	int milliseconds = 20;
-	Renderer renderer = null;
 
 	public void redraw() {
 		if (renderer == null) {
@@ -444,27 +425,6 @@ public class ScreenManager {
 
 	public void setRenderComplete(boolean b) {
 		renderComplete = b;
-
-	}
-
-	private class Renderer implements Runnable {
-
-		private boolean redrawIntent = false;
-
-		@Override
-		public void run() {
-			if (renderComplete == true & redrawIntent == true) {
-				setRenderComplete(false);
-				setRedrawIntent(false);
-				canvas.redraw();
-			}
-			if (!canvas.isDisposed())
-				canvas.getDisplay().timerExec(milliseconds, renderer);
-		}
-
-		public void setRedrawIntent(boolean b) {
-			redrawIntent = b;
-		}
 
 	}
 
@@ -493,6 +453,27 @@ public class ScreenManager {
 	 */
 	public void removeConnection(LayerUpdater connection) {
 		connections.remove(connection);
+	}
+
+	private class Renderer implements Runnable {
+
+		private boolean redrawIntent = false;
+
+		@Override
+		public void run() {
+			if (renderComplete == true & redrawIntent == true) {
+				setRenderComplete(false);
+				setRedrawIntent(false);
+				canvas.redraw();
+			}
+			if (!canvas.isDisposed())
+				canvas.getDisplay().timerExec(milliseconds, renderer);
+		}
+
+		public void setRedrawIntent(boolean b) {
+			redrawIntent = b;
+		}
+
 	}
 
 }

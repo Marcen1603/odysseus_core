@@ -42,8 +42,9 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.MapDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.OwnProperties;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.LayerTypeRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.RasterLayer;
@@ -68,6 +69,7 @@ public class MapEditorModel extends ModelObject {
 
 	private IProject project = null;
 	private ScreenManager screenManager = null;
+	private OwnProperties ownProperties;
 
 	private int layercount;
 	private static IFile iFile;
@@ -88,6 +90,9 @@ public class MapEditorModel extends ModelObject {
 				layer.init(screenManager, null, null);
 		}
 		screenManager.redraw();
+		
+		//added on my own
+		ownProperties = new OwnProperties();
 	}
 
 //	/**
@@ -376,6 +381,31 @@ public class MapEditorModel extends ModelObject {
 	// return layer;
 	// }
 	
+	public void editLayer(LayerConfiguration layerConfiguration){
+		ILayer layer = null;
+
+		if (layerConfiguration instanceof RasterLayerConfiguration)
+			layer = editLayer((RasterLayerConfiguration) layerConfiguration);
+//		else if (layerConfiguration instanceof VectorLayerConfiguration)
+//			layer = editLayer((VectorLayerConfiguration) layerConfiguration);
+		// else if (layerConfiguration instanceof TracemapLayerConfiguration)
+		// layer = editLayer((TracemapLayerConfiguration) layerConfiguration);
+		// else if (layerConfiguration instanceof HeatmapLayerConfiguration)
+		// layer = editLayer((HeatmapLayerConfiguration) layerConfiguration);
+		
+		firePropertyChange(MAP, null, this);
+	}
+	
+	private ILayer editLayer(RasterLayerConfiguration layerConfiguration){
+		ILayer layer = new RasterLayer(layerConfiguration);
+		return layer;
+	}
+	
+//	private ILayer editLayer(VectorLayerConfiguration layerConfiguration){
+//		ILayer layer = new VectorLayer(layerConfiguration);
+//		return layer;
+//	}
+	
 	public void removeLayer(ILayer layer) {
 		layers.remove(layer);
 		firePropertyChange(MAP, null, this);
@@ -400,7 +430,7 @@ public class MapEditorModel extends ModelObject {
 		LinkedList<ILayer> group = layers;
 		if (group.contains(layer)) {
 			int positionOrign = group.lastIndexOf(layer);
-			int positionTop = group.size();
+			int positionTop = group.size()-1;
 			if (positionTop != positionOrign) {
 				ILayer tmp = group.get(positionOrign);
 				ILayer tmp1 = group.get(positionTop);
@@ -587,5 +617,9 @@ public class MapEditorModel extends ModelObject {
 
 	public Collection<LayerUpdater> getConnectionCollection() {
 		return connections.values();
+	}
+	
+	public OwnProperties getOwnProperties(){
+		return ownProperties;
 	}
 }

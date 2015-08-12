@@ -7,7 +7,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.MapDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.MapEditorModel;
 
 public abstract class AbstractStreamMapEditorViewPart extends ViewPart{
