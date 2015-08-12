@@ -109,7 +109,7 @@ public class GGASentence extends Sentence {
 	{
 		super(source, FIELD_COUNT);
 		
-		if (source.containsKey("time")) time = ParseUtils.parseTime((String) source.get("time"));
+		time = Time.fromMap("time", source);
 		if (source.containsKey("latitudeHem")) latitudeHem = ParseUtils.parseHemisphere((String) source.get("latitudeHem"));
 		if (source.containsKey("longitudeHem")) longitudeHem = ParseUtils.parseHemisphere((String) source.get("longitudeHem"));
 		if (source.containsKey("gpsQuality")) gpsQuality = ParseUtils.parseGpsQuality((String) source.get("gpsQuality"));

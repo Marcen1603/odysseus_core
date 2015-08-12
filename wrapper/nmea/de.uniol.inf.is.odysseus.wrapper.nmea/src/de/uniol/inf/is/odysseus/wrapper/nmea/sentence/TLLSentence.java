@@ -101,10 +101,8 @@ public class TLLSentence extends Sentence{
 		if (source.containsKey("latitudeHem")) latitudeHem = ParseUtils.parseHemisphere((String) source.get("latitudeHem"));
 		if (source.containsKey("longitude")) longitude = ParseUtils.parseCoordinate((String) source.get("longitude"));
 		if (source.containsKey("longitudeHem")) longitudeHem = ParseUtils.parseHemisphere((String) source.get("longitudeHem"));
-		if (source.containsKey("targetLabel")) targetLabel = (String) source.get("targetLabel");
-		
-		// TODO: Implement Time.fromMap, reverse Time.addToMap
-		if (source.containsKey("time")) time = null; //ParseUtils.parseTime((String) source.get("time"));
+		if (source.containsKey("targetLabel")) targetLabel = (String) source.get("targetLabel");		
+		time = Time.fromMap("time", source);
 		if (source.containsKey("targetStatus")) targetStatus = ParseUtils.parseTargetStatus((String) source.get("targetStatus"));
 		if (source.containsKey("referenceTarget")) referenceTarget = ParseUtils.parseTargetReference((String) source.get("referenceTarget"));
 		

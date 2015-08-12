@@ -100,7 +100,7 @@ public class RMCSentence extends Sentence {
 	{
 		super(source, FIELD_COUNT);
 		
-		if (source.containsKey("time"))	time = ParseUtils.parseTime((String) source.get("time"));
+		time = Time.fromMap("time", source);
 		if (source.containsKey("status")) status = ParseUtils.parseStatus((String) source.get("status"));
 		if (source.containsKey("latitude")) latitude = ParseUtils.parseCoordinate((String) source.get("latitude"));
 		if (source.containsKey("latitudeHem")) latitudeHem = ParseUtils.parseHemisphere((String) source.get("latitudeHem"));

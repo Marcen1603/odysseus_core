@@ -97,7 +97,7 @@ public class ASHRSentence extends Sentence {
 	{
 		super(source, FIELD_COUNT);
 		
-		if (source.containsKey("time")) time = ParseUtils.parseTime((String) source.get("time"));
+		time = Time.fromMap("time", source);
 		if (source.containsKey("heading")) heading = (double) source.get("heading");
 		if (source.containsKey("trueHeading")) trueHeading = (String) source.get("trueHeading");
 		if (source.containsKey("rollAngle")) rollAngle = (double) source.get("rollAngle");

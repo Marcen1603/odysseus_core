@@ -59,6 +59,8 @@ public class SentenceFactory {
 		registerSentenceType("ASHR", ASHRSentence.class);
 		registerSentenceType("EXT", EXTSentence.class);
 		registerSentenceType("TLL", TLLSentence.class);
+		registerSentenceType("ZDA", ZDASentence.class);
+		registerSentenceType("ROT", ROTSentence.class);		
 	}
 	
 	/**

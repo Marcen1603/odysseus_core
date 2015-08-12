@@ -125,7 +125,7 @@ public class TTMSentence extends Sentence {
 		if (source.containsKey("targetLabel")) targetLabel = (String) source.get("targetLabel");
 		if (source.containsKey("targetStatus")) targetStatus = ParseUtils.parseTargetStatus((String) source.get("targetStatus"));
 		if (source.containsKey("referenceTarget")) referenceTarget = ParseUtils.parseTargetReference((String) source.get("referenceTarget"));
-		if (source.containsKey("time")) time = ParseUtils.parseTime((String) source.get("time"));
+		time = Time.fromMap("time", source);
 		if (source.containsKey("typeAcquisition")) typeAcquisition = ParseUtils.parseAcquisition((String) source.get("typeAcquisition"));
 	}				
 	

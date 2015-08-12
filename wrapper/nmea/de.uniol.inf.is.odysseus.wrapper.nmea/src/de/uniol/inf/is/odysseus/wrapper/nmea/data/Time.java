@@ -69,4 +69,31 @@ public class Time {
 		map.put(prefix + ".seconds", seconds);
 		map.put(prefix + ".milliSeconds", milliSeconds);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static Time fromMap(String prefix, Map<String, Object> map)
+	{
+		try
+		{
+			if (map.containsKey(prefix) && map.get(prefix) instanceof Map)
+			{
+				// Nested key-value
+				map = (Map<String, Object>) map.get(prefix);
+				prefix = "";
+			}
+			else
+				prefix += ".";
+			
+			Time res = new Time();
+			res.setHours(((Number)map.get(prefix + "hours")).intValue());
+			res.setMinutes(((Number)map.get(prefix + "minutes")).intValue());
+			res.setSeconds(((Number)map.get(prefix + "seconds")).intValue());
+			res.setMilliSeconds(((Number)map.get(prefix + "milliSeconds")).intValue());
+			return res;
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
+	}
 }
