@@ -31,6 +31,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -627,6 +628,18 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	public void partial(IOperatorOwner id, int sheddingFactor) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void setLogicalOperator(ILogicalOperator op) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ILogicalOperator getLogicalOperator() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

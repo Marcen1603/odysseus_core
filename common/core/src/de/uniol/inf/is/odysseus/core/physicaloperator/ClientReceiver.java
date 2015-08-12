@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -785,5 +786,17 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			List<IOperatorOwner> forOwners) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void setLogicalOperator(ILogicalOperator op) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ILogicalOperator getLogicalOperator() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

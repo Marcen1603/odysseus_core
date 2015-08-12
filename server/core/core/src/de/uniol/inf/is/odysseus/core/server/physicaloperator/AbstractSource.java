@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
@@ -83,6 +84,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	final private OwnerHandler ownerHandler;
 
 	private boolean inOrder = true;
+	
+	private ILogicalOperator definingOp;
 
 	// --------------------------------------------------------------------
 	// Logging
@@ -1015,5 +1018,18 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 	protected void sendInfo(String message) {
 		infoService.info(message);
+	}
+	
+	// -----------------------
+	// Provenance
+	// -----------------------
+	@Override
+	public void setLogicalOperator(ILogicalOperator op){
+		this.definingOp = op;
+	}
+	
+	@Override
+	public ILogicalOperator getLogicalOperator(){
+		return this.definingOp;
 	}
 }

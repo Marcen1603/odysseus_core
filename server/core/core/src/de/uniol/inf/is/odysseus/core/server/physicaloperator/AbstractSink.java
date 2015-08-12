@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -68,6 +69,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 
 	private Map<IOperatorOwner, Resource> uniqueIds = new TreeMap<>();
+	
+	private ILogicalOperator definingOp;
 
 	// private boolean allInputsDone = false;
 	final private OwnerHandler ownerHandler;
@@ -80,6 +83,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	protected boolean debug = false;
 
+	
+	
 	@Override
 	public void setDebug(boolean debug) {
 		this.debug = debug;
@@ -866,5 +871,18 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	@Override
 	public boolean hasInput() {
 		return getSubscribedToSource().size() > 0;
+	}
+	
+	// -----------------------
+	// Provenance
+	// -----------------------
+	@Override
+	public void setLogicalOperator(ILogicalOperator op){
+		this.definingOp = op;
+	}
+	
+	@Override
+	public ILogicalOperator getLogicalOperator(){
+		return this.definingOp;
 	}
 }

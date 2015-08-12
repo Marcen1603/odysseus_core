@@ -20,6 +20,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.event.IEventHandler;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
@@ -102,4 +103,8 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	void setSuppressPunctuations(boolean suppressPunctuations);
 	
 	List<ISession> getSessions();
+
+	void setLogicalOperator(ILogicalOperator op);
+
+	ILogicalOperator getLogicalOperator();
 }
