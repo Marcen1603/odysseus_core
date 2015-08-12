@@ -55,8 +55,5 @@ public interface IIQLTypeUtils {
 	
 	String getNameWithoutSetterPrefix(JvmOperation method);
 	String getNameWithoutGetterPrefix(JvmOperation method);
-	
-	boolean isImportNeeded(JvmType type, String text);
-
 
 }

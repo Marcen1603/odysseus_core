@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -316,6 +317,32 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 			return name;
 		}		
 	}
+	
+	@Override
+	public boolean isImportNeeded(JvmType type, String text) {
+		if (type instanceof JvmDeclaredType) {
+			JvmDeclaredType declaredType = (JvmDeclaredType) type;
+			if (isSystemType(typeUtils.getLongName(type, false))) {
+				return true;
+			} else if (typeUtils.isUserDefinedType(declaredType, false)) {
+				return false;
+			} else if (typeUtils.isPrimitive(declaredType)) {
+				return false;
+			} else if (declaredType.getPackageName() == null) {
+				return false;
+			} else {
+				try {
+					Class.forName(text);
+					return false;
+				} catch (Exception e) {
+					return true;
+				}
+			}
+			
+		} else {
+			return false;
+		}
+	}
 
 	@Override
 	public String getSimpleName(JvmType type, String text, boolean wrapper, boolean array) {
@@ -323,7 +350,7 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 		String simpleName = typeUtils.getShortName(type, array);	
 		IQLSystemType systemType = this.getSystemType(qualifiedName);
 		if (systemType != null) {
-			if (!typeUtils.isImportNeeded(type, text)) {
+			if (!isImportNeeded(type, text)) {
 				return converter.toJavaString(text);
 			} else {
 				Class<?> javaType = systemType.getJavaType();
@@ -337,7 +364,7 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 			}
 			if (wrapper && typeUtils.isPrimitive(type)) {
 				return toWrapper(qualifiedName);
-			} else if (!typeUtils.isImportNeeded(type, text)) {
+			} else if (!isImportNeeded(type, text)) {
 				return text;				
 			} else if (javaType != null) {
 				return javaType.getSimpleName();

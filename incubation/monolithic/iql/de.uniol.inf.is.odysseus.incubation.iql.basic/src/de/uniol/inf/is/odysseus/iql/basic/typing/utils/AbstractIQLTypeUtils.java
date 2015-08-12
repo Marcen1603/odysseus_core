@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmArrayType;
-import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmLowerBound;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmPrimitiveType;
@@ -31,31 +30,7 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 
 	@Inject
 	protected IQLClasspathTypeProviderFactory typeProviderFactory;
-	
-	@Override
-	public boolean isImportNeeded(JvmType type, String text) {
-		if (type instanceof JvmDeclaredType) {
-			JvmDeclaredType declaredType = (JvmDeclaredType) type;
-			if (isUserDefinedType(declaredType, false)) {
-				return false;
-			} else if (isPrimitive(declaredType)) {
-				return false;
-			} else if (declaredType.getPackageName() == null) {
-				return false;
-			} else {
-				try {
-					Class.forName(text);
-					return false;
-				} catch (Exception e) {
-					return true;
-				}
-			}
-			
-		} else {
-			return false;
-		}
-	}
-	
+
 	
 	@Override
 	public JvmTypeReference createTypeRef(Class<?> javaType, Notifier context) {

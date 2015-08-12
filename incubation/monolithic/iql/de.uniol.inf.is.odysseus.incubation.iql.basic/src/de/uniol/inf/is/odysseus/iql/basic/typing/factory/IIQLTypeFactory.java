@@ -41,4 +41,6 @@ public interface IIQLTypeFactory {
 	Collection<JvmTypeReference> getImportedTypes(EObject obj);
 	
 	Collection<String> getJavaPackages();
+	
+	boolean isImportNeeded(JvmType type, String text);
 }

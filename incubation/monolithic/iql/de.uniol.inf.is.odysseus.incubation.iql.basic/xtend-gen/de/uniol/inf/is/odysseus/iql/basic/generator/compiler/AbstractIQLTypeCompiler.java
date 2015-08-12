@@ -100,7 +100,7 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
     String _xblockexpression = null;
     {
       JvmType innerType = this.typeUtils.getInnerType(typeRef, false);
-      boolean _isImportNeeded = this.typeUtils.isImportNeeded(innerType, nodeText);
+      boolean _isImportNeeded = this.typeFactory.isImportNeeded(innerType, nodeText);
       if (_isImportNeeded) {
         String _importName = this.typeFactory.getImportName(innerType);
         context.addImport(_importName);
