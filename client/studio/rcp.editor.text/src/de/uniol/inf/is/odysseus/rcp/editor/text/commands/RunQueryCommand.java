@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.commands;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -64,7 +65,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
             	IEditorInput editorInput = editor.getEditorInput();
             	if (editorInput instanceof IFileEditorInput) {
             		IFile file = ((IFileEditorInput) editorInput).getFile();
-                    runFile(file, editor);
+                    runFile(file);
             	} 
             }
         }
@@ -101,17 +102,11 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
         return part;
     }
 
-    private void runFile(IFile fileToRun, IEditorPart editor) {
-        try {
-            execute(fileToRun, editor);
-        }
-        catch (Exception ex) {
-            LOG.error("Exception during running query file", ex);
-            ExceptionErrorDialog.open(new Status(IStatus.ERROR, IEditorTextParserConstants.PLUGIN_ID, "'Parsing and Executing Query' has encountered a problem.\n\nScript Execution Error: " + ex.getMessage(), ex), ex);
-            // new ExceptionWindow(ex);
-        }
+    private void runFile(IFile file) {
+    	runFiles(Collections.singletonList(file));
     }
 
+    
     private void runFiles(List<IFile> filesToRun) {
         try {
             for (IFile file : filesToRun) {
@@ -125,27 +120,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
         }
 
     }
-    
-    private static void execute(final IFile scriptFile, final IEditorPart editor) {
-        Job job = new Job("Parsing and Executing Query") {
-            @Override
-            protected IStatus run(IProgressMonitor monitor) {
-                try {
-                	IFileExecutor executor = FileExecutorRegistry.getFileExecutor(scriptFile.getFileExtension());
-                	String text = readLinesFromFile(scriptFile);
-                	executor.run(text, ParserClientUtil.createRCPContext(scriptFile), editor);
-               } catch (final Throwable ex) {
-                    ExceptionErrorDialog.open(new Status(IStatus.ERROR, IEditorTextParserConstants.PLUGIN_ID, "'Parsing and Executing Query' has encountered a problem.\n\nScript Execution Error: " + ex.getMessage(), ex), ex);
-                    // return new Status(IStatus.ERROR,
-                    // IEditorTextParserConstants.PLUGIN_ID,
-                    // "Script Execution Error: " + ex.getMessage(), ex);
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        job.setUser(true);
-        job.schedule();
-    }
+
 
     private static void execute(final IFile scriptFile) {
         Job job = new Job("Parsing and Executing Query") {

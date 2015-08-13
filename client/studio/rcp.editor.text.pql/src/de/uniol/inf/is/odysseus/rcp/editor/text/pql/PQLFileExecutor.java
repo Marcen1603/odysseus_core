@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql;
 
-import org.eclipse.ui.IEditorPart;
-
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -20,10 +18,4 @@ public class PQLFileExecutor implements IFileExecutor {
 		IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
         executor.addQuery(text, "PQL", OdysseusRCPPlugIn.getActiveSession(), context);
 	}
-
-	@Override
-	public void run(String text, Context context, IEditorPart editor) {
-		run(text, context);
-	}
-
 }
