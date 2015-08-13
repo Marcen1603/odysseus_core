@@ -1,17 +1,13 @@
 package de.uniol.inf.is.odysseus.query.transformation.main;
 
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
@@ -39,13 +35,12 @@ public class QueryTransformation {
 		
 		ILogicalOperator savedPlan = copyVisitor.getResult();
 		
-		List<IPhysicalOperator> physicalOperatorList =  ExecutorServiceBinding.getExecutor().getPhysicalRoots(parameter.getQueryId(), QueryTransformationHelper.getActiveSession());
+		TransformationConfiguration transformationConfiguration =	ExecutorServiceBinding.getExecutor().getBuildConfigForQuery(queryTopAo).getTransformationConfiguration();
 		
-
 		ITargetPlatform targetPlatform = TargetPlatformRegistry.getTargetPlatform(parameter.getProgramLanguage());
 		
 		try {
-			targetPlatform.convertQueryToStandaloneSystem(savedPlan, parameter, queue);
+			targetPlatform.convertQueryToStandaloneSystem(savedPlan, parameter, queue, transformationConfiguration);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

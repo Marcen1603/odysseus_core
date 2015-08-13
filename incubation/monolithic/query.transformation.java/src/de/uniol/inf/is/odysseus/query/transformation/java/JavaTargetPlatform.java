@@ -9,6 +9,7 @@ import java.util.concurrent.BlockingQueue;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
@@ -24,6 +25,7 @@ import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.IOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.registry.OperatorRegistry;
+import de.uniol.inf.is.odysseus.query.transformation.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.AbstractTargetPlatform;
 
 public class JavaTargetPlatform extends AbstractTargetPlatform{
@@ -48,7 +50,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
-			TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> progressBarQueue) throws InterruptedException {
+			TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> progressBarQueue,TransformationConfiguration transformationConfiguration) throws InterruptedException {
 		this.setProgressBarQueue(progressBarQueue);
 		
 		//add userfeedback
@@ -86,7 +88,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
 		
-		walkTroughLogicalPlan(sourceOPs,parameter);
+		walkTroughLogicalPlan(sourceOPs,parameter, transformationConfiguration);
 		
 		//generate code for osgi binds
 		updateProgressBar(70, "Generate OSGI emulation code");
@@ -122,20 +124,23 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	}
 	
 
-	private void walkTroughLogicalPlan(List<ILogicalOperator> operatorSources,TransformationParameter parameter) throws InterruptedException{
+	private void walkTroughLogicalPlan(List<ILogicalOperator> operatorSources,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		
 		for(ILogicalOperator sourceOperator: operatorSources){
-				generateCode(sourceOperator,parameter);
+				generateCode(sourceOperator,parameter, transformationConfiguration);
 		}
 		
 	}
 	
-	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter) throws InterruptedException{
+	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 
 		
 	
 		IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getClass().getSimpleName());
+		
+		
+		OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
 			if(!TransformationInformation.getInstance().isOperatorAdded(operator)){
@@ -177,7 +182,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 	
 		for(LogicalSubscription s:operator.getSubscriptions()){
-			generateCode(s.getTarget(),parameter);
+			generateCode(s.getTarget(),parameter, transformationConfiguration);
 		}
 		
 	}
