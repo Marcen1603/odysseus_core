@@ -5,7 +5,6 @@ import java.util.Collection;
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -31,7 +30,7 @@ public class BasicIQLUiParser extends BasicIQLParser implements IIQLUiParser {
 	}
 
 	@Override
-	public void parse(IQLModel model, IProject project) {
+	public void parse(IQLModel model) {
 		
 	}
 

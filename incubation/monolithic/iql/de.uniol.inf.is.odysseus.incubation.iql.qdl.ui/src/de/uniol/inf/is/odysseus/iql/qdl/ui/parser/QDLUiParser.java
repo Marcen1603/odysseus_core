@@ -55,7 +55,7 @@ public class QDLUiParser extends QDLParser implements IIQLUiParser{
 	}
 
 	@Override
-	public void parse(IQLModel file, IProject project) {
+	public void parse(IQLModel file) {
 		ResourceSet resourceSet = EcoreUtil2.getResourceSet(file);
 		for (QDLQuery query : EcoreUtil2.getAllContentsOfType(file, QDLQuery.class)) {
 			String outputPath = getIQLOutputPath()+QUERIES_DIR+File.separator+query.getSimpleName();

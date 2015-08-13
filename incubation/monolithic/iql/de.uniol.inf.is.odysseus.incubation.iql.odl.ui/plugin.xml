@@ -54,15 +54,6 @@
 				</and>
             </activeWhen>
         </handler>
-        <handler
-              class="de.uniol.inf.is.odysseus.iql.odl.ui.ODLExecutableExtensionFactory:de.uniol.inf.is.odysseus.iql.odl.ui.RunQueryCommandHandler"
-              commandId="de.uniol.inf.is.odysseus.rcp.editor.text.RunQuery">
-           <activeWhen>
-              <reference
-                    definitionId="de.uniol.inf.is.odysseus.iql.odl.ODL.XtextEditor.opened">
-              </reference>
-           </activeWhen>
-        </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
         <definition id="de.uniol.inf.is.odysseus.iql.odl.ODL.Editor.opened">

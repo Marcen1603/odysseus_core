@@ -45,7 +45,7 @@ public class ODLUiParser extends ODLParser implements IIQLUiParser{
 	}
 
 	@Override
-	public void parse(IQLModel model, IProject project) {	
+	public void parse(IQLModel model) {	
 		ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
 
 		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
