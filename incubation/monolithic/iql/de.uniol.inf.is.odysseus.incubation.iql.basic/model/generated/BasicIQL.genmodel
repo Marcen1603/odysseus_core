@@ -19,6 +19,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLTypeDefinition/inner"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLNamespace">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLNamespace/static"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLNamespace/importedNamespace"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLJavaMetadata">

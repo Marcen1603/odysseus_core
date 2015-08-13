@@ -91,12 +91,14 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 
 	
 	@Override
-	public Collection<JvmTypeReference> getImportedTypes(EObject obj) {
+	public Collection<JvmTypeReference> getStaticImports(EObject obj) {
 		Collection<String> imports = new HashSet<>();
-		imports.addAll(getImplicitImports());
+		imports.addAll(getImplicitStaticImports());
 		IQLModel model = EcoreUtil2.getContainerOfType(obj, IQLModel.class);
 		for (IQLNamespace namespace : model.getNamespaces()) {
-			imports.add(namespace.getImportedNamespace().replace(IQLQualifiedNameConverter.DELIMITER, "."));
+			if (namespace.isStatic()) {
+				imports.add(namespace.getImportedNamespace().replace(IQLQualifiedNameConverter.DELIMITER, "."));
+			}
 		}
 		
 		Collection<JvmTypeReference> result = new HashSet<>();
@@ -127,6 +129,12 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 		Collection<String> implicitImports = createImplicitImports();
 		return implicitImports;
 	}
+	
+	@Override
+	public Collection<String> getImplicitStaticImports() {
+		Collection<String> implicitImports = createImplicitStaticImports();
+		return implicitImports;
+	}
 
 
 	public Collection<String> createImplicitImports() {
@@ -139,6 +147,18 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 		implicitImports.addAll(serviceObserver.getImplicitImports());		
 
 		return implicitImports;
+	}
+	
+	public Collection<String> createImplicitStaticImports() {
+		Collection<String> implicitStaticImports = new HashSet<>();
+		
+		for (Class<?> c : IQLDefaultTypes.getImplicitStaticImports()) {
+			implicitStaticImports.add(c.getCanonicalName());
+		}
+		for (Class<?> c : serviceObserver.getImplicitStaticImports()) {
+			implicitStaticImports.add(c.getCanonicalName());
+		}
+		return implicitStaticImports;
 	}
 		
 	

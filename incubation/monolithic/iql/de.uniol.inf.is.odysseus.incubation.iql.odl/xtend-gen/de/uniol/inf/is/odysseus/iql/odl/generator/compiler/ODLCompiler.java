@@ -39,7 +39,6 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.EventMethodsFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.IEventMethod;
-import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -124,8 +123,6 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       context.addImport(_canonicalName);
       String _canonicalName_1 = TransformationConfiguration.class.getCanonicalName();
       context.addImport(_canonicalName_1);
-      String _canonicalName_2 = RuleException.class.getCanonicalName();
-      context.addImport(_canonicalName_2);
       Collection<String> _imports = context.getImports();
       for (final String i : _imports) {
         String _lineSeparator = System.lineSeparator();
@@ -716,10 +713,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
       _builder.append(aoName, "\t");
       _builder.append(" operator, ");
       _builder.append(transform, "\t");
-      _builder.append(" config) throws ");
-      String _simpleName_3 = RuleException.class.getSimpleName();
-      _builder.append(_simpleName_3, "\t");
-      _builder.append(" {");
+      _builder.append(" config) {");
       _builder.newLineIfNotEmpty();
       _builder.append("\t\t");
       _builder.append("defaultExecute(operator, new ");

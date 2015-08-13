@@ -411,7 +411,7 @@
             finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             icon="icons/text.gif"
             id="de.uniol.inf.is.odysseus.iql.odl.ui.wizard.ODLWizard"
-            name="ODL File"
+            name="Operator Definition Language"
             project="false">
       </wizard>
    </extension>

@@ -22,7 +22,6 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
-import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 
@@ -33,7 +32,6 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFac
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-@SuppressWarnings({ "restriction" })
 public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQLTypeExtensionsFactory, U extends IIQLTypeUtils> implements IIQLLookUp{
 	
 	@Inject
@@ -47,8 +45,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	@Inject
 	protected IIQLMethodFinder methodFinder;
 
-	@Inject
-	protected IJvmTypeProvider.Factory typeProviderFactory;
+
 
 	public AbstractIQLLookUp(T typeFactory, F typeOperatosFactory, U typeUtils) {
 		this.typeFactory = typeFactory;
@@ -68,27 +65,36 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	
 	@Override
 	public Collection<JvmField> getPublicAttributes(JvmTypeReference typeRef, Collection<JvmTypeReference> importedTypes,boolean extensionAttributes) {
+		Set<JvmField> result = new HashSet<>();
 		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE};
-		Map<String, JvmField> attributes = new HashMap<>();
-		Set<String> visitedTypes = new HashSet<>();
 		
-		findAttributes(typeRef,visitedTypes,attributes, true, visibilities, false,extensionAttributes);
+		Map<String, JvmField> attributes = new HashMap<>();
+		findAttributes(typeRef,new HashSet<String>(),attributes, true, visibilities, false,extensionAttributes);
+		result.addAll(attributes.values());
+		
 		for (JvmTypeReference importedType : importedTypes) {
-			findAttributes(importedType,visitedTypes, attributes, true, visibilities, true, false);
+			Map<String, JvmField> attributesMap = new HashMap<>();
+			findAttributes(importedType,new HashSet<String>(), attributesMap, true, visibilities, true, false);
+			result.addAll(attributesMap.values());
 		}
-		return new HashSet<>(attributes.values());
+		return result;
 	}
 	
 	@Override
 	public Collection<JvmField> getProtectedAttributes(JvmTypeReference typeRef, Collection<JvmTypeReference> importedTypes, boolean extensionAttributes) {
+		Set<JvmField> result = new HashSet<>();
 		int[] visibilities = new int[]{JvmVisibility.PROTECTED_VALUE};
+		
 		Map<String, JvmField> attributes = new HashMap<>();
-		Set<String> visitedTypes = new HashSet<>();
-		findAttributes(typeRef, visitedTypes, attributes, true, visibilities, false,extensionAttributes);
+		findAttributes(typeRef, new HashSet<String>(), attributes, true, visibilities, false,extensionAttributes);
+		result.addAll(attributes.values());
+		
 		for (JvmTypeReference importedType : importedTypes) {
-			findAttributes(importedType,visitedTypes, attributes, true, visibilities, true, false);
+			Map<String, JvmField> attributesMap = new HashMap<>();
+			findAttributes(importedType,new HashSet<String>(), attributesMap, true, visibilities, true, false);
+			result.addAll(attributesMap.values());
 		}
-		return new HashSet<>(attributes.values());
+		return result;
 	}
 	
 	protected void findAttributes(JvmTypeReference typeRef, Set<String> visitedTypes,Map<String, JvmField> attributes, boolean deep, int[] visibilities,boolean onlyStatic, boolean extensionAttributes) {
@@ -169,27 +175,36 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	
 	@Override
 	public Collection<JvmOperation> getPublicMethods(JvmTypeReference typeRef,Collection<JvmTypeReference> importedTypes,boolean extensionMethods) {
-		Map<String, JvmOperation> methods = new HashMap<>();
-		Set<String> visitedTypes = new HashSet<>();
-
+		Set<JvmOperation> result = new HashSet<>();
 		int[] visibilities = new int[]{JvmVisibility.PUBLIC_VALUE};
-		findMethods(typeRef, visitedTypes, methods, true, visibilities, false, extensionMethods);
+
+		Map<String, JvmOperation> methods = new HashMap<>();
+		findMethods(typeRef, new HashSet<String>(), methods, true, visibilities, false, extensionMethods);
+		result.addAll(methods.values());
+		
 		for (JvmTypeReference importedType : importedTypes) {
-			findMethods(importedType, visitedTypes, methods, true, visibilities, true, false);
+			Map<String, JvmOperation> methodsMap = new HashMap<>();
+			findMethods(importedType, new HashSet<String>(), methodsMap, true, visibilities, true, false);
+			result.addAll(methodsMap.values());
 		}
-		return new HashSet<>(methods.values());
+		return result;
 	}
 	
 	@Override
 	public Collection<JvmOperation> getProtectedMethods(JvmTypeReference typeRef, Collection<JvmTypeReference> importedTypes,boolean extensionMethods) {
-		Map<String, JvmOperation> methods = new HashMap<>();
-		Set<String> visitedTypes = new HashSet<>();
+		Set<JvmOperation> result = new HashSet<>();
 		int[] visibilities = new int[]{JvmVisibility.PROTECTED_VALUE};
-		findMethods(typeRef, visitedTypes,  methods, true, visibilities, false, extensionMethods);
+
+		Map<String, JvmOperation> methods = new HashMap<>();
+		findMethods(typeRef, new HashSet<String>(),  methods, true, visibilities, false, extensionMethods);
+		result.addAll(methods.values());
+
 		for (JvmTypeReference importedType : importedTypes) {
-			findMethods(importedType, visitedTypes, methods, true, visibilities, true, false);
+			Map<String, JvmOperation> methodsMap = new HashMap<>();
+			findMethods(importedType, new HashSet<String>(), methodsMap, true, visibilities, true, false);
+			result.addAll(methodsMap.values());
 		}
-		return new HashSet<>(methods.values());
+		return result;
 	}
 	
 	
@@ -457,7 +472,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	@Override
 	public Map<String, JvmTypeReference> getProperties(JvmTypeReference typeRef) {
 		Map<String, JvmTypeReference> result = new HashMap<>();
-		Collection<JvmField> attributes = getPublicAttributes(typeRef, new HashSet<JvmTypeReference>(),false);
+		Collection<JvmField> attributes = getPublicAttributes(typeRef, false);
 		for (JvmField attr : attributes) {
 			result.put(attr.getSimpleName(), attr.getType());			
 		}
@@ -472,7 +487,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	
 	protected Collection<JvmOperation> getPublicSetters(JvmTypeReference typeRef) {
 		Collection<JvmOperation> result = new HashSet<>();
-		for (JvmOperation op : getPublicMethods(typeRef,new HashSet<JvmTypeReference>(), false)) {
+		for (JvmOperation op : getPublicMethods(typeRef, false)) {
 			if (op.getSimpleName().startsWith("set") && op.getParameters().size() == 1 && (op.getReturnType() == null || typeUtils.isVoid(typeRef))){
 				result.add(op);
 			}

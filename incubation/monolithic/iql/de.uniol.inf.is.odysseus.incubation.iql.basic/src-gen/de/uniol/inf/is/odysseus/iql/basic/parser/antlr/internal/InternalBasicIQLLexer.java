@@ -199,10 +199,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__17;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:14:7: ( 'class' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:14:9: 'class'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:14:7: ( 'static' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:14:9: 'static'
             {
-            match("class"); 
+            match("static"); 
 
 
             }
@@ -220,10 +220,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__18;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:15:7: ( 'extends' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:15:9: 'extends'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:15:7: ( 'class' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:15:9: 'class'
             {
-            match("extends"); 
+            match("class"); 
 
 
             }
@@ -241,10 +241,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__19;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:16:7: ( 'implements' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:16:9: 'implements'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:16:7: ( 'extends' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:16:9: 'extends'
             {
-            match("implements"); 
+            match("extends"); 
 
 
             }
@@ -262,10 +262,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__20;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:17:7: ( ',' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:17:9: ','
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:17:7: ( 'implements' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:17:9: 'implements'
             {
-            match(','); 
+            match("implements"); 
+
 
             }
 
@@ -282,10 +283,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__21;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:18:7: ( '{' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:18:9: '{'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:18:7: ( ',' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:18:9: ','
             {
-            match('{'); 
+            match(','); 
 
             }
 
@@ -302,10 +303,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__22;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:19:7: ( '}' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:19:9: '}'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:19:7: ( '{' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:19:9: '{'
             {
-            match('}'); 
+            match('{'); 
 
             }
 
@@ -322,11 +323,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__23;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:20:7: ( 'interface' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:20:9: 'interface'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:20:7: ( '}' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:20:9: '}'
             {
-            match("interface"); 
-
+            match('}'); 
 
             }
 
@@ -343,10 +343,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__24;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:21:7: ( '$*' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:21:9: '$*'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:21:7: ( 'interface' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:21:9: 'interface'
             {
-            match("$*"); 
+            match("interface"); 
 
 
             }
@@ -364,10 +364,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__25;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:22:7: ( '*$' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:22:9: '*$'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:22:7: ( '$*' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:22:9: '$*'
             {
-            match("*$"); 
+            match("$*"); 
 
 
             }
@@ -385,10 +385,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__26;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:23:7: ( '[' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:23:9: '['
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:23:7: ( '*$' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:23:9: '*$'
             {
-            match('['); 
+            match("*$"); 
+
 
             }
 
@@ -405,10 +406,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__27;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:24:7: ( ']' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:24:9: ']'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:24:7: ( '[' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:24:9: '['
             {
-            match(']'); 
+            match('['); 
 
             }
 
@@ -425,11 +426,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__28;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:25:7: ( 'override' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:25:9: 'override'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:25:7: ( ']' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:25:9: ']'
             {
-            match("override"); 
-
+            match(']'); 
 
             }
 
@@ -446,10 +446,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__29;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:26:7: ( '(' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:26:9: '('
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:26:7: ( 'override' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:26:9: 'override'
             {
-            match('('); 
+            match("override"); 
+
 
             }
 
@@ -466,10 +467,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__30;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:27:7: ( ')' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:27:9: ')'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:27:7: ( '(' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:27:9: '('
             {
-            match(')'); 
+            match('('); 
 
             }
 
@@ -486,10 +487,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__31;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:28:7: ( ':' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:28:9: ':'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:28:7: ( ')' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:28:9: ')'
             {
-            match(':'); 
+            match(')'); 
 
             }
 
@@ -506,10 +507,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__32;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:29:7: ( '=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:29:9: '='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:29:7: ( ':' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:29:9: ':'
             {
-            match('='); 
+            match(':'); 
 
             }
 
@@ -526,11 +527,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__33;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:30:7: ( 'null' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:30:9: 'null'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:30:7: ( '=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:30:9: '='
             {
-            match("null"); 
-
+            match('='); 
 
             }
 
@@ -547,10 +547,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__34;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:31:7: ( 'if' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:31:9: 'if'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:31:7: ( 'null' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:31:9: 'null'
             {
-            match("if"); 
+            match("null"); 
 
 
             }
@@ -568,10 +568,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__35;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:32:7: ( 'else' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:32:9: 'else'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:32:7: ( 'if' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:32:9: 'if'
             {
-            match("else"); 
+            match("if"); 
 
 
             }
@@ -589,10 +589,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__36;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:33:7: ( 'while' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:33:9: 'while'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:33:7: ( 'else' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:33:9: 'else'
             {
-            match("while"); 
+            match("else"); 
 
 
             }
@@ -610,10 +610,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__37;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:34:7: ( 'do' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:34:9: 'do'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:34:7: ( 'while' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:34:9: 'while'
             {
-            match("do"); 
+            match("while"); 
 
 
             }
@@ -631,10 +631,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__38;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:35:7: ( 'for' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:35:9: 'for'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:35:7: ( 'do' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:35:9: 'do'
             {
-            match("for"); 
+            match("do"); 
 
 
             }
@@ -652,10 +652,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__39;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:36:7: ( 'switch' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:36:9: 'switch'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:36:7: ( 'for' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:36:9: 'for'
             {
-            match("switch"); 
+            match("for"); 
 
 
             }
@@ -673,10 +673,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__40;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:37:7: ( 'default' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:37:9: 'default'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:37:7: ( 'switch' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:37:9: 'switch'
             {
-            match("default"); 
+            match("switch"); 
 
 
             }
@@ -694,10 +694,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__41;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:38:7: ( 'case' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:38:9: 'case'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:38:7: ( 'default' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:38:9: 'default'
             {
-            match("case"); 
+            match("default"); 
 
 
             }
@@ -715,10 +715,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__42;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:39:7: ( 'super' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:39:9: 'super'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:39:7: ( 'case' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:39:9: 'case'
             {
-            match("super"); 
+            match("case"); 
 
 
             }
@@ -736,10 +736,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__43;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:40:7: ( 'this' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:40:9: 'this'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:40:7: ( 'super' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:40:9: 'super'
             {
-            match("this"); 
+            match("super"); 
 
 
             }
@@ -757,10 +757,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__44;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:41:7: ( 'break' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:41:9: 'break'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:41:7: ( 'this' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:41:9: 'this'
             {
-            match("break"); 
+            match("this"); 
 
 
             }
@@ -778,10 +778,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__45;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:42:7: ( 'continue' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:42:9: 'continue'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:42:7: ( 'break' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:42:9: 'break'
             {
-            match("continue"); 
+            match("break"); 
 
 
             }
@@ -799,10 +799,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__46;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:43:7: ( 'return' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:43:9: 'return'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:43:7: ( 'continue' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:43:9: 'continue'
             {
-            match("return"); 
+            match("continue"); 
 
 
             }
@@ -820,10 +820,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__47;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:44:7: ( '+=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:44:9: '+='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:44:7: ( 'return' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:44:9: 'return'
             {
-            match("+="); 
+            match("return"); 
 
 
             }
@@ -841,10 +841,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__48;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:45:7: ( '-=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:45:9: '-='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:45:7: ( '+=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:45:9: '+='
             {
-            match("-="); 
+            match("+="); 
 
 
             }
@@ -862,10 +862,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__49;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:46:7: ( '*=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:46:9: '*='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:46:7: ( '-=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:46:9: '-='
             {
-            match("*="); 
+            match("-="); 
 
 
             }
@@ -883,10 +883,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__50;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:47:7: ( '/=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:47:9: '/='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:47:7: ( '*=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:47:9: '*='
             {
-            match("/="); 
+            match("*="); 
 
 
             }
@@ -904,10 +904,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__51;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:48:7: ( '%=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:48:9: '%='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:48:7: ( '/=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:48:9: '/='
             {
-            match("%="); 
+            match("/="); 
 
 
             }
@@ -925,10 +925,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__52;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:49:7: ( '||' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:49:9: '||'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:49:7: ( '%=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:49:9: '%='
             {
-            match("||"); 
+            match("%="); 
 
 
             }
@@ -946,10 +946,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__53;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:50:7: ( '&&' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:50:9: '&&'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:50:7: ( '||' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:50:9: '||'
             {
-            match("&&"); 
+            match("||"); 
 
 
             }
@@ -967,10 +967,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__54;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:51:7: ( '==' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:51:9: '=='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:51:7: ( '&&' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:51:9: '&&'
             {
-            match("=="); 
+            match("&&"); 
 
 
             }
@@ -988,10 +988,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__55;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:52:7: ( '!=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:52:9: '!='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:52:7: ( '==' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:52:9: '=='
             {
-            match("!="); 
+            match("=="); 
 
 
             }
@@ -1009,10 +1009,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__56;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:53:7: ( 'instanceof' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:53:9: 'instanceof'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:53:7: ( '!=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:53:9: '!='
             {
-            match("instanceof"); 
+            match("!="); 
 
 
             }
@@ -1030,10 +1030,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__57;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:54:7: ( '>' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:54:9: '>'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:54:7: ( 'instanceof' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:54:9: 'instanceof'
             {
-            match('>'); 
+            match("instanceof"); 
+
 
             }
 
@@ -1050,11 +1051,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__58;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:55:7: ( '>=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:55:9: '>='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:55:7: ( '>' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:55:9: '>'
             {
-            match(">="); 
-
+            match('>'); 
 
             }
 
@@ -1071,10 +1071,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__59;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:56:7: ( '<' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:56:9: '<'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:56:7: ( '>=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:56:9: '>='
             {
-            match('<'); 
+            match(">="); 
+
 
             }
 
@@ -1091,11 +1092,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__60;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:57:7: ( '<=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:57:9: '<='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:57:7: ( '<' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:57:9: '<'
             {
-            match("<="); 
-
+            match('<'); 
 
             }
 
@@ -1112,10 +1112,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__61;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:58:7: ( '+' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:58:9: '+'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:58:7: ( '<=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:58:9: '<='
             {
-            match('+'); 
+            match("<="); 
+
 
             }
 
@@ -1132,10 +1133,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__62;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:59:7: ( '-' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:59:9: '-'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:59:7: ( '+' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:59:9: '+'
             {
-            match('-'); 
+            match('+'); 
 
             }
 
@@ -1152,10 +1153,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__63;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:60:7: ( '*' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:60:9: '*'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:60:7: ( '-' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:60:9: '-'
             {
-            match('*'); 
+            match('-'); 
 
             }
 
@@ -1172,10 +1173,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__64;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:61:7: ( '/' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:61:9: '/'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:61:7: ( '*' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:61:9: '*'
             {
-            match('/'); 
+            match('*'); 
 
             }
 
@@ -1192,10 +1193,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__65;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:62:7: ( '%' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:62:9: '%'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:62:7: ( '/' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:62:9: '/'
             {
-            match('%'); 
+            match('/'); 
 
             }
 
@@ -1212,10 +1213,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__66;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:63:7: ( '!' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:63:9: '!'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:63:7: ( '%' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:63:9: '%'
             {
-            match('!'); 
+            match('%'); 
 
             }
 
@@ -1232,11 +1233,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__67;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:64:7: ( '++' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:64:9: '++'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:64:7: ( '!' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:64:9: '!'
             {
-            match("++"); 
-
+            match('!'); 
 
             }
 
@@ -1253,10 +1253,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__68;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:65:7: ( '--' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:65:9: '--'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:65:7: ( '++' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:65:9: '++'
             {
-            match("--"); 
+            match("++"); 
 
 
             }
@@ -1274,10 +1274,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__69;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:66:7: ( '.' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:66:9: '.'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:66:7: ( '--' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:66:9: '--'
             {
-            match('.'); 
+            match("--"); 
+
 
             }
 
@@ -1294,11 +1295,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__70;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:67:7: ( 'new' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:67:9: 'new'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:67:7: ( '.' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:67:9: '.'
             {
-            match("new"); 
-
+            match('.'); 
 
             }
 
@@ -1315,10 +1315,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__71;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:68:7: ( '::*' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:68:9: '::*'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:68:7: ( 'new' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:68:9: 'new'
             {
-            match("::*"); 
+            match("new"); 
 
 
             }
@@ -1336,10 +1336,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__72;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:69:7: ( '::' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:69:9: '::'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:69:7: ( '::*' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:69:9: '::*'
             {
-            match("::"); 
+            match("::*"); 
 
 
             }
@@ -1357,10 +1357,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__73;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:70:7: ( '~' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:70:9: '~'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:70:7: ( '::' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:70:9: '::'
             {
-            match('~'); 
+            match("::"); 
+
 
             }
 
@@ -1377,11 +1378,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__74;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:71:7: ( '?:' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:71:9: '?:'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:71:7: ( '~' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:71:9: '~'
             {
-            match("?:"); 
-
+            match('~'); 
 
             }
 
@@ -1398,10 +1398,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__75;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:72:7: ( '|' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:72:9: '|'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:72:7: ( '?:' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:72:9: '?:'
             {
-            match('|'); 
+            match("?:"); 
+
 
             }
 
@@ -1418,11 +1419,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__76;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:73:7: ( '|=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:73:9: '|='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:73:7: ( '|' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:73:9: '|'
             {
-            match("|="); 
-
+            match('|'); 
 
             }
 
@@ -1439,10 +1439,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__77;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:74:7: ( '^' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:74:9: '^'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:74:7: ( '|=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:74:9: '|='
             {
-            match('^'); 
+            match("|="); 
+
 
             }
 
@@ -1459,11 +1460,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__78;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:75:7: ( '^=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:75:9: '^='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:75:7: ( '^' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:75:9: '^'
             {
-            match("^="); 
-
+            match('^'); 
 
             }
 
@@ -1480,10 +1480,11 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__79;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:76:7: ( '&' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:76:9: '&'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:76:7: ( '^=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:76:9: '^='
             {
-            match('&'); 
+            match("^="); 
+
 
             }
 
@@ -1500,11 +1501,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__80;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:77:7: ( '&=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:77:9: '&='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:77:7: ( '&' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:77:9: '&'
             {
-            match("&="); 
-
+            match('&'); 
 
             }
 
@@ -1521,10 +1521,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__81;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:78:7: ( '>>' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:78:9: '>>'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:78:7: ( '&=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:78:9: '&='
             {
-            match(">>"); 
+            match("&="); 
 
 
             }
@@ -1542,10 +1542,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__82;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:79:7: ( '>>=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:79:9: '>>='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:79:7: ( '>>' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:79:9: '>>'
             {
-            match(">>="); 
+            match(">>"); 
 
 
             }
@@ -1563,10 +1563,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__83;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:80:7: ( '<<' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:80:9: '<<'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:80:7: ( '>>=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:80:9: '>>='
             {
-            match("<<"); 
+            match(">>="); 
 
 
             }
@@ -1584,10 +1584,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__84;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:81:7: ( '<<=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:81:9: '<<='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:81:7: ( '<<' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:81:9: '<<'
             {
-            match("<<="); 
+            match("<<"); 
 
 
             }
@@ -1605,10 +1605,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__85;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:82:7: ( '>>>' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:82:9: '>>>'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:82:7: ( '<<=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:82:9: '<<='
             {
-            match(">>>"); 
+            match("<<="); 
 
 
             }
@@ -1626,10 +1626,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__86;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:83:7: ( '>>>=' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:83:9: '>>>='
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:83:7: ( '>>>' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:83:9: '>>>'
             {
-            match(">>>="); 
+            match(">>>"); 
 
 
             }
@@ -1647,10 +1647,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__87;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:84:7: ( 'package' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:84:9: 'package'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:84:7: ( '>>>=' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:84:9: '>>>='
             {
-            match("package"); 
+            match(">>>="); 
 
 
             }
@@ -1668,10 +1668,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__88;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:85:7: ( 'abstract' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:85:9: 'abstract'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:85:7: ( 'package' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:85:9: 'package'
             {
-            match("abstract"); 
+            match("package"); 
 
 
             }
@@ -1689,10 +1689,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__89;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:86:7: ( 'assert' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:86:9: 'assert'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:86:7: ( 'abstract' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:86:9: 'abstract'
             {
-            match("assert"); 
+            match("abstract"); 
 
 
             }
@@ -1710,10 +1710,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__90;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:87:7: ( 'catch' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:87:9: 'catch'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:87:7: ( 'assert' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:87:9: 'assert'
             {
-            match("catch"); 
+            match("assert"); 
 
 
             }
@@ -1731,10 +1731,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__91;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:88:7: ( 'const' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:88:9: 'const'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:88:7: ( 'catch' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:88:9: 'catch'
             {
-            match("const"); 
+            match("catch"); 
 
 
             }
@@ -1752,10 +1752,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__92;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:89:7: ( 'enum' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:89:9: 'enum'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:89:7: ( 'const' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:89:9: 'const'
             {
-            match("enum"); 
+            match("const"); 
 
 
             }
@@ -1773,10 +1773,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__93;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:90:7: ( 'final' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:90:9: 'final'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:90:7: ( 'enum' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:90:9: 'enum'
             {
-            match("final"); 
+            match("enum"); 
 
 
             }
@@ -1794,10 +1794,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__94;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:91:7: ( 'finally' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:91:9: 'finally'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:91:7: ( 'final' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:91:9: 'final'
             {
-            match("finally"); 
+            match("final"); 
 
 
             }
@@ -1815,10 +1815,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__95;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:92:7: ( 'goto' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:92:9: 'goto'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:92:7: ( 'finally' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:92:9: 'finally'
             {
-            match("goto"); 
+            match("finally"); 
 
 
             }
@@ -1836,10 +1836,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__96;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:93:7: ( 'import' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:93:9: 'import'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:93:7: ( 'goto' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:93:9: 'goto'
             {
-            match("import"); 
+            match("goto"); 
 
 
             }
@@ -1857,10 +1857,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__97;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:94:7: ( 'native' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:94:9: 'native'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:94:7: ( 'import' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:94:9: 'import'
             {
-            match("native"); 
+            match("import"); 
 
 
             }
@@ -1878,10 +1878,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__98;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:95:7: ( 'private' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:95:9: 'private'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:95:7: ( 'native' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:95:9: 'native'
             {
-            match("private"); 
+            match("native"); 
 
 
             }
@@ -1899,10 +1899,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__99;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:96:7: ( 'protected' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:96:9: 'protected'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:96:7: ( 'private' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:96:9: 'private'
             {
-            match("protected"); 
+            match("private"); 
 
 
             }
@@ -1920,10 +1920,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__100;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:97:8: ( 'public' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:97:10: 'public'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:97:8: ( 'protected' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:97:10: 'protected'
             {
-            match("public"); 
+            match("protected"); 
 
 
             }
@@ -1941,10 +1941,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = T__101;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:98:8: ( 'static' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:98:10: 'static'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:98:8: ( 'public' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:98:10: 'public'
             {
-            match("static"); 
+            match("public"); 
 
 
             }
@@ -2109,8 +2109,8 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = RULE_RANGE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6513:12: ( RULE_INT '..' RULE_INT )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6513:14: RULE_INT '..' RULE_INT
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6528:12: ( RULE_INT '..' RULE_INT )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6528:14: RULE_INT '..' RULE_INT
             {
             mRULE_INT(); 
             match(".."); 
@@ -2132,10 +2132,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = RULE_BOOLEAN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6515:14: ( ( 'true' | 'false' ) )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6515:16: ( 'true' | 'false' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6530:14: ( ( 'true' | 'false' ) )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6530:16: ( 'true' | 'false' )
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6515:16: ( 'true' | 'false' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6530:16: ( 'true' | 'false' )
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -2153,7 +2153,7 @@ public class InternalBasicIQLLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6515:17: 'true'
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6530:17: 'true'
                     {
                     match("true"); 
 
@@ -2161,7 +2161,7 @@ public class InternalBasicIQLLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6515:24: 'false'
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6530:24: 'false'
                     {
                     match("false"); 
 
@@ -2187,10 +2187,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6517:10: ( ( '0' .. '9' )+ )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6517:12: ( '0' .. '9' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6532:10: ( ( '0' .. '9' )+ )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6532:12: ( '0' .. '9' )+
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6517:12: ( '0' .. '9' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6532:12: ( '0' .. '9' )+
             int cnt2=0;
             loop2:
             do {
@@ -2204,7 +2204,7 @@ public class InternalBasicIQLLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6517:13: '0' .. '9'
+            	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6532:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -2236,10 +2236,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = RULE_DOUBLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6519:13: ( ( '0' .. '9' )* '.' ( '0' .. '9' )+ )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6519:15: ( '0' .. '9' )* '.' ( '0' .. '9' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6534:13: ( ( '0' .. '9' )* '.' ( '0' .. '9' )+ )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6534:15: ( '0' .. '9' )* '.' ( '0' .. '9' )+
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6519:15: ( '0' .. '9' )*
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6534:15: ( '0' .. '9' )*
             loop3:
             do {
                 int alt3=2;
@@ -2252,7 +2252,7 @@ public class InternalBasicIQLLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6519:16: '0' .. '9'
+            	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6534:16: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -2265,7 +2265,7 @@ public class InternalBasicIQLLexer extends Lexer {
             } while (true);
 
             match('.'); 
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6519:31: ( '0' .. '9' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6534:31: ( '0' .. '9' )+
             int cnt4=0;
             loop4:
             do {
@@ -2279,7 +2279,7 @@ public class InternalBasicIQLLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6519:32: '0' .. '9'
+            	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6534:32: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -2311,10 +2311,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6521:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6521:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6536:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6536:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6521:11: ( '^' )?
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6536:11: ( '^' )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -2323,7 +2323,7 @@ public class InternalBasicIQLLexer extends Lexer {
             }
             switch (alt5) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6521:11: '^'
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6536:11: '^'
                     {
                     match('^'); 
 
@@ -2341,7 +2341,7 @@ public class InternalBasicIQLLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6521:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6536:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop6:
             do {
                 int alt6=2;
@@ -2390,10 +2390,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt9=2;
             int LA9_0 = input.LA(1);
 
@@ -2411,10 +2411,10 @@ public class InternalBasicIQLLexer extends Lexer {
             }
             switch (alt9) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop7:
                     do {
                         int alt7=3;
@@ -2430,7 +2430,7 @@ public class InternalBasicIQLLexer extends Lexer {
 
                         switch (alt7) {
                     	case 1 :
-                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:21: '\\\\' .
+                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -2438,7 +2438,7 @@ public class InternalBasicIQLLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2463,10 +2463,10 @@ public class InternalBasicIQLLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop8:
                     do {
                         int alt8=3;
@@ -2482,7 +2482,7 @@ public class InternalBasicIQLLexer extends Lexer {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:54: '\\\\' .
+                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -2490,7 +2490,7 @@ public class InternalBasicIQLLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6523:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6538:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2533,12 +2533,12 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6525:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6525:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6540:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6540:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6525:24: ( options {greedy=false; } : . )*
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6540:24: ( options {greedy=false; } : . )*
             loop10:
             do {
                 int alt10=2;
@@ -2563,7 +2563,7 @@ public class InternalBasicIQLLexer extends Lexer {
 
                 switch (alt10) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6525:52: .
+            	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6540:52: .
             	    {
             	    matchAny(); 
 
@@ -2593,12 +2593,12 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6527:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6527:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6542:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6542:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6527:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6542:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop11:
             do {
                 int alt11=2;
@@ -2611,7 +2611,7 @@ public class InternalBasicIQLLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6527:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6542:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -2631,7 +2631,7 @@ public class InternalBasicIQLLexer extends Lexer {
                 }
             } while (true);
 
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6527:40: ( ( '\\r' )? '\\n' )?
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6542:40: ( ( '\\r' )? '\\n' )?
             int alt13=2;
             int LA13_0 = input.LA(1);
 
@@ -2640,9 +2640,9 @@ public class InternalBasicIQLLexer extends Lexer {
             }
             switch (alt13) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6527:41: ( '\\r' )? '\\n'
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6542:41: ( '\\r' )? '\\n'
                     {
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6527:41: ( '\\r' )?
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6542:41: ( '\\r' )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -2651,7 +2651,7 @@ public class InternalBasicIQLLexer extends Lexer {
                     }
                     switch (alt12) {
                         case 1 :
-                            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6527:41: '\\r'
+                            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6542:41: '\\r'
                             {
                             match('\r'); 
 
@@ -2683,10 +2683,10 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6529:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6529:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6544:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6544:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6529:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6544:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt14=0;
             loop14:
             do {
@@ -2740,8 +2740,8 @@ public class InternalBasicIQLLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6531:16: ( . )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6531:18: .
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6546:16: ( . )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.basic/src-gen/de/uniol/inf/is/odysseus/iql/basic/parser/antlr/internal/InternalBasicIQL.g:6546:18: .
             {
             matchAny(); 
 
@@ -3503,135 +3503,136 @@ public class InternalBasicIQLLexer extends Lexer {
 
     protected DFA15 dfa15 = new DFA15(this);
     static final String DFA15_eotS =
-        "\1\uffff\1\64\1\uffff\4\64\3\uffff\1\60\1\106\2\uffff\1\64\2\uffff"+
-        "\1\115\1\117\7\64\1\140\1\143\1\147\1\151\1\154\1\157\1\161\1\164"+
+        "\1\uffff\1\64\1\uffff\5\64\3\uffff\1\60\1\112\2\uffff\1\64\2\uffff"+
+        "\1\121\1\123\6\64\1\140\1\143\1\147\1\151\1\154\1\157\1\161\1\164"+
         "\1\167\1\170\1\uffff\1\60\1\175\4\64\1\u0085\1\uffff\2\60\2\uffff"+
-        "\3\64\2\uffff\11\64\1\u0099\11\uffff\1\64\2\uffff\1\u009c\3\uffff"+
-        "\1\64\1\u009e\14\64\25\uffff\1\u00b1\2\uffff\1\u00b3\7\uffff\7\64"+
-        "\2\uffff\1\u0085\2\uffff\3\64\1\u00c0\1\u00c1\12\64\1\uffff\1\64"+
-        "\2\uffff\1\64\1\uffff\1\64\1\u00d1\12\64\1\u00dc\3\64\1\uffff\1"+
-        "\u00e1\3\uffff\10\64\1\uffff\2\64\1\u00ec\2\uffff\1\64\1\u00ee\4"+
-        "\64\1\u00f3\1\u00f4\7\64\1\uffff\7\64\1\u0103\2\64\1\uffff\1\u0106"+
-        "\2\64\2\uffff\6\64\1\u010f\3\64\1\uffff\1\u0113\1\uffff\1\u0114"+
-        "\1\64\1\u0116\1\64\2\uffff\5\64\1\u011d\1\64\1\u0120\1\u0106\1\64"+
-        "\1\u0122\3\64\1\uffff\1\u0127\1\64\1\uffff\1\u0129\7\64\1\uffff"+
-        "\2\64\1\u0133\2\uffff\1\64\1\uffff\2\64\1\u0137\3\64\1\uffff\2\64"+
-        "\1\uffff\1\u013d\1\uffff\1\u013e\2\64\1\u0141\1\uffff\1\64\1\uffff"+
-        "\1\u0143\3\64\1\u0147\1\64\1\u0149\2\64\1\uffff\1\64\1\u014d\1\64"+
-        "\1\uffff\3\64\1\u0152\1\u0153\2\uffff\2\64\1\uffff\1\64\1\uffff"+
-        "\1\u0157\1\u0158\1\64\1\uffff\1\64\1\uffff\2\64\1\u015d\1\uffff"+
-        "\3\64\1\u0161\2\uffff\1\u0162\2\64\2\uffff\1\64\1\u0166\1\u0167"+
-        "\1\u0168\1\uffff\1\64\1\u016a\1\64\2\uffff\1\64\1\u016d\1\u016e"+
-        "\3\uffff\1\u016f\1\uffff\1\u0170\1\64\4\uffff\1\64\1\u0173\1\uffff";
+        "\3\64\2\uffff\15\64\1\u009e\11\uffff\1\64\2\uffff\1\u00a1\3\uffff"+
+        "\1\64\1\u00a3\10\64\25\uffff\1\u00b1\2\uffff\1\u00b3\7\uffff\7\64"+
+        "\2\uffff\1\u0085\2\uffff\3\64\1\u00c0\1\u00c1\17\64\1\uffff\1\64"+
+        "\2\uffff\1\64\1\uffff\1\64\1\u00d6\5\64\1\u00dc\3\64\1\uffff\1\u00e1"+
+        "\3\uffff\10\64\1\uffff\2\64\1\u00ec\2\uffff\6\64\1\u00f3\4\64\1"+
+        "\u00f8\1\u00f9\7\64\1\uffff\2\64\1\u0103\2\64\1\uffff\1\u0106\2"+
+        "\64\2\uffff\6\64\1\u010f\3\64\1\uffff\3\64\1\u0116\1\64\1\u0118"+
+        "\1\uffff\1\u0119\1\64\1\u011b\1\64\2\uffff\5\64\1\u0122\1\64\1\u0125"+
+        "\1\u0106\1\uffff\1\u0127\1\64\1\uffff\1\u0129\7\64\1\uffff\2\64"+
+        "\1\u0133\1\u0134\1\64\1\u0136\1\uffff\1\64\2\uffff\1\64\1\uffff"+
+        "\2\64\1\u013b\3\64\1\uffff\2\64\1\uffff\1\u0141\1\uffff\1\64\1\uffff"+
+        "\1\u0143\3\64\1\u0147\1\64\1\u0149\2\64\2\uffff\1\64\1\uffff\2\64"+
+        "\1\u014f\1\64\1\uffff\3\64\1\u0154\1\u0155\1\uffff\1\64\1\uffff"+
+        "\1\u0157\1\u0158\1\64\1\uffff\1\64\1\uffff\2\64\1\u015d\1\64\1\u015f"+
+        "\1\uffff\3\64\1\u0163\2\uffff\1\64\2\uffff\1\64\1\u0166\1\u0167"+
+        "\1\u0168\1\uffff\1\64\1\uffff\1\64\1\u016b\1\64\1\uffff\1\u016d"+
+        "\1\u016e\3\uffff\1\64\1\u0170\1\uffff\1\u0171\2\uffff\1\64\2\uffff"+
+        "\1\u0173\1\uffff";
     static final String DFA15_eofS =
         "\u0174\uffff";
     static final String DFA15_minS =
-        "\1\0\1\141\1\uffff\1\163\1\141\1\154\1\146\3\uffff\1\52\1\44\2"+
-        "\uffff\1\166\2\uffff\1\72\1\75\1\150\1\145\1\141\1\164\1\150\1\162"+
+        "\1\0\1\141\1\uffff\1\163\1\164\1\141\1\154\1\146\3\uffff\1\52\1"+
+        "\44\2\uffff\1\166\2\uffff\1\72\1\75\1\150\1\145\1\141\1\150\1\162"+
         "\1\145\1\53\1\55\1\52\2\75\1\46\2\75\1\74\1\60\1\uffff\1\72\1\75"+
         "\1\141\1\142\2\157\1\56\1\uffff\2\0\2\uffff\1\155\1\154\1\167\2"+
-        "\uffff\1\145\1\141\1\163\1\156\1\164\1\163\1\165\1\160\1\163\1\60"+
-        "\11\uffff\1\145\2\uffff\1\52\3\uffff\1\151\1\60\1\146\1\162\1\156"+
-        "\1\154\1\151\1\160\1\141\1\156\1\151\1\141\1\145\1\164\25\uffff"+
-        "\1\75\2\uffff\1\75\7\uffff\1\143\1\151\1\142\2\163\1\164\1\154\1"+
-        "\uffff\2\56\2\uffff\1\145\1\151\1\154\2\60\1\163\1\145\1\143\1\163"+
-        "\2\145\1\155\1\154\1\145\1\164\1\uffff\1\162\2\uffff\1\154\1\uffff"+
-        "\1\141\1\60\1\141\1\163\1\164\1\145\1\164\1\151\1\143\1\163\1\157"+
-        "\1\156\1\60\1\145\1\141\1\165\1\uffff\1\75\3\uffff\1\153\1\166\1"+
-        "\164\1\154\1\164\1\145\1\157\1\141\1\uffff\1\163\1\166\1\60\2\uffff"+
-        "\1\163\1\60\1\150\1\151\1\164\1\156\2\60\1\145\2\162\1\141\1\162"+
-        "\1\145\1\165\1\uffff\1\154\1\145\1\143\1\162\1\151\1\143\1\150\1"+
-        "\60\1\167\1\163\1\uffff\1\60\1\153\1\162\2\uffff\2\141\1\145\1\151"+
-        "\2\162\1\60\1\164\1\160\1\145\1\uffff\1\60\1\uffff\1\60\1\156\1"+
-        "\60\1\144\2\uffff\1\155\1\164\1\146\1\156\1\151\1\60\1\154\2\60"+
-        "\1\150\1\60\1\143\1\164\1\162\1\uffff\1\60\1\151\1\uffff\1\60\1"+
-        "\156\1\147\1\164\2\143\1\141\1\164\1\uffff\1\151\1\141\1\60\2\uffff"+
-        "\1\165\1\uffff\1\163\1\145\1\60\1\141\1\143\1\144\1\uffff\1\164"+
-        "\1\171\1\uffff\1\60\1\uffff\1\60\1\146\1\157\1\60\1\uffff\1\145"+
-        "\1\uffff\1\60\2\145\1\164\1\60\1\143\1\60\1\154\1\143\1\uffff\1"+
-        "\145\1\60\1\156\1\uffff\1\143\2\145\2\60\2\uffff\1\160\1\156\1\uffff"+
-        "\1\156\1\uffff\2\60\1\145\1\uffff\1\164\1\uffff\2\145\1\60\1\uffff"+
-        "\1\164\1\145\1\157\1\60\2\uffff\1\60\1\151\1\164\2\uffff\1\144\3"+
-        "\60\1\uffff\1\163\1\60\1\146\2\uffff\1\172\2\60\3\uffff\1\60\1\uffff"+
-        "\1\60\1\145\4\uffff\1\144\1\60\1\uffff";
+        "\uffff\1\145\1\141\1\151\1\160\1\156\1\141\1\163\1\156\1\164\1\163"+
+        "\1\165\1\160\1\163\1\60\11\uffff\1\145\2\uffff\1\52\3\uffff\1\151"+
+        "\1\60\1\146\1\162\1\156\1\154\1\151\1\141\1\145\1\164\25\uffff\1"+
+        "\75\2\uffff\1\75\7\uffff\1\143\1\151\1\142\2\163\1\164\1\154\1\uffff"+
+        "\2\56\2\uffff\1\145\1\151\1\154\2\60\1\164\1\151\1\164\1\145\1\143"+
+        "\1\163\1\145\1\143\1\163\2\145\1\155\1\154\1\145\1\164\1\uffff\1"+
+        "\162\2\uffff\1\154\1\uffff\1\141\1\60\1\141\2\163\1\157\1\156\1"+
+        "\60\1\145\1\141\1\165\1\uffff\1\75\3\uffff\1\153\1\166\1\164\1\154"+
+        "\1\164\1\145\1\157\1\141\1\uffff\1\163\1\166\1\60\2\uffff\1\151"+
+        "\2\143\1\162\1\150\1\163\1\60\1\150\1\151\1\164\1\156\2\60\1\145"+
+        "\2\162\1\141\1\162\1\145\1\165\1\uffff\1\154\1\145\1\60\1\167\1"+
+        "\163\1\uffff\1\60\1\153\1\162\2\uffff\2\141\1\145\1\151\2\162\1"+
+        "\60\1\164\1\160\1\145\1\uffff\1\143\1\164\1\150\1\60\1\162\1\60"+
+        "\1\uffff\1\60\1\156\1\60\1\144\2\uffff\1\155\1\164\1\146\1\156\1"+
+        "\151\1\60\1\154\2\60\1\uffff\1\60\1\151\1\uffff\1\60\1\156\1\147"+
+        "\1\164\2\143\1\141\1\164\1\uffff\1\151\1\141\2\60\1\146\1\60\1\uffff"+
+        "\1\157\2\uffff\1\165\1\uffff\1\163\1\145\1\60\1\141\1\143\1\144"+
+        "\1\uffff\1\164\1\171\1\uffff\1\60\1\uffff\1\145\1\uffff\1\60\2\145"+
+        "\1\164\1\60\1\143\1\60\1\154\1\143\2\uffff\1\160\1\uffff\1\156\1"+
+        "\145\1\60\1\156\1\uffff\1\143\2\145\2\60\1\uffff\1\156\1\uffff\2"+
+        "\60\1\145\1\uffff\1\164\1\uffff\2\145\1\60\1\151\1\60\1\uffff\1"+
+        "\164\1\145\1\157\1\60\2\uffff\1\164\2\uffff\1\144\3\60\1\uffff\1"+
+        "\172\1\uffff\1\163\1\60\1\146\1\uffff\2\60\3\uffff\1\145\1\60\1"+
+        "\uffff\1\60\2\uffff\1\144\2\uffff\1\60\1\uffff";
     static final String DFA15_maxS =
-        "\1\uffff\1\165\1\uffff\1\163\1\157\1\170\1\156\3\uffff\1\52\1\75"+
-        "\2\uffff\1\166\2\uffff\1\72\1\75\1\150\2\157\1\171\2\162\1\145\4"+
-        "\75\1\174\2\75\1\76\1\75\1\71\1\uffff\1\72\1\172\1\165\1\163\2\157"+
-        "\1\71\1\uffff\2\uffff\2\uffff\1\164\1\154\1\167\2\uffff\1\145\1"+
-        "\141\1\164\1\156\1\164\1\163\1\165\1\160\1\164\1\172\11\uffff\1"+
-        "\145\2\uffff\1\52\3\uffff\1\151\1\172\1\146\1\162\1\156\1\154\1"+
-        "\151\1\160\1\162\1\156\1\162\1\171\1\145\1\164\25\uffff\1\76\2\uffff"+
+        "\1\uffff\1\165\1\uffff\1\163\1\171\1\157\1\170\1\156\3\uffff\1"+
+        "\52\1\75\2\uffff\1\166\2\uffff\1\72\1\75\1\150\2\157\2\162\1\145"+
+        "\4\75\1\174\2\75\1\76\1\75\1\71\1\uffff\1\72\1\172\1\165\1\163\2"+
+        "\157\1\71\1\uffff\2\uffff\2\uffff\1\164\1\154\1\167\2\uffff\1\145"+
+        "\1\162\1\151\1\160\1\156\1\141\1\164\1\156\1\164\1\163\1\165\1\160"+
+        "\1\164\1\172\11\uffff\1\145\2\uffff\1\52\3\uffff\1\151\1\172\1\146"+
+        "\1\162\1\156\1\154\1\162\1\171\1\145\1\164\25\uffff\1\76\2\uffff"+
         "\1\75\7\uffff\1\143\1\157\1\142\2\163\1\164\1\154\1\uffff\2\71\2"+
-        "\uffff\1\145\1\151\1\154\2\172\1\163\1\145\1\143\1\164\2\145\1\155"+
-        "\1\157\1\145\1\164\1\uffff\1\162\2\uffff\1\154\1\uffff\1\141\1\172"+
-        "\1\141\1\163\1\164\1\145\1\164\1\151\1\143\1\163\1\157\1\156\1\172"+
-        "\1\145\1\141\1\165\1\uffff\1\75\3\uffff\1\153\1\166\1\164\1\154"+
-        "\1\164\1\145\1\157\1\141\1\uffff\1\163\1\166\1\172\2\uffff\1\163"+
-        "\1\172\1\150\1\151\1\164\1\156\2\172\1\145\2\162\1\141\1\162\1\145"+
-        "\1\165\1\uffff\1\154\1\145\1\143\1\162\1\151\1\143\1\150\1\172\1"+
-        "\167\1\163\1\uffff\1\172\1\153\1\162\2\uffff\2\141\1\145\1\151\2"+
-        "\162\1\172\1\164\1\160\1\145\1\uffff\1\172\1\uffff\1\172\1\156\1"+
-        "\172\1\144\2\uffff\1\155\1\164\1\146\1\156\1\151\1\172\1\154\2\172"+
-        "\1\150\1\172\1\143\1\164\1\162\1\uffff\1\172\1\151\1\uffff\1\172"+
-        "\1\156\1\147\1\164\2\143\1\141\1\164\1\uffff\1\151\1\141\1\172\2"+
-        "\uffff\1\165\1\uffff\1\163\1\145\1\172\1\141\1\143\1\144\1\uffff"+
-        "\1\164\1\171\1\uffff\1\172\1\uffff\1\172\1\146\1\157\1\172\1\uffff"+
-        "\1\145\1\uffff\1\172\2\145\1\164\1\172\1\143\1\172\1\154\1\143\1"+
-        "\uffff\1\145\1\172\1\156\1\uffff\1\143\2\145\2\172\2\uffff\1\160"+
-        "\1\156\1\uffff\1\156\1\uffff\2\172\1\145\1\uffff\1\164\1\uffff\2"+
-        "\145\1\172\1\uffff\1\164\1\145\1\157\1\172\2\uffff\1\172\1\151\1"+
-        "\164\2\uffff\1\144\3\172\1\uffff\1\163\1\172\1\146\2\uffff\3\172"+
-        "\3\uffff\1\172\1\uffff\1\172\1\145\4\uffff\1\144\1\172\1\uffff";
+        "\uffff\1\145\1\151\1\154\2\172\1\164\1\151\1\164\1\145\1\143\1\163"+
+        "\1\145\1\143\1\164\2\145\1\155\1\157\1\145\1\164\1\uffff\1\162\2"+
+        "\uffff\1\154\1\uffff\1\141\1\172\1\141\2\163\1\157\1\156\1\172\1"+
+        "\145\1\141\1\165\1\uffff\1\75\3\uffff\1\153\1\166\1\164\1\154\1"+
+        "\164\1\145\1\157\1\141\1\uffff\1\163\1\166\1\172\2\uffff\1\151\2"+
+        "\143\1\162\1\150\1\163\1\172\1\150\1\151\1\164\1\156\2\172\1\145"+
+        "\2\162\1\141\1\162\1\145\1\165\1\uffff\1\154\1\145\1\172\1\167\1"+
+        "\163\1\uffff\1\172\1\153\1\162\2\uffff\2\141\1\145\1\151\2\162\1"+
+        "\172\1\164\1\160\1\145\1\uffff\1\143\1\164\1\150\1\172\1\162\1\172"+
+        "\1\uffff\1\172\1\156\1\172\1\144\2\uffff\1\155\1\164\1\146\1\156"+
+        "\1\151\1\172\1\154\2\172\1\uffff\1\172\1\151\1\uffff\1\172\1\156"+
+        "\1\147\1\164\2\143\1\141\1\164\1\uffff\1\151\1\141\2\172\1\146\1"+
+        "\172\1\uffff\1\157\2\uffff\1\165\1\uffff\1\163\1\145\1\172\1\141"+
+        "\1\143\1\144\1\uffff\1\164\1\171\1\uffff\1\172\1\uffff\1\145\1\uffff"+
+        "\1\172\2\145\1\164\1\172\1\143\1\172\1\154\1\143\2\uffff\1\160\1"+
+        "\uffff\1\156\1\145\1\172\1\156\1\uffff\1\143\2\145\2\172\1\uffff"+
+        "\1\156\1\uffff\2\172\1\145\1\uffff\1\164\1\uffff\2\145\1\172\1\151"+
+        "\1\172\1\uffff\1\164\1\145\1\157\1\172\2\uffff\1\164\2\uffff\1\144"+
+        "\3\172\1\uffff\1\172\1\uffff\1\163\1\172\1\146\1\uffff\2\172\3\uffff"+
+        "\1\145\1\172\1\uffff\1\172\2\uffff\1\144\2\uffff\1\172\1\uffff";
     static final String DFA15_acceptS =
-        "\2\uffff\1\2\4\uffff\1\7\1\10\1\11\2\uffff\1\15\1\16\1\uffff\1"+
-        "\20\1\21\23\uffff\1\74\7\uffff\1\144\2\uffff\1\150\1\151\3\uffff"+
-        "\1\144\1\2\12\uffff\1\7\1\10\1\11\1\13\1\14\1\44\1\62\1\15\1\16"+
-        "\1\uffff\1\20\1\21\1\uffff\1\22\1\51\1\23\16\uffff\1\42\1\66\1\60"+
-        "\1\43\1\67\1\61\1\45\1\146\1\147\1\63\1\46\1\64\1\47\1\77\1\76\1"+
-        "\50\1\103\1\102\1\52\1\65\1\55\1\uffff\1\54\1\57\1\uffff\1\56\1"+
-        "\70\1\143\1\74\1\75\1\101\1\100\7\uffff\1\142\2\uffff\1\145\1\150"+
-        "\17\uffff\1\25\1\uffff\1\72\1\73\1\uffff\1\30\20\uffff\1\105\1\uffff"+
-        "\1\104\1\107\1\106\10\uffff\1\140\3\uffff\1\71\1\3\17\uffff\1\31"+
-        "\12\uffff\1\135\3\uffff\1\111\1\110\12\uffff\1\24\1\uffff\1\34\4"+
-        "\uffff\1\26\1\117\16\uffff\1\36\2\uffff\1\141\10\uffff\1\122\3\uffff"+
-        "\1\4\1\115\1\uffff\1\116\6\uffff\1\27\2\uffff\1\120\1\uffff\1\35"+
-        "\4\uffff\1\132\1\uffff\1\37\11\uffff\1\124\3\uffff\1\123\5\uffff"+
-        "\1\32\1\130\2\uffff\1\133\1\uffff\1\41\3\uffff\1\127\1\uffff\1\114"+
-        "\3\uffff\1\5\4\uffff\1\33\1\121\3\uffff\1\112\1\125\4\uffff\1\40"+
-        "\3\uffff\1\17\1\137\3\uffff\1\113\1\136\1\1\1\uffff\1\12\2\uffff"+
-        "\1\134\1\126\1\6\1\53\2\uffff\1\131";
+        "\2\uffff\1\2\5\uffff\1\10\1\11\1\12\2\uffff\1\16\1\17\1\uffff\1"+
+        "\21\1\22\22\uffff\1\75\7\uffff\1\144\2\uffff\1\150\1\151\3\uffff"+
+        "\1\144\1\2\16\uffff\1\10\1\11\1\12\1\14\1\15\1\45\1\63\1\16\1\17"+
+        "\1\uffff\1\21\1\22\1\uffff\1\23\1\52\1\24\12\uffff\1\43\1\67\1\61"+
+        "\1\44\1\70\1\62\1\46\1\146\1\147\1\64\1\47\1\65\1\50\1\100\1\77"+
+        "\1\51\1\104\1\103\1\53\1\66\1\56\1\uffff\1\55\1\60\1\uffff\1\57"+
+        "\1\71\1\143\1\75\1\76\1\102\1\101\7\uffff\1\142\2\uffff\1\145\1"+
+        "\150\24\uffff\1\26\1\uffff\1\73\1\74\1\uffff\1\31\13\uffff\1\106"+
+        "\1\uffff\1\105\1\110\1\107\10\uffff\1\140\3\uffff\1\72\1\3\24\uffff"+
+        "\1\32\5\uffff\1\135\3\uffff\1\112\1\111\12\uffff\1\25\6\uffff\1"+
+        "\35\4\uffff\1\27\1\120\11\uffff\1\37\2\uffff\1\141\10\uffff\1\123"+
+        "\6\uffff\1\36\1\uffff\1\5\1\116\1\uffff\1\117\6\uffff\1\30\2\uffff"+
+        "\1\121\1\uffff\1\132\1\uffff\1\40\11\uffff\1\125\1\4\1\uffff\1\33"+
+        "\4\uffff\1\124\5\uffff\1\133\1\uffff\1\42\3\uffff\1\130\1\uffff"+
+        "\1\115\5\uffff\1\6\4\uffff\1\34\1\122\1\uffff\1\113\1\126\4\uffff"+
+        "\1\137\1\uffff\1\41\3\uffff\1\20\2\uffff\1\114\1\136\1\1\2\uffff"+
+        "\1\13\1\uffff\1\134\1\127\1\uffff\1\7\1\54\1\uffff\1\131";
     static final String DFA15_specialS =
         "\1\1\54\uffff\1\0\1\2\u0145\uffff}>";
     static final String[] DFA15_transitionS = {
-            "\11\60\2\57\2\60\1\57\22\60\1\57\1\40\1\55\1\60\1\12\1\35\1"+
-            "\37\1\56\1\17\1\20\1\13\1\32\1\7\1\33\1\43\1\34\12\53\1\21\1"+
-            "\2\1\42\1\22\1\41\1\45\1\60\32\54\1\14\1\60\1\15\1\46\1\54\1"+
-            "\60\1\50\1\30\1\4\1\24\1\5\1\25\1\51\1\54\1\6\4\54\1\1\1\16"+
-            "\1\47\1\54\1\31\1\26\1\27\1\3\1\52\1\23\3\54\1\10\1\36\1\11"+
-            "\1\44\uff81\60",
+            "\11\60\2\57\2\60\1\57\22\60\1\57\1\40\1\55\1\60\1\13\1\35\1"+
+            "\37\1\56\1\20\1\21\1\14\1\32\1\10\1\33\1\43\1\34\12\53\1\22"+
+            "\1\2\1\42\1\23\1\41\1\45\1\60\32\54\1\15\1\60\1\16\1\46\1\54"+
+            "\1\60\1\50\1\30\1\5\1\25\1\6\1\26\1\51\1\54\1\7\4\54\1\1\1\17"+
+            "\1\47\1\54\1\31\1\4\1\27\1\3\1\52\1\24\3\54\1\11\1\36\1\12\1"+
+            "\44\uff81\60",
             "\1\61\3\uffff\1\63\17\uffff\1\62",
             "",
             "\1\66",
-            "\1\70\12\uffff\1\67\2\uffff\1\71",
-            "\1\73\1\uffff\1\74\11\uffff\1\72",
-            "\1\77\6\uffff\1\75\1\76",
+            "\1\67\1\71\1\uffff\1\70\1\uffff\1\72",
+            "\1\74\12\uffff\1\73\2\uffff\1\75",
+            "\1\77\1\uffff\1\100\11\uffff\1\76",
+            "\1\103\6\uffff\1\101\1\102",
             "",
             "",
             "",
-            "\1\103",
-            "\1\104\30\uffff\1\105",
+            "\1\107",
+            "\1\110\30\uffff\1\111",
             "",
             "",
-            "\1\111",
+            "\1\115",
             "",
             "",
-            "\1\114",
-            "\1\116",
             "\1\120",
-            "\1\122\11\uffff\1\121",
-            "\1\125\7\uffff\1\124\5\uffff\1\123",
-            "\1\130\1\127\1\uffff\1\126\1\uffff\1\131",
+            "\1\122",
+            "\1\124",
+            "\1\126\11\uffff\1\125",
+            "\1\131\7\uffff\1\130\5\uffff\1\127",
             "\1\132\11\uffff\1\133",
             "\1\134",
             "\1\135",
@@ -3664,40 +3665,40 @@ public class InternalBasicIQLLexer extends Lexer {
             "",
             "",
             "\1\u008e",
-            "\1\u008f",
-            "\1\u0090\1\u0091",
+            "\1\u008f\20\uffff\1\u0090",
+            "\1\u0091",
             "\1\u0092",
             "\1\u0093",
             "\1\u0094",
-            "\1\u0095",
-            "\1\u0096",
-            "\1\u0098\1\u0097",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            "\1\u0095\1\u0096",
+            "\1\u0097",
+            "\1\u0098",
+            "\1\u0099",
             "\1\u009a",
-            "",
-            "",
             "\1\u009b",
-            "",
-            "",
-            "",
-            "\1\u009d",
+            "\1\u009d\1\u009c",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\u009f",
+            "",
+            "",
             "\1\u00a0",
-            "\1\u00a1",
+            "",
+            "",
+            "",
             "\1\u00a2",
-            "\1\u00a3",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\1\u00a4",
-            "\1\u00a5\20\uffff\1\u00a6",
+            "\1\u00a5",
+            "\1\u00a6",
             "\1\u00a7",
             "\1\u00a8\10\uffff\1\u00a9",
             "\1\u00aa\23\uffff\1\u00ac\3\uffff\1\u00ab",
@@ -3755,26 +3756,26 @@ public class InternalBasicIQLLexer extends Lexer {
             "\1\u00c2",
             "\1\u00c3",
             "\1\u00c4",
-            "\1\u00c6\1\u00c5",
+            "\1\u00c5",
+            "\1\u00c6",
             "\1\u00c7",
             "\1\u00c8",
             "\1\u00c9",
-            "\1\u00ca\2\uffff\1\u00cb",
+            "\1\u00cb\1\u00ca",
             "\1\u00cc",
             "\1\u00cd",
-            "",
             "\1\u00ce",
-            "",
-            "",
-            "\1\u00cf",
-            "",
-            "\1\u00d0",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "\1\u00cf\2\uffff\1\u00d0",
+            "\1\u00d1",
             "\1\u00d2",
+            "",
             "\1\u00d3",
+            "",
+            "",
             "\1\u00d4",
+            "",
             "\1\u00d5",
-            "\1\u00d6",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\1\u00d7",
             "\1\u00d8",
             "\1\u00d9",
@@ -3804,26 +3805,26 @@ public class InternalBasicIQLLexer extends Lexer {
             "",
             "",
             "\1\u00ed",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "\1\u00ee",
             "\1\u00ef",
             "\1\u00f0",
             "\1\u00f1",
             "\1\u00f2",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "\1\u00f4",
             "\1\u00f5",
             "\1\u00f6",
             "\1\u00f7",
-            "\1\u00f8",
-            "\1\u00f9",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\1\u00fa",
             "\1\u00fb",
-            "",
             "\1\u00fc",
             "\1\u00fd",
             "\1\u00fe",
             "\1\u00ff",
             "\1\u0100",
+            "",
             "\1\u0101",
             "\1\u0102",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
@@ -3846,29 +3847,29 @@ public class InternalBasicIQLLexer extends Lexer {
             "\1\u0111",
             "\1\u0112",
             "",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "\1\u0113",
+            "\1\u0114",
             "\1\u0115",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\1\u0117",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "",
-            "",
-            "\1\u0118",
-            "\1\u0119",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\1\u011a",
-            "\1\u011b",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\1\u011c",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "",
+            "",
+            "\1\u011d",
             "\1\u011e",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\13\64\1\u011f\16"+
-            "\64",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "\1\u011f",
+            "\1\u0120",
             "\1\u0121",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\1\u0123",
-            "\1\u0124",
-            "\1\u0125",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\13\64\1\u0124\16"+
+            "\64",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\22\64\1\u0126\7"+
             "\64",
@@ -3886,25 +3887,25 @@ public class InternalBasicIQLLexer extends Lexer {
             "\1\u0131",
             "\1\u0132",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "",
-            "",
-            "\1\u0134",
-            "",
-            "\1\u0135",
-            "\1\u0136",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "\1\u0135",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "",
+            "\1\u0137",
+            "",
+            "",
             "\1\u0138",
+            "",
             "\1\u0139",
             "\1\u013a",
-            "",
-            "\1\u013b",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\1\u013c",
+            "\1\u013d",
+            "\1\u013e",
             "",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\1\u013f",
             "\1\u0140",
+            "",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "",
             "\1\u0142",
@@ -3919,19 +3920,19 @@ public class InternalBasicIQLLexer extends Lexer {
             "\1\u014a",
             "\1\u014b",
             "",
+            "",
             "\1\u014c",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "",
+            "\1\u014d",
             "\1\u014e",
-            "",
-            "\1\u014f",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\1\u0150",
+            "",
             "\1\u0151",
+            "\1\u0152",
+            "\1\u0153",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "",
-            "",
-            "\1\u0154",
-            "\1\u0155",
             "",
             "\1\u0156",
             "",
@@ -3944,15 +3945,15 @@ public class InternalBasicIQLLexer extends Lexer {
             "\1\u015b",
             "\1\u015c",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "",
             "\1\u015e",
-            "\1\u015f",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "",
             "\1\u0160",
+            "\1\u0161",
+            "\1\u0162",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "",
             "",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "\1\u0163",
             "\1\u0164",
             "",
             "",
@@ -3962,25 +3963,25 @@ public class InternalBasicIQLLexer extends Lexer {
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "",
             "\1\u0169",
+            "",
+            "\1\u016a",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "\1\u016b",
-            "",
-            "",
             "\1\u016c",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "",
-            "",
             "",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
+            "",
+            "",
+            "",
+            "\1\u016f",
+            "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             "",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
-            "\1\u0171",
-            "",
-            "",
             "",
             "",
             "\1\u0172",
+            "",
+            "",
             "\12\64\7\uffff\32\64\4\uffff\1\64\1\uffff\32\64",
             ""
     };
@@ -4041,43 +4042,43 @@ public class InternalBasicIQLLexer extends Lexer {
 
                         else if ( (LA15_0=='u') ) {s = 3;}
 
-                        else if ( (LA15_0=='c') ) {s = 4;}
+                        else if ( (LA15_0=='s') ) {s = 4;}
 
-                        else if ( (LA15_0=='e') ) {s = 5;}
+                        else if ( (LA15_0=='c') ) {s = 5;}
 
-                        else if ( (LA15_0=='i') ) {s = 6;}
+                        else if ( (LA15_0=='e') ) {s = 6;}
 
-                        else if ( (LA15_0==',') ) {s = 7;}
+                        else if ( (LA15_0=='i') ) {s = 7;}
 
-                        else if ( (LA15_0=='{') ) {s = 8;}
+                        else if ( (LA15_0==',') ) {s = 8;}
 
-                        else if ( (LA15_0=='}') ) {s = 9;}
+                        else if ( (LA15_0=='{') ) {s = 9;}
 
-                        else if ( (LA15_0=='$') ) {s = 10;}
+                        else if ( (LA15_0=='}') ) {s = 10;}
 
-                        else if ( (LA15_0=='*') ) {s = 11;}
+                        else if ( (LA15_0=='$') ) {s = 11;}
 
-                        else if ( (LA15_0=='[') ) {s = 12;}
+                        else if ( (LA15_0=='*') ) {s = 12;}
 
-                        else if ( (LA15_0==']') ) {s = 13;}
+                        else if ( (LA15_0=='[') ) {s = 13;}
 
-                        else if ( (LA15_0=='o') ) {s = 14;}
+                        else if ( (LA15_0==']') ) {s = 14;}
 
-                        else if ( (LA15_0=='(') ) {s = 15;}
+                        else if ( (LA15_0=='o') ) {s = 15;}
 
-                        else if ( (LA15_0==')') ) {s = 16;}
+                        else if ( (LA15_0=='(') ) {s = 16;}
 
-                        else if ( (LA15_0==':') ) {s = 17;}
+                        else if ( (LA15_0==')') ) {s = 17;}
 
-                        else if ( (LA15_0=='=') ) {s = 18;}
+                        else if ( (LA15_0==':') ) {s = 18;}
 
-                        else if ( (LA15_0=='w') ) {s = 19;}
+                        else if ( (LA15_0=='=') ) {s = 19;}
 
-                        else if ( (LA15_0=='d') ) {s = 20;}
+                        else if ( (LA15_0=='w') ) {s = 20;}
 
-                        else if ( (LA15_0=='f') ) {s = 21;}
+                        else if ( (LA15_0=='d') ) {s = 21;}
 
-                        else if ( (LA15_0=='s') ) {s = 22;}
+                        else if ( (LA15_0=='f') ) {s = 22;}
 
                         else if ( (LA15_0=='t') ) {s = 23;}
 

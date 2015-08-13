@@ -2,23 +2,25 @@ package de.uniol.inf.is.odysseus.iql.qdl.ui.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
+import org.eclipse.xtext.ui.util.ResourceUtil;
 
 import com.google.common.io.Files;
 
@@ -28,6 +30,8 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.ui.BasicIQLUiModule;
 import de.uniol.inf.is.odysseus.iql.basic.ui.parser.IIQLUiParser;
@@ -61,7 +65,7 @@ public class QDLUiParser extends QDLParser implements IIQLUiParser{
 			generateJavaFiles(resources);
 			deleteResources(resources);
 			
-			copyAndMoveUserEditiedFiles(project, outputPath);
+			copyAndMoveUserEditiedFiles(query, outputPath);
 			compileJavaFiles(outputPath, createClassPathEntries(resourceSet, resources));
 			
 			IQDLQuery qdlQuery = loadQuery(query,resources);
@@ -75,24 +79,34 @@ public class QDLUiParser extends QDLParser implements IIQLUiParser{
 		}
 	}
 	
-	protected void copyAndMoveUserEditiedFiles(IProject project, String path) {
-		IFolder folder = project.getFolder(BasicIQLUiModule.EDIT_FOLDER);
-		if (folder.exists()) {
-			try {
-				for (IResource res : folder.members()) {
-					File from = new File(res.getRawLocationURI());					
-					java.net.URI uri = folder.getRawLocationURI().relativize(res.getRawLocationURI());					
-					File to = new File(path+File.separator+uri.toString());
-					if (to.exists()) {
+	protected void copyAndMoveUserEditiedFiles(QDLQuery query, String path) {
+		copyAndMoveUserEditiedFiles(query, path, query.getSimpleName());
+		for (EObject obj : getUserDefinedTypes(query)) {
+			if (obj instanceof IQLClass) {
+				copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
+			} else if (obj instanceof IQLInterface) {
+				copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
+			}
+		}
+	}
+	
+	protected void copyAndMoveUserEditiedFiles(EObject obj, String path, String name) {
+		IFile file = ResourceUtil.getFile(obj.eResource());
+		if (file.exists()) {
+			IProject project = file.getProject();
+			if (project != null && project.exists()) {
+				URI uri = project.getLocationURI().relativize(file.getParent().getLocationURI());
+				File from = new File(project.getLocation().toString()+File.separator+BasicIQLUiModule.EDIT_FOLDER+File.separator+uri.toString()+File.separator+name+".java");
+				File to = new File(path+File.separator+uri.toString()+File.separator+name+".java");
+				if (from.exists() && to.exists()) {
+					try {
 						Files.copy(from, to);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
-			} catch (CoreException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
-		}		
+		}
 	}
 	
 	@Override

@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.types.MepFunctions;
-import de.uniol.inf.is.odysseus.iql.odl.typing.extension.ODLUtils;
+import de.uniol.inf.is.odysseus.iql.odl.types.ODLUtils;
 import de.uniol.inf.is.odysseus.iql.odl.typing.extension.PunctuationExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.typing.extension.TransferExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.typing.extension.TupleExtensions;
@@ -98,6 +98,20 @@ public class ODLDefaultTypes {
 		result.add(new PunctuationExtensions());
 		result.add(new TransferExtensions());
 		return result;
+	}
+
+	public static Collection<Class<?>> getImplicitStaticImports() {
+		Collection<Class<?>> types = new HashSet<>();
+		types.add(System.class);
+		types.add(Tuple.class);
+		types.add(SDFSchemaFactory.class);
+		types.add(SDFSchema.class);
+		types.add(MepFunctions.class);
+		types.add(Order.class);
+		types.add(MetadataRegistry.class);
+		types.add(SDFDatatype.class);
+		types.add(ODLUtils.class);
+		return types;
 	}
 
 

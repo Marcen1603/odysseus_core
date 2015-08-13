@@ -19,7 +19,7 @@ IQLTypeDefinition:
 
 
 IQLNamespace :
-	'use' importedNamespace = QualifiedNameWithWildcard ';'
+	'use' (static?='static')? importedNamespace = QualifiedNameWithWildcard ';'
 ;
 
 IQLClass returns types::JvmGenericType:

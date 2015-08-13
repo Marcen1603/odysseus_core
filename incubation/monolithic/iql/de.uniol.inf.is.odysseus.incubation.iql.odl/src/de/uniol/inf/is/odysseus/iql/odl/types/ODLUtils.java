@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.odl.typing.extension;
+package de.uniol.inf.is.odysseus.iql.odl.types;
 
 import java.util.Arrays;
 import java.util.List;

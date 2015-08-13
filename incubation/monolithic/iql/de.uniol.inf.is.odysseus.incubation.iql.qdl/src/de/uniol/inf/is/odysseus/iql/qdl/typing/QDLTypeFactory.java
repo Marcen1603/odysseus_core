@@ -92,6 +92,15 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		implicitImports.addAll(QDLDefaultTypes.getImplicitImports());	
 		return implicitImports;
 	}
+	
+	public Collection<String> createImplicitStaticImports() {
+		Collection<String> implicitStaticImports = super.createImplicitStaticImports();
+		for (Class<?> c : QDLDefaultTypes.getImplicitStaticImports()) {
+			implicitStaticImports.add(c.getCanonicalName());
+		}
+		return implicitStaticImports;
+	}
+
 
 	
 	public boolean isSourceAttribute(String sourceName, String attrName) {

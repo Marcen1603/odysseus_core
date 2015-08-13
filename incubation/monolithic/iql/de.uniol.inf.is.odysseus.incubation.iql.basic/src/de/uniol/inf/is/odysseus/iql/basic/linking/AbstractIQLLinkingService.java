@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmOperation;
@@ -114,6 +115,11 @@ public abstract class AbstractIQLLinkingService extends DefaultLinkingService{
 		Collection<IEObjectDescription> eObjectDescriptions = scopeProvider.getIQLJvmElementCallExpression(expr);
 		String[] splits = getCrossRefNodeAsString(node).split(IQLQualifiedNameConverter.DELIMITER);
 		String crossRefString = splits[splits.length-1];
+		String type = null;
+		if (splits.length>1) {
+			type = splits[0];
+		}
+
 		EObject result = null;
 		for (IEObjectDescription desc : eObjectDescriptions) {
 			if (qualifiedNameConverter.toString(desc.getQualifiedName()).equalsIgnoreCase(crossRefString)) {
@@ -125,7 +131,12 @@ public abstract class AbstractIQLLinkingService extends DefaultLinkingService{
 					result = obj;
 					break;
 				} else if (obj instanceof JvmField) {
-					result = obj;
+					JvmDeclaredType declaredType = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
+					if (type == null) {
+						result = obj;
+					} else if (type != null && declaredType.getSimpleName().equalsIgnoreCase(type)) {
+						result = obj;
+					}
 				} 
 			}
 		}
@@ -134,7 +145,12 @@ public abstract class AbstractIQLLinkingService extends DefaultLinkingService{
 			for (IEObjectDescription desc : eObjectDescriptions) {
 				EObject obj = desc.getEObjectOrProxy();
 				if (obj instanceof JvmOperation) {
-					methods.add((JvmOperation) obj);
+					JvmDeclaredType declaredType = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
+					if (type == null) {
+						methods.add((JvmOperation) obj);
+					} else if (type != null && declaredType.getSimpleName().equalsIgnoreCase(type)) {
+						methods.add((JvmOperation) obj);
+					}
 				}
 			}
 			

@@ -2,26 +2,30 @@ package de.uniol.inf.is.odysseus.iql.odl.ui.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
+import org.eclipse.xtext.ui.util.ResourceUtil;
 
 import com.google.common.io.Files;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.ui.BasicIQLUiModule;
 import de.uniol.inf.is.odysseus.iql.basic.ui.parser.IIQLUiParser;
@@ -53,39 +57,45 @@ public class ODLUiParser extends ODLParser implements IIQLUiParser{
 			generateJavaFiles(resources);
 			deleteResources(resources);
 			
-			copyAndMoveUserEditiedFiles(project, outputPath);
+			copyAndMoveUserEditiedFiles(operator, outputPath);
 			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator), resources));
 			loadOperator(operator, resources);
 		}
 	}
 	
-	protected void copyAndMoveUserEditiedFiles(IProject project, String path) {
-		IFolder folder = project.getFolder(BasicIQLUiModule.EDIT_FOLDER);
-		if (folder.exists()) {
-			copyAndMoveUserEditiedFiles(folder, folder, path);
-		}		
+	protected void copyAndMoveUserEditiedFiles(ODLOperator operator, String path) {
+		copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"AO");
+		copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"AORule");
+		copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"PO");
+		for (EObject obj : getUserDefinedTypes(operator)) {
+			if (obj instanceof IQLClass) {
+				copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
+			} else if (obj instanceof IQLInterface) {
+				copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
+			}
+		}
 	}
 	
-	protected void copyAndMoveUserEditiedFiles(IFolder rootFolder, IFolder folder, String path) {
-		try {
-			for (IResource res : folder.members()) {
-				if (res instanceof IFolder) {
-					copyAndMoveUserEditiedFiles(rootFolder, (IFolder)res, path);
-				} else {
-					File from = new File(res.getRawLocationURI());					
-					java.net.URI uri = rootFolder.getRawLocationURI().relativize(res.getRawLocationURI());					
-					File to = new File(path+File.separator+uri.toString());
-					if (from.exists() && to.exists()) {
+	protected void copyAndMoveUserEditiedFiles(EObject obj, String path, String name) {
+		IFile file = ResourceUtil.getFile(obj.eResource());
+		if (file.exists()) {
+			IProject project = file.getProject();
+			if (project != null && project.exists()) {
+				URI uri = project.getLocationURI().relativize(file.getParent().getLocationURI());
+				File from = new File(project.getLocation().toString()+File.separator+BasicIQLUiModule.EDIT_FOLDER+File.separator+uri.toString()+File.separator+name+".java");
+				File to = new File(path+File.separator+uri.toString()+File.separator+name+".java");
+				if (from.exists() && to.exists()) {
+					try {
 						Files.copy(from, to);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
 			}
-		} catch (CoreException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
+		}
 	}
+
+
 	
 	@Override
 	protected Collection<String> createClassPathEntries(ResourceSet set, Collection<Resource> resources) {

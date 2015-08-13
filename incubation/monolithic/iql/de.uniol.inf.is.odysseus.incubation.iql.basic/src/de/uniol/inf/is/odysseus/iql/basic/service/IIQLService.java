@@ -10,4 +10,5 @@ public interface IIQLService {
 	Collection<Class<?>> getVisibleTypes();
 	Collection<String> getImplicitImports();
 	Collection<IIQLTypeExtensions> getTypeExtensions();
+	Collection<Class<?>> getImplicitStaticImports();
 }

@@ -92,7 +92,7 @@ public class SelectODLTemplateWizardPage extends WizardPage {
 	}
 
 	private Text createScriptText(Composite rootComposite) {
-		Text text = new Text(rootComposite, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.BORDER );
+		Text text = new Text(rootComposite, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL );
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		text.setText(defaultTemplate.getText());

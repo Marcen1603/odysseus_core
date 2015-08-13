@@ -31,14 +31,16 @@ public interface IIQLTypeFactory {
 	
 	Collection<JvmType> getVisibleTypes(Collection<String> usedNamespaces, Resource context);
 	Collection<String> getImplicitImports();
+	Collection<String> getImplicitStaticImports();
 
+	
 	IQLSystemType addSystemType(JvmGenericType type, Class<?> javaType);
 	void removeSystemType(String name);
 	
 	IQLSystemType getSystemType(String name);
 	boolean isSystemType(String name);
 	
-	Collection<JvmTypeReference> getImportedTypes(EObject obj);
+	Collection<JvmTypeReference> getStaticImports(EObject obj);
 	
 	Collection<String> getJavaPackages();
 	

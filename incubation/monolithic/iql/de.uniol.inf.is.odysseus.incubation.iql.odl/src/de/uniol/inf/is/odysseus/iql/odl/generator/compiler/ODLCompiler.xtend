@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAORule
-import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory
@@ -78,7 +77,6 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		builder.append(compileAORuleIntern(o, context))
 		context.addImport(AbstractODLAORule.canonicalName)	
 		context.addImport(TransformationConfiguration.canonicalName)	
-		context.addImport(RuleException.canonicalName)	
 		for (String i : context.getImports) {
 			builder.insert(0, "import "+ i+ ";"+System.lineSeparator)
 		}
@@ -237,7 +235,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		public class «name» extends «superClass»<«aoName»> {
 			
 			@Override
-			public void execute(«aoName» operator, «transform» config) throws «RuleException.simpleName» {
+			public void execute(«aoName» operator, «transform» config) {
 				defaultExecute(operator, new «poName»(operator), config, true, true);
 			}
 		}

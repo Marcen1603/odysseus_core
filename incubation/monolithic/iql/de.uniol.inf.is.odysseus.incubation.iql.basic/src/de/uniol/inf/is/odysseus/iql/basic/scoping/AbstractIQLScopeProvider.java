@@ -191,7 +191,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		}
 		if (type instanceof IQLClass) {
 			IQLClass clazz = (IQLClass) type;
-			Collection<JvmTypeReference> importedTypes = typeFactory.getImportedTypes(expr);
+			Collection<JvmTypeReference> importedTypes = typeFactory.getStaticImports(expr);
 			elements.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
 			elements.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
 		

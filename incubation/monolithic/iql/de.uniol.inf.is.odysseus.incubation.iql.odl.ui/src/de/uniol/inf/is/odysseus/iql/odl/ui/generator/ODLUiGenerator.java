@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.iql.odl.ui.generator;
 
 import java.io.File;
+import java.net.URI;
 
 import javax.inject.Inject;
 
@@ -66,11 +67,15 @@ public class ODLUiGenerator extends ODLGenerator{
 	}
 	
 	private String getOutputFolder(Resource res) {
-		StringBuilder b = new StringBuilder();
-		for (int i = 2; i < res.getURI().segmentCount()-1; i++) {
-			b.append(res.getURI().segment(i));
+		IFile file = ResourceUtil.getFile(res);
+		if (file.exists()) {
+			IProject project = file.getProject();
+			if (project != null && project.exists()) {
+				URI uri = project.getLocationURI().relativize(file.getParent().getLocationURI());
+				return uri.toString()+File.separator;
+			}
 		}
-		return b.toString()+File.separator;
+		return "";
 	}
 
 

@@ -115,7 +115,7 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<ODLTypeFactory, O
 				container = container.eContainer();
 			}
 			
-			Collection<JvmTypeReference> importedTypes = typeFactory.getImportedTypes(expr);
+			Collection<JvmTypeReference> importedTypes = typeFactory.getStaticImports(expr);
 
 			JvmTypeReference thisType = typeUtils.createTypeRef(op);
 

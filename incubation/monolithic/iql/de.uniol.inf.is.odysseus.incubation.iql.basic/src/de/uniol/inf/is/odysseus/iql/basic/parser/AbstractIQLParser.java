@@ -137,7 +137,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 		return NodeModelUtils.getTokenText(node);
 	}
 	
-	private Set<EObject> getUserDefinedTypes(EObject element) {
+	protected Set<EObject> getUserDefinedTypes(EObject element) {
 		Set<EObject> userDefinedTypes = new HashSet<>();
 		for (JvmTypeReference typeRef : EcoreUtil2.getAllContentsOfType(element, JvmTypeReference.class)) {
 			if (typeUtils.getInnerType(typeRef, false) instanceof IQLClass) {

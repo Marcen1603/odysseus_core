@@ -250,7 +250,8 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLModelAccess().getElementsAssignment_2(), "rule__IQLModel__ElementsAssignment_2");
 					put(grammarAccess.getIQLTypeDefinitionAccess().getJavametadataAssignment_1(), "rule__IQLTypeDefinition__JavametadataAssignment_1");
 					put(grammarAccess.getIQLTypeDefinitionAccess().getInnerAssignment_2(), "rule__IQLTypeDefinition__InnerAssignment_2");
-					put(grammarAccess.getIQLNamespaceAccess().getImportedNamespaceAssignment_1(), "rule__IQLNamespace__ImportedNamespaceAssignment_1");
+					put(grammarAccess.getIQLNamespaceAccess().getStaticAssignment_1(), "rule__IQLNamespace__StaticAssignment_1");
+					put(grammarAccess.getIQLNamespaceAccess().getImportedNamespaceAssignment_2(), "rule__IQLNamespace__ImportedNamespaceAssignment_2");
 					put(grammarAccess.getIQLClassAccess().getSimpleNameAssignment_2(), "rule__IQLClass__SimpleNameAssignment_2");
 					put(grammarAccess.getIQLClassAccess().getExtendedClassAssignment_3_1(), "rule__IQLClass__ExtendedClassAssignment_3_1");
 					put(grammarAccess.getIQLClassAccess().getExtendedInterfacesAssignment_4_1(), "rule__IQLClass__ExtendedInterfacesAssignment_4_1");

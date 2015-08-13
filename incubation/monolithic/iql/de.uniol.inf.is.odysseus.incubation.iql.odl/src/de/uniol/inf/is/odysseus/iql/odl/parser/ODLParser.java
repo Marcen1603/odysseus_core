@@ -95,7 +95,7 @@ public class ODLParser extends AbstractIQLParser<ODLTypeFactory, ODLTypeUtils> {
 				String outputPath = uri.toFileString();
 				urls.add(new File(outputPath).toURI().toURL());
 			}			
-			URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
+			URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), ODLParser.class.getClassLoader());
 			Class<? extends ILogicalOperator> ao = (Class<? extends ILogicalOperator>) Class.forName(operator.getSimpleName()+ODLCompilerHelper.AO_OPERATOR, true, classLoader);
 			addLogicalOperator(ao);
 			Class<?> rule = Class.forName(operator.getSimpleName()+ODLCompilerHelper.AO_RULE_OPERATOR, true, classLoader);

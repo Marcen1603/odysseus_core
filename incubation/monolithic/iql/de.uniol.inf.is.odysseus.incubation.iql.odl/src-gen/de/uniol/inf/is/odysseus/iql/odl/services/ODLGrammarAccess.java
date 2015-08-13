@@ -501,7 +501,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLNamespace:
-	//	"use" importedNamespace=QualifiedNameWithWildcard ";";
+	//	"use" static?="static"? importedNamespace=QualifiedNameWithWildcard ";";
 	public BasicIQLGrammarAccess.IQLNamespaceElements getIQLNamespaceAccess() {
 		return gaBasicIQL.getIQLNamespaceAccess();
 	}

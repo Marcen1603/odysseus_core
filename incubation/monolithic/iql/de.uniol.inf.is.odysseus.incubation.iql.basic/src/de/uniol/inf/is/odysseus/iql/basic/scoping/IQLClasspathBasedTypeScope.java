@@ -34,11 +34,13 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 	@Override
 	public IEObjectDescription getSingleElement(QualifiedName name) {
 		IEObjectDescription result = jdtScope.getSingleElement(name);
-		if (result == null) {
-			result = super.getSingleElement(name);
-		}
+		
 		if (result == null) {
 			result = parentScope.getSingleElement(name);
+		}
+		
+		if (result == null) {
+			result = super.getSingleElement(name);
 		}
 		return result;
 	}
@@ -48,10 +50,10 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 	public IEObjectDescription getSingleElement(EObject object) {
 		IEObjectDescription result = jdtScope.getSingleElement(object);
 		if (result == null) {
-			result = super.getSingleElement(object);
+			result = parentScope.getSingleElement(object);
 		}
 		if (result == null) {
-			result = parentScope.getSingleElement(object);
+			result = super.getSingleElement(object);
 		}
 		return result;
 	}
@@ -64,12 +66,13 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 			result.put(obj.getQualifiedName(), obj);
 		}
 		
-		for (IEObjectDescription obj : super.getElements(name)) {
+		for (IEObjectDescription obj : parentScope.getElements(name)) {
 			if (!result.containsKey(obj.getQualifiedName())) {
 				result.put(obj.getQualifiedName(), obj);
 			}
 		}
-		for (IEObjectDescription obj : parentScope.getElements(name)) {
+		
+		for (IEObjectDescription obj : super.getElements(name)) {
 			if (!result.containsKey(obj.getQualifiedName())) {
 				result.put(obj.getQualifiedName(), obj);
 			}
@@ -85,12 +88,13 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 			result.put(obj.getQualifiedName(), obj);
 		}
 		
-		for (IEObjectDescription obj : super.getElements(object)) {
+		for (IEObjectDescription obj : parentScope.getElements(object)) {
 			if (!result.containsKey(obj.getQualifiedName())) {
 				result.put(obj.getQualifiedName(), obj);
 			}
 		}
-		for (IEObjectDescription obj : parentScope.getElements(object)) {
+		
+		for (IEObjectDescription obj : super.getElements(object)) {
 			if (!result.containsKey(obj.getQualifiedName())) {
 				result.put(obj.getQualifiedName(), obj);
 			}
@@ -104,15 +108,15 @@ public class IQLClasspathBasedTypeScope extends ClasspathBasedTypeScope {
 		
 		for (IEObjectDescription obj : jdtScope.getAllElements()) {
 			result.put(obj.getQualifiedName(), obj);
-		}
-		
-		for (IEObjectDescription obj : super.getAllElements()) {
-			if (!result.containsKey(obj.getQualifiedName())) {
-				result.put(obj.getQualifiedName(), obj);
-			}
 		}		
 		
 		for (IEObjectDescription obj : parentScope.getAllElements()) {
+			if (!result.containsKey(obj.getQualifiedName())) {
+				result.put(obj.getQualifiedName(), obj);
+			}
+		}
+		
+		for (IEObjectDescription obj : super.getAllElements()) {
 			if (!result.containsKey(obj.getQualifiedName())) {
 				result.put(obj.getQualifiedName(), obj);
 			}

@@ -813,9 +813,19 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getIQLNamespace_ImportedNamespace()
+  public EAttribute getIQLNamespace_Static()
   {
     return (EAttribute)iqlNamespaceEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getIQLNamespace_ImportedNamespace()
+  {
+    return (EAttribute)iqlNamespaceEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -2818,6 +2828,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     createEReference(iqlTypeDefinitionEClass, IQL_TYPE_DEFINITION__INNER);
 
     iqlNamespaceEClass = createEClass(IQL_NAMESPACE);
+    createEAttribute(iqlNamespaceEClass, IQL_NAMESPACE__STATIC);
     createEAttribute(iqlNamespaceEClass, IQL_NAMESPACE__IMPORTED_NAMESPACE);
 
     iqlJavaMetadataEClass = createEClass(IQL_JAVA_METADATA);
@@ -3199,6 +3210,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     initEReference(getIQLTypeDefinition_Inner(), theTypesPackage.getJvmGenericType(), null, "inner", null, 0, 1, IQLTypeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlNamespaceEClass, IQLNamespace.class, "IQLNamespace", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIQLNamespace_Static(), ecorePackage.getEBoolean(), "static", null, 0, 1, IQLNamespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getIQLNamespace_ImportedNamespace(), ecorePackage.getEString(), "importedNamespace", null, 0, 1, IQLNamespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlJavaMetadataEClass, IQLJavaMetadata.class, "IQLJavaMetadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

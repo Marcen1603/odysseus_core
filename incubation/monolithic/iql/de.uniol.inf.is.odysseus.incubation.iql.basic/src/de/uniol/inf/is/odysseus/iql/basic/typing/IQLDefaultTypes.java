@@ -49,4 +49,10 @@ public class IQLDefaultTypes {
 		return result;
 	}
 
+	public static Collection<Class<?>> getImplicitStaticImports() {
+		Collection<Class<?>> types = new HashSet<>();
+		types.add(System.class);
+		return types;
+	}
+
 }

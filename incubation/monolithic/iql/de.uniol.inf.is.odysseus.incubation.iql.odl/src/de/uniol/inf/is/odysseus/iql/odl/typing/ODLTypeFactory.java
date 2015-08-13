@@ -95,6 +95,16 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils, ODLServ
 	}
 	
 	@Override
+	public Collection<String> createImplicitStaticImports() {
+		Collection<String> implicitStaticImports = super.createImplicitStaticImports();
+		for (Class<?> c : ODLDefaultTypes.getImplicitStaticImports()) {
+			implicitStaticImports.add(c.getCanonicalName());
+		}
+		return implicitStaticImports;
+	}
+
+	
+	@Override
 	protected IQLModel createCleanSystemFile() {
 		return ODLFactory.eINSTANCE.createODLModel();
 	}

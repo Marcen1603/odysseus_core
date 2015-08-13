@@ -411,7 +411,7 @@
             finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
             icon="icons/text.gif"
             id="de.uniol.inf.is.odysseus.iql.qdl.ui.wizard.QDLWizard"
-            name="QDL File"
+            name="Query Definition Language"
             project="false">
       </wizard>
    </extension>

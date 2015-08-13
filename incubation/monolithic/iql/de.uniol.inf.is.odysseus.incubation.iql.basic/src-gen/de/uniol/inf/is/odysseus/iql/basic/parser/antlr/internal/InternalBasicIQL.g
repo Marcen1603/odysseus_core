@@ -247,25 +247,40 @@ ruleIQLNamespace returns [EObject current=null]
     }
 (
 (
-		{ 
-	        newCompositeNode(grammarAccess.getIQLNamespaceAccess().getImportedNamespaceQualifiedNameWithWildcardParserRuleCall_1_0()); 
+		lv_static_1_0=	'static' 
+    {
+        newLeafNode(lv_static_1_0, grammarAccess.getIQLNamespaceAccess().getStaticStaticKeyword_1_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getIQLNamespaceRule());
+	        }
+       		setWithLastConsumed($current, "static", true, "static");
 	    }
-		lv_importedNamespace_1_0=ruleQualifiedNameWithWildcard		{
+
+)
+)?(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getIQLNamespaceAccess().getImportedNamespaceQualifiedNameWithWildcardParserRuleCall_2_0()); 
+	    }
+		lv_importedNamespace_2_0=ruleQualifiedNameWithWildcard		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getIQLNamespaceRule());
 	        }
        		set(
        			$current, 
        			"importedNamespace",
-        		lv_importedNamespace_1_0, 
+        		lv_importedNamespace_2_0, 
         		"QualifiedNameWithWildcard");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)	otherlv_2=';' 
+)	otherlv_3=';' 
     {
-    	newLeafNode(otherlv_2, grammarAccess.getIQLNamespaceAccess().getSemicolonKeyword_2());
+    	newLeafNode(otherlv_3, grammarAccess.getIQLNamespaceAccess().getSemicolonKeyword_3());
     }
 )
 ;

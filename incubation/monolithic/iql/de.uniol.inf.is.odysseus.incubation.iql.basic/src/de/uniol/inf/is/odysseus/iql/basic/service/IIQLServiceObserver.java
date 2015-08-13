@@ -8,5 +8,6 @@ public interface IIQLServiceObserver {
 	public Collection<Bundle> getDependencies();
 	public Collection<Class<?>> getVisibleTypes();
 	public Collection<String> getImplicitImports();
+	public Collection<Class<?>> getImplicitStaticImports();
 
 }

@@ -152,13 +152,22 @@ public interface BasicIQLPackage extends EPackage
   int IQL_NAMESPACE = 2;
 
   /**
+   * The feature id for the '<em><b>Static</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_NAMESPACE__STATIC = 0;
+
+  /**
    * The feature id for the '<em><b>Imported Namespace</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IQL_NAMESPACE__IMPORTED_NAMESPACE = 0;
+  int IQL_NAMESPACE__IMPORTED_NAMESPACE = 1;
 
   /**
    * The number of structural features of the '<em>IQL Namespace</em>' class.
@@ -167,7 +176,7 @@ public interface BasicIQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IQL_NAMESPACE_FEATURE_COUNT = 1;
+  int IQL_NAMESPACE_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLJavaMetadataImpl <em>IQL Java Metadata</em>}' class.
@@ -3636,6 +3645,17 @@ public interface BasicIQLPackage extends EPackage
   EClass getIQLNamespace();
 
   /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace#isStatic <em>Static</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Static</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace#isStatic()
+   * @see #getIQLNamespace()
+   * @generated
+   */
+  EAttribute getIQLNamespace_Static();
+
+  /**
    * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace#getImportedNamespace <em>Imported Namespace</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5817,6 +5837,14 @@ public interface BasicIQLPackage extends EPackage
      * @generated
      */
     EClass IQL_NAMESPACE = eINSTANCE.getIQLNamespace();
+
+    /**
+     * The meta object literal for the '<em><b>Static</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute IQL_NAMESPACE__STATIC = eINSTANCE.getIQLNamespace_Static();
 
     /**
      * The meta object literal for the '<em><b>Imported Namespace</b></em>' attribute feature.

@@ -51,10 +51,6 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 		return ODLUiGenerator.class;
 	}
 	
-	public Class<? extends IIQLJdtTypeProviderFactory> bindIQLJdtTypeProviderFactory() {
-		return IQLJdtTypeProviderFactory.class;
-	}
-	
 	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
 		return ODLUiScopeProvider.class;
 	}
@@ -66,6 +62,10 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 	public Class<? extends IIQLUiParser> bindIQLUiParser() {
 		return ODLUiParser.class;
 	}
+	
+	public Class<? extends IIQLJdtTypeProviderFactory> bindIQLJdtTypeProviderFactory() {
+		return IQLJdtTypeProviderFactory.class;
+	}	
 	
 	@Override
 	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
@@ -81,7 +81,6 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.IContentProposalProvider> bindIContentProposalProvider() {
 		return ODLProposalProvider.class;
 	}
-
 	
 	public Class<? extends IEObjectHover> bindIEObjectHover() {
 		return IQLDispatchingEObjectTextHover.class;

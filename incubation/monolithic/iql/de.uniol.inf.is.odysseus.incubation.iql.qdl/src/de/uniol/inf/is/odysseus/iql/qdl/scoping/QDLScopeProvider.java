@@ -95,7 +95,7 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<QDLTypeFactory, Q
 				}
 			}
 			
-			Collection<JvmTypeReference> importedTypes = typeFactory.getImportedTypes(expr);
+			Collection<JvmTypeReference> importedTypes = typeFactory.getStaticImports(expr);
 			elements.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(query), importedTypes, true));
 			elements.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(query), importedTypes, true));
 		

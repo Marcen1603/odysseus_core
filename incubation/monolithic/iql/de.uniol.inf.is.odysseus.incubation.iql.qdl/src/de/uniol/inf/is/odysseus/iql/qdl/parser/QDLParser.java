@@ -56,7 +56,7 @@ public class QDLParser extends AbstractIQLParser<QDLTypeFactory, QDLTypeUtils> {
 				String outputPath = uri.toFileString();
 				urls.add(new File(outputPath).toURI().toURL());
 			}			
-			URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
+			URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), QDLParser.class.getClassLoader());
 			Class<? extends IQDLQuery> queryClass = (Class<? extends IQDLQuery>) Class.forName(query.getSimpleName(), true, classLoader);
 			return queryClass.newInstance();		
 		} catch (Exception e) {
