@@ -86,7 +86,9 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
             List<Object> selectedObjects = ((IStructuredSelection) selection).toList();
 
             for (Object obj : selectedObjects) {
-                foundFiles.add((IFile) obj);
+            	if (obj instanceof IFile) {
+                    foundFiles.add((IFile) obj);
+            	}
             }
         }
 

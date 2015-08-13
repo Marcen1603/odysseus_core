@@ -80,7 +80,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	protected void cleanUpDir(String dir) {
 		try {
 			FileUtils.deleteDirectory(new File(dir));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			//e.printStackTrace();
 		}
 	}
@@ -126,8 +126,11 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	private String getFilePath(IQLModel file) {
 		URI uri = file.eResource().getURI();
 		StringBuilder builder = new StringBuilder();
-		for (int i = 2; i< uri.segmentCount(); i++) {
-			builder.append(File.separator+uri.segments()[i]);
+		if (uri.segmentCount() > 1) {
+			builder.append(File.separator+uri.segments()[uri.segmentCount()-2]);
+			builder.append(File.separator+uri.segments()[uri.segmentCount()-1]);
+		} else {
+			builder.append(File.separator+uri.segments()[0]);
 		}
 		return builder.toString();
 	}

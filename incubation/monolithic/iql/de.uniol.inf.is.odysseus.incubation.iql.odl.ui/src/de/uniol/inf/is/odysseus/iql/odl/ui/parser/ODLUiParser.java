@@ -78,7 +78,7 @@ public class ODLUiParser extends ODLParser implements IIQLUiParser{
 	
 	protected void copyAndMoveUserEditiedFiles(EObject obj, String path, String name) {
 		IFile file = ResourceUtil.getFile(obj.eResource());
-		if (file.exists()) {
+		if (file != null && file.exists()) {
 			IProject project = file.getProject();
 			if (project != null && project.exists()) {
 				URI uri = project.getLocationURI().relativize(file.getParent().getLocationURI());
