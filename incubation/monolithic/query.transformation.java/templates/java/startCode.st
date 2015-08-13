@@ -1,4 +1,4 @@
-startCode(firstOP,operatorList,sinkOpList,createWhileFragment,sourceOP)::=<<
+startCode(firstOP,operatorList,sinkOpList,sourceOP)::=<<
 
 
 		ArrayList<IPhysicalOperator> physicalOperatorList = new ArrayList<IPhysicalOperator>();
@@ -19,10 +19,5 @@ startCode(firstOP,operatorList,sinkOpList,createWhileFragment,sourceOP)::=<<
 		}$
 
 		
-		//TODO keine schleife notwendig? siehe SelectorThread?
-		$if(createWhileFragment)$
-				while($sourceOP$PO.hasNext()){
-					$sourceOP$PO.transferNext();
-				}	
-		$endif$
+	
 >>

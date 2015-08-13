@@ -8,14 +8,16 @@ public class TransformationParameter {
 	private String odysseusPath;
 	private boolean generateOdysseusJar;
 	private int queryId;
+	private String executor;
 	
-	public TransformationParameter(String programLanguage, String tempDirectory, String destinationDirectory, int queryId, String odysseusPath, boolean generateOdysseusJar){
+	public TransformationParameter(String programLanguage, String tempDirectory, String destinationDirectory, int queryId, String odysseusPath, boolean generateOdysseusJar, String executor){
 		this.programLanguage = programLanguage;
 		this.tempDirectory = tempDirectory;
 		this.destinationDirectory = destinationDirectory;
 		this.queryId = queryId;
 		this.setOdysseusPath(odysseusPath);
 		this.setGenerateOdysseusJar(generateOdysseusJar);
+		this.executor = executor;
 	}
 	
 	
@@ -76,6 +78,16 @@ public class TransformationParameter {
 
 	public void setGenerateOdysseusJar(boolean generateOdysseusJar) {
 		this.generateOdysseusJar = generateOdysseusJar;
+	}
+
+
+	public String getExecutor() {
+		return executor;
+	}
+
+
+	public void setExecutor(String executor) {
+		this.executor = executor;
 	}
 
 	

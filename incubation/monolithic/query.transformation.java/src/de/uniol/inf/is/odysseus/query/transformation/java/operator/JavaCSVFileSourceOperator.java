@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
@@ -55,6 +56,7 @@ public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
 		csvFileSource.addImport(IMetaAttribute.class.getName());
 		csvFileSource.addImport(TimeInterval.class.getName());
 		csvFileSource.addImport(IOException.class.getName());
+		csvFileSource.addImport(IMetadataInitializer.class.getName());
 		
 		
 		return csvFileSource;

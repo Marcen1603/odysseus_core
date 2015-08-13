@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.transformation.executor.registry.ExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
@@ -94,8 +95,12 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
 		
 		//generate start code
-		CodeFragmentInfo startStreams = CreateDefaultCode.codeForStartStreams(sinkOPs, sourceOPs);
+		CodeFragmentInfo startStreams = CreateDefaultCode.codeForStartStreams(sinkOPs, sourceOPs, parameter.getExecutor());
 		
+		//generate executor code and files
+		ExecutorRegistry.getExecutor("Java", parameter.getExecutor()).createNeededFiles(parameter);
+		
+	
 		importList.addAll(startStreams.getImports());
 	
 		updateProgressBar(75, "Create Java files");
@@ -127,6 +132,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	
 	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter) throws InterruptedException{
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
+
 		
 	
 		IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getClass().getSimpleName());

@@ -24,10 +24,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
+import de.uniol.inf.is.odysseus.query.transformation.executor.registry.ExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
@@ -100,36 +100,30 @@ public class CreateDefaultCode {
 		
 	}
 	
-	public static CodeFragmentInfo codeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs){
+	public static CodeFragmentInfo codeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs, String executor){
 		CodeFragmentInfo startFragment = new CodeFragmentInfo();
 		
 		String firstOP = TransformationInformation.getInstance().getVariable(sourceOPs.get(0));
 		
 		List<String> sinkOpList = new ArrayList<String>();
-		boolean createWhileFragment = false;
-		
-		if(sourceOPs.get(0) instanceof StreamAO){
-			
-		}else{
-			createWhileFragment = true;
-			
-		}
-		
+	
+
 		//Open on sink ops
 		for(ILogicalOperator sinkOp : sinkOPs){
 					sinkOpList.add(TransformationInformation.getInstance().getVariable(sinkOp));
-	
 		}
-		
+
 		StringTemplate startCodeTemplate = new StringTemplate("java","startCode");
 		startCodeTemplate.getSt().add("firstOP", firstOP);
 		startCodeTemplate.getSt().add("operatorList",TransformationInformation.getInstance().getOperatorList());
 		startCodeTemplate.getSt().add("sinkOpList",sinkOpList);
-		startCodeTemplate.getSt().add("createWhileFragment",createWhileFragment);
 		startCodeTemplate.getSt().add("sourceOP",TransformationInformation.getInstance().getVariable(sourceOPs.get(0)));
 		
-	
 		startFragment.addCode(startCodeTemplate.getSt().render());
+		
+		
+		CodeFragmentInfo executorCode = ExecutorRegistry.getExecutor("Java", executor).getStartCode(sourceOPs);
+		startFragment.addCodeFragmentInfo(executorCode);
 		
 		startFragment.addImport(IPhysicalOperator.class.getName());
 		startFragment.addImport(ArrayList.class.getName());

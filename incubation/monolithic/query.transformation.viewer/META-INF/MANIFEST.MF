@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.rcp.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.query.transformation.compiler,
+ de.uniol.inf.is.odysseus.query.transformation.executor.registry,
  de.uniol.inf.is.odysseus.query.transformation.main,
  de.uniol.inf.is.odysseus.query.transformation.modell,
  de.uniol.inf.is.odysseus.query.transformation.target.platform.registry,

@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.transformation.executor.registry.ExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.rcp.window.QueryTransformationWindow;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.registry.TargetPlatformRegistry;
 
@@ -27,8 +28,10 @@ public class QueryTransformationParameterComposite extends Composite{
 	private Button btnChooseTargetDirectory;
 	private Button  btnChooseTempDirectory;
 	private Combo targetPlatform;
+	private Combo comboExecutor;
 	
 	private Composite inputFieldComposite;
+	private Composite inputField2GridComposite;
 	private Composite buttonComposite;
 	private QueryTransformationWindow window;
 
@@ -45,6 +48,9 @@ public class QueryTransformationParameterComposite extends Composite{
 		inputFieldComposite = new Composite(this, SWT.FILL);
 		inputFieldComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 	
+		
+		inputField2GridComposite = new Composite(this, SWT.FILL);
+		inputField2GridComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		createContent();
 		
@@ -67,6 +73,8 @@ public class QueryTransformationParameterComposite extends Composite{
 	private void createContent() {
 		
 	 inputFieldComposite.setLayout(new GridLayout(3, false));
+	 inputField2GridComposite.setLayout(new GridLayout(2, false));
+	 
 		
 	 Label lblTragetDirectory = new Label(inputFieldComposite, SWT.FILL);
 	 lblTragetDirectory.setText("Zielverzeichnis");
@@ -145,11 +153,11 @@ public class QueryTransformationParameterComposite extends Composite{
 	    });
 	    buttonOdysseusCore.setText("...");
 	
-	    Label label = new Label(inputFieldComposite, SWT.NONE);
+	    Label label = new Label(inputField2GridComposite, SWT.NONE);
 	    label.setBounds(5, 130, 45, 15);
 	    label.setText("Sprache:");
 	    
-	    targetPlatform = new Combo(inputFieldComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
+	    targetPlatform = new Combo(inputField2GridComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 	    targetPlatform.setBounds(99, 127, 68, 23);
 	    
 	    for(String platform : TargetPlatformRegistry.getAllTargetPlatform()){
@@ -157,6 +165,18 @@ public class QueryTransformationParameterComposite extends Composite{
 	    }
 	    targetPlatform.select(1);
 	  
+	    
+	    Label labelExecutor = new Label(inputField2GridComposite, SWT.NONE);
+	    labelExecutor.setBounds(5, 130, 45, 15);
+	    labelExecutor.setText("Executor:");
+	    
+	    comboExecutor = new Combo(inputField2GridComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
+	    comboExecutor.setBounds(99, 127, 68, 23);
+	    
+	    for(String executor : ExecutorRegistry.getAllExecutor("Java")){
+	    	comboExecutor.add(executor.toUpperCase());
+	    }
+	    comboExecutor.select(0);
 	
 	}
 	
@@ -171,7 +191,7 @@ public class QueryTransformationParameterComposite extends Composite{
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
-				TransformationParameter parameter = new TransformationParameter(targetPlatform.getText(),txtTempDirectory.getText(), txtTragetDirectory.getText(), window.getQueryId(), txtFOdysseusCode.getText(), true);	
+				TransformationParameter parameter = new TransformationParameter(targetPlatform.getText(),txtTempDirectory.getText(), txtTragetDirectory.getText(), window.getQueryId(), txtFOdysseusCode.getText(), true,comboExecutor.getText());	
 				window.startQueryTransformation(parameter);
 			}
 		});
