@@ -16,6 +16,13 @@ public class ParserClientUtil {
         File parent = file.getLocation().makeAbsolute().toFile().getParentFile();
         String projectName = project.getName();
         Context context = Context.empty();
+        context.put("FILE", file.getName());
+        context.put("FILEPATH", file.getFullPath().toString());
+        context.put("FILEPATH\\", file.getFullPath().toString() + File.separator);
+        context.put("FILEPATH/", file.getFullPath().toString() + File.separator);
+        context.put("FILEOSPATH", file.getFullPath().toOSString());
+        context.put("FILEOSPATH\\", file.getFullPath().toOSString() + File.separator);
+        context.put("FILEOSPATH/", file.getFullPath().toOSString() + File.separator);
         context.put("ROOT", parent.getAbsolutePath());
         context.put("ROOT\\", parent.getAbsolutePath() + File.separator);
         context.put("ROOT/", parent.getAbsolutePath() + File.separator);

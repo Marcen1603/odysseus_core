@@ -126,11 +126,8 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	private String getFilePath(IQLModel file) {
 		URI uri = file.eResource().getURI();
 		StringBuilder builder = new StringBuilder();
-		if (uri.segmentCount() > 1) {
-			builder.append(File.separator+uri.segments()[uri.segmentCount()-2]);
-			builder.append(File.separator+uri.segments()[uri.segmentCount()-1]);
-		} else {
-			builder.append(File.separator+uri.segments()[0]);
+		for (int i = 2; i< uri.segmentCount(); i++) {
+			builder.append(File.separator+uri.segments()[i]);
 		}
 		return builder.toString();
 	}
