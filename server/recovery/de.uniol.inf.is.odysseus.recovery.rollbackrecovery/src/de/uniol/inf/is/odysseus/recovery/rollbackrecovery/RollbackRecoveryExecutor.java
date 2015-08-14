@@ -51,7 +51,13 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	 */
 	private static IRecoveryComponent cIncomingElementsComponent;
 
-	// TODO RollbackRecoveryExecutor misses Operator Recovery
+	/**
+	 * The not initialized recovery component for the operator states (to be
+	 * bound by OSGi).
+	 */
+	private static IRecoveryComponent cOperatorStateComponent;
+
+	// TODO RollbackRecoveryExecutor misses Queue Recovery
 
 	/**
 	 * Binds either a recovery component for the protection point handling, for
@@ -67,8 +73,11 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 			cProtectionPointsComponent = component;
 		} else if (component.getName().equals("Incoming Elements")) {
 			cIncomingElementsComponent = component;
+		} else if (component.getName().equals("Operator State")) {
+			cOperatorStateComponent = component;
 		}
-		// TODO RollbackRecoveryExecutor misses Operator Recovery
+
+		// TODO RollbackRecoveryExecutor misses Queue Recovery
 	}
 
 	/**
@@ -82,8 +91,11 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 			cProtectionPointsComponent = null;
 		} else if (component.equals(cIncomingElementsComponent)) {
 			cIncomingElementsComponent = null;
+		} else if (component.getName().equals("Operator State")) {
+			cOperatorStateComponent = null;
 		}
-		// TODO RollbackRecoveryExecutor misses Operator Recovery
+
+		// TODO RollbackRecoveryExecutor misses Queue Recovery
 	}
 
 	/**
@@ -96,6 +108,11 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	 */
 	private IRecoveryComponent mSourceRecoveryComponent;
 
+	/**
+	 * The initialized recovery component for the operator states.
+	 */
+	private IRecoveryComponent mOperatorStateComponent;
+
 	@Override
 	public IRecoveryExecutor newInstance(Properties config) {
 		RollbackRecoveryExecutor executor = new RollbackRecoveryExecutor();
@@ -103,6 +120,8 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 		executor.mProtectionPointsComponent = cProtectionPointsComponent
 				.newInstance(config);
 		executor.mSourceRecoveryComponent = cIncomingElementsComponent
+				.newInstance(config);
+		executor.mOperatorStateComponent = cOperatorStateComponent
 				.newInstance(config);
 		return executor;
 	}
@@ -122,9 +141,18 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 			cLog.error("RollBackRecovery executor misses Incoming Elements recovery component!");
 			return modifiedQueries;
 		}
-		return this.mSourceRecoveryComponent.recover(qbConfig, caller,
-				modifiedQueries);
-		// TODO RollbackRecoveryExecutor misses Operator Recovery
+		modifiedQueries = this.mSourceRecoveryComponent.recover(qbConfig,
+				caller, modifiedQueries);
+
+		if (this.mOperatorStateComponent == null) {
+			cLog.error("RollBackRecovery executor misses Operator State recovery component!");
+			return modifiedQueries;
+		}
+		modifiedQueries = this.mOperatorStateComponent.recover(qbConfig,
+				caller, modifiedQueries);
+
+		// TODO RollbackRecoveryExecutor misses Queue Recovery
+		return modifiedQueries;
 	}
 
 	/**
@@ -146,9 +174,18 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 			cLog.error("RollBackRecovery executor misses Incoming Elements recovery component!");
 			return modifiedQueries;
 		}
-		return this.mSourceRecoveryComponent.activateBackup(qbConfig, caller,
-				modifiedQueries);
-		// TODO RollbackRecoveryExecutor misses Operator Recovery
+		modifiedQueries = this.mSourceRecoveryComponent.activateBackup(
+				qbConfig, caller, modifiedQueries);
+
+		if (this.mOperatorStateComponent == null) {
+			cLog.error("RollBackRecovery executor misses Operator State recovery component!");
+			return modifiedQueries;
+		}
+		modifiedQueries = this.mOperatorStateComponent.activateBackup(qbConfig,
+				caller, modifiedQueries);
+
+		// TODO RollbackRecoveryExecutor misses Queue Recovery
+		return modifiedQueries;
 	}
 
 }

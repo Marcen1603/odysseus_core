@@ -275,17 +275,33 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 
 	@Override
 	public IOperatorState getState() {
-		return new SourceRecoveryState(this.mOffset);
+		synchronized (this.mOffset) {
+			return new SourceRecoveryState(this.mOffset);
+		}
 	}
 
 	@Override
 	public void setState(Serializable state) {
-		this.mOffset = ((SourceRecoveryState) state).getOffset();
+		synchronized (this.mOffset) {
+			this.mOffset = ((SourceRecoveryState) state).getOffset();
+		}
 	}
 
 	@Override
 	public void onProtectionPointReached() throws Exception {
-		this.mNeedToAdjustOffset = true;
+		// FIXME An error occurs, which may start here:
+		/*
+		 * java.nio.BufferUnderflowException
+		 * at java.nio.Buffer.nextGetIndex(Unknown Source)
+		 * at java.nio.HeapByteBuffer.getInt(Unknown Source)
+		 * at de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferUtil.createStreamObject(ByteBufferUtil.java:34)
+		 * at de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler.create(ByteBufferHandler.java:67)
+		 * at de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBufferHandler.process(SizeByteBufferHandler.java:165)
+		 * at de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator.AbstractSourceRecoveryPO$1.onNewMessage(AbstractSourceRecoveryPO.java:148)
+		 * at de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.KafkaConsumerAccess$1.run(KafkaConsumerAccess.java:219)
+		 * 48931 ERROR SizeByteBufferHandler  -  - de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBufferHandler.process(SizeByteBufferHandler.java:176) 
+		 */
+//		this.mNeedToAdjustOffset = true;
 	}
 
 }

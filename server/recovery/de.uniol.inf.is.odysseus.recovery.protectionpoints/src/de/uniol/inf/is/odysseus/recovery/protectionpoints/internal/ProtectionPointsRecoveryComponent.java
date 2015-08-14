@@ -112,6 +112,7 @@ public class ProtectionPointsRecoveryComponent implements IRecoveryComponent,
 			break;
 		default:
 			// Nothing to do.
+			// FIXME stop, if query is stopped or paused.
 			break;
 		}
 	}

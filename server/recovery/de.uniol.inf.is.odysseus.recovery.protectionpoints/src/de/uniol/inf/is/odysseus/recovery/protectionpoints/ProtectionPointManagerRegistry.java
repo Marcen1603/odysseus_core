@@ -165,7 +165,7 @@ public class ProtectionPointManagerRegistry {
 		String managerName = config.getProperty(NAME_KEY, NAME_VALUE_DEFAULT);
 		ProtectionPointUnit unit;
 		if (config.containsKey(UNIT_KEY)) {
-			unit = ProtectionPointUnit.valueOf(config.getProperty(NAME_KEY).toUpperCase());
+			unit = ProtectionPointUnit.valueOf(config.getProperty(UNIT_KEY).toUpperCase());
 		} else {
 			unit = UNIT_VALUE_DEFAULT;
 		}
