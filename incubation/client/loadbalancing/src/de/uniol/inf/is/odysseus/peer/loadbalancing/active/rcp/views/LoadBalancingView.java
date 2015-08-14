@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.views;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -64,9 +66,10 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		
 		if(controller==null) {
 			createLabel(parent,CONTROL_NOT_BOUND);
+			return;
 		}
 		else {
-			createChooserComposite(parent);
+			createMainView(parent);
 			controller.addControllerListener(this);
 		}
 
@@ -83,64 +86,38 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		
 	}
 	
-	private void createChooserComposite(Composite parent) {
+	private void createMainView(Composite parent) {
 
 		ILoadBalancingController controller = Activator.getLoadBalancingController();
 		ILoadBalancingLock lock = Activator.getLock();
 		
 		Composite rootComposite = new Composite(parent, SWT.NONE);
 		rootComposite.setLayout(new GridLayout(2, true));
+		rootComposite.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 		
-		createLabel(rootComposite,STATUS_DESCRIPTION_LABEL);
-		statusLabel = createLabel(rootComposite,STATUS_DESCRIPTION_LABEL);
-		if(controller!=null) {
-			if(controller.isLoadBalancingRunning()) {
-				statusLabel.setText("Active");
-			}
-			else {
-				statusLabel.setText("Inactive");
-			}
-		}
+		createLoadBalancingStatusAndLockStatusView(controller, lock,
+				rootComposite);
 		
-		createLabel(rootComposite,STATUS_LOCK);
-		lockLabel = createLabel(rootComposite,"unbound");
+		createStrategyAndAllocatorChooser(rootComposite);
 		
-		if(lock!=null) {
-			if(lock.isLocked()) {
-				lockLabel.setText("locked");
-			}
-			else {
-				lockLabel.setText("unlocked");
-			}
-		}
+		createExcludedQueriesListView(rootComposite);
 		
-		
-		createLabel(rootComposite,STRATEGY_LABEL);
-		strategyCombo = new Combo(rootComposite,SWT.READ_ONLY);
-		strategyCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				selectedStrategy = ((Combo)e.getSource()).getText();
-			}
-		});
-		
-		createLabel(rootComposite,ALLOCATOR_LABEL);
-		allocatorCombo = new Combo(rootComposite, SWT.READ_ONLY);
-		allocatorCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				selectedAllocator = ((Combo)e.getSource()).getText();
-			}
-		});
-		
-		
+		createLeftButtonComposite(rootComposite);
+
+		createRightButtonComposite(lock, rootComposite);
+				
+		populateStrategyList(controller);
+		populateAllocatorList(controller);
+	}
+
+	private void createExcludedQueriesListView(Composite rootComposite) {
 		createLabel(rootComposite,EXCLUDED_LABEL);
+		excludedQueries = createLabel(rootComposite,"");
+		excludedQueries.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 		
-		
-		excludedQueries = createLabel(rootComposite,"                          ");
-		
-		
-		
+	}
+
+	private void createLeftButtonComposite(Composite rootComposite) {
 		Composite buttonComposite = new Composite(rootComposite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout(3, true));
 
@@ -189,7 +166,10 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 				}
 			}
 		});
+	}
 
+	private void createRightButtonComposite(ILoadBalancingLock lock,
+			Composite rootComposite) {
 		Composite rightButtonComposite = new Composite(rootComposite, SWT.NONE);
 		rightButtonComposite.setLayout(new GridLayout(3, true));
 
@@ -218,25 +198,76 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		forceButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ILoadBalancingController controller = Activator.getLoadBalancingController();
+				new Thread()
+				{
+				    public void run() {
+				    	ILoadBalancingController controller = Activator.getLoadBalancingController();
 
-				if (controller != null){
-					controller.forceLoadBalancing();;
-				}
+						if (controller != null){
+							controller.forceLoadBalancing();;
+						}
+				    }
+				}.start();
+
+			}
+		});
+	}
+
+	private void createStrategyAndAllocatorChooser(Composite rootComposite) {
+		createLabel(rootComposite,STRATEGY_LABEL);
+		strategyCombo = new Combo(rootComposite,SWT.READ_ONLY);
+		strategyCombo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+		
+		strategyCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				selectedStrategy = ((Combo)e.getSource()).getText();
 			}
 		});
 		
+		createLabel(rootComposite,ALLOCATOR_LABEL);
+		allocatorCombo = new Combo(rootComposite, SWT.READ_ONLY);
+		allocatorCombo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 		
+		allocatorCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				selectedAllocator = ((Combo)e.getSource()).getText();
+			}
+		});
+	}
+
+	private void createLoadBalancingStatusAndLockStatusView(
+			ILoadBalancingController controller, ILoadBalancingLock lock,
+			Composite rootComposite) {
+		createLabel(rootComposite,STATUS_DESCRIPTION_LABEL);
 		
+		statusLabel = createLabel(rootComposite,STATUS_DESCRIPTION_LABEL);
+		if(controller!=null) {
+			if(controller.isLoadBalancingRunning()) {
+				statusLabel.setText("Active");
+			}
+			else {
+				statusLabel.setText("Inactive");
+			}
+		}
 		
-		populateStrategyList(controller);
-		populateAllocatorList(controller);
+		createLabel(rootComposite,STATUS_LOCK);
+		lockLabel = createLabel(rootComposite,"unbound");
+		
+		if(lock!=null) {
+			if(lock.isLocked()) {
+				lockLabel.setText("locked");
+			}
+			else {
+				lockLabel.setText("unlocked");
+			}
+		}
 	}
 	
 	
 	private static Label createLabel(Composite generalComposite, String string) {
-		Label label = new Label(generalComposite, SWT.WRAP | SWT.BORDER
-				| SWT.LEFT);
+		Label label = new Label(generalComposite, SWT.WRAP | SWT.LEFT);
 		label.setText(string);
 		return label;
 	}
@@ -277,6 +308,8 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		allocatorCombo.setItems(stringArray);
 	}
 
+	
+	
 	@Override
 	public synchronized void notifyLoadBalancingStatusChanged(boolean isRunning) {
 		
@@ -330,9 +363,10 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		
 	}
 	
-	private String integerListToString(List<Integer> integers) {
+	private synchronized String integerListToString(List<Integer> integers) {
+		List<Integer> integersCopy = new ArrayList<Integer>(integers);
 		StringBuilder sb = new StringBuilder();
-		Iterator<Integer> iter = integers.iterator();
+		Iterator<Integer> iter = integersCopy.iterator();
 		while(iter.hasNext()) {
 			sb.append(iter.next().toString());
 			if(iter.hasNext())
