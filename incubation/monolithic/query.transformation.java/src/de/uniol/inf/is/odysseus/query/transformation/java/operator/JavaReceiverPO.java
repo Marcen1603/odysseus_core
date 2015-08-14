@@ -17,9 +17,9 @@ import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
-public class JavaReceiverOperator extends AbstractTransformationOperator{
+public class JavaReceiverPO extends AbstractTransformationOperator{
 	
-	public JavaReceiverOperator(){
+	public JavaReceiverPO(){
 		super(ReceiverPO.class, "StreamAO","Java");
 	}
 

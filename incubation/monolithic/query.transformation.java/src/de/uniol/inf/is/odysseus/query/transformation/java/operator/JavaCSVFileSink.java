@@ -12,9 +12,9 @@ import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
-public class JavaCSVFileSinkOperator extends AbstractTransformationOperator{
+public class JavaCSVFileSink extends AbstractTransformationOperator{
 
-	public JavaCSVFileSinkOperator(){
+	public JavaCSVFileSink(){
 		super(SenderPO.class, "CSVFILESINK","Java");
 	}
 	

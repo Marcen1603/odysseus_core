@@ -14,9 +14,9 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransforma
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
 
-public class JavaWindowOperator extends AbstractTransformationOperator {
+public class JavaSlidingAdvanceTimeWindowTIPO extends AbstractTransformationOperator {
 
-	public JavaWindowOperator(){
+	public JavaSlidingAdvanceTimeWindowTIPO(){
 		super(SlidingAdvanceTimeWindowTIPO.class, "TimeWindowAO","Java");
 	}
 

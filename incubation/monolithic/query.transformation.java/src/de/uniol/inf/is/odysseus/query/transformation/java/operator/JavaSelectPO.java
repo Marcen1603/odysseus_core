@@ -15,9 +15,9 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 
-public class JavaSelectOperator extends AbstractTransformationOperator{
+public class JavaSelectPO extends AbstractTransformationOperator{
 	
-	public JavaSelectOperator(){
+	public JavaSelectPO(){
 		super(SelectPO.class, new SelectAO().getClass().getSimpleName(),"Java");
 	}
 	

@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIB
 import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.IOperator;
-import de.uniol.inf.is.odysseus.query.transformation.operator.registry.OperatorRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.AbstractTargetPlatform;
 
@@ -135,12 +134,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 
-		
 	
-		IOperator opTrans = OperatorRegistry.getOperatorTransformation(parameter.getProgramLanguage(), operator.getClass().getSimpleName());
-		
-		
-		OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
+		IOperator opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
 			if(!TransformationInformation.getInstance().isOperatorAdded(operator)){

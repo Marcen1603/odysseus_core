@@ -9,9 +9,11 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransforma
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 
-public class JavaProjectOperator extends AbstractTransformationOperator{
+
+
+public class JavaRelationalProjectPO extends AbstractTransformationOperator{
 	
-	public JavaProjectOperator(){
+	public JavaRelationalProjectPO(){
 		super(RelationalProjectPO.class, "ProjectAO","Java");
 	}
 	

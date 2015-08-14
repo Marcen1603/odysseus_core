@@ -19,9 +19,9 @@ import de.uniol.inf.is.odysseus.query.transformation.java.utils.Utils;
 import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
-public class JavaCSVFileSourceOperator extends AbstractTransformationOperator {
+public class JavaAccessPO extends AbstractTransformationOperator {
 	
-	public JavaCSVFileSourceOperator(){
+	public JavaAccessPO(){
 		super(AccessPO.class, "CSVFileSource","Java");
 	}
 	  
