@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.costmodel.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.physical.StandardPhysicalOperatorEstimator;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingElementWindowTIPO;
 
@@ -48,5 +49,10 @@ public class ElementWindowTIPOEstimator extends StandardPhysicalOperatorEstimato
 		}
 
 		throw new RuntimeException("WindowTIPO has no input operators!");
+	}
+	
+	@Override
+	public double getMemory() {
+		return getOperator().getWindowSizeMillis() * EstimatorHelper.sizeInBytes(getOperator().getOutputSchema());
 	}
 }
