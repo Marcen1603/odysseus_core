@@ -24,12 +24,17 @@
 
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
  * This is the physical sliding delta window po. This window is used to change
@@ -53,6 +58,13 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 		this.windowSlide = logical.getBaseTimeUnit().convert(logical.getWindowSlide().getTime(), logical.getWindowSlide().getUnit());
 		setName(getName() + " slide=" + windowSlide);
 	}
+	
+	 public SlidingPeriodicWindowTIPO(TimeUnit baseTimeUnit,TimeValueItem windowSize, TimeValueItem windowSlide, SDFSchema inputSchema) {
+		super(WindowType.TIME,baseTimeUnit,windowSize, null,windowSlide,false, null,inputSchema);
+		this.windowSlide = baseTimeUnit.convert(windowSlide.getTime(), windowSlide.getUnit());
+		setName(getName() + " slide=" + windowSlide);
+	}
+
 	
 	@Override
 	public OutputMode getOutputMode() {
