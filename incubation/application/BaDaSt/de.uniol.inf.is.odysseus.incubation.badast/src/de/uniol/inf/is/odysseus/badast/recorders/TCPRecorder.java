@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.badast.KafkaProducerFactory;
  * 
  * @author Michael Brand
  */
+@SuppressWarnings(value = { "nls" })
 @ABaDaStRecorder(type = TCPRecorder.TYPE, parameters = {
 		TCPRecorder.SOURCENAME_CONFIG, TCPRecorder.HOST_CONFIG,
 		TCPRecorder.PORT_CONFIG, TCPRecorder.BUFFERSIZE_CONFIG + " (optional)" })

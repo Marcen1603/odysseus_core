@@ -56,6 +56,7 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		IQueryAddedListener, ICrashDetectionListener, IDataDictionaryListener,
 		IPlanModificationListener {
@@ -73,7 +74,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory
+	static final Logger cLog = LoggerFactory
 			.getLogger(QueryStateRecoveryComponent.class);
 
 	/**
@@ -264,7 +265,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	/**
 	 * The system log, if bound.
 	 */
-	private static Optional<ISystemLog> cSystemLog = Optional.absent();
+	static Optional<ISystemLog> cSystemLog = Optional.absent();
 
 	/**
 	 * Binds an implementation of the system log.
@@ -291,12 +292,12 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	/**
 	 * The server executor, if bound.
 	 */
-	private static Optional<IServerExecutor> cExecutor = Optional.absent();
+	static Optional<IServerExecutor> cExecutor = Optional.absent();
 
 	/**
 	 * All sessions used to retrieve data dictionary updates.
 	 */
-	private static Map<IDataDictionary, ISession> cUsedDataDictionaries = Maps
+	static Map<IDataDictionary, ISession> cUsedDataDictionaries = Maps
 			.newConcurrentMap();
 
 	/**
@@ -348,7 +349,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * @param executor
 	 *            A present executor.
 	 */
-	private void backupScript(String script, List<Integer> queryIds,
+	void backupScript(String script, List<Integer> queryIds,
 			String parserId, ISession user, Context context,
 			IServerExecutor executor) {
 		ScriptAddedInfo info = new ScriptAddedInfo();
@@ -377,7 +378,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * @param user
 	 *            The caller.
 	 */
-	private void backupSourceRemoval(String name, ISession user) {
+	static void backupSourceRemoval(String name, ISession user) {
 		SourceRemovedInfo info = new SourceRemovedInfo();
 		info.setSourceName(name);
 		info.setSession(user);
@@ -394,7 +395,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * @param user
 	 *            The caller.
 	 */
-	private void backupQueryRemoval(int id, ISession user) {
+	static void backupQueryRemoval(int id, ISession user) {
 		QueryRemovedInfo info = new QueryRemovedInfo();
 		info.setQueryId(id);
 		info.setSession(user);
@@ -415,7 +416,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * @param user
 	 *            The caller.
 	 */
-	private void backupQueryStateChange(int id, QueryState state,
+	static void backupQueryStateChange(int id, QueryState state,
 			int sheddingFactor, ISession user) {
 		QueryStateChangedInfo info = new QueryStateChangedInfo();
 		info.setQueryId(id);
@@ -434,7 +435,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * @param executor
 	 *            A present executor.
 	 */
-	private static void recoverFromLog(List<ISysLogEntry> log,
+	static void recoverFromLog(List<ISysLogEntry> log,
 			IServerExecutor executor) {
 		// Mapping of the last seen log entry (the contained info, but not yet
 		// recovered) for each query (state change or removal, not creation).

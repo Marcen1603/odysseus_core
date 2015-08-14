@@ -34,68 +34,69 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class KafkaConsumerAccess extends Thread {
 
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory
+	static final Logger cLog = LoggerFactory
 			.getLogger(KafkaConsumerAccess.class);
 
 	/**
 	 * Host name of the Broker.
 	 */
-	private static final String cHost = OdysseusConfiguration.get(
-			"kafka.host.name", "localhost");
+	static final String cHost = OdysseusConfiguration.get("kafka.host.name",
+			"localhost");
 
 	/**
 	 * Port of the Broker.
 	 */
-	private static final int cPort = OdysseusConfiguration.getInt(
-			"kafka.clientPort", 9092);
+	static final int cPort = OdysseusConfiguration.getInt("kafka.clientPort",
+			9092);
 
 	/**
 	 * The socket timeout threshold for the {@link SimpleConsumer}.
 	 */
-	private static final int cTimeOut = 100000;
+	static final int cTimeOut = 100000;
 
 	/**
 	 * The buffer size for the {@link SimpleConsumer}.
 	 */
-	private static final int cBufferSize = 64 * 1024;
+	static final int cBufferSize = 64 * 1024;
 
 	/**
 	 * The buffer size for the {@link FetchRequest}. <br />
 	 * Note: this fetchSize of 100000 might need to be increased if large
 	 * batches are written to Kafka.
 	 */
-	private static final int cFetchSize = 100000;
+	static final int cFetchSize = 100000;
 
 	/**
 	 * Topic to read from.
 	 */
-	private final String mTopic;
+	final String mTopic;
 
 	/**
 	 * Partition to read from.
 	 */
-	private final int mPartition;
+	final int mPartition;
 
 	/**
 	 * True, if the consumption from Kafka server shall continue. Call
 	 * {@link #interrupt()} to set it to false.
 	 */
-	private boolean mContinueConsumption;
+	boolean mContinueConsumption;
 
 	/**
 	 * The listener to be updated while reading.
 	 */
-	private final IKafkaConsumer mListener;
+	final IKafkaConsumer mListener;
 
 	/**
 	 * The offset from where to read.
 	 */
-	private long mOffset;
+	long mOffset;
 
 	@Override
 	public void interrupt() {
@@ -251,7 +252,7 @@ public class KafkaConsumerAccess extends Thread {
 	/**
 	 * {@link Thread#sleep(long)} for one second.
 	 */
-	private static void sleep() {
+	static void sleep() {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {

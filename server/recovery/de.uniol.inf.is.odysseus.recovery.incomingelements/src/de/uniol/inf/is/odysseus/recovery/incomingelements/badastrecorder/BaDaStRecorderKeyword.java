@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 
 	/**

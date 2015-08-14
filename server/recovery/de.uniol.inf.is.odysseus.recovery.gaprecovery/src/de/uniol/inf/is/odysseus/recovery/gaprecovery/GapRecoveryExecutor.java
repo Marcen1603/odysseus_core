@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class GapRecoveryExecutor extends AbstractRecoveryExecutor {
 
 	@Override

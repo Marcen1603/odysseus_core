@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class TSourceRecoveryAORule extends
 		AbstractTransformationRule<SourceRecoveryAO> {
 

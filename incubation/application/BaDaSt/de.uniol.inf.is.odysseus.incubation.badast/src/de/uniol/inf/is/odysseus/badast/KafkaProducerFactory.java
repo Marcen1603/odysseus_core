@@ -11,6 +11,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class KafkaProducerFactory {
 
 	/**

@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public abstract class AbstractQueryStateInfo implements Serializable {
 
 	// XXX SystemLog: Chance to log the human readable information

@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManager
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class ProtectionPointsRecoveryComponent implements IRecoveryComponent,
 		IPlanModificationListener {
 

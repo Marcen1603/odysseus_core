@@ -9,6 +9,7 @@ import java.util.Properties;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public abstract class AbstractRecoveryExecutor implements IRecoveryExecutor {
 
 	/**

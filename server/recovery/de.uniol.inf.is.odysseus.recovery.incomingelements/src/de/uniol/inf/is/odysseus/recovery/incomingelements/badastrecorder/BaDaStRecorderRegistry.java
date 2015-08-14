@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class BaDaStRecorderRegistry {
 
 	/**

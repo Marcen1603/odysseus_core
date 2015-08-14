@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.recovery.systemlog.internal.SystemLog;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class SystemLogConfiguration implements BundleActivator {
 
 	/**

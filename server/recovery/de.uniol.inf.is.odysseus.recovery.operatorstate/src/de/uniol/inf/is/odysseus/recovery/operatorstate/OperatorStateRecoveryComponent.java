@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManager
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 		IProtectionPointHandler {
 
@@ -57,7 +58,7 @@ public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 	 * @param executor
 	 *            The implementation to bind.
 	 */
-	public void bindServerExecutor(IExecutor executor) {
+	public static void bindServerExecutor(IExecutor executor) {
 		if (IServerExecutor.class.isInstance(executor)) {
 			cExecutor = Optional.of((IServerExecutor) executor);
 		}
@@ -69,7 +70,7 @@ public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 	 * @param executor
 	 *            The implementation to unbind.
 	 */
-	public void unbindServerExecutor(IExecutor executor) {
+	public static void unbindServerExecutor(IExecutor executor) {
 		if (cExecutor.isPresent() && cExecutor.get() == executor) {
 			cExecutor = Optional.absent();
 		}

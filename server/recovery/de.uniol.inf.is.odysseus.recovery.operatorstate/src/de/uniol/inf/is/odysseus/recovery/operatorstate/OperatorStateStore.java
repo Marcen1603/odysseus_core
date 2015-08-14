@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class OperatorStateStore {
 
 	/**

@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class SystemStateLogger {
 
 	/**

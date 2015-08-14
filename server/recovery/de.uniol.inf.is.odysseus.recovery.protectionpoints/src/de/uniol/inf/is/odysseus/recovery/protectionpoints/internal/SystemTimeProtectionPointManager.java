@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointUnit;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class SystemTimeProtectionPointManager implements
 		IProtectionPointManager {
 
@@ -129,7 +130,7 @@ public class SystemTimeProtectionPointManager implements
 	/**
 	 * Calls all listeners that a protection point is reached.
 	 */
-	private void fireProtectionPointReachedEvent() {
+	void fireProtectionPointReachedEvent() {
 		for (IProtectionPointHandler handler : this.mHandlers) {
 			try {
 				handler.onProtectionPointReached();

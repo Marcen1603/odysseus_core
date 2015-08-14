@@ -33,7 +33,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	/**
 	 * The protocol handler to use in recovery mode.
 	 */
-	private final IProtocolHandler<StreamObject> mRecoveryProtocolHandler;
+	final IProtocolHandler<StreamObject> mRecoveryProtocolHandler;
 
 	/**
 	 * The access to the Kafka server to use in recovery mode.
@@ -88,7 +88,8 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	public SourceRecoveryPO(SourceRecoveryAO logical) {
 		super(logical);
 		this.mRecoveryProtocolHandler = createProtocolHandler();
-		this.mRecoveryProtocolHandler.setTransfer(mRecoveryTransferHandler);
+		this.mRecoveryProtocolHandler
+				.setTransfer(this.mRecoveryTransferHandler);
 	}
 
 	@Override

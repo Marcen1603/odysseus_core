@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.internal.SystemTimePro
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class ProtectionPointManagerRegistry {
 
 	/**

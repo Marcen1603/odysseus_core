@@ -38,6 +38,7 @@ import kafka.message.MessageAndOffset;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
@@ -100,7 +101,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * Starts the BaDaSt server (incl. ZooKeeper and Kafka).
 	 * @param ci No arguments needed.
 	 */
-	public void _startBaDaSt(CommandInterpreter ci) {
+	public static void _startBaDaSt(CommandInterpreter ci) {
 		BaDaStApplication.getInstance().start();
 	}
 
@@ -108,7 +109,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * All available (already created) recorder (initialized recorders, not
 	 * types). Key is the name, value is an initialized recorder with that name.
 	 */
-	private static final Map<String, IBaDaStRecorder<?>> cRecorders = Maps.newHashMap();
+	static final Map<String, IBaDaStRecorder<?>> cRecorders = Maps.newHashMap();
 
 	/**
 	 * Lists all available recorder types.
@@ -142,7 +143,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * @param ci
 	 *            No arguments needed.
 	 */
-	public void _lsRecorderTypes(CommandInterpreter ci) {
+	public static void _lsRecorderTypes(CommandInterpreter ci) {
 		ci.println("Available types of BaDaSt recorders:\n");
 		ci.println(lsRecorderTypes());
 	}
@@ -170,7 +171,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * @param ci
 	 *            No arguments needed.
 	 */
-	public void _lsRecorders(CommandInterpreter ci) {
+	public static void _lsRecorders(CommandInterpreter ci) {
 		ci.println("Available BaDaSt recorders:\n");
 		if (cRecorders.isEmpty()) {
 			ci.println("None");
@@ -266,7 +267,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            should be {@link #TYPE_CONFIG} and all other needed keys
 	 *            depend on the recorder type.
 	 */
-	public void _createRecorder(CommandInterpreter ci) {
+	public static void _createRecorder(CommandInterpreter ci) {
 		try {
 			ci.println(createRecorder(parse(ci)));
 		} catch (BaDaStException e) {
@@ -358,7 +359,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            Should contain one key value argument "key=value", where key
 	 *            is {@link #NAME_CONFIG}.
 	 */
-	public void _startRecorder(final CommandInterpreter ci) {
+	public static void _startRecorder(final CommandInterpreter ci) {
 		try {
 			ci.println(startRecorder(parse(ci)));
 		} catch (BaDaStException e) {
@@ -402,7 +403,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            Should contain one key value argument "key=value", where key
 	 *            is {@link #NAME_CONFIG}.
 	 */
-	public void _closeRecorder(CommandInterpreter ci) {
+	public static void _closeRecorder(CommandInterpreter ci) {
 		try {
 			ci.println(closeRecorder(parse(ci)));
 		} catch (BaDaStException e) {
@@ -417,7 +418,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            Should contain two arguments "key=value", where key 1 is
 	 *            {@link #SOURCENAME_CONFIG} and key 2 is {@code offset}.
 	 */
-	public void _consume(final CommandInterpreter ci) {
+	public static void _consume(final CommandInterpreter ci) {
 		try {
 			final String clientid = "OSGiConsoleClient";
 			Properties cfg = parse(ci);

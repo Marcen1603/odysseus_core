@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManager
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 		IQueryAddedListener, IDataDictionaryListener {
 
@@ -116,7 +117,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 		for (ILogicalQuery query : queries) {
 			insertSourceSyncOperators(query, true, caller, cExecutor.get());
 		}
-		mCurrentlyRecoveredQueries.addAll(queries);
+		this.mCurrentlyRecoveredQueries.addAll(queries);
 		return queries;
 	}
 
@@ -150,7 +151,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	 * @param executor
 	 *            A present executor.
 	 */
-	private void insertSourceSyncOperators(final ILogicalQuery query,
+	private static void insertSourceSyncOperators(final ILogicalQuery query,
 			final boolean recoveryMode, ISession caller,
 			IServerExecutor executor) {
 		List<ILogicalOperator> operators = Lists
@@ -169,7 +170,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 				// XXX Works only with AbstractAccessAO, not with StreamAO,
 				// because I need the protocol and data handler
 				if (AbstractAccessAO.class.isInstance(operator)
-						&& mRecordedSources
+						&& this.mRecordedSources
 								.contains(((AbstractAccessAO) operator)
 										.getAccessAOName().getResourceName())) {
 					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;

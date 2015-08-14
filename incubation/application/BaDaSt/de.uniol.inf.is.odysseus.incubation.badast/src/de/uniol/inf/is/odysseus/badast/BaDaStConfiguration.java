@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class BaDaStConfiguration {
 
 	/**

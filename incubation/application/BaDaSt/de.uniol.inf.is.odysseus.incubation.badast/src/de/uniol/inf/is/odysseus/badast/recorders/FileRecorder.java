@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.badast.KafkaProducerFactory;
  * 
  * @author Michael Brand
  */
+@SuppressWarnings(value = { "nls" })
 @ABaDaStRecorder(type = FileRecorder.TYPE, parameters = {
 		FileRecorder.SOURCENAME_CONFIG, FileRecorder.FILENAME_CONFIG })
 public class FileRecorder extends AbstractBaDaStRecorder<String> {

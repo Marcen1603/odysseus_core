@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListen
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class CrashDetector implements ISystemLogListener {
 
 	/**

@@ -23,6 +23,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
  *            The type of the values to store on the Kafka server. Either String
  *            or byte array.
  */
+@SuppressWarnings(value = { "nls" })
 public abstract class AbstractBaDaStRecorder<V> implements IBaDaStRecorder<V> {
 
 	/**

@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 
 	/**

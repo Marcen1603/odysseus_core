@@ -7,6 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 
+import kafka.server.KafkaConfig;
+import kafka.server.KafkaServerStartable;
+
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.zookeeper.server.ServerConfig;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
@@ -18,8 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.badast.BaDaStConfiguration;
 import de.uniol.inf.is.odysseus.badast.BaDaStException;
-import kafka.server.KafkaConfig;
-import kafka.server.KafkaServerStartable;
 
 // XXX Replace Kafka source code with Kafka jar file. First try to do it resulted in run-time errors for the Kafka server.
 /**
@@ -32,12 +33,13 @@ import kafka.server.KafkaServerStartable;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class BaDaStApplication implements IApplication {
 
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory.getLogger(BaDaStApplication.class);
+	static final Logger cLog = LoggerFactory.getLogger(BaDaStApplication.class);
 
 	/**
 	 * The only instance.
@@ -59,7 +61,7 @@ public class BaDaStApplication implements IApplication {
 	/**
 	 * The Kafka Server.
 	 */
-	private KafkaServerStartable mKafkaServer;
+	KafkaServerStartable mKafkaServer;
 
 	/**
 	 * Starts first a ZooKeeper server and afterwards a Kafka server.
@@ -77,21 +79,23 @@ public class BaDaStApplication implements IApplication {
 	 * Configures the slf4j logging framework with properties from
 	 * /config/log4j.properties.
 	 */
-	private void configureLogging() {
-		PropertyConfigurator.configure(BaDaStApplication.class.getClassLoader().getResource("log4j.properties"));
+	private static void configureLogging() {
+		PropertyConfigurator.configure(BaDaStApplication.class.getClassLoader()
+				.getResource("log4j.properties"));
 	}
 
 	/**
 	 * Starts a ZooKeeper server in a new Thread.
 	 */
-	private void startZooKeeperServer() {
+	private static void startZooKeeperServer() {
 		new Thread("ZooKeeper Server") {
 
 			@Override
 			public void run() {
 				try {
 					QuorumPeerConfig qpConfig = new QuorumPeerConfig();
-					qpConfig.parseProperties(BaDaStConfiguration.getZooKeeperConfig());
+					qpConfig.parseProperties(BaDaStConfiguration
+							.getZooKeeperConfig());
 					ServerConfig sConfig = new ServerConfig();
 					sConfig.readFrom(qpConfig);
 					ZooKeeperServerMain server = new ZooKeeperServerMain();
@@ -108,7 +112,7 @@ public class BaDaStApplication implements IApplication {
 	/**
 	 * Waits one second.
 	 */
-	private void wait_() {
+	private static void wait_() {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -126,8 +130,10 @@ public class BaDaStApplication implements IApplication {
 			@Override
 			public void run() {
 				try {
-					KafkaConfig config = new KafkaConfig(BaDaStConfiguration.getKafkaConfig());
-					BaDaStApplication.this.mKafkaServer = new KafkaServerStartable(config);
+					KafkaConfig config = new KafkaConfig(
+							BaDaStConfiguration.getKafkaConfig());
+					BaDaStApplication.this.mKafkaServer = new KafkaServerStartable(
+							config);
 					BaDaStApplication.this.mKafkaServer.startup();
 				} catch (Exception e) {
 					cLog.error("Kafka failed!", e);
@@ -141,7 +147,7 @@ public class BaDaStApplication implements IApplication {
 	/**
 	 * Starts a BaDaSt server in a new Thread.
 	 */
-	private void startBaDaStServer() {
+	private static void startBaDaStServer() {
 		new Thread("BaDaSt Server") {
 
 			/**
@@ -163,7 +169,8 @@ public class BaDaStApplication implements IApplication {
 						Integer.parseInt((String) config.get("clientPort")))) {
 					while (!this.mToBeInterrupted) {
 						try (Socket connectionSocket = serverSocket.accept();
-								DataInputStream inFromClient = new DataInputStream(connectionSocket.getInputStream());
+								DataInputStream inFromClient = new DataInputStream(
+										connectionSocket.getInputStream());
 								DataOutputStream outToClient = new DataOutputStream(
 										connectionSocket.getOutputStream())) {
 							handleCommandFromClient(inFromClient, outToClient);
@@ -186,16 +193,18 @@ public class BaDaStApplication implements IApplication {
 			 * @throws IOException
 			 *             if any error occurs.
 			 */
-			private void handleCommandFromClient(DataInputStream inFromClient, DataOutputStream outToClient)
-					throws IOException {
+			private void handleCommandFromClient(DataInputStream inFromClient,
+					DataOutputStream outToClient) throws IOException {
 				String message = inFromClient.readUTF();
 				String answer = null;
 				try {
 					Properties args = BaDaStCommandProvider.parse(message);
-					String command = (String) args.remove(BaDaStCommandProvider.COMMAND_CONFIG);
+					String command = (String) args
+							.remove(BaDaStCommandProvider.COMMAND_CONFIG);
 					answer = BaDaStCommandProvider.execute(command, args);
 				} catch (BaDaStException e) {
-					answer = "Could not execute " + message + "! " + e.getMessage();
+					answer = "Could not execute " + message + "! "
+							+ e.getMessage();
 				} finally {
 					outToClient.writeUTF(answer);
 				}

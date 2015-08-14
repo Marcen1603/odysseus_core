@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class BaDaStSender {
 
 	/**

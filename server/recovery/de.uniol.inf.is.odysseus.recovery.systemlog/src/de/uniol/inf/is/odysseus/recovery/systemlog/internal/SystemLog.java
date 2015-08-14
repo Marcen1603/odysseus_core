@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.recovery.systemlog.SystemLogConfiguration;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class SystemLog implements ISystemLog {
 
 	/**

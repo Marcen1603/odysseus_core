@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
  * @author Michael Brand
  *
  */
+@SuppressWarnings(value = { "nls" })
 public class SysLogEntry implements ISysLogEntry {
 
 	/**
