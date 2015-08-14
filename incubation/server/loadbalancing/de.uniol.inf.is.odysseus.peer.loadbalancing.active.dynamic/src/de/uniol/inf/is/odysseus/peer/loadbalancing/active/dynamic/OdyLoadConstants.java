@@ -8,7 +8,6 @@ public class OdyLoadConstants {
 			public static final double CPU_THRESHOLD = 0.7;
 			public static final double MEM_THRESHOLD = 0.7;
 			public static final double NET_THRESHOLD = 0.7;
-	
 			
 			//Names
 			public static final String BID_PROVIDER_NAME = "OdyLoad";
@@ -35,10 +34,7 @@ public class OdyLoadConstants {
 			public static final double WEIGHT_RECEIVERS = 0.1;
 			public static final double WEIGHT_STATE = 0.8;
 			
-			public static final double WEIGHT_GENERAL_COSTS = 0.3;
-			public static final double WEIGHT_INDIVIDUAL_COSTS = 0.7;
 			public static final String DEFAULT_QUERY_BUILD_CONFIG = "Standard";
-			
 			
 			//Fallback values for Cost model...
 			public static final double FALLBACK_CPU_COSTS = 0.1;

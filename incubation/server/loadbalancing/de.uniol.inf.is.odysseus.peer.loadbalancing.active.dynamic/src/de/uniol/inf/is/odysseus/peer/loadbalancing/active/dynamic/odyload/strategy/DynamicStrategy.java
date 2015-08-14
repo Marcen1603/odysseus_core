@@ -49,6 +49,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strate
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.SimulatedAnnealingQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer.QueryTransmissionHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SharedQueryIDModifier;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SourceTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
@@ -284,6 +285,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 		if(executor.getLogicalQueryIds(getActiveSession()).size()==0) {
 			LOG.warn("Load Balancing triggered, but no queries installed. Continuing monitoring.");
+			return;
 		}
 		
 		
@@ -307,10 +309,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		//Replaces Sources with Sender-Receiver constructs.
 		for(int queryID : queryIDs) {
 			SharedQueryIDModifier.addSharedQueryIDIfNeccessary(queryID, executor, queryPartController, networkManager, getActiveSession());
-			//SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor,queryPartController,excludedQueryRegistry);
+			SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor,queryPartController,excludedQueryRegistry);
 			//SinkTransformer.replaceSinks(queryID, localPeerID, getActiveSession(), networkManager, executor, queryPartController,excludedQueryRegistry);
 		}
-		
 		QueryCostMap allQueries = generateCostMapForAllQueries();
 		IQuerySelectionStrategy greedySelector = new GreedyQuerySelector();
 		QueryCostMap greedyResult = greedySelector.selectQueries(allQueries.clone(),cpuLoadToRemove, memLoadToRemove, netLoadToRemove);
@@ -399,7 +400,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		failedTransmissionQueryIDs = Lists.newArrayList();
 		
 		if(transmissionHandlerList!=null && transmissionHandlerList.size()>0) {
-			transmissionHandlerList.get(0).initiateTransmission(this);
+		//	transmissionHandlerList.get(0).initiateTransmission(this);
 		}
 		
 	}
@@ -466,7 +467,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 			double memLoad = queryCost.getMemorySum()/memMax;
 				
 			
-			double migrationCosts = calculateIndividualMigrationCostsForQuery(operatorsInQuery,queryCost);
+			double migrationCosts = calculateIndividualMigrationCostsForQuery(operatorsInQuery);
 			
 			QueryLoadInformation info = new QueryLoadInformation(queryId,cpuLoad,memLoad,netLoad,migrationCosts);
 			
@@ -476,7 +477,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	}
 	
 
-	private double calculateIndividualMigrationCostsForQuery(Collection<IPhysicalOperator> operators, IPhysicalCost costmodelCosts) {
+	private double calculateIndividualMigrationCostsForQuery(Collection<IPhysicalOperator> operators) {
 		
 		int numberOfReceivers = 0;
 		int numberOfSenders = 0;

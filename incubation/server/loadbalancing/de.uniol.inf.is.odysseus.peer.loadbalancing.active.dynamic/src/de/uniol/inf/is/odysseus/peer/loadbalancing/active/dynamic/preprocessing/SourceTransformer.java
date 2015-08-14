@@ -172,7 +172,7 @@ public class SourceTransformer {
 	private static void replaceLogicalSubscription(ISubscription logicalSubscription, ILogicalOperator source, ILogicalOperator replacement) {
 		ILogicalOperator sink = (ILogicalOperator) logicalSubscription.getTarget();
 		int sinkInPort = logicalSubscription.getSinkInPort();
-		int sourceOutPort = logicalSubscription.getSinkInPort();
+		int sourceOutPort = logicalSubscription.getSourceOutPort();
 		
 		source.unsubscribeSink(sink, sinkInPort, sourceOutPort, logicalSubscription.getSchema());
 		replacement.subscribeSink(sink, sinkInPort, sourceOutPort, source.getOutputSchema().clone());
@@ -233,6 +233,7 @@ public class SourceTransformer {
 		receiverAO.setPipeID(pipeID.toString());
 		receiverAO.setSchema(source.getOutputSchema().clone().getAttributes());
 		receiverAO.setSchemaName(source.getOutputSchema().getURI());
+		receiverAO.setMetaschemata(source.getOutputSchema().getMetaschema());
 		receiverAO.setName("JxtaReceiver " + source.getName());
 		return receiverAO;
 	}
@@ -246,8 +247,6 @@ public class SourceTransformer {
 		ISink sink = (ISink)subscr.getTarget();
 		ISubscription revSubscr = getReversePhysicalSubscription(source, subscr);
 		
-		// TODO What about ports? -> Perhaps add Port Route-Operator inbetween.
-
 		sink.unsubscribeFromSource(revSubscr);
 		receiverPO.subscribeSink(sink, subscr.getSinkInPort(), 0, subscr
 				.getSchema().clone());

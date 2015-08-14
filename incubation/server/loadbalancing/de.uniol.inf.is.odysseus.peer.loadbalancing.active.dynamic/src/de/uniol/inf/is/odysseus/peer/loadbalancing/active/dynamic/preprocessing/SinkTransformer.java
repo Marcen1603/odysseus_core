@@ -374,6 +374,7 @@ public class SinkTransformer {
 		receiverAO.setPipeID(pipeID.toString());
 		receiverAO.setOutputSchema(schema.clone());
 		receiverAO.setSchema(schema.clone().getAttributes());
+		receiverAO.setMetaschemata(schema.getMetaschema());
 		receiverAO.setName("JxtaReceiver " + sink.getName());
 		receiverAO.setSchemaName(schema.getURI());
 		return receiverAO;
@@ -465,6 +466,9 @@ public class SinkTransformer {
 					if(opAsSource.getSubscriptions().size()==0) {
 						return true;
 					}
+				}
+				else {
+					return true;
 				}
 			}
 		}
