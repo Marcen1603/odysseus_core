@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
+import java.util.Locale;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Reference;
@@ -100,9 +101,9 @@ public class MWVSentence extends Sentence{
 	@Override
 	protected void encode() {
 		int index = 0;
-		setValue(index++, ParseUtils.toString(angle));
+		setValue(index++, String.format(Locale.US, "%.1f", angle));
 		setValue(index++, ParseUtils.toString(reference));
-		setValue(index++, ParseUtils.toString(speed));
+		setValue(index++, String.format(Locale.US, "%.1f", speed));
 		setValue(index++, ParseUtils.toString(speedUnit));
 		setValue(index++, ParseUtils.toString(status));
 	}

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
+import java.util.Locale;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Date;
@@ -140,12 +141,12 @@ public class RMCSentence extends Sentence {
 		setValue(index++, ParseUtils.toString(latitudeHem));
 		setValue(index++, ParseUtils.toString(longitude, 3));
 		setValue(index++, ParseUtils.toString(longitudeHem));
-		setValue(index++, ParseUtils.toString(speedOverGround));
-		setValue(index++, ParseUtils.toString(trackMadeGood));
+		setValue(index++, String.format(Locale.US, "%.1f", speedOverGround));
+		setValue(index++, String.format(Locale.US, "%.1f", trackMadeGood));
 		setValue(index++, ParseUtils.toString(date));
-		setValue(index++, ParseUtils.toString(magneticVariation));
+		setValue(index++, String.format(Locale.US, "%.1f", magneticVariation));
 		setValue(index++, ParseUtils.toString(magneticHem));
-		setValue(index++, ParseUtils.toString(signalIntegrity));
+		//setValue(index++, ParseUtils.toString(signalIntegrity));
 	}
 
 	@Override

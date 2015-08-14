@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.nmea.sentence;
 
+import java.util.Locale;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.wrapper.nmea.data.Reference;
@@ -85,7 +86,7 @@ public class VTGSentence extends Sentence{
 	public VTGSentence(Map<String, Object> source)	
 	{
 		super(source, FIELD_COUNT);
-
+		
 		if (source.containsKey("headingTrack")) headingTrack = (double) source.get("headingTrack");
 		if (source.containsKey("trackReference")) trackReference = ParseUtils.parseReference((String) source.get("trackReference"));
 		if (source.containsKey("headingMagnetic")) headingMagnetic = (double) source.get("headingMagnetic");
@@ -112,13 +113,14 @@ public class VTGSentence extends Sentence{
 	@Override
 	protected void encode() {
 		int index = 0;
-		setValue(index++, ParseUtils.toString(headingTrack));
+		
+		setValue(index++, String.format(Locale.US, "%.1f", headingTrack));
 		setValue(index++, ParseUtils.toString(trackReference));
-		setValue(index++, ParseUtils.toString(headingMagnetic));
+		setValue(index++, String.format(Locale.US, "%.1f", headingMagnetic));
 		setValue(index++, ParseUtils.toString(magneticReference));
-		setValue(index++, ParseUtils.toString(speedKnots));
+		setValue(index++, String.format(Locale.US, "%.1f", speedKnots));
 		setValue(index++, ParseUtils.toString(speedKnotsUnits));
-		setValue(index++, ParseUtils.toString(speedKilometers));
+		setValue(index++, String.format(Locale.US, "%.1f", speedKilometers));
 		setValue(index++, ParseUtils.toString(speedKilometersUnits));
 	}
 
