@@ -194,12 +194,10 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 	// called by OSGi-DS
 	public void activate() {
-		LOG.debug("Active Loadbalancing console activated");
 	}
 
 	// called by OSGi-DS
 	public void deactivate() {
-		LOG.debug("Active Loadbalancing console deactivated");
 	}
 
 	@Override

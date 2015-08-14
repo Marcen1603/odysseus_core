@@ -41,6 +41,7 @@ public class GreedyQuerySelector implements IQuerySelectionStrategy {
 		LOG.info("Chosen Subset is:");
 		LOG.info(chosenSubset.toString());
 		return chosenSubset;
+	
 	}
 	
 }

@@ -20,8 +20,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.network,
  de.uniol.inf.is.odysseus.costmodel.logical;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.communication
-Service-Component: OSGI-INF/DynamicStrategy.xml,OSGI-INF/DynamicAllocator.xml,OSGI-INF/DynamicBidProvider.xml,OSGI-INF/JxtaSenderPOEstimator.xml,OSGI-INF/JxtaReceiverPOEstimator.xml,OSGI-INF/JxtaReceiverAOEstimator.xml,
- OSGI-INF/JxtaSenderAOEstimator.xml
+Service-Component: OSGI-INF/DynamicStrategy.xml,OSGI-INF/DynamicAllocator.xml,OSGI-INF/DynamicBidProvider.xml,OSGI-INF/JxtaSenderPOEstimator.xml,OSGI-INF/JxtaReceiverPOEstimator.xml,OSGI-INF/JxtaReceiverAOEstimator.xml,OSGI-INF/JxtaSenderAOEstimator.xml,
+ OSGI-INF/OdyLoadConsole.xml
 Import-Package: de.uniol.inf.is.odysseus.costmodel,
  de.uniol.inf.is.odysseus.peer.dictionary,
  de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid,

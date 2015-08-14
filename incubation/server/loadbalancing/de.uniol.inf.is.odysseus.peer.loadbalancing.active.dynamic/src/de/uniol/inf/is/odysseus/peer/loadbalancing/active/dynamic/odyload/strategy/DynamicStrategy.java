@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.jxta.peer.PeerID;
 
@@ -213,6 +214,11 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	@Override
 	public void startMonitoring() throws LoadBalancingException {
 
+		startNewMonitoringThread();
+
+	}
+
+	private void startNewMonitoringThread() {
 		if (usageManager == null) {
 			LOG.error("Could not start monitoring: No resource Usage Manager bound.");
 			return;
@@ -227,7 +233,6 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				LOG.info("Monitoring Thread already running.");
 			}
 		}
-
 	}
 
 	@Override
@@ -274,35 +279,33 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	@Override
 	public void triggerLoadBalancing(double cpuUsage, double memUsage, double netUsage) {
 		
-		Preconditions.checkNotNull(this.networkManager);
-		Preconditions.checkNotNull(this.executor);
-		Preconditions.checkNotNull(this.queryPartController);
-		Preconditions.checkNotNull(this.communicatorRegistry);
-		Preconditions.checkNotNull(this.allocator);
-		Preconditions.checkNotNull(this.lock);
-		Preconditions.checkNotNull(this.peerDictionary);
-		Preconditions.checkNotNull(this.physicalCostModel);
+		Preconditions.checkNotNull(this.networkManager,"Network Manager not bound.");
+		Preconditions.checkNotNull(this.executor,"Executor Manager not bound.");
+		Preconditions.checkNotNull(this.queryPartController,"Query Part Controller not bound.");
+		Preconditions.checkNotNull(this.communicatorRegistry,"Communicator Registry not bound.");
+		Preconditions.checkNotNull(this.allocator,"No allocator bound.");
+		Preconditions.checkNotNull(this.lock,"No Load Balancing Lock bound.");
+		Preconditions.checkNotNull(this.peerDictionary,"Peer Dictionary not bound.");
+		Preconditions.checkNotNull(this.physicalCostModel,"Physical Cost Model not bound.");
+		
+		
 		
 		if(executor.getLogicalQueryIds(getActiveSession()).size()==0) {
 			LOG.warn("Load Balancing triggered, but no queries installed. Continuing monitoring.");
 			return;
 		}
 		
+		stopMonitoringThread();
 		
-		synchronized(threadManipulationLock) {
-			if(monitoringThread!=null) {
-				monitoringThread.removeListener(this);
-				monitoringThread.setInactive();
-				monitoringThread = null;
-			}
-		}
+
+		PeerID localPeerID = networkManager.getLocalPeerID();
+		
 		LOG.info("Re-Allocation of queries triggered.");
 					
 		double cpuLoadToRemove = Math.max(0.0, cpuUsage-OdyLoadConstants.CPU_THRESHOLD);
 		double memLoadToRemove = Math.max(0.0, memUsage-OdyLoadConstants.MEM_THRESHOLD);
 		double netLoadToRemove = Math.max(0.0, netUsage-OdyLoadConstants.NET_THRESHOLD);
 		
-		PeerID localPeerID = networkManager.getLocalPeerID();
 		
 		Collection<Integer> queryIDs = getNotExcludedQueries();
 		
@@ -312,6 +315,62 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 			SourceTransformer.replaceSources(queryID, localPeerID, getActiveSession(), networkManager, executor,queryPartController,excludedQueryRegistry);
 			//SinkTransformer.replaceSinks(queryID, localPeerID, getActiveSession(), networkManager, executor, queryPartController,excludedQueryRegistry);
 		}
+		
+		
+		QueryCostMap chosenResult;
+		try {
+			chosenResult = selectQueriesToRemove(cpuLoadToRemove,
+					memLoadToRemove, netLoadToRemove);
+		} catch (LoadBalancingException e) {
+			LOG.error("Exception in Allocation: {}",e.getMessage());
+			e.printStackTrace();
+			startNewMonitoringThread();
+			return;
+		}
+			
+
+		allocateAndTransferQueries(localPeerID, chosenResult);
+		
+	}
+
+	public void allocateAndTransferQueries(PeerID localPeerID,
+			QueryCostMap chosenResult) {
+		HashMap<ILogicalQueryPart,Integer> queryPartIDMapping = new HashMap<ILogicalQueryPart,Integer>();
+		
+		for (int queryId : chosenResult.getQueryIds()) {
+			ILogicalQuery query = executor.getLogicalQueryById(queryId, getActiveSession());
+			ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
+			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
+			queryPartIDMapping.put(new LogicalQueryPart(operators),queryId);
+		}
+			
+		
+		if(chosenResult.getQueryIds().size()==0) {
+			LOG.error("No Queries to remove.");
+			return;
+		}
+		
+
+		Collection<PeerID> knownRemotePeers = peerDictionary.getRemotePeerIDs();
+		
+		allocateQueries(localPeerID, chosenResult, queryPartIDMapping,
+				knownRemotePeers);
+		
+		doTransferAllocatedQueryParts();
+	}
+
+	private void stopMonitoringThread() {
+		synchronized(threadManipulationLock) {
+			if(monitoringThread!=null) {
+				monitoringThread.removeListener(this);
+				monitoringThread.setInactive();
+				monitoringThread = null;
+			}
+		}
+	}
+
+	private QueryCostMap selectQueriesToRemove(double cpuLoadToRemove,
+			double memLoadToRemove, double netLoadToRemove) throws LoadBalancingException {
 		QueryCostMap allQueries = generateCostMapForAllQueries();
 		IQuerySelectionStrategy greedySelector = new GreedyQuerySelector();
 		QueryCostMap greedyResult = greedySelector.selectQueries(allQueries.clone(),cpuLoadToRemove, memLoadToRemove, netLoadToRemove);
@@ -333,26 +392,14 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 			
 		if(allocator==null) {
-			LOG.error("No Allocator set.");
-			return;
+			throw new LoadBalancingException("No Allocator set.");
 		}
-			
-			
-		HashMap<ILogicalQueryPart,Integer> queryPartIDMapping = new HashMap<ILogicalQueryPart,Integer>();
-		
-		for (int queryId : chosenResult.getQueryIds()) {
-			ILogicalQuery query = executor.getLogicalQueryById(queryId, getActiveSession());
-			ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
-			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
-			queryPartIDMapping.put(new LogicalQueryPart(operators),queryId);
-		}
-			
-		Collection<PeerID> knownRemotePeers = peerDictionary.getRemotePeerIDs();
-		
-		if(chosenResult.getQueryIds().size()==0) {
-			LOG.error("No Queries to remove.");
-			return;
-		}
+		return chosenResult;
+	}
+
+	private void allocateQueries(PeerID localPeerID, QueryCostMap chosenResult,
+			HashMap<ILogicalQueryPart, Integer> queryPartIDMapping,
+			Collection<PeerID> knownRemotePeers) {
 		//TODO What if no Object in List?
 		int firstQueryId = chosenResult.getQueryIds().get(0);
 			
@@ -396,17 +443,18 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 			LOG.error("Could not allocate Query Parts: {}",e.getMessage());
 			e.printStackTrace();
 		}
-		
+	}
+
+	private void doTransferAllocatedQueryParts() {
 		failedTransmissionQueryIDs = Lists.newArrayList();
 		
 		if(transmissionHandlerList!=null && transmissionHandlerList.size()>0) {
-		//	transmissionHandlerList.get(0).initiateTransmission(this);
+			transmissionHandlerList.get(0).initiateTransmission(this);
 		}
-		
 	}
 	
 	
-	private HashMap<Integer,ILoadBalancingCommunicator> chooseCommunicators(List<Integer> queryIds) {
+	public HashMap<Integer,ILoadBalancingCommunicator> chooseCommunicators(List<Integer> queryIds) {
 		
 		
 		HashMap<Integer,ILoadBalancingCommunicator> queryCommunicatorMapping = new HashMap<Integer,ILoadBalancingCommunicator>();
@@ -447,33 +495,40 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 	}
 	
-	private QueryCostMap generateCostMapForAllQueries() {
+	public QueryCostMap generateCostMapForAllQueries() {
 		
 		HashMap<Integer,IPhysicalQuery> queries = getPhysicalQueries();
 		
 		QueryCostMap queryCostMap = new QueryCostMap();
 		//Get cost and load information for each query.
 		for (int queryId : queries.keySet()) {
+			
+			Set<IPhysicalOperator> operatorList = queries.get(queryId).getAllOperators();
 
-			double cpuMax = usageManager.getLocalResourceUsage().getCpuMax();
-			double netMax = usageManager.getLocalResourceUsage().getNetBandwidthMax();
-			long memMax = usageManager.getLocalResourceUsage().getMemMaxBytes();
-			
-			Collection<IPhysicalOperator> operatorsInQuery = queries.get(queryId).getAllOperators();
-			IPhysicalCost queryCost = physicalCostModel.estimateCost(operatorsInQuery);
-			
-			double cpuLoad = queryCost.getCpuSum()/(cpuMax*OdyLoadConstants.CPU_LOAD_COSTMODEL_FACTOR);
-			double netLoad = queryCost.getNetworkSum()/netMax;
-			double memLoad = queryCost.getMemorySum()/memMax;
-				
-			
-			double migrationCosts = calculateIndividualMigrationCostsForQuery(operatorsInQuery);
-			
-			QueryLoadInformation info = new QueryLoadInformation(queryId,cpuLoad,memLoad,netLoad,migrationCosts);
-			
-			queryCostMap.add(info);
+			addQueryToCostMap(queryCostMap, queryId, operatorList);
 		}
 		return queryCostMap;
+	}
+
+	public void addQueryToCostMap(QueryCostMap queryCostMap, int queryId,
+			Set<IPhysicalOperator> operatorList) {
+		double cpuMax = usageManager.getLocalResourceUsage().getCpuMax();
+		double netMax = usageManager.getLocalResourceUsage().getNetBandwidthMax();
+		long memMax = usageManager.getLocalResourceUsage().getMemMaxBytes();
+		
+		Collection<IPhysicalOperator> operatorsInQuery = operatorList;
+		IPhysicalCost queryCost = physicalCostModel.estimateCost(operatorsInQuery);
+		
+		double cpuLoad = queryCost.getCpuSum()/(cpuMax*OdyLoadConstants.CPU_LOAD_COSTMODEL_FACTOR);
+		double netLoad = queryCost.getNetworkSum()/netMax;
+		double memLoad = queryCost.getMemorySum()/memMax;
+			
+		
+		double migrationCosts = calculateIndividualMigrationCostsForQuery(operatorsInQuery);
+		
+		QueryLoadInformation info = new QueryLoadInformation(queryId,cpuLoad,memLoad,netLoad,migrationCosts);
+		
+		queryCostMap.add(info);
 	}
 	
 
