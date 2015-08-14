@@ -94,7 +94,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	@Override
 	protected void process_open() throws OpenFailedException {
 		// offset should be loaded as operator state
-		this.mNeedToAdjustOffset = true;
+		this.mNeedToAdjustOffset = false;
 		this.mRecoveryKafkaAccess = new KafkaConsumerAccess(this.mSourceAccess
 				.getAccessAOName().getResourceName(),
 				this.mRecoveryKafkaConsumer, this.mOffset);

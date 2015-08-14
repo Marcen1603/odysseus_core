@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStRecorderRegistry;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStSender;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
+import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManagerRegistry;
 
 /**
  * The incoming elements recovery component handles the backup and recovery of
@@ -149,11 +150,12 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	 * @param executor
 	 *            A present executor.
 	 */
-	private void insertSourceSyncOperators(ILogicalQuery query,
+	private void insertSourceSyncOperators(final ILogicalQuery query,
 			final boolean recoveryMode, ISession caller,
 			IServerExecutor executor) {
-		LogicalGraphWalker graphWalker = new LogicalGraphWalker(
-				collectOperators(query.getLogicalPlan()));
+		List<ILogicalOperator> operators = Lists
+				.newArrayList(collectOperators(query.getLogicalPlan()));
+		LogicalGraphWalker graphWalker = new LogicalGraphWalker(operators);
 		graphWalker.walk(new IOperatorWalker<ILogicalOperator>() {
 
 			/**
@@ -172,7 +174,9 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 										.getAccessAOName().getResourceName())) {
 					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
 					SourceRecoveryAO sourceRecovery = new SourceRecoveryAO(
-							sourceAccess, recoveryMode);
+							sourceAccess, recoveryMode,
+							ProtectionPointManagerRegistry.getInstance(query
+									.getID()));
 					Collection<LogicalSubscription> subs = Lists
 							.newArrayList(operator.getSubscriptions());
 					operator.unsubscribeFromAllSinks();
@@ -196,9 +200,9 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	 *            The logical plan.
 	 * @return All operators within the logical plan.
 	 */
-	private static List<ILogicalOperator> collectOperators(
+	private static Set<ILogicalOperator> collectOperators(
 			ILogicalOperator logicalPlan) {
-		List<ILogicalOperator> operators = Lists.newArrayList();
+		Set<ILogicalOperator> operators = Sets.newHashSet();
 		collectOperatorsRecursive(logicalPlan, operators);
 		return operators;
 	}
@@ -214,7 +218,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	 * @return All operators within the logical plan.
 	 */
 	private static void collectOperatorsRecursive(ILogicalOperator operator,
-			List<ILogicalOperator> operators) {
+			Set<ILogicalOperator> operators) {
 		operators.add(operator);
 		for (LogicalSubscription sub : operator.getSubscribedToSource()) {
 			collectOperatorsRecursive(sub.getTarget(), operators);
@@ -223,7 +227,8 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 
 	@Override
 	public IRecoveryComponent newInstance(Properties config) {
-		return new IncomingElementsRecoveryComponent();
+		IncomingElementsRecoveryComponent instance = new IncomingElementsRecoveryComponent();
+		return instance;
 	}
 
 	@Override

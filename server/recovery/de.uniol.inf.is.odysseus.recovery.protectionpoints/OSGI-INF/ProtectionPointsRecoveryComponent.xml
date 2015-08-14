@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointsRecoveryComponent">
+   <implementation class="de.uniol.inf.is.odysseus.recovery.protectionpoints.internal.ProtectionPointsRecoveryComponent"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent"/>
+   </service>
+   <reference bind="bindServerExecutor" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindServerExecutor"/>
+</scr:component>

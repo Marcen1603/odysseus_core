@@ -38,7 +38,7 @@ public class SourceBackupPO<StreamObject extends IStreamObject<IMetaAttribute>>
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		this.mNeedToAdjustOffset = false;
+		this.mNeedToAdjustOffset = true;
 		super.process_open();
 	}
 

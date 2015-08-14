@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicalope
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointManager;
 
 /**
  * Logical operator to be placed directly after source access operators. <br />
@@ -26,21 +27,27 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
  * @author Michael Brand
  */
 public class SourceRecoveryAO extends UnaryLogicalOp {
-	
+
 	/**
 	 * The version of this class for serialization.
 	 */
 	private static final long serialVersionUID = -9156948424518889385L;
-	
+
 	/**
 	 * The access to the source, which is recorded by BaDaSt.
 	 */
-	private AbstractAccessAO mSourceAccess;
+	private final AbstractAccessAO mSourceAccess;
 
 	/**
 	 * True, if data stream elements shall be recovered from BaDaSt.
 	 */
-	private boolean mRecoveryMode;
+	private final boolean mRecoveryMode;
+
+	/**
+	 * The protection point manager to be used to inform, if a protection point
+	 * is reached.
+	 */
+	private final IProtectionPointManager mProtectionPointManager;
 
 	/**
 	 * Creates a new {@link SourceRecoveryAO}.
@@ -49,11 +56,16 @@ public class SourceRecoveryAO extends UnaryLogicalOp {
 	 *            The access to the source, which is recorded by BaDaSt.
 	 * @param recoveryMode
 	 *            True, if data stream elements shall be recovered from BaDaSt.
+	 * @param protectionPointManager
+	 *            The protection point manager to be used to inform, if a
+	 *            protection point is reached.
 	 */
-	public SourceRecoveryAO(AbstractAccessAO sourceAccess, boolean recoveryMode) {
+	public SourceRecoveryAO(AbstractAccessAO sourceAccess,
+			boolean recoveryMode, IProtectionPointManager protectionPointManager) {
 		super();
 		this.mSourceAccess = sourceAccess;
 		this.mRecoveryMode = recoveryMode;
+		this.mProtectionPointManager = protectionPointManager;
 	}
 
 	/**
@@ -66,6 +78,7 @@ public class SourceRecoveryAO extends UnaryLogicalOp {
 		super(other);
 		this.mSourceAccess = other.mSourceAccess;
 		this.mRecoveryMode = other.mRecoveryMode;
+		this.mProtectionPointManager = other.mProtectionPointManager;
 	}
 
 	@Override
@@ -89,6 +102,16 @@ public class SourceRecoveryAO extends UnaryLogicalOp {
 	 */
 	public boolean isInRecoveryMode() {
 		return this.mRecoveryMode;
+	}
+
+	/**
+	 * Gets the protection point manager.
+	 * 
+	 * @return The protection point manager to be used to inform, if a
+	 *         protection point is reached.
+	 */
+	public IProtectionPointManager getProtectionPointManager() {
+		return this.mProtectionPointManager;
 	}
 
 }

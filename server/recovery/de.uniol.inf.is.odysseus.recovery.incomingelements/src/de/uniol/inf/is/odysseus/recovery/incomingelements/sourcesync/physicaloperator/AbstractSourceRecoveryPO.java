@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
-import kafka.message.MessageAndOffset;
-
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -28,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.IKafkaConsumer;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.KafkaConsumerAccess;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
+import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointHandler;
 
 /**
  * Logical operator to be placed directly after source access operators. <br />
@@ -54,7 +53,8 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloper
  *            The type of stream elements to process.
  */
 public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>>
-		extends AbstractPipe<StreamObject, StreamObject> implements IStatefulPO {
+		extends AbstractPipe<StreamObject, StreamObject> implements
+		IStatefulPO, IProtectionPointHandler {
 
 	/**
 	 * Abstract transfer handler just to avoid the need to implement all
@@ -100,8 +100,6 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 
 	/**
 	 * The offset of the first element to recover.
-	 * 
-	 * @see MessageAndOffset
 	 */
 	protected Long mOffset = 0l;
 
@@ -135,7 +133,7 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	/**
 	 * The access to the Kafka server to use in backup mode.
 	 */
-	private final KafkaConsumerAccess mBackupKafkaAccess;
+	private KafkaConsumerAccess mBackupKafkaAccess;
 
 	/**
 	 * The handler of messages consumed from Kafka in backup mode.
@@ -166,9 +164,12 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 			if (AbstractSourceRecoveryPO.this.mReference.equals(object)) {
 				AbstractSourceRecoveryPO.this.mOffset = AbstractSourceRecoveryPO.this.mCurrentOffsets
 						.getFirst();
+				// FIXME for testing
+				System.err.println(AbstractSourceRecoveryPO.this.mOffset);
 				if (AbstractSourceRecoveryPO.this.mBackupKafkaAccess != null) {
 					AbstractSourceRecoveryPO.this.mBackupKafkaAccess
 							.interrupt();
+					AbstractSourceRecoveryPO.this.mBackupKafkaAccess = null;
 				}
 			}
 			// At this point a complete tuple is read out. This means
@@ -199,8 +200,7 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 		this.mSourceAccess = logical.getSource();
 		this.mBackupProtocolHandler = createProtocolHandler();
 		this.mBackupProtocolHandler.setTransfer(mBackupTransferHandler);
-		this.mBackupKafkaAccess = new KafkaConsumerAccess(this.mSourceAccess
-				.getAccessAOName().getResourceName(), this.mBackupKafkaConsumer);
+		logical.getProtectionPointManager().addHandler(this);
 	}
 
 	/**
@@ -256,9 +256,19 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	 */
 	protected void adjustOffsetIfNeeded(IStreamable object) {
 		synchronized (this.mOffset) {
-			if (!this.mNeedToAdjustOffset) {
-				this.mNeedToAdjustOffset = true;
+			if (this.mNeedToAdjustOffset) {
+				this.mNeedToAdjustOffset = false;
 				this.mReference = object;
+				// Kafka Consumer access has to be deleted and new created for
+				// every protection point reaching, because otherwise an
+				// IllegalThreadStateException occurs.
+				if (this.mBackupKafkaAccess != null) {
+					this.mBackupKafkaAccess.interrupt();
+					this.mBackupKafkaAccess = null;
+				}
+				this.mBackupKafkaAccess = new KafkaConsumerAccess(
+						this.mSourceAccess.getAccessAOName().getResourceName(),
+						this.mBackupKafkaConsumer);
 				this.mBackupKafkaAccess.start();
 			}
 		}
@@ -267,14 +277,17 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 
 	@Override
 	public IOperatorState getState() {
-		long out = this.mOffset;
-		this.mNeedToAdjustOffset = false;
-		return new SourceRecoveryState(out);
+		return new SourceRecoveryState(this.mOffset);
 	}
 
 	@Override
 	public void setState(Serializable state) {
 		this.mOffset = ((SourceRecoveryState) state).getOffset();
+	}
+
+	@Override
+	public void onProtectionPointReached() throws Exception {
+		this.mNeedToAdjustOffset = true;
 	}
 
 }

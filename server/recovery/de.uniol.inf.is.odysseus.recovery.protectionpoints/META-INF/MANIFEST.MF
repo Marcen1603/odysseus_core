@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Protection Points Recovery Component
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.recovery.protectionpoints
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Michael Brand
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.slf4j,
+ com.google.guava
+Service-Component: OSGI-INF/ProtectionPointsRecoveryComponent.xml
+Export-Package: de.uniol.inf.is.odysseus.recovery.protectionpoints
