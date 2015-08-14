@@ -5,7 +5,8 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.transformation.java
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.java.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.mep,
+Import-Package: com.google.gson,
+ de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.parser.pql.relational,
  org.osgi.framework;version="1.3.0",
  org.osgi.service.packageadmin;version="1.2.0"
@@ -21,7 +22,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.query.transformation,
  javaparser;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.relational_interval,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ com.google.code.gson;bundle-version="2.2.4"
 Service-Component: OSGI-INF/JavaSelectOperator.xml,OSGI-INF/JavaProjectOperator.xml,OSGI-INF/JavaTargetPlatform.xml,OSGI-INF/JavaCSVFileSourceOperator.xml,OSGI-INF/JavaCSVFileSinkOperator.xml,OSGI-INF/JavaWindowOperator.xml,OSGI-INF/JavaReceiverOperator.xml,OSGI-INF/MultipleSourceExecutor.xml,OSGI-INF/TSlidingAdvanceTimeWindowTIPORule.xml,
  OSGI-INF/TCSVFileSourceRule.xml,OSGI-INF/TSelectAORule.xml,OSGI-INF/TCSVFileSinkRule.xml,OSGI-INF/TRelationalProjectAORule.xml,OSGI-INF/TStreamAORule.xml,OSGI-INF/TSlidingTimeWindowTIPORule.xml,
  OSGI-INF/TSlidingPeriodicWindowTIPORule.xml

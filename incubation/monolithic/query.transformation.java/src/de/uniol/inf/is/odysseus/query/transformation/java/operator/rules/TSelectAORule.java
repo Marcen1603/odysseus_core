@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 public class TSelectAORule extends AbstractRule{
 
 	public TSelectAORule() {
-		super("TSelectAORule", "Java");
+		super(TSelectAORule.class.getName(), "Java");
 	}
 
 	@Override

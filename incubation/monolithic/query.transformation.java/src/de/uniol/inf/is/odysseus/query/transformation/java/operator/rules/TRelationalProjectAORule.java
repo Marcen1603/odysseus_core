@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractRule;
 public class TRelationalProjectAORule extends AbstractRule{
 	
 	public TRelationalProjectAORule() {
-		super("TProjectAORule", "java");
+		super(TRelationalProjectAORule.class.getName(), "java");
 	}
 	
 	@Override

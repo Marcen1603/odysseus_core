@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractRule;
 public class TCSVFileSourceRule extends AbstractRule{
 
 	public TCSVFileSourceRule() {
-		super("TCSVFileSourceRule", "java");
+		super(TCSVFileSourceRule.class.getName(), "java");
 	}
 	
 	@Override
@@ -71,6 +71,10 @@ public class TCSVFileSourceRule extends AbstractRule{
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
 		
 		csvFileSource.addCodeFragmentInfo(CreateDefaultCode.codeForAccessFramework(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
+		
+		//Operator configfile test
+		
+		CreateDefaultCode.generateOperatorConfigfile(operatorVariable, csvFileSourceOP.getOptionsMap());
 		
 		TimestampAO timestampAO = Utils.createTimestampAO(operator, null);
 		

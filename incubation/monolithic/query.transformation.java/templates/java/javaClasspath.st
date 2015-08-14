@@ -8,6 +8,8 @@ javaClasspath(jarList)::=<<
 			<classpathentry kind="lib" path="lib/slf4j-log4j12-1.6.4.jar"/>
 			<classpathentry kind="lib" path="lib/slf4j-api-1.6.4.jar"/>
 			<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+			<classpathentry kind="lib" path="lib/gson-2.2.4.jar"/>
+			
 			
 			$jarList: {jarFile| 
 			<classpathentry kind="lib" path="lib/$jarFile$"/>

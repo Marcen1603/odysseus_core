@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractRule;
 public class TCSVFileSinkRule extends AbstractRule {
 	
 	public TCSVFileSinkRule() {
-		super("TCSVFileSinkRule", "Java");
+		super(TCSVFileSinkRule.class.getName(), "Java");
 	}
 	
 	@Override

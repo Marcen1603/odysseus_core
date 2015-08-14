@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingTimeWindow
 public class TSlidingTimeWindowTIPORule extends AbstractRule{
 	
 	public TSlidingTimeWindowTIPORule(){
-		super("TSlidingTimeWindowTIPORule", "Java");
+		super(TSlidingTimeWindowTIPORule.class.getName(), "Java");
 	}
 	
 

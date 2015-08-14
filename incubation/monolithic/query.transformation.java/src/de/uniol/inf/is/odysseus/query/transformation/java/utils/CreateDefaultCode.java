@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.utils;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.gson.Gson;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -306,5 +310,30 @@ public class CreateDefaultCode {
 		return sdfSchema;
 	}
 	
+	
+	
+	public static void generateOperatorConfigfile(String operatorVariable, Map<String,String> optionMap){
+		
+		  Gson gson = new Gson();
+
+		 
+	      String json = gson.toJson(optionMap);
+		
+	      System.out.println(json);
+	      
+	 
+		try {
+		 	FileWriter file = new FileWriter("C:\\Users\\Marc\\Desktop\\tmp\\"+operatorVariable+"PO.json");
+			file.write(json);
+			file.flush();
+			file.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+	      
+	
+	}
 
 }

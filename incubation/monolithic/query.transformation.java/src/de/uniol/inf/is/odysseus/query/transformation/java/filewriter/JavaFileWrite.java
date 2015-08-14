@@ -65,6 +65,9 @@ public class JavaFileWrite {
 		//create main.java file
 		createMainJavaFile();
 		
+		//create Utils.java file
+		createUtilsJavaFile();
+		
 		//create build.xml file
 		createBuildScript();
 		
@@ -125,6 +128,30 @@ public class JavaFileWrite {
 			e.printStackTrace();
 		}
 
+	}
+	
+	
+	private void createUtilsJavaFile(){
+		StringBuilder absolutePath = new StringBuilder();
+		absolutePath.append(tempPath);
+		absolutePath.append("\\src\\main\\");
+		absolutePath.append("Utils.java");
+		
+		file = new File(absolutePath.toString());
+		 // creates the file
+		try {
+			file.createNewFile();
+			writer = new FileWriter(file); 
+			
+			StringTemplate javaUtils = new StringTemplate("java","javaUtils");
+			writer.write(javaUtils.getSt().render()); 
+			
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	

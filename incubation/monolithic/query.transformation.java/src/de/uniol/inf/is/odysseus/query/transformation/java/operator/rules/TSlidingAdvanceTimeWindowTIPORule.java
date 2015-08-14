@@ -21,7 +21,7 @@ public class TSlidingAdvanceTimeWindowTIPORule extends AbstractRule{
 
 
 	public TSlidingAdvanceTimeWindowTIPORule(){
-		super("TSlidingAdvanceTimeWindowTIPORule", "Java");
+		super(TSlidingAdvanceTimeWindowTIPORule.class.getName(), "Java");
 	}
 	
 

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractRule;
 public class TStreamAORule extends AbstractRule{
 	
 	public TStreamAORule() {
-		super("TStreamAORule", "Java");
+		super(TStreamAORule.class.getName(), "Java");
 	}
 	
 	

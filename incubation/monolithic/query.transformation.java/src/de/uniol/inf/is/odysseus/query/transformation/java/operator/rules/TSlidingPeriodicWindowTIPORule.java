@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingPeriodicWi
 public class TSlidingPeriodicWindowTIPORule extends AbstractRule{
 	
 	public TSlidingPeriodicWindowTIPORule(){
-		super("TSlidingPeriodicWindowTIPORule", "Java");
+		super(TSlidingPeriodicWindowTIPORule.class.getName(), "Java");
 	}
 	
 

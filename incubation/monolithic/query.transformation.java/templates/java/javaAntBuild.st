@@ -23,6 +23,9 @@ javaAntBuild(copyJars)::=<<
 			
 			 <pathelement path="lib/$copyJar$"/>
 		}$
+		
+			 <pathelement path="lib/gson-2.2.4.jar"/>
+	
  
 		</classpath>
 		
@@ -56,6 +59,8 @@ javaAntBuild(copyJars)::=<<
             	<zipfileset excludes="META-INF/*.SF" src="lib/slf4j-api-1.6.4.jar"/>
             	
             	<zipfileset excludes="META-INF/*.SF" src="lib/log4j-1.2.16.jar"/>
+            	
+            	<zipfileset excludes="META-INF/*.SF" src="lib/gson-2.2.4.jar"/>
             	
         	</jar>
         	
