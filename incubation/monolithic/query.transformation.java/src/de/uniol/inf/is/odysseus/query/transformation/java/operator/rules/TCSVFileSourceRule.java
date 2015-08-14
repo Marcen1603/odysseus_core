@@ -1,5 +1,4 @@
-package de.uniol.inf.is.odysseus.query.transformation.java.operator;
-
+package de.uniol.inf.is.odysseus.query.transformation.java.operator.rules;
 
 import java.io.IOException;
 
@@ -7,28 +6,57 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.Utils;
-import de.uniol.inf.is.odysseus.query.transformation.operator.AbstractTransformationOperator;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractRule;
 
-public class JavaAccessPO extends AbstractTransformationOperator {
-	
-	public JavaAccessPO(){
-		super(AccessPO.class, "CSVFileSource","Java");
+public class TCSVFileSourceRule extends AbstractRule{
+
+	public TCSVFileSourceRule() {
+		super("TCSVFileSourceRule", "java");
 	}
-	  
+	
+	@Override
+	public boolean isExecutable(ILogicalOperator logicalOperator,
+			TransformationConfiguration transformationConfiguration) {
+		
+		if(logicalOperator instanceof AbstractAccessAO){
+			
+			AbstractAccessAO operator = (AbstractAccessAO) logicalOperator;
+			if (operator.getWrapper() != null) {
+				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+					return true;
+				}
+				if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator.getWrapper())) {
+					return true;
+				}
+			}
+		}
+	
+		return false;
+	}
+
+
+	@Override
+	public Class<?> getConditionClass() {
+		return AbstractAccessAO.class;
+	}
+
 	@Override
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 		CodeFragmentInfo csvFileSource = new CodeFragmentInfo();
-	
+		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 		
 		CSVFileSource csvFileSourceOP = (CSVFileSource) operator;
@@ -57,18 +85,9 @@ public class JavaAccessPO extends AbstractTransformationOperator {
 		csvFileSource.addImport(TimeInterval.class.getName());
 		csvFileSource.addImport(IOException.class.getName());
 		csvFileSource.addImport(IMetadataInitializer.class.getName());
-		
+		csvFileSource.addImport(AccessPO.class.getName());
 		
 		return csvFileSource;
 	}
-
-	@Override
-	public void defineImports() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-
-	
 
 }

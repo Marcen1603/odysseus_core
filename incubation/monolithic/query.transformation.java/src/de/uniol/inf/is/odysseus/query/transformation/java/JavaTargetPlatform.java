@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCod
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIBindings;
 import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.query.transformation.operator.IOperator;
+import de.uniol.inf.is.odysseus.query.transformation.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.AbstractTargetPlatform;
 
@@ -135,7 +135,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 
 	
-		IOperator opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
+		IOperatorRule opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
 			if(!TransformationInformation.getInstance().isOperatorAdded(operator)){
@@ -152,7 +152,6 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				//add imports for default code
 				importList.addAll(initOp.getImports());
 				
-				
 				//generate operator code
 				CodeFragmentInfo opCodeFragment = opTrans.getCode(operator);
 				
@@ -162,7 +161,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				bodyCode.append(operatorCode);
 				
 				//add import for *PO
-				importList.addAll(opTrans.getNeededImports());
+				//importList.addAll(opTrans.getNeededImports());
 	
 				//subcode imports
 				importList.addAll(opCodeFragment.getImports());
