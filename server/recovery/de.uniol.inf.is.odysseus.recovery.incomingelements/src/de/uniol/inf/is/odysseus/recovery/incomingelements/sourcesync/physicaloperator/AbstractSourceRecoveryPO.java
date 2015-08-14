@@ -164,8 +164,6 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 			if (AbstractSourceRecoveryPO.this.mReference.equals(object)) {
 				AbstractSourceRecoveryPO.this.mOffset = AbstractSourceRecoveryPO.this.mCurrentOffsets
 						.getFirst();
-				// FIXME for testing
-				System.err.println(AbstractSourceRecoveryPO.this.mOffset);
 				if (AbstractSourceRecoveryPO.this.mBackupKafkaAccess != null) {
 					AbstractSourceRecoveryPO.this.mBackupKafkaAccess
 							.interrupt();
