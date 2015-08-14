@@ -99,7 +99,7 @@ public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 			ISession caller, List<ILogicalQuery> queries) {
 		for (ILogicalQuery query : queries) {
 			int queryId = query.getID();
-			this.mQueryIds.add(new Pair<Integer, ISession>(queryId, caller));
+			this.mQueryIds.add(new Pair<Integer, ISession>(new Integer(queryId), caller));
 			ProtectionPointManagerRegistry.getInstance(queryId)
 					.addHandler(this);
 		}
@@ -114,8 +114,8 @@ public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 		}
 		for (IPair<Integer, ISession> queryId : this.mQueryIds) {
 			OperatorStateStore.store(collectStateFulOperators(cExecutor.get()
-					.getPhysicalRoots(queryId.getE1(), queryId.getE2())),
-					queryId.getE1());
+					.getPhysicalRoots(queryId.getE1().intValue(), queryId.getE2())),
+					queryId.getE1().intValue());
 		}
 	}
 

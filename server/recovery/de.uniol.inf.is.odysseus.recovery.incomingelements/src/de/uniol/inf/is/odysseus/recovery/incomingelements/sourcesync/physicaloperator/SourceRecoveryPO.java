@@ -98,7 +98,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		this.mNeedToAdjustOffset = false;
 		this.mRecoveryKafkaAccess = new KafkaConsumerAccess(this.mSourceAccess
 				.getAccessAOName().getResourceName(),
-				this.mRecoveryKafkaConsumer, this.mOffset);
+				this.mRecoveryKafkaConsumer, this.mOffset.longValue());
 		this.mRecoveryKafkaAccess.start();
 		super.process_open();
 	}

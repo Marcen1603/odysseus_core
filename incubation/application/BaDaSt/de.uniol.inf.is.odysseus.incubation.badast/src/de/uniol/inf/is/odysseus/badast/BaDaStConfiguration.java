@@ -71,6 +71,7 @@ public class BaDaStConfiguration {
 		}
 
 		// File already existed
+		@SuppressWarnings("resource")
 		FileInputStream stream = null;
 		try {
 			stream = new FileInputStream(file);
@@ -83,6 +84,11 @@ public class BaDaStConfiguration {
 			}
 		} finally {
 			saveConfiguration(fileName);
+			try {
+				stream.close();
+			} catch (IOException e1) {
+				cLog.error("Could not close file stream!");
+			}
 		}
 	}
 

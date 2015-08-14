@@ -211,9 +211,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 
 			}.start();
 			break;
-		case QUERY_ADDED:
-		case PLAN_REOPTIMIZE:
-		case QUERY_REOPTIMIZE:
+		default:
 			// Nothing to do.
 			break;
 		}
@@ -349,9 +347,8 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * @param executor
 	 *            A present executor.
 	 */
-	void backupScript(String script, List<Integer> queryIds,
-			String parserId, ISession user, Context context,
-			IServerExecutor executor) {
+	void backupScript(String script, List<Integer> queryIds, String parserId,
+			ISession user, Context context, IServerExecutor executor) {
 		ScriptAddedInfo info = new ScriptAddedInfo();
 		info.setContext(context);
 		info.setParserId(parserId);
@@ -435,8 +432,7 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	 * @param executor
 	 *            A present executor.
 	 */
-	static void recoverFromLog(List<ISysLogEntry> log,
-			IServerExecutor executor) {
+	static void recoverFromLog(List<ISysLogEntry> log, IServerExecutor executor) {
 		// Mapping of the last seen log entry (the contained info, but not yet
 		// recovered) for each query (state change or removal, not creation).
 		Map<Integer, QueryStateChangedInfo> lastSeenEntries = Maps.newHashMap();
@@ -457,16 +453,17 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 				case SOURCE_REMOVED:
 					recoverSourceRemoval(entry, executor);
 					break;
-				case QUERY_REMOVED:
-				case QUERYSTATE_CHANGED:
+				default:
+					// case QUERY_REMOVED:
+					// case QUERYSTATE_CHANGED:
 					QueryStateChangedInfo info = (QueryStateChangedInfo) AbstractQueryStateInfo
 							.fromBase64Binary(entry.getComment().get());
-					lastSeenEntries.put(info.getQueryId(), info);
+					lastSeenEntries.put(new Integer(info.getQueryId()), info);
 					break;
 				}
 			}
 		}
-		for (int queryId : lastSeenEntries.keySet()) {
+		for (Integer queryId : lastSeenEntries.keySet()) {
 			recoverQueryStateChange(lastSeenEntries.get(queryId), executor);
 		}
 	}
@@ -562,7 +559,8 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 		case RUNNING:
 			executor.startQuery(queryID, caller);
 			break;
-		case UNDEF:
+		default:
+			// case UNDEF:
 			executor.removeQuery(queryID, caller);
 		}
 	}

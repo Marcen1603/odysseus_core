@@ -102,7 +102,7 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	/**
 	 * The offset of the first element to recover.
 	 */
-	protected Long mOffset = 0l;
+	protected Long mOffset = new Long(0l);
 
 	/**
 	 * True, if the next element shall be used as {@link #mReference} to adjust
@@ -145,7 +145,7 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 		public void onNewMessage(ByteBuffer message, long offset)
 				throws Throwable {
 			synchronized (AbstractSourceRecoveryPO.this.mCurrentOffsets) {
-				AbstractSourceRecoveryPO.this.mCurrentOffsets.add(offset);
+				AbstractSourceRecoveryPO.this.mCurrentOffsets.add(new Long(offset));
 				AbstractSourceRecoveryPO.this.mBackupProtocolHandler.process(0,
 						message);
 			}
@@ -238,7 +238,7 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 
 	@Override
 	protected void process_close() {
-		this.mOffset = 0l;
+		this.mOffset = new Long(0l);
 		if (this.mBackupKafkaAccess != null) {
 			this.mBackupKafkaAccess.interrupt();
 		}
@@ -277,14 +277,14 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	@Override
 	public IOperatorState getState() {
 		synchronized (this.mOffset) {
-			return new SourceRecoveryState(this.mOffset);
+			return new SourceRecoveryState(this.mOffset.longValue());
 		}
 	}
 
 	@Override
 	public void setState(Serializable state) {
 		synchronized (this.mOffset) {
-			this.mOffset = ((SourceRecoveryState) state).getOffset();
+			this.mOffset = new Long(((SourceRecoveryState) state).getOffset());
 		}
 	}
 

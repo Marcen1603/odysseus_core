@@ -117,7 +117,7 @@ public class ProtectionPointManagerRegistry {
 	 *         {@code null}, if none is set.
 	 */
 	public static IProtectionPointManager getInstance(int queryId) {
-		return cUsedManagers.get(queryId);
+		return cUsedManagers.get(new Integer(queryId));
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class ProtectionPointManagerRegistry {
 	 */
 	public static void setProtectionPointManager(int queryId,
 			IProtectionPointManager manager) {
-		cUsedManagers.put(queryId, manager);
+		cUsedManagers.put(new Integer(queryId), manager);
 	}
 
 	/**

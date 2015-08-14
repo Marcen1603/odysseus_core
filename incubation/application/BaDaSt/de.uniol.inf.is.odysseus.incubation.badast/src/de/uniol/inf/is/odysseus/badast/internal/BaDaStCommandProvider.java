@@ -245,17 +245,23 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * @return A success message or failure message.
 	 */
 	private static String createRecorder(Properties cfg) {
-		StringBuffer out = new StringBuffer();
+		
+		String type;
 		try {
-			String type = cfg.getProperty(TYPE_CONFIG);
+			type = cfg.getProperty(TYPE_CONFIG);
 			validateTypeShallExist(type);
-			IBaDaStRecorder<?> reader = cRecorderTypes.get(type).newInstance(cfg);
+		} catch (BaDaStException e) {
+			return e.getMessage();
+		}
+		
+		StringBuffer out = new StringBuffer();
+		try( IBaDaStRecorder<?> reader = cRecorderTypes.get(type).newInstance(cfg)) {
 			validateNameShallNotExist(reader.getName());
 			cRecorders.put(reader.getName(), reader);
 			out.append("Created BaDaSt recorder " + reader.getName());
-		} catch (BaDaStException e) {
-			out.append(e.getMessage());
-		}
+		} catch (Exception e) {
+			return e.getMessage();
+		} 
 		return out.toString();
 	}
 
