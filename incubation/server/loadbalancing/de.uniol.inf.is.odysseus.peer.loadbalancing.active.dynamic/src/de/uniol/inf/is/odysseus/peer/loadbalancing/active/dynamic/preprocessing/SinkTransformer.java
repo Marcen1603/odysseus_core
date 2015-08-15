@@ -24,16 +24,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterParserID;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -92,7 +84,7 @@ public class SinkTransformer {
 	@SuppressWarnings({ "rawtypes"})
 	private static void replaceSubscriptionWithSenderAndReceiver(ISink sinkOperator,PeerID peerID, int queryID, IServerExecutor executor, ISession session, IQueryPartController queryPartController, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry) {
 		
-		ILogicalOperator logicalSink = getLogicalSinkToPhysicalSink(sinkOperator, queryID, executor, session);
+		ILogicalOperator logicalSink = TransformationHelper.getLogicalSinkToPhysicalSink(sinkOperator, queryID, executor, session);
 		
 		List<ControllablePhysicalSubscription> physicalSubscriptionsToReplace = getSubscriptionsToReplace(
 				sinkOperator, queryID, executor);
@@ -119,13 +111,13 @@ public class SinkTransformer {
 			
 			if(firstSubscription) {
 
-				receiverAO = createReceiverAO(sinkOperator, peerID, newPipe,subscr.getSchema());
-				Pair<Integer,JxtaReceiverPO> queryIdReceiverPair = createNewQueryWithJxtaReceiver(receiverAO,queryID, executor, session,logicalSink.getName());
+				receiverAO = TransformationHelper.createReceiverAO(sinkOperator, peerID, newPipe,subscr.getSchema());
+				Pair<Integer,IPhysicalOperator> queryIdReceiverPair = TransformationHelper.createNewQueryWithFromLogicalOperator(receiverAO,queryID, executor, session,logicalSink.getName());
 				newQueryID = queryIdReceiverPair.getE1();
-				receiverPO = queryIdReceiverPair.getE2();
+				receiverPO = (JxtaReceiverPO)queryIdReceiverPair.getE2();
 				firstSubscription = false;
 			} else {
-				receiverAO = createReceiverAO(sinkOperator, peerID, newPipe,subscr.getSchema());
+				receiverAO = TransformationHelper.createReceiverAO(sinkOperator, peerID, newPipe,subscr.getSchema());
 				try {
 					receiverPO = new JxtaReceiverPO(receiverAO);
 					executor.getExecutionPlan().getQueryById(newQueryID).addChild(receiverPO);
@@ -136,29 +128,37 @@ public class SinkTransformer {
 				}
 			}
 			
-			JxtaSenderAO senderAO = createJxtaSenderAO(sinkOperator, peerID, newPipe);
+			JxtaSenderAO senderAO = TransformationHelper.createJxtaSenderAO(sinkOperator, peerID, newPipe);
 			addedSenders.add(senderAO);
 			JxtaSenderPO senderPO;
 			
 			try {
 				senderPO = new JxtaSenderPO(senderAO);
 			} catch (DataTransmissionException e) {
-				LOG.error("Could not create JxtaReceiverPO.");
+				LOG.error("Could not create JxtaSenderPO.");
 				e.printStackTrace();
 				return;
 			}
-			
 			if(logicalSink!=null) {
-				modifyLogicalQuery(queryID, executor, session, logicalSink,
-						newQueryID, addedSenders, receiverAO, subscr, senderAO);
+				
+				
+				
+				Collection<ILogicalOperator> newRootsSinkSide = Lists.newArrayList();
+				newRootsSinkSide.add(logicalSink);
+				TransformationHelper.modifyLogicalQuery(logicalSink, senderAO, receiverAO, subscr, queryID, newQueryID, addedSenders, newRootsSinkSide, executor, session,true);
 			}
 			else {
 				LOG.warn("Could not find logical Sink to physical Sink {}",sinkOperator.getName());
 			}
+
+			ISubscription sourceToSinkSubscription = getSourceToSinkSubscription(sinkOperator, subscr);
+			TransformationHelper.modifyPhyiscalQuery(sinkOperator,(ISource)subscr.getTarget(), queryID, executor, session,
+					newRoots, iter, sourceToSinkSubscription, receiverPO, senderPO,false);
 			
-			modifyPhyiscalQuery(sinkOperator, queryID, executor, session,
-					newRoots, iter, subscr, receiverPO, senderPO);
-			
+			//Set last root manually.
+			if(!iter.hasNext()) {
+					 executor.getExecutionPlan().getQueryById(queryID).replaceOperator(sinkOperator, senderPO);
+			}
 		}
 		
 
@@ -172,70 +172,6 @@ public class SinkTransformer {
 		
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static void modifyLogicalQuery(int queryID,
-			IServerExecutor executor, ISession session,
-			ILogicalOperator logicalSink, int newQueryID,
-			Collection<ILogicalOperator> addedSenders,
-			JxtaReceiverAO receiverAO, ControllablePhysicalSubscription subscr,
-			JxtaSenderAO senderAO) {
-		ISubscription logicalSubscription = getLogicalForPhysicalSubscription(subscr, logicalSink);
-		replaceLogicalSubscription(logicalSubscription,logicalSink,senderAO,receiverAO);
-		
-		ILogicalQuery oldLogicalQuery = executor.getLogicalQueryById(queryID, session);
-		ILogicalQuery newLogicalQuery = executor.getLogicalQueryById(newQueryID, session);
-		IPhysicalQuery newPhysicalQuery = executor.getExecutionPlan().getQueryById(newQueryID);
-		
-		Collection<ILogicalOperator> oldSink = Lists.newArrayList();
-		oldSink.add(logicalSink);
-		
-		
-		TopAO oldTop = RestructHelper.generateTopAO(addedSenders);
-		TopAO newTop = RestructHelper.generateTopAO(oldSink);
-		
-		oldLogicalQuery.setLogicalPlan(oldTop, true);
-		
-		newLogicalQuery.setLogicalPlan(newTop, true);
-		newPhysicalQuery.setLogicalQuery(newLogicalQuery);
-		
-		List<ILogicalOperator> operatorsInNewQuery = Lists.newArrayList();
-		List<ILogicalOperator> operatorsInOldQuery = Lists.newArrayList();
-		
-		RestructHelper.collectOperators(newTop, operatorsInNewQuery);
-		RestructHelper.collectOperators(oldTop, operatorsInOldQuery);
-		
-		for(ILogicalOperator op : operatorsInNewQuery) {
-			op.removeAllOwners();
-			op.addOwner(newLogicalQuery);
-		}
-		
-
-		for(ILogicalOperator op : operatorsInOldQuery) {
-			op.removeAllOwners();
-			op.addOwner(oldLogicalQuery);
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	private static void modifyPhyiscalQuery(ISink sinkOperator, int queryID,
-			IServerExecutor executor, ISession session,
-			List<IPhysicalOperator> newRoots,
-			Iterator<ControllablePhysicalSubscription> iter,
-			ControllablePhysicalSubscription subscr, JxtaReceiverPO receiverPO,
-			JxtaSenderPO senderPO) {
-		replacePhysicalSinkWithSenderReceiverPair(sinkOperator,subscr,senderPO, receiverPO);
-
-		newRoots.add(senderPO);
-
-		senderPO.open(executor.getLogicalQueryById(queryID, session));
-		
-		if(iter.hasNext()) {
-			 executor.getExecutionPlan().getQueryById(queryID).addChild(senderPO);
-		}
-		else {
-			 executor.getExecutionPlan().getQueryById(queryID).replaceOperator(sinkOperator, senderPO);
-		}
-	}
 
 	@SuppressWarnings("rawtypes")
 	private static void reorganizeRootsOfQuery(ISink sinkOperator, int queryID,
@@ -268,30 +204,6 @@ public class SinkTransformer {
 			queryPartController.registerAsMaster(executor.getLogicalQueryById(newQueryID, session), newQueryID, sharedQueryID, otherPeers);
 		}
 	}
-	
-	@SuppressWarnings("rawtypes")
-	private static void replaceLogicalSubscription(ISubscription logicalSubscription, ILogicalOperator sink, ILogicalOperator senderAO,ILogicalOperator receiverAO) {
-		ILogicalOperator source = (ILogicalOperator) logicalSubscription.getTarget();
-		int sinkInPort = logicalSubscription.getSinkInPort();
-		int sourceOutPort = logicalSubscription.getSourceOutPort();
-		
-		source.unsubscribeSink(sink, sinkInPort, sourceOutPort, logicalSubscription.getSchema());
-
-		sink.unsubscribeFromSource(source, sinkInPort, sourceOutPort, sink.getInputSchema(sinkInPort));
-		
-		source.subscribeSink(senderAO, 0, sourceOutPort, source.getOutputSchema().clone());
-		receiverAO.subscribeSink(sink, sinkInPort, 0, source.getOutputSchema().clone());
-		
-		sink.subscribeToSource(receiverAO, sinkInPort, 0, source.getOutputSchema().clone());
-		senderAO.subscribeToSource(source, 0, sourceOutPort, source.getOutputSchema().clone());
-		
-	}
-	
-	@SuppressWarnings("rawtypes")
-	private static ISubscription getLogicalForPhysicalSubscription(ControllablePhysicalSubscription subscr, ILogicalOperator logicalSink) {
-		return logicalSink.getSubscribedToSource(subscr.getSinkInPort());
-		
-	}
 
 	@SuppressWarnings("rawtypes")
 	private static List<ControllablePhysicalSubscription> getSubscriptionsToReplace(
@@ -312,55 +224,26 @@ public class SinkTransformer {
 		}
 		return subscriptionsToReplace;
 	}
+	
 
 	@SuppressWarnings("rawtypes")
-	private static JxtaSenderAO createJxtaSenderAO(ISink sink,
-			PeerID peerID, PipeID pipeID) {
-		JxtaSenderAO senderAO = new JxtaSenderAO();
-		senderAO.setPeerID(peerID.toString());
-		senderAO.setPipeID(pipeID.toString());
-		senderAO.setOutputSchema(sink.getOutputSchema().clone());
-		senderAO.setName("JxtaSender " + sink.getName());
-		return senderAO;
+	private static ISubscription getSourceToSinkSubscription(ISink sink,ISubscription subscr) {
+		ISource source = (ISource) subscr.getTarget();
+		for (Object obj : source.getSubscriptions()) {
+			if (obj instanceof ISubscription) {
+				ISubscription revSubscr = (ISubscription) obj;
+				if (revSubscr.getTarget().equals(sink)
+						&& revSubscr.getSourceOutPort() == subscr
+								.getSourceOutPort()
+						&& revSubscr.getSinkInPort() == subscr.getSinkInPort()) {
+					return revSubscr;
+				}
+			}
+		}
+		return null;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static void replacePhysicalSinkWithSenderReceiverPair(ISink sink,
-			ControllablePhysicalSubscription revSubscr,
-			JxtaSenderPO senderPO, JxtaReceiverPO receiverPO) {
-
-		ISource source = (ISource)revSubscr.getTarget();
-		ISubscription subscr = getReversePhysicalSubscription(sink, revSubscr);
-		
-
-		if(subscr instanceof ControllablePhysicalSubscription) {
-
-			ControllablePhysicalSubscription cSub = (ControllablePhysicalSubscription) subscr;
-			cSub.suspend();
-			
-
-			cSub.setTarget(senderPO);
-			
-			sink.unsubscribeFromSource(revSubscr);
-
-			sink.subscribeToSource(receiverPO, subscr.getSinkInPort(), 0,
-					subscr.getSchema().clone());
-			
-			senderPO.subscribeToSource(source, 0, subscr.getSourceOutPort(), subscr.getSchema());
-			
-		
-			receiverPO.subscribeSink(sink, subscr.getSinkInPort(), 0, subscr
-					.getSchema().clone());
-
-			cSub.setSinkInPort(0);
-			cSub.resume();
-		}
-		else {
-			LOG.error("Subscription is no controllable Subscription. Not supported.");
-		}
-		
-	}
-
+	/*
 	@SuppressWarnings("rawtypes")
 	private static Pair<Integer, JxtaReceiverPO> createNewQueryWithJxtaReceiver(JxtaReceiverAO receiverAO,int oldQueryID,
 			IServerExecutor executor, ISession session, String sinkName) {
@@ -388,59 +271,10 @@ public class SinkTransformer {
 				executor,receiverAO.getPipeID());
 		return new Pair<Integer, JxtaReceiverPO>(queryIdForNewQuery, receiverPO);
 	}
-
-	@SuppressWarnings("rawtypes")
-	private static JxtaReceiverAO createReceiverAO(ISink sink, PeerID peerID,
-			PipeID pipeID,SDFSchema schema) {
-		JxtaReceiverAO receiverAO = new JxtaReceiverAO();
-		receiverAO.setPeerID(peerID.toString());
-		receiverAO.setPipeID(pipeID.toString());
-		receiverAO.setOutputSchema(schema.clone());
-		receiverAO.setSchema(schema.clone().getAttributes());
-		receiverAO.setMetaschemata(schema.getMetaschema());
-		receiverAO.setName("JxtaReceiver " + sink.getName());
-		receiverAO.setSchemaName(schema.getURI());
-		return receiverAO;
-	}
-
-	
-	public static ILogicalOperator getLogicalSinkToPhysicalSink(IPhysicalOperator sinkOperator,int queryID, IServerExecutor executor,ISession session) {
-		ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryID, session);
-		List<ILogicalOperator> operatorsInLogicalQuery = Lists.newArrayList();
-		RestructHelper.collectOperators(logicalQuery.getLogicalPlan(), operatorsInLogicalQuery);
-		
-		ILogicalOperator sink=null;
-		
-		for(ILogicalOperator op: operatorsInLogicalQuery) {
-			if(!op.isSinkOperator())
-				continue;
-			if(op.getName().equals(sinkOperator.getName())) {
-				sink = op;
-				break;
-			}
-		}
-		return sink;
-	}
-
-	@SuppressWarnings("rawtypes")
-	private static ISubscription getReversePhysicalSubscription(ISink sink,
-			ISubscription subscr) {
-		ISource source = (ISource) subscr.getTarget();
-		for (Object obj : source.getSubscriptions()) {
-			if (obj instanceof ISubscription) {
-				ISubscription revSubscr = (ISubscription) obj;
-				if (revSubscr.getTarget().equals(sink)
-						&& revSubscr.getSourceOutPort() == subscr
-								.getSourceOutPort()
-						&& revSubscr.getSinkInPort() == subscr.getSinkInPort()) {
-					return revSubscr;
-				}
-			}
-		}
-		return null;
-	}
+	*/
 
 
+/*
 	@SuppressWarnings("rawtypes")
 	private static JxtaReceiverPO getPhysicalReceiverFromQuery(int queryId,
 			ISession session, IServerExecutor executor,String pipeID) {
@@ -456,5 +290,31 @@ public class SinkTransformer {
 		return null;
 	}
 	
+	
+
+	@SuppressWarnings("rawtypes")
+	private static void modifyPhyiscalQuery(ISink sinkOperator, int queryID,
+			IServerExecutor executor, ISession session,
+			List<IPhysicalOperator> newRoots,
+			Iterator<ControllablePhysicalSubscription> iter,
+			ControllablePhysicalSubscription subscr, JxtaReceiverPO receiverPO,
+			JxtaSenderPO senderPO) {
+		
+		ISubscription sourceToSinkSubscr = getSourceToSinkSubscription(sinkOperator, subscr);
+		ISource sourceOperator= (ISource)(subscr.getTarget());
+		TransformationHelper.replacePhysicalConnectionWithSenderReceiverPair(sourceOperator, sinkOperator, sourceToSinkSubscr, senderPO, receiverPO);
+
+		newRoots.add(senderPO);
+
+		senderPO.open(executor.getLogicalQueryById(queryID, session));
+		
+		if(iter.hasNext()) {
+			 executor.getExecutionPlan().getQueryById(queryID).addChild(senderPO);
+		}
+		else {
+			 executor.getExecutionPlan().getQueryById(queryID).replaceOperator(sinkOperator, senderPO);
+		}
+	}
+	*/
 	
 }
