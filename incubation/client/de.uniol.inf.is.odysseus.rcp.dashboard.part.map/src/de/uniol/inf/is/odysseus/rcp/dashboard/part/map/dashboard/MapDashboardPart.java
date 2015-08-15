@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -20,7 +22,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
-
 
 public class MapDashboardPart extends AbstractDashboardPart implements IStreamMapEditor {
 
@@ -35,7 +36,8 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 	private final List<Tuple<?>> data = Lists.newArrayList();
 
 	private String attributeList = "*";
-	private String operatorName = "";
+	private String layerSettings = "";
+	private Integer srid = 0;
 
 	private int maxData = 10;
 	private int updateInterval = 1000;
@@ -56,23 +58,24 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 		screenManager.setCanvasViewer(screenManager.createCanvas(parent));
 		// setTimeSlider(createTimeSliderComposite(parent));
 
-		BasicLayer basic = new BasicLayer();
-		mapModel.getLayers().addFirst(basic);
+		addFirstLayer();
 		
 		mapModel.init(this);
+		update();
 	}
 
 	public void initMapModel() {
 
 		if (!initiated) {
-			// mapModel = MapEditorModel.open(file,this);
 			mapModel = new MapEditorModel();
 
-			if (mapModel.getSRID() == 0) {
+			if (mapModel.getSRID() == 0 && srid == 0) {
 				// If a new file was created or the map has
 				// no srid because of other reasons
 				// set a standard srid, here 3785
 				mapModel.setSrid(3857);
+			} else {
+				mapModel.setSrid(srid);
 			}
 			initiated = true;
 		}
@@ -121,12 +124,12 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 			LOG.error("Map Model is not initialized.");
 		}
 	}
-	
-	public void editLayer(LayerConfiguration layer){
-		if(mapModel != null){
+
+	public void editLayer(LayerConfiguration layer) {
+		if (mapModel != null) {
 			mapModel.editLayer(layer);
 			update();
-		}else{
+		} else {
 			LOG.error("Map Model is not initialized.");
 		}
 	}
@@ -210,9 +213,50 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 	// }
 
 	@Override
+	public Map<String, String> onSave() {
+		Map<String, String> toSaveMap = Maps.newHashMap();
+		layerSettings = mapModel.save();
+		toSaveMap.put("Attributes", attributeList);
+		toSaveMap.put("MaxData", String.valueOf(maxData));
+		toSaveMap.put("UpdateInterval", String.valueOf(updateInterval));
+		toSaveMap.put("LayerSettings", layerSettings);
+		System.out.print("SAVE"+ layerSettings);
+		toSaveMap.put("SRID", String.valueOf(mapModel.getSRID()));
+		return toSaveMap;
+	};
+
+	@Override
+	public void onLoad(Map<String, String> saved) {
+		initMapModel();
+
+		attributeList = saved.get("Attributes");
+		maxData = Integer.valueOf(saved.get("MaxData"));
+		updateInterval = Integer.valueOf(saved.get("UpdateInterval"));
+		srid = Integer.valueOf(saved.get("SRID"));
+		layerSettings = saved.get("LayerSettings");
+		System.out.println("Saved LayerSettings:" + saved.get("LayerSettings"));
+		System.out.println("LOAD: "+layerSettings);
+		if (layerSettings != null) {
+			mapModel.load(layerSettings);
+		}
+	};
+
+	@Override
 	public Object getAdapter(Class adapter) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	/**
+	 * Adds the BasicLayer to the map.
+	 */
+	private void addFirstLayer() {
+		if (mapModel.getLayers().isEmpty()) {
+			BasicLayer basic = new BasicLayer();
+			basic.setActive(true);
+			mapModel.getLayers().addFirst(basic);
+		}
+	}
+	
 
 }
