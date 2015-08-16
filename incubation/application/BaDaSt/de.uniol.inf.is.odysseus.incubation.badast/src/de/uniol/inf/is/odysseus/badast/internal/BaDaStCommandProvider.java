@@ -38,7 +38,7 @@ import kafka.message.MessageAndOffset;
  * @author Michael Brand
  *
  */
-@SuppressWarnings(value = { "nls" })
+@SuppressWarnings("nls")
 public class BaDaStCommandProvider implements CommandProvider {
 
 	/**
@@ -70,10 +70,13 @@ public class BaDaStCommandProvider implements CommandProvider {
 	// Fill the mapping with all recorder types, which are not bound by
 	// OSGi
 	static {
-		IBaDaStRecorder<String> fileRecorder = new FileRecorder();
-		cRecorderTypes.put(FileRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), fileRecorder);
-		IBaDaStRecorder<byte[]> tcpRecorder = new TCPRecorder();
-		cRecorderTypes.put(TCPRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), tcpRecorder);
+		try(IBaDaStRecorder<String> fileRecorder = new FileRecorder(); IBaDaStRecorder<byte[]> tcpRecorder = new TCPRecorder()) {		
+			cRecorderTypes.put(FileRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), fileRecorder);
+			cRecorderTypes.put(TCPRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), tcpRecorder);
+		} catch (Exception e) {
+			// Unreachable block
+			e.printStackTrace();
+		}
 	}
 
 	/**
