@@ -29,8 +29,7 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManager
  *
  */
 @SuppressWarnings(value = { "nls" })
-public class ProtectionPointsRecoveryComponent implements IRecoveryComponent,
-		IPlanModificationListener {
+public class ProtectionPointsRecoveryComponent implements IRecoveryComponent, IPlanModificationListener {
 
 	@Override
 	public String getName() {
@@ -76,32 +75,28 @@ public class ProtectionPointsRecoveryComponent implements IRecoveryComponent,
 	@Override
 	public IRecoveryComponent newInstance(Properties config) {
 		ProtectionPointsRecoveryComponent component = new ProtectionPointsRecoveryComponent();
-		component.mManager = ProtectionPointManagerRegistry
-				.createFromConfig(config);
+		component.mManager = ProtectionPointManagerRegistry.createFromConfig(config);
 		return component;
 	}
 
 	@Override
-	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
-			ISession caller, List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
 		// Nothing to do
 		return queries;
 	}
 
 	@Override
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
-			ISession caller, List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
+			List<ILogicalQuery> queries) {
 		for (ILogicalQuery query : queries) {
-			ProtectionPointManagerRegistry.setProtectionPointManager(
-					query.getID(), this.mManager);
+			ProtectionPointManagerRegistry.setProtectionPointManager(query.getID(), this.mManager);
 		}
 		return queries;
 	}
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		PlanModificationEventType eventType = (PlanModificationEventType) eventArgs
-				.getEventType();
+		PlanModificationEventType eventType = (PlanModificationEventType) eventArgs.getEventType();
 		final int queryId = ((IPhysicalQuery) eventArgs.getValue()).getID();
 		switch (eventType) {
 		case QUERY_START:

@@ -60,8 +60,8 @@ public class SourceRecoveryAO extends UnaryLogicalOp {
 	 *            The protection point manager to be used to inform, if a
 	 *            protection point is reached.
 	 */
-	public SourceRecoveryAO(AbstractAccessAO sourceAccess,
-			boolean recoveryMode, IProtectionPointManager protectionPointManager) {
+	public SourceRecoveryAO(AbstractAccessAO sourceAccess, boolean recoveryMode,
+			IProtectionPointManager protectionPointManager) {
 		super();
 		this.mSourceAccess = sourceAccess;
 		this.mRecoveryMode = recoveryMode;

@@ -42,14 +42,13 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManager
  *
  */
 @SuppressWarnings(value = { "nls" })
-public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
-		IQueryAddedListener, IDataDictionaryListener {
+public class IncomingElementsRecoveryComponent
+		implements IRecoveryComponent, IQueryAddedListener, IDataDictionaryListener {
 
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory
-			.getLogger(IncomingElementsRecoveryComponent.class);
+	private static final Logger cLog = LoggerFactory.getLogger(IncomingElementsRecoveryComponent.class);
 
 	/**
 	 * The server executor, if bound.
@@ -59,8 +58,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	/**
 	 * All data dictionaries, where this component listens to.
 	 */
-	private static Set<IDataDictionary> cUsedDataDictionaries = Sets
-			.newHashSet();
+	private static Set<IDataDictionary> cUsedDataDictionaries = Sets.newHashSet();
 
 	/**
 	 * Binds an implementation of the server executor.
@@ -104,12 +102,10 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	 * not yet an income of
 	 * {@link #activateBackup(QueryBuildConfiguration, ISession, List)}.
 	 */
-	private final Set<ILogicalQuery> mCurrentlyRecoveredQueries = Sets
-			.newHashSet();
+	private final Set<ILogicalQuery> mCurrentlyRecoveredQueries = Sets.newHashSet();
 
 	@Override
-	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
-			ISession caller, List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
 		if (!cExecutor.isPresent()) {
 			cLog.error("No executor bound!");
 			return queries;
@@ -122,8 +118,8 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	}
 
 	@Override
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
-			ISession caller, List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
+			List<ILogicalQuery> queries) {
 		if (!cExecutor.isPresent()) {
 			cLog.error("No executor bound!");
 			return queries;
@@ -151,41 +147,31 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	 * @param executor
 	 *            A present executor.
 	 */
-	private static void insertSourceSyncOperators(final ILogicalQuery query,
-			final boolean recoveryMode, ISession caller,
-			IServerExecutor executor) {
-		List<ILogicalOperator> operators = Lists
-				.newArrayList(collectOperators(query.getLogicalPlan()));
+	private static void insertSourceSyncOperators(final ILogicalQuery query, final boolean recoveryMode,
+			ISession caller, IServerExecutor executor) {
+		List<ILogicalOperator> operators = Lists.newArrayList(collectOperators(query.getLogicalPlan()));
 		LogicalGraphWalker graphWalker = new LogicalGraphWalker(operators);
 		graphWalker.walk(new IOperatorWalker<ILogicalOperator>() {
 
 			/**
 			 * All recorded sources.
 			 */
-			private final Set<String> mRecordedSources = BaDaStRecorderRegistry
-					.getRecordedSources();
+			private final Set<String> mRecordedSources = BaDaStRecorderRegistry.getRecordedSources();
 
 			@Override
 			public void walk(ILogicalOperator operator) {
 				// XXX Works only with AbstractAccessAO, not with StreamAO,
 				// because I need the protocol and data handler
-				if (AbstractAccessAO.class.isInstance(operator)
-						&& this.mRecordedSources
-								.contains(((AbstractAccessAO) operator)
-										.getAccessAOName().getResourceName())) {
+				if (AbstractAccessAO.class.isInstance(operator) && this.mRecordedSources
+						.contains(((AbstractAccessAO) operator).getAccessAOName().getResourceName())) {
 					AbstractAccessAO sourceAccess = (AbstractAccessAO) operator;
-					SourceRecoveryAO sourceRecovery = new SourceRecoveryAO(
-							sourceAccess, recoveryMode,
-							ProtectionPointManagerRegistry.getInstance(query
-									.getID()));
-					Collection<LogicalSubscription> subs = Lists
-							.newArrayList(operator.getSubscriptions());
+					SourceRecoveryAO sourceRecovery = new SourceRecoveryAO(sourceAccess, recoveryMode,
+							ProtectionPointManagerRegistry.getInstance(query.getID()));
+					Collection<LogicalSubscription> subs = Lists.newArrayList(operator.getSubscriptions());
 					operator.unsubscribeFromAllSinks();
-					sourceRecovery.subscribeToSource(operator, 0, 0,
-							operator.getOutputSchema());
+					sourceRecovery.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
 					for (LogicalSubscription sub : subs) {
-						sourceRecovery.subscribeSink(sub.getTarget(),
-								sub.getSinkInPort(), sub.getSourceOutPort(),
+						sourceRecovery.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(),
 								sub.getSchema());
 					}
 				}
@@ -201,8 +187,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	 *            The logical plan.
 	 * @return All operators within the logical plan.
 	 */
-	private static Set<ILogicalOperator> collectOperators(
-			ILogicalOperator logicalPlan) {
+	private static Set<ILogicalOperator> collectOperators(ILogicalOperator logicalPlan) {
 		Set<ILogicalOperator> operators = Sets.newHashSet();
 		collectOperatorsRecursive(logicalPlan, operators);
 		return operators;
@@ -218,8 +203,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	 *            All already collected operators.
 	 * @return All operators within the logical plan.
 	 */
-	private static void collectOperatorsRecursive(ILogicalOperator operator,
-			Set<ILogicalOperator> operators) {
+	private static void collectOperatorsRecursive(ILogicalOperator operator, Set<ILogicalOperator> operators) {
 		operators.add(operator);
 		for (LogicalSubscription sub : operator.getSubscribedToSource()) {
 			collectOperatorsRecursive(sub.getTarget(), operators);
@@ -233,9 +217,8 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	}
 
 	@Override
-	public void queryAddedEvent(String query, List<Integer> queryIds,
-			QueryBuildConfiguration buildConfig, String parserID,
-			ISession user, Context context) {
+	public void queryAddedEvent(String query, List<Integer> queryIds, QueryBuildConfiguration buildConfig,
+			String parserID, ISession user, Context context) {
 		// Get data dictionary news
 		IDataDictionary dict = cExecutor.get().getDataDictionary(user);
 		if (!cUsedDataDictionaries.contains(dict)) {
@@ -245,8 +228,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name,
-			ILogicalOperator op) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
 		// name is user.sourcename
 		String sourcename = name;
 		int dotIndex = name.indexOf('.');
@@ -262,8 +244,7 @@ public class IncomingElementsRecoveryComponent implements IRecoveryComponent,
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name,
-			ILogicalOperator op) {
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
 		// Nothing to do
 	}
 

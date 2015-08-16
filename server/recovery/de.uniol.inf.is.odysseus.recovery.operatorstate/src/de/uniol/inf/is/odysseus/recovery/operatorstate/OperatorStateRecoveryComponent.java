@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.recovery.operatorstate;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
@@ -33,14 +35,12 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManager
  *
  */
 @SuppressWarnings(value = { "nls" })
-public class OperatorStateRecoveryComponent implements IRecoveryComponent,
-		IProtectionPointHandler {
+public class OperatorStateRecoveryComponent implements IRecoveryComponent, IProtectionPointHandler {
 
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory
-			.getLogger(OperatorStateRecoveryComponent.class);
+	private static final Logger cLog = LoggerFactory.getLogger(OperatorStateRecoveryComponent.class);
 
 	@Override
 	public String getName() {
@@ -82,10 +82,23 @@ public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 	}
 
 	@Override
-	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
-			ISession caller, List<ILogicalQuery> queries) {
-		// TODO implement OperatorStateRecoveryComponent.recover
-		return queries;
+	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
+		if (!cExecutor.isPresent()) {
+			cLog.error("No executor bound!");
+			return queries;
+		}
+		// FIXME Test, if recovery of operator states works
+		List<ILogicalQuery> modifiedQueries = Lists.newArrayList(queries);
+		for (ILogicalQuery query : modifiedQueries) {
+			try {
+				int queryId = query.getID();
+				OperatorStateStore.load(collectStateFulOperators(cExecutor.get().getPhysicalRoots(queryId, caller)),
+						queryId);
+			} catch (IOException | ClassNotFoundException e) {
+				cLog.error("Could not load operator!", e);
+			}
+		}
+		return modifiedQueries;
 	}
 
 	/**
@@ -95,13 +108,12 @@ public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 	private final Set<IPair<Integer, ISession>> mQueryIds = Sets.newHashSet();
 
 	@Override
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
-			ISession caller, List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
+			List<ILogicalQuery> queries) {
 		for (ILogicalQuery query : queries) {
 			int queryId = query.getID();
 			this.mQueryIds.add(new Pair<Integer, ISession>(new Integer(queryId), caller));
-			ProtectionPointManagerRegistry.getInstance(queryId)
-					.addHandler(this);
+			ProtectionPointManagerRegistry.getInstance(queryId).addHandler(this);
 		}
 		return queries;
 	}
@@ -113,8 +125,9 @@ public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 			return;
 		}
 		for (IPair<Integer, ISession> queryId : this.mQueryIds) {
-			OperatorStateStore.store(collectStateFulOperators(cExecutor.get()
-					.getPhysicalRoots(queryId.getE1().intValue(), queryId.getE2())),
+			OperatorStateStore.store(
+					collectStateFulOperators(
+							cExecutor.get().getPhysicalRoots(queryId.getE1().intValue(), queryId.getE2())),
 					queryId.getE1().intValue());
 		}
 	}
@@ -126,8 +139,7 @@ public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 	 *            The roots of the plan.
 	 * @return A set of operators each implementing {@link IStatefulPO}.
 	 */
-	private Set<IStatefulPO> collectStateFulOperators(
-			List<IPhysicalOperator> physicalRoots) {
+	private Set<IStatefulPO> collectStateFulOperators(List<IPhysicalOperator> physicalRoots) {
 		Set<IStatefulPO> statefulOperators = Sets.newHashSet();
 		for (IPhysicalOperator root : physicalRoots) {
 			collectStateFulOperatorsRecursive(root, statefulOperators);
@@ -144,8 +156,7 @@ public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 	 *            All already collected stateful operators.
 	 * @return A set of operators each implementing {@link IStatefulPO}.
 	 */
-	private void collectStateFulOperatorsRecursive(IPhysicalOperator operator,
-			Set<IStatefulPO> operators) {
+	private void collectStateFulOperatorsRecursive(IPhysicalOperator operator, Set<IStatefulPO> operators) {
 		if (IStatefulPO.class.isInstance(operator)) {
 			IStatefulPO statefulOperator = (IStatefulPO) operator;
 			if (!operators.contains(statefulOperator)) {
@@ -156,8 +167,7 @@ public class OperatorStateRecoveryComponent implements IRecoveryComponent,
 			for (Object sub : ((IPipe<?, ?>) operator).getSubscribedToSource()) {
 				if (AbstractPhysicalSubscription.class.isInstance(sub)) {
 					collectStateFulOperatorsRecursive(
-							(IPhysicalOperator) ((AbstractPhysicalSubscription<?>) sub)
-									.getTarget(), operators);
+							(IPhysicalOperator) ((AbstractPhysicalSubscription<?>) sub).getTarget(), operators);
 				}
 			}
 		}

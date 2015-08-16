@@ -36,8 +36,7 @@ public class ProtectionPointManagerRegistry {
 	 * The default value for {@link #NAME_KEY} read out from
 	 * {@link OdysseusConfiguration}.
 	 */
-	public static final String NAME_VALUE_DEFAULT = OdysseusConfiguration
-			.get("protectionpointDefaultManager");
+	public static final String NAME_VALUE_DEFAULT = OdysseusConfiguration.get("protectionpointDefaultManager");
 
 	/**
 	 * The configuration key for the protection point unit to use.
@@ -62,20 +61,17 @@ public class ProtectionPointManagerRegistry {
 	 * {@link OdysseusConfiguration}.
 	 */
 	public static final long PERIOD_VALUE_DEFAULT = Long
-			.parseLong(OdysseusConfiguration
-					.get("protectionpointDefaultInterval"));
+			.parseLong(OdysseusConfiguration.get("protectionpointDefaultPeriod"));
 
 	/**
 	 * All bound implementations of {@link IProtectionPointManager}.
 	 */
-	private static final Map<String, IProtectionPointManager> cManagers = Maps
-			.newHashMap();
+	private static final Map<String, IProtectionPointManager> cManagers = Maps.newHashMap();
 
 	// Registers those implementations, which are within this bundle.
 	static {
 		IProtectionPointManager systemTimeProtectionPointManager = new SystemTimeProtectionPointManager();
-		cManagers.put(systemTimeProtectionPointManager.getName(),
-				systemTimeProtectionPointManager);
+		cManagers.put(systemTimeProtectionPointManager.getName(), systemTimeProtectionPointManager);
 	}
 
 	/**
@@ -85,8 +81,7 @@ public class ProtectionPointManagerRegistry {
 	 *            The implementation to bind, which should have an unique
 	 *            {@link IProtectionPointManager#getName()}.
 	 */
-	public static void bindProtectionPointManager(
-			IProtectionPointManager manager) {
+	public static void bindProtectionPointManager(IProtectionPointManager manager) {
 		cManagers.put(manager.getName(), manager);
 	}
 
@@ -96,8 +91,7 @@ public class ProtectionPointManagerRegistry {
 	 * @param manager
 	 *            The implementation to unbind.
 	 */
-	public static void unbindProtectionPointManager(
-			IProtectionPointManager manager) {
+	public static void unbindProtectionPointManager(IProtectionPointManager manager) {
 		cManagers.remove(manager.getName());
 	}
 
@@ -105,8 +99,7 @@ public class ProtectionPointManagerRegistry {
 	 * All protection point managers in use mapped to the queries, which use
 	 * them, represented by their ids.
 	 */
-	private static final Map<Integer, IProtectionPointManager> cUsedManagers = Maps
-			.newHashMap();
+	private static final Map<Integer, IProtectionPointManager> cUsedManagers = Maps.newHashMap();
 
 	/**
 	 * Gets the protection point manager, which is used for a given query.
@@ -127,8 +120,7 @@ public class ProtectionPointManagerRegistry {
 	 *            The id of the given query.
 	 * @return The protection point manager, which is used for a given query.
 	 */
-	public static void setProtectionPointManager(int queryId,
-			IProtectionPointManager manager) {
+	public static void setProtectionPointManager(int queryId, IProtectionPointManager manager) {
 		cUsedManagers.put(new Integer(queryId), manager);
 	}
 
@@ -146,9 +138,8 @@ public class ProtectionPointManagerRegistry {
 	 * @throws IllegalArgumentException
 	 *             if {@code period} is not greater than 0.
 	 */
-	public static IProtectionPointManager newInstance(String name,
-			ProtectionPointUnit unit, long period) throws NullPointerException,
-			IllegalArgumentException {
+	public static IProtectionPointManager newInstance(String name, ProtectionPointUnit unit, long period)
+			throws NullPointerException, IllegalArgumentException {
 		return cManagers.get(name).newInstance(unit, period);
 	}
 
