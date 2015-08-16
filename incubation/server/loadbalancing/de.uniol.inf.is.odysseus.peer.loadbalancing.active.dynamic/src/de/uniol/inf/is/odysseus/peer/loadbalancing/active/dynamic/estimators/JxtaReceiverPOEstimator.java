@@ -33,4 +33,13 @@ public class JxtaReceiverPOEstimator extends
 		JxtaReceiverPO op = (JxtaReceiverPO) getOperator();
 		return op.getDownloadRateBytesPerSecond();
 	}
+	
+
+	
+	//To avoid infinity Estimation and as a JxtaReceiverPO is usually more limited by network than by window size, we return Datarate instead of window size... 
+	//TODO Find better solution!
+	@Override
+	public double getWindowSize() {
+		return getDatarate();
+	}
 }

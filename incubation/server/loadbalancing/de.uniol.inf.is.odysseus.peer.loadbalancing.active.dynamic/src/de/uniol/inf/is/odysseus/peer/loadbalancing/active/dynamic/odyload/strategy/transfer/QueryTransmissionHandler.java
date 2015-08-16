@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.jxta.peer.PeerID;
@@ -11,130 +10,99 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
+import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionHandlerListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.IPeerLockContainerListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.PeerLockContainer;
 
-
-public class QueryTransmissionHandler implements IPeerLockContainerListener, ILoadBalancingListener {
+public class QueryTransmissionHandler implements IQueryTransmissionListener {
 	
 
-	/**
-	 * The logger for this class.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(QueryTransmissionHandler.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(QueryTransmissionHandler.class);
 	
-	private int queryId;
-	private ILoadBalancingCommunicator communicator;
-	private List<PeerID> involvedPeers;
-	private PeerID slavePeerId;
-	private PeerLockContainer locks;
+	private List<Integer> failedTransmissionQueryIDs = Lists.newArrayList();
+
+	private List<QueryTransmission> transmissionHandlerList = Lists.newArrayList();
+	
+	private IPeerDictionary peerDictionary;
 	private ILoadBalancingLock lock;
 	private IPeerCommunicator peerCommunicator;
 	
-	private List<IQueryTransmissionHandlerListener> listeners = Lists.newArrayList();
-	
-	private boolean lbResult = false;
-	
-	public int getQueryId() {
-		return queryId;
-	}
-	
-	public PeerID getSlavePeerID() {
-		return slavePeerId;
-	}
-
-	public QueryTransmissionHandler(int queryIdToTransmit, PeerID destinationPeerId, ILoadBalancingCommunicator communicator,IPeerCommunicator peerCommunicator, ILoadBalancingLock lock) {
-		LOG.debug("New Transmission Handler for Query Id {}",queryIdToTransmit);
-		this.communicator = communicator;
-		this.queryId = queryIdToTransmit;
-		this.slavePeerId = destinationPeerId;
-		this.involvedPeers = communicator.getInvolvedPeers(queryIdToTransmit);
-		if(!involvedPeers.contains(slavePeerId)) {
-			involvedPeers.add(slavePeerId);
-		}
+	public QueryTransmissionHandler(IPeerDictionary peerDictionary, ILoadBalancingLock lock,IPeerCommunicator peerCommunicator) {
+		this.peerDictionary = peerDictionary;
 		this.lock = lock;
 		this.peerCommunicator = peerCommunicator;
 	}
 	
-	public void registerListener(IQueryTransmissionHandlerListener listener) {
-		if(this.listeners.contains(listener))
-			return;
-		listeners.add(listener);
-	}
-	
-	public void removeListener(IQueryTransmissionHandlerListener listener) {
-		if(this.listeners.contains(listener))
-			listeners.remove(listener);
-	}
-	
-	public void initiateTransmission(IQueryTransmissionHandlerListener callback) {
-		LOG.debug("{} - Initiated Transmission.",queryId);
-		if(lock.requestLocalLock()) {
-			LOG.debug("{} - Local lock acquired. Requesting other locks.",queryId);
-			registerListener(callback);
-			locks = new PeerLockContainer(peerCommunicator,involvedPeers,this);
-			locks.requestLocks();
-			//TODO tell that it worked... or didn't
-		} 
-		else {
-			LOG.debug("{} - No local lock acquired.",queryId);
-		}
-		
-	}
-	
-	@Override
-	public void notifyLockingFailed() {
-		LOG.debug("{} - Locking other peers failed.",queryId);
-		tellListeners(false);
-	}
 
 	@Override
-	public void notifyLockingSuccessfull() {
-		LOG.debug("{} - Locking other peers successful. Starting transmission.",queryId);
-		communicator.registerLoadBalancingListener(this);
-		communicator.initiateLoadBalancing(slavePeerId, queryId);
-	}
-
-	@Override
-	public void notifyReleasingFinished() {
-		LOG.debug("{} - Releasing other peers done.",queryId);
-		tellListeners(lbResult);
-		
-	}
-	
-	private synchronized void tellListeners(boolean success) {
-		List<IQueryTransmissionHandlerListener> listenerCopy = new ArrayList<IQueryTransmissionHandlerListener>(listeners);
-		
-		for(IQueryTransmissionHandlerListener listener : listenerCopy) {
-		
-			if(success) {
-				listener.transmissionSuccessful(this);
-			}
-			else {
-				listener.tranmissionFailed(this);
-			}
-			
-		}
-	}
-
-	@Override
-	public void notifyLoadBalancingFinished(boolean successful) {
-		communicator.removeLoadBalancingListener(this);
-		this.lbResult = successful;
-		if(successful) {
-			LOG.debug("{} - Transferring Query successful.",queryId);
+	public void tranmissionFailed(QueryTransmission transmission) {
+		transmission.removeListener(this);
+		transmissionHandlerList.remove(transmission);
+		failedTransmissionQueryIDs.add(transmission.getQueryId());
+		LOG.error("Transmission of Query {} to Peer {} failed.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
+		if(transmissionHandlerList.size()>0) {
+				transmissionHandlerList.get(0).initiateTransmission(this);
 		}
 		else {
-			LOG.debug("{} - Transferring Query failed",queryId);
+				LOG.info("Tried to transfer all Queries.");
+				for(Integer queryID : failedTransmissionQueryIDs) {
+					LOG.warn("Query ID {} failed to transmit.",queryID);
+				}
+
+				lock.releaseLocalLock();
+			}
+	}
+
+	@Override
+	public void transmissionSuccessful(QueryTransmission transmission) {
+		transmission.removeListener(this);
+		transmissionHandlerList.remove(transmission);
+
+		LOG.error("Transmission of Query {} to Peer {} successful.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
+		if(transmissionHandlerList.size()>0) {
+				transmissionHandlerList.get(0).initiateTransmission(this);
 		}
-		LOG.debug("{} - Releasing Locks.",queryId);
-		locks.releaseLocks();
+		else {
+				LOG.info("Tried to transfer all Queries.");
+				for(Integer queryID : failedTransmissionQueryIDs) {
+					LOG.warn("Query ID {} failed to transmit.",queryID);
+				}
+				lock.releaseLocalLock();
+			}
+	}
+
+
+	@Override
+	public void localLockFailed(QueryTransmission transmission) {
+		try {
+			LOG.debug("Acquiring Local Lock failed. Waiting for {} milliseconds.",OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
+			Thread.sleep(OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
+			transmission.initiateTransmission(this);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 	}
+
+
+	public void addTransmission(int queryId, PeerID slavePeerId,
+			ILoadBalancingCommunicator communicator) {
+		this.transmissionHandlerList.add(new QueryTransmission(queryId, slavePeerId, communicator,peerCommunicator, lock));
+	}
 	
+
+	public void startTransmissions() {
+		
+		if(transmissionHandlerList!=null && transmissionHandlerList.size()>0) {
+			transmissionHandlerList.get(0).initiateTransmission(this);
+		}
+	}
+	
+	public List<Integer> getFailedTransmissions() {
+		return failedTransmissionQueryIDs;
+	}
 
 }

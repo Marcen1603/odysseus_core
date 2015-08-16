@@ -18,4 +18,5 @@ public class ReceiverPOEstimator extends StandardPhysicalOperatorEstimator<Recei
 		Optional<Double> optDatarate = getCostModelKnowledge().getDatarate(getOperator().getName());
 		return optDatarate.isPresent() ? optDatarate.get() : super.getDatarate();
 	}
+	
 }

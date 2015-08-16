@@ -11,4 +11,7 @@
       <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
    </service>
    <reference bind="bindQueryPartController" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController" name="IQueryPartController" policy="static" unbind="unbindQueryPartController"/>
+   <reference bind="bindCommunicatorRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry" name="ILoadBalancingCommunicatorRegistry" policy="static" unbind="unbindCommunicatorRegistry"/>
+   <reference bind="bindPhysicalCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel" name="IPhysicalCostModel" policy="static" unbind="unbindPhysicalCostModel"/>
+   <reference bind="bindPeerResourceUsageManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager" name="IPeerResourceUsageManager" policy="static" unbind="unbindPeerResourceUsageManager"/>
 </scr:component>

@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
@@ -34,6 +35,8 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunic
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.DynamicStrategy;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.CommunicatorChooser.OdyLoadCommunicatorChooser;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.CostEstimationHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.GreedyQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.QueryCostMap;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.SimulatedAnnealingQuerySelector;
@@ -42,8 +45,10 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SourceTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingAllocatorRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingStrategyRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
 public class OdyLoadConsole implements CommandProvider {
 	
@@ -55,6 +60,20 @@ public class OdyLoadConsole implements CommandProvider {
 	private static ILoadBalancingStrategyRegistry strategyRegistry;
 	private static ILoadBalancingAllocatorRegistry allocatorRegistry;
 	private static IPeerDictionary peerDictionary;
+	private static ILoadBalancingCommunicatorRegistry communicatorRegistry;
+	private static IPhysicalCostModel physicalCostModel;
+	private static IPeerResourceUsageManager usageManager;
+	
+	
+	public static void bindCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
+		communicatorRegistry = serv;
+	}
+	
+	public static void unbindCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
+		if(communicatorRegistry==serv) {
+			communicatorRegistry=null;
+		}
+	}
 	
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		networkManager = serv;
@@ -127,7 +146,25 @@ public class OdyLoadConsole implements CommandProvider {
 		}
 	}
 	
+	public void bindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
+		usageManager = serv;
+	}
 	
+	public void unbindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
+		if(usageManager==serv) {
+			usageManager = null;
+		}
+	}
+	
+	public void bindPhysicalCostModel(IPhysicalCostModel serv) {
+		physicalCostModel = serv;
+	}
+	
+	public void unbindPhysicalCostModel(IPhysicalCostModel serv) {
+		if(physicalCostModel==serv) {
+			physicalCostModel = null;
+		}
+	}
 	
 	
 	
@@ -322,7 +359,9 @@ public class OdyLoadConsole implements CommandProvider {
 	
 	public void _determineCommunicator(CommandInterpreter ci) {
 		
-		Preconditions.checkNotNull(strategyRegistry,"Strategy Registry not bound.");
+		Preconditions.checkNotNull(communicatorRegistry, "Communicator Registry not bound.");
+		Preconditions.checkNotNull(executor, "Executor not bound.");
+		
 		
 		final String ERROR_USAGE = "Usage: determineCommunicator <queryID>";
 		
@@ -335,8 +374,9 @@ public class OdyLoadConsole implements CommandProvider {
 		List<Integer> queryIDAsList = Lists.newArrayList();
 		queryIDAsList.add(queryID);
 		
-		DynamicStrategy strategy = (DynamicStrategy) strategyRegistry.getStrategy(OdyLoadConstants.STRATEGY_NAME);
-		HashMap<Integer,ILoadBalancingCommunicator> result = strategy.chooseCommunicators(queryIDAsList);
+		OdyLoadCommunicatorChooser chooser = new OdyLoadCommunicatorChooser();
+		
+		HashMap<Integer,ILoadBalancingCommunicator> result = chooser.chooseCommunicators(queryIDAsList,executor,communicatorRegistry,getActiveSession());
 		ILoadBalancingCommunicator comm = result.get(queryID);
 		ci.println("Chosen Communicator: " + comm.getName());
 	}
@@ -369,11 +409,10 @@ public class OdyLoadConsole implements CommandProvider {
 		
 		QueryCostMap costMap = new QueryCostMap();
 		
-		strategy.addQueryToCostMap(costMap, queryID, operatorList);
+		CostEstimationHelper.addQueryToCostMap(costMap, queryID, operatorList,usageManager,physicalCostModel,networkManager);
 		strategy.setAllocator(allocatorRegistry.getAllocator(OdyLoadConstants.ALLOCATOR_NAME));
-
 		
-		strategy.allocateAndTransferQueries(getLocalPeerID(), costMap);
+		strategy.allocateAndTransferQueries(costMap);
 		
 		ci.println("Done.");
 	}

@@ -78,12 +78,20 @@ public class TransformationHelper {
 	public static boolean hasRealSources(int queryID,IServerExecutor executor) {
 		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
 		for(IPhysicalOperator op : physicalOps) {
-			if(isRealSink(op))
+			if(isRealSource(op))
 				return true;
 		}
 		return false;
 	}
 	
+	public static boolean hasRealSinks(int queryID, IServerExecutor executor) {
+		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
+		for(IPhysicalOperator op : physicalOps) {
+			if(isRealSink(op))
+				return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Converts a String to a peer ID.

@@ -17,21 +17,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -42,21 +36,27 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocato
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.ICommunicatorChooser;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThreadListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQuerySelectionStrategy;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionHandlerListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.CommunicatorChooser.OdyLoadCommunicatorChooser;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.CostEstimationHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.GreedyQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.QueryCostMap;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.SimulatedAnnealingQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer.QueryTransmissionHandler;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.trigger.MonitoringThread;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SharedQueryIDModifier;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SinkTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SourceTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.TransformationHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
-public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThreadListener, IQueryTransmissionHandlerListener {
+public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThreadListener  {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DynamicStrategy.class);
@@ -71,11 +71,14 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	private ILoadBalancingLock lock;
 	private ILoadBalancingCommunicatorRegistry communicatorRegistry;
 	private IPeerCommunicator peerCommunicator;
-	private List<QueryTransmissionHandler> transmissionHandlerList;
 	private IQueryPartController queryPartController;
 	private IExcludedQueriesRegistry excludedQueryRegistry;
-	private List<Integer> failedTransmissionQueryIDs;
 	
+	private QueryTransmissionHandler transmissionHandler;
+	
+
+	private List<Integer> failedAllocationQueryIDs = Lists.newArrayList();
+
 
 	private MonitoringThread monitoringThread = null;
 	
@@ -258,10 +261,10 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		HashMap<Integer, IPhysicalQuery> queries = new HashMap<Integer, IPhysicalQuery>();
 
 		for (int queryId : executor.getLogicalQueryIds(getActiveSession())) {
+			
 			//Ignore excluded Quries.
 			if(excludedQueryRegistry.isQueryIDExcludedFromLoadBalancing(queryId))
 				continue;
-			
 			IPhysicalQuery query = executor.getExecutionPlan().getQueryById(
 					queryId);
 			if (query == null)
@@ -295,10 +298,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 		
 		stopMonitoringThread();
-		
 
-		PeerID localPeerID = networkManager.getLocalPeerID();
-		
 		LOG.info("Re-Allocation of queries triggered.");
 					
 		double cpuLoadToRemove = Math.max(0.0, cpuUsage-OdyLoadConstants.CPU_THRESHOLD);
@@ -326,12 +326,39 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 			
 
-		allocateAndTransferQueries(localPeerID, chosenResult);
+		allocateAndTransferQueries(chosenResult);
 		
 	}
+	
+	/***
+	 * Transforms Sinks and Sources in Failed Queries to JxtaReceiver-Sender Constructs as this might have been a reason for the failure...
+	 */
+	private void transformFailedQueries() {
+		if(failedAllocationQueryIDs!=null) {
+			for(int queryID : failedAllocationQueryIDs) {
+				if(TransformationHelper.hasRealSinks(queryID, executor)) {
+					SinkTransformer.replaceSinks(queryID, networkManager.getLocalPeerID(), getActiveSession(), networkManager, executor, queryPartController, excludedQueryRegistry);
+				}
+				if(TransformationHelper.hasRealSources(queryID, executor)) {
+					SourceTransformer.replaceSources(queryID, networkManager.getLocalPeerID(), getActiveSession(), networkManager, executor, queryPartController, excludedQueryRegistry);
+				}
+			}
+		}
+		if(transmissionHandler!=null) {
+			for(int queryID : transmissionHandler.getFailedTransmissions()) {
+				if(TransformationHelper.hasRealSinks(queryID, executor)) {
+					SinkTransformer.replaceSinks(queryID, networkManager.getLocalPeerID(), getActiveSession(), networkManager, executor, queryPartController, excludedQueryRegistry);
+				}
+				if(TransformationHelper.hasRealSources(queryID, executor)) {
+					SourceTransformer.replaceSources(queryID, networkManager.getLocalPeerID(), getActiveSession(), networkManager, executor, queryPartController, excludedQueryRegistry);
+				}
+			}
+		}
+	}
+	
+	
 
-	public void allocateAndTransferQueries(PeerID localPeerID,
-			QueryCostMap chosenResult) {
+	public void allocateAndTransferQueries(QueryCostMap chosenResult) {
 		HashMap<ILogicalQueryPart,Integer> queryPartIDMapping = new HashMap<ILogicalQueryPart,Integer>();
 		
 		for (int queryId : chosenResult.getQueryIds()) {
@@ -344,17 +371,24 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 		if(chosenResult.getQueryIds().size()==0) {
 			LOG.error("No Queries to remove.");
+			startNewMonitoringThread();
 			return;
 		}
 		
 
 		Collection<PeerID> knownRemotePeers = peerDictionary.getRemotePeerIDs();
 		
-		allocateQueries(localPeerID, chosenResult, queryPartIDMapping,
+		allocateQueries(networkManager.getLocalPeerID(), chosenResult, queryPartIDMapping,
 				knownRemotePeers);
 		
-		doTransferAllocatedQueryParts();
+		if(transmissionHandler!=null) {
+			transmissionHandler.startTransmissions();
+		}
+		else {
+			startNewMonitoringThread();
+		}
 	}
+	
 
 	private void stopMonitoringThread() {
 		synchronized(threadManipulationLock) {
@@ -397,7 +431,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	private void allocateQueries(PeerID localPeerID, QueryCostMap chosenResult,
 			HashMap<ILogicalQueryPart, Integer> queryPartIDMapping,
 			Collection<PeerID> knownRemotePeers) {
-		//TODO What if no Object in List?
+		
+		failedAllocationQueryIDs = Lists.newArrayList();
+		
 		int firstQueryId = chosenResult.getQueryIds().get(0);
 			
 		//Parameter Query is used to get Build Configuration...
@@ -414,6 +450,8 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
 					if(allocationMap.get(queryPart).equals(localPeerID)) {
 						LOG.warn("No other Peer wanted to take Query {}.",queryPartIDMapping.get(queryPart));
+						failedAllocationQueryIDs.add(queryPartIDMapping.get(queryPart));
+						
 					}
 					else {
 						LOG.debug("({} goes to Peer {}",queryPartIDMapping.get(queryPart),this.peerDictionary.getRemotePeerName(allocationMap.get(queryPart)));
@@ -421,10 +459,11 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				}
 			}
 			
+			ICommunicatorChooser communicatorChooser = new OdyLoadCommunicatorChooser();
 			
-			HashMap<Integer,ILoadBalancingCommunicator> communicatorMapping = chooseCommunicators(chosenResult.getQueryIds());
+			HashMap<Integer,ILoadBalancingCommunicator> communicatorMapping = communicatorChooser.chooseCommunicators(chosenResult.getQueryIds(),executor,communicatorRegistry,getActiveSession());
 			
-			this.transmissionHandlerList = new ArrayList<QueryTransmissionHandler>();
+			this.transmissionHandler = new QueryTransmissionHandler(peerDictionary, lock,peerCommunicator);
 			
 			for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
 				//Create a Query Transmission handler for every  transmission we have to do.
@@ -433,64 +472,21 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 				if(slavePeerId.equals(localPeerID))
 					continue;
 				ILoadBalancingCommunicator communicator = communicatorMapping.get(queryId);
-				transmissionHandlerList.add(new QueryTransmissionHandler(queryId,slavePeerId,communicator, peerCommunicator, lock));
+				transmissionHandler.addTransmission(queryId,slavePeerId,communicator);
 			}
+
 			
 		} catch (QueryPartAllocationException e) {
 			LOG.error("Could not allocate Query Parts: {}",e.getMessage());
 			e.printStackTrace();
 		}
+		
+		
 	}
+	
+	
 
-	private void doTransferAllocatedQueryParts() {
-		failedTransmissionQueryIDs = Lists.newArrayList();
-		
-		if(transmissionHandlerList!=null && transmissionHandlerList.size()>0) {
-			transmissionHandlerList.get(0).initiateTransmission(this);
-		}
-	}
 	
-	
-	public HashMap<Integer,ILoadBalancingCommunicator> chooseCommunicators(List<Integer> queryIds) {
-		
-		
-		HashMap<Integer,ILoadBalancingCommunicator> queryCommunicatorMapping = new HashMap<Integer,ILoadBalancingCommunicator>();
-		for (int queryId : queryIds) {
-			if(!isActive(queryId)) {
-				ILoadBalancingCommunicator inactiveQueryCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.INACTIVE_QUERIES_COMMUNICATOR_NAME);
-				queryCommunicatorMapping.put(queryId, inactiveQueryCommunicator);
-			}
-			if(!hasStatefulOperator(queryId)) {
-				ILoadBalancingCommunicator parallelTrackCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.STATELESS_QUERIES_COMMUNICATOR_NAME);
-				queryCommunicatorMapping.put(queryId, parallelTrackCommunicator);
-			}
-			ILoadBalancingCommunicator movingStateCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.STATEFUL_QUERIES_COMMUNICATOR_NAME);
-			queryCommunicatorMapping.put(queryId, movingStateCommunicator);
-			
-		}
-		
-		return queryCommunicatorMapping;
-	}
-	
-	private boolean isActive(int queryId) {
-		QueryState queryState = executor.getQueryState(queryId);
-		if(queryState==QueryState.INACTIVE) {
-			return false;
-		}
-		return true;
-	}
-	
-	private boolean hasStatefulOperator(int queryId) {
-		HashMap<Integer,IPhysicalQuery> queries = getPhysicalQueries();
-		Collection<IPhysicalOperator> operatorsInQuery = queries.get(queryId).getAllOperators();
-		for (IPhysicalOperator op : operatorsInQuery) {
-			if(op instanceof IStatefulPO)
-				return true;
-		}
-		return false;
-		
-		
-	}
 	
 	public QueryCostMap generateCostMapForAllQueries() {
 		
@@ -502,155 +498,22 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 			
 			Set<IPhysicalOperator> operatorList = queries.get(queryId).getAllOperators();
 
-			addQueryToCostMap(queryCostMap, queryId, operatorList);
+			CostEstimationHelper.addQueryToCostMap(queryCostMap, queryId, operatorList,usageManager,physicalCostModel,networkManager);
 		}
 		return queryCostMap;
 	}
 
-	public void addQueryToCostMap(QueryCostMap queryCostMap, int queryId,
-			Set<IPhysicalOperator> operatorList) {
-		double cpuMax = usageManager.getLocalResourceUsage().getCpuMax();
-		double netMax = usageManager.getLocalResourceUsage().getNetBandwidthMax();
-		long memMax = usageManager.getLocalResourceUsage().getMemMaxBytes();
-		
-		Collection<IPhysicalOperator> operatorsInQuery = operatorList;
-		IPhysicalCost queryCost = physicalCostModel.estimateCost(operatorsInQuery);
-		
-		double cpuLoad = queryCost.getCpuSum()/(cpuMax*OdyLoadConstants.CPU_LOAD_COSTMODEL_FACTOR);
-		double netLoad = queryCost.getNetworkSum()/netMax;
-		double memLoad = queryCost.getMemorySum()/memMax;
-		
-		//Workaround, as Cost Model does not provide real usage data for network :(
-		if(OdyLoadConstants.COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS) {
-			LOG.info("Using JxtaOperators to estimate NetLoad instead of using value from CostModel.");
-			netLoad = estimateNetloadFromJxtaOperatorCount(operatorList);
-		}
-			
-		
-		double migrationCosts = calculateIndividualMigrationCostsForQuery(operatorsInQuery);
-		
-		QueryLoadInformation info = new QueryLoadInformation(queryId,cpuLoad,memLoad,netLoad,migrationCosts);
-		
-		queryCostMap.add(info);
-	}
+	
 
-	@SuppressWarnings("rawtypes")
-	private double estimateNetloadFromJxtaOperatorCount(
-			Set<IPhysicalOperator> operatorList) {
-		double netLoad;
-		int sendersToRemotePeersCount = 0;
-		int receiversFromRemotePeersCount = 0;
-		String localPeerIDString = networkManager.getLocalPeerID().toString();
-		for(IPhysicalOperator op : operatorList) {
-			if(op instanceof JxtaSenderPO) {
-				JxtaSenderPO sender = (JxtaSenderPO) op;
-				//Don't count sender operators that send to local peer, as this does not produce "real" network traffic.
-				if(sender.getPeerIDString().equals(localPeerIDString))
-					continue;
-				sendersToRemotePeersCount++;	
-			}
-			if(op instanceof JxtaReceiverPO) {
-				JxtaReceiverPO receiver = (JxtaReceiverPO) op;
-				//Don't count receiver operators that receive from local peer, as this does not produce "real" network traffic.
-				if(receiver.getPeerIDString().equals(localPeerIDString))
-					continue;
-				receiversFromRemotePeersCount++;	
-			}
-		}
-		Double networkOut = sendersToRemotePeersCount*OdyLoadConstants.BandwithPerSender;
-		Double networkIn = receiversFromRemotePeersCount*OdyLoadConstants.BandwithPerReceiver;
-		netLoad = Math.min(1.0,(networkOut+networkIn));
-		return netLoad;
+
+
+	@Override
+	public void forceLoadBalancing() throws LoadBalancingException {
+		triggerLoadBalancing(OdyLoadConstants.CPU_THRESHOLD+0.01, OdyLoadConstants.MEM_THRESHOLD+0.01, OdyLoadConstants.NET_THRESHOLD+0.01);
+		
 	}
 	
 
-	private double calculateIndividualMigrationCostsForQuery(Collection<IPhysicalOperator> operators) {
-		
-		int numberOfReceivers = 0;
-		int numberOfSenders = 0;
-		double memoryForStates = 0.0;
-		
-		
-		for (IPhysicalOperator op : operators) {
-			if(op instanceof JxtaSenderPO) {
-				numberOfSenders++;
-				continue;
-			}
-			if(op instanceof JxtaReceiverPO) {
-				numberOfReceivers++;
-				continue;
-			}
-			if(op instanceof IStatefulPO) {
-				//Estimate State Size Method 
-				try {
-					IStatefulPO statefulOP = (IStatefulPO) op;
-					IOperatorState state = statefulOP.getState();
-					memoryForStates += state.estimateSizeInBytes();
-				}
-				 catch (Exception e) {
-						LOG.error("Error estimating state size of {} Operator",op.getName());
-						LOG.error(e.getMessage());
-						e.printStackTrace();
-						LOG.error("Assuming Infinite Migration Cost for state!");
-						memoryForStates+=Double.POSITIVE_INFINITY;
-				}
-			}
-		}
-		
-		return (OdyLoadConstants.WEIGHT_RECEIVERS*numberOfReceivers)+(OdyLoadConstants.WEIGHT_SENDERS*numberOfSenders)+(OdyLoadConstants.WEIGHT_STATE*memoryForStates);
-		
-	}
-
-	@Override
-	public void tranmissionFailed(QueryTransmissionHandler transmission) {
-		transmission.removeListener(this);
-		transmissionHandlerList.remove(transmission);
-		failedTransmissionQueryIDs.add(transmission.getQueryId());
-		LOG.error("Transmission of Query {} to Peer {} failed.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
-		if(transmissionHandlerList.size()>0) {
-				transmissionHandlerList.get(0).initiateTransmission(this);
-		}
-		else {
-				LOG.info("Tried to transfer all Queries.");
-				for(Integer queryID : failedTransmissionQueryIDs) {
-					LOG.warn("Query ID {} failed to transmit.",queryID);
-				}
-
-				lock.releaseLocalLock();
-			}
-	}
-
-	@Override
-	public void transmissionSuccessful(QueryTransmissionHandler transmission) {
-		transmission.removeListener(this);
-		transmissionHandlerList.remove(transmission);
-
-		LOG.error("Transmission of Query {} to Peer {} successful.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
-		if(transmissionHandlerList.size()>0) {
-				transmissionHandlerList.get(0).initiateTransmission(this);
-		}
-		else {
-				LOG.info("Tried to transfer all Queries.");
-				for(Integer queryID : failedTransmissionQueryIDs) {
-					LOG.warn("Query ID {} failed to transmit.",queryID);
-				}
-				lock.releaseLocalLock();
-			}
-	}
-
-
-	@Override
-	public void localLockFailed(QueryTransmissionHandler transmission) {
-		try {
-			LOG.debug("Acquiring Local Lock failed. Waiting for {} milliseconds.",OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
-			Thread.sleep(OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
-			transmission.initiateTransmission(this);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
 	
 	private Collection<Integer> getNotExcludedQueries() {
 		Collection<Integer> queryIDs =  executor.getLogicalQueryIds(getActiveSession());
@@ -663,13 +526,10 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		}
 		return queryIDs;
 	}
+	
 
-	@Override
-	public void forceLoadBalancing() throws LoadBalancingException {
-		
-		triggerLoadBalancing(OdyLoadConstants.CPU_THRESHOLD+0.01, OdyLoadConstants.MEM_THRESHOLD+0.01, OdyLoadConstants.NET_THRESHOLD+0.01);
-		
-	}
+	
+
 
 }
 
