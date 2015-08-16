@@ -519,6 +519,12 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		double cpuLoad = queryCost.getCpuSum()/(cpuMax*OdyLoadConstants.CPU_LOAD_COSTMODEL_FACTOR);
 		double netLoad = queryCost.getNetworkSum()/netMax;
 		double memLoad = queryCost.getMemorySum()/memMax;
+		
+		//Workaround, as Cost Model does not provide real usage data for network :(
+		if(OdyLoadConstants.COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS) {
+			LOG.info("Using JxtaOperators to estimate NetLoad instead of using value from CostModel.");
+			netLoad = estimateNetloadFromJxtaOperatorCount(operatorList);
+		}
 			
 		
 		double migrationCosts = calculateIndividualMigrationCostsForQuery(operatorsInQuery);
@@ -526,6 +532,35 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		QueryLoadInformation info = new QueryLoadInformation(queryId,cpuLoad,memLoad,netLoad,migrationCosts);
 		
 		queryCostMap.add(info);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private double estimateNetloadFromJxtaOperatorCount(
+			Set<IPhysicalOperator> operatorList) {
+		double netLoad;
+		int sendersToRemotePeersCount = 0;
+		int receiversFromRemotePeersCount = 0;
+		String localPeerIDString = networkManager.getLocalPeerID().toString();
+		for(IPhysicalOperator op : operatorList) {
+			if(op instanceof JxtaSenderPO) {
+				JxtaSenderPO sender = (JxtaSenderPO) op;
+				//Don't count sender operators that send to local peer, as this does not produce "real" network traffic.
+				if(sender.getPeerIDString().equals(localPeerIDString))
+					continue;
+				sendersToRemotePeersCount++;	
+			}
+			if(op instanceof JxtaReceiverPO) {
+				JxtaReceiverPO receiver = (JxtaReceiverPO) op;
+				//Don't count receiver operators that receive from local peer, as this does not produce "real" network traffic.
+				if(receiver.getPeerIDString().equals(localPeerIDString))
+					continue;
+				receiversFromRemotePeersCount++;	
+			}
+		}
+		Double networkOut = sendersToRemotePeersCount*OdyLoadConstants.BandwithPerSender;
+		Double networkIn = receiversFromRemotePeersCount*OdyLoadConstants.BandwithPerReceiver;
+		netLoad = Math.min(1.0,(networkOut+networkIn));
+		return netLoad;
 	}
 	
 

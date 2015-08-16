@@ -41,6 +41,9 @@ public class OdyLoadConstants {
 			public static final double FALLBACK_MEM_COSTS = 0.1;
 			public static final double FALLBACK_NET_COSTS = 0.1;
 			
+			public static final boolean COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS = true;
+			public static final double BandwithPerSender = 0.1;
+			public static final double BandwithPerReceiver = 0.1;
 			//Other
 			public static final long WAITING_TIME_FOR_LOCAL_LOCK = 2000;
 			
