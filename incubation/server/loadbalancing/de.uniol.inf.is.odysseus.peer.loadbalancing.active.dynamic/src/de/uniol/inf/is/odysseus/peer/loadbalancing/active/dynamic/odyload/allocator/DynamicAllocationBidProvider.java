@@ -1,19 +1,25 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.allocator;
 
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -24,6 +30,7 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 
 	private static IPhysicalCostModel costModel;
 	private static IPeerResourceUsageManager usageManager;
+	private static IP2PNetworkManager networkManager;
 
 	// called by OSGi-DS
 	public static void bindPhysicalCostModel(IPhysicalCostModel serv) {
@@ -46,6 +53,17 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 	public static void unbindResourceUsageManager(IPeerResourceUsageManager serv) {
 		if (usageManager == serv) {
 			usageManager = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindNetworkManager(IP2PNetworkManager serv) {
+		networkManager = serv;
+	}
+	
+	public static void unbindNetworkManager(IP2PNetworkManager serv) {
+		if(networkManager==serv) {
+			networkManager = null;
 		}
 	}
 
@@ -95,21 +113,29 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 			neededMemLoad = OdyLoadConstants.FALLBACK_MEM_COSTS;
 			neededNetLoad = OdyLoadConstants.FALLBACK_NET_COSTS;
 		}
+		
+		
+		if(OdyLoadConstants.COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS) {
+			LOG.info("Counting Jxta Operators to remote Peers for network Costs.");
+			neededNetLoad = estimateNetloadFromJxtaOperatorCount(physicalQuery
+			.getAllOperators());
+		}
+		
 
-		LOG.debug("needed Cpu Load:{}", neededCpuLoad);
-		LOG.debug("needed Mem Load:{}", neededMemLoad);
-		LOG.debug("needed Net Load:{}", neededNetLoad);
+		LOG.debug("needed Cpu Load:{}", String.format( "%.4f",neededCpuLoad));
+		LOG.debug("needed Mem Load:{}", String.format( "%.4f",neededMemLoad));
+		LOG.debug("needed Net Load:{}", String.format( "%.4f",neededNetLoad));
 
 		double freeCpuAfterLoadBalancing = cpuFree-neededCpuLoad;
 		double freeMemAfterLoadBalancing = memFree-neededMemLoad;
 		double freeNetAfterLoadBalancing = netFree-neededNetLoad;
 
 		LOG.debug("CPU Free after LB:{} (Currently Free:{})",
-				freeCpuAfterLoadBalancing, cpuFree);
+				String.format( "%.4f",freeCpuAfterLoadBalancing), String.format( "%.4f",cpuFree));
 		LOG.debug("MEM Free after LB:{} (Currently Free:{})",
-				freeMemAfterLoadBalancing, memFree);
+				String.format( "%.4f",freeMemAfterLoadBalancing), String.format( "%.4f",memFree));
 		LOG.debug("NET Free after LB:{} (Currently Free:{})",
-				freeNetAfterLoadBalancing, netFree);
+				String.format( "%.4f",freeNetAfterLoadBalancing), String.format( "%.4f",netFree));
 
 		//FIXME Remove Workaround ;)
 		// This prevents peer from overloading itself.
@@ -124,6 +150,36 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 		LOG.debug("Bidding to QueryPart with Bid of {}", bid);
 		return Optional.of(bid);
 
+	}
+	
+
+	@SuppressWarnings("rawtypes")
+	private double estimateNetloadFromJxtaOperatorCount(
+			Set<IPhysicalOperator> operatorList) {
+		double netLoad;
+		int sendersToRemotePeersCount = 0;
+		int receiversFromRemotePeersCount = 0;
+		String localPeerIDString = networkManager.getLocalPeerID().toString();
+		for(IPhysicalOperator op : operatorList) {
+			if(op instanceof JxtaSenderPO) {
+				JxtaSenderPO sender = (JxtaSenderPO) op;
+				//Don't count sender operators that send to local peer, as this does not produce "real" network traffic.
+				if(sender.getPeerIDString().equals(localPeerIDString))
+					continue;
+				sendersToRemotePeersCount++;	
+			}
+			if(op instanceof JxtaReceiverPO) {
+				JxtaReceiverPO receiver = (JxtaReceiverPO) op;
+				//Don't count receiver operators that receive from local peer, as this does not produce "real" network traffic.
+				if(receiver.getPeerIDString().equals(localPeerIDString))
+					continue;
+				receiversFromRemotePeersCount++;	
+			}
+		}
+		Double networkOut = sendersToRemotePeersCount*OdyLoadConstants.BandwithPerSender;
+		Double networkIn = receiversFromRemotePeersCount*OdyLoadConstants.BandwithPerReceiver;
+		netLoad = Math.min(1.0,(networkOut+networkIn));
+		return netLoad;
 	}
 
 }

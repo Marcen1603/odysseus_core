@@ -150,21 +150,24 @@ public class QueryCostMap implements Cloneable {
 				sb.append(",");
 			}
 		}
+		
+		
+		
 		sb.append("}\n");
 		sb.append("Total CPU Load:");
-		sb.append(getTotalCpuLoad());
+		sb.append(String.format( "%.4f",getTotalCpuLoad()));
 		sb.append("\n");
 		
 		sb.append("Total MEM Load:");
-		sb.append(getTotalMemLoad());
+		sb.append(String.format( "%.4f",getTotalMemLoad()));
 		sb.append("\n");
 		
 		sb.append("Total NET Load:");
-		sb.append(getTotalNetLoad());
+		sb.append(String.format( "%.4f",getTotalNetLoad()));
 		sb.append("\n");
 		
 		sb.append("Migration cost:");
-		sb.append(getCosts());
+		sb.append(String.format( "%.2f",getCosts()));
 		sb.append("\n");
 		
 		return sb.toString();

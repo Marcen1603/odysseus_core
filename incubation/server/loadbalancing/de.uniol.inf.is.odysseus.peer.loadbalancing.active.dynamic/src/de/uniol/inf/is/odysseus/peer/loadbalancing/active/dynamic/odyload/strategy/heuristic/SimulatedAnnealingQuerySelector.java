@@ -50,10 +50,10 @@ public class SimulatedAnnealingQuerySelector implements IQuerySelectionStrategy 
 			currentTemperature -= 1;
 			QueryCostMap neighbor = chooseRandomNeighbor(currentSolution,
 					allQueries);
-			if (neighbor.getCosts() < currentSolution.getCosts()
-					&& isFeasible(neighbor, minCpuLoad, minMemLoad, minNetLoad)) {
+			if (isBetterSolution(minCpuLoad, minMemLoad, minNetLoad,
+					currentSolution, neighbor)) {
 				currentSolution = neighbor;
-				if (neighbor.getCosts() < bestSolution.getCosts()) {
+				if (isBetterSolution(minCpuLoad,minMemLoad,minNetLoad,bestSolution,neighbor)) {
 					bestSolution = neighbor.clone();
 				}
 			} else {
@@ -72,13 +72,41 @@ public class SimulatedAnnealingQuerySelector implements IQuerySelectionStrategy 
 
 		LOG.info("Finished suimulated annealing, best found proposal is:");
 		LOG.info(bestSolution.toString());
-		
-		if(!isFeasible(bestSolution,minCpuLoad,minMemLoad,minNetLoad)) {
-			LOG.warn("Solution is not feasible. Returning null instead.");
-			return null;
+				
+		return bestSolution;
+	}
+
+
+	private boolean isBetterSolution(double minCpuLoad, double minMemLoad,
+			double minNetLoad, QueryCostMap currentSolution,
+			QueryCostMap neighbor) {
+		//If we already have a working solution -> test if new solution is better AND is working.
+		if(isFeasible(currentSolution,minCpuLoad,minMemLoad, minNetLoad)) {
+			if(neighbor.getCosts() < currentSolution.getCosts() && isFeasible(neighbor, minCpuLoad, minMemLoad, minNetLoad)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		//Current solution is not solving the Problem at all. If new solution is dominating current Solution (=> better in solving the problem) in Load Values prefer it over the other solution.
+		//There is no use in having a "cheap" solution that does not work. So we prefer an expensive Solution, that solves the Prolem better...
+		else {
+			
+			boolean cpuNeighborDominatingCurrent = solvesProblemBetterOrEqual(neighbor.getTotalCpuLoad(), currentSolution.getTotalCpuLoad(), minCpuLoad);
+			boolean memNeighborDominatingCurrent = solvesProblemBetterOrEqual(neighbor.getTotalMemLoad(), currentSolution.getTotalMemLoad(), minMemLoad);
+			boolean netNeighborDominatingCurrent = solvesProblemBetterOrEqual(neighbor.getTotalNetLoad(), currentSolution.getTotalNetLoad(), minNetLoad);
+			
+			if(cpuNeighborDominatingCurrent && memNeighborDominatingCurrent & netNeighborDominatingCurrent) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 		
-		return bestSolution;
+		
+	
 	}
 
 	private QueryCostMap chooseRandom(QueryCostMap allQueries) {
@@ -113,6 +141,11 @@ public class SimulatedAnnealingQuerySelector implements IQuerySelectionStrategy 
 		return (proposal.getTotalCpuLoad() >= minCpuSum 
 				&& proposal.getTotalMemLoad() >= minMemSum
 				&& proposal.getTotalNetLoad() >= minNetSum);
+	}
+	
+
+	private boolean solvesProblemBetterOrEqual(double firstLoadValue, double secondLoadValue, double loadMinimum) {
+		return firstLoadValue>=Math.min(secondLoadValue, loadMinimum);
 	}
 
 }
