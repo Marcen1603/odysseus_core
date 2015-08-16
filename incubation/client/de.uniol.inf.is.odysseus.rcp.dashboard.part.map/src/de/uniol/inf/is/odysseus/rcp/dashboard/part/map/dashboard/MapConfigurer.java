@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.EditDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.PropertyTitleDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
@@ -36,8 +34,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfigur
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
 
 /**
- * The configurer of the {@link MapDashboardPart}. This is what you can see in
- * settings
+ * The MapConfigurer of the {@link MapDashboardPart}. This is what you can see
+ * in settings
  *
  */
 public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardPart> {
@@ -47,10 +45,9 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	private MapDashboardPart mapDashboardPart;
 	private Collection<IPhysicalOperator> roots;
 	private Table layerTable;
-
-	protected ScreenTransformation transformation;
-	protected ScreenManager screenManager;
 	private MapEditorModel mapModel;
+
+	private Button editButton;
 
 	@Override
 	public void init(MapDashboardPart dashboardPartToConfigure, Collection<IPhysicalOperator> roots) {
@@ -79,11 +76,12 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 		createLayerSettingsControls(layerSettingComp);
 
-		reprintLayerTable();		
+		reprintLayerTable();
 	}
 
 	private void createMaxDataControls(Composite topComposite) {
-		DashboardPartUtil.createLabel(topComposite, "Max Data Value");
+		Label maxDataLabel = DashboardPartUtil.createLabel(topComposite, "Max Data Value");
+		maxDataLabel.setToolTipText("Max value of DataStreamElements are processed");
 		final Text maxDataText = DashboardPartUtil.createText(topComposite,
 				String.valueOf(mapDashboardPart.getMaxData()));
 		maxDataText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -97,7 +95,8 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	}
 
 	private void createUpdateIntervalControls(Composite topComposite) {
-		DashboardPartUtil.createLabel(topComposite, "Upate Interval (ms)");
+		Label updateIntervall = DashboardPartUtil.createLabel(topComposite, "Upate Interval (ms)");
+		updateIntervall.setToolTipText("Updates the map in the given time intervall");
 		final Text updateIntervalText = DashboardPartUtil.createText(topComposite,
 				String.valueOf(mapDashboardPart.getUpdateInterval()));
 		updateIntervalText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -116,7 +115,8 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		tableSettingComp.setLayout(new GridLayout(1, true));
 		tableSettingComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		DashboardPartUtil.createLabel(tableSettingComp, "Layer Settings");
+		Label layerSettingLabel = DashboardPartUtil.createLabel(tableSettingComp, "Layer Settings");
+		layerSettingLabel.setToolTipText("After creation wizard a BasicLayer will be added");
 
 		Composite tableComp = new Composite(tableSettingComp, SWT.NONE);
 		tableComp.setLayout(new GridLayout(1, true));
@@ -140,17 +140,39 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 	}
 
-	private void createLayerTable(Composite parent) {
+	private void createLayerTable(final Composite parent) {
 		this.layerTable = new Table(parent, SWT.CHECK | SWT.FULL_SELECTION | SWT.V_SCROLL);
 		layerTable.setHeaderVisible(true);
 		layerTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 		layerTable.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				/// TODO Ausgrauen von Buttons
+				int index = layerTable.getSelectionIndex();
+				if (index >= 0) {
+					ILayer layer = mapModel.getLayers().get(index);
+					if (layer instanceof BasicLayer) {
+						editButton.setEnabled(false);
+					} else {
+						editButton.setEnabled(true);
+					}
+				}
 			}
 
 		});
+
+		// layerTable.addListener(SWT.Selection, new Listener() {
+		// @Override
+		// public void handleEvent(Event event) {
+		// System.out.println("GetLayers()" + mapModel.getLayers());
+		// System.out.println("EventButton" + event.button);
+		//
+		// boolean checked = event.detail == SWT.CHECK ? true : false;
+		// System.out.println(event.detail);
+		// System.out.println(checked);
+		// mapDashboardPart.setActive(mapModel.getLayers().get(event.button),
+		// checked);
+		// }
+		// });
 
 		TableColumn visibilityColumn = new TableColumn(layerTable, SWT.NULL);
 		visibilityColumn.setText("Visibility");
@@ -178,7 +200,9 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				addDialog.create();
 				addDialog.open();
 				if (addDialog.getReturnCode() == Window.OK) {
+
 					mapDashboardPart.addLayer(addDialog.getLayerConfiguration());
+
 					reprintLayerTable();
 					fireListener();
 				} else {
@@ -257,8 +281,9 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	}
 
 	private void createEditButton(final Composite parent) {
-		final Button configurateButton = createButton(parent, "Edit");
-		configurateButton.addSelectionListener(new SelectionAdapter() {
+		final Button editButton = createButton(parent, "Edit");
+		this.editButton = editButton;
+		editButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -272,7 +297,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 					editDialog.create();
 					editDialog.open();
 					if (editDialog.getReturnCode() == Window.OK) {
-						mapDashboardPart.editLayer(editDialog.getLayerConfiguration());
+						mapDashboardPart.editLayer(group.get(index), editDialog.getLayerConfiguration());
 						reprintLayerTable();
 						fireListener();
 					}
@@ -308,6 +333,10 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	// TODO BUTTONS AUSGRAUEN, FALLS DIE GEWAEHLTE SCHICHT SCHON TOP ODER BOTTOM
 	// IST
 	private void createOrderButtons(final Composite parent) {
+
+		Label horizontalSpacer = new Label(parent, SWT.NONE);
+		int height = 50;
+		horizontalSpacer.setLayoutData(new GridData(1, height));
 
 		Button bottomButton = createButton(parent, "Bottom");
 		bottomButton.addSelectionListener(new SelectionAdapter() {
@@ -406,6 +435,11 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			item.setText(0, "");
 
 			if (layerConf instanceof RasterLayerConfiguration) {
+				if (layer.isActive()) {
+					item.setChecked(true);
+				} else {
+					item.setChecked(false);
+				}
 				item.setText(1, layerConf.getName());
 				item.setText(2, "RasterLayer");
 				// } else if(layerConf instanceof ){
@@ -425,8 +459,6 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			tc.pack();
 		;
 	}
-
-	
 
 	@Override
 	public void dispose() {

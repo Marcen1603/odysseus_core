@@ -73,11 +73,13 @@ final class GeometryPaintListener implements PaintListener {
 		int ypos = (screenSize.y - 10);
 		int xpos = (screenSize.x);
 		e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
-		//e.gc.drawLine(xpos - 100, ypos , xpos - 10, ypos);
-		//e.gc.drawLine(xpos - 100, ypos , xpos - 100, ypos - 10);
-		//e.gc.drawLine(xpos - 100 + dpcm -1, ypos , xpos - 100 + dpcm -1, ypos - 10);
-		//e.gc.drawString("Scale: " + (scale * dpcm), xpos - 200, ypos - 80);
-		//e.gc.drawString("Scale: " + (scale), xpos - 200, ypos - 40);
+		
+		//scale on the map
+//		e.gc.drawLine(xpos - 100, ypos , xpos - 10, ypos);
+//		e.gc.drawLine(xpos - 100, ypos , xpos - 100, ypos - 10);
+//		e.gc.drawLine(xpos - 100 + dpcm -1, ypos , xpos - 100 + dpcm -1, ypos - 10);
+//		e.gc.drawString("Scale: " + (scale * dpcm), xpos - 200, ypos - 80);
+//		e.gc.drawString("Scale: " + (scale), xpos - 200, ypos - 40);
 		if (this.mapDashboardPart.getScreenManager().getMouseSelection() != null){
 			e.gc.setAlpha(90);
 			e.gc.fillRectangle(this.mapDashboardPart.getScreenManager().getMouseSelection());

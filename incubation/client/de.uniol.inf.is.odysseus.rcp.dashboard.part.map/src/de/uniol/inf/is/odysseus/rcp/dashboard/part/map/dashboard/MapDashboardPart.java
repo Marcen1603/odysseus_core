@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.IStreamMapEditor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
@@ -37,8 +36,8 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 
 	private String attributeList = "*";
 	private String layerSettings = "";
-	private Integer srid = 0;
-
+	
+	private int srid = 0;
 	private int maxData = 10;
 	private int updateInterval = 1000;
 
@@ -56,9 +55,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 		initMapModel();
 		screenManager = new ScreenManager(transformation, this);
 		screenManager.setCanvasViewer(screenManager.createCanvas(parent));
-		// setTimeSlider(createTimeSliderComposite(parent));
-
-		addFirstLayer();
+		// setTimeSlider(createTimeSliderComposite(parent))
 		
 		mapModel.init(this);
 		update();
@@ -125,9 +122,9 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 		}
 	}
 
-	public void editLayer(LayerConfiguration layer) {
+	public void editLayer(ILayer layer,LayerConfiguration layerConf) {
 		if (mapModel != null) {
-			mapModel.editLayer(layer);
+			mapModel.editLayer(layer, layerConf);
 			update();
 		} else {
 			LOG.error("Map Model is not initialized.");
@@ -220,7 +217,6 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 		toSaveMap.put("MaxData", String.valueOf(maxData));
 		toSaveMap.put("UpdateInterval", String.valueOf(updateInterval));
 		toSaveMap.put("LayerSettings", layerSettings);
-		System.out.print("SAVE"+ layerSettings);
 		toSaveMap.put("SRID", String.valueOf(mapModel.getSRID()));
 		return toSaveMap;
 	};
@@ -234,29 +230,16 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 		updateInterval = Integer.valueOf(saved.get("UpdateInterval"));
 		srid = Integer.valueOf(saved.get("SRID"));
 		layerSettings = saved.get("LayerSettings");
-		System.out.println("Saved LayerSettings:" + saved.get("LayerSettings"));
-		System.out.println("LOAD: "+layerSettings);
 		if (layerSettings != null) {
 			mapModel.load(layerSettings);
 		}
 	};
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	/**
-	 * Adds the BasicLayer to the map.
-	 */
-	private void addFirstLayer() {
-		if (mapModel.getLayers().isEmpty()) {
-			BasicLayer basic = new BasicLayer();
-			basic.setActive(true);
-			mapModel.getLayers().addFirst(basic);
-		}
-	}
-	
 
 }

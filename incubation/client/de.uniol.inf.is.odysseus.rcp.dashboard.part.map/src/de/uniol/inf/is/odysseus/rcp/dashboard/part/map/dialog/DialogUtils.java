@@ -39,13 +39,6 @@ public class DialogUtils {
 		return gridData;
 	}
 
-	public static GridLayout getRadioSelectionLayout(int colums) {
-		GridLayout layout = new GridLayout();
-		layout.numColumns = colums;
-		layout.horizontalSpacing = GridData.FILL;
-		layout.verticalSpacing = GridData.BEGINNING;
-		return layout;
-	}
 
 	public static void separator(Composite parent) {
 		GridData separatorgridData = new GridData();

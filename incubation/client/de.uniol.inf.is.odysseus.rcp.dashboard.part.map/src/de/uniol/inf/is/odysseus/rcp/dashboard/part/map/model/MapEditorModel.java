@@ -42,6 +42,8 @@ public class MapEditorModel extends ModelObject {
 
 	private int layercount;
 	private int srid;
+	private int startIndex;
+	private int endIndex;
 
 	private LinkedList<ILayer> layers = new LinkedList<ILayer>();
 	private TreeMap<String, LayerUpdater> connections = new TreeMap<String, LayerUpdater>();
@@ -70,7 +72,7 @@ public class MapEditorModel extends ModelObject {
 
 	// TODO Andere Layertypen adden
 	public String save() {
-
+		this.layerSettings = "";
 		for (ILayer layer : layers) {
 			LayerConfiguration configuration = layer.getConfiguration();
 			boolean checked = layer.isActive();
@@ -122,11 +124,12 @@ public class MapEditorModel extends ModelObject {
 	}
 
 	public void load(String layerSettings) {
+		layers.clear();
+
 		if (!layerSettings.isEmpty()) {
 			this.layerSettings = layerSettings;
 			ArrayList<String> configurationList = new ArrayList<String>();
 			int startIndex = 0;
-			// layers.clear();
 
 			// Split the big String into each layerConfiguration String
 			// separated by "\\"
@@ -153,8 +156,8 @@ public class MapEditorModel extends ModelObject {
 	}
 
 	private void loadBasicConfiguration(String configuration) {
-		int startIndex = 0;
-		int endIndex = configuration.indexOf(";");
+		startIndex = 0;
+		endIndex = configuration.indexOf(";");
 		BasicLayer basic = new BasicLayer();
 
 		// Get the name of the BasicLayer
@@ -169,112 +172,56 @@ public class MapEditorModel extends ModelObject {
 		layers.add(basic);
 	}
 
+	// TODO Check
 	private void loadRasterLayerConfiguration(String configuration) {
-		int startIndex = 0;
-		int endIndex = configuration.indexOf(";");
+		startIndex = 0;
+		endIndex = 0;
+		endIndex = configuration.indexOf(";");
 		double minX, maxX, minY, maxY;
 
 		// Gets the name
 		String substring = configuration.substring(startIndex, endIndex);
-
-		// TODO REMOVE THIS AND SWITCH IT TO int minX,...
-		String secondSubstring;
-
-		// Create new RasterLayerConfiguration
 		RasterLayerConfiguration rlc = new RasterLayerConfiguration(substring);
 
 		// Sets the setting one by one
-		startIndex = endIndex + 1;
-		endIndex = configuration.indexOf(";", startIndex);
-		substring = configuration.substring(startIndex, endIndex);
-		rlc.setUrl(substring);
+		rlc.setUrl(getSubString(configuration, ";"));
+		rlc.setFormat(getSubString(configuration, ";"));
+		rlc.setMinZoom(Integer.valueOf(getSubString(configuration, ";")));
+		rlc.setMaxZoom(Integer.valueOf(getSubString(configuration, ";")));
+		rlc.setTileSize(Integer.valueOf(getSubString(configuration, ";")),
+				Integer.valueOf(getSubString(configuration, ";")));
+		rlc.setSrid(Integer.valueOf(getSubString(configuration, ";")));
 
-		startIndex = endIndex + 1;
-		endIndex = configuration.indexOf(";", startIndex);
-		substring = configuration.substring(startIndex, endIndex);
-		rlc.setFormat(substring);
-
-		startIndex = endIndex + 1;
-		endIndex = configuration.indexOf(";", startIndex);
-		substring = configuration.substring(startIndex, endIndex);
-		rlc.setMinZoom(Integer.valueOf(substring));
-
-		startIndex = endIndex + 1;
-		endIndex = configuration.indexOf(";", startIndex);
-		substring = configuration.substring(startIndex, endIndex);
-		rlc.setMaxZoom(Integer.valueOf(substring));
-
-		startIndex = endIndex + 1;
-		endIndex = configuration.indexOf(";", startIndex);
-		substring = configuration.substring(startIndex, endIndex);
-
-		startIndex = endIndex + 1;
-		endIndex = configuration.indexOf(";", startIndex);
-		secondSubstring = configuration.substring(startIndex, endIndex);
-
-		rlc.setTileSize(Integer.valueOf(substring), Integer.valueOf(secondSubstring));
-
-		startIndex = endIndex + 1;
-		endIndex = configuration.indexOf(";", startIndex);
-		substring = configuration.substring(startIndex, endIndex);
-		rlc.setSrid(Integer.valueOf(substring));
-
-		startIndex = endIndex + 1;
-		endIndex = configuration.indexOf(";", startIndex);
-		substring = configuration.substring(startIndex, endIndex);
+		substring = getSubString(configuration, ";");
 
 		if (!substring.equals("null")) {
 			minX = Double.valueOf(substring);
-
-			startIndex = endIndex + 1;
-			endIndex = configuration.indexOf(";", startIndex);
-			substring = configuration.substring(startIndex, endIndex);
-			maxX = Double.valueOf(substring);
-
-			startIndex = endIndex + 1;
-			endIndex = configuration.indexOf(";", startIndex);
-			substring = configuration.substring(startIndex, endIndex);
-			minY = Double.valueOf(substring);
-
-			startIndex = endIndex + 1;
-			endIndex = configuration.indexOf(";", startIndex);
-			substring = configuration.substring(startIndex, endIndex);
-			maxY = Double.valueOf(substring);
+			maxX = Double.valueOf(getSubString(configuration, ";"));
+			minY = Double.valueOf(getSubString(configuration, ";"));
+			maxY = Double.valueOf(getSubString(configuration, ";"));
 
 			rlc.setCoverageProjected(minX, maxX, minY, maxY);
 		} else {
-			startIndex = endIndex + 1;
-			endIndex = configuration.indexOf(";", startIndex);
-			substring = configuration.substring(startIndex, endIndex);
-			minX = Double.valueOf(substring);
-
-			startIndex = endIndex + 1;
-			endIndex = configuration.indexOf(";", startIndex);
-			substring = configuration.substring(startIndex, endIndex);
-			maxX = Double.valueOf(substring);
-
-			startIndex = endIndex + 1;
-			endIndex = configuration.indexOf(";", startIndex);
-			substring = configuration.substring(startIndex, endIndex);
-			minY = Double.valueOf(substring);
-
-			startIndex = endIndex + 1;
-			endIndex = configuration.indexOf(";", startIndex);
-			substring = configuration.substring(startIndex, endIndex);
-			maxY = Double.valueOf(substring);
+			minX = Double.valueOf(getSubString(configuration, ";"));
+			maxX = Double.valueOf(getSubString(configuration, ";"));
+			minY = Double.valueOf(getSubString(configuration, ";"));
+			maxY = Double.valueOf(getSubString(configuration, ";"));
 
 			rlc.setCoverageGeographic(minX, maxX, minY, maxY);
 			startIndex = endIndex + 1;
 			endIndex = configuration.indexOf(";", startIndex);
 		}
-		startIndex = endIndex + 1;
-		endIndex = configuration.indexOf(";", startIndex);
-		substring = configuration.substring(startIndex, endIndex);
 
 		RasterLayer rasterLayer = new RasterLayer(rlc);
+		rasterLayer.setActive(Boolean.valueOf(getSubString(configuration, ";")));
 		layers.add(rasterLayer);
+	}
 
-		// TODO Actitivty
+	private String getSubString(String string, String separator) {
+		startIndex = endIndex + 1;
+		endIndex = string.indexOf(separator, startIndex);
+		String subString = string.substring(startIndex, endIndex);
+		return subString;
 	}
 
 	/**
@@ -287,17 +234,30 @@ public class MapEditorModel extends ModelObject {
 		layercount++;
 		ILayer layer = null;
 
-		if (layerConfiguration instanceof RasterLayerConfiguration)
+		if (layerConfiguration instanceof RasterLayerConfiguration) {
 			layer = addLayer((RasterLayerConfiguration) layerConfiguration);
-		else if (layerConfiguration instanceof VectorLayerConfiguration)
-			layer = addLayer((VectorLayerConfiguration) layerConfiguration);
-		// else if (layerConfiguration instanceof TracemapLayerConfiguration)
-		// layer = addLayer((TracemapLayerConfiguration) layerConfiguration);
-		// else if (layerConfiguration instanceof HeatmapLayerConfiguration)
-		// layer = addLayer((HeatmapLayerConfiguration) layerConfiguration);
+			// else if (layerConfiguration instanceof VectorLayerConfiguration)
+			// layer = addLayer((VectorLayerConfiguration) layerConfiguration);
+			// else if (layerConfiguration instanceof
+			// TracemapLayerConfiguration)
+			// layer = addLayer((TracemapLayerConfiguration)
+			// layerConfiguration);
+			// else if (layerConfiguration instanceof HeatmapLayerConfiguration)
+			// layer = addLayer((HeatmapLayerConfiguration) layerConfiguration);
+		} else {
+			layer = addLayer();
+		}
 
 		firePropertyChange(MAP, null, this);
 		layers.addLast(layer);
+	}
+
+	private ILayer addLayer() {
+		ILayer layer = new BasicLayer();
+		if (screenManager != null) {
+			layer.init(screenManager, null, null);
+		}
+		return layer;
 	}
 
 	private ILayer addLayer(RasterLayerConfiguration layerConfiguration) {
@@ -309,35 +269,39 @@ public class MapEditorModel extends ModelObject {
 		return layer;
 	}
 
-	private ILayer addLayer(VectorLayerConfiguration layerConfiguration) {
-		ILayer layer = null;
-		SDFAttribute attribute = null;
-		SDFSchema schema = null;
-
-		// Find the Query
-		for (LayerUpdater connection : connections.values()) {
-			if (connection.getQuery().getQueryText().equals(layerConfiguration.getQuery())) {
-
-				// Connect the Stream to the iStreamListner
-				schema = connection.getConnection().getOutputSchema();
-				for (SDFAttribute tmpAttribute : schema) {
-					if (tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute())) {
-						attribute = tmpAttribute;
-						layer = LayerTypeRegistry.getLayer(attribute.getDatatype());
-						layer.setConfiguration(layerConfiguration);
-
-						// PreInit
-						layer.init(null, schema, attribute);
-						connection.add(layer);
-					}
-				}
-			}
-		}
-		if (screenManager != null && layer != null) {
-			layer.init(screenManager, schema, attribute);
-		}
-		return layer;
-	}
+	// private ILayer addLayer(VectorLayerConfiguration layerConfiguration) {
+	// ILayer layer = null;
+	// SDFAttribute attribute = null;
+	// SDFSchema schema = null;
+	//
+	// // Find the Query
+	// for (LayerUpdater connection : connections.values()) {
+	// if
+	// (connection.getQuery().getQueryText().equals(layerConfiguration.getQuery()))
+	// {
+	//
+	// // Connect the Stream to the iStreamListner
+	// schema = connection.getConnection().getOutputSchema();
+	// for (SDFAttribute tmpAttribute : schema) {
+	// if
+	// (tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute()))
+	// {
+	// attribute = tmpAttribute;
+	// layer = LayerTypeRegistry.getLayer(attribute.getDatatype());
+	// layer.setConfiguration(layerConfiguration);
+	//
+	// // PreInit
+	// layer.init(null, schema, attribute);
+	// connection.add(layer);
+	// }
+	// }
+	// }
+	// }
+	// if (screenManager != null && layer != null) {
+	// layer.init(screenManager, schema, attribute);
+	// }
+	// return layer;
+	// }
 
 	// /**
 	// * Adds an HeatmapLayer to the map
@@ -391,10 +355,7 @@ public class MapEditorModel extends ModelObject {
 	// return layer;
 	// }
 
-	public void editLayer(LayerConfiguration layerConfiguration) {
-		@SuppressWarnings("unused")
-		ILayer layer = null;
-
+	public void editLayer(ILayer layer, LayerConfiguration layerConfiguration) {
 		if (layerConfiguration instanceof RasterLayerConfiguration)
 			layer = editLayer((RasterLayerConfiguration) layerConfiguration);
 		// else if (layerConfiguration instanceof VectorLayerConfiguration)

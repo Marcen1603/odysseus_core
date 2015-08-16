@@ -40,12 +40,12 @@ public class BasicLayer extends AbstractLayer<NullConfiguration>{
 	public BasicLayer() {
 		super(new NullConfiguration());
 		this.name = "Basic";
-		this.active = false;
+		this.active = true;
     }
 	
 	private BasicLayer(NullConfiguration configuration) {
 		super(configuration);
-		this.active = false;
+		this.active = true;
     }
 	
 	@Override

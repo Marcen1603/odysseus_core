@@ -13,6 +13,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -110,24 +111,43 @@ public class EditDialog extends TitleAreaDialog {
 		Label layerTypelabel = new Label(layerConfigurationComp, SWT.FLAT);
 		layerTypelabel.setText("Type:");
 
-		final Composite radioTypeSelection = new Composite(layerConfigurationComp, SWT.NONE);
-		radioTypeSelection.setLayout(DialogUtils.getRadioSelectionLayout(2));
-		radioTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
-		Listener listener = new Listener() {
+		final Composite typeSelection = new Composite(layerConfigurationComp, SWT.NONE);
+		typeSelection.setLayout(DialogUtils.getGroupLayout());
+		typeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+
+		String[] types = { "Map", "HeatMap" };
+		final Combo layerTypesCombo = new Combo(typeSelection, SWT.DROP_DOWN);
+		layerTypesCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		layerTypesCombo.setItems(types);
+		layerTypesCombo.select(0);// Map
+		layerTypesCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void handleEvent(Event e) {
-				Control[] children = radioTypeSelection.getChildren();
-				if (((Button) e.widget).getText().endsWith("Raster")) {
+			public void widgetSelected(SelectionEvent e) {
+
+				if ((layerTypesCombo.getText().equals("Map"))) {
 					if (!(layerType.equals("RasterLayer"))) {
-						configContainer.getChildren()[0].dispose();
+						for(Control c: configContainer.getChildren()){
+							c.dispose();
+						}
 						getRasterLayerConfigurationComposite(configContainer);
 						configContainer.redraw();
 						main.layout(true);
 						layerType = "RasterLayer";
 					}
+				} else if (layerTypesCombo.getText().equals("HeatMap")) {
+					if (!(layerType.equals("HeatMap"))) {
+						for(Control c: configContainer.getChildren()){
+							c.dispose();
+						}
+						//getRasterLayerConfigurationComposite(configContainer);
+						configContainer.redraw();
+						main.layout(true);
+						layerType = "HeatMap";
+					}
 				}
-				// }
+			}
+		});
 				// if (((Button) e.widget).getText().endsWith("Thematic")) {
 				// if (!(layerType.equals("ThematicLayer"))) {
 				// configContainer.getChildren()[0].dispose();
@@ -138,29 +158,7 @@ public class EditDialog extends TitleAreaDialog {
 				// layerType = "ThematicLayer";
 				// }
 				// }
-				for (Control child : children) {
-					if (e.widget != child) {
-						((Button) child).setSelection(false);
-					}
-				}
-				((Button) e.widget).setSelection(true);
-			}
-		};
-
-		Button radioTypeButtonRaster = new Button(radioTypeSelection, SWT.RADIO);
-		radioTypeButtonRaster.setText("Raster");
-		radioTypeButtonRaster.addListener(SWT.Selection, listener);
-
-		Button radioTypeButtonThematic = new Button(radioTypeSelection, SWT.RADIO);
-		radioTypeButtonThematic.setText("Thematic");
-		radioTypeButtonThematic.addListener(SWT.Selection, listener);
-		
-		if(layerConfiguration instanceof RasterLayerConfiguration){
-			radioTypeButtonRaster.setSelection(true);
-		}
-//		else if(layerConfigurationComp instanceof HeatmapLayerConfiguration){
-//			radioTypeButtonThematic.setSelection(true);
-//		}
+				
 
 		Label layerPlaceLabel = new Label(layerConfigurationComp, SWT.FLAT);
 		layerPlaceLabel.setText("Placement (after):");
@@ -214,8 +212,12 @@ public class EditDialog extends TitleAreaDialog {
 		for (String string : defaults) {
 			server.add(string);
 		}
-		//TODO FIND A WAY TO GET THE RIGHT ADRESS
-		server.select(1);// .setText("http://oatile2.mqcdn.com/tiles/1.0.0/osm/");
+		RasterLayerConfiguration conf = (RasterLayerConfiguration)layerConfiguration;
+		for(int i = 0; i < server.getItemCount(); i++){
+			if(server.getItem(i).equals(conf.getUrl())){
+				server.select(i);
+			}
+		}
 		ownProperties.getTileServer(server.getSelectionIndex(), layerConfiguration);
 
 		return rasterLayerComp;
