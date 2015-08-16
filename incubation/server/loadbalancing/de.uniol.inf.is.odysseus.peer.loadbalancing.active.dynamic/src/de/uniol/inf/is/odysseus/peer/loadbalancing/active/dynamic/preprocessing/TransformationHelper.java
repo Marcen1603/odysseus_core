@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 
 public class TransformationHelper {
 	
@@ -75,7 +76,10 @@ public class TransformationHelper {
 		return false;
 	}
 	
-	public static boolean hasRealSources(int queryID,IServerExecutor executor) {
+	public static boolean hasRealSources(int queryID) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
 		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
 		for(IPhysicalOperator op : physicalOps) {
 			if(isRealSource(op))
@@ -84,7 +88,10 @@ public class TransformationHelper {
 		return false;
 	}
 	
-	public static boolean hasRealSinks(int queryID, IServerExecutor executor) {
+	public static boolean hasRealSinks(int queryID) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
 		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
 		for(IPhysicalOperator op : physicalOps) {
 			if(isRealSink(op))
@@ -137,8 +144,10 @@ public class TransformationHelper {
 	
 
 	public static ILogicalOperator getLogicalSourceToPhysicalSource(
-			IPhysicalOperator sourceOperator, int queryID,
-			IServerExecutor executor, ISession session) {
+			IPhysicalOperator sourceOperator, int queryID,ISession session) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
 		ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryID,
 				session);
 		List<ILogicalOperator> operatorsInLogicalQuery = Lists.newArrayList();
@@ -160,7 +169,10 @@ public class TransformationHelper {
 	
 
 	
-	public static ILogicalOperator getLogicalSinkToPhysicalSink(IPhysicalOperator sinkOperator,int queryID, IServerExecutor executor,ISession session) {
+	public static ILogicalOperator getLogicalSinkToPhysicalSink(IPhysicalOperator sinkOperator,int queryID,ISession session) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
 		ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryID, session);
 		List<ILogicalOperator> operatorsInLogicalQuery = Lists.newArrayList();
 		RestructHelper.collectOperators(logicalQuery.getLogicalPlan(), operatorsInLogicalQuery);
@@ -181,7 +193,10 @@ public class TransformationHelper {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List<ControllablePhysicalSubscription> getSubscriptionsToReplace(
-			IPhysicalOperator operator, int queryID, IServerExecutor executor, boolean isSink) {
+			IPhysicalOperator operator, int queryID, boolean isSink) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
 		List<ControllablePhysicalSubscription> subscriptionsToReplace = Lists
 				.newArrayList();
 		Set<IPhysicalOperator> operatorsInPhysicalQuery = executor
@@ -210,14 +225,19 @@ public class TransformationHelper {
 	}
 	
 
-	public static IPhysicalOperator getFirstPhysicalRootOfQuery(IServerExecutor executor, int queryId) {
+	public static IPhysicalOperator getFirstPhysicalRootOfQuery(int queryId) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
 		return executor.getExecutionPlan().getQueryById(queryId).getRoots().get(0);
 	}
 	
 
 	public static Pair<Integer, IPhysicalOperator> createNewQueryWithFromLogicalOperator(
 			ILogicalOperator operator, int oldQueryID,
-			IServerExecutor executor, ISession session, String queryNamePostfix) {
+			ISession session, String queryNamePostfix) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 
 		ILogicalQuery logicalQuery = executor.getLogicalQueryById(oldQueryID,
 				session);
@@ -237,7 +257,7 @@ public class TransformationHelper {
 				.getBuildConfigForQuery(logicalQuery).getName(), settings);
 
 		//As there is only ONE Op -> we return this as Operator
-		return new Pair<Integer, IPhysicalOperator>(queryIdForNewQuery, TransformationHelper.getFirstPhysicalRootOfQuery(executor, queryIdForNewQuery));
+		return new Pair<Integer, IPhysicalOperator>(queryIdForNewQuery, TransformationHelper.getFirstPhysicalRootOfQuery(queryIdForNewQuery));
 	}
 	
 
@@ -320,7 +340,9 @@ public class TransformationHelper {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public static void modifyLogicalQuery(ILogicalOperator operator,JxtaSenderAO jxtaSender,JxtaReceiverAO jxtaReceiver, ISubscription subscription,int sourceQueryID,int sinkQueryID,Collection<ILogicalOperator> newRootsSourceSide,Collection<ILogicalOperator> newRootsSinkSide,IServerExecutor executor,ISession session, boolean reverseSubscription) {
+	public static void modifyLogicalQuery(ILogicalOperator operator,JxtaSenderAO jxtaSender,JxtaReceiverAO jxtaReceiver, ISubscription subscription,int sourceQueryID,int sinkQueryID,Collection<ILogicalOperator> newRootsSourceSide,Collection<ILogicalOperator> newRootsSinkSide,ISession session, boolean reverseSubscription) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		ISubscription logicalSubscription = TransformationHelper.getLogicalForPhysicalSubscription(operator, subscription,reverseSubscription);
 		
@@ -433,9 +455,11 @@ public class TransformationHelper {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public static void modifyPhyiscalQuery(ISink sinkOperator,ISource sourceOperator, int sourceSideQueryID,IServerExecutor executor, ISession session,List<IPhysicalOperator> newRoots,Iterator<ControllablePhysicalSubscription> iter,
+	public static void modifyPhyiscalQuery(ISink sinkOperator,ISource sourceOperator, int sourceSideQueryID, ISession session,List<IPhysicalOperator> newRoots,Iterator<ControllablePhysicalSubscription> iter,
 			ISubscription subscr, JxtaReceiverPO receiverPO,
 			JxtaSenderPO senderPO, boolean openReceivers) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		TransformationHelper.replacePhysicalConnectionWithSenderReceiverPair(sourceOperator, sinkOperator, subscr, senderPO, receiverPO,openReceivers);
 		

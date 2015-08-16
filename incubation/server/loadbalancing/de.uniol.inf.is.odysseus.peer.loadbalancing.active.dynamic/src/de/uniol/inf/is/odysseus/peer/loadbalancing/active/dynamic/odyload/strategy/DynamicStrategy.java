@@ -18,24 +18,21 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
-import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.ICommunicatorChooser;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThreadListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQuerySelectionStrategy;
@@ -50,9 +47,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SinkTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SourceTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.TransformationHelper;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
@@ -61,18 +56,10 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DynamicStrategy.class);
 	private Object threadManipulationLock = new Object();
-	private IPeerResourceUsageManager usageManager;
-	private IServerExecutor executor;
-	private static ISession activeSession;
-	private IPhysicalCostModel physicalCostModel;
+	
 	private ILoadBalancingAllocator allocator;
-	private IPeerDictionary peerDictionary;
-	private IP2PNetworkManager networkManager;
-	private ILoadBalancingLock lock;
-	private ILoadBalancingCommunicatorRegistry communicatorRegistry;
-	private IPeerCommunicator peerCommunicator;
-	private IQueryPartController queryPartController;
-	private IExcludedQueriesRegistry excludedQueryRegistry;
+	private static ISession activeSession;
+	
 	
 	private QueryTransmissionHandler transmissionHandler;
 	
@@ -81,110 +68,6 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 
 
 	private MonitoringThread monitoringThread = null;
-	
-	
-	public void bindExcludedQueryRegistry(IExcludedQueriesRegistry serv) {
-		this.excludedQueryRegistry = serv;
-	}
-	
-	public void unbindExcludedQueryRegistry(IExcludedQueriesRegistry serv) {
-		if(this.excludedQueryRegistry==serv) {
-			this.excludedQueryRegistry = null;
-		}
-	}
-	
-	public void bindPeerCommunicator(IPeerCommunicator serv) {
-		this.peerCommunicator = serv;
-	}
-	
-	public void unbindPeerCommunicator(IPeerCommunicator serv) {
-		if(this.peerCommunicator==serv) {
-			this.peerCommunicator = null;
-		}
-	}
-	
-	public void bindQueryPartController(IQueryPartController serv) {
-			this.queryPartController = serv;
-	}
-	
-	public void unbindQueryPartController(IQueryPartController serv) {
-		if(this.queryPartController==serv) {
-			this.queryPartController=null;
-		}
-	}
-	
-	public void bindLoadBalancingCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
-		this.communicatorRegistry = serv;
-	}
-
-	public void unbindLoadBalancingCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
-		if(this.communicatorRegistry==serv) {
-			this.communicatorRegistry = null;
-		}
-	}
-	
-	public void bindPhysicalCostModel(IPhysicalCostModel serv) {
-		this.physicalCostModel = serv;
-		
-	}
-	
-	public void unbindPhysicalCostModel(IPhysicalCostModel serv) {
-		if(this.physicalCostModel==serv) {
-			this.physicalCostModel = null;
-		}
-	}
-	
-	public void bindLoadBalancingLock(ILoadBalancingLock serv) {
-		this.lock = serv;
-	}
-
-
-	public void unbindLoadBalancingLock(ILoadBalancingLock serv) {
-		if(this.lock == serv) {
-			lock = null;
-		}
-	}
-
-	
-	public void bindResourceUsageManager(IPeerResourceUsageManager serv) {
-		this.usageManager = serv;
-	}
-
-	public void unbindResourceUsageManager(IPeerResourceUsageManager serv) {
-		if (usageManager == serv) {
-			usageManager = null;
-		}
-	}
-	
-	public void bindExecutor(IExecutor serv) {
-		this.executor = (IServerExecutor)serv;
-	}
-	
-	public void unbindExecutor(IExecutor serv) {
-		if(executor==serv){
-			executor=null;
-		}
-	}
-	
-	public void bindPeerDictionary(IPeerDictionary serv) {
-		this.peerDictionary = serv;
-	}
-	
-	public void unbindPeerDictionary(IPeerDictionary serv) {
-		if(serv==peerDictionary) {
-			this.peerDictionary = null;
-		}
-	}
-	
-	public void bindNetworkManager(IP2PNetworkManager serv) {
-		this.networkManager = serv;
-	}
-	
-	public void unbindNetworkManager(IP2PNetworkManager serv) {
-		if(this.networkManager==serv) {
-			this.networkManager = null;
-		}
-	}
 	
 
 	/**
@@ -221,6 +104,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	}
 
 	private void startNewMonitoringThread() {
+		
+		IPeerResourceUsageManager usageManager = OsgiServiceProvider.getUsageManager();
+		
 		if (usageManager == null) {
 			LOG.error("Could not start monitoring: No resource Usage Manager bound.");
 			return;
@@ -257,6 +143,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	}
 
 	private HashMap<Integer, IPhysicalQuery> getPhysicalQueries() {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		IExcludedQueriesRegistry excludedQueryRegistry = OsgiServiceProvider.getExcludedQueryRegistry();
 
 		HashMap<Integer, IPhysicalQuery> queries = new HashMap<Integer, IPhysicalQuery>();
 
@@ -281,16 +170,8 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	@Override
 	public void triggerLoadBalancing(double cpuUsage, double memUsage, double netUsage) {
 		
-		Preconditions.checkNotNull(this.networkManager,"Network Manager not bound.");
-		Preconditions.checkNotNull(this.executor,"Executor Manager not bound.");
-		Preconditions.checkNotNull(this.queryPartController,"Query Part Controller not bound.");
-		Preconditions.checkNotNull(this.communicatorRegistry,"Communicator Registry not bound.");
 		Preconditions.checkNotNull(this.allocator,"No allocator bound.");
-		Preconditions.checkNotNull(this.lock,"No Load Balancing Lock bound.");
-		Preconditions.checkNotNull(this.peerDictionary,"Peer Dictionary not bound.");
-		Preconditions.checkNotNull(this.physicalCostModel,"Physical Cost Model not bound.");
-		
-		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		if(executor.getLogicalQueryIds(getActiveSession()).size()==0) {
 			LOG.warn("Load Balancing triggered, but no queries installed. Continuing monitoring.");
@@ -310,7 +191,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		
 		//Add Shared QueryID to every Query if needed.
 		for(int queryID : queryIDs) {
-			SharedQueryIDModifier.addSharedQueryIDIfNeccessary(queryID, executor, queryPartController, networkManager, getActiveSession());
+			SharedQueryIDModifier.addSharedQueryIDIfNeccessary(queryID, getActiveSession());
 		}
 		
 		
@@ -333,24 +214,29 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	/***
 	 * Transforms Sinks and Sources in Failed Queries to JxtaReceiver-Sender Constructs as this might have been a reason for the failure...
 	 */
+	@SuppressWarnings("unused")
 	private void transformFailedQueries() {
+		
+		IP2PNetworkManager networkManager = OsgiServiceProvider.getNetworkManager();
+		
+		
 		if(failedAllocationQueryIDs!=null) {
 			for(int queryID : failedAllocationQueryIDs) {
-				if(TransformationHelper.hasRealSinks(queryID, executor)) {
-					SinkTransformer.replaceSinks(queryID, networkManager.getLocalPeerID(), getActiveSession(), networkManager, executor, queryPartController, excludedQueryRegistry);
+				if(TransformationHelper.hasRealSinks(queryID)) {
+					SinkTransformer.replaceSinks(queryID, networkManager.getLocalPeerID(), getActiveSession());
 				}
-				if(TransformationHelper.hasRealSources(queryID, executor)) {
-					SourceTransformer.replaceSources(queryID, networkManager.getLocalPeerID(), getActiveSession(), networkManager, executor, queryPartController, excludedQueryRegistry);
+				if(TransformationHelper.hasRealSources(queryID)) {
+					SourceTransformer.replaceSources(queryID, networkManager.getLocalPeerID(), getActiveSession());
 				}
 			}
 		}
 		if(transmissionHandler!=null) {
 			for(int queryID : transmissionHandler.getFailedTransmissions()) {
-				if(TransformationHelper.hasRealSinks(queryID, executor)) {
-					SinkTransformer.replaceSinks(queryID, networkManager.getLocalPeerID(), getActiveSession(), networkManager, executor, queryPartController, excludedQueryRegistry);
+				if(TransformationHelper.hasRealSinks(queryID)) {
+					SinkTransformer.replaceSinks(queryID, networkManager.getLocalPeerID(), getActiveSession());
 				}
-				if(TransformationHelper.hasRealSources(queryID, executor)) {
-					SourceTransformer.replaceSources(queryID, networkManager.getLocalPeerID(), getActiveSession(), networkManager, executor, queryPartController, excludedQueryRegistry);
+				if(TransformationHelper.hasRealSources(queryID)) {
+					SourceTransformer.replaceSources(queryID, networkManager.getLocalPeerID(), getActiveSession());
 				}
 			}
 		}
@@ -359,6 +245,11 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	
 
 	public void allocateAndTransferQueries(QueryCostMap chosenResult) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		IPeerDictionary peerDictionary = OsgiServiceProvider.getPeerDictionary();
+		IP2PNetworkManager networkManager = OsgiServiceProvider.getNetworkManager();
+		
 		HashMap<ILogicalQueryPart,Integer> queryPartIDMapping = new HashMap<ILogicalQueryPart,Integer>();
 		
 		for (int queryId : chosenResult.getQueryIds()) {
@@ -432,6 +323,9 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 			HashMap<ILogicalQueryPart, Integer> queryPartIDMapping,
 			Collection<PeerID> knownRemotePeers) {
 		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		IPeerDictionary peerDictionary = OsgiServiceProvider.getPeerDictionary();
+		
 		failedAllocationQueryIDs = Lists.newArrayList();
 		
 		int firstQueryId = chosenResult.getQueryIds().get(0);
@@ -454,16 +348,16 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 						
 					}
 					else {
-						LOG.debug("({} goes to Peer {}",queryPartIDMapping.get(queryPart),this.peerDictionary.getRemotePeerName(allocationMap.get(queryPart)));
+						LOG.debug("({} goes to Peer {}",queryPartIDMapping.get(queryPart),peerDictionary.getRemotePeerName(allocationMap.get(queryPart)));
 					}
 				}
 			}
 			
 			ICommunicatorChooser communicatorChooser = new OdyLoadCommunicatorChooser();
 			
-			HashMap<Integer,ILoadBalancingCommunicator> communicatorMapping = communicatorChooser.chooseCommunicators(chosenResult.getQueryIds(),executor,communicatorRegistry,getActiveSession());
+			HashMap<Integer,ILoadBalancingCommunicator> communicatorMapping = communicatorChooser.chooseCommunicators(chosenResult.getQueryIds(),getActiveSession());
 			
-			this.transmissionHandler = new QueryTransmissionHandler(peerDictionary, lock,peerCommunicator);
+			this.transmissionHandler = new QueryTransmissionHandler();
 			
 			for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
 				//Create a Query Transmission handler for every  transmission we have to do.
@@ -498,7 +392,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 			
 			Set<IPhysicalOperator> operatorList = queries.get(queryId).getAllOperators();
 
-			CostEstimationHelper.addQueryToCostMap(queryCostMap, queryId, operatorList,usageManager,physicalCostModel,networkManager);
+			CostEstimationHelper.addQueryToCostMap(queryCostMap, queryId, operatorList);
 		}
 		return queryCostMap;
 	}
@@ -516,6 +410,10 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 
 	
 	private Collection<Integer> getNotExcludedQueries() {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		IExcludedQueriesRegistry excludedQueryRegistry = OsgiServiceProvider.getExcludedQueryRegistry();
+		
 		Collection<Integer> queryIDs =  executor.getLogicalQueryIds(getActiveSession());
 		Iterator<Integer> iter = queryIDs.iterator();
 		while(iter.hasNext()) {

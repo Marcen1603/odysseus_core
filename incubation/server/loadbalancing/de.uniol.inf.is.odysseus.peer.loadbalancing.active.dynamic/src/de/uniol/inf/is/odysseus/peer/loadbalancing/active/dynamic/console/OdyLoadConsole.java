@@ -11,28 +11,25 @@ import net.jxta.peer.PeerID;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.DynamicStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.CommunicatorChooser.OdyLoadCommunicatorChooser;
@@ -43,130 +40,11 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strate
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SharedQueryIDModifier;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SinkTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SourceTransformer;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingAllocatorRegistry;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingStrategyRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
-import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
 public class OdyLoadConsole implements CommandProvider {
-	
-	
-	private static IP2PNetworkManager networkManager;
-	private static IServerExecutor executor;
-	private static IQueryPartController queryPartController;
-	private static IExcludedQueriesRegistry excludedQueriesRegistry;
-	private static ILoadBalancingStrategyRegistry strategyRegistry;
-	private static ILoadBalancingAllocatorRegistry allocatorRegistry;
-	private static IPeerDictionary peerDictionary;
-	private static ILoadBalancingCommunicatorRegistry communicatorRegistry;
-	private static IPhysicalCostModel physicalCostModel;
-	private static IPeerResourceUsageManager usageManager;
-	
-	
-	public static void bindCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
-		communicatorRegistry = serv;
-	}
-	
-	public static void unbindCommunicatorRegistry(ILoadBalancingCommunicatorRegistry serv) {
-		if(communicatorRegistry==serv) {
-			communicatorRegistry=null;
-		}
-	}
-	
-	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
-		networkManager = serv;
-	}
-	
-	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
-		if(networkManager==serv) {
-			networkManager=null;
-		}
-	}
-	
-	public static void bindExecutor(IExecutor serv) {
-		executor = (IServerExecutor)serv;
-	}
-	
-	public static void unbindExecutor(IExecutor serv) {
-		if(executor==serv) {
-			executor=null;
-		}
-	}
-	
-	public static void bindQueryPartController(IQueryPartController serv) {
-		queryPartController = serv;
-	}
-	
-	public static void unbindQueryPartController(IQueryPartController serv) {
-		if(queryPartController==serv) {
-			queryPartController=null;
-		}
-	}
-	
-	public static void bindExcludedQueriesRegistry(IExcludedQueriesRegistry serv) {
-		excludedQueriesRegistry = serv;
-	}
-	
-	public static void unbindExcludedQueriesRegistry(IExcludedQueriesRegistry serv) {
-		if(excludedQueriesRegistry==serv) {
-			excludedQueriesRegistry=null;
-		}
-	}
-	
-	
-	public static void bindStrategyRegistry(ILoadBalancingStrategyRegistry serv) {
-		strategyRegistry = serv;
-	}
-	
-	public void unbindStrategyRegistry(ILoadBalancingStrategyRegistry serv) {
-		if(strategyRegistry == serv) {
-			strategyRegistry = null;
-		}
-	}
-	
-	public void bindAllocatorRegistry(ILoadBalancingAllocatorRegistry serv) {
-		allocatorRegistry = serv;
-	}
-	
-	public void unbindAllocatorRegistry(ILoadBalancingAllocatorRegistry serv) {
-		if(allocatorRegistry==serv) {
-			allocatorRegistry = null;
-		}
-	}
-	
-	public void bindPeerDictionary(IPeerDictionary serv)  {
-		peerDictionary = serv;
-	}
-	
-	public void unbindPeerDictionary(IPeerDictionary serv) {
-		if(peerDictionary==serv) {
-			peerDictionary = null;
-		}
-	}
-	
-	public void bindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
-		usageManager = serv;
-	}
-	
-	public void unbindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
-		if(usageManager==serv) {
-			usageManager = null;
-		}
-	}
-	
-	public void bindPhysicalCostModel(IPhysicalCostModel serv) {
-		physicalCostModel = serv;
-	}
-	
-	public void unbindPhysicalCostModel(IPhysicalCostModel serv) {
-		if(physicalCostModel==serv) {
-			physicalCostModel = null;
-		}
-	}
-	
-	
 	
 	private static ISession activeSession;
 
@@ -189,12 +67,6 @@ public class OdyLoadConsole implements CommandProvider {
 	
 	public void _transformSources(CommandInterpreter ci) {
 		
-
-		Preconditions.checkNotNull(networkManager,"Network Manager not bound.");
-		Preconditions.checkNotNull(executor,"Executor not bound.");
-		Preconditions.checkNotNull(queryPartController,"QueryPartController not bound.");
-		Preconditions.checkNotNull(excludedQueriesRegistry,"ExcludedQueriesRegistry not bound.");
-		
 		final String ERROR_USAGE  = "Usage: transformSources <queryID>";
 		Integer localQueryID = getIntegerParameter(ci, ERROR_USAGE);
 		
@@ -202,19 +74,14 @@ public class OdyLoadConsole implements CommandProvider {
 			return;
 		}
 		
-		SourceTransformer.replaceSources(localQueryID, getLocalPeerID(), getActiveSession(), networkManager, executor, queryPartController, excludedQueriesRegistry);
+		SourceTransformer.replaceSources(localQueryID, getLocalPeerID(), getActiveSession());
 		ci.println("Done.");
 	}
 	
 	
 
 	public void _transformSinks(CommandInterpreter ci) {
-		
 
-		Preconditions.checkNotNull(networkManager,"Network Manager not bound.");
-		Preconditions.checkNotNull(executor,"Executor not bound.");
-		Preconditions.checkNotNull(queryPartController,"QueryPartController not bound.");
-		Preconditions.checkNotNull(excludedQueriesRegistry,"ExcludedQueriesRegistry not bound.");
 		
 		final String ERROR_USAGE  = "Usage: transformSinks <queryID>";
 		Integer localQueryID = getIntegerParameter(ci, ERROR_USAGE);
@@ -223,19 +90,14 @@ public class OdyLoadConsole implements CommandProvider {
 			return;
 		}
 		
-		SinkTransformer.replaceSinks(localQueryID, getLocalPeerID(), getActiveSession(), networkManager, executor, queryPartController, excludedQueriesRegistry);
+		SinkTransformer.replaceSinks(localQueryID, getLocalPeerID(), getActiveSession());
 		ci.println("Done.");
 	}
 	
 
 
 	public void _addSharedQueryID(CommandInterpreter ci) {
-		
-
-		Preconditions.checkNotNull(networkManager,"Network Manager not bound.");
-		Preconditions.checkNotNull(executor,"Executor not bound.");
-		Preconditions.checkNotNull(queryPartController,"QueryPartController not bound.");
-		
+				
 		final String ERROR_USAGE  = "Usage: transformSinks <queryID>";
 		Integer localQueryID = getIntegerParameter(ci, ERROR_USAGE);
 		
@@ -243,14 +105,15 @@ public class OdyLoadConsole implements CommandProvider {
 			return;
 		}
 		
-		SharedQueryIDModifier.addSharedQueryIDIfNeccessary(localQueryID, executor, queryPartController, networkManager, getActiveSession());
+		SharedQueryIDModifier.addSharedQueryIDIfNeccessary(localQueryID,getActiveSession());
 		ci.println("Done.");
 	}
 	
 	public void _selectGreedy(CommandInterpreter ci) {
 
-		Preconditions.checkNotNull(strategyRegistry,"Strategy Registry not bound.");
-
+		
+		ILoadBalancingStrategyRegistry strategyRegistry = OsgiServiceProvider.getStrategyRegistry();
+		
 		final String ERROR_USAGE = "Usage: selectGreedy <cpuToRemove> <memToRemove> <netToRemove>";
 		
 		Double cpuToRemove = getDoubleParameter(ci, ERROR_USAGE);
@@ -270,7 +133,8 @@ public class OdyLoadConsole implements CommandProvider {
 	
 	public void _selectAnnealing(CommandInterpreter ci) {
 		
-		Preconditions.checkNotNull(strategyRegistry,"Strategy Registry not bound.");
+
+		ILoadBalancingStrategyRegistry strategyRegistry = OsgiServiceProvider.getStrategyRegistry();
 		
 		final String ERROR_USAGE = "Usage: selectAnnealing <cpuToRemove> <memToRemove> <netToRemove>";
 		
@@ -291,7 +155,8 @@ public class OdyLoadConsole implements CommandProvider {
 	
 	public void _selectCombination(CommandInterpreter ci) {
 
-		Preconditions.checkNotNull(strategyRegistry,"Strategy Registry not bound.");
+
+		ILoadBalancingStrategyRegistry strategyRegistry = OsgiServiceProvider.getStrategyRegistry();
 		
 		final String ERROR_USAGE = "Usage: selectCombination <cpuToRemove> <memToRemove> <netToRemove>";
 		
@@ -316,9 +181,10 @@ public class OdyLoadConsole implements CommandProvider {
 	
 	
 	public void _allocate(CommandInterpreter ci) {
-
-		Preconditions.checkNotNull(allocatorRegistry,"Allocator Registry not bound.");
-		Preconditions.checkNotNull(peerDictionary,"Peer Dictionary not bound.");
+		
+		ILoadBalancingAllocatorRegistry allocatorRegistry = OsgiServiceProvider.getAllocatorRegistry();
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		IPeerDictionary peerDictionary = OsgiServiceProvider.getPeerDictionary();
 
 		
 		final String ERROR_USAGE = "Usage: allocate <queryID>";
@@ -359,10 +225,6 @@ public class OdyLoadConsole implements CommandProvider {
 	
 	public void _determineCommunicator(CommandInterpreter ci) {
 		
-		Preconditions.checkNotNull(communicatorRegistry, "Communicator Registry not bound.");
-		Preconditions.checkNotNull(executor, "Executor not bound.");
-		
-		
 		final String ERROR_USAGE = "Usage: determineCommunicator <queryID>";
 		
 		Integer queryID = getIntegerParameter(ci, ERROR_USAGE);
@@ -376,16 +238,17 @@ public class OdyLoadConsole implements CommandProvider {
 		
 		OdyLoadCommunicatorChooser chooser = new OdyLoadCommunicatorChooser();
 		
-		HashMap<Integer,ILoadBalancingCommunicator> result = chooser.chooseCommunicators(queryIDAsList,executor,communicatorRegistry,getActiveSession());
+		HashMap<Integer,ILoadBalancingCommunicator> result = chooser.chooseCommunicators(queryIDAsList,getActiveSession());
 		ILoadBalancingCommunicator comm = result.get(queryID);
 		ci.println("Chosen Communicator: " + comm.getName());
 	}
 	
 	
 	public void _allocateAndTransfer(CommandInterpreter ci) {
-		Preconditions.checkNotNull(executor,"Executor not bound.");
-		Preconditions.checkNotNull(strategyRegistry,"Strategy Registry not bound.");
-		Preconditions.checkNotNull(allocatorRegistry,"Allocator Registry not bound.");
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		ILoadBalancingAllocatorRegistry allocatorRegistry = OsgiServiceProvider.getAllocatorRegistry();
+		ILoadBalancingStrategyRegistry strategyRegistry = OsgiServiceProvider.getStrategyRegistry();
 		
 		final String ERROR_USAGE = "Usage: allocateAndTransfer <queryID>";
 		final String ERROR_QUERY = "Query not found.";
@@ -409,7 +272,7 @@ public class OdyLoadConsole implements CommandProvider {
 		
 		QueryCostMap costMap = new QueryCostMap();
 		
-		CostEstimationHelper.addQueryToCostMap(costMap, queryID, operatorList,usageManager,physicalCostModel,networkManager);
+		CostEstimationHelper.addQueryToCostMap(costMap, queryID, operatorList);
 		strategy.setAllocator(allocatorRegistry.getAllocator(OdyLoadConstants.ALLOCATOR_NAME));
 		
 		strategy.allocateAndTransferQueries(costMap);
@@ -473,13 +336,12 @@ public class OdyLoadConsole implements CommandProvider {
 	}
 	
 	private PeerID getLocalPeerID() {
-		Preconditions.checkNotNull(networkManager,"Network Manager not bound.");
+		IP2PNetworkManager networkManager = OsgiServiceProvider.getNetworkManager();
 		return networkManager.getLocalPeerID();
 	}
 	
 	private ILogicalQueryPart getLogicalQueryPart(int queryID) {
-
-		Preconditions.checkNotNull(executor,"Executor not bound.");
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		ILogicalQuery query = executor.getLogicalQueryById(queryID, getActiveSession());
 		List<ILogicalOperator> opsInQuery = Lists.newArrayList();
 		RestructHelper.collectOperators(query.getLogicalPlan(),opsInQuery);

@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
@@ -46,19 +47,19 @@ public class SinkTransformer {
 
 	@SuppressWarnings({ "rawtypes" })
 	public static void replaceSinks(int queryID, PeerID localPeerID,
-			ISession session, IP2PNetworkManager networkManager,
-			IServerExecutor executor,IQueryPartController queryPartController,IExcludedQueriesRegistry excludedQueriesRegistry) {
+			ISession session) {
+
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+
 		LOG.debug("Replacing Sinks for Query {}", queryID);
 		List<ISink> sinks = Lists.newArrayList();
 		Collection<IPhysicalOperator> operatorsInQuery = executor
 				.getExecutionPlan().getQueryById(queryID).getAllOperators();
 
-		
-		//Get all Subscriptions that have a real sink 
+		// Get all Subscriptions that have a real sink
 		for (IPhysicalOperator op : operatorsInQuery) {
 			if (TransformationHelper.isRealSink(op)) {
-				LOG.debug("Operator {} seems to be a real sink.",
-						op.getName());
+				LOG.debug("Operator {} seems to be a real sink.", op.getName());
 				ISink sink = (ISink) op;
 				for (Object obj : sink.getSubscribedToSource()) {
 					if (obj instanceof ISubscription) {
@@ -74,64 +75,76 @@ public class SinkTransformer {
 		}
 
 		for (ISink sink : sinks) {
-			
+
 			replaceSubscriptionWithSenderAndReceiver(sink, localPeerID,
-					queryID, executor, session,queryPartController,networkManager,excludedQueriesRegistry);
+					queryID, session);
 		}
 
 	}
 
-	@SuppressWarnings({ "rawtypes"})
-	private static void replaceSubscriptionWithSenderAndReceiver(ISink sinkOperator,PeerID peerID, int queryID, IServerExecutor executor, ISession session, IQueryPartController queryPartController, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry) {
-		
-		ILogicalOperator logicalSink = TransformationHelper.getLogicalSinkToPhysicalSink(sinkOperator, queryID, executor, session);
-		
+	@SuppressWarnings({ "rawtypes" })
+	private static void replaceSubscriptionWithSenderAndReceiver(
+			ISink sinkOperator, PeerID peerID, int queryID, ISession session) {
+
+		IP2PNetworkManager networkManager = OsgiServiceProvider
+				.getNetworkManager();
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		IExcludedQueriesRegistry excludedQueriesRegistry = OsgiServiceProvider.getExcludedQueryRegistry();
+
+		ILogicalOperator logicalSink = TransformationHelper
+				.getLogicalSinkToPhysicalSink(sinkOperator, queryID, session);
+
 		List<ControllablePhysicalSubscription> physicalSubscriptionsToReplace = getSubscriptionsToReplace(
-				sinkOperator, queryID, executor);
+				sinkOperator, queryID);
 
 		List<IPhysicalOperator> newRoots = Lists.newArrayList();
-		
-		
-		int newQueryID=0;
-		boolean firstSubscription = true;
-		
-		Collection<ILogicalOperator> addedSenders = Lists.newArrayList();
-		
 
-		Iterator<ControllablePhysicalSubscription> iter = physicalSubscriptionsToReplace.iterator();
-		while(iter.hasNext()){
-			
+		int newQueryID = 0;
+		boolean firstSubscription = true;
+
+		Collection<ILogicalOperator> addedSenders = Lists.newArrayList();
+
+		Iterator<ControllablePhysicalSubscription> iter = physicalSubscriptionsToReplace
+				.iterator();
+		while (iter.hasNext()) {
+
 			JxtaReceiverAO receiverAO = null;
 			ControllablePhysicalSubscription subscr = iter.next();
 
 			PipeID newPipe = IDFactory.newPipeID(networkManager
 					.getLocalPeerGroupID());
-			
-			JxtaReceiverPO receiverPO=null;
-			
-			if(firstSubscription) {
 
-				receiverAO = TransformationHelper.createReceiverAO(sinkOperator, peerID, newPipe,subscr.getSchema());
-				Pair<Integer,IPhysicalOperator> queryIdReceiverPair = TransformationHelper.createNewQueryWithFromLogicalOperator(receiverAO,queryID, executor, session,logicalSink.getName());
+			JxtaReceiverPO receiverPO = null;
+
+			if (firstSubscription) {
+
+				receiverAO = TransformationHelper.createReceiverAO(
+						sinkOperator, peerID, newPipe, subscr.getSchema());
+				Pair<Integer, IPhysicalOperator> queryIdReceiverPair = TransformationHelper
+						.createNewQueryWithFromLogicalOperator(receiverAO,
+								queryID, session, logicalSink.getName());
 				newQueryID = queryIdReceiverPair.getE1();
-				receiverPO = (JxtaReceiverPO)queryIdReceiverPair.getE2();
+				receiverPO = (JxtaReceiverPO) queryIdReceiverPair.getE2();
 				firstSubscription = false;
 			} else {
-				receiverAO = TransformationHelper.createReceiverAO(sinkOperator, peerID, newPipe,subscr.getSchema());
+				receiverAO = TransformationHelper.createReceiverAO(
+						sinkOperator, peerID, newPipe, subscr.getSchema());
 				try {
 					receiverPO = new JxtaReceiverPO(receiverAO);
-					executor.getExecutionPlan().getQueryById(newQueryID).addChild(receiverPO);
+					executor.getExecutionPlan().getQueryById(newQueryID)
+							.addChild(receiverPO);
 				} catch (DataTransmissionException e) {
 					LOG.error("Error while creating receiver!");
 					e.printStackTrace();
 					return;
 				}
 			}
-			
-			JxtaSenderAO senderAO = TransformationHelper.createJxtaSenderAO(sinkOperator, peerID, newPipe);
+
+			JxtaSenderAO senderAO = TransformationHelper.createJxtaSenderAO(
+					sinkOperator, peerID, newPipe);
 			addedSenders.add(senderAO);
 			JxtaSenderPO senderPO;
-			
+
 			try {
 				senderPO = new JxtaSenderPO(senderAO);
 			} catch (DataTransmissionException e) {
@@ -139,75 +152,88 @@ public class SinkTransformer {
 				e.printStackTrace();
 				return;
 			}
-			if(logicalSink!=null) {
-				
-				
-				
-				Collection<ILogicalOperator> newRootsSinkSide = Lists.newArrayList();
+			if (logicalSink != null) {
+
+				Collection<ILogicalOperator> newRootsSinkSide = Lists
+						.newArrayList();
 				newRootsSinkSide.add(logicalSink);
-				TransformationHelper.modifyLogicalQuery(logicalSink, senderAO, receiverAO, subscr, queryID, newQueryID, addedSenders, newRootsSinkSide, executor, session,true);
-			}
-			else {
-				LOG.warn("Could not find logical Sink to physical Sink {}",sinkOperator.getName());
+				TransformationHelper.modifyLogicalQuery(logicalSink, senderAO,
+						receiverAO, subscr, queryID, newQueryID, addedSenders,
+						newRootsSinkSide, session, true);
+			} else {
+				LOG.warn("Could not find logical Sink to physical Sink {}",
+						sinkOperator.getName());
 			}
 
-			ISubscription sourceToSinkSubscription = getSourceToSinkSubscription(sinkOperator, subscr);
-			TransformationHelper.modifyPhyiscalQuery(sinkOperator,(ISource)subscr.getTarget(), queryID, executor, session,
-					newRoots, iter, sourceToSinkSubscription, receiverPO, senderPO,false);
-			
-			//Set last root manually.
-			if(!iter.hasNext()) {
-					 executor.getExecutionPlan().getQueryById(queryID).replaceOperator(sinkOperator, senderPO);
+			ISubscription sourceToSinkSubscription = getSourceToSinkSubscription(
+					sinkOperator, subscr);
+			TransformationHelper
+					.modifyPhyiscalQuery(sinkOperator,
+							(ISource) subscr.getTarget(), queryID, session,
+							newRoots, iter, sourceToSinkSubscription,
+							receiverPO, senderPO, false);
+
+			// Set last root manually.
+			if (!iter.hasNext()) {
+				executor.getExecutionPlan().getQueryById(queryID)
+						.replaceOperator(sinkOperator, senderPO);
 			}
 		}
-		
 
-		reorganizeRootsOfQuery(sinkOperator, queryID, executor, newRoots,
-				newQueryID,session);
-		
-		
-		addNewQueryToSharedQuery(queryID, executor, session,
-				queryPartController, newQueryID);
+		reorganizeRootsOfQuery(sinkOperator, queryID, newRoots, newQueryID,
+				session);
+
+		addNewQueryToSharedQuery(queryID, session, newQueryID);
 		excludedQueriesRegistry.excludeQueryIdFromLoadBalancing(newQueryID);
-		
-	}
 
+	}
 
 	@SuppressWarnings("rawtypes")
 	private static void reorganizeRootsOfQuery(ISink sinkOperator, int queryID,
-			IServerExecutor executor, List<IPhysicalOperator> newRoots,
-			int newQueryID,ISession session) {
-		IPhysicalQuery newQueryWithSink = executor.getExecutionPlan().getQueryById(newQueryID);
+			List<IPhysicalOperator> newRoots, int newQueryID, ISession session) {
+
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+
+		IPhysicalQuery newQueryWithSink = executor.getExecutionPlan()
+				.getQueryById(newQueryID);
 		List<IOperatorOwner> ownerList = new ArrayList<IOperatorOwner>();
 		ownerList.add(newQueryWithSink);
-		//sinkOperator.open(newQueryWithSink);
-		
-		
+		// sinkOperator.open(newQueryWithSink);
 
-		
-		executor.getExecutionPlan().getQueryById(newQueryID).addChild(sinkOperator);
-		
+		executor.getExecutionPlan().getQueryById(newQueryID)
+				.addChild(sinkOperator);
+
 		List<IPhysicalOperator> newRootsForNewQuery = Lists.newArrayList();
 		newRootsForNewQuery.add(sinkOperator);
-		executor.getExecutionPlan().getQueryById(newQueryID).setRoots(newRootsForNewQuery);
+		executor.getExecutionPlan().getQueryById(newQueryID)
+				.setRoots(newRootsForNewQuery);
 		executor.getExecutionPlan().getQueryById(queryID).setRoots(newRoots);
 		executor.startQuery(newQueryID, session);
 	}
 
-	private static void addNewQueryToSharedQuery(int queryID,
-			IServerExecutor executor, ISession session,
-			IQueryPartController queryPartController, int newQueryID) {
-		//Add query to (newly created) shared query.
+	private static void addNewQueryToSharedQuery(int queryID, ISession session,
+			int newQueryID) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		IQueryPartController queryPartController = OsgiServiceProvider.getQueryPartController();
+		
+		// Add query to (newly created) shared query.
 		ID sharedQueryID = queryPartController.getSharedQueryID(queryID);
-		if(sharedQueryID!=null) {
-			Collection<PeerID> otherPeers = queryPartController.getOtherPeers(sharedQueryID);
-			queryPartController.registerAsMaster(executor.getLogicalQueryById(newQueryID, session), newQueryID, sharedQueryID, otherPeers);
+		if (sharedQueryID != null) {
+			Collection<PeerID> otherPeers = queryPartController
+					.getOtherPeers(sharedQueryID);
+			queryPartController.registerAsMaster(
+					executor.getLogicalQueryById(newQueryID, session),
+					newQueryID, sharedQueryID, otherPeers);
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
 	private static List<ControllablePhysicalSubscription> getSubscriptionsToReplace(
-			ISink sinkOperator, int queryID, IServerExecutor executor) {
+			ISink sinkOperator, int queryID) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
 		List<ControllablePhysicalSubscription> subscriptionsToReplace = Lists
 				.newArrayList();
 		Set<IPhysicalOperator> operatorsInPhysicalQuery = executor
@@ -224,10 +250,10 @@ public class SinkTransformer {
 		}
 		return subscriptionsToReplace;
 	}
-	
 
 	@SuppressWarnings("rawtypes")
-	private static ISubscription getSourceToSinkSubscription(ISink sink,ISubscription subscr) {
+	private static ISubscription getSourceToSinkSubscription(ISink sink,
+			ISubscription subscr) {
 		ISource source = (ISource) subscr.getTarget();
 		for (Object obj : source.getSubscriptions()) {
 			if (obj instanceof ISubscription) {
@@ -243,78 +269,5 @@ public class SinkTransformer {
 		return null;
 	}
 
-	/*
-	@SuppressWarnings("rawtypes")
-	private static Pair<Integer, JxtaReceiverPO> createNewQueryWithJxtaReceiver(JxtaReceiverAO receiverAO,int oldQueryID,
-			IServerExecutor executor, ISession session, String sinkName) {
-		
-		ILogicalQuery logicalQuery = executor.getLogicalQueryById(oldQueryID,
-				session);
 
-		List<ILogicalOperator> operatorList = Lists.newArrayList();
-		operatorList.add(receiverAO);
-		TopAO top = RestructHelper.generateTopAO(operatorList);
-		
-		List<IQueryBuildSetting<?>> settings = Lists.newArrayList();
-		
-		settings.add(new ParameterQueryName(logicalQuery.getName()+"_"+sinkName));
-		settings.add(new ParameterParserID(logicalQuery.getParserId()));
-		settings.add(new ParameterPriority(logicalQuery.getPriority()));
-		
-		
-		int queryIdForNewQuery = executor.addQuery(top, session, executor
-				.getBuildConfigForQuery(logicalQuery).getName(), settings);
-		
-		
-
-		JxtaReceiverPO receiverPO = getPhysicalReceiverFromQuery(queryIdForNewQuery, session,
-				executor,receiverAO.getPipeID());
-		return new Pair<Integer, JxtaReceiverPO>(queryIdForNewQuery, receiverPO);
-	}
-	*/
-
-
-/*
-	@SuppressWarnings("rawtypes")
-	private static JxtaReceiverPO getPhysicalReceiverFromQuery(int queryId,
-			ISession session, IServerExecutor executor,String pipeID) {
-		for (IPhysicalOperator op : executor.getExecutionPlan()
-				.getQueryById(queryId).getAllOperators()) {
-			if (op instanceof JxtaReceiverPO) {
-				JxtaReceiverPO receiver =  (JxtaReceiverPO) op;
-				if(receiver.getPipeIDString().equals(pipeID)) {
-					return receiver;
-				}
-			}
-		}
-		return null;
-	}
-	
-	
-
-	@SuppressWarnings("rawtypes")
-	private static void modifyPhyiscalQuery(ISink sinkOperator, int queryID,
-			IServerExecutor executor, ISession session,
-			List<IPhysicalOperator> newRoots,
-			Iterator<ControllablePhysicalSubscription> iter,
-			ControllablePhysicalSubscription subscr, JxtaReceiverPO receiverPO,
-			JxtaSenderPO senderPO) {
-		
-		ISubscription sourceToSinkSubscr = getSourceToSinkSubscription(sinkOperator, subscr);
-		ISource sourceOperator= (ISource)(subscr.getTarget());
-		TransformationHelper.replacePhysicalConnectionWithSenderReceiverPair(sourceOperator, sinkOperator, sourceToSinkSubscr, senderPO, receiverPO);
-
-		newRoots.add(senderPO);
-
-		senderPO.open(executor.getLogicalQueryById(queryID, session));
-		
-		if(iter.hasNext()) {
-			 executor.getExecutionPlan().getQueryById(queryID).addChild(senderPO);
-		}
-		else {
-			 executor.getExecutionPlan().getQueryById(queryID).replaceOperator(sinkOperator, senderPO);
-		}
-	}
-	*/
-	
 }

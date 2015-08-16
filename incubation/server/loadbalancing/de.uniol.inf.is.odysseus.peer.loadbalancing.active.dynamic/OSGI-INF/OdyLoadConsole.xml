@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConsole">
    <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.console.OdyLoadConsole"/>
-   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindP2PNetworkManager"/>
-   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>
-   <reference bind="bindExcludedQueriesRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry" name="IExcludedQueriesRegistry" policy="static" unbind="unbindExcludedQueriesRegistry"/>
-   <reference bind="bindStrategyRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingStrategyRegistry" name="ILoadBalancingStrategyRegistry" policy="static" unbind="unbindStrategyRegistry"/>
-   <reference bind="bindAllocatorRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingAllocatorRegistry" name="ILoadBalancingAllocatorRegistry" policy="static" unbind="unbindAllocatorRegistry"/>
-   <reference bind="bindPeerDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary" name="IPeerDictionary" policy="static" unbind="unbindPeerDictionary"/>
    <service>
       <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
    </service>
-   <reference bind="bindQueryPartController" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController" name="IQueryPartController" policy="static" unbind="unbindQueryPartController"/>
-   <reference bind="bindCommunicatorRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry" name="ILoadBalancingCommunicatorRegistry" policy="static" unbind="unbindCommunicatorRegistry"/>
-   <reference bind="bindPhysicalCostModel" cardinality="1..1" interface="de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel" name="IPhysicalCostModel" policy="static" unbind="unbindPhysicalCostModel"/>
-   <reference bind="bindPeerResourceUsageManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager" name="IPeerResourceUsageManager" policy="static" unbind="unbindPeerResourceUsageManager"/>
 </scr:component>

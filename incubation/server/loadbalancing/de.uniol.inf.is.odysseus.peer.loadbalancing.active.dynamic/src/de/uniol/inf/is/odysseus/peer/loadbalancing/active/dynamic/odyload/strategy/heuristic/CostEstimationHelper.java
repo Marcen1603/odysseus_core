@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.QueryLoadInformation;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
@@ -27,8 +28,10 @@ public class CostEstimationHelper {
 	
 	
 	@SuppressWarnings("rawtypes")
-	public static double estimateNetloadFromJxtaOperatorCount(
-			Set<IPhysicalOperator> operatorList,IP2PNetworkManager networkManager) {
+	public static double estimateNetloadFromJxtaOperatorCount(Set<IPhysicalOperator> operatorList) {
+		
+		IP2PNetworkManager networkManager = OsgiServiceProvider.getNetworkManager();
+		
 		double netLoad;
 		int sendersToRemotePeersCount = 0;
 		int receiversFromRemotePeersCount = 0;
@@ -96,8 +99,12 @@ public class CostEstimationHelper {
 	
 
 
-	public static void addQueryToCostMap(QueryCostMap queryCostMap, int queryId,
-			Set<IPhysicalOperator> operatorList, IPeerResourceUsageManager usageManager, IPhysicalCostModel physicalCostModel, IP2PNetworkManager networkManager) {
+	public static void addQueryToCostMap(QueryCostMap queryCostMap, int queryId,Set<IPhysicalOperator> operatorList) {
+		
+		
+		IPeerResourceUsageManager usageManager = OsgiServiceProvider.getUsageManager();
+		IPhysicalCostModel physicalCostModel = OsgiServiceProvider.getPhysicalCostModel();
+		
 		double cpuMax = usageManager.getLocalResourceUsage().getCpuMax();
 		double netMax = usageManager.getLocalResourceUsage().getNetBandwidthMax();
 		long memMax = usageManager.getLocalResourceUsage().getMemMaxBytes();
@@ -112,7 +119,7 @@ public class CostEstimationHelper {
 		//Workaround, as Cost Model does not provide real usage data for network :(
 		if(OdyLoadConstants.COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS) {
 			LOG.info("Using JxtaOperators to estimate NetLoad instead of using value from CostModel.");
-			netLoad = estimateNetloadFromJxtaOperatorCount(operatorList,networkManager);
+			netLoad = estimateNetloadFromJxtaOperatorCount(operatorList);
 		}
 			
 		

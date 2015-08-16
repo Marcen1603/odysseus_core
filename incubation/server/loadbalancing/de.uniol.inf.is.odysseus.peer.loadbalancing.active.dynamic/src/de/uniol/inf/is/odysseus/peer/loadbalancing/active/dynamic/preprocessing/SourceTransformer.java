@@ -32,8 +32,8 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
-import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 
 public class SourceTransformer {
@@ -45,10 +45,10 @@ public class SourceTransformer {
 			.getLogger(SourceTransformer.class);
 
 	@SuppressWarnings({ "rawtypes" })
-	public static void replaceSources(int queryID, PeerID localPeerID,
-			ISession session, IP2PNetworkManager networkManager,
-			IServerExecutor executor, IQueryPartController queryPartController,
-			IExcludedQueriesRegistry excludedQueriesRegistry) {
+	public static void replaceSources(int queryID, PeerID localPeerID, ISession session) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
 		LOG.debug("Replacing Sources for Query {}", queryID);
 		List<ISource> sources = Lists.newArrayList();
 		Collection<IPhysicalOperator> operatorsInQuery = executor
@@ -75,23 +75,22 @@ public class SourceTransformer {
 		for (ISource source : sources) {
 
 			replaceSubscriptionWithSenderAndReceiver(source, localPeerID,
-					queryID, executor, session, queryPartController,
-					networkManager, excludedQueriesRegistry);
+					queryID, session);
 		}
 
 	}
 
 	@SuppressWarnings({ "rawtypes" })
 	private static void replaceSubscriptionWithSenderAndReceiver(
-			ISource sourceOperator, PeerID peerID, int queryID,
-			IServerExecutor executor, ISession session,
-			IQueryPartController queryPartController,
-			IP2PNetworkManager networkManager,
-			IExcludedQueriesRegistry excludedQueriesRegistry) {
+			ISource sourceOperator, PeerID peerID, int queryID,ISession session) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		IExcludedQueriesRegistry excludedQueryRegistry = OsgiServiceProvider.getExcludedQueryRegistry();
+		
 
-		ILogicalOperator logicalSource = TransformationHelper.getLogicalSourceToPhysicalSource(sourceOperator, queryID, executor, session);
+		ILogicalOperator logicalSource = TransformationHelper.getLogicalSourceToPhysicalSource(sourceOperator, queryID, session);
 
-		List<ControllablePhysicalSubscription> physicalSubscriptionsToReplace = TransformationHelper.getSubscriptionsToReplace(sourceOperator, queryID, executor,false);
+		List<ControllablePhysicalSubscription> physicalSubscriptionsToReplace = TransformationHelper.getSubscriptionsToReplace(sourceOperator, queryID, false);
 
 		List<IPhysicalOperator> newRoots = Lists.newArrayList();
 
@@ -108,15 +107,14 @@ public class SourceTransformer {
 			JxtaSenderAO senderAO = null;
 			ControllablePhysicalSubscription subscr = iter.next();
 
-			PipeID newPipe = IDFactory.newPipeID(networkManager
-					.getLocalPeerGroupID());
+			PipeID newPipe = IDFactory.newPipeID(OsgiServiceProvider.getNetworkManager().getLocalPeerGroupID());
 
 			JxtaSenderPO senderPO = null;
 
 			if (firstSubscription) {
 
 				senderAO = TransformationHelper.createJxtaSenderAO(sourceOperator,peerID,newPipe);
-				Pair<Integer, IPhysicalOperator> queryIDSenderPair = TransformationHelper.createNewQueryWithFromLogicalOperator(senderAO, queryID, executor, session,logicalSource.getName());
+				Pair<Integer, IPhysicalOperator> queryIDSenderPair = TransformationHelper.createNewQueryWithFromLogicalOperator(senderAO, queryID,  session,logicalSource.getName());
 				newQueryID = queryIDSenderPair.getE1();
 				senderPO = (JxtaSenderPO)queryIDSenderPair.getE2();
 				firstSubscription = false;
@@ -125,7 +123,7 @@ public class SourceTransformer {
 				senderAO = TransformationHelper.createJxtaSenderAO(sourceOperator, peerID, newPipe);
 				try {
 					senderPO = new JxtaSenderPO(senderAO);
-					executor.getExecutionPlan().getQueryById(newQueryID)
+					OsgiServiceProvider.getExecutor().getExecutionPlan().getQueryById(newQueryID)
 							.addChild(senderPO);
 					addedSenders.add(senderAO);
 				} catch (DataTransmissionException e) {
@@ -151,13 +149,13 @@ public class SourceTransformer {
 				ILogicalOperator oldTop = executor.getLogicalQueryById(queryID, session).getLogicalPlan();
 				Collection<ILogicalOperator> oldRoots = getRootsFromTopAO(oldTop);
 				
-				TransformationHelper.modifyLogicalQuery(logicalSource, senderAO, receiverAO, subscr, newQueryID, queryID, addedSenders, oldRoots, executor, session,false);
+				TransformationHelper.modifyLogicalQuery(logicalSource, senderAO, receiverAO, subscr, newQueryID, queryID, addedSenders, oldRoots,  session,false);
 			} else {
 				LOG.warn("Could not find logical Sink to physical Sink {}",
 						sourceOperator.getName());
 			}
 			
-			TransformationHelper.modifyPhyiscalQuery((ISink)subscr.getTarget(),sourceOperator, newQueryID, executor, session,newRoots, iter, subscr, receiverPO, senderPO,true);
+			TransformationHelper.modifyPhyiscalQuery((ISink)subscr.getTarget(),sourceOperator, newQueryID,  session,newRoots, iter, subscr, receiverPO, senderPO,true);
 			
 			if(!iter.hasNext()) {
 				//Set last root manually.
@@ -169,12 +167,11 @@ public class SourceTransformer {
 
 		}
 
-		reorganizeRootsOfQuery(newQueryID, queryID, executor, newRoots,
+		reorganizeRootsOfQuery(newQueryID, queryID, newRoots,
 				session,sourceOperator);
 
-		addNewQueryToSharedQuery(queryID, executor, session,
-				queryPartController, newQueryID);
-		excludedQueriesRegistry.excludeQueryIdFromLoadBalancing(newQueryID);
+		addNewQueryToSharedQuery(queryID, session,newQueryID);
+		excludedQueryRegistry.excludeQueryIdFromLoadBalancing(newQueryID);
 
 	}
 
@@ -193,9 +190,8 @@ public class SourceTransformer {
 	
 
 	@SuppressWarnings("rawtypes")
-	private static void reorganizeRootsOfQuery(int sourceSideQueryID, int sinkSideQueryID,
-			IServerExecutor executor, List<IPhysicalOperator> newRoots, ISession session,ISource sourceOperator) {
-		
+	private static void reorganizeRootsOfQuery(int sourceSideQueryID, int sinkSideQueryID, List<IPhysicalOperator> newRoots, ISession session,ISource sourceOperator) {
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		IPhysicalQuery sourceSideQuery = executor.getExecutionPlan().getQueryById(sourceSideQueryID);
 		List<IOperatorOwner> ownerList = new ArrayList<IOperatorOwner>();
@@ -205,9 +201,11 @@ public class SourceTransformer {
 		executor.getExecutionPlan().getQueryById(sourceSideQueryID).setRoots(newRoots);
 	}
 	
-	private static void addNewQueryToSharedQuery(int queryID,
-			IServerExecutor executor, ISession session,
-			IQueryPartController queryPartController, int newQueryID) {
+	private static void addNewQueryToSharedQuery(int queryID,ISession session, int newQueryID) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		IQueryPartController queryPartController = OsgiServiceProvider.getQueryPartController();
+		
 		//Add query to (newly created) shared query.
 		ID sharedQueryID = queryPartController.getSharedQueryID(queryID);
 		if(sharedQueryID!=null) {

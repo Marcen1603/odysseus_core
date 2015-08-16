@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
@@ -28,45 +29,7 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DynamicAllocationBidProvider.class);
 
-	private static IPhysicalCostModel costModel;
-	private static IPeerResourceUsageManager usageManager;
-	private static IP2PNetworkManager networkManager;
-
-	// called by OSGi-DS
-	public static void bindPhysicalCostModel(IPhysicalCostModel serv) {
-		costModel = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindPhysicalCostModel(IPhysicalCostModel serv) {
-		if (costModel == serv) {
-			costModel = null;
-		}
-	}
-
-	// called by OSGi-DS
-	public static void bindResourceUsageManager(IPeerResourceUsageManager serv) {
-		usageManager = serv;
-	}
-
-	// called by OSGi-DS
-	public static void unbindResourceUsageManager(IPeerResourceUsageManager serv) {
-		if (usageManager == serv) {
-			usageManager = null;
-		}
-	}
 	
-	// called by OSGi-DS
-	public static void bindNetworkManager(IP2PNetworkManager serv) {
-		networkManager = serv;
-	}
-	
-	public static void unbindNetworkManager(IP2PNetworkManager serv) {
-		if(networkManager==serv) {
-			networkManager = null;
-		}
-	}
-
 	@Override
 	public String getName() {
 		return OdyLoadConstants.BID_PROVIDER_NAME;
@@ -74,6 +37,10 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 
 	@Override
 	public Optional<Double> calculateBid(ILogicalQuery query, String configName) {
+		
+		IPhysicalCostModel costModel = OsgiServiceProvider.getPhysicalCostModel();
+		IPeerResourceUsageManager usageManager = OsgiServiceProvider.getUsageManager();
+		
 		IPhysicalQuery physicalQuery = Helper.getPhysicalQuery(query,
 				configName);
 
@@ -122,14 +89,16 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 		}
 		
 
-		LOG.debug("needed Cpu Load:{}", String.format( "%.4f",neededCpuLoad));
-		LOG.debug("needed Mem Load:{}", String.format( "%.4f",neededMemLoad));
-		LOG.debug("needed Net Load:{}", String.format( "%.4f",neededNetLoad));
-
 		double freeCpuAfterLoadBalancing = cpuFree-neededCpuLoad;
 		double freeMemAfterLoadBalancing = memFree-neededMemLoad;
 		double freeNetAfterLoadBalancing = netFree-neededNetLoad;
+		
+		
 
+
+		LOG.debug("needed Cpu Load:{}", String.format( "%.4f",neededCpuLoad));
+		LOG.debug("needed Mem Load:{}", String.format( "%.4f",neededMemLoad));
+		LOG.debug("needed Net Load:{}", String.format( "%.4f",neededNetLoad));
 		LOG.debug("CPU Free after LB:{} (Currently Free:{})",
 				String.format( "%.4f",freeCpuAfterLoadBalancing), String.format( "%.4f",cpuFree));
 		LOG.debug("MEM Free after LB:{} (Currently Free:{})",
@@ -137,8 +106,6 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 		LOG.debug("NET Free after LB:{} (Currently Free:{})",
 				String.format( "%.4f",freeNetAfterLoadBalancing), String.format( "%.4f",netFree));
 
-		//FIXME Remove Workaround ;)
-		// This prevents peer from overloading itself.
 		if (freeCpuAfterLoadBalancing <= (1.0-OdyLoadConstants.CPU_THRESHOLD) || freeMemAfterLoadBalancing <=  (1.0-OdyLoadConstants.MEM_THRESHOLD)
 				|| freeNetAfterLoadBalancing <= (1.0-OdyLoadConstants.NET_THRESHOLD)) {
 			LOG.debug("Not bidding to QueryPart is this would overload Peer:");
@@ -156,6 +123,9 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 	@SuppressWarnings("rawtypes")
 	private double estimateNetloadFromJxtaOperatorCount(
 			Set<IPhysicalOperator> operatorList) {
+		
+		IP2PNetworkManager networkManager = OsgiServiceProvider.getNetworkManager();
+		
 		double netLoad;
 		int sendersToRemotePeersCount = 0;
 		int receiversFromRemotePeersCount = 0;

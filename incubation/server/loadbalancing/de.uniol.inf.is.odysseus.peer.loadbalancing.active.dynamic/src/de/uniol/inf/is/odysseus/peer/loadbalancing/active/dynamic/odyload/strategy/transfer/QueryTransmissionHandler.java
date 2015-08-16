@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 
@@ -30,10 +31,10 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 	private ILoadBalancingLock lock;
 	private IPeerCommunicator peerCommunicator;
 	
-	public QueryTransmissionHandler(IPeerDictionary peerDictionary, ILoadBalancingLock lock,IPeerCommunicator peerCommunicator) {
-		this.peerDictionary = peerDictionary;
-		this.lock = lock;
-		this.peerCommunicator = peerCommunicator;
+	public QueryTransmissionHandler() {
+		this.peerDictionary = OsgiServiceProvider.getPeerDictionary();
+		this.lock = OsgiServiceProvider.getLock();
+		this.peerCommunicator = OsgiServiceProvider.getPeerCommunicator();
 	}
 	
 

@@ -10,7 +10,6 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -20,6 +19,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.SurveyBasedAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 
 public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 	
@@ -27,7 +27,6 @@ public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 	private static final Logger LOG = LoggerFactory.getLogger(DynamicLoadBalancingAllocator.class);
 	
 	IQueryPartAllocator surveyAllocator;
-	IServerExecutor executor;
 	
 	public void bindSurveyAllocator(IQueryPartAllocator serv) {
 		if(serv instanceof SurveyBasedAllocator) {
@@ -43,16 +42,6 @@ public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 		}
 	}
 	
-	public void bindExecutor(IExecutor serv) {
-		this.executor = (IServerExecutor)serv;
-	}
-	
-	
-	public void unbindExecutor(IExecutor serv) {
-		if(this.executor == serv) {
-			this.executor = null;
-		}
-	}
 
 	@Override
 	public String getName() {
@@ -65,6 +54,7 @@ public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 			Collection<PeerID> knownRemotePeers, PeerID localPeerID)
 			throws QueryPartAllocationException {
 		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		if(surveyAllocator==null) {
 			throw new QueryPartAllocationException("Survey Allocator not bound.");
