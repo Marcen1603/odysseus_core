@@ -85,7 +85,9 @@ public class BaDaStConfiguration {
 		} finally {
 			saveConfiguration(fileName);
 			try {
-				stream.close();
+				if(stream != null) {
+					stream.close();
+				}
 			} catch (IOException e1) {
 				cLog.error("Could not close file stream!", e1);
 			}

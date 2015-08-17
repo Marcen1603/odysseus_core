@@ -235,8 +235,10 @@ public class KafkaConsumerAccess extends Thread {
 						cLog.error("Error while consuming from Kafka. Reason: "
 								+ t.getMessage() + ". Error counter = "
 								+ ++errorsInARow);
-						consumer.close();
-						consumer = null;
+						if(consumer != null) {
+							consumer.close();
+							consumer = null;
+						}
 						if (errorsInARow == 10) {
 							KafkaConsumerAccess.this.mContinueConsumption = false;
 						}
