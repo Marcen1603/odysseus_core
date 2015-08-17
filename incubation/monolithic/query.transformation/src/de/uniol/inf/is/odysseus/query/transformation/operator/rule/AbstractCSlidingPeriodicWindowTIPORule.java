@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
 
 public abstract class AbstractCSlidingPeriodicWindowTIPORule extends AbstractRule{
 
@@ -39,4 +40,9 @@ public abstract class AbstractCSlidingPeriodicWindowTIPORule extends AbstractRul
 	
 	}
 
+	public void analyseOperator(ILogicalOperator logicalOperator,TransformationInformation transformationInformation){
+		
+	
+		
+	}
 }

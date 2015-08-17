@@ -7,7 +7,12 @@ import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
 public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	
 	private BlockingQueue<ProgressBarUpdate> progressBarQueue;
+	private String targetPlatformName = "";
 	
+	public AbstractTargetPlatform(String targetPlatformName) {
+		this.setTargetPlatformName(targetPlatformName);
+	}
+
 	public void updateProgressBar(int value, String text){
 		if(progressBarQueue!= null){
 			try {
@@ -24,6 +29,14 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 
 	public void setProgressBarQueue(BlockingQueue<ProgressBarUpdate> progressBarQueue) {
 		this.progressBarQueue = progressBarQueue;
+	}
+
+	public String getTargetPlatformName() {
+		return targetPlatformName;
+	}
+
+	public void setTargetPlatformName(String targetPlatformName) {
+		this.targetPlatformName = targetPlatformName;
 	}
 	
 }

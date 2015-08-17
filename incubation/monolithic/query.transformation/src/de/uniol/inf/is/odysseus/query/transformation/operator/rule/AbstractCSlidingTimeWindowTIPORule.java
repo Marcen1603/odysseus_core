@@ -2,7 +2,9 @@ package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
 
 public abstract class AbstractCSlidingTimeWindowTIPORule extends AbstractRule{
 
@@ -37,7 +39,18 @@ public abstract class AbstractCSlidingTimeWindowTIPORule extends AbstractRule{
 		return false;
 	}
 
+	
+	public void analyseOperator(ILogicalOperator logicalOperator,TransformationInformation transformationInformation){
+		
+		AccessAO accessAO = (AccessAO)logicalOperator;
+	
+		transformationInformation.addDataHandler(accessAO.getDataHandler());
+		transformationInformation.addProtocolHandler(accessAO.getProtocolHandler());
+		transformationInformation.addTransportHandler(accessAO.getTransportHandler());
+		
+	}
 
+	
 }
 
 

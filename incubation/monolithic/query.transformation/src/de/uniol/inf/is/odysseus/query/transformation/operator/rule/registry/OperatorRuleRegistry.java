@@ -27,7 +27,6 @@ public class OperatorRuleRegistry {
 		//targetplatform vorhanden
 		if(operatorRuleList.containsKey(targetPlatform.toLowerCase())){
 			
-			
 			Map<String,IOperatorRule> rules = operatorRuleList.get(targetPlatform.toLowerCase());
 			
 			for (Entry<String, IOperatorRule> entry : rules.entrySet())

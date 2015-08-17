@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.query.transformation.java;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,14 +9,11 @@ import java.util.concurrent.BlockingQueue;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.executor.registry.ExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OdysseusIndex;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIBindings;
@@ -28,38 +24,31 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.rule.registry.Oper
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.AbstractTargetPlatform;
 
 public class JavaTargetPlatform extends AbstractTargetPlatform{
-
-	private String targetPlatformName = "Java";
-
-	private Set<String> importList = new HashSet<String>();
 	
+	private Set<String> importList = new HashSet<String>();
 	private StringBuilder bodyCode;
 	private String osgiBindCode;
 	
-	private List<ILogicalOperator> sourceOPs;
-	private List<ILogicalOperator> sinkOPs;
-	
-
-	@Override
-	public String getTargetPlatformName() {
-		return targetPlatformName;
+	public JavaTargetPlatform(){
+		super("Java");
 	}
-
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	
 	@Override
-	public void convertQueryToStandaloneSystem(ILogicalOperator query,
-			TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> progressBarQueue,TransformationConfiguration transformationConfiguration) throws InterruptedException {
+	public void convertQueryToStandaloneSystem(
+			ILogicalOperator query,
+			de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation transformationInforamtion,
+			TransformationParameter parameter,
+			BlockingQueue<ProgressBarUpdate> progressBarQueue,
+			TransformationConfiguration transformationConfiguration)
+			throws InterruptedException  {
 		this.setProgressBarQueue(progressBarQueue);
 		
 		//add userfeedback
 		updateProgressBar(10, "Start the transformation");
 		
 		//clear transformation infos
-		TransformationInformation.clear();
+		OperatorTransformationInformation.clear();
 		
-		//init sinksOps list
-		sinkOPs = new ArrayList<ILogicalOperator>();
 	
 		//Start Odysseus index
 		updateProgressBar(15, "Index the Odysseus codepath");
@@ -67,36 +56,18 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	
 		bodyCode = new StringBuilder();
 
-		FindSinksLogicalVisitor<ILogicalOperator> findSinksVisitor = new FindSinksLogicalVisitor<ILogicalOperator>();
-		GenericGraphWalker walker = new GenericGraphWalker();
-		walker.prefixWalk(query, findSinksVisitor);
-	
-		
-		for(ILogicalOperator topAO : findSinksVisitor.getResult()){
-			for(LogicalSubscription sourceOPSub : topAO.getSubscribedToSource()){
-				sinkOPs.add(sourceOPSub.getTarget());
-			}
-		}
-		
-		FindSourcesLogicalVisitor<ILogicalOperator> findSourcesVisitor = new FindSourcesLogicalVisitor<ILogicalOperator>();
-		GenericGraphWalker walkerSources = new GenericGraphWalker();
-		walkerSources.prefixWalk(query, findSourcesVisitor);
-		
-		sourceOPs = findSourcesVisitor.getResult();
-	
-		
 		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
 		
-		walkTroughLogicalPlan(sourceOPs,parameter, transformationConfiguration);
+		walkTroughLogicalPlan(transformationInforamtion.getSourceOpList(),parameter, transformationConfiguration);
 		
 		//generate code for osgi binds
 		updateProgressBar(70, "Generate OSGI emulation code");
-		osgiBindCode = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath());
+		osgiBindCode = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath(), transformationInforamtion);
 		
 		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
 		
 		//generate start code
-		CodeFragmentInfo startStreams = CreateDefaultCode.codeForStartStreams(sinkOPs, sourceOPs, parameter.getExecutor());
+		CodeFragmentInfo startStreams = CreateDefaultCode.codeForStartStreams(transformationInforamtion.getSinkOpList(), transformationInforamtion.getSourceOpList(), parameter.getExecutor());
 		
 		//generate executor code and files
 		ExecutorRegistry.getExecutor("Java", parameter.getExecutor()).createNeededFiles(parameter);
@@ -138,12 +109,12 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		IOperatorRule opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
-			if(!TransformationInformation.getInstance().isOperatorAdded(operator)){
+			if(!OperatorTransformationInformation.getInstance().isOperatorAdded(operator)){
 				
 				this.getProgressBarQueue().put(new ProgressBarUpdate(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName()));
 				
 				//reg the operator to generate a uniq operatorVariable
-				TransformationInformation.getInstance().addOperator(operator);
+				OperatorTransformationInformation.getInstance().addOperator(operator);
 
 				//generate the default code e.g. SDFSchema
 				CodeFragmentInfo initOp = CreateDefaultCode.initOperator(operator);
@@ -180,5 +151,12 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		}
 		
 	}
+
+
+
+
+
+
+
 
 }

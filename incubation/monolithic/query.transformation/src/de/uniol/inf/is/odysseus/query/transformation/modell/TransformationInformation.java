@@ -1,6 +1,8 @@
-package de.uniol.inf.is.odysseus.query.transformation.java.mapping;
+package de.uniol.inf.is.odysseus.query.transformation.modell;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -11,25 +13,38 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 
 public class TransformationInformation {
 
-	private static TransformationInformation instance = null;
-
 	private Map<String, String> dataHandler = new HashMap<String, String>();
 	private Map<String, String> mepFunctions = new HashMap<String, String>();
 	private Map<String, String> protocolHandler = new HashMap<String, String>();
 	private Map<String, String> transportHandler = new HashMap<String, String>();
 	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
 	
+	
+	private List<ILogicalOperator> sourceOPs = new ArrayList<ILogicalOperator>();
+	private List<ILogicalOperator> sinkOPs = new ArrayList<ILogicalOperator>();;
+	
 	private int uniqueId = 0;
 	
-	public static TransformationInformation getInstance() {
-		if (instance == null) {
-			instance = new TransformationInformation();
-		}
-		return instance;
+	
+	public void addSourceOp(ILogicalOperator sourceOP){
+		sourceOPs.add(sourceOP);
 	}
 	
-	public static void clear(){
-		instance = null;
+
+	public void addSourceOp(List<ILogicalOperator> sourceOPList){
+		sourceOPs.addAll(sourceOPList);
+	}
+	
+	public List<ILogicalOperator> getSourceOpList(){
+		return sourceOPs;
+	}
+	
+	public void addSinkOp(ILogicalOperator sinkOP){
+		sinkOPs.add(sinkOP);
+	}
+	
+	public List<ILogicalOperator> getSinkOpList(){
+		return sinkOPs;
 	}
 
 	public void addDataHandler(String datatype){
@@ -107,7 +122,7 @@ public class TransformationInformation {
 		}
 	}
 	
-	public  void addOperator(ILogicalOperator operator){
+	public void addOperator(ILogicalOperator operator){
 		
 		if(!operatorList.containsKey(operator)){
 			operatorList.put(operator, operator.getName().toLowerCase()+getUniqueId());

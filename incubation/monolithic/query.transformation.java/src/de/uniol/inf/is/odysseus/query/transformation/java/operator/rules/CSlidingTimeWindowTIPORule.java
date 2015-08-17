@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWidthAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
@@ -28,7 +28,7 @@ public class CSlidingTimeWindowTIPORule extends AbstractCSlidingTimeWindowTIPORu
 		
 		StringBuilder code = new StringBuilder();
 
-		String operatorVariable = TransformationInformation.getInstance()
+		String operatorVariable = OperatorTransformationInformation.getInstance()
 				.getVariable(operator);
 
 		AbstractWindowWithWidthAO windowAO = (AbstractWindowWithWidthAO) operator;

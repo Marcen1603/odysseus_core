@@ -6,9 +6,10 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
+import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
 
 public interface ITargetPlatform {
 	public String getTargetPlatformName();
-	public void convertQueryToStandaloneSystem(ILogicalOperator query, TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue,TransformationConfiguration transformationConfiguration) throws InterruptedException;
+	public void convertQueryToStandaloneSystem(ILogicalOperator query,TransformationInformation transformationInforamtion, TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue,TransformationConfiguration transformationConfiguration) throws InterruptedException;
 
 }

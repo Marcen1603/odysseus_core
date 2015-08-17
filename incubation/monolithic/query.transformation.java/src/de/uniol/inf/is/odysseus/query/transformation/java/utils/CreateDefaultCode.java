@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.query.transformation.executor.registry.ExecutorRegistry;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
@@ -42,7 +42,7 @@ public class CreateDefaultCode {
 	public static CodeFragmentInfo initOperator(ILogicalOperator operator){
 		CodeFragmentInfo sdfSchema = new CodeFragmentInfo();
 		
-		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
 		
 		sdfSchema.addCodeFragmentInfo(getCodeForSDFSchema(operator.getOutputSchema(),operatorVariable));
 				
@@ -52,7 +52,7 @@ public class CreateDefaultCode {
 	public static CodeFragmentInfo codeForAccessFramework(ProtocolHandlerParameter protocolHandlerParameter, Map<String,String> optionMap, ILogicalOperator operator, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 	
-		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
 
 		//add import
 		codeFragmentInfo.addImport(ITransportDirection.class.getName());
@@ -71,7 +71,7 @@ public class CreateDefaultCode {
 	public static CodeFragmentInfo codeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
-		String operatorVariable = TransformationInformation.getInstance().getVariable(forOperator);
+		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(forOperator);
 		
 		SDFSchema schema = timestampAO.getInputSchema();
 		boolean clearEnd = timestampAO.isClearEnd();
@@ -107,21 +107,21 @@ public class CreateDefaultCode {
 	public static CodeFragmentInfo codeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs, String executor){
 		CodeFragmentInfo startFragment = new CodeFragmentInfo();
 		
-		String firstOP = TransformationInformation.getInstance().getVariable(sourceOPs.get(0));
+		String firstOP = OperatorTransformationInformation.getInstance().getVariable(sourceOPs.get(0));
 		
 		List<String> sinkOpList = new ArrayList<String>();
 	
 
 		//Open on sink ops
 		for(ILogicalOperator sinkOp : sinkOPs){
-					sinkOpList.add(TransformationInformation.getInstance().getVariable(sinkOp));
+					sinkOpList.add(OperatorTransformationInformation.getInstance().getVariable(sinkOp));
 		}
 
 		StringTemplate startCodeTemplate = new StringTemplate("java","startCode");
 		startCodeTemplate.getSt().add("firstOP", firstOP);
-		startCodeTemplate.getSt().add("operatorList",TransformationInformation.getInstance().getOperatorList());
+		startCodeTemplate.getSt().add("operatorList",OperatorTransformationInformation.getInstance().getOperatorList());
 		startCodeTemplate.getSt().add("sinkOpList",sinkOpList);
-		startCodeTemplate.getSt().add("sourceOP",TransformationInformation.getInstance().getVariable(sourceOPs.get(0)));
+		startCodeTemplate.getSt().add("sourceOP",OperatorTransformationInformation.getInstance().getVariable(sourceOPs.get(0)));
 		
 		startFragment.addCode(startCodeTemplate.getSt().render());
 		
@@ -143,7 +143,7 @@ public class CreateDefaultCode {
 	public static CodeFragmentInfo generateSubscription(ILogicalOperator operator) {
 		CodeFragmentInfo codeFragmentInfo =  new CodeFragmentInfo();
 		
-		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
 		
 		Collection<LogicalSubscription> subscriptionSourceList = operator.getSubscribedToSource();
 		
@@ -162,7 +162,7 @@ public class CreateDefaultCode {
 						targetLogicalOP = sub.getTarget();
 					}
 			
-					 String  targetOp =  TransformationInformation.getInstance().getVariable(targetLogicalOP);
+					 String  targetOp =  OperatorTransformationInformation.getInstance().getVariable(targetLogicalOP);
 					  if(!targetOp.equals("")){
 						  targetOpMap.put(targetOp,sub);		
 					  }	
@@ -234,9 +234,6 @@ public class CreateDefaultCode {
 		}
 		imports.add(IAccessPattern.class.getName());
 		
-		TransformationInformation.getInstance().addDataHandler(protocolHandlerParameter.getDataHandler());
-		TransformationInformation.getInstance().addProtocolHandler(protocolHandlerParameter.getProtocolHandler());
-		TransformationInformation.getInstance().addTransportHandler(protocolHandlerParameter.getTransportHandler());
 	
 		StringTemplate protocolHandlerTemplate = new StringTemplate("utils","protocolHandler");
 	
@@ -285,11 +282,6 @@ public class CreateDefaultCode {
 		
 		code.append(sdfSchemaTemplate.getSt().render());
 		
-	
-		//add needed dataHandler
-		for(SDFAttribute attribute : schema.getAttributes()){
-			TransformationInformation.getInstance().addDataHandler(attribute.getDatatype().toString());
-		}
 
 		
 		//Add imports 

@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.query.transformation.java.operator.rules;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCRelationalProjectAORule;
@@ -21,7 +21,7 @@ public class CRelationalProjectAORule extends AbstractCRelationalProjectAORule{
 		CodeFragmentInfo projectPO = new CodeFragmentInfo();
 		
 
-		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
 		
 		ProjectAO projectAO = (ProjectAO)operator;
 	
@@ -39,5 +39,7 @@ public class CRelationalProjectAORule extends AbstractCRelationalProjectAORule{
 
 		return projectPO;
 	}
+
+
 	
 }

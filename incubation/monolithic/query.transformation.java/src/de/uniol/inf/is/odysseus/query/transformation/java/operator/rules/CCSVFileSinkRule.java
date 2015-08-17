@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
@@ -21,7 +21,7 @@ public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule {
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 		CodeFragmentInfo csvFileSink = new CodeFragmentInfo();
 		
-		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
 	
 		CSVFileSink csvFileSinkOP = (CSVFileSink) operator;
 			

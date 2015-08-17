@@ -2,15 +2,16 @@ package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
 
 public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 	
 	public AbstractCCSVFileSinkRule(String name, String targetPlatform) {
 		super(name,targetPlatform );
 	}
-
 
 	public boolean isExecutable(ILogicalOperator logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
@@ -37,11 +38,20 @@ public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 		return false;
 	}
 
-
-	@Override
 	public Class<?> getConditionClass() {
 		return AbstractSenderAO.class;
 	}
-
-
+	
+	
+	public void analyseOperator(ILogicalOperator logicalOperator,TransformationInformation transformationInformation){
+		
+		CSVFileSink csvFileSinkOP = (CSVFileSink) logicalOperator;
+		
+		
+		transformationInformation.addDataHandler(csvFileSinkOP.getDataHandler());
+		transformationInformation.addProtocolHandler(csvFileSinkOP.getProtocolHandler());
+		transformationInformation.addTransportHandler(csvFileSinkOP.getTransportHandler());
+		
+	}
+	
 }

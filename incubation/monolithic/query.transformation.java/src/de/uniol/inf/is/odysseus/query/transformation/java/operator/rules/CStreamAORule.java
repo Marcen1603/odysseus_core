@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
@@ -30,7 +30,7 @@ public class CStreamAORule extends AbstractCStreamAORule{
 		
 		StreamAO streamAO = (StreamAO)operator;
 		
-		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
 		
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
 		ILogicalOperator logicalPlan = DataDictionaryProvider.getDataDictionary(tenant).getStreamForTransformation(streamAO.getStreamname(),  null);

@@ -17,7 +17,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 
 import de.uniol.inf.is.odysseus.core.Activator;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.osgi.Component;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.osgi.ObjectFactory;
 
@@ -31,7 +30,7 @@ public class JavaEmulateOSGIBindings {
 	/*
 	 * dynamic
 	 */
-	public String getCodeForOSGIBinds(String odysseusPath){
+	public String getCodeForOSGIBinds(String odysseusPath, de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation transformationInforamtion){
 		/*
 		 * TODO get all XML Files and bundles ?
 		 */
@@ -110,7 +109,7 @@ public class JavaEmulateOSGIBindings {
 		
 		
 		//MEP Funktion
-		Map<String, String> neededMEPFunctions = TransformationInformation.getInstance().getNeededMEPFunctions();
+		Map<String, String> neededMEPFunctions = transformationInforamtion.getNeededMEPFunctions();
 		
 		for (Map.Entry<String, String> entry : neededMEPFunctions.entrySet())
 		{
@@ -130,7 +129,7 @@ public class JavaEmulateOSGIBindings {
 		
 	
 		//DataHandler
-		Map<String, String> neededDataHandler = TransformationInformation.getInstance().getNeededDataHandler();
+		Map<String, String> neededDataHandler = transformationInforamtion.getNeededDataHandler();
 		
 		for (Map.Entry<String, String> entry : neededDataHandler.entrySet())
 		{
@@ -142,7 +141,7 @@ public class JavaEmulateOSGIBindings {
 		}
 		
 		//TransportHandler
-		Map<String, String> neededTransportHandler = TransformationInformation.getInstance().getNeededTransportHandler();
+		Map<String, String> neededTransportHandler = transformationInforamtion.getNeededTransportHandler();
 		
 		for (Map.Entry<String, String> entry : neededTransportHandler.entrySet())
 		{
@@ -153,7 +152,7 @@ public class JavaEmulateOSGIBindings {
 		}
 	
 		//ProtocolHandler
-		Map<String, String> neededProtocolHandler = TransformationInformation.getInstance().getNeededProtocolHandler();
+		Map<String, String> neededProtocolHandler = transformationInforamtion.getNeededProtocolHandler();
 		
 		for (Map.Entry<String, String> entry : neededProtocolHandler.entrySet())
 		{

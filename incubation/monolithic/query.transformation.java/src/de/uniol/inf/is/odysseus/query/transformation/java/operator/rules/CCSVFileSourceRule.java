@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
@@ -28,7 +28,7 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 		CodeFragmentInfo csvFileSource = new CodeFragmentInfo();
 		
-		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
 		
 		CSVFileSource csvFileSourceOP = (CSVFileSource) operator;
 	

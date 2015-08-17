@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.executor.AbstractExecutor;
 import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.FileHelper;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
@@ -25,7 +25,7 @@ public class MultipleSourceExecutor extends AbstractExecutor{
 		List<String> sourceOpList = new ArrayList<String>();
 		
 		for(ILogicalOperator sourceOp : operatorList){
-			sourceOpList.add(TransformationInformation.getInstance().getVariable(sourceOp));
+			sourceOpList.add(OperatorTransformationInformation.getInstance().getVariable(sourceOp));
 		}
 		
 
