@@ -67,7 +67,7 @@ public class CostEstimationHelper {
 	
 
 	public static double estimateNetFreeFromJxtaOperatorCount() {
-		return (1.0-estimateNetFreeFromJxtaOperatorCount());
+		return (1.0-estimateNetUsedFromJxtaOperatorCount());
 	}
 	
 	public static double estimateNetUsedFromJxtaOperatorCount() {
