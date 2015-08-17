@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -122,4 +124,23 @@ public class ControllablePhysicalSubscription<K> extends
 		return super.toString() + " suspendCalls " + suspendCalls + " "
 				+ suspendBuffer;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public ImmutableList<IStreamObject> getBufferedElements() {
+		synchronized (this.suspendBuffer) {
+			return ImmutableList.copyOf(this.suspendBuffer);
+		}
+	}
+	
+	/**
+	 * Attention: Buffer of elements will be cleared and filled with new elements.
+	 */
+	@SuppressWarnings("rawtypes")
+	public void setBufferedElements(List<IStreamObject> elements) {
+		synchronized (this.suspendBuffer) {
+			this.suspendBuffer.clear();
+			this.suspendBuffer.addAll(elements);
+		}
+	}
+	
 }
