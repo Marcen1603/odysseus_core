@@ -32,8 +32,7 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory
-			.getLogger(RollbackRecoveryExecutor.class);
+	private static final Logger cLog = LoggerFactory.getLogger(RollbackRecoveryExecutor.class);
 
 	@Override
 	public String getName() {
@@ -58,16 +57,19 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	 */
 	private static IRecoveryComponent cOperatorStateComponent;
 
-	// TODO RollbackRecoveryExecutor misses Queue Recovery
+	/**
+	 * The not initialized recovery component for the queue states (to be bound
+	 * by OSGi).
+	 */
+	private static IRecoveryComponent cQueueStateComponent;
 
 	/**
 	 * Binds either a recovery component for the protection point handling, for
 	 * the incoming data stream elements or for the operator states.
 	 *
 	 * @param component
-	 *            The component to bind, if its name matches
-	 *            "Protection Points", "Incoming Elements" or
-	 *            "Operator Recovery".
+	 *            The component to bind, if its name matches "Protection Points"
+	 *            , "Incoming Elements" or "Operator Recovery".
 	 */
 	public static void bindComponent(IRecoveryComponent component) {
 		if (component.getName().equals("Protection Points")) {
@@ -76,9 +78,9 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 			cIncomingElementsComponent = component;
 		} else if (component.getName().equals("Operator State")) {
 			cOperatorStateComponent = component;
+		} else if (component.getName().equals("Queue State")) {
+			cQueueStateComponent = component;
 		}
-
-		// TODO RollbackRecoveryExecutor misses Queue Recovery
 	}
 
 	/**
@@ -94,9 +96,9 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 			cIncomingElementsComponent = null;
 		} else if (component.getName().equals("Operator State")) {
 			cOperatorStateComponent = null;
+		} else if (component.getName().equals("Queue State")) {
+			cQueueStateComponent = null;
 		}
-
-		// TODO RollbackRecoveryExecutor misses Queue Recovery
 	}
 
 	/**
@@ -114,78 +116,80 @@ public class RollbackRecoveryExecutor extends AbstractRecoveryExecutor {
 	 */
 	private IRecoveryComponent mOperatorStateComponent;
 
+	/**
+	 * The initialized recovery component for the queue states.
+	 */
+	private IRecoveryComponent mQueueStateComponent;
+
 	@Override
 	public IRecoveryExecutor newInstance(Properties config) {
 		RollbackRecoveryExecutor executor = new RollbackRecoveryExecutor();
 		executor.mConfig = config;
-		executor.mProtectionPointsComponent = cProtectionPointsComponent
-				.newInstance(config);
-		executor.mSourceRecoveryComponent = cIncomingElementsComponent
-				.newInstance(config);
-		executor.mOperatorStateComponent = cOperatorStateComponent
-				.newInstance(config);
+		executor.mProtectionPointsComponent = cProtectionPointsComponent.newInstance(config);
+		executor.mSourceRecoveryComponent = cIncomingElementsComponent.newInstance(config);
+		executor.mOperatorStateComponent = cOperatorStateComponent.newInstance(config);
+		executor.mQueueStateComponent = cQueueStateComponent.newInstance(config);
 		return executor;
 	}
 
 	@Override
-	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig,
-			ISession caller, List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
 		List<ILogicalQuery> modifiedQueries = Lists.newArrayList(queries);
 		if (this.mProtectionPointsComponent == null) {
 			cLog.error("RollBackRecovery executor misses Protection Points recovery component!");
 			return modifiedQueries;
 		}
-		modifiedQueries = this.mProtectionPointsComponent.recover(qbConfig,
-				caller, modifiedQueries);
+		modifiedQueries = this.mProtectionPointsComponent.recover(qbConfig, caller, modifiedQueries);
 
 		if (this.mSourceRecoveryComponent == null) {
 			cLog.error("RollBackRecovery executor misses Incoming Elements recovery component!");
 			return modifiedQueries;
 		}
-		modifiedQueries = this.mSourceRecoveryComponent.recover(qbConfig,
-				caller, modifiedQueries);
+		modifiedQueries = this.mSourceRecoveryComponent.recover(qbConfig, caller, modifiedQueries);
 
 		if (this.mOperatorStateComponent == null) {
 			cLog.error("RollBackRecovery executor misses Operator State recovery component!");
 			return modifiedQueries;
 		}
-		modifiedQueries = this.mOperatorStateComponent.recover(qbConfig,
-				caller, modifiedQueries);
+		modifiedQueries = this.mOperatorStateComponent.recover(qbConfig, caller, modifiedQueries);
 
-		// TODO RollbackRecoveryExecutor misses Queue Recovery
+		if (this.mQueueStateComponent == null) {
+			cLog.error("RollBackRecovery executor misses Queue State recovery component!");
+			return modifiedQueries;
+		}
+		modifiedQueries = this.mQueueStateComponent.recover(qbConfig, caller, modifiedQueries);
+
 		return modifiedQueries;
 	}
 
-	/**
-	 * Nothing to do, because backup of query states (incl. sinks and sources)
-	 * is done globally.
-	 */
 	@Override
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig,
-			ISession caller, List<ILogicalQuery> queries) {
+	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
+			List<ILogicalQuery> queries) {
 		List<ILogicalQuery> modifiedQueries = Lists.newArrayList(queries);
 		if (this.mProtectionPointsComponent == null) {
 			cLog.error("RollBackRecovery executor misses Protection Points recovery component!");
 			return modifiedQueries;
 		}
-		modifiedQueries = this.mProtectionPointsComponent.activateBackup(
-				qbConfig, caller, modifiedQueries);
+		modifiedQueries = this.mProtectionPointsComponent.activateBackup(qbConfig, caller, modifiedQueries);
 
 		if (this.mSourceRecoveryComponent == null) {
 			cLog.error("RollBackRecovery executor misses Incoming Elements recovery component!");
 			return modifiedQueries;
 		}
-		modifiedQueries = this.mSourceRecoveryComponent.activateBackup(
-				qbConfig, caller, modifiedQueries);
+		modifiedQueries = this.mSourceRecoveryComponent.activateBackup(qbConfig, caller, modifiedQueries);
 
 		if (this.mOperatorStateComponent == null) {
 			cLog.error("RollBackRecovery executor misses Operator State recovery component!");
 			return modifiedQueries;
 		}
-		modifiedQueries = this.mOperatorStateComponent.activateBackup(qbConfig,
-				caller, modifiedQueries);
+		modifiedQueries = this.mOperatorStateComponent.activateBackup(qbConfig, caller, modifiedQueries);
 
-		// TODO RollbackRecoveryExecutor misses Queue Recovery
+		if (this.mQueueStateComponent == null) {
+			cLog.error("RollBackRecovery executor misses Queue State recovery component!");
+			return modifiedQueries;
+		}
+		modifiedQueries = this.mQueueStateComponent.activateBackup(qbConfig, caller, modifiedQueries);
+
 		return modifiedQueries;
 	}
 

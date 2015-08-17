@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Queue State Recovery Component
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.recovery.queuestate
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Michael Brand
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ com.google.guava,
+ de.uniol.inf.is.odysseus.recovery.protectionpoints
+Service-Component: OSGI-INF/QueueStateRecoveryComponent.xml
