@@ -7,7 +7,6 @@ import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +95,7 @@ public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 			PeerID localPeerID) throws QueryPartAllocationException {
 		
 		//FIXME is not implemented as this method is never used in Load Balancing 
-		throw new NotImplementedException("ReAllocation is not implemented in Dynamic Load Balancing Allocator.");
+		return null;
 	}
 	
 	private List<String> createAllocationParameters() {
