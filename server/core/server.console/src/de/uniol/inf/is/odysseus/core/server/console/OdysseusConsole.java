@@ -73,12 +73,10 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.updater.FeatureUpdateUtility;
 
 @SuppressWarnings({ "rawtypes" })
-public class OdysseusConsole implements CommandProvider,
-		IPlanExecutionListener, IPlanModificationListener, IErrorEventListener,
-		ICompilerListener {
+public class OdysseusConsole implements CommandProvider, IPlanExecutionListener, IPlanModificationListener,
+		IErrorEventListener, ICompilerListener {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(OdysseusConsole.class);
+	private static Logger logger = LoggerFactory.getLogger(OdysseusConsole.class);
 
 	private static final String METHOD = "method";
 
@@ -110,8 +108,7 @@ public class OdysseusConsole implements CommandProvider,
 	private Map<String, List<Command>> macros = new HashMap<String, List<Command>>();
 	private String currentMacro = null;
 
-	private static class DelegateCommandInterpreter implements
-			CommandInterpreter {
+	private static class DelegateCommandInterpreter implements CommandInterpreter {
 		final private CommandInterpreter ci;
 		int i = 0;
 		final private String[] args;
@@ -180,8 +177,7 @@ public class OdysseusConsole implements CommandProvider,
 			for (String arg : args) {
 				if (arg.contains(DELIMITER)) {
 					System.err.println("fixme: argument may not contain '|||'");
-					throw new RuntimeException(
-							"fixme: argument may not contain '|||'");
+					throw new RuntimeException("fixme: argument may not contain '|||'");
 				}
 				builder.append(DELIMITER);
 				builder.append(arg);
@@ -236,8 +232,7 @@ public class OdysseusConsole implements CommandProvider,
 		if (string.equalsIgnoreCase("0")) {
 			return false;
 		}
-		throw new IllegalArgumentException("can't convert '" + string
-				+ "' to boolean value");
+		throw new IllegalArgumentException("can't convert '" + string + "' to boolean value");
 	}
 
 	// -----------------------------------------------------------------------------------------------
@@ -258,8 +253,7 @@ public class OdysseusConsole implements CommandProvider,
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
 
-		currentUser = UserManagementProvider.getUsermanagement(true)
-				.getSessionManagement().loginSuperUser(null);
+		currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 	}
 
 	public void unbindExecutor(IExecutor executor) {
@@ -307,8 +301,7 @@ public class OdysseusConsole implements CommandProvider,
 		// } catch (Exception e) {
 		// ci.println(e.getMessage());
 		// }
-		currentUser = UserManagementProvider.getUsermanagement(true)
-				.getSessionManagement().loginSuperUser(null);
+		currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 	}
 
 	@Help(parameter = "<logout>", description = "Logout current user.")
@@ -331,8 +324,7 @@ public class OdysseusConsole implements CommandProvider,
 			return parser;
 		}
 
-		Iterator<String> parsers = this.executor.getSupportedQueryParsers(
-				currentUser).iterator();
+		Iterator<String> parsers = this.executor.getSupportedQueryParsers(currentUser).iterator();
 		if (parsers != null && parsers.hasNext()) {
 			this.parser = parsers.next();
 			return this.parser;
@@ -371,8 +363,7 @@ public class OdysseusConsole implements CommandProvider,
 		addCommand(args);
 		if (args != null && args.length > 0) {
 			try {
-				if (this.executor.getSupportedQueryParsers(currentUser)
-						.contains(args[0])) {
+				if (this.executor.getSupportedQueryParsers(currentUser).contains(args[0])) {
 					this.parser = args[0];
 					ci.println("New parser: " + args[0]);
 				} else {
@@ -396,12 +387,10 @@ public class OdysseusConsole implements CommandProvider,
 
 	@Help(description = "show available buffer placement strategies")
 	public void _lsbuffer(CommandInterpreter ci) {
-		Set<String> bufferList = this.executor
-				.getRegisteredBufferPlacementStrategiesIDs(currentUser);
+		Set<String> bufferList = this.executor.getRegisteredBufferPlacementStrategiesIDs(currentUser);
 		if (bufferList != null) {
-			ParameterBufferPlacementStrategy p = this.executor
-					.getConfiguration(currentUser).get(
-							ParameterBufferPlacementStrategy.class);
+			ParameterBufferPlacementStrategy p = this.executor.getConfiguration(currentUser)
+					.get(ParameterBufferPlacementStrategy.class);
 			String current = null;
 			if (p != null) {
 				current = p.getValue().getName();
@@ -431,19 +420,15 @@ public class OdysseusConsole implements CommandProvider,
 		if (args != null && args.length > 0) {
 			try {
 				String bufferName = args[0];
-				Set<String> list = this.executor
-						.getRegisteredBufferPlacementStrategiesIDs(currentUser);
+				Set<String> list = this.executor.getRegisteredBufferPlacementStrategiesIDs(currentUser);
 				if (list.contains(bufferName)) {
-					this.executor.getConfiguration(currentUser).set(
-							new ParameterBufferPlacementStrategy(executor
-									.getBufferPlacementStrategy(bufferName,
-											currentUser)));
+					this.executor.getConfiguration(currentUser).set(new ParameterBufferPlacementStrategy(
+							executor.getBufferPlacementStrategy(bufferName, currentUser)));
 					ci.println("Strategy " + bufferName + " set.");
 					return;
 				}
 
-				this.executor.getConfiguration(currentUser).set(
-						new ParameterBufferPlacementStrategy());
+				this.executor.getConfiguration(currentUser).set(new ParameterBufferPlacementStrategy());
 				if ("no strategy".equalsIgnoreCase(bufferName)) {
 					ci.println("Current strategy removed.");
 				} else {
@@ -465,11 +450,9 @@ public class OdysseusConsole implements CommandProvider,
 
 	@Help(description = "show available scheduling strategies")
 	public void _lsschedulingstrategies(CommandInterpreter ci) {
-		Set<String> list = this.executor
-				.getRegisteredSchedulingStrategies(currentUser);
+		Set<String> list = this.executor.getRegisteredSchedulingStrategies(currentUser);
 		if (list != null) {
-			String current = executor
-					.getCurrentSchedulingStrategyID(currentUser);
+			String current = executor.getCurrentSchedulingStrategyID(currentUser);
 			ci.println("Available Scheduling strategies:");
 
 			ci.println("");
@@ -550,8 +533,7 @@ public class OdysseusConsole implements CommandProvider,
 
 			if (methodName.startsWith("_")) {
 				if (method.isAnnotationPresent(Help.class)) {
-					methodHelps.put(methodName.substring(1),
-							method.getAnnotation(Help.class));
+					methodHelps.put(methodName.substring(1), method.getAnnotation(Help.class));
 				}
 			}
 		}
@@ -609,8 +591,7 @@ public class OdysseusConsole implements CommandProvider,
 			StringBuffer buff = new StringBuffer();
 			ci.println("Physical plan of all roots: ");
 			int count = 1;
-			for (IPhysicalOperator root : this.executor.getExecutionPlan()
-					.getRoots()) {
+			for (IPhysicalOperator root : this.executor.getExecutionPlan().getRoots()) {
 				buff = new StringBuffer();
 				if (root.isSink()) {
 					support.dumpPlan((ISink) root, depth, buff);
@@ -640,8 +621,7 @@ public class OdysseusConsole implements CommandProvider,
 			}
 
 			try {
-				IPhysicalQuery query = this.executor.getExecutionPlan()
-						.getQueryById(qnum);
+				IPhysicalQuery query = this.executor.getExecutionPlan().getQueryById(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -673,8 +653,7 @@ public class OdysseusConsole implements CommandProvider,
 		if (args != null && args.length > 0) {
 			int qnum = Integer.valueOf(args[0]);
 			try {
-				IPhysicalQuery query = this.executor.getExecutionPlan()
-						.getQueryById(qnum);
+				IPhysicalQuery query = this.executor.getExecutionPlan().getQueryById(qnum);
 				if (query != null) {
 					for (int i = 0; i < query.getRoots().size(); i++) {
 						IPhysicalOperator curRoot = query.getRoots().get(i);
@@ -829,8 +808,7 @@ public class OdysseusConsole implements CommandProvider,
 	 * @throws Exception
 	 * @throws PlanManagementException
 	 */
-	private void delegateAddQueryCmd(String[] args)
-			throws PlanManagementException, Exception {
+	private void delegateAddQueryCmd(String[] args) throws PlanManagementException, Exception {
 
 		boolean eclipseConsole = false;
 		boolean restructure = false;
@@ -855,8 +833,7 @@ public class OdysseusConsole implements CommandProvider,
 		}
 
 		params.add(this.trafoConfigParam);
-		params.add(restructure ? ParameterDoRewrite.TRUE
-				: ParameterDoRewrite.FALSE);
+		params.add(restructure ? ParameterDoRewrite.TRUE : ParameterDoRewrite.FALSE);
 
 		IQueryBuildSetting[] paramsArray = new IQueryBuildSetting[params.size()];
 		for (int i = 0; i < params.size(); i++) {
@@ -868,8 +845,7 @@ public class OdysseusConsole implements CommandProvider,
 			return;
 		}
 
-		this.executor.addQuery(query, parser(), currentUser,
-				 Context.empty());
+		this.executor.addQuery(query, parser(), currentUser, Context.empty());
 		return;
 	}
 
@@ -894,8 +870,7 @@ public class OdysseusConsole implements CommandProvider,
 		addCommand();
 		try {
 			ci.println("Current registered queries (ID | STATE):");
-			for (IPhysicalQuery query : this.executor.getExecutionPlan()
-					.getQueries()) {
+			for (IPhysicalQuery query : this.executor.getExecutionPlan().getQueries()) {
 				ci.println(query.getID() + " | " + query.getState().name());
 			}
 		} catch (PlanManagementException e) {
@@ -907,8 +882,7 @@ public class OdysseusConsole implements CommandProvider,
 	public void _lssources(CommandInterpreter ci) {
 		addCommand();
 		ci.println("Current registered sources");
-		for (ViewInformation e : this.executor
-				.getStreamsAndViewsInformation(currentUser)) {
+		for (ViewInformation e : this.executor.getStreamsAndViewsInformation(currentUser)) {
 			ci.println(e.getName() + " | " + e.getOutputSchema());
 		}
 	}
@@ -1005,15 +979,13 @@ public class OdysseusConsole implements CommandProvider,
 
 		CommandInterpreter delegateCi;
 		try {
-			ci.println("--- running macro from file: " + file.getAbsolutePath()
-					+ " ---");
+			ci.println("--- running macro from file: " + file.getAbsolutePath() + " ---");
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				String commandString = line;
 				ci.println("Command: " + commandString);
 
-				StringTokenizer tokens = new StringTokenizer(commandString,
-						" \n\t'", true);
+				StringTokenizer tokens = new StringTokenizer(commandString, " \n\t'", true);
 				ArrayList<String> tokenList = new ArrayList<String>();
 				while (tokens.hasMoreTokens()) {
 					String token = tokens.nextToken();
@@ -1027,14 +999,12 @@ public class OdysseusConsole implements CommandProvider,
 							if (!innerToken.endsWith(start)) {
 								complexArgument += innerToken;
 							} else {
-								complexArgument += innerToken.substring(0,
-										innerToken.length() - 1);
+								complexArgument += innerToken.substring(0, innerToken.length() - 1);
 								isEnd = true;
 							}
 						}
 						tokenList.add(complexArgument);
-					} else if (!token.equals(" ") && !token.equals("\n")
-							&& !token.equals("\t")) {
+					} else if (!token.equals(" ") && !token.equals("\n") && !token.equals("\t")) {
 						tokenList.add(token);
 					}
 				}
@@ -1045,24 +1015,20 @@ public class OdysseusConsole implements CommandProvider,
 				}
 
 				String[] currentArgs = new String[commandAndArgs.length - 1];
-				System.arraycopy(commandAndArgs, 1, currentArgs, 0,
-						commandAndArgs.length - 1);
+				System.arraycopy(commandAndArgs, 1, currentArgs, 0, commandAndArgs.length - 1);
 				Command command = new Command();
 				command.name = "_" + commandAndArgs[0];
 				command.setArgs(currentArgs);
 
-				Method m = this.getClass().getMethod(command.name,
-						CommandInterpreter.class);
+				Method m = this.getClass().getMethod(command.name, CommandInterpreter.class);
 
-				delegateCi = new DelegateCommandInterpreter(ci,
-						command.getArgs());
+				delegateCi = new DelegateCommandInterpreter(ci, command.getArgs());
 
 				m.invoke(this, delegateCi);
 
 			}
 
-			ci.println("--- macro from file " + file.getAbsolutePath()
-					+ " done ---");
+			ci.println("--- macro from file " + file.getAbsolutePath() + " done ---");
 		} catch (IOException e) {
 			ci.printStackTrace(e);
 			return;
@@ -1078,8 +1044,16 @@ public class OdysseusConsole implements CommandProvider,
 			e.getTargetException().printStackTrace();
 		} catch (NegativeArraySizeException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (br != null) {
+					br.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-
 	}
 
 	// -----------------------------------------------------------------------------------------------
@@ -1119,8 +1093,7 @@ public class OdysseusConsole implements CommandProvider,
 
 	@Help(parameter = "", description = "lists features that can be installed")
 	public void _installableFeatures(CommandInterpreter ci) {
-		List<IInstallableUnit> units = FeatureUpdateUtility
-				.getInstallableFeatures(this.currentUser);
+		List<IInstallableUnit> units = FeatureUpdateUtility.getInstallableFeatures(this.currentUser);
 		ci.println("Following installable were found in the update site:");
 		for (IInstallableUnit unit : units) {
 			ci.println(" - " + unit.getId());
@@ -1129,8 +1102,7 @@ public class OdysseusConsole implements CommandProvider,
 
 	@Help(parameter = "", description = "lists current installed bundles")
 	public void _installedFeatures(CommandInterpreter ci) {
-		List<IInstallableUnit> units = FeatureUpdateUtility
-				.getInstalledFeatures(this.currentUser);
+		List<IInstallableUnit> units = FeatureUpdateUtility.getInstalledFeatures(this.currentUser);
 		ci.println("Following features are installed:");
 		for (IInstallableUnit unit : units) {
 			ci.println(" - " + unit.getId());
@@ -1148,7 +1120,7 @@ public class OdysseusConsole implements CommandProvider,
 	}
 
 	@Help(parameter = "", description = "change location of current update site")
-	public void _setUpdateSite(CommandInterpreter ci){
+	public void _setUpdateSite(CommandInterpreter ci) {
 		String id = ci.nextArgument();
 		if (id != null && !id.isEmpty()) {
 			FeatureUpdateUtility.setRepositoryLocation(id, this.currentUser);
@@ -1158,11 +1130,10 @@ public class OdysseusConsole implements CommandProvider,
 	}
 
 	@Help(parameter = "", description = "reset location of current update site to default location")
-	public void _resetUpdateSite(CommandInterpreter ci){
+	public void _resetUpdateSite(CommandInterpreter ci) {
 		FeatureUpdateUtility.clearRepositoryLocation(this.currentUser);
 	}
 
-	
 	@Help(parameter = "", description = "uninstall feature")
 	public void _uninstallFeature(CommandInterpreter ci) {
 		String id = ci.nextArgument();
@@ -1173,7 +1144,6 @@ public class OdysseusConsole implements CommandProvider,
 		}
 	}
 
-	
 	// -----------------------------------------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------
 
@@ -1224,8 +1194,7 @@ public class OdysseusConsole implements CommandProvider,
 			// Object ecs = eclipseConsoleSink.newInstance();
 			// IPhysicalOperator ecSink = (IPhysicalOperator) ecs;
 
-			this.executor.addQuery(query, parser(), currentUser,
-					 Context.empty());
+			this.executor.addQuery(query, parser(), currentUser, Context.empty());
 		} catch (ClassNotFoundException e) {
 			System.err.println("Eclipse Console Plugin is missing!");
 		} catch (Exception e) {
@@ -1299,8 +1268,7 @@ public class OdysseusConsole implements CommandProvider,
 				return;
 			}
 
-			Preferences macrosNode = this.preferences.getSystemPreferences()
-					.node(MACROS_NODE);
+			Preferences macrosNode = this.preferences.getSystemPreferences().node(MACROS_NODE);
 			if (macrosNode.nodeExists(name)) {
 				Preferences macroNode = macrosNode.node(name);
 				macroNode.removeNode();
@@ -1308,8 +1276,7 @@ public class OdysseusConsole implements CommandProvider,
 			}
 			ci.println("macro removed");
 		} catch (BackingStoreException e) {
-			ci.println("could not remove macro from backing store: "
-					+ e.getMessage());
+			ci.println("could not remove macro from backing store: " + e.getMessage());
 		} finally {
 			this.preferencesLock.unlock();
 		}
@@ -1325,26 +1292,22 @@ public class OdysseusConsole implements CommandProvider,
 				return;
 			}
 
-			this.preferences.getSystemPreferences().node(MACROS_NODE)
-					.removeNode();
+			this.preferences.getSystemPreferences().node(MACROS_NODE).removeNode();
 			ci.println("macros cleared");
 		} catch (BackingStoreException e) {
-			ci.println("could not remove macros from backing store: "
-					+ e.getMessage());
+			ci.println("could not remove macros from backing store: " + e.getMessage());
 		} finally {
 			this.preferencesLock.unlock();
 		}
 	}
 
 	private void restoreMacros() {
-		Preferences macrosNode = this.preferences.getSystemPreferences().node(
-				MACROS_NODE);
+		Preferences macrosNode = this.preferences.getSystemPreferences().node(MACROS_NODE);
 		try {
 			for (String macroName : macrosNode.childrenNames()) {
 				Preferences macroNode = macrosNode.node(macroName);
 				String[] commands = macroNode.childrenNames();
-				List<Command> commandList = new ArrayList<Command>(
-						commands.length);
+				List<Command> commandList = new ArrayList<Command>(commands.length);
 				// command names could be unsorted, so create names
 				// by counting
 				for (int i = 0; i < commands.length; ++i) {
@@ -1379,8 +1342,7 @@ public class OdysseusConsole implements CommandProvider,
 			arg = ci.nextArgument();
 		}
 		File file = new File(sb.toString().trim());
-		logger.debug("--- running macro from file: " + file.getAbsolutePath()
-				+ " ---");
+		logger.debug("--- running macro from file: " + file.getAbsolutePath() + " ---");
 
 		BufferedReader in;
 		try {
@@ -1399,8 +1361,7 @@ public class OdysseusConsole implements CommandProvider,
 		} catch (IOException e) {
 			logger.error("Error while reading from file");
 		}
-		logger.debug("--- macro from file " + file.getAbsolutePath()
-				+ " done ---");
+		logger.debug("--- macro from file " + file.getAbsolutePath() + " done ---");
 
 	}
 
@@ -1423,11 +1384,9 @@ public class OdysseusConsole implements CommandProvider,
 		try {
 			for (Command command : macro) {
 
-				Method m = this.getClass().getMethod(command.name,
-						CommandInterpreter.class);
+				Method m = this.getClass().getMethod(command.name, CommandInterpreter.class);
 
-				CommandInterpreter delegateCi = new DelegateCommandInterpreter(
-						ci, command.getArgs());
+				CommandInterpreter delegateCi = new DelegateCommandInterpreter(ci, command.getArgs());
 
 				m.invoke(this, delegateCi);
 			}
@@ -1452,10 +1411,8 @@ public class OdysseusConsole implements CommandProvider,
 			}
 
 			if (this.macros.containsKey(macroName)) {
-				ci.println("a macro already exists under the name '"
-						+ macroName
-						+ "'. you have to remove it first (removeMacro "
-						+ macroName + ")");
+				ci.println("a macro already exists under the name '" + macroName
+						+ "'. you have to remove it first (removeMacro " + macroName + ")");
 				return;
 			}
 			this.currentCommands = new LinkedList<Command>();
@@ -1483,13 +1440,11 @@ public class OdysseusConsole implements CommandProvider,
 					return;
 				}
 
-				Preferences macrosNode = this.preferences
-						.getSystemPreferences().node(MACROS_NODE);
+				Preferences macrosNode = this.preferences.getSystemPreferences().node(MACROS_NODE);
 				Preferences currentMacroNode = macrosNode.node(currentMacro);
 				Integer i = 0;
 				for (Command command : this.currentCommands) {
-					Preferences commandNode = currentMacroNode.node(i
-							.toString());
+					Preferences commandNode = currentMacroNode.node(i.toString());
 					commandNode.put(METHOD, command.name);
 					commandNode.put(ARGUMENTS, command.getArgsAsString());
 					++i;
@@ -1514,7 +1469,8 @@ public class OdysseusConsole implements CommandProvider,
 	// Removed stuff from priority
 
 	// @Help(description =
-	// "<on|off> - Adds or removes punctuation support inside every available PriorityPO.")
+	// "<on|off> - Adds or removes punctuation support inside every available
+	// PriorityPO.")
 	// public void _addPunctuations(CommandInterpreter ci) {
 	// boolean usePunctuations = false;
 	// String[] args = support.getArgs(ci);
