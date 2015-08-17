@@ -370,6 +370,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 							getActiveSession());
 
 			this.transmissionHandler = new QueryTransmissionHandler();
+			
 
 			for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
 				// Create a Query Transmission handler for every transmission we
@@ -383,6 +384,8 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 				transmissionHandler.addTransmission(queryId, slavePeerId,
 						communicator);
 			}
+			
+			transmissionHandler.startTransmissions();
 
 		} catch (QueryPartAllocationException e) {
 			LOG.error("Could not allocate Query Parts: {}", e.getMessage());

@@ -1,14 +1,20 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -60,6 +66,30 @@ public class CostEstimationHelper {
 	
 	
 
+	public static double estimateNetFreeFromJxtaOperatorCount() {
+		return (1.0-estimateNetFreeFromJxtaOperatorCount());
+	}
+	
+	public static double estimateNetUsedFromJxtaOperatorCount() {
+
+		List<IPhysicalOperator> allOperatorsOnPeer = Lists.newArrayList();
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
+		for(IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
+			allOperatorsOnPeer.addAll(query.getAllOperators());
+		}
+		
+		
+		Set<IPhysicalOperator> allOperatorsOnPeerSet = new HashSet<IPhysicalOperator>(allOperatorsOnPeer);
+	
+		double neededLoad = estimateNetloadFromJxtaOperatorCount(allOperatorsOnPeerSet);
+		
+		return Math.min(1.0, neededLoad);
+	}
+
+	
+	
 	public static double calculateIndividualMigrationCostsForQuery(Collection<IPhysicalOperator> operators) {
 		
 		int numberOfReceivers = 0;

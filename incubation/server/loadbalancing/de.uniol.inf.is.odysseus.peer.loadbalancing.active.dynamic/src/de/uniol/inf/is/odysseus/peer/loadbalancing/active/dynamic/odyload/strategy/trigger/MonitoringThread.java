@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThreadListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.CostEstimationHelper;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -61,6 +62,11 @@ public class MonitoringThread extends Thread {
 			double memUsage = 1-(1.0*usage.getMemFreeBytes()/usage.getMemMaxBytes());
 			
 			double netUsage = (usage.getNetOutputRate()+usage.getNetInputRate())/usage.getNetBandwidthMax();
+			
+			if(OdyLoadConstants.COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS) {
+				netUsage = CostEstimationHelper.estimateNetUsedFromJxtaOperatorCount();
+			}
+			
 			
 			LOG.info("CPU usage is {}",cpuUsage);
 			LOG.info("MEM usage is {}",memUsage);

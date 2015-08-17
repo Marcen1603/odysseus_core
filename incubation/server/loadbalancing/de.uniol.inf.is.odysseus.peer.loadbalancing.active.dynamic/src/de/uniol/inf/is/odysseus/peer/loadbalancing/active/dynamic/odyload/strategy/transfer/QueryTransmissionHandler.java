@@ -125,6 +125,9 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 		if(transmissionHandlerList!=null && transmissionHandlerList.size()>0) {
 			transmissionHandlerList.get(0).initiateTransmission(this);
 		}
+		else {
+			notifyListeners();
+		}
 	}
 	
 	public List<Integer> getFailedTransmissions() {

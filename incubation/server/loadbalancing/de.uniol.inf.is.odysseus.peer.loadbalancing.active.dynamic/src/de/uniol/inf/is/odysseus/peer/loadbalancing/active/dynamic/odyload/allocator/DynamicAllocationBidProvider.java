@@ -1,30 +1,21 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.allocator;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
-import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
-import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.CostEstimationHelper;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -63,7 +54,7 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 				/ usage.getNetBandwidthMax());
 		
 		if(OdyLoadConstants.COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS) {
-			netFree = estimateNetFreeFromJxtaOperatorCount();
+			netFree = CostEstimationHelper.estimateNetFreeFromJxtaOperatorCount();
 		}
 
 		double neededCpuLoad;
@@ -92,7 +83,7 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 		
 		if(OdyLoadConstants.COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS) {
 			LOG.info("Counting Jxta Operators to remote Peers for network Costs.");
-			neededNetLoad = estimateNetloadFromJxtaOperatorCount(physicalQuery
+			neededNetLoad = CostEstimationHelper.estimateNetloadFromJxtaOperatorCount(physicalQuery
 			.getAllOperators());
 		}
 		
@@ -128,55 +119,5 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 	}
 	
 
-	private double estimateNetFreeFromJxtaOperatorCount() {
-		
-		
-		List<IPhysicalOperator> allOperatorsOnPeer = Lists.newArrayList();
-		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		
-		for(IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
-			allOperatorsOnPeer.addAll(query.getAllOperators());
-		}
-		
-		
-		Set<IPhysicalOperator> allOperatorsOnPeerSet = new HashSet<IPhysicalOperator>(allOperatorsOnPeer);
-	
-		double neededLoad = estimateNetloadFromJxtaOperatorCount(allOperatorsOnPeerSet);
-		
-		return Math.max(0, (1.0-neededLoad));
-	}
-
-	@SuppressWarnings("rawtypes")
-	private double estimateNetloadFromJxtaOperatorCount(
-			Set<IPhysicalOperator> operatorList) {
-		
-		IP2PNetworkManager networkManager = OsgiServiceProvider.getNetworkManager();
-		
-		double netLoad;
-		int sendersToRemotePeersCount = 0;
-		int receiversFromRemotePeersCount = 0;
-		String localPeerIDString = networkManager.getLocalPeerID().toString();
-		for(IPhysicalOperator op : operatorList) {
-			if(op instanceof JxtaSenderPO) {
-				JxtaSenderPO sender = (JxtaSenderPO) op;
-				//Don't count sender operators that send to local peer, as this does not produce "real" network traffic.
-				if(sender.getPeerIDString().equals(localPeerIDString))
-					continue;
-				sendersToRemotePeersCount++;	
-			}
-			if(op instanceof JxtaReceiverPO) {
-				JxtaReceiverPO receiver = (JxtaReceiverPO) op;
-				//Don't count receiver operators that receive from local peer, as this does not produce "real" network traffic.
-				if(receiver.getPeerIDString().equals(localPeerIDString))
-					continue;
-				receiversFromRemotePeersCount++;	
-			}
-		}
-		Double networkOut = sendersToRemotePeersCount*OdyLoadConstants.BandwithPerSender;
-		Double networkIn = receiversFromRemotePeersCount*OdyLoadConstants.BandwithPerReceiver;
-		netLoad = Math.min(1.0,(networkOut+networkIn));
-		return netLoad;
-	}
 
 }
