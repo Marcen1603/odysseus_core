@@ -1,15 +1,19 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.allocator;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCost;
@@ -57,6 +61,10 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 		double memFree = 1.0 * usage.getMemFreeBytes() / usage.getMemMaxBytes();
 		double netFree = 1.0-((usage.getNetInputRate() + usage.getNetOutputRate())
 				/ usage.getNetBandwidthMax());
+		
+		if(OdyLoadConstants.COUNT_JXTA_OPERATORS_FOR_NETWORK_COSTS) {
+			netFree = estimateNetFreeFromJxtaOperatorCount();
+		}
 
 		double neededCpuLoad;
 		double neededMemLoad;
@@ -119,6 +127,25 @@ public class DynamicAllocationBidProvider implements IBidProvider {
 
 	}
 	
+
+	private double estimateNetFreeFromJxtaOperatorCount() {
+		
+		
+		List<IPhysicalOperator> allOperatorsOnPeer = Lists.newArrayList();
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
+		for(IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
+			allOperatorsOnPeer.addAll(query.getAllOperators());
+		}
+		
+		
+		Set<IPhysicalOperator> allOperatorsOnPeerSet = new HashSet<IPhysicalOperator>(allOperatorsOnPeer);
+	
+		double neededLoad = estimateNetloadFromJxtaOperatorCount(allOperatorsOnPeerSet);
+		
+		return Math.max(0, (1.0-neededLoad));
+	}
 
 	@SuppressWarnings("rawtypes")
 	private double estimateNetloadFromJxtaOperatorCount(
