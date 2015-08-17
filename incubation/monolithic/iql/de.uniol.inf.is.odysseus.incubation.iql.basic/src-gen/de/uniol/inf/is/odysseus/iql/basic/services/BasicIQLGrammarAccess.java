@@ -171,12 +171,12 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//IQLClass returns types::JvmGenericType:
 		//	{IQLClass} "class" simpleName=ID ("extends" extendedClass=JvmTypeReference)? ("implements"
-		//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)? "{" members+=(IQLAttribute |
+		//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)*)? "{" members+=(IQLAttribute |
 		//	IQLMethod | IQLJavaMember)* "}";
 		public ParserRule getRule() { return rule; }
 
 		//{IQLClass} "class" simpleName=ID ("extends" extendedClass=JvmTypeReference)? ("implements"
-		//extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)? "{" members+=(IQLAttribute |
+		//extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)*)? "{" members+=(IQLAttribute |
 		//IQLMethod | IQLJavaMember)* "}"
 		public Group getGroup() { return cGroup; }
 
@@ -204,7 +204,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		//JvmTypeReference
 		public RuleCall getExtendedClassJvmTypeReferenceParserRuleCall_3_1_0() { return cExtendedClassJvmTypeReferenceParserRuleCall_3_1_0; }
 
-		//("implements" extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)?
+		//("implements" extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)*)?
 		public Group getGroup_4() { return cGroup_4; }
 
 		//"implements"
@@ -216,7 +216,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		//JvmTypeReference
 		public RuleCall getExtendedInterfacesJvmTypeReferenceParserRuleCall_4_1_0() { return cExtendedInterfacesJvmTypeReferenceParserRuleCall_4_1_0; }
 
-		//("," extendedInterfaces+=JvmTypeReference)?
+		//("," extendedInterfaces+=JvmTypeReference)*
 		public Group getGroup_4_2() { return cGroup_4_2; }
 
 		//","
@@ -4167,7 +4167,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 
 	//IQLClass returns types::JvmGenericType:
 	//	{IQLClass} "class" simpleName=ID ("extends" extendedClass=JvmTypeReference)? ("implements"
-	//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)? "{" members+=(IQLAttribute |
+	//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)*)? "{" members+=(IQLAttribute |
 	//	IQLMethod | IQLJavaMember)* "}";
 	public IQLClassElements getIQLClassAccess() {
 		return pIQLClass;

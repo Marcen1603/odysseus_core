@@ -512,7 +512,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 
 	//IQLClass returns types::JvmGenericType:
 	//	{IQLClass} "class" simpleName=ID ("extends" extendedClass=JvmTypeReference)? ("implements"
-	//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)?)? "{" members+=(IQLAttribute |
+	//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)*)? "{" members+=(IQLAttribute |
 	//	IQLMethod | IQLJavaMember)* "}";
 	public BasicIQLGrammarAccess.IQLClassElements getIQLClassAccess() {
 		return gaBasicIQL.getIQLClassAccess();

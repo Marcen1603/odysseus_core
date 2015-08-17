@@ -6170,7 +6170,7 @@ rule__IQLClass__Group_4__2__Impl
 :
 (
 { before(grammarAccess.getIQLClassAccess().getGroup_4_2()); }
-(rule__IQLClass__Group_4_2__0)?
+(rule__IQLClass__Group_4_2__0)*
 { after(grammarAccess.getIQLClassAccess().getGroup_4_2()); }
 )
 

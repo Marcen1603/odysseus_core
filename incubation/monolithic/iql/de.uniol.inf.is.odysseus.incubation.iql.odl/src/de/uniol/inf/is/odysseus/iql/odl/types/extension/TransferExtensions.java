@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.odl.typing.extension;
+package de.uniol.inf.is.odysseus.iql.odl.types.extension;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;

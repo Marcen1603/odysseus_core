@@ -33,8 +33,7 @@ IQLInterface returns types::JvmGenericType:
 	{IQLInterface}
 	'interface' simpleName=ID ('extends' extendedInterfaces+=JvmTypeReference (',' extendedInterfaces+=JvmTypeReference)?)? '{'
 		members += (IQLMethodDeclarationMember | IQLJavaMember )*
-	'}'	
-;
+	'}'	;
 
 IQLJavaMetadata:
 	{IQLJavaMetadata}
@@ -78,15 +77,15 @@ ArrayBrackets :
 	'[' ']'
 ;
 
-JvmFormalParameter returns types::JvmFormalParameter:
-	parameterType=JvmTypeReference name=ID;
-
-
 IQLMethod returns types::JvmOperation:
 	{IQLMethod}		
 	(override?='override')?
 	simpleName=ID ('(' (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? ')')? (':' returnType=JvmTypeReference)?
 	body=IQLStatementBlock
+;
+
+JvmFormalParameter returns types::JvmFormalParameter:
+	parameterType=JvmTypeReference name=ID
 ;
 
 
@@ -176,18 +175,18 @@ IQLArgumentsMapKeyValue :
 
 IQLStatement:	
 	IQLStatementBlock |
-	IQLExpressionStatement |
 	IQLIfStatement |
+	IQLSwitchStatement |	
 	IQLWhileStatement |
 	IQLDoWhileStatement |
 	IQLForStatement |
 	IQLForEachStatement	|
-	IQLSwitchStatement |	
 	IQLVariableStatement |
+	IQLConstructorCallStatement |
+	IQLExpressionStatement |	
 	IQLBreakStatement |
 	IQLContinueStatement |
 	IQLReturnStatement | 
-	IQLConstructorCallStatement |
 	IQLJavaStatement
 ;
 

@@ -1030,7 +1030,7 @@ ruleIQLClass returns [EObject current=null]
 	    }
 
 )
-))?)?	otherlv_9='{' 
+))*)?	otherlv_9='{' 
     {
     	newLeafNode(otherlv_9, grammarAccess.getIQLClassAccess().getLeftCurlyBracketKeyword_5());
     }

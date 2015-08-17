@@ -1213,7 +1213,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *     (
 	 *         simpleName=ID 
 	 *         extendedClass=JvmTypeReference? 
-	 *         (extendedInterfaces+=JvmTypeReference extendedInterfaces+=JvmTypeReference?)? 
+	 *         (extendedInterfaces+=JvmTypeReference extendedInterfaces+=JvmTypeReference*)? 
 	 *         (members+=IQLAttribute | members+=IQLMethod | members+=IQLJavaMember)*
 	 *     )
 	 */

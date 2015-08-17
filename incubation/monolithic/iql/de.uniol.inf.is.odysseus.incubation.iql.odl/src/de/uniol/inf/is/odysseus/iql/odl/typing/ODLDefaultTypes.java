@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
@@ -24,9 +25,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.types.MepFunctions;
 import de.uniol.inf.is.odysseus.iql.odl.types.ODLUtils;
-import de.uniol.inf.is.odysseus.iql.odl.typing.extension.PunctuationExtensions;
-import de.uniol.inf.is.odysseus.iql.odl.typing.extension.TransferExtensions;
-import de.uniol.inf.is.odysseus.iql.odl.typing.extension.TupleExtensions;
+import de.uniol.inf.is.odysseus.iql.odl.types.extension.PunctuationExtensions;
+import de.uniol.inf.is.odysseus.iql.odl.types.extension.TransferExtensions;
+import de.uniol.inf.is.odysseus.iql.odl.types.extension.TupleExtensions;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
@@ -57,7 +58,7 @@ public class ODLDefaultTypes {
 		types.add(ODLUtils.class);
 		types.add(SDFDatatype.class);
 		types.add(AbstractPhysicalSubscription.class);
-
+		types.add(ITimeInterval.class);
 		return types;
 	}
 	

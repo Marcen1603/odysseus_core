@@ -150,18 +150,20 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 	
 	
 	public TypeResult getType(IQLLiteralExpressionDouble expr, C context) {
-		JvmTypeReference expectedType = context.getExpectedTypeRef();
-		if (expectedType != null) {
-			return new TypeResult(expectedType);
+		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"doubleToType", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "doubleToType", 1).getReturnType());
+		} else if (context.getExpectedTypeRef() != null) {
+			return new TypeResult(context.getExpectedTypeRef());
 		} else {
 			return new TypeResult(typeUtils.createTypeRef("double", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionInt expr, C context) {
-		JvmTypeReference expectedType = context.getExpectedTypeRef();
-		if (expectedType != null) {
-			return new TypeResult(expectedType);
+		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"intToType", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "intToType", 1).getReturnType());
+		} else if (context.getExpectedTypeRef() != null) {
+			return new TypeResult(context.getExpectedTypeRef());
 		} else {
 			return new TypeResult(typeUtils.createTypeRef("int", typeFactory.getSystemResourceSet()));
 		}
@@ -169,20 +171,29 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 
 	
 	public TypeResult getType(IQLLiteralExpressionString expr, C context) {
-		return new TypeResult(typeUtils.createTypeRef(String.class, typeFactory.getSystemResourceSet()));
+		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"stringToType", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "stringToType", 1).getReturnType());
+		} else {
+			return new TypeResult(typeUtils.createTypeRef(String.class, typeFactory.getSystemResourceSet()));
+		}
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionBoolean expr, C context) {
-		JvmTypeReference expectedType = context.getExpectedTypeRef();
-		if (expectedType != null) {
-			return new TypeResult(expectedType);
+		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"booleanToType", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "booleanToType", 1).getReturnType());
+		}else if (context.getExpectedTypeRef() != null) {
+			return new TypeResult(context.getExpectedTypeRef());
 		} else {
 			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionRange expr, C context) {
-		return new TypeResult(typeUtils.createTypeRef(Range.class, typeFactory.getSystemResourceSet()));
+		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"rangeToType", 2)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "rangeToType", 2).getReturnType());
+		} else {
+			return new TypeResult(typeUtils.createTypeRef(Range.class, typeFactory.getSystemResourceSet()));
+		}
 	}
 	
 	
@@ -191,11 +202,19 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionList expr, C context) {
-		return new TypeResult(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()));
+		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"listToType", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "listToType", 1).getReturnType());
+		} else {
+			return new TypeResult(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()));
+		}
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionMap expr, C context) {
-		return new TypeResult(typeUtils.createTypeRef(Map.class, typeFactory.getSystemResourceSet()));
+		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"mapToType", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "listToType", 1).getReturnType());
+		} else {
+			return new TypeResult(typeUtils.createTypeRef(Map.class, typeFactory.getSystemResourceSet()));
+		}
 	}
 	
 	public TypeResult getType(IQLJvmElementCallExpression expr, C context) {
@@ -280,24 +299,41 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 
 	
 	public TypeResult getType(IQLPlusMinusExpression expr, C context) {
-		return getType(expr.getOperand(), context);
+		if (context.getExpectedTypeRef()!= null && expr.getOp().equals("+") && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"simplePlusPrefix", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "simplePlusPrefix", 1).getReturnType());
+		} else if (context.getExpectedTypeRef()!= null && expr.getOp().equals("-") && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"simpleMinusPrefix", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "simpleMinusPrefix", 1).getReturnType());
+		} else {
+			return getType(expr.getOperand(), context);
+		}
 	}
 	
 	public TypeResult getType(IQLBooleanNotExpression expr, C context) {
-		JvmTypeReference expectedType = context.getExpectedTypeRef();
-		if (expectedType != null) {
-			return new TypeResult(expectedType);
+		if (context.getExpectedTypeRef() != null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"booleanNotPrefix", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "booleanNotPrefix", 1).getReturnType());
 		} else {
 			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLPrefixExpression expr, C context) {
-		return getType(expr.getOperand(), context);
+		if (context.getExpectedTypeRef() != null && expr.getOp().equals("++")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"plusPrefix", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "plusPrefix", 1).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("--")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"minusPrefix", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "minusPrefix", 1).getReturnType());
+		} else {
+			return getType(expr.getOperand(), context);
+		}
 	}
 	
 	public TypeResult getType(IQLPostfixExpression expr, C context) {
-		return getType(expr.getOperand(), context);
+		if (context.getExpectedTypeRef() != null && expr.getOp().equals("++")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"plusPostfix", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "plusPostfix", 1).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("--")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"minusPostfix", 1)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "minusPostfix", 1).getReturnType());
+		} else {
+			return getType(expr.getOperand(), context);
+		}
 	}
 	
 	public TypeResult getType(IQLTypeCastExpression expr, C context) {
@@ -341,45 +377,44 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 	}
 	
 	public TypeResult getType(IQLRelationalExpression expr, C context) {
-		JvmTypeReference expectedType = context.getExpectedTypeRef();
-		if (expectedType != null) {
-			return new TypeResult(expectedType);
+		if (context.getExpectedTypeRef() != null && expr.getOp().equals(">")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"greaterThan", 2)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "greaterThan", 2).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("<")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"lessThan", 2)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "lessThan", 2).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals(">=")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"greaterOrEqualsThan", 2)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "greaterOrEqualsThan", 2).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("<=")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"lessOrEqualsThan",2)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "lessOrEqualsThan", 2).getReturnType());
 		} else {
 			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLInstanceOfExpression expr, C context) {
-		JvmTypeReference expectedType = context.getExpectedTypeRef();
-		if (expectedType != null) {
-			return new TypeResult(expectedType);
-		} else {
-			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
-		}
+		return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 	}
 	
 	public TypeResult getType(IQLEqualityExpression expr, C context) {
-		JvmTypeReference expectedType = context.getExpectedTypeRef();
-		if (expectedType != null) {
-			return new TypeResult(expectedType);
+		if (context.getExpectedTypeRef() != null && expr.getOp().equals("==")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"equals", 2)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "equals", 2).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("!=")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"equalsNot", 2)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "equalsNot", 2).getReturnType());
 		} else {
 			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLogicalAndExpression expr, C context) {
-		JvmTypeReference expectedType = context.getExpectedTypeRef();
-		if (expectedType != null) {
-			return new TypeResult(expectedType);
+		if (context.getExpectedTypeRef() != null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"logicalAnd", 2)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "logicalAnd", 2).getReturnType());
 		} else {
 			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLogicalOrExpression expr, C context) {
-		JvmTypeReference expectedType = context.getExpectedTypeRef();
-		if (expectedType != null) {
-			return new TypeResult(expectedType);
+		if (context.getExpectedTypeRef() != null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"logicalOr", 2)){
+			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "logicalOr", 2).getReturnType());
 		} else {
 			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
 		}
