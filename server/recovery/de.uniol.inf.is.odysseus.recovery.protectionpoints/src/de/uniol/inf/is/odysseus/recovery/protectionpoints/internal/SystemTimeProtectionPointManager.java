@@ -111,20 +111,31 @@ public class SystemTimeProtectionPointManager implements
 	public long getPeriod() {
 		return this.mPeriod;
 	}
+	
+	/**
+	 * The internal timer.
+	 */
+	private Timer mTimer;
 
 	@Override
 	public void start() {
-		TimerTask timerTask = new TimerTask() {
+		long period = this.mPeriod * this.mUnit.getConversionFactor();
+		this.mTimer = new Timer(this.getClass().getSimpleName(), true);
+		this.mTimer.scheduleAtFixedRate(new TimerTask() {
 
 			@Override
 			public void run() {
 				fireProtectionPointReachedEvent();
 			}
-		};
-
-		Timer timer = new Timer(this.getClass().getSimpleName(), true);
-		long period = this.mPeriod * this.mUnit.getConversionFactor();
-		timer.scheduleAtFixedRate(timerTask, period, period);
+		}, period, period);
+	}
+	
+	@Override
+	public void stop() {
+		if(this.mTimer != null) {
+			this.mTimer.cancel();
+			this.mTimer = null;
+		}
 	}
 
 	/**

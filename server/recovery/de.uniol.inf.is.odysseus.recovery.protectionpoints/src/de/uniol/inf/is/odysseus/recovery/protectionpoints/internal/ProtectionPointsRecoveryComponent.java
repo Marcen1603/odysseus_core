@@ -80,10 +80,13 @@ public class ProtectionPointsRecoveryComponent implements IRecoveryComponent, IP
 		component.mManager = ProtectionPointManagerRegistry.createFromConfig(config);
 		return component;
 	}
-	
+
 	/**
-	 * All queries (their ids), for which the protection point manager is already set.
-	 * @see ProtectionPointManagerRegistry#setProtectionPointManager(int, IProtectionPointManager)
+	 * All queries (their ids), for which the protection point manager is
+	 * already set.
+	 * 
+	 * @see ProtectionPointManagerRegistry#setProtectionPointManager(int,
+	 *      IProtectionPointManager)
 	 */
 	private final Set<Integer> mProcessedQueries = Sets.newHashSet();
 
@@ -100,7 +103,7 @@ public class ProtectionPointsRecoveryComponent implements IRecoveryComponent, IP
 	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
 			List<ILogicalQuery> queries) {
 		for (ILogicalQuery query : queries) {
-			if(!this.mProcessedQueries.contains(new Integer(query.getID()))) {
+			if (!this.mProcessedQueries.contains(new Integer(query.getID()))) {
 				ProtectionPointManagerRegistry.setProtectionPointManager(query.getID(), this.mManager);
 			}
 		}
@@ -111,18 +114,23 @@ public class ProtectionPointsRecoveryComponent implements IRecoveryComponent, IP
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		PlanModificationEventType eventType = (PlanModificationEventType) eventArgs.getEventType();
 		final int queryId = ((IPhysicalQuery) eventArgs.getValue()).getID();
-		switch (eventType) {
-		case QUERY_START:
-		case QUERY_RESUME:
-			// This method is only called once, because OSGi knows only one
-			// instance of this components. All concrete instances are created
-			// with newInstance. So in this method, mManager is null.
-			ProtectionPointManagerRegistry.getInstance(queryId).start();
-			break;
-		default:
-			// Nothing to do.
-			// FIXME stop, if query is stopped or paused.
-			break;
+		IProtectionPointManager protectionPointManager = ProtectionPointManagerRegistry.getInstance(queryId);
+		// This method is only called once, because OSGi knows only one
+		// instance of this components. All concrete instances are created
+		// with newInstance. So in this method, mManager is null.
+		if (protectionPointManager != null) {
+			switch (eventType) {
+			case QUERY_START:
+			case QUERY_RESUME:
+				protectionPointManager.start();
+				break;
+			case QUERY_STOP:
+				protectionPointManager.stop();
+				break;
+			default:
+				// Nothing to do.
+				break;
+			}
 		}
 	}
 

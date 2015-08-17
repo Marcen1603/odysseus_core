@@ -79,5 +79,10 @@ public interface IProtectionPointManager {
 	 * Starts the manager.
 	 */
 	public void start();
+	
+	/**
+	 * Stops the manager.
+	 */
+	public void stop();
 
 }
