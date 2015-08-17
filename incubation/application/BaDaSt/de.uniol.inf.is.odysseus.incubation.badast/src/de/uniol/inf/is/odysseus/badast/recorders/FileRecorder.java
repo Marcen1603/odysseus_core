@@ -25,19 +25,14 @@ import de.uniol.inf.is.odysseus.badast.KafkaProducerFactory;
  * @author Michael Brand
  */
 @SuppressWarnings(value = { "nls" })
-@ABaDaStRecorder(type = FileRecorder.TYPE, parameters = {
-		FileRecorder.SOURCENAME_CONFIG, FileRecorder.FILENAME_CONFIG })
+@ABaDaStRecorder(type = FileRecorder.TYPE, parameters = { AbstractBaDaStRecorder.SOURCENAME_CONFIG,
+		FileRecorder.FILENAME_CONFIG })
 public class FileRecorder extends AbstractBaDaStRecorder<String> {
 
 	/**
 	 * The type of the recorder.
 	 */
 	public static final String TYPE = "FileRecorder";
-
-	/**
-	 * The key for configuration, where the source name is set.
-	 */
-	public static final String SOURCENAME_CONFIG = AbstractBaDaStRecorder.SOURCENAME_CONFIG;
 
 	/**
 	 * The key for configuration, where the file name is set.
@@ -56,8 +51,7 @@ public class FileRecorder extends AbstractBaDaStRecorder<String> {
 	}
 
 	@Override
-	protected KafkaProducer<String, String> createKafkaProducer()
-			throws BaDaStException {
+	protected KafkaProducer<String, String> createKafkaProducer() throws BaDaStException {
 		try {
 			return KafkaProducerFactory.createKafkaProducerString(getName());
 		} catch (IOException e) {
@@ -74,14 +68,13 @@ public class FileRecorder extends AbstractBaDaStRecorder<String> {
 	public void start() throws BaDaStException {
 		validate();
 		this.mContinueReading = true;
-		try (BufferedReader reader = new BufferedReader(new FileReader(this
-				.getConfig().getProperty(FILENAME_CONFIG)))) {
+		try (BufferedReader reader = new BufferedReader(
+				new FileReader(this.getConfig().getProperty(FILENAME_CONFIG)))) {
 			String line;
 			while ((line = reader.readLine()) != null && this.mContinueReading) {
 				String out = line + "\n";
-				this.getProducer().send(
-						new ProducerRecord<String, String>(this.getConfig()
-								.getProperty(SOURCENAME_CONFIG), out));
+				this.getProducer()
+						.send(new ProducerRecord<String, String>(this.getConfig().getProperty(SOURCENAME_CONFIG), out));
 			}
 		} catch (Exception e) {
 			throw new BaDaStException("Could not read from file source!", e);
@@ -89,8 +82,7 @@ public class FileRecorder extends AbstractBaDaStRecorder<String> {
 	}
 
 	@Override
-	public IBaDaStRecorder<String> newInstance(Properties cfg)
-			throws BaDaStException {
+	public IBaDaStRecorder<String> newInstance(Properties cfg) throws BaDaStException {
 		FileRecorder writer = new FileRecorder();
 		writer.initialize(cfg);
 		return writer;

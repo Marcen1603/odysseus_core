@@ -26,20 +26,14 @@ import de.uniol.inf.is.odysseus.badast.KafkaProducerFactory;
  * @author Michael Brand
  */
 @SuppressWarnings(value = { "nls" })
-@ABaDaStRecorder(type = TCPRecorder.TYPE, parameters = {
-		TCPRecorder.SOURCENAME_CONFIG, TCPRecorder.HOST_CONFIG,
-		TCPRecorder.PORT_CONFIG, TCPRecorder.BUFFERSIZE_CONFIG + " (optional)" })
+@ABaDaStRecorder(type = TCPRecorder.TYPE, parameters = { AbstractBaDaStRecorder.SOURCENAME_CONFIG,
+		TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG, TCPRecorder.BUFFERSIZE_CONFIG + " (optional)" })
 public class TCPRecorder extends AbstractBaDaStRecorder<byte[]> {
 
 	/**
 	 * The type of the recorder.
 	 */
 	public static final String TYPE = "TCPRecorder";
-
-	/**
-	 * The key for configuration, where the source name is set.
-	 */
-	public static final String SOURCENAME_CONFIG = AbstractBaDaStRecorder.SOURCENAME_CONFIG;
 
 	/**
 	 * The key for configuration, where the host is set.
@@ -75,19 +69,15 @@ public class TCPRecorder extends AbstractBaDaStRecorder<byte[]> {
 	@Override
 	public void start() throws BaDaStException {
 		this.mContinueReading = true;
-		final int buffersize = Integer.parseInt(this.getConfig().getProperty(
-				BUFFERSIZE_CONFIG, BUFFERSIZE_DEFAULT));
-		try (Socket clientSocket = new Socket(this.getConfig().getProperty(
-				HOST_CONFIG), Integer.parseInt(this.getConfig().getProperty(
-				PORT_CONFIG)));
-				BufferedInputStream inStream = new BufferedInputStream(
-						clientSocket.getInputStream(), buffersize)) {
+		final int buffersize = Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG, BUFFERSIZE_DEFAULT));
+		try (Socket clientSocket = new Socket(this.getConfig().getProperty(HOST_CONFIG),
+				Integer.parseInt(this.getConfig().getProperty(PORT_CONFIG)));
+				BufferedInputStream inStream = new BufferedInputStream(clientSocket.getInputStream(), buffersize)) {
 			while (this.mContinueReading) {
 				byte[] readBytes = new byte[buffersize];
 				inStream.read(readBytes);
 				this.getProducer().send(
-						new ProducerRecord<String, byte[]>(this.getConfig()
-								.getProperty(SOURCENAME_CONFIG), readBytes));
+						new ProducerRecord<String, byte[]>(this.getConfig().getProperty(SOURCENAME_CONFIG), readBytes));
 			}
 		} catch (Exception e) {
 			throw new BaDaStException("Could not read from server!", e);
@@ -95,16 +85,14 @@ public class TCPRecorder extends AbstractBaDaStRecorder<byte[]> {
 	}
 
 	@Override
-	public IBaDaStRecorder<byte[]> newInstance(Properties cfg)
-			throws BaDaStException {
+	public IBaDaStRecorder<byte[]> newInstance(Properties cfg) throws BaDaStException {
 		TCPRecorder writer = new TCPRecorder();
 		writer.initialize(cfg);
 		return writer;
 	}
 
 	@Override
-	protected KafkaProducer<String, byte[]> createKafkaProducer()
-			throws BaDaStException {
+	protected KafkaProducer<String, byte[]> createKafkaProducer() throws BaDaStException {
 		try {
 			return KafkaProducerFactory.createKafkaProducerByteArray(getName());
 		} catch (IOException e) {
@@ -121,17 +109,14 @@ public class TCPRecorder extends AbstractBaDaStRecorder<byte[]> {
 		try {
 			Integer.parseInt(this.getConfig().getProperty(PORT_CONFIG));
 		} catch (NumberFormatException e) {
-			throw new BaDaStException(this.getConfig().getProperty(PORT_CONFIG)
-					+ " is not a valid port!", e);
+			throw new BaDaStException(this.getConfig().getProperty(PORT_CONFIG) + " is not a valid port!", e);
 		}
 
 		// Check, if the buffer size is an integer
 		try {
-			Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG,
-					BUFFERSIZE_DEFAULT));
+			Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG, BUFFERSIZE_DEFAULT));
 		} catch (NumberFormatException e) {
-			throw new BaDaStException(this.getConfig().getProperty(
-					BUFFERSIZE_CONFIG, BUFFERSIZE_DEFAULT)
+			throw new BaDaStException(this.getConfig().getProperty(BUFFERSIZE_CONFIG, BUFFERSIZE_DEFAULT)
 					+ " is not a valid buffer size!", e);
 		}
 	}
