@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.badast.recorders;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -52,11 +51,7 @@ public class FileRecorder extends AbstractBaDaStRecorder<String> {
 
 	@Override
 	protected KafkaProducer<String, String> createKafkaProducer() throws BaDaStException {
-		try {
-			return KafkaProducerFactory.createKafkaProducerString(getName());
-		} catch (IOException e) {
-			throw new BaDaStException("Could not create kafka producer!", e);
-		}
+		return KafkaProducerFactory.createKafkaProducerString(getName());
 	}
 
 	@Override

@@ -111,7 +111,7 @@ public class IncomingElementsRecoveryComponent
 			return queries;
 		}
 		for (ILogicalQuery query : queries) {
-			insertSourceSyncOperators(query, true, caller, cExecutor.get());
+			insertSourceSyncOperators(query, true);
 		}
 		this.mCurrentlyRecoveredQueries.addAll(queries);
 		return queries;
@@ -128,7 +128,7 @@ public class IncomingElementsRecoveryComponent
 			if (this.mCurrentlyRecoveredQueries.contains(query)) {
 				this.mCurrentlyRecoveredQueries.remove(query);
 			} else {
-				insertSourceSyncOperators(query, false, caller, cExecutor.get());
+				insertSourceSyncOperators(query, false);
 			}
 		}
 		return queries;
@@ -142,13 +142,8 @@ public class IncomingElementsRecoveryComponent
 	 *            The logical query to modify.
 	 * @param recoveryMode
 	 *            True, if data stream elements shall be recovered from BaDaSt.
-	 * @param caller
-	 *            The user, which created the query.
-	 * @param executor
-	 *            A present executor.
 	 */
-	private static void insertSourceSyncOperators(final ILogicalQuery query, final boolean recoveryMode,
-			ISession caller, IServerExecutor executor) {
+	private static void insertSourceSyncOperators(final ILogicalQuery query, final boolean recoveryMode) {
 		List<ILogicalOperator> operators = Lists.newArrayList(collectOperators(query.getLogicalPlan()));
 		LogicalGraphWalker graphWalker = new LogicalGraphWalker(operators);
 		graphWalker.walk(new IOperatorWalker<ILogicalOperator>() {

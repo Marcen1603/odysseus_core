@@ -80,10 +80,9 @@ public class BaDaStSender {
 		if (answer != null && answer.startsWith("Created BaDaSt recorder")) {
 			String[] split = answer.split(" ");
 			return split[split.length - 1];
-		} else {
-			cLog.error("Could not create BaDaSt recorder!");
-			return null;
 		}
+		cLog.error("Could not create BaDaSt recorder!");
+		return null;
 	}
 
 	/**

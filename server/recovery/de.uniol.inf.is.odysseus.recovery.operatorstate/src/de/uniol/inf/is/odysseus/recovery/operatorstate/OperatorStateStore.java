@@ -66,7 +66,7 @@ public class OperatorStateStore {
 		try (FileOutputStream fout = new FileOutputStream(file);
 				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
 			for (IStatefulPO operator : operators) {
-				oos.writeObject((Serializable) operator.getState());
+				oos.writeObject(operator.getState());
 				cLog.debug("Wrote state of '{}' to file '{}'", operator, file.getName());
 			}
 		}

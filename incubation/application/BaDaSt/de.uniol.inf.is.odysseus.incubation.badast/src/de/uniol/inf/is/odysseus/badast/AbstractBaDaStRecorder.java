@@ -63,13 +63,12 @@ public abstract class AbstractBaDaStRecorder<V> implements IBaDaStRecorder<V> {
 		if (!getClass().isAnnotationPresent(ABaDaStRecorder.class)) {
 			return null;
 		}
-		StringBuffer out = new StringBuffer(getClass().getAnnotation(
-				ABaDaStRecorder.class).type());
+		StringBuffer out = new StringBuffer(getClass().getAnnotation(ABaDaStRecorder.class).type());
 		try {
 			validate();
 			out.append("_");
 			out.append(this.mCfg.get(SOURCENAME_CONFIG));
-		} catch (BaDaStException e) {
+		} catch (@SuppressWarnings("unused") BaDaStException e) {
 			// Nothing to do
 		}
 		return out.toString();
@@ -100,8 +99,7 @@ public abstract class AbstractBaDaStRecorder<V> implements IBaDaStRecorder<V> {
 	 * @throws BaDaStException
 	 *             if the producer could not be created.
 	 */
-	protected abstract KafkaProducer<String, V> createKafkaProducer()
-			throws BaDaStException;
+	protected abstract KafkaProducer<String, V> createKafkaProducer() throws BaDaStException;
 
 	/**
 	 * Gets the producer for Kafka.
@@ -126,13 +124,10 @@ public abstract class AbstractBaDaStRecorder<V> implements IBaDaStRecorder<V> {
 	 */
 	protected void validate() throws BaDaStException {
 		if (!getClass().isAnnotationPresent(ABaDaStRecorder.class)) {
-			throw new BaDaStException(getClass().getSimpleName()
-					+ " misses the annotation "
-					+ ABaDaStRecorder.class.getSimpleName());
+			throw new BaDaStException(
+					getClass().getSimpleName() + " misses the annotation " + ABaDaStRecorder.class.getSimpleName());
 		} else if (this.mCfg == null) {
-			throw new BaDaStException(getClass().getAnnotation(
-					ABaDaStRecorder.class).type()
-					+ " is not initialized!");
+			throw new BaDaStException(getClass().getAnnotation(ABaDaStRecorder.class).type() + " is not initialized!");
 		}
 		validate(SOURCENAME_CONFIG);
 		validate_internal();
@@ -148,8 +143,7 @@ public abstract class AbstractBaDaStRecorder<V> implements IBaDaStRecorder<V> {
 	 */
 	protected void validate(String key) throws BaDaStException {
 		if (!this.mCfg.containsKey(key)) {
-			throw new BaDaStException(getClass().getAnnotation(
-					ABaDaStRecorder.class).type()
+			throw new BaDaStException(getClass().getAnnotation(ABaDaStRecorder.class).type()
 					+ " is not properly initialized. " + key + " is missing!");
 		}
 	}

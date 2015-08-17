@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.badast.recorders;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.net.Socket;
 import java.util.Properties;
 
@@ -93,11 +92,7 @@ public class TCPRecorder extends AbstractBaDaStRecorder<byte[]> {
 
 	@Override
 	protected KafkaProducer<String, byte[]> createKafkaProducer() throws BaDaStException {
-		try {
-			return KafkaProducerFactory.createKafkaProducerByteArray(getName());
-		} catch (IOException e) {
-			throw new BaDaStException("Could not create kafka producer!", e);
-		}
+		return KafkaProducerFactory.createKafkaProducerByteArray(getName());
 	}
 
 	@Override

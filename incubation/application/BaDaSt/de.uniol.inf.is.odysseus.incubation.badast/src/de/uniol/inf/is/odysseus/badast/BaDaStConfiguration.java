@@ -76,18 +76,18 @@ public class BaDaStConfiguration {
 		try {
 			stream = new FileInputStream(file);
 			cConfig.loadFromXML(stream);
-		} catch (IOException e) {
+		} catch (@SuppressWarnings("unused") IOException e) {
 			try {
 				cConfig.load(stream);
 			} catch (IOException e1) {
-				cLog.error("Could not load BaDaSt config from file " + fileName);
+				cLog.error("Could not load BaDaSt config from file " + fileName, e1);
 			}
 		} finally {
 			saveConfiguration(fileName);
 			try {
 				stream.close();
 			} catch (IOException e1) {
-				cLog.error("Could not close file stream!");
+				cLog.error("Could not close file stream!", e1);
 			}
 		}
 	}

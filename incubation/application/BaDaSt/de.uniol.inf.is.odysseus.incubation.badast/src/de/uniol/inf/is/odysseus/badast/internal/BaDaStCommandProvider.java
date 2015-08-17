@@ -32,7 +32,6 @@ import kafka.message.MessageAndOffset;
  * - lsRecorderTypes <br />
  * - lsRecorders <br />
  * - createRecorder <br />
- * - startRecorder <br />
  * - closeRecorder <br />
  * 
  * @author Michael Brand
@@ -98,14 +97,6 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 */
 	public static void unbindReader(IBaDaStRecorder<?> recorder) {
 		cRecorderTypes.remove(recorder.getClass().getAnnotation(ABaDaStRecorder.class).type());
-	}
-	
-	/**
-	 * Starts the BaDaSt server (incl. ZooKeeper and Kafka).
-	 * @param ci No arguments needed.
-	 */
-	public static void _startBaDaSt(CommandInterpreter ci) {
-		BaDaStApplication.getInstance().start();
 	}
 
 	/**
@@ -485,7 +476,6 @@ public class BaDaStCommandProvider implements CommandProvider {
 	public String getHelp() {
 		final String TAB = "	";
 		StringBuffer out = new StringBuffer("---Backup of Data Streams (BaDaSt) Commands---\n");
-		out.append(TAB + "startBaDaSt - Starts the BaDaSt server (incl. ZooKeeper and Kafka).\n");
 		out.append(TAB + "lsRecorderTypes - Lists all registered BaDaSt recorders types.\n");
 		out.append(TAB + "lsRecorders - Lists all created BaDaSt recorders.\n");
 		out.append(TAB
@@ -513,9 +503,6 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 */
 	public static String execute(String command, Properties args) throws BaDaStException {
 		switch (command) {
-		case "startBaDaSt":
-			BaDaStApplication.getInstance().start();
-			return "BaDaSt started.";
 		case "lsRecorderTypes":
 			return lsRecorderTypes();
 		case "lsRecorders":
