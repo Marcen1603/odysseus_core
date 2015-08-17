@@ -50,6 +50,18 @@ public class MonitoringThread extends Thread {
 	public void run() {
 		while(isActive) {
 				LOG.info("Looking up resource usage");
+				
+
+				
+				//Wait for update interval.
+				//Do This before we measure as this forces the peer to wait between failed LB attempts.
+				try {
+					Thread.sleep(OdyLoadConstants.UPDATE_INTERVAL);
+				}
+				catch (InterruptedException e) {
+					LOG.error(e.getMessage());
+					isActive = false;
+				}
 			
 			IResourceUsage usage = usageManager.getLocalResourceUsage();
 			LOG.debug("CPU: {} free of {}",usage.getCpuFree(),usage.getCpuMax());
@@ -80,15 +92,6 @@ public class MonitoringThread extends Thread {
 				}
 			}
 			
-				
-			//Wait for update interval.
-			try {
-				Thread.sleep(OdyLoadConstants.UPDATE_INTERVAL);
-			}
-			catch (InterruptedException e) {
-				LOG.error(e.getMessage());
-				isActive = false;
-			}
 		}
 		
 		
