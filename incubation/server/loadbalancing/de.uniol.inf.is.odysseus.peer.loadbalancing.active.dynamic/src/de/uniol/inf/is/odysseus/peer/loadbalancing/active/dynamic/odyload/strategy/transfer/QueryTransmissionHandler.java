@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.jxta.peer.PeerID;
@@ -14,6 +15,7 @@ import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionHandlerListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 
@@ -27,6 +29,8 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 
 	private List<QueryTransmission> transmissionHandlerList = Lists.newArrayList();
 	
+	private List<IQueryTransmissionHandlerListener> listeners = Lists.newArrayList();
+	
 	private IPeerDictionary peerDictionary;
 	private ILoadBalancingLock lock;
 	private IPeerCommunicator peerCommunicator;
@@ -37,6 +41,25 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 		this.peerCommunicator = OsgiServiceProvider.getPeerCommunicator();
 	}
 	
+	
+	public synchronized void addListener(IQueryTransmissionHandlerListener listener) {
+		if(listeners.contains(listener))
+			return;
+		listeners.add(listener);
+	}
+	
+	public synchronized void removeListener(IQueryTransmissionHandlerListener listener) {
+		if(!listeners.contains(listener))
+			return;
+		listeners.remove(listener);
+	}
+	
+	public synchronized void notifyListeners() {
+		List<IQueryTransmissionHandlerListener> listenersCopy = new ArrayList<IQueryTransmissionHandlerListener>(listeners);
+		for(IQueryTransmissionHandlerListener listener : listenersCopy) {
+			listener.transmissionsFinished();
+		}
+	}
 
 	@Override
 	public void tranmissionFailed(QueryTransmission transmission) {
@@ -54,6 +77,7 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 				}
 
 				lock.releaseLocalLock();
+				notifyListeners();
 			}
 	}
 
@@ -72,6 +96,7 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 					LOG.warn("Query ID {} failed to transmit.",queryID);
 				}
 				lock.releaseLocalLock();
+				notifyListeners();
 			}
 	}
 
@@ -79,7 +104,7 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 	@Override
 	public void localLockFailed(QueryTransmission transmission) {
 		try {
-			LOG.debug("Acquiring Local Lock failed. Waiting for {} milliseconds.",OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
+			LOG.warn("Acquiring Local Lock failed. Waiting for {} milliseconds.",OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
 			Thread.sleep(OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
 			transmission.initiateTransmission(this);
 		} catch (InterruptedException e) {
@@ -105,5 +130,7 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 	public List<Integer> getFailedTransmissions() {
 		return failedTransmissionQueryIDs;
 	}
+	
+	
 
 }

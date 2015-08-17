@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,15 +84,19 @@ public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 		return allocationResult;
 	}
 
+	
 	@Override
+	/**
+	 * In this implementation the previous allocation map is ignored and faulty peers are removed from known Peers. 
+	 * Apart from that, the allocation is called.
+	 */
 	public Map<ILogicalQueryPart, PeerID> reallocate(
 			Map<ILogicalQueryPart, PeerID> previousAllocationMap,
 			Collection<PeerID> faultPeers, Collection<PeerID> knownRemotePeers,
 			PeerID localPeerID) throws QueryPartAllocationException {
 		
-		//TODO implement
-		
-		return null;
+		//FIXME is not implemented as this method is never used in Load Balancing 
+		throw new NotImplementedException("ReAllocation is not implemented in Dynamic Load Balancing Allocator.");
 	}
 	
 	private List<String> createAllocationParameters() {

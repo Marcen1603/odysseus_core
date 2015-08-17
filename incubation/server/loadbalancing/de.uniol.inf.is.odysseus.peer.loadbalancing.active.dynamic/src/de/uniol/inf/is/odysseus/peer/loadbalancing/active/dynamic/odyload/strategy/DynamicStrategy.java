@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServicePro
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.ICommunicatorChooser;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThreadListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQuerySelectionStrategy;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionHandlerListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.CommunicatorChooser.OdyLoadCommunicatorChooser;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.CostEstimationHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.GreedyQuerySelector;
@@ -51,24 +52,23 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
-public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThreadListener  {
+public class DynamicStrategy implements ILoadBalancingStrategy,
+		IMonitoringThreadListener, IQueryTransmissionHandlerListener {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DynamicStrategy.class);
 	private Object threadManipulationLock = new Object();
-	
+
 	private ILoadBalancingAllocator allocator;
 	private static ISession activeSession;
-	
-	
+
 	private QueryTransmissionHandler transmissionHandler;
-	
 
-	private List<Integer> failedAllocationQueryIDs = Lists.newArrayList();
-
+	private List<Integer> failedAllocationQueryIDs;
 
 	private MonitoringThread monitoringThread = null;
-	
+
+	private boolean firstAllocationTry = true;
 
 	/**
 	 * Gets currently active Session.
@@ -104,9 +104,10 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	}
 
 	private void startNewMonitoringThread() {
-		
-		IPeerResourceUsageManager usageManager = OsgiServiceProvider.getUsageManager();
-		
+
+		IPeerResourceUsageManager usageManager = OsgiServiceProvider
+				.getUsageManager();
+
 		if (usageManager == null) {
 			LOG.error("Could not start monitoring: No resource Usage Manager bound.");
 			return;
@@ -115,7 +116,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		synchronized (threadManipulationLock) {
 			if (monitoringThread == null) {
 				LOG.info("Starting to monitor Peer.");
-				monitoringThread = new MonitoringThread(usageManager,this);
+				monitoringThread = new MonitoringThread(usageManager, this);
 				monitoringThread.start();
 			} else {
 				LOG.info("Monitoring Thread already running.");
@@ -143,16 +144,18 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	}
 
 	private HashMap<Integer, IPhysicalQuery> getPhysicalQueries() {
-		
+
 		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		IExcludedQueriesRegistry excludedQueryRegistry = OsgiServiceProvider.getExcludedQueryRegistry();
+		IExcludedQueriesRegistry excludedQueryRegistry = OsgiServiceProvider
+				.getExcludedQueryRegistry();
 
 		HashMap<Integer, IPhysicalQuery> queries = new HashMap<Integer, IPhysicalQuery>();
 
 		for (int queryId : executor.getLogicalQueryIds(getActiveSession())) {
-			
-			//Ignore excluded Quries.
-			if(excludedQueryRegistry.isQueryIDExcludedFromLoadBalancing(queryId))
+
+			// Ignore excluded Quries.
+			if (excludedQueryRegistry
+					.isQueryIDExcludedFromLoadBalancing(queryId))
 				continue;
 			IPhysicalQuery query = executor.getExecutionPlan().getQueryById(
 					queryId);
@@ -164,126 +167,116 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 		return queries;
 	}
 
-	
-	
-	
 	@Override
-	public void triggerLoadBalancing(double cpuUsage, double memUsage, double netUsage) {
-		
-		Preconditions.checkNotNull(this.allocator,"No allocator bound.");
+	public void triggerLoadBalancing(double cpuUsage, double memUsage,
+			double netUsage) {
+
+		Preconditions.checkNotNull(this.allocator, "No allocator bound.");
 		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		
-		if(executor.getLogicalQueryIds(getActiveSession()).size()==0) {
+
+		if (executor.getLogicalQueryIds(getActiveSession()).size() == 0) {
 			LOG.warn("Load Balancing triggered, but no queries installed. Continuing monitoring.");
 			return;
 		}
-		
+
 		stopMonitoringThread();
 
+		firstAllocationTry = true;
+
 		LOG.info("Re-Allocation of queries triggered.");
-					
-		double cpuLoadToRemove = Math.max(0.0, cpuUsage-OdyLoadConstants.CPU_THRESHOLD);
-		double memLoadToRemove = Math.max(0.0, memUsage-OdyLoadConstants.MEM_THRESHOLD);
-		double netLoadToRemove = Math.max(0.0, netUsage-OdyLoadConstants.NET_THRESHOLD);
-		
-		
+
+		double cpuLoadToRemove = Math.max(0.0, cpuUsage
+				- OdyLoadConstants.CPU_THRESHOLD);
+		double memLoadToRemove = Math.max(0.0, memUsage
+				- OdyLoadConstants.MEM_THRESHOLD);
+		double netLoadToRemove = Math.max(0.0, netUsage
+				- OdyLoadConstants.NET_THRESHOLD);
+
 		Collection<Integer> queryIDs = getNotExcludedQueries();
-		
-		//Add Shared QueryID to every Query if needed.
-		for(int queryID : queryIDs) {
-			SharedQueryIDModifier.addSharedQueryIDIfNeccessary(queryID, getActiveSession());
+
+		// Add Shared QueryID to every Query if needed.
+		for (int queryID : queryIDs) {
+			SharedQueryIDModifier.addSharedQueryIDIfNeccessary(queryID,
+					getActiveSession());
 		}
-		
-		
+
 		QueryCostMap chosenResult;
 		try {
 			chosenResult = selectQueriesToRemove(cpuLoadToRemove,
 					memLoadToRemove, netLoadToRemove);
 		} catch (LoadBalancingException e) {
-			LOG.error("Exception in Allocation: {}",e.getMessage());
+			LOG.error("Exception in Allocation: {}", e.getMessage());
 			e.printStackTrace();
 			startNewMonitoringThread();
 			return;
 		}
-			
 
 		allocateAndTransferQueries(chosenResult);
-		
+
 	}
-	
+
 	/***
-	 * Transforms Sinks and Sources in Failed Queries to JxtaReceiver-Sender Constructs as this might have been a reason for the failure...
+	 * Transforms Sinks and Sources in Failed Queries to JxtaReceiver-Sender
+	 * Constructs as this might have been a reason for the failure...
 	 */
-	@SuppressWarnings("unused")
-	private void transformFailedQueries() {
-		
-		IP2PNetworkManager networkManager = OsgiServiceProvider.getNetworkManager();
-		
-		
-		if(failedAllocationQueryIDs!=null) {
-			for(int queryID : failedAllocationQueryIDs) {
-				if(TransformationHelper.hasRealSinks(queryID)) {
-					SinkTransformer.replaceSinks(queryID, networkManager.getLocalPeerID(), getActiveSession());
-				}
-				if(TransformationHelper.hasRealSources(queryID)) {
-					SourceTransformer.replaceSources(queryID, networkManager.getLocalPeerID(), getActiveSession());
-				}
+	private void transformFailedQueries(List<Integer> failedQueries) {
+
+		IP2PNetworkManager networkManager = OsgiServiceProvider
+				.getNetworkManager();
+
+		for (int queryID : failedQueries) {
+			if (TransformationHelper.hasRealSinks(queryID)) {
+				SinkTransformer.replaceSinks(queryID,
+						networkManager.getLocalPeerID(), getActiveSession());
 			}
-		}
-		if(transmissionHandler!=null) {
-			for(int queryID : transmissionHandler.getFailedTransmissions()) {
-				if(TransformationHelper.hasRealSinks(queryID)) {
-					SinkTransformer.replaceSinks(queryID, networkManager.getLocalPeerID(), getActiveSession());
-				}
-				if(TransformationHelper.hasRealSources(queryID)) {
-					SourceTransformer.replaceSources(queryID, networkManager.getLocalPeerID(), getActiveSession());
-				}
+			if (TransformationHelper.hasRealSources(queryID)) {
+				SourceTransformer.replaceSources(queryID,
+						networkManager.getLocalPeerID(), getActiveSession());
 			}
 		}
 	}
-	
-	
 
 	public void allocateAndTransferQueries(QueryCostMap chosenResult) {
-		
+
 		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		IPeerDictionary peerDictionary = OsgiServiceProvider.getPeerDictionary();
-		IP2PNetworkManager networkManager = OsgiServiceProvider.getNetworkManager();
-		
-		HashMap<ILogicalQueryPart,Integer> queryPartIDMapping = new HashMap<ILogicalQueryPart,Integer>();
-		
+		IPeerDictionary peerDictionary = OsgiServiceProvider
+				.getPeerDictionary();
+		IP2PNetworkManager networkManager = OsgiServiceProvider
+				.getNetworkManager();
+
+		HashMap<ILogicalQueryPart, Integer> queryPartIDMapping = new HashMap<ILogicalQueryPart, Integer>();
+
 		for (int queryId : chosenResult.getQueryIds()) {
-			ILogicalQuery query = executor.getLogicalQueryById(queryId, getActiveSession());
+			ILogicalQuery query = executor.getLogicalQueryById(queryId,
+					getActiveSession());
 			ArrayList<ILogicalOperator> operators = new ArrayList<ILogicalOperator>();
 			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
-			queryPartIDMapping.put(new LogicalQueryPart(operators),queryId);
+			queryPartIDMapping.put(new LogicalQueryPart(operators), queryId);
 		}
-			
-		
-		if(chosenResult.getQueryIds().size()==0) {
+
+		if (chosenResult.getQueryIds().size() == 0) {
 			LOG.error("No Queries to remove.");
 			startNewMonitoringThread();
 			return;
 		}
-		
 
 		Collection<PeerID> knownRemotePeers = peerDictionary.getRemotePeerIDs();
-		
-		allocateQueries(networkManager.getLocalPeerID(), chosenResult, queryPartIDMapping,
-				knownRemotePeers);
-		
-		if(transmissionHandler!=null) {
+
+		allocateQueries(networkManager.getLocalPeerID(), chosenResult,
+				queryPartIDMapping, knownRemotePeers);
+
+		if (transmissionHandler != null) {
+			transmissionHandler.addListener(this);
 			transmissionHandler.startTransmissions();
-		}
-		else {
+		} else {
+			LOG.info("No transmission to do... Restarting Monitoring Thread.");
 			startNewMonitoringThread();
 		}
 	}
-	
 
 	private void stopMonitoringThread() {
-		synchronized(threadManipulationLock) {
-			if(monitoringThread!=null) {
+		synchronized (threadManipulationLock) {
+			if (monitoringThread != null) {
 				monitoringThread.removeListener(this);
 				monitoringThread.setInactive();
 				monitoringThread = null;
@@ -292,28 +285,39 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	}
 
 	private QueryCostMap selectQueriesToRemove(double cpuLoadToRemove,
-			double memLoadToRemove, double netLoadToRemove) throws LoadBalancingException {
+			double memLoadToRemove, double netLoadToRemove)
+			throws LoadBalancingException {
 		QueryCostMap allQueries = generateCostMapForAllQueries();
 		IQuerySelectionStrategy greedySelector = new GreedyQuerySelector();
-		QueryCostMap greedyResult = greedySelector.selectQueries(allQueries.clone(),cpuLoadToRemove, memLoadToRemove, netLoadToRemove);
-		IQuerySelectionStrategy simulatedAnnealingSelector = new SimulatedAnnealingQuerySelector(greedyResult);
-		QueryCostMap simulatedAnnealingResult =  simulatedAnnealingSelector.selectQueries(allQueries.clone(), cpuLoadToRemove, memLoadToRemove, netLoadToRemove);
-			
+		QueryCostMap greedyResult = greedySelector.selectQueries(
+				allQueries.clone(), cpuLoadToRemove, memLoadToRemove,
+				netLoadToRemove);
+		IQuerySelectionStrategy simulatedAnnealingSelector = new SimulatedAnnealingQuerySelector(
+				greedyResult);
+		QueryCostMap simulatedAnnealingResult = simulatedAnnealingSelector
+				.selectQueries(allQueries.clone(), cpuLoadToRemove,
+						memLoadToRemove, netLoadToRemove);
+
 		QueryCostMap chosenResult;
-		if(simulatedAnnealingResult == null) {
+		if (simulatedAnnealingResult == null) {
 			LOG.info("No feasible simulated Annealing Result found. Using Greedy Result.");
 			chosenResult = greedyResult;
-		}
-		else if(greedyResult.getCosts()<simulatedAnnealingResult.getCosts()) {
-			LOG.info("Greedy result is better than Simulated Annealing result ({}<{}), choosing Greedy result.",greedyResult.getCosts(),simulatedAnnealingResult.getCosts());
+		} else if (greedyResult.getCosts() < simulatedAnnealingResult
+				.getCosts()) {
+			LOG.info(
+					"Greedy result is better than Simulated Annealing result ({}<{}), choosing Greedy result.",
+					greedyResult.getCosts(),
+					simulatedAnnealingResult.getCosts());
 			chosenResult = greedyResult;
-		}
-		else {
-			LOG.info("Simulated Annealing result is better than Greedy result ({}<{}), choosing Simulated Annealing result.",simulatedAnnealingResult.getCosts(),greedyResult.getCosts());
+		} else {
+			LOG.info(
+					"Simulated Annealing result is better than Greedy result ({}<{}), choosing Simulated Annealing result.",
+					simulatedAnnealingResult.getCosts(),
+					greedyResult.getCosts());
 			chosenResult = simulatedAnnealingResult;
 		}
-			
-		if(allocator==null) {
+
+		if (allocator == null) {
 			throw new LoadBalancingException("No Allocator set.");
 		}
 		return chosenResult;
@@ -322,113 +326,163 @@ public class DynamicStrategy implements ILoadBalancingStrategy, IMonitoringThrea
 	private void allocateQueries(PeerID localPeerID, QueryCostMap chosenResult,
 			HashMap<ILogicalQueryPart, Integer> queryPartIDMapping,
 			Collection<PeerID> knownRemotePeers) {
-		
+
 		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		IPeerDictionary peerDictionary = OsgiServiceProvider.getPeerDictionary();
-		
+		IPeerDictionary peerDictionary = OsgiServiceProvider
+				.getPeerDictionary();
+
 		failedAllocationQueryIDs = Lists.newArrayList();
-		
+
 		int firstQueryId = chosenResult.getQueryIds().get(0);
-			
-		//Parameter Query is used to get Build Configuration...
-		ILogicalQuery query = executor.getLogicalQueryById(firstQueryId, getActiveSession());
-			
-		
-			
+
+		// Parameter Query is used to get Build Configuration...
+		ILogicalQuery query = executor.getLogicalQueryById(firstQueryId,
+				getActiveSession());
+
 		try {
-			Map<ILogicalQueryPart,PeerID> allocationMap = allocator.allocate(queryPartIDMapping.keySet(), query, knownRemotePeers, localPeerID);
-			
-			if(LOG.isDebugEnabled()) {
+			Map<ILogicalQueryPart, PeerID> allocationMap = allocator.allocate(
+					queryPartIDMapping.keySet(), query, knownRemotePeers,
+					localPeerID);
+
+			if (LOG.isDebugEnabled()) {
 				LOG.debug("Allocation finished.");
 				LOG.debug("Local PID is {}", localPeerID.toString());
 				for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
-					if(allocationMap.get(queryPart).equals(localPeerID)) {
-						LOG.warn("No other Peer wanted to take Query {}.",queryPartIDMapping.get(queryPart));
-						failedAllocationQueryIDs.add(queryPartIDMapping.get(queryPart));
-						
-					}
-					else {
-						LOG.debug("({} goes to Peer {}",queryPartIDMapping.get(queryPart),peerDictionary.getRemotePeerName(allocationMap.get(queryPart)));
+					if (allocationMap.get(queryPart).equals(localPeerID)) {
+						LOG.warn("No other Peer wanted to take Query {}.",
+								queryPartIDMapping.get(queryPart));
+						failedAllocationQueryIDs.add(queryPartIDMapping
+								.get(queryPart));
+
+					} else {
+						LOG.debug("({} goes to Peer {}", queryPartIDMapping
+								.get(queryPart),
+								peerDictionary.getRemotePeerName(allocationMap
+										.get(queryPart)));
 					}
 				}
 			}
-			
+
 			ICommunicatorChooser communicatorChooser = new OdyLoadCommunicatorChooser();
-			
-			HashMap<Integer,ILoadBalancingCommunicator> communicatorMapping = communicatorChooser.chooseCommunicators(chosenResult.getQueryIds(),getActiveSession());
-			
+
+			HashMap<Integer, ILoadBalancingCommunicator> communicatorMapping = communicatorChooser
+					.chooseCommunicators(chosenResult.getQueryIds(),
+							getActiveSession());
+
 			this.transmissionHandler = new QueryTransmissionHandler();
-			
+
 			for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
-				//Create a Query Transmission handler for every  transmission we have to do.
+				// Create a Query Transmission handler for every transmission we
+				// have to do.
 				int queryId = queryPartIDMapping.get(queryPart);
 				PeerID slavePeerId = allocationMap.get(queryPart);
-				if(slavePeerId.equals(localPeerID))
+				if (slavePeerId.equals(localPeerID))
 					continue;
-				ILoadBalancingCommunicator communicator = communicatorMapping.get(queryId);
-				transmissionHandler.addTransmission(queryId,slavePeerId,communicator);
+				ILoadBalancingCommunicator communicator = communicatorMapping
+						.get(queryId);
+				transmissionHandler.addTransmission(queryId, slavePeerId,
+						communicator);
 			}
 
-			
 		} catch (QueryPartAllocationException e) {
-			LOG.error("Could not allocate Query Parts: {}",e.getMessage());
+			LOG.error("Could not allocate Query Parts: {}", e.getMessage());
 			e.printStackTrace();
 		}
-		
-		
+
 	}
-	
-	
 
-	
-	
 	public QueryCostMap generateCostMapForAllQueries() {
-		
-		HashMap<Integer,IPhysicalQuery> queries = getPhysicalQueries();
-		
-		QueryCostMap queryCostMap = new QueryCostMap();
-		//Get cost and load information for each query.
-		for (int queryId : queries.keySet()) {
-			
-			Set<IPhysicalOperator> operatorList = queries.get(queryId).getAllOperators();
 
-			CostEstimationHelper.addQueryToCostMap(queryCostMap, queryId, operatorList);
+		HashMap<Integer, IPhysicalQuery> queries = getPhysicalQueries();
+
+		QueryCostMap queryCostMap = new QueryCostMap();
+		// Get cost and load information for each query.
+		for (int queryId : queries.keySet()) {
+
+			Set<IPhysicalOperator> operatorList = queries.get(queryId)
+					.getAllOperators();
+
+			CostEstimationHelper.addQueryToCostMap(queryCostMap, queryId,
+					operatorList);
 		}
 		return queryCostMap;
 	}
 
-	
-
-
-
 	@Override
 	public void forceLoadBalancing() throws LoadBalancingException {
-		triggerLoadBalancing(OdyLoadConstants.CPU_THRESHOLD+0.01, OdyLoadConstants.MEM_THRESHOLD+0.01, OdyLoadConstants.NET_THRESHOLD+0.01);
-		
-	}
-	
+		triggerLoadBalancing(OdyLoadConstants.CPU_THRESHOLD + 0.01,
+				OdyLoadConstants.MEM_THRESHOLD + 0.01,
+				OdyLoadConstants.NET_THRESHOLD + 0.01);
 
-	
+	}
+
 	private Collection<Integer> getNotExcludedQueries() {
-		
+
 		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		IExcludedQueriesRegistry excludedQueryRegistry = OsgiServiceProvider.getExcludedQueryRegistry();
-		
-		Collection<Integer> queryIDs =  executor.getLogicalQueryIds(getActiveSession());
+		IExcludedQueriesRegistry excludedQueryRegistry = OsgiServiceProvider
+				.getExcludedQueryRegistry();
+
+		Collection<Integer> queryIDs = executor
+				.getLogicalQueryIds(getActiveSession());
 		Iterator<Integer> iter = queryIDs.iterator();
-		while(iter.hasNext()) {
+		while (iter.hasNext()) {
 			int nextQId = iter.next();
-			if(excludedQueryRegistry.isQueryIDExcludedFromLoadBalancing(nextQId)) {
+			if (excludedQueryRegistry
+					.isQueryIDExcludedFromLoadBalancing(nextQId)) {
 				iter.remove();
 			}
 		}
 		return queryIDs;
 	}
-	
 
-	
+	@Override
+	public void transmissionsFinished() {
 
+		List<Integer> queriesToReprocess = Lists.newArrayList();
+
+		transmissionHandler.removeListener(this);
+		List<Integer> failedTransmissions = transmissionHandler
+				.getFailedTransmissions();
+		transmissionHandler = null;
+
+		if (failedTransmissions != null) {
+			queriesToReprocess.addAll(failedTransmissions);
+		}
+		if (failedAllocationQueryIDs != null) {
+			queriesToReprocess.addAll(failedAllocationQueryIDs);
+		}
+
+		if (firstAllocationTry && queriesToReprocess.size() > 0) {
+			LOG.debug("Second try.");
+			reallocateAndTransmitQueries(queriesToReprocess);
+		} else {
+			LOG.info("Load Balancing Process finished. Restarting Monitoring.");
+			startNewMonitoringThread();
+		}
+
+	}
+
+	private void reallocateAndTransmitQueries(List<Integer> queriesToReprocess) {
+
+		firstAllocationTry = false;
+
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+
+		transformFailedQueries(queriesToReprocess);
+
+		QueryCostMap costMapOfFailedQueries = new QueryCostMap();
+
+		// Build new CostMap
+		for (int queryID : queriesToReprocess) {
+			Set<IPhysicalOperator> operatorsInQuery = executor
+					.getExecutionPlan().getQueryById(queryID).getAllOperators();
+			CostEstimationHelper.addQueryToCostMap(costMapOfFailedQueries,
+					queryID, operatorsInQuery);
+		}
+
+		// And allocate another time...
+		allocateAndTransferQueries(costMapOfFailedQueries);
+
+	}
 
 }
-
-
