@@ -67,7 +67,14 @@ public class PeerServiceBinding {
 	
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
-
+		
+		//TODO This is a quickfix to avoid troubles in Peer Server Product.
+		//If Network is already started before Listener is added (e.g. when lazy loading), register Advertimesment nonetheless.
+		if(serv.isStarted()) {
+			AdvertisementFactory.registerAdvertisementInstance(WebserviceAdvertisement.getAdvertisementType(), new WebserviceAdvertisementInstantiator());
+			new WebserviceAdvertisementSender().publishWebserviceAdvertisement(jxtaServicesProvider, p2pNetworkManager.getLocalPeerID(),p2pNetworkManager.getLocalPeerGroupID());
+			PeerServiceBinding.getP2PNetworkManager().addAdvertisementListener(webserviceAdvListener);
+		}
 		
 		p2pNetworkManager.addListener(new IP2PNetworkListener() {
 			
