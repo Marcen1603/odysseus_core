@@ -182,6 +182,7 @@ public class OdyLoadConsole implements CommandProvider {
 	
 	public void _allocate(CommandInterpreter ci) {
 		
+		
 		ILoadBalancingAllocatorRegistry allocatorRegistry = OsgiServiceProvider.getAllocatorRegistry();
 		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		IPeerDictionary peerDictionary = OsgiServiceProvider.getPeerDictionary();

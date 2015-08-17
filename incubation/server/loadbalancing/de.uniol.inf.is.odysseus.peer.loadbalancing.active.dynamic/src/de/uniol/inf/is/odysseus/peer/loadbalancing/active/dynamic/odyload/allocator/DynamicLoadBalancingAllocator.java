@@ -10,6 +10,8 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -53,6 +55,8 @@ public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 			Collection<ILogicalQueryPart> queryParts, ILogicalQuery query,
 			Collection<PeerID> knownRemotePeers, PeerID localPeerID)
 			throws QueryPartAllocationException {
+		
+		Preconditions.checkNotNull(surveyAllocator,"Survey Allocator not bound.");
 		
 		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
