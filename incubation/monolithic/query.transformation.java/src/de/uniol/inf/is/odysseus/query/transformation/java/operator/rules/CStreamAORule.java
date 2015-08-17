@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvide
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
@@ -16,32 +15,14 @@ import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerP
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractRule;
+import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCStreamAORule;
 
-public class TStreamAORule extends AbstractRule{
+public class CStreamAORule extends AbstractCStreamAORule{
 	
-	public TStreamAORule() {
-		super(TStreamAORule.class.getName(), "Java");
+	public CStreamAORule() {
+		super(CStreamAORule.class.getName(), "Java");
 	}
 	
-	
-	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
-			TransformationConfiguration transformationConfiguration) {
-		
-		if(logicalOperator instanceof StreamAO){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-
-	@Override
-	public Class<?> getConditionClass() {
-		return StreamAO.class;
-	}
-
 
 	@Override
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {

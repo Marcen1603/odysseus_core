@@ -6,36 +6,20 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractRule;
+import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCSelectAORule;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
-public class TSelectAORule extends AbstractRule{
+public class CSelectAORule extends AbstractCSelectAORule{
 
-	public TSelectAORule() {
-		super(TSelectAORule.class.getName(), "Java");
+	public CSelectAORule() {
+		super(CSelectAORule.class.getName(), "Java");
 	}
 
-	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
-			TransformationConfiguration transformationConfiguration) {
-		if(logicalOperator instanceof SelectAO){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-
-	@Override
-	public Class<?> getConditionClass() {
-		return SelectAO.class;
-	}
 
 	@Override
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {

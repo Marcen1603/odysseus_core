@@ -2,59 +2,24 @@ package de.uniol.inf.is.odysseus.query.transformation.java.operator.rules;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractRule;
+import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCCSVFileSinkRule;
 
-public class TCSVFileSinkRule extends AbstractRule {
+public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule {
 	
-	public TCSVFileSinkRule() {
-		super(TCSVFileSinkRule.class.getName(), "Java");
-	}
-	
-	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
-			TransformationConfiguration transformationConfiguration) {
-		
-		if(logicalOperator instanceof AbstractSenderAO){
-			
-			AbstractSenderAO operator = (AbstractSenderAO) logicalOperator;
-			
-				if (operator.getWrapper() != null) {
-						if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
-								.getWrapper())) {
-							return true;
-						}
-						if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator
-								.getWrapper())) {
-							return true;
-						}
-				}
-	
-			return false;
-			
-		}
-		
-		return false;
-	}
-
-
-	@Override
-	public Class<?> getConditionClass() {
-		return AbstractSenderAO.class;
+	public CCSVFileSinkRule() {
+		super(CCSVFileSinkRule.class.getName(), "Java");
 	}
 
 	@Override
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
-	CodeFragmentInfo csvFileSink = new CodeFragmentInfo();
+		CodeFragmentInfo csvFileSink = new CodeFragmentInfo();
 		
 		String operatorVariable = TransformationInformation.getInstance().getVariable(operator);
 	
@@ -81,6 +46,6 @@ public class TCSVFileSinkRule extends AbstractRule {
 		
 		return csvFileSink;
 	}
-
+	
 
 }

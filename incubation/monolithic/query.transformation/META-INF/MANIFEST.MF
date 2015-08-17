@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator.sink,
  de.uniol.inf.is.odysseus.core.server.planmanagement,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
  de.uniol.inf.is.odysseus.core.server.planmanagement.query,

@@ -1,0 +1,34 @@
+package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+
+public abstract class AbstractCStreamAORule extends AbstractRule{
+	
+	public AbstractCStreamAORule(String name, String targetPlatform) {
+		super(name,targetPlatform );
+	}
+	
+	
+	@Override
+	public boolean isExecutable(ILogicalOperator logicalOperator,
+			TransformationConfiguration transformationConfiguration) {
+		
+		if(logicalOperator instanceof StreamAO){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+	@Override
+	public Class<?> getConditionClass() {
+		return StreamAO.class;
+	}
+
+
+
+
+}

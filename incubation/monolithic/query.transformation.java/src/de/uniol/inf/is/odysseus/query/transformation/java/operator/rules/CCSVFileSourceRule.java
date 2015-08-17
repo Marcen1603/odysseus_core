@@ -6,51 +6,22 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.Utils;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractRule;
+import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCCSVFileSourceRule;
 
-public class TCSVFileSourceRule extends AbstractRule{
+public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 
-	public TCSVFileSourceRule() {
-		super(TCSVFileSourceRule.class.getName(), "java");
-	}
-	
-	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
-			TransformationConfiguration transformationConfiguration) {
-		
-		if(logicalOperator instanceof AbstractAccessAO){
-			
-			AbstractAccessAO operator = (AbstractAccessAO) logicalOperator;
-			if (operator.getWrapper() != null) {
-				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-					return true;
-				}
-				if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator.getWrapper())) {
-					return true;
-				}
-			}
-		}
-	
-		return false;
-	}
-
-
-	@Override
-	public Class<?> getConditionClass() {
-		return AbstractAccessAO.class;
+	public CCSVFileSourceRule() {
+		super(CCSVFileSourceRule.class.getName(), "java");
 	}
 
 	@Override
@@ -93,5 +64,8 @@ public class TCSVFileSourceRule extends AbstractRule{
 		
 		return csvFileSource;
 	}
+	
+
+
 
 }
