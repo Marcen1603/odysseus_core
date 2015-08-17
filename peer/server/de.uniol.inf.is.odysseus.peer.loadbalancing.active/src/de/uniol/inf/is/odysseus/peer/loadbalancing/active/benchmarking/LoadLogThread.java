@@ -2,10 +2,22 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.benchmarking;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -27,13 +39,17 @@ public class LoadLogThread extends Thread {
 	
 	private boolean isActive = true;
 	private IPeerResourceUsageManager usageManager;
+	private IServerExecutor executor;
+	private IP2PNetworkManager networkManager;
 	
 	public void setInactive() {
 		isActive = false;
 	}
 	
-	public LoadLogThread(IPeerResourceUsageManager usageManager, String filename) {
+	public LoadLogThread(IPeerResourceUsageManager usageManager, IServerExecutor executor, IP2PNetworkManager networkManager,String filename) {
 		this.usageManager = usageManager;
+		this.executor = executor;
+		this.networkManager = networkManager;
 		this.filename = filename;
 	}
 	
@@ -56,7 +72,15 @@ public class LoadLogThread extends Thread {
 			
 			double netUsage = (usage.getNetOutputRate()+usage.getNetInputRate())/usage.getNetBandwidthMax();
 			sb.append(netUsage);
+			sb.append(SEPERATOR);
+			
+			Pair<Integer,Integer> senderReceiverCount = getExternalJxtaOperatorCount();
+			sb.append(senderReceiverCount.getE1());
+			sb.append(SEPERATOR);
+			
+			sb.append(senderReceiverCount.getE2());
 			sb.append(LINEBREAK);
+			
 			counter++;
 			if(counter==WRITE_BULK_SIZE) {
 				flushToFile();
@@ -96,5 +120,40 @@ public class LoadLogThread extends Thread {
 	public synchronized void stopThread() {
 		this.isActive = false;
 	}
+	
+	
+
+	@SuppressWarnings("rawtypes")
+	private Pair<Integer,Integer> getExternalJxtaOperatorCount() {
+		
+		String localPID = networkManager.getLocalPeerID().toString();
+
+		int senderCount=0;
+		int receiverCount=0;
+		
+		List<IPhysicalOperator> allOperatorsOnPeer = Lists.newArrayList();
+		
+		for(IPhysicalQuery query : executor.getExecutionPlan().getQueries()) {
+			allOperatorsOnPeer.addAll(query.getAllOperators());
+		}
+		
+		
+		Set<IPhysicalOperator> allOperatorsOnPeerSet = new HashSet<IPhysicalOperator>(allOperatorsOnPeer);
+	
+		for(IPhysicalOperator op : allOperatorsOnPeerSet) {
+			if(op instanceof JxtaSenderPO)  {
+				if(((JxtaSenderPO)op).getPeerIDString().equals(localPID))
+					continue;
+				senderCount++;
+			}
+			if(op instanceof JxtaReceiverPO) {
+				if(((JxtaReceiverPO)op).getPeerIDString().equals(localPID))
+				receiverCount++;
+			}
+		}
+		
+		return new Pair<Integer,Integer>(senderCount,receiverCount);
+	}
+	
 
 }
