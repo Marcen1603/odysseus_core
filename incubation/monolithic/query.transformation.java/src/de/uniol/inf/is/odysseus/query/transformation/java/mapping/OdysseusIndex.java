@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.FileFinder;
+import de.uniol.inf.is.odysseus.query.transformation.utils.FileFinder;
 
 public class OdysseusIndex {
 	

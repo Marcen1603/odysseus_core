@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,11 +20,16 @@ import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.transformation.executor.IExecutor;
 import de.uniol.inf.is.odysseus.query.transformation.java.Activator;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.UnZip;
+import de.uniol.inf.is.odysseus.query.transformation.utils.UnZip;
 
 
 //TODO add mac support
@@ -40,11 +46,14 @@ public class JavaFileWrite {
 	private String osgiBindCode;
 	private String bodyCode;
 	private String startCode;
+	private IExecutor executor;
+	
+	private Map<ILogicalOperator,Map<String,String>> operatorConfigurationList;
 	
 	private static Logger LOG = LoggerFactory.getLogger(JavaFileWrite.class);
 	
 	
-	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode){
+	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, IExecutor executor){
 		this.fileName = fileName;
 		this.tempPath = transformationParameter.getTempDirectory();
 		this.transformationParameter = transformationParameter;
@@ -52,6 +61,8 @@ public class JavaFileWrite {
 		this.osgiBindCode = osgiBindCode;
 		this.bodyCode = bodyCode;
 		this.startCode = startCode;
+		this.operatorConfigurationList = operatorConfigurationList;
+		this.executor = executor;
 		
 	}
 
@@ -68,6 +79,12 @@ public class JavaFileWrite {
 		//create Utils.java file
 		createUtilsJavaFile();
 		
+		//create executor file
+		createExecutorFile();
+		
+		//create operatorconfiguration files
+		createOperationConfigurationFiles();
+		
 		//create build.xml file
 		createBuildScript();
 		
@@ -75,7 +92,14 @@ public class JavaFileWrite {
 		createClassFile();
 	}
 	
+
+	private void createExecutorFile() {
 	
+		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"\\src\\main");
+		fileHelper.writeToFile(executor.getExecutorCode());
+		
+	}
+
 	private void unzipProjectTemplate(){
 		UnZip unZip = new UnZip();
 		
@@ -251,6 +275,30 @@ public class JavaFileWrite {
             copyJars.add(name+".jar");
 		}
 	
+	}
+	
+	private void createOperationConfigurationFiles() {
+		
+		for (Entry<ILogicalOperator, Map<String, String>> entry : operatorConfigurationList.entrySet())
+		{
+		    System.out.println(entry.getKey() + "/" + entry.getValue());
+		    
+		    String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(entry.getKey());
+		  
+		    Gson gson = new Gson();
+		    String json = gson.toJson(entry.getValue());
+		    
+			try {
+			 	FileWriter file = new FileWriter(tempPath+"\\"+operatorVariable+"PO.json");
+				file.write(json);
+				file.flush();
+				file.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    
+		}
 	}
 	
 

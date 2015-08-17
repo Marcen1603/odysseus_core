@@ -1,8 +1,12 @@
 package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
 
 public abstract class AbstractRule implements IOperatorRule {
@@ -40,6 +44,11 @@ public abstract class AbstractRule implements IOperatorRule {
 		for(SDFAttribute attribute : sdfSchema.getAttributes()){
 			transformationInformation.addDataHandler(attribute.getDatatype().toString());
 		}
+		
+	}
+
+	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
+			TransformationInformation transformationInformation) {
 		
 	}
 	

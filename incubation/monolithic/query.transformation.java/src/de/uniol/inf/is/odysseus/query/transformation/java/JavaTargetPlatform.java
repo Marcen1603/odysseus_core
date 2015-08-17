@@ -15,8 +15,8 @@ import de.uniol.inf.is.odysseus.query.transformation.java.filewriter.JavaFileWri
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.JavaEmulateOSGIBindings;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateJavaDefaultCode;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.EmulateJavaOSGIBindings;
 import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.IOperatorRule;
@@ -56,7 +56,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	
 		bodyCode = new StringBuilder();
 
-		JavaEmulateOSGIBindings javaEmulateOSGIBindings = new JavaEmulateOSGIBindings();
+		EmulateJavaOSGIBindings javaEmulateOSGIBindings = new EmulateJavaOSGIBindings();
 		
 		walkTroughLogicalPlan(transformationInforamtion.getSourceOpList(),parameter, transformationConfiguration);
 		
@@ -67,16 +67,12 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
 		
 		//generate start code
-		CodeFragmentInfo startStreams = CreateDefaultCode.codeForStartStreams(transformationInforamtion.getSinkOpList(), transformationInforamtion.getSourceOpList(), parameter.getExecutor());
+		CodeFragmentInfo startStreams = CreateJavaDefaultCode.codeForStartStreams(transformationInforamtion.getSinkOpList(), transformationInforamtion.getSourceOpList(), parameter.getExecutor());
 		
-		//generate executor code and files
-		ExecutorRegistry.getExecutor("Java", parameter.getExecutor()).createNeededFiles(parameter);
-		
-	
 		importList.addAll(startStreams.getImports());
 	
 		updateProgressBar(75, "Create Java files");
-		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBindCode,bodyCode.toString(),startStreams.getCode());
+		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBindCode,bodyCode.toString(),startStreams.getCode(), transformationInforamtion.getOperatorConfigurationList(), ExecutorRegistry.getExecutor("Java", parameter.getExecutor()));
 		
 		try {
 			updateProgressBar(80, "Create Java project");
@@ -117,7 +113,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				OperatorTransformationInformation.getInstance().addOperator(operator);
 
 				//generate the default code e.g. SDFSchema
-				CodeFragmentInfo initOp = CreateDefaultCode.initOperator(operator);
+				CodeFragmentInfo initOp = CreateJavaDefaultCode.initOperator(operator);
 				String operatorCode = initOp.getCode();
 				
 				//add imports for default code
@@ -139,7 +135,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				
 			
 				//generate subscription
-				CodeFragmentInfo  subscription = CreateDefaultCode.generateSubscription(operator);
+				CodeFragmentInfo  subscription = CreateJavaDefaultCode.generateSubscription(operator);
 				bodyCode.append(subscription.getCode());	
 				importList.addAll(subscription.getImports());
 			}

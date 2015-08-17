@@ -22,5 +22,7 @@ public interface IOperatorRule {
 	public void analyseOperator(ILogicalOperator logicalOperator, TransformationInformation transformationInformation);
 	
 	public void addDataHandlerFromSDFSchema(ILogicalOperator logicalOperator, TransformationInformation transformationInformation);
+	
+	public void addOperatorConfiguration(ILogicalOperator logicalOperator, TransformationInformation transformationInformation);
 
 }

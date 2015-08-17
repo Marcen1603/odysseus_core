@@ -10,6 +10,9 @@ import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaSource;
 
+import de.uniol.inf.is.odysseus.query.transformation.utils.FileSearch;
+
+
 public class ReadJavaImports {
 	
 	public static Set<String> getImportsFromFileWithKnownLocation(String fileFullPath,String packageName){

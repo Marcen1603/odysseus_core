@@ -12,11 +12,11 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateDefaultCode;
+import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.Utils;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCCSVFileSourceRule;
+import de.uniol.inf.is.odysseus.query.transformation.utils.Utils;
 
 public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 
@@ -41,19 +41,15 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
 		
-		csvFileSource.addCodeFragmentInfo(CreateDefaultCode.codeForAccessFramework(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
-		
-		//Operator configfile test
-		
-		CreateDefaultCode.generateOperatorConfigfile(operatorVariable, csvFileSourceOP.getOptionsMap());
-		
+		csvFileSource.addCodeFragmentInfo(CreateJavaDefaultCode.codeForAccessFramework(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
+	
 		TimestampAO timestampAO = Utils.createTimestampAO(operator, null);
 		
 		StringTemplate accessPOTemplate = new StringTemplate("operator","accessPO");
 		accessPOTemplate.getSt().add("operatorVariable", operatorVariable);
 		csvFileSource.addCode(accessPOTemplate.getSt().render());
 	
-		csvFileSource.addCodeFragmentInfo(CreateDefaultCode.codeForRelationalTimestampAttributeTimeIntervalMFactory(operator, timestampAO));
+		csvFileSource.addCodeFragmentInfo(CreateJavaDefaultCode.codeForRelationalTimestampAttributeTimeIntervalMFactory(operator, timestampAO));
 
 		//add imports
 		csvFileSource.addImport(IMetaAttribute.class.getName());
@@ -64,6 +60,10 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 		
 		return csvFileSource;
 	}
+
+
+
+
 	
 
 

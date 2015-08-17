@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
@@ -49,6 +52,19 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 		transformationInformation.addProtocolHandler(csvFileSource.getProtocolHandler());
 		transformationInformation.addTransportHandler(csvFileSource.getTransportHandler());
 		
+	}
+	
+	
+	@Override
+	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
+			TransformationInformation transformationInformation) {
+		
+		CSVFileSource csvFileSourceOP = (CSVFileSource) logicalOperator;
+		Map<String,String> optionMap =  new HashMap<String,String>();
+		optionMap = csvFileSourceOP.getOptionsMap();
+		
+	
+		transformationInformation.addOperatorConfiguration(logicalOperator, optionMap);
 	}
 
 }

@@ -17,14 +17,25 @@ public class TransformationInformation {
 	private Map<String, String> mepFunctions = new HashMap<String, String>();
 	private Map<String, String> protocolHandler = new HashMap<String, String>();
 	private Map<String, String> transportHandler = new HashMap<String, String>();
+	
 	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
+
+	private Map<ILogicalOperator,Map<String,String>> operatorConfigurationList =  new HashMap<ILogicalOperator,Map<String,String>>();
 	
-	
+
 	private List<ILogicalOperator> sourceOPs = new ArrayList<ILogicalOperator>();
 	private List<ILogicalOperator> sinkOPs = new ArrayList<ILogicalOperator>();;
 	
 	private int uniqueId = 0;
 	
+	
+	public void addOperatorConfiguration(ILogicalOperator operator, Map<String,String> optionMap){
+		operatorConfigurationList.put(operator,optionMap);
+	}
+	
+	public Map<ILogicalOperator,Map<String,String>> getOperatorConfigurationList(){
+		return operatorConfigurationList;
+	}
 	
 	public void addSourceOp(ILogicalOperator sourceOP){
 		sourceOPs.add(sourceOP);

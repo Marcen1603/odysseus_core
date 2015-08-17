@@ -117,6 +117,7 @@ public class QueryTransformation {
 				
 				opTrans.analyseOperator(operator,transformationInformation);
 				opTrans.addDataHandlerFromSDFSchema(operator, transformationInformation);
+				opTrans.addOperatorConfiguration(operator, transformationInformation);
 
 			}
 		}

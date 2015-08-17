@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.transformation.java.utils;
+package de.uniol.inf.is.odysseus.query.transformation.utils;
 import static java.nio.file.FileVisitResult.CONTINUE;
 
 import java.io.IOException;

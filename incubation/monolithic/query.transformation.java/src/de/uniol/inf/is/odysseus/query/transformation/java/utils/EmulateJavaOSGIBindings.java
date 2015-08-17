@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.query.transformation.java.model.osgi.Component;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.osgi.ObjectFactory;
 
 
-public class JavaEmulateOSGIBindings {
+public class EmulateJavaOSGIBindings {
 	
 	
 	private List<String> neededImportList  = new ArrayList<String>();

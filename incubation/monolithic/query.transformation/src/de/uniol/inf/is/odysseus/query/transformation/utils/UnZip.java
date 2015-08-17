@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.transformation.java.utils;
+package de.uniol.inf.is.odysseus.query.transformation.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

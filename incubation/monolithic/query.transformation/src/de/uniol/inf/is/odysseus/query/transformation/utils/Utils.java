@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.transformation.java.utils;
+package de.uniol.inf.is.odysseus.query.transformation.utils;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
