@@ -16,4 +16,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  org.apache.kafka
 Service-Component: OSGI-INF/IncomingElementsRecoveryComponent.xml,
  OSGI-INF/KeywordProvider.xml
-Export-Package: de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder
+Export-Package: de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder,
+ de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator,
+ de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.physicaloperator

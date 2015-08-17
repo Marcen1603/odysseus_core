@@ -49,7 +49,7 @@ public class OperatorStateStore {
 	 * The file ending (incl. dot) of all file names, where operator states are
 	 * stored.
 	 */
-	private static final String cFileNameEnding = ".ops";
+	private static final String cFileNameEnding = ".operator";
 
 	/**
 	 * Stores the states of all {@link IStatefulPO}s of a physical query.
@@ -66,7 +66,7 @@ public class OperatorStateStore {
 		try (FileOutputStream fout = new FileOutputStream(file);
 				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
 			for (IStatefulPO operator : operators) {
-				oos.writeObject(operator.getState());
+				oos.writeObject((Serializable) operator.getState());
 				cLog.debug("Wrote state of '{}' to file '{}'", operator, file.getName());
 			}
 		}

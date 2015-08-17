@@ -2,8 +2,10 @@ package de.uniol.inf.is.odysseus.recovery.protectionpoints.internal;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -78,10 +80,19 @@ public class ProtectionPointsRecoveryComponent implements IRecoveryComponent, IP
 		component.mManager = ProtectionPointManagerRegistry.createFromConfig(config);
 		return component;
 	}
+	
+	/**
+	 * All queries (their ids), for which the protection point manager is already set.
+	 * @see ProtectionPointManagerRegistry#setProtectionPointManager(int, IProtectionPointManager)
+	 */
+	private final Set<Integer> mProcessedQueries = Sets.newHashSet();
 
 	@Override
 	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
-		// Nothing to do
+		for (ILogicalQuery query : queries) {
+			ProtectionPointManagerRegistry.setProtectionPointManager(query.getID(), this.mManager);
+			this.mProcessedQueries.add(new Integer(query.getID()));
+		}
 		return queries;
 	}
 
@@ -89,7 +100,9 @@ public class ProtectionPointsRecoveryComponent implements IRecoveryComponent, IP
 	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
 			List<ILogicalQuery> queries) {
 		for (ILogicalQuery query : queries) {
-			ProtectionPointManagerRegistry.setProtectionPointManager(query.getID(), this.mManager);
+			if(!this.mProcessedQueries.contains(new Integer(query.getID()))) {
+				ProtectionPointManagerRegistry.setProtectionPointManager(query.getID(), this.mManager);
+			}
 		}
 		return queries;
 	}

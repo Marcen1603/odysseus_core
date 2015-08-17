@@ -54,8 +54,7 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointHandle
  */
 @SuppressWarnings(value = { "nls" })
 public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>>
-		extends AbstractPipe<StreamObject, StreamObject> implements
-		IStatefulPO, IProtectionPointHandler {
+		extends AbstractPipe<StreamObject, StreamObject>implements IStatefulPO, IProtectionPointHandler {
 
 	/**
 	 * Abstract transfer handler just to avoid the need to implement all
@@ -64,8 +63,7 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	 * @author Michael Brand
 	 *
 	 */
-	protected abstract class AbstractSourceRecoveryTransferHandler implements
-			ITransferHandler<StreamObject> {
+	protected abstract class AbstractSourceRecoveryTransferHandler implements ITransferHandler<StreamObject> {
 
 		/**
 		 * Method for both StreamObjects and punctuations.
@@ -142,12 +140,10 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	private final IKafkaConsumer mBackupKafkaConsumer = new IKafkaConsumer() {
 
 		@Override
-		public void onNewMessage(ByteBuffer message, long offset)
-				throws Throwable {
+		public void onNewMessage(ByteBuffer message, long offset) throws Throwable {
 			synchronized (AbstractSourceRecoveryPO.this.mCurrentOffsets) {
 				AbstractSourceRecoveryPO.this.mCurrentOffsets.add(new Long(offset));
-				AbstractSourceRecoveryPO.this.mBackupProtocolHandler.process(0,
-						message);
+				AbstractSourceRecoveryPO.this.mBackupProtocolHandler.process(0, message);
 			}
 
 		}
@@ -163,11 +159,9 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 		@Override
 		public void transfer_intern(IStreamable object, int port) {
 			if (AbstractSourceRecoveryPO.this.mReference.equals(object)) {
-				AbstractSourceRecoveryPO.this.mOffset = AbstractSourceRecoveryPO.this.mCurrentOffsets
-						.getFirst();
+				AbstractSourceRecoveryPO.this.mOffset = AbstractSourceRecoveryPO.this.mCurrentOffsets.getFirst();
 				if (AbstractSourceRecoveryPO.this.mBackupKafkaAccess != null) {
-					AbstractSourceRecoveryPO.this.mBackupKafkaAccess
-							.interrupt();
+					AbstractSourceRecoveryPO.this.mBackupKafkaAccess.interrupt();
 					AbstractSourceRecoveryPO.this.mBackupKafkaAccess = null;
 				}
 			}
@@ -208,17 +202,15 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	@SuppressWarnings("unchecked")
 	protected IProtocolHandler<StreamObject> createProtocolHandler() {
 		IDataHandler<StreamObject> dataHandler = (IDataHandler<StreamObject>) DataHandlerRegistry
-				.getDataHandler(this.mSourceAccess.getDataHandler(),
-						this.mSourceAccess.getOutputSchema());
+				.getDataHandler(this.mSourceAccess.getDataHandler(), this.mSourceAccess.getOutputSchema());
 		OptionMap options = new OptionMap(this.mSourceAccess.getOptions());
 		IAccessPattern access = IAccessPattern.PUSH;
 		if (this.mSourceAccess.getWrapper().toLowerCase().contains("pull")) {
 			// XXX AccessPattern: Better way to determine the AccessPattern?
 			access = IAccessPattern.PULL;
 		}
-		return (IProtocolHandler<StreamObject>) ProtocolHandlerRegistry
-				.getInstance(this.mSourceAccess.getProtocolHandler(),
-						ITransportDirection.IN, access, options, dataHandler);
+		return (IProtocolHandler<StreamObject>) ProtocolHandlerRegistry.getInstance(
+				this.mSourceAccess.getProtocolHandler(), ITransportDirection.IN, access, options, dataHandler);
 	}
 
 	@Override
@@ -266,8 +258,7 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 					this.mBackupKafkaAccess = null;
 				}
 				this.mBackupKafkaAccess = new KafkaConsumerAccess(
-						this.mSourceAccess.getAccessAOName().getResourceName(),
-						this.mBackupKafkaConsumer);
+						this.mSourceAccess.getAccessAOName().getResourceName(), this.mBackupKafkaConsumer);
 				this.mBackupKafkaAccess.start();
 			}
 		}

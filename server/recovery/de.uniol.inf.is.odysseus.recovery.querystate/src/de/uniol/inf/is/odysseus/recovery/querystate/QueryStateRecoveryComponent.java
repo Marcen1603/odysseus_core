@@ -506,16 +506,20 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent,
 	private static String insertRecoveryNeededArgument(String queryText) {
 		String toInsert = " " + AbstractRecoveryExecutor.RECOVERY_NEEDED_KEY
 				+ "=true";
-		int keywordIndex = queryText.indexOf(RecoveryConfigKeyword.getName());
-		int endLineIndex = queryText.indexOf("\n", keywordIndex) - 1;
-		if (keywordIndex != -1 && endLineIndex > keywordIndex) {
+		int keywordIndex = -1;
+		String modifiedQueryText = queryText;
+		while((keywordIndex = modifiedQueryText.indexOf(RecoveryConfigKeyword.getName(), keywordIndex + 1)) != -1) {
+			int endLineIndex = modifiedQueryText.indexOf("\n", keywordIndex) - 1;
+			if(endLineIndex <= keywordIndex) {
+				break;
+			}
 			StringBuffer out = new StringBuffer();
-			out.append(queryText.substring(0, endLineIndex));
+			out.append(modifiedQueryText.substring(0, endLineIndex));
 			out.append(toInsert);
-			out.append(queryText.substring(endLineIndex));
-			return out.toString();
+			out.append(modifiedQueryText.substring(endLineIndex));
+			modifiedQueryText = out.toString();
 		}
-		return queryText;
+		return modifiedQueryText;
 	}
 
 	/**

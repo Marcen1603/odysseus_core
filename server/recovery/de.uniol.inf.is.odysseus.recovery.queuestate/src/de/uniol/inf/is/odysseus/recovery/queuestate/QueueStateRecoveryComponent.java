@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
@@ -21,6 +20,10 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -35,7 +38,8 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManager
  *
  */
 @SuppressWarnings(value = { "nls" })
-public class QueueStateRecoveryComponent implements IRecoveryComponent, IProtectionPointHandler {
+public class QueueStateRecoveryComponent
+		implements IRecoveryComponent, IProtectionPointHandler, IPlanModificationListener {
 
 	/**
 	 * The logger for this class.
@@ -58,9 +62,10 @@ public class QueueStateRecoveryComponent implements IRecoveryComponent, IProtect
 	 * @param executor
 	 *            The implementation to bind.
 	 */
-	public static void bindServerExecutor(IExecutor executor) {
+	public void bindServerExecutor(IExecutor executor) {
 		if (IServerExecutor.class.isInstance(executor)) {
 			cExecutor = Optional.of((IServerExecutor) executor);
+			((IServerExecutor) executor).addPlanModificationListener(this);
 		}
 	}
 
@@ -70,9 +75,10 @@ public class QueueStateRecoveryComponent implements IRecoveryComponent, IProtect
 	 * @param executor
 	 *            The implementation to unbind.
 	 */
-	public static void unbindServerExecutor(IExecutor executor) {
+	public void unbindServerExecutor(IExecutor executor) {
 		if (cExecutor.isPresent() && cExecutor.get() == executor) {
 			cExecutor = Optional.absent();
+			((IServerExecutor) executor).removePlanModificationListener(this);
 		}
 	}
 
@@ -81,39 +87,31 @@ public class QueueStateRecoveryComponent implements IRecoveryComponent, IProtect
 		return new QueueStateRecoveryComponent();
 	}
 
+	/**
+	 * The ids of all queries, recovery is activated for.
+	 */
+	private static final Set<Integer> cQueryIdsForRecovery = Sets.newHashSet();
+
 	@Override
 	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
-		if (!cExecutor.isPresent()) {
-			cLog.error("No executor bound!");
-			return queries;
+		for (ILogicalQuery query : queries) {
+			cQueryIdsForRecovery.add(new Integer(query.getID()));
 		}
-		// FIXME Test, if recovery of queue states works
-		List<ILogicalQuery> modifiedQueries = Lists.newArrayList(queries);
-		for (ILogicalQuery query : modifiedQueries) {
-			try {
-				int queryId = query.getID();
-				QueueStateStore.load(
-						collectControllableSubscriptions(cExecutor.get().getPhysicalRoots(queryId, caller)), queryId);
-			} catch (IOException | ClassNotFoundException e) {
-				cLog.error("Could not load queues!", e);
-			}
-		}
-		return modifiedQueries;
+		return queries;
 	}
 
 	/**
 	 * The ids of all queries (and the session, which called the creation),
 	 * backup is activated for.
 	 */
-	private final Set<IPair<Integer, ISession>> mQueryIds = Sets.newHashSet();
+	private final Set<IPair<Integer, ISession>> mQueryIdsForBackup = Sets.newHashSet();
 
 	@Override
 	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
 			List<ILogicalQuery> queries) {
-		// FIXME Test, if backup of queue states works
 		for (ILogicalQuery query : queries) {
 			int queryId = query.getID();
-			this.mQueryIds.add(new Pair<Integer, ISession>(new Integer(queryId), caller));
+			this.mQueryIdsForBackup.add(new Pair<Integer, ISession>(new Integer(queryId), caller));
 			ProtectionPointManagerRegistry.getInstance(queryId).addHandler(this);
 		}
 		return queries;
@@ -121,12 +119,11 @@ public class QueueStateRecoveryComponent implements IRecoveryComponent, IProtect
 
 	@Override
 	public void onProtectionPointReached() throws Exception {
-		// FIXME Test, if backup of queue states works
 		if (!cExecutor.isPresent()) {
 			cLog.error("No executor bound!");
 			return;
 		}
-		for (IPair<Integer, ISession> queryId : this.mQueryIds) {
+		for (IPair<Integer, ISession> queryId : this.mQueryIdsForBackup) {
 			QueueStateStore.store(
 					collectControllableSubscriptions(
 							cExecutor.get().getPhysicalRoots(queryId.getE1().intValue(), queryId.getE2())),
@@ -169,6 +166,21 @@ public class QueueStateRecoveryComponent implements IRecoveryComponent, IProtect
 					collectControllableSubscriptionsRecursive(
 							(IPhysicalOperator) ((AbstractPhysicalSubscription<?>) sub).getTarget(), queues);
 				}
+			}
+		}
+	}
+
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		PlanModificationEventType eventType = (PlanModificationEventType) eventArgs.getEventType();
+		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
+		Integer queryId = new Integer(query.getID());
+		if (cQueryIdsForRecovery.contains(queryId) && PlanModificationEventType.QUERY_ADDED.equals(eventType)) {
+			try {
+				QueueStateStore.load(collectControllableSubscriptions(query.getRoots()), queryId.intValue());
+				cQueryIdsForRecovery.remove(queryId);
+			} catch (ClassNotFoundException | IOException e) {
+				cLog.error("Could not load operator state!", e);
 			}
 		}
 	}

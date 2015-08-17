@@ -46,8 +46,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	private final IKafkaConsumer mRecoveryKafkaConsumer = new IKafkaConsumer() {
 
 		@Override
-		public void onNewMessage(ByteBuffer message, long offset)
-				throws Throwable {
+		public void onNewMessage(ByteBuffer message, long offset) throws Throwable {
 			SourceRecoveryPO.this.mRecoveryProtocolHandler.process(0, message);
 
 		}
@@ -64,8 +63,7 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		@Override
 		public void transfer_intern(IStreamable object, int port) {
 			if (object.isPunctuation()) {
-				SourceRecoveryPO.this.sendPunctuation((IPunctuation) object,
-						port);
+				SourceRecoveryPO.this.sendPunctuation((IPunctuation) object, port);
 			} else {
 				SourceRecoveryPO.this.transfer((StreamObject) object, port);
 			}
@@ -88,16 +86,14 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	public SourceRecoveryPO(SourceRecoveryAO logical) {
 		super(logical);
 		this.mRecoveryProtocolHandler = createProtocolHandler();
-		this.mRecoveryProtocolHandler
-				.setTransfer(this.mRecoveryTransferHandler);
+		this.mRecoveryProtocolHandler.setTransfer(this.mRecoveryTransferHandler);
 	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		// offset should be loaded as operator state
 		this.mNeedToAdjustOffset = false;
-		this.mRecoveryKafkaAccess = new KafkaConsumerAccess(this.mSourceAccess
-				.getAccessAOName().getResourceName(),
+		this.mRecoveryKafkaAccess = new KafkaConsumerAccess(this.mSourceAccess.getAccessAOName().getResourceName(),
 				this.mRecoveryKafkaConsumer, this.mOffset.longValue());
 		this.mRecoveryKafkaAccess.start();
 		super.process_open();

@@ -54,7 +54,7 @@ public class QueueStateStore {
 	 * The file ending (incl. dot) of all file names, where queue states are
 	 * stored.
 	 */
-	private static final String cFileNameEnding = ".qus";
+	private static final String cFileNameEnding = ".queue";
 
 	/**
 	 * Stores the states of all {@link ControllablePhysicalSubscription}s of a
