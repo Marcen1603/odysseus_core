@@ -273,7 +273,7 @@ public class KafkaConsumerAccess extends Thread {
 		try {
 			TopicAndPartition topicAndPartition = new TopicAndPartition(
 					this.mTopic, this.mPartition);
-			Map<TopicAndPartition, PartitionOffsetRequestInfo> requestInfo = new HashMap<TopicAndPartition, PartitionOffsetRequestInfo>();
+			Map<TopicAndPartition, PartitionOffsetRequestInfo> requestInfo = new HashMap<>();
 			requestInfo.put(topicAndPartition, new PartitionOffsetRequestInfo(
 					OffsetRequest.EarliestTime(), 1));
 			kafka.javaapi.OffsetRequest request = new kafka.javaapi.OffsetRequest(

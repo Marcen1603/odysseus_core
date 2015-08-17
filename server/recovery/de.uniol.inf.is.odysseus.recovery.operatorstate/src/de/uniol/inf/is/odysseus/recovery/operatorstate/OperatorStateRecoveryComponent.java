@@ -111,7 +111,7 @@ public class OperatorStateRecoveryComponent
 			List<ILogicalQuery> queries) {
 		for (ILogicalQuery query : queries) {
 			int queryId = query.getID();
-			this.mQueryIdsForBackup.add(new Pair<Integer, ISession>(new Integer(queryId), caller));
+			this.mQueryIdsForBackup.add(new Pair<>(new Integer(queryId), caller));
 			ProtectionPointManagerRegistry.getInstance(queryId).addHandler(this);
 		}
 		return queries;

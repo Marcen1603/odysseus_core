@@ -41,7 +41,7 @@ public class SystemLog implements ISystemLog {
 	/**
 	 * All log entries ordered by time stamp (older entries first).
 	 */
-	private static final LinkedList<ISysLogEntry> cEntries = new LinkedList<ISysLogEntry>();
+	private static final LinkedList<ISysLogEntry> cEntries = new LinkedList<>();
 
 	/**
 	 * True, if the initial loading from file has been done.
@@ -139,7 +139,7 @@ public class SystemLog implements ISystemLog {
 			}
 		}
 
-		List<ISysLogEntry> subList = new LinkedList<ISysLogEntry>();
+		List<ISysLogEntry> subList = new LinkedList<>();
 		if (++index < cEntries.size()) {
 			synchronized (cEntries) {
 				subList = cEntries.subList(index, cEntries.size());
@@ -249,8 +249,8 @@ public class SystemLog implements ISystemLog {
 			return;
 		}
 
-		List<ISysLogEntry> entriesToDelete = new LinkedList<ISysLogEntry>();
-		List<ISysLogEntry> entriesToKeep = new LinkedList<ISysLogEntry>();
+		List<ISysLogEntry> entriesToDelete = new LinkedList<>();
+		List<ISysLogEntry> entriesToKeep = new LinkedList<>();
 		int indexOfOldestEntryToKeep = 0;
 
 		// Check, what to delete and what to keep
