@@ -33,8 +33,10 @@ public HashMap<Integer,ILoadBalancingCommunicator> chooseCommunicators(List<Inte
 				ILoadBalancingCommunicator parallelTrackCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.STATELESS_QUERIES_COMMUNICATOR_NAME);
 				queryCommunicatorMapping.put(queryId, parallelTrackCommunicator);
 			}
+			else {
 			ILoadBalancingCommunicator movingStateCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.STATEFUL_QUERIES_COMMUNICATOR_NAME);
 			queryCommunicatorMapping.put(queryId, movingStateCommunicator);
+			}
 			
 		}
 		
