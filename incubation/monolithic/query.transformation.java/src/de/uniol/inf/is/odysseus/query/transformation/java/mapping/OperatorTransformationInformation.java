@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.query.transformation.java.mapping;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -10,6 +11,8 @@ public class OperatorTransformationInformation {
 	private static OperatorTransformationInformation instance = null;
 
 	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
+	
+	private Map<ILogicalOperator,String> codeReady  = new HashMap<ILogicalOperator, String>();
 	
 	private int uniqueId = 0;
 	
@@ -38,6 +41,42 @@ public class OperatorTransformationInformation {
 			operatorList.put(operator, operator.getName().toLowerCase()+getUniqueId());
 		}
 	
+	}
+	
+	
+	public boolean allOperatorExisForSubscriptions(List<ILogicalOperator> operatorList){
+		if(operatorList.isEmpty()){
+			return false;
+		}
+		
+		for(ILogicalOperator op : operatorList){
+			if(!codeReady.containsKey(op)){
+				return false;
+			}
+		
+		}
+		
+		return true;
+	}
+	
+	public boolean isOperatorCodeReady(ILogicalOperator operator){
+		if(codeReady.containsKey(operator)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public void addOperatorToCodeReady(ILogicalOperator operator){
+
+		if(!codeReady.containsKey(operator)){
+			codeReady.put(operator, "0");
+		}
+	
+	}
+	
+	public void setOperatorList(Map<ILogicalOperator, String> operatorList){
+		this.operatorList = operatorList;
 	}
 	
 	public  String getVariable(ILogicalOperator operator){

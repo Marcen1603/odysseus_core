@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 public class TransformationInformation {
 
@@ -17,6 +19,9 @@ public class TransformationInformation {
 	private Map<String, String> mepFunctions = new HashMap<String, String>();
 	private Map<String, String> protocolHandler = new HashMap<String, String>();
 	private Map<String, String> transportHandler = new HashMap<String, String>();
+	private Map<String, String> metaDataTypes = new HashMap<String, String>();
+	private Map<String, String> sweepAreas = new HashMap<String, String>();
+	
 	
 	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
 
@@ -58,6 +63,43 @@ public class TransformationInformation {
 		return sinkOPs;
 	}
 
+	public void addSweepArea(String sweepArea){
+		String fullClassName = "";
+		String simpleClassName = "";
+		
+		try {
+			fullClassName = SweepAreaRegistry.getSweepArea(sweepArea).getClass().getName();
+			simpleClassName = SweepAreaRegistry.getSweepArea(sweepArea).getClass().getSimpleName();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		
+		if (!sweepAreas.containsKey(fullClassName)) {
+			sweepAreas.put(fullClassName, simpleClassName);
+		}
+		
+	}
+	
+	public Map<String, String> getNeededSweepAreas() {
+		return sweepAreas;
+	}
+	
+	public void addMetaData(String metaData){
+		
+		String fullClassName = MetadataRegistry.getIMetaAttributeClass(metaData).getClass().getName();
+		String simpleClassName = MetadataRegistry.getIMetaAttributeClass(metaData).getClass().getSimpleName();
+		
+		if (!metaDataTypes.containsKey(fullClassName)) {
+			metaDataTypes.put(fullClassName, simpleClassName);
+		}
+	}
+	
+	public Map<String, String> getNeededMetaDataTypes() {
+		return metaDataTypes;
+	}
+	
+	
 	public void addDataHandler(String datatype){
 		String fullClassName = DataHandlerRegistry.getIDataHandlerClass(datatype).getClass().getName();
 		String simpleClassName = DataHandlerRegistry.getIDataHandlerClass(datatype).getClass().getSimpleName();

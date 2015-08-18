@@ -38,8 +38,10 @@ public class EmulateJavaOSGIBindings {
 		
 		neededBundleList.add("common\\core");
 		neededBundleList.add("common\\mep");
+		neededBundleList.add("server\\core\\core");
+		neededBundleList.add("common\\de.uniol.inf.is.odysseus.sweeparea");
 		
-		
+	
 		StringBuilder code =  new StringBuilder();
 
 		List<Component> registryList = new ArrayList<Component>();
@@ -177,9 +179,40 @@ public class EmulateJavaOSGIBindings {
 		}
 		
 		
+		//MetaDataRegistry
+		Map<String, String> neededMetaDataTypes = transformationInforamtion.getNeededMetaDataTypes();
+		
+		for (Map.Entry<String, String> entry : neededMetaDataTypes.entrySet())
+		{
+		    neededImportList.add(entry.getKey());
+			code.append("\n");
+			code.append("metadataregistry.addMetadataType(new "+entry.getValue()+"());");
+			code.append("\n");
+		}
+		
+		
+		
+		//SweepaAreas
+		Map<String, String> neededSweepAreas = transformationInforamtion.getNeededSweepAreas();
+		
+		for (Map.Entry<String, String> entry : neededSweepAreas.entrySet())
+		{
+		    neededImportList.add(entry.getKey());
+			code.append("\n");
+			code.append("sweeparearegistry.register(new "+entry.getValue()+"());");
+			code.append("\n");
+		}
+		
+		
+		
+		
 		return code.toString();
 		
 	}
+	
+	
+	
+	
 	
 	public List<String> getXMLFiles(File folder) {
 		List<String> xmlFileList = new ArrayList<String>();

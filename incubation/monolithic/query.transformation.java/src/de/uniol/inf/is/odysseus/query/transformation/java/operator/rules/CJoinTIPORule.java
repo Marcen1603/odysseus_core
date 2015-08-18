@@ -4,11 +4,20 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
+import de.uniol.inf.is.odysseus.persistentqueries.DirectTransferArea;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCJoinTIPORule;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
@@ -27,6 +36,28 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule{
 		
 		JoinAO joinAO = (JoinAO) operator;
 		
+		String areaName = "TIJoinSA";	
+		
+		if(joinAO.getSweepAreaName() != null){
+			areaName = joinAO.getSweepAreaName();
+		}
+		
+		
+		IPredicate<?> predicate = joinAO.getPredicate();
+		
+		String predicateValue = predicate.toString();
+		String transferFuntion = "";
+		
+		if (joinAO.isAssureOrder()) {
+			transferFuntion = "TITransferArea";
+		
+		} else {
+			transferFuntion = "DirectTransferArea";
+		}
+	
+
+	
+	
 		List<String> input0MetaAttributeNames = joinAO.getInputSchema(0).getMetaAttributeNames();
 		List<String> input1MetaAttributeNames = joinAO.getInputSchema(1).getMetaAttributeNames();
 		
@@ -47,15 +78,34 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule{
 		joinTIPOTemplate.getSt().add("input1MetaAttributeNamesCode", stringList1Template.getSt().render());
 		joinTIPOTemplate.getSt().add("input0MetaAttributeNamesVariable", operatorVariable+"JoinInput0MetaAttributes");
 		joinTIPOTemplate.getSt().add("input1MetaAttributeNamesVariable", operatorVariable+"JoinInput1MetaAttributes");
+		joinTIPOTemplate.getSt().add("areaName", areaName);
+		joinTIPOTemplate.getSt().add("predicateValue", predicateValue);
+		joinTIPOTemplate.getSt().add("transferFuntion", transferFuntion);
 		
-		
-		
-		
+	
 		joinTIPO.addCode(joinTIPOTemplate.getSt().render());
 		
 		joinTIPO.addImport(IMetadataMergeFunction.class.getName());
 		joinTIPO.addImport(JoinTIPO.class.getName());
 		joinTIPO.addImport(ITimeIntervalSweepArea.class.getName());
+		joinTIPO.addImport(DefaultTISweepArea.class.getName());
+		joinTIPO.addImport(RelationalMergeFunction.class.getName());
+		joinTIPO.addImport(ITimeInterval.class.getName());
+		
+	
+		
+		
+		
+		
+		
+		joinTIPO.addImport(DirectAttributeResolver.class.getName());
+		joinTIPO.addImport(RelationalPredicateBuilder.class.getName());
+		joinTIPO.addImport(RelationalPredicate.class.getName());
+		joinTIPO.addImport(TITransferArea.class.getName());
+		joinTIPO.addImport(DirectTransferArea.class.getName());
+		
+		
+
 		
 		
 		return joinTIPO;

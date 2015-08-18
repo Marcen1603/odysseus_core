@@ -23,6 +23,7 @@ public class MultipleSourceExecutor extends AbstractExecutor{
 		List<String> sourceOpList = new ArrayList<String>();
 		
 		for(ILogicalOperator sourceOp : operatorList){
+		
 			sourceOpList.add(OperatorTransformationInformation.getInstance().getVariable(sourceOp));
 		}
 		

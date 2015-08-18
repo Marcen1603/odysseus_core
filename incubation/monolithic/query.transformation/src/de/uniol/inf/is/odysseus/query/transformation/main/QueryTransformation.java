@@ -48,6 +48,8 @@ public class QueryTransformation {
 		
 		analyseQuery(savedPlan, parameter, transformationConfiguration);
 		
+		
+		
 		ITargetPlatform targetPlatform = TargetPlatformRegistry.getTargetPlatform(parameter.getProgramLanguage());
 		
 		try {
@@ -57,6 +59,7 @@ public class QueryTransformation {
 			e.printStackTrace();
 		}
 	
+		
 
 	}
 	
@@ -64,6 +67,12 @@ public class QueryTransformation {
 	private static void analyseQuery(ILogicalOperator query,TransformationParameter parameter, TransformationConfiguration transformationConfiguration){
 		
 		transformationInformation = new TransformationInformation();
+		
+	
+		
+		for(String metaDataType : transformationConfiguration.getDefaultMetaTypeSet()){
+			transformationInformation.addMetaData(metaDataType);	
+		}
 		
 		FindSinksLogicalVisitor<ILogicalOperator> findSinksVisitor = new FindSinksLogicalVisitor<ILogicalOperator>();
 		GenericGraphWalker walker = new GenericGraphWalker();
@@ -118,6 +127,7 @@ public class QueryTransformation {
 				opTrans.analyseOperator(operator,transformationInformation);
 				opTrans.addDataHandlerFromSDFSchema(operator, transformationInformation);
 				opTrans.addOperatorConfiguration(operator, transformationInformation);
+			
 
 			}
 		}

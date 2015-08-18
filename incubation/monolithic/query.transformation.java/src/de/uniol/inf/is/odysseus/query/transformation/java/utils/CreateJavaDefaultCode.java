@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.query.transformation.executor.registry.ExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
+import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
@@ -112,6 +113,10 @@ public class CreateJavaDefaultCode {
 		for(ILogicalOperator sinkOp : sinkOPs){
 					sinkOpList.add(OperatorTransformationInformation.getInstance().getVariable(sinkOp));
 		}
+		
+		
+		
+		
 
 		StringTemplate startCodeTemplate = new StringTemplate("java","startCode");
 		startCodeTemplate.getSt().add("firstOP", firstOP);
@@ -136,16 +141,17 @@ public class CreateJavaDefaultCode {
 	}
 	
 	
-	public static CodeFragmentInfo generateSubscription(ILogicalOperator operator) {
+	public static CodeFragmentInfo generateSubscription(ILogicalOperator operator, TransformationInformation transformationInformation) {
 		CodeFragmentInfo codeFragmentInfo =  new CodeFragmentInfo();
 		
-		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = transformationInformation.getVariable(operator);
 		
 		Collection<LogicalSubscription> subscriptionSourceList = operator.getSubscribedToSource();
 		
 		Map<String,LogicalSubscription> targetOpMap = new HashMap<String,LogicalSubscription>();
 		
-			
+		List<ILogicalOperator> neededOperator = new ArrayList<ILogicalOperator>();
+		
 		   if(!subscriptionSourceList.isEmpty()){
 			   for(LogicalSubscription sub : subscriptionSourceList){
 				   
@@ -158,21 +164,27 @@ public class CreateJavaDefaultCode {
 						targetLogicalOP = sub.getTarget();
 					}
 			
-					 String  targetOp =  OperatorTransformationInformation.getInstance().getVariable(targetLogicalOP);
+					 String  targetOp =  transformationInformation.getVariable(targetLogicalOP);
+					 neededOperator.add(targetLogicalOP);
 					  if(!targetOp.equals("")){
 						  targetOpMap.put(targetOp,sub);		
 					  }	
 				   }
 		   }
 		   
+		 if(OperatorTransformationInformation.getInstance().allOperatorExisForSubscriptions(neededOperator)){
+			 
+	
+			StringTemplate startCodeTemplate = new StringTemplate("utils","subscribeToSource");
+			startCodeTemplate.getSt().add("operatorVariable", operatorVariable);  
+			startCodeTemplate.getSt().add("targetOpMap", targetOpMap);  
+				
+			codeFragmentInfo.addCode(startCodeTemplate.getSt().render());
 			
-		StringTemplate startCodeTemplate = new StringTemplate("utils","subscribeToSource");
-		startCodeTemplate.getSt().add("operatorVariable", operatorVariable);  
-		startCodeTemplate.getSt().add("targetOpMap", targetOpMap);  
-			
-		codeFragmentInfo.addCode(startCodeTemplate.getSt().render());
-		
-		return codeFragmentInfo;
+			return codeFragmentInfo;
+		 }
+		 
+		 return null;
 	}
 	
 	

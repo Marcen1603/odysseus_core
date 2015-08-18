@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.java.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.gson,
+ de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.parser.pql.relational,
  de.uniol.inf.is.odysseus.sweeparea,

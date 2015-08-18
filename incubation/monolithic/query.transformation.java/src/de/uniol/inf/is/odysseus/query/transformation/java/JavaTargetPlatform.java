@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.Execute
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.EmulateJavaOSGIBindings;
 import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
+import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.registry.OperatorRuleRegistry;
@@ -49,7 +50,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		//clear transformation infos
 		OperatorTransformationInformation.clear();
 		
-	
+		OperatorTransformationInformation.getInstance().setOperatorList(transformationInforamtion.getOperatorList());
 		//Start Odysseus index
 		updateProgressBar(15, "Index the Odysseus codepath");
 		OdysseusIndex.getInstance().search(parameter.getOdysseusPath());
@@ -58,7 +59,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 
 		EmulateJavaOSGIBindings javaEmulateOSGIBindings = new EmulateJavaOSGIBindings();
 		
-		walkTroughLogicalPlan(transformationInforamtion.getSourceOpList(),parameter, transformationConfiguration);
+		walkTroughLogicalPlan(transformationInforamtion,parameter, transformationConfiguration);
 		
 		//generate code for osgi binds
 		updateProgressBar(70, "Generate OSGI emulation code");
@@ -90,27 +91,30 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	}
 	
 
-	private void walkTroughLogicalPlan(List<ILogicalOperator> operatorSources,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
+	private void walkTroughLogicalPlan(TransformationInformation transformationInforamtion,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
+		List<ILogicalOperator> operatorSources = transformationInforamtion.getSourceOpList();
+		
 		
 		for(ILogicalOperator sourceOperator: operatorSources){
-				generateCode(sourceOperator,parameter, transformationConfiguration);
+				generateCode(sourceOperator,parameter, transformationConfiguration,transformationInforamtion);
 		}
 		
 	}
 	
-	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
+	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,TransformationInformation transformationInforamtion) throws InterruptedException{
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 
 	
 		IOperatorRule opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
-			if(!OperatorTransformationInformation.getInstance().isOperatorAdded(operator)){
+			if(!OperatorTransformationInformation.getInstance().isOperatorCodeReady(operator)){
 				
 				this.getProgressBarQueue().put(new ProgressBarUpdate(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName()));
 				
-				//reg the operator to generate a uniq operatorVariable
-				OperatorTransformationInformation.getInstance().addOperator(operator);
+				//add ready
+				OperatorTransformationInformation.getInstance().addOperatorToCodeReady(operator);
+			
 
 				//generate the default code e.g. SDFSchema
 				CodeFragmentInfo initOp = CreateJavaDefaultCode.initOperator(operator);
@@ -134,8 +138,12 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				importList.addAll(opCodeFragment.getImports());
 				
 			
-				//generate subscription
-				CodeFragmentInfo  subscription = CreateJavaDefaultCode.generateSubscription(operator);
+		
+			}
+			
+			//generate subscription
+			CodeFragmentInfo  subscription = CreateJavaDefaultCode.generateSubscription(operator, transformationInforamtion);
+			if(subscription!= null){
 				bodyCode.append(subscription.getCode());	
 				importList.addAll(subscription.getImports());
 			}
@@ -143,7 +151,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 	
 		for(LogicalSubscription s:operator.getSubscriptions()){
-			generateCode(s.getTarget(),parameter, transformationConfiguration);
+			generateCode(s.getTarget(),parameter, transformationConfiguration,transformationInforamtion);
 		}
 		
 	}

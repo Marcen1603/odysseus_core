@@ -1,8 +1,12 @@
 package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
 
 public abstract class AbstractCStreamAORule extends AbstractRule{
@@ -32,7 +36,20 @@ public abstract class AbstractCStreamAORule extends AbstractRule{
 
 	public void analyseOperator(ILogicalOperator logicalOperator,TransformationInformation transformationInformation){
 		
+		StreamAO streamAO = (StreamAO)logicalOperator;
 		
+		ITenant tenant = UserManagementProvider.getDefaultTenant();
+		ILogicalOperator logicalPlan = DataDictionaryProvider.getDataDictionary(tenant).getStreamForTransformation(streamAO.getStreamname(),  null);
+
+		AccessAO accessAO = (AccessAO)logicalPlan;
+		
+		String transportHandler = accessAO.getTransportHandler();
+		String protocolHandler = accessAO.getProtocolHandler();
+		
+		transformationInformation.addTransportHandler(transportHandler);
+		transformationInformation.addProtocolHandler(protocolHandler);
+		
+
 	}
 
 
