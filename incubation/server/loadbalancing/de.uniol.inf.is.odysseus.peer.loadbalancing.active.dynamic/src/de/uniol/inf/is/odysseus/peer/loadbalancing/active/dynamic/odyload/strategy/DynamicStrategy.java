@@ -385,7 +385,6 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 						communicator);
 			}
 			
-			transmissionHandler.startTransmissions();
 
 		} catch (QueryPartAllocationException e) {
 			LOG.error("Could not allocate Query Parts: {}", e.getMessage());
