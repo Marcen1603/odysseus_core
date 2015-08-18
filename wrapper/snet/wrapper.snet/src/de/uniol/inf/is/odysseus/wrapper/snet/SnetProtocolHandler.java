@@ -5,14 +5,16 @@ import java.util.ArrayList;
 
 import de.fraunhofer.iis.kom.wsn.messages.WSNMessageDefault;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.wrapper.snet.physicaloperator.access.SnetTransportHandler;
 
-public class SnetProtocolHandler<T> extends AbstractProtocolHandler<T> {
+public class SnetProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
 	protected ArrayList<WSNMessageDefault> messages;
 
@@ -20,7 +22,7 @@ public class SnetProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public SnetProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler,
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,
 			OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 	}
@@ -28,7 +30,7 @@ public class SnetProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		SnetProtocolHandler<T> handler = new SnetProtocolHandler<T>(direction,
 				access, dataHandler, options);
 		return handler;

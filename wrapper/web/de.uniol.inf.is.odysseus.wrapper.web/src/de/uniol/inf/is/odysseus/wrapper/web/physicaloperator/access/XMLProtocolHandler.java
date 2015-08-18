@@ -47,7 +47,7 @@ import org.xml.sax.SAXException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -101,7 +101,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      * @param dataHandler
      * @param options
      */
-    public XMLProtocolHandler(final ITransportDirection direction, final IAccessPattern access, IDataHandler<T> dataHandler, OptionMap options) {
+    public XMLProtocolHandler(final ITransportDirection direction, final IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap options) {
         super(direction, access, dataHandler, options);
         init_internal();
     }
@@ -318,7 +318,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     }
 
     @Override
-    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IDataHandler<T> dataHandler) {
+    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IStreamObjectDataHandler<T> dataHandler) {
         final XMLProtocolHandler<T> instance = new XMLProtocolHandler<T>(direction, access, dataHandler, options);
         return instance;
     }

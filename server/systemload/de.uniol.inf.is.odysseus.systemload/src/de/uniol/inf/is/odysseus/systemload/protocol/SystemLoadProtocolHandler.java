@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -26,7 +26,7 @@ public class SystemLoadProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
 		super();
 	}
 
-	public SystemLoadProtocolHandler(ITransportDirection direction, IAccessPattern access, OptionMap options, IDataHandler<Tuple<?>> dataHandler) {
+	public SystemLoadProtocolHandler(ITransportDirection direction, IAccessPattern access, OptionMap options, IStreamObjectDataHandler<Tuple<?>> dataHandler) {
 		super(direction, access, dataHandler, options);
 		init_internal();
 	}
@@ -82,7 +82,7 @@ public class SystemLoadProtocolHandler extends AbstractProtocolHandler<Tuple<?>>
 	}
 
 	@Override
-	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IDataHandler<Tuple<?>> dataHandler) {
+	public IProtocolHandler<Tuple<?>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IStreamObjectDataHandler<Tuple<?>> dataHandler) {
 		return new SystemLoadProtocolHandler(direction, access, options, dataHandler);
 	}
 

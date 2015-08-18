@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ import com.extentech.formats.XLS.WorkSheetNotFoundException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolMonitor;
@@ -110,7 +111,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      * 
      * @param schema
      */
-    private XLSProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<T> dataHandler, OptionMap optionsMap) {
+    private XLSProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
         super(direction, access, dataHandler, optionsMap);
         init_internal();
     }
@@ -178,7 +179,7 @@ public class XLSProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      * {@inheritDoc}
      */
     @Override
-    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IDataHandler<T> dataHandler) {
+    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IStreamObjectDataHandler<T> dataHandler) {
         final XLSProtocolHandler<T> instance = new XLSProtocolHandler<>(direction, access, dataHandler, options);
         return instance;
     }

@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -30,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
+public interface IProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>> extends ITransportHandlerListener<T> {
 
 	/**
 	 * Creates a new protocol handler
@@ -41,7 +43,7 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener<T> {
 	 * @return
 	 */
     IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
-            OptionMap options, IDataHandler<T> dataHandler);
+            OptionMap options, IStreamObjectDataHandler<T> dataHandler);
 
     /**
      * The unique name of the protocol handler

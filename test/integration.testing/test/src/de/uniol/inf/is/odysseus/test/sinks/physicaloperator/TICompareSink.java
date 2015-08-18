@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @author Timo Michelsen, Dennis Geesen
  * 
  */
-public class TICompareSink<T extends IStreamObject<? extends ITimeInterval>> extends AbstractCompareSink<T> {
+public class TICompareSink<T extends IStreamObject<ITimeInterval>> extends AbstractCompareSink<T> {
 
 	Logger logger = LoggerFactory.getLogger(TICompareSink.class);
 
@@ -65,13 +65,13 @@ public class TICompareSink<T extends IStreamObject<? extends ITimeInterval>> ext
 		synchronized (expected) {
 			this.expected.clear();
 			this.inputdata.clear();
-			IDataHandler<T> dh = (IDataHandler<T>) DataHandlerRegistry.getDataHandler(this.dataHandler, getOutputSchema());
+			IStreamObjectDataHandler<T> dh = (IStreamObjectDataHandler<T>) DataHandlerRegistry.getDataHandler(this.dataHandler, getOutputSchema());
 			OptionMap options = new OptionMap();
 			options.setOption(AbstractCSVHandler.DELIMITER, "|");
-			SimpleCSVProtocolHandler<T> csvreader = new SimpleCSVProtocolHandler<T>(ITransportDirection.IN, IAccessPattern.PULL, dh, options);
-			csvreader = (SimpleCSVProtocolHandler<T>) csvreader.createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
+			SimpleCSVProtocolHandler csvreader = new SimpleCSVProtocolHandler(ITransportDirection.IN, IAccessPattern.PULL, dh, options);
+			csvreader = (SimpleCSVProtocolHandler) csvreader.createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
 			for (Pair<String, String> csv : expectedOriginals) {
-				T tuple = csvreader.convertLine(csv.getE1());
+				T tuple = (T) csvreader.convertLine(csv.getE1());
 				TimeInterval ti = TimeInterval.parseTimeInterval(csv.getE2());
 				((Tuple)tuple).setMetadata(ti);
 				this.expected.insert(tuple);

@@ -51,12 +51,13 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
@@ -83,6 +84,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBui
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MapParameter;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
@@ -809,14 +811,18 @@ public class WebserviceServer {
 			rootAsSource = ((ISink<?>) root).getSubscribedToSource(0).getTarget();
 		}
 
-		IDataHandler<?> handler = null;
+		IStreamObjectDataHandler<?> handler = null;
 
 		if (nullValues) {
 			handler = new NullAwareTupleDataHandler(root.getOutputSchema());
 		} else {
-			handler = new TupleDataHandler().createInstance(root
+			handler = (IStreamObjectDataHandler<?>) new TupleDataHandler().createInstance(root
 					.getOutputSchema());
 		}
+		
+		IMetaAttribute metaAttribute = MetadataRegistry
+				.getMetadataType(root.getOutputSchema().getMetaAttributeNames());
+		handler.setMetaAttribute(metaAttribute);
 
 		ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 				handler);

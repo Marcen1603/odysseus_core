@@ -18,22 +18,23 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 import java.nio.ByteOrder;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 
-abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandler<T> {
+abstract public class AbstractByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
     public static final String WRITE_METADATA = "writemetadata";
 	protected ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
-    protected boolean exportMetadata = false;
     
     public AbstractByteBufferHandler() {
         super();
     }
 
-    public AbstractByteBufferHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> datahandler, OptionMap optionsMap) {
+    public AbstractByteBufferHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<T> datahandler, OptionMap optionsMap) {
         super(direction, access, datahandler, optionsMap);
         init_internal();
     }
@@ -46,7 +47,6 @@ abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandl
         else {
             byteOrder = ByteOrder.BIG_ENDIAN;
         }
-        exportMetadata = optionsMap.getBoolean(WRITE_METADATA, Boolean.FALSE);
     }
 
 	public ByteOrder getByteOrder() {

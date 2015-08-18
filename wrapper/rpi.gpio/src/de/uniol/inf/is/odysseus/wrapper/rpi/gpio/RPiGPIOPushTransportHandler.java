@@ -22,6 +22,7 @@ import com.pi4j.io.gpio.impl.PinImpl;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -108,8 +109,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 			@Override
 			public void run() {
 				while (true) {
-					@SuppressWarnings("rawtypes")
-					Tuple<?> tuple = new Tuple(2, false);
+					Tuple<IMetaAttribute> tuple = new Tuple<>(2, false);
 					tuple.setAttribute(0, "pinNumber" + pin.getAddress());
 					tuple.setAttribute(1, 1);
 
@@ -197,8 +197,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 		case WIN:
 		case MAC:
 		case UNKNOWN:
-			@SuppressWarnings("rawtypes")
-			Tuple<?> tuple = new Tuple(2, false);
+			Tuple<IMetaAttribute> tuple = new Tuple<>(2, false);
 			tuple.setAttribute(0, "pinNumber" + pin.getAddress());
 			tuple.setAttribute(1, 0);
 			fireProcess(tuple);
@@ -212,8 +211,7 @@ public class RPiGPIOPushTransportHandler extends AbstractTransportHandler {
 	}
 
 	private void fireButtonState() {
-		@SuppressWarnings("rawtypes")
-		final Tuple<?> tuple = new Tuple(2, false);
+		final Tuple<IMetaAttribute> tuple = new Tuple<>(2, false);
 
 		try {
 			boolean buttonPressed = myButton.isHigh();

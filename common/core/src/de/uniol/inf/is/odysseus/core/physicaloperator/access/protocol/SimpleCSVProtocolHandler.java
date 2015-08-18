@@ -20,11 +20,13 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
+public class SimpleCSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractCSVHandler<T> {
 
 	Logger LOG = LoggerFactory.getLogger(SimpleCSVProtocolHandler.class);
 	public static final String NAME = "SimpleCSV";
@@ -34,7 +36,7 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	}
 
 	public SimpleCSVProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 	}
 
@@ -61,7 +63,7 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		SimpleCSVProtocolHandler<T> instance = new SimpleCSVProtocolHandler<T>(
 				direction, access, dataHandler, options);
 		return instance;

@@ -19,15 +19,15 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferSinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -58,7 +58,7 @@ public class TRelationalSocketSinkAORule extends
 
 		if (socketSinkPO == null) {
 
-			IDataHandler<?> handler = new TupleDataHandler()
+			IStreamObjectDataHandler<?> handler = (IStreamObjectDataHandler<?>) new TupleDataHandler()
 					.createInstance(operator.getOutputSchema());
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);

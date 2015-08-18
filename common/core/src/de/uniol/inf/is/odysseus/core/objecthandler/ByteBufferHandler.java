@@ -20,24 +20,26 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-public class ByteBufferHandler<T> implements
+public class ByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>> implements
 		IObjectHandler<T> {
 
 	private static final int BYTEBUF_INIT = 2048;
 	ByteBuffer byteBuffer = null;
-	private IDataHandler<?> dataHandler;
+	private IStreamObjectDataHandler<?> dataHandler;
 	
 	public ByteBufferHandler() {
 	}
 	
 	@Override
-	public IObjectHandler<T> getInstance(IDataHandler<T> dataHandler) {
+	public IObjectHandler<T> getInstance(IStreamObjectDataHandler<T> dataHandler) {
 		return new ByteBufferHandler<T>(dataHandler);
 	}
 	
-	public ByteBufferHandler(IDataHandler<?> dataHandler) {
+	public ByteBufferHandler(IStreamObjectDataHandler<?> dataHandler) {
 		byteBuffer = ByteBuffer.allocate(BYTEBUF_INIT);
 		this.dataHandler = dataHandler;		
 	}
@@ -58,14 +60,14 @@ public class ByteBufferHandler<T> implements
 		return byteBuffer;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked"})
 	@Override
 	public synchronized T create() throws IOException, ClassNotFoundException, BufferUnderflowException {
 		T retval = null;
 		synchronized(byteBuffer){		
 			byteBuffer.flip();
-			retval = (T) ByteBufferUtil.createStreamObject(byteBuffer, (IDataHandler) dataHandler);
-			//retval = (T)this.dataHandler.readData(byteBuffer);
+			//retval = (T) ByteBufferUtil.createStreamObject(byteBuffer, (IDataHandler) dataHandler);
+			retval = (T)this.dataHandler.readData(byteBuffer);
 			byteBuffer.clear();
 		}
 		return retval;
@@ -114,15 +116,14 @@ public class ByteBufferHandler<T> implements
 		
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void put(T value, boolean withMetadata) {
 
 		synchronized(byteBuffer){
 			checkAndResizeBuffer(byteBuffer, dataHandler.memSize(value));
 			byteBuffer.clear();
-			ByteBufferUtil.toBuffer(byteBuffer, (IStreamObject) value, dataHandler, withMetadata);
-			//this.dataHandler.writeData(byteBuffer, value);
+			//ByteBufferUtil.toBuffer(byteBuffer, (IStreamObject) value, dataHandler, withMetadata);
+			this.dataHandler.writeData(byteBuffer, value);
 			
 
 			byteBuffer.flip();

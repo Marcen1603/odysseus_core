@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -53,7 +53,7 @@ import de.uniol.inf.is.odysseus.wrapper.nmea.util.SentenceUtils;
  * 
  */
 public class NMEAProtocolHandler extends
-		AbstractProtocolHandler<KeyValueObject<? extends IMetaAttribute>> {
+		AbstractProtocolHandler<KeyValueObject<IMetaAttribute>> {
 	/** Logger for this class. */
 	private final Logger LOG = LoggerFactory
 			.getLogger(NMEAProtocolHandler.class);
@@ -61,7 +61,7 @@ public class NMEAProtocolHandler extends
 	protected BufferedReader reader;
 	/** Find next object to be returned for GenericPull. */
 	// private KeyValueObject<? extends IMetaAttribute> next = null;
-	private List<KeyValueObject<? extends IMetaAttribute>> nextList = new ArrayList<>();
+	private List<KeyValueObject<IMetaAttribute>> nextList = new ArrayList<>();
 	/** Delay on GenericPull. */
 	private long delay = 0;
 	/** Handler for AIS sentences. */
@@ -72,7 +72,7 @@ public class NMEAProtocolHandler extends
 
 	public NMEAProtocolHandler(ITransportDirection direction,
 			IAccessPattern access,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
+			IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler,
 			OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		if (optionsMap.containsKey("delay")) {
@@ -119,7 +119,7 @@ public class NMEAProtocolHandler extends
 	}
 
 	@Override
-	public KeyValueObject<? extends IMetaAttribute> getNext()
+	public KeyValueObject<IMetaAttribute> getNext()
 			throws IOException {
 		if (delay > 0) {
 			try {
@@ -127,7 +127,7 @@ public class NMEAProtocolHandler extends
 			} catch (InterruptedException e) {
 			}
 		}
-		KeyValueObject<? extends IMetaAttribute> next = this.nextList.size() != 0 ? this.nextList
+		KeyValueObject<IMetaAttribute> next = this.nextList.size() != 0 ? this.nextList
 				.remove(0) : null;
 		return next;
 	}
@@ -175,14 +175,14 @@ public class NMEAProtocolHandler extends
 		}
 		sentence.parse();
 		Map<String, Object> event = new HashMap<>();
-		List<KeyValueObject<? extends IMetaAttribute>> res = new ArrayList<>();
+		List<KeyValueObject<IMetaAttribute>> res = new ArrayList<>();
 		// Handling AIS Sentences, encoded sentences to be decoded
 		if (sentence instanceof AISSentence) {
 			AISSentence aissentence = (AISSentence) sentence;
 			this.aishandler.handleAISSentence(aissentence);
 			if (this.aishandler.getDecodedAISMessage() != null) {
 				aissentence.toDecodedPayloadMap(event);
-				KeyValueObject<? extends IMetaAttribute> decodedAIS = new KeyValueObject<>(
+				KeyValueObject<IMetaAttribute> decodedAIS = new KeyValueObject<>(
 						event);
 				// Important to parse the decodedAIS as a sentence in order to
 				// prepare the fields which will be used in writing.
@@ -195,7 +195,7 @@ public class NMEAProtocolHandler extends
 			}
 			// The Original message:
 			Map<String, Object> originalEvent = sentence.toMap();
-			KeyValueObject<? extends IMetaAttribute> originalAIS = new KeyValueObject<>(
+			KeyValueObject<IMetaAttribute> originalAIS = new KeyValueObject<>(
 					originalEvent);
 			originalAIS.setMetadata("originalNMEA", sentence);
 			// ensure the order, original fragment (if it's the second fragment,
@@ -209,7 +209,7 @@ public class NMEAProtocolHandler extends
 		// Handling other NMEA Sentences
 		else {
 			event = sentence.toMap();
-			KeyValueObject<? extends IMetaAttribute> undecodedNMEA = new KeyValueObject<>(
+			KeyValueObject<IMetaAttribute> undecodedNMEA = new KeyValueObject<>(
 					event);
 			undecodedNMEA.setMetadata("originalNMEA", sentence);
 			res.add(undecodedNMEA);
@@ -218,7 +218,7 @@ public class NMEAProtocolHandler extends
 	}
 
 	@Override
-	public void write(KeyValueObject<? extends IMetaAttribute> object)
+	public void write(KeyValueObject<IMetaAttribute> object)
 			throws IOException {
 		try {
 			//Case1: Avoid writing decoded AIS messages, because such messages are only processed 
@@ -244,10 +244,10 @@ public class NMEAProtocolHandler extends
 	}
 
 	@Override
-	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
+	public IProtocolHandler<KeyValueObject<IMetaAttribute>> createInstance(
 			ITransportDirection direction, IAccessPattern access,
 			OptionMap options,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+			IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler) {
 		NMEAProtocolHandler instance = new NMEAProtocolHandler(direction,
 				access, dataHandler, options);
 		return instance;

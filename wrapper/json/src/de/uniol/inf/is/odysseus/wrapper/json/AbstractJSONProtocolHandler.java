@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -41,7 +41,7 @@ abstract public class AbstractJSONProtocolHandler<T extends KeyValueObject<?>> e
 	public AbstractJSONProtocolHandler() {
 	}
 
-	public AbstractJSONProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+	public AbstractJSONProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 	}
 

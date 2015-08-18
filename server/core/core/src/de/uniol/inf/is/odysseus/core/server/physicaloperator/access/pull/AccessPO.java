@@ -47,9 +47,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSou
  * @param <W>
  *            The Output that is written by this operator.
  */
-public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
-		extends AbstractIterableSource<W> implements
-		IMetadataInitializer<M, W>, ICommandProvider {
+public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractIterableSource<W>
+		implements IMetadataInitializer<M, W>, ICommandProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccessPO.class);
 
@@ -59,14 +58,16 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 
 	final private AtomicBoolean isClosing = new AtomicBoolean(false);
 
+	final private boolean readMetaData;
+
 	private IProtocolHandler<W> protocolHandler;
 
 	private IMetadataInitializer<M, W> metadataInitializer = new MetadataInitializerAdapter<>();
 
-	public AccessPO(IProtocolHandler<W> protocolHandler,
-			long maxTimeToWaitForNewEventMS) {
+	public AccessPO(IProtocolHandler<W> protocolHandler, long maxTimeToWaitForNewEventMS, boolean readMetaData) {
 		this.protocolHandler = protocolHandler;
 		this.maxTimeToWaitForNewEventMS = maxTimeToWaitForNewEventMS;
+		this.readMetaData = readMetaData;
 	}
 
 	@Override
@@ -116,7 +117,9 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 
 		M meta = null;
 		try {
-			meta = getMetadataInstance();
+			if (!readMetaData) {
+				meta = getMetadataInstance();
+			}
 		} catch (InstantiationException | IllegalAccessException e1) {
 			LOG.error("Error creating meta data", e1);
 		}
@@ -135,8 +138,10 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 					if (maxTimeToWaitForNewEventMS > 0) {
 						lastTransfer = System.currentTimeMillis();
 					}
-					toTransfer.setMetadata(meta);
-					updateMetadata(toTransfer);
+					if (!readMetaData) {
+						toTransfer.setMetadata(meta);
+						updateMetadata(toTransfer);
+					}
 					transfer(toTransfer);
 				}
 			} catch (Exception e) {
@@ -182,7 +187,8 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 			return false;
 		}
 		// TODO: Check for Equality
-		// This is not needed. Access Operators with the same name are shared automatically
+		// This is not needed. Access Operators with the same name are shared
+		// automatically
 		return false;
 	}
 
@@ -192,8 +198,7 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 	}
 
 	@Override
-	public M getMetadataInstance() throws InstantiationException,
-			IllegalAccessException {
+	public M getMetadataInstance() throws InstantiationException, IllegalAccessException {
 		if (this.metadataInitializer == null) {
 			return null;
 		}
@@ -224,21 +229,16 @@ public class AccessPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 				ITransportHandler transportHandler = ((AbstractProtocolHandler<W>) protocolHandler)
 						.getTransportHandler();
 				if (transportHandler instanceof ICommandProvider)
-					return ((ICommandProvider) transportHandler)
-							.getCommandByName(newCommandName, schema);
+					return ((ICommandProvider) transportHandler).getCommandByName(newCommandName, schema);
 				else
-					throw new UnsupportedOperationException(
-							"transport handler doesn't implement ICommandProvider");
+					throw new UnsupportedOperationException("transport handler doesn't implement ICommandProvider");
 			} else if (target.equalsIgnoreCase("protocol")) {
 				if (protocolHandler instanceof ICommandProvider)
-					return ((ICommandProvider) protocolHandler)
-							.getCommandByName(newCommandName, schema);
+					return ((ICommandProvider) protocolHandler).getCommandByName(newCommandName, schema);
 				else
-					throw new UnsupportedOperationException(
-							"protocol handler doesn't implement ICommandProvider");
+					throw new UnsupportedOperationException("protocol handler doesn't implement ICommandProvider");
 			} else
-				throw new IllegalArgumentException("Unknown target \"" + target
-						+ "\" in \"" + commandName + "\"");
+				throw new IllegalArgumentException("Unknown target \"" + target + "\" in \"" + commandName + "\"");
 		} else {
 			// Command is for this Operator!
 			return null;

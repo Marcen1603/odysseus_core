@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +19,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.undercouch.bson4jackson.BsonFactory;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
-import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
-public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject<?>>
-		extends AbstractDataHandler<T> {
+public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject<? extends IMetaAttribute>>
+		extends AbstractStreamObjectDataHandler<T> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractKeyValueObjectDataHandler.class);
 
 	static protected ObjectMapper jsonMapper = new ObjectMapper(
@@ -42,12 +44,34 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 	}
 
 	@Override
-	public int memSize(Object attribute) {
+	public int memSize(Object attribute, boolean handleMetaData) {
+		// TODO: Find a way to handle metadata in key value
 		return 0;
+	}
+	
+	@Override
+	public T readData(List<String> input, boolean handleMetaData) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public T readData(ByteBuffer buffer) {
+	public void writeData(ByteBuffer buffer, T object, boolean handleMetaData) {
+		throw new UnsupportedOperationException();	
+	}
+	
+	@Override
+	public void writeData(List<String> output, Object data, boolean handleMetaData) {
+		throw new UnsupportedOperationException();	
+	}
+	
+	@Override
+	public void writeData(StringBuilder string, Object data, boolean handleMetaData) {
+		throw new UnsupportedOperationException();	
+	}
+	
+	@Override
+	public T readData(ByteBuffer buffer, boolean handleMetaData) {
+		// TODO: Find a way to handle metadata in key value
 		try {
 			if (buffer.remaining() > 0) {
 				CharBuffer decoded = Charset.forName("UTF-8").newDecoder()
@@ -59,9 +83,10 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
 		}
 		return null;
 	}
-
+	
     @Override
-    public T readData(InputStream inputStream) {
+    public T readData(InputStream inputStream, boolean handleMetaData) {
+		// TODO: Find a way to handle metadata in key value
         try {
             byte[] buffer = new byte[inputStream.available()];
             for (int i = 0; inputStream.available() > 0; i++) {
@@ -78,18 +103,21 @@ public abstract class AbstractKeyValueObjectDataHandler<T extends KeyValueObject
     }
 
 	@Override
-	public T readData(String message) {
+	public T readData(String message, boolean handleMetaData) {
+		// TODO: Find a way to handle metadata in key value
 		return jsonStringToKVO(message);
 	}
 
 	@Override
-	public T readData(String[] message) {
-		return jsonStringToKVO(message[0]);
+	public T readData(String[] message, boolean handleMetaData) {
+		// TODO: Find a way to handle metadata in key value
+	return jsonStringToKVO(message[0]);
 	}
 
 	@Override
-	public void writeData(ByteBuffer buffer, Object data) {
-		throw new IllegalArgumentException(
+	public void writeData(ByteBuffer buffer, Object data, boolean handleMetaData) {
+		// TODO: Find a way to handle metadata in key value
+	throw new IllegalArgumentException(
 				"writeData() is not implemented in this DataHandler! writeJSONData should be used instead.");
 	}
 

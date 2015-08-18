@@ -24,13 +24,15 @@ import java.nio.ByteBuffer;
 import java.util.Scanner;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
+public class TextProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
 	private String charset;
 	private String objectDelimiter;
 	private Scanner scanner;
@@ -42,7 +44,7 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public TextProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler,
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,
 			OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
@@ -126,7 +128,7 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 
 		TextProtocolHandler<T> instance = new TextProtocolHandler<T>(direction,
 				access, dataHandler, options);

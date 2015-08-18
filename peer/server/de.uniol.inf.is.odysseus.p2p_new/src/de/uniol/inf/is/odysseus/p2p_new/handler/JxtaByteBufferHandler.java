@@ -4,16 +4,15 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.peer.util.ObjectByteConverter;
 
-@SuppressWarnings("rawtypes")
-public class JxtaByteBufferHandler<T extends IStreamObject> extends ByteBufferHandler<T> {
+public class JxtaByteBufferHandler<T  extends IStreamObject<IMetaAttribute>> extends ByteBufferHandler<T> {
 
-	public JxtaByteBufferHandler(IDataHandler<?> dataHandler) {
+	public JxtaByteBufferHandler(IStreamObjectDataHandler<?> dataHandler) {
 		super(dataHandler);
 	}
 

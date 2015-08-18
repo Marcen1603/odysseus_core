@@ -19,19 +19,20 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
+public class MarkerByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractByteBufferHandler<T> {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(MarkerByteBufferHandler.class);
@@ -44,7 +45,7 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	}
 
 	public MarkerByteBufferHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler,
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,
 			OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		objectHandler = new ByteBufferHandler<T>(dataHandler);
@@ -62,13 +63,12 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		getTransportHandler().close();
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void write(T object) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(1024);
-		ByteBufferUtil.toBuffer(buffer, (IStreamObject) object,
-				getDataHandler(), exportMetadata);
-		// getDataHandler().writeData(buffer, object);
+//		ByteBufferUtil.toBuffer(buffer, (IStreamObject) object,
+//				getDataHandler(), exportMetadata);
+		getDataHandler().writeData(buffer, object);
 		buffer.flip();
 
 		int messageSizeBytes = buffer.remaining();
@@ -84,7 +84,7 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		MarkerByteBufferHandler<T> instance = new MarkerByteBufferHandler<T>(
 				direction, access, dataHandler, options);
 

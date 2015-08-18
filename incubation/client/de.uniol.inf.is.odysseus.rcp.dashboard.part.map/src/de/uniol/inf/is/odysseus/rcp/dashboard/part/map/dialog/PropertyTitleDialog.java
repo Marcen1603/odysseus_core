@@ -16,23 +16,18 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.OwnProperties;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.NullConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.VectorLayerConfiguration;
 
 public class PropertyTitleDialog extends TitleAreaDialog {
 

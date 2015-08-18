@@ -37,13 +37,13 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferStreamHandler;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 
 /**
  * A NEXMarkClient wraps the data for a query: socket of connection, the
@@ -105,7 +105,7 @@ public class NEXMarkClient {
 			this.objectOutputStream = new ObjectOutputStream(
 					connection.getOutputStream());
 		}
-		IDataHandler<?> handler = new TupleDataHandler().createInstance(
+		IStreamObjectDataHandler<?> handler = (IStreamObjectDataHandler<?>) new TupleDataHandler().createInstance(
 				NEXMarkStreamType.getSchema(streamType));
 		objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 				handler);

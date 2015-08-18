@@ -19,11 +19,13 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
+public class CSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractCSVHandler<T> {
 	
 	public static final String NAME = "CSV";
 	
@@ -32,7 +34,7 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	}
 
 	public CSVProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler,OptionMap optionsMap) {
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
 	}
@@ -65,7 +67,7 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		CSVProtocolHandler<T> instance = new CSVProtocolHandler<T>(direction,
 				access, dataHandler, options);
 		return instance;

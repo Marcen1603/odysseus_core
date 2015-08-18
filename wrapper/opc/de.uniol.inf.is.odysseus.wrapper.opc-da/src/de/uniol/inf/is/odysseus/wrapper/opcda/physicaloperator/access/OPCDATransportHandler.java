@@ -303,7 +303,7 @@ public class OPCDATransportHandler<T> extends AbstractTransportHandler {
 			// ByteBuffer buffer = ByteBuffer.allocate(this.dataHandler
 			// .memSize(this.read));
 			// this.dataHandler.writeData(buffer, this.read);
-			Tuple<?> toSend = read.clone();
+			Tuple<IMetaAttribute> toSend = read.clone();
 			fireProcess(toSend);
 		}
 	}

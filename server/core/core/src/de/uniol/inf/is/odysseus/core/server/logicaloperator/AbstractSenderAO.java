@@ -221,14 +221,26 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 		this.dataHandler = dataHandler;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = AbstractCSVHandler.CSV_WRITE_METADATA, optional = true, doc = "Write metadata.")
+	// old version of meta data writing (here only for csv files)
+	@Parameter(type = BooleanParameter.class, name = AbstractCSVHandler.CSV_WRITE_METADATA, optional = true, doc = "Write metadata.", deprecated=true)
+	public void setWriteMetaData_old(boolean writeMetaData){
+		this.writeMetaData = writeMetaData;
+	}
+	
+	public boolean isWriteMetaData_old(){
+		return writeMetaData;
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "writeMetadata", optional = true, doc = "Write metadata.")
 	public void setWriteMetaData(boolean writeMetaData){
 		this.writeMetaData = writeMetaData;
 	}
 	
+
 	public boolean isWriteMetaData(){
 		return writeMetaData;
 	}
+
 	
 	/**
 	 * @return The name of the protocol handler

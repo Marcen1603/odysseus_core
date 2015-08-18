@@ -21,8 +21,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -38,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * 
  * @param <T>
  */
-public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
+public class FS20ProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
 	protected BufferedReader reader;
 	protected BufferedWriter writer;
@@ -48,7 +51,7 @@ public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public FS20ProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 	}
 
@@ -82,7 +85,7 @@ public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		throw new RuntimeException("Not implemented yet");
 
 		//FS20ProtocolHandler<T> instance = new FS20ProtocolHandler<T>(direction,

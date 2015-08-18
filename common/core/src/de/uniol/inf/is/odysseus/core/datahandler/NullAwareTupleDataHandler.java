@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -43,12 +44,12 @@ public class NullAwareTupleDataHandler extends TupleDataHandler {
 	}
 	
 	@Override
-	public IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
+	public IDataHandler<Tuple<? extends IMetaAttribute>> getInstance(SDFSchema schema) {
 		return new NullAwareTupleDataHandler(schema);
 	}
 
 	@Override
-	public IDataHandler<Tuple<?>> getInstance(List<SDFDatatype> schema) {
+	public IDataHandler<Tuple<? extends IMetaAttribute>> getInstance(List<SDFDatatype> schema) {
 		NullAwareTupleDataHandler handler = new NullAwareTupleDataHandler();
 		handler.init(schema);
 		return handler;

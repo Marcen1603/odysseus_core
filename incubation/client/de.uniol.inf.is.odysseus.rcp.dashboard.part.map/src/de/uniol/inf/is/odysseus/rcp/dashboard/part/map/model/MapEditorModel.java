@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
@@ -20,12 +18,10 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.LayerTypeRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.NullConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.VectorLayerConfiguration;
 
 //import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 //import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;

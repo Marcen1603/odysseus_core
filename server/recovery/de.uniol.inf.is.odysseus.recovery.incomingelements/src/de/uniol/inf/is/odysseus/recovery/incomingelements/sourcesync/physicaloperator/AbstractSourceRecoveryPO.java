@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
@@ -201,8 +201,8 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	 */
 	@SuppressWarnings("unchecked")
 	protected IProtocolHandler<StreamObject> createProtocolHandler() {
-		IDataHandler<StreamObject> dataHandler = (IDataHandler<StreamObject>) DataHandlerRegistry
-				.getDataHandler(this.mSourceAccess.getDataHandler(), this.mSourceAccess.getOutputSchema());
+		IStreamObjectDataHandler<StreamObject> dataHandler = (IStreamObjectDataHandler<StreamObject>) DataHandlerRegistry
+				.getStreamObjectDataHandler(this.mSourceAccess.getDataHandler(), this.mSourceAccess.getOutputSchema());
 		OptionMap options = new OptionMap(this.mSourceAccess.getOptions());
 		IAccessPattern access = IAccessPattern.PUSH;
 		if (this.mSourceAccess.getWrapper().toLowerCase().contains("pull")) {

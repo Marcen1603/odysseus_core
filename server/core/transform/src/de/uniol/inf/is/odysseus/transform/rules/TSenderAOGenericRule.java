@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -50,12 +51,10 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class TSenderAOGenericRule extends
-		AbstractTransformationRule<AbstractSenderAO> {
+public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSenderAO> {
 
 	static Logger LOG = LoggerFactory.getLogger(TSenderAOGenericRule.class);
-	static final InfoService INFOSERVICE = InfoServiceFactory
-			.getInfoService(TSenderAOGenericRule.class);
+	static final InfoService INFOSERVICE = InfoServiceFactory.getInfoService(TSenderAOGenericRule.class);
 
 	/*
 	 * (non-Javadoc)
@@ -75,44 +74,34 @@ public class TSenderAOGenericRule extends
 	 * java.lang.Object)
 	 */
 	@Override
-	public void execute(AbstractSenderAO operator,
-			TransformationConfiguration config) throws RuleException {
+	public void execute(AbstractSenderAO operator, TransformationConfiguration config) throws RuleException {
 		Resource senderPOName = operator.getSinkname();
 
 		OptionMap options = new OptionMap(operator.getOptionsMap());
 
-		IDataHandler<?> dataHandler = getDataHandler(operator);
+		IStreamObjectDataHandler<?> dataHandler = getDataHandler(operator);
 		if (dataHandler == null) {
 			LOG.error("No data handler {} found.", operator.getDataHandler());
-			throw new TransformationException("No data handler "
-					+ operator.getDataHandler() + " found.");
+			throw new TransformationException("No data handler " + operator.getDataHandler() + " found.");
 		}
 
 		if (operator.isWriteMetaData()) {
-			dataHandler.setHandleMetaData(true);
 			IMetaAttribute metaAttribute = MetadataRegistry
-					.getMetadataType(operator.getInputSchema(0)
-							.getMetaAttributeNames());
+					.getMetadataType(operator.getInputSchema(0).getMetaAttributeNames());
 			dataHandler.setMetaAttribute(metaAttribute);
 		}
 
-		IProtocolHandler<?> protocolHandler = getProtocolHandler(operator,
-				dataHandler, options);
+		IProtocolHandler<?> protocolHandler = getProtocolHandler(operator, dataHandler, options);
 		if (protocolHandler == null) {
-			LOG.error("No protocol handler {} found.",
-					operator.getProtocolHandler());
-			throw new TransformationException("No protocol handler "
-					+ operator.getProtocolHandler() + " found.");
+			LOG.error("No protocol handler {} found.", operator.getProtocolHandler());
+			throw new TransformationException("No protocol handler " + operator.getProtocolHandler() + " found.");
 		}
 
 		if (!operator.getTransportHandler().equalsIgnoreCase("NONE")) {
-			ITransportHandler transportHandler = getTransportHandler(operator,
-					protocolHandler, options);
+			ITransportHandler transportHandler = getTransportHandler(operator, protocolHandler, options);
 			if (transportHandler == null) {
-				LOG.error("No transport handler {} found.",
-						operator.getTransportHandler());
-				throw new TransformationException("No transport handler "
-						+ operator.getTransportHandler() + " found.");
+				LOG.error("No transport handler {} found.", operator.getTransportHandler());
+				throw new TransformationException("No transport handler " + operator.getTransportHandler() + " found.");
 			}
 		}
 
@@ -121,16 +110,13 @@ public class TSenderAOGenericRule extends
 		if (!config.isVirtualTransformation()) {
 			getDataDictionary().putSinkplan(senderPOName, senderPO);
 			if (!getDataDictionary().containsSink(senderPOName, getCaller())) {
-				getDataDictionary()
-						.addSink(senderPOName, operator, getCaller());
+				getDataDictionary().addSink(senderPOName, operator, getCaller());
 			}
 		}
 
 		List<String> unusedOptions = options.getUnreadOptions();
 		if (!unusedOptions.isEmpty()) {
-			INFOSERVICE
-					.warning("The following options where not used in translation "
-							+ unusedOptions);
+			INFOSERVICE.warning("The following options where not used in translation " + unusedOptions);
 		}
 
 		defaultExecute(operator, senderPO, config, true, true);
@@ -144,17 +130,14 @@ public class TSenderAOGenericRule extends
 	 * .Object, java.lang.Object)
 	 */
 	@Override
-	public boolean isExecutable(AbstractSenderAO operator,
-			TransformationConfiguration config) {
+	public boolean isExecutable(AbstractSenderAO operator, TransformationConfiguration config) {
 		if (operator.isAllPhysicalInputSet()) {
 			if (getDataDictionary().getSinkplan(operator.getSinkname()) == null) {
 				if (operator.getWrapper() != null) {
-					if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
-							.getWrapper())) {
+					if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 						return true;
 					}
-					if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator
-							.getWrapper())) {
+					if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator.getWrapper())) {
 						return true;
 					}
 				}
@@ -203,12 +186,12 @@ public class TSenderAOGenericRule extends
 	 *            the current protocol handler
 	 * @return The transport handler
 	 */
-	private ITransportHandler getTransportHandler(AbstractSenderAO operator,
-			IProtocolHandler<?> protocolHandler, OptionMap options) {
+	private ITransportHandler getTransportHandler(AbstractSenderAO operator, IProtocolHandler<?> protocolHandler,
+			OptionMap options) {
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
-			transportHandler = TransportHandlerRegistry.getInstance(
-					operator.getTransportHandler(), protocolHandler, options);
+			transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(), protocolHandler,
+					options);
 		}
 		return transportHandler;
 	}
@@ -222,18 +205,16 @@ public class TSenderAOGenericRule extends
 	 *            The current data handler
 	 * @return The protocol handler
 	 */
-	private IProtocolHandler<?> getProtocolHandler(AbstractSenderAO operator,
-			IDataHandler<?> dataHandler, OptionMap options) {
+	private IProtocolHandler<?> getProtocolHandler(AbstractSenderAO operator, IStreamObjectDataHandler<?> dataHandler,
+			OptionMap options) {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-				protocolHandler = ProtocolHandlerRegistry.getInstance(
-						operator.getProtocolHandler(), ITransportDirection.OUT,
-						IAccessPattern.PULL, options, dataHandler);
+				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
+						ITransportDirection.OUT, IAccessPattern.PULL, options, dataHandler);
 			} else {
-				protocolHandler = ProtocolHandlerRegistry.getInstance(
-						operator.getProtocolHandler(), ITransportDirection.OUT,
-						IAccessPattern.PUSH, options, dataHandler);
+				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(),
+						ITransportDirection.OUT, IAccessPattern.PUSH, options, dataHandler);
 			}
 		}
 		return protocolHandler;
@@ -246,16 +227,20 @@ public class TSenderAOGenericRule extends
 	 *            The {@link AbstractSenderAO}
 	 * @return The data handler
 	 */
-	private IDataHandler<?> getDataHandler(AbstractSenderAO operator) {
+	private IStreamObjectDataHandler<?> getDataHandler(AbstractSenderAO operator) {
 		IDataHandler<?> dataHandler = null;
 		if (operator.getDataHandler() != null) {
 			if (operator.getOutputSchema() != null) {
-				dataHandler = DataHandlerRegistry.getDataHandler(
-						operator.getDataHandler(), operator.getOutputSchema());
+				dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
 			}
-
 		}
-		return dataHandler;
+		if (dataHandler != null) {
+			if (!(dataHandler instanceof IStreamObjectDataHandler)) {
+				throw new IllegalArgumentException("DataHandler " + operator.getDataHandler() + " cannot be used!");
+			}
+			return (IStreamObjectDataHandler<?>) dataHandler;
+		}
+		return null;
 	}
 
 }

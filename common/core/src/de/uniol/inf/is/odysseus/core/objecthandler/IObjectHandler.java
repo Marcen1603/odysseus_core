@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-public interface IObjectHandler<T> extends IClone {
+public interface IObjectHandler<T extends IStreamObject<? extends IMetaAttribute>> extends IClone {
 	public void put(ByteBuffer buffer) throws IOException;
 	public void put(ByteBuffer buffer, int size) throws IOException;
 	public void put(T object, boolean withMetadata);
@@ -29,5 +31,5 @@ public interface IObjectHandler<T> extends IClone {
 	public ByteBuffer getByteBuffer();
 	public T create() throws IOException, ClassNotFoundException;
 	public String getName();
-	public IObjectHandler<T> getInstance(IDataHandler<T> dataHandler);
+	public IObjectHandler<T> getInstance(IStreamObjectDataHandler<T> dataHandler);
 }

@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.wrapper.kinect.openNI;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -13,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * {@link KinectTransportHandler} to a data handler, usualy TupleDataHandler.
  * @author Juergen Boger <juergen.boger@offis.de>
  */
-public class KinectProtocolHandler<T> extends SimpleByteBufferHandler<T> {
+public class KinectProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends SimpleByteBufferHandler<T> {
     /**
      * Standard constructor.
      */
@@ -30,14 +32,14 @@ public class KinectProtocolHandler<T> extends SimpleByteBufferHandler<T> {
      */
     public KinectProtocolHandler(
             ITransportDirection direction, IAccessPattern access,
-            OptionMap options, IDataHandler<T> dataHandler) {
+            OptionMap options, IStreamObjectDataHandler<T> dataHandler) {
         super(direction, access, options, dataHandler);
     }
 
     @Override
     public IProtocolHandler<T> createInstance(
             ITransportDirection direction, IAccessPattern access,
-            OptionMap options, IDataHandler<T> dataHandler) {
+            OptionMap options, IStreamObjectDataHandler<T> dataHandler) {
         return new KinectProtocolHandler<>(direction,
                 access, options, dataHandler);
     }

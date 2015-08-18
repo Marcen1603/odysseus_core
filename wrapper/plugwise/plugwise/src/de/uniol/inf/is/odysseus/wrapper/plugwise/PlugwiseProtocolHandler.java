@@ -3,8 +3,11 @@ package de.uniol.inf.is.odysseus.wrapper.plugwise;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -12,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
+public class PlugwiseProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
 	public static final String NAME = "Plugwise";
 	public static final String CIRCLE_MAC = "circle_mac";
@@ -25,7 +28,7 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	public PlugwiseProtocolHandler(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		super(direction, access, dataHandler, options);
 		init_internal();
 	}
@@ -115,7 +118,7 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		return new PlugwiseProtocolHandler<>(direction, access, options,
 				dataHandler);
 

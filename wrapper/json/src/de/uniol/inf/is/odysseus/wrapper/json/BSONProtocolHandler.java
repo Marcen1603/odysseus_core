@@ -11,12 +11,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.undercouch.bson4jackson.BsonFactory;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class BSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJSONProtocolHandler<T> {
+public class BSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>> extends AbstractJSONProtocolHandler<T> {
 	
 	public static final String NAME = "BSON";
 	
@@ -26,7 +27,7 @@ public class BSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 	
 
 	public BSONProtocolHandler(
-			ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler,OptionMap optionsMap) {
+			ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,OptionMap optionsMap) {
 		super(direction,access,dataHandler,optionsMap);
 		this.init_internal();
 	}
@@ -41,7 +42,7 @@ public class BSONProtocolHandler<T extends KeyValueObject<?>> extends AbstractJS
 	public IProtocolHandler<T> createInstance(
 			ITransportDirection direction, IAccessPattern access,
 			OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		BSONProtocolHandler<T> instance = new BSONProtocolHandler<T>(direction, access, dataHandler, options);
 		return instance;
 	}

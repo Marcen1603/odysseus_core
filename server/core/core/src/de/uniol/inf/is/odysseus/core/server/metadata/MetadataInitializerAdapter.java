@@ -41,4 +41,5 @@ public class MetadataInitializerAdapter<M extends IMetaAttribute, T extends IStr
 		}
 	}
 
+
 }

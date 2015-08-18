@@ -32,15 +32,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
+public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
 	protected static final Charset charset = Charset.forName("UTF-8");
 
@@ -99,7 +101,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public LineProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler,
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,
 			OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
@@ -444,7 +446,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction,
 				access, dataHandler, options);
 		return instance;

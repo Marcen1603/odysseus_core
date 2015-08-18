@@ -20,9 +20,8 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-import com.sun.xml.internal.ws.resources.SenderMessages;
-
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 abstract public class AbstractTransportHandler implements ITransportHandler{
 
-	final AbstractTransportHandlerDelegate<?> delegate;
+	final AbstractTransportHandlerDelegate<IStreamObject<IMetaAttribute>> delegate;
 	IExecutor executor;
 	
 	public AbstractTransportHandler(){
@@ -130,7 +129,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		delegate.fireProcess(message);
 	}
 	
-	final public void fireProcess(IStreamObject<?> message){
+	final public void fireProcess(IStreamObject<IMetaAttribute> message){
 		delegate.fireProcess(message);
 	}
 

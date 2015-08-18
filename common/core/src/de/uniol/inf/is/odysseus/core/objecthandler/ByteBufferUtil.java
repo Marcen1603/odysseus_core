@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -60,10 +61,10 @@ public class ByteBufferUtil {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T extends IStreamObject> void toBuffer(ByteBuffer buffer,
-			T object, IDataHandler dataHandler, boolean withMetadata) {
-		dataHandler.writeData(buffer, object);
+			T object, IStreamObjectDataHandler dataHandler, boolean withJavaSerializedMetadata, boolean withOdysseusSerializedMetadata) {
+		dataHandler.writeData(buffer, object, withOdysseusSerializedMetadata);
 
-		if (withMetadata) {
+		if (withJavaSerializedMetadata) {
 			Object metadata = object.getMetadata();
 			if (metadata != null) {
 				byte[] metadataBytes = ObjectByteConverter.objectToBytes(object

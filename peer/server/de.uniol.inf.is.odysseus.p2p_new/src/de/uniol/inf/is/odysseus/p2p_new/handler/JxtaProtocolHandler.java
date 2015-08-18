@@ -8,7 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractByteBufferHandler;
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.peer.util.ObjectByteConverter;
 
-public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByteBufferHandler<T> {
+public class JxtaProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractByteBufferHandler<T> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SizeByteBufferHandler.class);
 	private static final String HANDLER_NAME = "JxtaSizeByteBuffer";
@@ -40,7 +41,7 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 		super();
 	}
 
-	public JxtaProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+	public JxtaProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler,optionsMap);
 		jxtaBufferHandler = new JxtaByteBufferHandler<T>(dataHandler);
 	}
@@ -170,7 +171,7 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 		} 
 	}
 
-	private static <T extends IStreamObject<?>> T tryCreate(JxtaByteBufferHandler<T> handler) {
+	private static <T extends IStreamObject<IMetaAttribute>> T tryCreate(JxtaByteBufferHandler<T> handler) {
 		try {
 			return handler.create();
 		} catch( Throwable t ) {
@@ -190,7 +191,7 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 	}
 
 	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IDataHandler<T> dataHandler) {
+	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options, IStreamObjectDataHandler<T> dataHandler) {
 		JxtaProtocolHandler<T> instance = new JxtaProtocolHandler<T>(direction, access,dataHandler, options);
 		return instance;
 	}

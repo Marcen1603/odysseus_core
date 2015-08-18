@@ -53,7 +53,7 @@ import org.w3c.dom.Text;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.NestedKeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -100,7 +100,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
         super();
     }
 
-    public XMLProtocolHandler2(final ITransportDirection direction, final IAccessPattern access, IDataHandler<T> dataHandler, OptionMap options) 
+    public XMLProtocolHandler2(final ITransportDirection direction, final IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap options) 
     {
         super(direction, access, dataHandler, options);
         
@@ -379,7 +379,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
     }
 
     @Override
-    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IDataHandler<T> dataHandler) {
+    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IStreamObjectDataHandler<T> dataHandler) {
         final XMLProtocolHandler2<T> instance = new XMLProtocolHandler2<T>(direction, access, dataHandler, options);
         return instance;
     }

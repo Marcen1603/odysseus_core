@@ -1,6 +1,8 @@
 
 package de.uniol.inf.is.odysseus.video.physicaloperator;
 
+import static org.bytedeco.javacpp.avcodec.AV_CODEC_ID_NONE;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -10,7 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bytedeco.javacpp.opencv_core.IplImage;
-import static org.bytedeco.javacpp.avcodec.AV_CODEC_ID_NONE;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameRecorder;
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -71,7 +72,7 @@ public abstract class AbstractVideoStreamProtocolHandler extends AbstractProtoco
 		super();
 	}
 
-	public AbstractVideoStreamProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<Tuple<?>> dataHandler, 
+	public AbstractVideoStreamProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<Tuple<?>> dataHandler, 
 												OptionMap options) 
 	{
 		super(direction, access, dataHandler, options);

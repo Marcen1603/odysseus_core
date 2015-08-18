@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -25,20 +25,20 @@ import de.uniol.inf.is.odysseus.keyvalue.logicaloperator.KeyValueToTupleAO;
 public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		AbstractPipe<KeyValueObject<M>, Tuple<M>> {
 
-	private IDataHandler<Tuple<?>> tHandler = new TupleDataHandler();
+	private IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>> tHandler = new TupleDataHandler();
 	private List<RenameAttribute> renameAttributes;
 	
 	boolean keepInputObject;
 
 	public KeyValueToTuplePO(boolean keepInputObject, SDFSchema outputSchema) {
 		this.keepInputObject = keepInputObject;
-		this.tHandler = tHandler.createInstance(outputSchema);
+		this.tHandler = (IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>>) tHandler.createInstance(outputSchema);
 		setOutputSchema(outputSchema);
 	}
 
 	public KeyValueToTuplePO(KeyValueToTupleAO operator) {
 		this.keepInputObject = operator.isKeepInputObject();
-		this.tHandler = tHandler.createInstance(operator.getOutputSchema());
+		this.tHandler = (IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>>) tHandler.createInstance(operator.getOutputSchema());
 		this.renameAttributes = operator.getAttributes();
 		setOutputSchema(operator.getOutputSchema());
 	}

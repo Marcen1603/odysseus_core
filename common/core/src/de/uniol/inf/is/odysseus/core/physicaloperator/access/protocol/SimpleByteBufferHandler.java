@@ -9,14 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
+public class SimpleByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractByteBufferHandler<T> {
 
 	final static String NAME = "SimpleByteBuffer";
 	final static Logger LOG = LoggerFactory.getLogger(SimpleByteBufferHandler.class);
@@ -32,19 +32,18 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
 	public SimpleByteBufferHandler(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		super(direction, access, dataHandler, options);
 		objectHandler = new ByteBufferHandler<T>(dataHandler);
 		if(options.containsKey(bufferSizeOption))
 			this.bufferSize = options.getInt(bufferSizeOption, this.bufferSize);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void write(T object) throws IOException {
 		ByteBuffer buffer = ByteBuffer.allocate(this.bufferSize);
-		//getDataHandler().writeData(buffer, object);
-		ByteBufferUtil.toBuffer(buffer, (IStreamObject)object, getDataHandler(), exportMetadata);
+		getDataHandler().writeData(buffer, object);
+		//ByteBufferUtil.toBuffer(buffer, (IStreamObject)object, getDataHandler(), exportMetadata);
 		buffer.flip();
 
 		int messageSizeBytes = buffer.remaining();
@@ -58,7 +57,7 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		return new SimpleByteBufferHandler<>(direction, access, options,
 				dataHandler);
 	}

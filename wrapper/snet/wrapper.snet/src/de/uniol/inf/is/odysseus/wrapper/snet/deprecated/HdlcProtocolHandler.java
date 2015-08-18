@@ -2,15 +2,14 @@ package de.uniol.inf.is.odysseus.wrapper.snet.deprecated;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-
-
-
-
 import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -18,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.wrapper.snet.communication.util.ByteUtils;
 
 @SuppressWarnings("all")
-public class HdlcProtocolHandler <T>  extends AbstractProtocolHandler <T> {
+public class HdlcProtocolHandler <T extends IStreamObject<? extends IMetaAttribute>>  extends AbstractProtocolHandler <T> {
 
 	protected BufferedInputStream reader;
 	
@@ -52,14 +51,14 @@ public class HdlcProtocolHandler <T>  extends AbstractProtocolHandler <T> {
 	public HdlcProtocolHandler() {}
 	
 	public HdlcProtocolHandler(
-			ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler,OptionMap optionsMap) {
+			ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,OptionMap optionsMap) {
 		super(direction, access,dataHandler,optionsMap);
 	}
 
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		HdlcProtocolHandler <T> handler = new HdlcProtocolHandler<T> (direction, access, dataHandler,options);
 		return handler;
 	}

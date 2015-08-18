@@ -7,7 +7,7 @@ import com.google.protobuf.CodedInputStream;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -44,7 +44,7 @@ public class GPBProtocolHandler extends
 
 	public GPBProtocolHandler(ITransportDirection direction,
 			IAccessPattern access,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
+			IStreamObjectDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
 			OptionMap options) {
 		super(direction, access, dataHandler, options);
 		if (!options.containsKey(STREAMTYPE)) {
@@ -66,7 +66,7 @@ public class GPBProtocolHandler extends
 	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
 			ITransportDirection direction, IAccessPattern access,
 			OptionMap options,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+			IStreamObjectDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
 
 		GPBProtocolHandler instance = new GPBProtocolHandler(direction, access,
 				dataHandler, options);

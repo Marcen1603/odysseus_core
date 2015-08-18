@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -49,7 +50,7 @@ import org.xml.sax.SAXNotSupportedException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -94,7 +95,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
      * 
      * @param schema
      */
-    private HTMLProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<T> dataHandler, OptionMap optionsMap) {
+    private HTMLProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
         super(direction, access, dataHandler, optionsMap);
         this.parser = new DOMFragmentParser();
 
@@ -327,7 +328,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHan
     }
 
     @Override
-    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IDataHandler<T> dataHandler) {
+    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IStreamObjectDataHandler<T> dataHandler) {
         final HTMLProtocolHandler<T> instance = new HTMLProtocolHandler<>(direction, access, dataHandler, options);
 
         return instance;

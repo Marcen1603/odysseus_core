@@ -70,6 +70,19 @@ public class DataHandlerRegistry {
 		}
 	}
 
+	public static IStreamObjectDataHandler<?> getStreamObjectDataHandler(String dataType,
+			SDFSchema schema) {
+		IDataHandler<?> h = getDataHandler(dataType, schema);
+		if (h == null){
+			return null;
+		}
+		if (!(h instanceof IStreamObjectDataHandler)){
+			throw new IllegalArgumentException("Datatype "+dataType+" is not usable as stream object!");
+		}
+		return (IStreamObjectDataHandler<?>) h;
+	}
+	
+	
 	public static IDataHandler<?> getDataHandler(String dataType,
 			SDFSchema schema) {
 		IDataHandler<?> ret = dataHandlers.get(dataType.toLowerCase());
@@ -81,6 +94,18 @@ public class DataHandlerRegistry {
 
 	public static boolean containsDataHandler(String dataType) {
 		return dataHandlers.containsKey(dataType.toLowerCase());
+	}
+	
+	public static IStreamObjectDataHandler<?> getStreamObjectDataHandler(String dataType,
+			List<SDFDatatype> schema) {
+		IDataHandler<?> h = getDataHandler(dataType, schema);
+		if (h == null){
+			return null;
+		}
+		if (!(h instanceof IStreamObjectDataHandler)){
+			throw new IllegalArgumentException("Datatype "+dataType+" is not usable as stream object!");
+		}
+		return (IStreamObjectDataHandler<?>) h;
 	}
 
 	public static IDataHandler<?> getDataHandler(String dataType,
@@ -97,10 +122,6 @@ public class DataHandlerRegistry {
 	
 	}
 	
-
-	
-	
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Class<? extends IStreamObject> getCreatedType(
 			String dhandlerText) {

@@ -17,14 +17,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class JSONProtocolHandler<T extends KeyValueObject<? extends IMetaAttribute>>
+public class JSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>>
 		extends AbstractJSONProtocolHandler<T> {
 
 	private static final String WRITE_METADATA = "json.write.metadata";
@@ -46,7 +46,7 @@ public class JSONProtocolHandler<T extends KeyValueObject<? extends IMetaAttribu
 	}
 
 	public JSONProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler,
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,
 			OptionMap options) {
 		super(direction, access, dataHandler, options);
 		this.init_internal();
@@ -132,7 +132,7 @@ public class JSONProtocolHandler<T extends KeyValueObject<? extends IMetaAttribu
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		return new JSONProtocolHandler<T>(direction, access, dataHandler,
 				options);
 	}

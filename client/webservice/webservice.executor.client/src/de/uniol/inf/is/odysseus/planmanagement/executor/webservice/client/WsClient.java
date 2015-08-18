@@ -57,12 +57,13 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ClientReceiver;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -791,8 +792,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		}
 
 		SDFSchema outputSchema = exec.getOutputSchema(queryId, caller);
-		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler("Tuple",
+		IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.getStreamObjectDataHandler("Tuple",
 				outputSchema);
+		
+		// TODO: Handle generic metadata ...
+		dataHandler.setMetaAttribute(new TimeInterval());
 		List<SocketAddress> adr = ((IClientExecutor) exec)
 				.getSocketConnectionInformation(queryId, caller);
 		OptionMap options = new OptionMap();

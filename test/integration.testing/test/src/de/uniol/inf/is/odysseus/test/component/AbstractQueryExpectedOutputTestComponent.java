@@ -69,7 +69,7 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 					if(dataHandler.equalsIgnoreCase("KEYVALUEOBJECT") || dataHandler.equalsIgnoreCase("NESTEDKEYVALUEOBJECT")) {
 						sink = new KeyValueTICompareSink<KeyValueObject<? extends ITimeInterval>>(expected, dataHandler);
 					} else {
-						sink = new TICompareSink<Tuple<? extends ITimeInterval>>(expected, dataHandler);
+						sink = new TICompareSink<Tuple<ITimeInterval>>(expected, dataHandler);
 					}
 //					if(set.getName().equalsIgnoreCase("aggregate_time.qry")){
 //						sink.setTracing(true);

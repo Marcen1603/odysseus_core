@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -54,7 +54,7 @@ public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> ext
 		super();
 	}
 
-	public MosaikProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+	public MosaikProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
         if (optionsMap.containsKey(CLEANSTRINGS)) {
             this.setCleanStrings(Boolean.parseBoolean(optionsMap.get(CLEANSTRINGS)));
@@ -65,7 +65,7 @@ public class MosaikProtocolHandler<T extends KeyValueObject<IMetaAttribute>> ext
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		return new MosaikProtocolHandler<>(direction, access, dataHandler, options);
 	}
 

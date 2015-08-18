@@ -36,9 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
-public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute>
-		extends AbstractSource<W> implements ITransferHandler<W>,
-		IMetadataInitializer<M, W>, ICommandProvider {
+public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractSource<W>
+		implements ITransferHandler<W>, IMetadataInitializer<M, W>, ICommandProvider {
 
 	volatile protected static Logger _logger = null;
 
@@ -52,12 +51,14 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 	private boolean opened;
 
 	private IProtocolHandler<W> protocolHandler;
-
+	final private boolean readMetaData;
+	
 	private IMetadataInitializer<M, W> metadataInitializer = new MetadataInitializerAdapter<>();
 
-	public ReceiverPO(IProtocolHandler<W> protocolHandler) {
+	public ReceiverPO(IProtocolHandler<W> protocolHandler, boolean readMetaData) {
 		this.protocolHandler = protocolHandler;
 		this.protocolHandler.setTransfer(this);
+		this.readMetaData = readMetaData;
 	}
 
 	public IProtocolHandler<W> getProtocolHandler() {
@@ -65,6 +66,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 	}
 
 	public ReceiverPO() {
+		readMetaData = false;
 	}
 
 	public void setProtocolHandler(IProtocolHandler<W> ph) {
@@ -109,27 +111,18 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 	}
 
 	@Override
-	final public void transfer(W object) {
+	final public void transfer(W object, int sourceOutPort) {
 		if (opened) {
 			try {
-				object.setMetadata(getMetadataInstance());
+				if (!readMetaData) {
+					object.setMetadata(getMetadataInstance());
+				}
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
-			updateMetadata(object);
-			super.transfer(object);
-		}
-	}
-
-	@Override
-	public final void transfer(W object, int sourceOutPort) {
-		if (opened) {
-			try {
-				object.setMetadata(getMetadataInstance());
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
+			if (!readMetaData) {
+				updateMetadata(object);
 			}
-			updateMetadata(object);
 			super.transfer(object, sourceOutPort);
 		}
 	}
@@ -153,8 +146,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 	}
 
 	@Override
-	public M getMetadataInstance() throws InstantiationException,
-			IllegalAccessException {
+	public M getMetadataInstance() throws InstantiationException, IllegalAccessException {
 		return this.metadataInitializer.getMetadataInstance();
 	}
 
@@ -181,21 +173,16 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute>
 				ITransportHandler transportHandler = ((AbstractProtocolHandler<W>) protocolHandler)
 						.getTransportHandler();
 				if (transportHandler instanceof ICommandProvider)
-					return ((ICommandProvider) transportHandler)
-							.getCommandByName(newCommandName, schema);
+					return ((ICommandProvider) transportHandler).getCommandByName(newCommandName, schema);
 				else
-					throw new UnsupportedOperationException(
-							"transport handler doesn't implement ICommandProvider");
+					throw new UnsupportedOperationException("transport handler doesn't implement ICommandProvider");
 			} else if (target.equalsIgnoreCase("protocol")) {
 				if (protocolHandler instanceof ICommandProvider)
-					return ((ICommandProvider) protocolHandler)
-							.getCommandByName(newCommandName, schema);
+					return ((ICommandProvider) protocolHandler).getCommandByName(newCommandName, schema);
 				else
-					throw new UnsupportedOperationException(
-							"protocol handler doesn't implement ICommandProvider");
+					throw new UnsupportedOperationException("protocol handler doesn't implement ICommandProvider");
 			} else
-				throw new IllegalArgumentException("Unknown target \"" + target
-						+ "\" in \"" + commandName + "\"");
+				throw new IllegalArgumentException("Unknown target \"" + target + "\" in \"" + commandName + "\"");
 		} else {
 			// Command is for this Operator!
 			return null;

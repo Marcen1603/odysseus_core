@@ -31,7 +31,7 @@ import com.google.common.io.LittleEndianDataOutputStream;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -175,7 +175,7 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 	{
 	}
 
-	public NMEA2000ProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler, OptionMap optionsMap) 
+	public NMEA2000ProtocolHandler(ITransportDirection direction, IAccessPattern access, IStreamObjectDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler, OptionMap optionsMap) 
 	{
 		super(direction, access, dataHandler, optionsMap);
 		delay = optionsMap.getInt(DELAY, 0);
@@ -282,7 +282,7 @@ public class NMEA2000ProtocolHandler extends AbstractProtocolHandler<KeyValueObj
 
 	@Override
 	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options,
-																					 IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) 
+			IStreamObjectDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) 
 	{
 		return new NMEA2000ProtocolHandler(direction, access, dataHandler, options);
 	}

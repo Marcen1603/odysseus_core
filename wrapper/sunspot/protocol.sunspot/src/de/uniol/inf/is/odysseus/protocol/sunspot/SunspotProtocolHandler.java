@@ -19,8 +19,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -32,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @param <T>
  * 
  */
-public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
+public class SunspotProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
 	protected BufferedReader reader;
 
@@ -41,7 +44,7 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public SunspotProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 	}
 
@@ -104,7 +107,7 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		SunspotProtocolHandler<T> instance = new SunspotProtocolHandler<T>(
 				direction, access, dataHandler, options);
 		return instance;

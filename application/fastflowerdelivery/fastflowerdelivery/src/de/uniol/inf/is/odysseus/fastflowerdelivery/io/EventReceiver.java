@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -85,7 +85,7 @@ public class EventReceiver extends Thread implements ITransferHandler {
 		options.setOption("port", "" + port);
 		options.setOption("autoconnect", "false");
 		
-		IDataHandler dataHandler = DataHandlerRegistry.getDataHandler(
+		 IStreamObjectDataHandler<?> dataHandler = DataHandlerRegistry.getStreamObjectDataHandler(
 						"tuple", getSchema());
 		
 		ReceiverPO receiver = new ReceiverPO();

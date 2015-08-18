@@ -2,14 +2,17 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
+public class StringArrayProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
 
 	public static final String NAME = "StringArray";
 
@@ -18,7 +21,7 @@ public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	public StringArrayProtocolHandler(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		super(direction, access, dataHandler, options);
 	}
 
@@ -46,7 +49,7 @@ public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		return new StringArrayProtocolHandler<T>(direction, access, options,
 				dataHandler);
 	}

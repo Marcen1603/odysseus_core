@@ -18,10 +18,11 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 
-public interface ITransportHandlerListener<T> {
+public interface ITransportHandlerListener<T extends IStreamObject<? extends IMetaAttribute>> {
 	
 	/**
 	 * Is called when a new connection with the transport handler is established
@@ -52,18 +53,11 @@ public interface ITransportHandlerListener<T> {
 	 */
 	void process(String[] message);
 
-
 	/**
 	 * Implement this method to process the message
 	 * @param message as T
 	 */
-	void process(IStreamObject<?> m);
-
-	/**
-	 * Implement this method to process the message
-	 * @param message as T
-	 */
-	void process(IStreamObject<?> m, int port);
+	void process(T m, int port);
 
 	
 	/**

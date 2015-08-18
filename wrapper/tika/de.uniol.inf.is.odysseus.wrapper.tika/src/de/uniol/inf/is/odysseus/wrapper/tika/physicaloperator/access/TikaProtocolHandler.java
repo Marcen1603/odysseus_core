@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
@@ -51,7 +51,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? extends IMetaAttribute>> {
+public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<IMetaAttribute>> {
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(TikaProtocolHandler.class);
     /** The name of the protocol handler. */
@@ -73,7 +73,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
      * @param access
      * @param dataHandler
      */
-    public TikaProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler, OptionMap optionsMap ) {
+    public TikaProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler, OptionMap optionsMap ) {
         super(direction, access, dataHandler, optionsMap);
         this.parser = new AutoDetectParser();
         init_internal();
@@ -101,8 +101,8 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
      * {@inheritDoc}
      */
     @Override
-    public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options,
-            final IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+    public IProtocolHandler<KeyValueObject<IMetaAttribute>> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options,
+            final IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler) {
         final TikaProtocolHandler instance = new TikaProtocolHandler(direction, access, dataHandler, options);
         return instance;
     }
@@ -112,10 +112,10 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
      * {@inheritDoc}
      */
     @Override
-    public KeyValueObject<? extends IMetaAttribute> getNext() throws IOException {
+    public KeyValueObject<IMetaAttribute> getNext() throws IOException {
         final String line = super.getNextLine(reader);
 
-        KeyValueObject<? extends IMetaAttribute> object = null;
+        KeyValueObject<IMetaAttribute> object = null;
         final Map<String, Object> event = new HashMap<>();
         final Metadata metadata = new Metadata();
         ParseContext context = new ParseContext();
@@ -152,7 +152,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
     @Override
     public void process(long callerId, final ByteBuffer message) {
 		// TODO: check if callerId is relevant
-        KeyValueObject<? extends IMetaAttribute> object = null;
+        KeyValueObject<IMetaAttribute> object = null;
         final Map<String, Object> event = new HashMap<>();
         final Metadata metadata = new Metadata();
         ParseContext context = new ParseContext();
@@ -187,7 +187,7 @@ public class TikaProtocolHandler extends LineProtocolHandler<KeyValueObject<? ex
      * {@inheritDoc}
      */
     @Override
-    public void write(final KeyValueObject<? extends IMetaAttribute> object) throws IOException {
+    public void write(final KeyValueObject<IMetaAttribute> object) throws IOException {
         throw new IllegalArgumentException("write not supported");
     }
 

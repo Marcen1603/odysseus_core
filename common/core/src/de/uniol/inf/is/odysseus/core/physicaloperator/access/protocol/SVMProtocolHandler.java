@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
@@ -30,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SVMProtocolHandler<T extends Tuple<?>> extends
+public class SVMProtocolHandler<T extends Tuple<IMetaAttribute>> extends
 		LineProtocolHandler<T> {
 
 	private final Logger LOG = LoggerFactory
@@ -62,7 +63,7 @@ public class SVMProtocolHandler<T extends Tuple<?>> extends
 	}
 	
 	public SVMProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler,
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,
 			OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
@@ -215,7 +216,7 @@ public class SVMProtocolHandler<T extends Tuple<?>> extends
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		SVMProtocolHandler<T> instance = new SVMProtocolHandler<T>(direction,
 				access, dataHandler, options);
 		return instance;

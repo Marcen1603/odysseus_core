@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -23,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * 
  * @param <T>
  */
-public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
+public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractProtocolHandler<T> {
 	Logger LOG = LoggerFactory.getLogger(DocumentProtocolHandler.class);
 	protected BufferedReader reader;
 	protected BufferedWriter writer;
@@ -49,7 +52,7 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public DocumentProtocolHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler, OptionMap optionsMap) {
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler, OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
 	}
@@ -224,7 +227,7 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, OptionMap options,
-			IDataHandler<T> dataHandler) {
+			IStreamObjectDataHandler<T> dataHandler) {
 		DocumentProtocolHandler<T> instance = new DocumentProtocolHandler<T>(
 				direction, access, dataHandler, options);
 		return instance;

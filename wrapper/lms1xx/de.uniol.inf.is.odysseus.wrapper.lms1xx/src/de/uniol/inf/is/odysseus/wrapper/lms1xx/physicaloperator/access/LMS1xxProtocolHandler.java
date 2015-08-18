@@ -38,7 +38,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
@@ -61,7 +61,7 @@ import de.uniol.inf.is.odysseus.wrapper.lms1xx.model.Sample;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class LMS1xxProtocolHandler extends
-		LineProtocolHandler<KeyValueObject<? extends IMetaAttribute>> {
+		LineProtocolHandler<KeyValueObject<IMetaAttribute>> {
 	/** The logger. */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(LMS1xxProtocolHandler.class);
@@ -126,7 +126,7 @@ public class LMS1xxProtocolHandler extends
 	public LMS1xxProtocolHandler(
 			final ITransportDirection direction,
 			final IAccessPattern access,
-			final IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
+			final IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler,
 			OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
 		init_internal();
@@ -155,11 +155,11 @@ public class LMS1xxProtocolHandler extends
 	 * {@inheritDoc}
 	 */
 	@Override
-	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
+	public IProtocolHandler<KeyValueObject<IMetaAttribute>> createInstance(
 			final ITransportDirection direction,
 			final IAccessPattern access,
 			final OptionMap options,
-			final IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+			final IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler) {
 		final LMS1xxProtocolHandler instance = new LMS1xxProtocolHandler(
 				direction, access, dataHandler, options);
 		return instance;
@@ -209,7 +209,7 @@ public class LMS1xxProtocolHandler extends
 	 * {@inheritDoc}
 	 */
 	@Override
-	public KeyValueObject<? extends IMetaAttribute> getNext()
+	public KeyValueObject<IMetaAttribute> getNext()
 			throws IOException {
 		final String line = super.getNextLine(reader);
 		final CharsetEncoder encoder = this.charset.newEncoder();
@@ -225,9 +225,9 @@ public class LMS1xxProtocolHandler extends
 			this.buffer.put(encoder.encode(CharBuffer.wrap(line)));
 		}
 		this.buffer.flip();
-		KeyValueObject<? extends IMetaAttribute> object = null;
+		KeyValueObject<IMetaAttribute> object = null;
 		try {
-			object = this.parse();
+			object = (KeyValueObject<IMetaAttribute>) this.parse();
 			if (object == null) {
 				object = this.getNext();
 			}
@@ -260,7 +260,7 @@ public class LMS1xxProtocolHandler extends
 				message.position(endPosition + 1);
 				startPosition = message.position();
 				this.buffer.flip();
-				KeyValueObject<? extends IMetaAttribute> object = null;
+				KeyValueObject<IMetaAttribute> object = null;
 				try {
 					object = this.parse();
 					if (object != null) {
@@ -308,7 +308,7 @@ public class LMS1xxProtocolHandler extends
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void write(final KeyValueObject<? extends IMetaAttribute> object)
+	public void write(final KeyValueObject<IMetaAttribute> object)
 			throws IOException {
 		// TODO 20140321 christian@kuka.cc Implement reverse protocol
 		this.writer.write(object.toString());
@@ -396,7 +396,7 @@ public class LMS1xxProtocolHandler extends
 		return ignoreTimestamp;
 	}	
 
-	private KeyValueObject<? extends IMetaAttribute> parse()
+	private KeyValueObject<IMetaAttribute> parse()
 			throws LMS1xxReadErrorException, LMS1xxLoginException,
 			LMS1xxUnknownMessageException {
 		final CharsetDecoder decoder = this.charset.newDecoder();
@@ -707,7 +707,7 @@ public class LMS1xxProtocolHandler extends
 		return event;
 	}
 
-	private KeyValueObject<? extends IMetaAttribute> parseLMS1xx(final String message) 
+	private KeyValueObject<IMetaAttribute> parseLMS1xx(final String message) 
 			throws LMS1xxLoginException,	LMS1xxUnknownMessageException 
 	{
 		final String[] data = message.split(" ");

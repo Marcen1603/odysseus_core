@@ -8,11 +8,13 @@ import java.text.DecimalFormat;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
+abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>> extends LineProtocolHandler<T> {
 	protected char delimiter;
 	protected Character textDelimiter = null;
 	protected DecimalFormat floatingFormatter;
@@ -39,7 +41,7 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
 	}	
 	
 	public AbstractCSVHandler(ITransportDirection direction,
-			IAccessPattern access, IDataHandler<T> dataHandler,OptionMap optionsMap) {
+			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,OptionMap optionsMap) {
 		super(direction, access, dataHandler,optionsMap);
 		init_internal();
 	}

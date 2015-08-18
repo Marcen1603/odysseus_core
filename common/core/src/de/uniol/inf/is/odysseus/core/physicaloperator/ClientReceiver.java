@@ -48,6 +48,8 @@ import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -62,7 +64,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * 
  * @author Merlin Wasmann, Marco Grawunder
  */
-public class ClientReceiver<R, W> implements ISource<W>,
+public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implements ISource<W>,
 		IAccessConnectionListener<R>, ITransferHandler<W>, IPhysicalOperator {
 
 	final public int ERRORPORT = Integer.MAX_VALUE;

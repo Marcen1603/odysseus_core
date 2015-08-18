@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  * @author Andr� Bolles, Marco Grawunder
  * 
  */
-public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
+public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? extends IMetaAttribute>> {
 
 	static final private Logger logger = LoggerFactory
 			.getLogger(TupleDataHandler.class);
@@ -67,12 +67,12 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	}
 
 	@Override
-	protected IDataHandler<Tuple<?>> getInstance(SDFSchema schema) {
+	protected IDataHandler<Tuple<? extends IMetaAttribute>> getInstance(SDFSchema schema) {
 		return new TupleDataHandler(schema, false);
 	}
 
 	@Override
-	protected IDataHandler<Tuple<?>> getInstance(List<SDFDatatype> schema) {
+	protected IDataHandler<Tuple<? extends IMetaAttribute>> getInstance(List<SDFDatatype> schema) {
 		TupleDataHandler handler = new TupleDataHandler(false);
 		handler.init(schema);
 		return handler;
@@ -97,7 +97,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	}
 
 	@Override
-	public Tuple<?> readData(InputStream inputStream) throws IOException {
+	public Tuple<? extends IMetaAttribute> readData(InputStream inputStream, boolean handleMetaData) throws IOException {
 		Object[] attributes = new Object[dataHandlers.length];
 		for (int i = 0; i < this.dataHandlers.length; i++) {
 			try {
@@ -120,9 +120,14 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		}
 		return ret;
 	}
+	
+	@Override
+	public Tuple<? extends IMetaAttribute> readData(String input, boolean handleMetaData) {
+		throw new UnsupportedOperationException("Currently not avaialable");
+	}
 
 	@Override
-	public Tuple<?> readData(String[] input) {
+	public Tuple<? extends IMetaAttribute> readData(String[] input, boolean handleMetaData) {
 		Object[] attributes = new Object[dataHandlers.length];
 		int min = Math.min(dataHandlers.length, input.length);
 		for (int i = 0; i < min; i++) {
@@ -153,7 +158,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	}
 
 	@Override
-	public Tuple<?> readData(List<String> input) {
+	public Tuple<? extends IMetaAttribute> readData(List<String> input, boolean handleMetaData) {
 		int min = Math.min(dataHandlers.length, input.size());
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(min,
 				false);
@@ -193,7 +198,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 * #readData (java.nio.ByteBuffer)
 	 */
 	@Override
-	public Tuple<?> readData(ByteBuffer buffer) {
+	public Tuple<? extends IMetaAttribute> readData(ByteBuffer buffer, boolean handleMetaData) {
 		Tuple<IMetaAttribute> r = null;
 		synchronized (buffer) {
 			// buffer.flip(); // DO NOT FLIP THIS BUFFER, OTHER READERS MIGHT
@@ -233,7 +238,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	}
 
 	@Override
-	public Tuple<?> readData(String string) {
+	public Tuple<? extends IMetaAttribute> readData(String string) {
 		String[] str = new String[1];
 		str[0] = string;
 		return readData(str);
@@ -247,7 +252,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 * (java.util.List, java.lang.Object)
 	 */
 	@Override
-	public void writeData(List<String> output, Object data) {
+	public void writeData(List<String> output, Object data, boolean handleMetaData) {
 		@SuppressWarnings("unchecked")
 		Tuple<IMetaAttribute> r = (Tuple<IMetaAttribute>) data;
 
@@ -269,7 +274,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 * (java.lang.StringBuilder, java.lang.Object)
 	 */
 	@Override
-	public void writeData(StringBuilder string, Object data) {
+	public void writeData(StringBuilder string, Object data, boolean handleMetaData) {
 		// super.writeData(string, data);
 		Tuple<?> r = (Tuple<?>) data;
 
@@ -291,23 +296,19 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 * #writeData (java.nio.ByteBuffer, java.lang.Object)
 	 */
 	@Override
-	public void writeData(ByteBuffer buffer, Object data) {
-		Tuple<?> r = (Tuple<?>) data;
-
-		// Dieser Code macht keinen Sinn...
-		// Denn im Falle eines zu großen Objekts wird ein
-		// temporärer ByteBuffer erzeugt und beschrieben. Der BYteBuffer
-		// des aufrufers wäre gar nicht angefasst worden
-
-		// int size = memSize(r);
-		//
-		// if (size > buffer.capacity()) {
-		// buffer = ByteBuffer.allocate(size * 2);
-		// }
-
+	public void writeData(ByteBuffer buffer, Object data, boolean handleMetaData) {
+		if (data instanceof Tuple){
+			Tuple<?> r = (Tuple<?>) data;
+			writeData(buffer, r, handleMetaData);
+		}
+	}
+	
+	@Override
+	public void writeData(ByteBuffer buffer, Tuple<? extends IMetaAttribute> object,
+			boolean handleMetaData) {
 		synchronized (buffer) {
 			for (int i = 0; i < dataHandlers.length; i++) {
-				Object v = r.getAttribute(i);
+				Object v = object.getAttribute(i);
 				if (nullMode) {
 					if (v == null) {
 						buffer.put((byte) 0);
@@ -316,13 +317,14 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 					}
 				}
 				if (!nullMode || (nullMode && v != null)) {
-					dataHandlers[i].writeData(buffer, r.getAttribute(i));
+					dataHandlers[i].writeData(buffer, object.getAttribute(i));
 				}
 			}
 			if (handleMetaData) {
-				writeMetaData(buffer, r.getMetadata());
+				writeMetaData(buffer, object.getMetadata());
 			}
 		}
+
 	}
 
 	/*
@@ -391,7 +393,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	}
 
 	@Override
-	public int memSize(Object attribute) {
+	public int memSize(Object attribute, boolean handleMetaData) {
 		Tuple<?> r = (Tuple<?>) attribute;
 		int size = 0;
 		for (int i = 0; i < dataHandlers.length; i++) {
