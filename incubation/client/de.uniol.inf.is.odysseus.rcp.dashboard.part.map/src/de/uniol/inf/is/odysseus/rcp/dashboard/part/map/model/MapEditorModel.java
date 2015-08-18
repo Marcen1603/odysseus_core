@@ -1,17 +1,13 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
-import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.OwnProperties;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
@@ -19,13 +15,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPar
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.RasterLayer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.NullConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
-
-//import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 //import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
-//import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
 //import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
 
 public class MapEditorModel extends ModelObject {
@@ -42,21 +37,13 @@ public class MapEditorModel extends ModelObject {
 	private int endIndex;
 
 	private LinkedList<ILayer> layers = new LinkedList<ILayer>();
-	private TreeMap<String, LayerUpdater> connections = new TreeMap<String, LayerUpdater>();
 
 	private ScreenManager screenManager = null;
 	private OwnProperties ownProperties;
 
 	public void init(MapDashboardPart mapDashboardPart) {
 		this.screenManager = mapDashboardPart.getScreenManager();
-		ownProperties = new OwnProperties();
-		for (LayerUpdater layerUpdater : connections.values()) {
-			screenManager.addPropertyChangeListener(layerUpdater);
-			screenManager.addConnection(layerUpdater);
-		}
 
-		// Cause if we load it from a file, the
-		// screenManger was null
 		for (ILayer layer : layers) {
 			if (layer != null) {
 				layer.init(screenManager, null, null);
@@ -66,7 +53,14 @@ public class MapEditorModel extends ModelObject {
 
 	}
 
-	// TODO Andere Layertypen adden
+	/**
+	 * Makes a String which contains the settings of all layers. The individual
+	 * layer settings are separated by
+	 * "\\". Each single attribute for the layer configuration is separated by a "
+	 * ;"
+	 * 
+	 * @return String which contains all layer setting
+	 */
 	public String save() {
 		this.layerSettings = "";
 		for (ILayer layer : layers) {
@@ -77,9 +71,8 @@ public class MapEditorModel extends ModelObject {
 						+ "\\";
 			} else if (configuration instanceof RasterLayerConfiguration) {
 				this.layerSettings += addToSettingString((RasterLayerConfiguration) configuration, checked) + "\\";
-				// }else if(configuration instanceof HeatmapLayerConfiguration){
-				// this.layerSettings +=
-				// addToSettingString((HeatmapLayerConfiguration)configuration);
+			} else if (configuration instanceof HeatmapLayerConfiguration) {
+				this.layerSettings += addToSettingString((HeatmapLayerConfiguration) configuration, checked) + "\\";
 			}
 		}
 		return layerSettings;
@@ -119,6 +112,20 @@ public class MapEditorModel extends ModelObject {
 		return layerSetting;
 	}
 
+	private String addToSettinString(HeatmapLayerConfiguration configuration, boolean checked) {
+		String layerSetting = "HeatMapLayerConfiguration";
+
+		return layerSetting;
+	}
+
+	// TODO this could be done with an String array
+	/**
+	 * Separates the given String into each layer configuration represented by a
+	 * String
+	 * 
+	 * @param layerSettings
+	 *            String which contains all layerConfigurations
+	 */
 	public void load(String layerSettings) {
 		layers.clear();
 
@@ -168,7 +175,7 @@ public class MapEditorModel extends ModelObject {
 		layers.add(basic);
 	}
 
-	// TODO Check
+	// TODO this could also be handled by a string array
 	private void loadRasterLayerConfiguration(String configuration) {
 		startIndex = 0;
 		endIndex = 0;
@@ -213,6 +220,17 @@ public class MapEditorModel extends ModelObject {
 		layers.add(rasterLayer);
 	}
 
+	private void loadHeatMapLayerConfiguration(String configuration) {
+
+	}
+
+	/**
+	 * Return the next setting value
+	 * 
+	 * @param string the given string
+	 * @param separator used separator
+	 * @return
+	 */
 	private String getSubString(String string, String separator) {
 		startIndex = endIndex + 1;
 		endIndex = string.indexOf(separator, startIndex);
@@ -232,14 +250,11 @@ public class MapEditorModel extends ModelObject {
 
 		if (layerConfiguration instanceof RasterLayerConfiguration) {
 			layer = addLayer((RasterLayerConfiguration) layerConfiguration);
-			// else if (layerConfiguration instanceof VectorLayerConfiguration)
-			// layer = addLayer((VectorLayerConfiguration) layerConfiguration);
-			// else if (layerConfiguration instanceof
-			// TracemapLayerConfiguration)
-			// layer = addLayer((TracemapLayerConfiguration)
-			// layerConfiguration);
-			// else if (layerConfiguration instanceof HeatmapLayerConfiguration)
-			// layer = addLayer((HeatmapLayerConfiguration) layerConfiguration);
+		} else if (layerConfiguration instanceof HeatmapLayerConfiguration) {
+			layer = addLayer((HeatmapLayerConfiguration) layerConfiguration);
+			// }else if (layerConfiguration instanceof
+			// TracemapLayerConfiguration){
+			// layer = addLayer((TracemapLayerConfiguration)layerConfiguration);
 		} else {
 			layer = addLayer();
 		}
@@ -265,65 +280,23 @@ public class MapEditorModel extends ModelObject {
 		return layer;
 	}
 
-	// private ILayer addLayer(VectorLayerConfiguration layerConfiguration) {
-	// ILayer layer = null;
-	// SDFAttribute attribute = null;
-	// SDFSchema schema = null;
-	//
-	// // Find the Query
-	// for (LayerUpdater connection : connections.values()) {
-	// if
-	// (connection.getQuery().getQueryText().equals(layerConfiguration.getQuery()))
-	// {
-	//
-	// // Connect the Stream to the iStreamListner
-	// schema = connection.getConnection().getOutputSchema();
-	// for (SDFAttribute tmpAttribute : schema) {
-	// if
-	// (tmpAttribute.getAttributeName().equals(layerConfiguration.getAttribute()))
-	// {
-	// attribute = tmpAttribute;
-	// layer = LayerTypeRegistry.getLayer(attribute.getDatatype());
-	// layer.setConfiguration(layerConfiguration);
-	//
-	// // PreInit
-	// layer.init(null, schema, attribute);
-	// connection.add(layer);
-	// }
-	// }
-	// }
-	// }
-	// if (screenManager != null && layer != null) {
-	// layer.init(screenManager, schema, attribute);
-	// }
-	// return layer;
-	// }
+	/**
+	 * Adds an HeatmapLayer to the map
+	 *
+	 * @param layerConfiguration
+	 * @return The layer
+	 */
+	private ILayer addLayer(HeatmapLayerConfiguration layerConfiguration) {
+		ILayer layer = new Heatmap(layerConfiguration);
+		if (screenManager != null) {
+			layer.init(screenManager, null, null);
+		}
 
-	// /**
-	// * Adds an HeatmapLayer to the map
-	// *
-	// * @param layerConfiguration
-	// * @return The layer
-	// */
-	// private ILayer addLayer(HeatmapLayerConfiguration layerConfiguration) {
-	// ILayer layer = new Heatmap(layerConfiguration);
-	// if (screenManager != null) {
-	// layer.init(screenManager, null, null);
-	// }
-	//
-	// // Add to the selected connection (LayerUpdater)
-	// for (LayerUpdater connection : connections.values()) {
-	// if (connection.getQuery().getQueryText()
-	// .equals(layerConfiguration.getQuery())) {
-	// connection.add(layer);
-	// }
-	// }
-	//
-	// // We don't want to set it active manually, too much clicks ...
-	// layer.setActive(true);
-	//
-	// return layer;
-	// }
+		// We don't want to set it active manually, too much clicks ...
+		layer.setActive(true);
+
+		return layer;
+	}
 
 	// /**
 	// * Adds a TracemapLayer to the map
@@ -351,34 +324,39 @@ public class MapEditorModel extends ModelObject {
 	// return layer;
 	// }
 
+	/**
+	 * Edit a layer by removing the old one and place in the "edit" one.
+	 * 
+	 * @param layer
+	 * @param layerConfiguration
+	 */
 	public void editLayer(ILayer layer, LayerConfiguration layerConfiguration) {
-		if (layerConfiguration instanceof RasterLayerConfiguration)
-			layer = editLayer((RasterLayerConfiguration) layerConfiguration);
-		// else if (layerConfiguration instanceof VectorLayerConfiguration)
-		// layer = editLayer((VectorLayerConfiguration) layerConfiguration);
-		// else if (layerConfiguration instanceof TracemapLayerConfiguration)
-		// layer = editLayer((TracemapLayerConfiguration) layerConfiguration);
-		// else if (layerConfiguration instanceof HeatmapLayerConfiguration)
-		// layer = editLayer((HeatmapLayerConfiguration) layerConfiguration);
+		LinkedList<ILayer> group = layers;
+		if (group.contains(layer)) {
+			int positionOrign = group.lastIndexOf(layer);
+			int positionLast = group.size();
+			addLayer(layerConfiguration);
 
-		firePropertyChange(MAP, null, this);
+			ILayer tmp = group.get(positionOrign);
+			ILayer tmp1 = group.get(positionLast);
+
+			group.set(positionLast, tmp);
+			group.set(positionOrign, tmp1);
+
+			removeLayer(group.getLast());
+		}
 	}
 
-	private ILayer editLayer(RasterLayerConfiguration layerConfiguration) {
-		ILayer layer = new RasterLayer(layerConfiguration);
-		return layer;
-	}
-
-	// private ILayer editLayer(VectorLayerConfiguration layerConfiguration){
-	// ILayer layer = new VectorLayer(layerConfiguration);
-	// return layer;
-	// }
-
+	/**
+	 * Removes a layer from the list  
+	 * @param layer
+	 */
 	public void removeLayer(ILayer layer) {
 		layers.remove(layer);
 		firePropertyChange(MAP, null, this);
 	}
 
+	
 	public void layerUp(ILayer layer) {
 		LinkedList<ILayer> group = layers;
 		if (group.contains(layer)) {
@@ -439,40 +417,25 @@ public class MapEditorModel extends ModelObject {
 		}
 	}
 
-	// TODO This should be handled by the Edit-Button later
 	public void rename(ILayer layer, String name) {
 		layer.setName(name);
 	}
 
-	// TODO THIS SHOULD BE DONE BY THE DASHBOARDPART
-	public void addConnection(IStreamConnection<Object> connection, IPhysicalQuery query,
-			MapDashboardPart mapDashboardPart) {
-		LOG.debug("Add Connection: " + query.getLogicalQuery().getQueryText());
+	/**
+	 * Generates a new layerUpdater and connects it to the ScreenManager
+	 * 
+	 * @param mapDashboardPart
+	 */
+	public LayerUpdater addConnection(MapDashboardPart mapDashboardPart) {
 
-		if (!connections.containsKey(String.valueOf(query.hashCode()))) {
-
-			LayerUpdater updater = new LayerUpdater(mapDashboardPart, query, connection);
-			connections.put(String.valueOf(query.hashCode()), updater);
-			if (screenManager != null) {
-				// If this Model is not opened by a file
-				screenManager.addPropertyChangeListener(updater);
-				screenManager.addConnection(updater);
-			}
-
-			LOG.debug("Bind Query: " + query.getID());
-			LOG.debug("Bind Query: " + query.getLogicalQuery().getQueryText());
+		LayerUpdater updater = new LayerUpdater(mapDashboardPart);
+		if (screenManager != null) {
+			// If this Model is not opened by a file
+			screenManager.addPropertyChangeListener(updater);
+			screenManager.addConnection(updater);
 		}
 		firePropertyChange(MAP, null, this);
-	}
-
-	public void removeConnection(LayerUpdater connection) {
-		String key = String.valueOf(connection.getQuery().hashCode());
-		for (ILayer layer : connections.get(key)) {
-			removeLayer(layer);
-		}
-		connections.remove(key);
-		screenManager.removeConnection(connection);
-		firePropertyChange(MAP, null, this);
+		return updater;
 	}
 
 	public String[] getLayerNameList() {
@@ -497,10 +460,6 @@ public class MapEditorModel extends ModelObject {
 
 	public LinkedList<ILayer> getLayers() {
 		return layers;
-	}
-
-	public Collection<LayerUpdater> getConnectionCollection() {
-		return connections.values();
 	}
 
 	public OwnProperties getOwnProperties() {

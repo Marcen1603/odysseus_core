@@ -13,16 +13,20 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.IStreamMapEditor;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.IMapDashboardAdapter;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 
-public class MapDashboardPart extends AbstractDashboardPart implements IStreamMapEditor {
+public class MapDashboardPart extends AbstractDashboardPart implements IMapDashboardAdapter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MapDashboardPart.class);
 
@@ -36,29 +40,99 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 
 	private String attributeList = "*";
 	private String layerSettings = "";
-	
+
 	private int srid = 0;
-	private int maxData = 10;
+	private int maxData = 10000;
 	private int updateInterval = 1000;
 
 	protected ScreenTransformation transformation;
 	protected ScreenManager screenManager;
 	private MapEditorModel mapModel;
+	private LayerUpdater layerUpdater;
 
 	private boolean initiated = false;
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
 		parent.setLayout(new GridLayout(1, false));
-
-		transformation = new ScreenTransformation();
 		initMapModel();
+		
+		transformation = new ScreenTransformation();
 		screenManager = new ScreenManager(transformation, this);
 		screenManager.setCanvasViewer(screenManager.createCanvas(parent));
 		// setTimeSlider(createTimeSliderComposite(parent))
-		
+
+		layerUpdater = mapModel.addConnection(this);
 		mapModel.init(this);
+		layerUpdater.setMaxPufferSize(maxData);
+
 		update();
+	} 
+	
+	@Override
+	public Map<String, String> onSave() {
+		Map<String, String> toSaveMap = Maps.newHashMap();
+		layerSettings = mapModel.save();
+		toSaveMap.put("Attributes", attributeList);
+		toSaveMap.put("MaxData", String.valueOf(maxData));
+		toSaveMap.put("UpdateInterval", String.valueOf(updateInterval));
+		toSaveMap.put("LayerSettings", layerSettings);
+		toSaveMap.put("SRID", String.valueOf(mapModel.getSRID()));
+		return toSaveMap;
+	};
+
+	@Override
+	public void onLoad(Map<String, String> saved) {
+		initMapModel();
+
+		attributeList = saved.get("Attributes");
+		maxData = Integer.valueOf(saved.get("MaxData"));
+		updateInterval = Integer.valueOf(saved.get("UpdateInterval"));
+		srid = Integer.valueOf(saved.get("SRID"));
+		layerSettings = saved.get("LayerSettings");
+		if (layerSettings != null) {
+			mapModel.load(layerSettings);
+		}
+	};
+
+	@Override
+	public void streamElementReceived(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
+		if (!(element instanceof Tuple<?>)) {
+			LOG.error("Warning: Map-DashboardPart is only for spatial relational tuple!");
+			return;
+		}
+
+		// TODO IST DAS IN ABHÄNGIGKEIT VOM TIMESLIDER
+		// SweepArea definiert Element Fenster bzw. die zu visualisierenden
+		// Elemente.
+		@SuppressWarnings("unchecked")
+		Tuple<? extends ITimeInterval> tuple = (Tuple<? extends ITimeInterval>) element;
+		PointInTime timestamp = tuple.getMetadata().getStart().clone();
+		if (timestamp.afterOrEquals(screenManager.getMaxIntervalEnd())
+				|| screenManager.getMaxIntervalEnd().isInfinite()) {
+			// Maybe the stream elements do not come in the right order (e.g.
+			// wrong csv-data)
+			getScreenManager().setMaxIntervalEnd(timestamp);
+		} else if (timestamp.beforeOrEquals(screenManager.getMaxIntervalStart())) {
+			screenManager.setMaxIntervalStart(timestamp);
+		}
+
+		layerUpdater.getPuffer().insert(tuple);
+		if (screenManager.getInterval().getEnd().isInfinite()
+				|| (screenManager.getInterval().getStart().beforeOrEquals(timestamp)
+						&& this.screenManager.getInterval().getEnd().afterOrEquals(timestamp))) {
+			// Add tuple to current list if the new timestamp is in the interval
+			layerUpdater.addTuple(tuple);
+		}
+
+		// Prevent an overflow in the puffer
+		layerUpdater.checkForPufferSize();
+
+		//TODO SOLLTE DAS HIER SEIN?
+		// Should we redraw here or just if we added the tupel to the current
+		// list?
+		screenManager.redraw();
+
 	}
 
 	public void initMapModel() {
@@ -79,35 +153,6 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 
 	}
 
-	// TODO Das oder getMaxTuple nutzen
-	public int getMaxData() {
-		return maxData;
-	}
-
-	public int getMaxTuplesCount() {
-		return 1000;
-	}
-
-	public void setMaxData(int maxData) {
-		this.maxData = maxData;
-	}
-
-	public int getUpdateInterval() {
-		return updateInterval;
-	}
-
-	public void setUpdateInterval(int updateInterval) {
-		this.updateInterval = updateInterval;
-	}
-
-	public void setFocus() {
-		if (screenManager != null) {
-			if (screenManager.hasCanvasViewer()) {
-				screenManager.getCanvas().setFocus();
-			}
-		}
-	}
-
 	@Override
 	public ScreenManager getScreenManager() {
 		return this.screenManager;
@@ -122,7 +167,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 		}
 	}
 
-	public void editLayer(ILayer layer,LayerConfiguration layerConf) {
+	public void editLayer(ILayer layer, LayerConfiguration layerConf) {
 		if (mapModel != null) {
 			mapModel.editLayer(layer, layerConf);
 			update();
@@ -179,7 +224,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 		update();
 	}
 
-	// TODO SHOULD BE CALLED BY EDIT - TEXTFIELD CHANGELISTENER
+	//TODO CHECK IF THIS IS USED ANYMORE
 	public void renameLayer(ILayer layer, String name) {
 		mapModel.rename(layer, name);
 		update();
@@ -188,6 +233,30 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 	public void setActive(ILayer iLayer, boolean checked) {
 		iLayer.setActive(checked);
 		this.screenManager.redraw();
+	}
+	
+	public int getMaxData() {
+		return maxData;
+	}
+
+	public void setMaxData(int maxData) {
+		this.maxData = maxData;
+	}
+
+	public int getUpdateInterval() {
+		return updateInterval;
+	}
+
+	public void setUpdateInterval(int updateInterval) {
+		this.updateInterval = updateInterval;
+	}
+	
+	public LayerUpdater getLayerUpdater (){
+		return this.layerUpdater;
+	}
+	
+	public IPhysicalOperator getOperator(){
+		return this.operator;
 	}
 
 	// public TimeSliderComposite createTimeSliderComposite(Composite parent) {
@@ -209,31 +278,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IStreamMa
 	// }
 	// }
 
-	@Override
-	public Map<String, String> onSave() {
-		Map<String, String> toSaveMap = Maps.newHashMap();
-		layerSettings = mapModel.save();
-		toSaveMap.put("Attributes", attributeList);
-		toSaveMap.put("MaxData", String.valueOf(maxData));
-		toSaveMap.put("UpdateInterval", String.valueOf(updateInterval));
-		toSaveMap.put("LayerSettings", layerSettings);
-		toSaveMap.put("SRID", String.valueOf(mapModel.getSRID()));
-		return toSaveMap;
-	};
-
-	@Override
-	public void onLoad(Map<String, String> saved) {
-		initMapModel();
-
-		attributeList = saved.get("Attributes");
-		maxData = Integer.valueOf(saved.get("MaxData"));
-		updateInterval = Integer.valueOf(saved.get("UpdateInterval"));
-		srid = Integer.valueOf(saved.get("SRID"));
-		layerSettings = saved.get("LayerSettings");
-		if (layerSettings != null) {
-			mapModel.load(layerSettings);
-		}
-	};
+	
 
 	@SuppressWarnings("rawtypes")
 	@Override

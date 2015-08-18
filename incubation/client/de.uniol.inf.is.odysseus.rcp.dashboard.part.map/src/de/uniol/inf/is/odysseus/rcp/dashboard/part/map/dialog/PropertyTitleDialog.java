@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog;
 
-import java.util.Collection;
 import java.util.LinkedList;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -19,10 +18,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.OwnProperties;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
@@ -31,12 +28,11 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerCo
 
 public class PropertyTitleDialog extends TitleAreaDialog {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TitleAreaDialog.class);
-
 	private LinkedList<ILayer> layerOrder;
-	private Collection<LayerUpdater> connections;
 
 	private OwnProperties ownProperties;
+
+	private IPhysicalOperator operator;
 
 	private Composite configContainer;
 	private Composite main;
@@ -47,10 +43,10 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 	private LayerConfiguration layerConfiguration = null;
 
-	public PropertyTitleDialog(Shell parentShell, LinkedList<ILayer> layerOrder, Collection<LayerUpdater> connections) {
+	public PropertyTitleDialog( Shell parentShell,IPhysicalOperator operator, LinkedList<ILayer> layerOrder) {
 		super(parentShell);
+		this.operator = operator;
 		this.layerOrder = layerOrder;
-		this.connections = connections;
 		this.layerType = "RasterLayer";
 		this.ownProperties = new OwnProperties();
 	}
@@ -104,29 +100,29 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		typeSelection.setLayout(DialogUtils.getGroupLayout());
 		typeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
-		String[] types = { "Basic", "Map", "HeatMap" };
+		String[] types = { "Basic", "Map", "ThematicLayer" };
 		final Combo layerTypesCombo = new Combo(typeSelection, SWT.DROP_DOWN);
 		layerTypesCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		layerTypesCombo.setItems(types);
-		layerTypesCombo.select(1);// Map
+		layerTypesCombo.select(0);
 		layerTypesCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(layerTypesCombo.getText().equals("Basic")){
+				if (layerTypesCombo.getText().equals("Basic")) {
 					if (!(layerType.equals("Basic"))) {
-						for(Control c: configContainer.getChildren()){
+						for (Control c : configContainer.getChildren()) {
 							c.dispose();
 						}
 						createNullConfiguration();
 						configContainer.redraw();
 						main.layout(true);
 						layerType = "Basic";
-					}	
-				}else
-					
-					if (layerTypesCombo.getText().equals("Map")) {
+					}
+				} else
+
+				if (layerTypesCombo.getText().equals("Map")) {
 					if (!(layerType.equals("RasterLayer"))) {
-						for(Control c: configContainer.getChildren()){
+						for (Control c : configContainer.getChildren()) {
 							c.dispose();
 						}
 						getRasterLayerConfigurationComposite(configContainer);
@@ -134,30 +130,20 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 						main.layout(true);
 						layerType = "RasterLayer";
 					}
-				} else if (layerTypesCombo.getText().equals("HeatMap")) {
-					if (!(layerType.equals("HeatMap"))) {
-						for(Control c: configContainer.getChildren()){
+				} else if (layerTypesCombo.getText().equals("ThematicLayer")) {
+					if (!(layerType.equals("ThematicLayer"))) {
+						for (Control c : configContainer.getChildren()) {
 							c.dispose();
 						}
-						//getRasterLayerConfigurationComposite(configContainer);
+						getThematicConfiguration(configContainer);
+						configContainer.layout(true);
 						configContainer.redraw();
 						main.layout(true);
-						layerType = "HeatMap";
+						layerType = "ThematicLayer";
 					}
 				}
 			}
 		});
-
-		// if (((Button) e.widget).getText().endsWith("Thematic")) {
-		// if (!(layerType.equals("ThematicLayer"))) {
-		// configContainer.getChildren()[0].dispose();
-		// getThematicConfiguration(configContainer);
-		// configContainer.layout(true);
-		// configContainer.redraw();
-		// main.layout(true);
-		// layerType = "ThematicLayer";
-		// }
-		// }
 
 		Label layerPlaceLabel = new Label(layerConfigurationComp, SWT.FLAT);
 		layerPlaceLabel.setText("Placement (after):");
@@ -171,6 +157,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		if (!layerOrder.isEmpty())
 			layerPlace.setText(layerOrder.getFirst().getName());
 
+		// TODO PLACEMENT
 		// layerPlace.addSelectionListener(new SelectionAdapter() {
 		// @Override
 		// public void widgetSelected(SelectionEvent e) {
@@ -180,9 +167,9 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		return layerConfigurationComp;
 	}
-	
+
 	private void createNullConfiguration() {
-		if(!(layerConfiguration instanceof NullConfiguration ))
+		if (!(layerConfiguration instanceof NullConfiguration))
 			this.layerConfiguration = new NullConfiguration();
 	}
 
@@ -221,161 +208,61 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		return rasterLayerComp;
 	}
 
-	// private Composite getVectorConfiguration(Composite parent) {
-	// if (!(layerConfiguration instanceof VectorLayerConfiguration))
-	// this.layerConfiguration = new VectorLayerConfiguration("");
-	// final VectorLayerConfiguration layerConfiguration =
-	// (VectorLayerConfiguration) this.layerConfiguration;
-	// final Composite vectorLayer = new Composite(parent, SWT.NONE);
-	// vectorLayer.setLayout(DialogUtils.getGroupLayout());
-	// vectorLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING,
-	// true, false));
-	// vectorLayer.setVisible(true);
-	//
-	// if (connections.isEmpty()) {
-	// Label streamLabel = new Label(vectorLayer, SWT.NONE);
-	// streamLabel.setText("No Streams Available.");
-	// streamLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	// setErrorMessage("Please connect a stream to the Map.");
-	// return vectorLayer;
-	// }
-	//
-	// Label streamLabel = new Label(vectorLayer, SWT.NONE);
-	// streamLabel.setText("Stream:");
-	// streamLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	//
-	// final CCombo streamSelect = new CCombo(vectorLayer, SWT.BORDER);
-	// streamSelect.setLayoutData(DialogUtils.getTextDataLayout());
-	//
-	// for (int i = 0; i < connections.toArray().length; i++) {
-	// streamSelect.add(((LayerUpdater)
-	// connections.toArray()[i]).getQuery().getQueryText(), i);
-	// }
-	// streamSelect.select(0);
-	// Label attributesLabel = new Label(vectorLayer, SWT.NONE);
-	// attributesLabel.setText("Attribute:");
-	// attributesLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	//
-	// final CCombo attributeSelect = new CCombo(vectorLayer, SWT.BORDER);
-	// attributeSelect.setLayoutData(DialogUtils.getTextDataLayout());
-	//
-	// streamSelect.addSelectionListener(new SelectionAdapter() {
-	// @Override
-	// public void widgetSelected(SelectionEvent e) {
-	// attributeSelect.removeAll();
-	// layerConfiguration.setQuery(streamSelect.getText());
-	// LOG.debug("Set Query: " + layerConfiguration.getQuery());
-	// SDFSchema schema = ((LayerUpdater)
-	// connections.toArray()[streamSelect.getSelectionIndex()])
-	// .getConnection().getOutputSchema();
-	//
-	// for (int i = 0; i < schema.size(); i++) {
-	// attributeSelect.add(schema.getAttribute(i).getAttributeName(), i);
-	// }
-	//
-	// AttributeResolver resolver = new AttributeResolver();
-	// resolver.addAttributes(schema);
-	//
-	// attributeSelect.setText(schema.getAttribute(0).getAttributeName());
-	// layerConfiguration.setAttribute(attributeSelect.getText());
-	//
-	// attributeSelect.addSelectionListener(new SelectionAdapter() {
-	// @Override
-	// public void widgetSelected(SelectionEvent e) {
-	// layerConfiguration.setAttribute(attributeSelect.getText());
-	// LOG.debug("Set Attribute: " + layerConfiguration.getAttribute());
-	// };
-	// });
-	//
-	// };
-	// });
-	// return vectorLayer;
-	// }
+	/**
+	 * Creates the content to select the thematic map and the stream for it
+	 *
+	 * @param parent
+	 * @return
+	 */
+	private Composite getThematicConfiguration(Composite parent) {
 
-	// /**
-	// * Creates the content to select the thematic map and the stream for it
-	// *
-	// * @param parent
-	// * @return
-	// */
-	// private Composite getThematicConfiguration(Composite parent) {
-	//
-	// Composite thematicLayer = new Composite(parent, SWT.NONE);
-	// thematicLayer.setLayout(DialogUtils.getGroupLayout());
-	// thematicLayer.setLayoutData(new GridData(GridData.FILL,
-	// GridData.BEGINNING, true, true));
-	// thematicLayer.setVisible(true);
-	//
-	// if (connections.isEmpty()) {
-	// Label streamLabel = new Label(thematicLayer, SWT.NONE);
-	// streamLabel.setText("No Streams Available.");
-	// streamLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	// setErrorMessage("Please connect a stream to the map.");
-	// return thematicLayer;
-	// }
-	//
-	// // Choose between the thematic maps
-	// Label mapTypeLabel = new Label(thematicLayer, SWT.NONE);
-	// mapTypeLabel.setText("Thematic map type:");
-	// mapTypeLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	//
-	// final CCombo mapTypeSelect = new CCombo(thematicLayer, SWT.BORDER);
-	// mapTypeSelect.setLayoutData(DialogUtils.getTextDataLayout());
-	// mapTypeSelect.add("Heatmap");
-	// mapTypeSelect.add("Tracemap");
-	// mapTypeSelect.select(0);
-	//
-	// // Choose the stream for the thematic map
-	// Label streamLabel = new Label(thematicLayer, SWT.NONE);
-	// streamLabel.setText("Stream:");
-	// streamLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	//
-	// final CCombo streamSelect = new CCombo(thematicLayer, SWT.BORDER);
-	// streamSelect.setLayoutData(DialogUtils.getTextDataLayout());
-	//
-	// // Add all available streams
-	// for (int i = 0; i < connections.toArray().length; i++) {
-	// streamSelect.add(((LayerUpdater) connections.toArray()[i])
-	// .getQuery().getQueryText(), i);
-	// }
-	// streamSelect.select(0);
-	//
-	// Label geometrieLabel = new Label(thematicLayer, SWT.NONE);
-	// geometrieLabel.setText("Geometry Attribute:");
-	// geometrieLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	//
-	// final CCombo geometrieSelect = new CCombo(thematicLayer, SWT.BORDER);
-	// geometrieSelect.setLayoutData(DialogUtils.getTextDataLayout());
-	//
-	// Label visualizationLabel = new Label(thematicLayer, SWT.NONE);
-	// visualizationLabel.setText("Value Attribute:");
-	// visualizationLabel.setLayoutData(DialogUtils.getLabelDataLayout());
-	//
-	// final CCombo visualizationSelect = new CCombo(thematicLayer, SWT.BORDER);
-	// visualizationSelect.setLayoutData(DialogUtils.getTextDataLayout());
-	//
-	// // Add a listener -> created right layerConfiguration
-	// ThematicSelectionListener thematicSelectionListener = new
-	// ThematicSelectionListener(
-	// layerConfiguration, mapTypeSelect, streamSelect,
-	// geometrieSelect, visualizationSelect, connections, this);
-	//
-	// StreamSelectionListener streamSelectionListener = new
-	// StreamSelectionListener(
-	// layerConfiguration, mapTypeSelect, streamSelect, geometrieSelect,
-	// visualizationSelect, connections, this);
-	// mapTypeSelect.addSelectionListener(thematicSelectionListener);
-	// streamSelect.addSelectionListener(streamSelectionListener);
-	//
-	// geometrieSelect.addSelectionListener(thematicSelectionListener);
-	// visualizationSelect.addSelectionListener(thematicSelectionListener);
-	//
-	// // Initialize selection
-	// thematicSelectionListener.widgetSelected(null);
-	// streamSelectionListener.widgetSelected(null);
-	//
-	// return thematicLayer;
-	// }
+		Composite thematicLayer = new Composite(parent, SWT.NONE);
+		thematicLayer.setLayout(DialogUtils.getGroupLayout());
+		thematicLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
+		thematicLayer.setVisible(true);
+
+		// Choose between the thematic maps
+		Label mapTypeLabel = new Label(thematicLayer, SWT.NONE);
+		mapTypeLabel.setText("Thematic map type:");
+		mapTypeLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo mapTypeSelect = new CCombo(thematicLayer, SWT.BORDER);
+		mapTypeSelect.setLayoutData(DialogUtils.getTextDataLayout());
+		mapTypeSelect.add("Heatmap");
+		// mapTypeSelect.add("Tracemap");
+		mapTypeSelect.select(0);
+
+		Label geometrieLabel = new Label(thematicLayer, SWT.NONE);
+		geometrieLabel.setText("Geometry Attribute:");
+		geometrieLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo geometrieSelect = new CCombo(thematicLayer, SWT.BORDER);
+		geometrieSelect.setLayoutData(DialogUtils.getTextDataLayout());
+
+		Label visualizationLabel = new Label(thematicLayer, SWT.NONE);
+		visualizationLabel.setText("Value Attribute:");
+		visualizationLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo visualizationSelect = new CCombo(thematicLayer, SWT.BORDER);
+		visualizationSelect.setLayoutData(DialogUtils.getTextDataLayout());
+
+		// Add a listener -> created right layerConfiguration
+		ThematicSelectionListener thematicSelectionListener = new ThematicSelectionListener(layerConfiguration,
+				mapTypeSelect, geometrieSelect, visualizationSelect, this);
+
+		StreamSelectionListener streamSelectionListener = new StreamSelectionListener(operator,
+				layerConfiguration, mapTypeSelect, geometrieSelect, visualizationSelect, this);
+		mapTypeSelect.addSelectionListener(thematicSelectionListener);
+
+		geometrieSelect.addSelectionListener(thematicSelectionListener);
+		visualizationSelect.addSelectionListener(thematicSelectionListener);
+
+		// Initialize selection
+		thematicSelectionListener.widgetSelected(null);
+		streamSelectionListener.widgetSelected(null);
+
+		return thematicLayer;
+	}
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {

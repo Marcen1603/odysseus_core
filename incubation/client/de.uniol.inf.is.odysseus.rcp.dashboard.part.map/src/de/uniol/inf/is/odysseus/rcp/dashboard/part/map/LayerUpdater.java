@@ -18,27 +18,20 @@ import com.vividsolutions.jts.index.quadtree.Quadtree;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
-import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
-import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 
-public class LayerUpdater extends ArrayList<ILayer> implements
-		IStreamElementListener<Object>, Serializable, PropertyChangeListener {
+public class LayerUpdater extends ArrayList<ILayer> implements  Serializable, PropertyChangeListener {
 
 	private static final long serialVersionUID = 1092858542289960843L;
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(LayerUpdater.class);
 
-	private final IStreamMapEditor streamMapEditor;
-	private final IStreamConnection<Object> connection;
-	private final IQuery query;
+	private final IMapDashboardAdapter mapDashboardPart;
 	private int maxNumerOfElements;
 	private int userDefinedTimeRange;
 
@@ -49,75 +42,17 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 	private List<Tuple<? extends ITimeInterval>> elementList;
 
-	public LayerUpdater(IStreamMapEditor streamMapEditor, IQuery query,
-			IStreamConnection<Object> connection) {
+	public LayerUpdater(IMapDashboardAdapter mapDashboardPart) {
 		super();
-		this.streamMapEditor = streamMapEditor;
-		this.connection = connection;
-		this.query = query;
+		this.mapDashboardPart = mapDashboardPart;
+
 		this.puffer = new DefaultTISweepArea<Tuple<? extends ITimeInterval>>();
-		connection.addStreamElementListener(this);
-		if (!connection.isConnected()) {
-			connection.connect();
-		}
-		maxNumerOfElements = 100000;
+		
+		//TODO GET THIS FROM MAP DASHBOARDPART 
+		maxNumerOfElements = 10000;
 
 	}
-
-	public IStreamConnection<Object> getConnection() {
-		return connection;
-	}
-
-	public IQuery getQuery() {
-		return query;
-	}
-
-	@Override
-	public void streamElementReceived(IPhysicalOperator senderOperator, Object element, int port) {
-		if (!(element instanceof Tuple<?>)) {
-			LOG.error("Warning: StreamMap is only for spatial relational tuple!");
-			return;
-		}
-
-		// SweepArea definiert Element Fenster bzw. die zu visualisierenden
-		// Elemente.
-		@SuppressWarnings("unchecked")
-		Tuple<? extends ITimeInterval> tuple = (Tuple<? extends ITimeInterval>) element;
-		PointInTime timestamp = tuple.getMetadata().getStart().clone();
-		if (timestamp.afterOrEquals(streamMapEditor.getScreenManager()
-				.getMaxIntervalEnd())
-				|| streamMapEditor.getScreenManager().getMaxIntervalEnd()
-						.isInfinite()) {
-			// Maybe the stream elements do not come in the right order (e.g.
-			// wrong csv-data)
-			this.streamMapEditor.getScreenManager()
-					.setMaxIntervalEnd(timestamp);
-		} else if (timestamp.beforeOrEquals(streamMapEditor.getScreenManager()
-				.getMaxIntervalStart())) {
-			this.streamMapEditor.getScreenManager().setMaxIntervalStart(
-					timestamp);
-		}
-
-		puffer.insert(tuple);
-		if (this.streamMapEditor.getScreenManager().getInterval().getEnd()
-				.isInfinite()
-				|| (this.streamMapEditor.getScreenManager().getInterval()
-						.getStart().beforeOrEquals(timestamp) && this.streamMapEditor
-						.getScreenManager().getInterval().getEnd()
-						.afterOrEquals(timestamp))) {
-			// Add tuple to current list if the new timestamp is in the interval
-			addTuple(tuple);
-		}
-
-		// Prevent an overflow in the puffer
-		checkForPufferSize();
-
-		// Should we redraw here or just if we added the tupel to the current
-		// list?
-		streamMapEditor.getScreenManager().redraw();
-
-	}
-
+	
 	/**
 	 * Removes the oldest elements if puffer is bigger than the configured size
 	 */
@@ -142,10 +77,10 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 				// Update "current-list", timeSlider and all the other things
 				// which rely on the startTimeStamp
-				streamMapEditor.getScreenManager().setMaxIntervalStart(
+				mapDashboardPart.getScreenManager().setMaxIntervalStart(
 						puffer.getMinTs());
 				this.elementList = this.puffer
-						.queryOverlapsAsList(this.streamMapEditor
+						.queryOverlapsAsList(this.mapDashboardPart
 								.getScreenManager().getInterval());
 				this.index = new HashMap<Integer, Quadtree>(this.index.size());
 			}
@@ -175,10 +110,10 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 			// Update "current-list", timeSlider and all the other things which
 			// rely on the startTimeStamp
-			streamMapEditor.getScreenManager().setMaxIntervalStart(
+			mapDashboardPart.getScreenManager().setMaxIntervalStart(
 					puffer.getMinTs());
 			this.elementList = this.puffer
-					.queryOverlapsAsList(this.streamMapEditor
+					.queryOverlapsAsList(this.mapDashboardPart
 							.getScreenManager().getInterval());
 			this.index = new HashMap<Integer, Quadtree>(this.index.size());
 		}
@@ -201,18 +136,18 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 		// Start
 		if (puffer.getMinTs() != null
-				&& (streamMapEditor.getScreenManager().getMaxIntervalStart()
+				&& (mapDashboardPart.getScreenManager().getMaxIntervalStart()
 						.after(puffer.getMinTs()) || first)) {
-			streamMapEditor.getScreenManager().setMaxIntervalStart(
+			mapDashboardPart.getScreenManager().setMaxIntervalStart(
 					puffer.getMinTs());
 			changedSomething = true;
 		}
 
 		// End
 		if (puffer.getMaxTs() != null
-				&& (streamMapEditor.getScreenManager().getMaxIntervalEnd()
+				&& (mapDashboardPart.getScreenManager().getMaxIntervalEnd()
 						.before(puffer.getMaxTs()) || first)) {
-			streamMapEditor.getScreenManager().setMaxIntervalEnd(
+			mapDashboardPart.getScreenManager().setMaxIntervalEnd(
 					puffer.getMaxTs());
 			changedSomething = true;
 		}
@@ -220,14 +155,6 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		return changedSomething;
 	}
 
-	@Override
-	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port) {
-	}
-
-	@Override
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
-			int port) {
-	}
 
 	/**
 	 * @param tuple
@@ -237,9 +164,9 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		synchronized (elementList) {
 			this.elementList.add(tuple);
 		}
-		ScreenTransformation transformation = this.streamMapEditor
+		ScreenTransformation transformation = this.mapDashboardPart
 				.getScreenManager().getTransformation();
-		int destSrid = this.streamMapEditor.getScreenManager().getSRID();
+		int destSrid = this.mapDashboardPart.getScreenManager().getSRID();
 		for (Entry<Integer, Quadtree> tree : this.index.entrySet()) {
 			synchronized (tree) {
 				DataSet newDataSet = new DataSet(tuple, tree.getKey(),
@@ -260,9 +187,9 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		Quadtree tree = null;
 		synchronized (this.index) {
 			tree = this.index.get(idx);
-			ScreenTransformation transformation = this.streamMapEditor
+			ScreenTransformation transformation = this.mapDashboardPart
 					.getScreenManager().getTransformation();
-			int destSrid = this.streamMapEditor.getScreenManager().getSRID();
+			int destSrid = this.mapDashboardPart.getScreenManager().getSRID();
 			if (this.srid != destSrid) {
 				tree = null;
 				this.srid = destSrid;
@@ -297,7 +224,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 		if (this.elementList == null) {
 			this.elementList = this.puffer
-					.queryOverlapsAsList(this.streamMapEditor
+					.queryOverlapsAsList(this.mapDashboardPart
 							.getScreenManager().getInterval());
 		}
 		return this.elementList;
@@ -318,6 +245,14 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		if (elementList != null)
 			return this.elementList.size();
 		return 0;
+	}
+	
+	/**
+	 * Returns the puffer
+	 * @return 
+	 */
+	public DefaultTISweepArea<Tuple<? extends ITimeInterval>> getPuffer(){
+		return puffer;
 	}
 
 	/**
@@ -380,13 +315,13 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	public void propertyChange(PropertyChangeEvent evt) {
 		if ("intervalStart".equals(evt.getPropertyName())) {
 			this.elementList = this.puffer
-					.queryOverlapsAsList(this.streamMapEditor
+					.queryOverlapsAsList(this.mapDashboardPart
 							.getScreenManager().getInterval());
 			this.index = new HashMap<Integer, Quadtree>(this.index.size());
 		}
 		if ("intervalEnd".equals(evt.getPropertyName())) {
 			this.elementList = this.puffer
-					.queryOverlapsAsList(this.streamMapEditor
+					.queryOverlapsAsList(this.mapDashboardPart
 							.getScreenManager().getInterval());
 			this.index = new HashMap<Integer, Quadtree>(this.index.size());
 		}

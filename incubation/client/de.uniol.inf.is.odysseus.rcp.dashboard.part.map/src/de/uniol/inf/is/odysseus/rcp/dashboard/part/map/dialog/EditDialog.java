@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog;
 
-import java.util.Collection;
 import java.util.LinkedList;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -22,7 +21,6 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.OwnProperties;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
@@ -33,7 +31,6 @@ public class EditDialog extends TitleAreaDialog {
 	private static final Logger LOG = LoggerFactory.getLogger(TitleAreaDialog.class);
 
 	private LinkedList<ILayer> layerOrder;
-	private Collection<LayerUpdater> connections;
 
 	private OwnProperties ownProperties;
 
@@ -47,12 +44,11 @@ public class EditDialog extends TitleAreaDialog {
 
 	private LayerConfiguration layerConfiguration = null;
 
-	public EditDialog(Shell parentShell, LinkedList<ILayer> layerOrder, Collection<LayerUpdater> connections,
+	public EditDialog(Shell parentShell, LinkedList<ILayer> layerOrder,
 			LayerConfiguration layerConfiguration, int layerPosition) {
 		super(parentShell);
 		this.layerOrder = layerOrder;
-		this.connections = connections;
-		this.layerType = "RasterLayer";
+		this.layerType = "Map";
 		this.ownProperties = new OwnProperties();
 		this.layerConfiguration = layerConfiguration;
 		this.layerPosition = layerPosition;
@@ -121,14 +117,14 @@ public class EditDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 
 				if ((layerTypesCombo.getText().equals("Map"))) {
-					if (!(layerType.equals("RasterLayer"))) {
+					if (!(layerType.equals("Map"))) {
 						for(Control c: configContainer.getChildren()){
 							c.dispose();
 						}
 						getRasterLayerConfigurationComposite(configContainer);
 						configContainer.redraw();
 						main.layout(true);
-						layerType = "RasterLayer";
+						layerType = "Map";
 					}
 				} else if (layerTypesCombo.getText().equals("HeatMap")) {
 					if (!(layerType.equals("HeatMap"))) {

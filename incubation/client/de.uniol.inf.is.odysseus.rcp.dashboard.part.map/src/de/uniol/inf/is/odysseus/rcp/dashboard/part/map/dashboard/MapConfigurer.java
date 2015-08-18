@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.EditDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.PropertyTitleDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.MapEditorModel;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
 
@@ -42,10 +42,11 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 	private static final Logger LOG = LoggerFactory.getLogger(MapConfigurer.class);
 
+	private IPhysicalOperator operator;
+
 	private MapDashboardPart mapDashboardPart;
 	private Collection<IPhysicalOperator> roots;
 	private Table layerTable;
-	private MapEditorModel mapModel;
 
 	private Button editButton;
 
@@ -54,7 +55,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		this.mapDashboardPart = dashboardPartToConfigure;
 		this.roots = roots;
 		this.mapDashboardPart.initMapModel();
-		this.mapModel = mapDashboardPart.getMapEditorModel();
+		operator = determinePyhsicalRoot(roots);
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	}
 
 	private void createMaxDataControls(Composite topComposite) {
-		Label maxDataLabel = DashboardPartUtil.createLabel(topComposite, "Max Data Value");
+		Label maxDataLabel = DashboardPartUtil.createLabel(topComposite, "Max. Data");
 		maxDataLabel.setToolTipText("Max value of DataStreamElements are processed");
 		final Text maxDataText = DashboardPartUtil.createText(topComposite,
 				String.valueOf(mapDashboardPart.getMaxData()));
@@ -115,8 +116,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		tableSettingComp.setLayout(new GridLayout(1, true));
 		tableSettingComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Label layerSettingLabel = DashboardPartUtil.createLabel(tableSettingComp, "Layer Settings");
-		layerSettingLabel.setToolTipText("After creation wizard a BasicLayer will be added");
+		DashboardPartUtil.createLabel(tableSettingComp, "Layer Settings");
 
 		Composite tableComp = new Composite(tableSettingComp, SWT.NONE);
 		tableComp.setLayout(new GridLayout(1, true));
@@ -135,6 +135,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		createAddButton(buttonComp);
 		createDeleteButton(buttonComp);
 		createEditButton(buttonComp);
+		createRefreshButton(buttonComp);
 
 		createOrderButtons(orderButtonsComp);
 
@@ -149,7 +150,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			public void widgetSelected(SelectionEvent e) {
 				int index = layerTable.getSelectionIndex();
 				if (index >= 0) {
-					ILayer layer = mapModel.getLayers().get(index);
+					ILayer layer = mapDashboardPart.getMapEditorModel().getLayers().get(index);
 					if (layer instanceof BasicLayer) {
 						editButton.setEnabled(false);
 					} else {
@@ -163,13 +164,14 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		// layerTable.addListener(SWT.Selection, new Listener() {
 		// @Override
 		// public void handleEvent(Event event) {
-		// System.out.println("GetLayers()" + mapModel.getLayers());
+		// System.out.println("GetLayers()" +
+		// mapDashboardPart.getMapEditorModel().getLayers());
 		// System.out.println("EventButton" + event.button);
 		//
 		// boolean checked = event.detail == SWT.CHECK ? true : false;
 		// System.out.println(event.detail);
 		// System.out.println(checked);
-		// mapDashboardPart.setActive(mapModel.getLayers().get(event.button),
+		// mapDashboardPart.setActive(mapDashboardPart.getMapEditorModel().getLayers().get(event.button),
 		// checked);
 		// }
 		// });
@@ -195,8 +197,8 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				PropertyTitleDialog addDialog = new PropertyTitleDialog(parent.getShell(), mapModel.getLayers(),
-						mapModel.getConnectionCollection());
+				PropertyTitleDialog addDialog = new PropertyTitleDialog(parent.getShell(), operator,
+						mapDashboardPart.getMapEditorModel().getLayers());
 				addDialog.create();
 				addDialog.open();
 				if (addDialog.getReturnCode() == Window.OK) {
@@ -244,7 +246,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		deleteComp.setLayout(new GridLayout(1, true));
 		deleteComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		String[] layerNames = mapModel.getLayerNameList();
+		String[] layerNames = mapDashboardPart.getMapEditorModel().getLayerNameList();
 		Label deleteLabel = DashboardPartUtil.createLabel(deleteComp, "Delete Layer " + layerNames[layerId] + "?");
 
 		Composite buttonComp = new Composite(deleteComp, SWT.NONE);
@@ -257,8 +259,8 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				mapModel.getLayers().get(layerId);
-				LinkedList<ILayer> group = mapModel.getLayers();
+				mapDashboardPart.getMapEditorModel().getLayers().get(layerId);
+				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 
 				mapDashboardPart.removeLayer(group.get(layerId));
 				fireListener();
@@ -290,9 +292,9 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				if (layerTable.getSelectionIndex() < 0) {
 					createWarningShell(parent, "Select row!");
 				} else {
-					LinkedList<ILayer> group = mapModel.getLayers();
+					LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 					int index = layerTable.getSelectionIndex();
-					EditDialog editDialog = new EditDialog(parent.getShell(), group, mapModel.getConnectionCollection(),
+					EditDialog editDialog = new EditDialog(parent.getShell(), group,
 							group.get(index).getConfiguration(), index);
 					editDialog.create();
 					editDialog.open();
@@ -302,6 +304,19 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 						fireListener();
 					}
 				}
+			}
+		});
+
+	}
+
+	// TODO
+	private void createRefreshButton(final Composite parent) {
+		final Button refresButton = createButton(parent, "Refresh");
+		refresButton.setToolTipText("If for any case the map is not shown");
+		refresButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
 			}
 		});
 
@@ -344,12 +359,12 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			public void widgetSelected(SelectionEvent e) {
 
 				int tableIndex = layerTable.getSelectionIndex();
-				LinkedList<ILayer> group = mapModel.getLayers();
+				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 
 				if (tableIndex < 0) {
 					createWarningShell(parent, "Select row!");
 				} else if (tableIndex > 0) {
-					mapModel.getLayers().get(tableIndex);
+					mapDashboardPart.getMapEditorModel().getLayers().get(tableIndex);
 					mapDashboardPart.layerBottom(group.get(tableIndex));
 					reprintLayerTable();
 					fireListener();
@@ -363,12 +378,12 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			public void widgetSelected(SelectionEvent e) {
 
 				int tableIndex = layerTable.getSelectionIndex();
-				LinkedList<ILayer> group = mapModel.getLayers();
+				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 
 				if (tableIndex < 0) {
 					createWarningShell(parent, "Select row!");
 				} else if (tableIndex > 0) {
-					mapModel.getLayers().get(tableIndex);
+					mapDashboardPart.getMapEditorModel().getLayers().get(tableIndex);
 					mapDashboardPart.layerDown(group.get(tableIndex));
 					reprintLayerTable();
 					fireListener();
@@ -382,12 +397,12 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			public void widgetSelected(SelectionEvent e) {
 
 				int tableIndex = layerTable.getSelectionIndex();
-				LinkedList<ILayer> group = mapModel.getLayers();
+				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 
 				if (tableIndex < 0) {
 					createWarningShell(parent, "Select row!");
 				} else if (tableIndex < group.size() - 1) {
-					mapModel.getLayers().get(tableIndex);
+					mapDashboardPart.getMapEditorModel().getLayers().get(tableIndex);
 					mapDashboardPart.layerUp(group.get(tableIndex));
 					reprintLayerTable();
 					fireListener();
@@ -401,12 +416,12 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			public void widgetSelected(SelectionEvent e) {
 
 				int tableIndex = layerTable.getSelectionIndex();
-				LinkedList<ILayer> group = mapModel.getLayers();
+				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 
 				if (tableIndex < 0) {
 					createWarningShell(parent, "Select row!");
 				} else if (tableIndex < group.size() - 1) {
-					mapModel.getLayers().get(tableIndex);
+					mapDashboardPart.getMapEditorModel().getLayers().get(tableIndex);
 					mapDashboardPart.layerTop(group.get(tableIndex));
 					reprintLayerTable();
 					fireListener();
@@ -424,8 +439,9 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		return button;
 	}
 
+	// TODO HEATMAP Anpassung
 	private void reprintLayerTable() {
-		LinkedList<ILayer> group = mapModel.getLayers();
+		LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 		layerTable.removeAll();
 
 		for (ILayer layer : group) {
@@ -441,12 +457,18 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 					item.setChecked(false);
 				}
 				item.setText(1, layerConf.getName());
-				item.setText(2, "RasterLayer");
-				// } else if(layerConf instanceof ){
-
+				item.setText(2, "Raster Layer");
+			} else if (layerConf instanceof HeatmapLayerConfiguration) {
+				if (layer.isActive()) {
+					item.setChecked(true);
+				} else {
+					item.setChecked(false);
+				}
+				item.setText(1, layerConf.getName());
+				item.setText(2, "Heatmap Layer");
 			} else {
 				item.setText(1, layer.getName());
-				item.setText(2, "BasicLayer");
+				item.setText(2, "Basic Layer");
 			}
 
 			if (layer.isActive()) {
@@ -458,6 +480,14 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		for (TableColumn tc : layerTable.getColumns())
 			tc.pack();
 		;
+	}
+
+	private IPhysicalOperator determinePyhsicalRoot(Collection<IPhysicalOperator> physicalRoots) {
+		for (IPhysicalOperator p : physicalRoots) {
+				return p;
+		}
+		LOG.info("Select first physical root.");
+		return physicalRoots.iterator().next();
 	}
 
 	@Override
