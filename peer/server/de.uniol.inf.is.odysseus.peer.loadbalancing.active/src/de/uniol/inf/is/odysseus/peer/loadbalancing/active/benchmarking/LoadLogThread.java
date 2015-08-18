@@ -148,6 +148,7 @@ public class LoadLogThread extends Thread {
 			}
 			if(op instanceof JxtaReceiverPO) {
 				if(((JxtaReceiverPO)op).getPeerIDString().equals(localPID))
+					continue;
 				receiverCount++;
 			}
 		}
