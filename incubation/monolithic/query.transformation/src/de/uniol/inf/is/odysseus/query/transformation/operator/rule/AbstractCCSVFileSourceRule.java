@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInform
 
 public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 
-	
 	public AbstractCCSVFileSourceRule(String name, String targetPlatform) {
 		super(name,targetPlatform );
 	}
@@ -43,7 +42,7 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 		return AbstractAccessAO.class;
 	}
 
-	
+
 	public void analyseOperator(ILogicalOperator logicalOperator,TransformationInformation transformationInformation){
 		
 		CSVFileSource csvFileSource = (CSVFileSource) logicalOperator;
@@ -53,7 +52,6 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 		transformationInformation.addTransportHandler(csvFileSource.getTransportHandler());
 		
 	}
-	
 	
 	@Override
 	public void addOperatorConfiguration(ILogicalOperator logicalOperator,

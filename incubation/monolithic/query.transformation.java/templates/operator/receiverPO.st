@@ -1,4 +1,4 @@
-reveiverPO(operatorVariable)::=<<
+receiverPO(operatorVariable)::=<<
 
 	ReceiverPO $operatorVariable$PO = new ReceiverPO($operatorVariable$ProtocolHandler);
 			

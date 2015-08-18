@@ -278,28 +278,36 @@ public class JavaFileWrite {
 	}
 	
 	private void createOperationConfigurationFiles() {
+		FileWriter infoFile = null;
 		
-		for (Entry<ILogicalOperator, Map<String, String>> entry : operatorConfigurationList.entrySet())
-		{
-		    System.out.println(entry.getKey() + "/" + entry.getValue());
-		    
-		    String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(entry.getKey());
-		  
-		    Gson gson = new Gson();
-		    String json = gson.toJson(entry.getValue());
-		    
-			try {
-			 	FileWriter file = new FileWriter(tempPath+"\\"+operatorVariable+"PO.json");
+		try {
+			 infoFile = new FileWriter(tempPath+"\\operatorConfigurationInfo.txt");
+		
+			for (Entry<ILogicalOperator, Map<String, String>> entry : operatorConfigurationList.entrySet())
+			{
+			    String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(entry.getKey());
+			  
+			    
+			    Gson gson = new Gson();
+			    String json = gson.toJson(entry.getValue());
+			    
+				infoFile.write(entry.getKey().getName()+" --> "+ operatorVariable +"\n");
+					
+				FileWriter file = new FileWriter(tempPath+"\\"+operatorVariable+"PO.json");
 				file.write(json);
 				file.flush();
 				file.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-		    
+			
+				infoFile.flush();
+				infoFile.close();
+		}catch (IOException e) {
+			e.printStackTrace();
 		}
+		
 	}
+	
+	
 	
 
 }

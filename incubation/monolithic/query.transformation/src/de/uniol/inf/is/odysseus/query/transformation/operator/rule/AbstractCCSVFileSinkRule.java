@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
@@ -52,6 +55,17 @@ public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 		transformationInformation.addProtocolHandler(csvFileSinkOP.getProtocolHandler());
 		transformationInformation.addTransportHandler(csvFileSinkOP.getTransportHandler());
 		
+	}
+	
+	@Override
+	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
+			TransformationInformation transformationInformation) {
+		
+		CSVFileSink csvfileSink = (CSVFileSink) logicalOperator;
+		Map<String,String> optionMap =  new HashMap<String,String>();
+		optionMap = csvfileSink.getOptionsMap();
+		
+		transformationInformation.addOperatorConfiguration(logicalOperator, optionMap);
 	}
 	
 }
