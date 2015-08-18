@@ -44,8 +44,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 		return metadata;
 	}
 
-	@Override
-	public void addMetadata(String key, Object value) {
+	protected void addMetadata(String key, Object value) {
 		metadata.add(new Pair<String, Object>(key, value));
 	}
 	

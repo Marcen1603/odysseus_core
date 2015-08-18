@@ -15,8 +15,6 @@ public interface IQDLQuery {
 	
 	public List<IPair<String, Object>> getMetadata();
 	
-	public void addMetadata(String key, Object value);
-
 	public void setDataDictionary(IDataDictionary dd);
 
 	public void setSession(ISession session);

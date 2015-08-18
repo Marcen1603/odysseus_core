@@ -47,9 +47,9 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression
 import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmDeclaredType
-import de.uniol.inf.is.odysseus.iql.basic.typing.^extension.impl.ListExtensions
 import java.util.ArrayList
 import java.util.List
+import de.uniol.inf.is.odysseus.iql.basic.typing.^extension.IQLOperatorOverloadingUtils
 
 abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionParser, U extends IIQLTypeUtils, L extends IIQLLookUp, O extends IIQLTypeExtensionsFactory> implements IIQLExpressionCompiler<G>{
 	
@@ -198,22 +198,24 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	
 	def String compileAssignmentExpr(IQLAssignmentExpression e, IQLArrayExpression arrayExpr,  G c) {
 		var arrayType = exprParser.getType(arrayExpr.leftOperand)
-		if (e.op.equals("=") && !arrayType.^null && typeExtensionsFactory.hasTypeExtensions(arrayType.ref,"set",3)){
+		var methodName = IQLOperatorOverloadingUtils.SET;			
+		
+		if (e.op.equals("=") && !arrayType.^null && typeExtensionsFactory.hasTypeExtensions(arrayType.ref,methodName,2)){
 			var leftType = exprParser.getType(arrayExpr)
 			var rightType = exprParser.getType(e.rightOperand)
 			if (!leftType.^null) {
 				c.expectedTypeRef = leftType.ref
 			}
 			var result = "";		
-			var typeOps = typeExtensionsFactory.getTypeExtensions(arrayType.ref,"set",3);
+			var typeOps = typeExtensionsFactory.getTypeExtensions(arrayType.ref,methodName,2);
 			c.addImport(typeOps.class.canonicalName)
 			if (leftType.^null || rightType.^null || lookUp.isAssignable(leftType.ref, rightType.ref)){
-				result = '''«typeOps.class.simpleName».set(«compile(arrayExpr.leftOperand, c)», «compile(e.rightOperand, c)», «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
+				result = '''«typeOps.class.simpleName».«methodName»(«compile(arrayExpr.leftOperand, c)», «compile(e.rightOperand, c)», «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
 			} else if (leftType.^null || rightType.^null || lookUp.isCastable(leftType.ref, rightType.ref)){
 				var target = typeCompiler.compile(leftType.ref, c, false)
-				result = '''«typeOps.class.simpleName».set(«compile(arrayExpr.leftOperand, c)», ((«target»)«compile(e.rightOperand, c)»), «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
+				result = '''«typeOps.class.simpleName».«methodName»(«compile(arrayExpr.leftOperand, c)», ((«target»)«compile(e.rightOperand, c)»), «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
 			} else {
-				result = '''«typeOps.class.simpleName».set(«compile(arrayExpr.leftOperand, c)», «compile(e.rightOperand, c)», «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
+				result = '''«typeOps.class.simpleName».«methodName»(«compile(arrayExpr.leftOperand, c)», «compile(e.rightOperand, c)», «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
 			}
 			c.expectedTypeRef = null
 			return result;
@@ -226,14 +228,14 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 			var result = "";		
 			if (leftType.^null || rightType.^null || lookUp.isAssignable(leftType.ref, rightType.ref)){
 				c.addImport(ListExtensions.canonicalName)			
-				result = '''«ListExtensions.simpleName».set(«compile(arrayExpr.leftOperand, c)», «compile(e.rightOperand, c)», «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
+				result = '''«ListExtensions.simpleName».«methodName»(«compile(arrayExpr.leftOperand, c)», «compile(e.rightOperand, c)», «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
 			} else if (leftType.^null || rightType.^null || lookUp.isCastable(leftType.ref, rightType.ref)){
 				c.addImport(ListExtensions.canonicalName)
 				var target = typeCompiler.compile(leftType.ref, c, false)
-				result = '''«ListExtensions.simpleName».set(«compile(arrayExpr.leftOperand, c)», ((«target»)«compile(e.rightOperand, c)»), «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
+				result = '''«ListExtensions.simpleName».«methodName»(«compile(arrayExpr.leftOperand, c)», ((«target»)«compile(e.rightOperand, c)»), «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
 			} else {
 				c.addImport(ListExtensions.canonicalName)			
-				result = '''«ListExtensions.simpleName».set(«compile(arrayExpr.leftOperand, c)», «compile(e.rightOperand, c)», «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
+				result = '''«ListExtensions.simpleName».«methodName»(«compile(arrayExpr.leftOperand, c)», «compile(e.rightOperand, c)», «arrayExpr.expressions.map[ el | compile(el, c)].join(", ")»)'''
 			}
 			c.expectedTypeRef = null
 			return result;
@@ -261,15 +263,15 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 			c.expectedTypeRef = null
 			return result
 		} else if (!leftType.^null && e.op.equals("+=")) {
-			return compileOperatorOverloading("+", "plus", leftType.ref, e.leftOperand, e.rightOperand, c);
+			return compileOperatorOverloading("+", IQLOperatorOverloadingUtils.PLUS, leftType.ref, e.leftOperand, e.rightOperand, c);
 		} else if (!leftType.^null && e.op.equals("-=")) {
-			return compileOperatorOverloading("-", "minus", leftType.ref, e.leftOperand, e.rightOperand, c);
+			return compileOperatorOverloading("-", IQLOperatorOverloadingUtils.MINUS, leftType.ref, e.leftOperand, e.rightOperand, c);
 		} else if (!leftType.^null && e.op.equals("*=")) {
-			return compileOperatorOverloading("*", "multiply", leftType.ref, e.leftOperand, e.rightOperand, c);
+			return compileOperatorOverloading("*", IQLOperatorOverloadingUtils.MULTIPLY, leftType.ref, e.leftOperand, e.rightOperand, c);
 		} else if (!leftType.^null && e.op.equals("/=")) {
-			return compileOperatorOverloading("/", "divide", leftType.ref, e.leftOperand, e.rightOperand, c);
+			return compileOperatorOverloading("/", IQLOperatorOverloadingUtils.DIVIDE, leftType.ref, e.leftOperand, e.rightOperand, c);
 		} else if (!leftType.^null && e.op.equals("%=")) {
-			return compileOperatorOverloading("%", "modulo", leftType.ref, e.leftOperand, e.rightOperand, c);
+			return compileOperatorOverloading("%", IQLOperatorOverloadingUtils.MODULO, leftType.ref, e.leftOperand, e.rightOperand, c);
 		}else {
 			return "";
 		}
@@ -279,8 +281,8 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	def String compile(IQLLogicalOrExpression e, G c) {
 		var left = exprParser.getType(e.leftOperand)		
 		var result = "";	
-		if (!left.^null && typeExtensionsFactory.hasTypeExtensions(left.ref,"logicalOr",e.rightOperand)){
-			result = compileOperatorOverloading(e.op, "logicalOr", left.ref, e.leftOperand, e.rightOperand, c);
+		if (!left.^null && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.LOGICAL_OR,e.rightOperand)){
+			result = compileOperatorOverloading(e.op, IQLOperatorOverloadingUtils.LOGICAL_OR, left.ref, e.leftOperand, e.rightOperand, c);
 		} else {
 			result = '''«compile(e.leftOperand, c)» «e.op» «compile(e.rightOperand, c)»'''
 		}			
@@ -290,8 +292,8 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	def String compile(IQLLogicalAndExpression e, G c) {
 		var left = exprParser.getType(e.leftOperand)		
 		var result = "";	
-		if (!left.^null && typeExtensionsFactory.hasTypeExtensions(left.ref,"logicalAnd",e.rightOperand)){
-			result = compileOperatorOverloading(e.op, "logicalAnd", left.ref, e.leftOperand, e.rightOperand, c);
+		if (!left.^null && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.LOGICAL_AND,e.rightOperand)){
+			result = compileOperatorOverloading(e.op, IQLOperatorOverloadingUtils.LOGICAL_AND, left.ref, e.leftOperand, e.rightOperand, c);
 		} else {
 			result = '''«compile(e.leftOperand, c)» «e.op» «compile(e.rightOperand, c)»'''
 		}			
@@ -301,10 +303,10 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	def String compile(IQLEqualityExpression e, G c) {
 		var left = exprParser.getType(e.leftOperand)		
 		var result = "";	
-		if (!left.^null && e.op.equals("==") && typeExtensionsFactory.hasTypeExtensions(left.ref,"equals",e.rightOperand)){
-			result = compileOperatorOverloading("==", "equals", left.ref, e.leftOperand, e.rightOperand, c);
-		} else if (!left.^null && e.op.equals("!=") && typeExtensionsFactory.hasTypeExtensions(left.ref,"equalsNot",e.rightOperand)){
-			result = compileOperatorOverloading("!=", "equalsNot", left.ref, e.leftOperand, e.rightOperand, c);
+		if (!left.^null && e.op.equals("==") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.EQUALS,e.rightOperand)){
+			result = compileOperatorOverloading("==", IQLOperatorOverloadingUtils.EQUALS, left.ref, e.leftOperand, e.rightOperand, c);
+		} else if (!left.^null && e.op.equals("!=") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.EQUALS_NOT,e.rightOperand)){
+			result = compileOperatorOverloading("!=", IQLOperatorOverloadingUtils.EQUALS_NOT, left.ref, e.leftOperand, e.rightOperand, c);
 		}else {
 			if (!left.^null){
 				c.expectedTypeRef = left.ref			
@@ -318,14 +320,14 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	def String compile(IQLRelationalExpression e, G c) {
 		var left = exprParser.getType(e.leftOperand)		
 		var result = "";	
-		if (!left.^null && e.op.equals(">") && typeExtensionsFactory.hasTypeExtensions(left.ref,"greaterThan",e.rightOperand)){
-			result = compileOperatorOverloading(">", "greaterThan", left.ref, e.leftOperand, e.rightOperand, c);
-		} else if (!left.^null &&  e.op.equals("<") && typeExtensionsFactory.hasTypeExtensions(left.ref,"lessThan",e.rightOperand)){
-			result = compileOperatorOverloading("<", "lessThan", left.ref, e.leftOperand, e.rightOperand, c);
-		} else if (!left.^null &&  e.op.equals(">=") && typeExtensionsFactory.hasTypeExtensions(left.ref,"greaterOrEqualsThan",e.rightOperand)){
-			result = compileOperatorOverloading(">=", "greaterOrEqualsThan", left.ref, e.leftOperand, e.rightOperand, c);
-		} else if (!left.^null &&  e.op.equals("<=") && typeExtensionsFactory.hasTypeExtensions(left.ref,"lessOrEqualsThan",e.rightOperand)){
-			result = compileOperatorOverloading("<=", "lessOrEqualsThan", left.ref, e.leftOperand, e.rightOperand, c);
+		if (!left.^null && e.op.equals(">") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.GREATER_THAN,e.rightOperand)){
+			result = compileOperatorOverloading(">", IQLOperatorOverloadingUtils.GREATER_THAN, left.ref, e.leftOperand, e.rightOperand, c);
+		} else if (!left.^null &&  e.op.equals("<") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.LESS_THAN,e.rightOperand)){
+			result = compileOperatorOverloading("<", IQLOperatorOverloadingUtils.LESS_THAN, left.ref, e.leftOperand, e.rightOperand, c);
+		} else if (!left.^null &&  e.op.equals(">=") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.GREATER_EQUALS_THAN,e.rightOperand)){
+			result = compileOperatorOverloading(">=", IQLOperatorOverloadingUtils.GREATER_EQUALS_THAN, left.ref, e.leftOperand, e.rightOperand, c);
+		} else if (!left.^null &&  e.op.equals("<=") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.LESS_EQUALS_THAN,e.rightOperand)){
+			result = compileOperatorOverloading("<=", IQLOperatorOverloadingUtils.LESS_EQUALS_THAN, left.ref, e.leftOperand, e.rightOperand, c);
 		}else {
 			if (!left.^null){
 				c.expectedTypeRef = left.ref			
@@ -345,22 +347,28 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 		var typeOps = typeExtensionsFactory.getTypeExtensions(left,operatorName,rightOperand);
 		c.addImport(typeOps.class.canonicalName)
 		var targetType = typeExtensionsFactory.getMethod(left,operatorName,rightOperand).parameters.get(0).parameterType;
+		c.expectedTypeRef = targetType
+		var result = "";
 		if (!right.isNull && lookUp.isAssignable(targetType, right.ref)){
-			'''«typeOps.class.simpleName».«operatorName»(«compile(leftOperand, c)», «compile(rightOperand, c)»)'''
-		} else {
+			result = '''«typeOps.class.simpleName».«operatorName»(«compile(leftOperand, c)», «compile(rightOperand, c)»)'''
+		} else if (right.^null || lookUp.isCastable(targetType, right.ref)){
 			var target = typeCompiler.compile(targetType, c, false)
-			'''«typeOps.class.simpleName».«operatorName»(«compile(leftOperand, c)», ((«target»)«compile(rightOperand, c)»))'''
-		}			
+			result = '''«typeOps.class.simpleName».«operatorName»(«compile(leftOperand, c)», ((«target»)«compile(rightOperand, c)»))'''
+		}else {
+			result = '''«typeOps.class.simpleName».«operatorName»(«compile(leftOperand, c)», «compile(rightOperand, c)»)'''
+		}	
+		c.expectedTypeRef = null
+		return result;	
 		
 	}
 	
 	def String compile(IQLAdditiveExpression e, G c) {
 		var left = exprParser.getType(e.leftOperand)		
 		var result = "";	
-		if (!left.^null && e.op.equals("+") && typeExtensionsFactory.hasTypeExtensions(left.ref,"plus",e.rightOperand)){
-			result = compileOperatorOverloading("+", "plus", left.ref, e.leftOperand, e.rightOperand, c);
-		} else if (!left.^null &&  e.op.equals("-") && typeExtensionsFactory.hasTypeExtensions(left.ref,"minus",e.rightOperand)){
-			result = compileOperatorOverloading("-", "minus", left.ref, e.leftOperand, e.rightOperand, c);
+		if (!left.^null && e.op.equals("+") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.PLUS,e.rightOperand)){
+			result = compileOperatorOverloading("+", IQLOperatorOverloadingUtils.PLUS, left.ref, e.leftOperand, e.rightOperand, c);
+		} else if (!left.^null &&  e.op.equals("-") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.MINUS,e.rightOperand)){
+			result = compileOperatorOverloading("-", IQLOperatorOverloadingUtils.MINUS, left.ref, e.leftOperand, e.rightOperand, c);
 		} else {
 			if (!left.^null){
 				c.expectedTypeRef = left.ref			
@@ -375,12 +383,12 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 		var left = exprParser.getType(e.leftOperand)
 		var result = "";
 		
-		if (!left.^null &&  e.op.equals("*") && typeExtensionsFactory.hasTypeExtensions(left.ref,"multiply",e.rightOperand)){
-			result = compileOperatorOverloading("*", "multiply", left.ref, e.leftOperand, e.rightOperand, c);
-		} else if (!left.^null &&  e.op.equals("/") && typeExtensionsFactory.hasTypeExtensions(left.ref,"divide",e.rightOperand)){
-			result = compileOperatorOverloading("/", "multiply", left.ref, e.leftOperand, e.rightOperand, c);
-		} else if (!left.^null &&  e.op.equals("%") && typeExtensionsFactory.hasTypeExtensions(left.ref,"modulo",e.rightOperand)){
-			result = compileOperatorOverloading("%", "modulo", left.ref, e.leftOperand, e.rightOperand, c);
+		if (!left.^null &&  e.op.equals("*") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.MULTIPLY,e.rightOperand)){
+			result = compileOperatorOverloading("*", IQLOperatorOverloadingUtils.MULTIPLY, left.ref, e.leftOperand, e.rightOperand, c);
+		} else if (!left.^null &&  e.op.equals("/") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.DIVIDE,e.rightOperand)){
+			result = compileOperatorOverloading("/", IQLOperatorOverloadingUtils.DIVIDE, left.ref, e.leftOperand, e.rightOperand, c);
+		} else if (!left.^null &&  e.op.equals("%") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.MODULO,e.rightOperand)){
+			result = compileOperatorOverloading("%", IQLOperatorOverloadingUtils.MODULO, left.ref, e.leftOperand, e.rightOperand, c);
 		} else {
 			if (!left.^null){
 				c.expectedTypeRef = left.ref			
@@ -392,26 +400,29 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	}
 	
 	def String compile(IQLPlusMinusExpression e, G c) {
-		var left = exprParser.getType(e.operand)		
-		if (!left.^null &&  e.op.equals("+") && typeExtensionsFactory.hasTypeExtensions(left.ref,"simplePlusPrefix",1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,"simplePlusPrefix",1);
+		var left = exprParser.getType(e.operand)
+		if (!left.^null &&  e.op.equals("+") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.SIMPLE_PLUS_PREFIX,0)){
+			var methodName = IQLOperatorOverloadingUtils.SIMPLE_PLUS_PREFIX;
+			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,methodName,0);
 			c.addImport(typeOps.class.canonicalName)
-			'''«typeOps.class.simpleName».simplePlusPrefix(«compile(e.operand, c)»)'''
-		} else if (!left.^null &&  e.op.equals("-") && typeExtensionsFactory.hasTypeExtensions(left.ref,"simpleMinusPrefix",1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,"simpleMinusPrefix",1);
+			'''«typeOps.class.simpleName».«methodName»(«compile(e.operand, c)»)'''
+		} else if (!left.^null &&  e.op.equals("-") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.SIMPLE_MINUS_PREFIX,0)){
+			var methodName = IQLOperatorOverloadingUtils.SIMPLE_MINUS_PREFIX;
+			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,methodName,0);
 			c.addImport(typeOps.class.canonicalName)
-			'''«typeOps.class.simpleName».simpleMinusPrefix(«compile(e.operand, c)»)'''
+			'''«typeOps.class.simpleName».«methodName»(«compile(e.operand, c)»)'''
 		} else {
 			'''«e.op»«compile(e.operand, c)»'''
 		}			
 	}
 	
 	def String compile(IQLBooleanNotExpression e, G c) {
-		var left = exprParser.getType(e.operand)		
-		if (!left.^null && typeExtensionsFactory.hasTypeExtensions(left.ref,"booleanNotPrefix",1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,"booleanNotPrefix",1);
+		var left = exprParser.getType(e.operand)	
+		var methodName = IQLOperatorOverloadingUtils.BOOLEAN_NOT_PREFIX;			
+		if (!left.^null && typeExtensionsFactory.hasTypeExtensions(left.ref,methodName,0)){
+			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,methodName,0);
 			c.addImport(typeOps.class.canonicalName)
-			'''«typeOps.class.simpleName».booleanNotPrefix(«compile(e.operand, c)»)'''
+			'''«typeOps.class.simpleName».«methodName»(«compile(e.operand, c)»)'''
 		} else {
 			'''«e.op»«compile(e.operand, c)»'''
 		}	
@@ -419,33 +430,40 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	
 	def String compile(IQLPrefixExpression e, G c) {
 		var left = exprParser.getType(e.operand)
-		if (!left.^null &&  e.op.equals("++") && typeExtensionsFactory.hasTypeExtensions(left.ref,"plusPrefix",1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,"plusPrefix",1);
+		if (!left.^null &&  e.op.equals("++") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.PLUS_PREFIX,0)){
+			var methodName = IQLOperatorOverloadingUtils.PLUS_PREFIX;
+			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,methodName,0);
 			c.addImport(typeOps.class.canonicalName)
-			'''«typeOps.class.simpleName».plusPrefix(«compile(e.operand, c)»)'''
-		} else if (!left.^null &&  e.op.equals("--") && typeExtensionsFactory.hasTypeExtensions(left.ref,"minusPrefix",1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,"minusPrefix",1);
+			'''«typeOps.class.simpleName».«methodName»(«compile(e.operand, c)»)'''
+		} else if (!left.^null &&  e.op.equals("--") && typeExtensionsFactory.hasTypeExtensions(left.ref,IQLOperatorOverloadingUtils.MINUS_PREFIX,0)){
+			var methodName = IQLOperatorOverloadingUtils.MINUS_PREFIX;
+			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,methodName,0);
 			c.addImport(typeOps.class.canonicalName)
-			'''«typeOps.class.simpleName».minusPrefix(«compile(e.operand, c)»)'''
+			'''«typeOps.class.simpleName».«methodName»(«compile(e.operand, c)»)'''
 		} else {
 			'''«e.op»«compile(e.operand, c)»'''
 		}
 	}
 	
 	def String compile(IQLTypeCastExpression e, G c) {
-		'''(«typeCompiler.compile(e.targetRef, c, false)»)(«compile(e.operand, c)»)'''
+		c.expectedTypeRef = e.targetRef		
+		var result = '''(«typeCompiler.compile(e.targetRef, c, false)»)(«compile(e.operand, c)»)'''
+		c.expectedTypeRef = null
+		return result
 	}	
 	
 	def String compile(IQLPostfixExpression e, G c) {
 		var right = exprParser.getType(e.operand)
-		if (!right.^null && e.op.equals("++") && typeExtensionsFactory.hasTypeExtensions(right.ref,"plusPostfix",1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(right.ref,"plusPostfix",1);
+		if (!right.^null && e.op.equals("++") && typeExtensionsFactory.hasTypeExtensions(right.ref,IQLOperatorOverloadingUtils.PLUS_POSTFIX,0)){
+			var methodName = IQLOperatorOverloadingUtils.PLUS_POSTFIX;
+			var typeOps = typeExtensionsFactory.getTypeExtensions(right.ref,methodName,0);
 			c.addImport(typeOps.class.canonicalName)
-			'''«typeOps.class.simpleName».plusPostfix(«compile(e.operand, c)»)'''
-		} else if (!right.^null && e.op.equals("--") && typeExtensionsFactory.hasTypeExtensions(right.ref,"minusPostfix",1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(right.ref,"minusPostfix",1);
+			'''«typeOps.class.simpleName».«methodName»(«compile(e.operand, c)»)'''
+		} else if (!right.^null && e.op.equals("--") && typeExtensionsFactory.hasTypeExtensions(right.ref,IQLOperatorOverloadingUtils.MINUS_POSTFIX,0)){
+			var methodName = IQLOperatorOverloadingUtils.MINUS_POSTFIX;
+			var typeOps = typeExtensionsFactory.getTypeExtensions(right.ref,methodName,0);
 			c.addImport(typeOps.class.canonicalName)
-			'''«typeOps.class.simpleName».minusPostfix(«compile(e.operand, c)»)'''
+			'''«typeOps.class.simpleName».«methodName»(«compile(e.operand, c)»)'''
 		} else {
 			'''«compile(e.operand, c)»«e.op»'''
 		}
@@ -453,13 +471,14 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	
 	def String compile(IQLArrayExpression e, G c) {
 		var left = exprParser.getType(e.leftOperand)
-		if (!left.^null && typeExtensionsFactory.hasTypeExtensions(left.ref,"get",2)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,"get",2);
+		var methodName = IQLOperatorOverloadingUtils.GET;
+		if (!left.^null && typeExtensionsFactory.hasTypeExtensions(left.ref,methodName,1)){
+			var typeOps = typeExtensionsFactory.getTypeExtensions(left.ref,methodName,1);
 			c.addImport(typeOps.class.canonicalName)
-			'''«typeOps.class.simpleName».get(«compile(e.leftOperand, c)», «e.expressions.map[ el | compile(el, c)].join(", ")»)'''
+			'''«typeOps.class.simpleName».«methodName»(«compile(e.leftOperand, c)», «e.expressions.map[ el | compile(el, c)].join(", ")»)'''
 		} else if (!left.^null && typeUtils.isArray(left.ref)){
 			c.addImport(ListExtensions.canonicalName)			
-			'''«ListExtensions.simpleName».get(«compile(e.leftOperand, c)», «e.expressions.map[ el | compile(el, c)].join(", ")»)'''
+			'''«ListExtensions.simpleName».«methodName»(«compile(e.leftOperand, c)», «e.expressions.map[ el | compile(el, c)].join(", ")»)'''
 		} else {
 			'''«compile(e.leftOperand, c)»[«compile(e.expressions.get(0), c)»]'''
 		}
@@ -638,8 +657,8 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	
 
 	def String compile(IQLLiteralExpressionDouble e, G c) {
-		if (c.expectedTypeRef != null && typeExtensionsFactory.hasTypeExtensions(c.expectedTypeRef,"doubleToType", 1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(c.expectedTypeRef,"doubleToType", 1);
+		if (c.expectedTypeRef != null && typeExtensionsFactory.hasTypeExtensions(c.expectedTypeRef,"doubleToType", e)){
+			var typeOps = typeExtensionsFactory.getTypeExtensions(c.expectedTypeRef,"doubleToType", e);
 			c.addImport(typeOps.class.canonicalName)
 			'''«typeOps.class.simpleName».doubleToType(«e.value»)'''
 		} else if (c.expectedTypeRef != null) {
@@ -656,8 +675,8 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	}
 
 	def String compile(IQLLiteralExpressionInt e, G c) {
-		if (c.expectedTypeRef != null && typeExtensionsFactory.hasTypeExtensions(c.expectedTypeRef,"intToType", 1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(c.expectedTypeRef,"intToType", 1);
+		if (c.expectedTypeRef != null && typeExtensionsFactory.hasTypeExtensions(c.expectedTypeRef,"intToType", e)){
+			var typeOps = typeExtensionsFactory.getTypeExtensions(c.expectedTypeRef,"intToType", e);
 			c.addImport(typeOps.class.canonicalName)
 			'''«typeOps.class.simpleName».intToType(«e.value»)'''
 		} else if (c.expectedTypeRef != null) {
@@ -676,9 +695,9 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	}
 		
 	def String compile(IQLLiteralExpressionString e, G c) {
-		if (c.expectedTypeRef != null && typeExtensionsFactory.hasTypeExtensions(c.expectedTypeRef,"stringToType", 1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(c.expectedTypeRef,"stringToType", 1);
-			c.addImport(typeOps.class.canonicalName)
+		if (c.expectedTypeRef != null && typeExtensionsFactory.hasTypeExtensions(c.expectedTypeRef,"stringToType", e)){
+			var typeOps = typeExtensionsFactory.getTypeExtensions(c.expectedTypeRef,"stringToType", e);
+			c.addImport(typeOps.class.canonicalName)			
 			'''«typeOps.class.simpleName».stringToType("«e.value»")'''
 		} else if (c.expectedTypeRef != null) {
 			if (typeUtils.isCharacter(c.expectedTypeRef)) {
@@ -692,8 +711,8 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 	}	
 	
 	def String compile(IQLLiteralExpressionBoolean e, G c) {
-		if (c.expectedTypeRef != null && typeExtensionsFactory.hasTypeExtensions(c.expectedTypeRef,"booleanToType", 1)){
-			var typeOps = typeExtensionsFactory.getTypeExtensions(c.expectedTypeRef,"booleanToType", 1);
+		if (c.expectedTypeRef != null && typeExtensionsFactory.hasTypeExtensions(c.expectedTypeRef,"booleanToType", e)){
+			var typeOps = typeExtensionsFactory.getTypeExtensions(c.expectedTypeRef,"booleanToType", e);
 			c.addImport(typeOps.class.canonicalName)
 			'''«typeOps.class.simpleName».booleanToType(«e.value»)'''
 		} else {
@@ -718,10 +737,11 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 		'''null'''	
 	}
 	
-	def String compile(IQLLiteralExpressionList e, G c) {		
+	def String compile(IQLLiteralExpressionList e, G c) {				
 		if (c.expectedTypeRef != null && typeExtensionsFactory.hasTypeExtensions(c.expectedTypeRef,"listToType", 1)){
 			var typeOps = typeExtensionsFactory.getTypeExtensions(c.expectedTypeRef,"listToType", 1);
 			c.addImport(typeOps.class.canonicalName)
+			c.expectedTypeRef = null;			
 			'''«typeOps.class.simpleName».listToType(«e.elements.map[el | compile(el, c)].join(", ")»)'''
 		} else {
 			c.addImport(IQLUtils.canonicalName)		
@@ -733,6 +753,7 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 		if (c.expectedTypeRef != null && typeExtensionsFactory.hasTypeExtensions(c.expectedTypeRef,"mapToType", 1)){
 			var typeOps = typeExtensionsFactory.getTypeExtensions(c.expectedTypeRef,"mapToType", 1);
 			c.addImport(typeOps.class.canonicalName)
+			c.expectedTypeRef = null;
 			'''«typeOps.class.simpleName».mapToType(«e.elements.map[el | compile(el.key, c) +", " +compile(el.value, c)].join(", ")»)'''
 		} else {
 			c.addImport(IQLUtils.canonicalName)

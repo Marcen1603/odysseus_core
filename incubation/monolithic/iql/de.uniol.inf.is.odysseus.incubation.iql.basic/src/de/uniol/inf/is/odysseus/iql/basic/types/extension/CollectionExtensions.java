@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl;
+package de.uniol.inf.is.odysseus.iql.basic.types.extension;
 
 import java.util.Collection;
 
@@ -25,8 +25,7 @@ public class CollectionExtensions implements IIQLTypeExtensions {
 		col.removeAll(operand);
 		return col;
 	}
-	
-	
+		
 	
 	@Override
 	public Class<?> getType() {

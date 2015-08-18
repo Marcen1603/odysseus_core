@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl;
+package de.uniol.inf.is.odysseus.iql.basic.types.extension;
 
 
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
 public class ObjectExtensions implements IIQLTypeExtensions {
-	
 	
 	public static void info(Object obj, String text) {
 		 LoggerFactory.getLogger(obj.getClass()).info(text);

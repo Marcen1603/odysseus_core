@@ -8,14 +8,17 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.types.Range;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.ExtensionMethod;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
 public class TupleExtensions implements IIQLTypeExtensions {
 
+	@ExtensionMethod(ignoreFirstParameter=false)
 	public static <T extends IMetaAttribute> Tuple<T> listToType(Object ... attributes) {
 		return new Tuple<>(attributes, false);
 	}
 	
+	@ExtensionMethod(ignoreFirstParameter=false)
 	public static <T extends IMetaAttribute> Tuple<T> rangeToType(int from, int to) {
 		List<Object> attributes = new ArrayList<>();
 		int counter = from;
@@ -26,18 +29,22 @@ public class TupleExtensions implements IIQLTypeExtensions {
 		return new Tuple<>(attributes.toArray(new Object[attributes.size()]), false);
 	}
 	
+	@ExtensionMethod(ignoreFirstParameter=false)
 	public static <T extends IMetaAttribute> Tuple<T> booleanToType(boolean value) {
 		return new Tuple<>(value, false);
 	}
 	
+	@ExtensionMethod(ignoreFirstParameter=false)
 	public static <T extends IMetaAttribute> Tuple<T> stringToType(String value) {
 		return new Tuple<>(value, false);
 	}
 	
+	@ExtensionMethod(ignoreFirstParameter=false)
 	public static <T extends IMetaAttribute> Tuple<T> intToType(int value) {
 		return new Tuple<>(value, false);
 	}
 	
+	@ExtensionMethod(ignoreFirstParameter=false)
 	public static <T extends IMetaAttribute> Tuple<T> doubleToType(double value) {
 		return new Tuple<>(value, false);
 	}	

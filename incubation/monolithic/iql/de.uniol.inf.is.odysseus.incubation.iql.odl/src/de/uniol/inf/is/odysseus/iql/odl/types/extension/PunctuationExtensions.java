@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.iql.odl.types.extension;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.ExtensionMethod;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
 public class PunctuationExtensions implements IIQLTypeExtensions {
@@ -12,24 +13,29 @@ public class PunctuationExtensions implements IIQLTypeExtensions {
 		return IPunctuation.class;
 	}
 	
-	public static IPunctuation plus(IPunctuation punctuation, long time) {
-		return punctuation.clone(punctuation.getTime().plus(new PointInTime(time)));
+	@ExtensionMethod(ignoreFirstParameter=false)
+	public static IPunctuation intToType(int value) {
+		return Heartbeat.createNewHeartbeat(value);
 	}
 	
-	public static IPunctuation minus(IPunctuation punctuation, long time) {
-		return punctuation.clone(punctuation.getTime().minus(new PointInTime(time)));
+	public static IPunctuation plus(IPunctuation left, IPunctuation right) {
+		return left.clone(left.getTime().plus(right.getTime()));
 	}
 	
-	public static IPunctuation multiply(IPunctuation punctuation, long time) {
-		return punctuation.clone(new PointInTime(punctuation.getTime().getMainPoint()*time));
+	public static IPunctuation minus(IPunctuation left, IPunctuation right) {
+		return left.clone(left.getTime().minus(right.getTime()));
 	}
 	
-	public static IPunctuation divide(IPunctuation punctuation, long time) {
-		return punctuation.clone(new PointInTime(punctuation.getTime().getMainPoint()/time));
+	public static IPunctuation multiply(IPunctuation left, IPunctuation right) {
+		return left.clone(new PointInTime(left.getTime().getMainPoint()*right.getTime().getMainPoint()));
 	}
 	
-	public static IPunctuation modulo(IPunctuation punctuation, long time) {
-		return punctuation.clone(new PointInTime(punctuation.getTime().getMainPoint()%time));
+	public static IPunctuation divide(IPunctuation left, IPunctuation right) {
+		return left.clone(new PointInTime(left.getTime().getMainPoint()/right.getTime().getMainPoint()));
+	}
+	
+	public static IPunctuation modulo(IPunctuation left, IPunctuation right) {
+		return left.clone(new PointInTime(left.getTime().getMainPoint()%right.getTime().getMainPoint()));
 	}
 	
 	public static IPunctuation plusPrefix(IPunctuation punctuation) {
@@ -72,9 +78,7 @@ public class PunctuationExtensions implements IIQLTypeExtensions {
 		return left.getTime().getMainPoint()!=right.getTime().getMainPoint();
 	}
 	
-	public static IPunctuation intToType(int value) {
-		return Heartbeat.createNewHeartbeat(value);
-	}
+	
 	public static IPunctuation simplePlusPrefix(IPunctuation punctuation) {
 		return punctuation.clone(new PointInTime(+punctuation.getTime().getMainPoint()));
 	}

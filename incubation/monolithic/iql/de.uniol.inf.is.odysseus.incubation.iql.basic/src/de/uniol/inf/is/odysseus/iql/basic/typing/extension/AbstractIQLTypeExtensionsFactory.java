@@ -11,6 +11,9 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmAnnotationReference;
+import org.eclipse.xtext.common.types.JvmAnnotationValue;
+import org.eclipse.xtext.common.types.JvmBooleanAnnotationValue;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmOperation;
@@ -68,11 +71,25 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 		JvmTypeReference typeRef = typeUtils.createTypeRef(extensions.getClass(), typeFactory.getSystemResourceSet());
 		JvmType innerType = typeUtils.getInnerType(typeRef, false);
 		for (JvmOperation method : EcoreUtil2.getAllContentsOfType(innerType, JvmOperation.class)) {
-			if (method.isStatic() && (method.getVisibility().getValue() == JvmVisibility.PUBLIC_VALUE || (method.getVisibility().getValue() == JvmVisibility.PROTECTED_VALUE))) {
+			if (method.isStatic() && ignoreFirstParameter(method) && (method.getVisibility().getValue() == JvmVisibility.PUBLIC_VALUE || (method.getVisibility().getValue() == JvmVisibility.PROTECTED_VALUE))) {
 				method.getParameters().remove(0);
 			}
 		}
 		this.typeExtensionsRefs.put(extensions, typeRef);
+	}
+	
+	private boolean ignoreFirstParameter(JvmOperation method) {
+		if (method.getAnnotations().size() > 0) {
+			for (JvmAnnotationReference anno : method.getAnnotations()) {
+				if (anno.getAnnotation().getSimpleName().equals(ExtensionMethod.class.getSimpleName())) {
+					for (JvmAnnotationValue value : anno.getValues()) {
+						JvmBooleanAnnotationValue v = (JvmBooleanAnnotationValue) value;
+						return v.getValues().get(0);
+					}
+				}
+			}
+		}
+		return true;
 	}
 	
 	@Override
@@ -239,8 +256,8 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 		if (col != null) {
 			for (IIQLTypeExtensions extensions : col) {
 				JvmTypeReference typeExtRef = typeExtensionsRefs.get(extensions);
-				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeExtRef, true);
-				JvmOperation op = methodFinder.findMethod(methods, method, args-1);
+				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeExtRef, true, false);
+				JvmOperation op = methodFinder.findMethod(methods, method, args);
 				if (op != null) {
 					return extensions;
 				}
@@ -281,7 +298,7 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 		if (col != null) {
 			for (IIQLTypeExtensions extensions : col) {
 				JvmTypeReference extRef = typeExtensionsRefs.get(extensions);
-				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(extRef, true);
+				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(extRef, true, false);
 				JvmOperation op = methodFinder.findMethod(methods, methodName, arguments);
 				if (op != null) {
 					return extensions;
@@ -340,7 +357,7 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 		JvmTypeReference ext = typeExtensionsRefs.get(findTypeExtensions(typeRef, method, args));
 		JvmDeclaredType type = (JvmDeclaredType)  typeUtils.getInnerType(ext, false);
 		for (JvmOperation op : type.getDeclaredOperations()) {
-			if (op.getSimpleName().equalsIgnoreCase(method) && op.getParameters().size() == args-1) {
+			if (op.getSimpleName().equalsIgnoreCase(method) && op.getParameters().size() == args) {
 				return op;
 			}
 		}
@@ -358,7 +375,7 @@ public abstract class AbstractIQLTypeExtensionsFactory<F extends IIQLTypeFactory
 	public JvmOperation getMethod(JvmTypeReference typeRef, String method,	List<IQLExpression> arguments) {
 		JvmTypeReference ext = typeExtensionsRefs.get(findTypeExtensions(typeRef, method, arguments));
 		JvmDeclaredType type = (JvmDeclaredType)  typeUtils.getInnerType(ext, false);
-		Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeUtils.createTypeRef(type), true);
+		Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeUtils.createTypeRef(type), true, false);
 		return methodFinder.findMethod(methods, method, arguments);
 	}
 

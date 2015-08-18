@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl;
+package de.uniol.inf.is.odysseus.iql.basic.types.extension;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +17,6 @@ public class ListExtensions extends CollectionExtensions {
 	public static <T> T get(List<T> col, int index) {
 		return col.get(index);
 	}
-
 	
 	public static <T> List<T> get(List<T> col, Object ... indices) {
 		List<T> result = new ArrayList<>();
@@ -43,7 +42,6 @@ public class ListExtensions extends CollectionExtensions {
 			col.add(index, element);
 		}
 	}
-	
 	
 	
 	public static <T> void set(List<T> col, Collection<T> elements, Object ... indices) {

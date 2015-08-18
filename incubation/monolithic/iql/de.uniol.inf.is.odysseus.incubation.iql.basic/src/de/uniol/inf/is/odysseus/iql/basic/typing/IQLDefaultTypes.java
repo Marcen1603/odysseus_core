@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.iql.basic.types.Range;
+import de.uniol.inf.is.odysseus.iql.basic.types.extension.CollectionExtensions;
+import de.uniol.inf.is.odysseus.iql.basic.types.extension.ListExtensions;
+import de.uniol.inf.is.odysseus.iql.basic.types.extension.ObjectExtensions;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
-import de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl.CollectionExtensions;
-import de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl.ListExtensions;
-import de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl.ObjectExtensions;
 
 public class IQLDefaultTypes {
 	

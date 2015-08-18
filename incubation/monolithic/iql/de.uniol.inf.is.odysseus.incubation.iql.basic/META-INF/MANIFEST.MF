@@ -56,7 +56,6 @@ Export-Package: de.uniol.inf.is.odysseus.iql.basic,
  de.uniol.inf.is.odysseus.iql.basic.typing.exprparser,
  de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context,
  de.uniol.inf.is.odysseus.iql.basic.typing.extension,
- de.uniol.inf.is.odysseus.iql.basic.typing.extension.impl,
  de.uniol.inf.is.odysseus.iql.basic.typing.factory,
  de.uniol.inf.is.odysseus.iql.basic.typing.utils,
  de.uniol.inf.is.odysseus.iql.basic.validation
