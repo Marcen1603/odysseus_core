@@ -176,6 +176,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 
 		if (executor.getLogicalQueryIds(getActiveSession()).size() == 0) {
 			LOG.warn("Load Balancing triggered, but no queries installed. Continuing monitoring.");
+			startNewMonitoringThread();
 			return;
 		}
 
