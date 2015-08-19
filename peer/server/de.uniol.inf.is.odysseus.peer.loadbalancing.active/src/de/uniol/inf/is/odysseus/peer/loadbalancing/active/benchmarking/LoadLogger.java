@@ -65,6 +65,7 @@ public class LoadLogger implements ILogLoadService {
 		if(loggingThread==null) {
 			String filename = "loadlog_"+System.currentTimeMillis()+".csv";
 			loggingThread = new LoadLogThread(usageManager,executor,networkManager, filename);
+			loggingThread.printInfoFile();
 			loggingThread.start();
 			LOG.info("Started Logging Load to {}",filename);
 		}

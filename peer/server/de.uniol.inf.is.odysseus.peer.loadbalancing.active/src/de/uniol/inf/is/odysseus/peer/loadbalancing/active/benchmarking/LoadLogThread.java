@@ -2,7 +2,12 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.benchmarking;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +20,8 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
@@ -27,9 +34,12 @@ public class LoadLogThread extends Thread {
 
 	private String filename;
 	private static final char SEPERATOR = ',';
+	private static final char SEPERATOR_QUERY_IDS = ';';
 	private static final char LINEBREAK  = '\n';
 	private static final int WRITE_BULK_SIZE=60; //60 Tuples -> Write about every minute.
 	public static final int FETCH_LOAD_INTERVAL = 1000;
+	
+	private static ISession activeSession;
 	int counter = 0;
 	StringBuilder sb = new StringBuilder();
 	/**
@@ -79,6 +89,17 @@ public class LoadLogThread extends Thread {
 			sb.append(SEPERATOR);
 			
 			sb.append(senderReceiverCount.getE2());
+			sb.append(SEPERATOR);
+			
+			sb.append(senderReceiverCount.getE1()+senderReceiverCount.getE2());
+			sb.append(SEPERATOR);
+			
+			Pair<Integer,String> queryCountAndIDs = getNumberAndIDsOfRunningQueries();
+			
+			sb.append(queryCountAndIDs.getE1());
+			sb.append(SEPERATOR);
+			
+			sb.append(queryCountAndIDs.getE2());
 			sb.append(LINEBREAK);
 			
 			counter++;
@@ -156,5 +177,94 @@ public class LoadLogThread extends Thread {
 		return new Pair<Integer,Integer>(senderCount,receiverCount);
 	}
 	
+	private Pair<Integer,String> getNumberAndIDsOfRunningQueries() {
+		
+		
+		Collection<Integer> runningQueries = executor.getLogicalQueryIds(getActiveSession());
+		int queryCount = runningQueries.size();
+		
+		StringBuilder builder = new StringBuilder();
+		Iterator<Integer> iter = runningQueries.iterator();
+		builder.append("{");
+		while(iter.hasNext()) {
+			int nextQueryId = iter.next();
+			builder.append(nextQueryId);
+			if(iter.hasNext()) {
+				builder.append(SEPERATOR_QUERY_IDS);
+			}
+		}
+		builder.append("}");
+		
+		return new Pair<Integer,String>(queryCount,builder.toString());
+	}
+	
+
+	/**
+	 * Gets currently active Session.
+	 * 
+	 * @return active Session
+	 */
+	public static ISession getActiveSession() {
+		if (activeSession == null || !activeSession.isValid()) {
+			activeSession = UserManagementProvider
+					.getSessionmanagement()
+					.loginSuperUser(null,
+							UserManagementProvider.getDefaultTenant().getName());
+		}
+		return activeSession;
+	}
+	
+	public void printInfoFile() {
+		
+		
+		
+		StringBuilder infoStringBuilder = new StringBuilder();
+		infoStringBuilder.append("#######FORMAT INFO#######");
+		infoStringBuilder.append("File:");
+		infoStringBuilder.append(filename);
+		infoStringBuilder.append('\n');
+		infoStringBuilder.append("PeerID:");
+		infoStringBuilder.append(networkManager.getLocalPeerID());
+		infoStringBuilder.append('\n');
+		infoStringBuilder.append("PeerName:");
+		infoStringBuilder.append(networkManager.getLocalPeerName());
+		infoStringBuilder.append('\n');
+		infoStringBuilder.append("Starting Time:");
+		infoStringBuilder.append(getCurrentDateTimeString());
+		infoStringBuilder.append("Separator:");
+		infoStringBuilder.append(SEPERATOR);
+		infoStringBuilder.append('\n');
+		infoStringBuilder.append("QueryID-Separator:");
+		infoStringBuilder.append(SEPERATOR_QUERY_IDS);
+		infoStringBuilder.append('\n');
+		infoStringBuilder.append("FetchLoadInterval:");
+		infoStringBuilder.append(FETCH_LOAD_INTERVAL);
+		infoStringBuilder.append('\n');
+		infoStringBuilder.append("BULKSIZE:");
+		infoStringBuilder.append(WRITE_BULK_SIZE);
+		infoStringBuilder.append('\n');
+		infoStringBuilder.append("FileFormat:");
+		infoStringBuilder.append("<Timestamp>,<cpuUsage>,<memUsage>,<netUsage>,<senderCount>,<receiverCount>,<totalJxtaOperatorCount>,<queryCound>,<installedQueryIDs>");
+		infoStringBuilder.append('\n');
+		
+		
+		try
+		{
+		    FileWriter fw = new FileWriter(filename+".info",false);
+		    fw.write(infoStringBuilder.toString());
+		    fw.close();
+		}
+		catch(IOException ioe)
+		{
+		    LOG.error("IOException: " + ioe.getMessage());
+		    stopThread();
+		}
+	}
+	
+	private String getCurrentDateTimeString() {
+		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		return dateFormat.format(cal.getTime()); //2014/08/06 16:00:22
+	}
 
 }
