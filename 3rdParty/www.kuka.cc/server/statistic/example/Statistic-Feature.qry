@@ -1,0 +1,26 @@
+#PARSER PQL
+#ADDQUERY
+
+input = ACCESS({source='Source',
+wrapper='GenericPush',
+transport='Timer',
+protocol='None',
+dataHandler='Tuple',
+options=[['period', '1000']],
+schema=[['time', 'Timestamp']]
+})
+
+func = MAP({EXPRESSIONS = [['rnd()','x']]}, input)
+
+agg = AGGREGATE({AGGREGATIONS = [
+['PSKEW', 'x', 'pskew'],
+['SSKEW', 'x', 'sskew'],
+['SKEW', 'x', 'skew'],
+['PKURT', 'x', 'pkurt'],
+['SKURT', 'x', 'skurt'],
+['KURT', 'x', 'kurt'],
+['PSTDDEV', 'x', 'pstddev'],
+['SSTDDEV', 'x', 'sstddev'],
+['JARQUE', 'x', 'jarque'],
+['DPO', 'x', 'dpo']
+]}, func)

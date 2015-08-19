@@ -1,0 +1,19 @@
+#PARSER PQL
+#ADDQUERY
+///Your first pql-query here
+
+
+input = ACCESS({source='Source',
+wrapper='GenericPull',
+transport='Yahoo',
+protocol='Document',
+dataHandler='Tuple',
+OPTIONS = [['yql',"select * from geo.places%s where text IN ('Sunnyvale', 'Mountain View', 'Cupertino')"]],
+SCHEMA = [['data', 'String']]
+})
+
+
+output = CONVERTER({protocol='JSON',
+inputDataHandler='Tuple',
+outputDataHandler='KeyValueObject'
+}, input)

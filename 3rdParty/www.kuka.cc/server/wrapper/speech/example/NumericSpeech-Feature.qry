@@ -1,0 +1,17 @@
+///OdysseusScript
+#PARSER PQL
+#ADDQUERY
+
+
+input = ACCESS({source='Source',
+wrapper='GenericPush',
+transport='NumericSpeech',
+protocol='Document',
+dataHandler='Tuple',
+schema=[['value', 'Integer']],
+options = [['onedocpercall','false']]
+})
+
+agg = AGGREGATE({AGGREGATIONS = [['avg', 'value', 'average']]}, 
+                TIMEWINDOW({SIZE = 5}, input)
+               )

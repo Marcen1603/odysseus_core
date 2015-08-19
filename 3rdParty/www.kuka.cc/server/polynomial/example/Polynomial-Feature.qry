@@ -1,0 +1,27 @@
+#PARSER PQL
+#ADDQUERY
+
+input = ACCESS({source='Source',
+wrapper='GenericPush',
+transport='Timer',
+protocol='None',
+dataHandler='Tuple',
+options=[['period', '1000']],
+schema=[['time', 'Timestamp']]
+})
+
+func = MAP({EXPRESSIONS = [
+ 'toPolynomial(toVector([1.0;5.0]))', 
+ 'toPolynomial(toVector([1.0;5.0])) + toPolynomial(toVector([-2.0;3.0]))',
+ 'toPolynomial(toVector([1.0;5.0])) - toPolynomial(toVector([-2.0;3.0]))',
+ 'toPolynomial(toVector([1.0;5.0])) * toPolynomial(toVector([-2.0;3.0]))',
+ 'eval(toPolynomial(toVector([1.0;5.0])), 3.0)',
+ 'comp(toPolynomial(toVector([1.0;5.0])), toPolynomial(toVector([-2.0;3.0])))',
+ 'diff(toPolynomial(toVector([1.0;5.0])))',
+ 'int(toPolynomial(toVector([1.0;5.0])))'
+ ]}, input)
+ 
+ 
+ data = MAP({EXPRESSIONS = [['rnd()','x'],['rnd()','y']]}, input)
+ 
+ agg = AGGREGATE({AGGREGATIONS = [['Regression', ['x','y'], 'poly']]}, data)

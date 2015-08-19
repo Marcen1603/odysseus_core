@@ -1,0 +1,25 @@
+#PARSER PQL
+
+#METADATA TimeInterval
+#METADATA Probabilistic
+
+#RUNQUERY
+
+Arduino =  ACCESS({
+	SOURCE = 'Arduino', 
+	TRANSPORT = 'RS232', 
+	DATAHANDLER = 'ProbabilisticTuple', 
+	WRAPPER = 'GenericPush', 
+	PROTOCOL = 'CSV',
+	SCHEMA = [['timestamp', 'STARTTIMESTAMP'],['x', 'DOUBLE']],
+	OPTIONS = [['port', '/dev/ttyACM3'], ['baud', '9600']]
+	})
+
+pSource = EM({ attributes = [ 'x'] , mixtures = 2}, 
+               WINDOW({SIZE = [2, 'seconds'], ADVANCE = 1, TYPE = 'time'}, 
+               Arduino) )
+dSource = Arduino
+
+
+pOut = SELECT({PREDICATE = 'x<7000 AND x>0'}, pSource)
+dOut = SELECT({PREDICATE = 'x<7000 AND x>0'}, dSource)

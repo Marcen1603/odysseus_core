@@ -1,0 +1,22 @@
+#PARSER PQL
+#RUNQUERY
+
+
+input = ACCESS({
+            source='source',
+            wrapper='GenericPush',
+            transport='Camera',
+            protocol='None',
+            datahandler='Tuple',
+            options=[['deviceid','0']],
+            schema=[['Content','Image']]
+          }
+        )
+
+
+data = EYETRACKER({
+            attribute = 'Content'
+          },
+          input
+        )
+

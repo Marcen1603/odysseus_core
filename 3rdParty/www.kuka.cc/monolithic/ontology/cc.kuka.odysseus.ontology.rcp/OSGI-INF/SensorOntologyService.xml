@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="cc.kuka.odysseus.ontology.rcp.SensorOntologyService">
+   <implementation class="cc.kuka.odysseus.ontology.rcp.SensorRegistryPlugIn"/>
+   <reference bind="bindSensorOntologyService" cardinality="1..1" interface="cc.kuka.odysseus.ontology.common.SensorOntologyService" name="SensorOntologyService" policy="static" unbind="unbindSensorOntologyService"/>
+</scr:component>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="cc.kuka.odysseus.ontology.SensorOntologyServiceProvider">
+   <implementation class="cc.kuka.odysseus.ontology.storage.service.SensorOntologyServiceImpl"/>
+   <service>
+      <provide interface="cc.kuka.odysseus.ontology.common.SensorOntologyService"/>
+   </service>
+</scr:component>

@@ -1,0 +1,13 @@
+///OdysseusScript
+#PARSER PQL
+#RUNQUERY
+
+
+input = ACCESS({source='Source',
+wrapper='GenericPush',
+transport='Speech',
+protocol='Document',
+dataHandler='Tuple',
+schema=[['value', 'String']],
+options = [['onedocpercall','false']]
+})
