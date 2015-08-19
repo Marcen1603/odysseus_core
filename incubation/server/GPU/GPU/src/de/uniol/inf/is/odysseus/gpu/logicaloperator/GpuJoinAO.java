@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
  */
 public class GpuJoinAO extends AbstractLogicalOperator {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * @param op
 	 */

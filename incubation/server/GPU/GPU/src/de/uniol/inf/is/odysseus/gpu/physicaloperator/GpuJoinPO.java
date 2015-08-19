@@ -1,18 +1,12 @@
 package de.uniol.inf.is.odysseus.gpu.physicaloperator;
 
-import java.util.function.UnaryOperator;
-
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
-@SuppressWarnings({"rawtypes"})
 public abstract class GpuJoinPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
-	
-	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO Auto-generated method stub
