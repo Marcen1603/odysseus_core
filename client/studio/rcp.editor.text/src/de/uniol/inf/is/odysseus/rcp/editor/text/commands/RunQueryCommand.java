@@ -75,7 +75,15 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 
     @Override
     public boolean isEnabled() {
-		return true;
+        List<IFile> fileList = getSelectedFiles();
+        
+        for( IFile file : fileList ) {
+        	if( !FileExecutorRegistry.hasFileExecutor(file.getFileExtension())) {
+        		return false;
+        	}
+        }
+        
+        return true;
     }
 
     @SuppressWarnings("unchecked")
