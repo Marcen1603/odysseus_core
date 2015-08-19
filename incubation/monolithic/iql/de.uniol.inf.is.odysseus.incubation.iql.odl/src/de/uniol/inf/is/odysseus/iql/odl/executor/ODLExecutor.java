@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.odl.parser;
+package de.uniol.inf.is.odysseus.iql.odl.executor;
 
 
 import java.beans.BeanInfo;
@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 
 
 
@@ -52,6 +53,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 
 
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -62,7 +64,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuil
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.iql.basic.parser.AbstractIQLParser;
+import de.uniol.inf.is.odysseus.iql.basic.executor.AbstractIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
@@ -73,13 +75,13 @@ import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
 
 
 
-public class ODLParser extends AbstractIQLParser<ODLTypeFactory, ODLTypeUtils> {
+public class ODLExecutor extends AbstractIQLExecutor<ODLTypeFactory, ODLTypeUtils> {
 	
 	private static final String LANGUAGE_NAME = "de.uniol.inf.is.odysseus.iql.odl.ODL";
 	protected static final String OPERATORS_DIR = "operators";
 
 	@Inject
-	public ODLParser(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
+	public ODLExecutor(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 	}
 
@@ -95,7 +97,7 @@ public class ODLParser extends AbstractIQLParser<ODLTypeFactory, ODLTypeUtils> {
 				String outputPath = uri.toFileString();
 				urls.add(new File(outputPath).toURI().toURL());
 			}			
-			URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), ODLParser.class.getClassLoader());
+			URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), ODLExecutor.class.getClassLoader());
 			Class<? extends ILogicalOperator> ao = (Class<? extends ILogicalOperator>) Class.forName(operator.getSimpleName()+ODLCompilerHelper.AO_OPERATOR, true, classLoader);
 			addLogicalOperator(ao);
 			Class<?> rule = Class.forName(operator.getSimpleName()+ODLCompilerHelper.AO_RULE_OPERATOR, true, classLoader);

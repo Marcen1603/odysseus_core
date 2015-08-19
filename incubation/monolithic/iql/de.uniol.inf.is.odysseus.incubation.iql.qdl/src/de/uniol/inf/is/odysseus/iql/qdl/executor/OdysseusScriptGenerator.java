@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.qdl.parser;
+package de.uniol.inf.is.odysseus.iql.qdl.executor;
 
 
 

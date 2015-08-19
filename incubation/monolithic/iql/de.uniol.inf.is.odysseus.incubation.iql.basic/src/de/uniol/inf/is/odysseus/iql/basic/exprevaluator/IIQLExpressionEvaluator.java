@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.basic.typing.exprparser;
+package de.uniol.inf.is.odysseus.iql.basic.exprevaluator;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -6,10 +6,10 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
 
-public interface IIQLExpressionParser {
-	TypeResult getType(IQLExpression expr);
+public interface IIQLExpressionEvaluator {
+	TypeResult eval(IQLExpression expr);
 
-	TypeResult getType(IQLExpression expr, JvmTypeReference exptectedType);
+	TypeResult eval(IQLExpression expr, JvmTypeReference exptectedType);
 	
 	TypeResult getThisType(EObject obj);
 	
@@ -18,6 +18,7 @@ public interface IIQLExpressionParser {
 	boolean isThis(EObject obj);
 	
 	boolean isSuper(EObject obj);
+
 
 
 }

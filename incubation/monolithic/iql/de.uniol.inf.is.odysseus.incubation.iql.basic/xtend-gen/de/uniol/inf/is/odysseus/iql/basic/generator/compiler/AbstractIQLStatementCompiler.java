@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLWhileStatement;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLStatementCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLTypeCompiler;
@@ -32,7 +33,6 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompiler
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -44,25 +44,25 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 @SuppressWarnings("all")
-public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, U extends IIQLTypeUtils, P extends IIQLExpressionParser, L extends IIQLLookUp> implements IIQLStatementCompiler<G> {
+public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, U extends IIQLTypeUtils, P extends IIQLExpressionEvaluator, L extends IIQLLookUp> implements IIQLStatementCompiler<G> {
   protected H helper;
   
   protected E exprCompiler;
   
   protected T typeCompiler;
   
-  protected P exprParser;
+  protected P exprEvaluator;
   
   protected L lookUp;
   
   protected U typeUtils;
   
-  public AbstractIQLStatementCompiler(final H helper, final E exprCompiler, final T typeCompiler, final U typeUtils, final P exprParser, final L lookUp) {
+  public AbstractIQLStatementCompiler(final H helper, final E exprCompiler, final T typeCompiler, final U typeUtils, final P exprEvaluator, final L lookUp) {
     this.helper = helper;
     this.exprCompiler = exprCompiler;
     this.typeCompiler = typeCompiler;
     this.typeUtils = typeUtils;
-    this.exprParser = exprParser;
+    this.exprEvaluator = exprEvaluator;
     this.lookUp = lookUp;
   }
   
@@ -375,7 +375,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
         {
           IQLVariableInitialization _init_3 = s.getInit();
           IQLExpression _value = _init_3.getValue();
-          TypeResult right = this.exprParser.getType(_value, leftType);
+          TypeResult right = this.exprEvaluator.eval(_value, leftType);
           String _xifexpression_1 = null;
           boolean _or = false;
           boolean _isNull = right.isNull();

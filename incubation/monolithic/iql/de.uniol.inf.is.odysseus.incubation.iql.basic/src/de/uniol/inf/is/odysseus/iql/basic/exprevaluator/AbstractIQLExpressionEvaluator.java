@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.basic.typing.exprparser;
+package de.uniol.inf.is.odysseus.iql.basic.exprevaluator;
 
 import java.util.List;
 import java.util.Map;
@@ -45,28 +45,28 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.IIQLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.types.Range;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.IIQLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IQLOperatorOverloadingUtils;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L extends IIQLLookUp, C extends IIQLExpressionParserContext, U extends IIQLTypeUtils, E extends IIQLTypeExtensionsFactory> implements IIQLExpressionParser {
+public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, L extends IIQLLookUp, C extends IIQLExpressionEvaluatorContext, U extends IIQLTypeUtils, E extends IIQLTypeExtensionsFactory> implements IIQLExpressionEvaluator {
 
 	
 	protected L lookUp;
 	protected T typeFactory;
-	protected C exprParserContext;
+	protected C exprEvaluatorContext;
 	protected U typeUtils;
 	protected E typeExtensionsFactory;
 
-	public AbstractIQLExpressionParser(T typeFactory, L lookUp, C exprParserContext, U typeUtils, E typeExtensionsFactory) {
+	public AbstractIQLExpressionEvaluator(T typeFactory, L lookUp, C exprEvaluatorContext, U typeUtils, E typeExtensionsFactory) {
 		this.typeFactory = typeFactory;
 		this.lookUp = lookUp;
-		this.exprParserContext = exprParserContext;
+		this.exprEvaluatorContext = exprEvaluatorContext;
 		this.typeUtils = typeUtils;
 		this.typeExtensionsFactory = typeExtensionsFactory;
 	}
@@ -74,14 +74,14 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public TypeResult getType(IQLExpression expr) {
-		return getType(expr, (C) exprParserContext.cleanCopy());
+	public TypeResult eval(IQLExpression expr) {
+		return getType(expr, (C) exprEvaluatorContext.cleanCopy());
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public TypeResult getType(IQLExpression expr, JvmTypeReference exptectedType) {
-		IIQLExpressionParserContext c = exprParserContext.cleanCopy();
+	public TypeResult eval(IQLExpression expr, JvmTypeReference exptectedType) {
+		IIQLExpressionEvaluatorContext c = exprEvaluatorContext.cleanCopy();
 		c.setExpectedTypeRef(exptectedType);
 		return getType(expr, (C) c);
 	}
@@ -367,15 +367,6 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		return new TypeResult(c.getExtendedClass());
 	}
 	
-	@Override
-	public boolean isThis(EObject obj) {
-		return obj instanceof IQLThisExpression;
-	}
-
-	@Override
-	public boolean isSuper(EObject obj) {
-		return obj instanceof IQLSuperExpression;
-	}
 	
 	public TypeResult getType(IQLRelationalExpression expr, C context) {
 		if (context.getExpectedTypeRef() != null && expr.getOp().equals(">")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.GREATER_THAN, expr.getRightOperand())){
@@ -477,6 +468,16 @@ public abstract class AbstractIQLExpressionParser<T extends IIQLTypeFactory, L e
 		} else {
 			return typeUtils.createTypeRef("int", typeFactory.getSystemResourceSet());		
 		}
+	}
+	
+	@Override
+	public boolean isThis(EObject obj) {
+		return obj instanceof IQLThisExpression;
+	}
+
+	@Override
+	public boolean isSuper(EObject obj) {
+		return obj instanceof IQLSuperExpression;
 	}
 	
 }

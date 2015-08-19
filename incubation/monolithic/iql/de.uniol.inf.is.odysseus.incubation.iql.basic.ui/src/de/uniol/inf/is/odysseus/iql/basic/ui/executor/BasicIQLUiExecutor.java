@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.basic.ui.parser;
+package de.uniol.inf.is.odysseus.iql.basic.ui.executor;
 
 import java.util.Collection;
 
@@ -15,17 +15,17 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.parser.BasicIQLParser;
+import de.uniol.inf.is.odysseus.iql.basic.executor.BasicIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 
-public class BasicIQLUiParser extends BasicIQLParser implements IIQLUiParser {
+public class BasicIQLUiExecutor extends BasicIQLExecutor implements IIQLUiExecutor {
 
 	@Inject
 	private IJavaProjectProvider javaProjectProvider;
 	
 	@Inject
-	public BasicIQLUiParser(BasicIQLTypeFactory typeFactory,BasicIQLTypeUtils typeUtils) {
+	public BasicIQLUiExecutor(BasicIQLTypeFactory typeFactory,BasicIQLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 	}
 

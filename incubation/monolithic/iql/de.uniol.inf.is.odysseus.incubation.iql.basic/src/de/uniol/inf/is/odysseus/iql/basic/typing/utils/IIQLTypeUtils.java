@@ -8,6 +8,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 
 public interface IIQLTypeUtils {
 	
+	
 	JvmTypeReference createTypeRef(JvmType typeRef);
 	JvmTypeReference createTypeRef(String name, Notifier context);
 	JvmTypeReference createTypeRef(Class<?> javaType, Notifier context);

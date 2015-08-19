@@ -46,9 +46,9 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
@@ -60,9 +60,9 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
  * on how and when to use it
  */
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L extends IIQLLookUp, P extends IIQLExpressionParser, U extends IIQLTypeUtils> extends AbstractDeclarativeScopeProvider implements IIQLScopeProvider {
+public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L extends IIQLLookUp, P extends IIQLExpressionEvaluator, U extends IIQLTypeUtils> extends AbstractDeclarativeScopeProvider implements IIQLScopeProvider {
 
-	protected P exprParser;
+	protected P exprEvaluator;
 	
 	protected U typeUtils;
 	
@@ -79,10 +79,10 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	
 	protected T typeFactory;
 	
-	public AbstractIQLScopeProvider(T typeFactory, L lookUp, P exprParser, U typeUtils) {
+	public AbstractIQLScopeProvider(T typeFactory, L lookUp, P exprEvaluator, U typeUtils) {
 		this.typeFactory = typeFactory;
 		this.lookUp = lookUp;
-		this.exprParser = exprParser;
+		this.exprEvaluator = exprEvaluator;
 		this.typeUtils = typeUtils;
 
 	}
@@ -256,15 +256,15 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	@Override
 	public Collection<IEObjectDescription> getScopeIQLMemberSelection(IQLMemberSelectionExpression expr) {
 		Collection<IEObjectDescription> result = new HashSet<>();
-		TypeResult typeResult = exprParser.getType(expr.getLeftOperand());
+		TypeResult typeResult = exprEvaluator.eval(expr.getLeftOperand());
 		
 		if (typeUtils.isArray(typeResult.getRef())) {
 			result.addAll(getScopeIQLAttributeSelection(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()), false, false));
 			result.addAll(getScopeIQLMethodSelection(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()), false, false));
 
 		} else {
-			boolean isThis = exprParser.isThis(expr.getLeftOperand());
-			boolean isSuper = exprParser.isSuper(expr.getLeftOperand());
+			boolean isThis = exprEvaluator.isThis(expr.getLeftOperand());
+			boolean isSuper = exprEvaluator.isSuper(expr.getLeftOperand());
 			
 			result.addAll(getScopeIQLAttributeSelection(typeResult.getRef(),isThis, isSuper));
 			result.addAll(getScopeIQLMethodSelection(typeResult.getRef(),isThis, isSuper));

@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.iql.basic.ui.parser.IIQLUiParser;
+import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.internal.QDLActivator;
 import de.uniol.inf.is.odysseus.rcp.editor.text.IFileExecutor;
@@ -33,8 +33,8 @@ public class QDLFileExecutor implements IFileExecutor{
         Resource res = resourceSetToUse.getResource(uri, true);
         if (res.getContents().size() > 0) {
         	QDLModel model = (QDLModel) res.getContents().get(0);
-			IIQLUiParser parser = QDLActivator.getInstance().getInjector(QDLActivator.DE_UNIOL_INF_IS_ODYSSEUS_IQL_QDL_QDL).getInstance(IIQLUiParser.class);
-			parser.parse(model);
+			IIQLUiExecutor executor = QDLActivator.getInstance().getInjector(QDLActivator.DE_UNIOL_INF_IS_ODYSSEUS_IQL_QDL_QDL).getInstance(IIQLUiExecutor.class);
+			executor.parse(model);
 		}
 	}
 

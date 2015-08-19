@@ -21,12 +21,12 @@ import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractIQLTemplateProposalProvider;
+import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.ODLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLScopeProvider;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.EventMethodParameter;
@@ -34,12 +34,12 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.EventMethodsFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.IEventMethod;
 
 
-public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<ODLExpressionParser, ODLTypeFactory, ODLLookUp, ODLScopeProvider, ODLTypeUtils> {
+public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<ODLExpressionEvaluator, ODLTypeFactory, ODLLookUp, ODLScopeProvider, ODLTypeUtils> {
 
 	@Inject
 	public ODLTemplateProposalProvider(TemplateStore templateStore,
-			ContextTypeRegistry registry, ContextTypeIdHelper helper, ODLExpressionParser exprParser, ODLTypeFactory typeFactory, ODLLookUp lookUp, ODLScopeProvider scopeProvider,ODLTypeUtils typeUtils) {
-		super(templateStore, registry, helper, exprParser, typeFactory, lookUp, scopeProvider, typeUtils);
+			ContextTypeRegistry registry, ContextTypeIdHelper helper, ODLExpressionEvaluator exprEvaluator, ODLTypeFactory typeFactory, ODLLookUp lookUp, ODLScopeProvider scopeProvider,ODLTypeUtils typeUtils) {
+		super(templateStore, registry, helper, exprEvaluator, typeFactory, lookUp, scopeProvider, typeUtils);
 	}
 	
 	protected void createTemplates(String rule, EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {

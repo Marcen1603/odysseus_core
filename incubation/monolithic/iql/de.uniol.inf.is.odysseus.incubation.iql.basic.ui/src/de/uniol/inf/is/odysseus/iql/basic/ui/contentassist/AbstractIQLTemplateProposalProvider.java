@@ -31,16 +31,16 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser, F extends IIQLTypeFactory, L extends IIQLLookUp, S extends IIQLScopeProvider, U extends IIQLTypeUtils> extends DefaultTemplateProposalProvider {
-	protected E exprParser;
+public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluator, F extends IIQLTypeFactory, L extends IIQLLookUp, S extends IIQLScopeProvider, U extends IIQLTypeUtils> extends DefaultTemplateProposalProvider {
+	protected E exprEvaluator;
 	protected F factory;
 	protected L lookUp;
 	protected S scopeProvider;
@@ -53,9 +53,9 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionParser,
 	protected IIQLMethodFinder methodFinder;
 	
 	
-	public AbstractIQLTemplateProposalProvider(TemplateStore templateStore,	ContextTypeRegistry registry, ContextTypeIdHelper helper, E exprParser, F factory, L lookUp, S scopeProvider, U typeUtils) {
+	public AbstractIQLTemplateProposalProvider(TemplateStore templateStore,	ContextTypeRegistry registry, ContextTypeIdHelper helper, E exprEvaluator, F factory, L lookUp, S scopeProvider, U typeUtils) {
 		super(templateStore, registry, helper);
-		this.exprParser = exprParser;
+		this.exprEvaluator = exprEvaluator;
 		this.factory = factory;
 		this.lookUp = lookUp;
 		this.scopeProvider = scopeProvider;

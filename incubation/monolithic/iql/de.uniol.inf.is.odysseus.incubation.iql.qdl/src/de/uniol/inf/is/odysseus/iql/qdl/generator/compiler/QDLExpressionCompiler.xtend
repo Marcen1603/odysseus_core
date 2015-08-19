@@ -9,7 +9,6 @@ import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.QDLSubscribableWithPort
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp
@@ -18,12 +17,13 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression
 import org.eclipse.xtext.common.types.JvmField
 import org.eclipse.xtext.common.types.JvmOperation
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeExtensionsFactory
+import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.QDLExpressionEvaluator
 
-class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionParser, QDLTypeUtils, QDLLookUp, QDLTypeExtensionsFactory>{
+class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionEvaluator, QDLTypeUtils, QDLLookUp, QDLTypeExtensionsFactory>{
 		
 	@Inject
-	new(QDLCompilerHelper helper, QDLTypeCompiler typeCompiler, QDLExpressionParser exprParser, QDLTypeUtils typeUtils, QDLLookUp lookUp, QDLTypeExtensionsFactory typeOperatorsFactory) {
-		super(helper, typeCompiler, exprParser, typeUtils, lookUp, typeOperatorsFactory)
+	new(QDLCompilerHelper helper, QDLTypeCompiler typeCompiler, QDLExpressionEvaluator exprEvaluator, QDLTypeUtils typeUtils, QDLLookUp lookUp, QDLTypeExtensionsFactory typeOperatorsFactory) {
+		super(helper, typeCompiler, exprEvaluator, typeUtils, lookUp, typeOperatorsFactory)
 	}
 	
 	override String compile(IQLExpression e, QDLGeneratorContext context) {
@@ -120,7 +120,7 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHel
 	override String compileAssignmentExpr(IQLAssignmentExpression e, IQLMemberSelectionExpression selExpr, QDLGeneratorContext c) {
 		if (e.op.equals("=") && selExpr.sel.member instanceof JvmField) {
 			var field = selExpr.sel.member as JvmField
-			var left = exprParser.getType(selExpr.leftOperand);
+			var left = exprEvaluator.eval(selExpr.leftOperand);
 			if (!left.isNull && helper.isOperator(left.ref) && helper.isParameter(field.simpleName, left.ref)) {
 				'''«compile(selExpr.leftOperand, c)».setParameter("«field.simpleName»",«compile(e.rightOperand, c)»)'''		
 			} else {

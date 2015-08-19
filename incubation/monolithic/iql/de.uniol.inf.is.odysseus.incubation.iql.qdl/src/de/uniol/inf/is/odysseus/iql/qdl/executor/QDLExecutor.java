@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.qdl.parser;
+package de.uniol.inf.is.odysseus.iql.qdl.executor;
 
 
 
@@ -19,21 +19,21 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.iql.basic.parser.AbstractIQLParser;
+import de.uniol.inf.is.odysseus.iql.basic.executor.AbstractIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 
 
-public class QDLParser extends AbstractIQLParser<QDLTypeFactory, QDLTypeUtils> {
+public class QDLExecutor extends AbstractIQLExecutor<QDLTypeFactory, QDLTypeUtils> {
 	
 	private static final String LANGUAGE_NAME = "de.uniol.inf.is.odysseus.iql.qdl.QDL";
 	protected static final String QUERIES_DIR = "queries";
 	
 	
 	@Inject
-	public QDLParser(QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+	public QDLExecutor(QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 	}
 	
@@ -56,7 +56,7 @@ public class QDLParser extends AbstractIQLParser<QDLTypeFactory, QDLTypeUtils> {
 				String outputPath = uri.toFileString();
 				urls.add(new File(outputPath).toURI().toURL());
 			}			
-			URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), QDLParser.class.getClassLoader());
+			URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), QDLExecutor.class.getClassLoader());
 			Class<? extends IQDLQuery> queryClass = (Class<? extends IQDLQuery>) Class.forName(query.getSimpleName(), true, classLoader);
 			return queryClass.newInstance();		
 		} catch (Exception e) {

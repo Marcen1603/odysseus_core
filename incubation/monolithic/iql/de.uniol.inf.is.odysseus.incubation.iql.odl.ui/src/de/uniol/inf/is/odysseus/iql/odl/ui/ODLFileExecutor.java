@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.iql.basic.ui.parser.IIQLUiParser;
+import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel;
 import de.uniol.inf.is.odysseus.iql.odl.ui.internal.ODLActivator;
 import de.uniol.inf.is.odysseus.rcp.editor.text.IFileExecutor;
@@ -33,8 +33,8 @@ public class ODLFileExecutor implements IFileExecutor{
         Resource res = resourceSetToUse.getResource(uri, true);
         if (res.getContents().size() > 0) {
         	ODLModel model = (ODLModel) res.getContents().get(0);
-			IIQLUiParser parser = ODLActivator.getInstance().getInjector(ODLActivator.DE_UNIOL_INF_IS_ODYSSEUS_IQL_ODL_ODL).getInstance(IIQLUiParser.class);
-			parser.parse(model);
+			IIQLUiExecutor executor = ODLActivator.getInstance().getInjector(ODLActivator.DE_UNIOL_INF_IS_ODYSSEUS_IQL_ODL_ODL).getInstance(IIQLUiExecutor.class);
+			executor.parse(model);
 		}
 	}
 

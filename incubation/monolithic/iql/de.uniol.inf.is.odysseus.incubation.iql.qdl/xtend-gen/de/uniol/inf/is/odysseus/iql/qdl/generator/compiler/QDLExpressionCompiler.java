@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
+import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.QDLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHelper;
@@ -18,7 +19,6 @@ import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.QDLSubscribableWithPort;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
 import javax.inject.Inject;
@@ -32,10 +32,10 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 @SuppressWarnings("all")
-public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionParser, QDLTypeUtils, QDLLookUp, QDLTypeExtensionsFactory> {
+public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionEvaluator, QDLTypeUtils, QDLLookUp, QDLTypeExtensionsFactory> {
   @Inject
-  public QDLExpressionCompiler(final QDLCompilerHelper helper, final QDLTypeCompiler typeCompiler, final QDLExpressionParser exprParser, final QDLTypeUtils typeUtils, final QDLLookUp lookUp, final QDLTypeExtensionsFactory typeOperatorsFactory) {
-    super(helper, typeCompiler, exprParser, typeUtils, lookUp, typeOperatorsFactory);
+  public QDLExpressionCompiler(final QDLCompilerHelper helper, final QDLTypeCompiler typeCompiler, final QDLExpressionEvaluator exprEvaluator, final QDLTypeUtils typeUtils, final QDLLookUp lookUp, final QDLTypeExtensionsFactory typeOperatorsFactory) {
+    super(helper, typeCompiler, exprEvaluator, typeUtils, lookUp, typeOperatorsFactory);
   }
   
   public String compile(final IQLExpression e, final QDLGeneratorContext context) {
@@ -459,7 +459,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
         JvmMember _member_1 = _sel_1.getMember();
         JvmField field = ((JvmField) _member_1);
         IQLExpression _leftOperand = selExpr.getLeftOperand();
-        TypeResult left = this.exprParser.getType(_leftOperand);
+        TypeResult left = this.exprEvaluator.eval(_leftOperand);
         String _xifexpression_1 = null;
         boolean _and_1 = false;
         boolean _and_2 = false;

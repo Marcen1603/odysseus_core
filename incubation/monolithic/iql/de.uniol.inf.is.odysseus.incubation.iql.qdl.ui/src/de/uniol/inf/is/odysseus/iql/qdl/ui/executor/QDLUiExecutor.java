@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.odl.ui.parser;
+package de.uniol.inf.is.odysseus.iql.qdl.ui.executor;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,50 +24,64 @@ import org.eclipse.xtext.ui.util.ResourceUtil;
 
 import com.google.common.io.Files;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.ui.BasicIQLUiModule;
-import de.uniol.inf.is.odysseus.iql.basic.ui.parser.IIQLUiParser;
-import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
-import de.uniol.inf.is.odysseus.iql.odl.parser.ODLParser;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
+import de.uniol.inf.is.odysseus.iql.qdl.executor.QDLExecutor;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
+import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
-public class ODLUiParser extends ODLParser implements IIQLUiParser{
+public class QDLUiExecutor extends QDLExecutor implements IIQLUiExecutor{
+
 
 	@Inject
 	private IJavaProjectProvider javaProjectProvider;
 	
 	@Inject
-	public ODLUiParser(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
+	public QDLUiExecutor(QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 	}
 
 	@Override
-	public void parse(IQLModel model) {	
-		ResourceSet resourceSet = EcoreUtil2.getResourceSet(model);
-
-		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
-			String outputPath = getIQLOutputPath()+OPERATORS_DIR+File.separator+operator.getSimpleName();
-			
+	public void parse(IQLModel file) {
+		ResourceSet resourceSet = EcoreUtil2.getResourceSet(file);
+		for (QDLQuery query : EcoreUtil2.getAllContentsOfType(file, QDLQuery.class)) {
+			String outputPath = getIQLOutputPath()+QUERIES_DIR+File.separator+query.getSimpleName();
 			cleanUpDir(outputPath);
 			
-			Collection<Resource> resources = createNecessaryIQLFiles(resourceSet, outputPath,operator);
+			Collection<Resource> resources = createNecessaryIQLFiles(resourceSet, outputPath,query);
 			generateJavaFiles(resources);
 			deleteResources(resources);
 			
-			copyAndMoveUserEditiedFiles(operator, outputPath);
-			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator), resources));
-			loadOperator(operator, resources);
+			copyAndMoveUserEditiedFiles(query, outputPath);
+			compileJavaFiles(outputPath, createClassPathEntries(resourceSet, resources));
+			
+			IQDLQuery qdlQuery = loadQuery(query,resources);
+						
+			ISession session = OdysseusRCPPlugIn.getActiveSession();
+			ITenant tenant = UserManagementProvider.getDefaultTenant();
+			IDataDictionary dd = DataDictionaryProvider.getDataDictionary(tenant);
+			
+			String script = generator.createOdysseusScript(qdlQuery, dd, session);
+			QDLServiceBinding.getExecutor().addQuery(script, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), Context.empty());
 		}
 	}
 	
-	protected void copyAndMoveUserEditiedFiles(ODLOperator operator, String path) {
-		copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"AO");
-		copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"AORule");
-		copyAndMoveUserEditiedFiles(operator, path, operator.getSimpleName()+"PO");
-		for (EObject obj : getUserDefinedTypes(operator)) {
+	protected void copyAndMoveUserEditiedFiles(QDLQuery query, String path) {
+		copyAndMoveUserEditiedFiles(query, path, query.getSimpleName());
+		for (EObject obj : getUserDefinedTypes(query)) {
 			if (obj instanceof IQLClass) {
 				copyAndMoveUserEditiedFiles(obj, path, ((IQLClass) obj).getSimpleName());
 			} else if (obj instanceof IQLInterface) {
@@ -94,8 +108,6 @@ public class ODLUiParser extends ODLParser implements IIQLUiParser{
 			}
 		}
 	}
-
-
 	
 	@Override
 	protected Collection<String> createClassPathEntries(ResourceSet set, Collection<Resource> resources) {
@@ -115,5 +127,4 @@ public class ODLUiParser extends ODLParser implements IIQLUiParser{
 		
 		return result;
 	}
-
 }

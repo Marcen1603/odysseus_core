@@ -10,6 +10,9 @@ import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceFactory;
 
+import de.uniol.inf.is.odysseus.iql.basic.executor.IIQLExecutor;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.IIQLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataAnnotationCompiler;
@@ -21,7 +24,6 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
-import de.uniol.inf.is.odysseus.iql.basic.parser.IIQLParser;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.DefaultIQLMethodFinder;
@@ -31,11 +33,12 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.IIQLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.qdl.executor.QDLExecutor;
+import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.QDLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.QDLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGenerator;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLCompiler;
@@ -47,13 +50,10 @@ import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.qdl.linking.QDLLinkingService;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
-import de.uniol.inf.is.odysseus.iql.qdl.parser.QDLParser;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceObserver;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeExtensionsFactory;
@@ -107,13 +107,13 @@ public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQ
 		return QDLLinkingService.class;
 	}
 	
-	public Class<? extends IIQLExpressionParserContext> bindExpressionParserContext() {
-		return QDLExpressionParserContext.class;
+	public Class<? extends IIQLExpressionEvaluatorContext> bindExpressionEvaluatorContext() {
+		return QDLExpressionEvaluatorContext.class;
 	}
 	
 	
-	public Class<? extends IIQLParser> bindParser() {
-		return QDLParser.class;
+	public Class<? extends IIQLExecutor> bindExecutor() {
+		return QDLExecutor.class;
 	}
 	
 	public Class<? extends IGenerator> bindGenerator() {
@@ -149,8 +149,8 @@ public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQ
 		return QDLMetadataMethodCompiler.class;
 	}
 
-	public Class<? extends IIQLExpressionParser> bindIQLExpressionParser() {
-		return QDLExpressionParser.class;
+	public Class<? extends IIQLExpressionEvaluator> bindIQLExpressionEvaluator() {
+		return QDLExpressionEvaluator.class;
 	}
 	
 	

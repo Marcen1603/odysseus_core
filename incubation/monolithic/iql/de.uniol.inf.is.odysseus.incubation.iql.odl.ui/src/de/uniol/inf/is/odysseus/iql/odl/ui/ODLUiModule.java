@@ -20,21 +20,23 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculato
 
 
 
+
+
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.IQLXtextEditorCallback;
+import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
-import de.uniol.inf.is.odysseus.iql.basic.ui.parser.IIQLUiParser;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.ui.coloring.ODLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.odl.ui.coloring.ODLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.ODLProposalProvider;
 import de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.ODLTemplateProposalProvider;
+import de.uniol.inf.is.odysseus.iql.odl.ui.executor.ODLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.odl.ui.generator.ODLUiGenerator;
 import de.uniol.inf.is.odysseus.iql.odl.ui.hover.ODLEObjectDocumentationProvider;
 import de.uniol.inf.is.odysseus.iql.odl.ui.hover.ODLEObjectHoverProvider;
-import de.uniol.inf.is.odysseus.iql.odl.ui.parser.ODLUiParser;
 import de.uniol.inf.is.odysseus.iql.odl.ui.scoping.ODLUiScopeProvider;
 
 
@@ -59,8 +61,8 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 		return ODLUiScopeProvider.class;
 	}
 	
-	public Class<? extends IIQLUiParser> bindIQLUiParser() {
-		return ODLUiParser.class;
+	public Class<? extends IIQLUiExecutor> bindIQLUiExecutor() {
+		return ODLUiExecutor.class;
 	}
 	
 	public Class<? extends IIQLJdtTypeProviderFactory> bindIQLJdtTypeProviderFactory() {

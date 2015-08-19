@@ -1,8 +1,8 @@
-package de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context;
+package de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context;
 
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
-public abstract class AbstractIQLExpressionParserContext implements IIQLExpressionParserContext {
+public abstract class AbstractIQLExpressionEvaluatorContext implements IIQLExpressionEvaluatorContext {
 
 	private JvmTypeReference expectedTypeRef;
 	

@@ -22,25 +22,25 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator
 
-abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, U extends IIQLTypeUtils, P extends IIQLExpressionParser, L extends IIQLLookUp> implements IIQLStatementCompiler<G>{
+abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, U extends IIQLTypeUtils, P extends IIQLExpressionEvaluator, L extends IIQLLookUp> implements IIQLStatementCompiler<G>{
 	protected H helper;
 	protected E exprCompiler;
 	protected T typeCompiler;
-	protected P exprParser;
+	protected P exprEvaluator;
 	protected L lookUp;
 	protected U typeUtils;
 	
 	
-	new (H helper, E exprCompiler, T typeCompiler, U typeUtils, P exprParser, L lookUp) {
+	new (H helper, E exprCompiler, T typeCompiler, U typeUtils, P exprEvaluator, L lookUp) {
 		this.helper = helper;
 		this.exprCompiler = exprCompiler;
 		this.typeCompiler = typeCompiler;
 		this.typeUtils = typeUtils;
-		this.exprParser = exprParser;
+		this.exprEvaluator = exprEvaluator;
 		this.lookUp = lookUp;	
 				
 	}
@@ -168,7 +168,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 		var leftVar = s.^var as IQLVariableDeclaration
 		var leftType = leftVar.ref
 		if (s.init != null && s.init.argsList == null && s.init.argsMap == null) {			
-			var right = exprParser.getType(s.init.value, leftType);
+			var right = exprEvaluator.eval(s.init.value, leftType);
 			if (right.isNull || lookUp.isAssignable(leftType, right.ref)){
 				'''«compile(leftVar, c)»«IF s.init != null» = «compile(s.init, leftType, c)»«ENDIF»;'''
 			} else if (right.isNull || lookUp.isCastable(leftType, right.ref)){

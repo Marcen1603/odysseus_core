@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.basic.parser;
+package de.uniol.inf.is.odysseus.iql.basic.executor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,7 +46,7 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLParser{
+public abstract class AbstractIQLExecutor<F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLExecutor{
 	
 	protected static final String IQL_DIR = "iql";
 	protected static final String JAVA_VERSION = "1.7";
@@ -67,7 +67,7 @@ public abstract class AbstractIQLParser<F extends IIQLTypeFactory, U extends IIQ
 	protected U typeUtils;
 	protected F typeFactory;
 
-	public AbstractIQLParser(F typeFactory, U typeUtils) {
+	public AbstractIQLExecutor(F typeFactory, U typeUtils) {
 		this.typeFactory = typeFactory;
 		this.typeUtils = typeUtils;
 	}

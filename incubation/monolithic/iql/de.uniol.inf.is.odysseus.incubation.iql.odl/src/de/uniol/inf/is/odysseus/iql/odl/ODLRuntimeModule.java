@@ -10,6 +10,9 @@ import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceFactory;
 
+import de.uniol.inf.is.odysseus.iql.basic.executor.IIQLExecutor;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.IIQLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataAnnotationCompiler;
@@ -21,7 +24,6 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
-import de.uniol.inf.is.odysseus.iql.basic.parser.IIQLParser;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.DefaultIQLMethodFinder;
@@ -31,11 +33,12 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.IIQLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.executor.ODLExecutor;
+import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.ODLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.ODLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGenerator;
 import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLCompiler;
@@ -47,13 +50,10 @@ import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.odl.linking.ODLLinkingService;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
-import de.uniol.inf.is.odysseus.iql.odl.parser.ODLParser;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.service.ODLServiceObserver;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeExtensionsFactory;
@@ -107,12 +107,12 @@ public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractO
 	}
 	
 	
-	public Class<? extends IIQLExpressionParserContext> bindExpressionParserContext() {
-		return ODLExpressionParserContext.class;
+	public Class<? extends IIQLExpressionEvaluatorContext> bindExpressionEvaluatorContext() {
+		return ODLExpressionEvaluatorContext.class;
 	}
 	
-	public Class<? extends IIQLParser> bindParser() {
-		return ODLParser.class;
+	public Class<? extends IIQLExecutor> bindExecutor() {
+		return ODLExecutor.class;
 	}
 	
 	
@@ -148,8 +148,8 @@ public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractO
 		return ODLMetadataMethodCompiler.class;
 	}
 
-	public Class<? extends IIQLExpressionParser> bindIQLExpressionParser() {
-		return ODLExpressionParser.class;
+	public Class<? extends IIQLExpressionEvaluator> bindIQLExpressionEvaluator() {
+		return ODLExpressionEvaluator.class;
 	}
 	
 	

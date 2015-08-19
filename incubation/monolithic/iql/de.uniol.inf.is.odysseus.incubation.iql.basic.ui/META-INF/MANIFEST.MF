@@ -27,9 +27,9 @@ Export-Package: de.uniol.inf.is.odysseus.iql.basic.ui,
  de.uniol.inf.is.odysseus.iql.basic.ui.coloring,
  de.uniol.inf.is.odysseus.iql.basic.ui.contentassist,
  de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.antlr,
+ de.uniol.inf.is.odysseus.iql.basic.ui.executor,
  de.uniol.inf.is.odysseus.iql.basic.ui.hover,
  de.uniol.inf.is.odysseus.iql.basic.ui.internal,
- de.uniol.inf.is.odysseus.iql.basic.ui.parser,
  de.uniol.inf.is.odysseus.iql.basic.ui.quickfix,
  de.uniol.inf.is.odysseus.iql.basic.ui.scoping
 Bundle-Activator: de.uniol.inf.is.odysseus.iql.basic.ui.internal.BasicIQLActivator

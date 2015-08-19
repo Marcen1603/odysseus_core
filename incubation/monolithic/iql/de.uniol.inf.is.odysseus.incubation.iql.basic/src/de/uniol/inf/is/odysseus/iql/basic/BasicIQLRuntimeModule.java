@@ -10,6 +10,10 @@ import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceFactory;
 
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.BasicIQLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.BasicIQLExpressionEvaluatorContext;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.IIQLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.basic.generator.BasicIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.BasicIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.BasicIQLExpressionCompiler;
@@ -45,10 +49,6 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.builder.BasicIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.BasicIQLTypingEntryPoint;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.BasicIQLExpressionParser;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.BasicIQLExpressionParserContext;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.context.IIQLExpressionParserContext;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.BasicIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
@@ -102,8 +102,8 @@ public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.Ab
 		return BasicIQLLinkingService.class;
 	}	
 	
-	public Class<? extends IIQLExpressionParserContext> bindExpressionParserContext() {
-		return BasicIQLExpressionParserContext.class;
+	public Class<? extends IIQLExpressionEvaluatorContext> bindExpressionEvaluatorContext() {
+		return BasicIQLExpressionEvaluatorContext.class;
 	}
 	
 	public Class<? extends IGenerator> bindGenerator() {
@@ -139,8 +139,8 @@ public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.Ab
 		return BasicIQLMetadataMethodCompiler.class;
 	}
 
-	public Class<? extends IIQLExpressionParser> bindIQLExpressionParser() {
-		return BasicIQLExpressionParser.class;
+	public Class<? extends IIQLExpressionEvaluator> bindIQLExpressionEvaluator() {
+		return BasicIQLExpressionEvaluator.class;
 	}
 	
 	

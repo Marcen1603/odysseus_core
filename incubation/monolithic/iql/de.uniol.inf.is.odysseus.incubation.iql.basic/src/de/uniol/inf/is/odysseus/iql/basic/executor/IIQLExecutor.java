@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.basic.parser;
+package de.uniol.inf.is.odysseus.iql.basic.executor;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
 
-public interface IIQLParser {
+public interface IIQLExecutor {
 	public List<IExecutorCommand> parse(String text,IDataDictionary dd, ISession session, Context context) throws QueryParseException;
 	
 }

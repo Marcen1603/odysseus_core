@@ -33,11 +33,12 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.iql.qdl,
+ de.uniol.inf.is.odysseus.iql.qdl.executor,
+ de.uniol.inf.is.odysseus.iql.qdl.exprevaluator,
  de.uniol.inf.is.odysseus.iql.qdl.formatting,
  de.uniol.inf.is.odysseus.iql.qdl.generator,
  de.uniol.inf.is.odysseus.iql.qdl.generator.compiler,
  de.uniol.inf.is.odysseus.iql.qdl.lookup,
- de.uniol.inf.is.odysseus.iql.qdl.parser,
  de.uniol.inf.is.odysseus.iql.qdl.parser.antlr,
  de.uniol.inf.is.odysseus.iql.qdl.parser.antlr.internal,
  de.uniol.inf.is.odysseus.iql.qdl.qDL,

@@ -32,6 +32,7 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	protected IQLClasspathTypeProviderFactory typeProviderFactory;
 
 	
+	
 	@Override
 	public JvmTypeReference createTypeRef(Class<?> javaType, Notifier context) {
 		JvmType type = typeProviderFactory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(context)).findTypeByName(javaType.getCanonicalName());

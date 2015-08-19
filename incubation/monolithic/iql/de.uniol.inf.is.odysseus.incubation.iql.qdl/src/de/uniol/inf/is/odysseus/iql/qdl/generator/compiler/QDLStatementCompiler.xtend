@@ -7,14 +7,14 @@ import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLExpressionParser
 import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils
+import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.QDLExpressionEvaluator
 
-class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionCompiler, QDLTypeUtils, QDLExpressionParser, QDLLookUp>{
+class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionCompiler, QDLTypeUtils, QDLExpressionEvaluator, QDLLookUp>{
 	
 	@Inject
-	new(QDLCompilerHelper helper, QDLExpressionCompiler exprCompiler, QDLTypeCompiler typeCompiler, QDLTypeUtils typeUtils, QDLExpressionParser exprParser,  QDLLookUp lookUp) {
-		super(helper, exprCompiler, typeCompiler, typeUtils, exprParser, lookUp)
+	new(QDLCompilerHelper helper, QDLExpressionCompiler exprCompiler, QDLTypeCompiler typeCompiler, QDLTypeUtils typeUtils, QDLExpressionEvaluator exprEvaluator,  QDLLookUp lookUp) {
+		super(helper, exprCompiler, typeCompiler, typeUtils, exprEvaluator, lookUp)
 	}
 	
 	override String compile(IQLVariableInitialization init, JvmTypeReference typeRef, QDLGeneratorContext context) {

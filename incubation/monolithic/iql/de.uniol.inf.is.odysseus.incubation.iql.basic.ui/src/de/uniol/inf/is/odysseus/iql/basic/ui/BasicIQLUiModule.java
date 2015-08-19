@@ -21,12 +21,12 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLHighlightingConfig
 import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLProposalProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLTemplateProposalProvider;
+import de.uniol.inf.is.odysseus.iql.basic.ui.executor.BasicIQLUiExecutor;
+import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.generator.BasicIQLUiGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectDocumentationProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectHoverProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
-import de.uniol.inf.is.odysseus.iql.basic.ui.parser.BasicIQLUiParser;
-import de.uniol.inf.is.odysseus.iql.basic.ui.parser.IIQLUiParser;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.BasicIQLUiScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
 
@@ -59,8 +59,8 @@ public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.Abst
 		return BasicIQLUiScopeProvider.class;
 	}
 	
-	public Class<? extends IIQLUiParser> bindIQLUiParser() {
-		return BasicIQLUiParser.class;
+	public Class<? extends IIQLUiExecutor> bindIQLUiExecutor() {
+		return BasicIQLUiExecutor.class;
 	}
 	
 	@Override

@@ -11,16 +11,20 @@ public class IQLUtils {
 
 	
 	public static List createList(Object ... obj) {
-		return new ArrayList<Object>(Arrays.asList(obj));
+		return new ArrayList(Arrays.asList(obj));
 	}
 
 	
+	public static List createList(List list) {
+		return new ArrayList(list);
+	}
+	
 	public static List createEmptyList() {
-		return new ArrayList<Object>();
+		return new ArrayList();
 	}
 	
 	public static Map createMap(Object ... obj) {
-		Map map = new HashMap<>();
+		Map map = new HashMap();
 		for (int i = 0; i < obj.length; i = i+2) {
 			map.put(obj[i], obj[i+1]);
 		}
@@ -32,6 +36,6 @@ public class IQLUtils {
 	}
 	
 	public static Map createEmptyMap() {
-		return new HashMap<>();
+		return new HashMap();
 	}
 }

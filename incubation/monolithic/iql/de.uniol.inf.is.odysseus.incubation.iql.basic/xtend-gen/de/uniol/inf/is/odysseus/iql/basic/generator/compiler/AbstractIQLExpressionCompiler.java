@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
@@ -45,7 +46,6 @@ import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.types.IQLUtils;
 import de.uniol.inf.is.odysseus.iql.basic.types.Range;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
-import de.uniol.inf.is.odysseus.iql.basic.typing.exprparser.IIQLExpressionParser;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IQLOperatorOverloadingUtils;
@@ -68,12 +68,12 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
-public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionParser, U extends IIQLTypeUtils, L extends IIQLLookUp, O extends IIQLTypeExtensionsFactory> implements IIQLExpressionCompiler<G> {
+public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionEvaluator, U extends IIQLTypeUtils, L extends IIQLLookUp, O extends IIQLTypeExtensionsFactory> implements IIQLExpressionCompiler<G> {
   protected H helper;
   
   protected T typeCompiler;
   
-  protected E exprParser;
+  protected E exprEvaluator;
   
   protected U typeUtils;
   
@@ -81,10 +81,10 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   protected O typeExtensionsFactory;
   
-  public AbstractIQLExpressionCompiler(final H helper, final T typeCompiler, final E exprParser, final U typeUtils, final L lookUp, final O typeExtensionsFactory) {
+  public AbstractIQLExpressionCompiler(final H helper, final T typeCompiler, final E exprEvaluator, final U typeUtils, final L lookUp, final O typeExtensionsFactory) {
     this.helper = helper;
     this.typeCompiler = typeCompiler;
-    this.exprParser = exprParser;
+    this.exprEvaluator = exprEvaluator;
     this.typeUtils = typeUtils;
     this.lookUp = lookUp;
     this.typeExtensionsFactory = typeExtensionsFactory;
@@ -250,7 +250,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       JvmFormalParameter _get = _parameters.get(0);
       JvmTypeReference leftType = _get.getParameterType();
       IQLExpression _rightOperand = e.getRightOperand();
-      TypeResult rightType = this.exprParser.getType(_rightOperand);
+      TypeResult rightType = this.exprEvaluator.eval(_rightOperand);
       c.setExpectedTypeRef(leftType);
       String result = "";
       JvmIdentifiableElement _element_2 = elementCallExpr.getElement();
@@ -336,7 +336,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       JvmFormalParameter _get = _parameters.get(0);
       JvmTypeReference leftType = _get.getParameterType();
       IQLExpression _rightOperand = e.getRightOperand();
-      TypeResult rightType = this.exprParser.getType(_rightOperand);
+      TypeResult rightType = this.exprEvaluator.eval(_rightOperand);
       c.setExpectedTypeRef(leftType);
       String result = "";
       IQLMemberSelection _sel_2 = selExpr.getSel();
@@ -420,7 +420,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     String _xblockexpression = null;
     {
       IQLExpression _leftOperand = arrayExpr.getLeftOperand();
-      TypeResult arrayType = this.exprParser.getType(_leftOperand);
+      TypeResult arrayType = this.exprEvaluator.eval(_leftOperand);
       String methodName = IQLOperatorOverloadingUtils.SET;
       String _xifexpression = null;
       boolean _and = false;
@@ -442,9 +442,9 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _and = _hasTypeExtensions;
       }
       if (_and) {
-        TypeResult leftType = this.exprParser.getType(arrayExpr);
+        TypeResult leftType = this.exprEvaluator.eval(arrayExpr);
         IQLExpression _rightOperand = e.getRightOperand();
-        TypeResult rightType = this.exprParser.getType(_rightOperand);
+        TypeResult rightType = this.exprEvaluator.eval(_rightOperand);
         boolean _isNull_1 = leftType.isNull();
         boolean _not_1 = (!_isNull_1);
         if (_not_1) {
@@ -602,9 +602,9 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _and_2 = _isArray;
         }
         if (_and_2) {
-          TypeResult leftType_1 = this.exprParser.getType(arrayExpr);
+          TypeResult leftType_1 = this.exprEvaluator.eval(arrayExpr);
           IQLExpression _rightOperand_4 = e.getRightOperand();
-          TypeResult rightType_1 = this.exprParser.getType(_rightOperand_4);
+          TypeResult rightType_1 = this.exprEvaluator.eval(_rightOperand_4);
           boolean _isNull_7 = leftType_1.isNull();
           boolean _not_3 = (!_isNull_7);
           if (_not_3) {
@@ -751,12 +751,12 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compileAssignmentExpr(final IQLAssignmentExpression e, final G c) {
     IQLExpression _leftOperand = e.getLeftOperand();
-    TypeResult leftType = this.exprParser.getType(_leftOperand);
+    TypeResult leftType = this.exprEvaluator.eval(_leftOperand);
     String _op = e.getOp();
     boolean _equals = _op.equals("=");
     if (_equals) {
       IQLExpression _rightOperand = e.getRightOperand();
-      TypeResult rightType = this.exprParser.getType(_rightOperand);
+      TypeResult rightType = this.exprEvaluator.eval(_rightOperand);
       boolean _isNull = leftType.isNull();
       boolean _not = (!_isNull);
       if (_not) {
@@ -939,7 +939,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLogicalOrExpression e, final G c) {
     IQLExpression _leftOperand = e.getLeftOperand();
-    TypeResult left = this.exprParser.getType(_leftOperand);
+    TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
     boolean _and = false;
     boolean _isNull = left.isNull();
@@ -978,7 +978,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLogicalAndExpression e, final G c) {
     IQLExpression _leftOperand = e.getLeftOperand();
-    TypeResult left = this.exprParser.getType(_leftOperand);
+    TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
     boolean _and = false;
     boolean _isNull = left.isNull();
@@ -1017,7 +1017,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLEqualityExpression e, final G c) {
     IQLExpression _leftOperand = e.getLeftOperand();
-    TypeResult left = this.exprParser.getType(_leftOperand);
+    TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
     boolean _and = false;
     boolean _and_1 = false;
@@ -1097,7 +1097,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLRelationalExpression e, final G c) {
     IQLExpression _leftOperand = e.getLeftOperand();
-    TypeResult left = this.exprParser.getType(_leftOperand);
+    TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
     boolean _and = false;
     boolean _and_1 = false;
@@ -1242,7 +1242,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   }
   
   public String compileOperatorOverloading(final String operator, final String operatorName, final JvmTypeReference left, final IQLExpression leftOperand, final IQLExpression rightOperand, final G c) {
-    TypeResult right = this.exprParser.getType(rightOperand);
+    TypeResult right = this.exprEvaluator.eval(rightOperand);
     IIQLTypeExtensions typeOps = this.typeExtensionsFactory.getTypeExtensions(left, operatorName, rightOperand);
     Class<? extends IIQLTypeExtensions> _class = typeOps.getClass();
     String _canonicalName = _class.getCanonicalName();
@@ -1329,7 +1329,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLAdditiveExpression e, final G c) {
     IQLExpression _leftOperand = e.getLeftOperand();
-    TypeResult left = this.exprParser.getType(_leftOperand);
+    TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
     boolean _and = false;
     boolean _and_1 = false;
@@ -1409,7 +1409,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLMultiplicativeExpression e, final G c) {
     IQLExpression _leftOperand = e.getLeftOperand();
-    TypeResult left = this.exprParser.getType(_leftOperand);
+    TypeResult left = this.exprEvaluator.eval(_leftOperand);
     String result = "";
     boolean _and = false;
     boolean _and_1 = false;
@@ -1518,7 +1518,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     String _xblockexpression = null;
     {
       IQLExpression _operand = e.getOperand();
-      TypeResult left = this.exprParser.getType(_operand);
+      TypeResult left = this.exprEvaluator.eval(_operand);
       String _xifexpression = null;
       boolean _and = false;
       boolean _and_1 = false;
@@ -1624,7 +1624,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     String _xblockexpression = null;
     {
       IQLExpression _operand = e.getOperand();
-      TypeResult left = this.exprParser.getType(_operand);
+      TypeResult left = this.exprEvaluator.eval(_operand);
       String methodName = IQLOperatorOverloadingUtils.BOOLEAN_NOT_PREFIX;
       String _xifexpression = null;
       boolean _and = false;
@@ -1677,7 +1677,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     String _xblockexpression = null;
     {
       IQLExpression _operand = e.getOperand();
-      TypeResult left = this.exprParser.getType(_operand);
+      TypeResult left = this.exprEvaluator.eval(_operand);
       String _xifexpression = null;
       boolean _and = false;
       boolean _and_1 = false;
@@ -1801,7 +1801,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     String _xblockexpression = null;
     {
       IQLExpression _operand = e.getOperand();
-      TypeResult right = this.exprParser.getType(_operand);
+      TypeResult right = this.exprEvaluator.eval(_operand);
       String _xifexpression = null;
       boolean _and = false;
       boolean _and_1 = false;
@@ -1907,7 +1907,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     String _xblockexpression = null;
     {
       IQLExpression _leftOperand = e.getLeftOperand();
-      TypeResult left = this.exprParser.getType(_leftOperand);
+      TypeResult left = this.exprEvaluator.eval(_leftOperand);
       String methodName = IQLOperatorOverloadingUtils.GET;
       String _xifexpression = null;
       boolean _and = false;
@@ -2016,8 +2016,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     String _xblockexpression = null;
     {
       IQLExpression _leftOperand = e.getLeftOperand();
-      TypeResult _type = this.exprParser.getType(_leftOperand);
-      JvmTypeReference left = _type.getRef();
+      TypeResult _eval = this.exprEvaluator.eval(_leftOperand);
+      JvmTypeReference left = _eval.getRef();
       String _xifexpression = null;
       IQLMemberSelection _sel = e.getSel();
       JvmMember _member = _sel.getMember();
@@ -2175,7 +2175,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         c.setExpectedTypeRef(_parameterType);
         EList<IQLExpression> _elements = args.getElements();
         IQLExpression _get_1 = _elements.get(i);
-        TypeResult type = this.exprParser.getType(_get_1);
+        TypeResult type = this.exprEvaluator.eval(_get_1);
         boolean _and = false;
         boolean _isNull = type.isNull();
         boolean _not = (!_isNull);
@@ -2372,7 +2372,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
         list = _arrayList;
       }
-      TypeResult typeDef = this.exprParser.getThisType(m);
+      TypeResult typeDef = this.exprEvaluator.getThisType(m);
       String _xifexpression = null;
       boolean _and = false;
       boolean _isNull = typeDef.isNull();

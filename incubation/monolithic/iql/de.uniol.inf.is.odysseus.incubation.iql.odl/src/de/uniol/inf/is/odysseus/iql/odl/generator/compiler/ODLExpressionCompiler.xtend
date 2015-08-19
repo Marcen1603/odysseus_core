@@ -4,16 +4,16 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLExpressi
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper
 import javax.inject.Inject
 import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLExpressionParser
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils
 import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeExtensionsFactory
+import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.ODLExpressionEvaluator
 
-class ODLExpressionCompiler extends AbstractIQLExpressionCompiler<ODLCompilerHelper,ODLGeneratorContext, ODLTypeCompiler, ODLExpressionParser, ODLTypeUtils, ODLLookUp, ODLTypeExtensionsFactory>{
+class ODLExpressionCompiler extends AbstractIQLExpressionCompiler<ODLCompilerHelper,ODLGeneratorContext, ODLTypeCompiler, ODLExpressionEvaluator, ODLTypeUtils, ODLLookUp, ODLTypeExtensionsFactory>{
 	
 	@Inject
-	new(ODLCompilerHelper helper, ODLTypeCompiler typeCompiler, ODLExpressionParser parser,ODLTypeUtils typeUtils, ODLLookUp lookUp, ODLTypeExtensionsFactory typeOperatorsFactory) {
-		super(helper, typeCompiler, parser, typeUtils, lookUp, typeOperatorsFactory)
+	new(ODLCompilerHelper helper, ODLTypeCompiler typeCompiler, ODLExpressionEvaluator exprEvaluator,ODLTypeUtils typeUtils, ODLLookUp lookUp, ODLTypeExtensionsFactory typeOperatorsFactory) {
+		super(helper, typeCompiler, exprEvaluator, typeUtils, lookUp, typeOperatorsFactory)
 	}
 	
 	
