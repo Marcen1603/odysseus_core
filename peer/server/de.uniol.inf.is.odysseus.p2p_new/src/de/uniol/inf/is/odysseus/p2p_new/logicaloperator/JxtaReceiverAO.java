@@ -20,9 +20,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFMetaSchemaParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.parameter.CreateSDFMetaSchemaParameter;
 
 @LogicalOperator(name = "JXTARECEIVER", doc = "Received data with JXTA", minInputPorts = 0, maxInputPorts = 0, category = {LogicalOperatorCategory.SOURCE}, hidden = true)
 public class JxtaReceiverAO extends AbstractLogicalOperator {

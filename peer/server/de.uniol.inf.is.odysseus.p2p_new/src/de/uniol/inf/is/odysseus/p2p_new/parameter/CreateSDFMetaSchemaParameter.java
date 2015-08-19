@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
+package de.uniol.inf.is.odysseus.p2p_new.parameter;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 public class CreateSDFMetaSchemaParameter extends AbstractParameter<SDFMetaSchema> {
