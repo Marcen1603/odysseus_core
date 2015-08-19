@@ -69,94 +69,17 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		return 0;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(AbstractAccessAO operator, TransformationConfiguration config) throws RuleException {
 
-		ISource inputPO = null;
+		ISource<?> inputPO = null;
 
 		if (!config.isVirtualTransformation()) {
 			inputPO = getDataDictionary().getAccessAO(operator.getAccessAOName());
 		}
 
 		if (inputPO == null) {
-
-			OptionMap options = new OptionMap(operator.getOptionsMap());
-
-			if (operator.getTransportHandler() != null) {
-				IStreamObjectDataHandler<?> dataHandler = getDataHandler(operator);
-				if (dataHandler == null) {
-					LOG.error("No data handler {} found.", operator.getDataHandler());
-					throw new TransformationException("No data handler " + operator.getDataHandler() + " found.");
-				}
-
-				if (operator.readMetaData()) {
-					IMetaAttribute metaAttribute = MetadataRegistry
-							.getMetadataType(operator.getOutputSchema().getMetaAttributeNames());
-					dataHandler.setMetaAttribute(metaAttribute);
-				}
-				
-				IProtocolHandler<?> protocolHandler = getProtocolHandler(operator, dataHandler, options);
-				if (protocolHandler == null) {
-					LOG.error("No protocol handler {} found.", operator.getProtocolHandler());
-					throw new TransformationException(
-							"No protocol handler " + operator.getProtocolHandler() + " found.");
-				}
-				protocolHandler.setExecutor((IExecutor) config.getOption(IServerExecutor.class.getName()));
-
-				if (dataHandler != null) {
-					protocolHandler.setSchema(dataHandler.getSchema());
-				}
-
-				if (!operator.getTransportHandler().equalsIgnoreCase("NONE")) {
-					ITransportHandler transportHandler = getTransportHandler(operator, protocolHandler, options);
-					if (transportHandler == null) {
-						LOG.error("No transport handler {} found.", operator.getTransportHandler());
-						throw new TransformationException(
-								"No transport handler " + operator.getTransportHandler() + " found.");
-					}
-
-					transportHandler.setExecutor((IExecutor) config.getOption(IServerExecutor.class.getName()));
-
-					// In some cases the transport handler needs to know the
-					// schema
-					if (dataHandler != null) {
-						transportHandler.setSchema(dataHandler.getSchema());
-					}
-				}
-
-				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-					inputPO = new AccessPO(protocolHandler, operator.getMaxTimeToWaitForNewEventMS(), operator.readMetaData());
-				} else {
-					inputPO = new ReceiverPO(protocolHandler, operator.readMetaData());
-				}
-
-			} else {
-				throw new IllegalArgumentException("This kind of access operator is no longer supported!");
-			}
-			if (options.containsKey("scheduler.delay")) {
-				if (inputPO instanceof IIterableSource) {
-					((IIterableSource) inputPO).setDelay(options.getLong("scheduler.delay", -1));
-				}
-			}
-			if (options.containsKey("scheduler.yieldrate")) {
-				if (inputPO instanceof IIterableSource) {
-					((IIterableSource) inputPO).setYieldRate(options.getInt("scheduler.yieldrate", -1));
-				}
-			}
-			if (options.containsKey("scheduler.yieldnanos")) {
-				if (inputPO instanceof IIterableSource) {
-					((IIterableSource) inputPO).setYieldDurationNanos(options.getInt("scheduler.yieldnanos", -1));
-				}
-			}
-			if (!config.isVirtualTransformation()) {
-				getDataDictionary().putAccessAO(operator.getAccessAOName(), inputPO);
-			}
-			List<String> unusedOptions = options.getUnreadOptions();
-			if (unusedOptions.size() > 0) {
-				infoService.warning("The following options where not used in translation " + unusedOptions);
-			}
-
+			inputPO = createInputPO(operator, config);
 		} else {
 			Class<? extends IMetaAttribute>[] opMT = operator.getLocalMetaAttribute().getClasses();
 			List<String> acMT = inputPO.getOutputSchema().getMetaAttributeNames();
@@ -166,7 +89,45 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 						"The source " + operator.getName() + " is already defined with meta data " + acMT);
 			}
 		}
-		// Set metadata types
+		processMetaData(operator, config, inputPO);
+
+		defaultExecute(operator, inputPO, config, true, true);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private ISource<?> createInputPO(AbstractAccessAO operator, TransformationConfiguration config) {
+		ISource<?> inputPO;
+		if (operator.getTransportHandler() == null) {
+			throw new IllegalArgumentException("This kind of access operator is no longer supported!");
+		}
+
+		OptionMap options = new OptionMap(operator.getOptionsMap());
+
+		IStreamObjectDataHandler<?> dataHandler = processDataHandler(operator);
+
+		IProtocolHandler<?> protocolHandler = processProtocolHandler(operator, config, options, dataHandler);
+
+		processTransportHandler(operator, config, options, dataHandler, protocolHandler);
+
+		if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+			inputPO = new AccessPO(protocolHandler, operator.getMaxTimeToWaitForNewEventMS(),
+					operator.readMetaData());
+		} else {
+			inputPO = new ReceiverPO(protocolHandler, operator.readMetaData());
+		}
+
+		processOptions(inputPO, options);
+		if (!config.isVirtualTransformation()) {
+			getDataDictionary().putAccessAO(operator.getAccessAOName(), inputPO);
+		}
+		List<String> unusedOptions = options.getUnreadOptions();
+		if (unusedOptions.size() > 0) {
+			infoService.warning("The following options where not used in translation " + unusedOptions);
+		}
+		return inputPO;
+	}
+
+	private void processMetaData(AbstractAccessAO operator, TransformationConfiguration config, ISource<?> inputPO) {
 		if (inputPO instanceof IMetadataInitializer) {
 			// New: do no create meta data creation and update, if operator
 			// already read the meta data from the source
@@ -176,7 +137,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				if (type == null) {
 					type = MetadataRegistry.getMetadataType(config.getDefaultMetaTypeSet());
 				}
-				((IMetadataInitializer) inputPO).setMetadataType(type);
+				((IMetadataInitializer<?,?>) inputPO).setMetadataType(type);
 
 				TimestampAO tsAO = getTimestampAOAsFather(operator);
 				Class<? extends IMetaAttribute> toC = ITimeInterval.class;
@@ -186,8 +147,74 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 
 			}
 		}
+	}
 
-		defaultExecute(operator, inputPO, config, true, true);
+	private void processTransportHandler(AbstractAccessAO operator, TransformationConfiguration config,
+			OptionMap options, IStreamObjectDataHandler<?> dataHandler, IProtocolHandler<?> protocolHandler) {
+		if (!operator.getTransportHandler().equalsIgnoreCase("NONE")) {
+			ITransportHandler transportHandler = getTransportHandler(operator, protocolHandler, options);
+			if (transportHandler == null) {
+				LOG.error("No transport handler {} found.", operator.getTransportHandler());
+				throw new TransformationException(
+						"No transport handler " + operator.getTransportHandler() + " found.");
+			}
+
+			transportHandler.setExecutor((IExecutor) config.getOption(IServerExecutor.class.getName()));
+
+			// In some cases the transport handler needs to know the
+			// schema
+			if (dataHandler != null) {
+				transportHandler.setSchema(dataHandler.getSchema());
+			}
+		}
+	}
+
+	private IProtocolHandler<?> processProtocolHandler(AbstractAccessAO operator, TransformationConfiguration config,
+			OptionMap options, IStreamObjectDataHandler<?> dataHandler) {
+		IProtocolHandler<?> protocolHandler = getProtocolHandler(operator, dataHandler, options);
+		if (protocolHandler == null) {
+			LOG.error("No protocol handler {} found.", operator.getProtocolHandler());
+			throw new TransformationException("No protocol handler " + operator.getProtocolHandler() + " found.");
+		}
+		protocolHandler.setExecutor((IExecutor) config.getOption(IServerExecutor.class.getName()));
+
+		if (dataHandler != null) {
+			protocolHandler.setSchema(dataHandler.getSchema());
+		}
+		return protocolHandler;
+	}
+
+	private IStreamObjectDataHandler<?> processDataHandler(AbstractAccessAO operator) {
+		IStreamObjectDataHandler<?> dataHandler = getDataHandler(operator);
+		if (dataHandler == null) {
+			LOG.error("No data handler {} found.", operator.getDataHandler());
+			throw new TransformationException("No data handler " + operator.getDataHandler() + " found.");
+		}
+
+		if (operator.readMetaData()) {
+			IMetaAttribute metaAttribute = MetadataRegistry
+					.getMetadataType(operator.getOutputSchema().getMetaAttributeNames());
+			dataHandler.setMetaAttribute(metaAttribute);
+		}
+		return dataHandler;
+	}
+
+	private void processOptions(ISource<?> inputPO, OptionMap options) {
+		if (options.containsKey("scheduler.delay")) {
+			if (inputPO instanceof IIterableSource) {
+				((IIterableSource<?>) inputPO).setDelay(options.getLong("scheduler.delay", -1));
+			}
+		}
+		if (options.containsKey("scheduler.yieldrate")) {
+			if (inputPO instanceof IIterableSource) {
+				((IIterableSource<?>) inputPO).setYieldRate(options.getInt("scheduler.yieldrate", -1));
+			}
+		}
+		if (options.containsKey("scheduler.yieldnanos")) {
+			if (inputPO instanceof IIterableSource) {
+				((IIterableSource<?>) inputPO).setYieldDurationNanos(options.getInt("scheduler.yieldnanos", -1));
+			}
+		}
 	}
 
 	@Override
