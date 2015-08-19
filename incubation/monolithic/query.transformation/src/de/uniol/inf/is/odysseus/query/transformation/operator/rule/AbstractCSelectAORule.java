@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 
 public abstract class AbstractCSelectAORule extends AbstractRule{
 
@@ -33,7 +33,7 @@ public abstract class AbstractCSelectAORule extends AbstractRule{
 
 	public void analyseOperator(
 			ILogicalOperator logicalOperator,
-		TransformationInformation transformationInformation) {
+		QueryAnalyseInformation transformationInformation) {
 		
 		SelectAO selectAO = (SelectAO) logicalOperator;
 		IPredicate<?> predicate = selectAO.getPredicate();

@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 
 public interface IOperatorRule {
@@ -19,10 +19,10 @@ public interface IOperatorRule {
 
 	public CodeFragmentInfo getCode(ILogicalOperator operator);
 	
-	public void analyseOperator(ILogicalOperator logicalOperator, TransformationInformation transformationInformation);
+	public void analyseOperator(ILogicalOperator logicalOperator, QueryAnalyseInformation transformationInformation);
 	
-	public void addDataHandlerFromSDFSchema(ILogicalOperator logicalOperator, TransformationInformation transformationInformation);
+	public void addDataHandlerFromSDFSchema(ILogicalOperator logicalOperator, QueryAnalyseInformation transformationInformation);
 	
-	public void addOperatorConfiguration(ILogicalOperator logicalOperator, TransformationInformation transformationInformation);
+	public void addOperatorConfiguration(ILogicalOperator logicalOperator, QueryAnalyseInformation transformationInformation);
 
 }

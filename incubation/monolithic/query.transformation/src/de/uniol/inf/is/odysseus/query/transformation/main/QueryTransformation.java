@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.ITargetPlatform;
@@ -28,7 +28,7 @@ public class QueryTransformation {
 	
 	private static Logger LOG = LoggerFactory.getLogger(QueryTransformation.class);
 
-	private static TransformationInformation transformationInformation;
+	private static QueryAnalyseInformation transformationInformation;
 	
 	@SuppressWarnings("unchecked")
 	public static void startQueryTransformation(TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue ){
@@ -66,7 +66,7 @@ public class QueryTransformation {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void analyseQuery(ILogicalOperator query,TransformationParameter parameter, TransformationConfiguration transformationConfiguration){
 		
-		transformationInformation = new TransformationInformation();
+		transformationInformation = new QueryAnalyseInformation();
 		
 	
 		

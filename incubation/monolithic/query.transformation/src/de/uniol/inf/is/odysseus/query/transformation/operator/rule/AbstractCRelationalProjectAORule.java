@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 
 
 //TProjectAORule
@@ -42,7 +42,7 @@ public abstract class AbstractCRelationalProjectAORule extends AbstractRule{
 
 	public void analyseOperator(
 			ILogicalOperator logicalOperator,
-		TransformationInformation transformationInformation) {
+		QueryAnalyseInformation transformationInformation) {
 
 		
 	}

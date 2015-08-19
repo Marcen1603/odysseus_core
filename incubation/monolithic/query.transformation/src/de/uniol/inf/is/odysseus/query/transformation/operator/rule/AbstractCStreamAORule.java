@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 
 public abstract class AbstractCStreamAORule extends AbstractRule{
 	
@@ -34,7 +34,7 @@ public abstract class AbstractCStreamAORule extends AbstractRule{
 	}
 
 
-	public void analyseOperator(ILogicalOperator logicalOperator,TransformationInformation transformationInformation){
+	public void analyseOperator(ILogicalOperator logicalOperator,QueryAnalyseInformation transformationInformation){
 		
 		StreamAO streamAO = (StreamAO)logicalOperator;
 		

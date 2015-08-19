@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
-public class TransformationInformation {
+public class QueryAnalyseInformation {
 
 	private Map<String, String> dataHandler = new HashMap<String, String>();
 	private Map<String, String> mepFunctions = new HashMap<String, String>();

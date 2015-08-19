@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.executor.IExecutor;
 import de.uniol.inf.is.odysseus.query.transformation.java.Activator;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.utils.UnZip;
@@ -285,7 +285,7 @@ public class JavaFileWrite {
 		
 			for (Entry<ILogicalOperator, Map<String, String>> entry : operatorConfigurationList.entrySet())
 			{
-			    String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(entry.getKey());
+			    String operatorVariable = JavaTransformationInformation.getInstance().getVariable(entry.getKey());
 			  
 			    
 			    Gson gson = new Gson();

@@ -34,9 +34,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.transformation.executor.registry.ExecutorRegistry;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
@@ -46,7 +46,7 @@ public class CreateJavaDefaultCode {
 	public static CodeFragmentInfo initOperator(ILogicalOperator operator){
 		CodeFragmentInfo sdfSchema = new CodeFragmentInfo();
 		
-		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
 		
 		sdfSchema.addCodeFragmentInfo(getCodeForSDFSchema(operator.getOutputSchema(),operatorVariable));
 				
@@ -56,7 +56,7 @@ public class CreateJavaDefaultCode {
 	public static CodeFragmentInfo codeForAccessFramework(ProtocolHandlerParameter protocolHandlerParameter, Map<String,String> optionMap, ILogicalOperator operator, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 	
-		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
 
 		//add import
 		codeFragmentInfo.addImport(ITransportDirection.class.getName());
@@ -75,7 +75,7 @@ public class CreateJavaDefaultCode {
 	public static CodeFragmentInfo codeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
-		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(forOperator);
+		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(forOperator);
 		
 		SDFSchema schema = timestampAO.getInputSchema();
 		boolean clearEnd = timestampAO.isClearEnd();
@@ -111,7 +111,7 @@ public class CreateJavaDefaultCode {
 	public static CodeFragmentInfo codeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs, String executor){
 		CodeFragmentInfo startFragment = new CodeFragmentInfo();
 		
-		String firstOP = OperatorTransformationInformation.getInstance().getVariable(sourceOPs.get(0));
+		String firstOP = JavaTransformationInformation.getInstance().getVariable(sourceOPs.get(0));
 		
 		List<String> sinkOpList = new ArrayList<String>();
 		List<String> iiterableSources = new ArrayList<String>();
@@ -119,22 +119,22 @@ public class CreateJavaDefaultCode {
 
 		//Open on sink ops
 		for(ILogicalOperator sinkOp : sinkOPs){
-					sinkOpList.add(OperatorTransformationInformation.getInstance().getVariable(sinkOp));
+					sinkOpList.add(JavaTransformationInformation.getInstance().getVariable(sinkOp));
 		}
 		
 	
 		StringTemplate startCodeTemplate = new StringTemplate("java","startCode");
 		startCodeTemplate.getSt().add("firstOP", firstOP);
-		startCodeTemplate.getSt().add("operatorList",OperatorTransformationInformation.getInstance().getOperatorList());
+		startCodeTemplate.getSt().add("operatorList",JavaTransformationInformation.getInstance().getOperatorList());
 		startCodeTemplate.getSt().add("sinkOpList",sinkOpList);
-		startCodeTemplate.getSt().add("sourceOP",OperatorTransformationInformation.getInstance().getVariable(sourceOPs.get(0)));
+		startCodeTemplate.getSt().add("sourceOP",JavaTransformationInformation.getInstance().getVariable(sourceOPs.get(0)));
 		
 		startFragment.addCode(startCodeTemplate.getSt().render());
 		
 		
 		for(ILogicalOperator op : sourceOPs){
 			if(op instanceof IIterableSource){
-				iiterableSources.add(OperatorTransformationInformation.getInstance().getVariable(op));
+				iiterableSources.add(JavaTransformationInformation.getInstance().getVariable(op));
 			}
 		}
 		
@@ -156,7 +156,7 @@ public class CreateJavaDefaultCode {
 	}
 	
 	
-	public static CodeFragmentInfo generateSubscription(ILogicalOperator operator, TransformationInformation transformationInformation) {
+	public static CodeFragmentInfo generateSubscription(ILogicalOperator operator, QueryAnalyseInformation transformationInformation) {
 		CodeFragmentInfo codeFragmentInfo =  new CodeFragmentInfo();
 		
 		String operatorVariable = transformationInformation.getVariable(operator);
@@ -187,7 +187,7 @@ public class CreateJavaDefaultCode {
 				   }
 		   }
 		   
-		 if(OperatorTransformationInformation.getInstance().allOperatorExisForSubscriptions(neededOperator)){
+		 if(JavaTransformationInformation.getInstance().allOperatorExistForSubscriptions(neededOperator)){
 			 
 	
 			StringTemplate startCodeTemplate = new StringTemplate("utils","subscribeToSource");
@@ -326,7 +326,7 @@ public class CreateJavaDefaultCode {
 	}
 	
 	
-	public static CodeFragmentInfo getCodeForOSGIBinds(String odysseusPath, de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation transformationInforamtion){
+	public static CodeFragmentInfo getCodeForOSGIBinds(String odysseusPath, de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation transformationInforamtion){
 		CodeFragmentInfo osgiBinds = new CodeFragmentInfo();
 		
 		osgiBinds.addCodeFragmentInfo(getCodeFragmentForRegistry("registerFunction",transformationInforamtion.getNeededMEPFunctions(), MEP.class));

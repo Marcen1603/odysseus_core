@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCSelectAORule;
@@ -23,7 +23,7 @@ public class CSelectAORule extends AbstractCSelectAORule{
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
 	CodeFragmentInfo selectPO = new CodeFragmentInfo();
 		
-		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
 		
 		SelectAO selectAO = (SelectAO) operator;
 		IPredicate<?> predicate = selectAO.getPredicate();

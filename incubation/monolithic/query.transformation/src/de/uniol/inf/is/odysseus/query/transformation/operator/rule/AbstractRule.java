@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 
 public abstract class AbstractRule implements IOperatorRule {
 	
@@ -30,7 +30,7 @@ public abstract class AbstractRule implements IOperatorRule {
 		return this.targetPlatform;
 	}
 	
-	public void addDataHandlerFromSDFSchema(ILogicalOperator logicalOperator, TransformationInformation transformationInformation){
+	public void addDataHandlerFromSDFSchema(ILogicalOperator logicalOperator, QueryAnalyseInformation transformationInformation){
 		
 		SDFSchema sdfSchema = logicalOperator.getOutputSchema();
 		
@@ -41,7 +41,7 @@ public abstract class AbstractRule implements IOperatorRule {
 	}
 
 	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
-			TransformationInformation transformationInformation) {
+			QueryAnalyseInformation transformationInformation) {
 		
 	}
 	

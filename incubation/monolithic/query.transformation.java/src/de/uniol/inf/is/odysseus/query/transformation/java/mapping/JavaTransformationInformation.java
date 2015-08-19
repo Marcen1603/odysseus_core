@@ -6,9 +6,9 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
-public class OperatorTransformationInformation {
+public class JavaTransformationInformation{
 
-	private static OperatorTransformationInformation instance = null;
+	private static JavaTransformationInformation instance = null;
 
 	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
 	
@@ -16,9 +16,9 @@ public class OperatorTransformationInformation {
 	
 	private int uniqueId = 0;
 	
-	public static OperatorTransformationInformation getInstance() {
+	public static JavaTransformationInformation getInstance() {
 		if (instance == null) {
-			instance = new OperatorTransformationInformation();
+			instance = new JavaTransformationInformation();
 		}
 		return instance;
 	}
@@ -40,11 +40,11 @@ public class OperatorTransformationInformation {
 		if(!operatorList.containsKey(operator)){
 			operatorList.put(operator, operator.getName().toLowerCase()+getUniqueId());
 		}
-	
+		
 	}
 	
 	
-	public boolean allOperatorExisForSubscriptions(List<ILogicalOperator> operatorList){
+	public boolean allOperatorExistForSubscriptions(List<ILogicalOperator> operatorList){
 		if(operatorList.isEmpty()){
 			return false;
 		}

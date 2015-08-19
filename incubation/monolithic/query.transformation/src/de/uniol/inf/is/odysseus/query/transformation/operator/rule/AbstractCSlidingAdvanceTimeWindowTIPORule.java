@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 
 public abstract class AbstractCSlidingAdvanceTimeWindowTIPORule extends AbstractRule{
 
@@ -40,7 +40,7 @@ public abstract class AbstractCSlidingAdvanceTimeWindowTIPORule extends Abstract
 	}
 
 	
-	public void analyseOperator(ILogicalOperator logicalOperator,TransformationInformation transformationInformation){
+	public void analyseOperator(ILogicalOperator logicalOperator,QueryAnalyseInformation transformationInformation){
 		
 	
 		

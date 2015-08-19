@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
 public abstract class AbstractCJoinTIPORule extends AbstractRule{
@@ -34,7 +34,7 @@ public abstract class AbstractCJoinTIPORule extends AbstractRule{
 	
 	@Override
 	public void analyseOperator(ILogicalOperator logicalOperator,
-			TransformationInformation transformationInformation) {
+			QueryAnalyseInformation transformationInformation) {
 	
 		JoinAO joinAO = (JoinAO) logicalOperator;
 

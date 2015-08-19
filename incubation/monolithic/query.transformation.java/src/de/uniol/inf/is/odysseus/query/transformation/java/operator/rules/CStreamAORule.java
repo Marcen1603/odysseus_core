@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
@@ -34,7 +34,7 @@ public class CStreamAORule extends AbstractCStreamAORule{
 		
 		StreamAO streamAO = (StreamAO)operator;
 		
-		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
 		
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
 		ILogicalOperator logicalPlan = DataDictionaryProvider.getDataDictionary(tenant).getStreamForTransformation(streamAO.getStreamname(),  null);

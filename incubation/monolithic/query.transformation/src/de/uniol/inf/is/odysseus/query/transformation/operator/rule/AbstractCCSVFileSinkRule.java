@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 
 public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 	
@@ -46,7 +46,7 @@ public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 	}
 	
 	
-	public void analyseOperator(ILogicalOperator logicalOperator,TransformationInformation transformationInformation){
+	public void analyseOperator(ILogicalOperator logicalOperator,QueryAnalyseInformation transformationInformation){
 		
 		CSVFileSink csvFileSinkOP = (CSVFileSink) logicalOperator;
 		
@@ -59,7 +59,7 @@ public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 	
 	@Override
 	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
-			TransformationInformation transformationInformation) {
+			QueryAnalyseInformation transformationInformation) {
 		
 		CSVFileSink csvfileSink = (CSVFileSink) logicalOperator;
 		Map<String,String> optionMap =  new HashMap<String,String>();

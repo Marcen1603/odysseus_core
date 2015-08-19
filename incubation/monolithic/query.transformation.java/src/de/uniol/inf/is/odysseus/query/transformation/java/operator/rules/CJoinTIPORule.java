@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
 import de.uniol.inf.is.odysseus.persistentqueries.DirectTransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
-import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.java.mapping.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCJoinTIPORule;
@@ -35,7 +35,7 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule{
 		
 		CodeFragmentInfo joinTIPO = new CodeFragmentInfo();
 		
-		String operatorVariable = OperatorTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
 		
 		JoinAO joinAO = (JoinAO) operator;
 		
@@ -87,8 +87,8 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule{
 		joinTIPOTemplate.getSt().add("areaName", areaName);
 		joinTIPOTemplate.getSt().add("predicateValue", predicateValue);
 		joinTIPOTemplate.getSt().add("transferFuntion", transferFuntion);
-		joinTIPOTemplate.getSt().add("input0",  OperatorTransformationInformation.getInstance().getVariable(logicalSubscritions[0].getTarget()));
-		joinTIPOTemplate.getSt().add("input1",  OperatorTransformationInformation.getInstance().getVariable(logicalSubscritions[1].getTarget()));
+		joinTIPOTemplate.getSt().add("input0",  JavaTransformationInformation.getInstance().getVariable(logicalSubscritions[0].getTarget()));
+		joinTIPOTemplate.getSt().add("input1",  JavaTransformationInformation.getInstance().getVariable(logicalSubscritions[1].getTarget()));
 		
 		
 		

@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
-import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
+import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.transformation.python.filewrite.PythonFileWrite;
 import de.uniol.inf.is.odysseus.query.transformation.target.platform.AbstractTargetPlatform;
 
@@ -23,7 +23,7 @@ public class PythonTargetPlatform extends AbstractTargetPlatform{
 	
 	@Override
 	public void convertQueryToStandaloneSystem(ILogicalOperator query,
-			TransformationInformation transformationInforamtion,
+			QueryAnalyseInformation transformationInforamtion,
 			TransformationParameter parameter,
 			BlockingQueue<ProgressBarUpdate> queue,
 			TransformationConfiguration transformationConfiguration)
