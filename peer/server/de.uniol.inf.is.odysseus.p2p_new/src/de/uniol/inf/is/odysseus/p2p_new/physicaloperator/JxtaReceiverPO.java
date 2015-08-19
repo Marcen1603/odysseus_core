@@ -8,14 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import net.jxta.id.IDFactory;
-import net.jxta.peer.PeerID;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -34,6 +32,8 @@ import de.uniol.inf.is.odysseus.peer.util.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.peer.util.IObservableOperator;
 import de.uniol.inf.is.odysseus.peer.util.IOperatorObserver;
 import de.uniol.inf.is.odysseus.systemload.ISystemLoad;
+import net.jxta.id.IDFactory;
+import net.jxta.peer.PeerID;
 
 @SuppressWarnings("rawtypes")
 public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> implements ITransmissionReceiverListener, IObservableOperator {
@@ -147,7 +147,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		}
 
 		@SuppressWarnings("unchecked")
-		T streamObject = (T) ByteBufferUtil.createStreamObject(ByteBuffer.wrap(data), dataHandler);
+		T streamObject = (T) ByteBufferUtil.createStreamObject(ByteBuffer.wrap(data), (IStreamObjectDataHandler) dataHandler);
 
 		Object metadata = streamObject.getMetadata();
 		if (metadata instanceof ISystemLoad) {

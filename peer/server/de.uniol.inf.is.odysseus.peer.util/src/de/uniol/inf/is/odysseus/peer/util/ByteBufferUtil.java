@@ -4,7 +4,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -21,13 +21,13 @@ public class ByteBufferUtil {
 		return (IPunctuation) ObjectByteConverter.bytesToObject(rawData);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T extends IStreamObject> T createStreamObject(
-			ByteBuffer byteBuffer, IDataHandler<T> dataHandler)
+	@SuppressWarnings({ "unchecked"})
+	public static IStreamObject<IMetaAttribute> createStreamObject(
+			ByteBuffer byteBuffer, IStreamObjectDataHandler<IStreamObject<IMetaAttribute>> dataHandler)
 			throws BufferUnderflowException {
-		T retval = null;
+		IStreamObject<IMetaAttribute> retval = null;
 		try {
-			retval = dataHandler.readData(byteBuffer);
+			retval = dataHandler.readData(byteBuffer, false);
 
 			if (byteBuffer.remaining() > 0) {
 
@@ -61,8 +61,8 @@ public class ByteBufferUtil {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T extends IStreamObject> void toBuffer(ByteBuffer buffer,
-			T object, IDataHandler dataHandler, boolean withMetadata) {
-		dataHandler.writeData(buffer, object);
+			T object, IStreamObjectDataHandler dataHandler, boolean withMetadata) {
+		dataHandler.writeData(buffer, object, false);
 
 		if (withMetadata) {
 			Object metadata = object.getMetadata();
