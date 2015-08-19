@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateJavaDefaultCode;
-import de.uniol.inf.is.odysseus.query.transformation.java.utils.EmulateJavaOSGIBindings;
 import de.uniol.inf.is.odysseus.query.transformation.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
@@ -28,7 +27,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	
 	private Set<String> importList = new HashSet<String>();
 	private StringBuilder bodyCode;
-	private String osgiBindCode;
+	private StringBuilder sdfSchemaCode;
 	
 	public JavaTargetPlatform(){
 		super("Java");
@@ -56,16 +55,15 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		OdysseusIndex.getInstance().search(parameter.getOdysseusPath());
 	
 		bodyCode = new StringBuilder();
-
-		EmulateJavaOSGIBindings javaEmulateOSGIBindings = new EmulateJavaOSGIBindings();
+		sdfSchemaCode  = new StringBuilder();
 		
 		walkTroughLogicalPlan(transformationInforamtion,parameter, transformationConfiguration);
 		
 		//generate code for osgi binds
 		updateProgressBar(70, "Generate OSGI emulation code");
-		osgiBindCode = javaEmulateOSGIBindings.getCodeForOSGIBinds(parameter.getOdysseusPath(), transformationInforamtion);
 		
-		importList.addAll(javaEmulateOSGIBindings.getNeededImports());
+		CodeFragmentInfo osgiBind = CreateJavaDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), transformationInforamtion);
+		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
 		CodeFragmentInfo startStreams = CreateJavaDefaultCode.codeForStartStreams(transformationInforamtion.getSinkOpList(), transformationInforamtion.getSourceOpList(), parameter.getExecutor());
@@ -73,7 +71,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		importList.addAll(startStreams.getImports());
 	
 		updateProgressBar(75, "Create Java files");
-		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBindCode,bodyCode.toString(),startStreams.getCode(), transformationInforamtion.getOperatorConfigurationList(), ExecutorRegistry.getExecutor("Java", parameter.getExecutor()));
+		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), transformationInforamtion.getOperatorConfigurationList(), ExecutorRegistry.getExecutor("Java", parameter.getExecutor()));
 		
 		try {
 			updateProgressBar(80, "Create Java project");
@@ -99,8 +97,17 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				generateCode(sourceOperator,parameter, transformationConfiguration,transformationInforamtion);
 		}
 		
+		
+		//sdfschema nach oben schieben
+		StringBuilder tempBodyCode = new StringBuilder();
+		tempBodyCode = bodyCode;
+		
+		bodyCode = sdfSchemaCode;
+		bodyCode.append(tempBodyCode);
+		
 	}
 	
+
 	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,TransformationInformation transformationInforamtion) throws InterruptedException{
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 
@@ -114,11 +121,12 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				
 				//add ready
 				OperatorTransformationInformation.getInstance().addOperatorToCodeReady(operator);
-			
-
+		
 				//generate the default code e.g. SDFSchema
 				CodeFragmentInfo initOp = CreateJavaDefaultCode.initOperator(operator);
-				String operatorCode = initOp.getCode();
+				sdfSchemaCode.append(initOp.getCode());
+				
+				//String operatorCode = initOp.getCode();
 				
 				//add imports for default code
 				importList.addAll(initOp.getImports());
@@ -126,7 +134,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				//generate operator code
 				CodeFragmentInfo opCodeFragment = opTrans.getCode(operator);
 				
-				operatorCode += opCodeFragment.getCode();
+				String operatorCode = opCodeFragment.getCode();
 			
 				//add operator code to java body
 				bodyCode.append(operatorCode);

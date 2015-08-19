@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -18,6 +19,7 @@ import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateJavaDefaul
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCStreamAORule;
+import de.uniol.inf.is.odysseus.query.transformation.utils.Utils;
 
 public class CStreamAORule extends AbstractCStreamAORule{
 	
@@ -54,6 +56,11 @@ public class CStreamAORule extends AbstractCStreamAORule{
 		receiverPOTemplate.getSt().add("operatorVariable", operatorVariable);
 			
 		receiverPO.addCode(receiverPOTemplate.getSt().render());
+		
+		TimestampAO timestampAO = Utils.createTimestampAO(operator, null);
+		
+		receiverPO.addCodeFragmentInfo(CreateJavaDefaultCode.codeForRelationalTimestampAttributeTimeIntervalMFactory(operator, timestampAO));
+		
 		receiverPO.addImport(ReceiverPO.class.getName());
 		receiverPO.addImport(IOException.class.getName());
 		

@@ -10,14 +10,17 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -26,13 +29,17 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.transformation.executor.registry.ExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.OperatorTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 public class CreateJavaDefaultCode {
 	
@@ -107,6 +114,7 @@ public class CreateJavaDefaultCode {
 		String firstOP = OperatorTransformationInformation.getInstance().getVariable(sourceOPs.get(0));
 		
 		List<String> sinkOpList = new ArrayList<String>();
+		List<String> iiterableSources = new ArrayList<String>();
 	
 
 		//Open on sink ops
@@ -114,10 +122,7 @@ public class CreateJavaDefaultCode {
 					sinkOpList.add(OperatorTransformationInformation.getInstance().getVariable(sinkOp));
 		}
 		
-		
-		
-		
-
+	
 		StringTemplate startCodeTemplate = new StringTemplate("java","startCode");
 		startCodeTemplate.getSt().add("firstOP", firstOP);
 		startCodeTemplate.getSt().add("operatorList",OperatorTransformationInformation.getInstance().getOperatorList());
@@ -127,9 +132,19 @@ public class CreateJavaDefaultCode {
 		startFragment.addCode(startCodeTemplate.getSt().render());
 		
 		
-		CodeFragmentInfo executorCode = ExecutorRegistry.getExecutor("Java", executor).getStartCode(sourceOPs);
-		startFragment.addCodeFragmentInfo(executorCode);
+		for(ILogicalOperator op : sourceOPs){
+			if(op instanceof IIterableSource){
+				iiterableSources.add(OperatorTransformationInformation.getInstance().getVariable(op));
+			}
+		}
 		
+		
+		if(!iiterableSources.isEmpty()){
+			CodeFragmentInfo executorCode = ExecutorRegistry.getExecutor("Java", executor).getStartCode(sourceOPs);
+			startFragment.addCodeFragmentInfo(executorCode);
+		}
+	
+	
 		startFragment.addImport(IPhysicalOperator.class.getName());
 		startFragment.addImport(ArrayList.class.getName());
 		startFragment.addImport(IPhysicalOperator.class.getName());
@@ -310,6 +325,57 @@ public class CreateJavaDefaultCode {
 		return sdfSchema;
 	}
 	
+	
+	public static CodeFragmentInfo getCodeForOSGIBinds(String odysseusPath, de.uniol.inf.is.odysseus.query.transformation.modell.TransformationInformation transformationInforamtion){
+		CodeFragmentInfo osgiBinds = new CodeFragmentInfo();
+		
+		osgiBinds.addCodeFragmentInfo(getCodeFragmentForRegistry("registerFunction",transformationInforamtion.getNeededMEPFunctions(), MEP.class));
+		
+		
+		osgiBinds.addCodeFragmentInfo(getCodeFragmentForRegistry("registerDataHandler",transformationInforamtion.getNeededDataHandler(), DataHandlerRegistry.class));
+	
+
+		osgiBinds.addCodeFragmentInfo(getCodeFragmentForRegistry("register",transformationInforamtion.getNeededTransportHandler(), TransportHandlerRegistry.class));
+		
+
+		osgiBinds.addCodeFragmentInfo(getCodeFragmentForRegistry("register",transformationInforamtion.getNeededProtocolHandler(), ProtocolHandlerRegistry.class));
+		
+	
+		osgiBinds.addCodeFragmentInfo(getCodeFragmentForRegistry("addMetadataType",transformationInforamtion.getNeededMetaDataTypes(), MetadataRegistry.class));
+		
+		
+		osgiBinds.addCodeFragmentInfo(getCodeFragmentForRegistry("register",transformationInforamtion.getNeededSweepAreas(), SweepAreaRegistry.class));
+		
+	
+		return osgiBinds;
+
+	}
+	
+	private static CodeFragmentInfo getCodeFragmentForRegistry(String registerFunctionName, Map<String, String> registerList, Class<?> registryClass){
+		
+		CodeFragmentInfo registryCode = new CodeFragmentInfo();
+		
+
+		List<String> functionNameList = new ArrayList<String>();
+		for (Map.Entry<String, String> entry : registerList.entrySet())
+		{
+			registryCode.addImport(entry.getKey());
+			functionNameList.add(entry.getValue());
+
+		}
+
+		StringTemplate mepRegistryTemplate = new StringTemplate("utils","registryHandler");
+		mepRegistryTemplate.getSt().add("clazzName", registryClass.getSimpleName());
+		mepRegistryTemplate.getSt().add("clazzSimpleName", registryClass.getSimpleName().toLowerCase());
+		mepRegistryTemplate.getSt().add("handlerList", functionNameList);
+		mepRegistryTemplate.getSt().add("registerFunctionName",registerFunctionName);
+		
+		registryCode.addCode(mepRegistryTemplate.getSt().render());
+		registryCode.addImport(registryClass.getName());
+		
+		
+		return registryCode;
+	}
 	
 	
 

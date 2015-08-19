@@ -1,4 +1,4 @@
-joinTIPO(operatorVariable,input0MetaAttributeNamesCode, input1MetaAttributeNamesCode,input0MetaAttributeNamesVariable, input1MetaAttributeNamesVariable,areaName,predicateValue,transferFuntion)::=<<
+joinTIPO(operatorVariable,input0MetaAttributeNamesCode, input1MetaAttributeNamesCode,input0MetaAttributeNamesVariable, input1MetaAttributeNamesVariable,areaName,predicateValue,transferFuntion,input0,input1)::=<<
 
 		$input0MetaAttributeNamesCode$
 		
@@ -23,11 +23,13 @@ joinTIPO(operatorVariable,input0MetaAttributeNamesCode, input1MetaAttributeNames
 		
 		$operatorVariable$PO.setTransferFunction(new $transferFuntion$());
 		
+		$operatorVariable$PO.setCreationFunction(new DefaultTIDummyDataCreation());
+		
 		
 		DirectAttributeResolver $operatorVariable$DirectAttriuteResolver = new DirectAttributeResolver($operatorVariable$SDFSchema);
 		RelationalPredicateBuilder $operatorVariable$RelationalPredicateBuilder = new  RelationalPredicateBuilder();
 		RelationalPredicate $operatorVariable$Predicate = (RelationalPredicate)$operatorVariable$RelationalPredicateBuilder.createPredicate($operatorVariable$DirectAttriuteResolver, "$predicateValue$");
-		$operatorVariable$Predicate.init($operatorVariable$SDFSchema, null);
+		$operatorVariable$Predicate.init($input0$SDFSchema, $input1$SDFSchema);
 		
 		$operatorVariable$PO.setOutputSchema($operatorVariable$SDFSchema);
 	

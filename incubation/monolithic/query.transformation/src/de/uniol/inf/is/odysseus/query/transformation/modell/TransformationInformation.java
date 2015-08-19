@@ -116,6 +116,7 @@ public class TransformationInformation {
 	
 	public void addMEPFunction(IExpression<?> mepExpression) {
 
+
 	String fullClassName =	mepExpression.toFunction().getClass().getName();
 	String simpleClassName = mepExpression.toFunction().getClass().getSimpleName();
 
