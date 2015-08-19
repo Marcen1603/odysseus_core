@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.transformation.executor.registry.ExecutorRegistry;
@@ -108,18 +107,25 @@ public class CreateJavaDefaultCode {
 		
 	}
 	
-	public static CodeFragmentInfo codeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs, String executor){
+	
+	public static CodeFragmentInfo codeForStartStreams(QueryAnalyseInformation queryAnalyseInform, String executor){
+		
+		return codeForStartStreams(queryAnalyseInform.getSinkOpList(),queryAnalyseInform.getSourceOpList(),queryAnalyseInform.getIterableSources(), executor);
+	}
+	
+	
+	
+	public static CodeFragmentInfo codeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs,List<ILogicalOperator> iterableSources, String executor){
 		CodeFragmentInfo startFragment = new CodeFragmentInfo();
 		
 		String firstOP = JavaTransformationInformation.getInstance().getVariable(sourceOPs.get(0));
 		
 		List<String> sinkOpList = new ArrayList<String>();
-		List<String> iiterableSources = new ArrayList<String>();
-	
+
 
 		//Open on sink ops
 		for(ILogicalOperator sinkOp : sinkOPs){
-					sinkOpList.add(JavaTransformationInformation.getInstance().getVariable(sinkOp));
+			sinkOpList.add(JavaTransformationInformation.getInstance().getVariable(sinkOp));
 		}
 		
 	
@@ -131,20 +137,11 @@ public class CreateJavaDefaultCode {
 		
 		startFragment.addCode(startCodeTemplate.getSt().render());
 		
-		
-		for(ILogicalOperator op : sourceOPs){
-			if(op instanceof IIterableSource){
-				iiterableSources.add(JavaTransformationInformation.getInstance().getVariable(op));
-			}
-		}
-		
-		
-		if(!iiterableSources.isEmpty()){
-			CodeFragmentInfo executorCode = ExecutorRegistry.getExecutor("Java", executor).getStartCode(sourceOPs);
+		if(!iterableSources.isEmpty()){
+			CodeFragmentInfo executorCode = ExecutorRegistry.getExecutor("Java", executor).getStartCode(iterableSources);
 			startFragment.addCodeFragmentInfo(executorCode);
 		}
-	
-	
+		
 		startFragment.addImport(IPhysicalOperator.class.getName());
 		startFragment.addImport(ArrayList.class.getName());
 		startFragment.addImport(IPhysicalOperator.class.getName());

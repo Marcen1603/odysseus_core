@@ -63,6 +63,10 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 		
 	
 		transformationInformation.addOperatorConfiguration(logicalOperator, optionMap);
+		
+		
+		transformationInformation.addIterableSource(logicalOperator);
+		
 	}
 
 }

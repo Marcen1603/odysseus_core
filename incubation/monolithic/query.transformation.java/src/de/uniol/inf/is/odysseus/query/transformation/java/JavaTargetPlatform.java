@@ -67,7 +67,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
-		CodeFragmentInfo startStreams = CreateJavaDefaultCode.codeForStartStreams(queryAnalyseInformation.getSinkOpList(), queryAnalyseInformation.getSourceOpList(), parameter.getExecutor());
+		CodeFragmentInfo startStreams = CreateJavaDefaultCode.codeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
 		
 		importList.addAll(startStreams.getImports());
 	

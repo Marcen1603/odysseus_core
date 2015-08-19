@@ -22,6 +22,8 @@ public class QueryAnalyseInformation {
 	private Map<String, String> metaDataTypes = new HashMap<String, String>();
 	private Map<String, String> sweepAreas = new HashMap<String, String>();
 	
+	private List<ILogicalOperator> iIterableSource = new ArrayList<ILogicalOperator>();
+	
 	
 	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
 
@@ -34,6 +36,13 @@ public class QueryAnalyseInformation {
 	private int uniqueId = 0;
 	
 	
+	public void addIterableSource(ILogicalOperator operator){
+		iIterableSource.add(operator);
+	}
+	
+	public List<ILogicalOperator> getIterableSources(){
+		return iIterableSource;
+	}
 	public void addOperatorConfiguration(ILogicalOperator operator, Map<String,String> optionMap){
 		operatorConfigurationList.put(operator,optionMap);
 	}
