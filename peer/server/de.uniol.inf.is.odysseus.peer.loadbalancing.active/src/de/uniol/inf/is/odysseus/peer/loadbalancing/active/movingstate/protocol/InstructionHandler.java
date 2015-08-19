@@ -98,7 +98,7 @@ public class InstructionHandler {
 				dispatcher = status.getMessageDispatcher();
 				dispatcher.stopRunningJob();
 				try {
-					Collection<Integer> queryIDs = LoadBalancingHelper.installAndRunQueryPartFromPql(Context.empty(), instruction.getPQLQuery());
+					Collection<Integer> queryIDs = LoadBalancingHelper.installAndRunQueryPartFromPql(Context.empty(), instruction.getPQLQuery(),instruction.getQueryName(),instruction.getTransCfgName(),instruction.getMetaDataTypeNames());
 					status.setInstalledQueries(queryIDs);
 
 					int installedQuery = (int) (queryIDs.toArray()[0]);

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import net.jxta.id.ID;
@@ -17,10 +18,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -29,8 +34,13 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -38,6 +48,7 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
@@ -292,14 +303,13 @@ public class LoadBalancingHelper {
 	 * @param pql
 	 *            PQL to execute.
 	 */
-	public static Collection<Integer> installAndRunQueryPartFromPql(
-			Context context, String pql) {
+	public static Collection<Integer> installAndRunQueryPartFromPql(Context context,String pql, String queryName, String transCfgName, Collection<String> metaDataTypes) {
+
 
 		IServerExecutor executor = OsgiServiceManager.getExecutor();
 		ISession session = OsgiServiceManager.getActiveSession();
-
-		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL",
-				session, context);
+		
+		Collection<Integer> installedQueries = installQueryPartFromPql(context, pql, queryName, transCfgName, metaDataTypes);
 		for (int query : installedQueries) {
 			executor.startQuery(query, session);
 		}
@@ -307,15 +317,106 @@ public class LoadBalancingHelper {
 
 	}
 
-	public static Collection<Integer> installQueryPartFromPql(Context context,
-			String pql) {
+	/***
+	 * This method is identical to the one used in QueryPartReceiver.
+	 * @param context
+	 * @param pql
+	 * @param queryName
+	 * @param transCfgName
+	 * @param metaDataTypes
+	 * @return
+	 */
+	public static Collection<Integer> installQueryPartFromPql(Context context,String pql, String queryName, String transCfgName, Collection<String> metaDataTypes) {
+		
 		IServerExecutor executor = OsgiServiceManager.getExecutor();
-		ISession session = OsgiServiceManager.getActiveSession();
+		
+		List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, transCfgName);
+		Optional<ParameterTransformationConfiguration> params = getParameterTransformationConfiguration(configuration);
+		if (params.isPresent()) {
+			params.get().getValue().addTypes(Sets.newHashSet(metaDataTypes));
+		}
 
-		Collection<Integer> installedQueries = executor.addQuery(pql, "PQL",
-				session, context);
-		return installedQueries;
+		String script = buildOdysseusScriptText(metaDataTypes,queryName,pql);
+		System.err.println(script);
 
+		Collection<Integer> ids = executor.addQuery(script, "OdysseusScript", PeerDistributePlugIn.getActiveSession(), transCfgName, Context.empty(), configuration);
+		return ids;
+
+	}
+	
+
+	private static Optional<ParameterTransformationConfiguration> getParameterTransformationConfiguration(List<IQueryBuildSetting<?>> settings) {
+		for (IQueryBuildSetting<?> s : settings) {
+			if (s instanceof ParameterTransformationConfiguration) {
+				return Optional.of((ParameterTransformationConfiguration) s);
+			}
+		}
+
+		return Optional.absent();
+	}
+
+	
+
+	private static List<IQueryBuildSetting<?>> determineQueryBuildSettings(IServerExecutor executor, String cfgName) {
+		final IQueryBuildConfigurationTemplate qbc = executor.getQueryBuildConfiguration(cfgName);
+		final List<IQueryBuildSetting<?>> configuration = qbc.getConfiguration();
+
+		final List<IQueryBuildSetting<?>> settings = Lists.newArrayList();
+		settings.addAll(configuration);
+		settings.add(ParameterDoRewrite.FALSE);
+		return settings;
+	}
+	
+	
+	
+	private static String buildOdysseusScriptText(Collection<String> metadataTypeNames,String queryName,String pql) {
+		StringBuilder sb = new StringBuilder();
+
+		Collection<Class<? extends IMetaAttribute>> metadataTypes = determineMetadataTypes(metadataTypeNames);
+		Set<String> metadataNames = MetadataRegistry.getNames();
+
+		for (Class<? extends IMetaAttribute> metadataType : metadataTypes) {
+			for (String metadataName : metadataNames) {
+				Optional<IMetaAttribute> metaAttribute = tryGetMetaAttribute(metadataName);
+				if (metaAttribute.isPresent() && metadataType.equals(metaAttribute.get().getClass())) {
+					sb.append("#METADATA " + metadataName).append("\n");
+					break;
+				}
+			}
+		}
+
+		sb.append("#PARSER PQL").append("\n");
+
+		if (!Strings.isNullOrEmpty(queryName)) {
+			sb.append("#QNAME ").append(queryName).append("\n");
+		}
+		// TODO should not be set that way
+		sb.append("#ADDQUERY").append("\n");
+		sb.append(pql).append("\n");
+		return sb.toString();
+	}
+	
+
+	private static Optional<IMetaAttribute> tryGetMetaAttribute(String metadataName) {
+		try {
+			return Optional.fromNullable(MetadataRegistry.getMetadataTypeByName(metadataName));
+		} catch (IllegalArgumentException e) {
+			return Optional.absent();
+		}
+	}
+	
+
+	private static Collection<Class<? extends IMetaAttribute>> determineMetadataTypes(Collection<String> metadataTypeNames) {
+		Collection<Class<? extends IMetaAttribute>> result = Lists.newArrayList();
+		for (String metadataTypeName : metadataTypeNames) {
+			try {
+				IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(metadataTypeName);
+				result.add(metaAttribute.getClass());
+			} catch( Throwable t ) {
+				LOG.error("Could not determine metaAttribute of '{}'", metadataTypeName);
+			}
+		}
+		return result;
 	}
 
 	/**

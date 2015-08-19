@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
@@ -116,7 +118,16 @@ public class ResponseHandler {
 					}
 					status.storeSharedQueryInformation(isMaster, sharedQueryID, localQueries, otherPeers);
 					queryPartController.unregisterAsMaster(sharedQueryID);
-					dispatcher.sendAddQueryForMasterQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, otherPeerIDStrings, sharedQueryID.toString());
+
+					//Add additional Query Info, e.g. Metadata Types.
+					IServerExecutor executor = OsgiServiceManager.getExecutor();
+					ILogicalQuery query = executor.getLogicalQueryById(status.getLogicalQuery(), OsgiServiceManager.getActiveSession());
+					String queryName = query.getName();
+					QueryBuildConfiguration queryBuildConfig = executor.getBuildConfigForQuery(query);
+					String transCfgName = queryBuildConfig.getName();
+					Collection<String> metaAttributes = queryBuildConfig.getTransformationConfiguration().getDefaultMetaTypeSet();
+					
+					dispatcher.sendAddQueryForMasterQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, otherPeerIDStrings, sharedQueryID.toString(),queryName,transCfgName,metaAttributes);
 
 				} else {
 					PeerID masterPeerID;
@@ -136,7 +147,15 @@ public class ResponseHandler {
 						}
 					}
 
-					dispatcher.sendAddQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, sharedQueryID.toString(), masterPeerID.toString());
+
+					//Add additional Query Info, e.g. Metadata Types.
+					IServerExecutor executor = OsgiServiceManager.getExecutor();
+					ILogicalQuery query = executor.getLogicalQueryById(status.getLogicalQuery(), OsgiServiceManager.getActiveSession());
+					String queryName = query.getName();
+					QueryBuildConfiguration queryBuildConfig = executor.getBuildConfigForQuery(query);
+					String transCfgName = queryBuildConfig.getName();
+					Collection<String> metaAttributes = queryBuildConfig.getTransformationConfiguration().getDefaultMetaTypeSet();
+					dispatcher.sendAddQuery(status.getVolunteeringPeer(), pqlFromQueryPart, communicationListener, sharedQueryID.toString(), masterPeerID.toString(),queryName,transCfgName,metaAttributes);
 
 				}
 

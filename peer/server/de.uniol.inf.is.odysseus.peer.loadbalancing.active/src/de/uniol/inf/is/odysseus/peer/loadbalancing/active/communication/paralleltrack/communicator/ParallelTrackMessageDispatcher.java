@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -173,21 +174,21 @@ public class ParallelTrackMessageDispatcher {
 	 * @param queryPartPql
 	 * @param listener
 	 */
-	public void sendAddQuery(PeerID destinationPeer, String queryPartPql,IMessageDeliveryFailedListener listener, String sharedQueryID, String masterPeer) {
+	public void sendAddQuery(PeerID destinationPeer, String queryPartPql,IMessageDeliveryFailedListener listener, String sharedQueryID, String masterPeer, String queryName, String transCfgName, Collection<String> metaDataTypes) {
 		LOG.debug("Send AddQuery");
-		ParallelTrackInstructionMessage message = ParallelTrackInstructionMessage.createAddQueryMsg(lbProcessId, queryPartPql,sharedQueryID,masterPeer);
+		ParallelTrackInstructionMessage message = ParallelTrackInstructionMessage.createAddQueryMsg(lbProcessId, queryPartPql,sharedQueryID,masterPeer,queryName,transCfgName,metaDataTypes);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 		currentJob.addListener(listener);
 		currentJob.start();
 	}
 	
 
-	public void sendAddQueryForMasterQuery(PeerID destinationPeer, String queryPartPql, IMessageDeliveryFailedListener listener, List<String> peerIDs, String sharedQueryID) {
+	public void sendAddQueryForMasterQuery(PeerID destinationPeer, String queryPartPql, IMessageDeliveryFailedListener listener, List<String> peerIDs, String sharedQueryID, String queryName, String transCfgName, Collection<String> metaDataTypes) {
 		LOG.debug("Send AddQuery for Master Peer:");
 		LOG.debug("Shared Query ID:" + sharedQueryID);
 		LOG.debug("Number of other Peers:" + peerIDs.size());
 		
-		ParallelTrackInstructionMessage message = ParallelTrackInstructionMessage.createAddQueryMsgForMasterQuery(lbProcessId, queryPartPql,peerIDs, sharedQueryID);
+		ParallelTrackInstructionMessage message = ParallelTrackInstructionMessage.createAddQueryMsgForMasterQuery(lbProcessId, queryPartPql,peerIDs, sharedQueryID, queryName,transCfgName,metaDataTypes);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 		currentJob.addListener(listener);
 		currentJob.start();

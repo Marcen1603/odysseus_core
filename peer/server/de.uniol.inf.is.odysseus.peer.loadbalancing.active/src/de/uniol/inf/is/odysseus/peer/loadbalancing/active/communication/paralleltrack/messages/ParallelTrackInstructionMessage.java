@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralle
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
@@ -14,16 +15,38 @@ import de.uniol.inf.is.odysseus.peer.communication.IMessage;
  */
 public class ParallelTrackInstructionMessage implements IMessage {
 
+	public String getTransCfgName() {
+		return transCfgName;
+	}
+
+	public void setTransCfgName(String transCfgName) {
+		this.transCfgName = transCfgName;
+	}
+
+	public Collection<String> getMetaDataTypeNames() {
+		return metaDataTypeNames;
+	}
+
+	public void setMetaDataTypeNames(Collection<String> metaDataTypeNames) {
+		this.metaDataTypeNames = metaDataTypeNames;
+	}
+
 	public static final int INITIATE_LOADBALANCING = 0;
 	public static final int ADD_QUERY = 1;
 	public static final int COPY_RECEIVER = 2;
 	public static final int COPY_SENDER = 3;
 	public static final int DELETE_SENDER = 4;
+	
+
 	public static final int DELETE_RECEIVER = 5;
 
 	public static final int MESSAGE_RECEIVED = 6;
 	public static final int PIPE_SUCCCESS_RECEIVED = 7;
-
+	
+	private String queryName;
+	private String transCfgName;
+	private Collection<String> metaDataTypeNames;
+	
 	private int loadBalancingProcessId;
 	private int msgType;
 
@@ -75,14 +98,17 @@ public class ParallelTrackInstructionMessage implements IMessage {
 		this.masterPeerID = masterPeerID;
 	}
 
-	public static ParallelTrackInstructionMessage createAddQueryMsgForMasterQuery(int lbProcessId, String PQLQuery, List<String> otherPeers, String sharedQueryID) {
+	public static ParallelTrackInstructionMessage createAddQueryMsgForMasterQuery(int lbProcessId, String PQLQuery, List<String> otherPeers, String sharedQueryID,String queryName, String transCfgName, Collection<String> metaDataTypes) {
 		ParallelTrackInstructionMessage message = new ParallelTrackInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.PQLQuery = PQLQuery;
 		message.isMasterForQuery = true;
 		message.otherPeers = otherPeers;
+		message.queryName = queryName;
 		message.sharedQueryID = sharedQueryID;
 		message.msgType = ADD_QUERY;
+		message.metaDataTypeNames = metaDataTypes;
+		message.transCfgName = transCfgName;
 		return message;
 	}
 
@@ -100,14 +126,17 @@ public class ParallelTrackInstructionMessage implements IMessage {
 		return message;
 	}
 
-	public static ParallelTrackInstructionMessage createAddQueryMsg(int lbProcessId, String PQLQuery, String sharedQueryID, String masterPeerID) {
+	public static ParallelTrackInstructionMessage createAddQueryMsg(int lbProcessId, String PQLQuery, String sharedQueryID, String masterPeerID,String queryName, String transCfgName, Collection<String> metaDataTypes) {
 		ParallelTrackInstructionMessage message = new ParallelTrackInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.PQLQuery = PQLQuery;
 		message.isMasterForQuery = false;
 		message.sharedQueryID = sharedQueryID;
 		message.setMasterPeerID(masterPeerID);
+		message.setQueryName(queryName);
 		message.msgType = ADD_QUERY;
+		message.metaDataTypeNames = metaDataTypes;
+		message.transCfgName = transCfgName;
 		return message;
 	}
 
@@ -189,8 +218,13 @@ public class ParallelTrackInstructionMessage implements IMessage {
 				else {
 					masterPeerIDAsBytes = masterPeerID.getBytes();
 				}
+				
+				byte[] queryNameAsBytes = queryName.getBytes();
 
-				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 4 + sharedQueryIDAsBytes.length + 1 + 4 + masterPeerIDAsBytes.length;
+				byte[] transCfgNameAsBytes = transCfgName.getBytes();
+				byte[] metaDataTypeNamesAsBytes = stringListToBytes(metaDataTypeNames);
+
+				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 4 + sharedQueryIDAsBytes.length + 1 + 4 + masterPeerIDAsBytes.length + 4 + queryNameAsBytes.length  + 4 + transCfgNameAsBytes.length + metaDataTypeNamesAsBytes.length;
 				bb = ByteBuffer.allocate(bbsize);
 				bb.putInt(msgType);
 				bb.putInt(loadBalancingProcessId);
@@ -198,6 +232,14 @@ public class ParallelTrackInstructionMessage implements IMessage {
 				bb.put(pqlAsBytes);
 				bb.putInt(sharedQueryIDAsBytes.length);
 				bb.put(sharedQueryIDAsBytes);
+				bb.putInt(queryNameAsBytes.length);
+				bb.put(queryNameAsBytes);
+				
+
+				bb.putInt(transCfgNameAsBytes.length);
+				bb.put(transCfgNameAsBytes);
+				bb.put(metaDataTypeNamesAsBytes);
+				
 				bb.put((byte) 0);
 				bb.putInt(masterPeerIDAsBytes.length);
 				bb.put(masterPeerIDAsBytes);
@@ -219,8 +261,12 @@ public class ParallelTrackInstructionMessage implements IMessage {
 			else {
 				sharedQueryIDAsBytes = sharedQueryID.getBytes();
 			}
+			byte[] queryNameAsBytes = queryName.getBytes();
 
-			bbsize = 4 + 4 + 4 + pqlAsBytes.length + 1 + otherPeersAsBytes.length + 4 + sharedQueryIDAsBytes.length;
+			byte[] transCfgNameAsBytes = transCfgName.getBytes();
+			byte[] metaDataTypeNamesAsBytes = stringListToBytes(metaDataTypeNames);
+
+			bbsize = 4 + 4 + 4 + pqlAsBytes.length + 1 + otherPeersAsBytes.length + 4 + sharedQueryIDAsBytes.length + 4 + queryNameAsBytes.length +  4 + transCfgNameAsBytes.length + metaDataTypeNamesAsBytes.length;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(msgType);
 			bb.putInt(loadBalancingProcessId);
@@ -228,6 +274,13 @@ public class ParallelTrackInstructionMessage implements IMessage {
 			bb.put(pqlAsBytes);
 			bb.putInt(sharedQueryIDAsBytes.length);
 			bb.put(sharedQueryIDAsBytes);
+			bb.putInt(queryNameAsBytes.length);
+			bb.put(queryNameAsBytes);
+			
+			bb.putInt(transCfgNameAsBytes.length);
+			bb.put(transCfgNameAsBytes);
+			bb.put(metaDataTypeNamesAsBytes);
+			
 			bb.put((byte) 1);
 			bb.put(otherPeersAsBytes);
 			break;
@@ -318,7 +371,26 @@ public class ParallelTrackInstructionMessage implements IMessage {
 			else {
 				this.sharedQueryID = null;
 			}
+			
+			int sizeOfQueryName = bb.getInt();
+			byte[] queryNameAsBytes = new byte[sizeOfQueryName];
+			bb.get(queryNameAsBytes);
+			this.queryName = new String(queryNameAsBytes);
 
+			int sizeOfTransCfgName = bb.getInt();
+			byte[] transCfgNameBytes = new byte[sizeOfTransCfgName];
+			bb.get(transCfgNameBytes);
+			this.queryName = new String(transCfgNameBytes);
+			
+			this.metaDataTypeNames = new ArrayList<String>();
+			int numberOfMetaDataTypes = bb.getInt();
+			for (int i = 0; i < numberOfMetaDataTypes; i++) {
+				int sizeOfMetaDataTypeString = bb.getInt();
+				byte[] metaDataTypeAsBytes = new byte[sizeOfMetaDataTypeString];
+				bb.get(metaDataTypeAsBytes);
+				metaDataTypeNames.add(new String(metaDataTypeAsBytes));
+			}
+			
 			byte masterFlag = bb.get();
 			if (masterFlag == 0) {
 				isMasterForQuery = false;
@@ -419,8 +491,16 @@ public class ParallelTrackInstructionMessage implements IMessage {
 	public void setNewPipeId(String newPipeId) {
 		this.newPipeId = newPipeId;
 	}
+	
+	public String getQueryName() {
+		return queryName;
+	}
 
-	private byte[] stringListToBytes(List<String> strings) {
+	public void setQueryName(String queryName) {
+		this.queryName = queryName;
+	}
+
+	private byte[] stringListToBytes(Collection<String> strings) {
 		int numberOfBytesNeeded = 4;
 
 		// Calculate Buffer Size.

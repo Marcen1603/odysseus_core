@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -236,23 +237,23 @@ public class MovingStateMessageDispatcher {
 	 *            messages.
 	 */
 	public void sendAddQuery(PeerID destinationPeer, String queryPartPql,
-			IMessageDeliveryFailedListener listener,String sharedQueryID, String masterPeerID) {
+			IMessageDeliveryFailedListener listener,String sharedQueryID, String masterPeerID, String queryName, String transCfgName, Collection<String> metaDataTypes) {
 
 		LOG.debug("Send AddQuery");
 		MovingStateInstructionMessage message = MovingStateInstructionMessage
-				.createAddQueryMsg(lbProcessId, queryPartPql, sharedQueryID, masterPeerID);
+				.createAddQueryMsg(lbProcessId, queryPartPql, sharedQueryID, masterPeerID, queryName,transCfgName,metaDataTypes);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator, message,
 				destinationPeer);
 		currentJob.addListener(listener);
 		currentJob.start();
 	}
 	
-	public void sendAddQueryForMasterQuery(PeerID destinationPeer, String queryPartPql, IMessageDeliveryFailedListener listener, List<String> peerIDs, String sharedQueryID) {
+	public void sendAddQueryForMasterQuery(PeerID destinationPeer, String queryPartPql, IMessageDeliveryFailedListener listener, List<String> peerIDs, String sharedQueryID, String queryName, String transCfgName, Collection<String> metaDataTypes) {
 		LOG.debug("Send AddQuery for Master Peer:");
 		LOG.debug("Shared Query ID:" + sharedQueryID);
 		LOG.debug("Number of other Peers:" + peerIDs.size());
 		
-		MovingStateInstructionMessage message = MovingStateInstructionMessage.createAddQueryMsgForMasterQuery(lbProcessId, queryPartPql,peerIDs, sharedQueryID);
+		MovingStateInstructionMessage message = MovingStateInstructionMessage.createAddQueryMsgForMasterQuery(lbProcessId, queryPartPql,peerIDs, sharedQueryID, queryName,transCfgName,metaDataTypes);
 		this.currentJob = new RepeatingMessageSend(peerCommunicator,message,destinationPeer);
 		currentJob.addListener(listener);
 		currentJob.start();

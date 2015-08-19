@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.messages;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
@@ -30,6 +31,12 @@ public class MovingStateInstructionMessage implements IMessage {
 
 	private int loadBalancingProcessId;
 	private int msgType;
+	private String queryName;
+
+	private String transCfgName;
+	
+	private Collection<String> metaDataTypeNames;
+
 
 	public List<String> getOtherPeerIDs() {
 		return this.otherPeers;
@@ -175,25 +182,31 @@ public class MovingStateInstructionMessage implements IMessage {
 	 *            PQL Query to install
 	 * @return Message with ADD_QUERY msgType
 	 */
-	public static MovingStateInstructionMessage createAddQueryMsg(int lbProcessId, String PQLQuery, String sharedQueryID, String masterPeerID) {
+	public static MovingStateInstructionMessage createAddQueryMsg(int lbProcessId, String PQLQuery, String sharedQueryID, String masterPeerID,String queryName, String transCfgName, Collection<String> metaDataTypes) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.PQLQuery = PQLQuery;
 		message.isMasterForQuery = false;
 		message.sharedQueryID = sharedQueryID;
+		message.setQueryName(queryName);
 		message.setMasterPeerID(masterPeerID);
 		message.msgType = ADD_QUERY;
+		message.metaDataTypeNames = metaDataTypes;
+		message.transCfgName = transCfgName;
 		return message;
 	}
 
-	public static MovingStateInstructionMessage createAddQueryMsgForMasterQuery(int lbProcessId, String PQLQuery, List<String> otherPeers, String sharedQueryID) {
+	public static MovingStateInstructionMessage createAddQueryMsgForMasterQuery(int lbProcessId, String PQLQuery, List<String> otherPeers, String sharedQueryID, String queryName, String transCfgName, Collection<String> metaDataTypes) {
 		MovingStateInstructionMessage message = new MovingStateInstructionMessage();
 		message.loadBalancingProcessId = lbProcessId;
 		message.PQLQuery = PQLQuery;
 		message.isMasterForQuery = true;
+		message.setQueryName(queryName);
 		message.otherPeers = otherPeers;
 		message.sharedQueryID = sharedQueryID;
 		message.msgType = ADD_QUERY;
+		message.metaDataTypeNames = metaDataTypes;
+		message.transCfgName = transCfgName;
 		return message;
 	}
 
@@ -294,8 +307,12 @@ public class MovingStateInstructionMessage implements IMessage {
 
 				byte[] sharedQueryIDAsBytes = sharedQueryID.getBytes();
 				byte[] masterPeerIDAsBytes = masterPeerID.getBytes();
+				byte[] queryNameAsBytes = queryName.getBytes();
+				byte[] transCfgNameAsBytes = transCfgName.getBytes();
+				byte[] metaDataTypeNamesAsBytes = stringListToBytes(metaDataTypeNames);
+				
 
-				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 4 + sharedQueryIDAsBytes.length + 1 + 4 + masterPeerIDAsBytes.length;
+				bbsize = 4 + 4 + 4 + pqlAsBytes.length + 4 + sharedQueryIDAsBytes.length + 1 + 4 + masterPeerIDAsBytes.length + 4 + queryNameAsBytes.length + 4 + transCfgNameAsBytes.length + metaDataTypeNamesAsBytes.length;
 				bb = ByteBuffer.allocate(bbsize);
 				bb.putInt(msgType);
 				bb.putInt(loadBalancingProcessId);
@@ -303,6 +320,13 @@ public class MovingStateInstructionMessage implements IMessage {
 				bb.put(pqlAsBytes);
 				bb.putInt(sharedQueryIDAsBytes.length);
 				bb.put(sharedQueryIDAsBytes);
+				bb.putInt(queryNameAsBytes.length);
+				bb.put(queryNameAsBytes);
+				
+				bb.putInt(transCfgNameAsBytes.length);
+				bb.put(transCfgNameAsBytes);
+				bb.put(metaDataTypeNamesAsBytes);
+				
 				bb.put((byte) 0);
 				bb.putInt(masterPeerIDAsBytes.length);
 				bb.put(masterPeerIDAsBytes);
@@ -312,8 +336,12 @@ public class MovingStateInstructionMessage implements IMessage {
 			byte[] pqlAsBytes = PQLQuery.getBytes();
 			byte[] otherPeersAsBytes = stringListToBytes(this.getOtherPeerIDs());
 			byte[] sharedQueryIDAsBytes = sharedQueryID.getBytes();
+			byte[] queryNameAsBytes = queryName.getBytes();
 
-			bbsize = 4 + 4 + 4 + pqlAsBytes.length + 1 + otherPeersAsBytes.length + 4 + sharedQueryIDAsBytes.length;
+			byte[] transCfgNameAsBytes = transCfgName.getBytes();
+			byte[] metaDataTypeNamesAsBytes = stringListToBytes(metaDataTypeNames);
+
+			bbsize = 4 + 4 + 4 + pqlAsBytes.length + 1 + otherPeersAsBytes.length + 4 + sharedQueryIDAsBytes.length + 4 + queryNameAsBytes.length + 4 + transCfgNameAsBytes.length + metaDataTypeNamesAsBytes.length;
 			bb = ByteBuffer.allocate(bbsize);
 			bb.putInt(msgType);
 			bb.putInt(loadBalancingProcessId);
@@ -321,6 +349,14 @@ public class MovingStateInstructionMessage implements IMessage {
 			bb.put(pqlAsBytes);
 			bb.putInt(sharedQueryIDAsBytes.length);
 			bb.put(sharedQueryIDAsBytes);
+			bb.putInt(queryNameAsBytes.length);
+			bb.put(queryNameAsBytes);
+			
+			bb.putInt(transCfgNameAsBytes.length);
+			bb.put(transCfgNameAsBytes);
+			
+			bb.put(metaDataTypeNamesAsBytes);
+			
 			bb.put((byte) 1);
 			bb.put(otherPeersAsBytes);
 			break;
@@ -425,6 +461,26 @@ public class MovingStateInstructionMessage implements IMessage {
 			bb.get(sharedQueryIDAsBytes);
 			this.sharedQueryID = new String(sharedQueryIDAsBytes);
 
+			int sizeOfQueryName = bb.getInt();
+			byte[] queryNameAsBytes = new byte[sizeOfQueryName];
+			bb.get(queryNameAsBytes);
+			this.queryName = new String(queryNameAsBytes);
+			
+			int sizeOfTransCfgName = bb.getInt();
+			byte[] transCfgNameBytes = new byte[sizeOfTransCfgName];
+			bb.get(transCfgNameBytes);
+			this.queryName = new String(transCfgNameBytes);
+			
+			this.metaDataTypeNames = new ArrayList<String>();
+			int numberOfMetaDataTypes = bb.getInt();
+			for (int i = 0; i < numberOfMetaDataTypes; i++) {
+				int sizeOfMetaDataTypeString = bb.getInt();
+				byte[] metaDataTypeAsBytes = new byte[sizeOfMetaDataTypeString];
+				bb.get(metaDataTypeAsBytes);
+				metaDataTypeNames.add(new String(metaDataTypeAsBytes));
+			}
+			
+			
 			byte masterFlag = bb.get();
 			if (masterFlag == 0) {
 				isMasterForQuery = false;
@@ -642,7 +698,7 @@ public class MovingStateInstructionMessage implements IMessage {
 		return message;
 	}
 
-	private byte[] stringListToBytes(List<String> strings) {
+	private byte[] stringListToBytes(Collection<String> strings) {
 		int numberOfBytesNeeded = 4;
 
 		// Calculate Buffer Size.
@@ -668,6 +724,32 @@ public class MovingStateInstructionMessage implements IMessage {
 
 	public void setMasterPeerID(String masterPeerID) {
 		this.masterPeerID = masterPeerID;
+	}
+	
+
+	public String getQueryName() {
+		return queryName;
+	}
+
+	public void setQueryName(String queryName) {
+		this.queryName = queryName;
+	}
+	
+
+	public String getTransCfgName() {
+		return transCfgName;
+	}
+
+	public void setTransCfgName(String transCfgName) {
+		this.transCfgName = transCfgName;
+	}
+
+	public Collection<String> getMetaDataTypeNames() {
+		return metaDataTypeNames;
+	}
+
+	public void setMetaDataTypeNames(Collection<String> metaDataTypeNames) {
+		this.metaDataTypeNames = metaDataTypeNames;
 	}
 
 }
