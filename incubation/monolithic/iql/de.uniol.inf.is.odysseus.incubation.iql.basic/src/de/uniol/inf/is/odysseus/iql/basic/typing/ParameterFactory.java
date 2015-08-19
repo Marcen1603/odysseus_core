@@ -152,7 +152,7 @@ public class ParameterFactory {
 			parameter.setDataDictionary(dd);
 			List<SDFSchema> schemata = new ArrayList<>();
 			for (LogicalSubscription subs : operator.getSubscribedToSource()) {
-				schemata.add(subs.getSchema());
+				schemata.add(subs.getTarget().getOutputSchema());
 			}
 			IAttributeResolver attributeResolver = new DirectAttributeResolver(schemata);
 			parameter.setAttributeResolver(attributeResolver);

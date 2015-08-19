@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -22,6 +23,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -43,14 +45,32 @@ public class OdysseusScriptGenerator {
 		query.setSession(session);		
 		
 		Collection<IQDLOperator> operators = query.execute();
+		Map<ILogicalOperator, IQDLOperator> operatorsMap = new HashMap<>();
 		for (IQDLOperator operator : operators) {
-			setParameters(operator, session, dd);
+			operatorsMap.put(operator.getLogicalOperator(), operator);
 		}
 		Collection<IQDLOperator> roots = getRoots(operators);
+		for (IQDLOperator root : roots) {
+			setParameters(root, new HashSet<IQDLOperator>(), operatorsMap, dd, session);
+		}
 		TopAO topAO = createTopAO(roots);
 		String pql = QDLServiceBinding.getPQLGenerator().generatePQLStatement(topAO);	
 		String script = setPreParserKeywords(query, pql);
 		return script;
+	}
+	
+	
+	private void setParameters(IQDLOperator operator, Set<IQDLOperator> visitedOperators, Map<ILogicalOperator, IQDLOperator> operatorsMap, IDataDictionary dd, ISession session) {
+		if (!visitedOperators.contains(operator)) {
+			visitedOperators.add(operator);
+			for (LogicalSubscription sub : operator.getLogicalOperator().getSubscribedToSource()) {
+				if (operatorsMap.containsKey(sub.getTarget())) {
+					setParameters(operatorsMap.get(sub.getTarget()), visitedOperators, operatorsMap, dd, session);
+				}
+			}
+			setParameters(operator, session, dd);
+		}
+		
 	}
 	
 	private String setPreParserKeywords(IQDLQuery query, String pql) {
