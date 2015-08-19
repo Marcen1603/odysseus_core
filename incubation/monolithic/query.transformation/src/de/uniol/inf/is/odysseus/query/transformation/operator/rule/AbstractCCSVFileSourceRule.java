@@ -51,6 +51,9 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 		transformationInformation.addProtocolHandler(csvFileSource.getProtocolHandler());
 		transformationInformation.addTransportHandler(csvFileSource.getTransportHandler());
 		
+		
+		transformationInformation.addIterableSource(logicalOperator);
+		
 	}
 	
 	@Override
@@ -64,8 +67,7 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 	
 		transformationInformation.addOperatorConfiguration(logicalOperator, optionMap);
 		
-		
-		transformationInformation.addIterableSource(logicalOperator);
+	
 		
 	}
 
