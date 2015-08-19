@@ -271,6 +271,7 @@ public class InactiveQueryInstructionMessage implements IMessage {
 
 				bb.putInt(transCfgNameAsBytes.length);
 				bb.put(transCfgNameAsBytes);
+				
 				bb.put(metaDataTypeNamesAsBytes);
 				
 				bb.put((byte) 0);
@@ -391,7 +392,7 @@ public class InactiveQueryInstructionMessage implements IMessage {
 			int sizeOfTransCfgName = bb.getInt();
 			byte[] transCfgNameBytes = new byte[sizeOfTransCfgName];
 			bb.get(transCfgNameBytes);
-			this.queryName = new String(transCfgNameBytes);
+			this.transCfgName = new String(transCfgNameBytes);
 			
 			this.metaDataTypeNames = new ArrayList<String>();
 			int numberOfMetaDataTypes = bb.getInt();

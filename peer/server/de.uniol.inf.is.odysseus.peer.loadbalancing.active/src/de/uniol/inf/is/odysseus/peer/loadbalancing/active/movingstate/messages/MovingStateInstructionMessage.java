@@ -469,7 +469,7 @@ public class MovingStateInstructionMessage implements IMessage {
 			int sizeOfTransCfgName = bb.getInt();
 			byte[] transCfgNameBytes = new byte[sizeOfTransCfgName];
 			bb.get(transCfgNameBytes);
-			this.queryName = new String(transCfgNameBytes);
+			this.transCfgName = new String(transCfgNameBytes);
 			
 			this.metaDataTypeNames = new ArrayList<String>();
 			int numberOfMetaDataTypes = bb.getInt();
