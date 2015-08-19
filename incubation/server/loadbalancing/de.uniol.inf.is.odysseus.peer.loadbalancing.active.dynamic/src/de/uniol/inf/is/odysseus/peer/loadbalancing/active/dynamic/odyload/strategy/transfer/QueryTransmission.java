@@ -28,12 +28,13 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 	private static final Logger LOG = LoggerFactory.getLogger(QueryTransmission.class);
 	
 	private int queryId;
-	private ILoadBalancingCommunicator communicator;
 	private List<PeerID> involvedPeers;
 	private PeerID slavePeerId;
 	private PeerLockContainer locks;
 	private ILoadBalancingLock lock;
 	private IPeerCommunicator peerCommunicator;
+	
+	private ILoadBalancingCommunicator communicator;
 	
 	private List<IQueryTransmissionListener> listeners = Lists.newArrayList();
 	
@@ -47,15 +48,10 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 		return slavePeerId;
 	}
 
-	public QueryTransmission(int queryIdToTransmit, PeerID destinationPeerId, ILoadBalancingCommunicator communicator,IPeerCommunicator peerCommunicator, ILoadBalancingLock lock) {
+	public QueryTransmission(int queryIdToTransmit, PeerID destinationPeerId, IPeerCommunicator peerCommunicator, ILoadBalancingLock lock) {
 		LOG.debug("New Transmission Handler for Query Id {}",queryIdToTransmit);
-		this.communicator = communicator;
 		this.queryId = queryIdToTransmit;
 		this.slavePeerId = destinationPeerId;
-		this.involvedPeers = communicator.getInvolvedPeers(queryIdToTransmit);
-		if(!involvedPeers.contains(slavePeerId)) {
-			involvedPeers.add(slavePeerId);
-		}
 		this.lock = lock;
 		this.peerCommunicator = peerCommunicator;
 	}
@@ -71,14 +67,20 @@ public class QueryTransmission implements IPeerLockContainerListener, ILoadBalan
 			listeners.remove(listener);
 	}
 	
-	public void initiateTransmission(IQueryTransmissionListener callback) {
+	public void initiateTransmission(IQueryTransmissionListener callback,ILoadBalancingCommunicator communicator) {
+		this.communicator = communicator;
 		LOG.debug("{} - Initiated Transmission.",queryId);
 		if(lock.requestLocalLock()) {
+
+			this.involvedPeers = communicator.getInvolvedPeers(queryId);
+			if(!involvedPeers.contains(slavePeerId)) {
+				involvedPeers.add(slavePeerId);
+			}
+			
 			LOG.debug("{} - Local lock acquired. Requesting other locks.",queryId);
 			registerListener(callback);
 			locks = new PeerLockContainer(peerCommunicator,involvedPeers,this);
 			locks.requestLocks();
-			//TODO tell that it worked... or didn't
 		} 
 		else {
 			LOG.debug("{} - No local lock acquired.",queryId);

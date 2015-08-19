@@ -21,23 +21,11 @@ public class OdyLoadCommunicatorChooser implements ICommunicatorChooser {
 @Override
 public HashMap<Integer,ILoadBalancingCommunicator> chooseCommunicators(List<Integer> queryIds,ISession session) {
 	
-		ILoadBalancingCommunicatorRegistry communicatorRegistry = OsgiServiceProvider.getCommunicatorRegistry();
 		
 		HashMap<Integer,ILoadBalancingCommunicator> queryCommunicatorMapping = new HashMap<Integer,ILoadBalancingCommunicator>();
+		
 		for (int queryId : queryIds) {
-			if(!isActive(queryId)) {
-				ILoadBalancingCommunicator inactiveQueryCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.INACTIVE_QUERIES_COMMUNICATOR_NAME);
-				queryCommunicatorMapping.put(queryId, inactiveQueryCommunicator);
-			}
-			if(!hasStatefulOperator(queryId,session)) {
-				ILoadBalancingCommunicator parallelTrackCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.STATELESS_QUERIES_COMMUNICATOR_NAME);
-				queryCommunicatorMapping.put(queryId, parallelTrackCommunicator);
-			}
-			else {
-			ILoadBalancingCommunicator movingStateCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.STATEFUL_QUERIES_COMMUNICATOR_NAME);
-			queryCommunicatorMapping.put(queryId, movingStateCommunicator);
-			}
-			
+			queryCommunicatorMapping.put(queryId,chooseCommunicator(queryId, session));
 		}
 		
 		return queryCommunicatorMapping;
@@ -87,5 +75,31 @@ public HashMap<Integer,ILoadBalancingCommunicator> chooseCommunicators(List<Inte
 		}
 
 		return queries;
+	}
+
+
+
+
+	@Override
+	public ILoadBalancingCommunicator chooseCommunicator(int queryID,
+			ISession session) {
+		
+
+		ILoadBalancingCommunicatorRegistry communicatorRegistry = OsgiServiceProvider.getCommunicatorRegistry();
+		
+		if(!isActive(queryID)) {
+			ILoadBalancingCommunicator inactiveQueryCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.INACTIVE_QUERIES_COMMUNICATOR_NAME);
+			return inactiveQueryCommunicator;
+		}
+		else {
+			if(!hasStatefulOperator(queryID,session)) {
+				ILoadBalancingCommunicator parallelTrackCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.STATELESS_QUERIES_COMMUNICATOR_NAME);
+				return parallelTrackCommunicator;
+			}
+			else {
+			ILoadBalancingCommunicator movingStateCommunicator = communicatorRegistry.getCommunicator(OdyLoadConstants.STATEFUL_QUERIES_COMMUNICATOR_NAME);
+			return movingStateCommunicator;
+			}
+		}
 	}
 }

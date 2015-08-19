@@ -10,11 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.ICommunicatorChooser;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionHandlerListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
@@ -35,7 +37,11 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 	private ILoadBalancingLock lock;
 	private IPeerCommunicator peerCommunicator;
 	
-	public QueryTransmissionHandler() {
+	private ICommunicatorChooser communicatorChooser;
+	private ISession activeSession;
+	
+	public QueryTransmissionHandler(ICommunicatorChooser chooser) {
+		this.communicatorChooser = chooser;
 		this.peerDictionary = OsgiServiceProvider.getPeerDictionary();
 		this.lock = OsgiServiceProvider.getLock();
 		this.peerCommunicator = OsgiServiceProvider.getPeerCommunicator();
@@ -68,7 +74,9 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 		failedTransmissionQueryIDs.add(transmission.getQueryId());
 		LOG.error("Transmission of Query {} to Peer {} failed.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
 		if(transmissionHandlerList.size()>0) {
-				transmissionHandlerList.get(0).initiateTransmission(this);
+
+			QueryTransmission nextTransmission = transmissionHandlerList.get(0);
+			nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
 		}
 		else {
 				LOG.info("Tried to transfer all Queries.");
@@ -88,7 +96,9 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 
 		LOG.error("Transmission of Query {} to Peer {} successful.",transmission.getQueryId(), peerDictionary.getRemotePeerName(transmission.getSlavePeerID()));
 		if(transmissionHandlerList.size()>0) {
-				transmissionHandlerList.get(0).initiateTransmission(this);
+
+			QueryTransmission nextTransmission = transmissionHandlerList.get(0);
+			nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
 		}
 		else {
 				LOG.info("Tried to transfer all Queries.");
@@ -106,7 +116,7 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 		try {
 			LOG.warn("Acquiring Local Lock failed. Waiting for {} milliseconds.",OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
 			Thread.sleep(OdyLoadConstants.WAITING_TIME_FOR_LOCAL_LOCK);
-			transmission.initiateTransmission(this);
+			transmission.initiateTransmission(this,communicatorChooser.chooseCommunicator(transmission.getQueryId(), getActiveSession()));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -114,16 +124,16 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 	}
 
 
-	public void addTransmission(int queryId, PeerID slavePeerId,
-			ILoadBalancingCommunicator communicator) {
-		this.transmissionHandlerList.add(new QueryTransmission(queryId, slavePeerId, communicator,peerCommunicator, lock));
+	public void addTransmission(int queryId, PeerID slavePeerId) {
+		this.transmissionHandlerList.add(new QueryTransmission(queryId, slavePeerId, peerCommunicator, lock));
 	}
 	
 
 	public void startTransmissions() {
 		
 		if(transmissionHandlerList!=null && transmissionHandlerList.size()>0) {
-			transmissionHandlerList.get(0).initiateTransmission(this);
+			QueryTransmission nextTransmission = transmissionHandlerList.get(0);
+			nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
 		}
 		else {
 			notifyListeners();
@@ -133,6 +143,23 @@ public class QueryTransmissionHandler implements IQueryTransmissionListener {
 	public List<Integer> getFailedTransmissions() {
 		return failedTransmissionQueryIDs;
 	}
+	
+
+	/**
+	 * Gets currently active Session.
+	 * 
+	 * @return active Session
+	 */
+	public ISession getActiveSession() {
+		if (activeSession == null || !activeSession.isValid()) {
+			activeSession = UserManagementProvider
+					.getSessionmanagement()
+					.loginSuperUser(null,
+							UserManagementProvider.getDefaultTenant().getName());
+		}
+		return activeSession;
+	}
+
 	
 	
 

@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunic
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.ICommunicatorChooser;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThreadListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionHandlerListener;
@@ -364,13 +363,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 				}
 			}
 
-			ICommunicatorChooser communicatorChooser = new OdyLoadCommunicatorChooser();
-
-			HashMap<Integer, ILoadBalancingCommunicator> communicatorMapping = communicatorChooser
-					.chooseCommunicators(chosenResult.getQueryIds(),
-							getActiveSession());
-
-			this.transmissionHandler = new QueryTransmissionHandler();
+			this.transmissionHandler = new QueryTransmissionHandler(new OdyLoadCommunicatorChooser());
 			
 
 			for (ILogicalQueryPart queryPart : allocationMap.keySet()) {
@@ -380,10 +373,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 				PeerID slavePeerId = allocationMap.get(queryPart);
 				if (slavePeerId.equals(localPeerID))
 					continue;
-				ILoadBalancingCommunicator communicator = communicatorMapping
-						.get(queryId);
-				transmissionHandler.addTransmission(queryId, slavePeerId,
-						communicator);
+				transmissionHandler.addTransmission(queryId, slavePeerId);
 			}
 			
 

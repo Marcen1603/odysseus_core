@@ -8,4 +8,5 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunic
 
 public interface ICommunicatorChooser {
 	public HashMap<Integer,ILoadBalancingCommunicator>  chooseCommunicators(List<Integer> queryIds, ISession session);
+	public ILoadBalancingCommunicator chooseCommunicator(int queryID, ISession session);
 }
