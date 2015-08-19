@@ -87,8 +87,8 @@ public class TransformationInformation {
 	
 	public void addMetaData(String metaData){
 		
-		String fullClassName = MetadataRegistry.getIMetaAttributeClass(metaData).getClass().getName();
-		String simpleClassName = MetadataRegistry.getIMetaAttributeClass(metaData).getClass().getSimpleName();
+		String fullClassName = MetadataRegistry.getMetadataType(metaData).getClass().getName();
+		String simpleClassName = MetadataRegistry.getMetadataType(metaData).getClass().getSimpleName();
 		
 		if (!metaDataTypes.containsKey(fullClassName)) {
 			metaDataTypes.put(fullClassName, simpleClassName);
