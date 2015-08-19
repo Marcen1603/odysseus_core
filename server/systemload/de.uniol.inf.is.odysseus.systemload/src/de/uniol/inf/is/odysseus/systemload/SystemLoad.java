@@ -18,10 +18,10 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
-final public class SystemLoad extends AbstractBaseMetaAttribute implements
-		ISystemLoad, Cloneable, Serializable {
+final public class SystemLoad extends AbstractBaseMetaAttribute implements ISystemLoad, Cloneable, Serializable {
 
 	private static final String LOCAL_NAME = "local";
 	private transient static final long serialVersionUID = 1L;
@@ -29,15 +29,21 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements
 	@SuppressWarnings("unchecked")
 	public transient static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ISystemLoad.class };
 
-	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(
-			CLASSES.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(CLASSES.length);
 
 	static {
+
+		List<SDFAttribute> sysLoadAttributes = new ArrayList<SDFAttribute>();
+		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "Name", SDFDatatype.STRING, null));
+		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "CpuLoad", SDFDatatype.DOUBLE, null));
+		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "MemLoad", SDFDatatype.DOUBLE, null));
+		sysLoadAttributes.add(new SDFAttribute("SystemloadEntry", "NetLoad", SDFDatatype.DOUBLE, null));
+
+		SDFSchema sysLoadEntry = SDFSchemaFactory.createNewSchema("SystemloadEntry", Tuple.class, sysLoadAttributes);
+
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("Systemload", "todo",
-				SDFDatatype.DOUBLE, null));
-		schema.add(SDFSchemaFactory.createNewMetaSchema("Systemload", Tuple.class,
-				attributes, ISystemLoad.class));
+		attributes.add(new SDFAttribute("Systemload", "EntryList", SDFDatatype.LIST_TUPLE, sysLoadEntry));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("Systemload", Tuple.class, attributes, ISystemLoad.class));
 	}
 
 	@Override
@@ -57,28 +63,58 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
-		@SuppressWarnings("rawtypes")
-		Tuple t = new Tuple(1, false);
-		t.setAttribute(0, "toto");
-		values.add(t);			
+		Tuple t = createTupleFromState();
+		values.add(t);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Tuple createTupleFromState() {
+		Tuple t = new Tuple(1, true);
+		List<Tuple<?>> l = createEntryListFromState();
+		t.setAttribute(0, l);
+		return t;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private List<Tuple<?>> createEntryListFromState() {
+		List<Tuple<?>> l = new ArrayList<>();
+		for (SystemLoadEntry v : systemLoads.values()) {
+			Tuple sysLoadEntry = new Tuple(4, false);
+			sysLoadEntry.setAttribute(0, v.getName());
+			sysLoadEntry.setAttribute(1, v.getCpuLoad());
+			sysLoadEntry.setAttribute(2, v.getMemLoad());
+			sysLoadEntry.setAttribute(3, v.getNetLoad());
+			l.add(sysLoadEntry);
+		}
+		return l;
 	}
 
 	@Override
 	public void writeValue(Tuple<?> value) {
+		List<Tuple<?>> l = value.getAttribute(0);
+		for (Tuple<?> e : l) {
+			String name = e.getAttribute(0);
+			double cpuLoad = e.getAttribute(1);
+			double memLoad = e.getAttribute(2);
+			double netLoad = e.getAttribute(3);
+			SystemLoadEntry sysEntry = new SystemLoadEntry(name,cpuLoad, memLoad, netLoad);
+			systemLoads.put(name, sysEntry);
+		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public <K> K getValue(int subtype, int index) {
-		return null;
+		return (K) createEntryListFromState();
 	}
-	
+
 	@Override
 	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
 		return new SystemLoadMergeFunction();
 	}
-
 
 	@Override
 	public ISystemLoad clone() {
@@ -87,8 +123,7 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements
 
 	@Override
 	public void addSystemLoad(String name) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(name),
-				"Name for system load must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name for system load must not be null or empty!");
 
 		// replaces older ones if necessary
 		systemLoads.put(name, new SystemLoadEntry(name));
@@ -96,8 +131,7 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements
 
 	@Override
 	public void removeSystemLoad(String name) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(name),
-				"Name for system load must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Name for system load must not be null or empty!");
 
 		systemLoads.remove(name);
 	}
@@ -132,9 +166,9 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements
 	public Collection<String> getSystemLoadNames() {
 		return systemLoads.keySet();
 	}
-	
+
 	@Override
-	public SystemLoadEntry getSystemLoad(String name){
+	public SystemLoadEntry getSystemLoad(String name) {
 		return systemLoads.get(name);
 	}
 

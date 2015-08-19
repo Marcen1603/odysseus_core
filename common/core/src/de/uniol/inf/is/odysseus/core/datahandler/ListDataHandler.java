@@ -31,10 +31,11 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	static protected List<String> types = new ArrayList<String>();
 	static{
 		types.add("MULTI_VALUE"); //??
-		types.add(SDFDatatype.LIST.getURI());
+		for (SDFDatatype d: SDFDatatype.LISTS){
+			types.add(d.getURI());
+		}
 	}
 	
-	SDFSchema subType = null;
 	IDataHandler<?> handler = null;
 	
 	public ListDataHandler(){
@@ -42,13 +43,19 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 	}
 	
 	public ListDataHandler(SDFSchema subType){
-		this.subType = subType;
-		this.handler = DataHandlerRegistry.getDataHandler(this.subType.getAttribute(0).getAttributeName(), this.subType);
+		this.handler = DataHandlerRegistry.getDataHandler(subType.getAttribute(0).getAttributeName(), subType);
 
 		//Is needed for handling of KeyValueObject
 		if(this.handler == null && subType.getAttribute(0).getDatatype().getSubType() != null) {
-			this.handler = DataHandlerRegistry.getDataHandler(this.subType.getAttribute(0).getDatatype().getSubType().toString(), this.subType);
+			SDFDatatype localSubType = subType.getAttribute(0).getDatatype().getSubType();
+			if (localSubType.isTuple()){
+				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE.toString(), subType.getAttribute(0).getSubSchema());
+			}else{
+				this.handler = DataHandlerRegistry.getDataHandler(subType.getAttribute(0).getDatatype().getSubType().toString(), subType);
+			}
 		}
+		
+		
 	}
 	
 	@Override

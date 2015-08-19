@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class DocumentDataHandler extends AbstractDataHandler<Document<?>> {
+public class DocumentDataHandler extends AbstractStreamObjectDataHandler<Document<?>> {
 
 	StringHandler stringHandler = new StringHandler();
 	
@@ -25,31 +27,48 @@ public class DocumentDataHandler extends AbstractDataHandler<Document<?>> {
 	}
 
 	@Override
-	public Document<?> readData(ByteBuffer buffer) {
+	public Document<?> readData(ByteBuffer buffer, boolean handleMetaData ) {
 		return new Document<>(stringHandler.readData(buffer));
 	}
 
 	@Override
-	public Document<?> readData(String string) {
+	public Document<?> readData(String[] input, boolean handleMetaData) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Document<?> readData(List<String> input, boolean handleMetaData) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+		
+	@Override
+	public Document<?> readData(String string, boolean handleMetaData) {
 		return new Document<>(stringHandler.readData(string));
+	}
+	
+	@Override
+	public Document<?> readData(InputStream inputStream, boolean handleMetaData) throws IOException {
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void writeData(ByteBuffer buffer, Object data) {
+	public void writeData(ByteBuffer buffer, Object data, boolean handleMetaData) {
 		stringHandler.writeData(buffer, ((Document<IMetaAttribute>)data).getContent());
 	}
 	
 	@SuppressWarnings("unchecked")
 
 	@Override
-	public void writeData(List<String> output, Object data) {
+	public void writeData(List<String> output, Object data, boolean handleMetaData) {
 		stringHandler.writeData(output, ((Document<IMetaAttribute>)data).getContent());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public int memSize(Object attribute) {
+	public int memSize(Object attribute, boolean handleMetaData) {
 		return stringHandler.memSize(((Document<IMetaAttribute>)attribute).getContent());
 	}
 
@@ -66,6 +85,18 @@ public class DocumentDataHandler extends AbstractDataHandler<Document<?>> {
 	@Override
 	public Class<?> createsType() {
 		return Document.class;
+	}
+
+	@Override
+	public void writeData(ByteBuffer buffer, Document<?> object, boolean handleMetaData) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void writeData(StringBuilder string, Object data, boolean handleMetaData) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

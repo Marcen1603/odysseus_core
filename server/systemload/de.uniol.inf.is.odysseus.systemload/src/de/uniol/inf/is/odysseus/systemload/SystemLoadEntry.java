@@ -33,7 +33,20 @@ public final class SystemLoadEntry implements Serializable, Cloneable {
 		
 		netLoad = (netInLoad + netOutLoad ) / netMax;
 	}
-	
+
+	/**
+	 * Constructor only needed for meta data transport
+	 * @param name
+	 * @param cpuLoad
+	 * @param memLoad
+	 * @param netLoad
+	 */
+	public SystemLoadEntry(String name, double cpuLoad, double memLoad, double netLoad) {
+		this.name = name;
+		this.cpuLoad = cpuLoad;
+		this.memLoad = memLoad;
+		this.netLoad = netLoad;
+	}
 	public SystemLoadEntry(SystemLoadEntry copy) {
 		this.name = copy.name;
 		

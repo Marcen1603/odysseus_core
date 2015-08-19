@@ -235,19 +235,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.BYTEBUFFER);
 		types.add(SDFDatatype.HEXSTRING);
 
-		types.add(SDFDatatype.LIST);
-		types.add(SDFDatatype.LIST_STRING);
-
-		types.add(SDFDatatype.LIST_LONG);
-		types.add(SDFDatatype.LIST_INTEGER);
-		types.add(SDFDatatype.LIST_BYTE);
-		types.add(SDFDatatype.LIST_CHAR);
-		types.add(SDFDatatype.LIST_FLOAT);
-		types.add(SDFDatatype.LIST_DOUBLE);
-		types.add(SDFDatatype.LIST_DATE);
-		types.add(SDFDatatype.LIST_BOOLEAN);
-		types.add(SDFDatatype.LIST_SHORT);
-
+		for (SDFDatatype t: LISTS){
+			types.add(t);
+		}
+		
 		types.add(SDFDatatype.STRING);
 		types.add(SDFDatatype.DOCUMENT);
 		types.add(SDFDatatype.MV);

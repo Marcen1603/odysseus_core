@@ -355,10 +355,10 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 				uri = "TUPLE";
 			} else if (type.isMultiValue()) {
 				uri = "MULTI_VALUE";
-			}
+			} 
 
 			if (!DataHandlerRegistry.containsDataHandler(uri)) {
-				throw new IllegalArgumentException("Unregistered datatype "
+				throw new IllegalArgumentException("Datatype cannot be used in transport!"
 						+ uri);
 			}
 			SDFSchema subSchema;
