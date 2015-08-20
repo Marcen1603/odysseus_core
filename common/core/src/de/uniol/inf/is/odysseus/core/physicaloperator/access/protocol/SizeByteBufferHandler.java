@@ -39,7 +39,7 @@ public class SizeByteBufferHandler<T extends IStreamObject<? extends IMetaAttrib
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
-	private ByteBufferHandler<T> objectHandler;
+	protected ByteBufferHandler<T> objectHandler;
 
 	public SizeByteBufferHandler() {
 		super();
@@ -84,11 +84,7 @@ public class SizeByteBufferHandler<T extends IStreamObject<? extends IMetaAttrib
 
 	@Override
 	public void write(T object) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(1024);
-//		ByteBufferUtil.toBuffer(buffer, (IStreamObject) object,
-//				getDataHandler(), exportMetadata);
-		getDataHandler().writeData(buffer, object);
-		buffer.flip();
+		ByteBuffer buffer = prepareObject(object);
 
 		int messageSizeBytes = buffer.remaining();
 		byte[] rawBytes = new byte[messageSizeBytes + 4];
@@ -97,6 +93,15 @@ public class SizeByteBufferHandler<T extends IStreamObject<? extends IMetaAttrib
 		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 4, messageSizeBytes);
 		getTransportHandler().send(rawBytes);
+	}
+
+	protected ByteBuffer prepareObject(T object) {
+		ByteBuffer buffer = ByteBuffer.allocate(1024);
+//		ByteBufferUtil.toBuffer(buffer, (IStreamObject) object,
+//				getDataHandler(), exportMetadata);
+		getDataHandler().writeData(buffer, object);
+		buffer.flip();
+		return buffer;
 	}
 
 	@Override
@@ -162,7 +167,7 @@ public class SizeByteBufferHandler<T extends IStreamObject<? extends IMetaAttrib
 						// logger.debug(" "+(size-currentSize));
 						objectHandler.put(message, size - currentSize);
 						// 2. das fertige Objekt weiterleiten
-						getTransfer().transfer(objectHandler.create());
+						processObject();
 						size = -1;
 						sizeBuffer.clear();
 						currentSize = 0;
@@ -177,6 +182,10 @@ public class SizeByteBufferHandler<T extends IStreamObject<? extends IMetaAttrib
 		} catch (ClassNotFoundException e) {
 			LOG.error(e.getMessage(), e);
 		}
+	}
+
+	protected void processObject() throws IOException, ClassNotFoundException {
+		getTransfer().transfer(objectHandler.create());
 	}
 
 	@Override
@@ -194,7 +203,7 @@ public class SizeByteBufferHandler<T extends IStreamObject<? extends IMetaAttrib
 		return "SizeByteBuffer";
 	}
 
-	private static void insertInt(byte[] destArray, int offset, int value) {
+	protected static void insertInt(byte[] destArray, int offset, int value) {
 		destArray[offset] = (byte) (value >>> 24);
 		destArray[offset + 1] = (byte) (value >>> 16);
 		destArray[offset + 2] = (byte) (value >>> 8);

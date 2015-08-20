@@ -80,7 +80,7 @@ public class Activator implements BundleActivator {
 		ProtocolHandlerRegistry.register(new SimpleCSVProtocolHandler());
 		ProtocolHandlerRegistry.register(new NoProtocolHandler());
 		ProtocolHandlerRegistry.register(new TextProtocolHandler());
-		ProtocolHandlerRegistry.register(new SizeByteBufferHandler());
+		//ProtocolHandlerRegistry.register(new SizeByteBufferHandler());
 		ProtocolHandlerRegistry.register(new MarkerByteBufferHandler());
 		ProtocolHandlerRegistry.register(new StringArrayProtocolHandler());
 		ProtocolHandlerRegistry.register(new SVMProtocolHandler());

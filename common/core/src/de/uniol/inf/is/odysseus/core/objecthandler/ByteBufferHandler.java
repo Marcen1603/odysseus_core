@@ -29,7 +29,7 @@ public class ByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>
 
 	private static final int BYTEBUF_INIT = 2048;
 	ByteBuffer byteBuffer = null;
-	private IStreamObjectDataHandler<?> dataHandler;
+	protected IStreamObjectDataHandler<?> dataHandler;
 	
 	public ByteBufferHandler() {
 	}
