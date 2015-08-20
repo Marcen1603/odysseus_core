@@ -74,7 +74,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 				// get sweep area from groupId
 				AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = tipo.getSweepAreaForGroup(groupId);
 				
-				// if sweep are is found, process aggregation
+				// if sweep area is found, process aggregation
 				if (sa != null){
 					synchronized (sa) {
 						List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo

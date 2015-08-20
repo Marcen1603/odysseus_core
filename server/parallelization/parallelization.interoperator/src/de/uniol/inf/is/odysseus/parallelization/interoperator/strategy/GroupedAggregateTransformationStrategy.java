@@ -325,6 +325,7 @@ public class GroupedAggregateTransformationStrategy extends
 		if (configuration.isUseParallelOperators()) {
 			operator.setNumberOfThreads(configuration
 					.getDegreeOfParallelization());
+			operator.setUseRoundRobinAllocation(true);
 		}
 	}
 

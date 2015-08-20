@@ -64,9 +64,10 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 	private boolean drainAtDone = true;
 	private boolean drainAtClose = false;
 	private boolean fastGrouping = false;
+	
 	private int numberOfThreads = 1;
 	private int maxBufferSize = 10000;
-
+	private boolean useRoundRobinAllocation = false;
 
 	public static final String AGGREGATIONS = "AGGREGATIONS";
 
@@ -92,6 +93,7 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		this.drainAtClose = op.drainAtClose;
 		this.numberOfThreads = op.numberOfThreads;
 		this.maxBufferSize = op.maxBufferSize;
+		this.useRoundRobinAllocation = op.useRoundRobinAllocation;
 		this.aggregationItems = op.aggregationItems != null ? Lists
 				.newArrayList(op.aggregationItems) : null;
 	}
@@ -324,13 +326,22 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		return numberOfThreads;
 	}
 	
-	@Parameter(type = IntegerParameter.class, optional = true)
+	@Parameter(type = IntegerParameter.class, optional = true, doc = "Defines the size of the buffers used in multithreaded execution")
 	public void setMaxBufferSize(int maxBufferSize) {
 		this.maxBufferSize  = maxBufferSize;
 	}
 	
 	public int getMaxBufferSize() {
 		return maxBufferSize;
+	}
+	
+	@Parameter(type = BooleanParameter.class, optional = true, doc = "Enables RoundRobin allocation. This is used in multithreaded execution for selecting the specific thread")
+	public void setUseRoundRobinAllocation(boolean useRoundRobinAllocation) {
+		this.useRoundRobinAllocation  = useRoundRobinAllocation;
+	}
+	
+	public boolean isUseRoundRobinAllocation() {
+		return useRoundRobinAllocation;
 	}
 
 	@Override

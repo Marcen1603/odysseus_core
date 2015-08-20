@@ -100,27 +100,26 @@ public class NonGroupedAggregateTransformationStrategy extends
 	public int evaluateCompatibility(ILogicalOperator operator) {
 		if (operator instanceof AggregateAO) {
 			AggregateAO aggregateOperator = (AggregateAO) operator;
-			if (aggregateOperator.getGroupingAttributes().isEmpty()) {
-				// if aggregation has no grouping this strategy works good
 
-				boolean everyAggregationHasOnlyOneInputAttribut = true;
-				List<AggregateItem> existingAggregationItems = aggregateOperator
-						.getAggregationItems();
-				for (AggregateItem aggregateItem : existingAggregationItems) {
-					if (aggregateItem.inAttributes.size() > 1) {
-						everyAggregationHasOnlyOneInputAttribut = false;
-					}
+			boolean everyAggregationHasOnlyOneInputAttribut = true;
+			List<AggregateItem> existingAggregationItems = aggregateOperator
+					.getAggregationItems();
+			for (AggregateItem aggregateItem : existingAggregationItems) {
+				if (aggregateItem.inAttributes.size() > 1) {
+					everyAggregationHasOnlyOneInputAttribut = false;
 				}
+			}
 
-				if (everyAggregationHasOnlyOneInputAttribut) {
-					// Only aggregations with one input attribute are allowed
-					// for partial aggregates
+			if (everyAggregationHasOnlyOneInputAttribut) {
+				// Only aggregations with one input attribute are allowed
+				// for partial aggregates
+				if (aggregateOperator.getGroupingAttributes().isEmpty()) {
 					return 100;
+				} else {
+					// if the aggregation has an grouping, there is might be a
+					// better strategy
+					return 50;
 				}
-			} else {
-				// if the aggregation has an grouping, there is might be a
-				// better strategy
-				return 50;
 			}
 		}
 		// if the operator is no aggregation, this strategy is incompatible

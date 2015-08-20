@@ -140,22 +140,22 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 	 */
 	private int parseDegree(String degreeOfParallelizationString)
 			throws OdysseusScriptException {
-		try {
+
 			int degreeOfParallelization = Integer
 					.parseInt(degreeOfParallelizationString);
 			if (degreeOfParallelization < 1) {
 				throw new OdysseusScriptException(
 						"Value for degreeOfParallelization is not valid. Only positive integer values >= 1 is allowed.");
 			}
+			if (degreeOfParallelization > IntraOperatorParallelizationConstants.MAX_DEGREE) {
+				throw new OdysseusScriptException(
+						"Maximum value for degree is "+IntraOperatorParallelizationConstants.MAX_DEGREE);
+			}
 			if (degreeOfParallelization > PerformanceDetectionHelper
 					.getNumberOfCores()) {
 				LOG.warn("Degree of parallelization is greater than available cores");
 			}
 			return degreeOfParallelization;
-		} catch (NumberFormatException e) {
-			throw new OdysseusScriptException(
-					"Value for degreeOfParallelization is not valid. Degree is no integer.");
-		}
 	}
 
 	/**

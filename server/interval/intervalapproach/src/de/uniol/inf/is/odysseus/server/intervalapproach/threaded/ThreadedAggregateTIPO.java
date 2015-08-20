@@ -55,6 +55,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 	// concurrent map which contains blocking queues for each worker thread
 	private Map<Integer, ArrayBlockingQueue<Pair<Long, R>>> queueMap = new ConcurrentHashMap<Integer, ArrayBlockingQueue<Pair<Long, R>>>();
+	private boolean useRoundRobinAllocation;
 
 	/**
 	 * Constructor for physical aggregate operator (threaded)
@@ -67,19 +68,21 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	 * @param metadataMerge
 	 * @param degree
 	 * @param buffersize
+	 * @param useRoundRobinAllocation
 	 */
 	public ThreadedAggregateTIPO(SDFSchema inputSchema, SDFSchema outputSchema,
 			List<SDFAttribute> groupingAttributes,
 			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
 			boolean fastGrouping, IMetadataMergeFunction<Q> metadataMerge,
-			int degree, int buffersize) {
+			int degree, int buffersize, boolean useRoundRobinAllocation) {
 		super(inputSchema, outputSchema, groupingAttributes, aggregations,
 				fastGrouping, metadataMerge);
 		this.maxBufferSize = buffersize;
 		this.degree = degree;
+		this.useRoundRobinAllocation = useRoundRobinAllocation;
 		// create threadgroup for grouping of worker threads
 		workerThreadGroup = new ThreadGroup(
-				"Threaded Aggregate worker threads "
+				"ThreadedAggregateTIPO worker threads "
 						+ UUID.randomUUID().toString());
 
 		// for each degree, create blocking queue and worker thread
@@ -144,11 +147,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 
 		// we need to use the threads in round robin mode, to do a identically
 		// load on the different cores
-		int threadNumber = counter;
-		counter++;
-		if (counter == degree) {
-			counter = 0;
-		}
+		int threadNumber = getThreadNumber(groupID);
 
 		// put element into queue, if queue is full this thread need to wait
 		// until worker thread takes elements out of it
@@ -159,6 +158,23 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 			queue.put(pair);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private int getThreadNumber(Long groupID) {
+		if (useRoundRobinAllocation) {
+			// if we use roundRobin allocation, we are counting until the
+			// maximum value is reached and start with 0
+			int threadNumber = counter;
+			counter++;
+			if (counter == degree) {
+				counter = 0;
+			}
+			return threadNumber;
+		} else {
+			// if no round robin is used, the thread number is the hash value of
+			// the group
+			return (int) (groupID % degree);
 		}
 	}
 
@@ -232,6 +248,7 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		map.putAll(super.getKeyValues());
 		map.put("Number of threads", String.valueOf(degree));
 		map.put("Buffersize", String.valueOf(maxBufferSize));
+		map.put("Use RoundRobin allocation", String.valueOf(useRoundRobinAllocation));
 		return map;
 
 	}
