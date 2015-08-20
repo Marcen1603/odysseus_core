@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import cc.kuka.odysseus.wrapper.audio.wav.WAVChunk;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
