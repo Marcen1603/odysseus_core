@@ -43,6 +43,8 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strate
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.SimulatedAnnealingQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer.QueryTransmissionHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.trigger.MonitoringThread;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.CalcLatencyPOTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.DataratePOTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SharedQueryIDModifier;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SinkTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SourceTransformer;
@@ -235,12 +237,25 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 
 		for (int queryID : failedQueries) {
 			if (TransformationHelper.hasRealSinks(queryID)) {
-				SinkTransformer.replaceSinks(queryID,
-						networkManager.getLocalPeerID(), getActiveSession());
-			}
+				if(TransformationHelper.hasCalclatencyPOs(queryID)) {
+					LOG.debug("Found CalcLatencyPO in Query. Using CalcLatencyTransformer instead.");
+					CalcLatencyPOTransformer.replaceCalcLatencyPO(queryID, networkManager.getLocalPeerID(), getActiveSession());
+				}
+				else {
+					SinkTransformer.replaceSinks(queryID,
+							networkManager.getLocalPeerID(), getActiveSession());
+				}
+				}
+			
 			if (TransformationHelper.hasRealSources(queryID)) {
-				SourceTransformer.replaceSources(queryID,
-						networkManager.getLocalPeerID(), getActiveSession());
+				if(TransformationHelper.hasDataratePOs(queryID)) {
+					LOG.debug("Found DataratePO in Query. Using DatarateTransformer instead.");
+					DataratePOTransformer.replaceDataratePOs(queryID, networkManager.getLocalPeerID(), getActiveSession());
+				}
+				else {
+					SourceTransformer.replaceSources(queryID,
+							networkManager.getLocalPeerID(), getActiveSession());
+				}
 			}
 		}
 	}

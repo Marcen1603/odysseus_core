@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.datarate.physicaloperator.DataratePO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -36,16 +37,16 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServicePro
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 
-public class SourceTransformer {
+public class DataratePOTransformer {
 
 	/**
 	 * Logger
 	 */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(SourceTransformer.class);
+			.getLogger(DataratePOTransformer.class);
 
 	@SuppressWarnings({ "rawtypes" })
-	public static void replaceSources(int queryID, PeerID localPeerID, ISession session) {
+	public static void replaceDataratePOs(int queryID, PeerID localPeerID, ISession session) {
 		
 		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
@@ -56,8 +57,8 @@ public class SourceTransformer {
 
 		// Get all Subscriptions that have a real sink
 		for (IPhysicalOperator op : operatorsInQuery) {
-			if (TransformationHelper.isRealSource(op)) {
-				LOG.debug("Operator {} seems to be a real source.", op.getName());
+			if (op instanceof DataratePO) {
+				LOG.debug("Operator {} seems to be a datarate Operator.", op.getName());
 				ISource source = (ISource) op;
 				for (Object obj : source.getSubscriptions()) {
 					if (obj instanceof ISubscription) {
@@ -88,8 +89,7 @@ public class SourceTransformer {
 		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		IExcludedQueriesRegistry excludedQueryRegistry = OsgiServiceProvider.getExcludedQueryRegistry();
 		
-
-		ILogicalOperator logicalSource = TransformationHelper.getLogicalSourceToPhysicalSource(sourceOperator, queryID, session);
+		ILogicalOperator logicalSource = TransformationHelper.getLogicalForPhysicalDatarateOperator(sourceOperator, queryID, session);
 
 		List<ControllablePhysicalSubscription> physicalSubscriptionsToReplace = TransformationHelper.getSubscriptionsToReplace(sourceOperator, queryID, false);
 
@@ -115,7 +115,8 @@ public class SourceTransformer {
 			if (firstSubscription) {
 
 				senderAO = TransformationHelper.createJxtaSenderAO(sourceOperator,peerID,newPipe);
-				Pair<Integer, IPhysicalOperator> queryIDSenderPair = TransformationHelper.createNewQueryWithFromLogicalOperator(senderAO, queryID,  session,logicalSource.getName());
+				//Using source name instead of "Datarate" to set Queryname ;)
+				Pair<Integer, IPhysicalOperator> queryIDSenderPair = TransformationHelper.createNewQueryWithFromLogicalOperator(senderAO, queryID,  session,logicalSource.getSubscribedToSource(0).getTarget().getName());
 				newQueryID = queryIDSenderPair.getE1();
 				senderPO = (JxtaSenderPO)queryIDSenderPair.getE2();
 				firstSubscription = false;

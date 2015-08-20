@@ -36,6 +36,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterParserID;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterPriority;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.datarate.logicaloperator.DatarateAO;
+import de.uniol.inf.is.odysseus.datarate.physicaloperator.DataratePO;
+import de.uniol.inf.is.odysseus.latency.physicaloperator.CalcLatencyPO;
+import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
@@ -168,6 +172,42 @@ public class TransformationHelper {
 		return source;
 	}
 	
+	/***
+	 * Attempts to find logical DatarateAO for physical DataratePO. This is done by comparing the names of the source for DataratePO.
+	 * This probably won't always work but is still better than not getting the logical Op.
+	 * Might be replaced by .getLogicalOperator in the future.
+	 * @param datarateOp
+	 * @param queryID
+	 * @param session
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public static ILogicalOperator getLogicalForPhysicalDatarateOperator(IPhysicalOperator datarateOp, int queryID,ISession session) {
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
+		ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryID,
+				session);
+		List<ILogicalOperator> operatorsInLogicalQuery = Lists.newArrayList();
+		RestructHelper.collectOperators(logicalQuery.getLogicalPlan(),
+				operatorsInLogicalQuery);
+
+		ILogicalOperator source = null;
+		
+		ISource realSource = (ISource)((DataratePO)datarateOp).getSubscribedToSource(0).getTarget();
+		String nameOfRealSource = realSource.getName();
+		
+
+		for (ILogicalOperator op : operatorsInLogicalQuery) {
+			if (!(op instanceof DatarateAO))
+				continue;
+			if (op.getSubscribedToSource(0).getTarget().getName().equals(nameOfRealSource)) {
+				source = op;
+				break;
+			}
+		}
+		return source;
+	}
+	
 
 	
 	public static ILogicalOperator getLogicalSinkToPhysicalSink(IPhysicalOperator sinkOperator,int queryID,ISession session) {
@@ -189,6 +229,59 @@ public class TransformationHelper {
 			}
 		}
 		return sink;
+	}
+	
+
+	/***
+	 * Attempts to get logical CalcLatencyOp for Physical OP. Compared by name.
+	 * This is probably not a good solution but a.t.m. the only working one.
+	 * @param calclatencyOp
+	 * @param queryID
+	 * @param session
+	 * @return
+	 */
+	public static ILogicalOperator getLogicalCalcLatencyOperatorToPhysicalCalcLatencyOperator(IPhysicalOperator calclatencyOp,int queryID,ISession session) {
+		
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
+		ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryID, session);
+		List<ILogicalOperator> operatorsInLogicalQuery = Lists.newArrayList();
+		RestructHelper.collectOperators(logicalQuery.getLogicalPlan(), operatorsInLogicalQuery);
+		
+		ILogicalOperator sink=null;
+		
+		for(ILogicalOperator op: operatorsInLogicalQuery) {
+			if(!(op instanceof CalcLatencyAO))
+				continue;
+			if(op.getName().equals(calclatencyOp.getName())) {
+				sink = op;
+				break;
+			}
+		}
+		return sink;
+	}
+	
+	public static boolean hasDataratePOs(int queryID) {
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
+		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
+		for(IPhysicalOperator op : physicalOps) {
+			if(op instanceof DataratePO)
+				return true;
+		}
+		return false;
+	}
+	
+
+	public static boolean hasCalclatencyPOs(int queryID) {
+		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+		
+		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
+		for(IPhysicalOperator op : physicalOps) {
+			if(op instanceof CalcLatencyPO)
+				return true;
+		}
+		return false;
 	}
 	
 
