@@ -68,6 +68,8 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 	private MonitoringThread monitoringThread = null;
 
 	private boolean firstAllocationTry = true;
+	
+	private boolean strategyIsRunning=false;
 
 	/**
 	 * Gets currently active Session.
@@ -97,15 +99,21 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 
 	@Override
 	public void startMonitoring() throws LoadBalancingException {
-
+		strategyIsRunning = true;
 		startNewMonitoringThread();
 
 	}
 
 	private void startNewMonitoringThread() {
-
+		//Only start new Thread if strategy is still running! 
+		if(!strategyIsRunning) {
+			LOG.info("Not restarting Monitoring Thread, as Strategy is stopped.");
+			return;
+		}
+		
 		IPeerResourceUsageManager usageManager = OsgiServiceProvider
 				.getUsageManager();
+		IPeerDictionary peerDictionary = OsgiServiceProvider.getPeerDictionary();
 
 		if (usageManager == null) {
 			LOG.error("Could not start monitoring: No resource Usage Manager bound.");
@@ -115,7 +123,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 		synchronized (threadManipulationLock) {
 			if (monitoringThread == null) {
 				LOG.info("Starting to monitor Peer.");
-				monitoringThread = new MonitoringThread(usageManager, this);
+				monitoringThread = new MonitoringThread(usageManager,peerDictionary, this);
 				monitoringThread.start();
 			} else {
 				LOG.info("Monitoring Thread already running.");
@@ -125,6 +133,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 
 	@Override
 	public void stopMonitoring() {
+		strategyIsRunning = false;
 		synchronized (threadManipulationLock) {
 			if (monitoringThread != null) {
 				LOG.info("Stopping monitoring Peer.");
