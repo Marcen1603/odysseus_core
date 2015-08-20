@@ -4,7 +4,7 @@ List<SDFExpression> $operatorVariable$SDFExpressionList = new ArrayList<SDFExpre
 
 $sdfExpressionList : {sdfExpression |
 
-$operatorVariable$SDFExpressionList.add(new SDFExpression("$sdfExpression.expressionString$", mep));
+$operatorVariable$SDFExpressionList.add(new SDFExpression("$sdfExpression$", mep));
 	
 }$
 
