@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritab
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatadictionaryProviderListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
@@ -408,6 +409,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			receiverOperator.setOutputSchema(outputSchema);
 			receiverOperator.setBaseTimeunit(advertisement.getBaseTimeunit());
 			receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
+			receiverOperator.setLocalMetaAttribute(MetadataRegistry.getMetadataType(outputSchema.getMetaAttributeNames()));
 			receiverOperator.setSchemaName(advertisement.getOutputSchema().getURI());
 			receiverOperator.setName(realSrcNameToUse + "_Receive");
 			receiverOperator.setImportedSourceAdvertisement(advertisement);

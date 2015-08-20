@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -279,7 +280,7 @@ public class TransformationHelper {
 		receiverAO.setPipeID(pipeID.toString());
 		receiverAO.setOutputSchema(schema.clone());
 		receiverAO.setSchema(schema.clone().getAttributes());
-		receiverAO.setMetaschemata(schema.getMetaschema());
+		receiverAO.setLocalMetaAttribute(MetadataRegistry.getMetadataType(schema.getMetaAttributeNames()));
 		receiverAO.setName("JxtaReceiver " + op.getName());
 		receiverAO.setSchemaName(schema.getURI());
 		return receiverAO;

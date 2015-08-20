@@ -536,6 +536,9 @@ public class MovingStateHelper {
 		copy.setPeerID(newPeerId);
 		copy.setSchema(logicalReceiver.getSchema());
 
+		copy.setMetadata(logicalReceiver.getLocalMetaAttribute());
+		copy.setLocalMetaAttribute(logicalReceiver.getLocalMetaAttribute());
+
 
 		JxtaReceiverPO physicalOriginal = (JxtaReceiverPO) LoadBalancingHelper.getPhysicalJxtaOperator(false, oldPipeId);
 		if(physicalOriginal==null) {

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.logicaloperator;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +11,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
@@ -20,9 +21,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MetaAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.parameter.CreateSDFMetaSchemaParameter;
 
 @LogicalOperator(name = "JXTARECEIVER", doc = "Received data with JXTA", minInputPorts = 0, maxInputPorts = 0, category = {LogicalOperatorCategory.SOURCE}, hidden = true)
 public class JxtaReceiverAO extends AbstractLogicalOperator {
@@ -37,8 +39,8 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	private String schemaName;
 	private String basetimeUnit;
 	private SourceAdvertisement importedSrcAdvertisement;
-	
-	private List<SDFMetaSchema> metaschemata;
+
+	private IMetaAttribute localMetaAttribute;
 	
 	public JxtaReceiverAO() {
 		super();
@@ -50,14 +52,23 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		this.pipeID = other.pipeID;
 		this.peerID = other.peerID;
 		this.assignedSchema = other.assignedSchema.clone();
-		this.metaschemata = other.metaschemata;
 		this.importedSrcAdvertisement = other.importedSrcAdvertisement;
 		this.basetimeUnit = other.basetimeUnit;
 		this.schemaName = other.schemaName;
+		this.localMetaAttribute = other.localMetaAttribute;
 		this.importedSrcAdvertisement = other.importedSrcAdvertisement;
 		
 		setParameterInfos(other.getParameterInfos());
 		appendToAssignedSchema(basetimeUnit);
+		appendMetaSchemaToSchema(localMetaAttribute);
+	}
+
+	private void appendMetaSchemaToSchema(IMetaAttribute metaAttribute) {
+		if(assignedSchema!=null && metaAttribute!=null) {
+			List<SDFMetaSchema> metaSchema = metaAttribute.getSchema();
+			assignedSchema.setMetaSchema(metaSchema);
+		}
+		
 	}
 
 	@Override
@@ -123,16 +134,8 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 			assignedSchema = SDFSchemaFactory.createNewTupleSchema("", outputSchema);
 		}
 		
-		if(assignedSchema.getMetaschema()!=null) {
-			setMetaschemata(assignedSchema.getMetaschema());
-		}
-		else {
-			if(this.metaschemata!=null) {
-				assignedSchema.setMetaSchema(metaschemata);
-			}
-		}
-		
 		appendToAssignedSchema(basetimeUnit);
+		appendMetaSchemaToSchema(localMetaAttribute);
 		
 		addParameterInfo("SCHEMA", schemaToString(assignedSchema.getAttributes()));
 	}
@@ -147,24 +150,8 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		this.basetimeUnit = baseTimeUnit;
 		
 		appendToAssignedSchema(baseTimeUnit);
+		appendMetaSchemaToSchema(localMetaAttribute);
 	}
-	
-	
-
-	public List<SDFMetaSchema> getMetaschemata() {
-		return metaschemata;
-	}
-
-	@Parameter(name="METASCHEMATA", type = CreateSDFMetaSchemaParameter.class, isList=true, optional=false)
-	public void setMetaschemata(List<SDFMetaSchema> metaschemata) {
-		this.metaschemata = metaschemata;
-		addParameterInfo("METASCHEMATA",metaSchemataToString(metaschemata));
-		if(this.getOutputSchema()!=null) {
-			this.assignedSchema.setMetaSchema(metaschemata);
-		}
-		
-	}
-
 	
 
 	private void appendToAssignedSchema(String baseTimeUnit) {
@@ -175,20 +162,10 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 			constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, baseTimeunit));
 			assignedSchema = SDFSchemaFactory.createNewWithContraints(constraints, assignedSchema);
 			
-			if(metaschemata!=null) {
-				assignedSchema.setMetaSchema(metaschemata);
-			}
-			
-			/*
-			// Workaround
-			List<SDFMetaSchema> metaSchemaList = Lists.newArrayList();
-			metaSchemaList.addAll(TimeInterval.schema);
-			assignedSchema = SDFSchemaFactory.createNewWithMetaSchema(assignedSchema, metaSchemaList );
-			*/
-			
 			addParameterInfo("SCHEMA", schemaToString(assignedSchema.getAttributes()));
 		}
 	}
+	
 	
 	public String getBaseTimeunit() {
 		return basetimeUnit;
@@ -202,9 +179,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		if( assignedSchema != null ) {
 			assignedSchema = SDFSchemaFactory.createNewTupleSchema(schemaName, assignedSchema.getAttributes());
 			appendToAssignedSchema(basetimeUnit);
-			if(metaschemata!=null) {
-				assignedSchema.setMetaSchema(metaschemata);
-			}
+			appendMetaSchemaToSchema(localMetaAttribute);
 		}
 	}
 	
@@ -247,31 +222,6 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		sb.append("]");
 		return sb.toString();
 	}
-	
-	private static String metaSchemataToString(List<SDFMetaSchema> metaSchemata) {
-		if(metaSchemata.isEmpty()) {
-			return "[]";
-		}
-		
-		
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		
-		Iterator<SDFMetaSchema> iter = metaSchemata.iterator();
-		while(iter.hasNext()) {
-			sb.append(singeMetaSchemaToString(iter.next()));
-			if(iter.hasNext()) {
-				sb.append(',');
-			}
-		}
-		
-		
-		sb.append("]");
-		
-		return sb.toString();
-		
-	}
 
 	public SDFSchema getAssignedSchema() {
 		return assignedSchema;
@@ -279,79 +229,33 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 
 	public void setAssignedSchema(SDFSchema assignedSchema) {
 		this.assignedSchema = assignedSchema;
-		if(this.assignedSchema.getMetaschema()!=null) {
-			setMetaschemata(this.assignedSchema.getMetaschema());
-		}
+		appendMetaSchemaToSchema(localMetaAttribute);
 	}
+	
+
+	@Parameter(type = MetaAttributeParameter.class, name = "metaAttribute", isList = false, optional = false,possibleValues="getMetadataTypes", doc = "If set, this value overwrites the meta data created from this source.")
+	public void setLocalMetaAttribute(IMetaAttribute metaAttribute){
+		this.localMetaAttribute = metaAttribute;
+		appendMetaSchemaToSchema(localMetaAttribute);
+	}
+	
+
+	
+	public IMetaAttribute getLocalMetaAttribute() {
+		return localMetaAttribute;
+	}
+	
+
+	
+	public List<String> getMetadataTypes(){
+		return new ArrayList<String>(MetadataRegistry.getNames());
+	}
+	
+
 	
 	@Override
 	public boolean isSinkOperator() {
 		return false;
 	}
 	
-	
-	private static String singeMetaSchemaToString(SDFMetaSchema metaschema) {
-		String uri = metaschema.getURI();
-		String metaelement = metaschema.getMetaAttribute().getName();
-		String metaElementDataType = metaschema.getType().getName();
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		sb.append("'");
-		sb.append(uri);
-		sb.append("','");
-		sb.append(metaelement);
-		sb.append("','");
-		sb.append(metaElementDataType);
-		sb.append("',[");
-		
-		Iterator<SDFAttribute> iter = metaschema.iterator();
-		while(iter.hasNext()) {
-			SDFAttribute nextAttribute = iter.next();
-			sb.append(getPQLForAttribute(nextAttribute));
-			if(iter.hasNext()) {
-				sb.append(",");
-			}
-		}
-		
-		sb.append("]]");
-		
-		
-		return sb.toString();
-	}
-	
-	private static String getPQLForAttribute(SDFAttribute attribute) {
-		String attributeFullName = attribute.getAttributeName();
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		
-		if (!Strings.isNullOrEmpty(attribute.getSourceName())) {
-			sb.append("'").append(attribute.getSourceName()).append("',");
-		}
-		
-		sb.append("'").append(attributeFullName).append("','").append(attribute.getDatatype().getURI()).append("'");
-		if (attribute.getUnit() != null || attribute.getDtConstraints().size() > 0) {
-			sb.append(",[");
-			if (attribute.getUnit() != null) {
-				sb.append("['Unit','").append(attribute.getUnit()).append("']");
-				if (attribute.getDtConstraints().size() > 0) {
-					sb.append(",");
-				}
-			}
-			if (attribute.getDtConstraints().size() > 0) {
-				Iterator<SDFConstraint> iter = attribute.getDtConstraints().iterator();
-				for (int i = 0; i < attribute.getDtConstraints().size(); i++) {
-					SDFConstraint cs = iter.next();
-					sb.append("['").append(cs.getURIWithoutQualName()).append("','").append(cs.getValue()).append("']");
-					if (i < attribute.getDtConstraints().size() - 1) {
-						sb.append(",");
-					}
-				}
-			}
-			sb.append("]");
-		}
-
-		sb.append("]");
-		return sb.toString();
-	}
 }

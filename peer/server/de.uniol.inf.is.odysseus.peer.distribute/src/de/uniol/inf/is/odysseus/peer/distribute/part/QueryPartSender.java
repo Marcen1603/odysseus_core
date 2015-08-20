@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionExcept
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
@@ -330,8 +331,8 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 				}
 				access.setPipeID(pipeID.toString());
 				access.setSchema(sourceOp.getOutputSchema().getAttributes());
+				access.setLocalMetaAttribute(MetadataRegistry.getMetadataType(sourceOp.getOutputSchema().getMetaAttributeNames()));
 				access.setSchemaName(sourceOp.getOutputSchema().getURI());
-				access.setMetaschemata(sourceOp.getOutputSchema().getMetaschema());
 				access.setPeerID(allocationMap.get(sourceQueryPart).toString());
 				return access;
 			}
@@ -368,6 +369,7 @@ public class QueryPartSender implements IPeerCommunicatorListener {
 						outputSchema.setMetaSchema(advertisement.getMetaSchemata());
 						receiverOperator.setOutputSchema(outputSchema);
 						receiverOperator.setSchema(advertisement.getOutputSchema().getAttributes());
+						receiverOperator.setMetadata(MetadataRegistry.getMetadataType(outputSchema.getMetaAttributeNames()));
 						receiverOperator.setBaseTimeunit(advertisement.getBaseTimeunit());
 						receiverOperator.setSchemaName(advertisement.getOutputSchema().getURI());
 						receiverOperator.setName(accessAO.getAccessAOName().getResourceName() + "_Receive");

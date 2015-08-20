@@ -204,11 +204,11 @@ public class LoadBalancingHelper {
 		receiver.setPipeID(pipeID);
 		receiver.setPeerID(connection.remotePeerID);
 		receiver.setSchema(connection.schema.clone().getAttributes());
+		receiver.setLocalMetaAttribute(MetadataRegistry.getMetadataType(connection.schema.getMetaAttributeNames()));
 		receiver.setSchemaName(connection.schema.clone().getURI());
 		receiver.connectSink(connection.localOperator, connection.port, 0,
 				connection.schema.clone());
 		receiver.setBaseTimeunit(btu);
-		receiver.setMetaschemata(connection.schema.getMetaschema());
 		LOG.debug("Created RECEIVER with PeerID " + connection.remotePeerID);
 		return receiver;
 	}
