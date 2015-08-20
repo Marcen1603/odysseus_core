@@ -198,7 +198,7 @@ public class CreateRMap {
 	}
 
 	private static boolean ignoreDirs(String name) {
-		if(isOneOfIgnoreCase(name, ".metadata", "restricted", "application","incubation")){
+		if(isOneOfIgnoreCase(name, ".metadata", "restricted", "application", "incubation", "3rdParty")){
 			return true; 
 		}
 		if(name.toLowerCase().startsWith("buckminster")){
