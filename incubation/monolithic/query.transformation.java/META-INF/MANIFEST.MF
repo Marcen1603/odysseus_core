@@ -26,8 +26,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.query.transformation,
  de.uniol.inf.is.odysseus.relational_interval,
  org.eclipse.core.runtime,
  com.google.code.gson;bundle-version="2.2.4"
-Service-Component: OSGI-INF/JavaTargetPlatform.xml,OSGI-INF/MultipleSourceExecutor.xml,OSGI-INF/CSlidingAdvanceTimeWindowTIPORule.xml,OSGI-INF/CCSVFileSourceRule.xml,OSGI-INF/CSelectAORule.xml,OSGI-INF/CCSVFileSinkRule.xml,OSGI-INF/CRelationalProjectAORule.xml,OSGI-INF/CStreamAORule.xml,OSGI-INF/CSlidingTimeWindowTIPORule.xml,OSGI-INF/CSlidingPeriodicWindowTIPORule.xml,
- OSGI-INF/CJoinTIPORule.xml
+Service-Component: OSGI-INF/JavaTargetPlatform.xml,OSGI-INF/MultipleSourceExecutor.xml,OSGI-INF/CSlidingAdvanceTimeWindowTIPORule.xml,OSGI-INF/CCSVFileSourceRule.xml,OSGI-INF/CSelectAORule.xml,OSGI-INF/CCSVFileSinkRule.xml,OSGI-INF/CRelationalProjectAORule.xml,OSGI-INF/CStreamAORule.xml,OSGI-INF/CSlidingTimeWindowTIPORule.xml,OSGI-INF/CSlidingPeriodicWindowTIPORule.xml,OSGI-INF/CJoinTIPORule.xml,
+ OSGI-INF/CRelationalMapPORule.xml
 Bundle-ClassPath: .,
  templates/,
  ST-4.0.8.jar

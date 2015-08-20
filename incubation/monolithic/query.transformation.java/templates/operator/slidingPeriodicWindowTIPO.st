@@ -5,5 +5,5 @@ SlidingPeriodicWindowTIPO $operatorVariable$PO = new SlidingPeriodicWindowTIPO(T
 		 new TimeValueItem($windowSize.time$,TimeUnit.valueOf("$windowSize.unit$")),
 		 new TimeValueItem($windowSlide.time$,TimeUnit.valueOf("$windowSlide.unit$")),
 		 $operatorVariable$InputSchemaSDFSchema);		
-
+	$operatorVariable$PO.setOutputSchema($operatorVariable$SDFSchema);
 >>

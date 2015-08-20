@@ -8,7 +8,7 @@ selectPO(operatorVariable,predicateValue)::=<<
 	$operatorVariable$Predicate.init($operatorVariable$SDFSchema, null);
 
 	SelectPO $operatorVariable$PO = new SelectPO($operatorVariable$Predicate);
-	
+	$operatorVariable$PO.setOutputSchema($operatorVariable$SDFSchema);
 		
 		
 >>

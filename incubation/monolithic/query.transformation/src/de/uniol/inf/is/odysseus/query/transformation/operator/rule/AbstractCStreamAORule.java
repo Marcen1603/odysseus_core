@@ -45,11 +45,11 @@ public abstract class AbstractCStreamAORule extends AbstractRule{
 		
 		String transportHandler = accessAO.getTransportHandler();
 		String protocolHandler = accessAO.getProtocolHandler();
+		String dataHandler = accessAO.getDataHandler();
 		
 		transformationInformation.addTransportHandler(transportHandler);
 		transformationInformation.addProtocolHandler(protocolHandler);
-		
-
+		transformationInformation.addDataHandler(dataHandler);
 	}
 
 
