@@ -2,9 +2,11 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeComparable;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface IPunctuation extends ITimeComparable, IStreamable, Serializable {
 
@@ -22,6 +24,16 @@ public interface IPunctuation extends ITimeComparable, IStreamable, Serializable
 	 */
 	boolean isHeartbeat();
 	
+	byte getNumber();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	SDFSchema getSchema();
+	
+	Tuple<?> getValue();
+		
 	IPunctuation clone();
 
 	IPunctuation clone(PointInTime p_start);

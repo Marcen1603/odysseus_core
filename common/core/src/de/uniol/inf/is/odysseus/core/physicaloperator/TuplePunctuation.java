@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * This punctuation holds a tuple as payload.
@@ -115,5 +116,18 @@ public class TuplePunctuation<T extends Tuple<M>, M extends ITimeInterval>
 		builder.append("]");
 		return builder.toString();
 	}
+
+	@Override
+	public SDFSchema getSchema() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Tuple<?> getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

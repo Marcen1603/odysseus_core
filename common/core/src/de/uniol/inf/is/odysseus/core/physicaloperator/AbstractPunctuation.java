@@ -1,12 +1,13 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 
 abstract public class AbstractPunctuation implements
 		IPunctuation {
 
 	private static final long serialVersionUID = 1L;
+	
+	final public byte NUMBER = -1; 
 	
 	final PointInTime point;
 	
@@ -60,6 +61,11 @@ abstract public class AbstractPunctuation implements
 	@Override
 	public String toString() {
 		return this.getClass()+" "+getTime();
+	}
+	
+	@Override
+	public byte getNumber() {
+		return NUMBER;
 	}
 	
 	@Override

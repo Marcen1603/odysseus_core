@@ -2,21 +2,27 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.objecthandler.ObjectByteConverter;
 import de.uniol.inf.is.odysseus.core.objecthandler.PunctAwareByteBufferHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NewFilenamePunctuation;
 
 public class OdysseusProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>> extends SizeByteBufferHandler<T> {
 	
 	final static byte OBJECT = 0;
 	final static byte PUNCT = 1;
+	
 	
 	public OdysseusProtocolHandler(){
 	}
@@ -37,14 +43,25 @@ public class OdysseusProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 	@Override
 	public void writePunctuation(IPunctuation punctuation) throws IOException {
 		ByteBuffer buffer = prepareObject(punctuation);
-		sendWithTypeInfo(buffer,PUNCT);
+		sendWithTypeInfo(buffer,punctuation.getNumber());
 	}
 	
 	private ByteBuffer prepareObject(IPunctuation punctuation) {
-		byte[] data = ObjectByteConverter.objectToBytes(punctuation);
-		ByteBuffer buffer = ByteBuffer.allocate(data.length+4);
-		buffer.putInt(data.length);
-		buffer.put(data);
+		ByteBuffer buffer;
+		int puncNumber = punctuation.getNumber();
+		// TODO: Move to registry
+		switch(puncNumber){
+		case 1:
+		case 2:
+			buffer = ByteBuffer.allocate(1024);
+			PunctAwareByteBufferHandler.dataHandlerList.get(puncNumber-1).writeData(buffer, punctuation.getValue());
+			break;
+		default:
+			byte[] data = ObjectByteConverter.objectToBytes(punctuation);
+			buffer = ByteBuffer.allocate(data.length+4);
+			buffer.putInt(data.length);
+			buffer.put(data);
+		}
 		buffer.flip();
 		return buffer;
 	}
