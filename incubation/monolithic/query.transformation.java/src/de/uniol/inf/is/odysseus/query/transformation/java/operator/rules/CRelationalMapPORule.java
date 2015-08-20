@@ -18,12 +18,11 @@ public class CRelationalMapPORule extends  AbstractCRelationalMapPORule{
 	
 	@Override
 	public CodeFragmentInfo getCode(ILogicalOperator logicalOperator) {
-		
 		CodeFragmentInfo mapPO = new CodeFragmentInfo();
-		
+	
 		if(logicalOperator instanceof MapAO){
 		
-		
+	
 			MapAO mapAO = (MapAO)logicalOperator;
 		
 			String operatorVariable = JavaTransformationInformation.getInstance().getVariable(logicalOperator);

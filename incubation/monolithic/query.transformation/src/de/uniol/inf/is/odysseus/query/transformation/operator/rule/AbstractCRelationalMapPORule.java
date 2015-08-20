@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
@@ -18,9 +19,9 @@ public abstract class AbstractCRelationalMapPORule extends AbstractRule{
 	public boolean isExecutable(ILogicalOperator logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 		if(logicalOperator instanceof MapAO){
-			
-			
-			return true;
+			if (((MapAO)logicalOperator).getInputSchema().getType() == Tuple.class) {
+				return true;
+			}
 		}
 		return false;
 	}
