@@ -54,7 +54,7 @@ public class MonitoringThread extends Thread {
 		while(isActive) {
 				
 			
-				LOG.info("Looking up resource usage");
+				LOG.debug("Looking up resource usage");
 				
 
 				

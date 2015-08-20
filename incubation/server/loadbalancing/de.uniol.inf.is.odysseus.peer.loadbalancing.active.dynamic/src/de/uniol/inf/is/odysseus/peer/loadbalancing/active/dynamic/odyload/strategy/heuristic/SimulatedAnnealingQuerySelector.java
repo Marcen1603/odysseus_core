@@ -70,8 +70,8 @@ public class SimulatedAnnealingQuerySelector implements IQuerySelectionStrategy 
 
 		}
 
-		LOG.info("Finished suimulated annealing, best found proposal is:");
-		LOG.info(bestSolution.toString());
+		LOG.debug("Finished suimulated annealing, best found proposal is:");
+		LOG.debug(bestSolution.toString());
 				
 		return bestSolution;
 	}

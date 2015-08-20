@@ -22,10 +22,10 @@ public class GreedyQuerySelector implements IQuerySelectionStrategy {
 	@Override
 	public QueryCostMap selectQueries(QueryCostMap allQueries, double minCpuLoad, double minMemLoad, double minNetLoad) {
 		
-		LOG.info("Greedy Selection: Need to find combination to remove:");
-		LOG.info("{} of CPU-Load",minCpuLoad);
-		LOG.info("{} of MEM-Load",minMemLoad);
-		LOG.info("{} of NET-Load",minNetLoad);
+		LOG.debug("Greedy Selection: Need to find combination to remove:");
+		LOG.debug("{} of CPU-Load",minCpuLoad);
+		LOG.debug("{} of MEM-Load",minMemLoad);
+		LOG.debug("{} of NET-Load",minNetLoad);
 		
 		
 		QueryCostMap chosenSubset = new QueryCostMap();
@@ -38,8 +38,8 @@ public class GreedyQuerySelector implements IQuerySelectionStrategy {
 			chosenSubset.add(iter.next().clone());
 		}
 		
-		LOG.info("Chosen Subset is:");
-		LOG.info(chosenSubset.toString());
+		LOG.debug("Chosen Subset is:");
+		LOG.debug(chosenSubset.toString());
 		return chosenSubset;
 	
 	}
