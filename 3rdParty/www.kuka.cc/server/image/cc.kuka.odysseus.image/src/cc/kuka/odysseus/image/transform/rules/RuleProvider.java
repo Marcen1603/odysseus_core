@@ -38,7 +38,7 @@ public class RuleProvider implements IRuleProvider {
     public List<IRule<?, ?>> getRules() {
         final List<IRule<?, ?>> rules = new ArrayList<>();
         rules.add(new TEyeTrackerAORule());
-        rules.add(new TFingerDetectionAORule());
+        //rules.add(new TFingerDetectionAORule());
         return rules;
     }
 }
