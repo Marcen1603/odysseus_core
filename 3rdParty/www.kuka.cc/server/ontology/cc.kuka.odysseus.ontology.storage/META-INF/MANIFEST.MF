@@ -22,13 +22,13 @@ Ignore-Package: com.sun.jdmk.comm,javax.jmdns,javax.jms,sun.io,com.ibm.u
  vm.tools,org.apache.xml.resolver,org.apache.xml.resolver.readers
 Bundle-ClassPath: .,
  lib/jcl-over-slf4j-1.6.4.jar,
- lib/org.apache.jena.jena-arq-2.11.0_1-SNAPSHOT.jar,
- lib/org.apache.jena.jena-core-2.11.0_1-SNAPSHOT.jar,
- lib/org.apache.jena.jena-iri-1.0.0_1-SNAPSHOT.jar,
- lib/org.apache.jena.jena-tdb-1.0.0_1-SNAPSHOT.jar,
  lib/org.apache.servicemix.bundles.xerces-2.11.0_1.jar,
  lib/httpclient-4.2.3.jar,
- lib/httpcore-4.2.2.jar
+ lib/httpcore-4.2.2.jar,
+ lib/jena-arq-2.11.2.jar,
+ lib/jena-core-2.11.2.jar,
+ lib/jena-iri-1.0.2.jar,
+ lib/jena-tdb-1.0.2.jar
 Bundle-Vendor: Christian Kuka
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core
