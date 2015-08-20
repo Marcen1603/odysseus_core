@@ -28,6 +28,7 @@ import cc.kuka.odysseus.wrapper.audio.wav.WAVChunk;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -68,7 +69,7 @@ public class WAVProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      * @param dataHandler
      *            The data handler
      */
-    private WAVProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IDataHandler<T> dataHandler, final OptionMap options) {
+    private WAVProtocolHandler(final ITransportDirection direction, final IAccessPattern access, final IStreamObjectDataHandler<T> dataHandler, final OptionMap options) {
         super(direction, access, dataHandler, options);
         this.init();
     }
@@ -77,7 +78,7 @@ public class WAVProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
      * {@inheritDoc}
      */
     @Override
-    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IDataHandler<T> dataHandler) {
+    public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IStreamObjectDataHandler<T> dataHandler) {
         final WAVProtocolHandler<T> instance = new WAVProtocolHandler<>(direction, access, dataHandler, options);
         return instance;
     }
