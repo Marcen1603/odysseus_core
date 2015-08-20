@@ -27,11 +27,13 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.EditDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.PropertyTitleDialog;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties.MapPropertiesDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
 
 /**
  * The MapConfigurer of the {@link MapDashboardPart}. This is what you can see
@@ -294,16 +296,29 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				} else {
 					LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 					int index = layerTable.getSelectionIndex();
-					EditDialog editDialog = new EditDialog(parent.getShell(), group,
-							group.get(index).getConfiguration(), index);
-					editDialog.create();
-					editDialog.open();
-					if (editDialog.getReturnCode() == Window.OK) {
-						mapDashboardPart.editLayer(group.get(index), editDialog.getLayerConfiguration());
-						reprintLayerTable();
-						fireListener();
+
+					if (group.get(index) instanceof Heatmap) {
+						MapPropertiesDialog propertiesDialog = new MapPropertiesDialog(parent.getShell(),
+								mapDashboardPart, (Heatmap) group.get(index), operator);
+						propertiesDialog.create();
+						propertiesDialog.open();
+						if (propertiesDialog.getReturnCode() == Window.OK) {
+
+						}
+					} else {
+
+						EditDialog editDialog = new EditDialog(parent.getShell(), group,
+								group.get(index).getConfiguration(), index);
+						editDialog.create();
+						editDialog.open();
+						if (editDialog.getReturnCode() == Window.OK) {
+							mapDashboardPart.editLayer(group.get(index), editDialog.getLayerConfiguration());
+							reprintLayerTable();
+							fireListener();
+						}
 					}
 				}
+
 			}
 		});
 
@@ -450,15 +465,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			TableItem item = new TableItem(layerTable, SWT.NULL);
 			item.setText(0, "");
 
-			if (layerConf instanceof RasterLayerConfiguration) {
-				if (layer.isActive()) {
-					item.setChecked(true);
-				} else {
-					item.setChecked(false);
-				}
-				item.setText(1, layerConf.getName());
-				item.setText(2, "Raster Layer");
-			} else if (layerConf instanceof HeatmapLayerConfiguration) {
+			if (layerConf instanceof HeatmapLayerConfiguration) {
 				if (layer.isActive()) {
 					item.setChecked(true);
 				} else {
@@ -466,6 +473,14 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				}
 				item.setText(1, layerConf.getName());
 				item.setText(2, "Heatmap Layer");
+			}else if (layerConf instanceof RasterLayerConfiguration) {
+				if (layer.isActive()) {
+					item.setChecked(true);
+				} else {
+					item.setChecked(false);
+				}
+				item.setText(1, layerConf.getName());
+				item.setText(2, "Raster Layer");
 			} else {
 				item.setText(1, layer.getName());
 				item.setText(2, "Basic Layer");
@@ -484,7 +499,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 	private IPhysicalOperator determinePyhsicalRoot(Collection<IPhysicalOperator> physicalRoots) {
 		for (IPhysicalOperator p : physicalRoots) {
-				return p;
+			return p;
 		}
 		LOG.info("Select first physical root.");
 		return physicalRoots.iterator().next();

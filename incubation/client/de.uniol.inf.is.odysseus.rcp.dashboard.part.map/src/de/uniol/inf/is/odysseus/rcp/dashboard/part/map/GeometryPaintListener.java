@@ -69,9 +69,9 @@ final class GeometryPaintListener implements PaintListener {
 		Point screenSize = this.mapDashboardPart.getScreenManager().getCanvas().getSize();
 		@SuppressWarnings("unused")
 		Coordinate sizeInCm = new Coordinate(screenSize.x / dpi.x * 25.4, screenSize.x / dpi.x * 25.4);
-//		int dpcm = (int) Math.floor(dpi.x / 2.54);
-//		int ypos = (screenSize.y - 10);
-//		int xpos = (screenSize.x);
+		int dpcm = (int) Math.floor(dpi.x / 2.54);
+		int ypos = (screenSize.y - 10);
+		int xpos = (screenSize.x);
 		e.gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		
 		//scale on the map

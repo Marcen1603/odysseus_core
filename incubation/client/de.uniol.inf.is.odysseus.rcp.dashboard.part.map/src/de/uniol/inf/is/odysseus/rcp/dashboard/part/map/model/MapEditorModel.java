@@ -248,13 +248,14 @@ public class MapEditorModel extends ModelObject {
 		layercount++;
 		ILayer layer = null;
 
-		if (layerConfiguration instanceof RasterLayerConfiguration) {
-			layer = addLayer((RasterLayerConfiguration) layerConfiguration);
-		} else if (layerConfiguration instanceof HeatmapLayerConfiguration) {
+		
+		if (layerConfiguration instanceof HeatmapLayerConfiguration) {
 			layer = addLayer((HeatmapLayerConfiguration) layerConfiguration);
 			// }else if (layerConfiguration instanceof
 			// TracemapLayerConfiguration){
-			// layer = addLayer((TracemapLayerConfiguration)layerConfiguration);
+			// layer = addLayer((TracemapLayerConfiguration)layerConfiguration);	
+		} else if (layerConfiguration instanceof RasterLayerConfiguration) {
+			layer = addLayer((RasterLayerConfiguration) layerConfiguration);
 		} else {
 			layer = addLayer();
 		}

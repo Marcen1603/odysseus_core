@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Text;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.OwnProperties;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.NullConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
@@ -215,7 +216,12 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 	 * @return
 	 */
 	private Composite getThematicConfiguration(Composite parent) {
-
+		
+		if (!(layerConfiguration instanceof HeatmapLayerConfiguration))
+			this.layerConfiguration = new HeatmapLayerConfiguration("");
+		final HeatmapLayerConfiguration layerConfiguration = (HeatmapLayerConfiguration) this.layerConfiguration;
+		
+		
 		Composite thematicLayer = new Composite(parent, SWT.NONE);
 		thematicLayer.setLayout(DialogUtils.getGroupLayout());
 		thematicLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
@@ -260,7 +266,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		// Initialize selection
 		thematicSelectionListener.widgetSelected(null);
 		streamSelectionListener.widgetSelected(null);
-
+		
+		main.layout();
 		return thematicLayer;
 	}
 
