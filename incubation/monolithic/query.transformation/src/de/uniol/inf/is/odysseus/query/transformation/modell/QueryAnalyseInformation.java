@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -123,9 +124,17 @@ public class QueryAnalyseInformation {
 	}
 
 	
+	public void addMEPFunction(Map<String,IExpression<?>> expressions){
+		
+		for (Entry<String, IExpression<?>> entry : expressions.entrySet())
+		{
+			addMEPFunction(entry.getValue());
+		}
+	}
+	
+	
 	public void addMEPFunction(IExpression<?> mepExpression) {
-
-
+		
 	String fullClassName =	mepExpression.toFunction().getClass().getName();
 	String simpleClassName = mepExpression.toFunction().getClass().getSimpleName();
 
