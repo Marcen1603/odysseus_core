@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.sink.ISinkStreamHandler;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;

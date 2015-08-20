@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.sink;
 
 import java.net.Socket;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.sink.ISinkStreamHandler;
+
 public class ObjectSinkStreamHandlerBuilder implements ISinkStreamHandlerBuilder {
 
 	@SuppressWarnings("rawtypes")

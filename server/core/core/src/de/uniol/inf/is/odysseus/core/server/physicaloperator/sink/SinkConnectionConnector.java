@@ -23,6 +23,8 @@ import java.nio.channels.SocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.sink.ISinkStreamHandler;
+
 /**
  * @author Dennis Geesen
  * 

@@ -20,6 +20,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.sink.ISinkStreamHandler;
+
 class ObjectSinkStreamHandler implements ISinkStreamHandler<Object> {
 	OutputStream outS;
 	ObjectOutputStream dout;

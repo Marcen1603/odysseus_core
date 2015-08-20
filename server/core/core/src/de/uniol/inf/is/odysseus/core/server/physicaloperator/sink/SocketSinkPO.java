@@ -28,10 +28,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.physicaloperator.sink.ISinkStreamHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })

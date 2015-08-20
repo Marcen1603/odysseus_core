@@ -7,6 +7,8 @@ import java.nio.ByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.sink.ISinkStreamHandler;
+
 
 public class ByteBufferStreamHandler implements ISinkStreamHandler<ByteBuffer> {
 

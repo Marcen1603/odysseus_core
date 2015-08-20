@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.NioByteBufferStreamHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.sink.NioByteBufferStreamHandler;
 import de.uniol.inf.is.odysseus.nexmark.generator.NEXMarkStreamType;
 
 /**
