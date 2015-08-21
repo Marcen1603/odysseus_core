@@ -13,7 +13,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -50,7 +52,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	private Collection<IPhysicalOperator> roots;
 	private Table layerTable;
 
-	private Button editButton;
+	private Button editButton, upButton, downButton, topButton, bottomButton;
 
 	@Override
 	public void init(MapDashboardPart dashboardPartToConfigure, Collection<IPhysicalOperator> roots) {
@@ -158,25 +160,50 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 					} else {
 						editButton.setEnabled(true);
 					}
+					
+					if(layerTable.getItemCount() == 1){
+						topButton.setEnabled(false);
+						upButton.setEnabled(false);
+						bottomButton.setEnabled(false);
+						downButton.setEnabled(false);
+					
+					}else if(index == 0){
+						topButton.setEnabled(true);
+						upButton.setEnabled(true);
+						
+						bottomButton.setEnabled(false);
+						downButton.setEnabled(false);
+					}else if(index == layerTable.getItemCount()-1){
+						topButton.setEnabled(false);
+						upButton.setEnabled(false);
+						
+						bottomButton.setEnabled(true);
+						downButton.setEnabled(true);					
+					}else{
+						topButton.setEnabled(true);
+						upButton.setEnabled(true);
+						
+						bottomButton.setEnabled(true);
+						downButton.setEnabled(true);
+					}
 				}
 			}
 
 		});
 
-		// layerTable.addListener(SWT.Selection, new Listener() {
-		// @Override
-		// public void handleEvent(Event event) {
-		// System.out.println("GetLayers()" +
-		// mapDashboardPart.getMapEditorModel().getLayers());
-		// System.out.println("EventButton" + event.button);
-		//
-		// boolean checked = event.detail == SWT.CHECK ? true : false;
-		// System.out.println(event.detail);
-		// System.out.println(checked);
-		// mapDashboardPart.setActive(mapDashboardPart.getMapEditorModel().getLayers().get(event.button),
-		// checked);
-		// }
-		// });
+		layerTable.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				LinkedList <ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
+				
+				for(int i = 0;i < group.size(); i++){
+					if(group.get(i).isActive() != layerTable.getItem(i).getChecked()){
+						mapDashboardPart.setActive(group.get(i), layerTable.getItem(i).getChecked());
+						fireListener();
+					}
+				}
+			}
+		});
 
 		TableColumn visibilityColumn = new TableColumn(layerTable, SWT.NULL);
 		visibilityColumn.setText("Visibility");
@@ -285,8 +312,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	}
 
 	private void createEditButton(final Composite parent) {
-		final Button editButton = createButton(parent, "Edit");
-		this.editButton = editButton;
+		this.editButton = createButton(parent, "Edit");
 		editButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -368,7 +394,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		int height = 50;
 		horizontalSpacer.setLayoutData(new GridData(1, height));
 
-		Button bottomButton = createButton(parent, "Bottom");
+		this.bottomButton = createButton(parent, "Bottom");
 		bottomButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -387,7 +413,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			}
 		});
 
-		Button downButton = createButton(parent, "Down");
+		this.downButton = createButton(parent, "Down");
 		downButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -406,7 +432,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			}
 		});
 
-		Button upButton = createButton(parent, "Up");
+		this.upButton = createButton(parent, "Up");
 		upButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -425,7 +451,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			}
 		});
 
-		Button topButton = createButton(parent, "Top");
+		this.topButton = createButton(parent, "Top");
 		topButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -454,7 +480,6 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		return button;
 	}
 
-	// TODO HEATMAP Anpassung
 	private void reprintLayerTable() {
 		LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
 		layerTable.removeAll();
@@ -497,6 +522,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		;
 	}
 
+	//TODO CHECK THIS
 	private IPhysicalOperator determinePyhsicalRoot(Collection<IPhysicalOperator> physicalRoots) {
 		for (IPhysicalOperator p : physicalRoots) {
 			return p;

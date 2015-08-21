@@ -105,7 +105,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		final Combo layerTypesCombo = new Combo(typeSelection, SWT.DROP_DOWN);
 		layerTypesCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		layerTypesCombo.setItems(types);
-		layerTypesCombo.select(0);
+		layerTypesCombo.select(1);//Map
 		layerTypesCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

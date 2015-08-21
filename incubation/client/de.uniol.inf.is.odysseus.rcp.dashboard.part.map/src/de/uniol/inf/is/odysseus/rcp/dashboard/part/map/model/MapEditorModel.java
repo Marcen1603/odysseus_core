@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,10 +71,10 @@ public class MapEditorModel extends ModelObject {
 			if (configuration instanceof NullConfiguration) {
 				this.layerSettings += addToSettingString((NullConfiguration) configuration, layer.getName(), checked)
 						+ "\\";
-			} else if (configuration instanceof RasterLayerConfiguration) {
-				this.layerSettings += addToSettingString((RasterLayerConfiguration) configuration, checked) + "\\";
 			} else if (configuration instanceof HeatmapLayerConfiguration) {
 				this.layerSettings += addToSettingString((HeatmapLayerConfiguration) configuration, checked) + "\\";
+			} else if (configuration instanceof RasterLayerConfiguration) {
+				this.layerSettings += addToSettingString((RasterLayerConfiguration) configuration, checked) + "\\";
 			}
 		}
 		return layerSettings;
@@ -112,8 +114,41 @@ public class MapEditorModel extends ModelObject {
 		return layerSetting;
 	}
 
-	private String addToSettinString(HeatmapLayerConfiguration configuration, boolean checked) {
-		String layerSetting = "HeatMapLayerConfiguration";
+	private String addToSettingString(HeatmapLayerConfiguration configuration, boolean checked) {
+		String layerSetting = "HeatmapLayerConfiguration;";
+		layerSetting += configuration.getName() + ";";
+		layerSetting += configuration.getSrid() + ";";
+		layerSetting += configuration.getGeometricAttributePosition() + ";";
+		layerSetting += configuration.getValueAttributePosition() + ";";
+
+		// Just get the RGB values. Usually getMinColor would return e.g. "Color
+		// {0 ,255, 0}"
+		String subString = configuration.getMinColor().toString().trim();
+		
+		int startIndex = subString.indexOf("{");
+		int endIndex = subString.indexOf("}");
+		subString = subString.substring(startIndex + 1, endIndex);
+		layerSetting += subString + ";";
+
+		// Just get the RGB values. Usually getMinColor would return e.g. "Color
+		// {0 ,255, 0}"
+		subString = configuration.getMaxColor().toString().trim();
+		startIndex = subString.indexOf("{");
+		endIndex = subString.indexOf("}");
+		subString = subString.substring(startIndex + 1, endIndex);
+		layerSetting += subString + ";";
+
+		layerSetting += configuration.getAlpha() + ";";
+		layerSetting += configuration.isInterpolation() + ";";
+		layerSetting += configuration.isAutoPosition() + ";";
+		layerSetting += configuration.isHideWithoutInformation() + ";";
+		layerSetting += configuration.getNumTilesWidth() + ";";
+		layerSetting += configuration.getNumTilesHeight() + ";";
+		layerSetting += configuration.getLatSW() + ";";
+		layerSetting += configuration.getLngSW() + ";";
+		layerSetting += configuration.getLatNE() + ";";
+		layerSetting += configuration.getLngNE() + ";";
+		layerSetting += checked + ";";
 
 		return layerSetting;
 	}
@@ -150,6 +185,8 @@ public class MapEditorModel extends ModelObject {
 
 				if (layerConfigurationType.equals("BasicLayer")) {
 					loadBasicConfiguration(configurationSettings);
+				} else if (layerConfigurationType.equals("HeatmapLayerConfiguration")) {
+					loadHeatMapLayerConfiguration(configurationSettings);
 				} else if (layerConfigurationType.equals("RasterLayerConfiguration")) {
 					loadRasterLayerConfiguration(configurationSettings);
 				}
@@ -221,14 +258,63 @@ public class MapEditorModel extends ModelObject {
 	}
 
 	private void loadHeatMapLayerConfiguration(String configuration) {
+		startIndex = 0;
+		endIndex = 0;
+		endIndex = configuration.indexOf(";");
+		int r, g, b;
+		double latSW, lngSW, latNE, lngNE;
 
+		
+		String substring = configuration.substring(startIndex, endIndex);
+		HeatmapLayerConfiguration hlc = new HeatmapLayerConfiguration(substring);
+
+		hlc.setSrid(Integer.valueOf(getSubString(configuration, ";")));
+		hlc.setGeometricAttributePosition(Integer.valueOf(getSubString(configuration, ";")));
+		hlc.setValueAttributePosition(Integer.valueOf(getSubString(configuration, ";")));
+
+		r = Integer.valueOf(getSubString(configuration, ","));
+		endIndex++;
+		g = Integer.valueOf(getSubString(configuration, ","));
+		endIndex++;
+		b = Integer.valueOf(getSubString(configuration, ";"));
+		hlc.setMinColor(new Color(Display.getDefault(), r, g, b));
+
+		r = Integer.valueOf(getSubString(configuration, ","));
+		endIndex++;
+		g = Integer.valueOf(getSubString(configuration, ","));
+		endIndex++;
+		b = Integer.valueOf(getSubString(configuration, ";"));
+		hlc.setMaxColor(new Color(Display.getDefault(), r, g, b));
+
+		hlc.setAlpha(Integer.valueOf(getSubString(configuration, ";")));
+		hlc.setInterpolation(Boolean.valueOf(getSubString(configuration, ";")));
+		hlc.setAutoPosition(Boolean.valueOf(getSubString(configuration, ";")));
+		hlc.setHideWithoutInformation(Boolean.valueOf(getSubString(configuration, ";")));
+		hlc.setNumTilesWidth(Integer.valueOf(getSubString(configuration, ";")));
+		hlc.setNumTilesHeight(Integer.valueOf(getSubString(configuration, ";")));
+		
+		latNE = Double.valueOf(getSubString(configuration, ";"));
+		hlc.setLatNE(latNE);
+		lngNE = Double.valueOf(getSubString(configuration, ";"));
+		hlc.setLngNE(lngNE);
+		latSW = Double.valueOf(getSubString(configuration, ";"));
+		hlc.setLatSW(latSW);
+		lngSW = Double.valueOf(getSubString(configuration, ";"));
+		hlc.setLngSW(lngSW);
+		hlc.setCoverageGeographic(lngSW, lngNE, latSW, latNE);
+		
+		Heatmap heatmap = new Heatmap(hlc);
+		heatmap.setActive(Boolean.valueOf(getSubString(configuration, ";")));
+		layers.add(heatmap);
 	}
 
 	/**
 	 * Return the next setting value
 	 * 
-	 * @param string the given string
-	 * @param separator used separator
+	 * @param string
+	 *            the given string
+	 * @param separator
+	 *            used separator
 	 * @return
 	 */
 	private String getSubString(String string, String separator) {
@@ -248,12 +334,11 @@ public class MapEditorModel extends ModelObject {
 		layercount++;
 		ILayer layer = null;
 
-		
 		if (layerConfiguration instanceof HeatmapLayerConfiguration) {
 			layer = addLayer((HeatmapLayerConfiguration) layerConfiguration);
 			// }else if (layerConfiguration instanceof
 			// TracemapLayerConfiguration){
-			// layer = addLayer((TracemapLayerConfiguration)layerConfiguration);	
+			// layer = addLayer((TracemapLayerConfiguration)layerConfiguration);
 		} else if (layerConfiguration instanceof RasterLayerConfiguration) {
 			layer = addLayer((RasterLayerConfiguration) layerConfiguration);
 		} else {
@@ -349,7 +434,8 @@ public class MapEditorModel extends ModelObject {
 	}
 
 	/**
-	 * Removes a layer from the list  
+	 * Removes a layer from the list
+	 * 
 	 * @param layer
 	 */
 	public void removeLayer(ILayer layer) {
@@ -357,7 +443,6 @@ public class MapEditorModel extends ModelObject {
 		firePropertyChange(MAP, null, this);
 	}
 
-	
 	public void layerUp(ILayer layer) {
 		LinkedList<ILayer> group = layers;
 		if (group.contains(layer)) {

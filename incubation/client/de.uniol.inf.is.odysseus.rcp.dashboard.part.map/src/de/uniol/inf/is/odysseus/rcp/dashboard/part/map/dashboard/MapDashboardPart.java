@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.IMapDashboardAdapter;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
@@ -63,6 +64,11 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		// setTimeSlider(createTimeSliderComposite(parent))
 
 		layerUpdater = mapModel.addConnection(this);
+		if(mapModel.getLayers().isEmpty()){
+			BasicLayer basic = new BasicLayer();
+			basic.setActive(true);
+			mapModel.getLayers().addFirst(basic);
+		}
 		mapModel.init(this);
 		layerUpdater.setMaxPufferSize(maxData);
 
@@ -102,7 +108,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 			return;
 		}
 
-		// TODO IST DAS IN ABHÄNGIGKEIT VOM TIMESLIDER
+		// TODO IST DAS IN ABHÄNGIGKEIT VOM TIMESLIDER?
 		// SweepArea definiert Element Fenster bzw. die zu visualisierenden
 		// Elemente.
 		@SuppressWarnings("unchecked")
@@ -123,6 +129,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 						&& this.screenManager.getInterval().getEnd().afterOrEquals(timestamp))) {
 			// Add tuple to current list if the new timestamp is in the interval
 			layerUpdater.addTuple(tuple);
+			System.out.println("Tupel:" + tuple);
 		}
 
 		// Prevent an overflow in the puffer

@@ -171,10 +171,11 @@ public class Heatmap extends RasterLayer {
 		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE,
 				Integer.MIN_VALUE)); // Bottom right
 
+		
+		//Get this to work
 		List<?> data = new ArrayList<Object>();
 		try {
-			data = layerUpdater.query(searchEnv,
-					config.getGeometricAttributePosition());
+			data = layerUpdater.getElementList();
 		} catch (ClassCastException e) {
 			// Do nothing. The setting, which past of the query was the
 			// geometric attribute was wrong
