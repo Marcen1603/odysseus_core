@@ -7,13 +7,14 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLStatementCompiler;
-import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.QDLExpressionEvaluator;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLExpressionCompiler;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLTypeCompiler;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHelper;
-import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLExpressionCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLStatementCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLTypeCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.IQDLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -22,13 +23,13 @@ import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 @SuppressWarnings("all")
-public class QDLStatementCompiler extends AbstractIQLStatementCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionCompiler, QDLTypeUtils, QDLExpressionEvaluator, QDLLookUp> {
+public class QDLStatementCompiler extends AbstractIQLStatementCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLExpressionCompiler, IQDLTypeUtils, IQDLExpressionEvaluator, IQDLLookUp> implements IQDLStatementCompiler {
   @Inject
-  public QDLStatementCompiler(final QDLCompilerHelper helper, final QDLExpressionCompiler exprCompiler, final QDLTypeCompiler typeCompiler, final QDLTypeUtils typeUtils, final QDLExpressionEvaluator exprEvaluator, final QDLLookUp lookUp) {
+  public QDLStatementCompiler(final IQDLCompilerHelper helper, final IQDLExpressionCompiler exprCompiler, final IQDLTypeCompiler typeCompiler, final IQDLTypeUtils typeUtils, final IQDLExpressionEvaluator exprEvaluator, final IQDLLookUp lookUp) {
     super(helper, exprCompiler, typeCompiler, typeUtils, exprEvaluator, lookUp);
   }
   
-  public String compile(final IQLVariableInitialization init, final JvmTypeReference typeRef, final QDLGeneratorContext context) {
+  public String compile(final IQLVariableInitialization init, final JvmTypeReference typeRef, final IQDLGeneratorContext context) {
     String _xifexpression = null;
     boolean _isOperator = this.helper.isOperator(typeRef);
     if (_isOperator) {

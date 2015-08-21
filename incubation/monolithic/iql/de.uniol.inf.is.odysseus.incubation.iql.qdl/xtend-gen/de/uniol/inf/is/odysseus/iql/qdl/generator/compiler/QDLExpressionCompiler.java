@@ -11,16 +11,17 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
-import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.QDLExpressionEvaluator;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLTypeCompiler;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHelper;
-import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
+import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLExpressionCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLTypeCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.IQDLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.QDLSubscribableWithPort;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeExtensionsFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.IQDLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -32,13 +33,13 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 @SuppressWarnings("all")
-public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLExpressionEvaluator, QDLTypeUtils, QDLLookUp, QDLTypeExtensionsFactory> {
+public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLExpressionEvaluator, IQDLTypeUtils, IQDLLookUp, IQDLTypeExtensionsFactory> implements IQDLExpressionCompiler {
   @Inject
-  public QDLExpressionCompiler(final QDLCompilerHelper helper, final QDLTypeCompiler typeCompiler, final QDLExpressionEvaluator exprEvaluator, final QDLTypeUtils typeUtils, final QDLLookUp lookUp, final QDLTypeExtensionsFactory typeOperatorsFactory) {
+  public QDLExpressionCompiler(final IQDLCompilerHelper helper, final IQDLTypeCompiler typeCompiler, final IQDLExpressionEvaluator exprEvaluator, final IQDLTypeUtils typeUtils, final IQDLLookUp lookUp, final IQDLTypeExtensionsFactory typeOperatorsFactory) {
     super(helper, typeCompiler, exprEvaluator, typeUtils, lookUp, typeOperatorsFactory);
   }
   
-  public String compile(final IQLExpression e, final QDLGeneratorContext context) {
+  public String compile(final IQLExpression e, final IQDLGeneratorContext context) {
     String _xifexpression = null;
     if ((e instanceof IQLSubscribeExpression)) {
       return this.compile(((IQLSubscribeExpression) e), context);
@@ -54,7 +55,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
     return _xifexpression;
   }
   
-  public String compile(final IQLSubscribeExpression e, final QDLGeneratorContext context) {
+  public String compile(final IQLSubscribeExpression e, final IQDLGeneratorContext context) {
     String _xifexpression = null;
     String _op = e.getOp();
     boolean _equals = _op.equals("->");
@@ -86,7 +87,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
     return _xifexpression;
   }
   
-  public String compile(final IQLPortExpression e, final QDLGeneratorContext context) {
+  public String compile(final IQLPortExpression e, final IQDLGeneratorContext context) {
     String _xblockexpression = null;
     {
       String _canonicalName = QDLSubscribableWithPort.class.getCanonicalName();
@@ -109,7 +110,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
     return _xblockexpression;
   }
   
-  public String compile(final IQLNewExpression e, final QDLGeneratorContext context) {
+  public String compile(final IQLNewExpression e, final IQDLGeneratorContext context) {
     String _xifexpression = null;
     JvmTypeReference _ref = e.getRef();
     boolean _isOperator = this.helper.isOperator(_ref);
@@ -332,7 +333,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
     return _xifexpression;
   }
   
-  public String compile(final IQLMemberSelectionExpression e, final JvmTypeReference left, final JvmField field, final QDLGeneratorContext c) {
+  public String compile(final IQLMemberSelectionExpression e, final JvmTypeReference left, final JvmField field, final IQDLGeneratorContext c) {
     String _xifexpression = null;
     boolean _isSource = this.helper.isSource(left);
     if (_isSource) {
@@ -385,7 +386,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
     return _xifexpression;
   }
   
-  public String compile(final IQLMemberSelectionExpression e, final JvmTypeReference left, final JvmOperation method, final QDLGeneratorContext c) {
+  public String compile(final IQLMemberSelectionExpression e, final JvmTypeReference left, final JvmOperation method, final IQDLGeneratorContext c) {
     String _xifexpression = null;
     boolean _isOperator = this.helper.isOperator(left);
     if (_isOperator) {
@@ -440,7 +441,7 @@ public class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<QDLComp
     return _xifexpression;
   }
   
-  public String compileAssignmentExpr(final IQLAssignmentExpression e, final IQLMemberSelectionExpression selExpr, final QDLGeneratorContext c) {
+  public String compileAssignmentExpr(final IQLAssignmentExpression e, final IQLMemberSelectionExpression selExpr, final IQDLGeneratorContext c) {
     String _xifexpression = null;
     boolean _and = false;
     String _op = e.getOp();

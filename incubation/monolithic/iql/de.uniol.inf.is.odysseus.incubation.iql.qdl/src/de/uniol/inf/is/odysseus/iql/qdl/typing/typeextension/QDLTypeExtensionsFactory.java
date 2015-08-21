@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.qdl.typing;
+package de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -9,12 +9,14 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.AbstractIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
 @Singleton
-public class QDLTypeExtensionsFactory extends AbstractIQLTypeExtensionsFactory<QDLTypeFactory, QDLTypeUtils> {
+public class QDLTypeExtensionsFactory extends AbstractIQLTypeExtensionsFactory<IQDLTypeFactory, IQDLTypeUtils> implements IQDLTypeExtensionsFactory {
 
 	@Inject
-	public QDLTypeExtensionsFactory(QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+	public QDLTypeExtensionsFactory(IQDLTypeFactory typeFactory, IQDLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 	}
 	

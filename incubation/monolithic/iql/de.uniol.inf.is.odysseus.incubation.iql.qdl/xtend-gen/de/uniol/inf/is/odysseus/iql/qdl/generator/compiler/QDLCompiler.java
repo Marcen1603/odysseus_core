@@ -17,17 +17,18 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLMetadataMethodCompiler;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLMetadataMethodCompiler;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLStatementCompiler;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLTypeCompiler;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLMetadataMethodCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLStatementCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLTypeCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.IQDLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,16 +44,16 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
-public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLStatementCompiler, QDLTypeFactory, QDLTypeUtils> {
+public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLStatementCompiler, IQDLTypeFactory, IQDLTypeUtils> implements IQDLCompiler {
   @Inject
-  private QDLMetadataMethodCompiler methodCompiler;
+  private IQDLMetadataMethodCompiler methodCompiler;
   
   @Inject
-  public QDLCompiler(final QDLCompilerHelper helper, final QDLTypeCompiler typeCompiler, final QDLStatementCompiler stmtCompiler, final QDLTypeFactory typeFactory, final QDLTypeUtils typeUtils) {
+  public QDLCompiler(final IQDLCompilerHelper helper, final IQDLTypeCompiler typeCompiler, final IQDLStatementCompiler stmtCompiler, final IQDLTypeFactory typeFactory, final IQDLTypeUtils typeUtils) {
     super(helper, typeCompiler, stmtCompiler, typeFactory, typeUtils);
   }
   
-  public String compile(final IQLTypeDefinition typeDef, final QDLQuery q, final QDLGeneratorContext context) {
+  public String compile(final IQLTypeDefinition typeDef, final QDLQuery q, final IQDLGeneratorContext context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
@@ -77,7 +78,7 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
     return _xblockexpression;
   }
   
-  public String compileQuery(final IQLTypeDefinition typeDef, final QDLQuery q, final QDLGeneratorContext context) {
+  public String compileQuery(final IQLTypeDefinition typeDef, final QDLQuery q, final IQDLGeneratorContext context) {
     String _xblockexpression = null;
     {
       String name = q.getSimpleName();
@@ -319,7 +320,7 @@ public class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGener
     return _xblockexpression;
   }
   
-  public CharSequence createGetterMethod(final JvmTypeReference typeRef, final IQLArgumentsMap map, final QDLGeneratorContext context) {
+  public CharSequence createGetterMethod(final JvmTypeReference typeRef, final IQLArgumentsMap map, final IQDLGeneratorContext context) {
     CharSequence _xifexpression = null;
     boolean _isOperator = this.helper.isOperator(typeRef);
     if (_isOperator) {

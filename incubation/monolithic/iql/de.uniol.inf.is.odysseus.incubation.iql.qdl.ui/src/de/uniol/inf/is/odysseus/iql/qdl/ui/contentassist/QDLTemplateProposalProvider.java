@@ -54,6 +54,8 @@ import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 
 
 
+
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
@@ -64,22 +66,22 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.AbstractIQLTemplateProposalProvider;
-import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.QDLExpressionEvaluator;
-import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
+import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.qdl.scoping.IQDLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
-public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<QDLExpressionEvaluator, QDLTypeFactory, QDLLookUp, QDLScopeProvider, QDLTypeUtils> {
+public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<IQDLExpressionEvaluator, IQDLTypeFactory, IQDLLookUp, IQDLScopeProvider, IQDLTypeUtils> {
 
 	@Inject
 	public QDLTemplateProposalProvider(TemplateStore templateStore,
-			ContextTypeRegistry registry, ContextTypeIdHelper helper, QDLExpressionEvaluator exprEvaluator, QDLTypeFactory factory, QDLLookUp lookUp, QDLScopeProvider scopeProvider, QDLTypeUtils typeUtils) {
+			ContextTypeRegistry registry, ContextTypeIdHelper helper, IQDLExpressionEvaluator exprEvaluator, IQDLTypeFactory factory, IQDLLookUp lookUp, IQDLScopeProvider scopeProvider, IQDLTypeUtils typeUtils) {
 		super(templateStore, registry, helper, exprEvaluator, factory, lookUp, scopeProvider, typeUtils);
 	}
 	

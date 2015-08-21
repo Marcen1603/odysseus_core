@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.qdl.typing;
+package de.uniol.inf.is.odysseus.iql.qdl.typing.builder;
 
 
 import java.awt.List;
@@ -34,18 +34,20 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.builder.AbstractIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
-public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory, QDLTypeUtils> {
+public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeFactory, IQDLTypeUtils> implements IQDLTypeBuilder {
 	public static String[] OPERATORS_NAMESPACE = new String[]{"operators"};
 	private static final String[] SOURCES_NAMESPACE = new String[]{"sources"};
 	
 	
 	@Inject
-	public QDLTypeBuilder(QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+	public QDLTypeBuilder(IQDLTypeFactory typeFactory, IQDLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 	}
 
-	
+	@Override
 	public void addSource(ILogicalOperator source) {
 		String name = getSourceName(source);
 		JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLSource.class, typeFactory.getSystemResourceSet());
@@ -70,6 +72,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory, QDLTy
 		typeFactory.addSource(name, source, sourceClass);
 	}
 	
+	@Override
 	public void removeSource(ILogicalOperator source) {
 		String name = firstCharUpperCase(source.getName().toLowerCase());
 		removeSystemType(SOURCES_NAMESPACE, name);
@@ -80,6 +83,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<QDLTypeFactory, QDLTy
 		return source.getName();
 	}
 	
+	@Override
 	@SuppressWarnings({ "unchecked" })
 	public void addOperator(IOperatorBuilder opBuilder) {
 		String name = firstCharUpperCase(opBuilder.getName().toLowerCase());

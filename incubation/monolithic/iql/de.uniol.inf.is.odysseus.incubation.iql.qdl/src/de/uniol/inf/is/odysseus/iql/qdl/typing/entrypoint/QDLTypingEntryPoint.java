@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.qdl.typing;
+package de.uniol.inf.is.odysseus.iql.qdl.typing.entrypoint;
 
 import java.util.Map.Entry;
 
@@ -26,13 +26,14 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.AbstractIQLTypingEntryPoint;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.builder.IQDLTypeBuilder;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 @Singleton
-public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<QDLTypeBuilder> implements IDatadictionaryProviderListener, OperatorsObservable.Listener, IDataDictionaryListener {
+public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<IQDLTypeBuilder> implements IDatadictionaryProviderListener, OperatorsObservable.Listener, IDataDictionaryListener {
 
 	@Inject
-	public QDLTypingEntryPoint(QDLTypeBuilder creator) {
+	public QDLTypingEntryPoint(IQDLTypeBuilder creator) {
 		super(creator);	
 		initOperators();
 		initSources();		

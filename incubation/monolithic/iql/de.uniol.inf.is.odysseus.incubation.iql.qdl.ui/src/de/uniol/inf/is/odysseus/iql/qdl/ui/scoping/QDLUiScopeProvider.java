@@ -7,17 +7,17 @@ import org.eclipse.xtext.scoping.IScope;
 
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtBasedTypeScope;
-import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.QDLExpressionEvaluator;
-import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
+import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLScopeProvider;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
 
 public class QDLUiScopeProvider extends QDLScopeProvider {
 
 	@Inject
-	public QDLUiScopeProvider(QDLTypeFactory typeFactory, QDLLookUp lookUp,	QDLExpressionEvaluator exprEvaluator, QDLTypeUtils typeUtils) {
+	public QDLUiScopeProvider(IQDLTypeFactory typeFactory, IQDLLookUp lookUp,	IQDLExpressionEvaluator exprEvaluator, IQDLTypeUtils typeUtils) {
 		super(typeFactory, lookUp, exprEvaluator, typeUtils);
 	}
 	

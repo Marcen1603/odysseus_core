@@ -15,15 +15,15 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.AbstractIQLEObjectDocumentationProvider;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
-public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumentationProvider<QDLTypeFactory, QDLTypeUtils> {
+public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumentationProvider<IQDLTypeFactory, IQDLTypeUtils> {
 
 	private static String BREAK = "<br>";
 	
 	@Inject
-	public QDLEObjectDocumentationProvider(QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+	public QDLEObjectDocumentationProvider(IQDLTypeFactory typeFactory, IQDLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 	}
 

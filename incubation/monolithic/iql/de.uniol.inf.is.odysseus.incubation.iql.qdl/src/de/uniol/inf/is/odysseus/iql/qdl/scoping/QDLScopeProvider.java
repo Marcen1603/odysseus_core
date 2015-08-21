@@ -26,17 +26,17 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.AbstractIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
-import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.QDLExpressionEvaluator;
-import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
+import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
 
-public class QDLScopeProvider extends AbstractIQLScopeProvider<QDLTypeFactory, QDLLookUp, QDLExpressionEvaluator, QDLTypeUtils> {
+public class QDLScopeProvider extends AbstractIQLScopeProvider<IQDLTypeFactory, IQDLLookUp, IQDLExpressionEvaluator, IQDLTypeUtils> implements IQDLScopeProvider {
 
 	@Inject
-	public QDLScopeProvider(QDLTypeFactory typeFactory, QDLLookUp lookUp,QDLExpressionEvaluator exprEvaluator, QDLTypeUtils typeUtils) {
+	public QDLScopeProvider(IQDLTypeFactory typeFactory, IQDLLookUp lookUp,IQDLExpressionEvaluator exprEvaluator, IQDLTypeUtils typeUtils) {
 		super(typeFactory, lookUp, exprEvaluator, typeUtils);
 	}
 

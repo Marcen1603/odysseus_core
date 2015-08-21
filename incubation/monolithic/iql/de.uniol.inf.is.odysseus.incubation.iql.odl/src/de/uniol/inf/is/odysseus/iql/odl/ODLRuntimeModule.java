@@ -118,10 +118,10 @@ public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractO
 	
 	
 	
-	public Class<? extends IIQLTypeExtensionsFactory> bindTypeOperatorsFactory() {
+	public Class<? extends IIQLTypeExtensionsFactory> bindTypeExtensionsFactory() {
 		return ODLTypeExtensionsFactory.class;
 	}	
-	public Class<? extends IODLTypeExtensionsFactory> bindODLTypeOperatorsFactory() {
+	public Class<? extends IODLTypeExtensionsFactory> bindODLTypeExtensionsFactory() {
 		return ODLTypeExtensionsFactory.class;
 	}
 	

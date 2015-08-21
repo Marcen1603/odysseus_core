@@ -13,15 +13,15 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeExtensionsFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.IQDLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
-public class QDLLookUp extends AbstractIQLLookUp<QDLTypeFactory, QDLTypeExtensionsFactory, QDLTypeUtils>{
+public class QDLLookUp extends AbstractIQLLookUp<IQDLTypeFactory, IQDLTypeExtensionsFactory, IQDLTypeUtils> implements IQDLLookUp{
 
 
 	@Inject
-	public QDLLookUp(QDLTypeFactory typeFactory, QDLTypeExtensionsFactory typeOperatorsFactory, QDLTypeUtils typeUtils) {
+	public QDLLookUp(IQDLTypeFactory typeFactory, IQDLTypeExtensionsFactory typeOperatorsFactory, IQDLTypeUtils typeUtils) {
 		super(typeFactory, typeOperatorsFactory, typeUtils);
 	}
 

@@ -22,18 +22,18 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.iql.basic.executor.AbstractIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
 
-public class QDLExecutor extends AbstractIQLExecutor<QDLTypeFactory, QDLTypeUtils> {
+public class QDLExecutor extends AbstractIQLExecutor<IQDLTypeFactory, IQDLTypeUtils> {
 	
 	private static final String LANGUAGE_NAME = "de.uniol.inf.is.odysseus.iql.qdl.QDL";
 	protected static final String QUERIES_DIR = "queries";
 	
 	
 	@Inject
-	public QDLExecutor(QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+	public QDLExecutor(IQDLTypeFactory typeFactory, IQDLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 	}
 	

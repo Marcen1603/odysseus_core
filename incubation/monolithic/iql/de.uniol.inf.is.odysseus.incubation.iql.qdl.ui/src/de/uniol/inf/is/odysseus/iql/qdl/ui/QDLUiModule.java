@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.IQLXtextEditorCallback;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.scoping.IQDLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLSemanticHighlightingCalculator;
@@ -41,6 +42,16 @@ public class QDLUiModule extends de.uniol.inf.is.odysseus.iql.qdl.ui.AbstractQDL
 		super(plugin);
 	}
 	
+	
+	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
+		return QDLUiScopeProvider.class;
+	}
+	public Class<? extends IQDLScopeProvider> bindQDLScopeProvider() {
+		return QDLUiScopeProvider.class;
+	}
+	
+	
+	
 	public Class<? extends IGenerator> bindGenerator() {
 		return QDLUiGenerator.class;
 	}
@@ -50,10 +61,7 @@ public class QDLUiModule extends de.uniol.inf.is.odysseus.iql.qdl.ui.AbstractQDL
 		return IQLJdtTypeProviderFactory.class;
 	}
 	
-	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
-		return QDLUiScopeProvider.class;
-	}
-	
+
 	
 	public Class<? extends org.eclipse.xtext.scoping.IScopeProvider> bindIScopeProvider() {
 		return QDLUiScopeProvider.class;

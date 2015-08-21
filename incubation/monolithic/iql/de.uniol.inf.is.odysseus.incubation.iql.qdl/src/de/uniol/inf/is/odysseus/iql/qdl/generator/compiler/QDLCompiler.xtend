@@ -1,9 +1,8 @@
 package de.uniol.inf.is.odysseus.iql.qdl.generator.compiler
 
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLCompiler
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.QDLCompilerHelper
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.helper.IQDLCompilerHelper
 import javax.inject.Inject
-import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock
@@ -12,26 +11,27 @@ import java.util.Collection
 import java.util.ArrayList
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeFactory
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
-import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLTypeUtils
+import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext
+import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils
 
-class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorContext, QDLTypeCompiler, QDLStatementCompiler, QDLTypeFactory, QDLTypeUtils>{
+class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLStatementCompiler, IQDLTypeFactory, IQDLTypeUtils> implements IQDLCompiler{
 	
 	@Inject
-	QDLMetadataMethodCompiler methodCompiler;
+	IQDLMetadataMethodCompiler methodCompiler;
 	
 	@Inject
-	new(QDLCompilerHelper helper, QDLTypeCompiler typeCompiler, QDLStatementCompiler stmtCompiler, QDLTypeFactory typeFactory, QDLTypeUtils typeUtils) {
+	new(IQDLCompilerHelper helper, IQDLTypeCompiler typeCompiler, IQDLStatementCompiler stmtCompiler, IQDLTypeFactory typeFactory, IQDLTypeUtils typeUtils) {
 		super(helper, typeCompiler, stmtCompiler, typeFactory, typeUtils)
 	}
 	
-	def String compile(IQLTypeDefinition typeDef,QDLQuery q, QDLGeneratorContext context) {
+	override String compile(IQLTypeDefinition typeDef,QDLQuery q, IQDLGeneratorContext context) {
 		var builder = new StringBuilder()
 		builder.append(compileQuery(typeDef, q, context))
 		context.addImport(AbstractQDLQuery.canonicalName)
@@ -45,7 +45,7 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 		builder.toString
 	}
 	
-	def String compileQuery(IQLTypeDefinition typeDef, QDLQuery q, QDLGeneratorContext context) {
+	def String compileQuery(IQLTypeDefinition typeDef, QDLQuery q, IQDLGeneratorContext context) {
 		var name = q.simpleName
 		var superClass = AbstractQDLQuery.simpleName
 		var metadata = q.metadataList != null
@@ -107,7 +107,7 @@ class QDLCompiler extends AbstractIQLCompiler<QDLCompilerHelper, QDLGeneratorCon
 		'''			
 	}
 	
-	override createGetterMethod(JvmTypeReference typeRef, IQLArgumentsMap map, QDLGeneratorContext context) {
+	override createGetterMethod(JvmTypeReference typeRef, IQLArgumentsMap map, IQDLGeneratorContext context) {
 		if (helper.isOperator(typeRef)) {
 			'''
 			

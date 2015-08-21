@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.qdl.typing;
+package de.uniol.inf.is.odysseus.iql.qdl.typing.factory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,11 +28,13 @@ import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.QDLDefaultTypes;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
 
 
 @Singleton
-public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServiceObserver> {
+public class QDLTypeFactory extends AbstractIQLTypeFactory<IQDLTypeUtils, QDLServiceObserver> implements IQDLTypeFactory {
 	
 
 	private Map<String, ILogicalOperator> sources = new HashMap<String, ILogicalOperator>();	
@@ -46,7 +48,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 	private Set<Class<?>> parameterValueTypes = new HashSet<>();
 	
 	@Inject
-	public QDLTypeFactory(QDLTypeUtils typeUtils, QDLServiceObserver serviceObserver) {
+	public QDLTypeFactory(IQDLTypeUtils typeUtils, QDLServiceObserver serviceObserver) {
 		super(typeUtils, serviceObserver);
 	}
 	
@@ -93,6 +95,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		return implicitImports;
 	}
 	
+	@Override
 	public Collection<String> createImplicitStaticImports() {
 		Collection<String> implicitStaticImports = super.createImplicitStaticImports();
 		for (Class<?> c : QDLDefaultTypes.getImplicitStaticImports()) {
@@ -102,7 +105,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 	}
 
 
-	
+	@Override
 	public boolean isSourceAttribute(String sourceName, String attrName) {
 		ILogicalOperator source = sources.get(sourceName.toLowerCase());
 		if (source != null) {
@@ -115,24 +118,29 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		return false;
 	}
 
+	@Override
 	public void addSource(String sourceName, ILogicalOperator source, IQLClass sourceClass) {
 		sources.put(sourceName.toLowerCase(), source);
 		sourceTypes.put(sourceName.toLowerCase(), sourceClass);
 	}
 
+	@Override
 	public void removeSource(String sourceName) {
 		sources.remove(sourceName.toLowerCase());	
 		sourceTypes.remove(sourceName.toLowerCase());
 	}
 	
+	@Override
 	public Collection<String> getSources() {
 		return sources.keySet();
 	}	
 	
+	@Override
 	public Collection<IQLClass> getSourceTypes() {
 		return sourceTypes.values();
 	}
 
+	@Override
 	public void addOperator(IOperatorBuilder opBuilder, IQLClass operatorType,  Map<String, String[]> parameterNames, Map<String, Parameter> parameterTypes) {
 		operators.put(opBuilder.getName().toLowerCase(), opBuilder);
 		operatorParameterNames.put(opBuilder.getName().toLowerCase(), parameterNames);
@@ -140,16 +148,17 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		operatorTypes.put(opBuilder.getName().toLowerCase(), operatorType);
 	}
 	
+	@Override
 	public Collection<IQLClass> getOperatorTypes() {
 		return operatorTypes.values();
 	}
-	
-	
-	
+		
+	@Override
 	public boolean isOperatorParameter(String operatorName, String parameterName) {
 		return getOperatorParameter(operatorName, parameterName) != null;
 	}
 
+	@Override
 	public Class<? extends ILogicalOperator> getLogicalOperator(String operatorName) {
 		IOperatorBuilder builder = operators.get(operatorName.toLowerCase());
 		if (builder != null) {
@@ -158,6 +167,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		return null;
 	}
 	
+	@Override
 	public Parameter getOperatorParameterType(String operatorName, String parameterName) {
 		Map<String, Parameter> parameters = operatorParameterTypes.get(operatorName.toLowerCase());
 		if (parameters != null) {
@@ -166,6 +176,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		return null;
 	}
 	
+	@Override
 	public IParameter<?> getOperatorParameter(String operatorName, String parameterName) {
 		IOperatorBuilder builder = operators.get(operatorName.toLowerCase());
 		if (builder != null) {
@@ -178,6 +189,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		return null;
 	}
 
+	@Override
 	public String getParameterPropertyName(String parameter, String operatorName) {		
 		Map<String, String[]> properties = operatorParameterNames.get(operatorName.toLowerCase());
 		if (properties != null) {
@@ -186,6 +198,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		return null;
 	}
 	
+	@Override
 	public String getParameterGetterName(String parameter, String operatorName) {
 		Map<String, String[]> properties = operatorParameterNames.get(operatorName.toLowerCase());
 		if (properties != null) {
@@ -194,6 +207,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		return null;
 	}
 	
+	@Override
 	public String getParameterSetterName(String parameter, String operatorName) {
 		Map<String, String[]> properties = operatorParameterNames.get(operatorName.toLowerCase());
 		if (properties != null) {
@@ -202,6 +216,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		return null;
 	}
 
+	@Override
 	public boolean isParameter(String parameter, String operatorName) {
 		Map<String, String[]> properties = operatorParameterNames.get(operatorName.toLowerCase());
 		if (properties != null) {
@@ -210,19 +225,22 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		return false;
 	}
 
-
+	@Override
 	public void setParameterValueTypes(Set<Class<?>> parameterValueTypes) {
 		this.parameterValueTypes.addAll(parameterValueTypes);
 	}
 
+	@Override
 	public Collection<IOperatorBuilder> getOperators() {
 		return operators.values();
 	}
 
+	@Override
 	public IOperatorBuilder getOperatorBuilder(String name) {
 		return this.operators.get(name.toLowerCase());
 	}
 
+	@Override
 	public boolean isOperator(JvmTypeReference typeRef) {
 		if (typeUtils.getInnerType(typeRef, true) instanceof IQLClass) {
 			JvmDeclaredType clazz = (JvmDeclaredType) typeUtils.getInnerType(typeRef, true);
@@ -234,6 +252,7 @@ public class QDLTypeFactory extends AbstractIQLTypeFactory<QDLTypeUtils, QDLServ
 		return false;	
 	}
 
+	@Override
 	public boolean isSource(JvmTypeReference typeRef) {
 		if (typeUtils.getInnerType(typeRef, true) instanceof IQLClass) {
 			JvmDeclaredType clazz = (JvmDeclaredType) typeUtils.getInnerType(typeRef, true);

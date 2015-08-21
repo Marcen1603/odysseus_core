@@ -39,7 +39,7 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 	}
 	
 
-	def String compile(IQLMetadataList o, G context) {
+	override String compile(IQLMetadataList o, G context) {
 		var counter = new AtomicInteger(0)		
 		'''
 		public void «CREATE_METADATA_METHOD_NAME»() {

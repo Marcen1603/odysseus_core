@@ -6,6 +6,7 @@ import java.io.File;
 
 
 
+
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IFile;
@@ -19,14 +20,14 @@ import org.eclipse.xtext.ui.util.ResourceUtil;
 
 import de.uniol.inf.is.odysseus.iql.basic.ui.BasicIQLUiModule;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGenerator;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.QDLGeneratorContext;
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.QDLCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLCompiler;
+import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext;
 
 public class QDLUiGenerator extends QDLGenerator{
 
 
 	@Inject
-	public QDLUiGenerator(QDLGeneratorContext generatorContext,	QDLCompiler compiler) {
+	public QDLUiGenerator(IQDLGeneratorContext generatorContext,IQDLCompiler compiler) {
 		super(generatorContext, compiler);
 	}
 
