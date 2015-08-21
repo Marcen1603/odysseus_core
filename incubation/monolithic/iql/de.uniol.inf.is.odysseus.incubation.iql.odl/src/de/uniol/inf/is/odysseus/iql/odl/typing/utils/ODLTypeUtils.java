@@ -1,16 +1,16 @@
-package de.uniol.inf.is.odysseus.iql.odl.typing;
+package de.uniol.inf.is.odysseus.iql.odl.typing.utils;
 
 
 import org.eclipse.xtext.common.types.JvmType;
 
 
+
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
-
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.AbstractIQLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 
-public class ODLTypeUtils extends AbstractIQLTypeUtils {
+public class ODLTypeUtils extends AbstractIQLTypeUtils implements IODLTypeUtils {
 	
 		
 	@Override

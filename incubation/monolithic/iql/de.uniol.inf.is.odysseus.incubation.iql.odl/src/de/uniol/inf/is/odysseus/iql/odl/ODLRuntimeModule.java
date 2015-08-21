@@ -37,28 +37,44 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFac
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.executor.ODLExecutor;
+import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.IODLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.IODLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.ODLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.ODLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGenerator;
-import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLExpressionCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLMetadataAnnotationCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLMetadataMethodCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLStatementCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLExpressionCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLMetadataAnnotationCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLMetadataMethodCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLStatementCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLTypeCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.IODLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.odl.generator.context.IODLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.odl.generator.context.ODLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.odl.linking.ODLLinkingService;
+import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
+import de.uniol.inf.is.odysseus.iql.odl.scoping.IODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.service.ODLServiceObserver;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeBuilder;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeExtensionsFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypingEntryPoint;
+import de.uniol.inf.is.odysseus.iql.odl.typing.builder.IODLTypeBuilder;
+import de.uniol.inf.is.odysseus.iql.odl.typing.builder.ODLTypeBuilder;
+import de.uniol.inf.is.odysseus.iql.odl.typing.entrypoint.ODLTypingEntryPoint;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.ODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.typeextension.IODLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.typeextension.ODLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.ODLTypeUtils;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -66,13 +82,169 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypingEntryPoint;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractODLRuntimeModule {
 
-	public Class<? extends IIQLJdtTypeProviderFactory> bindJdtTypeProviderFactory() {
-		return IQLNullJdtTypeProviderFactory.class;
+	public Class<? extends IIQLTypeFactory> bindIQLTypeFactory() {
+		return ODLTypeFactory.class;
+	}	
+	public Class<? extends IODLTypeFactory> bindODLTypeFactory() {
+		return ODLTypeFactory.class;
 	}
+	
+	
+	
+	public Class<? extends IIQLLookUp> bindIQLLookUp() {
+		return ODLLookUp.class;
+	}	
+	public Class<? extends IODLLookUp> bindODLLookUp() {
+		return ODLLookUp.class;
+	}
+	
+	
 	
 	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
 		return ODLScopeProvider.class;
+	}	
+	public Class<? extends IODLScopeProvider> bindODLScopeProvider() {
+		return ODLScopeProvider.class;
 	}
+	
+	
+	
+	public Class<? extends IIQLTypeUtils> bindTypeUtils() {
+		return ODLTypeUtils.class;
+	}	
+	public Class<? extends IODLTypeUtils> bindODLTypeUtils() {
+		return ODLTypeUtils.class;
+	}
+	
+	
+	
+	public Class<? extends IIQLTypeExtensionsFactory> bindTypeOperatorsFactory() {
+		return ODLTypeExtensionsFactory.class;
+	}	
+	public Class<? extends IODLTypeExtensionsFactory> bindODLTypeOperatorsFactory() {
+		return ODLTypeExtensionsFactory.class;
+	}
+	
+	
+	
+	public Class<? extends IIQLTypeBuilder> bindIQLTypeBuilder() {
+		return ODLTypeBuilder.class;
+	}	
+	public Class<? extends IODLTypeBuilder> bindODLTypeBuilder() {
+		return ODLTypeBuilder.class;
+	}
+	
+			
+	
+	public Class<? extends IIQLExpressionEvaluator> bindIQLExpressionEvaluator() {
+		return ODLExpressionEvaluator.class;
+	}	
+	public Class<? extends IODLExpressionEvaluator> bindODLExpressionEvaluator() {
+		return ODLExpressionEvaluator.class;
+	}	
+	
+	
+	
+	public Class<? extends IIQLCompilerHelper> bindIQLCompilerHelper() {
+		return ODLCompilerHelper.class;
+	}	
+	public Class<? extends IODLCompilerHelper> bindODLCompilerHelper() {
+		return ODLCompilerHelper.class;
+	}
+	
+	
+	
+	
+	public Class<? extends IIQLMetadataAnnotationCompiler> bindIQLMetadataAnnotationCompiler() {
+		return ODLMetadataAnnotationCompiler.class;
+	}
+	
+	public Class<? extends IODLMetadataAnnotationCompiler> bindODLMetadataAnnotationCompiler() {
+		return ODLMetadataAnnotationCompiler.class;
+	}
+	
+	
+	
+	public Class<? extends IIQLTypeCompiler> bindIQLTypeCompiler() {
+		return ODLTypeCompiler.class;
+	}
+	public Class<? extends IODLTypeCompiler> bindODLTypeCompiler() {
+		return ODLTypeCompiler.class;
+	}
+	
+	
+	
+	
+	public Class<? extends IIQLStatementCompiler> bindIQLStatementCompiler() {
+		return ODLStatementCompiler.class;
+	}		
+	public Class<? extends IODLStatementCompiler> bindODLStatementCompiler() {
+		return ODLStatementCompiler.class;
+	}
+		
+	
+	
+	public Class<? extends IIQLMetadataMethodCompiler> bindIQLMetadataMethodCompiler() {
+		return ODLMetadataMethodCompiler.class;
+	}
+	public Class<? extends IODLMetadataMethodCompiler> bindODLMetadataMethodCompiler() {
+		return ODLMetadataMethodCompiler.class;
+	}
+	
+	
+	
+	public Class<? extends IIQLExpressionCompiler> bindIQLExpressionCompiler() {
+		return ODLExpressionCompiler.class;
+	}
+	public Class<? extends IODLExpressionCompiler> bindODLExpressionCompiler() {
+		return ODLExpressionCompiler.class;
+	}
+	
+	
+	
+	
+	public Class<? extends IIQLCompiler> bindIQLCompiler() {
+		return ODLCompiler.class;
+	}
+	public Class<? extends IODLCompiler> bindODLCompiler() {
+		return ODLCompiler.class;
+	}
+	
+	
+	
+	
+	public Class<? extends IIQLGeneratorContext> bindGeneratorContext() {
+		  return ODLGeneratorContext.class;
+	}	
+	public Class<? extends IODLGeneratorContext> bindODLGeneratorContext() {
+		  return ODLGeneratorContext.class;
+	}
+	
+		
+	
+	
+	public Class<? extends IIQLExpressionEvaluatorContext> bindExpressionEvaluatorContext() {
+		return ODLExpressionEvaluatorContext.class;
+	}
+	public Class<? extends IODLExpressionEvaluatorContext> bindODLExpressionEvaluatorContext() {
+		return ODLExpressionEvaluatorContext.class;
+	}
+	
+	
+	
+	
+	
+	public Class<? extends org.eclipse.xtext.naming.IQualifiedNameProvider> bindIQualifiedNameProvider() {
+		return ODLQualifiedNameProvider.class;
+	}
+	
+	public Class<? extends IQualifiedNameConverter> bindQualifiedNameConverter() {
+		return IQLQualifiedNameConverter.class;
+	}
+	
+	public Class<? extends IIQLJdtTypeProviderFactory> bindJdtTypeProviderFactory() {
+		return IQLNullJdtTypeProviderFactory.class;
+	}	
 	
 	@Override
 	public Class<? extends org.eclipse.xtext.common.types.access.IJvmTypeProvider.Factory> bindIJvmTypeProvider$Factory() {
@@ -83,100 +255,31 @@ public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractO
 	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
 		return ClasspathBasedTypeScopeProvider.class;
 	}
-	
-	
+		
 	public Class<? extends IIQLMethodFinder> bindMethodFinder() {
 		return DefaultIQLMethodFinder.class;
 	}
 	
 	public Class<? extends IIQLServiceObserver> bindIQLServiceObserver() {
 		return ODLServiceObserver.class;
-	}
-
-	public Class<? extends IIQLTypeUtils> bindTypeUtils() {
-		return ODLTypeUtils.class;
-	}
+	}	
 	
-	public Class<? extends IIQLTypeExtensionsFactory> bindTypeOperatorsFactory() {
-		return ODLTypeExtensionsFactory.class;
-	}
+	public Class<? extends IIQLTypingEntryPoint> bindIQLTypingEntryPoint() {
+		return ODLTypingEntryPoint.class;
+	}	
 	
 	@Override
 	public Class<? extends ILinkingService> bindILinkingService() {
 		return ODLLinkingService.class;
-	}
-	
-	
-	public Class<? extends IIQLExpressionEvaluatorContext> bindExpressionEvaluatorContext() {
-		return ODLExpressionEvaluatorContext.class;
-	}
+	}	
 	
 	public Class<? extends IIQLExecutor> bindExecutor() {
 		return ODLExecutor.class;
-	}
-	
+	}	
 	
 	public Class<? extends IGenerator> bindGenerator() {
 		return ODLGenerator.class;
-	}
-	
-	public Class<? extends IIQLCompilerHelper> bindIQLCompilerHelper() {
-		return ODLCompilerHelper.class;
-	}
-	
-	public Class<? extends IIQLCompiler> bindIQLCompiler() {
-		return ODLCompiler.class;
-	}
-	
-	public Class<? extends IIQLTypeCompiler> bindIQLTypeCompiler() {
-		return ODLTypeCompiler.class;
-	}
-	
-	public Class<? extends IIQLExpressionCompiler> bindIQLExpressionCompiler() {
-		return ODLExpressionCompiler.class;
-	}
-	
-	public Class<? extends IIQLStatementCompiler> bindIQLStatementCompiler() {
-		return ODLStatementCompiler.class;
-	}
-		
-	public Class<? extends IIQLMetadataAnnotationCompiler> bindIQLMetadataAnnotationCompiler() {
-		return ODLMetadataAnnotationCompiler.class;
-	}
-	
-	public Class<? extends IIQLMetadataMethodCompiler> bindIQLMetadataMethodCompiler() {
-		return ODLMetadataMethodCompiler.class;
-	}
-
-	public Class<? extends IIQLExpressionEvaluator> bindIQLExpressionEvaluator() {
-		return ODLExpressionEvaluator.class;
-	}
-	
-	
-	public Class<? extends IIQLTypeFactory> bindIQLTypeFactory() {
-		return ODLTypeFactory.class;
-	}
-	
-	public Class<? extends IIQLLookUp> bindIQLLookUp() {
-		return ODLLookUp.class;
-	}
-	
-	public Class<? extends IIQLTypeBuilder> bindIQLTypeBuilder() {
-		return ODLTypeBuilder.class;
-	}
-	
-	public Class<? extends IIQLTypingEntryPoint> bindIQLTypingEntryPoint() {
-		return ODLTypingEntryPoint.class;
-	}
-	
-	public Class<? extends org.eclipse.xtext.naming.IQualifiedNameProvider> bindIQualifiedNameProvider() {
-		return ODLQualifiedNameProvider.class;
-	}
-	
-	public Class<? extends IQualifiedNameConverter> bindQualifiedNameConverter() {
-		return IQLQualifiedNameConverter.class;
-	}
-	
+	}		
 
 	@Override
 	public Class<? extends XtextResource> bindXtextResource() {
@@ -188,8 +291,6 @@ public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractO
 	}
 	
 
-	public Class<? extends IIQLGeneratorContext> bindGeneratorContext() {
-		  return ODLGeneratorContext.class;
-	}
+
 
 }

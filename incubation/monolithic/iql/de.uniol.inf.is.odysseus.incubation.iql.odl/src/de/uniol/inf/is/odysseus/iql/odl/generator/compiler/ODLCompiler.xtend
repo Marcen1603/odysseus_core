@@ -1,16 +1,15 @@
 package de.uniol.inf.is.odysseus.iql.odl.generator.compiler
 
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLCompiler
-import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.IODLCompilerHelper
 import javax.inject.Inject
-import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext
+import de.uniol.inf.is.odysseus.iql.odl.generator.context.IODLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAORule
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.types.IQLUtils
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory
@@ -18,7 +17,6 @@ import org.eclipse.xtext.common.types.JvmMember
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates
 import java.util.List
@@ -32,22 +30,24 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
 import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLPO
-import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils
+import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp
 
-class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLStatementCompiler, ODLTypeFactory, ODLTypeUtils>{
+class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLStatementCompiler, IODLTypeFactory, IODLTypeUtils> implements IODLCompiler{
 	
 	@Inject
-	private ODLMetadataAnnotationCompiler metadataAnnotationCompiler
+	private IODLMetadataAnnotationCompiler metadataAnnotationCompiler
 	
 	@Inject
-	private ODLLookUp lookUp;
+	private IODLLookUp lookUp;
 	
 	@Inject
-	new(ODLCompilerHelper helper, ODLTypeCompiler typeCompiler, ODLStatementCompiler stmtCompiler, ODLTypeFactory factory, ODLTypeUtils typeUtils) {
+	new(IODLCompilerHelper helper, IODLTypeCompiler typeCompiler, IODLStatementCompiler stmtCompiler, IODLTypeFactory factory, IODLTypeUtils typeUtils) {
 		super(helper, typeCompiler, stmtCompiler, factory, typeUtils)
 	}
 	
-	def String compileAO(ODLOperator o, ODLGeneratorContext context) {
+	override String compileAO(ODLOperator o, IODLGeneratorContext context) {
 		context.ao = true	
 		var builder = new StringBuilder()
 		builder.append(compileAOIntern(o, context))
@@ -62,7 +62,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		builder.toString
 	}
 	
-	def String compilePO(IQLTypeDefinition typeDef, ODLOperator o, ODLGeneratorContext context) {	
+	override String compilePO(IQLTypeDefinition typeDef, ODLOperator o, IODLGeneratorContext context) {	
 		var builder = new StringBuilder()
 		builder.append(compilePOIntern(typeDef, o, context))
 			
@@ -72,7 +72,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		builder.toString
 	}
 	
-	def String compileAORule(ODLOperator o, ODLGeneratorContext context) {	
+	override String compileAORule(ODLOperator o, IODLGeneratorContext context) {	
 		var builder = new StringBuilder()
 		builder.append(compileAORuleIntern(o, context))
 		context.addImport(AbstractODLAORule.canonicalName)	
@@ -84,8 +84,8 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 	}
 	
 	
-	def String compileAOIntern(ODLOperator o, ODLGeneratorContext context) {	
-		var opName = o.simpleName+ODLCompilerHelper.AO_OPERATOR
+	def String compileAOIntern(ODLOperator o, IODLGeneratorContext context) {	
+		var opName = o.simpleName+IODLCompilerHelper.AO_OPERATOR
 		var superClass = AbstractLogicalOperator.simpleName;
 		var parameters = helper.getParameters(o);
 		var newExpressions = helper.getNewExpressions(o);
@@ -223,11 +223,11 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		'''
 	}	
 	
-	def String compileAORuleIntern(ODLOperator o, ODLGeneratorContext context) {	
-		var name = o.simpleName+ODLCompilerHelper.AO_RULE_OPERATOR
+	def String compileAORuleIntern(ODLOperator o, IODLGeneratorContext context) {	
+		var name = o.simpleName+IODLCompilerHelper.AO_RULE_OPERATOR
 		var superClass = AbstractODLAORule.simpleName;
-		var aoName = o.simpleName+ODLCompilerHelper.AO_OPERATOR
-		var poName = o.simpleName+ODLCompilerHelper.PO_OPERATOR		
+		var aoName = o.simpleName+IODLCompilerHelper.AO_OPERATOR
+		var poName = o.simpleName+IODLCompilerHelper.PO_OPERATOR		
 		var transform = TransformationConfiguration.simpleName
 		'''
 		
@@ -242,9 +242,9 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		'''
 	}
 
-	def String compilePOIntern(IQLTypeDefinition typeDef, ODLOperator o, ODLGeneratorContext context) {
-		var opName = o.simpleName+ODLCompilerHelper.PO_OPERATOR
-		var aoName = o.simpleName+ODLCompilerHelper.AO_OPERATOR		
+	def String compilePOIntern(IQLTypeDefinition typeDef, ODLOperator o, IODLGeneratorContext context) {
+		var opName = o.simpleName+IODLCompilerHelper.PO_OPERATOR
+		var aoName = o.simpleName+IODLCompilerHelper.AO_OPERATOR		
 		var parameters = helper.getParameters(o)
 		var attributes = helper.getAttributes(o)	
 		var superClass = AbstractPipe	
@@ -350,7 +350,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		'''
 	}	
 	
-	override String compile(JvmMember m, ODLGeneratorContext context) {
+	override String compile(JvmMember m, IODLGeneratorContext context) {
 		if (context.ao && m instanceof ODLParameter) {
 			compile(m as ODLParameter, context);
 		} else if (m instanceof ODLMethod) {
@@ -360,7 +360,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		}
 	}
 	
-	def String compile(ODLParameter a, ODLGeneratorContext context) {
+	def String compile(ODLParameter a, IODLGeneratorContext context) {
 		'''
 		private «typeCompiler.compile(a.type, context, false)» «a.simpleName»«IF a.init != null» = «stmtCompiler.compile(a.init, a.type, context)»«ENDIF»;
 		
@@ -368,7 +368,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 	}
 
 	
-	def String compile(ODLMethod m,ODLGeneratorContext context) {
+	def String compile(ODLMethod m,IODLGeneratorContext context) {
 		if (m.validate && m.simpleName != null && context.isAo) {
 			'''
 			private boolean validate«m.simpleName»()
@@ -401,7 +401,7 @@ class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorCon
 		} 
 	}
 	
-	def String createCloneStatements(ODLParameter p, String varName, ODLGeneratorContext context) {
+	def String createCloneStatements(ODLParameter p, String varName, IODLGeneratorContext context) {
 		var name = p.simpleName
 		var pName = helper.firstCharUpperCase(name)
 		var type = p.type

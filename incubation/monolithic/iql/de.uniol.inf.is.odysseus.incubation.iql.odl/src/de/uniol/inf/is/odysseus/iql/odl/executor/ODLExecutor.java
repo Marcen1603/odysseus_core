@@ -32,10 +32,20 @@ import java.util.Map;
 
 
 
+
+
+
+
+
 import javax.inject.Inject;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+
+
+
+
+
 
 
 
@@ -66,22 +76,22 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.iql.basic.executor.AbstractIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
-import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.IODLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
 
 
 
-public class ODLExecutor extends AbstractIQLExecutor<ODLTypeFactory, ODLTypeUtils> {
+public class ODLExecutor extends AbstractIQLExecutor<IODLTypeFactory, IODLTypeUtils> {
 	
 	private static final String LANGUAGE_NAME = "de.uniol.inf.is.odysseus.iql.odl.ODL";
 	protected static final String OPERATORS_DIR = "operators";
 
 	@Inject
-	public ODLExecutor(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
+	public ODLExecutor(IODLTypeFactory typeFactory, IODLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 	}
 
@@ -98,9 +108,9 @@ public class ODLExecutor extends AbstractIQLExecutor<ODLTypeFactory, ODLTypeUtil
 				urls.add(new File(outputPath).toURI().toURL());
 			}			
 			URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), ODLExecutor.class.getClassLoader());
-			Class<? extends ILogicalOperator> ao = (Class<? extends ILogicalOperator>) Class.forName(operator.getSimpleName()+ODLCompilerHelper.AO_OPERATOR, true, classLoader);
+			Class<? extends ILogicalOperator> ao = (Class<? extends ILogicalOperator>) Class.forName(operator.getSimpleName()+IODLCompilerHelper.AO_OPERATOR, true, classLoader);
 			addLogicalOperator(ao);
-			Class<?> rule = Class.forName(operator.getSimpleName()+ODLCompilerHelper.AO_RULE_OPERATOR, true, classLoader);
+			Class<?> rule = Class.forName(operator.getSimpleName()+IODLCompilerHelper.AO_RULE_OPERATOR, true, classLoader);
 			TransformationInventory.getInstance().addRule((IRule<?, ?>) rule.newInstance());
 			
 		} catch (Exception e) {

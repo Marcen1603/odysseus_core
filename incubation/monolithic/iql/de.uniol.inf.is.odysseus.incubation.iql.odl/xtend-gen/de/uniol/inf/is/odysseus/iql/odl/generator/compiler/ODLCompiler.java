@@ -23,22 +23,23 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.types.IQLUtils;
-import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext;
-import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLMetadataAnnotationCompiler;
-import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLStatementCompiler;
-import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLTypeCompiler;
-import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
-import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLMetadataAnnotationCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLStatementCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLTypeCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.IODLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.odl.generator.context.IODLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAORule;
 import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLAO;
 import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLPO;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.EventMethodsFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.IEventMethod;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,19 +59,19 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
-public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLStatementCompiler, ODLTypeFactory, ODLTypeUtils> {
+public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLStatementCompiler, IODLTypeFactory, IODLTypeUtils> implements IODLCompiler {
   @Inject
-  private ODLMetadataAnnotationCompiler metadataAnnotationCompiler;
+  private IODLMetadataAnnotationCompiler metadataAnnotationCompiler;
   
   @Inject
-  private ODLLookUp lookUp;
+  private IODLLookUp lookUp;
   
   @Inject
-  public ODLCompiler(final ODLCompilerHelper helper, final ODLTypeCompiler typeCompiler, final ODLStatementCompiler stmtCompiler, final ODLTypeFactory factory, final ODLTypeUtils typeUtils) {
+  public ODLCompiler(final IODLCompilerHelper helper, final IODLTypeCompiler typeCompiler, final IODLStatementCompiler stmtCompiler, final IODLTypeFactory factory, final IODLTypeUtils typeUtils) {
     super(helper, typeCompiler, stmtCompiler, factory, typeUtils);
   }
   
-  public String compileAO(final ODLOperator o, final ODLGeneratorContext context) {
+  public String compileAO(final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
       context.setAo(true);
@@ -96,7 +97,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
     return _xblockexpression;
   }
   
-  public String compilePO(final IQLTypeDefinition typeDef, final ODLOperator o, final ODLGeneratorContext context) {
+  public String compilePO(final IQLTypeDefinition typeDef, final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
@@ -113,7 +114,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
     return _xblockexpression;
   }
   
-  public String compileAORule(final ODLOperator o, final ODLGeneratorContext context) {
+  public String compileAORule(final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
@@ -134,11 +135,11 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
     return _xblockexpression;
   }
   
-  public String compileAOIntern(final ODLOperator o, final ODLGeneratorContext context) {
+  public String compileAOIntern(final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
       String _simpleName = o.getSimpleName();
-      String opName = (_simpleName + ODLCompilerHelper.AO_OPERATOR);
+      String opName = (_simpleName + IODLCompilerHelper.AO_OPERATOR);
       String superClass = AbstractLogicalOperator.class.getSimpleName();
       Collection<ODLParameter> parameters = this.helper.getParameters(o);
       Collection<IQLNewExpression> newExpressions = this.helper.getNewExpressions(o);
@@ -680,16 +681,16 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
     return _xblockexpression;
   }
   
-  public String compileAORuleIntern(final ODLOperator o, final ODLGeneratorContext context) {
+  public String compileAORuleIntern(final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
       String _simpleName = o.getSimpleName();
-      String name = (_simpleName + ODLCompilerHelper.AO_RULE_OPERATOR);
+      String name = (_simpleName + IODLCompilerHelper.AO_RULE_OPERATOR);
       String superClass = AbstractODLAORule.class.getSimpleName();
       String _simpleName_1 = o.getSimpleName();
-      String aoName = (_simpleName_1 + ODLCompilerHelper.AO_OPERATOR);
+      String aoName = (_simpleName_1 + IODLCompilerHelper.AO_OPERATOR);
       String _simpleName_2 = o.getSimpleName();
-      String poName = (_simpleName_2 + ODLCompilerHelper.PO_OPERATOR);
+      String poName = (_simpleName_2 + IODLCompilerHelper.PO_OPERATOR);
       String transform = TransformationConfiguration.class.getSimpleName();
       StringConcatenation _builder = new StringConcatenation();
       _builder.newLine();
@@ -730,13 +731,13 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
     return _xblockexpression;
   }
   
-  public String compilePOIntern(final IQLTypeDefinition typeDef, final ODLOperator o, final ODLGeneratorContext context) {
+  public String compilePOIntern(final IQLTypeDefinition typeDef, final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
       String _simpleName = o.getSimpleName();
-      String opName = (_simpleName + ODLCompilerHelper.PO_OPERATOR);
+      String opName = (_simpleName + IODLCompilerHelper.PO_OPERATOR);
       String _simpleName_1 = o.getSimpleName();
-      String aoName = (_simpleName_1 + ODLCompilerHelper.AO_OPERATOR);
+      String aoName = (_simpleName_1 + IODLCompilerHelper.AO_OPERATOR);
       Collection<ODLParameter> parameters = this.helper.getParameters(o);
       Collection<IQLAttribute> attributes = this.helper.getAttributes(o);
       Class<AbstractPipe> superClass = AbstractPipe.class;
@@ -1105,7 +1106,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
     return _xblockexpression;
   }
   
-  public String compile(final JvmMember m, final ODLGeneratorContext context) {
+  public String compile(final JvmMember m, final IODLGeneratorContext context) {
     String _xifexpression = null;
     boolean _and = false;
     boolean _isAo = context.isAo();
@@ -1128,7 +1129,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
     return _xifexpression;
   }
   
-  public String compile(final ODLParameter a, final ODLGeneratorContext context) {
+  public String compile(final ODLParameter a, final IODLGeneratorContext context) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("private ");
     JvmTypeReference _type = a.getType();
@@ -1154,7 +1155,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
     return _builder.toString();
   }
   
-  public String compile(final ODLMethod m, final ODLGeneratorContext context) {
+  public String compile(final ODLMethod m, final IODLGeneratorContext context) {
     String _xifexpression = null;
     boolean _and = false;
     boolean _and_1 = false;
@@ -1345,7 +1346,7 @@ public class ODLCompiler extends AbstractIQLCompiler<ODLCompilerHelper, ODLGener
     return _xifexpression;
   }
   
-  public String createCloneStatements(final ODLParameter p, final String varName, final ODLGeneratorContext context) {
+  public String createCloneStatements(final ODLParameter p, final String varName, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
       String name = p.getSimpleName();

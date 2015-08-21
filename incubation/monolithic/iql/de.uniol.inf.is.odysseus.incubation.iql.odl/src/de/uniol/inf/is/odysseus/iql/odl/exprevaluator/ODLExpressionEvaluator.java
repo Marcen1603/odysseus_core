@@ -9,21 +9,21 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.AbstractIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
-import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
+import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeExtensionsFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.typeextension.IODLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
-public class ODLExpressionEvaluator extends AbstractIQLExpressionEvaluator<ODLTypeFactory, ODLLookUp, ODLExpressionEvaluatorContext, ODLTypeUtils, ODLTypeExtensionsFactory>{
+public class ODLExpressionEvaluator extends AbstractIQLExpressionEvaluator<IODLTypeFactory, IODLLookUp, IODLExpressionEvaluatorContext, IODLTypeUtils, IODLTypeExtensionsFactory> implements IODLExpressionEvaluator{
 
 	@Inject
-	public ODLExpressionEvaluator(ODLTypeFactory typeFactory, ODLLookUp lookUp, ODLExpressionEvaluatorContext context,ODLTypeUtils typeUtils, ODLTypeExtensionsFactory typeExtensionsFactory) {
+	public ODLExpressionEvaluator(IODLTypeFactory typeFactory, IODLLookUp lookUp, IODLExpressionEvaluatorContext context,IODLTypeUtils typeUtils, IODLTypeExtensionsFactory typeExtensionsFactory) {
 		super(typeFactory, lookUp, context, typeUtils, typeExtensionsFactory);
 	}
 	
 	@Override
-	public TypeResult getType(IQLSuperExpression expr, ODLExpressionEvaluatorContext context) {
+	public TypeResult getType(IQLSuperExpression expr, IODLExpressionEvaluatorContext context) {
 		ODLOperator operator = EcoreUtil2.getContainerOfType(expr, ODLOperator.class);
 		if (operator != null) {
 			return getSuperType(expr);

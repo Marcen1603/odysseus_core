@@ -1,16 +1,16 @@
 package de.uniol.inf.is.odysseus.iql.odl.generator.compiler
 
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLTypeCompiler
-import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.IODLCompilerHelper
 import javax.inject.Inject
-import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory
+import de.uniol.inf.is.odysseus.iql.odl.generator.context.IODLGeneratorContext
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils
 
-class ODLTypeCompiler extends AbstractIQLTypeCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLExpressionCompiler, ODLTypeFactory,  ODLTypeUtils>{
+class ODLTypeCompiler extends AbstractIQLTypeCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLExpressionCompiler, IODLTypeFactory,  IODLTypeUtils> implements IODLTypeCompiler{
 	
 	@Inject
-	new(ODLCompilerHelper helper,ODLTypeFactory typeFactory,  ODLTypeUtils typeUtils) {
+	new(IODLCompilerHelper helper,IODLTypeFactory typeFactory,  IODLTypeUtils typeUtils) {
 		super(helper, typeFactory, typeUtils)
 	}
 	

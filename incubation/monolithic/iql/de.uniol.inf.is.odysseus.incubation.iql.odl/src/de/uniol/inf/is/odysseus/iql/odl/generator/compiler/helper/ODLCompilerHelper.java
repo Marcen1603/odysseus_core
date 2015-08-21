@@ -17,28 +17,26 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.AbstractIQLCompilerHelper;
-import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
+import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
-public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLTypeFactory, ODLTypeUtils> {
-
-	public static final String AO_RULE_OPERATOR = "AORule";
-	public static final String AO_OPERATOR = "AO";
-	public static final String PO_OPERATOR = "PO";
+public class ODLCompilerHelper extends AbstractIQLCompilerHelper<IODLLookUp, IODLTypeFactory, IODLTypeUtils> implements IODLCompilerHelper {
 
 	@Inject
-	public ODLCompilerHelper(ODLLookUp lookUp, ODLTypeFactory factory, ODLTypeUtils typeUtils) {
+	public ODLCompilerHelper(IODLLookUp lookUp, IODLTypeFactory factory, IODLTypeUtils typeUtils) {
 		super(lookUp, factory, typeUtils);
 	}
 	
-	public Collection<ODLParameter> getParameters(ODLOperator o) {
-		return EcoreUtil2.getAllContentsOfType(o, ODLParameter.class);
+	@Override
+	public Collection<ODLParameter> getParameters(ODLOperator operator) {
+		return EcoreUtil2.getAllContentsOfType(operator, ODLParameter.class);
 	}
-
+	
+	@Override
 	public boolean hasValidateMethod(ODLOperator operator, ODLParameter parameter) {
 		for (ODLMethod method : EcoreUtil2.getAllContentsOfType(operator, ODLMethod.class)) {
 			if (method.isValidate() && method.getSimpleName() != null && method.getSimpleName().equalsIgnoreCase(parameter.getSimpleName())) {
@@ -47,11 +45,13 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		}
 		return false;
 	}
-
+	
+	@Override
 	public Collection<ODLMethod> getODLMethods(ODLOperator operator) {
 		return EcoreUtil2.getAllContentsOfType(operator, ODLMethod.class);
 	}
 
+	@Override
 	public JvmTypeReference determineReadType(ODLOperator operator) {
 		for (IQLMethod method : EcoreUtil2.getAllContentsOfType(operator, IQLMethod.class)) {
 			if (method.getSimpleName() != null && method.getSimpleName().equals("processNext")) {
@@ -63,6 +63,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		return typeUtils.createTypeRef(Tuple.class, typeFactory.getSystemResourceSet());
 	}
 
+	@Override
 	public OutputMode determineOutputMode(ODLOperator operator) {
 		if (operator.getMetadataList() != null) {
 			for (IQLMetadata metadata : operator.getMetadataList().getElements()) {
@@ -79,10 +80,12 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	@Override
 	public boolean hasPredicate(ODLOperator operator) {
 		return !getPredicates(operator).isEmpty() || !getPredicateArrays(operator).isEmpty();
 	}
 
+	@Override
 	public Collection<String> getPredicates(ODLOperator operator) {
 		Collection<String> predicates = new HashSet<>();
 		for (ODLParameter parameter : EcoreUtil2.getAllContentsOfType(operator, ODLParameter.class)) {
@@ -93,6 +96,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		return predicates;
 	}
 	
+	@Override
 	public Collection<String> getPredicateArrays(ODLOperator operator) {
 		Collection<String> predicates = new HashSet<>();
 		for (ODLParameter parameter : EcoreUtil2.getAllContentsOfType(operator, ODLParameter.class)) {
@@ -106,6 +110,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		return predicates;
 	}
 
+	@Override
 	public boolean hasInitMethod(ODLOperator operator) {
 		for (IQLMethod method : EcoreUtil2.getAllContentsOfType(operator, IQLMethod.class)) {
 			if (method.getSimpleName() != null && method.getSimpleName().equals("init") && method.getParameters().size() == 0) {
@@ -115,6 +120,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		return false;
 	}
 
+	@Override
 	public boolean hasOperatorValidate(ODLOperator operator) {
 		for (ODLMethod method : EcoreUtil2.getAllContentsOfType(operator, ODLMethod.class)) {
 			if (method.isValidate() &&  method.getSimpleName() == null) {
@@ -124,6 +130,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		return false;
 	}
 
+	@Override
 	public boolean hasProcessNext(ODLOperator operator) {
 		for (IQLMethod method : EcoreUtil2.getAllContentsOfType(operator, IQLMethod.class)) {
 			if (method.getSimpleName() != null && method.getSimpleName().equals("process_next") && method.getParameters().size() == 2) {
@@ -135,6 +142,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		return false;
 	}
 
+	@Override
 	public boolean hasProcessPunctuation(ODLOperator operator) {
 		for (IQLMethod method : EcoreUtil2.getAllContentsOfType(operator, IQLMethod.class)) {
 			if (method.getSimpleName() != null && method.getSimpleName().equals("processPunctuation") && method.getParameters().size() == 2) {
@@ -144,6 +152,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<ODLLookUp, ODLT
 		return false;
 	}
 
+	@Override
 	public JvmTypeReference determineMetadataType(ODLOperator operator) {
 		return typeUtils.createTypeRef(IMetaAttribute.class, typeFactory.getSystemResourceSet());
 	}

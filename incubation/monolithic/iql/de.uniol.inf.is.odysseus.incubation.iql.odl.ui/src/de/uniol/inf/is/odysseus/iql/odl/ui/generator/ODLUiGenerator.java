@@ -16,14 +16,14 @@ import org.eclipse.xtext.ui.util.ResourceUtil;
 
 import de.uniol.inf.is.odysseus.iql.basic.ui.BasicIQLUiModule;
 import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGenerator;
-import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.context.IODLGeneratorContext;
 
 public class ODLUiGenerator extends ODLGenerator{
 
 
 	@Inject
-	public ODLUiGenerator(ODLGeneratorContext generatorContext,	ODLCompiler compiler) {
+	public ODLUiGenerator(IODLGeneratorContext generatorContext,ODLCompiler compiler) {
 		super(generatorContext, compiler);
 	}
 

@@ -22,12 +22,14 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculato
 
 
 
+
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.IQLXtextEditorCallback;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.odl.scoping.IODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.ui.coloring.ODLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.odl.ui.coloring.ODLSemanticHighlightingCalculator;
@@ -49,21 +51,14 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 		super(plugin);
 	}
 	
-	public Class<? extends IGenerator> bindGenerator() {
-		return ODLUiGenerator.class;
-	}
-	
 	public Class<? extends IIQLScopeProvider> bindIQLScopeProvider() {
 		return ODLUiScopeProvider.class;
 	}
-	
-	public Class<? extends org.eclipse.xtext.scoping.IScopeProvider> bindIScopeProvider() {
+	public Class<? extends IODLScopeProvider> bindODLScopeProvider() {
 		return ODLUiScopeProvider.class;
-	}
+	}	
 	
-	public Class<? extends IIQLUiExecutor> bindIQLUiExecutor() {
-		return ODLUiExecutor.class;
-	}
+	
 	
 	public Class<? extends IIQLJdtTypeProviderFactory> bindIQLJdtTypeProviderFactory() {
 		return IQLJdtTypeProviderFactory.class;
@@ -77,6 +72,18 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 	@Override
 	public Class<? extends org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
 		return ClasspathBasedTypeScopeProvider.class;
+	}
+	
+	public Class<? extends IGenerator> bindGenerator() {
+		return ODLUiGenerator.class;
+	}
+		
+	public Class<? extends org.eclipse.xtext.scoping.IScopeProvider> bindIScopeProvider() {
+		return ODLUiScopeProvider.class;
+	}
+	
+	public Class<? extends IIQLUiExecutor> bindIQLUiExecutor() {
+		return ODLUiExecutor.class;
 	}
 	
 	@Override
@@ -108,7 +115,6 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 	public Class<? extends ITemplateProposalProvider> bindITemplateProposalProvider() {
 		return ODLTemplateProposalProvider.class;
 	}
-
 	
 	@Override
 	public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {

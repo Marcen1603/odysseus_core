@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.odl.typing;
+package de.uniol.inf.is.odysseus.iql.odl.typing.typeextension;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -10,12 +10,15 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.AbstractIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLDefaultTypes;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
 @Singleton
-public class ODLTypeExtensionsFactory extends AbstractIQLTypeExtensionsFactory<ODLTypeFactory, ODLTypeUtils> {
+public class ODLTypeExtensionsFactory extends AbstractIQLTypeExtensionsFactory<IODLTypeFactory, IODLTypeUtils> implements IODLTypeExtensionsFactory {
 
 	@Inject
-	public ODLTypeExtensionsFactory(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
+	public ODLTypeExtensionsFactory(IODLTypeFactory typeFactory, IODLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 		init();
 	}

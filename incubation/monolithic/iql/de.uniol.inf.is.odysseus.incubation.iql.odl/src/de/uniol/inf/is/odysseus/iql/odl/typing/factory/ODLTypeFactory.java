@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.iql.odl.typing;
+package de.uniol.inf.is.odysseus.iql.odl.typing.factory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,21 +20,20 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.AbstractIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLFactory;
 import de.uniol.inf.is.odysseus.iql.odl.service.ODLServiceObserver;
+import de.uniol.inf.is.odysseus.iql.odl.typing.ODLDefaultTypes;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
 
 
 @Singleton
-public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils, ODLServiceObserver> {
-	public static final String PARAMETER_KEY_TYPE = "keytype";
-	public static final String PARAMETER_TYPE = "type";
-	public static final String OPERATOR_OUTPUT_MODE = "outputMode";
-	public static final String OPERATOR_PERSISTENT = "persistent";
+public class ODLTypeFactory extends AbstractIQLTypeFactory<IODLTypeUtils, ODLServiceObserver> implements IODLTypeFactory {
+
 
 	private Map<String, JvmTypeReference> parametersByType = new HashMap<>();
 	private Map<String, List<JvmTypeReference>> parametersByValue = new HashMap<>();
 	
 	@Inject
-	public ODLTypeFactory(ODLTypeUtils typeUtils, ODLServiceObserver serviceObserver) {
+	public ODLTypeFactory(IODLTypeUtils typeUtils, ODLServiceObserver serviceObserver) {
 		super(typeUtils, serviceObserver);
 	}
 	
@@ -109,7 +108,7 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils, ODLServ
 		return ODLFactory.eINSTANCE.createODLModel();
 	}
 		
-
+	@Override
 	public void addParameter(JvmTypeReference parameterType, JvmTypeReference parameterValueType) {	
 		parametersByType.put(typeUtils.getLongName(parameterType, true),parameterValueType);
 		
@@ -122,6 +121,7 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils, ODLServ
 		
 	}
 	
+	@Override
 	public JvmTypeReference getParameterType(JvmTypeReference valueType) {
 		String qName = typeUtils.getLongName(valueType, false);
 		List<JvmTypeReference> parameters = parametersByValue.get(qName);
@@ -132,10 +132,12 @@ public class ODLTypeFactory extends AbstractIQLTypeFactory<ODLTypeUtils, ODLServ
 	}
 
 
+	@Override
 	public Collection<JvmTypeReference> getAllParameterValues() {
 		return parametersByType.values();
 	}
 
+	@Override
 	public Collection<JvmTypeReference> getAllParameterTypes() {
 		Collection<JvmTypeReference> result = new HashSet<>();
 		for (List<JvmTypeReference> list : parametersByValue.values()) {

@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.iql.odl.ui.hover;
 import javax.inject.Inject;
 
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.AbstractIQLEObjectHoverProvider;
-import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
-public class ODLEObjectHoverProvider extends AbstractIQLEObjectHoverProvider<ODLTypeUtils, ODLLookUp> {
+public class ODLEObjectHoverProvider extends AbstractIQLEObjectHoverProvider<IODLTypeUtils, IODLLookUp> {
 
 	@Inject
-	public ODLEObjectHoverProvider(ODLTypeUtils typeUtils, ODLLookUp lookUp) {
+	public ODLEObjectHoverProvider(IODLTypeUtils typeUtils, IODLLookUp lookUp) {
 		super(typeUtils, lookUp);
 	}
 

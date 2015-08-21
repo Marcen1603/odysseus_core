@@ -9,6 +9,12 @@ import java.util.Map;
 import javax.inject.Inject;
 
 
+
+
+
+
+
+
 import org.eclipse.xtext.common.types.JvmArrayType;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -20,17 +26,18 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeExtensionsFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.typeextension.IODLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
-public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory, ODLTypeExtensionsFactory, ODLTypeUtils>{
+public class ODLLookUp extends AbstractIQLLookUp<IODLTypeFactory, IODLTypeExtensionsFactory, IODLTypeUtils> implements IODLLookUp{
 
 	@Inject
-	public ODLLookUp(ODLTypeFactory typeFactory, ODLTypeExtensionsFactory typeOperatorsFactory,ODLTypeUtils typeUtils) {
+	public ODLLookUp(IODLTypeFactory typeFactory, IODLTypeExtensionsFactory typeOperatorsFactory,IODLTypeUtils typeUtils) {
 		super(typeFactory, typeOperatorsFactory, typeUtils);
 	}
 
+	@Override
 	public Collection<JvmOperation> getOnMethods() {
 		Collection<JvmOperation> result = new HashSet<>();
 
@@ -49,18 +56,20 @@ public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory, ODLTypeExtensio
 		}
 		return result;
 	}
-
+	
+	@Override
 	public Collection<String> getOperatorMetadataKeys() {
 		Collection<String> result = new HashSet<>();
 		for(Method method : LogicalOperator.class.getDeclaredMethods()) {
 			result.add(method.getName());
 		}
-		result.add(ODLTypeFactory.OPERATOR_OUTPUT_MODE);
-		result.add(ODLTypeFactory.OPERATOR_PERSISTENT);
+		result.add(IODLTypeFactory.OPERATOR_OUTPUT_MODE);
+		result.add(IODLTypeFactory.OPERATOR_PERSISTENT);
 		return result;
 	}
 	
 
+	@Override
 	public Collection<String> getParameterMetadataKeys() {
 		Collection<String> result = new HashSet<>();
 		for(Method method : Parameter.class.getDeclaredMethods()) {
@@ -69,18 +78,22 @@ public class ODLLookUp extends AbstractIQLLookUp<ODLTypeFactory, ODLTypeExtensio
 		return result;
 	}
 
+	@Override
 	public OutputMode[] getOutputModeValues() {
 		return OutputMode.values();
 	}
 	
+	@Override
 	public boolean isMap(JvmTypeReference typeRef) {
 		return isAssignable(typeUtils.createTypeRef(Map.class, typeFactory.getSystemResourceSet()), typeRef);
 	}
 	
+	@Override
 	public boolean isClonable(JvmTypeReference typeRef) {
 		return methodFinder.findMethod(getPublicMethods(typeRef, false), "clone", 0, true) != null;
 	}
 	
+	@Override
 	public boolean isList(JvmTypeReference typeRef) {
 		if (typeUtils.getInnerType(typeRef, true) instanceof IQLArrayType) {
 			return true;

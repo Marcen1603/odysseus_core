@@ -31,8 +31,8 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.BasicIQLUiModule;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.odl.executor.ODLExecutor;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
 public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 
@@ -40,7 +40,7 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 	private IJavaProjectProvider javaProjectProvider;
 	
 	@Inject
-	public ODLUiExecutor(ODLTypeFactory typeFactory, ODLTypeUtils typeUtils) {
+	public ODLUiExecutor(IODLTypeFactory typeFactory, IODLTypeUtils typeUtils) {
 		super(typeFactory, typeUtils);
 	}
 

@@ -1,19 +1,20 @@
 package de.uniol.inf.is.odysseus.iql.odl.generator.compiler;
 
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLExpressionCompiler;
-import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.ODLExpressionEvaluator;
-import de.uniol.inf.is.odysseus.iql.odl.generator.ODLGeneratorContext;
-import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.ODLTypeCompiler;
-import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.ODLCompilerHelper;
-import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeExtensionsFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.IODLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLExpressionCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLTypeCompiler;
+import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.IODLCompilerHelper;
+import de.uniol.inf.is.odysseus.iql.odl.generator.context.IODLGeneratorContext;
+import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
+import de.uniol.inf.is.odysseus.iql.odl.typing.typeextension.IODLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 import javax.inject.Inject;
 
 @SuppressWarnings("all")
-public class ODLExpressionCompiler extends AbstractIQLExpressionCompiler<ODLCompilerHelper, ODLGeneratorContext, ODLTypeCompiler, ODLExpressionEvaluator, ODLTypeUtils, ODLLookUp, ODLTypeExtensionsFactory> {
+public class ODLExpressionCompiler extends AbstractIQLExpressionCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLExpressionEvaluator, IODLTypeUtils, IODLLookUp, IODLTypeExtensionsFactory> implements IODLExpressionCompiler {
   @Inject
-  public ODLExpressionCompiler(final ODLCompilerHelper helper, final ODLTypeCompiler typeCompiler, final ODLExpressionEvaluator exprEvaluator, final ODLTypeUtils typeUtils, final ODLLookUp lookUp, final ODLTypeExtensionsFactory typeOperatorsFactory) {
+  public ODLExpressionCompiler(final IODLCompilerHelper helper, final IODLTypeCompiler typeCompiler, final IODLExpressionEvaluator exprEvaluator, final IODLTypeUtils typeUtils, final IODLLookUp lookUp, final IODLTypeExtensionsFactory typeOperatorsFactory) {
     super(helper, typeCompiler, exprEvaluator, typeUtils, lookUp, typeOperatorsFactory);
   }
 }

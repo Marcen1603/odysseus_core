@@ -28,17 +28,17 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.AbstractIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
-import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.ODLExpressionEvaluator;
-import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
+import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.IODLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
 
-public class ODLScopeProvider extends AbstractIQLScopeProvider<ODLTypeFactory, ODLLookUp, ODLExpressionEvaluator, ODLTypeUtils>{
+public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeFactory, IODLLookUp, IODLExpressionEvaluator, IODLTypeUtils> implements IODLScopeProvider{
 
 	@Inject
-	public ODLScopeProvider(ODLTypeFactory typeFactory, ODLLookUp lookUp,ODLExpressionEvaluator exprEvaluator, ODLTypeUtils typeUtils) {
+	public ODLScopeProvider(IODLTypeFactory typeFactory, IODLLookUp lookUp,IODLExpressionEvaluator exprEvaluator, IODLTypeUtils typeUtils) {
 		super(typeFactory, lookUp, exprEvaluator, typeUtils);
 	}
 	

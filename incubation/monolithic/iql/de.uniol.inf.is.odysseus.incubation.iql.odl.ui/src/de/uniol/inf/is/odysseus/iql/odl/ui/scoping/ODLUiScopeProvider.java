@@ -7,16 +7,16 @@ import org.eclipse.xtext.scoping.IScope;
 
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtBasedTypeScope;
-import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.ODLExpressionEvaluator;
-import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
+import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.IODLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLScopeProvider;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.ODLTypeUtils;
+import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
 public class ODLUiScopeProvider extends ODLScopeProvider {
 	
 	@Inject
-	public ODLUiScopeProvider(ODLTypeFactory typeFactory, ODLLookUp lookUp,	ODLExpressionEvaluator exprEvaluator, ODLTypeUtils typeUtils) {
+	public ODLUiScopeProvider(IODLTypeFactory typeFactory, IODLLookUp lookUp,	IODLExpressionEvaluator exprEvaluator, IODLTypeUtils typeUtils) {
 		super(typeFactory, lookUp, exprEvaluator, typeUtils);
 	}
 	
