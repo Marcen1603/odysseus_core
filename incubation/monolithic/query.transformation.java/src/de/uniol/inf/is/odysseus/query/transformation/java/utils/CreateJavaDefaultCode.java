@@ -375,5 +375,17 @@ public class CreateJavaDefaultCode {
 	}
 	
 	
+	public static CodeFragmentInfo createCodeForSDFAttributeList(List<SDFAttribute> sdfAttributes, String operatorVariable){
+		CodeFragmentInfo sdfAttributeList = new CodeFragmentInfo();
+		
+		StringTemplate sdfAttributeListTemplate = new StringTemplate("utils","sdfAttributeList");
+		sdfAttributeListTemplate.getSt().add("sdfAttributes", sdfAttributes);
+		sdfAttributeListTemplate.getSt().add("operatorVariable",operatorVariable);
+
+		sdfAttributeList.addCode(sdfAttributeListTemplate.getSt().render());
+	
+		return sdfAttributeList;
+	}
+	
 
 }
