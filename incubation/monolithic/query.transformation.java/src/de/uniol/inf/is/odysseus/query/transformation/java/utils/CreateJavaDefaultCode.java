@@ -11,6 +11,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -267,6 +268,7 @@ public class CreateJavaDefaultCode {
 		imports.add(IProtocolHandler.class.getName());
 		imports.add(ITransportHandler.class.getName());
 		imports.add(FileHandler.class.getName());
+		imports.add(IStreamObjectDataHandler.class.getName());
 	 
 		codeFragmentInfo.setCode(protocolHandlerTemplate.getSt().render());
 		codeFragmentInfo.setImports(imports);
@@ -360,17 +362,19 @@ public class CreateJavaDefaultCode {
 			functionNameList.add(entry.getValue());
 
 		}
+		
+		if(!functionNameList.isEmpty()){
 
-		StringTemplate mepRegistryTemplate = new StringTemplate("utils","registryHandler");
-		mepRegistryTemplate.getSt().add("clazzName", registryClass.getSimpleName());
-		mepRegistryTemplate.getSt().add("clazzSimpleName", registryClass.getSimpleName().toLowerCase());
-		mepRegistryTemplate.getSt().add("handlerList", functionNameList);
-		mepRegistryTemplate.getSt().add("registerFunctionName",registerFunctionName);
+			StringTemplate mepRegistryTemplate = new StringTemplate("utils","registryHandler");
+			mepRegistryTemplate.getSt().add("clazzName", registryClass.getSimpleName());
+			mepRegistryTemplate.getSt().add("clazzSimpleName", registryClass.getSimpleName().toLowerCase());
+			mepRegistryTemplate.getSt().add("handlerList", functionNameList);
+			mepRegistryTemplate.getSt().add("registerFunctionName",registerFunctionName);
+			
+			registryCode.addCode(mepRegistryTemplate.getSt().render());
+			registryCode.addImport(registryClass.getName());
 		
-		registryCode.addCode(mepRegistryTemplate.getSt().render());
-		registryCode.addImport(registryClass.getName());
-		
-		
+		}
 		return registryCode;
 	}
 	

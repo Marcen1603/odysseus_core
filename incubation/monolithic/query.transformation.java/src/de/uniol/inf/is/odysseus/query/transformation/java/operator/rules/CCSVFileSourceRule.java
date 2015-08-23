@@ -37,6 +37,8 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 		String dataHandler = csvFileSourceOP.getDataHandler();
 		String wrapper = csvFileSourceOP.getWrapper();
 		String protocolHandler = csvFileSourceOP.getProtocolHandler();
+		
+		
 		ITransportDirection direction = ITransportDirection.IN;
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
@@ -47,6 +49,12 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 		
 		StringTemplate accessPOTemplate = new StringTemplate("operator","accessPO");
 		accessPOTemplate.getSt().add("operatorVariable", operatorVariable);
+		accessPOTemplate.getSt().add("getMaxTimeToWaitForNewEventMS", csvFileSourceOP.getMaxTimeToWaitForNewEventMS());
+		accessPOTemplate.getSt().add("readMetaData", csvFileSourceOP.readMetaData());
+		
+		
+		
+		
 		csvFileSource.addCode(accessPOTemplate.getSt().render());
 	
 		csvFileSource.addCodeFragmentInfo(CreateJavaDefaultCode.codeForRelationalTimestampAttributeTimeIntervalMFactory(operator, timestampAO));
