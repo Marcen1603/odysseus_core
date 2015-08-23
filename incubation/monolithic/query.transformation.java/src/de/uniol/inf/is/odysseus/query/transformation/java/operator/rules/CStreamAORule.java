@@ -56,6 +56,8 @@ public class CStreamAORule extends AbstractCStreamAORule{
 		 
 		StringTemplate receiverPOTemplate = new StringTemplate("operator","receiverPO");
 		receiverPOTemplate.getSt().add("operatorVariable", operatorVariable);
+		receiverPOTemplate.getSt().add("readMetaData", accessAO.getReadMetaData());
+		
 			
 		receiverPO.addCode(receiverPOTemplate.getSt().render());
 		

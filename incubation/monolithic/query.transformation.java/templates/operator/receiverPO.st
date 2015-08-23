@@ -1,6 +1,6 @@
-receiverPO(operatorVariable)::=<<
+receiverPO(operatorVariable,readMetaData)::=<<
 
-	ReceiverPO $operatorVariable$PO = new ReceiverPO($operatorVariable$ProtocolHandler);
+	ReceiverPO $operatorVariable$PO = new ReceiverPO($operatorVariable$ProtocolHandler,$readMetaData$);
 			
 	$operatorVariable$PO.setOutputSchema($operatorVariable$SDFSchema);
 	
