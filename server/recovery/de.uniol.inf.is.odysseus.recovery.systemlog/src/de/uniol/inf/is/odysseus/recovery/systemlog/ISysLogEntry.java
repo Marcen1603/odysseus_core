@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.recovery;
+package de.uniol.inf.is.odysseus.recovery.systemlog;
 
 import com.google.common.base.Optional;
 

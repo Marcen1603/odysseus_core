@@ -5,7 +5,6 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
-import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.internal.SysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.internal.SystemLog;
 

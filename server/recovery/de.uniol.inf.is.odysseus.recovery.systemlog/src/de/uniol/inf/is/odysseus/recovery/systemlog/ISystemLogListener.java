@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.recovery.systemlog;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
-
 /**
  * Listeners for actions within the system log.
  * 

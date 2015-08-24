@@ -27,13 +27,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.recovery.AbstractRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
-import de.uniol.inf.is.odysseus.core.server.recovery.ISysLogEntry;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.AbstractQueryStateInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryRemovedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryStateChangedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.ScriptAddedInfo;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.SourceRemovedInfo;
+import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
