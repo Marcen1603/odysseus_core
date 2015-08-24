@@ -60,7 +60,7 @@ public class RecoveryConfigKeyword extends AbstractPreParserKeyword {
 	 * @return A string to represent the keyword in Odysseus Script.
 	 */
 	public static String getName() {
-		return "RECOVERYCONFIGUTRATION";
+		return "RECOVERYCONFIGURATION";
 	}
 
 	@Override
