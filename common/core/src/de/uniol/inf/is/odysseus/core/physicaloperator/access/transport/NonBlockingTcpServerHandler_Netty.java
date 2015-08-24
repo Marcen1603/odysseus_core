@@ -32,8 +32,7 @@ import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
-		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener,
-		IHasAlias {
+		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener, IHasAlias {
 
 	private static final String PORT = "port";
 	private static final String MAX_BUFFER_SIZE = "maxbuffersize";
@@ -68,13 +67,10 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 		return ret;
 	}
 
-	public NonBlockingTcpServerHandler_Netty(
-			IProtocolHandler<?> protocolHandler, OptionMap options) {
+	public NonBlockingTcpServerHandler_Netty(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
-		port = options.containsKey(PORT) ? Integer.parseInt(options.get(PORT))
-				: 8080;
-		maxBufferSize = options.containsKey(MAX_BUFFER_SIZE) ? Integer
-				.parseInt(options.get(MAX_BUFFER_SIZE)) : 0;
+		port = options.containsKey(PORT) ? Integer.parseInt(options.get(PORT)) : 8080;
+		maxBufferSize = options.containsKey(MAX_BUFFER_SIZE) ? Integer.parseInt(options.get(MAX_BUFFER_SIZE)) : 0;
 	}
 
 	public NonBlockingTcpServerHandler_Netty() {
@@ -107,10 +103,8 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	}
 
 	@Override
-	public ITransportHandler createInstance(
-			IProtocolHandler<?> protocolHandler, OptionMap options) {
-		NonBlockingTcpServerHandler_Netty result = new NonBlockingTcpServerHandler_Netty(
-				protocolHandler, options);
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
+		NonBlockingTcpServerHandler_Netty result = new NonBlockingTcpServerHandler_Netty(protocolHandler, options);
 		return result;
 	}
 
@@ -135,8 +129,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	}
 
 	@Override
-	public void notify(final IConnection connection,
-			final ConnectionMessageReason reason) {
+	public void notify(final IConnection connection, final ConnectionMessageReason reason) {
 		switch (reason) {
 		case ConnectionAbort:
 			super.fireOnDisconnect();
@@ -185,8 +178,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	private void processInOutClose() throws IOException {
 		try {
-			Iterator<ChannelHandlerContext> channelIter = this.channels
-					.iterator();
+			Iterator<ChannelHandlerContext> channelIter = this.channels.iterator();
 			while (channelIter.hasNext()) {
 				ChannelHandlerContext e = channelIter.next();
 				e.close();
@@ -215,8 +207,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	}
 
 	@Override
-	public void process(long callerId, ByteBuffer buffer)
-			throws ClassNotFoundException {
+	public void process(long callerId, ByteBuffer buffer) throws ClassNotFoundException {
 		super.fireProcess(callerId, buffer);
 	}
 
@@ -244,17 +235,23 @@ class MyTCPServer {
 	public MyTCPServer() {
 	}
 
-	private ServerBootstrap b = null;
-	private EventLoopGroup bossGroup = new NioEventLoopGroup();
-	private EventLoopGroup workerGroup = new NioEventLoopGroup();
+	final private Map<Integer, ServerBootstrap> bootsTraps = new HashMap<>();
+	private Map<Integer, EventLoopGroup> bossGroups = new HashMap<>();
+	private Map<Integer, EventLoopGroup> workerGroups = new HashMap<>();
 
 	Map<Integer, ChannelFuture> portMapping = new HashMap<Integer, ChannelFuture>();
 	Map<Integer, NonBlockingTcpServerHandler_Netty> handlerMapping = new HashMap<>();
 
 	public void shutdown() {
-		workerGroup.shutdownGracefully();
-		bossGroup.shutdownGracefully();
-		b = null;
+		for (EventLoopGroup workerGroup : workerGroups.values()) {
+			workerGroup.shutdownGracefully();
+		}
+		workerGroups.clear();
+		for (EventLoopGroup bossGroup : bossGroups.values()) {
+			bossGroup.shutdownGracefully();
+		}
+		bossGroups.clear();
+		bootsTraps.clear();
 	}
 
 	public void shutdown(int port) throws InterruptedException {
@@ -268,32 +265,28 @@ class MyTCPServer {
 		}
 	}
 
-	public void add(int port, final NonBlockingTcpServerHandler_Netty caller)
-			throws InterruptedException {
+	public void add(int port, final NonBlockingTcpServerHandler_Netty caller) throws InterruptedException {
 
 		if (portMapping.containsKey(port)) {
-			throw new IllegalArgumentException("Server port " + port
-					+ " already bound!");
+			throw new IllegalArgumentException("Server port " + port + " already bound!");
 		}
 
-		if (b == null) {
-			b = new ServerBootstrap();
-			bossGroup = new NioEventLoopGroup();
-			workerGroup = new NioEventLoopGroup();
-			b.group(bossGroup, workerGroup)
-					.channel(NioServerSocketChannel.class)
-					.childHandler(new ChannelInitializer<SocketChannel>() {
-						@Override
-						protected void initChannel(SocketChannel ch)
-								throws Exception {
-							final ServerHandler handler = new ServerHandler(
-									caller);
-							ch.pipeline().addLast(handler);
-						}
-					}).option(ChannelOption.SO_BACKLOG, 128)
-					.childOption(ChannelOption.SO_KEEPALIVE, true);
-		}
+		ServerBootstrap b = new ServerBootstrap();
+		NioEventLoopGroup bossGroup = new NioEventLoopGroup();
+		NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+		b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+				.childHandler(new ChannelInitializer<SocketChannel>() {
+					@Override
+					protected void initChannel(SocketChannel ch) throws Exception {
+						final ServerHandler handler = new ServerHandler(caller);
+						ch.pipeline().addLast(handler);
+					}
+				}).option(ChannelOption.SO_BACKLOG, 128).childOption(ChannelOption.SO_KEEPALIVE, true);
 
+		bootsTraps.put(port,b);
+		bossGroups.put(port, bossGroup);
+		workerGroups.put(port, workerGroup);
+		
 		ChannelFuture f = null;
 		f = b.bind(port).sync();
 		portMapping.put(port, f);
@@ -322,19 +315,18 @@ class ServerHandler extends ByteToMessageDecoder {
 	}
 
 	@Override
-	protected void decode(ChannelHandlerContext ctx, ByteBuf in,
-			List<Object> out) throws Exception {
+	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		sendToServer(ctx, in.readBytes(in.readableBytes()), this);
 	}
 
-	public synchronized void sendToServer(ChannelHandlerContext ctx,
-			ByteBuf msg, ServerHandler serverHandler) throws Exception {
+	public synchronized void sendToServer(ChannelHandlerContext ctx, ByteBuf msg, ServerHandler serverHandler)
+			throws Exception {
 		try {
-//			System.err.println("ChannelRead " + msg);
-//			System.err.println("Context " + ctx);
-//			System.err.println("ServerHandler " + serverHandler);
-//			System.err.println("Content "
-//					+ msg.toString(io.netty.util.CharsetUtil.UTF_8));
+			// System.err.println("ChannelRead " + msg);
+			// System.err.println("Context " + ctx);
+			// System.err.println("ServerHandler " + serverHandler);
+			// System.err.println("Content "
+			// + msg.toString(io.netty.util.CharsetUtil.UTF_8));
 
 			ByteBuffer buffer = msg.nioBuffer();
 			buffer.position(buffer.limit());
@@ -371,8 +363,7 @@ class ServerHandler extends ByteToMessageDecoder {
 	}
 
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-			throws Exception {
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		// System.err.println("ERROR");
 		cause.printStackTrace();
 
