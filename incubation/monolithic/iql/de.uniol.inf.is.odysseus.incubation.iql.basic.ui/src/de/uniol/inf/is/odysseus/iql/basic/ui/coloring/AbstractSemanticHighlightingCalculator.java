@@ -10,7 +10,6 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultSemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaKeywords;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement;
@@ -29,9 +28,10 @@ public class AbstractSemanticHighlightingCalculator extends	DefaultSemanticHighl
                 acceptor.addPosition(node.getOffset(), node.getLength(), AbstractIQLHighlightingConfiguration.JAVA_ID);
 	        } else if (current instanceof IQLJavaMetadata) {
                 acceptor.addPosition(node.getOffset(), node.getLength(), AbstractIQLHighlightingConfiguration.JAVA_ID);
-	        } else if (current instanceof IQLJavaKeywords) {
-                acceptor.addPosition(node.getOffset(), node.getLength(), AbstractIQLHighlightingConfiguration.JAVA_KEYWORDS_ID);
 	        }
+//	        else if (current instanceof IQLJavaKeywords) {
+//                acceptor.addPosition(node.getOffset(), node.getLength(), AbstractIQLHighlightingConfiguration.JAVA_KEYWORDS_ID);
+//	        }
 		}  
 
 	}

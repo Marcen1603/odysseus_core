@@ -3,7 +3,6 @@
 package de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -13,6 +12,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import org.eclipse.xtext.common.types.JvmType;
 
 import org.eclipse.xtext.common.types.impl.JvmTypeReferenceImpl;
 
@@ -39,7 +40,7 @@ public class IQLArrayTypeRefImpl extends JvmTypeReferenceImpl implements IQLArra
    * @generated
    * @ordered
    */
-  protected IQLArrayType type;
+  protected JvmType type;
 
   /**
    * <!-- begin-user-doc -->
@@ -67,7 +68,7 @@ public class IQLArrayTypeRefImpl extends JvmTypeReferenceImpl implements IQLArra
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLArrayType getType()
+  public JvmType getType()
   {
     return type;
   }
@@ -77,9 +78,9 @@ public class IQLArrayTypeRefImpl extends JvmTypeReferenceImpl implements IQLArra
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetType(IQLArrayType newType, NotificationChain msgs)
+  public NotificationChain basicSetType(JvmType newType, NotificationChain msgs)
   {
-    IQLArrayType oldType = type;
+    JvmType oldType = type;
     type = newType;
     if (eNotificationRequired())
     {
@@ -94,7 +95,7 @@ public class IQLArrayTypeRefImpl extends JvmTypeReferenceImpl implements IQLArra
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setType(IQLArrayType newType)
+  public void setType(JvmType newType)
   {
     if (newType != type)
     {
@@ -153,7 +154,7 @@ public class IQLArrayTypeRefImpl extends JvmTypeReferenceImpl implements IQLArra
     switch (featureID)
     {
       case BasicIQLPackage.IQL_ARRAY_TYPE_REF__TYPE:
-        setType((IQLArrayType)newValue);
+        setType((JvmType)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -170,7 +171,7 @@ public class IQLArrayTypeRefImpl extends JvmTypeReferenceImpl implements IQLArra
     switch (featureID)
     {
       case BasicIQLPackage.IQL_ARRAY_TYPE_REF__TYPE:
-        setType((IQLArrayType)null);
+        setType((JvmType)null);
         return;
     }
     super.eUnset(featureID);

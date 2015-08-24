@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLIfStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInstanceOfExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaKeywords;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement;
@@ -50,9 +49,16 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueMapElement;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleBoolean;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleDouble;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleInt;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclarationMember;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMultiplicativeExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
@@ -62,32 +68,24 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPostfixExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPrefixExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLRelationalExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLReturnStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSwitchStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLWhileStatement;
 import de.uniol.inf.is.odysseus.iql.basic.serializer.BasicIQLSemanticSequencer;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleBoolean;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleDouble;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleInt;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleNull;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleString;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleTypeRef;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLMetadataValueSingleID;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel;
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModelElement;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.qdl.services.QDLGrammarAccess;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
@@ -182,8 +180,7 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				}
 				else break;
 			case BasicIQLPackage.IQL_ARRAY_TYPE:
-				if(context == grammarAccess.getIQLArrayTypeRule() ||
-				   context == grammarAccess.getJvmTypeRule()) {
+				if(context == grammarAccess.getIQLArrayTypeRule()) {
 					sequence_IQLArrayType(context, (IQLArrayType) semanticObject); 
 					return; 
 				}
@@ -350,12 +347,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 			case BasicIQLPackage.IQL_JAVA:
 				if(context == grammarAccess.getIQLJavaRule()) {
 					sequence_IQLJava(context, (IQLJava) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_JAVA_KEYWORDS:
-				if(context == grammarAccess.getIQLJavaKeywordsRule()) {
-					sequence_IQLJavaKeywords(context, (IQLJavaKeywords) semanticObject); 
 					return; 
 				}
 				else break;
@@ -771,21 +762,69 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
+			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleBoolean) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleDouble) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleInt) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_NULL:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleNull) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_STRING:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleString) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF:
+				if(context == grammarAccess.getIQLMetadataValueRule() ||
+				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
+					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleTypeRef) semanticObject); 
+					return; 
+				}
+				else break;
 			case BasicIQLPackage.IQL_METHOD:
 				if(context == grammarAccess.getIQLMethodRule()) {
 					sequence_IQLMethod(context, (IQLMethod) semanticObject); 
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_METHOD_DECLARATION_MEMBER:
-				if(context == grammarAccess.getIQLMethodDeclarationMemberRule()) {
-					sequence_IQLMethodDeclarationMember(context, (IQLMethodDeclarationMember) semanticObject); 
+			case BasicIQLPackage.IQL_METHOD_DECLARATION:
+				if(context == grammarAccess.getIQLMethodDeclarationRule()) {
+					sequence_IQLMethodDeclaration(context, (IQLMethodDeclaration) semanticObject); 
 					return; 
 				}
 				else break;
 			case BasicIQLPackage.IQL_MODEL:
 				if(context == grammarAccess.getIQLModelRule()) {
 					sequence_IQLModel(context, (IQLModel) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_MODEL_ELEMENT:
+				if(context == grammarAccess.getIQLModelElementRule()) {
+					sequence_IQLModelElement(context, (IQLModelElement) semanticObject); 
 					return; 
 				}
 				else break;
@@ -988,13 +1027,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_SIMPLE_TYPE:
-				if(context == grammarAccess.getIQLSimpleTypeRule() ||
-				   context == grammarAccess.getJvmTypeRule()) {
-					sequence_IQLSimpleType(context, (IQLSimpleType) semanticObject); 
-					return; 
-				}
-				else break;
 			case BasicIQLPackage.IQL_SIMPLE_TYPE_REF:
 				if(context == grammarAccess.getIQLSimpleTypeRefRule() ||
 				   context == grammarAccess.getJvmTypeReferenceRule()) {
@@ -1104,12 +1136,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_TYPE_DEFINITION:
-				if(context == grammarAccess.getIQLTypeDefinitionRule()) {
-					sequence_IQLTypeDefinition(context, (IQLTypeDefinition) semanticObject); 
-					return; 
-				}
-				else break;
 			case BasicIQLPackage.IQL_VARIABLE_DECLARATION:
 				if(context == grammarAccess.getIQLVariableDeclarationRule()) {
 					sequence_IQLVariableDeclaration(context, (IQLVariableDeclaration) semanticObject); 
@@ -1138,48 +1164,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 				else break;
 			}
 		else if(semanticObject.eClass().getEPackage() == QDLPackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
-			case QDLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleBoolean) semanticObject); 
-					return; 
-				}
-				else break;
-			case QDLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleDouble) semanticObject); 
-					return; 
-				}
-				else break;
-			case QDLPackage.IQL_METADATA_VALUE_SINGLE_INT:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleInt) semanticObject); 
-					return; 
-				}
-				else break;
-			case QDLPackage.IQL_METADATA_VALUE_SINGLE_NULL:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleNull) semanticObject); 
-					return; 
-				}
-				else break;
-			case QDLPackage.IQL_METADATA_VALUE_SINGLE_STRING:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleString) semanticObject); 
-					return; 
-				}
-				else break;
-			case QDLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF:
-				if(context == grammarAccess.getIQLMetadataValueRule() ||
-				   context == grammarAccess.getIQLMetadataValueSingleRule()) {
-					sequence_IQLMetadataValueSingle(context, (IQLMetadataValueSingleTypeRef) semanticObject); 
-					return; 
-				}
-				else break;
 			case QDLPackage.IQL_PORT_EXPRESSION:
 				if(context == grammarAccess.getIQLAssignmentExpressionRule() ||
 				   context == grammarAccess.getIQLAssignmentExpressionAccess().getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() ||
@@ -1215,15 +1199,15 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case QDLPackage.QDL_QUERY:
-				if(context == grammarAccess.getQDLQueryRule()) {
-					sequence_QDLQuery(context, (QDLQuery) semanticObject); 
+			case QDLPackage.QDL_MODEL_ELEMENT:
+				if(context == grammarAccess.getQDLModelElementRule()) {
+					sequence_QDLModelElement(context, (QDLModelElement) semanticObject); 
 					return; 
 				}
 				else break;
-			case QDLPackage.QDL_TYPE_DEFINITION:
-				if(context == grammarAccess.getQDLTypeDefinitionRule()) {
-					sequence_QDLTypeDefinition(context, (QDLTypeDefinition) semanticObject); 
+			case QDLPackage.QDL_QUERY:
+				if(context == grammarAccess.getQDLQueryRule()) {
+					sequence_QDLQuery(context, (QDLQuery) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1267,8 +1251,8 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	 */
 	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleBoolean semanticObject) {
 		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_BOOLEAN__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_BOOLEAN__VALUE));
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_BOOLEAN__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_BOOLEAN__VALUE));
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
@@ -1283,8 +1267,8 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	 */
 	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleDouble semanticObject) {
 		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_DOUBLE__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_DOUBLE__VALUE));
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_DOUBLE__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_DOUBLE__VALUE));
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
@@ -1299,8 +1283,8 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	 */
 	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleInt semanticObject) {
 		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_INT__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_INT__VALUE));
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_INT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_INT__VALUE));
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
@@ -1311,28 +1295,12 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     value='null'
-	 */
-	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleNull semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_NULL__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_NULL__VALUE));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLMetadataValueSingleAccess().getValueNullKeyword_6_1_0(), semanticObject.getValue());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Constraint:
 	 *     value=STRING
 	 */
 	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleString semanticObject) {
 		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_STRING__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_STRING__VALUE));
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_STRING__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_STRING__VALUE));
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
@@ -1347,8 +1315,8 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	 */
 	protected void sequence_IQLMetadataValueSingle(EObject context, IQLMetadataValueSingleTypeRef semanticObject) {
 		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, QDLPackage.Literals.IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE));
+			if(transientValues.isValueTransient(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, BasicIQLPackage.Literals.IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE));
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
@@ -1419,7 +1387,16 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (namespaces+=IQLNamespace* elements+=QDLTypeDefinition*)
+	 *     (javametadata+=IQLJavaMetadata* (inner=IQLClass | inner=IQLInterface | inner=QDLQuery))
+	 */
+	protected void sequence_QDLModelElement(EObject context, QDLModelElement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (namespaces+=IQLNamespace* elements+=QDLModelElement*)
 	 */
 	protected void sequence_QDLModel(EObject context, QDLModel semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1431,15 +1408,6 @@ public class QDLSemanticSequencer extends BasicIQLSemanticSequencer {
 	 *     (simpleName=ID metadataList=IQLMetadataList? statements=IQLStatementBlock)
 	 */
 	protected void sequence_QDLQuery(EObject context, QDLQuery semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (javametadata+=IQLJavaMetadata* (inner=IQLClass | inner=IQLInterface | inner=QDLQuery))
-	 */
-	protected void sequence_QDLTypeDefinition(EObject context, QDLTypeDefinition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 }

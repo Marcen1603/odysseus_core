@@ -15,9 +15,9 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
@@ -52,8 +52,6 @@ import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmMember;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.nodemodel.ICompositeNode;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
@@ -97,11 +95,11 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
     return _xblockexpression;
   }
   
-  public String compilePO(final IQLTypeDefinition typeDef, final ODLOperator o, final IODLGeneratorContext context) {
+  public String compilePO(final IQLModelElement element, final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
-      String _compilePOIntern = this.compilePOIntern(typeDef, o, context);
+      String _compilePOIntern = this.compilePOIntern(element, o, context);
       builder.append(_compilePOIntern);
       Collection<String> _imports = context.getImports();
       for (final String i : _imports) {
@@ -731,7 +729,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
     return _xblockexpression;
   }
   
-  public String compilePOIntern(final IQLTypeDefinition typeDef, final ODLOperator o, final IODLGeneratorContext context) {
+  public String compilePOIntern(final IQLModelElement element, final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
       String _simpleName = o.getSimpleName();
@@ -762,11 +760,10 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       StringConcatenation _builder = new StringConcatenation();
       _builder.newLine();
       {
-        EList<IQLJavaMetadata> _javametadata = typeDef.getJavametadata();
+        EList<IQLJavaMetadata> _javametadata = element.getJavametadata();
         for(final IQLJavaMetadata j : _javametadata) {
-          IQLJava _text = j.getText();
-          ICompositeNode _node = NodeModelUtils.getNode(_text);
-          String text = NodeModelUtils.getTokenText(_node);
+          IQLJava _java = j.getJava();
+          String text = _java.getText();
           _builder.newLineIfNotEmpty();
           _builder.append(text, "");
           _builder.newLineIfNotEmpty();

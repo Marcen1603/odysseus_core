@@ -29,7 +29,7 @@ import org.eclipse.xtext.common.types.impl.JvmTypeImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLArrayTypeImpl#getType <em>Type</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLArrayTypeImpl#getComponentType <em>Component Type</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLArrayTypeImpl#getDimensions <em>Dimensions</em>}</li>
  * </ul>
  * </p>
@@ -39,14 +39,14 @@ import org.eclipse.xtext.common.types.impl.JvmTypeImpl;
 public class IQLArrayTypeImpl extends JvmTypeImpl implements IQLArrayType
 {
   /**
-   * The cached value of the '{@link #getType() <em>Type</em>}' reference.
+   * The cached value of the '{@link #getComponentType() <em>Component Type</em>}' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getType()
+   * @see #getComponentType()
    * @generated
    * @ordered
    */
-  protected JvmType type;
+  protected JvmType componentType;
 
   /**
    * The cached value of the '{@link #getDimensions() <em>Dimensions</em>}' attribute list.
@@ -84,19 +84,19 @@ public class IQLArrayTypeImpl extends JvmTypeImpl implements IQLArrayType
    * <!-- end-user-doc -->
    * @generated
    */
-  public JvmType getType()
+  public JvmType getComponentType()
   {
-    if (type != null && type.eIsProxy())
+    if (componentType != null && componentType.eIsProxy())
     {
-      InternalEObject oldType = (InternalEObject)type;
-      type = (JvmType)eResolveProxy(oldType);
-      if (type != oldType)
+      InternalEObject oldComponentType = (InternalEObject)componentType;
+      componentType = (JvmType)eResolveProxy(oldComponentType);
+      if (componentType != oldComponentType)
       {
         if (eNotificationRequired())
-          eNotify(new ENotificationImpl(this, Notification.RESOLVE, BasicIQLPackage.IQL_ARRAY_TYPE__TYPE, oldType, type));
+          eNotify(new ENotificationImpl(this, Notification.RESOLVE, BasicIQLPackage.IQL_ARRAY_TYPE__COMPONENT_TYPE, oldComponentType, componentType));
       }
     }
-    return type;
+    return componentType;
   }
 
   /**
@@ -104,9 +104,9 @@ public class IQLArrayTypeImpl extends JvmTypeImpl implements IQLArrayType
    * <!-- end-user-doc -->
    * @generated
    */
-  public JvmType basicGetType()
+  public JvmType basicGetComponentType()
   {
-    return type;
+    return componentType;
   }
 
   /**
@@ -114,12 +114,12 @@ public class IQLArrayTypeImpl extends JvmTypeImpl implements IQLArrayType
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setType(JvmType newType)
+  public void setComponentType(JvmType newComponentType)
   {
-    JvmType oldType = type;
-    type = newType;
+    JvmType oldComponentType = componentType;
+    componentType = newComponentType;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_ARRAY_TYPE__TYPE, oldType, type));
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_ARRAY_TYPE__COMPONENT_TYPE, oldComponentType, componentType));
   }
 
   /**
@@ -146,9 +146,9 @@ public class IQLArrayTypeImpl extends JvmTypeImpl implements IQLArrayType
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_ARRAY_TYPE__TYPE:
-        if (resolve) return getType();
-        return basicGetType();
+      case BasicIQLPackage.IQL_ARRAY_TYPE__COMPONENT_TYPE:
+        if (resolve) return getComponentType();
+        return basicGetComponentType();
       case BasicIQLPackage.IQL_ARRAY_TYPE__DIMENSIONS:
         return getDimensions();
     }
@@ -166,8 +166,8 @@ public class IQLArrayTypeImpl extends JvmTypeImpl implements IQLArrayType
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_ARRAY_TYPE__TYPE:
-        setType((JvmType)newValue);
+      case BasicIQLPackage.IQL_ARRAY_TYPE__COMPONENT_TYPE:
+        setComponentType((JvmType)newValue);
         return;
       case BasicIQLPackage.IQL_ARRAY_TYPE__DIMENSIONS:
         getDimensions().clear();
@@ -187,8 +187,8 @@ public class IQLArrayTypeImpl extends JvmTypeImpl implements IQLArrayType
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_ARRAY_TYPE__TYPE:
-        setType((JvmType)null);
+      case BasicIQLPackage.IQL_ARRAY_TYPE__COMPONENT_TYPE:
+        setComponentType((JvmType)null);
         return;
       case BasicIQLPackage.IQL_ARRAY_TYPE__DIMENSIONS:
         getDimensions().clear();
@@ -207,8 +207,8 @@ public class IQLArrayTypeImpl extends JvmTypeImpl implements IQLArrayType
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_ARRAY_TYPE__TYPE:
-        return type != null;
+      case BasicIQLPackage.IQL_ARRAY_TYPE__COMPONENT_TYPE:
+        return componentType != null;
       case BasicIQLPackage.IQL_ARRAY_TYPE__DIMENSIONS:
         return dimensions != null && !dimensions.isEmpty();
     }

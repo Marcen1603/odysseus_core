@@ -93,10 +93,10 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_TYPE_DEFINITION:
+      case BasicIQLPackage.IQL_MODEL_ELEMENT:
       {
-        IQLTypeDefinition iqlTypeDefinition = (IQLTypeDefinition)theEObject;
-        T result = caseIQLTypeDefinition(iqlTypeDefinition);
+        IQLModelElement iqlModelElement = (IQLModelElement)theEObject;
+        T result = caseIQLModelElement(iqlModelElement);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -111,40 +111,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
       {
         IQLJavaMetadata iqlJavaMetadata = (IQLJavaMetadata)theEObject;
         T result = caseIQLJavaMetadata(iqlJavaMetadata);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case BasicIQLPackage.IQL_SIMPLE_TYPE_REF:
-      {
-        IQLSimpleTypeRef iqlSimpleTypeRef = (IQLSimpleTypeRef)theEObject;
-        T result = caseIQLSimpleTypeRef(iqlSimpleTypeRef);
-        if (result == null) result = caseJvmTypeReference(iqlSimpleTypeRef);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case BasicIQLPackage.IQL_ARRAY_TYPE_REF:
-      {
-        IQLArrayTypeRef iqlArrayTypeRef = (IQLArrayTypeRef)theEObject;
-        T result = caseIQLArrayTypeRef(iqlArrayTypeRef);
-        if (result == null) result = caseJvmTypeReference(iqlArrayTypeRef);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case BasicIQLPackage.IQL_SIMPLE_TYPE:
-      {
-        IQLSimpleType iqlSimpleType = (IQLSimpleType)theEObject;
-        T result = caseIQLSimpleType(iqlSimpleType);
-        if (result == null) result = caseJvmType(iqlSimpleType);
-        if (result == null) result = caseJvmIdentifiableElement(iqlSimpleType);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case BasicIQLPackage.IQL_ARRAY_TYPE:
-      {
-        IQLArrayType iqlArrayType = (IQLArrayType)theEObject;
-        T result = caseIQLArrayType(iqlArrayType);
-        if (result == null) result = caseJvmType(iqlArrayType);
-        if (result == null) result = caseJvmIdentifiableElement(iqlArrayType);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -246,13 +212,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_JAVA_KEYWORDS:
-      {
-        IQLJavaKeywords iqlJavaKeywords = (IQLJavaKeywords)theEObject;
-        T result = caseIQLJavaKeywords(iqlJavaKeywords);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case BasicIQLPackage.IQL_CLASS:
       {
         IQLClass iqlClass = (IQLClass)theEObject;
@@ -295,6 +254,31 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case BasicIQLPackage.IQL_SIMPLE_TYPE_REF:
+      {
+        IQLSimpleTypeRef iqlSimpleTypeRef = (IQLSimpleTypeRef)theEObject;
+        T result = caseIQLSimpleTypeRef(iqlSimpleTypeRef);
+        if (result == null) result = caseJvmTypeReference(iqlSimpleTypeRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case BasicIQLPackage.IQL_ARRAY_TYPE_REF:
+      {
+        IQLArrayTypeRef iqlArrayTypeRef = (IQLArrayTypeRef)theEObject;
+        T result = caseIQLArrayTypeRef(iqlArrayTypeRef);
+        if (result == null) result = caseJvmTypeReference(iqlArrayTypeRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case BasicIQLPackage.IQL_ARRAY_TYPE:
+      {
+        IQLArrayType iqlArrayType = (IQLArrayType)theEObject;
+        T result = caseIQLArrayType(iqlArrayType);
+        if (result == null) result = caseJvmType(iqlArrayType);
+        if (result == null) result = caseJvmIdentifiableElement(iqlArrayType);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case BasicIQLPackage.IQL_METHOD:
       {
         IQLMethod iqlMethod = (IQLMethod)theEObject;
@@ -309,17 +293,17 @@ public class BasicIQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case BasicIQLPackage.IQL_METHOD_DECLARATION_MEMBER:
+      case BasicIQLPackage.IQL_METHOD_DECLARATION:
       {
-        IQLMethodDeclarationMember iqlMethodDeclarationMember = (IQLMethodDeclarationMember)theEObject;
-        T result = caseIQLMethodDeclarationMember(iqlMethodDeclarationMember);
-        if (result == null) result = caseJvmOperation(iqlMethodDeclarationMember);
-        if (result == null) result = caseJvmExecutable(iqlMethodDeclarationMember);
-        if (result == null) result = caseJvmFeature(iqlMethodDeclarationMember);
-        if (result == null) result = caseJvmTypeParameterDeclarator(iqlMethodDeclarationMember);
-        if (result == null) result = caseJvmMember(iqlMethodDeclarationMember);
-        if (result == null) result = caseJvmAnnotationTarget(iqlMethodDeclarationMember);
-        if (result == null) result = caseJvmIdentifiableElement(iqlMethodDeclarationMember);
+        IQLMethodDeclaration iqlMethodDeclaration = (IQLMethodDeclaration)theEObject;
+        T result = caseIQLMethodDeclaration(iqlMethodDeclaration);
+        if (result == null) result = caseJvmOperation(iqlMethodDeclaration);
+        if (result == null) result = caseJvmExecutable(iqlMethodDeclaration);
+        if (result == null) result = caseJvmFeature(iqlMethodDeclaration);
+        if (result == null) result = caseJvmTypeParameterDeclarator(iqlMethodDeclaration);
+        if (result == null) result = caseJvmMember(iqlMethodDeclaration);
+        if (result == null) result = caseJvmAnnotationTarget(iqlMethodDeclaration);
+        if (result == null) result = caseJvmIdentifiableElement(iqlMethodDeclaration);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -762,17 +746,17 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Type Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Model Element</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Type Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Model Element</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLTypeDefinition(IQLTypeDefinition object)
+  public T caseIQLModelElement(IQLModelElement object)
   {
     return null;
   }
@@ -805,70 +789,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIQLJavaMetadata(IQLJavaMetadata object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Simple Type Ref</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Simple Type Ref</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLSimpleTypeRef(IQLSimpleTypeRef object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Array Type Ref</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Array Type Ref</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLArrayTypeRef(IQLArrayTypeRef object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Simple Type</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Simple Type</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLSimpleType(IQLSimpleType object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Array Type</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Array Type</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLArrayType(IQLArrayType object)
   {
     return null;
   }
@@ -1098,22 +1018,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Java Keywords</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Java Keywords</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLJavaKeywords(IQLJavaKeywords object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>IQL Class</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1162,6 +1066,54 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Simple Type Ref</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Simple Type Ref</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLSimpleTypeRef(IQLSimpleTypeRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Array Type Ref</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Array Type Ref</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLArrayTypeRef(IQLArrayTypeRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Array Type</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Array Type</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLArrayType(IQLArrayType object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>IQL Method</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1178,17 +1130,17 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Method Declaration Member</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Method Declaration</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Method Declaration Member</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Method Declaration</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLMethodDeclarationMember(IQLMethodDeclarationMember object)
+  public T caseIQLMethodDeclaration(IQLMethodDeclaration object)
   {
     return null;
   }
@@ -2026,22 +1978,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Jvm Type Reference</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Jvm Type Reference</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseJvmTypeReference(JvmTypeReference object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Jvm Identifiable Element</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -2053,22 +1989,6 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseJvmIdentifiableElement(JvmIdentifiableElement object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Jvm Type</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Jvm Type</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseJvmType(JvmType object)
   {
     return null;
   }
@@ -2101,6 +2021,22 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseJvmMember(JvmMember object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Jvm Type</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Jvm Type</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseJvmType(JvmType object)
   {
     return null;
   }
@@ -2197,6 +2133,22 @@ public class BasicIQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseJvmField(JvmField object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Jvm Type Reference</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Jvm Type Reference</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseJvmTypeReference(JvmTypeReference object)
   {
     return null;
   }

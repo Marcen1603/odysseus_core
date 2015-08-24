@@ -10,7 +10,7 @@
   <genPackages prefix="QDL" basePackage="de.uniol.inf.is.odysseus.iql.qdl" disposableProviderFactory="true"
       fileExtensions="qdl" ecorePackage="QDL.ecore#/">
     <genClasses ecoreClass="QDL.ecore#//QDLModel"/>
-    <genClasses ecoreClass="QDL.ecore#//QDLTypeDefinition"/>
+    <genClasses ecoreClass="QDL.ecore#//QDLModelElement"/>
     <genClasses ecoreClass="QDL.ecore#//QDLQuery">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//QDLQuery/metadataList"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//QDLQuery/statements"/>
@@ -25,26 +25,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute QDL.ecore#//IQLPortExpression/op"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//IQLPortExpression/rightOperand"/>
     </genClasses>
-    <genClasses ecoreClass="QDL.ecore#//IQLMetadataValueSingleInt">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute QDL.ecore#//IQLMetadataValueSingleInt/value"/>
-    </genClasses>
-    <genClasses ecoreClass="QDL.ecore#//IQLMetadataValueSingleDouble">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute QDL.ecore#//IQLMetadataValueSingleDouble/value"/>
-    </genClasses>
-    <genClasses ecoreClass="QDL.ecore#//IQLMetadataValueSingleString">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute QDL.ecore#//IQLMetadataValueSingleString/value"/>
-    </genClasses>
-    <genClasses ecoreClass="QDL.ecore#//IQLMetadataValueSingleBoolean">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute QDL.ecore#//IQLMetadataValueSingleBoolean/value"/>
-    </genClasses>
     <genClasses ecoreClass="QDL.ecore#//QDLMetadataValueSingleID">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute QDL.ecore#//QDLMetadataValueSingleID/value"/>
-    </genClasses>
-    <genClasses ecoreClass="QDL.ecore#//IQLMetadataValueSingleTypeRef">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//IQLMetadataValueSingleTypeRef/value"/>
-    </genClasses>
-    <genClasses ecoreClass="QDL.ecore#//IQLMetadataValueSingleNull">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute QDL.ecore#//IQLMetadataValueSingleNull/value"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

@@ -10,22 +10,22 @@ import org.eclipse.xtext.common.types.JvmGenericType;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>IQL Type Definition</b></em>'.
+ * A representation of the model object '<em><b>IQL Model Element</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition#getJavametadata <em>Javametadata</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition#getInner <em>Inner</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement#getJavametadata <em>Javametadata</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement#getInner <em>Inner</em>}</li>
  * </ul>
  * </p>
  *
- * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLTypeDefinition()
+ * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLModelElement()
  * @model
  * @generated
  */
-public interface IQLTypeDefinition extends EObject
+public interface IQLModelElement extends EObject
 {
   /**
    * Returns the value of the '<em><b>Javametadata</b></em>' containment reference list.
@@ -37,7 +37,7 @@ public interface IQLTypeDefinition extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Javametadata</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLTypeDefinition_Javametadata()
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLModelElement_Javametadata()
    * @model containment="true"
    * @generated
    */
@@ -53,14 +53,14 @@ public interface IQLTypeDefinition extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Inner</em>' containment reference.
    * @see #setInner(JvmGenericType)
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLTypeDefinition_Inner()
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLModelElement_Inner()
    * @model containment="true"
    * @generated
    */
   JvmGenericType getInner();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition#getInner <em>Inner</em>}' containment reference.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement#getInner <em>Inner</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Inner</em>' containment reference.
@@ -69,4 +69,4 @@ public interface IQLTypeDefinition extends EObject
    */
   void setInner(JvmGenericType value);
 
-} // IQLTypeDefinition
+} // IQLModelElement

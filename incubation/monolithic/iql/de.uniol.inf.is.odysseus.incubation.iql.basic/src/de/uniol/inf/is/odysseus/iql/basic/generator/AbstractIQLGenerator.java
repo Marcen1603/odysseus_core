@@ -10,7 +10,7 @@ import org.eclipse.xtext.generator.IGenerator;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
 
@@ -46,18 +46,20 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 	}
 	
 	protected void doGenerate(IQLModel model, IFileSystemAccess fsa, String outputFolder) {
-		for (IQLTypeDefinition typeDef : EcoreUtil2.getAllContentsOfType(model, IQLTypeDefinition.class)) {
-			doGenerate(typeDef, fsa, outputFolder);
+		for (IQLModelElement element : EcoreUtil2.getAllContentsOfType(model, IQLModelElement.class)) {
+			doGenerate(element, fsa, outputFolder);
 			
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void doGenerate(IQLTypeDefinition typeDef, IFileSystemAccess fsa, String outputFolder) {
-		if (typeDef.getInner() instanceof IQLClass) {
-			fsa.generateFile(outputFolder+typeDef.getInner().getSimpleName() + ".java", compiler.compile(typeDef, (IQLClass)typeDef.getInner(), (G)context.cleanCopy()));
-		} else if (typeDef.getInner() instanceof IQLInterface) {
-			fsa.generateFile(outputFolder+typeDef.getInner().getSimpleName() + ".java", compiler.compile(typeDef, (IQLInterface)typeDef.getInner(), (G)context.cleanCopy()));
+	protected void doGenerate(IQLModelElement element, IFileSystemAccess fsa, String outputFolder) {
+		if (element.getInner() instanceof IQLClass) {
+			IQLClass clazz = (IQLClass) element.getInner();
+			fsa.generateFile(outputFolder+clazz.getSimpleName() + ".java", compiler.compile(element, clazz, (G)context.cleanCopy()));
+		} else if (element.getInner() instanceof IQLInterface) {
+			IQLInterface interf = (IQLInterface) element.getInner();
+			fsa.generateFile(outputFolder+interf.getSimpleName() + ".java", compiler.compile(element, interf, (G)context.cleanCopy()));
 		}
 	}
 }

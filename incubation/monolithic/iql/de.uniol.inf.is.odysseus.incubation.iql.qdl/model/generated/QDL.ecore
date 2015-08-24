@@ -3,7 +3,7 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="qDL" nsURI="http://www.uniol.de/inf/is/odysseus/iql/qdl/QDL"
     nsPrefix="qDL">
   <eClassifiers xsi:type="ecore:EClass" name="QDLModel" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLModel"/>
-  <eClassifiers xsi:type="ecore:EClass" name="QDLTypeDefinition" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLTypeDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="QDLModelElement" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLModelElement"/>
   <eClassifiers xsi:type="ecore:EClass" name="QDLQuery" eSuperTypes="platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmGenericType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="metadataList" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataList"
         containment="true"/>
@@ -24,26 +24,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="rightOperand" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleInt" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleDouble" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleString" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleBoolean" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="QDLMetadataValueSingleID" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleTypeRef" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmTypeReference"
-        containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IQLMetadataValueSingleNull" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataValue">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 </ecore:EPackage>

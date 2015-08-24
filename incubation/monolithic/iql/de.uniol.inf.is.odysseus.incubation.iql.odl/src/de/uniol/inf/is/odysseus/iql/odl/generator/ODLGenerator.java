@@ -9,7 +9,8 @@ import org.eclipse.xtext.generator.IFileSystemAccess;
 
 
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
+
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.generator.AbstractIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.IODLCompiler;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.IODLCompilerHelper;
@@ -24,13 +25,14 @@ public class ODLGenerator extends AbstractIQLGenerator<IODLGeneratorContext, IOD
 	}
 
 	
-	protected void doGenerate(IQLTypeDefinition typeDef, IFileSystemAccess fsa, String outputFolder) {
-		if (typeDef.getInner() instanceof ODLOperator) {
-			fsa.generateFile(outputFolder+typeDef.getInner().getSimpleName() + IODLCompilerHelper.AO_OPERATOR + ".java", compiler.compileAO((ODLOperator) typeDef.getInner(),(IODLGeneratorContext) context.cleanCopy()));
-			fsa.generateFile(outputFolder+typeDef.getInner().getSimpleName() + IODLCompilerHelper.PO_OPERATOR+ ".java", compiler.compilePO(typeDef, (ODLOperator)typeDef.getInner(),(IODLGeneratorContext) context.cleanCopy()));
-			fsa.generateFile(outputFolder+typeDef.getInner().getSimpleName() + IODLCompilerHelper.AO_RULE_OPERATOR+".java", compiler.compileAORule((ODLOperator)typeDef.getInner(),(IODLGeneratorContext) context.cleanCopy()));
+	protected void doGenerate(IQLModelElement element, IFileSystemAccess fsa, String outputFolder) {
+		if (element.getInner() instanceof ODLOperator) {
+			ODLOperator op = (ODLOperator) element.getInner();
+			fsa.generateFile(outputFolder+op.getSimpleName() + IODLCompilerHelper.AO_OPERATOR + ".java", compiler.compileAO(op,(IODLGeneratorContext) context.cleanCopy()));
+			fsa.generateFile(outputFolder+op.getSimpleName() + IODLCompilerHelper.PO_OPERATOR+ ".java", compiler.compilePO(element, op, (IODLGeneratorContext) context.cleanCopy()));
+			fsa.generateFile(outputFolder+op.getSimpleName() + IODLCompilerHelper.AO_RULE_OPERATOR+".java", compiler.compileAORule(op,(IODLGeneratorContext) context.cleanCopy()));
 		} else {
-			super.doGenerate(typeDef, fsa, outputFolder);			
+			super.doGenerate(element, fsa, outputFolder);			
 		}
 	}
 

@@ -10,10 +10,10 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclarationMember;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclaration;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
@@ -32,8 +32,6 @@ import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmMember;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.nodemodel.ICompositeNode;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
@@ -58,11 +56,11 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     this.typeFactory = typeFactory;
   }
   
-  public String compile(final IQLTypeDefinition typeDef, final IQLClass c, final G context) {
+  public String compile(final IQLModelElement element, final IQLClass c, final G context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
-      String _compileClass = this.compileClass(typeDef, c, context);
+      String _compileClass = this.compileClass(element, c, context);
       builder.append(_compileClass);
       Collection<String> _imports = context.getImports();
       for (final String i : _imports) {
@@ -75,7 +73,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     return _xblockexpression;
   }
   
-  public String compileClass(final IQLTypeDefinition typeDef, final IQLClass c, final G context) {
+  public String compileClass(final IQLModelElement element, final IQLClass c, final G context) {
     String _xblockexpression = null;
     {
       String name = c.getSimpleName();
@@ -86,11 +84,10 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       Collection<IQLVariableStatement> varStmts = this.helper.getVarStatements(c);
       StringConcatenation _builder = new StringConcatenation();
       {
-        EList<IQLJavaMetadata> _javametadata = typeDef.getJavametadata();
+        EList<IQLJavaMetadata> _javametadata = element.getJavametadata();
         for(final IQLJavaMetadata j : _javametadata) {
-          IQLJava _text = j.getText();
-          ICompositeNode _node = NodeModelUtils.getNode(_text);
-          String text = NodeModelUtils.getTokenText(_node);
+          IQLJava _java = j.getJava();
+          String text = _java.getText();
           _builder.newLineIfNotEmpty();
           _builder.append(text, "");
           _builder.newLineIfNotEmpty();
@@ -119,7 +116,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
             }
           };
           List<String> _map = ListExtensions.<JvmTypeReference, String>map(interfaces, _function);
-          _builder.append(_map, "");
+          String _join = IterableExtensions.join(_map, ",");
+          _builder.append(_join, "");
         }
       }
       _builder.append(" {");
@@ -254,11 +252,11 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     return _xblockexpression;
   }
   
-  public String compile(final IQLTypeDefinition typeDef, final IQLInterface interf, final G context) {
+  public String compile(final IQLModelElement element, final IQLInterface interf, final G context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
-      String _compileInterface = this.compileInterface(typeDef, interf, context);
+      String _compileInterface = this.compileInterface(element, interf, context);
       builder.append(_compileInterface);
       Collection<String> _imports = context.getImports();
       for (final String i : _imports) {
@@ -269,7 +267,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     return _xblockexpression;
   }
   
-  public String compileInterface(final IQLTypeDefinition typeDef, final IQLInterface i, final G context) {
+  public String compileInterface(final IQLModelElement element, final IQLInterface i, final G context) {
     String _xblockexpression = null;
     {
       String name = i.getSimpleName();
@@ -277,11 +275,10 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       StringConcatenation _builder = new StringConcatenation();
       _builder.newLine();
       {
-        EList<IQLJavaMetadata> _javametadata = typeDef.getJavametadata();
+        EList<IQLJavaMetadata> _javametadata = element.getJavametadata();
         for(final IQLJavaMetadata j : _javametadata) {
-          IQLJava _text = j.getText();
-          ICompositeNode _node = NodeModelUtils.getNode(_text);
-          String text = NodeModelUtils.getTokenText(_node);
+          IQLJava _java = j.getJava();
+          String text = _java.getText();
           _builder.newLineIfNotEmpty();
           _builder.append(text, "");
           _builder.newLineIfNotEmpty();
@@ -302,7 +299,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
             }
           };
           List<String> _map = ListExtensions.<JvmTypeReference, String>map(interfaces, _function);
-          _builder.append(_map, "");
+          String _join = IterableExtensions.join(_map, ",");
+          _builder.append(_join, "");
         }
       }
       _builder.append(" {");
@@ -333,8 +331,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
         _xifexpression_1 = this.compile(((IQLMethod) m), context);
       } else {
         String _xifexpression_2 = null;
-        if ((m instanceof IQLMethodDeclarationMember)) {
-          _xifexpression_2 = this.compile(((IQLMethodDeclarationMember) m), context);
+        if ((m instanceof IQLMethodDeclaration)) {
+          _xifexpression_2 = this.compile(((IQLMethodDeclaration) m), context);
         } else {
           String _xifexpression_3 = null;
           if ((m instanceof IQLJavaMember)) {
@@ -355,9 +353,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
   public String compile(final IQLJavaMember m, final G context) {
     String _xblockexpression = null;
     {
-      IQLJava _text = m.getText();
-      ICompositeNode _node = NodeModelUtils.getNode(_text);
-      String text = NodeModelUtils.getTokenText(_node);
+      IQLJava _java = m.getJava();
+      String text = _java.getText();
       StringConcatenation _builder = new StringConcatenation();
       _builder.append(text, "");
       _xblockexpression = _builder.toString();
@@ -479,7 +476,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     return _builder.toString();
   }
   
-  public String compile(final IQLMethodDeclarationMember m, final G context) {
+  public String compile(final IQLMethodDeclaration m, final G context) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("public ");
     JvmTypeReference _returnType = m.getReturnType();

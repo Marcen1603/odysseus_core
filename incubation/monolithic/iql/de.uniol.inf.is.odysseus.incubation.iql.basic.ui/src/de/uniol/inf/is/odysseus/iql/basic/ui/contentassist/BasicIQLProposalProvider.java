@@ -72,14 +72,14 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	protected IIQLTypeUtils typeUtils;
 	
 	@Override
-	public void completeIQLSimpleType_Type(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+	public void completeIQLSimpleTypeRef_Type(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		if (!(model instanceof IQLNewExpression)) {
 			createTypeProposals(model, context, acceptor);
 		}
 	}
 	
 	@Override
-	public void completeIQLArrayType_Type(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+	public void completeIQLArrayType_ComponentType(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 
 	}
 	
@@ -91,7 +91,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	@Override
 	public void completeIQLOtherExpressions_Ref(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		if (model instanceof IQLNewExpression) {
-			IScope scope = scopeProvider.getScope(model, BasicIQLPackage.eINSTANCE.getIQLSimpleType_Type());
+			IScope scope = scopeProvider.getScope(model, BasicIQLPackage.eINSTANCE.getIQLSimpleTypeRef_Type());
 			for (IEObjectDescription obj :  scopeProvider.getTypes(model)) {
 				EObject resolved = EcoreUtil2.resolve(obj.getEObjectOrProxy(), EcoreUtil2.getResourceSet(model.eResource()));
 				if (resolved instanceof JvmDeclaredType) {
@@ -141,7 +141,7 @@ public class BasicIQLProposalProvider extends AbstractBasicIQLProposalProvider {
 	}
 	
 	public void createTypeProposals(EObject model, ContentAssistContext context,  ICompletionProposalAcceptor acceptor) {
-		IScope scope = scopeProvider.getScope(model, BasicIQLPackage.eINSTANCE.getIQLSimpleType_Type());
+		IScope scope = scopeProvider.getScope(model, BasicIQLPackage.eINSTANCE.getIQLSimpleTypeRef_Type());
 		for (IEObjectDescription obj :  scopeProvider.getTypes(model)) {
 			String proposalStr = obj.getQualifiedName().getLastSegment();
 			String displayString = obj.getQualifiedName().getLastSegment()+ " - " +converter.toString(obj.getQualifiedName());

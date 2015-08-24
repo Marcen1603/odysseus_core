@@ -14,7 +14,7 @@ import org.eclipse.xtext.common.types.JvmType;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType#getType <em>Type</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType#getComponentType <em>Component Type</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType#getDimensions <em>Dimensions</em>}</li>
  * </ul>
  * </p>
@@ -26,30 +26,30 @@ import org.eclipse.xtext.common.types.JvmType;
 public interface IQLArrayType extends JvmType
 {
   /**
-   * Returns the value of the '<em><b>Type</b></em>' reference.
+   * Returns the value of the '<em><b>Component Type</b></em>' reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Type</em>' reference isn't clear,
+   * If the meaning of the '<em>Component Type</em>' reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Type</em>' reference.
-   * @see #setType(JvmType)
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLArrayType_Type()
+   * @return the value of the '<em>Component Type</em>' reference.
+   * @see #setComponentType(JvmType)
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLArrayType_ComponentType()
    * @model
    * @generated
    */
-  JvmType getType();
+  JvmType getComponentType();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType#getType <em>Type</em>}' reference.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType#getComponentType <em>Component Type</em>}' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Type</em>' reference.
-   * @see #getType()
+   * @param value the new value of the '<em>Component Type</em>' reference.
+   * @see #getComponentType()
    * @generated
    */
-  void setType(JvmType value);
+  void setComponentType(JvmType value);
 
   /**
    * Returns the value of the '<em><b>Dimensions</b></em>' attribute list.

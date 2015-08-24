@@ -2,6 +2,7 @@
  */
 package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
 
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 /**
@@ -31,12 +32,12 @@ public interface IQLArrayTypeRef extends JvmTypeReference
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Type</em>' containment reference.
-   * @see #setType(IQLArrayType)
+   * @see #setType(JvmType)
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLArrayTypeRef_Type()
    * @model containment="true"
    * @generated
    */
-  IQLArrayType getType();
+  JvmType getType();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef#getType <em>Type</em>}' containment reference.
@@ -46,6 +47,6 @@ public interface IQLArrayTypeRef extends JvmTypeReference
    * @see #getType()
    * @generated
    */
-  void setType(IQLArrayType value);
+  void setType(JvmType value);
 
 } // IQLArrayTypeRef

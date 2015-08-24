@@ -4,8 +4,8 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 
 import java.util.Collection;
 
@@ -78,7 +78,7 @@ public class IQLModelImpl extends MinimalEObjectImpl.Container implements IQLMod
    * @generated
    * @ordered
    */
-  protected EList<IQLTypeDefinition> elements;
+  protected EList<IQLModelElement> elements;
 
   /**
    * <!-- begin-user-doc -->
@@ -143,11 +143,11 @@ public class IQLModelImpl extends MinimalEObjectImpl.Container implements IQLMod
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<IQLTypeDefinition> getElements()
+  public EList<IQLModelElement> getElements()
   {
     if (elements == null)
     {
-      elements = new EObjectContainmentEList<IQLTypeDefinition>(IQLTypeDefinition.class, this, BasicIQLPackage.IQL_MODEL__ELEMENTS);
+      elements = new EObjectContainmentEList<IQLModelElement>(IQLModelElement.class, this, BasicIQLPackage.IQL_MODEL__ELEMENTS);
     }
     return elements;
   }
@@ -210,7 +210,7 @@ public class IQLModelImpl extends MinimalEObjectImpl.Container implements IQLMod
         return;
       case BasicIQLPackage.IQL_MODEL__ELEMENTS:
         getElements().clear();
-        getElements().addAll((Collection<? extends IQLTypeDefinition>)newValue);
+        getElements().addAll((Collection<? extends IQLModelElement>)newValue);
         return;
     }
     super.eSet(featureID, newValue);

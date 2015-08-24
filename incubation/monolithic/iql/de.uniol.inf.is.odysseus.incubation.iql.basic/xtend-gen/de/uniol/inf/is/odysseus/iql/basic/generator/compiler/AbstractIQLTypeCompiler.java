@@ -49,14 +49,14 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
         String _trim = _replace_1.trim();
         nodeText = _trim;
       }
-      IQLArrayTypeRef arrayType = ((IQLArrayTypeRef) typeRef);
-      IQLArrayType _type = arrayType.getType();
-      EList<String> _dimensions = _type.getDimensions();
+      IQLArrayTypeRef arrayTypeRef = ((IQLArrayTypeRef) typeRef);
+      JvmType _type = arrayTypeRef.getType();
+      IQLArrayType arrayType = ((IQLArrayType) _type);
+      EList<String> _dimensions = arrayType.getDimensions();
       int _size = _dimensions.size();
       boolean _greaterThan = (_size > 0);
       if (_greaterThan) {
-        IQLArrayType _type_1 = arrayType.getType();
-        EList<String> _dimensions_1 = _type_1.getDimensions();
+        EList<String> _dimensions_1 = arrayType.getDimensions();
         int _size_1 = _dimensions_1.size();
         ExclusiveRange _doubleDotLessThan = new ExclusiveRange(0, _size_1, true);
         for (final Integer i : _doubleDotLessThan) {
@@ -73,14 +73,14 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
     String _compile = this.compile(typeRef, context, nodeText, w);
     result = (_result_1 + _compile);
     if ((typeRef instanceof IQLArrayTypeRef)) {
-      IQLArrayTypeRef arrayType_1 = ((IQLArrayTypeRef) typeRef);
-      IQLArrayType _type_2 = arrayType_1.getType();
-      EList<String> _dimensions_2 = _type_2.getDimensions();
+      IQLArrayTypeRef arrayTypeRef_1 = ((IQLArrayTypeRef) typeRef);
+      JvmType _type_1 = arrayTypeRef_1.getType();
+      IQLArrayType arrayType_1 = ((IQLArrayType) _type_1);
+      EList<String> _dimensions_2 = arrayType_1.getDimensions();
       int _size_2 = _dimensions_2.size();
       boolean _greaterThan_1 = (_size_2 > 0);
       if (_greaterThan_1) {
-        IQLArrayType _type_3 = arrayType_1.getType();
-        EList<String> _dimensions_3 = _type_3.getDimensions();
+        EList<String> _dimensions_3 = arrayType_1.getDimensions();
         int _size_3 = _dimensions_3.size();
         ExclusiveRange _doubleDotLessThan_1 = new ExclusiveRange(0, _size_3, true);
         for (final Integer i_1 : _doubleDotLessThan_1) {

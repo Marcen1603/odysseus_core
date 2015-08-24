@@ -4,22 +4,13 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaKeywords;
 
-import java.util.Collection;
-
-import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.InternalEObject;
 
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
-import org.eclipse.emf.ecore.util.EDataTypeEList;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,7 +20,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLJavaImpl#getText <em>Text</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLJavaImpl#getKeywords <em>Keywords</em>}</li>
  * </ul>
  * </p>
  *
@@ -38,24 +28,24 @@ import org.eclipse.emf.ecore.util.InternalEList;
 public class IQLJavaImpl extends MinimalEObjectImpl.Container implements IQLJava
 {
   /**
-   * The cached value of the '{@link #getText() <em>Text</em>}' attribute list.
+   * The default value of the '{@link #getText() <em>Text</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getText()
    * @generated
    * @ordered
    */
-  protected EList<String> text;
+  protected static final String TEXT_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getKeywords() <em>Keywords</em>}' containment reference list.
+   * The cached value of the '{@link #getText() <em>Text</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getKeywords()
+   * @see #getText()
    * @generated
    * @ordered
    */
-  protected EList<IQLJavaKeywords> keywords;
+  protected String text = TEXT_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -83,12 +73,8 @@ public class IQLJavaImpl extends MinimalEObjectImpl.Container implements IQLJava
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<String> getText()
+  public String getText()
   {
-    if (text == null)
-    {
-      text = new EDataTypeEList<String>(String.class, this, BasicIQLPackage.IQL_JAVA__TEXT);
-    }
     return text;
   }
 
@@ -97,29 +83,12 @@ public class IQLJavaImpl extends MinimalEObjectImpl.Container implements IQLJava
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<IQLJavaKeywords> getKeywords()
+  public void setText(String newText)
   {
-    if (keywords == null)
-    {
-      keywords = new EObjectContainmentEList<IQLJavaKeywords>(IQLJavaKeywords.class, this, BasicIQLPackage.IQL_JAVA__KEYWORDS);
-    }
-    return keywords;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
-  {
-    switch (featureID)
-    {
-      case BasicIQLPackage.IQL_JAVA__KEYWORDS:
-        return ((InternalEList<?>)getKeywords()).basicRemove(otherEnd, msgs);
-    }
-    return super.eInverseRemove(otherEnd, featureID, msgs);
+    String oldText = text;
+    text = newText;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_JAVA__TEXT, oldText, text));
   }
 
   /**
@@ -134,8 +103,6 @@ public class IQLJavaImpl extends MinimalEObjectImpl.Container implements IQLJava
     {
       case BasicIQLPackage.IQL_JAVA__TEXT:
         return getText();
-      case BasicIQLPackage.IQL_JAVA__KEYWORDS:
-        return getKeywords();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -145,19 +112,13 @@ public class IQLJavaImpl extends MinimalEObjectImpl.Container implements IQLJava
    * <!-- end-user-doc -->
    * @generated
    */
-  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
       case BasicIQLPackage.IQL_JAVA__TEXT:
-        getText().clear();
-        getText().addAll((Collection<? extends String>)newValue);
-        return;
-      case BasicIQLPackage.IQL_JAVA__KEYWORDS:
-        getKeywords().clear();
-        getKeywords().addAll((Collection<? extends IQLJavaKeywords>)newValue);
+        setText((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -174,10 +135,7 @@ public class IQLJavaImpl extends MinimalEObjectImpl.Container implements IQLJava
     switch (featureID)
     {
       case BasicIQLPackage.IQL_JAVA__TEXT:
-        getText().clear();
-        return;
-      case BasicIQLPackage.IQL_JAVA__KEYWORDS:
-        getKeywords().clear();
+        setText(TEXT_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -194,9 +152,7 @@ public class IQLJavaImpl extends MinimalEObjectImpl.Container implements IQLJava
     switch (featureID)
     {
       case BasicIQLPackage.IQL_JAVA__TEXT:
-        return text != null && !text.isEmpty();
-      case BasicIQLPackage.IQL_JAVA__KEYWORDS:
-        return keywords != null && !keywords.isEmpty();
+        return TEXT_EDEFAULT == null ? text != null : !TEXT_EDEFAULT.equals(text);
     }
     return super.eIsSet(featureID);
   }

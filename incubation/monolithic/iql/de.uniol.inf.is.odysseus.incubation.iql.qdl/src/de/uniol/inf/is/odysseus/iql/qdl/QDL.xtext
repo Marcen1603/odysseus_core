@@ -3,21 +3,21 @@ grammar de.uniol.inf.is.odysseus.iql.qdl.QDL with de.uniol.inf.is.odysseus.iql.b
 generate qDL "http://www.uniol.de/inf/is/odysseus/iql/qdl/QDL"
 
 import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as iql
-import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvm
 
 QDLModel returns iql::IQLModel:
 	{QDLModel}
 	namespaces+=IQLNamespace*
-	(elements+=QDLTypeDefinition)*
+	(elements+=QDLModelElement)*
 ;
 
-QDLTypeDefinition returns iql::IQLTypeDefinition:
-	{QDLTypeDefinition}
+QDLModelElement returns iql::IQLModelElement:
+	{QDLModelElement}
 	(javametadata+=IQLJavaMetadata)*
 	inner=(IQLClass | IQLInterface | QDLQuery)
 ; 
 
-QDLQuery returns types::JvmGenericType:
+QDLQuery returns jvm::JvmGenericType:
 	{QDLQuery}
 	'query' simpleName=ID ('(' (metadataList=IQLMetadataList)? ')')?
 	statements=IQLStatementBlock
@@ -45,11 +45,23 @@ IQLSubscribe:
 ;
 
 IQLMetadataValueSingle returns iql::IQLMetadataValue:
-	{IQLMetadataValueSingleInt} value = INT|
-	{IQLMetadataValueSingleDouble} value = DOUBLE|
-	{IQLMetadataValueSingleString} value = STRING|
-	{IQLMetadataValueSingleBoolean} value = BOOLEAN|
+	{iql::IQLMetadataValueSingleInt} value = INT|
+	{iql::IQLMetadataValueSingleDouble} value = DOUBLE|
+	{iql::IQLMetadataValueSingleString} value = STRING|
+	{iql::IQLMetadataValueSingleBoolean} value = BOOLEAN|
 	(=>({QDLMetadataValueSingleID} value = ID)) |
-	{IQLMetadataValueSingleTypeRef} value = JvmTypeReference |	
-	{IQLMetadataValueSingleNull} value = 'null'	
+	{iql::IQLMetadataValueSingleTypeRef} value = JvmTypeReference |	
+	{iql::IQLMetadataValueSingleNull} 'null'	
 ;
+
+IQLJavaWords:
+	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
+	'+'  | '+='  | '-'  | '-='  | '*'   | '*='   | '/' | '/=' | '%'  | '%=' |
+	'++' | '--'	 | '>'  | '>='  | '<'   | '<='   | '!' | '!=' | '&&' | '||' |
+	'==' | '='   | '~'  | '?:'  | '|'   | '|='   | '^' | '^=' | '&'  | '&=' |
+	'>>' | '>>=' | '<<' | '<<=' | '>>>' | '>>>=' |
+	'['  | ']'   |'{'   |'}'    |  '('  |')'     |
+	 '.' | ':'   | ';'  | ','   | 'null' | 
+	 'query'
+;
+

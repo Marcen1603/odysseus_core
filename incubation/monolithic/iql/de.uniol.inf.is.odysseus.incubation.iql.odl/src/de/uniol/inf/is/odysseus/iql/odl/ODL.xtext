@@ -4,21 +4,21 @@ generate oDL "http://www.uniol.de/inf/is/odysseus/iql/odl/ODL"
 
 
 import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as iql
-import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvm
 
 ODLModel returns iql::IQLModel:
 	{ODLModel}
 	namespaces+=IQLNamespace*
-	(elements+=ODLTypeDefinition)*
+	(elements+=ODLModelElement)*
 ;
 
-ODLTypeDefinition returns iql::IQLTypeDefinition:
-	{ODLTypeDefinition}
+ODLModelElement returns iql::IQLModelElement:
+	{ODLModelElement}
 	(javametadata+=IQLJavaMetadata)*
 	inner=(IQLClass | IQLInterface | ODLOperator)
 ; 
 
-ODLOperator returns  types::JvmGenericType:
+ODLOperator returns jvm::JvmGenericType:
 	{ODLOperator}
 	'operator' simpleName=ID ('(' (metadataList=IQLMetadataList)? ')')? '{'
 		members += (IQLAttribute | IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)*
@@ -37,4 +37,15 @@ ODLMethod returns iql::IQLMethod:
 	(on?='on' | validate?='validate')
 	(simpleName=ID ('(' (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? ')')? (':' returnType=JvmTypeReference)?)?
 	body=IQLStatementBlock
+;
+
+IQLJavaWords:
+	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
+	'+'  | '+='  | '-'  | '-='  | '*'   | '*='   | '/' | '/=' | '%'  | '%=' |
+	'++' | '--'	 | '>'  | '>='  | '<'   | '<='   | '!' | '!=' | '&&' | '||' |
+	'==' | '='   | '~'  | '?:'  | '|'   | '|='   | '^' | '^=' | '&'  | '&=' |
+	'>>' | '>>=' | '<<' | '<<=' | '>>>' | '>>>=' |
+	'['  | ']'   |'{'   |'}'    |  '('  |')'     |
+	 '.' | ':'   | ';'  | ','   | 'null' | 
+	 'on' | 'validate' | 'parameter' | 'optional' | 'operator'
 ;

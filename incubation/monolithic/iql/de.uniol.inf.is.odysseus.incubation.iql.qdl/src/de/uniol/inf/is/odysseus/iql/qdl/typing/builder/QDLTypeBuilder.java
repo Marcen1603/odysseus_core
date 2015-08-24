@@ -86,7 +86,15 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeFactory, IQDL
 	@Override
 	@SuppressWarnings({ "unchecked" })
 	public void addOperator(IOperatorBuilder opBuilder) {
-		String name = firstCharUpperCase(opBuilder.getName().toLowerCase());
+		String name = firstCharUpperCase(opBuilder.getName().toLowerCase());		
+		String operatorClassName = opBuilder.getOperatorClass().getSimpleName();
+		if (operatorClassName.endsWith("AO")) {
+			operatorClassName = operatorClassName.substring(0, operatorClassName.length()-2);
+		}
+		if (name.equalsIgnoreCase(operatorClassName)) {
+			name = operatorClassName;
+		}
+		
 		JvmTypeReference superClass = typeUtils.createTypeRef(DefaultQDLOperator.class, typeFactory.getSystemResourceSet());
 
 		IQLClass opClass = BasicIQLFactory.eINSTANCE.createIQLClass();

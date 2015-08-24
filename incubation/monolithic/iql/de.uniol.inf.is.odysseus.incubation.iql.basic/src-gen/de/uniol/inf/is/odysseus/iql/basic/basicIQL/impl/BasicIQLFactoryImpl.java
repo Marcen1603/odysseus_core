@@ -65,13 +65,9 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
     switch (eClass.getClassifierID())
     {
       case BasicIQLPackage.IQL_MODEL: return createIQLModel();
-      case BasicIQLPackage.IQL_TYPE_DEFINITION: return createIQLTypeDefinition();
+      case BasicIQLPackage.IQL_MODEL_ELEMENT: return createIQLModelElement();
       case BasicIQLPackage.IQL_NAMESPACE: return createIQLNamespace();
       case BasicIQLPackage.IQL_JAVA_METADATA: return createIQLJavaMetadata();
-      case BasicIQLPackage.IQL_SIMPLE_TYPE_REF: return createIQLSimpleTypeRef();
-      case BasicIQLPackage.IQL_ARRAY_TYPE_REF: return createIQLArrayTypeRef();
-      case BasicIQLPackage.IQL_SIMPLE_TYPE: return createIQLSimpleType();
-      case BasicIQLPackage.IQL_ARRAY_TYPE: return createIQLArrayType();
       case BasicIQLPackage.IQL_METADATA_LIST: return createIQLMetadataList();
       case BasicIQLPackage.IQL_METADATA: return createIQLMetadata();
       case BasicIQLPackage.IQL_METADATA_VALUE: return createIQLMetadataValue();
@@ -86,12 +82,14 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
       case BasicIQLPackage.IQL_MEMBER_SELECTION: return createIQLMemberSelection();
       case BasicIQLPackage.IQL_LITERAL_EXPRESSION_MAP_KEY_VALUE: return createIQLLiteralExpressionMapKeyValue();
       case BasicIQLPackage.IQL_JAVA: return createIQLJava();
-      case BasicIQLPackage.IQL_JAVA_KEYWORDS: return createIQLJavaKeywords();
       case BasicIQLPackage.IQL_CLASS: return createIQLClass();
       case BasicIQLPackage.IQL_INTERFACE: return createIQLInterface();
       case BasicIQLPackage.IQL_ATTRIBUTE: return createIQLAttribute();
+      case BasicIQLPackage.IQL_SIMPLE_TYPE_REF: return createIQLSimpleTypeRef();
+      case BasicIQLPackage.IQL_ARRAY_TYPE_REF: return createIQLArrayTypeRef();
+      case BasicIQLPackage.IQL_ARRAY_TYPE: return createIQLArrayType();
       case BasicIQLPackage.IQL_METHOD: return createIQLMethod();
-      case BasicIQLPackage.IQL_METHOD_DECLARATION_MEMBER: return createIQLMethodDeclarationMember();
+      case BasicIQLPackage.IQL_METHOD_DECLARATION: return createIQLMethodDeclaration();
       case BasicIQLPackage.IQL_JAVA_MEMBER: return createIQLJavaMember();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_INT: return createIQLMetadataValueSingleInt();
       case BasicIQLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE: return createIQLMetadataValueSingleDouble();
@@ -165,10 +163,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLTypeDefinition createIQLTypeDefinition()
+  public IQLModelElement createIQLModelElement()
   {
-    IQLTypeDefinitionImpl iqlTypeDefinition = new IQLTypeDefinitionImpl();
-    return iqlTypeDefinition;
+    IQLModelElementImpl iqlModelElement = new IQLModelElementImpl();
+    return iqlModelElement;
   }
 
   /**
@@ -191,50 +189,6 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
   {
     IQLJavaMetadataImpl iqlJavaMetadata = new IQLJavaMetadataImpl();
     return iqlJavaMetadata;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLSimpleTypeRef createIQLSimpleTypeRef()
-  {
-    IQLSimpleTypeRefImpl iqlSimpleTypeRef = new IQLSimpleTypeRefImpl();
-    return iqlSimpleTypeRef;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLArrayTypeRef createIQLArrayTypeRef()
-  {
-    IQLArrayTypeRefImpl iqlArrayTypeRef = new IQLArrayTypeRefImpl();
-    return iqlArrayTypeRef;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLSimpleType createIQLSimpleType()
-  {
-    IQLSimpleTypeImpl iqlSimpleType = new IQLSimpleTypeImpl();
-    return iqlSimpleType;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLArrayType createIQLArrayType()
-  {
-    IQLArrayTypeImpl iqlArrayType = new IQLArrayTypeImpl();
-    return iqlArrayType;
   }
 
   /**
@@ -396,17 +350,6 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLJavaKeywords createIQLJavaKeywords()
-  {
-    IQLJavaKeywordsImpl iqlJavaKeywords = new IQLJavaKeywordsImpl();
-    return iqlJavaKeywords;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public IQLClass createIQLClass()
   {
     IQLClassImpl iqlClass = new IQLClassImpl();
@@ -440,6 +383,39 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public IQLSimpleTypeRef createIQLSimpleTypeRef()
+  {
+    IQLSimpleTypeRefImpl iqlSimpleTypeRef = new IQLSimpleTypeRefImpl();
+    return iqlSimpleTypeRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLArrayTypeRef createIQLArrayTypeRef()
+  {
+    IQLArrayTypeRefImpl iqlArrayTypeRef = new IQLArrayTypeRefImpl();
+    return iqlArrayTypeRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IQLArrayType createIQLArrayType()
+  {
+    IQLArrayTypeImpl iqlArrayType = new IQLArrayTypeImpl();
+    return iqlArrayType;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public IQLMethod createIQLMethod()
   {
     IQLMethodImpl iqlMethod = new IQLMethodImpl();
@@ -451,10 +427,10 @@ public class BasicIQLFactoryImpl extends EFactoryImpl implements BasicIQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLMethodDeclarationMember createIQLMethodDeclarationMember()
+  public IQLMethodDeclaration createIQLMethodDeclaration()
   {
-    IQLMethodDeclarationMemberImpl iqlMethodDeclarationMember = new IQLMethodDeclarationMemberImpl();
-    return iqlMethodDeclarationMember;
+    IQLMethodDeclarationImpl iqlMethodDeclaration = new IQLMethodDeclarationImpl();
+    return iqlMethodDeclaration;
   }
 
   /**

@@ -40,8 +40,6 @@ import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.nodemodel.ICompositeNode;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 @SuppressWarnings("all")
 public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, E extends IIQLExpressionCompiler<G>, U extends IIQLTypeUtils, P extends IIQLExpressionEvaluator, L extends IIQLLookUp> implements IIQLStatementCompiler<G> {
@@ -129,9 +127,8 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
   public String compile(final IQLJavaStatement s, final G c) {
     String _xblockexpression = null;
     {
-      IQLJava _text = s.getText();
-      ICompositeNode _node = NodeModelUtils.getNode(_text);
-      String text = NodeModelUtils.getTokenText(_node);
+      IQLJava _java = s.getJava();
+      String text = _java.getText();
       StringConcatenation _builder = new StringConcatenation();
       _builder.append(text, "");
       _xblockexpression = _builder.toString();
@@ -518,9 +515,8 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
         String _xblockexpression_1 = null;
         {
           JvmTypeReference typeRef = this.typeUtils.createTypeRef(type);
-          String _keyword = s.getKeyword();
-          boolean _equalsIgnoreCase = _keyword.equalsIgnoreCase("super");
-          if (_equalsIgnoreCase) {
+          boolean _isSuper = s.isSuper();
+          if (_isSuper) {
             JvmTypeReference _extendedClass = type.getExtendedClass();
             typeRef = _extendedClass;
           }
@@ -528,12 +524,17 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
           EList<IQLExpression> _elements = _args.getElements();
           JvmExecutable constructor = this.lookUp.findConstructor(typeRef, _elements);
           String _xifexpression_1 = null;
+          boolean _and = false;
           boolean _notEquals_1 = (!Objects.equal(constructor, null));
-          if (_notEquals_1) {
+          if (!_notEquals_1) {
+            _and = false;
+          } else {
+            boolean _isSuper_1 = s.isSuper();
+            _and = _isSuper_1;
+          }
+          if (_and) {
             StringConcatenation _builder = new StringConcatenation();
-            String _keyword_1 = s.getKeyword();
-            _builder.append(_keyword_1, "");
-            _builder.append("(");
+            _builder.append("super(");
             {
               IQLArgumentsList _args_1 = s.getArgs();
               boolean _notEquals_2 = (!Objects.equal(_args_1, null));
@@ -546,26 +547,63 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
             }
             _builder.append(");");
             _xifexpression_1 = _builder.toString();
+          } else {
+            String _xifexpression_2 = null;
+            boolean _notEquals_3 = (!Objects.equal(constructor, null));
+            if (_notEquals_3) {
+              StringConcatenation _builder_1 = new StringConcatenation();
+              _builder_1.append("this(");
+              {
+                IQLArgumentsList _args_3 = s.getArgs();
+                boolean _notEquals_4 = (!Objects.equal(_args_3, null));
+                if (_notEquals_4) {
+                  IQLArgumentsList _args_4 = s.getArgs();
+                  EList<JvmFormalParameter> _parameters_1 = constructor.getParameters();
+                  String _compile_1 = this.exprCompiler.compile(_args_4, _parameters_1, c);
+                  _builder_1.append(_compile_1, "");
+                }
+              }
+              _builder_1.append(");");
+              _xifexpression_2 = _builder_1.toString();
+            }
+            _xifexpression_1 = _xifexpression_2;
           }
           _xblockexpression_1 = _xifexpression_1;
         }
         _xifexpression = _xblockexpression_1;
       } else {
-        StringConcatenation _builder = new StringConcatenation();
-        String _keyword = s.getKeyword();
-        _builder.append(_keyword, "");
-        _builder.append("(");
-        {
-          IQLArgumentsList _args = s.getArgs();
-          boolean _notEquals_1 = (!Objects.equal(_args, null));
-          if (_notEquals_1) {
-            IQLArgumentsList _args_1 = s.getArgs();
-            String _compile = this.exprCompiler.compile(_args_1, c);
-            _builder.append(_compile, "");
+        String _xifexpression_1 = null;
+        boolean _isSuper = s.isSuper();
+        if (_isSuper) {
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("super(");
+          {
+            IQLArgumentsList _args = s.getArgs();
+            boolean _notEquals_1 = (!Objects.equal(_args, null));
+            if (_notEquals_1) {
+              IQLArgumentsList _args_1 = s.getArgs();
+              String _compile = this.exprCompiler.compile(_args_1, c);
+              _builder.append(_compile, "");
+            }
           }
+          _builder.append(");");
+          _xifexpression_1 = _builder.toString();
+        } else {
+          StringConcatenation _builder_1 = new StringConcatenation();
+          _builder_1.append("this(");
+          {
+            IQLArgumentsList _args_2 = s.getArgs();
+            boolean _notEquals_2 = (!Objects.equal(_args_2, null));
+            if (_notEquals_2) {
+              IQLArgumentsList _args_3 = s.getArgs();
+              String _compile_1 = this.exprCompiler.compile(_args_3, c);
+              _builder_1.append(_compile_1, "");
+            }
+          }
+          _builder_1.append(");");
+          _xifexpression_1 = _builder_1.toString();
         }
-        _builder.append(");");
-        _xifexpression = _builder.toString();
+        _xifexpression = _xifexpression_1;
       }
       _xblockexpression = _xifexpression;
     }

@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator
@@ -80,7 +79,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	}
 	
 	def String compile(IQLJavaStatement s, G c) {
-		var text = NodeModelUtils.getTokenText(NodeModelUtils.getNode(s.text))
+		var text = s.java.text
 		'''«text»'''			
 	}
 	
@@ -202,15 +201,21 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 		var type = helper.getClass(s);
 		if (type != null) {
 			var typeRef = typeUtils.createTypeRef(type)
-			if (s.keyword.equalsIgnoreCase("super")) {
+			if (s.isSuper) {
 				typeRef = type.extendedClass
 			} 
 			var constructor = lookUp.findConstructor(typeRef, s.args.elements);
-			if (constructor != null) {
-				'''«s.keyword»(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
+			if (constructor != null && s.isSuper) {
+				'''super(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
+			} else if (constructor != null) {
+				'''this(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
 			}
  		} else {
- 			'''«s.keyword»(«IF s.args!=null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
+ 			if (s.isSuper) {
+ 			'''super(«IF s.args!=null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
+ 			} else {
+ 			'''this(«IF s.args!=null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
+ 			}
  		}	
 	}
 	

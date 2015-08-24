@@ -37,16 +37,15 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 			nameMappings = new HashMap<AbstractElement, String>() {
 				private static final long serialVersionUID = 1L;
 				{
-					put(grammarAccess.getIQLTypeDefinitionAccess().getInnerAlternatives_2_0(), "rule__IQLTypeDefinition__InnerAlternatives_2_0");
+					put(grammarAccess.getIQLModelElementAccess().getInnerAlternatives_1_0(), "rule__IQLModelElement__InnerAlternatives_1_0");
 					put(grammarAccess.getIQLClassAccess().getMembersAlternatives_6_0(), "rule__IQLClass__MembersAlternatives_6_0");
 					put(grammarAccess.getIQLInterfaceAccess().getMembersAlternatives_5_0(), "rule__IQLInterface__MembersAlternatives_5_0");
 					put(grammarAccess.getJvmTypeReferenceAccess().getAlternatives(), "rule__JvmTypeReference__Alternatives");
-					put(grammarAccess.getJvmTypeAccess().getAlternatives(), "rule__JvmType__Alternatives");
 					put(grammarAccess.getIQLMetadataValueAccess().getAlternatives(), "rule__IQLMetadataValue__Alternatives");
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getAlternatives(), "rule__IQLMetadataValueSingle__Alternatives");
 					put(grammarAccess.getIQLVariableInitializationAccess().getAlternatives(), "rule__IQLVariableInitialization__Alternatives");
 					put(grammarAccess.getIQLStatementAccess().getAlternatives(), "rule__IQLStatement__Alternatives");
-					put(grammarAccess.getIQLConstructorCallStatementAccess().getKeywordAlternatives_1_0(), "rule__IQLConstructorCallStatement__KeywordAlternatives_1_0");
+					put(grammarAccess.getIQLConstructorCallStatementAccess().getAlternatives_1(), "rule__IQLConstructorCallStatement__Alternatives_1");
 					put(grammarAccess.getOpAssignAccess().getAlternatives(), "rule__OpAssign__Alternatives");
 					put(grammarAccess.getOpEqualityAccess().getAlternatives(), "rule__OpEquality__Alternatives");
 					put(grammarAccess.getIQLRelationalExpressionAccess().getAlternatives_1(), "rule__IQLRelationalExpression__Alternatives_1");
@@ -61,12 +60,11 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives(), "rule__IQLOtherExpressions__Alternatives");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives_4_2(), "rule__IQLOtherExpressions__Alternatives_4_2");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getAlternatives(), "rule__IQLLiteralExpression__Alternatives");
-					put(grammarAccess.getIQLJavaAccess().getAlternatives_1(), "rule__IQLJava__Alternatives_1");
-					put(grammarAccess.getIQLJavaTextAccess().getAlternatives(), "rule__IQLJavaText__Alternatives");
-					put(grammarAccess.getIQLJavaKeywordsAccess().getKeywordAlternatives_1_0(), "rule__IQLJavaKeywords__KeywordAlternatives_1_0");
+					put(grammarAccess.getIQLJavaWordsAccess().getAlternatives(), "rule__IQLJavaWords__Alternatives");
+					put(grammarAccess.getIQLJavaKeywordsAccess().getAlternatives(), "rule__IQLJavaKeywords__Alternatives");
 					put(grammarAccess.getIQLModelAccess().getGroup(), "rule__IQLModel__Group__0");
 					put(grammarAccess.getIQLModelAccess().getGroup_0(), "rule__IQLModel__Group_0__0");
-					put(grammarAccess.getIQLTypeDefinitionAccess().getGroup(), "rule__IQLTypeDefinition__Group__0");
+					put(grammarAccess.getIQLModelElementAccess().getGroup(), "rule__IQLModelElement__Group__0");
 					put(grammarAccess.getIQLNamespaceAccess().getGroup(), "rule__IQLNamespace__Group__0");
 					put(grammarAccess.getIQLClassAccess().getGroup(), "rule__IQLClass__Group__0");
 					put(grammarAccess.getIQLClassAccess().getGroup_3(), "rule__IQLClass__Group_3__0");
@@ -75,8 +73,9 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLInterfaceAccess().getGroup(), "rule__IQLInterface__Group__0");
 					put(grammarAccess.getIQLInterfaceAccess().getGroup_3(), "rule__IQLInterface__Group_3__0");
 					put(grammarAccess.getIQLInterfaceAccess().getGroup_3_2(), "rule__IQLInterface__Group_3_2__0");
-					put(grammarAccess.getIQLJavaMetadataAccess().getGroup(), "rule__IQLJavaMetadata__Group__0");
 					put(grammarAccess.getIQLAttributeAccess().getGroup(), "rule__IQLAttribute__Group__0");
+					put(grammarAccess.getIQLSimpleTypeRefAccess().getGroup(), "rule__IQLSimpleTypeRef__Group__0");
+					put(grammarAccess.getIQLArrayTypeRefAccess().getGroup(), "rule__IQLArrayTypeRef__Group__0");
 					put(grammarAccess.getIQLArrayTypeAccess().getGroup(), "rule__IQLArrayType__Group__0");
 					put(grammarAccess.getArrayBracketsAccess().getGroup(), "rule__ArrayBrackets__Group__0");
 					put(grammarAccess.getJvmFormalParameterAccess().getGroup(), "rule__JvmFormalParameter__Group__0");
@@ -85,10 +84,10 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLMethodAccess().getGroup_3_1(), "rule__IQLMethod__Group_3_1__0");
 					put(grammarAccess.getIQLMethodAccess().getGroup_3_1_1(), "rule__IQLMethod__Group_3_1_1__0");
 					put(grammarAccess.getIQLMethodAccess().getGroup_4(), "rule__IQLMethod__Group_4__0");
-					put(grammarAccess.getIQLMethodDeclarationMemberAccess().getGroup(), "rule__IQLMethodDeclarationMember__Group__0");
-					put(grammarAccess.getIQLMethodDeclarationMemberAccess().getGroup_3(), "rule__IQLMethodDeclarationMember__Group_3__0");
-					put(grammarAccess.getIQLMethodDeclarationMemberAccess().getGroup_3_1(), "rule__IQLMethodDeclarationMember__Group_3_1__0");
-					put(grammarAccess.getIQLMethodDeclarationMemberAccess().getGroup_5(), "rule__IQLMethodDeclarationMember__Group_5__0");
+					put(grammarAccess.getIQLMethodDeclarationAccess().getGroup(), "rule__IQLMethodDeclaration__Group__0");
+					put(grammarAccess.getIQLMethodDeclarationAccess().getGroup_3(), "rule__IQLMethodDeclaration__Group_3__0");
+					put(grammarAccess.getIQLMethodDeclarationAccess().getGroup_3_1(), "rule__IQLMethodDeclaration__Group_3_1__0");
+					put(grammarAccess.getIQLMethodDeclarationAccess().getGroup_5(), "rule__IQLMethodDeclaration__Group_5__0");
 					put(grammarAccess.getIQLJavaMemberAccess().getGroup(), "rule__IQLJavaMember__Group__0");
 					put(grammarAccess.getIQLMetadataListAccess().getGroup(), "rule__IQLMetadataList__Group__0");
 					put(grammarAccess.getIQLMetadataListAccess().getGroup_1(), "rule__IQLMetadataList__Group_1__0");
@@ -109,7 +108,6 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLMetadataValueMapElementAccess().getGroup(), "rule__IQLMetadataValueMapElement__Group__0");
 					put(grammarAccess.getIQLVariableDeclarationAccess().getGroup(), "rule__IQLVariableDeclaration__Group__0");
 					put(grammarAccess.getIQLVariableInitializationAccess().getGroup_0(), "rule__IQLVariableInitialization__Group_0__0");
-					put(grammarAccess.getIQLVariableInitializationAccess().getGroup_0_1(), "rule__IQLVariableInitialization__Group_0_1__0");
 					put(grammarAccess.getIQLVariableInitializationAccess().getGroup_1(), "rule__IQLVariableInitialization__Group_1__0");
 					put(grammarAccess.getIQLArgumentsListAccess().getGroup(), "rule__IQLArgumentsList__Group__0");
 					put(grammarAccess.getIQLArgumentsListAccess().getGroup_2(), "rule__IQLArgumentsList__Group_2__0");
@@ -209,12 +207,11 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getQualifiedNameAccess().getGroup(), "rule__QualifiedName__Group__0");
 					put(grammarAccess.getQualifiedNameAccess().getGroup_1(), "rule__QualifiedName__Group_1__0");
 					put(grammarAccess.getIQLJavaAccess().getGroup(), "rule__IQLJava__Group__0");
-					put(grammarAccess.getIQLJavaKeywordsAccess().getGroup(), "rule__IQLJavaKeywords__Group__0");
 					put(grammarAccess.getIQLModelAccess().getNameAssignment_0_1(), "rule__IQLModel__NameAssignment_0_1");
 					put(grammarAccess.getIQLModelAccess().getNamespacesAssignment_1(), "rule__IQLModel__NamespacesAssignment_1");
 					put(grammarAccess.getIQLModelAccess().getElementsAssignment_2(), "rule__IQLModel__ElementsAssignment_2");
-					put(grammarAccess.getIQLTypeDefinitionAccess().getJavametadataAssignment_1(), "rule__IQLTypeDefinition__JavametadataAssignment_1");
-					put(grammarAccess.getIQLTypeDefinitionAccess().getInnerAssignment_2(), "rule__IQLTypeDefinition__InnerAssignment_2");
+					put(grammarAccess.getIQLModelElementAccess().getJavametadataAssignment_0(), "rule__IQLModelElement__JavametadataAssignment_0");
+					put(grammarAccess.getIQLModelElementAccess().getInnerAssignment_1(), "rule__IQLModelElement__InnerAssignment_1");
 					put(grammarAccess.getIQLNamespaceAccess().getStaticAssignment_1(), "rule__IQLNamespace__StaticAssignment_1");
 					put(grammarAccess.getIQLNamespaceAccess().getImportedNamespaceAssignment_2(), "rule__IQLNamespace__ImportedNamespaceAssignment_2");
 					put(grammarAccess.getIQLClassAccess().getSimpleNameAssignment_2(), "rule__IQLClass__SimpleNameAssignment_2");
@@ -226,15 +223,14 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLInterfaceAccess().getExtendedInterfacesAssignment_3_1(), "rule__IQLInterface__ExtendedInterfacesAssignment_3_1");
 					put(grammarAccess.getIQLInterfaceAccess().getExtendedInterfacesAssignment_3_2_1(), "rule__IQLInterface__ExtendedInterfacesAssignment_3_2_1");
 					put(grammarAccess.getIQLInterfaceAccess().getMembersAssignment_5(), "rule__IQLInterface__MembersAssignment_5");
-					put(grammarAccess.getIQLJavaMetadataAccess().getTextAssignment_2(), "rule__IQLJavaMetadata__TextAssignment_2");
+					put(grammarAccess.getIQLJavaMetadataAccess().getJavaAssignment(), "rule__IQLJavaMetadata__JavaAssignment");
 					put(grammarAccess.getIQLAttributeAccess().getTypeAssignment_1(), "rule__IQLAttribute__TypeAssignment_1");
 					put(grammarAccess.getIQLAttributeAccess().getSimpleNameAssignment_2(), "rule__IQLAttribute__SimpleNameAssignment_2");
 					put(grammarAccess.getIQLAttributeAccess().getInitAssignment_3(), "rule__IQLAttribute__InitAssignment_3");
-					put(grammarAccess.getIQLSimpleTypeRefAccess().getTypeAssignment(), "rule__IQLSimpleTypeRef__TypeAssignment");
-					put(grammarAccess.getIQLArrayTypeRefAccess().getTypeAssignment(), "rule__IQLArrayTypeRef__TypeAssignment");
-					put(grammarAccess.getIQLSimpleTypeAccess().getTypeAssignment(), "rule__IQLSimpleType__TypeAssignment");
-					put(grammarAccess.getIQLArrayTypeAccess().getTypeAssignment_0(), "rule__IQLArrayType__TypeAssignment_0");
-					put(grammarAccess.getIQLArrayTypeAccess().getDimensionsAssignment_1(), "rule__IQLArrayType__DimensionsAssignment_1");
+					put(grammarAccess.getIQLSimpleTypeRefAccess().getTypeAssignment_1(), "rule__IQLSimpleTypeRef__TypeAssignment_1");
+					put(grammarAccess.getIQLArrayTypeRefAccess().getTypeAssignment_1(), "rule__IQLArrayTypeRef__TypeAssignment_1");
+					put(grammarAccess.getIQLArrayTypeAccess().getComponentTypeAssignment_1(), "rule__IQLArrayType__ComponentTypeAssignment_1");
+					put(grammarAccess.getIQLArrayTypeAccess().getDimensionsAssignment_2(), "rule__IQLArrayType__DimensionsAssignment_2");
 					put(grammarAccess.getJvmFormalParameterAccess().getParameterTypeAssignment_0(), "rule__JvmFormalParameter__ParameterTypeAssignment_0");
 					put(grammarAccess.getJvmFormalParameterAccess().getNameAssignment_1(), "rule__JvmFormalParameter__NameAssignment_1");
 					put(grammarAccess.getIQLMethodAccess().getOverrideAssignment_1(), "rule__IQLMethod__OverrideAssignment_1");
@@ -243,11 +239,11 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLMethodAccess().getParametersAssignment_3_1_1_1(), "rule__IQLMethod__ParametersAssignment_3_1_1_1");
 					put(grammarAccess.getIQLMethodAccess().getReturnTypeAssignment_4_1(), "rule__IQLMethod__ReturnTypeAssignment_4_1");
 					put(grammarAccess.getIQLMethodAccess().getBodyAssignment_5(), "rule__IQLMethod__BodyAssignment_5");
-					put(grammarAccess.getIQLMethodDeclarationMemberAccess().getSimpleNameAssignment_1(), "rule__IQLMethodDeclarationMember__SimpleNameAssignment_1");
-					put(grammarAccess.getIQLMethodDeclarationMemberAccess().getParametersAssignment_3_0(), "rule__IQLMethodDeclarationMember__ParametersAssignment_3_0");
-					put(grammarAccess.getIQLMethodDeclarationMemberAccess().getParametersAssignment_3_1_1(), "rule__IQLMethodDeclarationMember__ParametersAssignment_3_1_1");
-					put(grammarAccess.getIQLMethodDeclarationMemberAccess().getReturnTypeAssignment_5_1(), "rule__IQLMethodDeclarationMember__ReturnTypeAssignment_5_1");
-					put(grammarAccess.getIQLJavaMemberAccess().getTextAssignment_2(), "rule__IQLJavaMember__TextAssignment_2");
+					put(grammarAccess.getIQLMethodDeclarationAccess().getSimpleNameAssignment_1(), "rule__IQLMethodDeclaration__SimpleNameAssignment_1");
+					put(grammarAccess.getIQLMethodDeclarationAccess().getParametersAssignment_3_0(), "rule__IQLMethodDeclaration__ParametersAssignment_3_0");
+					put(grammarAccess.getIQLMethodDeclarationAccess().getParametersAssignment_3_1_1(), "rule__IQLMethodDeclaration__ParametersAssignment_3_1_1");
+					put(grammarAccess.getIQLMethodDeclarationAccess().getReturnTypeAssignment_5_1(), "rule__IQLMethodDeclaration__ReturnTypeAssignment_5_1");
+					put(grammarAccess.getIQLJavaMemberAccess().getJavaAssignment_1(), "rule__IQLJavaMember__JavaAssignment_1");
 					put(grammarAccess.getIQLMetadataListAccess().getElementsAssignment_0(), "rule__IQLMetadataList__ElementsAssignment_0");
 					put(grammarAccess.getIQLMetadataListAccess().getElementsAssignment_1_1(), "rule__IQLMetadataList__ElementsAssignment_1_1");
 					put(grammarAccess.getIQLMetadataAccess().getNameAssignment_0(), "rule__IQLMetadata__NameAssignment_0");
@@ -257,7 +253,6 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getValueAssignment_2_1(), "rule__IQLMetadataValueSingle__ValueAssignment_2_1");
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getValueAssignment_3_1(), "rule__IQLMetadataValueSingle__ValueAssignment_3_1");
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getValueAssignment_4_1(), "rule__IQLMetadataValueSingle__ValueAssignment_4_1");
-					put(grammarAccess.getIQLMetadataValueSingleAccess().getValueAssignment_5_1(), "rule__IQLMetadataValueSingle__ValueAssignment_5_1");
 					put(grammarAccess.getIQLMetadataValueListAccess().getElementsAssignment_2_0(), "rule__IQLMetadataValueList__ElementsAssignment_2_0");
 					put(grammarAccess.getIQLMetadataValueListAccess().getElementsAssignment_2_1_1(), "rule__IQLMetadataValueList__ElementsAssignment_2_1_1");
 					put(grammarAccess.getIQLMetadataValueMapAccess().getElementsAssignment_2_0(), "rule__IQLMetadataValueMap__ElementsAssignment_2_0");
@@ -266,8 +261,8 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLMetadataValueMapElementAccess().getValueAssignment_2(), "rule__IQLMetadataValueMapElement__ValueAssignment_2");
 					put(grammarAccess.getIQLVariableDeclarationAccess().getRefAssignment_1(), "rule__IQLVariableDeclaration__RefAssignment_1");
 					put(grammarAccess.getIQLVariableDeclarationAccess().getNameAssignment_2(), "rule__IQLVariableDeclaration__NameAssignment_2");
-					put(grammarAccess.getIQLVariableInitializationAccess().getArgsListAssignment_0_1_0(), "rule__IQLVariableInitialization__ArgsListAssignment_0_1_0");
-					put(grammarAccess.getIQLVariableInitializationAccess().getArgsMapAssignment_0_1_1(), "rule__IQLVariableInitialization__ArgsMapAssignment_0_1_1");
+					put(grammarAccess.getIQLVariableInitializationAccess().getArgsListAssignment_0_0(), "rule__IQLVariableInitialization__ArgsListAssignment_0_0");
+					put(grammarAccess.getIQLVariableInitializationAccess().getArgsMapAssignment_0_1(), "rule__IQLVariableInitialization__ArgsMapAssignment_0_1");
 					put(grammarAccess.getIQLVariableInitializationAccess().getValueAssignment_1_1(), "rule__IQLVariableInitialization__ValueAssignment_1_1");
 					put(grammarAccess.getIQLArgumentsListAccess().getElementsAssignment_2_0(), "rule__IQLArgumentsList__ElementsAssignment_2_0");
 					put(grammarAccess.getIQLArgumentsListAccess().getElementsAssignment_2_1_1(), "rule__IQLArgumentsList__ElementsAssignment_2_1_1");
@@ -276,7 +271,7 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLArgumentsMapKeyValueAccess().getKeyAssignment_0(), "rule__IQLArgumentsMapKeyValue__KeyAssignment_0");
 					put(grammarAccess.getIQLArgumentsMapKeyValueAccess().getValueAssignment_2(), "rule__IQLArgumentsMapKeyValue__ValueAssignment_2");
 					put(grammarAccess.getIQLStatementBlockAccess().getStatementsAssignment_2(), "rule__IQLStatementBlock__StatementsAssignment_2");
-					put(grammarAccess.getIQLJavaStatementAccess().getTextAssignment_2(), "rule__IQLJavaStatement__TextAssignment_2");
+					put(grammarAccess.getIQLJavaStatementAccess().getJavaAssignment_1(), "rule__IQLJavaStatement__JavaAssignment_1");
 					put(grammarAccess.getIQLIfStatementAccess().getPredicateAssignment_3(), "rule__IQLIfStatement__PredicateAssignment_3");
 					put(grammarAccess.getIQLIfStatementAccess().getThenBodyAssignment_5(), "rule__IQLIfStatement__ThenBodyAssignment_5");
 					put(grammarAccess.getIQLIfStatementAccess().getElseBodyAssignment_6_1(), "rule__IQLIfStatement__ElseBodyAssignment_6_1");
@@ -299,7 +294,8 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLExpressionStatementAccess().getExpressionAssignment_1(), "rule__IQLExpressionStatement__ExpressionAssignment_1");
 					put(grammarAccess.getIQLVariableStatementAccess().getVarAssignment_1(), "rule__IQLVariableStatement__VarAssignment_1");
 					put(grammarAccess.getIQLVariableStatementAccess().getInitAssignment_2(), "rule__IQLVariableStatement__InitAssignment_2");
-					put(grammarAccess.getIQLConstructorCallStatementAccess().getKeywordAssignment_1(), "rule__IQLConstructorCallStatement__KeywordAssignment_1");
+					put(grammarAccess.getIQLConstructorCallStatementAccess().getThisAssignment_1_0(), "rule__IQLConstructorCallStatement__ThisAssignment_1_0");
+					put(grammarAccess.getIQLConstructorCallStatementAccess().getSuperAssignment_1_1(), "rule__IQLConstructorCallStatement__SuperAssignment_1_1");
 					put(grammarAccess.getIQLConstructorCallStatementAccess().getArgsAssignment_2(), "rule__IQLConstructorCallStatement__ArgsAssignment_2");
 					put(grammarAccess.getIQLReturnStatementAccess().getExpressionAssignment_2(), "rule__IQLReturnStatement__ExpressionAssignment_2");
 					put(grammarAccess.getIQLAssignmentExpressionAccess().getOpAssignment_1_0_0_1(), "rule__IQLAssignmentExpression__OpAssignment_1_0_0_1");
@@ -349,9 +345,7 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLLiteralExpressionMapAccess().getElementsAssignment_2_1_1(), "rule__IQLLiteralExpressionMap__ElementsAssignment_2_1_1");
 					put(grammarAccess.getIQLLiteralExpressionMapKeyValueAccess().getKeyAssignment_0(), "rule__IQLLiteralExpressionMapKeyValue__KeyAssignment_0");
 					put(grammarAccess.getIQLLiteralExpressionMapKeyValueAccess().getValueAssignment_2(), "rule__IQLLiteralExpressionMapKeyValue__ValueAssignment_2");
-					put(grammarAccess.getIQLJavaAccess().getTextAssignment_1_0(), "rule__IQLJava__TextAssignment_1_0");
-					put(grammarAccess.getIQLJavaAccess().getKeywordsAssignment_1_1(), "rule__IQLJava__KeywordsAssignment_1_1");
-					put(grammarAccess.getIQLJavaKeywordsAccess().getKeywordAssignment_1(), "rule__IQLJavaKeywords__KeywordAssignment_1");
+					put(grammarAccess.getIQLJavaAccess().getTextAssignment_1(), "rule__IQLJava__TextAssignment_1");
 				}
 			};
 		}

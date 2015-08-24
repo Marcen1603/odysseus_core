@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLIfStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInstanceOfExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaKeywords;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaStatement;
@@ -57,8 +56,9 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleNull;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleString;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValueSingleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclarationMember;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMultiplicativeExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
@@ -68,14 +68,12 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPostfixExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLPrefixExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLRelationalExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLReturnStatement;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSwitchStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeCastExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
@@ -83,10 +81,10 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLWhileStatement;
 import de.uniol.inf.is.odysseus.iql.basic.serializer.BasicIQLSemanticSequencer;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel;
+import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModelElement;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLPackage;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
-import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.odl.services.ODLGrammarAccess;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
@@ -170,8 +168,7 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 				}
 				else break;
 			case BasicIQLPackage.IQL_ARRAY_TYPE:
-				if(context == grammarAccess.getIQLArrayTypeRule() ||
-				   context == grammarAccess.getJvmTypeRule()) {
+				if(context == grammarAccess.getIQLArrayTypeRule()) {
 					sequence_IQLArrayType(context, (IQLArrayType) semanticObject); 
 					return; 
 				}
@@ -326,12 +323,6 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 			case BasicIQLPackage.IQL_JAVA:
 				if(context == grammarAccess.getIQLJavaRule()) {
 					sequence_IQLJava(context, (IQLJava) semanticObject); 
-					return; 
-				}
-				else break;
-			case BasicIQLPackage.IQL_JAVA_KEYWORDS:
-				if(context == grammarAccess.getIQLJavaKeywordsRule()) {
-					sequence_IQLJavaKeywords(context, (IQLJavaKeywords) semanticObject); 
 					return; 
 				}
 				else break;
@@ -747,15 +738,21 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_METHOD_DECLARATION_MEMBER:
-				if(context == grammarAccess.getIQLMethodDeclarationMemberRule()) {
-					sequence_IQLMethodDeclarationMember(context, (IQLMethodDeclarationMember) semanticObject); 
+			case BasicIQLPackage.IQL_METHOD_DECLARATION:
+				if(context == grammarAccess.getIQLMethodDeclarationRule()) {
+					sequence_IQLMethodDeclaration(context, (IQLMethodDeclaration) semanticObject); 
 					return; 
 				}
 				else break;
 			case BasicIQLPackage.IQL_MODEL:
 				if(context == grammarAccess.getIQLModelRule()) {
 					sequence_IQLModel(context, (IQLModel) semanticObject); 
+					return; 
+				}
+				else break;
+			case BasicIQLPackage.IQL_MODEL_ELEMENT:
+				if(context == grammarAccess.getIQLModelElementRule()) {
+					sequence_IQLModelElement(context, (IQLModelElement) semanticObject); 
 					return; 
 				}
 				else break;
@@ -930,13 +927,6 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_SIMPLE_TYPE:
-				if(context == grammarAccess.getIQLSimpleTypeRule() ||
-				   context == grammarAccess.getJvmTypeRule()) {
-					sequence_IQLSimpleType(context, (IQLSimpleType) semanticObject); 
-					return; 
-				}
-				else break;
 			case BasicIQLPackage.IQL_SIMPLE_TYPE_REF:
 				if(context == grammarAccess.getIQLSimpleTypeRefRule() ||
 				   context == grammarAccess.getJvmTypeReferenceRule()) {
@@ -1034,12 +1024,6 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
-			case BasicIQLPackage.IQL_TYPE_DEFINITION:
-				if(context == grammarAccess.getIQLTypeDefinitionRule()) {
-					sequence_IQLTypeDefinition(context, (IQLTypeDefinition) semanticObject); 
-					return; 
-				}
-				else break;
 			case BasicIQLPackage.IQL_VARIABLE_DECLARATION:
 				if(context == grammarAccess.getIQLVariableDeclarationRule()) {
 					sequence_IQLVariableDeclaration(context, (IQLVariableDeclaration) semanticObject); 
@@ -1080,6 +1064,12 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 					return; 
 				}
 				else break;
+			case ODLPackage.ODL_MODEL_ELEMENT:
+				if(context == grammarAccess.getODLModelElementRule()) {
+					sequence_ODLModelElement(context, (ODLModelElement) semanticObject); 
+					return; 
+				}
+				else break;
 			case ODLPackage.ODL_OPERATOR:
 				if(context == grammarAccess.getODLOperatorRule()) {
 					sequence_ODLOperator(context, (ODLOperator) semanticObject); 
@@ -1089,12 +1079,6 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 			case ODLPackage.ODL_PARAMETER:
 				if(context == grammarAccess.getODLParameterRule()) {
 					sequence_ODLParameter(context, (ODLParameter) semanticObject); 
-					return; 
-				}
-				else break;
-			case ODLPackage.ODL_TYPE_DEFINITION:
-				if(context == grammarAccess.getODLTypeDefinitionRule()) {
-					sequence_ODLTypeDefinition(context, (ODLTypeDefinition) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1125,7 +1109,16 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (namespaces+=IQLNamespace* elements+=ODLTypeDefinition*)
+	 *     (javametadata+=IQLJavaMetadata* (inner=IQLClass | inner=IQLInterface | inner=ODLOperator))
+	 */
+	protected void sequence_ODLModelElement(EObject context, ODLModelElement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (namespaces+=IQLNamespace* elements+=ODLModelElement*)
 	 */
 	protected void sequence_ODLModel(EObject context, ODLModel semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1157,15 +1150,6 @@ public class ODLSemanticSequencer extends BasicIQLSemanticSequencer {
 	 *     )
 	 */
 	protected void sequence_ODLParameter(EObject context, ODLParameter semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (javametadata+=IQLJavaMetadata* (inner=IQLClass | inner=IQLInterface | inner=ODLOperator))
-	 */
-	protected void sequence_ODLTypeDefinition(EObject context, ODLTypeDefinition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 }

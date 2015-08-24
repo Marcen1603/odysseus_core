@@ -107,14 +107,14 @@ public interface QDLPackage extends EPackage
   int QDL_MODEL_FEATURE_COUNT = BasicIQLPackage.IQL_MODEL_FEATURE_COUNT + 0;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLTypeDefinitionImpl <em>Type Definition</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLModelElementImpl <em>Model Element</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLTypeDefinitionImpl
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getQDLTypeDefinition()
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLModelElementImpl
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getQDLModelElement()
    * @generated
    */
-  int QDL_TYPE_DEFINITION = 1;
+  int QDL_MODEL_ELEMENT = 1;
 
   /**
    * The feature id for the '<em><b>Javametadata</b></em>' containment reference list.
@@ -123,7 +123,7 @@ public interface QDLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int QDL_TYPE_DEFINITION__JAVAMETADATA = BasicIQLPackage.IQL_TYPE_DEFINITION__JAVAMETADATA;
+  int QDL_MODEL_ELEMENT__JAVAMETADATA = BasicIQLPackage.IQL_MODEL_ELEMENT__JAVAMETADATA;
 
   /**
    * The feature id for the '<em><b>Inner</b></em>' containment reference.
@@ -132,16 +132,16 @@ public interface QDLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int QDL_TYPE_DEFINITION__INNER = BasicIQLPackage.IQL_TYPE_DEFINITION__INNER;
+  int QDL_MODEL_ELEMENT__INNER = BasicIQLPackage.IQL_MODEL_ELEMENT__INNER;
 
   /**
-   * The number of structural features of the '<em>Type Definition</em>' class.
+   * The number of structural features of the '<em>Model Element</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int QDL_TYPE_DEFINITION_FEATURE_COUNT = BasicIQLPackage.IQL_TYPE_DEFINITION_FEATURE_COUNT + 0;
+  int QDL_MODEL_ELEMENT_FEATURE_COUNT = BasicIQLPackage.IQL_MODEL_ELEMENT_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLQueryImpl <em>Query</em>}' class.
@@ -426,118 +426,6 @@ public interface QDLPackage extends EPackage
   int IQL_PORT_EXPRESSION_FEATURE_COUNT = BasicIQLPackage.IQL_EXPRESSION_FEATURE_COUNT + 3;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleIntImpl <em>IQL Metadata Value Single Int</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleIntImpl
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleInt()
-   * @generated
-   */
-  int IQL_METADATA_VALUE_SINGLE_INT = 5;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_INT__VALUE = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>IQL Metadata Value Single Int</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_INT_FEATURE_COUNT = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 1;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleDoubleImpl <em>IQL Metadata Value Single Double</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleDoubleImpl
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleDouble()
-   * @generated
-   */
-  int IQL_METADATA_VALUE_SINGLE_DOUBLE = 6;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_DOUBLE__VALUE = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>IQL Metadata Value Single Double</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_DOUBLE_FEATURE_COUNT = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 1;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleStringImpl <em>IQL Metadata Value Single String</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleStringImpl
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleString()
-   * @generated
-   */
-  int IQL_METADATA_VALUE_SINGLE_STRING = 7;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_STRING__VALUE = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>IQL Metadata Value Single String</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_STRING_FEATURE_COUNT = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 1;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleBooleanImpl <em>IQL Metadata Value Single Boolean</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleBooleanImpl
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleBoolean()
-   * @generated
-   */
-  int IQL_METADATA_VALUE_SINGLE_BOOLEAN = 8;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_BOOLEAN__VALUE = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>IQL Metadata Value Single Boolean</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_BOOLEAN_FEATURE_COUNT = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 1;
-
-  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLMetadataValueSingleIDImpl <em>Metadata Value Single ID</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -545,7 +433,7 @@ public interface QDLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getQDLMetadataValueSingleID()
    * @generated
    */
-  int QDL_METADATA_VALUE_SINGLE_ID = 9;
+  int QDL_METADATA_VALUE_SINGLE_ID = 5;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -565,62 +453,6 @@ public interface QDLPackage extends EPackage
    */
   int QDL_METADATA_VALUE_SINGLE_ID_FEATURE_COUNT = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 1;
 
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleTypeRefImpl <em>IQL Metadata Value Single Type Ref</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleTypeRefImpl
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleTypeRef()
-   * @generated
-   */
-  int IQL_METADATA_VALUE_SINGLE_TYPE_REF = 10;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>IQL Metadata Value Single Type Ref</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_TYPE_REF_FEATURE_COUNT = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 1;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleNullImpl <em>IQL Metadata Value Single Null</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleNullImpl
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleNull()
-   * @generated
-   */
-  int IQL_METADATA_VALUE_SINGLE_NULL = 11;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_NULL__VALUE = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 0;
-
-  /**
-   * The number of structural features of the '<em>IQL Metadata Value Single Null</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int IQL_METADATA_VALUE_SINGLE_NULL_FEATURE_COUNT = BasicIQLPackage.IQL_METADATA_VALUE_FEATURE_COUNT + 1;
-
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel <em>Model</em>}'.
@@ -633,14 +465,14 @@ public interface QDLPackage extends EPackage
   EClass getQDLModel();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition <em>Type Definition</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModelElement <em>Model Element</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Type Definition</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition
+   * @return the meta object for class '<em>Model Element</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModelElement
    * @generated
    */
-  EClass getQDLTypeDefinition();
+  EClass getQDLModelElement();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery <em>Query</em>}'.
@@ -761,90 +593,6 @@ public interface QDLPackage extends EPackage
   EReference getIQLPortExpression_RightOperand();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleInt <em>IQL Metadata Value Single Int</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>IQL Metadata Value Single Int</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleInt
-   * @generated
-   */
-  EClass getIQLMetadataValueSingleInt();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleInt#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleInt#getValue()
-   * @see #getIQLMetadataValueSingleInt()
-   * @generated
-   */
-  EAttribute getIQLMetadataValueSingleInt_Value();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleDouble <em>IQL Metadata Value Single Double</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>IQL Metadata Value Single Double</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleDouble
-   * @generated
-   */
-  EClass getIQLMetadataValueSingleDouble();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleDouble#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleDouble#getValue()
-   * @see #getIQLMetadataValueSingleDouble()
-   * @generated
-   */
-  EAttribute getIQLMetadataValueSingleDouble_Value();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleString <em>IQL Metadata Value Single String</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>IQL Metadata Value Single String</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleString
-   * @generated
-   */
-  EClass getIQLMetadataValueSingleString();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleString#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleString#getValue()
-   * @see #getIQLMetadataValueSingleString()
-   * @generated
-   */
-  EAttribute getIQLMetadataValueSingleString_Value();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleBoolean <em>IQL Metadata Value Single Boolean</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>IQL Metadata Value Single Boolean</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleBoolean
-   * @generated
-   */
-  EClass getIQLMetadataValueSingleBoolean();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleBoolean#isValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleBoolean#isValue()
-   * @see #getIQLMetadataValueSingleBoolean()
-   * @generated
-   */
-  EAttribute getIQLMetadataValueSingleBoolean_Value();
-
-  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLMetadataValueSingleID <em>Metadata Value Single ID</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -864,48 +612,6 @@ public interface QDLPackage extends EPackage
    * @generated
    */
   EAttribute getQDLMetadataValueSingleID_Value();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleTypeRef <em>IQL Metadata Value Single Type Ref</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>IQL Metadata Value Single Type Ref</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleTypeRef
-   * @generated
-   */
-  EClass getIQLMetadataValueSingleTypeRef();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleTypeRef#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleTypeRef#getValue()
-   * @see #getIQLMetadataValueSingleTypeRef()
-   * @generated
-   */
-  EReference getIQLMetadataValueSingleTypeRef_Value();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleNull <em>IQL Metadata Value Single Null</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>IQL Metadata Value Single Null</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleNull
-   * @generated
-   */
-  EClass getIQLMetadataValueSingleNull();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleNull#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLMetadataValueSingleNull#getValue()
-   * @see #getIQLMetadataValueSingleNull()
-   * @generated
-   */
-  EAttribute getIQLMetadataValueSingleNull_Value();
 
   /**
    * Returns the factory that creates the instances of the model.
@@ -941,14 +647,14 @@ public interface QDLPackage extends EPackage
     EClass QDL_MODEL = eINSTANCE.getQDLModel();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLTypeDefinitionImpl <em>Type Definition</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLModelElementImpl <em>Model Element</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLTypeDefinitionImpl
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getQDLTypeDefinition()
+     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLModelElementImpl
+     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getQDLModelElement()
      * @generated
      */
-    EClass QDL_TYPE_DEFINITION = eINSTANCE.getQDLTypeDefinition();
+    EClass QDL_MODEL_ELEMENT = eINSTANCE.getQDLModelElement();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLQueryImpl <em>Query</em>}' class.
@@ -1045,78 +751,6 @@ public interface QDLPackage extends EPackage
     EReference IQL_PORT_EXPRESSION__RIGHT_OPERAND = eINSTANCE.getIQLPortExpression_RightOperand();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleIntImpl <em>IQL Metadata Value Single Int</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleIntImpl
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleInt()
-     * @generated
-     */
-    EClass IQL_METADATA_VALUE_SINGLE_INT = eINSTANCE.getIQLMetadataValueSingleInt();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute IQL_METADATA_VALUE_SINGLE_INT__VALUE = eINSTANCE.getIQLMetadataValueSingleInt_Value();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleDoubleImpl <em>IQL Metadata Value Single Double</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleDoubleImpl
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleDouble()
-     * @generated
-     */
-    EClass IQL_METADATA_VALUE_SINGLE_DOUBLE = eINSTANCE.getIQLMetadataValueSingleDouble();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute IQL_METADATA_VALUE_SINGLE_DOUBLE__VALUE = eINSTANCE.getIQLMetadataValueSingleDouble_Value();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleStringImpl <em>IQL Metadata Value Single String</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleStringImpl
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleString()
-     * @generated
-     */
-    EClass IQL_METADATA_VALUE_SINGLE_STRING = eINSTANCE.getIQLMetadataValueSingleString();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute IQL_METADATA_VALUE_SINGLE_STRING__VALUE = eINSTANCE.getIQLMetadataValueSingleString_Value();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleBooleanImpl <em>IQL Metadata Value Single Boolean</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleBooleanImpl
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleBoolean()
-     * @generated
-     */
-    EClass IQL_METADATA_VALUE_SINGLE_BOOLEAN = eINSTANCE.getIQLMetadataValueSingleBoolean();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute IQL_METADATA_VALUE_SINGLE_BOOLEAN__VALUE = eINSTANCE.getIQLMetadataValueSingleBoolean_Value();
-
-    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLMetadataValueSingleIDImpl <em>Metadata Value Single ID</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1133,42 +767,6 @@ public interface QDLPackage extends EPackage
      * @generated
      */
     EAttribute QDL_METADATA_VALUE_SINGLE_ID__VALUE = eINSTANCE.getQDLMetadataValueSingleID_Value();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleTypeRefImpl <em>IQL Metadata Value Single Type Ref</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleTypeRefImpl
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleTypeRef()
-     * @generated
-     */
-    EClass IQL_METADATA_VALUE_SINGLE_TYPE_REF = eINSTANCE.getIQLMetadataValueSingleTypeRef();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference IQL_METADATA_VALUE_SINGLE_TYPE_REF__VALUE = eINSTANCE.getIQLMetadataValueSingleTypeRef_Value();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleNullImpl <em>IQL Metadata Value Single Null</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLMetadataValueSingleNullImpl
-     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLMetadataValueSingleNull()
-     * @generated
-     */
-    EClass IQL_METADATA_VALUE_SINGLE_NULL = eINSTANCE.getIQLMetadataValueSingleNull();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute IQL_METADATA_VALUE_SINGLE_NULL__VALUE = eINSTANCE.getIQLMetadataValueSingleNull_Value();
 
   }
 

@@ -25,13 +25,13 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cNamespacesAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNamespacesIQLNamespaceParserRuleCall_1_0 = (RuleCall)cNamespacesAssignment_1.eContents().get(0);
 		private final Assignment cElementsAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cElementsODLTypeDefinitionParserRuleCall_2_0 = (RuleCall)cElementsAssignment_2.eContents().get(0);
+		private final RuleCall cElementsODLModelElementParserRuleCall_2_0 = (RuleCall)cElementsAssignment_2.eContents().get(0);
 		
 		//ODLModel returns iql::IQLModel:
-		//	{ODLModel} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*;
+		//	{ODLModel} namespaces+=IQLNamespace* elements+=ODLModelElement*;
 		public ParserRule getRule() { return rule; }
 
-		//{ODLModel} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*
+		//{ODLModel} namespaces+=IQLNamespace* elements+=ODLModelElement*
 		public Group getGroup() { return cGroup; }
 
 		//{ODLModel}
@@ -43,17 +43,17 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		//IQLNamespace
 		public RuleCall getNamespacesIQLNamespaceParserRuleCall_1_0() { return cNamespacesIQLNamespaceParserRuleCall_1_0; }
 
-		//elements+=ODLTypeDefinition*
+		//elements+=ODLModelElement*
 		public Assignment getElementsAssignment_2() { return cElementsAssignment_2; }
 
-		//ODLTypeDefinition
-		public RuleCall getElementsODLTypeDefinitionParserRuleCall_2_0() { return cElementsODLTypeDefinitionParserRuleCall_2_0; }
+		//ODLModelElement
+		public RuleCall getElementsODLModelElementParserRuleCall_2_0() { return cElementsODLModelElementParserRuleCall_2_0; }
 	}
 
-	public class ODLTypeDefinitionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ODLTypeDefinition");
+	public class ODLModelElementElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "ODLModelElement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cODLTypeDefinitionAction_0 = (Action)cGroup.eContents().get(0);
+		private final Action cODLModelElementAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cJavametadataAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cJavametadataIQLJavaMetadataParserRuleCall_1_0 = (RuleCall)cJavametadataAssignment_1.eContents().get(0);
 		private final Assignment cInnerAssignment_2 = (Assignment)cGroup.eContents().get(2);
@@ -62,15 +62,15 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cInnerIQLInterfaceParserRuleCall_2_0_1 = (RuleCall)cInnerAlternatives_2_0.eContents().get(1);
 		private final RuleCall cInnerODLOperatorParserRuleCall_2_0_2 = (RuleCall)cInnerAlternatives_2_0.eContents().get(2);
 		
-		//ODLTypeDefinition returns iql::IQLTypeDefinition:
-		//	{ODLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator);
+		//ODLModelElement returns iql::IQLModelElement:
+		//	{ODLModelElement} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator);
 		public ParserRule getRule() { return rule; }
 
-		//{ODLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator)
+		//{ODLModelElement} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator)
 		public Group getGroup() { return cGroup; }
 
-		//{ODLTypeDefinition}
-		public Action getODLTypeDefinitionAction_0() { return cODLTypeDefinitionAction_0; }
+		//{ODLModelElement}
+		public Action getODLModelElementAction_0() { return cODLModelElementAction_0; }
 
 		//javametadata+=IQLJavaMetadata*
 		public Assignment getJavametadataAssignment_1() { return cJavametadataAssignment_1; }
@@ -116,7 +116,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cMembersIQLJavaMemberParserRuleCall_5_0_4 = (RuleCall)cMembersAlternatives_5_0.eContents().get(4);
 		private final Keyword cRightCurlyBracketKeyword_6 = (Keyword)cGroup.eContents().get(6);
 		
-		//ODLOperator returns types::JvmGenericType:
+		//ODLOperator returns jvm::JvmGenericType:
 		//	{ODLOperator} "operator" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? "{" members+=(IQLAttribute |
 		//	IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)* "}";
 		public ParserRule getRule() { return rule; }
@@ -376,13 +376,272 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		//IQLStatementBlock
 		public RuleCall getBodyIQLStatementBlockParserRuleCall_3_0() { return cBodyIQLStatementBlockParserRuleCall_3_0; }
 	}
+
+	public class IQLJavaWordsElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLJavaWords");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cIQLJavaKeywordsParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cWSTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
+		private final RuleCall cBOOLEANTerminalRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
+		private final RuleCall cDOUBLETerminalRuleCall_4 = (RuleCall)cAlternatives.eContents().get(4);
+		private final RuleCall cSTRINGTerminalRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
+		private final RuleCall cINTTerminalRuleCall_6 = (RuleCall)cAlternatives.eContents().get(6);
+		private final RuleCall cANY_OTHERTerminalRuleCall_7 = (RuleCall)cAlternatives.eContents().get(7);
+		private final Keyword cPlusSignKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
+		private final Keyword cPlusSignEqualsSignKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
+		private final Keyword cHyphenMinusKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
+		private final Keyword cHyphenMinusEqualsSignKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cAsteriskKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cAsteriskEqualsSignKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cSolidusKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
+		private final Keyword cSolidusEqualsSignKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
+		private final Keyword cPercentSignKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
+		private final Keyword cPercentSignEqualsSignKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
+		private final Keyword cPlusSignPlusSignKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
+		private final Keyword cHyphenMinusHyphenMinusKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
+		private final Keyword cGreaterThanSignKeyword_20 = (Keyword)cAlternatives.eContents().get(20);
+		private final Keyword cGreaterThanSignEqualsSignKeyword_21 = (Keyword)cAlternatives.eContents().get(21);
+		private final Keyword cLessThanSignKeyword_22 = (Keyword)cAlternatives.eContents().get(22);
+		private final Keyword cLessThanSignEqualsSignKeyword_23 = (Keyword)cAlternatives.eContents().get(23);
+		private final Keyword cExclamationMarkKeyword_24 = (Keyword)cAlternatives.eContents().get(24);
+		private final Keyword cExclamationMarkEqualsSignKeyword_25 = (Keyword)cAlternatives.eContents().get(25);
+		private final Keyword cAmpersandAmpersandKeyword_26 = (Keyword)cAlternatives.eContents().get(26);
+		private final Keyword cVerticalLineVerticalLineKeyword_27 = (Keyword)cAlternatives.eContents().get(27);
+		private final Keyword cEqualsSignEqualsSignKeyword_28 = (Keyword)cAlternatives.eContents().get(28);
+		private final Keyword cEqualsSignKeyword_29 = (Keyword)cAlternatives.eContents().get(29);
+		private final Keyword cTildeKeyword_30 = (Keyword)cAlternatives.eContents().get(30);
+		private final Keyword cQuestionMarkColonKeyword_31 = (Keyword)cAlternatives.eContents().get(31);
+		private final Keyword cVerticalLineKeyword_32 = (Keyword)cAlternatives.eContents().get(32);
+		private final Keyword cVerticalLineEqualsSignKeyword_33 = (Keyword)cAlternatives.eContents().get(33);
+		private final Keyword cCircumflexAccentKeyword_34 = (Keyword)cAlternatives.eContents().get(34);
+		private final Keyword cCircumflexAccentEqualsSignKeyword_35 = (Keyword)cAlternatives.eContents().get(35);
+		private final Keyword cAmpersandKeyword_36 = (Keyword)cAlternatives.eContents().get(36);
+		private final Keyword cAmpersandEqualsSignKeyword_37 = (Keyword)cAlternatives.eContents().get(37);
+		private final Keyword cGreaterThanSignGreaterThanSignKeyword_38 = (Keyword)cAlternatives.eContents().get(38);
+		private final Keyword cGreaterThanSignGreaterThanSignEqualsSignKeyword_39 = (Keyword)cAlternatives.eContents().get(39);
+		private final Keyword cLessThanSignLessThanSignKeyword_40 = (Keyword)cAlternatives.eContents().get(40);
+		private final Keyword cLessThanSignLessThanSignEqualsSignKeyword_41 = (Keyword)cAlternatives.eContents().get(41);
+		private final Keyword cGreaterThanSignGreaterThanSignGreaterThanSignKeyword_42 = (Keyword)cAlternatives.eContents().get(42);
+		private final Keyword cGreaterThanSignGreaterThanSignGreaterThanSignEqualsSignKeyword_43 = (Keyword)cAlternatives.eContents().get(43);
+		private final Keyword cLeftSquareBracketKeyword_44 = (Keyword)cAlternatives.eContents().get(44);
+		private final Keyword cRightSquareBracketKeyword_45 = (Keyword)cAlternatives.eContents().get(45);
+		private final Keyword cLeftCurlyBracketKeyword_46 = (Keyword)cAlternatives.eContents().get(46);
+		private final Keyword cRightCurlyBracketKeyword_47 = (Keyword)cAlternatives.eContents().get(47);
+		private final Keyword cLeftParenthesisKeyword_48 = (Keyword)cAlternatives.eContents().get(48);
+		private final Keyword cRightParenthesisKeyword_49 = (Keyword)cAlternatives.eContents().get(49);
+		private final Keyword cFullStopKeyword_50 = (Keyword)cAlternatives.eContents().get(50);
+		private final Keyword cColonKeyword_51 = (Keyword)cAlternatives.eContents().get(51);
+		private final Keyword cSemicolonKeyword_52 = (Keyword)cAlternatives.eContents().get(52);
+		private final Keyword cCommaKeyword_53 = (Keyword)cAlternatives.eContents().get(53);
+		private final Keyword cNullKeyword_54 = (Keyword)cAlternatives.eContents().get(54);
+		private final Keyword cOnKeyword_55 = (Keyword)cAlternatives.eContents().get(55);
+		private final Keyword cValidateKeyword_56 = (Keyword)cAlternatives.eContents().get(56);
+		private final Keyword cParameterKeyword_57 = (Keyword)cAlternatives.eContents().get(57);
+		private final Keyword cOptionalKeyword_58 = (Keyword)cAlternatives.eContents().get(58);
+		private final Keyword cOperatorKeyword_59 = (Keyword)cAlternatives.eContents().get(59);
+		
+		//IQLJavaWords:
+		//	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
+		//	| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" |
+		//	"|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
+		//	")" | "." | ":" | ";" | "," | "null" | "on" | "validate" | "parameter" | "optional" | "operator";
+		public ParserRule getRule() { return rule; }
+
+		//IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/" |
+		//"/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" | "|" |
+		//"|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" | ")" |
+		//"." | ":" | ";" | "," | "null" | "on" | "validate" | "parameter" | "optional" | "operator"
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//IQLJavaKeywords
+		public RuleCall getIQLJavaKeywordsParserRuleCall_0() { return cIQLJavaKeywordsParserRuleCall_0; }
+
+		//WS
+		public RuleCall getWSTerminalRuleCall_1() { return cWSTerminalRuleCall_1; }
+
+		//ID
+		public RuleCall getIDTerminalRuleCall_2() { return cIDTerminalRuleCall_2; }
+
+		//BOOLEAN
+		public RuleCall getBOOLEANTerminalRuleCall_3() { return cBOOLEANTerminalRuleCall_3; }
+
+		//DOUBLE
+		public RuleCall getDOUBLETerminalRuleCall_4() { return cDOUBLETerminalRuleCall_4; }
+
+		//STRING
+		public RuleCall getSTRINGTerminalRuleCall_5() { return cSTRINGTerminalRuleCall_5; }
+
+		//INT
+		public RuleCall getINTTerminalRuleCall_6() { return cINTTerminalRuleCall_6; }
+
+		//ANY_OTHER
+		public RuleCall getANY_OTHERTerminalRuleCall_7() { return cANY_OTHERTerminalRuleCall_7; }
+
+		//"+"
+		public Keyword getPlusSignKeyword_8() { return cPlusSignKeyword_8; }
+
+		//"+="
+		public Keyword getPlusSignEqualsSignKeyword_9() { return cPlusSignEqualsSignKeyword_9; }
+
+		//"-"
+		public Keyword getHyphenMinusKeyword_10() { return cHyphenMinusKeyword_10; }
+
+		//"-="
+		public Keyword getHyphenMinusEqualsSignKeyword_11() { return cHyphenMinusEqualsSignKeyword_11; }
+
+		//"*"
+		public Keyword getAsteriskKeyword_12() { return cAsteriskKeyword_12; }
+
+		//"*="
+		public Keyword getAsteriskEqualsSignKeyword_13() { return cAsteriskEqualsSignKeyword_13; }
+
+		//"/"
+		public Keyword getSolidusKeyword_14() { return cSolidusKeyword_14; }
+
+		//"/="
+		public Keyword getSolidusEqualsSignKeyword_15() { return cSolidusEqualsSignKeyword_15; }
+
+		//"%"
+		public Keyword getPercentSignKeyword_16() { return cPercentSignKeyword_16; }
+
+		//"%="
+		public Keyword getPercentSignEqualsSignKeyword_17() { return cPercentSignEqualsSignKeyword_17; }
+
+		//"++"
+		public Keyword getPlusSignPlusSignKeyword_18() { return cPlusSignPlusSignKeyword_18; }
+
+		//"--"
+		public Keyword getHyphenMinusHyphenMinusKeyword_19() { return cHyphenMinusHyphenMinusKeyword_19; }
+
+		//">"
+		public Keyword getGreaterThanSignKeyword_20() { return cGreaterThanSignKeyword_20; }
+
+		//">="
+		public Keyword getGreaterThanSignEqualsSignKeyword_21() { return cGreaterThanSignEqualsSignKeyword_21; }
+
+		//"<"
+		public Keyword getLessThanSignKeyword_22() { return cLessThanSignKeyword_22; }
+
+		//"<="
+		public Keyword getLessThanSignEqualsSignKeyword_23() { return cLessThanSignEqualsSignKeyword_23; }
+
+		//"!"
+		public Keyword getExclamationMarkKeyword_24() { return cExclamationMarkKeyword_24; }
+
+		//"!="
+		public Keyword getExclamationMarkEqualsSignKeyword_25() { return cExclamationMarkEqualsSignKeyword_25; }
+
+		//"&&"
+		public Keyword getAmpersandAmpersandKeyword_26() { return cAmpersandAmpersandKeyword_26; }
+
+		//"||"
+		public Keyword getVerticalLineVerticalLineKeyword_27() { return cVerticalLineVerticalLineKeyword_27; }
+
+		//"=="
+		public Keyword getEqualsSignEqualsSignKeyword_28() { return cEqualsSignEqualsSignKeyword_28; }
+
+		//"="
+		public Keyword getEqualsSignKeyword_29() { return cEqualsSignKeyword_29; }
+
+		//"~"
+		public Keyword getTildeKeyword_30() { return cTildeKeyword_30; }
+
+		//"?:"
+		public Keyword getQuestionMarkColonKeyword_31() { return cQuestionMarkColonKeyword_31; }
+
+		//"|"
+		public Keyword getVerticalLineKeyword_32() { return cVerticalLineKeyword_32; }
+
+		//"|="
+		public Keyword getVerticalLineEqualsSignKeyword_33() { return cVerticalLineEqualsSignKeyword_33; }
+
+		//"^"
+		public Keyword getCircumflexAccentKeyword_34() { return cCircumflexAccentKeyword_34; }
+
+		//"^="
+		public Keyword getCircumflexAccentEqualsSignKeyword_35() { return cCircumflexAccentEqualsSignKeyword_35; }
+
+		//"&"
+		public Keyword getAmpersandKeyword_36() { return cAmpersandKeyword_36; }
+
+		//"&="
+		public Keyword getAmpersandEqualsSignKeyword_37() { return cAmpersandEqualsSignKeyword_37; }
+
+		//">>"
+		public Keyword getGreaterThanSignGreaterThanSignKeyword_38() { return cGreaterThanSignGreaterThanSignKeyword_38; }
+
+		//">>="
+		public Keyword getGreaterThanSignGreaterThanSignEqualsSignKeyword_39() { return cGreaterThanSignGreaterThanSignEqualsSignKeyword_39; }
+
+		//"<<"
+		public Keyword getLessThanSignLessThanSignKeyword_40() { return cLessThanSignLessThanSignKeyword_40; }
+
+		//"<<="
+		public Keyword getLessThanSignLessThanSignEqualsSignKeyword_41() { return cLessThanSignLessThanSignEqualsSignKeyword_41; }
+
+		//">>>"
+		public Keyword getGreaterThanSignGreaterThanSignGreaterThanSignKeyword_42() { return cGreaterThanSignGreaterThanSignGreaterThanSignKeyword_42; }
+
+		//">>>="
+		public Keyword getGreaterThanSignGreaterThanSignGreaterThanSignEqualsSignKeyword_43() { return cGreaterThanSignGreaterThanSignGreaterThanSignEqualsSignKeyword_43; }
+
+		//"["
+		public Keyword getLeftSquareBracketKeyword_44() { return cLeftSquareBracketKeyword_44; }
+
+		//"]"
+		public Keyword getRightSquareBracketKeyword_45() { return cRightSquareBracketKeyword_45; }
+
+		//"{"
+		public Keyword getLeftCurlyBracketKeyword_46() { return cLeftCurlyBracketKeyword_46; }
+
+		//"}"
+		public Keyword getRightCurlyBracketKeyword_47() { return cRightCurlyBracketKeyword_47; }
+
+		//"("
+		public Keyword getLeftParenthesisKeyword_48() { return cLeftParenthesisKeyword_48; }
+
+		//")"
+		public Keyword getRightParenthesisKeyword_49() { return cRightParenthesisKeyword_49; }
+
+		//"."
+		public Keyword getFullStopKeyword_50() { return cFullStopKeyword_50; }
+
+		//":"
+		public Keyword getColonKeyword_51() { return cColonKeyword_51; }
+
+		//";"
+		public Keyword getSemicolonKeyword_52() { return cSemicolonKeyword_52; }
+
+		//","
+		public Keyword getCommaKeyword_53() { return cCommaKeyword_53; }
+
+		//"null"
+		public Keyword getNullKeyword_54() { return cNullKeyword_54; }
+
+		//"on"
+		public Keyword getOnKeyword_55() { return cOnKeyword_55; }
+
+		//"validate"
+		public Keyword getValidateKeyword_56() { return cValidateKeyword_56; }
+
+		//"parameter"
+		public Keyword getParameterKeyword_57() { return cParameterKeyword_57; }
+
+		//"optional"
+		public Keyword getOptionalKeyword_58() { return cOptionalKeyword_58; }
+
+		//"operator"
+		public Keyword getOperatorKeyword_59() { return cOperatorKeyword_59; }
+	}
 	
 	
 	private final ODLModelElements pODLModel;
-	private final ODLTypeDefinitionElements pODLTypeDefinition;
+	private final ODLModelElementElements pODLModelElement;
 	private final ODLOperatorElements pODLOperator;
 	private final ODLParameterElements pODLParameter;
 	private final ODLMethodElements pODLMethod;
+	private final IQLJavaWordsElements pIQLJavaWords;
 	
 	private final Grammar grammar;
 
@@ -394,10 +653,11 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		this.grammar = internalFindGrammar(grammarProvider);
 		this.gaBasicIQL = gaBasicIQL;
 		this.pODLModel = new ODLModelElements();
-		this.pODLTypeDefinition = new ODLTypeDefinitionElements();
+		this.pODLModelElement = new ODLModelElementElements();
 		this.pODLOperator = new ODLOperatorElements();
 		this.pODLParameter = new ODLParameterElements();
 		this.pODLMethod = new ODLMethodElements();
+		this.pIQLJavaWords = new IQLJavaWordsElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -428,7 +688,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//ODLModel returns iql::IQLModel:
-	//	{ODLModel} namespaces+=IQLNamespace* elements+=ODLTypeDefinition*;
+	//	{ODLModel} namespaces+=IQLNamespace* elements+=ODLModelElement*;
 	public ODLModelElements getODLModelAccess() {
 		return pODLModel;
 	}
@@ -437,17 +697,17 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getODLModelAccess().getRule();
 	}
 
-	//ODLTypeDefinition returns iql::IQLTypeDefinition:
-	//	{ODLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator);
-	public ODLTypeDefinitionElements getODLTypeDefinitionAccess() {
-		return pODLTypeDefinition;
+	//ODLModelElement returns iql::IQLModelElement:
+	//	{ODLModelElement} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator);
+	public ODLModelElementElements getODLModelElementAccess() {
+		return pODLModelElement;
 	}
 	
-	public ParserRule getODLTypeDefinitionRule() {
-		return getODLTypeDefinitionAccess().getRule();
+	public ParserRule getODLModelElementRule() {
+		return getODLModelElementAccess().getRule();
 	}
 
-	//ODLOperator returns types::JvmGenericType:
+	//ODLOperator returns jvm::JvmGenericType:
 	//	{ODLOperator} "operator" simpleName=ID ("(" metadataList=IQLMetadataList? ")")? "{" members+=(IQLAttribute |
 	//	IQLMethod | ODLParameter | ODLMethod | IQLJavaMember)* "}";
 	public ODLOperatorElements getODLOperatorAccess() {
@@ -480,8 +740,21 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getODLMethodAccess().getRule();
 	}
 
+	//IQLJavaWords:
+	//	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
+	//	| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" |
+	//	"|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
+	//	")" | "." | ":" | ";" | "," | "null" | "on" | "validate" | "parameter" | "optional" | "operator";
+	public IQLJavaWordsElements getIQLJavaWordsAccess() {
+		return pIQLJavaWords;
+	}
+	
+	public ParserRule getIQLJavaWordsRule() {
+		return getIQLJavaWordsAccess().getRule();
+	}
+
 	//IQLModel:
-	//	("namespace" name=QualifiedName ";")? namespaces+=IQLNamespace* elements+=IQLTypeDefinition*;
+	//	("namespace" name=QualifiedName ";")? namespaces+=IQLNamespace* elements+=IQLModelElement*;
 	public BasicIQLGrammarAccess.IQLModelElements getIQLModelAccess() {
 		return gaBasicIQL.getIQLModelAccess();
 	}
@@ -490,14 +763,14 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLModelAccess().getRule();
 	}
 
-	//IQLTypeDefinition:
-	//	{IQLTypeDefinition} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface);
-	public BasicIQLGrammarAccess.IQLTypeDefinitionElements getIQLTypeDefinitionAccess() {
-		return gaBasicIQL.getIQLTypeDefinitionAccess();
+	//IQLModelElement:
+	//	javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface);
+	public BasicIQLGrammarAccess.IQLModelElementElements getIQLModelElementAccess() {
+		return gaBasicIQL.getIQLModelElementAccess();
 	}
 	
-	public ParserRule getIQLTypeDefinitionRule() {
-		return getIQLTypeDefinitionAccess().getRule();
+	public ParserRule getIQLModelElementRule() {
+		return getIQLModelElementAccess().getRule();
 	}
 
 	//IQLNamespace:
@@ -510,7 +783,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLNamespaceAccess().getRule();
 	}
 
-	//IQLClass returns types::JvmGenericType:
+	//IQLClass returns jvm::JvmGenericType:
 	//	{IQLClass} "class" simpleName=ID ("extends" extendedClass=JvmTypeReference)? ("implements"
 	//	extendedInterfaces+=JvmTypeReference ("," extendedInterfaces+=JvmTypeReference)*)? "{" members+=(IQLAttribute |
 	//	IQLMethod | IQLJavaMember)* "}";
@@ -522,9 +795,9 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLClassAccess().getRule();
 	}
 
-	//IQLInterface returns types::JvmGenericType:
+	//IQLInterface returns jvm::JvmGenericType:
 	//	{IQLInterface} "interface" simpleName=ID ("extends" extendedInterfaces+=JvmTypeReference (","
-	//	extendedInterfaces+=JvmTypeReference)?)? "{" members+=(IQLMethodDeclarationMember | IQLJavaMember)* "}";
+	//	extendedInterfaces+=JvmTypeReference)?)? "{" members+=(IQLMethodDeclaration | IQLJavaMember)* "}";
 	public BasicIQLGrammarAccess.IQLInterfaceElements getIQLInterfaceAccess() {
 		return gaBasicIQL.getIQLInterfaceAccess();
 	}
@@ -534,7 +807,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLJavaMetadata:
-	//	{IQLJavaMetadata} "$*" text=IQLJava "*$";
+	//	java=IQLJava;
 	public BasicIQLGrammarAccess.IQLJavaMetadataElements getIQLJavaMetadataAccess() {
 		return gaBasicIQL.getIQLJavaMetadataAccess();
 	}
@@ -546,7 +819,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	///////////////////////////////////////////////
 	///////////////////////////////////////////////
 	///////////////////////////////////////////////
-	//IQLAttribute returns types::JvmField:
+	//IQLAttribute returns jvm::JvmField:
 	//	{IQLAttribute} type=JvmTypeReference simpleName=ID init=IQLVariableInitialization? ";";
 	public BasicIQLGrammarAccess.IQLAttributeElements getIQLAttributeAccess() {
 		return gaBasicIQL.getIQLAttributeAccess();
@@ -556,7 +829,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLAttributeAccess().getRule();
 	}
 
-	//JvmTypeReference returns types::JvmTypeReference:
+	//JvmTypeReference returns jvm::JvmTypeReference:
 	//	IQLSimpleTypeRef | IQLArrayTypeRef;
 	public BasicIQLGrammarAccess.JvmTypeReferenceElements getJvmTypeReferenceAccess() {
 		return gaBasicIQL.getJvmTypeReferenceAccess();
@@ -566,18 +839,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmTypeReferenceAccess().getRule();
 	}
 
-	//JvmType returns types::JvmType:
-	//	IQLSimpleType | IQLArrayType;
-	public BasicIQLGrammarAccess.JvmTypeElements getJvmTypeAccess() {
-		return gaBasicIQL.getJvmTypeAccess();
-	}
-	
-	public ParserRule getJvmTypeRule() {
-		return getJvmTypeAccess().getRule();
-	}
-
-	//IQLSimpleTypeRef:
-	//	type=IQLSimpleType;
+	//IQLSimpleTypeRef returns jvm::JvmTypeReference:
+	//	{IQLSimpleTypeRef} type=[jvm::JvmType|QualifiedName];
 	public BasicIQLGrammarAccess.IQLSimpleTypeRefElements getIQLSimpleTypeRefAccess() {
 		return gaBasicIQL.getIQLSimpleTypeRefAccess();
 	}
@@ -586,8 +849,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLSimpleTypeRefAccess().getRule();
 	}
 
-	//IQLArrayTypeRef:
-	//	type=IQLArrayType;
+	//IQLArrayTypeRef returns jvm::JvmTypeReference:
+	//	{IQLArrayTypeRef} type=IQLArrayType;
 	public BasicIQLGrammarAccess.IQLArrayTypeRefElements getIQLArrayTypeRefAccess() {
 		return gaBasicIQL.getIQLArrayTypeRefAccess();
 	}
@@ -596,18 +859,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLArrayTypeRefAccess().getRule();
 	}
 
-	//IQLSimpleType:
-	//	type=[types::JvmType|QualifiedName];
-	public BasicIQLGrammarAccess.IQLSimpleTypeElements getIQLSimpleTypeAccess() {
-		return gaBasicIQL.getIQLSimpleTypeAccess();
-	}
-	
-	public ParserRule getIQLSimpleTypeRule() {
-		return getIQLSimpleTypeAccess().getRule();
-	}
-
-	//IQLArrayType:
-	//	type=[types::JvmType|QualifiedName] dimensions+=ArrayBrackets+;
+	//IQLArrayType returns jvm::JvmType:
+	//	{IQLArrayType} componentType=[jvm::JvmType|QualifiedName] dimensions+=ArrayBrackets+;
 	public BasicIQLGrammarAccess.IQLArrayTypeElements getIQLArrayTypeAccess() {
 		return gaBasicIQL.getIQLArrayTypeAccess();
 	}
@@ -626,7 +879,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getArrayBracketsAccess().getRule();
 	}
 
-	//JvmFormalParameter returns types::JvmFormalParameter:
+	//JvmFormalParameter returns jvm::JvmFormalParameter:
 	//	parameterType=JvmTypeReference name=ID;
 	public BasicIQLGrammarAccess.JvmFormalParameterElements getJvmFormalParameterAccess() {
 		return gaBasicIQL.getJvmFormalParameterAccess();
@@ -636,7 +889,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmFormalParameterAccess().getRule();
 	}
 
-	//IQLMethod returns types::JvmOperation:
+	//IQLMethod returns jvm::JvmOperation:
 	//	{IQLMethod} override?="override"? simpleName=ID ("(" (parameters+=JvmFormalParameter (","
 	//	parameters+=JvmFormalParameter)*)? ")")? (":" returnType=JvmTypeReference)? body=IQLStatementBlock;
 	public BasicIQLGrammarAccess.IQLMethodElements getIQLMethodAccess() {
@@ -647,19 +900,19 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLMethodAccess().getRule();
 	}
 
-	//IQLMethodDeclarationMember returns types::JvmOperation:
-	//	{IQLMethodDeclarationMember} simpleName=ID "(" (parameters+=JvmFormalParameter (","
-	//	parameters+=JvmFormalParameter)*)? ")" (":" returnType=JvmTypeReference)? ";";
-	public BasicIQLGrammarAccess.IQLMethodDeclarationMemberElements getIQLMethodDeclarationMemberAccess() {
-		return gaBasicIQL.getIQLMethodDeclarationMemberAccess();
+	//IQLMethodDeclaration returns jvm::JvmOperation:
+	//	{IQLMethodDeclaration} simpleName=ID "(" (parameters+=JvmFormalParameter ("," parameters+=JvmFormalParameter)*)? ")"
+	//	(":" returnType=JvmTypeReference)? ";";
+	public BasicIQLGrammarAccess.IQLMethodDeclarationElements getIQLMethodDeclarationAccess() {
+		return gaBasicIQL.getIQLMethodDeclarationAccess();
 	}
 	
-	public ParserRule getIQLMethodDeclarationMemberRule() {
-		return getIQLMethodDeclarationMemberAccess().getRule();
+	public ParserRule getIQLMethodDeclarationRule() {
+		return getIQLMethodDeclarationAccess().getRule();
 	}
 
-	//IQLJavaMember returns types::JvmMember:
-	//	{IQLJavaMember} "$*" text=IQLJava "*$";
+	//IQLJavaMember returns jvm::JvmMember:
+	//	{IQLJavaMember} java=IQLJava;
 	public BasicIQLGrammarAccess.IQLJavaMemberElements getIQLJavaMemberAccess() {
 		return gaBasicIQL.getIQLJavaMemberAccess();
 	}
@@ -704,7 +957,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	//IQLMetadataValueSingle returns IQLMetadataValue:
 	//	{IQLMetadataValueSingleInt} value=INT | {IQLMetadataValueSingleDouble} value=DOUBLE | {IQLMetadataValueSingleString}
 	//	value=STRING | {IQLMetadataValueSingleBoolean} value=BOOLEAN | {IQLMetadataValueSingleTypeRef} value=JvmTypeReference
-	//	| {IQLMetadataValueSingleNull} value="null";
+	//	| {IQLMetadataValueSingleNull} "null";
 	public BasicIQLGrammarAccess.IQLMetadataValueSingleElements getIQLMetadataValueSingleAccess() {
 		return gaBasicIQL.getIQLMetadataValueSingleAccess();
 	}
@@ -746,7 +999,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	///////////////////////////////////////////////
 	///////////////////////////////////////////////
 	///////////////////////////////////////////////
-	//IQLVariableDeclaration returns types::JvmIdentifiableElement:
+	//IQLVariableDeclaration returns jvm::JvmIdentifiableElement:
 	//	{IQLVariableDeclaration} ref=JvmTypeReference name=ID;
 	public BasicIQLGrammarAccess.IQLVariableDeclarationElements getIQLVariableDeclarationAccess() {
 		return gaBasicIQL.getIQLVariableDeclarationAccess();
@@ -757,7 +1010,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLVariableInitialization:
-	//	{IQLVariableInitialization} (argsList=IQLArgumentsList argsMap=IQLArgumentsMap?) | "=" value=IQLExpression;
+	//	argsList=IQLArgumentsList argsMap=IQLArgumentsMap? | "=" value=IQLExpression;
 	public BasicIQLGrammarAccess.IQLVariableInitializationElements getIQLVariableInitializationAccess() {
 		return gaBasicIQL.getIQLVariableInitializationAccess();
 	}
@@ -822,7 +1075,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLJavaStatement returns IQLStatement:
-	//	{IQLJavaStatement} "$*" text=IQLJava "*$";
+	//	{IQLJavaStatement} java=IQLJava;
 	public BasicIQLGrammarAccess.IQLJavaStatementElements getIQLJavaStatementAccess() {
 		return gaBasicIQL.getIQLJavaStatementAccess();
 	}
@@ -924,7 +1177,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLConstructorCallStatement returns IQLStatement:
-	//	{IQLConstructorCallStatement} keyword=("super" | "this") args=IQLArgumentsList ";";
+	//	{IQLConstructorCallStatement} (this?="super" | super?="this") args=IQLArgumentsList ";";
 	public BasicIQLGrammarAccess.IQLConstructorCallStatementElements getIQLConstructorCallStatementAccess() {
 		return gaBasicIQL.getIQLConstructorCallStatementAccess();
 	}
@@ -1189,7 +1442,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLMemberSelection:
-	//	member=[types::JvmMember] args=IQLArgumentsList?;
+	//	member=[jvm::JvmMember] args=IQLArgumentsList?;
 	public BasicIQLGrammarAccess.IQLMemberSelectionElements getIQLMemberSelectionAccess() {
 		return gaBasicIQL.getIQLMemberSelectionAccess();
 	}
@@ -1199,7 +1452,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLOtherExpressions returns IQLExpression:
-	//	{IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
+	//	{IQLJvmElementCallExpression} element=[jvm::JvmIdentifiableElement|QualifiedName] args=IQLArgumentsList? |
 	//	{IQLThisExpression} "this" | {IQLSuperExpression} "super" | {IQLParenthesisExpression} "(" expr=IQLExpression ")" |
 	//	{IQLNewExpression} "new" (ref=IQLArrayTypeRef | ref=IQLSimpleTypeRef argsList=IQLArgumentsList
 	//	argsMap=IQLArgumentsMap?) | IQLLiteralExpression;
@@ -1283,8 +1536,8 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return gaBasicIQL.getRANGERule();
 	} 
 
-	//IQLJava:
-	//	{IQLJava} (text+=IQLJavaText | keywords+=IQLJavaKeywords)*;
+	//IQLJava hidden(SL_COMMENT, ML_COMMENT):
+	//	"$*" text=IQLJavaText "*$";
 	public BasicIQLGrammarAccess.IQLJavaElements getIQLJavaAccess() {
 		return gaBasicIQL.getIQLJavaAccess();
 	}
@@ -1294,10 +1547,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLJavaText:
-	//	ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/" | "/=" | "%" | "%=" |
-	//	"++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" | "|" | "|=" | "^" | "^="
-	//	| "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" | ")" | "." | ":" | ";" |
-	//	"," | "null";
+	//	IQLJavaWords*;
 	public BasicIQLGrammarAccess.IQLJavaTextElements getIQLJavaTextAccess() {
 		return gaBasicIQL.getIQLJavaTextAccess();
 	}
@@ -1307,11 +1557,10 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLJavaKeywords:
-	//	{IQLJavaKeywords} keyword=("break" | "case" | "class" | "continue" | "default" | "do" | "else" | "extends" | "for" |
-	//	"if" | "implements" | "instanceof" | "interface" | "new" | "package" | "return" | "super" | "switch" | "this" |
-	//	"while" | "abstract" | "assert" | "catch" | "const" | "enum" | "final" | "finally" | "goto" | "import" | "native" |
-	//	"private" | "protected" | "public" | "static" | "synchronized" | "throw" | "throws" | "transient" | "try" |
-	//	"volatile" | "strictfp");
+	//	"break" | "case" | "class" | "continue" | "default" | "do" | "else" | "extends" | "for" | "if" | "implements" |
+	//	"instanceof" | "interface" | "new" | "package" | "return" | "super" | "switch" | "this" | "while" | "abstract" |
+	//	"assert" | "catch" | "const" | "enum" | "final" | "finally" | "goto" | "import" | "native" | "private" | "protected"
+	//	| "public" | "static" | "synchronized" | "throw" | "throws" | "transient" | "try" | "volatile" | "strictfp";
 	public BasicIQLGrammarAccess.IQLJavaKeywordsElements getIQLJavaKeywordsAccess() {
 		return gaBasicIQL.getIQLJavaKeywordsAccess();
 	}

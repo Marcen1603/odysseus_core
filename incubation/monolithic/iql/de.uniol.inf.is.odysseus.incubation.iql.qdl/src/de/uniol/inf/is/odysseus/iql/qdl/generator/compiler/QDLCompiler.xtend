@@ -11,15 +11,14 @@ import java.util.Collection
 import java.util.ArrayList
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
 import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
 
 class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLStatementCompiler, IQDLTypeFactory, IQDLTypeUtils> implements IQDLCompiler{
 	
@@ -31,9 +30,9 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 		super(helper, typeCompiler, stmtCompiler, typeFactory, typeUtils)
 	}
 	
-	override String compile(IQLTypeDefinition typeDef,QDLQuery q, IQDLGeneratorContext context) {
+	override String compile(IQLModelElement element,QDLQuery q, IQDLGeneratorContext context) {
 		var builder = new StringBuilder()
-		builder.append(compileQuery(typeDef, q, context))
+		builder.append(compileQuery(element, q, context))
 		context.addImport(AbstractQDLQuery.canonicalName)
 		context.addImport(Collection.canonicalName)
 		context.addImport(IQDLOperator.canonicalName)
@@ -45,7 +44,7 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 		builder.toString
 	}
 	
-	def String compileQuery(IQLTypeDefinition typeDef, QDLQuery q, IQDLGeneratorContext context) {
+	def String compileQuery(IQLModelElement element, QDLQuery q, IQDLGeneratorContext context) {
 		var name = q.simpleName
 		var superClass = AbstractQDLQuery.simpleName
 		var metadata = q.metadataList != null
@@ -55,8 +54,8 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 		
 		'''
 		
-		«FOR j : typeDef.javametadata»
-		«var text = NodeModelUtils.getTokenText(NodeModelUtils.getNode(j.text))»
+		«FOR j : element.javametadata»
+		«var text = j.java.text»
 		«text»
 		«ENDFOR»
 		@SuppressWarnings("all")

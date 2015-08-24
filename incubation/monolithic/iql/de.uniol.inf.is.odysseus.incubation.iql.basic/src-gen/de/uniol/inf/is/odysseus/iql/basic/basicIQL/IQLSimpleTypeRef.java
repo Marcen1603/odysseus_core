@@ -2,6 +2,7 @@
  */
 package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
 
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 /**
@@ -23,29 +24,29 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 public interface IQLSimpleTypeRef extends JvmTypeReference
 {
   /**
-   * Returns the value of the '<em><b>Type</b></em>' containment reference.
+   * Returns the value of the '<em><b>Type</b></em>' reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Type</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Type</em>' reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Type</em>' containment reference.
-   * @see #setType(IQLSimpleType)
+   * @return the value of the '<em>Type</em>' reference.
+   * @see #setType(JvmType)
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLSimpleTypeRef_Type()
-   * @model containment="true"
+   * @model
    * @generated
    */
-  IQLSimpleType getType();
+  JvmType getType();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef#getType <em>Type</em>}' containment reference.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef#getType <em>Type</em>}' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Type</em>' containment reference.
+   * @param value the new value of the '<em>Type</em>' reference.
    * @see #getType()
    * @generated
    */
-  void setType(IQLSimpleType value);
+  void setType(JvmType value);
 
 } // IQLSimpleTypeRef

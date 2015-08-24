@@ -256,7 +256,7 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 				return new TypeResult(typeUtils.createTypeRef(arrayType.getComponentType()));
 			} else {
 				IQLArrayType type = BasicIQLFactory.eINSTANCE.createIQLArrayType();
-				type.setType(arrayType.getComponentType());
+				type.setComponentType(arrayType.getComponentType());
 				for (int i = 0; i< arrayType.getDimensions()-1; i++) {
 					type.getDimensions().add("[]");
 				}
@@ -267,10 +267,10 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 			if (expr.getExpressions().size() > 1 || (expr.getExpressions().size() == 1 && isRange(expr.getExpressions().get(0), context))) {
 				return new TypeResult(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()));
 			} else if (arrayType.getDimensions().size()==1) {
-				return new TypeResult(typeUtils.createTypeRef(arrayType.getType()));
+				return new TypeResult(typeUtils.createTypeRef(arrayType.getComponentType()));
 			} else {
 				IQLArrayType type = BasicIQLFactory.eINSTANCE.createIQLArrayType();
-				type.setType(arrayType.getType());
+				type.setComponentType(arrayType.getComponentType());
 				for (int i = 0; i< arrayType.getDimensions().size()-1; i++) {
 					type.getDimensions().add("[]");
 				}

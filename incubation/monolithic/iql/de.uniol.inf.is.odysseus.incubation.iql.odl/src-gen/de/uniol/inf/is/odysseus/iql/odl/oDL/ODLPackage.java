@@ -107,14 +107,14 @@ public interface ODLPackage extends EPackage
   int ODL_MODEL_FEATURE_COUNT = BasicIQLPackage.IQL_MODEL_FEATURE_COUNT + 0;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLTypeDefinitionImpl <em>Type Definition</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelElementImpl <em>Model Element</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLTypeDefinitionImpl
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLTypeDefinition()
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelElementImpl
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLModelElement()
    * @generated
    */
-  int ODL_TYPE_DEFINITION = 1;
+  int ODL_MODEL_ELEMENT = 1;
 
   /**
    * The feature id for the '<em><b>Javametadata</b></em>' containment reference list.
@@ -123,7 +123,7 @@ public interface ODLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ODL_TYPE_DEFINITION__JAVAMETADATA = BasicIQLPackage.IQL_TYPE_DEFINITION__JAVAMETADATA;
+  int ODL_MODEL_ELEMENT__JAVAMETADATA = BasicIQLPackage.IQL_MODEL_ELEMENT__JAVAMETADATA;
 
   /**
    * The feature id for the '<em><b>Inner</b></em>' containment reference.
@@ -132,16 +132,16 @@ public interface ODLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ODL_TYPE_DEFINITION__INNER = BasicIQLPackage.IQL_TYPE_DEFINITION__INNER;
+  int ODL_MODEL_ELEMENT__INNER = BasicIQLPackage.IQL_MODEL_ELEMENT__INNER;
 
   /**
-   * The number of structural features of the '<em>Type Definition</em>' class.
+   * The number of structural features of the '<em>Model Element</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ODL_TYPE_DEFINITION_FEATURE_COUNT = BasicIQLPackage.IQL_TYPE_DEFINITION_FEATURE_COUNT + 0;
+  int ODL_MODEL_ELEMENT_FEATURE_COUNT = BasicIQLPackage.IQL_MODEL_ELEMENT_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLOperatorImpl <em>Operator</em>}' class.
@@ -752,14 +752,14 @@ public interface ODLPackage extends EPackage
   EClass getODLModel();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLTypeDefinition <em>Type Definition</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModelElement <em>Model Element</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Type Definition</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLTypeDefinition
+   * @return the meta object for class '<em>Model Element</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModelElement
    * @generated
    */
-  EClass getODLTypeDefinition();
+  EClass getODLModelElement();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator <em>Operator</em>}'.
@@ -891,14 +891,14 @@ public interface ODLPackage extends EPackage
     EClass ODL_MODEL = eINSTANCE.getODLModel();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLTypeDefinitionImpl <em>Type Definition</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelElementImpl <em>Model Element</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLTypeDefinitionImpl
-     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLTypeDefinition()
+     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelElementImpl
+     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLModelElement()
      * @generated
      */
-    EClass ODL_TYPE_DEFINITION = eINSTANCE.getODLTypeDefinition();
+    EClass ODL_MODEL_ELEMENT = eINSTANCE.getODLModelElement();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLOperatorImpl <em>Operator</em>}' class.

@@ -21,7 +21,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLConstructorCallStatementImpl#getKeyword <em>Keyword</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLConstructorCallStatementImpl#isThis <em>This</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLConstructorCallStatementImpl#isSuper <em>Super</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLConstructorCallStatementImpl#getArgs <em>Args</em>}</li>
  * </ul>
  * </p>
@@ -31,24 +32,44 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 public class IQLConstructorCallStatementImpl extends IQLStatementImpl implements IQLConstructorCallStatement
 {
   /**
-   * The default value of the '{@link #getKeyword() <em>Keyword</em>}' attribute.
+   * The default value of the '{@link #isThis() <em>This</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getKeyword()
+   * @see #isThis()
    * @generated
    * @ordered
    */
-  protected static final String KEYWORD_EDEFAULT = null;
+  protected static final boolean THIS_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #getKeyword() <em>Keyword</em>}' attribute.
+   * The cached value of the '{@link #isThis() <em>This</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getKeyword()
+   * @see #isThis()
    * @generated
    * @ordered
    */
-  protected String keyword = KEYWORD_EDEFAULT;
+  protected boolean this_ = THIS_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isSuper() <em>Super</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isSuper()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean SUPER_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isSuper() <em>Super</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isSuper()
+   * @generated
+   * @ordered
+   */
+  protected boolean super_ = SUPER_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getArgs() <em>Args</em>}' containment reference.
@@ -86,9 +107,9 @@ public class IQLConstructorCallStatementImpl extends IQLStatementImpl implements
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getKeyword()
+  public boolean isThis()
   {
-    return keyword;
+    return this_;
   }
 
   /**
@@ -96,12 +117,35 @@ public class IQLConstructorCallStatementImpl extends IQLStatementImpl implements
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setKeyword(String newKeyword)
+  public void setThis(boolean newThis)
   {
-    String oldKeyword = keyword;
-    keyword = newKeyword;
+    boolean oldThis = this_;
+    this_ = newThis;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__KEYWORD, oldKeyword, keyword));
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__THIS, oldThis, this_));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isSuper()
+  {
+    return super_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setSuper(boolean newSuper)
+  {
+    boolean oldSuper = super_;
+    super_ = newSuper;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__SUPER, oldSuper, super_));
   }
 
   /**
@@ -178,8 +222,10 @@ public class IQLConstructorCallStatementImpl extends IQLStatementImpl implements
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__KEYWORD:
-        return getKeyword();
+      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__THIS:
+        return isThis();
+      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__SUPER:
+        return isSuper();
       case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__ARGS:
         return getArgs();
     }
@@ -196,8 +242,11 @@ public class IQLConstructorCallStatementImpl extends IQLStatementImpl implements
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__KEYWORD:
-        setKeyword((String)newValue);
+      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__THIS:
+        setThis((Boolean)newValue);
+        return;
+      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__SUPER:
+        setSuper((Boolean)newValue);
         return;
       case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__ARGS:
         setArgs((IQLArgumentsList)newValue);
@@ -216,8 +265,11 @@ public class IQLConstructorCallStatementImpl extends IQLStatementImpl implements
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__KEYWORD:
-        setKeyword(KEYWORD_EDEFAULT);
+      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__THIS:
+        setThis(THIS_EDEFAULT);
+        return;
+      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__SUPER:
+        setSuper(SUPER_EDEFAULT);
         return;
       case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__ARGS:
         setArgs((IQLArgumentsList)null);
@@ -236,8 +288,10 @@ public class IQLConstructorCallStatementImpl extends IQLStatementImpl implements
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__KEYWORD:
-        return KEYWORD_EDEFAULT == null ? keyword != null : !KEYWORD_EDEFAULT.equals(keyword);
+      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__THIS:
+        return this_ != THIS_EDEFAULT;
+      case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__SUPER:
+        return super_ != SUPER_EDEFAULT;
       case BasicIQLPackage.IQL_CONSTRUCTOR_CALL_STATEMENT__ARGS:
         return args != null;
     }
@@ -255,8 +309,10 @@ public class IQLConstructorCallStatementImpl extends IQLStatementImpl implements
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (keyword: ");
-    result.append(keyword);
+    result.append(" (this: ");
+    result.append(this_);
+    result.append(", super: ");
+    result.append(super_);
     result.append(')');
     return result.toString();
   }

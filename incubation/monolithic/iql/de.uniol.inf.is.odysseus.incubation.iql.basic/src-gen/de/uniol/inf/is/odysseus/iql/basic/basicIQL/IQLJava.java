@@ -2,8 +2,6 @@
  */
 package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -15,7 +13,6 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava#getText <em>Text</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava#getKeywords <em>Keywords</em>}</li>
  * </ul>
  * </p>
  *
@@ -26,35 +23,29 @@ import org.eclipse.emf.ecore.EObject;
 public interface IQLJava extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Text</b></em>' attribute list.
-   * The list contents are of type {@link java.lang.String}.
+   * Returns the value of the '<em><b>Text</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Text</em>' attribute list isn't clear,
+   * If the meaning of the '<em>Text</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Text</em>' attribute list.
+   * @return the value of the '<em>Text</em>' attribute.
+   * @see #setText(String)
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLJava_Text()
-   * @model unique="false"
+   * @model
    * @generated
    */
-  EList<String> getText();
+  String getText();
 
   /**
-   * Returns the value of the '<em><b>Keywords</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaKeywords}.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava#getText <em>Text</em>}' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Keywords</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Keywords</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLJava_Keywords()
-   * @model containment="true"
+   * @param value the new value of the '<em>Text</em>' attribute.
+   * @see #getText()
    * @generated
    */
-  EList<IQLJavaKeywords> getKeywords();
+  void setText(String value);
 
 } // IQLJava

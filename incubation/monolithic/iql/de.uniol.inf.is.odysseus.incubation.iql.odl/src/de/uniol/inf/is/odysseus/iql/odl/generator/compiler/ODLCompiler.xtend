@@ -14,9 +14,7 @@ import de.uniol.inf.is.odysseus.iql.basic.types.IQLUtils
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory
 import org.eclipse.xtext.common.types.JvmMember
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates
 import java.util.List
@@ -33,6 +31,7 @@ import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLPO
 import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils
 import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
 
 class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLStatementCompiler, IODLTypeFactory, IODLTypeUtils> implements IODLCompiler{
 	
@@ -62,9 +61,9 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 		builder.toString
 	}
 	
-	override String compilePO(IQLTypeDefinition typeDef, ODLOperator o, IODLGeneratorContext context) {	
+	override String compilePO(IQLModelElement element, ODLOperator o, IODLGeneratorContext context) {	
 		var builder = new StringBuilder()
-		builder.append(compilePOIntern(typeDef, o, context))
+		builder.append(compilePOIntern(element, o, context))
 			
 		for (String i : context.getImports) {
 			builder.insert(0, "import "+ i+ ";"+System.lineSeparator)
@@ -242,7 +241,7 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 		'''
 	}
 
-	def String compilePOIntern(IQLTypeDefinition typeDef, ODLOperator o, IODLGeneratorContext context) {
+	def String compilePOIntern(IQLModelElement element, ODLOperator o, IODLGeneratorContext context) {
 		var opName = o.simpleName+IODLCompilerHelper.PO_OPERATOR
 		var aoName = o.simpleName+IODLCompilerHelper.AO_OPERATOR		
 		var parameters = helper.getParameters(o)
@@ -266,8 +265,8 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 		
 		'''
 
-		«FOR j : typeDef.javametadata»
-		«var text = NodeModelUtils.getTokenText(NodeModelUtils.getNode(j.text))»
+		«FOR j : element.javametadata»
+		«var text = j.java.text»
 		«text»
 		«ENDFOR»
 		@SuppressWarnings("all")

@@ -179,6 +179,7 @@ abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper, G ext
 			var rightType = exprEvaluator.eval(e.rightOperand)
 			c.expectedTypeRef = leftType
 
+
 			var result = "";
 			var op = selExpr.sel.member as JvmOperation
 			if (rightType.^null || lookUp.isAssignable(leftType, rightType.ref)){

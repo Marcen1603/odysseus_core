@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSimpleTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
 
@@ -53,11 +52,9 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	}
 	
 	@Override
-	public JvmTypeReference createTypeRef(JvmType typeRef) {
+	public JvmTypeReference createTypeRef(JvmType type) {
 		IQLSimpleTypeRef simpleTypeRef = BasicIQLFactory.eINSTANCE.createIQLSimpleTypeRef();
-		IQLSimpleType simpleType = BasicIQLFactory.eINSTANCE.createIQLSimpleType();		
-		simpleType.setType(typeRef);
-		simpleTypeRef.setType(simpleType);
+		simpleTypeRef.setType(type);
 		return simpleTypeRef;
 	}
 
@@ -91,20 +88,17 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	@Override
 	public String getLongName(JvmType type, boolean array) {
 		try {
-			if (type instanceof IQLSimpleType) {
-				IQLSimpleType simpleType = (IQLSimpleType) type;
-				return getLongName(simpleType.getType(), array);
-			} else if (type instanceof IQLArrayType && array) {
+			if (type instanceof IQLArrayType && array) {
 				IQLArrayType arrayType = (IQLArrayType) type;				
 				StringBuilder b = new StringBuilder();
-				b.append(getLongName(arrayType.getType(), array));
+				b.append(getLongName(arrayType.getComponentType(), array));
 				for (int i = 0; i < arrayType.getDimensions().size(); i++) {
 					b.append("[]");
 				}
 				return b.toString();	
 			} else if (type instanceof IQLArrayType) {
 				IQLArrayType arrayType = (IQLArrayType) type;	
-				return getLongName(arrayType.getType(), array);
+				return getLongName(arrayType.getComponentType(), array);
 			} else if (type instanceof JvmArrayType && !array) {
 				JvmArrayType arrayType = (JvmArrayType) type;	
 				return getLongName(arrayType.getComponentType(), array);
@@ -149,20 +143,17 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	@Override
 	public String getShortName(JvmType type, boolean array) {
 		try {
-			if (type instanceof IQLSimpleType) {
-				IQLSimpleType simpleType = (IQLSimpleType) type;
-				return getShortName(simpleType.getType(), array);
-			} else if (type instanceof IQLArrayType && array) {				
+			if (type instanceof IQLArrayType && array) {				
 				IQLArrayType arrayType = (IQLArrayType) type;
 				StringBuilder b = new StringBuilder();
-				b.append(getShortName(arrayType.getType(), array));
+				b.append(getShortName(arrayType.getComponentType(), array));
 				for (int i = 0; i < arrayType.getDimensions().size(); i++) {
 					b.append("[]");
 				}
 				return b.toString();
 			} else if (type instanceof IQLArrayType) {	
 				IQLArrayType arrayType = (IQLArrayType) type;	
-				return getShortName(arrayType.getType(), array);
+				return getShortName(arrayType.getComponentType(), array);
 				
 			} else if (type instanceof JvmArrayType && !array) {	
 				JvmArrayType arrayType = (JvmArrayType) type;	
@@ -215,16 +206,13 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 	}
 	
 	protected JvmType getInnerType(JvmType type, boolean array) {
-		if (type instanceof IQLSimpleType) {
-			IQLSimpleType simpleType = (IQLSimpleType) type;
-			return getInnerType(simpleType.getType(), array);
-		} else if (type instanceof IQLArrayType && array) {
+		 if (type instanceof IQLArrayType && array) {
 			return type;
 		} else if (type instanceof JvmArrayType && array) {
 			return type;
 		} else if (type instanceof IQLArrayType && !array) {
 			IQLArrayType arrayType = (IQLArrayType) type;
-			return getInnerType(arrayType.getType(), array);
+			return getInnerType(arrayType.getComponentType(), array);
 		} else if (type instanceof JvmArrayType && !array) {
 			JvmArrayType arrayType = (JvmArrayType) type;
 			return getInnerType(arrayType.getComponentType(), array);

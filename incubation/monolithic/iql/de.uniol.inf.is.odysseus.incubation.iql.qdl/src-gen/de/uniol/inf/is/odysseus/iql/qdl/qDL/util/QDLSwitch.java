@@ -5,7 +5,7 @@ package de.uniol.inf.is.odysseus.iql.qdl.qDL.util;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.*;
 
@@ -94,11 +94,11 @@ public class QDLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case QDLPackage.QDL_TYPE_DEFINITION:
+      case QDLPackage.QDL_MODEL_ELEMENT:
       {
-        QDLTypeDefinition qdlTypeDefinition = (QDLTypeDefinition)theEObject;
-        T result = caseQDLTypeDefinition(qdlTypeDefinition);
-        if (result == null) result = caseIQLTypeDefinition(qdlTypeDefinition);
+        QDLModelElement qdlModelElement = (QDLModelElement)theEObject;
+        T result = caseQDLModelElement(qdlModelElement);
+        if (result == null) result = caseIQLModelElement(qdlModelElement);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -133,59 +133,11 @@ public class QDLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case QDLPackage.IQL_METADATA_VALUE_SINGLE_INT:
-      {
-        IQLMetadataValueSingleInt iqlMetadataValueSingleInt = (IQLMetadataValueSingleInt)theEObject;
-        T result = caseIQLMetadataValueSingleInt(iqlMetadataValueSingleInt);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleInt);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case QDLPackage.IQL_METADATA_VALUE_SINGLE_DOUBLE:
-      {
-        IQLMetadataValueSingleDouble iqlMetadataValueSingleDouble = (IQLMetadataValueSingleDouble)theEObject;
-        T result = caseIQLMetadataValueSingleDouble(iqlMetadataValueSingleDouble);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleDouble);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case QDLPackage.IQL_METADATA_VALUE_SINGLE_STRING:
-      {
-        IQLMetadataValueSingleString iqlMetadataValueSingleString = (IQLMetadataValueSingleString)theEObject;
-        T result = caseIQLMetadataValueSingleString(iqlMetadataValueSingleString);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleString);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case QDLPackage.IQL_METADATA_VALUE_SINGLE_BOOLEAN:
-      {
-        IQLMetadataValueSingleBoolean iqlMetadataValueSingleBoolean = (IQLMetadataValueSingleBoolean)theEObject;
-        T result = caseIQLMetadataValueSingleBoolean(iqlMetadataValueSingleBoolean);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleBoolean);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case QDLPackage.QDL_METADATA_VALUE_SINGLE_ID:
       {
         QDLMetadataValueSingleID qdlMetadataValueSingleID = (QDLMetadataValueSingleID)theEObject;
         T result = caseQDLMetadataValueSingleID(qdlMetadataValueSingleID);
         if (result == null) result = caseIQLMetadataValue(qdlMetadataValueSingleID);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case QDLPackage.IQL_METADATA_VALUE_SINGLE_TYPE_REF:
-      {
-        IQLMetadataValueSingleTypeRef iqlMetadataValueSingleTypeRef = (IQLMetadataValueSingleTypeRef)theEObject;
-        T result = caseIQLMetadataValueSingleTypeRef(iqlMetadataValueSingleTypeRef);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleTypeRef);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case QDLPackage.IQL_METADATA_VALUE_SINGLE_NULL:
-      {
-        IQLMetadataValueSingleNull iqlMetadataValueSingleNull = (IQLMetadataValueSingleNull)theEObject;
-        T result = caseIQLMetadataValueSingleNull(iqlMetadataValueSingleNull);
-        if (result == null) result = caseIQLMetadataValue(iqlMetadataValueSingleNull);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -210,17 +162,17 @@ public class QDLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Type Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Model Element</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Type Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Model Element</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseQDLTypeDefinition(QDLTypeDefinition object)
+  public T caseQDLModelElement(QDLModelElement object)
   {
     return null;
   }
@@ -274,70 +226,6 @@ public class QDLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Int</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Int</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLMetadataValueSingleInt(IQLMetadataValueSingleInt object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Double</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Double</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLMetadataValueSingleDouble(IQLMetadataValueSingleDouble object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single String</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single String</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLMetadataValueSingleString(IQLMetadataValueSingleString object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Boolean</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Boolean</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLMetadataValueSingleBoolean(IQLMetadataValueSingleBoolean object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Metadata Value Single ID</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -349,38 +237,6 @@ public class QDLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseQDLMetadataValueSingleID(QDLMetadataValueSingleID object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Type Ref</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Type Ref</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLMetadataValueSingleTypeRef(IQLMetadataValueSingleTypeRef object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Null</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Metadata Value Single Null</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLMetadataValueSingleNull(IQLMetadataValueSingleNull object)
   {
     return null;
   }
@@ -402,17 +258,17 @@ public class QDLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Type Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>IQL Model Element</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Type Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>IQL Model Element</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseIQLTypeDefinition(IQLTypeDefinition object)
+  public T caseIQLModelElement(IQLModelElement object)
   {
     return null;
   }

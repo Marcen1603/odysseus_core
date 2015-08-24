@@ -2,30 +2,30 @@
  */
 package de.uniol.inf.is.odysseus.iql.qdl.qDL.impl;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefinitionImpl;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLModelElementImpl;
 
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModelElement;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLTypeDefinition;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Type Definition</b></em>'.
+ * An implementation of the model object '<em><b>Model Element</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class QDLTypeDefinitionImpl extends IQLTypeDefinitionImpl implements QDLTypeDefinition
+public class QDLModelElementImpl extends IQLModelElementImpl implements QDLModelElement
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected QDLTypeDefinitionImpl()
+  protected QDLModelElementImpl()
   {
     super();
   }
@@ -38,7 +38,7 @@ public class QDLTypeDefinitionImpl extends IQLTypeDefinitionImpl implements QDLT
   @Override
   protected EClass eStaticClass()
   {
-    return QDLPackage.Literals.QDL_TYPE_DEFINITION;
+    return QDLPackage.Literals.QDL_MODEL_ELEMENT;
   }
 
-} //QDLTypeDefinitionImpl
+} //QDLModelElementImpl

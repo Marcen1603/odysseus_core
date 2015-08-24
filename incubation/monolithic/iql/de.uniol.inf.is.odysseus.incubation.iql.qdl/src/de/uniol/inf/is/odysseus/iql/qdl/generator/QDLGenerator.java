@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.eclipse.xtext.generator.IFileSystemAccess;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.generator.AbstractIQLGenerator;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLCompiler;
 import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext;
@@ -17,11 +17,12 @@ public class QDLGenerator extends AbstractIQLGenerator<IQDLGeneratorContext, IQD
 		super(generatorContext, compiler);
 	}
 
-	protected void doGenerate(IQLTypeDefinition typeDef, IFileSystemAccess fsa, String outputFolder) {
-		if (typeDef.getInner() instanceof QDLQuery) {
-			fsa.generateFile(outputFolder+typeDef.getInner().getSimpleName() + ".java", compiler.compile(typeDef, (QDLQuery)typeDef.getInner(),(IQDLGeneratorContext) context.cleanCopy()));
+	protected void doGenerate(IQLModelElement element, IFileSystemAccess fsa, String outputFolder) {
+		if (element.getInner() instanceof QDLQuery) {
+			QDLQuery query = (QDLQuery) element.getInner();
+			fsa.generateFile(outputFolder+query.getSimpleName() + ".java", compiler.compile(element, query,(IQDLGeneratorContext) context.cleanCopy()));
 		} else {
-			super.doGenerate(typeDef, fsa, outputFolder);			
+			super.doGenerate(element, fsa, outputFolder);			
 		}
 	}
 

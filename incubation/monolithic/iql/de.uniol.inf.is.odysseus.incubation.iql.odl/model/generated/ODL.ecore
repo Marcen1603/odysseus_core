@@ -3,7 +3,7 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="oDL" nsURI="http://www.uniol.de/inf/is/odysseus/iql/odl/ODL"
     nsPrefix="oDL">
   <eClassifiers xsi:type="ecore:EClass" name="ODLModel" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLModel"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ODLTypeDefinition" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLTypeDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ODLModelElement" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLModelElement"/>
   <eClassifiers xsi:type="ecore:EClass" name="ODLOperator" eSuperTypes="platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmGenericType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="metadataList" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLMetadataList"
         containment="true"/>

@@ -208,7 +208,7 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		
 	protected void createOperatorTemplate(IOperatorBuilder builder, IQLClass operatorType ,Set<String> parameters, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor, String id) {
 		StringBuilder descBuilder = new StringBuilder();
-		descBuilder.append(firstCharUpperCase(builder.getName().toLowerCase()));
+		descBuilder.append(operatorType.getSimpleName());
 		descBuilder.append("(){");
 		descBuilder.append("{");
 		int i = 0;
@@ -222,7 +222,7 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		descBuilder.append("}");
 
 		StringBuilder patternBuilder = new StringBuilder();
-		patternBuilder.append(firstCharUpperCase(builder.getName().toLowerCase()));
+		patternBuilder.append(operatorType.getSimpleName());
 		patternBuilder.append(" ${var}()");
 		patternBuilder.append("{");
 		int j = 0;

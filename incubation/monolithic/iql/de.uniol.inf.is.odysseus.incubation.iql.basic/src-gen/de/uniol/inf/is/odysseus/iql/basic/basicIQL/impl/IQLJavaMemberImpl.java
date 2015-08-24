@@ -23,7 +23,7 @@ import org.eclipse.xtext.common.types.impl.JvmMemberImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLJavaMemberImpl#getText <em>Text</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLJavaMemberImpl#getJava <em>Java</em>}</li>
  * </ul>
  * </p>
  *
@@ -32,14 +32,14 @@ import org.eclipse.xtext.common.types.impl.JvmMemberImpl;
 public class IQLJavaMemberImpl extends JvmMemberImpl implements IQLJavaMember
 {
   /**
-   * The cached value of the '{@link #getText() <em>Text</em>}' containment reference.
+   * The cached value of the '{@link #getJava() <em>Java</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getText()
+   * @see #getJava()
    * @generated
    * @ordered
    */
-  protected IQLJava text;
+  protected IQLJava java;
 
   /**
    * <!-- begin-user-doc -->
@@ -67,9 +67,9 @@ public class IQLJavaMemberImpl extends JvmMemberImpl implements IQLJavaMember
    * <!-- end-user-doc -->
    * @generated
    */
-  public IQLJava getText()
+  public IQLJava getJava()
   {
-    return text;
+    return java;
   }
 
   /**
@@ -77,13 +77,13 @@ public class IQLJavaMemberImpl extends JvmMemberImpl implements IQLJavaMember
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetText(IQLJava newText, NotificationChain msgs)
+  public NotificationChain basicSetJava(IQLJava newJava, NotificationChain msgs)
   {
-    IQLJava oldText = text;
-    text = newText;
+    IQLJava oldJava = java;
+    java = newJava;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_JAVA_MEMBER__TEXT, oldText, newText);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_JAVA_MEMBER__JAVA, oldJava, newJava);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -94,20 +94,20 @@ public class IQLJavaMemberImpl extends JvmMemberImpl implements IQLJavaMember
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setText(IQLJava newText)
+  public void setJava(IQLJava newJava)
   {
-    if (newText != text)
+    if (newJava != java)
     {
       NotificationChain msgs = null;
-      if (text != null)
-        msgs = ((InternalEObject)text).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_JAVA_MEMBER__TEXT, null, msgs);
-      if (newText != null)
-        msgs = ((InternalEObject)newText).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_JAVA_MEMBER__TEXT, null, msgs);
-      msgs = basicSetText(newText, msgs);
+      if (java != null)
+        msgs = ((InternalEObject)java).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_JAVA_MEMBER__JAVA, null, msgs);
+      if (newJava != null)
+        msgs = ((InternalEObject)newJava).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BasicIQLPackage.IQL_JAVA_MEMBER__JAVA, null, msgs);
+      msgs = basicSetJava(newJava, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_JAVA_MEMBER__TEXT, newText, newText));
+      eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_JAVA_MEMBER__JAVA, newJava, newJava));
   }
 
   /**
@@ -120,8 +120,8 @@ public class IQLJavaMemberImpl extends JvmMemberImpl implements IQLJavaMember
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_JAVA_MEMBER__TEXT:
-        return basicSetText(null, msgs);
+      case BasicIQLPackage.IQL_JAVA_MEMBER__JAVA:
+        return basicSetJava(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -136,8 +136,8 @@ public class IQLJavaMemberImpl extends JvmMemberImpl implements IQLJavaMember
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_JAVA_MEMBER__TEXT:
-        return getText();
+      case BasicIQLPackage.IQL_JAVA_MEMBER__JAVA:
+        return getJava();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -152,8 +152,8 @@ public class IQLJavaMemberImpl extends JvmMemberImpl implements IQLJavaMember
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_JAVA_MEMBER__TEXT:
-        setText((IQLJava)newValue);
+      case BasicIQLPackage.IQL_JAVA_MEMBER__JAVA:
+        setJava((IQLJava)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -169,8 +169,8 @@ public class IQLJavaMemberImpl extends JvmMemberImpl implements IQLJavaMember
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_JAVA_MEMBER__TEXT:
-        setText((IQLJava)null);
+      case BasicIQLPackage.IQL_JAVA_MEMBER__JAVA:
+        setJava((IQLJava)null);
         return;
     }
     super.eUnset(featureID);
@@ -186,8 +186,8 @@ public class IQLJavaMemberImpl extends JvmMemberImpl implements IQLJavaMember
   {
     switch (featureID)
     {
-      case BasicIQLPackage.IQL_JAVA_MEMBER__TEXT:
-        return text != null;
+      case BasicIQLPackage.IQL_JAVA_MEMBER__JAVA:
+        return java != null;
     }
     return super.eIsSet(featureID);
   }

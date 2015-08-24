@@ -89,7 +89,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	
 	protected abstract IScope getJdtScope(ResourceSet set, IIQLJdtTypeProvider typeProvider);
 	
-	public IScope scope_IQLSimpleType_type(IQLModel model, EReference type) {	
+	public IScope scope_IQLSimpleTypeRef_type(IQLModel model, EReference type) {	
 		Collection<JvmType> types = getAllTypes(model);
 		
 		IQLClasspathTypeProvider provider = (IQLClasspathTypeProvider) factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(model));
@@ -100,7 +100,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		return new IQLImportScope(createImportNormalizers(model), scope, null, type.getEReferenceType(), true);
 	}
 	
-	public IScope scope_IQLArrayType_type(IQLModel model, EReference type) {	
+	public IScope scope_IQLArrayType_componentType(IQLModel model, EReference type) {	
 		Collection<JvmType> types = getAllTypes(model);
 
 		IQLClasspathTypeProvider provider = (IQLClasspathTypeProvider) factory.findOrCreateTypeProvider(EcoreUtil2.getResourceSet(model));
@@ -246,7 +246,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	}	
 	
 	
-	public IScope scope_IQLMemberSelection_member(IQLMemberSelectionExpression expr, EReference type) {		
+	public IScope scope_IQLMemberCallExpression_member(IQLMemberSelectionExpression expr, EReference type) {		
 		Collection<IEObjectDescription> elements = new HashSet<>();
 		elements.addAll(getScopeIQLMemberSelection(expr));		
 		return new SimpleScope(elements);

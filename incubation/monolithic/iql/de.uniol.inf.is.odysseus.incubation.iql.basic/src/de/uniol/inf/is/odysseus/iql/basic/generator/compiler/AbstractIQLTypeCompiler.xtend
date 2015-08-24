@@ -7,6 +7,7 @@ import java.util.List
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType
 
 abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, E extends IIQLExpressionCompiler<G>, F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLTypeCompiler<G>{
 	protected H helper;
@@ -34,9 +35,11 @@ abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends I
 			if (nodeText != null) {
 				nodeText = nodeText.replace("[","").replace("]","").trim;				
 			}
-			var arrayType = typeRef as IQLArrayTypeRef
-			if (arrayType.type.dimensions.size()>0) {
-				for (i : 0 ..< arrayType.type.dimensions.size) {
+			var arrayTypeRef = typeRef as IQLArrayTypeRef
+			var arrayType = arrayTypeRef.type as IQLArrayType
+			
+			if (arrayType.dimensions.size()>0) {
+				for (i : 0 ..< arrayType.dimensions.size) {
 					result += '''«List.simpleName»<'''
 				}
 			}
@@ -45,9 +48,10 @@ abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends I
 		result += compile(typeRef, context, nodeText,w)
 		
 		if (typeRef instanceof IQLArrayTypeRef) {
-			var arrayType = typeRef as IQLArrayTypeRef
-			if (arrayType.type.dimensions.size()>0) {
-				for (i : 0 ..< arrayType.type.dimensions.size) {
+			var arrayTypeRef = typeRef as IQLArrayTypeRef
+			var arrayType = arrayTypeRef.type as IQLArrayType
+			if (arrayType.dimensions.size()>0) {
+				for (i : 0 ..< arrayType.dimensions.size) {
 					result += '''>'''
 				}
 				context.addImport(List.canonicalName)

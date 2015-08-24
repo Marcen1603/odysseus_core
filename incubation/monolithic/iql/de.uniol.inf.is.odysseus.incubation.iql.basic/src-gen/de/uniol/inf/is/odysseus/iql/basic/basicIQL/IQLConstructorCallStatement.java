@@ -11,7 +11,8 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLConstructorCallStatement#getKeyword <em>Keyword</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLConstructorCallStatement#isThis <em>This</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLConstructorCallStatement#isSuper <em>Super</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLConstructorCallStatement#getArgs <em>Args</em>}</li>
  * </ul>
  * </p>
@@ -23,30 +24,56 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
 public interface IQLConstructorCallStatement extends IQLStatement
 {
   /**
-   * Returns the value of the '<em><b>Keyword</b></em>' attribute.
+   * Returns the value of the '<em><b>This</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Keyword</em>' attribute isn't clear,
+   * If the meaning of the '<em>This</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Keyword</em>' attribute.
-   * @see #setKeyword(String)
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLConstructorCallStatement_Keyword()
+   * @return the value of the '<em>This</em>' attribute.
+   * @see #setThis(boolean)
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLConstructorCallStatement_This()
    * @model
    * @generated
    */
-  String getKeyword();
+  boolean isThis();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLConstructorCallStatement#getKeyword <em>Keyword</em>}' attribute.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLConstructorCallStatement#isThis <em>This</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Keyword</em>' attribute.
-   * @see #getKeyword()
+   * @param value the new value of the '<em>This</em>' attribute.
+   * @see #isThis()
    * @generated
    */
-  void setKeyword(String value);
+  void setThis(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Super</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Super</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Super</em>' attribute.
+   * @see #setSuper(boolean)
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLConstructorCallStatement_Super()
+   * @model
+   * @generated
+   */
+  boolean isSuper();
+
+  /**
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLConstructorCallStatement#isSuper <em>Super</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Super</em>' attribute.
+   * @see #isSuper()
+   * @generated
+   */
+  void setSuper(boolean value);
 
   /**
    * Returns the value of the '<em><b>Args</b></em>' containment reference.

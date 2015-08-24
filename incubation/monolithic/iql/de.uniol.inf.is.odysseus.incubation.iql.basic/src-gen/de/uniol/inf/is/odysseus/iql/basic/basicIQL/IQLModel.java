@@ -70,7 +70,7 @@ public interface IQLModel extends EObject
 
   /**
    * Returns the value of the '<em><b>Elements</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition}.
+   * The list contents are of type {@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Elements</em>' containment reference list isn't clear,
@@ -82,6 +82,6 @@ public interface IQLModel extends EObject
    * @model containment="true"
    * @generated
    */
-  EList<IQLTypeDefinition> getElements();
+  EList<IQLModelElement> getElements();
 
 } // IQLModel

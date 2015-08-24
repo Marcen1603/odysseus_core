@@ -32,13 +32,13 @@ public interface BasicIQLFactory extends EFactory
   IQLModel createIQLModel();
 
   /**
-   * Returns a new object of class '<em>IQL Type Definition</em>'.
+   * Returns a new object of class '<em>IQL Model Element</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Type Definition</em>'.
+   * @return a new object of class '<em>IQL Model Element</em>'.
    * @generated
    */
-  IQLTypeDefinition createIQLTypeDefinition();
+  IQLModelElement createIQLModelElement();
 
   /**
    * Returns a new object of class '<em>IQL Namespace</em>'.
@@ -57,42 +57,6 @@ public interface BasicIQLFactory extends EFactory
    * @generated
    */
   IQLJavaMetadata createIQLJavaMetadata();
-
-  /**
-   * Returns a new object of class '<em>IQL Simple Type Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Simple Type Ref</em>'.
-   * @generated
-   */
-  IQLSimpleTypeRef createIQLSimpleTypeRef();
-
-  /**
-   * Returns a new object of class '<em>IQL Array Type Ref</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Array Type Ref</em>'.
-   * @generated
-   */
-  IQLArrayTypeRef createIQLArrayTypeRef();
-
-  /**
-   * Returns a new object of class '<em>IQL Simple Type</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Simple Type</em>'.
-   * @generated
-   */
-  IQLSimpleType createIQLSimpleType();
-
-  /**
-   * Returns a new object of class '<em>IQL Array Type</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Array Type</em>'.
-   * @generated
-   */
-  IQLArrayType createIQLArrayType();
 
   /**
    * Returns a new object of class '<em>IQL Metadata List</em>'.
@@ -221,15 +185,6 @@ public interface BasicIQLFactory extends EFactory
   IQLJava createIQLJava();
 
   /**
-   * Returns a new object of class '<em>IQL Java Keywords</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Java Keywords</em>'.
-   * @generated
-   */
-  IQLJavaKeywords createIQLJavaKeywords();
-
-  /**
    * Returns a new object of class '<em>IQL Class</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -257,6 +212,33 @@ public interface BasicIQLFactory extends EFactory
   IQLAttribute createIQLAttribute();
 
   /**
+   * Returns a new object of class '<em>IQL Simple Type Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Simple Type Ref</em>'.
+   * @generated
+   */
+  IQLSimpleTypeRef createIQLSimpleTypeRef();
+
+  /**
+   * Returns a new object of class '<em>IQL Array Type Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Array Type Ref</em>'.
+   * @generated
+   */
+  IQLArrayTypeRef createIQLArrayTypeRef();
+
+  /**
+   * Returns a new object of class '<em>IQL Array Type</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Array Type</em>'.
+   * @generated
+   */
+  IQLArrayType createIQLArrayType();
+
+  /**
    * Returns a new object of class '<em>IQL Method</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -266,13 +248,13 @@ public interface BasicIQLFactory extends EFactory
   IQLMethod createIQLMethod();
 
   /**
-   * Returns a new object of class '<em>IQL Method Declaration Member</em>'.
+   * Returns a new object of class '<em>IQL Method Declaration</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Method Declaration Member</em>'.
+   * @return a new object of class '<em>IQL Method Declaration</em>'.
    * @generated
    */
-  IQLMethodDeclarationMember createIQLMethodDeclarationMember();
+  IQLMethodDeclaration createIQLMethodDeclaration();
 
   /**
    * Returns a new object of class '<em>IQL Java Member</em>'.

@@ -32,13 +32,13 @@ public interface ODLFactory extends EFactory
   ODLModel createODLModel();
 
   /**
-   * Returns a new object of class '<em>Type Definition</em>'.
+   * Returns a new object of class '<em>Model Element</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Type Definition</em>'.
+   * @return a new object of class '<em>Model Element</em>'.
    * @generated
    */
-  ODLTypeDefinition createODLTypeDefinition();
+  ODLModelElement createODLModelElement();
 
   /**
    * Returns a new object of class '<em>Operator</em>'.

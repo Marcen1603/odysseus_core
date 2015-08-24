@@ -45,11 +45,13 @@ import org.reflections.scanners.SubTypesScanner;
 
 
 
+
+
 import de.uniol.inf.is.odysseus.iql.basic.Activator;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
@@ -139,7 +141,7 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 
 	public Collection<String> createImplicitImports() {
 		Collection<String> implicitImports = new HashSet<>();
-		for (JvmGenericType systemType : getSystemTypes()) {
+		for (JvmDeclaredType systemType : getSystemTypes()) {
 			implicitImports.add(systemType.getPackageName()+"."+systemType.getSimpleName());
 		}
 		
@@ -180,9 +182,9 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 			systemFile.setName(packageName);
 			systemFiles.put(packageName, systemFile);
 		}
-		IQLTypeDefinition typeDef = BasicIQLFactory.eINSTANCE.createIQLTypeDefinition();
-		typeDef.setInner(type);
-		systemFile.getElements().add(typeDef);	
+		IQLModelElement element = BasicIQLFactory.eINSTANCE.createIQLModelElement();
+		element.setInner(type);
+		systemFile.getElements().add(element);	
 		return systemType;
 	}
 	
@@ -285,8 +287,8 @@ public abstract class AbstractIQLTypeFactory<U extends IIQLTypeUtils, I extends 
 		return result;
 	}
 	
-	private Collection<JvmGenericType> getSystemTypes() {
-		Collection<JvmGenericType> types = new HashSet<>();
+	private Collection<JvmDeclaredType> getSystemTypes() {
+		Collection<JvmDeclaredType> types = new HashSet<>();
 		for (IQLSystemType systemType : systemTypes.values()) {
 			types.add(systemType.getIqlTypeDef());
 		}

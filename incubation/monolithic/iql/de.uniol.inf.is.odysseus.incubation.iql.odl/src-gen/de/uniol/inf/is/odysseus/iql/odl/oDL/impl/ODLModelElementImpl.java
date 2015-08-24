@@ -2,30 +2,30 @@
  */
 package de.uniol.inf.is.odysseus.iql.odl.oDL.impl;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLTypeDefinitionImpl;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.impl.IQLModelElementImpl;
 
+import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModelElement;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLPackage;
-import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLTypeDefinition;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Type Definition</b></em>'.
+ * An implementation of the model object '<em><b>Model Element</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * </p>
  *
  * @generated
  */
-public class ODLTypeDefinitionImpl extends IQLTypeDefinitionImpl implements ODLTypeDefinition
+public class ODLModelElementImpl extends IQLModelElementImpl implements ODLModelElement
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected ODLTypeDefinitionImpl()
+  protected ODLModelElementImpl()
   {
     super();
   }
@@ -38,7 +38,7 @@ public class ODLTypeDefinitionImpl extends IQLTypeDefinitionImpl implements ODLT
   @Override
   protected EClass eStaticClass()
   {
-    return ODLPackage.Literals.ODL_TYPE_DEFINITION;
+    return ODLPackage.Literals.ODL_MODEL_ELEMENT;
   }
 
-} //ODLTypeDefinitionImpl
+} //ODLModelElementImpl

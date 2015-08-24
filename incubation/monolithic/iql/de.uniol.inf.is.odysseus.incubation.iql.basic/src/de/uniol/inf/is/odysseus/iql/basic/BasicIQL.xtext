@@ -3,16 +3,15 @@ grammar de.uniol.inf.is.odysseus.iql.basic.BasicIQL with org.eclipse.xtext.commo
 generate basicIQL "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL"
 
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
-import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvm
 
 IQLModel:
 	('namespace' name=QualifiedName ';')?
 	namespaces+=IQLNamespace*
-	(elements+=IQLTypeDefinition)*
+	(elements+=IQLModelElement)*
 ;
 
-IQLTypeDefinition:
-	{IQLTypeDefinition}
+IQLModelElement:
 	(javametadata+=IQLJavaMetadata)*
 	inner=(IQLClass | IQLInterface)
 ; 
@@ -22,67 +21,62 @@ IQLNamespace :
 	'use' (static?='static')? importedNamespace = QualifiedNameWithWildcard ';'
 ;
 
-IQLClass returns types::JvmGenericType:
+IQLClass returns jvm::JvmGenericType:
 	{IQLClass}
 	'class' simpleName=ID ('extends' extendedClass=JvmTypeReference)? ('implements' extendedInterfaces+=JvmTypeReference (',' extendedInterfaces+=JvmTypeReference)*)? '{'
 		members += (IQLAttribute | IQLMethod | IQLJavaMember)*
 	'}'	
 ;
 
-IQLInterface returns types::JvmGenericType:
+IQLInterface returns jvm::JvmGenericType:
 	{IQLInterface}
 	'interface' simpleName=ID ('extends' extendedInterfaces+=JvmTypeReference (',' extendedInterfaces+=JvmTypeReference)?)? '{'
-		members += (IQLMethodDeclarationMember | IQLJavaMember )*
+		members += (IQLMethodDeclaration | IQLJavaMember )*
 	'}'	
 ;
 
+
 IQLJavaMetadata:
-	{IQLJavaMetadata}
-	'$*' text=IQLJava '*$'
+	java=IQLJava
 ;
 
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 
-IQLAttribute returns types::JvmField:
+IQLAttribute returns jvm::JvmField:
 	{IQLAttribute}		
 	type=JvmTypeReference simpleName=ID (init=IQLVariableInitialization)? ';'
 ;
 
-JvmTypeReference returns types::JvmTypeReference:
+JvmTypeReference returns jvm::JvmTypeReference:
     IQLSimpleTypeRef | IQLArrayTypeRef
 ;
 
-JvmType returns types::JvmType: 
-	IQLSimpleType | IQLArrayType
+IQLSimpleTypeRef returns jvm::JvmTypeReference:
+	{IQLSimpleTypeRef}
+	type=[jvm::JvmType|QualifiedName]
 ;
 
-IQLSimpleTypeRef:
-	type=IQLSimpleType
-;
-
-IQLArrayTypeRef:
+IQLArrayTypeRef returns jvm::JvmTypeReference:
+	{IQLArrayTypeRef}
 	type=IQLArrayType
 ;
 
-IQLSimpleType:
-	type=[types::JvmType|QualifiedName]
-;
-
-IQLArrayType:
-	type=[types::JvmType|QualifiedName] (dimensions+=ArrayBrackets)+
+IQLArrayType returns jvm::JvmType:
+	{IQLArrayType}
+	componentType=[jvm::JvmType|QualifiedName] (dimensions+=ArrayBrackets)+
 ;
 
 ArrayBrackets :
 	'[' ']'
 ;
 
-JvmFormalParameter returns types::JvmFormalParameter:
+JvmFormalParameter returns jvm::JvmFormalParameter:
 	parameterType=JvmTypeReference name=ID;
 
 
-IQLMethod returns types::JvmOperation:
+IQLMethod returns jvm::JvmOperation:
 	{IQLMethod}		
 	(override?='override')?
 	simpleName=ID ('(' (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? ')')? (':' returnType=JvmTypeReference)?
@@ -90,14 +84,14 @@ IQLMethod returns types::JvmOperation:
 ;
 
 
-IQLMethodDeclarationMember returns types::JvmOperation:
-	{IQLMethodDeclarationMember}	
+IQLMethodDeclaration returns jvm::JvmOperation:
+	{IQLMethodDeclaration}	
 	simpleName=ID '(' (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? ')' (':' returnType=JvmTypeReference)?';'
 ;
 
-IQLJavaMember returns types::JvmMember:
+IQLJavaMember returns jvm::JvmMember:
 	{IQLJavaMember}
-	'$*' text=IQLJava '*$'
+	java=IQLJava
 ;
 
 /////////////////////////////////////////////
@@ -122,7 +116,7 @@ IQLMetadataValueSingle returns IQLMetadataValue:
 	{IQLMetadataValueSingleString} value = STRING|
 	{IQLMetadataValueSingleBoolean} value = BOOLEAN|
 	{IQLMetadataValueSingleTypeRef} value = JvmTypeReference |	
-	{IQLMetadataValueSingleNull} value = 'null'	
+	{IQLMetadataValueSingleNull} 'null'	
 ;
 
 
@@ -145,20 +139,20 @@ IQLMetadataValueMapElement:
 /////////////////////////////////////////////
 /////////////////////////////////////////////
 
-IQLVariableDeclaration returns types::JvmIdentifiableElement:
+IQLVariableDeclaration returns jvm::JvmIdentifiableElement:
 	{IQLVariableDeclaration}
 	ref=JvmTypeReference name=ID
 ;
 
 IQLVariableInitialization:
-	{IQLVariableInitialization}	
-	( argsList=IQLArgumentsList  (argsMap=IQLArgumentsMap)? ) | ('=' value=IQLExpression)
+	(argsList=IQLArgumentsList  (argsMap=IQLArgumentsMap)? ) | ('=' value=IQLExpression)
 ;
 
 IQLArgumentsList:
 	{IQLArgumentsList}	
 	'(' (elements+=IQLExpression (',' elements+=IQLExpression)*)? ')'	 
 ;
+
 
 IQLArgumentsMap:
 	{IQLArgumentsMap}	
@@ -198,7 +192,7 @@ IQLStatementBlock returns IQLStatement:
 
 IQLJavaStatement returns IQLStatement:
 	{IQLJavaStatement}
-	'$*' text=IQLJava '*$'
+	java=IQLJava
 ;
 
 IQLIfStatement returns IQLStatement:
@@ -257,7 +251,7 @@ IQLVariableStatement returns IQLStatement:
 
 IQLConstructorCallStatement returns IQLStatement:
 	{IQLConstructorCallStatement}
-	keyword=('super' | 'this') args=IQLArgumentsList ';'
+	(this?='super' | super?='this') args=IQLArgumentsList ';'
 ;
 
 IQLBreakStatement returns IQLStatement:
@@ -371,15 +365,17 @@ OpPostfix:
 
 IQLMemberCallExpression returns IQLExpression:
 	IQLOtherExpressions	
-	(=>({IQLArrayExpression.leftOperand=current} '[' expressions+=IQLExpression (',' expressions+=IQLExpression)? ']') | =>({IQLMemberSelectionExpression.leftOperand=current} '.') sel=IQLMemberSelection)*
+	(=>({IQLArrayExpression.leftOperand=current} '[' expressions+=IQLExpression (',' expressions+=IQLExpression)? ']') |
+		=>({IQLMemberSelectionExpression.leftOperand=current} '.') sel=IQLMemberSelection
+	)*
 ;
 
 IQLMemberSelection:
-	member=[types::JvmMember] (args=IQLArgumentsList)?
+	member=[jvm::JvmMember] (args=IQLArgumentsList)?
 ;
 
 IQLOtherExpressions returns IQLExpression:
-    {IQLJvmElementCallExpression} element=[types::JvmIdentifiableElement | QualifiedName] (args=IQLArgumentsList)?  |
+    {IQLJvmElementCallExpression} element=[jvm::JvmIdentifiableElement | QualifiedName] (args=IQLArgumentsList)?  |
     {IQLThisExpression} 'this'  |
     {IQLSuperExpression} 'super'  |    
     {IQLParenthesisExpression} '(' expr = IQLExpression ')'  |
@@ -428,13 +424,17 @@ terminal RANGE:
 	INT'..'INT
 ;
 
-IQLJava:
-	{IQLJava}
-	(text+=IQLJavaText | keywords+=IQLJavaKeywords)*
+
+IQLJava hidden(SL_COMMENT, ML_COMMENT):
+    '$*' text = IQLJavaText '*$'
 ;
 
-IQLJavaText:
-	ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
+IQLJavaText :
+    IQLJavaWords*
+;
+
+IQLJavaWords:
+	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
 	'+'  | '+='  | '-'  | '-='  | '*'   | '*='   | '/' | '/=' | '%'  | '%=' |
 	'++' | '--'	 | '>'  | '>='  | '<'   | '<='   | '!' | '!=' | '&&' | '||' |
 	'==' | '='   | '~'  | '?:'  | '|'   | '|='   | '^' | '^=' | '&'  | '&=' |
@@ -444,14 +444,13 @@ IQLJavaText:
 ;
 
 IQLJavaKeywords:
-	{IQLJavaKeywords}
-	keyword=('break'   | 'case'   | 'class' | 'continue'   | 'default'   | 'do'        | 'else' |
+	'break'   | 'case'   | 'class' | 'continue'   | 'default'   | 'do'        | 'else' |
 	'extends' | 'for'    | 'if'    | 'implements' | 'instanceof'| 'interface' | 'new'  |
     'package' | 'return' | 'super' | 'switch'     | 'this'      | 'while'     |
 	
 	'abstract'     | 'assert'  | 'catch'  | 'const'     |  'enum'     | 'final'      | 'finally'   |
 	'goto'         | 'import'  | 'native' | 'private'   | 'protected' | 'public'     | 'static'    |
-	'synchronized' | 'throw'   | 'throws' | 'transient' | 'try'       | 'volatile'   | 'strictfp')
+	'synchronized' | 'throw'   | 'throws' | 'transient' | 'try'       | 'volatile'   | 'strictfp'
 ;
 
 

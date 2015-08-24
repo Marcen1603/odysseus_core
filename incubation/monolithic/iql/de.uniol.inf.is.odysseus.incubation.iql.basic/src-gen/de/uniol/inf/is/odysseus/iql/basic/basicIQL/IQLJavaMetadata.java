@@ -12,7 +12,7 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata#getText <em>Text</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata#getJava <em>Java</em>}</li>
  * </ul>
  * </p>
  *
@@ -23,29 +23,29 @@ import org.eclipse.emf.ecore.EObject;
 public interface IQLJavaMetadata extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Text</b></em>' containment reference.
+   * Returns the value of the '<em><b>Java</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Text</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Java</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Text</em>' containment reference.
-   * @see #setText(IQLJava)
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLJavaMetadata_Text()
+   * @return the value of the '<em>Java</em>' containment reference.
+   * @see #setJava(IQLJava)
+   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLJavaMetadata_Java()
    * @model containment="true"
    * @generated
    */
-  IQLJava getText();
+  IQLJava getJava();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata#getText <em>Text</em>}' containment reference.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata#getJava <em>Java</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Text</em>' containment reference.
-   * @see #getText()
+   * @param value the new value of the '<em>Java</em>' containment reference.
+   * @see #getJava()
    * @generated
    */
-  void setText(IQLJava value);
+  void setJava(IQLJava value);
 
 } // IQLJavaMetadata

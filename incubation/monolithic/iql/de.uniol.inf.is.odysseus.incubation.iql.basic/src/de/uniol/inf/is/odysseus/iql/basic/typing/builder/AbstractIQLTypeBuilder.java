@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.iql.basic.typing.builder;
 
 import javax.inject.Inject;
 
-import org.eclipse.xtext.common.types.JvmGenericType;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
 import org.eclipse.xtext.common.types.util.TypeReferences;
@@ -43,7 +43,7 @@ public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeFactory, U extend
 	}
 	
 	private IQLSystemType createSystemType(String packageName, String simpleName, Class<?> javaType) {
-		JvmGenericType type = null;
+		JvmDeclaredType type = null;
 		if (javaType.isInterface()) {
 			type = createInterfaceType(packageName, simpleName, javaType);
 		} else {

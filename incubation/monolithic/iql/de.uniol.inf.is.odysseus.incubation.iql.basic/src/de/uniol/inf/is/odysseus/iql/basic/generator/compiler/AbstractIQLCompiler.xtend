@@ -7,17 +7,16 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 import org.eclipse.xtext.common.types.JvmMember
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclarationMember
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclaration
 import org.eclipse.xtext.common.types.JvmFormalParameter
 import org.eclipse.xtext.common.types.JvmTypeReference
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLTypeDefinition
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
 
 abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, S extends IIQLStatementCompiler<G>, F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLCompiler<G>{
 	
@@ -39,9 +38,9 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 		this.typeFactory = typeFactory;
 	}
 	
-	override compile(IQLTypeDefinition typeDef, IQLClass c, G context) {
+	override compile(IQLModelElement element, IQLClass c, G context) {
 		var builder = new StringBuilder()
-		builder.append(compileClass(typeDef, c, context))
+		builder.append(compileClass(element, c, context))
 		for (String i : context.imports) {
 			builder.insert(0, "import "+ i+ ";"+System.lineSeparator)
 		}
@@ -49,7 +48,7 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 	}
 	
 	
-	def String compileClass(IQLTypeDefinition typeDef, IQLClass c, G context) {
+	def String compileClass(IQLModelElement element, IQLClass c, G context) {
 		var name = c.simpleName;
 		var superClass = c.extendedClass;
 		var interfaces = c.extendedInterfaces;
@@ -58,12 +57,12 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 		var varStmts = helper.getVarStatements(c)
 		
 		'''
-		«FOR j : typeDef.javametadata»
-		«var text = NodeModelUtils.getTokenText(NodeModelUtils.getNode(j.text))»
+		«FOR j : element.javametadata»
+		«var text = j.java.text»
 		«text»
 		«ENDFOR»
 		@SuppressWarnings("all")
-		public class «name»«IF superClass != null» extends «typeCompiler.compile(superClass, context, true)»«ENDIF»«IF interfaces.size > 0» implements «interfaces.map[el | typeCompiler.compile(el, context, true)]»«ENDIF» {
+		public class «name»«IF superClass != null» extends «typeCompiler.compile(superClass, context, true)»«ENDIF»«IF interfaces.size > 0» implements «interfaces.map[el | typeCompiler.compile(el, context, true)].join(",")»«ENDIF» {
 			«FOR m : c.members»			
 			«compile(m, context)»
 			«ENDFOR»
@@ -92,26 +91,26 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 		'''
 	}
 	
-	override compile(IQLTypeDefinition typeDef,IQLInterface interf, G context) {
+	override compile(IQLModelElement element,IQLInterface interf, G context) {
 		var builder = new StringBuilder()
-		builder.append(compileInterface(typeDef, interf, context))
+		builder.append(compileInterface(element, interf, context))
 		for (String i : context.imports) {
 			builder.insert(0, "import "+ i+ ";")
 		}
 		builder.toString	
 	}
 	
-	def String compileInterface(IQLTypeDefinition typeDef,IQLInterface i, G context) {
+	def String compileInterface(IQLModelElement element,IQLInterface i, G context) {
 		var name = i.simpleName;
 		var interfaces = i.extendedInterfaces;
 		'''
 		
-		«FOR j : typeDef.javametadata»
-		«var text = NodeModelUtils.getTokenText(NodeModelUtils.getNode(j.text))»
+		«FOR j : element.javametadata»
+		«var text = j.java.text»
 		«text»
 		«ENDFOR»
 		@SuppressWarnings("all")
-		public interface «name»«IF interfaces.size > 0» extends «interfaces.map[el |typeCompiler.compile(el, context, true)]»«ENDIF» {
+		public interface «name»«IF interfaces.size > 0» extends «interfaces.map[el |typeCompiler.compile(el, context, true)].join(",")»«ENDIF» {
 			«FOR m : i.members»			
 			«compile(m, context)»
 			«ENDFOR»
@@ -124,8 +123,8 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 			compile(m as IQLAttribute, context);
 		} else if (m instanceof IQLMethod) {
 			compile(m as IQLMethod, context);			
-		} else if (m instanceof IQLMethodDeclarationMember) {
-			compile(m as IQLMethodDeclarationMember, context);
+		} else if (m instanceof IQLMethodDeclaration) {
+			compile(m as IQLMethodDeclaration, context);
 		} else if (m instanceof IQLJavaMember) {
 			compile(m as IQLJavaMember, context);
 		} else {
@@ -134,7 +133,7 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 	}
 	
 	def String compile(IQLJavaMember m, G context) {
-		var text = NodeModelUtils.getTokenText(NodeModelUtils.getNode(m.text))
+		var text = m.java.text
 		'''«text»'''
 	}
 	
@@ -166,7 +165,7 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 	}
 	
 	
-	def String compile(IQLMethodDeclarationMember m, G context) {
+	def String compile(IQLMethodDeclaration m, G context) {
 		'''
 		public «typeCompiler.compile(m.returnType, context, false)» «m.simpleName»(«m.parameters.map[p | compile(p, context)].join(", ")»);
 		
