@@ -18,14 +18,14 @@ Require-Bundle: de.uniol.inf.is.odysseus.query.codegenerator,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.slf4j,
  com.google.guava,
- qdox;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.relational.base,
  org.apache.commons.io,
  javaparser;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.relational_interval,
  org.eclipse.core.runtime,
- com.google.code.gson;bundle-version="2.2.4"
+ com.google.code.gson;bundle-version="2.2.4",
+ qdox;bundle-version="1.0.0"
 Service-Component: OSGI-INF/JavaTargetPlatform.xml,OSGI-INF/MultipleSourceExecutor.xml,OSGI-INF/CSlidingAdvanceTimeWindowTIPORule.xml,OSGI-INF/CCSVFileSourceRule.xml,OSGI-INF/CSelectAORule.xml,OSGI-INF/CCSVFileSinkRule.xml,OSGI-INF/CRelationalProjectAORule.xml,OSGI-INF/CStreamAORule.xml,OSGI-INF/CSlidingTimeWindowTIPORule.xml,OSGI-INF/CSlidingPeriodicWindowTIPORule.xml,OSGI-INF/CJoinTIPORule.xml,OSGI-INF/CRelationalMapPORule.xml,
  OSGI-INF/CAggregateTIPORule.xml
 Bundle-ClassPath: .,
