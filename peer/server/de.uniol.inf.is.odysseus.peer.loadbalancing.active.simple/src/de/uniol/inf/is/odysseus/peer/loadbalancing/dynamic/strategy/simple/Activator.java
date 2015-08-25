@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.simple;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.strategy.simple;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.simple;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.strategy.simple;
 
 import java.util.ArrayList;
 import java.util.Collection;
