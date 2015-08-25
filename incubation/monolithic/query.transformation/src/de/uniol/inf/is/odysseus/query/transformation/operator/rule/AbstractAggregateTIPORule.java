@@ -8,8 +8,8 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 
 public abstract class AbstractAggregateTIPORule extends AbstractRule{
 	
-	public AbstractAggregateTIPORule(String name, String targetPlatform) {
-		super(name,targetPlatform );
+	public AbstractAggregateTIPORule(String name) {
+		super(name);
 	}
 
 

@@ -10,8 +10,8 @@ import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformat
 public abstract class AbstractCRelationalMapPORule extends AbstractRule{
 	
 	
-	public AbstractCRelationalMapPORule(String name, String targetPlatform) {
-		super(name,targetPlatform );
+	public AbstractCRelationalMapPORule(String name) {
+		super(name);
 	}
 	
 	

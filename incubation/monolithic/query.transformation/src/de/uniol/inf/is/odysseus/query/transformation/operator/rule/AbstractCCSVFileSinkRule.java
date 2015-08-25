@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformat
 
 public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 	
-	public AbstractCCSVFileSinkRule(String name, String targetPlatform) {
-		super(name,targetPlatform );
+	public AbstractCCSVFileSinkRule(String name) {
+		super(name);
 	}
 
 	public boolean isExecutable(ILogicalOperator logicalOperator,

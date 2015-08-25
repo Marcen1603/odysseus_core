@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.query.transformation.operator.rule;
 
+import org.osgi.service.component.ComponentContext;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -7,15 +9,16 @@ import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformat
 
 public abstract class AbstractRule implements IOperatorRule {
 	
+	private ComponentContext context;
+	
 	private String name = "";
 	private String targetPlatform = "";
 	
 	public AbstractRule(){
 	}
 	
-	public AbstractRule(String name, String targetPlatform){
+	public AbstractRule(String name){
 		this.name = name;
-		this.targetPlatform = targetPlatform;
 	}
 
 	public int getPriority() {
@@ -24,6 +27,10 @@ public abstract class AbstractRule implements IOperatorRule {
 	
 	public String getName() {
 		return this.name;
+	}
+	
+	public void setTragetPlattform(String targetPlatform){
+		this.targetPlatform = targetPlatform;
 	}
 
 	public String getTargetPlatform(){
@@ -44,5 +51,16 @@ public abstract class AbstractRule implements IOperatorRule {
 			QueryAnalyseInformation transformationInformation) {
 		
 	}
+	
+	
+    protected void activate(ComponentContext context) {
+        this.context = context;
+        initRule();
+    }
+
+    private void initRule() {
+    	String targetPlattform = (String)this.context.getProperties().get("targetPlattform");
+    	setTragetPlattform(targetPlattform);
+    }
 	
 }

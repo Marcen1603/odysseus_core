@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformat
 public abstract class AbstractCRelationalProjectAORule extends AbstractRule{
 	
 
-	public AbstractCRelationalProjectAORule(String name, String targetPlatform) {
-		super(name,targetPlatform );
+	public AbstractCRelationalProjectAORule(String name) {
+		super(name);
 	}
 	
 	public boolean isExecutable(ILogicalOperator logicalOperator,

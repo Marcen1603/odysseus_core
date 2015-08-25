@@ -4,4 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.query.transformation.operator.rule.IOperatorRule"/>
    </service>
+   <property name="targetPlattform" type="String" value="Java"/>
 </scr:component>

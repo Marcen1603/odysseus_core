@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.query.transformation.utils.Utils;
 public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 
 	public CCSVFileSourceRule() {
-		super(CCSVFileSourceRule.class.getName(), "java");
+		super(CCSVFileSourceRule.class.getName());
 	}
 
 	@Override
@@ -52,11 +52,7 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 		accessPOTemplate.getSt().add("getMaxTimeToWaitForNewEventMS", csvFileSourceOP.getMaxTimeToWaitForNewEventMS());
 		accessPOTemplate.getSt().add("readMetaData", csvFileSourceOP.readMetaData());
 		
-		
-		
-		
 		csvFileSource.addCode(accessPOTemplate.getSt().render());
-	
 		csvFileSource.addCodeFragmentInfo(CreateJavaDefaultCode.codeForRelationalTimestampAttributeTimeIntervalMFactory(operator, timestampAO));
 
 		//add imports

@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformat
 
 public abstract class AbstractCStreamAORule extends AbstractRule{
 	
-	public AbstractCStreamAORule(String name, String targetPlatform) {
-		super(name,targetPlatform );
+	public AbstractCStreamAORule(String name) {
+		super(name );
 	}
 	
 	

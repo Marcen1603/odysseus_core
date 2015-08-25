@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 public class CSelectAORule extends AbstractCSelectAORule{
 
 	public CSelectAORule() {
-		super(CSelectAORule.class.getName(), "Java");
+		super(CSelectAORule.class.getName());
 	}
 
 

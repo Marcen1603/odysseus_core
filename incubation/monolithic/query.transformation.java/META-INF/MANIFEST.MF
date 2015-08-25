@@ -31,3 +31,4 @@ Service-Component: OSGI-INF/JavaTargetPlatform.xml,OSGI-INF/MultipleSourceExecut
 Bundle-ClassPath: .,
  templates/,
  ST-4.0.8.jar
+Export-Package: de.uniol.inf.is.odysseus.query.transformation.java.operator.rules

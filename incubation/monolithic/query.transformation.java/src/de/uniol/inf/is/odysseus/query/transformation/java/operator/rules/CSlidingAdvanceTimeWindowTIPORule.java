@@ -18,7 +18,7 @@ public class CSlidingAdvanceTimeWindowTIPORule extends AbstractCSlidingAdvanceTi
 
 
 	public CSlidingAdvanceTimeWindowTIPORule(){
-		super(CSlidingAdvanceTimeWindowTIPORule.class.getName(), "Java");
+		super(CSlidingAdvanceTimeWindowTIPORule.class.getName());
 	}
 	
 	@Override

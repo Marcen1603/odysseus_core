@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 public class CJoinTIPORule extends  AbstractCJoinTIPORule{
 
 	public CJoinTIPORule() {
-		super(CJoinTIPORule.class.getName(), "java");
+		super(CJoinTIPORule.class.getName());
 	}
 
 	@Override
@@ -104,9 +104,7 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule{
 		
 	
 		
-		
-		
-		
+
 		
 		joinTIPO.addImport(DirectAttributeResolver.class.getName());
 		joinTIPO.addImport(RelationalPredicateBuilder.class.getName());
@@ -115,10 +113,7 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule{
 		joinTIPO.addImport(DirectTransferArea.class.getName());
 		joinTIPO.addImport(DefaultTIDummyDataCreation.class.getName());
 		
-		
-		
-
-		
+	
 		
 		return joinTIPO;
 	}

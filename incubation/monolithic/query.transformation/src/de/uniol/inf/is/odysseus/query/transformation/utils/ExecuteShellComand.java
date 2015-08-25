@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.transformation.java.shell.commands;
+package de.uniol.inf.is.odysseus.query.transformation.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -14,8 +14,8 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
 public abstract class AbstractCJoinTIPORule extends AbstractRule{
 	
-	public AbstractCJoinTIPORule(String name, String targetPlatform) {
-		super(name,targetPlatform );
+	public AbstractCJoinTIPORule(String name) {
+		super(name);
 	}
 
 	@Override

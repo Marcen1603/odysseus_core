@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.query.transformation.java.operator.rules;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
@@ -17,14 +17,18 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractAggregateTIPORule;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 
-public class CAggregateTIPORule extends AbstractAggregateTIPORule{
 
+public class CAggregateTIPORule extends AbstractAggregateTIPORule{
+	
 	public CAggregateTIPORule() {
-		super(CAggregateTIPORule.class.getName(), "Java");
+		super(CAggregateTIPORule.class.getName());
 	}
 	
 	@Override
 	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+		
+		
+		
 		CodeFragmentInfo aggregateTIPO = new CodeFragmentInfo();
 		
 		AggregateAO aggregateAO = (AggregateAO) operator;
@@ -100,4 +104,7 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule{
 		
 		return aggregateTIPO;
 	}
+	
+	
+
 }

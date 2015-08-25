@@ -13,8 +13,8 @@ import de.uniol.inf.is.odysseus.query.transformation.utils.Utils;
 
 public abstract class AbstractCSelectAORule extends AbstractRule{
 
-	public AbstractCSelectAORule(String name, String targetPlatform) {
-		super(name,targetPlatform );
+	public AbstractCSelectAORule(String name) {
+		super(name);
 	}
 	
 	@Override

@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingPeriodicWi
 public class CSlidingPeriodicWindowTIPORule extends AbstractCSlidingPeriodicWindowTIPORule{
 	
 	public CSlidingPeriodicWindowTIPORule(){
-		super(CSlidingPeriodicWindowTIPORule.class.getName(), "Java");
+		super(CSlidingPeriodicWindowTIPORule.class.getName());
 	}
 
 

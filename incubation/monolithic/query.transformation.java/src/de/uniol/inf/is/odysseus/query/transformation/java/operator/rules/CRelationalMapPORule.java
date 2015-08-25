@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCRela
 public class CRelationalMapPORule extends  AbstractCRelationalMapPORule{
 	
 	public CRelationalMapPORule() {
-		super(CRelationalMapPORule.class.getName(), "java");
+		super(CRelationalMapPORule.class.getName());
 	}
 	
 	@Override

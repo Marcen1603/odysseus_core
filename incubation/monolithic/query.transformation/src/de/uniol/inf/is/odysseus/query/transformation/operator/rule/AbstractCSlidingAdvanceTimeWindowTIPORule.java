@@ -9,8 +9,8 @@ import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformat
 public abstract class AbstractCSlidingAdvanceTimeWindowTIPORule extends AbstractRule{
 
 	
-	public AbstractCSlidingAdvanceTimeWindowTIPORule(String name, String targetPlatform) {
-		super(name,targetPlatform );
+	public AbstractCSlidingAdvanceTimeWindowTIPORule(String name) {
+		super(name);
 	}
 	
 	@Override

@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.query.transformation.utils.Utils;
 public class CStreamAORule extends AbstractCStreamAORule{
 	
 	public CStreamAORule() {
-		super(CStreamAORule.class.getName(), "Java");
+		super(CStreamAORule.class.getName());
 	}
 	
 

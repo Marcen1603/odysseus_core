@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCCSVF
 public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule {
 	
 	public CCSVFileSinkRule() {
-		super(CCSVFileSinkRule.class.getName(), "Java");
+		super(CCSVFileSinkRule.class.getName());
 	}
 
 	@Override

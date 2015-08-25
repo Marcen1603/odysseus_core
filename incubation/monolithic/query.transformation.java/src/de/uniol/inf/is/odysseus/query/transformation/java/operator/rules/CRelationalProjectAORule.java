@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.query.transformation.operator.rule.AbstractCRela
 public class CRelationalProjectAORule extends AbstractCRelationalProjectAORule{
 	
 	public CRelationalProjectAORule() {
-		super(CRelationalProjectAORule.class.getName(), "java");
+		super(CRelationalProjectAORule.class.getName());
 	}
 
 	@Override

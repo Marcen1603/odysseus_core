@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +26,8 @@ import de.uniol.inf.is.odysseus.query.transformation.compiler.TransformationPara
 import de.uniol.inf.is.odysseus.query.transformation.executor.IExecutor;
 import de.uniol.inf.is.odysseus.query.transformation.java.Activator;
 import de.uniol.inf.is.odysseus.query.transformation.java.mapping.JavaTransformationInformation;
-import de.uniol.inf.is.odysseus.query.transformation.java.shell.commands.ExecuteShellComand;
 import de.uniol.inf.is.odysseus.query.transformation.java.utils.StringTemplate;
+import de.uniol.inf.is.odysseus.query.transformation.osgi.ExtractOSGIBundle;
 import de.uniol.inf.is.odysseus.query.transformation.utils.UnZip;
 
 
@@ -221,61 +220,9 @@ public class JavaFileWrite {
 	
 	
 	private void copyOdysseusJar(){
-		generateJarExport(importList,transformationParameter.getTempDirectory());
+		copyJars = ExtractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "lib");
 	}
 	
-	
-	/*
-	 * TODO only works with eclipse odysseus?
-	 */
-	private  void generateJarExport(Set<String> importList ,String tempPath){
-		Map<String,String> bundles = new HashMap<String, String>();
-		//get needed bundle
-		for(String neededClass : importList){
-			String path;
-			try {
-				
-				Bundle neededBundel = org.osgi.framework.FrameworkUtil.getBundle(Class.forName(neededClass));
-				if(neededBundel != null){				
-					URL entryss = neededBundel.getEntry(".project");
-					
-					//neededBundel.getHeaders().get("Require-Bundle");
-					System.out.println("Bundle:" +neededBundel.getSymbolicName());
-				
-					path = FileLocator.toFileURL(entryss).getPath();
-					bundles.put(path.replaceFirst("/", "").replace(".project",""), neededBundel.getSymbolicName());
-					
-					System.out.println("Bundle-Path:"+path.replaceFirst("/", ""));
-				}
-			} catch (IOException | ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		for (Map.Entry<String, String> entry : bundles.entrySet())
-		{
-
-		    String path = entry.getKey().replace("/", "\\");
-		    String name = entry.getValue().replace(".", "");
-		    String[] volume = path.split(":"); 
-		    
-		    System.out.println(volume[0]+":");
-		    System.out.println("cd "+path);
-		    System.out.println("xcopy "+path+"src\\* "+path+"bin /s /e /c /y");
-		    System.out.println("jar cvf "+name+".jar *.properties lib/*.jar -C bin .");
-		        
-		    String[] commands = new String[3];
-		    commands[0] = "cmd";
-		    commands[1] = "/c";
-            /* Command to execute */
-		    commands[2] = volume[0]+": && cd "+path+" && xcopy "+path+"src\\* "+path+"bin /s /e /c /y && jar cvf "+name+".jar *.properties *.jar -C bin . && cd "+path+" && xcopy "+name+".jar "+tempPath+"\\lib /Y";
-		    
-            ExecuteShellComand.excecuteCommand(commands);
-            
-            copyJars.add(name+".jar");
-		}
-	
-	}
 	
 	private void createOperationConfigurationFiles() {
 		FileWriter infoFile = null;

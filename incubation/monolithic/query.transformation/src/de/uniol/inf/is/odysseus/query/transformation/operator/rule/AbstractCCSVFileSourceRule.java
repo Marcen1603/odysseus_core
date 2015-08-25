@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.query.transformation.modell.QueryAnalyseInformat
 
 public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 
-	public AbstractCCSVFileSourceRule(String name, String targetPlatform) {
-		super(name,targetPlatform );
+	public AbstractCCSVFileSourceRule(String name) {
+		super(name);
 	}
 
 

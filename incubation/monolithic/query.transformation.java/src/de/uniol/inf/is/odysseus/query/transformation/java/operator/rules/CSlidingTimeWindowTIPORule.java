@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingTimeWindow
 public class CSlidingTimeWindowTIPORule extends AbstractCSlidingTimeWindowTIPORule{
 	
 	public CSlidingTimeWindowTIPORule(){
-		super(CSlidingTimeWindowTIPORule.class.getName(), "Java");
+		super(CSlidingTimeWindowTIPORule.class.getName());
 	}
 	
 
