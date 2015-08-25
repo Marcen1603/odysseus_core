@@ -28,8 +28,7 @@ Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
 DynamicImport-Package: *
 Require-Bundle: de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.core
-Service-Component: OSGI-INF/OperatorRegistry.xml, OSGI-INF/ExecutorServiceBinding.xml,OSGI-INF/TargetPlatformRegistry.xml,OSGI-INF/ExecutorRegistry.xml,OSGI-INF/OperatorRuleRegistry.xml,
- OSGI-INF/CCSVFileSourceTargetplattform.xml
+Service-Component: OSGI-INF/ExecutorServiceBinding.xml,OSGI-INF/TargetPlatformRegistry.xml,OSGI-INF/ExecutorRegistry.xml,OSGI-INF/OperatorRuleRegistry.xml
 Export-Package: de.uniol.inf.is.odysseus.query.codegenerator.compiler,
  de.uniol.inf.is.odysseus.query.codegenerator.executor,
  de.uniol.inf.is.odysseus.query.codegenerator.executor.registry,
