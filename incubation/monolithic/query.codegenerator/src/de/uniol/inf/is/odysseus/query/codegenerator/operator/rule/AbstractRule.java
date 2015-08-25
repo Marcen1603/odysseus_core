@@ -59,7 +59,7 @@ public abstract class AbstractRule implements IOperatorRule {
     }
 
     private void initRule() {
-    	String targetPlattform = (String)this.context.getProperties().get("targetPlattform");
+    	String targetPlattform = (String)this.context.getProperties().get("targetPlatform");
     	setTragetPlattform(targetPlattform);
     }
 	
