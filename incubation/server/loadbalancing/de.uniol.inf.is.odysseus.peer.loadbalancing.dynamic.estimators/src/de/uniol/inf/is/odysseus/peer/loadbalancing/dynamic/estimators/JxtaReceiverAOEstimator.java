@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.estimators;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.estimators;
 
 import com.google.common.base.Optional;
 

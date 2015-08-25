@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.estimators;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.estimators;
 
 import de.uniol.inf.is.odysseus.costmodel.physical.StandardPhysicalOperatorEstimator;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
