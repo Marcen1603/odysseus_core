@@ -95,15 +95,16 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		this.readMetaData = po.readMetaData;
 	}
 
-	public AbstractAccessAO(Resource name, String wrapper,
-			String transportHandler, String protocolHandler,
+	public AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler,
 			String dataHandler, Map<String, String> optionsMap) {
 		setAccessAOName(name);
 		this.wrapper = wrapper;
 		this.transportHandler = transportHandler;
 		this.protocolHandler = protocolHandler;
 		this.dataHandler = dataHandler;
-		this.optionsMap.putAll(optionsMap);
+		if (optionsMap != null) {
+			this.optionsMap.putAll(optionsMap);
+		}
 	}
 
 	@Parameter(type = AccessAOSourceParameter.class, name = "source", optional = false, doc = "The name of the sourcetype to create.")
@@ -253,15 +254,15 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return outputSchema.get(3);
 	}
 
-	@Parameter(type = MetaAttributeParameter.class, name = "metaAttribute", isList = false, optional = true,possibleValues="getMetadataTypes", doc = "If set, this value overwrites the meta data created from this source.")
-	public void setLocalMetaAttribute(IMetaAttribute metaAttribute){
+	@Parameter(type = MetaAttributeParameter.class, name = "metaAttribute", isList = false, optional = true, possibleValues = "getMetadataTypes", doc = "If set, this value overwrites the meta data created from this source.")
+	public void setLocalMetaAttribute(IMetaAttribute metaAttribute) {
 		this.localMetaAttribute = metaAttribute;
 	}
-	
-	public List<String> getMetadataTypes(){
+
+	public List<String> getMetadataTypes() {
 		return new ArrayList<String>(MetadataRegistry.getNames());
 	}
-	
+
 	public IMetaAttribute getLocalMetaAttribute() {
 		return localMetaAttribute;
 	}
@@ -279,52 +280,52 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	public boolean getReadMetaData() {
 		return readMetaData();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		
+
 		SDFSchema schema = null;
 		Map<String, SDFConstraint> constraints = new HashMap<>();
-		
+
 		@SuppressWarnings("rawtypes")
-		Class<? extends IStreamObject> type = DataHandlerRegistry
-				.getCreatedType(dataHandler);
+		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(dataHandler);
 		if (type == null) {
 			type = Tuple.class;
 		}
-		
+
 		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-		
-		if (optionsMap.containsKey(SDFConstraint.BASE_TIME_UNIT)){
+
+		if (optionsMap.containsKey(SDFConstraint.BASE_TIME_UNIT)) {
 			String unit = optionsMap.get(SDFConstraint.BASE_TIME_UNIT);
 			TimeUnit btu = TimeUnit.valueOf(unit);
-			if (btu != null){
+			if (btu != null) {
 				timeUnit = btu;
-			}else{
-				throw new IllegalParameterException("Illegal time unit "+unit);
+			} else {
+				throw new IllegalParameterException("Illegal time unit " + unit);
 			}
 		}
-		constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT,timeUnit));
+		constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, timeUnit));
 
-		boolean strictOrder = false; 
-		if (optionsMap.containsKey(SDFConstraint.STRICT_ORDER)){
+		boolean strictOrder = false;
+		if (optionsMap.containsKey(SDFConstraint.STRICT_ORDER)) {
 			String sorder = optionsMap.get(SDFConstraint.STRICT_ORDER);
 			strictOrder = Boolean.parseBoolean(sorder);
 		}
-		
+
 		List<SDFAttribute> attributes = outputSchema.get(pos);
 		List<SDFAttribute> s2 = new ArrayList<>();
 		if (attributes != null && attributes.size() > 0) {
 			// Add source name to attributes
 			for (SDFAttribute a : attributes) {
 				SDFAttribute newAttr;
-				if (a.getDatatype() == SDFDatatype.START_TIMESTAMP || a.getDatatype() == SDFDatatype.START_TIMESTAMP_STRING){
+				if (a.getDatatype() == SDFDatatype.START_TIMESTAMP
+						|| a.getDatatype() == SDFDatatype.START_TIMESTAMP_STRING) {
 					List<SDFConstraint> c = new ArrayList<>();
 					c.add(new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, timeUnit));
 					SDFUnit unit = new SDFTimeUnit(timeUnit.toString());
 					newAttr = new SDFAttribute(getName(), a.getAttributeName(), a, unit, c);
-				}else{
+				} else {
 					newAttr = new SDFAttribute(getName(), a.getAttributeName(), a);
 				}
 				s2.add(newAttr);
@@ -333,18 +334,18 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		schema = SDFSchemaFactory.createNewSchema(getName(), (Class<? extends IStreamObject<?>>) type, s2);
 		schema = SDFSchemaFactory.createNewWithContraints(constraints, schema);
 		schema = SDFSchemaFactory.createNewWithStrictOrder(strictOrder, schema);
-		
-		// Add meta attributes. If is set in operator, this overwrites other options
-		IMetaAttribute metaAttribute = localMetaAttribute!=null?localMetaAttribute:getMetaAttribute();
-		
-		if (metaAttribute != null){
+
+		// Add meta attributes. If is set in operator, this overwrites other
+		// options
+		IMetaAttribute metaAttribute = localMetaAttribute != null ? localMetaAttribute : getMetaAttribute();
+
+		if (metaAttribute != null) {
 			List<SDFMetaSchema> metaSchema = metaAttribute.getSchema();
-			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);			
+			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
 			// Keep meta attribute!
 			this.localMetaAttribute = metaAttribute;
 		}
-		
-		
+
 		return schema;
 	}
 
@@ -393,5 +394,5 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	public boolean isSinkOperator() {
 		return false;
 	}
-	
+
 }
