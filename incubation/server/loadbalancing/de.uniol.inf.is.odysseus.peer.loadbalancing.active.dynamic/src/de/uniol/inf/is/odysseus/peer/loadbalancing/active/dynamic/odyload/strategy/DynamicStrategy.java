@@ -43,13 +43,13 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strate
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.SimulatedAnnealingQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer.QueryTransmissionHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.trigger.MonitoringThread;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.CalcLatencyPOTransformer;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.DataratePOTransformer;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SharedQueryIDModifier;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SinkTransformer;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SourceTransformer;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.TransformationHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.CalcLatencyPOTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.DataratePOTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SharedQueryIDModifier;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SinkTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SourceTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.TransformationHelper;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
@@ -208,7 +208,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 		// Add Shared QueryID to every Query if needed.
 		for (int queryID : queryIDs) {
 			SharedQueryIDModifier.addSharedQueryIDIfNeccessary(queryID,
-					getActiveSession());
+					getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getQueryPartController(),OsgiServiceProvider.getNetworkManager());
 		}
 
 		QueryCostMap chosenResult;
@@ -236,25 +236,25 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 				.getNetworkManager();
 
 		for (int queryID : failedQueries) {
-			if (TransformationHelper.hasRealSinks(queryID)) {
-				if(TransformationHelper.hasCalclatencyPOs(queryID)) {
+			if (TransformationHelper.hasRealSinks(queryID,OsgiServiceProvider.getExecutor())) {
+				if(TransformationHelper.hasCalclatencyPOs(queryID,OsgiServiceProvider.getExecutor())) {
 					LOG.debug("Found CalcLatencyPO in Query. Using CalcLatencyTransformer instead.");
-					CalcLatencyPOTransformer.replaceCalcLatencyPO(queryID, networkManager.getLocalPeerID(), getActiveSession());
+					CalcLatencyPOTransformer.replaceCalcLatencyPO(queryID, networkManager.getLocalPeerID(), getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getNetworkManager(),OsgiServiceProvider.getExcludedQueryRegistry(),OsgiServiceProvider.getQueryPartController());
 				}
 				else {
 					SinkTransformer.replaceSinks(queryID,
-							networkManager.getLocalPeerID(), getActiveSession());
+							networkManager.getLocalPeerID(), getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getNetworkManager(),OsgiServiceProvider.getExcludedQueryRegistry(),OsgiServiceProvider.getQueryPartController());
 				}
 				}
 			
-			if (TransformationHelper.hasRealSources(queryID)) {
-				if(TransformationHelper.hasDataratePOs(queryID)) {
+			if (TransformationHelper.hasRealSources(queryID,OsgiServiceProvider.getExecutor())) {
+				if(TransformationHelper.hasDataratePOs(queryID,OsgiServiceProvider.getExecutor())) {
 					LOG.debug("Found DataratePO in Query. Using DatarateTransformer instead.");
-					DataratePOTransformer.replaceDataratePOs(queryID, networkManager.getLocalPeerID(), getActiveSession());
+					DataratePOTransformer.replaceDataratePOs(queryID, networkManager.getLocalPeerID(), getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getNetworkManager(),OsgiServiceProvider.getExcludedQueryRegistry(),OsgiServiceProvider.getQueryPartController());
 				}
 				else {
 					SourceTransformer.replaceSources(queryID,
-							networkManager.getLocalPeerID(), getActiveSession());
+							networkManager.getLocalPeerID(), getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getNetworkManager(),OsgiServiceProvider.getExcludedQueryRegistry(),OsgiServiceProvider.getQueryPartController());
 				}
 			}
 		}

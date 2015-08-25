@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,8 +33,8 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
+import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 
 public class DataratePOTransformer {
@@ -46,9 +46,8 @@ public class DataratePOTransformer {
 			.getLogger(DataratePOTransformer.class);
 
 	@SuppressWarnings({ "rawtypes" })
-	public static void replaceDataratePOs(int queryID, PeerID localPeerID, ISession session) {
+	public static void replaceDataratePOs(int queryID, PeerID localPeerID, ISession session,IServerExecutor executor, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry,IQueryPartController queryPartController) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		LOG.debug("Replacing Sources for Query {}", queryID);
 		List<ISource> sources = Lists.newArrayList();
@@ -76,7 +75,7 @@ public class DataratePOTransformer {
 		for (ISource source : sources) {
 
 			replaceSubscriptionWithSenderAndReceiver(source, localPeerID,
-					queryID, session);
+					queryID, session,executor,networkManager,excludedQueriesRegistry,queryPartController);
 		}
 
 	}
@@ -84,14 +83,12 @@ public class DataratePOTransformer {
 
 	@SuppressWarnings({ "rawtypes" })
 	private static void replaceSubscriptionWithSenderAndReceiver(
-			ISource sourceOperator, PeerID peerID, int queryID,ISession session) {
+			ISource sourceOperator, PeerID peerID, int queryID,ISession session, IServerExecutor executor, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry,IQueryPartController queryPartController) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		IExcludedQueriesRegistry excludedQueryRegistry = OsgiServiceProvider.getExcludedQueryRegistry();
 		
-		ILogicalOperator logicalSource = TransformationHelper.getLogicalForPhysicalDatarateOperator(sourceOperator, queryID, session);
+		ILogicalOperator logicalSource = TransformationHelper.getLogicalForPhysicalDatarateOperator(sourceOperator, queryID, session,executor);
 
-		List<ControllablePhysicalSubscription> physicalSubscriptionsToReplace = TransformationHelper.getSubscriptionsToReplace(sourceOperator, queryID, false);
+		List<ControllablePhysicalSubscription> physicalSubscriptionsToReplace = TransformationHelper.getSubscriptionsToReplace(sourceOperator, queryID, false,executor);
 
 		List<IPhysicalOperator> newRoots = Lists.newArrayList();
 
@@ -108,7 +105,7 @@ public class DataratePOTransformer {
 			JxtaSenderAO senderAO = null;
 			ControllablePhysicalSubscription subscr = iter.next();
 
-			PipeID newPipe = IDFactory.newPipeID(OsgiServiceProvider.getNetworkManager().getLocalPeerGroupID());
+			PipeID newPipe = IDFactory.newPipeID(networkManager.getLocalPeerGroupID());
 
 			JxtaSenderPO senderPO = null;
 
@@ -116,7 +113,7 @@ public class DataratePOTransformer {
 
 				senderAO = TransformationHelper.createJxtaSenderAO(sourceOperator,peerID,newPipe);
 				//Using source name instead of "Datarate" to set Queryname ;)
-				Pair<Integer, IPhysicalOperator> queryIDSenderPair = TransformationHelper.createNewQueryWithFromLogicalOperator(senderAO, queryID,  session,logicalSource.getSubscribedToSource(0).getTarget().getName());
+				Pair<Integer, IPhysicalOperator> queryIDSenderPair = TransformationHelper.createNewQueryWithFromLogicalOperator(senderAO, queryID,  session,logicalSource.getSubscribedToSource(0).getTarget().getName(),executor);
 				newQueryID = queryIDSenderPair.getE1();
 				senderPO = (JxtaSenderPO)queryIDSenderPair.getE2();
 				firstSubscription = false;
@@ -125,7 +122,7 @@ public class DataratePOTransformer {
 				senderAO = TransformationHelper.createJxtaSenderAO(sourceOperator, peerID, newPipe);
 				try {
 					senderPO = new JxtaSenderPO(senderAO);
-					OsgiServiceProvider.getExecutor().getExecutionPlan().getQueryById(newQueryID)
+					executor.getExecutionPlan().getQueryById(newQueryID)
 							.addChild(senderPO);
 					addedSenders.add(senderAO);
 				} catch (DataTransmissionException e) {
@@ -151,13 +148,13 @@ public class DataratePOTransformer {
 				ILogicalOperator oldTop = executor.getLogicalQueryById(queryID, session).getLogicalPlan();
 				Collection<ILogicalOperator> oldRoots = getRootsFromTopAO(oldTop);
 				
-				TransformationHelper.modifyLogicalQuery(logicalSource, senderAO, receiverAO, subscr, newQueryID, queryID, addedSenders, oldRoots,  session,false);
+				TransformationHelper.modifyLogicalQuery(logicalSource, senderAO, receiverAO, subscr, newQueryID, queryID, addedSenders, oldRoots,  session,false,executor);
 			} else {
 				LOG.warn("Could not find logical Sink to physical Sink {}",
 						sourceOperator.getName());
 			}
 			
-			TransformationHelper.modifyPhyiscalQuery((ISink)subscr.getTarget(),sourceOperator, newQueryID,  session,newRoots, iter, subscr, receiverPO, senderPO,true);
+			TransformationHelper.modifyPhyiscalQuery((ISink)subscr.getTarget(),sourceOperator, newQueryID,  session,newRoots, iter, subscr, receiverPO, senderPO,true,executor);
 			
 			if(!iter.hasNext()) {
 				//Set last root manually.
@@ -170,10 +167,10 @@ public class DataratePOTransformer {
 		}
 
 		reorganizeRootsOfQuery(newQueryID, queryID, newRoots,
-				session,sourceOperator);
+				session,sourceOperator,executor);
 
-		addNewQueryToSharedQuery(queryID, session,newQueryID);
-		excludedQueryRegistry.excludeQueryIdFromLoadBalancing(newQueryID);
+		addNewQueryToSharedQuery(queryID, session,newQueryID,executor,queryPartController);
+		excludedQueriesRegistry.excludeQueryIdFromLoadBalancing(newQueryID);
 
 	}
 
@@ -192,8 +189,7 @@ public class DataratePOTransformer {
 	
 
 	@SuppressWarnings("rawtypes")
-	private static void reorganizeRootsOfQuery(int sourceSideQueryID, int sinkSideQueryID, List<IPhysicalOperator> newRoots, ISession session,ISource sourceOperator) {
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+	private static void reorganizeRootsOfQuery(int sourceSideQueryID, int sinkSideQueryID, List<IPhysicalOperator> newRoots, ISession session,ISource sourceOperator,IServerExecutor executor) {
 		
 		IPhysicalQuery sourceSideQuery = executor.getExecutionPlan().getQueryById(sourceSideQueryID);
 		List<IOperatorOwner> ownerList = new ArrayList<IOperatorOwner>();
@@ -203,10 +199,8 @@ public class DataratePOTransformer {
 		executor.getExecutionPlan().getQueryById(sourceSideQueryID).setRoots(newRoots);
 	}
 	
-	private static void addNewQueryToSharedQuery(int queryID,ISession session, int newQueryID) {
+	private static void addNewQueryToSharedQuery(int queryID,ISession session, int newQueryID, IServerExecutor executor, IQueryPartController queryPartController) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		IQueryPartController queryPartController = OsgiServiceProvider.getQueryPartController();
 		
 		//Add query to (newly created) shared query.
 		ID sharedQueryID = queryPartController.getSharedQueryID(queryID);

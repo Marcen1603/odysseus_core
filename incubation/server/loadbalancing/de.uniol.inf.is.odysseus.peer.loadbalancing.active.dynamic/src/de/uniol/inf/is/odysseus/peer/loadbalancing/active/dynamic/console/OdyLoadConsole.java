@@ -37,14 +37,14 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strate
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.GreedyQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.QueryCostMap;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.SimulatedAnnealingQuerySelector;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.CalcLatencyPOTransformer;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.DataratePOTransformer;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SharedQueryIDModifier;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SinkTransformer;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.SourceTransformer;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing.TransformationHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingAllocatorRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingStrategyRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.CalcLatencyPOTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.DataratePOTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SharedQueryIDModifier;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SinkTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SourceTransformer;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.TransformationHelper;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public class OdyLoadConsole implements CommandProvider {
@@ -77,12 +77,12 @@ public class OdyLoadConsole implements CommandProvider {
 			return;
 		}
 		
-		if(TransformationHelper.hasDataratePOs(localQueryID)) {
+		if(TransformationHelper.hasDataratePOs(localQueryID,OsgiServiceProvider.getExecutor())) {
 			ci.println("Query has DataratePOs. Using Datarate Transformer instead.");
-			DataratePOTransformer.replaceDataratePOs(localQueryID, getLocalPeerID(), getActiveSession());
+			DataratePOTransformer.replaceDataratePOs(localQueryID, getLocalPeerID(), getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getNetworkManager(),OsgiServiceProvider.getExcludedQueryRegistry(),OsgiServiceProvider.getQueryPartController());
 		}
 		else {
-			SourceTransformer.replaceSources(localQueryID, getLocalPeerID(), getActiveSession());
+			SourceTransformer.replaceSources(localQueryID, getLocalPeerID(), getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getNetworkManager(),OsgiServiceProvider.getExcludedQueryRegistry(),OsgiServiceProvider.getQueryPartController());
 		}
 		ci.println("Done.");
 	}
@@ -99,12 +99,12 @@ public class OdyLoadConsole implements CommandProvider {
 			return;
 		}
 		
-		if(TransformationHelper.hasDataratePOs(localQueryID)) {
+		if(TransformationHelper.hasDataratePOs(localQueryID,OsgiServiceProvider.getExecutor())) {
 			ci.println("Query has CalcLatencyPOs. Using CalcLatency Transformer instead.");
-			CalcLatencyPOTransformer.replaceCalcLatencyPO(localQueryID, getLocalPeerID(), getActiveSession());
+			CalcLatencyPOTransformer.replaceCalcLatencyPO(localQueryID, getLocalPeerID(), getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getNetworkManager(),OsgiServiceProvider.getExcludedQueryRegistry(),OsgiServiceProvider.getQueryPartController());
 		}
 		else {
-			SinkTransformer.replaceSinks(localQueryID, getLocalPeerID(), getActiveSession());
+			SinkTransformer.replaceSinks(localQueryID, getLocalPeerID(), getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getNetworkManager(),OsgiServiceProvider.getExcludedQueryRegistry(),OsgiServiceProvider.getQueryPartController());
 		}
 		ci.println("Done.");
 	}
@@ -120,7 +120,7 @@ public class OdyLoadConsole implements CommandProvider {
 			return;
 		}
 		
-		SharedQueryIDModifier.addSharedQueryIDIfNeccessary(localQueryID,getActiveSession());
+		SharedQueryIDModifier.addSharedQueryIDIfNeccessary(localQueryID,getActiveSession(),OsgiServiceProvider.getExecutor(),OsgiServiceProvider.getQueryPartController(),OsgiServiceProvider.getNetworkManager());
 		ci.println("Done.");
 	}
 	

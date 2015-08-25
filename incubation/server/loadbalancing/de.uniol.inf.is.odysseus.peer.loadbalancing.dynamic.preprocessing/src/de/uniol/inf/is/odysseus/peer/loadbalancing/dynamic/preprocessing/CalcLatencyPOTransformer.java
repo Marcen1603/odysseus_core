@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +34,6 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
@@ -49,9 +48,8 @@ public class CalcLatencyPOTransformer {
 
 	@SuppressWarnings({ "rawtypes" })
 	public static void replaceCalcLatencyPO(int queryID, PeerID localPeerID,
-			ISession session) {
+			ISession session, IServerExecutor executor, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry,IQueryPartController queryPartController) {
 
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 
 		LOG.debug("Replacing Sinks for Query {}", queryID);
 		List<ISink> sinks = Lists.newArrayList();
@@ -79,25 +77,20 @@ public class CalcLatencyPOTransformer {
 		for (ISink sink : sinks) {
 
 			replaceSubscriptionWithSenderAndReceiver(sink, localPeerID,
-					queryID, session);
+					queryID, session,executor,networkManager,excludedQueriesRegistry,queryPartController);
 		}
 
 	}
 
 	@SuppressWarnings({ "rawtypes" })
 	private static void replaceSubscriptionWithSenderAndReceiver(
-			ISink sinkOperator, PeerID peerID, int queryID, ISession session) {
-
-		IP2PNetworkManager networkManager = OsgiServiceProvider
-				.getNetworkManager();
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		IExcludedQueriesRegistry excludedQueriesRegistry = OsgiServiceProvider.getExcludedQueryRegistry();
+			ISink sinkOperator, PeerID peerID, int queryID, ISession session, IServerExecutor executor, IP2PNetworkManager networkManager, IExcludedQueriesRegistry excludedQueriesRegistry,IQueryPartController queryPartController) {
 
 		ILogicalOperator logicalSink = TransformationHelper
-				.getLogicalSinkToPhysicalSink(sinkOperator, queryID, session);
+				.getLogicalSinkToPhysicalSink(sinkOperator, queryID, session,executor);
 
 		List<ControllablePhysicalSubscription> physicalSubscriptionsToReplace = getSubscriptionsToReplace(
-				sinkOperator, queryID);
+				sinkOperator, queryID,executor);
 
 		List<IPhysicalOperator> newRoots = Lists.newArrayList();
 
@@ -124,7 +117,7 @@ public class CalcLatencyPOTransformer {
 						sinkOperator, peerID, newPipe, subscr.getSchema());
 				Pair<Integer, IPhysicalOperator> queryIdReceiverPair = TransformationHelper
 						.createNewQueryWithFromLogicalOperator(receiverAO,
-								queryID, session, logicalSink.getName());
+								queryID, session, logicalSink.getName(),executor);
 				newQueryID = queryIdReceiverPair.getE1();
 				receiverPO = (JxtaReceiverPO) queryIdReceiverPair.getE2();
 				firstSubscription = false;
@@ -170,7 +163,7 @@ public class CalcLatencyPOTransformer {
 				newRootsSinkSide.add(realSink);
 				TransformationHelper.modifyLogicalQuery(logicalSink, senderAO,
 						receiverAO, subscr, queryID, newQueryID, addedSenders,
-						newRootsSinkSide, session, true);
+						newRootsSinkSide, session, true,executor);
 			} else {
 				LOG.warn("Could not find logical Sink to physical Sink {}",
 						sinkOperator.getName());
@@ -182,7 +175,7 @@ public class CalcLatencyPOTransformer {
 					.modifyPhyiscalQuery(sinkOperator,
 							(ISource) subscr.getTarget(), queryID, session,
 							newRoots, iter, sourceToSinkSubscription,
-							receiverPO, senderPO, false);
+							receiverPO, senderPO, false,executor);
 
 			// Set last root manually.
 			if (!iter.hasNext()) {
@@ -192,16 +185,16 @@ public class CalcLatencyPOTransformer {
 		}
 
 		reorganizeRootsOfQuery(sinkOperator, queryID, newRoots, newQueryID,
-				session);
+				session, executor);
 
-		addNewQueryToSharedQuery(queryID, session, newQueryID);
+		addNewQueryToSharedQuery(queryID, session, newQueryID,executor,queryPartController);
 		excludedQueriesRegistry.excludeQueryIdFromLoadBalancing(newQueryID);
 
 	}
 
 	@SuppressWarnings("rawtypes")
 	private static void reorganizeRootsOfQuery(ISink calcLatencyOpAsSink, int queryID,
-			List<IPhysicalOperator> newRoots, int newQueryID, ISession session) {
+			List<IPhysicalOperator> newRoots, int newQueryID, ISession session, IServerExecutor executor) {
 
 		CalcLatencyPO calcLatencyOp = (CalcLatencyPO)calcLatencyOpAsSink;
 		
@@ -216,7 +209,6 @@ public class CalcLatencyPOTransformer {
 			sinkOperator = (ISink)((ISubscription)subscrObj).getTarget();
 		}
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 
 		IPhysicalQuery newQueryWithSink = executor.getExecutionPlan()
 				.getQueryById(newQueryID);
@@ -242,10 +234,7 @@ public class CalcLatencyPOTransformer {
 	}
 
 	private static void addNewQueryToSharedQuery(int queryID, ISession session,
-			int newQueryID) {
-		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		IQueryPartController queryPartController = OsgiServiceProvider.getQueryPartController();
+			int newQueryID,IServerExecutor executor, IQueryPartController queryPartController) {
 		
 		// Add query to (newly created) shared query.
 		ID sharedQueryID = queryPartController.getSharedQueryID(queryID);
@@ -260,9 +249,8 @@ public class CalcLatencyPOTransformer {
 
 	@SuppressWarnings("rawtypes")
 	private static List<ControllablePhysicalSubscription> getSubscriptionsToReplace(
-			ISink sinkOperator, int queryID) {
+			ISink sinkOperator, int queryID,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		List<ControllablePhysicalSubscription> subscriptionsToReplace = Lists
 				.newArrayList();

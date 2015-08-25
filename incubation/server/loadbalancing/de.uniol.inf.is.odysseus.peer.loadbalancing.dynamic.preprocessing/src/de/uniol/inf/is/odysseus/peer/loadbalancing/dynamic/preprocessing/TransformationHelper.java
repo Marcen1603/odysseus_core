@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.preprocessing;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,7 +44,6 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 
 public class TransformationHelper {
 	
@@ -81,9 +80,8 @@ public class TransformationHelper {
 		return false;
 	}
 	
-	public static boolean hasRealSources(int queryID) {
+	public static boolean hasRealSources(int queryID,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
 		for(IPhysicalOperator op : physicalOps) {
@@ -93,9 +91,8 @@ public class TransformationHelper {
 		return false;
 	}
 	
-	public static boolean hasRealSinks(int queryID) {
+	public static boolean hasRealSinks(int queryID,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
 		for(IPhysicalOperator op : physicalOps) {
@@ -149,9 +146,8 @@ public class TransformationHelper {
 	
 
 	public static ILogicalOperator getLogicalSourceToPhysicalSource(
-			IPhysicalOperator sourceOperator, int queryID,ISession session) {
+			IPhysicalOperator sourceOperator, int queryID,ISession session,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryID,
 				session);
@@ -182,8 +178,7 @@ public class TransformationHelper {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public static ILogicalOperator getLogicalForPhysicalDatarateOperator(IPhysicalOperator datarateOp, int queryID,ISession session) {
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+	public static ILogicalOperator getLogicalForPhysicalDatarateOperator(IPhysicalOperator datarateOp, int queryID,ISession session,IServerExecutor executor) {
 		
 		ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryID,
 				session);
@@ -210,9 +205,8 @@ public class TransformationHelper {
 	
 
 	
-	public static ILogicalOperator getLogicalSinkToPhysicalSink(IPhysicalOperator sinkOperator,int queryID,ISession session) {
+	public static ILogicalOperator getLogicalSinkToPhysicalSink(IPhysicalOperator sinkOperator,int queryID,ISession session,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryID, session);
 		List<ILogicalOperator> operatorsInLogicalQuery = Lists.newArrayList();
@@ -240,9 +234,8 @@ public class TransformationHelper {
 	 * @param session
 	 * @return
 	 */
-	public static ILogicalOperator getLogicalCalcLatencyOperatorToPhysicalCalcLatencyOperator(IPhysicalOperator calclatencyOp,int queryID,ISession session) {
+	public static ILogicalOperator getLogicalCalcLatencyOperatorToPhysicalCalcLatencyOperator(IPhysicalOperator calclatencyOp,int queryID,ISession session,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		ILogicalQuery logicalQuery = executor.getLogicalQueryById(queryID, session);
 		List<ILogicalOperator> operatorsInLogicalQuery = Lists.newArrayList();
@@ -261,8 +254,7 @@ public class TransformationHelper {
 		return sink;
 	}
 	
-	public static boolean hasDataratePOs(int queryID) {
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
+	public static boolean hasDataratePOs(int queryID,IServerExecutor executor) {
 		
 		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
 		for(IPhysicalOperator op : physicalOps) {
@@ -273,9 +265,7 @@ public class TransformationHelper {
 	}
 	
 
-	public static boolean hasCalclatencyPOs(int queryID) {
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
-		
+	public static boolean hasCalclatencyPOs(int queryID,IServerExecutor executor) {
 		Set<IPhysicalOperator> physicalOps = executor.getExecutionPlan().getQueryById(queryID).getAllOperators();
 		for(IPhysicalOperator op : physicalOps) {
 			if(op instanceof CalcLatencyPO)
@@ -287,9 +277,8 @@ public class TransformationHelper {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List<ControllablePhysicalSubscription> getSubscriptionsToReplace(
-			IPhysicalOperator operator, int queryID, boolean isSink) {
+			IPhysicalOperator operator, int queryID, boolean isSink,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		List<ControllablePhysicalSubscription> subscriptionsToReplace = Lists
 				.newArrayList();
@@ -319,9 +308,8 @@ public class TransformationHelper {
 	}
 	
 
-	public static IPhysicalOperator getFirstPhysicalRootOfQuery(int queryId) {
+	public static IPhysicalOperator getFirstPhysicalRootOfQuery(int queryId,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		return executor.getExecutionPlan().getQueryById(queryId).getRoots().get(0);
 	}
@@ -329,9 +317,8 @@ public class TransformationHelper {
 
 	public static Pair<Integer, IPhysicalOperator> createNewQueryWithFromLogicalOperator(
 			ILogicalOperator operator, int oldQueryID,
-			ISession session, String queryNamePostfix) {
+			ISession session, String queryNamePostfix,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 
 		ILogicalQuery logicalQuery = executor.getLogicalQueryById(oldQueryID,
 				session);
@@ -351,7 +338,7 @@ public class TransformationHelper {
 				.getBuildConfigForQuery(logicalQuery).getName(), settings);
 
 		//As there is only ONE Op -> we return this as Operator
-		return new Pair<Integer, IPhysicalOperator>(queryIdForNewQuery, TransformationHelper.getFirstPhysicalRootOfQuery(queryIdForNewQuery));
+		return new Pair<Integer, IPhysicalOperator>(queryIdForNewQuery, TransformationHelper.getFirstPhysicalRootOfQuery(queryIdForNewQuery,executor));
 	}
 	
 
@@ -434,9 +421,8 @@ public class TransformationHelper {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public static void modifyLogicalQuery(ILogicalOperator operator,JxtaSenderAO jxtaSender,JxtaReceiverAO jxtaReceiver, ISubscription subscription,int sourceQueryID,int sinkQueryID,Collection<ILogicalOperator> newRootsSourceSide,Collection<ILogicalOperator> newRootsSinkSide,ISession session, boolean reverseSubscription) {
+	public static void modifyLogicalQuery(ILogicalOperator operator,JxtaSenderAO jxtaSender,JxtaReceiverAO jxtaReceiver, ISubscription subscription,int sourceQueryID,int sinkQueryID,Collection<ILogicalOperator> newRootsSourceSide,Collection<ILogicalOperator> newRootsSinkSide,ISession session, boolean reverseSubscription,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		ISubscription logicalSubscription = TransformationHelper.getLogicalForPhysicalSubscription(operator, subscription,reverseSubscription);
 		
@@ -551,9 +537,8 @@ public class TransformationHelper {
 	@SuppressWarnings("rawtypes")
 	public static void modifyPhyiscalQuery(ISink sinkOperator,ISource sourceOperator, int sourceSideQueryID, ISession session,List<IPhysicalOperator> newRoots,Iterator<ControllablePhysicalSubscription> iter,
 			ISubscription subscr, JxtaReceiverPO receiverPO,
-			JxtaSenderPO senderPO, boolean openReceivers) {
+			JxtaSenderPO senderPO, boolean openReceivers,IServerExecutor executor) {
 		
-		IServerExecutor executor = OsgiServiceProvider.getExecutor();
 		
 		TransformationHelper.replacePhysicalConnectionWithSenderReceiverPair(sourceOperator, sinkOperator, subscr, senderPO, receiverPO,openReceivers);
 		
