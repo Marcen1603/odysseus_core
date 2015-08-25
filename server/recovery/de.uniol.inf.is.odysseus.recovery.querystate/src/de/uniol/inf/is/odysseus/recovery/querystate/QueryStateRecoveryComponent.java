@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.recovery.querystate;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
@@ -25,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.AbstractRecoveryExecutor;
-import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.AbstractQueryStateInfo;
@@ -57,8 +54,8 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
  *
  */
 @SuppressWarnings(value = { "nls" })
-public class QueryStateRecoveryComponent implements IRecoveryComponent, IQueryAddedListener, ICrashDetectionListener,
-		IDataDictionaryListener, IPlanModificationListener {
+public class QueryStateRecoveryComponent
+		implements IQueryAddedListener, ICrashDetectionListener, IDataDictionaryListener, IPlanModificationListener {
 
 	/*
 	 * XXX QueryStateRecoveryComponent-Optimization: For now, this component
@@ -224,30 +221,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent, IQueryAd
 	@Override
 	public void dataDictionaryChanged(IDataDictionary sender) {
 		// Nothing to do.
-	}
-
-	@Override
-	public String getName() {
-		return "Query State";
-	}
-
-	/**
-	 * Global recovery component. Not to be called for certain queries.
-	 */
-	@Override
-	public List<ILogicalQuery> recover(QueryBuildConfiguration qbConfig, ISession caller, List<ILogicalQuery> queries) {
-		// Nothing to do.
-		return queries;
-	}
-
-	/**
-	 * Global recovery component. Not to be called for certain queries.
-	 */
-	@Override
-	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
-			List<ILogicalQuery> queries) {
-		// Nothing to do.
-		return queries;
 	}
 
 	/**
@@ -545,11 +518,6 @@ public class QueryStateRecoveryComponent implements IRecoveryComponent, IQueryAd
 			// case UNDEF:
 			executor.removeQuery(queryID, caller);
 		}
-	}
-
-	@Override
-	public IRecoveryComponent newInstance(Properties config) {
-		return new QueryStateRecoveryComponent();
 	}
 
 }
