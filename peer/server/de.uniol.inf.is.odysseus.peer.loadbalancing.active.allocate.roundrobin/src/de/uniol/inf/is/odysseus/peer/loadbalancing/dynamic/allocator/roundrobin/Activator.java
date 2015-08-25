@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.allocate.roundrobin;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.roundrobin;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
