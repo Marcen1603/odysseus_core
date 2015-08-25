@@ -45,11 +45,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.mep.impl.ParseException;
 import de.uniol.inf.is.odysseus.relational.base.predicate.TypeSafeRelationalPredicate;
 import de.uniol.inf.is.odysseus.sparql.datamodel.INode;
 import de.uniol.inf.is.odysseus.sparql.datamodel.Triple;
 import de.uniol.inf.is.odysseus.sparql.datamodel.Variable;
-import de.uniol.inf.is.odysseus.sparql.logicaloperator.DuplicateElimination;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatchingAO;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTAdditiveExpression;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTAggregation;
@@ -449,9 +449,10 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 				inputForProjection.getOutputSchema());
 
 		if (node.isDistinct()) {
-			ILogicalOperator duplAO = new DuplicateElimination();
-			duplAO.subscribeToSource(logOp, 0, 0, logOp.getOutputSchema());
-			logOp = duplAO;
+			throw new RuntimeException("Distinct currently not implemented!");
+//			ILogicalOperator duplAO = new DuplicateElimination();
+//			duplAO.subscribeToSource(logOp, 0, 0, logOp.getOutputSchema());
+//			logOp = duplAO;
 		}
 
 		// if result has to be written into file
