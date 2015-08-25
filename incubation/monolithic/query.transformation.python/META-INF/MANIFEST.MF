@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Python.incubation
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.transformation.python
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.query.codegenerator.python
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.query.transformation.python.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.query.codegenerator.python.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
- de.uniol.inf.is.odysseus.query.transformation.compiler,
- de.uniol.inf.is.odysseus.query.transformation.java.operator.rules,
- de.uniol.inf.is.odysseus.query.transformation.modell,
- de.uniol.inf.is.odysseus.query.transformation.target.platform,
+ de.uniol.inf.is.odysseus.query.codegenerator.compiler,
+ de.uniol.inf.is.odysseus.query.codegenerator.java.operator.rules,
+ de.uniol.inf.is.odysseus.query.codegenerator.modell,
+ de.uniol.inf.is.odysseus.query.codegenerator.target.platform,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server

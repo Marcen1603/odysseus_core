@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.query.transformation.python.operator.rules.CAggregateTIPORule">
-   <implementation class="de.uniol.inf.is.odysseus.query.transformation.java.operator.rules.CAggregateTIPORule"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.query.codegenerator.python.operator.rules.CAggregateTIPORule">
+   <implementation class="de.uniol.inf.is.odysseus.query.codegenerator.java.operator.rules.CAggregateTIPORule"/>
    <property name="targetPlattform" type="String" value="python"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.query.transformation.operator.rule.IOperatorRule"/>
+      <provide interface="de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule"/>
    </service>
 </scr:component>
