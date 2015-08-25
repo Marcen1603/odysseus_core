@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.map;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -59,7 +58,7 @@ public class ScreenManager {
 	private ITimeInterval interval;
 	private ITimeInterval maxInterval;
 
-	private ArrayList<LayerUpdater> connections;
+	private LayerUpdater connection;
 
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private MapMouseListener mouseListener;
@@ -96,7 +95,6 @@ public class ScreenManager {
 		if (this.crs != null)
 			this.crs.getProjection().project(new ProjCoordinate(0, 0), p);
 		setCenterUV((int) (p.x / scale), (int) (p.y / scale));
-		connections = new ArrayList<LayerUpdater>();
 	}
 
 	public void setSRID(int srid) {
@@ -218,6 +216,10 @@ public class ScreenManager {
 	public ScreenTransformation getTransformation() {
 		return transformation;
 	}
+	
+	public MapDashboardPart getMapDashboardPart(){
+		return mapDashboardPart;
+	}
 
 	public Rectangle getMouseSelection() {
 		return mouseListener.getSelection();
@@ -276,7 +278,6 @@ public class ScreenManager {
 	public void setIntervalStart(PointInTime intervalStart) {
 		PointInTime oldIntervalStart = this.interval.getStart();
 		this.interval.setStart(intervalStart);
-		System.out.println(this.interval);
 		this.pcs.firePropertyChange("intervalStart", oldIntervalStart, this.interval.getStart());
 	}
 
@@ -287,7 +288,6 @@ public class ScreenManager {
 	public void setIntervalEnd(PointInTime intervalEnd) {
 		PointInTime oldIntervalEnd = this.interval.getEnd();
 		this.interval.setEnd(intervalEnd);
-		System.out.println(this.interval);
 		this.pcs.firePropertyChange("intervalEnd", oldIntervalEnd, this.interval.getEnd());
 	}
 
@@ -429,31 +429,18 @@ public class ScreenManager {
 	}
 
 	/**
-	 * Adds a connection (as a layerUpdater) e.g. important for the timeslider
+	 * Adds a connection (as a layerUpdater) e.g. important for the time slider
 	 * 
 	 * @param connection
 	 */
 	public void addConnection(LayerUpdater connection) {
-		connections.add(connection);
+		this.connection = connection;
+	}
+	
+	public LayerUpdater getConnection()	{
+		return this.connection;
 	}
 
-	/**
-	 * Returns a list of all connections (as layerUpdaters)
-	 * 
-	 * @return
-	 */
-	public ArrayList<LayerUpdater> getConnections() {
-		return connections;
-	}
-
-	/**
-	 * Removes a connection (LayerUpdater) from the list
-	 * 
-	 * @param connection
-	 */
-	public void removeConnection(LayerUpdater connection) {
-		connections.remove(connection);
-	}
 
 	private class Renderer implements Runnable {
 

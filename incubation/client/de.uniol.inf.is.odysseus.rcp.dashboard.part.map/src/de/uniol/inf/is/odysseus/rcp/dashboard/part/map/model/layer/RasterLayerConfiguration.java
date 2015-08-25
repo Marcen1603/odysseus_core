@@ -10,6 +10,7 @@ public class RasterLayerConfiguration extends LayerConfiguration {
 	private static final long serialVersionUID = -1186631268002859663L;
 	
 	private String url = null;
+	private int urlNumber = 0;
 	private String format = "RESTFUL Tile Server";
 	private int minZoom = 0;
 	private int maxZoom = 0;
@@ -108,6 +109,14 @@ public class RasterLayerConfiguration extends LayerConfiguration {
 	public void setCoverageGeographic(double minX, double maxX, double minY, double maxY) {
 		this.coverageGeographic = new Envelope(minX, maxX, minY, maxY);
 		this.coverageProjected = null;
+	}
+	
+	public void setUrlNumber(int number){
+		urlNumber = number;
+	}
+	
+	public int getUrlNumber(){
+		return urlNumber;
 	}
 
 }

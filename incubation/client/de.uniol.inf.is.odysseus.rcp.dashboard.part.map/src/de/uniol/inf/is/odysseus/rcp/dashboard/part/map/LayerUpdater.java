@@ -18,9 +18,7 @@ import com.vividsolutions.jts.index.quadtree.Quadtree;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 
@@ -48,8 +46,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements  Serializable, Pr
 
 		this.puffer = new DefaultTISweepArea<Tuple<? extends ITimeInterval>>();
 		
-		//TODO GET THIS FROM MAP DASHBOARDPART 
-		maxNumerOfElements = 10000;
+		maxNumerOfElements = 10;
 
 	}
 	
@@ -85,7 +82,8 @@ public class LayerUpdater extends ArrayList<ILayer> implements  Serializable, Pr
 				this.index = new HashMap<Integer, Quadtree>(this.index.size());
 			}
 		}
-
+		
+		
 		// Maybe in the time the user-defined were too many tuples
 		// then delete the oldest tuples, so we prevent an overflow
 		while (puffer.size() > maxNumerOfElements) {
@@ -105,7 +103,11 @@ public class LayerUpdater extends ArrayList<ILayer> implements  Serializable, Pr
 			// is in this time-window, more than one element will
 			// be deleted.
 			if( deleteTime != null ) {
-				puffer.purgeElementsBefore(deleteTime.plus(1));
+				if(deleteTime.isInfinite()){
+					puffer.remove(elementList.get(0));
+				}else{
+					puffer.purgeElementsBefore(deleteTime.plus(1));
+				}
 			}
 
 			// Update "current-list", timeSlider and all the other things which

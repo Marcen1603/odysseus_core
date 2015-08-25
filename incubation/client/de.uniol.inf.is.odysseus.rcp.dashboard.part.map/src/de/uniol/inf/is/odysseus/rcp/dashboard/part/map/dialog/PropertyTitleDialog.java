@@ -71,8 +71,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		configContainer.setLayout(DialogUtils.getGroupLayout());
 		configContainer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 
-		getRasterLayerConfigurationComposite(configContainer);
-
+		//getRasterLayerConfigurationComposite(configContainer);
+		getThematicConfiguration(configContainer);
 		DialogUtils.separator(parent);
 
 		DialogUtils.getFlexArea(parent);
@@ -105,7 +105,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		final Combo layerTypesCombo = new Combo(typeSelection, SWT.DROP_DOWN);
 		layerTypesCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		layerTypesCombo.setItems(types);
-		layerTypesCombo.select(1);//Map
+		layerTypesCombo.select(2);//Map
 		layerTypesCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -116,7 +116,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 						}
 						createNullConfiguration();
 						configContainer.redraw();
-						main.layout(true);
+						main.layout();
 						layerType = "Basic";
 					}
 				} else
@@ -128,7 +128,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 						}
 						getRasterLayerConfigurationComposite(configContainer);
 						configContainer.redraw();
-						main.layout(true);
+						configContainer.layout();
 						layerType = "RasterLayer";
 					}
 				} else if (layerTypesCombo.getText().equals("ThematicLayer")) {
@@ -137,9 +137,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 							c.dispose();
 						}
 						getThematicConfiguration(configContainer);
-						configContainer.layout(true);
 						configContainer.redraw();
-						main.layout(true);
+						configContainer.layout();
 						layerType = "ThematicLayer";
 					}
 				}
@@ -204,6 +203,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		}
 		server.select(1);// .setText("http://oatile2.mqcdn.com/tiles/1.0.0/osm/");
 		layerConfiguration.setUrl(server.getText());
+		layerConfiguration.setUrlNumber(server.getSelectionIndex());
 		ownProperties.getTileServer(server.getSelectionIndex(), layerConfiguration);
 
 		return rasterLayerComp;

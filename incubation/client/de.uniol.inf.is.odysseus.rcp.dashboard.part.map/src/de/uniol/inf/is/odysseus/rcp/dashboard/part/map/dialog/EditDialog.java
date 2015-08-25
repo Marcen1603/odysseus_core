@@ -37,7 +37,6 @@ public class EditDialog extends TitleAreaDialog {
 	private Composite configContainer;
 	private Composite main;
 
-	private String layerType;
 	private Text layerName;
 	private CCombo server = null;
 	private int layerPosition;
@@ -48,7 +47,6 @@ public class EditDialog extends TitleAreaDialog {
 			LayerConfiguration layerConfiguration, int layerPosition) {
 		super(parentShell);
 		this.layerOrder = layerOrder;
-		this.layerType = "Map";
 		this.ownProperties = new OwnProperties();
 		this.layerConfiguration = layerConfiguration;
 		this.layerPosition = layerPosition;
@@ -99,57 +97,6 @@ public class EditDialog extends TitleAreaDialog {
 		layerName.setLayoutData(DialogUtils.getTextDataLayout());
 		layerName.setText(layerConfiguration.getName());
 
-		Label layerTypelabel = new Label(layerConfigurationComp, SWT.FLAT);
-		layerTypelabel.setText("Type:");
-
-
-		final Composite typeSelection = new Composite(layerConfigurationComp, SWT.NONE);
-		typeSelection.setLayout(DialogUtils.getGroupLayout());
-		typeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
-
-		String[] types = { "Map", "HeatMap" };
-		final Combo layerTypesCombo = new Combo(typeSelection, SWT.DROP_DOWN);
-		layerTypesCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		layerTypesCombo.setItems(types);
-		layerTypesCombo.select(0);// Map
-		layerTypesCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-				if ((layerTypesCombo.getText().equals("Map"))) {
-					if (!(layerType.equals("Map"))) {
-						for(Control c: configContainer.getChildren()){
-							c.dispose();
-						}
-						getRasterLayerConfigurationComposite(configContainer);
-						configContainer.redraw();
-						main.layout(true);
-						layerType = "Map";
-					}
-				} else if (layerTypesCombo.getText().equals("HeatMap")) {
-					if (!(layerType.equals("HeatMap"))) {
-						for(Control c: configContainer.getChildren()){
-							c.dispose();
-						}
-						//getRasterLayerConfigurationComposite(configContainer);
-						configContainer.redraw();
-						main.layout(true);
-						layerType = "HeatMap";
-					}
-				}
-			}
-		});
-				// if (((Button) e.widget).getText().endsWith("Thematic")) {
-				// if (!(layerType.equals("ThematicLayer"))) {
-				// configContainer.getChildren()[0].dispose();
-				// getThematicConfiguration(configContainer);
-				// configContainer.layout(true);
-				// configContainer.redraw();
-				// main.layout(true);
-				// layerType = "ThematicLayer";
-				// }
-				// }
-				
 
 		Label layerPlaceLabel = new Label(layerConfigurationComp, SWT.FLAT);
 		layerPlaceLabel.setText("Placement (after):");

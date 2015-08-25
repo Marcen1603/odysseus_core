@@ -38,16 +38,18 @@ public class MapEditorModel extends ModelObject {
 	private int startIndex;
 	private int endIndex;
 
+
 	private LinkedList<ILayer> layers = new LinkedList<ILayer>();
 
 	private ScreenManager screenManager = null;
 	private OwnProperties ownProperties;
+	private LayerUpdater layerUpdater;
 
 	public void init(MapDashboardPart mapDashboardPart) {
-		this.screenManager = mapDashboardPart.getScreenManager();
-
+		
 		for (ILayer layer : layers) {
 			if (layer != null) {
+				System.out.println("Init Layer:"+ layer.getComplexName());
 				layer.init(screenManager, null, null);
 			}
 		}
@@ -88,6 +90,7 @@ public class MapEditorModel extends ModelObject {
 		String layerSetting = "RasterLayerConfiguration;";
 		layerSetting += configuration.getName() + ";";
 		layerSetting += configuration.getUrl() + ";";
+		layerSetting += configuration.getUrlNumber() + ";";
 		layerSetting += configuration.getFormat() + ";";
 		layerSetting += configuration.getMinZoom() + ";";
 		layerSetting += configuration.getMaxZoom() + ";";
@@ -225,6 +228,7 @@ public class MapEditorModel extends ModelObject {
 
 		// Sets the setting one by one
 		rlc.setUrl(getSubString(configuration, ";"));
+		rlc.setUrlNumber(Integer.valueOf(getSubString(configuration, ";")));
 		rlc.setFormat(getSubString(configuration, ";"));
 		rlc.setMinZoom(Integer.valueOf(getSubString(configuration, ";")));
 		rlc.setMaxZoom(Integer.valueOf(getSubString(configuration, ";")));
@@ -253,6 +257,9 @@ public class MapEditorModel extends ModelObject {
 		}
 
 		RasterLayer rasterLayer = new RasterLayer(rlc);
+		ownProperties = new OwnProperties();
+		
+		ownProperties.getTileServer(rlc.getUrlNumber(), rlc);
 		rasterLayer.setActive(Boolean.valueOf(getSubString(configuration, ";")));
 		layers.add(rasterLayer);
 	}
@@ -305,6 +312,7 @@ public class MapEditorModel extends ModelObject {
 		
 		Heatmap heatmap = new Heatmap(hlc);
 		heatmap.setActive(Boolean.valueOf(getSubString(configuration, ";")));
+		heatmap.setLayerUpdater(layerUpdater);
 		layers.add(heatmap);
 	}
 
@@ -351,7 +359,7 @@ public class MapEditorModel extends ModelObject {
 
 	private ILayer addLayer() {
 		ILayer layer = new BasicLayer();
-		if (screenManager != null) {
+		if (screenManager != null ) {
 			layer.init(screenManager, null, null);
 		}
 		return layer;
@@ -380,7 +388,7 @@ public class MapEditorModel extends ModelObject {
 
 		// We don't want to set it active manually, too much clicks ...
 		layer.setActive(true);
-
+		layer.setLayerUpdater(layerUpdater);
 		return layer;
 	}
 
@@ -513,15 +521,15 @@ public class MapEditorModel extends ModelObject {
 	 * @param mapDashboardPart
 	 */
 	public LayerUpdater addConnection(MapDashboardPart mapDashboardPart) {
-
-		LayerUpdater updater = new LayerUpdater(mapDashboardPart);
+		this.screenManager = mapDashboardPart.getScreenManager();
+		layerUpdater = new LayerUpdater(mapDashboardPart);
 		if (screenManager != null) {
 			// If this Model is not opened by a file
-			screenManager.addPropertyChangeListener(updater);
-			screenManager.addConnection(updater);
+			screenManager.addPropertyChangeListener(layerUpdater);
+			screenManager.addConnection(layerUpdater);
 		}
 		firePropertyChange(MAP, null, this);
-		return updater;
+		return layerUpdater;
 	}
 
 	public String[] getLayerNameList() {
@@ -551,4 +559,6 @@ public class MapEditorModel extends ModelObject {
 	public OwnProperties getOwnProperties() {
 		return ownProperties;
 	}
+	
+
 }

@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -35,6 +36,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.buffer.MaxTupleListener;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.buffer.TimeSliderComposite;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
 
 /**
@@ -49,7 +52,8 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	private IPhysicalOperator operator;
 
 	private MapDashboardPart mapDashboardPart;
-	private Collection<IPhysicalOperator> roots;
+
+	private TimeSliderComposite timeSliderComposite;
 	private Table layerTable;
 
 	private Button editButton, upButton, downButton, topButton, bottomButton;
@@ -57,9 +61,9 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 	@Override
 	public void init(MapDashboardPart dashboardPartToConfigure, Collection<IPhysicalOperator> roots) {
 		this.mapDashboardPart = dashboardPartToConfigure;
-		this.roots = roots;
-		this.mapDashboardPart.initMapModel();
+		this.mapDashboardPart.init();
 		operator = determinePyhsicalRoot(roots);
+		mapDashboardPart.setOperator(operator);
 	}
 
 	@Override
@@ -81,26 +85,33 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 		createLayerSettingsControls(layerSettingComp);
 
+		
+		if (!mapDashboardPart.getWizardBoolean()) {
+			DashboardPartUtil.createLabel(topComposite, "CARE! The time slider is not working properly!");
+			createTimeSliderComposite(topComposite);
+		}
+
 		reprintLayerTable();
 	}
 
 	private void createMaxDataControls(Composite topComposite) {
 		Label maxDataLabel = DashboardPartUtil.createLabel(topComposite, "Max. Data");
 		maxDataLabel.setToolTipText("Max value of DataStreamElements are processed");
-		final Text maxDataText = DashboardPartUtil.createText(topComposite,
-				String.valueOf(mapDashboardPart.getMaxData()));
-		maxDataText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		maxDataText.addModifyListener(new ModifyListener() {
+		final Spinner maxTuples = new Spinner(topComposite, SWT.NONE);
+		maxTuples.setValues(mapDashboardPart.getLayerUpdater().getMaxPufferSize(), 0, Integer.MAX_VALUE, 0, 1, 1);
+		maxTuples.addSelectionListener(new MaxTupleListener(mapDashboardPart.getLayerUpdater(), maxTuples));
+
+		maxTuples.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				mapDashboardPart.setMaxData(Integer.valueOf(maxDataText.getText()));
+				mapDashboardPart.setMaxData(Integer.valueOf(maxTuples.getText()));
 				fireListener();
 			}
 		});
 	}
 
 	private void createUpdateIntervalControls(Composite topComposite) {
-		Label updateIntervall = DashboardPartUtil.createLabel(topComposite, "Upate Interval (ms)");
+		Label updateIntervall = DashboardPartUtil.createLabel(topComposite, "Upate Interval (s)");
 		updateIntervall.setToolTipText("Updates the map in the given time intervall");
 		final Text updateIntervalText = DashboardPartUtil.createText(topComposite,
 				String.valueOf(mapDashboardPart.getUpdateInterval()));
@@ -120,7 +131,8 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		tableSettingComp.setLayout(new GridLayout(1, true));
 		tableSettingComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		DashboardPartUtil.createLabel(tableSettingComp, "Layer Settings");
+		Label layerSettingsLabel = DashboardPartUtil.createLabel(tableSettingComp, "Layer Settings");
+		layerSettingsLabel.setToolTipText("If no layer was added, a basic layer will be added");
 
 		Composite tableComp = new Composite(tableSettingComp, SWT.NONE);
 		tableComp.setLayout(new GridLayout(1, true));
@@ -139,7 +151,6 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		createAddButton(buttonComp);
 		createDeleteButton(buttonComp);
 		createEditButton(buttonComp);
-		createRefreshButton(buttonComp);
 
 		createOrderButtons(orderButtonsComp);
 
@@ -160,29 +171,29 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 					} else {
 						editButton.setEnabled(true);
 					}
-					
-					if(layerTable.getItemCount() == 1){
+
+					if (layerTable.getItemCount() == 1) {
 						topButton.setEnabled(false);
 						upButton.setEnabled(false);
 						bottomButton.setEnabled(false);
 						downButton.setEnabled(false);
-					
-					}else if(index == 0){
+
+					} else if (index == 0) {
 						topButton.setEnabled(true);
 						upButton.setEnabled(true);
-						
+
 						bottomButton.setEnabled(false);
 						downButton.setEnabled(false);
-					}else if(index == layerTable.getItemCount()-1){
+					} else if (index == layerTable.getItemCount() - 1) {
 						topButton.setEnabled(false);
 						upButton.setEnabled(false);
-						
+
 						bottomButton.setEnabled(true);
-						downButton.setEnabled(true);					
-					}else{
+						downButton.setEnabled(true);
+					} else {
 						topButton.setEnabled(true);
 						upButton.setEnabled(true);
-						
+
 						bottomButton.setEnabled(true);
 						downButton.setEnabled(true);
 					}
@@ -194,10 +205,10 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		layerTable.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				LinkedList <ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
-				
-				for(int i = 0;i < group.size(); i++){
-					if(group.get(i).isActive() != layerTable.getItem(i).getChecked()){
+				LinkedList<ILayer> group = mapDashboardPart.getMapEditorModel().getLayers();
+
+				for (int i = 0; i < group.size(); i++) {
+					if (group.get(i).isActive() != layerTable.getItem(i).getChecked()) {
 						mapDashboardPart.setActive(group.get(i), layerTable.getItem(i).getChecked());
 						fireListener();
 					}
@@ -350,18 +361,6 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 
 	}
 
-	// TODO
-	private void createRefreshButton(final Composite parent) {
-		final Button refresButton = createButton(parent, "Refresh");
-		refresButton.setToolTipText("If for any case the map is not shown");
-		refresButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-
-			}
-		});
-
-	}
 
 	private void createWarningShell(Composite topComposite, String text) {
 		final Shell warningShell = new Shell(topComposite.getShell(),
@@ -498,14 +497,14 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 				}
 				item.setText(1, layerConf.getName());
 				item.setText(2, "Heatmap Layer");
-			}else if (layerConf instanceof RasterLayerConfiguration) {
+			} else if (layerConf instanceof RasterLayerConfiguration) {
 				if (layer.isActive()) {
 					item.setChecked(true);
 				} else {
 					item.setChecked(false);
 				}
 				item.setText(1, layerConf.getName());
-				item.setText(2, "Raster Layer");
+				item.setText(2, "Map Layer");
 			} else {
 				item.setText(1, layer.getName());
 				item.setText(2, "Basic Layer");
@@ -522,13 +521,30 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 		;
 	}
 
-	//TODO CHECK THIS
 	private IPhysicalOperator determinePyhsicalRoot(Collection<IPhysicalOperator> physicalRoots) {
 		for (IPhysicalOperator p : physicalRoots) {
 			return p;
 		}
 		LOG.info("Select first physical root.");
 		return physicalRoots.iterator().next();
+	}
+
+	public TimeSliderComposite createTimeSliderComposite(Composite parent) {
+		timeSliderComposite = new TimeSliderComposite(parent, SWT.BORDER);
+		timeSliderComposite.setScreenmanager(mapDashboardPart.getScreenManager());
+		return timeSliderComposite;
+	}
+
+	public final TimeSliderComposite getTimeSliderComposite() {
+		return timeSliderComposite;
+	}
+
+	public void setTimeSlider(TimeSliderComposite timeSlider) {
+		if (timeSlider != null) {
+			this.timeSliderComposite = timeSlider;
+		} else {
+			LOG.error("TimeSlider is null.");
+		}
 	}
 
 	@Override

@@ -1,15 +1,15 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard;
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -31,48 +31,68 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 
 	private static final Logger LOG = LoggerFactory.getLogger(MapDashboardPart.class);
 
-	private IPhysicalOperator operator;
-
-	private String[] attributes;
-	private int[] positions;
-	private boolean refreshing = false;
-
-	private final List<Tuple<?>> data = Lists.newArrayList();
+	
 
 	private String attributeList = "*";
 	private String layerSettings = "";
 
 	private int srid = 0;
-	private int maxData = 10000;
-	private int updateInterval = 1000;
+	private int maxData = 100;
+	private int updateInterval = 5;
 
 	protected ScreenTransformation transformation;
 	protected ScreenManager screenManager;
 	private MapEditorModel mapModel;
 	private LayerUpdater layerUpdater;
+	private IPhysicalOperator operator;
+	private Thread updateThread;
 
 	private boolean initiated = false;
+	/**
+	 * Needed to check if the user is still in the wizard to create the mapDashboardpart
+	 */
+	private boolean wizard = true;
 
 	@Override
-	public void createPartControl(Composite parent, ToolBar toolbar) {
+	public void createPartControl(final Composite parent, ToolBar toolbar) {
 		parent.setLayout(new GridLayout(1, false));
-		initMapModel();
 		
 		transformation = new ScreenTransformation();
 		screenManager = new ScreenManager(transformation, this);
 		screenManager.setCanvasViewer(screenManager.createCanvas(parent));
-		// setTimeSlider(createTimeSliderComposite(parent))
-
-		layerUpdater = mapModel.addConnection(this);
+		
 		if(mapModel.getLayers().isEmpty()){
 			BasicLayer basic = new BasicLayer();
 			basic.setActive(true);
 			mapModel.getLayers().addFirst(basic);
 		}
+		layerUpdater = mapModel.addConnection(this);		
 		mapModel.init(this);
-		layerUpdater.setMaxPufferSize(maxData);
 
-		update();
+		updateThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (!parent.isDisposed()) {
+					final Display disp = PlatformUI.getWorkbench().getDisplay();
+					if (!disp.isDisposed()) {
+						disp.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								if (!screenManager.getCanvas().isDisposed()) {
+									screenManager.redraw();
+								}
+							}
+						});
+					}
+					waiting(updateInterval);
+				}
+			}
+
+		});
+
+		updateThread.setName("StreamList Updater");
+		updateThread.start();
 	} 
 	
 	@Override
@@ -89,7 +109,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 
 	@Override
 	public void onLoad(Map<String, String> saved) {
-		initMapModel();
+		init();
 
 		attributeList = saved.get("Attributes");
 		maxData = Integer.valueOf(saved.get("MaxData"));
@@ -99,6 +119,8 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		if (layerSettings != null) {
 			mapModel.load(layerSettings);
 		}
+		
+		wizard = false;
 	};
 
 	@Override
@@ -129,7 +151,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 						&& this.screenManager.getInterval().getEnd().afterOrEquals(timestamp))) {
 			// Add tuple to current list if the new timestamp is in the interval
 			layerUpdater.addTuple(tuple);
-			System.out.println("Tupel:" + tuple);
+			//System.out.println("Tupel:" + tuple);
 		}
 
 		// Prevent an overflow in the puffer
@@ -142,8 +164,8 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 
 	}
 
-	public void initMapModel() {
-
+	public void init() {
+		
 		if (!initiated) {
 			mapModel = new MapEditorModel();
 
@@ -155,9 +177,19 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 			} else {
 				mapModel.setSrid(srid);
 			}
+			
+			layerUpdater = mapModel.addConnection(this);
+			layerUpdater.setMaxPufferSize(maxData);
 			initiated = true;
 		}
 
+	}
+	
+	private static void waiting(long length) {
+		try {
+			Thread.sleep(length);
+		} catch (final InterruptedException e) {
+		}
 	}
 
 	@Override
@@ -248,6 +280,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 
 	public void setMaxData(int maxData) {
 		this.maxData = maxData;
+		layerUpdater.setMaxPufferSize(maxData);
 	}
 
 	public int getUpdateInterval() {
@@ -256,7 +289,9 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 
 	public void setUpdateInterval(int updateInterval) {
 		this.updateInterval = updateInterval;
+		layerUpdater.setTimeRange(updateInterval);
 	}
+
 	
 	public LayerUpdater getLayerUpdater (){
 		return this.layerUpdater;
@@ -265,27 +300,15 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 	public IPhysicalOperator getOperator(){
 		return this.operator;
 	}
-
-	// public TimeSliderComposite createTimeSliderComposite(Composite parent) {
-	// timeSliderComposite = new TimeSliderComposite(parent, SWT.BORDER);
-	// timeSliderComposite.setScreenmanager(this.screenManager);
-	// return timeSliderComposite;
-	// }
-	//
-	// @Override
-	// public final TimeSliderComposite getTimeSliderComposite() {
-	// return timeSliderComposite;
-	// }
-	//
-	// public void setTimeSlider(TimeSliderComposite timeSlider) {
-	// if (timeSlider != null) {
-	// this.timeSliderComposite = timeSlider;
-	// } else {
-	// LOG.error("TimeSlider is null.");
-	// }
-	// }
-
 	
+	public void setOperator(IPhysicalOperator operator){
+		this.operator = operator;
+	}
+	
+	public boolean getWizardBoolean(){
+		return wizard;
+	}
+
 
 	@SuppressWarnings("rawtypes")
 	@Override
