@@ -37,13 +37,6 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.query.codegenerator.java"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.query.codegenerator.python"
          download-size="0"
          install-size="0"
@@ -62,5 +55,12 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.query.codegenerator.jre"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
