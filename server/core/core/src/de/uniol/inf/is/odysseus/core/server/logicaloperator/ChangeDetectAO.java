@@ -166,7 +166,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		return useBaseValue;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "useBaseValue", optional = true, doc = "If this is set to true, the actual value is compared to the base value instead to the last value. Default is false.")
+	@Parameter(type = BooleanParameter.class, name = "useBaseValue", optional = true, doc = "If this is set to true, the actual value is compared to the base value instead to the last value. Default is false. Does not work with 'useWindow'.")
 	public void setUseBaseValue(boolean useBaseValue) {
 		this.useBaseValue = useBaseValue;
 	}

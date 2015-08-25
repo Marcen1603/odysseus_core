@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ChangeDetectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -39,6 +40,10 @@ public class TChangeDetectAORule extends AbstractTransformationRule<ChangeDetect
 
 	@Override
 	public boolean isExecutable(ChangeDetectAO operator, TransformationConfiguration config) {
+		if (operator.isUseBaseValue() && operator.isUseWindow()) {
+			throw new TransformationException(
+					"Cannot use a base value and a window the same time (" + operator.getName() + ")");
+		}
 		return operator.isAllPhysicalInputSet() && !operator.hasAttributes();
 	}
 

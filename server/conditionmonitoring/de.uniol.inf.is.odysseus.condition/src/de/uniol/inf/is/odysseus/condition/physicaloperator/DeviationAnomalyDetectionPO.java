@@ -127,7 +127,8 @@ public class DeviationAnomalyDetectionPO<T extends Tuple<M>, M extends ITimeInte
 		// Get correct information
 		DeviationInformation info = getInfoForTuple(tuple);
 
-		if (info != null && (!(this.maxRelativeChange > 0) || (this.maxRelativeChange > 0 && hadLittleChange.get(gId)))) {
+		if (info != null
+				&& (!(this.maxRelativeChange > 0) || (this.maxRelativeChange > 0 && hadLittleChange.get(gId)))) {
 			if (info.counter > this.tuplesToWait) {
 				this.startToDeliver.put(gId, true);
 			}
