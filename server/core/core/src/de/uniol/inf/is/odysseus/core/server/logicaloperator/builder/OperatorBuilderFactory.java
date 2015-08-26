@@ -57,6 +57,10 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	public static boolean containsOperatorBuilderType(String name) {
 		return operatorBuilders.containsKey(name.toUpperCase());
 	}
+	
+	public static IOperatorBuilder getOperatorBuilderType(String name) {
+		return operatorBuilders.get(name.toUpperCase());
+	}
 
 	public static Set<String> getOperatorBuilderNames() {
 		return operatorBuilders.keySet();
