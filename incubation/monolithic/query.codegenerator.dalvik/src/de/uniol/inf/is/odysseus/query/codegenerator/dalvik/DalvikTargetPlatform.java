@@ -32,8 +32,6 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		super("Dalvik");
 	}
 
-
-
 	@Override
 	public void convertQueryToStandaloneSystem(
 			ILogicalOperator query,
@@ -42,9 +40,6 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 			BlockingQueue<ProgressBarUpdate> progressBarQueue,
 			TransformationConfiguration transformationConfiguration)
 			throws InterruptedException {
-		
-		System.out.println("Dalvik test");
-		
 		
 		
 		//add userfeedback

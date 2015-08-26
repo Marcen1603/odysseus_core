@@ -5,10 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,8 +19,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.Activator;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.ICExecutor;
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.utils.StringTemplate;
+import de.uniol.inf.is.odysseus.query.codegenerator.executor.ICExecutor;
 import de.uniol.inf.is.odysseus.query.codegenerator.osgi.ExtractOSGIBundle;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.FileHelper;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.UnZip;
@@ -31,20 +29,16 @@ import de.uniol.inf.is.odysseus.query.codegenerator.utils.UnZip;
 //TODO add mac support
 public class DalvikFileWrite {
 	
-	
 	private String fileName;
 	private File file;
 	private FileWriter writer;
 	private String tempPath;
 	private TransformationParameter transformationParameter;
 	private Set<String> importList = new HashSet<String>();
-	private List<String> copyJars = new ArrayList<String>();
 	private String osgiBindCode;
 	private String bodyCode;
 	private String startCode;
 	private ICExecutor executor;
-	
-	private Map<ILogicalOperator,Map<String,String>> operatorConfigurationList;
 	
 	private static Logger LOG = LoggerFactory.getLogger(DalvikFileWrite.class);
 	
@@ -57,7 +51,6 @@ public class DalvikFileWrite {
 		this.osgiBindCode = osgiBindCode;
 		this.bodyCode = bodyCode;
 		this.startCode = startCode;
-		this.operatorConfigurationList = operatorConfigurationList;
 		this.executor = executor;
 		
 	}
@@ -171,7 +164,7 @@ public class DalvikFileWrite {
 	
 	
 	private void copyOdysseusJar(){
-		copyJars = ExtractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "app\\libs");
+		ExtractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "app\\libs");
 	}
 	
 	
