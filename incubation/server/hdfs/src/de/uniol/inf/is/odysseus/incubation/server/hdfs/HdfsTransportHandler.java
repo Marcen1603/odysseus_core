@@ -37,7 +37,9 @@ public class HdfsTransportHandler extends AbstractTransportHandler {
 	}
 
 	public void createConnection() {
-
+		
+		System.setProperty("HADOOP_USER_NAME", "hduser");
+		
 		Configuration conf = new Configuration();
 		conf.set("fs.defaultFS", fsDefaultName);
 		try {
@@ -116,8 +118,25 @@ public class HdfsTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
-		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public void write(byte[] buffer){
+		try {
+			dfsOutput.write(buffer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public byte[] read(byte[] buffer){
+		try {
+			dfsInput.read(buffer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return buffer;
 	}
 
 }
