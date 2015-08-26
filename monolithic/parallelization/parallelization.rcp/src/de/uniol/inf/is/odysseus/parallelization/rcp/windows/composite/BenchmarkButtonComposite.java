@@ -195,6 +195,7 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 					public void run() {
 						StringBuilder builder = new StringBuilder();
 						List<String> queryStringArray = data
+								.getBenchmarkInitializationResult()
 								.getQueryStringArray();
 
 						for (String queryString : queryStringArray) {
@@ -206,7 +207,9 @@ public class BenchmarkButtonComposite extends AbstractBenchmarkComposite {
 						ByteArrayInputStream in = new ByteArrayInputStream(
 								builder.toString().getBytes());
 
-						IFile queryFile = data.getQueryFile();
+						IFile queryFile = data
+								.getBenchmarkInitializationResult()
+								.getQueryFile();
 						try {
 							queryFile.setContents(in, true, true, null);
 							if (!queryFile.isSynchronized(IResource.DEPTH_ZERO)) {

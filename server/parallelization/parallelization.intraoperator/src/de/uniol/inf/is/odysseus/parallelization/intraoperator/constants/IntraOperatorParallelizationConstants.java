@@ -22,7 +22,6 @@ package de.uniol.inf.is.odysseus.parallelization.intraoperator.constants;
  */
 public class IntraOperatorParallelizationConstants {
 	public static final int DEFAULT_BUFFERSIZE = 100000;
-	public static final int MAX_DEGREE = 128;
 	
 	public static String BLANK = " ";
 }

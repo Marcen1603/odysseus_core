@@ -113,8 +113,11 @@ public class JoinTransformationStrategy extends
 	@Override
 	public TransformationResult transform() {
 		prepareTransformation();
+		if (transformationResult.getState() == State.FAILED) {
+			return transformationResult;
+		}
+		
 		createAndSubscribeFragments();
-
 		if (transformationResult.getState() == State.FAILED) {
 			return transformationResult;
 		}

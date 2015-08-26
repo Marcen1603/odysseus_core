@@ -15,17 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.parallelization.rcp.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IEditorPart;
-
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
 /**
  * base data handler for parallelization benchmarker, this class provides
@@ -39,14 +31,6 @@ public class BenchmarkDataHandler {
 	private static Map<UUID, BenchmarkDataHandler> instances = new HashMap<UUID, BenchmarkDataHandler>();
 	private UUID uniqueIdentifier;
 
-	private IEditorPart part;
-	private ISelection selection;
-
-	// query data
-	private IFile queryFile;
-	private List<String> queryStringArray = new ArrayList<String>();
-	private List<ILogicalQuery> logicalQueries = new ArrayList<ILogicalQuery>();
-
 	// Initialization data
 	private BenchmarkInitializationResult benchmarkInitializationResult;
 
@@ -55,6 +39,7 @@ public class BenchmarkDataHandler {
 
 	public BenchmarkDataHandler() {
 		uniqueIdentifier = UUID.randomUUID();
+		benchmarkInitializationResult = new BenchmarkInitializationResult();
 	}
 
 	/**
@@ -115,38 +100,6 @@ public class BenchmarkDataHandler {
 		return uniqueIdentifier;
 	}
 
-	public IFile getQueryFile() {
-		return queryFile;
-	}
-
-	public void setQueryFile(IFile queryFile) {
-		this.queryFile = queryFile;
-	}
-
-	public ISelection getSelection() {
-		return selection;
-	}
-
-	public void setSelection(ISelection selection) {
-		this.selection = selection;
-	}
-
-	public IEditorPart getPart() {
-		return part;
-	}
-
-	public void setPart(IEditorPart part) {
-		this.part = part;
-	}
-
-	public void addQueryString(String queryString) {
-		this.queryStringArray.add(queryString);
-	}
-
-	public List<String> getQueryStringArray() {
-		return queryStringArray;
-	}
-
 	public BenchmarkInitializationResult getBenchmarkInitializationResult() {
 		return benchmarkInitializationResult;
 	}
@@ -162,17 +115,5 @@ public class BenchmarkDataHandler {
 
 	public void setConfiguration(BenchmarkerConfiguration configuration) {
 		this.configuration = configuration;
-	}
-
-	public List<ILogicalQuery> getLogicalQueries() {
-		return logicalQueries;
-	}
-
-	public void setLogicalQueries(List<ILogicalQuery> logicalQueries) {
-		this.logicalQueries = logicalQueries;
-	}
-
-	public void addLogicalQuery(ILogicalQuery logicalQuery) {
-		this.logicalQueries.add(logicalQuery);
 	}
 }

@@ -192,7 +192,8 @@ public class BenchmarkMainExecutionThread extends Thread {
 	 * @param benchmarkerExecution
 	 */
 	private void executeAnalysis(IBenchmarkerExecution benchmarkerExecution) {
-		List<String> queryStringArray = data.getQueryStringArray();
+		List<String> queryStringArray = data.getBenchmarkInitializationResult()
+				.getQueryStringArray();
 		StringBuilder builder = new StringBuilder();
 		for (String queryStringLine : queryStringArray) {
 			builder.append(queryStringLine);
@@ -211,7 +212,8 @@ public class BenchmarkMainExecutionThread extends Thread {
 		executionThread.start();
 
 		try {
-			// wait for the execution thread to finish. if its finished start next
+			// wait for the execution thread to finish. if its finished start
+			// next
 			// execution
 			executionThread.join();
 		} catch (InterruptedException e) {
@@ -229,6 +231,7 @@ public class BenchmarkMainExecutionThread extends Thread {
 
 	/**
 	 * change the progress on the UI (progress bar and text box)
+	 * 
 	 * @param progressProcent
 	 * @param remainingTimeMillis
 	 * @param progressString

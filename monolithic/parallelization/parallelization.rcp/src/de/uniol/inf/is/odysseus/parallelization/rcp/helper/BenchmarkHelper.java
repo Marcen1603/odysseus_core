@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
-import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkInitializationResult;
 
 /**
  * this helper is needed for initialization of the currently selected query.
@@ -48,13 +47,13 @@ public class BenchmarkHelper {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void getPossibleParallelizationOptions(
 			BenchmarkDataHandler dataHandler) throws IllegalArgumentException {
-		if (dataHandler.getLogicalQueries().isEmpty()) {
+		if (dataHandler.getBenchmarkInitializationResult().getLogicalQueries()
+				.isEmpty()) {
 			throw new IllegalArgumentException("Logical query not found");
 		}
 
-		List<ILogicalQuery> logicalQueries = dataHandler.getLogicalQueries();
-
-		BenchmarkInitializationResult result = new BenchmarkInitializationResult();
+		List<ILogicalQuery> logicalQueries = dataHandler
+				.getBenchmarkInitializationResult().getLogicalQueries();
 
 		// for each logical query, search possible operators
 		for (ILogicalQuery logicalQuery : logicalQueries) {
@@ -83,7 +82,8 @@ public class BenchmarkHelper {
 								.getStrategiesForOperator(operatorForTransformation
 										.getClass());
 						if (!strategiesForOperator.isEmpty()) {
-							result.setStrategiesForOperator(
+							dataHandler
+							.getBenchmarkInitializationResult().setStrategiesForOperator(
 									operatorForTransformation,
 									strategiesForOperator);
 						}
@@ -91,7 +91,5 @@ public class BenchmarkHelper {
 				}
 			}
 		}
-
-		dataHandler.setBenchmarkInitializationResult(result);
 	}
 }

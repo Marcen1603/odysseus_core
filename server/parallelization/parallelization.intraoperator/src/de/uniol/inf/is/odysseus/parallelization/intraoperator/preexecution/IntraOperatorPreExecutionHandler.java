@@ -181,11 +181,7 @@ public class IntraOperatorPreExecutionHandler extends
 			// degree need to be greater eq 1,
 			if (integerDegree >= 1) {
 				this.globalDegreeOfParallelization = integerDegree;
-				
-				if (this.globalDegreeOfParallelization > IntraOperatorParallelizationConstants.MAX_DEGREE) {
-					throw new OdysseusScriptException(
-							"Maximum value for degree is "+IntraOperatorParallelizationConstants.MAX_DEGREE);
-				}
+			
 				if (this.globalDegreeOfParallelization > PerformanceDetectionHelper
 						.getNumberOfCores()) {
 					INFO_SERVICE

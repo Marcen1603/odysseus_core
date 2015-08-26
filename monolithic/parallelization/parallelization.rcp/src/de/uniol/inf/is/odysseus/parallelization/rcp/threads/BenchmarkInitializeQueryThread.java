@@ -93,14 +93,16 @@ public class BenchmarkInitializeQueryThread extends Thread {
 
 			// if we have this values, we could start executing the current
 			// query
-			if (benchmarkDataHandler.getSelection() != null) {
+			if (benchmarkDataHandler.getBenchmarkInitializationResult()
+					.getSelection() != null) {
 				runSelectedQuery();
 			}
 			updateProgress(50);
 
 			// if executing of query works, we can start analysing the logical
 			// plan
-			if (!benchmarkDataHandler.getLogicalQueries().isEmpty()) {
+			if (!benchmarkDataHandler.getBenchmarkInitializationResult()
+					.getLogicalQueries().isEmpty()) {
 				BenchmarkHelper
 						.getPossibleParallelizationOptions(benchmarkDataHandler);
 			} else {
@@ -130,18 +132,23 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				benchmarkDataHandler.setPart(PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage()
-						.getActiveEditor());
-				benchmarkDataHandler.setSelection(PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getSelectionService()
-						.getSelection());
+				benchmarkDataHandler.getBenchmarkInitializationResult()
+						.setPart(
+								PlatformUI.getWorkbench()
+										.getActiveWorkbenchWindow()
+										.getActivePage().getActiveEditor());
+				benchmarkDataHandler.getBenchmarkInitializationResult()
+						.setSelection(
+								PlatformUI.getWorkbench()
+										.getActiveWorkbenchWindow()
+										.getSelectionService().getSelection());
 			}
 		});
 
 		// wait until values are found
 		int counter = 0;
-		while (benchmarkDataHandler.getSelection() == null) {
+		while (benchmarkDataHandler.getBenchmarkInitializationResult()
+				.getSelection() == null) {
 			if (counter == 1000) {
 				break;
 			}
@@ -236,9 +243,11 @@ public class BenchmarkInitializeQueryThread extends Thread {
 	@SuppressWarnings("unchecked")
 	private static List<IFile> getSelectedFiles() {
 		List<IFile> foundFiles = Lists.newArrayList();
-		if (benchmarkDataHandler.getSelection() instanceof IStructuredSelection) {
+		if (benchmarkDataHandler.getBenchmarkInitializationResult()
+				.getSelection() instanceof IStructuredSelection) {
 			List<Object> selectedObjects = ((IStructuredSelection) benchmarkDataHandler
-					.getSelection()).toList();
+					.getBenchmarkInitializationResult().getSelection())
+					.toList();
 			for (Object obj : selectedObjects) {
 				if (isQueryTextFile(obj)) {
 					foundFiles.add((IFile) obj);
@@ -266,9 +275,9 @@ public class BenchmarkInitializeQueryThread extends Thread {
 	 * @return
 	 */
 	private static Optional<OdysseusScriptEditor> getScriptEditor() {
-		if (benchmarkDataHandler.getPart() instanceof OdysseusScriptEditor) {
+		if (benchmarkDataHandler.getBenchmarkInitializationResult().getPart() instanceof OdysseusScriptEditor) {
 			return Optional.of((OdysseusScriptEditor) benchmarkDataHandler
-					.getPart());
+					.getBenchmarkInitializationResult().getPart());
 		}
 		return Optional.absent();
 	}
@@ -308,7 +317,8 @@ public class BenchmarkInitializeQueryThread extends Thread {
 	private void execute(final IFile scriptFile) throws CoreException,
 			IOException {
 
-		benchmarkDataHandler.setQueryFile(scriptFile);
+		benchmarkDataHandler.getBenchmarkInitializationResult().setQueryFile(
+				scriptFile);
 		String text = readLinesFromFile(scriptFile);
 		IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
 		ISession activeSession = OdysseusRCPPlugIn.getActiveSession();
@@ -328,7 +338,8 @@ public class BenchmarkInitializeQueryThread extends Thread {
 				// get logical plan from executor
 				ILogicalQuery logicalQuery = executor.getLogicalQueryById(
 						queryId, activeSession);
-				benchmarkDataHandler.addLogicalQuery(logicalQuery);
+				benchmarkDataHandler.getBenchmarkInitializationResult()
+						.addLogicalQuery(logicalQuery);
 			}
 
 			// if we have all logical plans, we need to stop and remove all
@@ -362,8 +373,8 @@ public class BenchmarkInitializeQueryThread extends Thread {
 		while (line != null) {
 			// Remove parallelization keywords
 			if (isLineSupported(line)) {
-				benchmarkDataHandler.addQueryString(line
-						+ System.lineSeparator());
+				benchmarkDataHandler.getBenchmarkInitializationResult()
+						.addQueryString(line + System.lineSeparator());
 				lines = lines + line;
 				lines = lines + System.lineSeparator();
 			}

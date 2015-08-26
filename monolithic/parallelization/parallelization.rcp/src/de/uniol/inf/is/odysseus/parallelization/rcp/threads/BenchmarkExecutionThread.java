@@ -78,8 +78,10 @@ public class BenchmarkExecutionThread extends Thread implements
 		// add the query for this execution
 		executor = OdysseusRCPEditorTextPlugIn.getExecutor();
 		queryIds = executor.addQuery(this.queryString, "OdysseusScript",
-				OdysseusRCPPlugIn.getActiveSession(),
-				ParserClientUtil.createRCPContext(data.getQueryFile()));
+				OdysseusRCPPlugIn.getActiveSession(), ParserClientUtil
+						.createRCPContext(data
+								.getBenchmarkInitializationResult()
+								.getQueryFile()));
 
 		// start the query if it is inactive
 		for (Integer queryID : queryIds) {
@@ -110,7 +112,7 @@ public class BenchmarkExecutionThread extends Thread implements
 	}
 
 	/**
-	 * udate method for observer. this method is called when the benchmark is
+	 * update method for observer. this method is called when the benchmark is
 	 * done successfully or data stream is done. The execution time is send via
 	 * args
 	 */

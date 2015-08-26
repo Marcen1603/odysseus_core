@@ -404,7 +404,9 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 				for (int i = 0; i < splittedOperatorIds.length; i++) {
 					splittedOperatorIds[i] = splittedOperatorIds[i].trim();
 					ILogicalOperator logicalOperator = null;
-					for (ILogicalQuery logicalQuery : data.getLogicalQueries()) {
+					for (ILogicalQuery logicalQuery : data
+							.getBenchmarkInitializationResult()
+							.getLogicalQueries()) {
 						logicalOperator = LogicalGraphHelper
 								.findOperatorWithId(splittedOperatorIds[i],
 										logicalQuery.getLogicalPlan());

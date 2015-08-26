@@ -20,7 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IEditorPart;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 
 /**
@@ -32,8 +37,19 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallel
  */
 public class BenchmarkInitializationResult {
 
+	private IEditorPart part;
+	private ISelection selection;
+
+	// query data
+	private IFile queryFile;
+	private List<String> queryStringArray = new ArrayList<String>();
+	private List<ILogicalQuery> logicalQueries = new ArrayList<ILogicalQuery>();
+	
 	private Map<ILogicalOperator, List<IParallelTransformationStrategy<? extends ILogicalOperator>>> strategiesForOperator = new HashMap<ILogicalOperator, List<IParallelTransformationStrategy<? extends ILogicalOperator>>>();
 
+	
+	
+	
 	public Map<ILogicalOperator, List<IParallelTransformationStrategy<? extends ILogicalOperator>>> getStrategiesForOperator() {
 		return strategiesForOperator;
 	}
@@ -60,5 +76,49 @@ public class BenchmarkInitializationResult {
 		List<IParallelTransformationStrategy<? extends ILogicalOperator>> list = strategiesForOperator
 				.get(operator);
 		list.addAll(strategies);
+	}
+	
+	public List<ILogicalQuery> getLogicalQueries() {
+		return logicalQueries;
+	}
+
+	public void setLogicalQueries(List<ILogicalQuery> logicalQueries) {
+		this.logicalQueries = logicalQueries;
+	}
+
+	public void addLogicalQuery(ILogicalQuery logicalQuery) {
+		this.logicalQueries.add(logicalQuery);
+	}
+	
+	public IFile getQueryFile() {
+		return queryFile;
+	}
+
+	public void setQueryFile(IFile queryFile) {
+		this.queryFile = queryFile;
+	}
+
+	public ISelection getSelection() {
+		return selection;
+	}
+
+	public void setSelection(ISelection selection) {
+		this.selection = selection;
+	}
+
+	public IEditorPart getPart() {
+		return part;
+	}
+
+	public void setPart(IEditorPart part) {
+		this.part = part;
+	}
+
+	public void addQueryString(String queryString) {
+		this.queryStringArray.add(queryString);
+	}
+
+	public List<String> getQueryStringArray() {
+		return queryStringArray;
 	}
 }
