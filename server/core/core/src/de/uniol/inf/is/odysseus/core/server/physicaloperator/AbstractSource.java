@@ -587,7 +587,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		// call close) kept in list connectedSinks
 		// If all by open connected subscriptions are removed, close
 		// operator
-		if ((activeSinkSubscriptions.size() - 1) == connectedSinks.size()) {
+		if (activeSinkSubscriptions.size() == connectedSinks.size() ) {
 			getLogger().trace("Closing " + toString());
 			fire(this.closeInitEvent);
 			this.process_close();
