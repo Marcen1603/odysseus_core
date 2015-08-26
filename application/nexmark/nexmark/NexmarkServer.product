@@ -88,7 +88,6 @@ This Software contains parts of the nexmark generator
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.nexmark.feature" version="1.0.0.qualifier"/>
-      <feature id="org.eclipse.platform" version="3.7.2.v20120207-1839-9gF7UHPDFxGjd-PqDr2jX_4yKaumkoHTz04_q-q"/>
    </features>
 
    <configurations>

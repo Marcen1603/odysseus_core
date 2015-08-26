@@ -34,7 +34,7 @@ public class NexmarkApplication implements IApplication {
 			.getLogger(BundleActivator.class);
 
 	static private String categories;
-	private static final String categoriesFile = "/config/categories.txt";
+	private static final String categoriesFile = "/config/categories.csv";
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
@@ -111,7 +111,7 @@ public class NexmarkApplication implements IApplication {
 
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				text += line.trim();
+				text += line.trim()+"\n";
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
