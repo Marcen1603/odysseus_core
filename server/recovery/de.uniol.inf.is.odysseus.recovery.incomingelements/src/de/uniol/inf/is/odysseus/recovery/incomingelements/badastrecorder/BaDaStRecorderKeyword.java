@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+// TODO use complete sourcename (user.source)
+// TODO Keyword should be executed after the source definition and only with type and sourcename. Then check the dd, read out other information about the source and create an IExecutorCommand.
 /**
  * Keyword to create a BaDaSt recorder for a given source. <br />
  * Parameters are key value pairs and must contain type=xyz. All other keys
@@ -46,45 +48,39 @@ public class BaDaStRecorderKeyword extends AbstractPreParserKeyword {
 	 *             if {@code parameter} is not a blank separated list of key
 	 *             value pairs.
 	 */
-	private static Properties parseParameter(String parameter)
-			throws OdysseusScriptException {
+	private static Properties parseParameter(String parameter) throws OdysseusScriptException {
 		Properties config = new Properties();
 		String[] args = parameter.split(" ");
 		for (String argument : args) {
 			if (!argument.contains("=")) {
-				throw new OdysseusScriptException(argument
-						+ " is not a valid key value argument! key=value");
+				throw new OdysseusScriptException(argument + " is not a valid key value argument! key=value");
 			}
 			String[] keyValue = argument.split("=");
 			config.put(keyValue[0].trim().toLowerCase(), keyValue[1].trim());
 		}
 		if (config.getProperty(KEY_SOURCENAME) == null) {
-			throw new OdysseusScriptException("Missing key 'sourcename' for "
-					+ getName());
+			throw new OdysseusScriptException("Missing key 'sourcename' for " + getName());
 		}
 		return config;
 
 	}
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller, Context context, IServerExecutor executor)
-			throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context,
+			IServerExecutor executor) throws OdysseusScriptException {
 		parseParameter(parameter);
 	}
 
 	@Override
-	public List<IExecutorCommand> execute(Map<String, Object> variables,
-			String parameter, ISession caller, Context context,
-			IServerExecutor executor) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller,
+			Context context, IServerExecutor executor) throws OdysseusScriptException {
 		Properties config = parseParameter(parameter);
 		String sourcename = config.getProperty(KEY_SOURCENAME);
 		String recorder = BaDaStRecorderRegistry.getRecorder(sourcename);
 		if (recorder == null) {
 			recorder = BaDaStSender.sendCreateCommand(config);
 			if (recorder == null) {
-				throw new OdysseusScriptException(
-						"Could not create BaDaSt recorder!");
+				throw new OdysseusScriptException("Could not create BaDaSt recorder!");
 			}
 			BaDaStRecorderRegistry.register(sourcename, recorder);
 			BaDaStSender.sendStartCommand(recorder);

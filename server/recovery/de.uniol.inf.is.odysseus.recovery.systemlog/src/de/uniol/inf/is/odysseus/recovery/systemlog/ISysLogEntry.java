@@ -25,6 +25,7 @@ public interface ISysLogEntry {
 	 */
 	public long getTimeStamp();
 
+	// TODO rename to information
 	/**
 	 * Gets the optional comment.
 	 * 

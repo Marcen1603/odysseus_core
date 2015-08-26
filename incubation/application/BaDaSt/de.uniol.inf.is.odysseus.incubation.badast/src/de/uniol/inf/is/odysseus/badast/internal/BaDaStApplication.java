@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.badast.BaDaStConfiguration;
 import de.uniol.inf.is.odysseus.badast.BaDaStException;
 
+// TODO encapsulate kafka: in BaDaSt and in Odysseus operators
 // XXX Replace Kafka source code with Kafka jar file. First try to do it resulted in run-time errors for the Kafka server.
 /**
  * BaDaSt - Backup of Data Streams application. <br />

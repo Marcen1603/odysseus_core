@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+// TODO Controller to define, which entities are allowed to write with which tags?
 /**
  * Service to log system events like startup and shutdown. <br />
  * See {@link ISysLogEntry} for how log entries look like and

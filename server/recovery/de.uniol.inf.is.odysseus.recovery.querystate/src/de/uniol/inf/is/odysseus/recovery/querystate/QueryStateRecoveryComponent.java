@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListen
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
 
+// TODO use IExecutorCommand instead of an own data structure. Use different listeners to get those commands.
 /**
  * The query state recovery component handles the backup and recovery of queries
  * (queries and their states, sources, sinks). <br />

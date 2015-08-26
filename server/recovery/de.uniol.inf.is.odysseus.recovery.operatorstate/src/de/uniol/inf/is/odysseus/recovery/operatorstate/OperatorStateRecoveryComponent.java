@@ -30,6 +30,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointHandler;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManagerRegistry;
 
+//TODO copy and clear file, if Odysseus shuts down regularly
+//TODO name file not with queryid but with a hash of the querytext
 /**
  * The operator state recovery component handles the backup and recovery of
  * operator states.
