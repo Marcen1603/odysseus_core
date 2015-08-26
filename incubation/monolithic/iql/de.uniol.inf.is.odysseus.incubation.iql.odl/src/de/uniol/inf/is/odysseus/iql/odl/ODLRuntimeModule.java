@@ -7,6 +7,7 @@ import org.eclipse.xtext.common.types.xtext.ClasspathBasedTypeScopeProvider;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
+import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceFactory;
 
@@ -64,6 +65,7 @@ import de.uniol.inf.is.odysseus.iql.odl.lookup.ODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.IODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLQualifiedNameProvider;
+import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLResourceDescriptionStrategy;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.service.ODLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.odl.typing.builder.IODLTypeBuilder;
@@ -82,6 +84,11 @@ import de.uniol.inf.is.odysseus.iql.odl.typing.utils.ODLTypeUtils;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class ODLRuntimeModule extends de.uniol.inf.is.odysseus.iql.odl.AbstractODLRuntimeModule {
 
+	public Class<? extends IDefaultResourceDescriptionStrategy> bindResourceDescriptionStrategy() {
+		return ODLResourceDescriptionStrategy.class;
+	}
+	
+	
 	public Class<? extends IIQLTypeFactory> bindIQLTypeFactory() {
 		return ODLTypeFactory.class;
 	}	

@@ -60,8 +60,8 @@ public class BasicIQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives(), "rule__IQLOtherExpressions__Alternatives");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives_4_2(), "rule__IQLOtherExpressions__Alternatives_4_2");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getAlternatives(), "rule__IQLLiteralExpression__Alternatives");
-					put(grammarAccess.getIQLJavaWordsAccess().getAlternatives(), "rule__IQLJavaWords__Alternatives");
-					put(grammarAccess.getIQLJavaKeywordsAccess().getAlternatives(), "rule__IQLJavaKeywords__Alternatives");
+					put(grammarAccess.getIQLJavaTextAccess().getAlternatives(), "rule__IQLJavaText__Alternatives");
+					put(grammarAccess.getIQL_JAVA_KEYWORDSAccess().getAlternatives(), "rule__IQL_JAVA_KEYWORDS__Alternatives");
 					put(grammarAccess.getIQLModelAccess().getGroup(), "rule__IQLModel__Group__0");
 					put(grammarAccess.getIQLModelAccess().getGroup_0(), "rule__IQLModel__Group_0__0");
 					put(grammarAccess.getIQLModelElementAccess().getGroup(), "rule__IQLModelElement__Group__0");

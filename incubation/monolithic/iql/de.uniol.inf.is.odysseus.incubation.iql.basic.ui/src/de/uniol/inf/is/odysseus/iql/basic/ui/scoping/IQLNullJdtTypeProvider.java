@@ -10,5 +10,4 @@ public class IQLNullJdtTypeProvider extends NullJdtTypeProvider implements IIQLJ
 	public IQLNullJdtTypeProvider(ResourceSet resourceSet) {
 		super(resourceSet);
 	}
-
 }

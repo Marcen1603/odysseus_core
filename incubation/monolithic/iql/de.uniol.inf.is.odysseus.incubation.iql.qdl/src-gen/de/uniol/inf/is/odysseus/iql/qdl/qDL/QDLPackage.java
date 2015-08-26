@@ -334,6 +334,89 @@ public interface QDLPackage extends EPackage
   int QDL_QUERY_FEATURE_COUNT = TypesPackage.JVM_GENERIC_TYPE_FEATURE_COUNT + 2;
 
   /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLInstanceOfExpressionImpl <em>IQL Instance Of Expression</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLInstanceOfExpressionImpl
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLInstanceOfExpression()
+   * @generated
+   */
+  int IQL_INSTANCE_OF_EXPRESSION = 3;
+
+  /**
+   * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_INSTANCE_OF_EXPRESSION__LEFT_OPERAND = BasicIQLPackage.IQL_EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Target Ref</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_INSTANCE_OF_EXPRESSION__TARGET_REF = BasicIQLPackage.IQL_EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>IQL Instance Of Expression</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_INSTANCE_OF_EXPRESSION_FEATURE_COUNT = BasicIQLPackage.IQL_EXPRESSION_FEATURE_COUNT + 2;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLRelationalExpressionImpl <em>IQL Relational Expression</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLRelationalExpressionImpl
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLRelationalExpression()
+   * @generated
+   */
+  int IQL_RELATIONAL_EXPRESSION = 4;
+
+  /**
+   * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_RELATIONAL_EXPRESSION__LEFT_OPERAND = BasicIQLPackage.IQL_EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Op</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_RELATIONAL_EXPRESSION__OP = BasicIQLPackage.IQL_EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
+   * The feature id for the '<em><b>Right Operand</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_RELATIONAL_EXPRESSION__RIGHT_OPERAND = BasicIQLPackage.IQL_EXPRESSION_FEATURE_COUNT + 2;
+
+  /**
+   * The number of structural features of the '<em>IQL Relational Expression</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IQL_RELATIONAL_EXPRESSION_FEATURE_COUNT = BasicIQLPackage.IQL_EXPRESSION_FEATURE_COUNT + 3;
+
+  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLSubscribeExpressionImpl <em>IQL Subscribe Expression</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -341,7 +424,7 @@ public interface QDLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLSubscribeExpression()
    * @generated
    */
-  int IQL_SUBSCRIBE_EXPRESSION = 3;
+  int IQL_SUBSCRIBE_EXPRESSION = 5;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -387,7 +470,7 @@ public interface QDLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLPortExpression()
    * @generated
    */
-  int IQL_PORT_EXPRESSION = 4;
+  int IQL_PORT_EXPRESSION = 6;
 
   /**
    * The feature id for the '<em><b>Left Operand</b></em>' containment reference.
@@ -433,7 +516,7 @@ public interface QDLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getQDLMetadataValueSingleID()
    * @generated
    */
-  int QDL_METADATA_VALUE_SINGLE_ID = 5;
+  int QDL_METADATA_VALUE_SINGLE_ID = 7;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -505,6 +588,81 @@ public interface QDLPackage extends EPackage
    * @generated
    */
   EReference getQDLQuery_Statements();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression <em>IQL Instance Of Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>IQL Instance Of Expression</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression
+   * @generated
+   */
+  EClass getIQLInstanceOfExpression();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression#getLeftOperand <em>Left Operand</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Left Operand</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression#getLeftOperand()
+   * @see #getIQLInstanceOfExpression()
+   * @generated
+   */
+  EReference getIQLInstanceOfExpression_LeftOperand();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression#getTargetRef <em>Target Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Target Ref</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression#getTargetRef()
+   * @see #getIQLInstanceOfExpression()
+   * @generated
+   */
+  EReference getIQLInstanceOfExpression_TargetRef();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression <em>IQL Relational Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>IQL Relational Expression</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression
+   * @generated
+   */
+  EClass getIQLRelationalExpression();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression#getLeftOperand <em>Left Operand</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Left Operand</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression#getLeftOperand()
+   * @see #getIQLRelationalExpression()
+   * @generated
+   */
+  EReference getIQLRelationalExpression_LeftOperand();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression#getOp <em>Op</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Op</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression#getOp()
+   * @see #getIQLRelationalExpression()
+   * @generated
+   */
+  EAttribute getIQLRelationalExpression_Op();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression#getRightOperand <em>Right Operand</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Right Operand</em>'.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression#getRightOperand()
+   * @see #getIQLRelationalExpression()
+   * @generated
+   */
+  EReference getIQLRelationalExpression_RightOperand();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression <em>IQL Subscribe Expression</em>}'.
@@ -681,6 +839,66 @@ public interface QDLPackage extends EPackage
      * @generated
      */
     EReference QDL_QUERY__STATEMENTS = eINSTANCE.getQDLQuery_Statements();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLInstanceOfExpressionImpl <em>IQL Instance Of Expression</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLInstanceOfExpressionImpl
+     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLInstanceOfExpression()
+     * @generated
+     */
+    EClass IQL_INSTANCE_OF_EXPRESSION = eINSTANCE.getIQLInstanceOfExpression();
+
+    /**
+     * The meta object literal for the '<em><b>Left Operand</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_INSTANCE_OF_EXPRESSION__LEFT_OPERAND = eINSTANCE.getIQLInstanceOfExpression_LeftOperand();
+
+    /**
+     * The meta object literal for the '<em><b>Target Ref</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_INSTANCE_OF_EXPRESSION__TARGET_REF = eINSTANCE.getIQLInstanceOfExpression_TargetRef();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLRelationalExpressionImpl <em>IQL Relational Expression</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLRelationalExpressionImpl
+     * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLPackageImpl#getIQLRelationalExpression()
+     * @generated
+     */
+    EClass IQL_RELATIONAL_EXPRESSION = eINSTANCE.getIQLRelationalExpression();
+
+    /**
+     * The meta object literal for the '<em><b>Left Operand</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_RELATIONAL_EXPRESSION__LEFT_OPERAND = eINSTANCE.getIQLRelationalExpression_LeftOperand();
+
+    /**
+     * The meta object literal for the '<em><b>Op</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute IQL_RELATIONAL_EXPRESSION__OP = eINSTANCE.getIQLRelationalExpression_Op();
+
+    /**
+     * The meta object literal for the '<em><b>Right Operand</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IQL_RELATIONAL_EXPRESSION__RIGHT_OPERAND = eINSTANCE.getIQLRelationalExpression_RightOperand();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.IQLSubscribeExpressionImpl <em>IQL Subscribe Expression</em>}' class.

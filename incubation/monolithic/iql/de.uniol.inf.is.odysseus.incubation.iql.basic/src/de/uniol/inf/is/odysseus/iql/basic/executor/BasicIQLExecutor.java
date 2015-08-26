@@ -20,13 +20,6 @@ public class BasicIQLExecutor extends AbstractIQLExecutor<BasicIQLTypeFactory, B
 		super(typeFactory, typeUtils);
 	}
 
-
-	@Override
-	protected String getLanguageName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public List<IExecutorCommand> parse(String text, IDataDictionary dd,
 			ISession session, Context context) throws QueryParseException {

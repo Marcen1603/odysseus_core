@@ -4,6 +4,8 @@ package de.uniol.inf.is.odysseus.iql.basic.basicIQL;
 
 import org.eclipse.emf.ecore.EObject;
 
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>IQL Arguments Map Key Value</b></em>'.
@@ -24,30 +26,30 @@ import org.eclipse.emf.ecore.EObject;
 public interface IQLArgumentsMapKeyValue extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Key</b></em>' attribute.
+   * Returns the value of the '<em><b>Key</b></em>' reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Key</em>' attribute isn't clear,
+   * If the meaning of the '<em>Key</em>' reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Key</em>' attribute.
-   * @see #setKey(String)
+   * @return the value of the '<em>Key</em>' reference.
+   * @see #setKey(JvmIdentifiableElement)
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage#getIQLArgumentsMapKeyValue_Key()
    * @model
    * @generated
    */
-  String getKey();
+  JvmIdentifiableElement getKey();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue#getKey <em>Key</em>}' attribute.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue#getKey <em>Key</em>}' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Key</em>' attribute.
+   * @param value the new value of the '<em>Key</em>' reference.
    * @see #getKey()
    * @generated
    */
-  void setKey(String value);
+  void setKey(JvmIdentifiableElement value);
 
   /**
    * Returns the value of the '<em><b>Value</b></em>' containment reference.

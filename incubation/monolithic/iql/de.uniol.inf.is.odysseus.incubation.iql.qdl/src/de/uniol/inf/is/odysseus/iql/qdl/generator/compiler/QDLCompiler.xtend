@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
+import org.eclipse.xtext.common.types.JvmOperation
 
 class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLStatementCompiler, IQDLTypeFactory, IQDLTypeUtils> implements IQDLCompiler{
 	
@@ -114,16 +115,14 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 				operators.add(type);
 				«IF map != null»
 					«FOR el :map.elements»
-						«var attrName = el.key»
+						«var attrName = el.key.simpleName»
 						«IF helper.isParameter(attrName, typeRef)»
 							type.setParameter("«attrName»", «attrName»);
 						«ELSE»	
-							«var type = helper.getPropertyType(el.key, typeRef)»
-							«IF type !=null && helper.isSetter(el.key, typeRef, type)»
-								«var methodName = helper.getMethodName("set"+el.key, typeRef)»
-								type.«methodName»(«el.key»);
+							«IF el.key instanceof JvmOperation»
+								type.«el.key.simpleName»(«el.key.simpleName»);				
 							«ELSE»
-								type.«el.key» = «el.key»;
+								type.«el.key.simpleName» = «el.key.simpleName»;
 							«ENDIF»			
 						«ENDIF»
 					«ENDFOR»

@@ -27,7 +27,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cElementsAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cElementsQDLModelElementParserRuleCall_2_0 = (RuleCall)cElementsAssignment_2.eContents().get(0);
 		
-		//QDLModel returns iql::IQLModel:
+		//QDLModel returns basiciql::IQLModel:
 		//	{QDLModel} namespaces+=IQLNamespace* elements+=QDLModelElement*;
 		public ParserRule getRule() { return rule; }
 
@@ -62,7 +62,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cInnerIQLInterfaceParserRuleCall_2_0_1 = (RuleCall)cInnerAlternatives_2_0.eContents().get(1);
 		private final RuleCall cInnerQDLQueryParserRuleCall_2_0_2 = (RuleCall)cInnerAlternatives_2_0.eContents().get(2);
 		
-		//QDLModelElement returns iql::IQLModelElement:
+		//QDLModelElement returns basiciql::IQLModelElement:
 		//	{QDLModelElement} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery);
 		public ParserRule getRule() { return rule; }
 
@@ -150,54 +150,87 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getStatementsIQLStatementBlockParserRuleCall_4_0() { return cStatementsIQLStatementBlockParserRuleCall_4_0; }
 	}
 
-	public class IQLAssignmentExpressionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLAssignmentExpression");
+	public class IQLRelationalExpressionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLRelationalExpression");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final RuleCall cIQLSubscribeExpressionParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Group cGroup_1_0 = (Group)cAlternatives_1.eContents().get(0);
 		private final Group cGroup_1_0_0 = (Group)cGroup_1_0.eContents().get(0);
-		private final Action cIQLAssignmentExpressionLeftOperandAction_1_0_0_0 = (Action)cGroup_1_0_0.eContents().get(0);
-		private final Assignment cOpAssignment_1_0_0_1 = (Assignment)cGroup_1_0_0.eContents().get(1);
-		private final RuleCall cOpOpAssignParserRuleCall_1_0_0_1_0 = (RuleCall)cOpAssignment_1_0_0_1.eContents().get(0);
-		private final Assignment cRightOperandAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cRightOperandIQLAssignmentExpressionParserRuleCall_1_1_0 = (RuleCall)cRightOperandAssignment_1_1.eContents().get(0);
+		private final Group cGroup_1_0_0_0 = (Group)cGroup_1_0_0.eContents().get(0);
+		private final Action cIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0 = (Action)cGroup_1_0_0_0.eContents().get(0);
+		private final Keyword cInstanceofKeyword_1_0_0_0_1 = (Keyword)cGroup_1_0_0_0.eContents().get(1);
+		private final Assignment cTargetRefAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
+		private final RuleCall cTargetRefJvmTypeReferenceParserRuleCall_1_0_1_0 = (RuleCall)cTargetRefAssignment_1_0_1.eContents().get(0);
+		private final Group cGroup_1_1 = (Group)cAlternatives_1.eContents().get(1);
+		private final Group cGroup_1_1_0 = (Group)cGroup_1_1.eContents().get(0);
+		private final Group cGroup_1_1_0_0 = (Group)cGroup_1_1_0.eContents().get(0);
+		private final Action cIQLRelationalExpressionLeftOperandAction_1_1_0_0_0 = (Action)cGroup_1_1_0_0.eContents().get(0);
+		private final Assignment cOpAssignment_1_1_0_0_1 = (Assignment)cGroup_1_1_0_0.eContents().get(1);
+		private final RuleCall cOpOpRelationalParserRuleCall_1_1_0_0_1_0 = (RuleCall)cOpAssignment_1_1_0_0_1.eContents().get(0);
+		private final Assignment cRightOperandAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
+		private final RuleCall cRightOperandIQLSubscribeExpressionParserRuleCall_1_1_1_0 = (RuleCall)cRightOperandAssignment_1_1_1.eContents().get(0);
 		
-		//IQLAssignmentExpression returns iql::IQLExpression:
-		//	IQLSubscribeExpression (=> ({iql::IQLAssignmentExpression.leftOperand=current} op=OpAssign)
-		//	rightOperand=IQLAssignmentExpression)?;
+		//IQLRelationalExpression returns basiciql::IQLExpression:
+		//	IQLSubscribeExpression (=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference |
+		//	=> ({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*;
 		public ParserRule getRule() { return rule; }
 
-		//IQLSubscribeExpression (=> ({iql::IQLAssignmentExpression.leftOperand=current} op=OpAssign)
-		//rightOperand=IQLAssignmentExpression)?
+		//IQLSubscribeExpression (=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference | =>
+		//({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*
 		public Group getGroup() { return cGroup; }
 
 		//IQLSubscribeExpression
 		public RuleCall getIQLSubscribeExpressionParserRuleCall_0() { return cIQLSubscribeExpressionParserRuleCall_0; }
 
-		//(=> ({iql::IQLAssignmentExpression.leftOperand=current} op=OpAssign) rightOperand=IQLAssignmentExpression)?
-		public Group getGroup_1() { return cGroup_1; }
+		//(=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference | =>
+		//({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
-		//=> ({iql::IQLAssignmentExpression.leftOperand=current} op=OpAssign)
+		//=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference
 		public Group getGroup_1_0() { return cGroup_1_0; }
 
-		//{iql::IQLAssignmentExpression.leftOperand=current} op=OpAssign
+		//=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof")
 		public Group getGroup_1_0_0() { return cGroup_1_0_0; }
 
-		//{iql::IQLAssignmentExpression.leftOperand=current}
-		public Action getIQLAssignmentExpressionLeftOperandAction_1_0_0_0() { return cIQLAssignmentExpressionLeftOperandAction_1_0_0_0; }
+		//{IQLInstanceOfExpression.leftOperand=current} "instanceof"
+		public Group getGroup_1_0_0_0() { return cGroup_1_0_0_0; }
 
-		//op=OpAssign
-		public Assignment getOpAssignment_1_0_0_1() { return cOpAssignment_1_0_0_1; }
+		//{IQLInstanceOfExpression.leftOperand=current}
+		public Action getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() { return cIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0; }
 
-		//OpAssign
-		public RuleCall getOpOpAssignParserRuleCall_1_0_0_1_0() { return cOpOpAssignParserRuleCall_1_0_0_1_0; }
+		//"instanceof"
+		public Keyword getInstanceofKeyword_1_0_0_0_1() { return cInstanceofKeyword_1_0_0_0_1; }
 
-		//rightOperand=IQLAssignmentExpression
-		public Assignment getRightOperandAssignment_1_1() { return cRightOperandAssignment_1_1; }
+		//targetRef=JvmTypeReference
+		public Assignment getTargetRefAssignment_1_0_1() { return cTargetRefAssignment_1_0_1; }
 
-		//IQLAssignmentExpression
-		public RuleCall getRightOperandIQLAssignmentExpressionParserRuleCall_1_1_0() { return cRightOperandIQLAssignmentExpressionParserRuleCall_1_1_0; }
+		//JvmTypeReference
+		public RuleCall getTargetRefJvmTypeReferenceParserRuleCall_1_0_1_0() { return cTargetRefJvmTypeReferenceParserRuleCall_1_0_1_0; }
+
+		//=> ({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression
+		public Group getGroup_1_1() { return cGroup_1_1; }
+
+		//=> ({IQLRelationalExpression.leftOperand=current} op=OpRelational)
+		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
+
+		//{IQLRelationalExpression.leftOperand=current} op=OpRelational
+		public Group getGroup_1_1_0_0() { return cGroup_1_1_0_0; }
+
+		//{IQLRelationalExpression.leftOperand=current}
+		public Action getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() { return cIQLRelationalExpressionLeftOperandAction_1_1_0_0_0; }
+
+		//op=OpRelational
+		public Assignment getOpAssignment_1_1_0_0_1() { return cOpAssignment_1_1_0_0_1; }
+
+		//OpRelational
+		public RuleCall getOpOpRelationalParserRuleCall_1_1_0_0_1_0() { return cOpOpRelationalParserRuleCall_1_1_0_0_1_0; }
+
+		//rightOperand=IQLSubscribeExpression
+		public Assignment getRightOperandAssignment_1_1_1() { return cRightOperandAssignment_1_1_1; }
+
+		//IQLSubscribeExpression
+		public RuleCall getRightOperandIQLSubscribeExpressionParserRuleCall_1_1_1_0() { return cRightOperandIQLSubscribeExpressionParserRuleCall_1_1_1_0; }
 	}
 
 	public class IQLSubscribeExpressionElements extends AbstractParserRuleElementFinder {
@@ -213,7 +246,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cRightOperandAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cRightOperandIQLPortExpressionParserRuleCall_1_1_0 = (RuleCall)cRightOperandAssignment_1_1.eContents().get(0);
 		
-		//IQLSubscribeExpression returns iql::IQLExpression:
+		//IQLSubscribeExpression returns basiciql::IQLExpression:
 		//	IQLPortExpression (=> ({IQLSubscribeExpression.leftOperand=current} op=IQLSubscribe)
 		//	rightOperand=IQLPortExpression)*;
 		public ParserRule getRule() { return rule; }
@@ -252,7 +285,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	public class IQLPortExpressionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLPortExpression");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cIQLLogicalOrExpressionParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final RuleCall cIQLAdditiveExpressionParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
 		private final Group cGroup_1_0_0 = (Group)cGroup_1_0.eContents().get(0);
@@ -260,19 +293,19 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cOpAssignment_1_0_0_1 = (Assignment)cGroup_1_0_0.eContents().get(1);
 		private final Keyword cOpColonKeyword_1_0_0_1_0 = (Keyword)cOpAssignment_1_0_0_1.eContents().get(0);
 		private final Assignment cRightOperandAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cRightOperandIQLLogicalOrExpressionParserRuleCall_1_1_0 = (RuleCall)cRightOperandAssignment_1_1.eContents().get(0);
+		private final RuleCall cRightOperandIQLAdditiveExpressionParserRuleCall_1_1_0 = (RuleCall)cRightOperandAssignment_1_1.eContents().get(0);
 		
-		//IQLPortExpression returns iql::IQLExpression:
-		//	IQLLogicalOrExpression (=> ({IQLPortExpression.leftOperand=current} op=":") rightOperand=IQLLogicalOrExpression)*;
+		//IQLPortExpression returns basiciql::IQLExpression:
+		//	IQLAdditiveExpression (=> ({IQLPortExpression.leftOperand=current} op=":") rightOperand=IQLAdditiveExpression)?;
 		public ParserRule getRule() { return rule; }
 
-		//IQLLogicalOrExpression (=> ({IQLPortExpression.leftOperand=current} op=":") rightOperand=IQLLogicalOrExpression)*
+		//IQLAdditiveExpression (=> ({IQLPortExpression.leftOperand=current} op=":") rightOperand=IQLAdditiveExpression)?
 		public Group getGroup() { return cGroup; }
 
-		//IQLLogicalOrExpression
-		public RuleCall getIQLLogicalOrExpressionParserRuleCall_0() { return cIQLLogicalOrExpressionParserRuleCall_0; }
+		//IQLAdditiveExpression
+		public RuleCall getIQLAdditiveExpressionParserRuleCall_0() { return cIQLAdditiveExpressionParserRuleCall_0; }
 
-		//(=> ({IQLPortExpression.leftOperand=current} op=":") rightOperand=IQLLogicalOrExpression)*
+		//(=> ({IQLPortExpression.leftOperand=current} op=":") rightOperand=IQLAdditiveExpression)?
 		public Group getGroup_1() { return cGroup_1; }
 
 		//=> ({IQLPortExpression.leftOperand=current} op=":")
@@ -290,11 +323,11 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		//":"
 		public Keyword getOpColonKeyword_1_0_0_1_0() { return cOpColonKeyword_1_0_0_1_0; }
 
-		//rightOperand=IQLLogicalOrExpression
+		//rightOperand=IQLAdditiveExpression
 		public Assignment getRightOperandAssignment_1_1() { return cRightOperandAssignment_1_1; }
 
-		//IQLLogicalOrExpression
-		public RuleCall getRightOperandIQLLogicalOrExpressionParserRuleCall_1_1_0() { return cRightOperandIQLLogicalOrExpressionParserRuleCall_1_1_0; }
+		//IQLAdditiveExpression
+		public RuleCall getRightOperandIQLAdditiveExpressionParserRuleCall_1_1_0() { return cRightOperandIQLAdditiveExpressionParserRuleCall_1_1_0; }
 	}
 
 	public class IQLSubscribeElements extends AbstractParserRuleElementFinder {
@@ -349,23 +382,23 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Action cIQLMetadataValueSingleNullAction_6_0 = (Action)cGroup_6.eContents().get(0);
 		private final Keyword cNullKeyword_6_1 = (Keyword)cGroup_6.eContents().get(1);
 		
-		//IQLMetadataValueSingle returns iql::IQLMetadataValue:
-		//	{iql::IQLMetadataValueSingleInt} value=INT | {iql::IQLMetadataValueSingleDouble} value=DOUBLE |
-		//	{iql::IQLMetadataValueSingleString} value=STRING | {iql::IQLMetadataValueSingleBoolean} value=BOOLEAN | =>
-		//	({QDLMetadataValueSingleID} value=ID) | {iql::IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
-		//	{iql::IQLMetadataValueSingleNull} "null";
+		//IQLMetadataValueSingle returns basiciql::IQLMetadataValue:
+		//	{basiciql::IQLMetadataValueSingleInt} value=INT | {basiciql::IQLMetadataValueSingleDouble} value=DOUBLE |
+		//	{basiciql::IQLMetadataValueSingleString} value=STRING | {basiciql::IQLMetadataValueSingleBoolean} value=BOOLEAN | =>
+		//	({QDLMetadataValueSingleID} value=ID) | {basiciql::IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
+		//	{basiciql::IQLMetadataValueSingleNull} "null";
 		public ParserRule getRule() { return rule; }
 
-		//{iql::IQLMetadataValueSingleInt} value=INT | {iql::IQLMetadataValueSingleDouble} value=DOUBLE |
-		//{iql::IQLMetadataValueSingleString} value=STRING | {iql::IQLMetadataValueSingleBoolean} value=BOOLEAN | =>
-		//({QDLMetadataValueSingleID} value=ID) | {iql::IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
-		//{iql::IQLMetadataValueSingleNull} "null"
+		//{basiciql::IQLMetadataValueSingleInt} value=INT | {basiciql::IQLMetadataValueSingleDouble} value=DOUBLE |
+		//{basiciql::IQLMetadataValueSingleString} value=STRING | {basiciql::IQLMetadataValueSingleBoolean} value=BOOLEAN | =>
+		//({QDLMetadataValueSingleID} value=ID) | {basiciql::IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
+		//{basiciql::IQLMetadataValueSingleNull} "null"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
-		//{iql::IQLMetadataValueSingleInt} value=INT
+		//{basiciql::IQLMetadataValueSingleInt} value=INT
 		public Group getGroup_0() { return cGroup_0; }
 
-		//{iql::IQLMetadataValueSingleInt}
+		//{basiciql::IQLMetadataValueSingleInt}
 		public Action getIQLMetadataValueSingleIntAction_0_0() { return cIQLMetadataValueSingleIntAction_0_0; }
 
 		//value=INT
@@ -374,10 +407,10 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		//INT
 		public RuleCall getValueINTTerminalRuleCall_0_1_0() { return cValueINTTerminalRuleCall_0_1_0; }
 
-		//{iql::IQLMetadataValueSingleDouble} value=DOUBLE
+		//{basiciql::IQLMetadataValueSingleDouble} value=DOUBLE
 		public Group getGroup_1() { return cGroup_1; }
 
-		//{iql::IQLMetadataValueSingleDouble}
+		//{basiciql::IQLMetadataValueSingleDouble}
 		public Action getIQLMetadataValueSingleDoubleAction_1_0() { return cIQLMetadataValueSingleDoubleAction_1_0; }
 
 		//value=DOUBLE
@@ -386,10 +419,10 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		//DOUBLE
 		public RuleCall getValueDOUBLETerminalRuleCall_1_1_0() { return cValueDOUBLETerminalRuleCall_1_1_0; }
 
-		//{iql::IQLMetadataValueSingleString} value=STRING
+		//{basiciql::IQLMetadataValueSingleString} value=STRING
 		public Group getGroup_2() { return cGroup_2; }
 
-		//{iql::IQLMetadataValueSingleString}
+		//{basiciql::IQLMetadataValueSingleString}
 		public Action getIQLMetadataValueSingleStringAction_2_0() { return cIQLMetadataValueSingleStringAction_2_0; }
 
 		//value=STRING
@@ -398,10 +431,10 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		//STRING
 		public RuleCall getValueSTRINGTerminalRuleCall_2_1_0() { return cValueSTRINGTerminalRuleCall_2_1_0; }
 
-		//{iql::IQLMetadataValueSingleBoolean} value=BOOLEAN
+		//{basiciql::IQLMetadataValueSingleBoolean} value=BOOLEAN
 		public Group getGroup_3() { return cGroup_3; }
 
-		//{iql::IQLMetadataValueSingleBoolean}
+		//{basiciql::IQLMetadataValueSingleBoolean}
 		public Action getIQLMetadataValueSingleBooleanAction_3_0() { return cIQLMetadataValueSingleBooleanAction_3_0; }
 
 		//value=BOOLEAN
@@ -425,10 +458,10 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getValueIDTerminalRuleCall_4_0_1_0() { return cValueIDTerminalRuleCall_4_0_1_0; }
 
-		//{iql::IQLMetadataValueSingleTypeRef} value=JvmTypeReference
+		//{basiciql::IQLMetadataValueSingleTypeRef} value=JvmTypeReference
 		public Group getGroup_5() { return cGroup_5; }
 
-		//{iql::IQLMetadataValueSingleTypeRef}
+		//{basiciql::IQLMetadataValueSingleTypeRef}
 		public Action getIQLMetadataValueSingleTypeRefAction_5_0() { return cIQLMetadataValueSingleTypeRefAction_5_0; }
 
 		//value=JvmTypeReference
@@ -437,20 +470,20 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		//JvmTypeReference
 		public RuleCall getValueJvmTypeReferenceParserRuleCall_5_1_0() { return cValueJvmTypeReferenceParserRuleCall_5_1_0; }
 
-		//{iql::IQLMetadataValueSingleNull} "null"
+		//{basiciql::IQLMetadataValueSingleNull} "null"
 		public Group getGroup_6() { return cGroup_6; }
 
-		//{iql::IQLMetadataValueSingleNull}
+		//{basiciql::IQLMetadataValueSingleNull}
 		public Action getIQLMetadataValueSingleNullAction_6_0() { return cIQLMetadataValueSingleNullAction_6_0; }
 
 		//"null"
 		public Keyword getNullKeyword_6_1() { return cNullKeyword_6_1; }
 	}
 
-	public class IQLJavaWordsElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLJavaWords");
+	public class IQLJavaTextElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLJavaText");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cIQLJavaKeywordsParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cIQL_JAVA_KEYWORDSParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cWSTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		private final RuleCall cIDTerminalRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		private final RuleCall cBOOLEANTerminalRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
@@ -507,21 +540,21 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cNullKeyword_54 = (Keyword)cAlternatives.eContents().get(54);
 		private final Keyword cQueryKeyword_55 = (Keyword)cAlternatives.eContents().get(55);
 		
-		//IQLJavaWords:
-		//	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
-		//	| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" |
-		//	"|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
-		//	")" | "." | ":" | ";" | "," | "null" | "query";
+		//IQLJavaText:
+		//	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" |
+		//	"/" | "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:"
+		//	| "|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
+		//	")" | "." | ":" | ";" | "," | "null" | "query")*;
 		public ParserRule getRule() { return rule; }
 
-		//IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/" |
-		//"/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" | "|" |
-		//"|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" | ")" |
-		//"." | ":" | ";" | "," | "null" | "query"
+		//(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
+		//| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" | "|"
+		//| "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" | ")" |
+		//"." | ":" | ";" | "," | "null" | "query")*
 		public Alternatives getAlternatives() { return cAlternatives; }
 
-		//IQLJavaKeywords
-		public RuleCall getIQLJavaKeywordsParserRuleCall_0() { return cIQLJavaKeywordsParserRuleCall_0; }
+		//IQL_JAVA_KEYWORDS
+		public RuleCall getIQL_JAVA_KEYWORDSParserRuleCall_0() { return cIQL_JAVA_KEYWORDSParserRuleCall_0; }
 
 		//WS
 		public RuleCall getWSTerminalRuleCall_1() { return cWSTerminalRuleCall_1; }
@@ -693,12 +726,12 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	private final QDLModelElements pQDLModel;
 	private final QDLModelElementElements pQDLModelElement;
 	private final QDLQueryElements pQDLQuery;
-	private final IQLAssignmentExpressionElements pIQLAssignmentExpression;
+	private final IQLRelationalExpressionElements pIQLRelationalExpression;
 	private final IQLSubscribeExpressionElements pIQLSubscribeExpression;
 	private final IQLPortExpressionElements pIQLPortExpression;
 	private final IQLSubscribeElements pIQLSubscribe;
 	private final IQLMetadataValueSingleElements pIQLMetadataValueSingle;
-	private final IQLJavaWordsElements pIQLJavaWords;
+	private final IQLJavaTextElements pIQLJavaText;
 	
 	private final Grammar grammar;
 
@@ -712,12 +745,12 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pQDLModel = new QDLModelElements();
 		this.pQDLModelElement = new QDLModelElementElements();
 		this.pQDLQuery = new QDLQueryElements();
-		this.pIQLAssignmentExpression = new IQLAssignmentExpressionElements();
+		this.pIQLRelationalExpression = new IQLRelationalExpressionElements();
 		this.pIQLSubscribeExpression = new IQLSubscribeExpressionElements();
 		this.pIQLPortExpression = new IQLPortExpressionElements();
 		this.pIQLSubscribe = new IQLSubscribeElements();
 		this.pIQLMetadataValueSingle = new IQLMetadataValueSingleElements();
-		this.pIQLJavaWords = new IQLJavaWordsElements();
+		this.pIQLJavaText = new IQLJavaTextElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -747,7 +780,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	
-	//QDLModel returns iql::IQLModel:
+	//QDLModel returns basiciql::IQLModel:
 	//	{QDLModel} namespaces+=IQLNamespace* elements+=QDLModelElement*;
 	public QDLModelElements getQDLModelAccess() {
 		return pQDLModel;
@@ -757,7 +790,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getQDLModelAccess().getRule();
 	}
 
-	//QDLModelElement returns iql::IQLModelElement:
+	//QDLModelElement returns basiciql::IQLModelElement:
 	//	{QDLModelElement} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery);
 	public QDLModelElementElements getQDLModelElementAccess() {
 		return pQDLModelElement;
@@ -777,18 +810,18 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getQDLQueryAccess().getRule();
 	}
 
-	//IQLAssignmentExpression returns iql::IQLExpression:
-	//	IQLSubscribeExpression (=> ({iql::IQLAssignmentExpression.leftOperand=current} op=OpAssign)
-	//	rightOperand=IQLAssignmentExpression)?;
-	public IQLAssignmentExpressionElements getIQLAssignmentExpressionAccess() {
-		return pIQLAssignmentExpression;
+	//IQLRelationalExpression returns basiciql::IQLExpression:
+	//	IQLSubscribeExpression (=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference |
+	//	=> ({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*;
+	public IQLRelationalExpressionElements getIQLRelationalExpressionAccess() {
+		return pIQLRelationalExpression;
 	}
 	
-	public ParserRule getIQLAssignmentExpressionRule() {
-		return getIQLAssignmentExpressionAccess().getRule();
+	public ParserRule getIQLRelationalExpressionRule() {
+		return getIQLRelationalExpressionAccess().getRule();
 	}
 
-	//IQLSubscribeExpression returns iql::IQLExpression:
+	//IQLSubscribeExpression returns basiciql::IQLExpression:
 	//	IQLPortExpression (=> ({IQLSubscribeExpression.leftOperand=current} op=IQLSubscribe)
 	//	rightOperand=IQLPortExpression)*;
 	public IQLSubscribeExpressionElements getIQLSubscribeExpressionAccess() {
@@ -799,8 +832,8 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLSubscribeExpressionAccess().getRule();
 	}
 
-	//IQLPortExpression returns iql::IQLExpression:
-	//	IQLLogicalOrExpression (=> ({IQLPortExpression.leftOperand=current} op=":") rightOperand=IQLLogicalOrExpression)*;
+	//IQLPortExpression returns basiciql::IQLExpression:
+	//	IQLAdditiveExpression (=> ({IQLPortExpression.leftOperand=current} op=":") rightOperand=IQLAdditiveExpression)?;
 	public IQLPortExpressionElements getIQLPortExpressionAccess() {
 		return pIQLPortExpression;
 	}
@@ -819,11 +852,11 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLSubscribeAccess().getRule();
 	}
 
-	//IQLMetadataValueSingle returns iql::IQLMetadataValue:
-	//	{iql::IQLMetadataValueSingleInt} value=INT | {iql::IQLMetadataValueSingleDouble} value=DOUBLE |
-	//	{iql::IQLMetadataValueSingleString} value=STRING | {iql::IQLMetadataValueSingleBoolean} value=BOOLEAN | =>
-	//	({QDLMetadataValueSingleID} value=ID) | {iql::IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
-	//	{iql::IQLMetadataValueSingleNull} "null";
+	//IQLMetadataValueSingle returns basiciql::IQLMetadataValue:
+	//	{basiciql::IQLMetadataValueSingleInt} value=INT | {basiciql::IQLMetadataValueSingleDouble} value=DOUBLE |
+	//	{basiciql::IQLMetadataValueSingleString} value=STRING | {basiciql::IQLMetadataValueSingleBoolean} value=BOOLEAN | =>
+	//	({QDLMetadataValueSingleID} value=ID) | {basiciql::IQLMetadataValueSingleTypeRef} value=JvmTypeReference |
+	//	{basiciql::IQLMetadataValueSingleNull} "null";
 	public IQLMetadataValueSingleElements getIQLMetadataValueSingleAccess() {
 		return pIQLMetadataValueSingle;
 	}
@@ -832,17 +865,17 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLMetadataValueSingleAccess().getRule();
 	}
 
-	//IQLJavaWords:
-	//	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
-	//	| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" |
-	//	"|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
-	//	")" | "." | ":" | ";" | "," | "null" | "query";
-	public IQLJavaWordsElements getIQLJavaWordsAccess() {
-		return pIQLJavaWords;
+	//IQLJavaText:
+	//	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" |
+	//	"/" | "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:"
+	//	| "|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
+	//	")" | "." | ":" | ";" | "," | "null" | "query")*;
+	public IQLJavaTextElements getIQLJavaTextAccess() {
+		return pIQLJavaText;
 	}
 	
-	public ParserRule getIQLJavaWordsRule() {
-		return getIQLJavaWordsAccess().getRule();
+	public ParserRule getIQLJavaTextRule() {
+		return getIQLJavaTextAccess().getRule();
 	}
 
 	//IQLModel:
@@ -1120,7 +1153,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLArgumentsMapKeyValue:
-	//	key=ID "=" value=IQLExpression;
+	//	key=[jvm::JvmIdentifiableElement|QualifiedName] "=" value=IQLExpression;
 	public BasicIQLGrammarAccess.IQLArgumentsMapKeyValueElements getIQLArgumentsMapKeyValueAccess() {
 		return gaBasicIQL.getIQLArgumentsMapKeyValueAccess();
 	}
@@ -1309,6 +1342,17 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLExpressionAccess().getRule();
 	}
 
+	//IQLAssignmentExpression returns IQLExpression:
+	//	IQLLogicalOrExpression (=> ({IQLAssignmentExpression.leftOperand=current} op=OpAssign)
+	//	rightOperand=IQLAssignmentExpression)?;
+	public BasicIQLGrammarAccess.IQLAssignmentExpressionElements getIQLAssignmentExpressionAccess() {
+		return gaBasicIQL.getIQLAssignmentExpressionAccess();
+	}
+	
+	public ParserRule getIQLAssignmentExpressionRule() {
+		return getIQLAssignmentExpressionAccess().getRule();
+	}
+
 	//OpAssign:
 	//	"=" | "+=" | "-=" | "*=" | "/=" | "%=";
 	public BasicIQLGrammarAccess.OpAssignElements getOpAssignAccess() {
@@ -1380,17 +1424,6 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getOpEqualityRule() {
 		return getOpEqualityAccess().getRule();
-	}
-
-	//IQLRelationalExpression returns IQLExpression:
-	//	IQLAdditiveExpression (=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference |
-	//	=> ({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLAdditiveExpression)*;
-	public BasicIQLGrammarAccess.IQLRelationalExpressionElements getIQLRelationalExpressionAccess() {
-		return gaBasicIQL.getIQLRelationalExpressionAccess();
-	}
-	
-	public ParserRule getIQLRelationalExpressionRule() {
-		return getIQLRelationalExpressionAccess().getRule();
 	}
 
 	//OpRelational:
@@ -1615,27 +1648,17 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLJavaAccess().getRule();
 	}
 
-	//IQLJavaText:
-	//	IQLJavaWords*;
-	public BasicIQLGrammarAccess.IQLJavaTextElements getIQLJavaTextAccess() {
-		return gaBasicIQL.getIQLJavaTextAccess();
-	}
-	
-	public ParserRule getIQLJavaTextRule() {
-		return getIQLJavaTextAccess().getRule();
-	}
-
-	//IQLJavaKeywords:
+	//IQL_JAVA_KEYWORDS:
 	//	"break" | "case" | "class" | "continue" | "default" | "do" | "else" | "extends" | "for" | "if" | "implements" |
 	//	"instanceof" | "interface" | "new" | "package" | "return" | "super" | "switch" | "this" | "while" | "abstract" |
 	//	"assert" | "catch" | "const" | "enum" | "final" | "finally" | "goto" | "import" | "native" | "private" | "protected"
 	//	| "public" | "static" | "synchronized" | "throw" | "throws" | "transient" | "try" | "volatile" | "strictfp";
-	public BasicIQLGrammarAccess.IQLJavaKeywordsElements getIQLJavaKeywordsAccess() {
-		return gaBasicIQL.getIQLJavaKeywordsAccess();
+	public BasicIQLGrammarAccess.IQL_JAVA_KEYWORDSElements getIQL_JAVA_KEYWORDSAccess() {
+		return gaBasicIQL.getIQL_JAVA_KEYWORDSAccess();
 	}
 	
-	public ParserRule getIQLJavaKeywordsRule() {
-		return getIQLJavaKeywordsAccess().getRule();
+	public ParserRule getIQL_JAVA_KEYWORDSRule() {
+		return getIQL_JAVA_KEYWORDSAccess().getRule();
 	}
 
 	//terminal BOOLEAN returns ecore::EBoolean:

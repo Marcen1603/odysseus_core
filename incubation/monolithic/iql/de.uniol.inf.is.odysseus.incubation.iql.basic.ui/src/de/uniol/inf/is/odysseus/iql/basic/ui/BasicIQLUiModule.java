@@ -11,12 +11,14 @@ import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLAntlrTokenToAttributeIdMapper;
 import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLProposalProvider;
@@ -46,6 +48,10 @@ public class BasicIQLUiModule extends de.uniol.inf.is.odysseus.iql.basic.ui.Abst
 		return BasicIQLUiGenerator.class;
 	}
 
+	
+	public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
+		return BasicIQLAntlrTokenToAttributeIdMapper.class ;
+	}
 	
 	public Class<? extends IIQLJdtTypeProviderFactory> bindJdtTypeProviderFactory() {
 		return IQLJdtTypeProviderFactory.class;

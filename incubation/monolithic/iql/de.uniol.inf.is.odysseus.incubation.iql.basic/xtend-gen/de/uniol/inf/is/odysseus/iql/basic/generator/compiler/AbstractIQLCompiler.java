@@ -31,6 +31,7 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmMember;
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -530,42 +531,30 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     {
       EList<IQLArgumentsMapKeyValue> _elements_1 = map.getElements();
       for(final IQLArgumentsMapKeyValue el : _elements_1) {
-        _builder.append("\t");
-        String _key = el.getKey();
-        JvmTypeReference type = this.helper.getPropertyType(_key, typeRef);
-        _builder.newLineIfNotEmpty();
         {
-          boolean _and = false;
-          boolean _notEquals = (!Objects.equal(type, null));
-          if (!_notEquals) {
-            _and = false;
-          } else {
-            String _key_1 = el.getKey();
-            boolean _isSetter = this.helper.isSetter(_key_1, typeRef, type);
-            _and = _isSetter;
-          }
-          if (_and) {
-            _builder.append("\t");
-            String _key_2 = el.getKey();
-            String _plus = ("set" + _key_2);
-            String methodName = this.helper.getMethodName(_plus, typeRef);
-            _builder.newLineIfNotEmpty();
+          JvmIdentifiableElement _key = el.getKey();
+          if ((_key instanceof JvmOperation)) {
             _builder.append("\t");
             _builder.append("type.");
-            _builder.append(methodName, "\t");
+            JvmIdentifiableElement _key_1 = el.getKey();
+            String _simpleName = _key_1.getSimpleName();
+            _builder.append(_simpleName, "\t");
             _builder.append("(");
-            String _key_3 = el.getKey();
-            _builder.append(_key_3, "\t");
-            _builder.append(");");
+            JvmIdentifiableElement _key_2 = el.getKey();
+            String _simpleName_1 = _key_2.getSimpleName();
+            _builder.append(_simpleName_1, "\t");
+            _builder.append(");\t\t\t\t");
             _builder.newLineIfNotEmpty();
           } else {
             _builder.append("\t");
             _builder.append("type.");
-            String _key_4 = el.getKey();
-            _builder.append(_key_4, "\t");
+            JvmIdentifiableElement _key_3 = el.getKey();
+            String _simpleName_2 = _key_3.getSimpleName();
+            _builder.append(_simpleName_2, "\t");
             _builder.append(" = ");
-            String _key_5 = el.getKey();
-            _builder.append(_key_5, "\t");
+            JvmIdentifiableElement _key_4 = el.getKey();
+            String _simpleName_3 = _key_4.getSimpleName();
+            _builder.append(_simpleName_3, "\t");
             _builder.append(";");
             _builder.newLineIfNotEmpty();
           }
@@ -583,7 +572,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
   public String compile(final IQLArgumentsMapKeyValue e, final JvmTypeReference typeRef, final G context) {
     String _xblockexpression = null;
     {
-      String _key = e.getKey();
+      JvmIdentifiableElement _key = e.getKey();
       JvmTypeReference type = this.helper.getPropertyType(_key, typeRef);
       String _xifexpression = null;
       boolean _notEquals = (!Objects.equal(type, null));
@@ -592,8 +581,9 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
         String _compile = this.typeCompiler.compile(type, context, false);
         _builder.append(_compile, "");
         _builder.append(" ");
-        String _key_1 = e.getKey();
-        _builder.append(_key_1, "");
+        JvmIdentifiableElement _key_1 = e.getKey();
+        String _simpleName = _key_1.getSimpleName();
+        _builder.append(_simpleName, "");
         _xifexpression = _builder.toString();
       } else {
         StringConcatenation _builder_1 = new StringConcatenation();

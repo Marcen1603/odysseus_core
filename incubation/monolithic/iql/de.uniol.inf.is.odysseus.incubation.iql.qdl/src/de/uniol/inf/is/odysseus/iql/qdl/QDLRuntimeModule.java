@@ -7,6 +7,7 @@ import org.eclipse.xtext.common.types.xtext.ClasspathBasedTypeScopeProvider;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
+import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceFactory;
 
@@ -64,6 +65,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.lookup.QDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.IQDLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLClasspathTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLQualifiedNameProvider;
+import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLResourceDescriptionStrategy;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.builder.IQDLTypeBuilder;
@@ -83,6 +85,10 @@ import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.QDLTypeUtils;
 @SuppressWarnings({"restriction", "rawtypes"})
 public class QDLRuntimeModule extends de.uniol.inf.is.odysseus.iql.qdl.AbstractQDLRuntimeModule {
 
+	public Class<? extends IDefaultResourceDescriptionStrategy> bindResourceDescriptionStrategy() {
+		return QDLResourceDescriptionStrategy.class;
+	}
+	
 	public Class<? extends IIQLTypeFactory> bindIQLTypeFactory() {
 		return QDLTypeFactory.class;
 	}

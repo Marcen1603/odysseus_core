@@ -24,6 +24,9 @@ public interface IIQLScopeProvider extends IScopeProvider {
 
 	Collection<IEObjectDescription> getTypes(EObject node);
 	
+	Collection<IEObjectDescription> getIQLArgumentsMapKeys(EObject node);
+
+	
 	Collection<JvmType> getAllTypes(EObject node);
 
 

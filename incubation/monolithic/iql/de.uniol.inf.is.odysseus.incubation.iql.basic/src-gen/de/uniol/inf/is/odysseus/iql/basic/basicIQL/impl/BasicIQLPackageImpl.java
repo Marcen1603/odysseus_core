@@ -1017,9 +1017,9 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getIQLArgumentsMapKeyValue_Key()
+  public EReference getIQLArgumentsMapKeyValue_Key()
   {
-    return (EAttribute)iqlArgumentsMapKeyValueEClass.getEStructuralFeatures().get(0);
+    return (EReference)iqlArgumentsMapKeyValueEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2793,7 +2793,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     createEReference(iqlArgumentsMapEClass, IQL_ARGUMENTS_MAP__ELEMENTS);
 
     iqlArgumentsMapKeyValueEClass = createEClass(IQL_ARGUMENTS_MAP_KEY_VALUE);
-    createEAttribute(iqlArgumentsMapKeyValueEClass, IQL_ARGUMENTS_MAP_KEY_VALUE__KEY);
+    createEReference(iqlArgumentsMapKeyValueEClass, IQL_ARGUMENTS_MAP_KEY_VALUE__KEY);
     createEReference(iqlArgumentsMapKeyValueEClass, IQL_ARGUMENTS_MAP_KEY_VALUE__VALUE);
 
     iqlStatementEClass = createEClass(IQL_STATEMENT);
@@ -3167,7 +3167,7 @@ public class BasicIQLPackageImpl extends EPackageImpl implements BasicIQLPackage
     initEReference(getIQLArgumentsMap_Elements(), this.getIQLArgumentsMapKeyValue(), null, "elements", null, 0, -1, IQLArgumentsMap.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlArgumentsMapKeyValueEClass, IQLArgumentsMapKeyValue.class, "IQLArgumentsMapKeyValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getIQLArgumentsMapKeyValue_Key(), ecorePackage.getEString(), "key", null, 0, 1, IQLArgumentsMapKeyValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIQLArgumentsMapKeyValue_Key(), theTypesPackage.getJvmIdentifiableElement(), null, "key", null, 0, 1, IQLArgumentsMapKeyValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getIQLArgumentsMapKeyValue_Value(), this.getIQLExpression(), null, "value", null, 0, 1, IQLArgumentsMapKeyValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlStatementEClass, IQLStatement.class, "IQLStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

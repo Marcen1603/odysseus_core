@@ -38,7 +38,7 @@ public class QDLEObjectDocumentationProvider extends AbstractIQLEObjectDocumenta
 			typeRef = expr.getRef();
 		}
 		if (typeFactory.isOperator(typeRef)) {
-			Parameter parameter = typeFactory.getOperatorParameterType(typeUtils.getShortName(typeRef, false), keyValue.getKey());
+			Parameter parameter = typeFactory.getOperatorParameterType(typeUtils.getShortName(typeRef, false), keyValue.getKey().getSimpleName());
 			if (parameter != null) {
 				return createParameterDocu(parameter);
 			} else {

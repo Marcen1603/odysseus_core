@@ -12,6 +12,7 @@ import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
@@ -23,6 +24,7 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHove
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.IQDLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLClasspathTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLAntlrTokenToAttributeIdMapper;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.contentassist.QDLProposalProvider;
@@ -40,6 +42,10 @@ import de.uniol.inf.is.odysseus.iql.qdl.ui.scoping.QDLUiScopeProvider;
 public class QDLUiModule extends de.uniol.inf.is.odysseus.iql.qdl.ui.AbstractQDLUiModule {
 	public QDLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	
+	public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
+		return QDLAntlrTokenToAttributeIdMapper.class;
 	}
 	
 	

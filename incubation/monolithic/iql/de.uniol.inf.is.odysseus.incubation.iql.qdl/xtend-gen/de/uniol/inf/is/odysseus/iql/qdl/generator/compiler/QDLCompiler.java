@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -377,7 +378,8 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
             EList<IQLArgumentsMapKeyValue> _elements_2 = map.getElements();
             for(final IQLArgumentsMapKeyValue el : _elements_2) {
               _builder.append("\t");
-              String attrName = el.getKey();
+              JvmIdentifiableElement _key = el.getKey();
+              String attrName = _key.getSimpleName();
               _builder.newLineIfNotEmpty();
               {
                 boolean _isParameter = this.helper.isParameter(attrName, typeRef);
@@ -390,42 +392,30 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
                   _builder.append(");");
                   _builder.newLineIfNotEmpty();
                 } else {
-                  _builder.append("\t");
-                  String _key = el.getKey();
-                  JvmTypeReference type = this.helper.getPropertyType(_key, typeRef);
-                  _builder.newLineIfNotEmpty();
                   {
-                    boolean _and_1 = false;
-                    boolean _notEquals_2 = (!Objects.equal(type, null));
-                    if (!_notEquals_2) {
-                      _and_1 = false;
-                    } else {
-                      String _key_1 = el.getKey();
-                      boolean _isSetter = this.helper.isSetter(_key_1, typeRef, type);
-                      _and_1 = _isSetter;
-                    }
-                    if (_and_1) {
-                      _builder.append("\t");
-                      String _key_2 = el.getKey();
-                      String _plus = ("set" + _key_2);
-                      String methodName = this.helper.getMethodName(_plus, typeRef);
-                      _builder.newLineIfNotEmpty();
+                    JvmIdentifiableElement _key_1 = el.getKey();
+                    if ((_key_1 instanceof JvmOperation)) {
                       _builder.append("\t");
                       _builder.append("type.");
-                      _builder.append(methodName, "\t");
+                      JvmIdentifiableElement _key_2 = el.getKey();
+                      String _simpleName_2 = _key_2.getSimpleName();
+                      _builder.append(_simpleName_2, "\t");
                       _builder.append("(");
-                      String _key_3 = el.getKey();
-                      _builder.append(_key_3, "\t");
-                      _builder.append(");");
+                      JvmIdentifiableElement _key_3 = el.getKey();
+                      String _simpleName_3 = _key_3.getSimpleName();
+                      _builder.append(_simpleName_3, "\t");
+                      _builder.append(");\t\t\t\t");
                       _builder.newLineIfNotEmpty();
                     } else {
                       _builder.append("\t");
                       _builder.append("type.");
-                      String _key_4 = el.getKey();
-                      _builder.append(_key_4, "\t");
+                      JvmIdentifiableElement _key_4 = el.getKey();
+                      String _simpleName_4 = _key_4.getSimpleName();
+                      _builder.append(_simpleName_4, "\t");
                       _builder.append(" = ");
-                      String _key_5 = el.getKey();
-                      _builder.append(_key_5, "\t");
+                      JvmIdentifiableElement _key_5 = el.getKey();
+                      String _simpleName_5 = _key_5.getSimpleName();
+                      _builder.append(_simpleName_5, "\t");
                       _builder.append(";");
                       _builder.newLineIfNotEmpty();
                     }

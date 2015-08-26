@@ -160,7 +160,7 @@ IQLArgumentsMap:
 ;
 
 IQLArgumentsMapKeyValue :
-	key=ID '=' value=IQLExpression
+	key=[jvm::JvmIdentifiableElement | QualifiedName] '=' value=IQLExpression
 ;
 
 /////////////////////////////////////////////
@@ -429,21 +429,17 @@ IQLJava hidden(SL_COMMENT, ML_COMMENT):
     '$*' text = IQLJavaText '*$'
 ;
 
-IQLJavaText :
-    IQLJavaWords*
-;
-
-IQLJavaWords:
-	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
+IQLJavaText:
+	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
 	'+'  | '+='  | '-'  | '-='  | '*'   | '*='   | '/' | '/=' | '%'  | '%=' |
 	'++' | '--'	 | '>'  | '>='  | '<'   | '<='   | '!' | '!=' | '&&' | '||' |
 	'==' | '='   | '~'  | '?:'  | '|'   | '|='   | '^' | '^=' | '&'  | '&=' |
 	'>>' | '>>=' | '<<' | '<<=' | '>>>' | '>>>=' |
 	'['  | ']'   |'{'   |'}'    |  '('  |')'     |
-	 '.' | ':'   | ';'  | ','   | 'null'
+	 '.' | ':'   | ';'  | ','   | 'null')*
 ;
 
-IQLJavaKeywords:
+IQL_JAVA_KEYWORDS:
 	'break'   | 'case'   | 'class' | 'continue'   | 'default'   | 'do'        | 'else' |
 	'extends' | 'for'    | 'if'    | 'implements' | 'instanceof'| 'interface' | 'new'  |
     'package' | 'return' | 'super' | 'switch'     | 'this'      | 'while'     |

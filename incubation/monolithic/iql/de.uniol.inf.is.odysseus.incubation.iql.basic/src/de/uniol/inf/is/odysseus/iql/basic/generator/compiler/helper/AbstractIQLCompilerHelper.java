@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.nodemodel.INode;
@@ -90,22 +91,15 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 	}
 	
 	@Override
-	public JvmTypeReference getPropertyType(String name, JvmTypeReference typeRef) {
-		for (JvmField attr : lookUp.getPublicAttributes(typeRef, false)) {
-			if (attr.getSimpleName().equalsIgnoreCase(name)) {
-				return attr.getType();
-			}
+	public JvmTypeReference getPropertyType(JvmIdentifiableElement jvmElement, JvmTypeReference typeRef) {
+		if (jvmElement instanceof JvmField) {
+			return ((JvmField) jvmElement).getType();
+		} else if (jvmElement instanceof JvmOperation) {
+			JvmOperation op = (JvmOperation) jvmElement;
+			return op.getParameters().get(0).getParameterType();
+		} else {
+			return null;
 		}
-		
-		for (JvmOperation meth : lookUp.getPublicMethods(typeRef, false)) {
-			if (meth.getSimpleName().equalsIgnoreCase("set"+name)) {
-				EList<JvmFormalParameter> parameters = meth.getParameters();
-				if (parameters != null && parameters.size() == 1) {
-					return parameters.get(0).getParameterType();
-				}
-			}
-		}		
-		return null;
 	}
 	
 	@Override
@@ -117,22 +111,7 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 		}		
 		return false;	
 	}
-	
-	@Override
-	public boolean isSetter(String property, JvmTypeReference typeRef, JvmTypeReference parameter) {
-		for (JvmOperation op : lookUp.getPublicMethods(typeRef, false)) {
-			if (op.getSimpleName().equalsIgnoreCase("set"+property)) {
-				for (JvmFormalParameter p : op.getParameters()) {
-					String qName = typeUtils.getLongName(p.getParameterType(), true);
-					String qName2 = typeUtils.getLongName(parameter, true);
-					if (qName.equals(qName2)) {
-						return true;
-					}
-				}
-			}
-		}		
-		return false;	
-	}
+
 	
 	@Override
 	public String firstCharUpperCase(String s) {

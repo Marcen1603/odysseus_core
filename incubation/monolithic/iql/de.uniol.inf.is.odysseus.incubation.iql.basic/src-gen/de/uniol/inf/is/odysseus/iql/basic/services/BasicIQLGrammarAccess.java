@@ -1289,23 +1289,27 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLArgumentsMapKeyValue");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cKeyIDTerminalRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
+		private final CrossReference cKeyJvmIdentifiableElementCrossReference_0_0 = (CrossReference)cKeyAssignment_0.eContents().get(0);
+		private final RuleCall cKeyJvmIdentifiableElementQualifiedNameParserRuleCall_0_0_1 = (RuleCall)cKeyJvmIdentifiableElementCrossReference_0_0.eContents().get(1);
 		private final Keyword cEqualsSignKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cValueIQLExpressionParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
 		
 		//IQLArgumentsMapKeyValue:
-		//	key=ID "=" value=IQLExpression;
+		//	key=[jvm::JvmIdentifiableElement|QualifiedName] "=" value=IQLExpression;
 		public ParserRule getRule() { return rule; }
 
-		//key=ID "=" value=IQLExpression
+		//key=[jvm::JvmIdentifiableElement|QualifiedName] "=" value=IQLExpression
 		public Group getGroup() { return cGroup; }
 
-		//key=ID
+		//key=[jvm::JvmIdentifiableElement|QualifiedName]
 		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
 
-		//ID
-		public RuleCall getKeyIDTerminalRuleCall_0_0() { return cKeyIDTerminalRuleCall_0_0; }
+		//[jvm::JvmIdentifiableElement|QualifiedName]
+		public CrossReference getKeyJvmIdentifiableElementCrossReference_0_0() { return cKeyJvmIdentifiableElementCrossReference_0_0; }
+
+		//QualifiedName
+		public RuleCall getKeyJvmIdentifiableElementQualifiedNameParserRuleCall_0_0_1() { return cKeyJvmIdentifiableElementQualifiedNameParserRuleCall_0_0_1; }
 
 		//"="
 		public Keyword getEqualsSignKeyword_1() { return cEqualsSignKeyword_1; }
@@ -3433,20 +3437,8 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 
 	public class IQLJavaTextElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLJavaText");
-		private final RuleCall cIQLJavaWordsParserRuleCall = (RuleCall)rule.eContents().get(1);
-		
-		//IQLJavaText:
-		//	IQLJavaWords*;
-		public ParserRule getRule() { return rule; }
-
-		//IQLJavaWords*
-		public RuleCall getIQLJavaWordsParserRuleCall() { return cIQLJavaWordsParserRuleCall; }
-	}
-
-	public class IQLJavaWordsElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLJavaWords");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cIQLJavaKeywordsParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cIQL_JAVA_KEYWORDSParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cWSTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		private final RuleCall cIDTerminalRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		private final RuleCall cBOOLEANTerminalRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
@@ -3502,21 +3494,21 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cCommaKeyword_53 = (Keyword)cAlternatives.eContents().get(53);
 		private final Keyword cNullKeyword_54 = (Keyword)cAlternatives.eContents().get(54);
 		
-		//IQLJavaWords:
-		//	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
-		//	| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" |
-		//	"|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
-		//	")" | "." | ":" | ";" | "," | "null";
+		//IQLJavaText:
+		//	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" |
+		//	"/" | "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:"
+		//	| "|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
+		//	")" | "." | ":" | ";" | "," | "null")*;
 		public ParserRule getRule() { return rule; }
 
-		//IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/" |
-		//"/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" | "|" |
-		//"|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" | ")" |
-		//"." | ":" | ";" | "," | "null"
+		//(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
+		//| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" | "|"
+		//| "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" | ")" |
+		//"." | ":" | ";" | "," | "null")*
 		public Alternatives getAlternatives() { return cAlternatives; }
 
-		//IQLJavaKeywords
-		public RuleCall getIQLJavaKeywordsParserRuleCall_0() { return cIQLJavaKeywordsParserRuleCall_0; }
+		//IQL_JAVA_KEYWORDS
+		public RuleCall getIQL_JAVA_KEYWORDSParserRuleCall_0() { return cIQL_JAVA_KEYWORDSParserRuleCall_0; }
 
 		//WS
 		public RuleCall getWSTerminalRuleCall_1() { return cWSTerminalRuleCall_1; }
@@ -3681,8 +3673,8 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getNullKeyword_54() { return cNullKeyword_54; }
 	}
 
-	public class IQLJavaKeywordsElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLJavaKeywords");
+	public class IQL_JAVA_KEYWORDSElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQL_JAVA_KEYWORDS");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Keyword cBreakKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
 		private final Keyword cCaseKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
@@ -3726,7 +3718,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cVolatileKeyword_39 = (Keyword)cAlternatives.eContents().get(39);
 		private final Keyword cStrictfpKeyword_40 = (Keyword)cAlternatives.eContents().get(40);
 		
-		//IQLJavaKeywords:
+		//IQL_JAVA_KEYWORDS:
 		//	"break" | "case" | "class" | "continue" | "default" | "do" | "else" | "extends" | "for" | "if" | "implements" |
 		//	"instanceof" | "interface" | "new" | "package" | "return" | "super" | "switch" | "this" | "while" | "abstract" |
 		//	"assert" | "catch" | "const" | "enum" | "final" | "finally" | "goto" | "import" | "native" | "private" | "protected"
@@ -3940,8 +3932,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final TerminalRule tRANGE;
 	private final IQLJavaElements pIQLJava;
 	private final IQLJavaTextElements pIQLJavaText;
-	private final IQLJavaWordsElements pIQLJavaWords;
-	private final IQLJavaKeywordsElements pIQLJavaKeywords;
+	private final IQL_JAVA_KEYWORDSElements pIQL_JAVA_KEYWORDS;
 	private final TerminalRule tBOOLEAN;
 	private final TerminalRule tINT;
 	private final TerminalRule tDOUBLE;
@@ -4031,8 +4022,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.tRANGE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "RANGE");
 		this.pIQLJava = new IQLJavaElements();
 		this.pIQLJavaText = new IQLJavaTextElements();
-		this.pIQLJavaWords = new IQLJavaWordsElements();
-		this.pIQLJavaKeywords = new IQLJavaKeywordsElements();
+		this.pIQL_JAVA_KEYWORDS = new IQL_JAVA_KEYWORDSElements();
 		this.tBOOLEAN = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "BOOLEAN");
 		this.tINT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "INT");
 		this.tDOUBLE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "DOUBLE");
@@ -4352,7 +4342,7 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLArgumentsMapKeyValue:
-	//	key=ID "=" value=IQLExpression;
+	//	key=[jvm::JvmIdentifiableElement|QualifiedName] "=" value=IQLExpression;
 	public IQLArgumentsMapKeyValueElements getIQLArgumentsMapKeyValueAccess() {
 		return pIQLArgumentsMapKeyValue;
 	}
@@ -4859,7 +4849,10 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLJavaText:
-	//	IQLJavaWords*;
+	//	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" |
+	//	"/" | "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:"
+	//	| "|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
+	//	")" | "." | ":" | ";" | "," | "null")*;
 	public IQLJavaTextElements getIQLJavaTextAccess() {
 		return pIQLJavaText;
 	}
@@ -4868,30 +4861,17 @@ public class BasicIQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLJavaTextAccess().getRule();
 	}
 
-	//IQLJavaWords:
-	//	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
-	//	| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" |
-	//	"|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
-	//	")" | "." | ":" | ";" | "," | "null";
-	public IQLJavaWordsElements getIQLJavaWordsAccess() {
-		return pIQLJavaWords;
-	}
-	
-	public ParserRule getIQLJavaWordsRule() {
-		return getIQLJavaWordsAccess().getRule();
-	}
-
-	//IQLJavaKeywords:
+	//IQL_JAVA_KEYWORDS:
 	//	"break" | "case" | "class" | "continue" | "default" | "do" | "else" | "extends" | "for" | "if" | "implements" |
 	//	"instanceof" | "interface" | "new" | "package" | "return" | "super" | "switch" | "this" | "while" | "abstract" |
 	//	"assert" | "catch" | "const" | "enum" | "final" | "finally" | "goto" | "import" | "native" | "private" | "protected"
 	//	| "public" | "static" | "synchronized" | "throw" | "throws" | "transient" | "try" | "volatile" | "strictfp";
-	public IQLJavaKeywordsElements getIQLJavaKeywordsAccess() {
-		return pIQLJavaKeywords;
+	public IQL_JAVA_KEYWORDSElements getIQL_JAVA_KEYWORDSAccess() {
+		return pIQL_JAVA_KEYWORDS;
 	}
 	
-	public ParserRule getIQLJavaKeywordsRule() {
-		return getIQLJavaKeywordsAccess().getRule();
+	public ParserRule getIQL_JAVA_KEYWORDSRule() {
+		return getIQL_JAVA_KEYWORDSAccess().getRule();
 	}
 
 	//terminal BOOLEAN returns ecore::EBoolean:

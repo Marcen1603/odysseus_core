@@ -24,6 +24,7 @@ import org.eclipse.xtext.ui.util.ResourceUtil;
 
 import com.google.common.io.Files;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
@@ -59,7 +60,11 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 			
 			copyAndMoveUserEditiedFiles(operator, outputPath);
 			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator), resources));
-			loadOperator(operator, resources);
+			loadOperator(operator, resources);			
+			
+			if (!isPersistent(operator)){
+				cleanUpDir(outputPath);
+			}
 		}
 	}
 	
@@ -88,7 +93,7 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 					try {
 						Files.copy(from, to);
 					} catch (IOException e) {
-						e.printStackTrace();
+						throw new QueryParseException("error while moving user edited files : " +e.getMessage(),e);
 					}
 				}
 			}
@@ -109,7 +114,7 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 				IFolder folder = root.getFolder(path);
 				result.add(folder.getLocation().toFile().getAbsolutePath());
 			} catch (JavaModelException e) {
-				e.printStackTrace();
+				throw new QueryParseException("error while creating classpath entries : " +e.getMessage(),e);
 			}
 		}
 		

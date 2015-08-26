@@ -2,16 +2,16 @@ grammar de.uniol.inf.is.odysseus.iql.qdl.QDL with de.uniol.inf.is.odysseus.iql.b
 
 generate qDL "http://www.uniol.de/inf/is/odysseus/iql/qdl/QDL"
 
-import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as iql
+import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as basiciql
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvm
 
-QDLModel returns iql::IQLModel:
+QDLModel returns basiciql::IQLModel:
 	{QDLModel}
 	namespaces+=IQLNamespace*
 	(elements+=QDLModelElement)*
 ;
 
-QDLModelElement returns iql::IQLModelElement:
+QDLModelElement returns basiciql::IQLModelElement:
 	{QDLModelElement}
 	(javametadata+=IQLJavaMetadata)*
 	inner=(IQLClass | IQLInterface | QDLQuery)
@@ -23,45 +23,44 @@ QDLQuery returns jvm::JvmGenericType:
 	statements=IQLStatementBlock
 ;
 
-IQLAssignmentExpression returns iql::IQLExpression:
-	IQLSubscribeExpression (
-		=>({iql::IQLAssignmentExpression.leftOperand=current} op=OpAssign) rightOperand=IQLAssignmentExpression
-	)?
+IQLRelationalExpression returns basiciql::IQLExpression:
+	IQLSubscribeExpression
+	(=>({IQLInstanceOfExpression.leftOperand=current} 'instanceof') targetRef=JvmTypeReference |
+	 =>({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*
 ;
 
-IQLSubscribeExpression returns iql::IQLExpression:
+IQLSubscribeExpression returns basiciql::IQLExpression:
 	IQLPortExpression
 	(=>({IQLSubscribeExpression.leftOperand=current} op=IQLSubscribe) rightOperand=IQLPortExpression)*
 ;
 
-IQLPortExpression returns iql::IQLExpression:
-	IQLLogicalOrExpression
-	(=>({IQLPortExpression.leftOperand=current} op=':') rightOperand=IQLLogicalOrExpression)*
+IQLPortExpression returns basiciql::IQLExpression:
+	IQLAdditiveExpression
+	(=>({IQLPortExpression.leftOperand=current} op=':') rightOperand=IQLAdditiveExpression)?
 ;
-
 
 IQLSubscribe:
 	'->' | '<-'
 ;
 
-IQLMetadataValueSingle returns iql::IQLMetadataValue:
-	{iql::IQLMetadataValueSingleInt} value = INT|
-	{iql::IQLMetadataValueSingleDouble} value = DOUBLE|
-	{iql::IQLMetadataValueSingleString} value = STRING|
-	{iql::IQLMetadataValueSingleBoolean} value = BOOLEAN|
+IQLMetadataValueSingle returns basiciql::IQLMetadataValue:
+	{basiciql::IQLMetadataValueSingleInt} value = INT|
+	{basiciql::IQLMetadataValueSingleDouble} value = DOUBLE|
+	{basiciql::IQLMetadataValueSingleString} value = STRING|
+	{basiciql::IQLMetadataValueSingleBoolean} value = BOOLEAN|
 	(=>({QDLMetadataValueSingleID} value = ID)) |
-	{iql::IQLMetadataValueSingleTypeRef} value = JvmTypeReference |	
-	{iql::IQLMetadataValueSingleNull} 'null'	
+	{basiciql::IQLMetadataValueSingleTypeRef} value = JvmTypeReference |	
+	{basiciql::IQLMetadataValueSingleNull} 'null'	
 ;
 
-IQLJavaWords:
-	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
+IQLJavaText:
+	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
 	'+'  | '+='  | '-'  | '-='  | '*'   | '*='   | '/' | '/=' | '%'  | '%=' |
 	'++' | '--'	 | '>'  | '>='  | '<'   | '<='   | '!' | '!=' | '&&' | '||' |
 	'==' | '='   | '~'  | '?:'  | '|'   | '|='   | '^' | '^=' | '&'  | '&=' |
 	'>>' | '>>=' | '<<' | '<<=' | '>>>' | '>>>=' |
 	'['  | ']'   |'{'   |'}'    |  '('  |')'     |
 	 '.' | ':'   | ';'  | ','   | 'null' | 
-	 'query'
+	 'query')*
 ;
 

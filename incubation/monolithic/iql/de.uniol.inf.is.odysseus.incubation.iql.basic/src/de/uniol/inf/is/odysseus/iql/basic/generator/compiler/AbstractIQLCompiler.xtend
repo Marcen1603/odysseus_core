@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
+import org.eclipse.xtext.common.types.JvmOperation
 
 abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, S extends IIQLStatementCompiler<G>, F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLCompiler<G>{
 	
@@ -177,12 +178,10 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 		
 		private «typeCompiler.compile(typeRef, context, false)» get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)» type, «map.elements.map[ el | compile(el, typeRef, context)].join(", ")») {
 			«FOR el :map.elements»
-				«var type = helper.getPropertyType(el.key, typeRef)»
-				«IF type !=null && helper.isSetter(el.key, typeRef, type)»
-					«var methodName = helper.getMethodName("set"+el.key, typeRef)»
-					type.«methodName»(«el.key»);
+				«IF el.key instanceof JvmOperation»
+					type.«el.key.simpleName»(«el.key.simpleName»);				
 				«ELSE»
-					type.«el.key» = «el.key»;
+					type.«el.key.simpleName» = «el.key.simpleName»;
 				«ENDIF»
 			«ENDFOR»
 			return type;
@@ -193,7 +192,7 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 	def String compile(IQLArgumentsMapKeyValue e, JvmTypeReference typeRef, G context) {	
 		var type = helper.getPropertyType(e.key, typeRef);
 		if (type != null) {
-			'''«typeCompiler.compile(type, context, false)» «e.key»'''			
+			'''«typeCompiler.compile(type, context, false)» «e.key.simpleName»'''			
 		} else {
 			''''''
 		}

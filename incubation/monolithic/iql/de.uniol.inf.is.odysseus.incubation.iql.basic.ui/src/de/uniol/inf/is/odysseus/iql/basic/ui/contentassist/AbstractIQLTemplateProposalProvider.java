@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.iql.basic.ui.contentassist;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -14,6 +12,7 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmOperation;
@@ -28,9 +27,7 @@ import org.eclipse.xtext.ui.editor.templates.DefaultTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
@@ -112,18 +109,9 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 	}
 	
 	protected void createIQLArgumentsMapKeyValueProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		IQLVariableStatement stmt = EcoreUtil2.getContainerOfType(node, IQLVariableStatement.class);
-		IQLNewExpression newExpr = EcoreUtil2.getContainerOfType(node, IQLNewExpression.class);	
-		JvmTypeReference typeRef = null;
-		if (stmt != null) {
-			typeRef = ((IQLVariableDeclaration) stmt.getVar()).getRef();
-		} else {
-			typeRef = newExpr.getRef();
-		}
-		
-		Map<String, JvmTypeReference> properties = lookUp.getProperties(typeRef);
-		for (Entry<String, JvmTypeReference> entry : properties.entrySet()) {
-			createMapEntryTemplate(entry.getKey(), entry.getValue(), templateContext, context, acceptor);
+		Collection<IEObjectDescription> elements = scopeProvider.getIQLArgumentsMapKeys(node);
+		for (IEObjectDescription element : elements) {
+			createMapEntryTemplate(element, templateContext, context, acceptor);
 		}
 	}
 	
@@ -135,13 +123,16 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 			EObject el = desc.getEObjectOrProxy();
 			if (el instanceof IQLVariableDeclaration) {
 				IQLVariableDeclaration decl = (IQLVariableDeclaration) el;
-				createVariableTemplate(decl.getName(), decl.getRef(), templateContext, context, acceptor);
+				JvmDeclaredType declaredType = EcoreUtil2.getContainerOfType(decl, JvmDeclaredType.class);
+				createVariableTemplate(decl.getName(), declaredType, decl.getRef(), templateContext, context, acceptor);
 			} else if (el instanceof JvmFormalParameter) {
 				JvmFormalParameter parameter = (JvmFormalParameter) el;
-				createVariableTemplate(parameter.getName(), parameter.getParameterType(), templateContext, context, acceptor);
+				JvmDeclaredType declaredType = EcoreUtil2.getContainerOfType(parameter, JvmDeclaredType.class);
+				createVariableTemplate(parameter.getName(),declaredType, parameter.getParameterType(), templateContext, context, acceptor);
 			} else if (el instanceof JvmField) {
 				JvmField attr = (JvmField) el;
-				createVariableTemplate(converter.toString(desc.getQualifiedName()), attr.getType(), templateContext, context, acceptor);
+				JvmDeclaredType declaredType = EcoreUtil2.getContainerOfType(attr, JvmDeclaredType.class);
+				createVariableTemplate(converter.toString(desc.getQualifiedName()),declaredType, attr.getType(), templateContext, context, acceptor);
 			} else if (el instanceof JvmOperation) {
 				JvmOperation op = (JvmOperation) el;
 				if (op.getSimpleName() != null) {
@@ -158,7 +149,8 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 			EObject obj = desc.getEObjectOrProxy();
 			if (obj instanceof JvmField) {
 				JvmField attribute = (JvmField) obj;
-				createVariableTemplate(attribute.getSimpleName(), attribute.getType(),templateContext, context, acceptor);
+				JvmDeclaredType declaredType = EcoreUtil2.getContainerOfType(attribute, JvmDeclaredType.class);
+				createVariableTemplate(attribute.getSimpleName(), declaredType, attribute.getType(),templateContext, context, acceptor);
 			} else {
 				JvmOperation method = (JvmOperation) obj;
 				String name = desc.getQualifiedName().toString();
@@ -180,7 +172,17 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 		finishTemplate(template, templateContext, context, acceptor);	
 	}
 	
-	protected void createMapEntryTemplate(String name, JvmTypeReference typeRef, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+	protected void createMapEntryTemplate(IEObjectDescription element, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		String name = element.toString();
+		JvmTypeReference typeRef = null;
+		EObject obj = element.getEObjectOrProxy();
+		if (obj instanceof JvmField) {
+			typeRef = ((JvmField) obj).getType();
+		} else {
+			JvmOperation op = (JvmOperation) obj;
+			typeRef = op.getParameters().get(0).getParameterType();
+		}
+		
 		StringBuilder descBuilder = new StringBuilder();
 		descBuilder.append(name);
 		descBuilder.append(" = ");
@@ -211,8 +213,11 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 	}
 	
 	protected void createMethodTemplate(String name, JvmOperation op,TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+		JvmDeclaredType declaredType = EcoreUtil2.getContainerOfType(op, JvmDeclaredType.class);
+		
 		StringBuilder descBuilder = new StringBuilder();
 		descBuilder.append(name);
+		
 
 		if (name.equalsIgnoreCase(op.getSimpleName())) {
 			descBuilder.append("(");
@@ -241,11 +246,12 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 		if (op.getParameters() != null) {
 			id = id+methodFinder.createExecutableID(op);
 		}
-		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
+		Template template = createTemplate(descBuilder.toString(), declaredType.getSimpleName(), id, patternBuilder.toString());
 		finishTemplate(template, templateContext, context, acceptor);
 	}
 	
-	protected void createVariableTemplate(String name, JvmTypeReference typeRef,TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+	protected void createVariableTemplate(String name, JvmDeclaredType declaredType, JvmTypeReference typeRef,TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
+
 		StringBuilder descBuilder = new StringBuilder();
 		descBuilder.append(name);
 		descBuilder.append(" : " + toDescString(typeRef));
@@ -254,7 +260,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 		patternBuilder.append(name);
 
 		String id = name;
-		Template template = createTemplate(descBuilder.toString(), "", id, patternBuilder.toString());
+		Template template = createTemplate(descBuilder.toString(), declaredType.getSimpleName(), id, patternBuilder.toString());
 		finishTemplate(template, templateContext, context, acceptor);
 	}
 		

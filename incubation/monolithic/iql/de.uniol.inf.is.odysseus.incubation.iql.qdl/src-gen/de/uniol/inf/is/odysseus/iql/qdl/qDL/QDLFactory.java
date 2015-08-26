@@ -50,6 +50,24 @@ public interface QDLFactory extends EFactory
   QDLQuery createQDLQuery();
 
   /**
+   * Returns a new object of class '<em>IQL Instance Of Expression</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Instance Of Expression</em>'.
+   * @generated
+   */
+  IQLInstanceOfExpression createIQLInstanceOfExpression();
+
+  /**
+   * Returns a new object of class '<em>IQL Relational Expression</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>IQL Relational Expression</em>'.
+   * @generated
+   */
+  IQLRelationalExpression createIQLRelationalExpression();
+
+  /**
    * Returns a new object of class '<em>IQL Subscribe Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

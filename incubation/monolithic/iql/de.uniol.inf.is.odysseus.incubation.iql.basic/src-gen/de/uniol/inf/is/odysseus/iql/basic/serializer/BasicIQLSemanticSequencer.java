@@ -1092,7 +1092,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (key=ID value=IQLExpression)
+	 *     (key=[JvmIdentifiableElement|QualifiedName] value=IQLExpression)
 	 */
 	protected void sequence_IQLArgumentsMapKeyValue(EObject context, IQLArgumentsMapKeyValue semanticObject) {
 		if(errorAcceptor != null) {
@@ -1103,7 +1103,7 @@ public class BasicIQLSemanticSequencer extends AbstractDelegatingSemanticSequenc
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getIQLArgumentsMapKeyValueAccess().getKeyIDTerminalRuleCall_0_0(), semanticObject.getKey());
+		feeder.accept(grammarAccess.getIQLArgumentsMapKeyValueAccess().getKeyJvmIdentifiableElementQualifiedNameParserRuleCall_0_0_1(), semanticObject.getKey());
 		feeder.accept(grammarAccess.getIQLArgumentsMapKeyValueAccess().getValueIQLExpressionParserRuleCall_2_0(), semanticObject.getValue());
 		feeder.finish();
 	}

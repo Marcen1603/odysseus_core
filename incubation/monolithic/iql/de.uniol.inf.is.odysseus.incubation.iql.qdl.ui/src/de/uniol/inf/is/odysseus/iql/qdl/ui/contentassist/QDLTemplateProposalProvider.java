@@ -132,7 +132,7 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		}
 		if (factory.isOperator(typeRef)) {
 			IOperatorBuilder builder = factory.getOperatorBuilder(typeUtils.getShortName(typeRef, false));
-			IParameter<?> parameter = factory.getOperatorParameter(typeUtils.getShortName(typeRef, false), node.getKey());
+			IParameter<?> parameter = factory.getOperatorParameter(typeUtils.getShortName(typeRef, false), node.getKey().getSimpleName());
 			if (parameter.getPossibleValueMethod() != null && parameter.getPossibleValueMethod().length()>0) {
 				createParameterPossibleValueTemplates(builder, parameter, templateContext, context, acceptor);
 			}

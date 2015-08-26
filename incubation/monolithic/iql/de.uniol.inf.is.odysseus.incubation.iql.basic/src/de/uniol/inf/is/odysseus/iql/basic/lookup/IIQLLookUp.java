@@ -2,14 +2,11 @@ package de.uniol.inf.is.odysseus.iql.basic.lookup;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmOperation;
-import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
@@ -32,10 +29,6 @@ public interface IIQLLookUp {
 	JvmExecutable findConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments);
 	JvmExecutable findPublicConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments);
 
-	Collection<JvmType> getAllTypes(Collection<String> usedNamespaces, Resource context);	
-	Collection<JvmType> getAllInstantiateableTypes(Collection<String> usedNamespaces, Resource context);	
-	Collection<JvmType> getAllAssignableTypes(JvmTypeReference target, Collection<String> usedNamespaces, Resource context);
-
 	Collection<String> getAllNamespaces();
 
 	
@@ -43,7 +36,7 @@ public interface IIQLLookUp {
 	boolean isCastable(JvmTypeReference targetRef, JvmTypeReference typeRef);	
 
 	
-	Map<String, JvmTypeReference> getProperties(JvmTypeReference typeRef);
 	boolean isInstantiateable(JvmDeclaredType declaredType);
+	Collection<JvmOperation> getPublicSetters(JvmTypeReference typeRef);
 
 }

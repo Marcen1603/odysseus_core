@@ -691,26 +691,26 @@ ruleODLMethod returns [EObject current=null]
 
 
 
-// Entry rule entryRuleIQLJavaWords
-entryRuleIQLJavaWords returns [String current=null] 
+// Entry rule entryRuleIQLJavaText
+entryRuleIQLJavaText returns [String current=null] 
 	:
-	{ newCompositeNode(grammarAccess.getIQLJavaWordsRule()); } 
-	 iv_ruleIQLJavaWords=ruleIQLJavaWords 
-	 { $current=$iv_ruleIQLJavaWords.current.getText(); }  
+	{ newCompositeNode(grammarAccess.getIQLJavaTextRule()); } 
+	 iv_ruleIQLJavaText=ruleIQLJavaText 
+	 { $current=$iv_ruleIQLJavaText.current.getText(); }  
 	 EOF 
 ;
 
-// Rule IQLJavaWords
-ruleIQLJavaWords returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] 
+// Rule IQLJavaText
+ruleIQLJavaText returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] 
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
 (
     { 
-        newCompositeNode(grammarAccess.getIQLJavaWordsAccess().getIQLJavaKeywordsParserRuleCall_0()); 
+        newCompositeNode(grammarAccess.getIQLJavaTextAccess().getIQL_JAVA_KEYWORDSParserRuleCall_0()); 
     }
-    this_IQLJavaKeywords_0=ruleIQLJavaKeywords    {
-		$current.merge(this_IQLJavaKeywords_0);
+    this_IQL_JAVA_KEYWORDS_0=ruleIQL_JAVA_KEYWORDS    {
+		$current.merge(this_IQL_JAVA_KEYWORDS_0);
     }
 
     { 
@@ -722,7 +722,7 @@ ruleIQLJavaWords returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleTo
     }
 
     { 
-    newLeafNode(this_WS_1, grammarAccess.getIQLJavaWordsAccess().getWSTerminalRuleCall_1()); 
+    newLeafNode(this_WS_1, grammarAccess.getIQLJavaTextAccess().getWSTerminalRuleCall_1()); 
     }
 
     |    this_ID_2=RULE_ID    {
@@ -730,7 +730,7 @@ ruleIQLJavaWords returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleTo
     }
 
     { 
-    newLeafNode(this_ID_2, grammarAccess.getIQLJavaWordsAccess().getIDTerminalRuleCall_2()); 
+    newLeafNode(this_ID_2, grammarAccess.getIQLJavaTextAccess().getIDTerminalRuleCall_2()); 
     }
 
     |    this_BOOLEAN_3=RULE_BOOLEAN    {
@@ -738,7 +738,7 @@ ruleIQLJavaWords returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleTo
     }
 
     { 
-    newLeafNode(this_BOOLEAN_3, grammarAccess.getIQLJavaWordsAccess().getBOOLEANTerminalRuleCall_3()); 
+    newLeafNode(this_BOOLEAN_3, grammarAccess.getIQLJavaTextAccess().getBOOLEANTerminalRuleCall_3()); 
     }
 
     |    this_DOUBLE_4=RULE_DOUBLE    {
@@ -746,7 +746,7 @@ ruleIQLJavaWords returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleTo
     }
 
     { 
-    newLeafNode(this_DOUBLE_4, grammarAccess.getIQLJavaWordsAccess().getDOUBLETerminalRuleCall_4()); 
+    newLeafNode(this_DOUBLE_4, grammarAccess.getIQLJavaTextAccess().getDOUBLETerminalRuleCall_4()); 
     }
 
     |    this_STRING_5=RULE_STRING    {
@@ -754,7 +754,7 @@ ruleIQLJavaWords returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleTo
     }
 
     { 
-    newLeafNode(this_STRING_5, grammarAccess.getIQLJavaWordsAccess().getSTRINGTerminalRuleCall_5()); 
+    newLeafNode(this_STRING_5, grammarAccess.getIQLJavaTextAccess().getSTRINGTerminalRuleCall_5()); 
     }
 
     |    this_INT_6=RULE_INT    {
@@ -762,7 +762,7 @@ ruleIQLJavaWords returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleTo
     }
 
     { 
-    newLeafNode(this_INT_6, grammarAccess.getIQLJavaWordsAccess().getINTTerminalRuleCall_6()); 
+    newLeafNode(this_INT_6, grammarAccess.getIQLJavaTextAccess().getINTTerminalRuleCall_6()); 
     }
 
     |    this_ANY_OTHER_7=RULE_ANY_OTHER    {
@@ -770,373 +770,373 @@ ruleIQLJavaWords returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleTo
     }
 
     { 
-    newLeafNode(this_ANY_OTHER_7, grammarAccess.getIQLJavaWordsAccess().getANY_OTHERTerminalRuleCall_7()); 
+    newLeafNode(this_ANY_OTHER_7, grammarAccess.getIQLJavaTextAccess().getANY_OTHERTerminalRuleCall_7()); 
     }
 
     |
 	kw='+' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getPlusSignKeyword_8()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getPlusSignKeyword_8()); 
     }
 
     |
 	kw='+=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getPlusSignEqualsSignKeyword_9()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getPlusSignEqualsSignKeyword_9()); 
     }
 
     |
 	kw='-' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getHyphenMinusKeyword_10()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getHyphenMinusKeyword_10()); 
     }
 
     |
 	kw='-=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getHyphenMinusEqualsSignKeyword_11()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getHyphenMinusEqualsSignKeyword_11()); 
     }
 
     |
 	kw='*' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getAsteriskKeyword_12()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getAsteriskKeyword_12()); 
     }
 
     |
 	kw='*=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getAsteriskEqualsSignKeyword_13()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getAsteriskEqualsSignKeyword_13()); 
     }
 
     |
 	kw='/' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getSolidusKeyword_14()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getSolidusKeyword_14()); 
     }
 
     |
 	kw='/=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getSolidusEqualsSignKeyword_15()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getSolidusEqualsSignKeyword_15()); 
     }
 
     |
 	kw='%' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getPercentSignKeyword_16()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getPercentSignKeyword_16()); 
     }
 
     |
 	kw='%=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getPercentSignEqualsSignKeyword_17()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getPercentSignEqualsSignKeyword_17()); 
     }
 
     |
 	kw='++' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getPlusSignPlusSignKeyword_18()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getPlusSignPlusSignKeyword_18()); 
     }
 
     |
 	kw='--' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getHyphenMinusHyphenMinusKeyword_19()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getHyphenMinusHyphenMinusKeyword_19()); 
     }
 
     |
 	kw='>' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getGreaterThanSignKeyword_20()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getGreaterThanSignKeyword_20()); 
     }
 
     |
 	kw='>=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getGreaterThanSignEqualsSignKeyword_21()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getGreaterThanSignEqualsSignKeyword_21()); 
     }
 
     |
 	kw='<' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getLessThanSignKeyword_22()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getLessThanSignKeyword_22()); 
     }
 
     |
 	kw='<=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getLessThanSignEqualsSignKeyword_23()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getLessThanSignEqualsSignKeyword_23()); 
     }
 
     |
 	kw='!' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getExclamationMarkKeyword_24()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getExclamationMarkKeyword_24()); 
     }
 
     |
 	kw='!=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getExclamationMarkEqualsSignKeyword_25()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getExclamationMarkEqualsSignKeyword_25()); 
     }
 
     |
 	kw='&&' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getAmpersandAmpersandKeyword_26()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getAmpersandAmpersandKeyword_26()); 
     }
 
     |
 	kw='||' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getVerticalLineVerticalLineKeyword_27()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getVerticalLineVerticalLineKeyword_27()); 
     }
 
     |
 	kw='==' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getEqualsSignEqualsSignKeyword_28()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getEqualsSignEqualsSignKeyword_28()); 
     }
 
     |
 	kw='=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getEqualsSignKeyword_29()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getEqualsSignKeyword_29()); 
     }
 
     |
 	kw='~' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getTildeKeyword_30()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getTildeKeyword_30()); 
     }
 
     |
 	kw='?:' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getQuestionMarkColonKeyword_31()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getQuestionMarkColonKeyword_31()); 
     }
 
     |
 	kw='|' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getVerticalLineKeyword_32()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getVerticalLineKeyword_32()); 
     }
 
     |
 	kw='|=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getVerticalLineEqualsSignKeyword_33()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getVerticalLineEqualsSignKeyword_33()); 
     }
 
     |
 	kw='^' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getCircumflexAccentKeyword_34()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getCircumflexAccentKeyword_34()); 
     }
 
     |
 	kw='^=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getCircumflexAccentEqualsSignKeyword_35()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getCircumflexAccentEqualsSignKeyword_35()); 
     }
 
     |
 	kw='&' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getAmpersandKeyword_36()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getAmpersandKeyword_36()); 
     }
 
     |
 	kw='&=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getAmpersandEqualsSignKeyword_37()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getAmpersandEqualsSignKeyword_37()); 
     }
 
     |
 	kw='>>' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getGreaterThanSignGreaterThanSignKeyword_38()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getGreaterThanSignGreaterThanSignKeyword_38()); 
     }
 
     |
 	kw='>>=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getGreaterThanSignGreaterThanSignEqualsSignKeyword_39()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getGreaterThanSignGreaterThanSignEqualsSignKeyword_39()); 
     }
 
     |
 	kw='<<' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getLessThanSignLessThanSignKeyword_40()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getLessThanSignLessThanSignKeyword_40()); 
     }
 
     |
 	kw='<<=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getLessThanSignLessThanSignEqualsSignKeyword_41()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getLessThanSignLessThanSignEqualsSignKeyword_41()); 
     }
 
     |
 	kw='>>>' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getGreaterThanSignGreaterThanSignGreaterThanSignKeyword_42()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getGreaterThanSignGreaterThanSignGreaterThanSignKeyword_42()); 
     }
 
     |
 	kw='>>>=' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getGreaterThanSignGreaterThanSignGreaterThanSignEqualsSignKeyword_43()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getGreaterThanSignGreaterThanSignGreaterThanSignEqualsSignKeyword_43()); 
     }
 
     |
 	kw='[' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getLeftSquareBracketKeyword_44()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getLeftSquareBracketKeyword_44()); 
     }
 
     |
 	kw=']' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getRightSquareBracketKeyword_45()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getRightSquareBracketKeyword_45()); 
     }
 
     |
 	kw='{' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getLeftCurlyBracketKeyword_46()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getLeftCurlyBracketKeyword_46()); 
     }
 
     |
 	kw='}' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getRightCurlyBracketKeyword_47()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getRightCurlyBracketKeyword_47()); 
     }
 
     |
 	kw='(' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getLeftParenthesisKeyword_48()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getLeftParenthesisKeyword_48()); 
     }
 
     |
 	kw=')' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getRightParenthesisKeyword_49()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getRightParenthesisKeyword_49()); 
     }
 
     |
 	kw='.' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getFullStopKeyword_50()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getFullStopKeyword_50()); 
     }
 
     |
 	kw=':' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getColonKeyword_51()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getColonKeyword_51()); 
     }
 
     |
 	kw=';' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getSemicolonKeyword_52()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getSemicolonKeyword_52()); 
     }
 
     |
 	kw=',' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getCommaKeyword_53()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getCommaKeyword_53()); 
     }
 
     |
 	kw='null' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getNullKeyword_54()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getNullKeyword_54()); 
     }
 
     |
 	kw='on' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getOnKeyword_55()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getOnKeyword_55()); 
     }
 
     |
 	kw='validate' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getValidateKeyword_56()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getValidateKeyword_56()); 
     }
 
     |
 	kw='parameter' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getParameterKeyword_57()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getParameterKeyword_57()); 
     }
 
     |
 	kw='optional' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getOptionalKeyword_58()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getOptionalKeyword_58()); 
     }
 
     |
 	kw='operator' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaWordsAccess().getOperatorKeyword_59()); 
+        newLeafNode(kw, grammarAccess.getIQLJavaTextAccess().getOperatorKeyword_59()); 
     }
-)
+)*
     ;
 
 
@@ -3154,19 +3154,16 @@ ruleIQLArgumentsMapKeyValue returns [EObject current=null]
     @after { leaveRule(); }:
 ((
 (
-		lv_key_0_0=RULE_ID
 		{
-			newLeafNode(lv_key_0_0, grammarAccess.getIQLArgumentsMapKeyValueAccess().getKeyIDTerminalRuleCall_0_0()); 
-		}
-		{
-	        if ($current==null) {
+			if ($current==null) {
 	            $current = createModelElement(grammarAccess.getIQLArgumentsMapKeyValueRule());
 	        }
-       		setWithLastConsumed(
-       			$current, 
-       			"key",
-        		lv_key_0_0, 
-        		"ID");
+        }
+		{ 
+	        newCompositeNode(grammarAccess.getIQLArgumentsMapKeyValueAccess().getKeyJvmIdentifiableElementCrossReference_0_0()); 
+	    }
+		ruleQualifiedName		{ 
+	        afterParserOrEnumRuleCall();
 	    }
 
 )
@@ -6579,49 +6576,17 @@ finally {
 
 
 
-// Entry rule entryRuleIQLJavaText
-entryRuleIQLJavaText returns [String current=null] 
+// Entry rule entryRuleIQL_JAVA_KEYWORDS
+entryRuleIQL_JAVA_KEYWORDS returns [String current=null] 
 	:
-	{ newCompositeNode(grammarAccess.getIQLJavaTextRule()); } 
-	 iv_ruleIQLJavaText=ruleIQLJavaText 
-	 { $current=$iv_ruleIQLJavaText.current.getText(); }  
+	{ newCompositeNode(grammarAccess.getIQL_JAVA_KEYWORDSRule()); } 
+	 iv_ruleIQL_JAVA_KEYWORDS=ruleIQL_JAVA_KEYWORDS 
+	 { $current=$iv_ruleIQL_JAVA_KEYWORDS.current.getText(); }  
 	 EOF 
 ;
 
-// Rule IQLJavaText
-ruleIQLJavaText returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] 
-    @init { enterRule(); 
-    }
-    @after { leaveRule(); }:
-(
-    { 
-        newCompositeNode(grammarAccess.getIQLJavaTextAccess().getIQLJavaWordsParserRuleCall()); 
-    }
-    this_IQLJavaWords_0=ruleIQLJavaWords    {
-		$current.merge(this_IQLJavaWords_0);
-    }
-
-    { 
-        afterParserOrEnumRuleCall();
-    }
-)*
-    ;
-
-
-
-
-
-// Entry rule entryRuleIQLJavaKeywords
-entryRuleIQLJavaKeywords returns [String current=null] 
-	:
-	{ newCompositeNode(grammarAccess.getIQLJavaKeywordsRule()); } 
-	 iv_ruleIQLJavaKeywords=ruleIQLJavaKeywords 
-	 { $current=$iv_ruleIQLJavaKeywords.current.getText(); }  
-	 EOF 
-;
-
-// Rule IQLJavaKeywords
-ruleIQLJavaKeywords returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] 
+// Rule IQL_JAVA_KEYWORDS
+ruleIQL_JAVA_KEYWORDS returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] 
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
@@ -6629,287 +6594,287 @@ ruleIQLJavaKeywords returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRul
 	kw='break' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getBreakKeyword_0()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getBreakKeyword_0()); 
     }
 
     |
 	kw='case' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getCaseKeyword_1()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getCaseKeyword_1()); 
     }
 
     |
 	kw='class' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getClassKeyword_2()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getClassKeyword_2()); 
     }
 
     |
 	kw='continue' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getContinueKeyword_3()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getContinueKeyword_3()); 
     }
 
     |
 	kw='default' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getDefaultKeyword_4()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getDefaultKeyword_4()); 
     }
 
     |
 	kw='do' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getDoKeyword_5()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getDoKeyword_5()); 
     }
 
     |
 	kw='else' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getElseKeyword_6()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getElseKeyword_6()); 
     }
 
     |
 	kw='extends' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getExtendsKeyword_7()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getExtendsKeyword_7()); 
     }
 
     |
 	kw='for' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getForKeyword_8()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getForKeyword_8()); 
     }
 
     |
 	kw='if' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getIfKeyword_9()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getIfKeyword_9()); 
     }
 
     |
 	kw='implements' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getImplementsKeyword_10()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getImplementsKeyword_10()); 
     }
 
     |
 	kw='instanceof' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getInstanceofKeyword_11()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getInstanceofKeyword_11()); 
     }
 
     |
 	kw='interface' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getInterfaceKeyword_12()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getInterfaceKeyword_12()); 
     }
 
     |
 	kw='new' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getNewKeyword_13()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getNewKeyword_13()); 
     }
 
     |
 	kw='package' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getPackageKeyword_14()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getPackageKeyword_14()); 
     }
 
     |
 	kw='return' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getReturnKeyword_15()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getReturnKeyword_15()); 
     }
 
     |
 	kw='super' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getSuperKeyword_16()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getSuperKeyword_16()); 
     }
 
     |
 	kw='switch' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getSwitchKeyword_17()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getSwitchKeyword_17()); 
     }
 
     |
 	kw='this' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getThisKeyword_18()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getThisKeyword_18()); 
     }
 
     |
 	kw='while' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getWhileKeyword_19()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getWhileKeyword_19()); 
     }
 
     |
 	kw='abstract' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getAbstractKeyword_20()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getAbstractKeyword_20()); 
     }
 
     |
 	kw='assert' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getAssertKeyword_21()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getAssertKeyword_21()); 
     }
 
     |
 	kw='catch' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getCatchKeyword_22()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getCatchKeyword_22()); 
     }
 
     |
 	kw='const' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getConstKeyword_23()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getConstKeyword_23()); 
     }
 
     |
 	kw='enum' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getEnumKeyword_24()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getEnumKeyword_24()); 
     }
 
     |
 	kw='final' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getFinalKeyword_25()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getFinalKeyword_25()); 
     }
 
     |
 	kw='finally' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getFinallyKeyword_26()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getFinallyKeyword_26()); 
     }
 
     |
 	kw='goto' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getGotoKeyword_27()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getGotoKeyword_27()); 
     }
 
     |
 	kw='import' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getImportKeyword_28()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getImportKeyword_28()); 
     }
 
     |
 	kw='native' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getNativeKeyword_29()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getNativeKeyword_29()); 
     }
 
     |
 	kw='private' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getPrivateKeyword_30()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getPrivateKeyword_30()); 
     }
 
     |
 	kw='protected' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getProtectedKeyword_31()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getProtectedKeyword_31()); 
     }
 
     |
 	kw='public' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getPublicKeyword_32()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getPublicKeyword_32()); 
     }
 
     |
 	kw='static' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getStaticKeyword_33()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getStaticKeyword_33()); 
     }
 
     |
 	kw='synchronized' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getSynchronizedKeyword_34()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getSynchronizedKeyword_34()); 
     }
 
     |
 	kw='throw' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getThrowKeyword_35()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getThrowKeyword_35()); 
     }
 
     |
 	kw='throws' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getThrowsKeyword_36()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getThrowsKeyword_36()); 
     }
 
     |
 	kw='transient' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getTransientKeyword_37()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getTransientKeyword_37()); 
     }
 
     |
 	kw='try' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getTryKeyword_38()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getTryKeyword_38()); 
     }
 
     |
 	kw='volatile' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getVolatileKeyword_39()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getVolatileKeyword_39()); 
     }
 
     |
 	kw='strictfp' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getIQLJavaKeywordsAccess().getStrictfpKeyword_40()); 
+        newLeafNode(kw, grammarAccess.getIQL_JAVA_KEYWORDSAccess().getStrictfpKeyword_40()); 
     }
 )
     ;

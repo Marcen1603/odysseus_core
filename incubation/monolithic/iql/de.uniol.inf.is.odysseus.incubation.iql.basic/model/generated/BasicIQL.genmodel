@@ -49,7 +49,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLArgumentsMap/elements"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLArgumentsMapKeyValue">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute BasicIQL.ecore#//IQLArgumentsMapKeyValue/key"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLArgumentsMapKeyValue/key"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference BasicIQL.ecore#//IQLArgumentsMapKeyValue/value"/>
     </genClasses>
     <genClasses ecoreClass="BasicIQL.ecore#//IQLStatement"/>

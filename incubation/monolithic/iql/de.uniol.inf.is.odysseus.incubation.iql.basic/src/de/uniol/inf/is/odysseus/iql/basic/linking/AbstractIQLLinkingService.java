@@ -19,6 +19,7 @@ import org.eclipse.xtext.linking.impl.IllegalNodeException;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.IEObjectDescription;
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAssignmentExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelection;
@@ -54,11 +55,34 @@ public abstract class AbstractIQLLinkingService extends DefaultLinkingService{
 			result = getLinkedObjectsIQLMemberSelection((IQLMemberSelection)context, ref, node);
 		} else if (context instanceof IQLJvmElementCallExpression) {
 			result =  getLinkedObjectsIQLJvmElementCallExpression((IQLJvmElementCallExpression)context, ref, node);
+		} else if (context instanceof IQLArgumentsMapKeyValue) {
+			result =  getLinkedObjectsIQLArgumentsMapKeyValue((IQLArgumentsMapKeyValue)context, ref, node);
 		}
 		if (result == null || result.isEmpty()) {
 			return super.getLinkedObjects(context, ref, node);
 		} else {
 			return result;
+		}
+	}
+	
+	protected List<EObject> getLinkedObjectsIQLArgumentsMapKeyValue(IQLArgumentsMapKeyValue keyValue, EReference ref, INode node) throws IllegalNodeException {
+		Collection<IEObjectDescription> eObjectDescriptions = scopeProvider.getIQLArgumentsMapKeys(keyValue);
+		String crossRefString = getCrossRefNodeAsString(node);
+
+		EObject result = null;
+		for (IEObjectDescription desc : eObjectDescriptions) {
+			EObject obj = desc.getEObjectOrProxy();
+			if (obj instanceof JvmField && crossRefString.equalsIgnoreCase(((JvmField) obj).getSimpleName())) {
+				result = obj;
+				break;
+			} else if (obj instanceof JvmOperation && ("set"+crossRefString).equalsIgnoreCase(((JvmOperation) obj).getSimpleName())) {
+				result = obj;
+			}			
+		}		
+		if (result != null) {
+			return Collections.singletonList(result);
+		} else {
+			return null;
 		}
 	}
 	

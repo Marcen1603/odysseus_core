@@ -10,9 +10,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.ClassUtils;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmConstructor;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmExecutable;
@@ -22,21 +19,15 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
-import org.eclipse.xtext.resource.IResourceDescription;
-import org.eclipse.xtext.resource.IResourceDescriptions;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQLTypeExtensionsFactory, U extends IIQLTypeUtils> implements IIQLLookUp{
-	
-	@Inject
-	protected IResourceDescriptions resources;
-	
+		
 	protected T typeFactory;
 	protected U typeUtils;
 
@@ -336,45 +327,34 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 
 	
 	@Override
-	public Collection<JvmType> getAllTypes(Collection<String> usedNamespaces, Resource context) {
-		Collection<JvmType> types = new HashSet<>();
-		Collection<IQLModel> files = getAllFiles(context);
-		for (IQLModel file : files) {
-			types.addAll(EcoreUtil2.getAllContentsOfType(file, JvmType.class));	
-		}
-		types.addAll(typeFactory.getVisibleTypes(usedNamespaces, context));
-		return types;
-	}
-	
-	@Override
 	public boolean isInstantiateable(JvmDeclaredType declaredType) {
 		return declaredType.isInstantiateable() || typeUtils.isUserDefinedType(declaredType, false);
 	}
 	
-	@Override
-	public Collection<JvmType> getAllInstantiateableTypes(Collection<String> usedNamespaces, Resource context) {
-		Collection<JvmType> result = new HashSet<>();
-		for (JvmType type : getAllTypes(usedNamespaces, context)) {
-			if (type instanceof JvmDeclaredType) {
-				JvmDeclaredType declaredType = (JvmDeclaredType) type;
-				if (declaredType.isInstantiateable() || typeUtils.isUserDefinedType(declaredType, false)) {
-					result.add(declaredType);
-				}
-			}
-		}
-		return result;
-	}
-	
-	@Override
-	public Collection<JvmType> getAllAssignableTypes(JvmTypeReference target, Collection<String> usedNamespaces,Resource context) {
-		Collection<JvmType> result = new HashSet<>();
-		for (JvmType type : getAllTypes(usedNamespaces, context)) {
-			if (isAssignable(target, type)) {
-				result.add(type);
-			}
-		}
-		return result;
-	}
+//	@Override
+//	public Collection<JvmType> getAllInstantiateableTypes(Collection<String> usedNamespaces, Resource context) {
+//		Collection<JvmType> result = new HashSet<>();
+//		for (JvmType type : getAllTypes(usedNamespaces, context)) {
+//			if (type instanceof JvmDeclaredType) {
+//				JvmDeclaredType declaredType = (JvmDeclaredType) type;
+//				if (declaredType.isInstantiateable() || typeUtils.isUserDefinedType(declaredType, false)) {
+//					result.add(declaredType);
+//				}
+//			}
+//		}
+//		return result;
+//	}
+//	
+//	@Override
+//	public Collection<JvmType> getAllAssignableTypes(JvmTypeReference target, Collection<String> usedNamespaces,Resource context) {
+//		Collection<JvmType> result = new HashSet<>();
+//		for (JvmType type : getAllTypes(usedNamespaces, context)) {
+//			if (isAssignable(target, type)) {
+//				result.add(type);
+//			}
+//		}
+//		return result;
+//	}
 	
 	@Override
 	public boolean isCastable(JvmTypeReference targetRef, JvmTypeReference typeRef) {
@@ -470,22 +450,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 	}
 	
 	@Override
-	public Map<String, JvmTypeReference> getProperties(JvmTypeReference typeRef) {
-		Map<String, JvmTypeReference> result = new HashMap<>();
-		Collection<JvmField> attributes = getPublicAttributes(typeRef, false);
-		for (JvmField attr : attributes) {
-			result.put(attr.getSimpleName(), attr.getType());			
-		}
-		
-		Collection<JvmOperation> setters = getPublicSetters(typeRef);
-		for (JvmOperation op : setters) {
-			String name = op.getSimpleName().substring(3);
-			result.put(name, op.getParameters().get(0).getParameterType());
-		}	
-		return result;
-	}
-	
-	protected Collection<JvmOperation> getPublicSetters(JvmTypeReference typeRef) {
+	public Collection<JvmOperation> getPublicSetters(JvmTypeReference typeRef) {
 		Collection<JvmOperation> result = new HashSet<>();
 		for (JvmOperation op : getPublicMethods(typeRef, false)) {
 			if (op.getSimpleName().startsWith("set") && op.getParameters().size() == 1 && (op.getReturnType() == null || typeUtils.isVoid(typeRef))){
@@ -584,20 +549,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		}
 		return false;
 	}
-	
-	protected Collection<IQLModel> getAllFiles(Resource context) {
-		Collection<IQLModel> files = new HashSet<>();
-		for (IResourceDescription res : resources.getAllResourceDescriptions()) {
-			Resource r = EcoreUtil2.getResource(context, res.getURI().toString());
-			if (r.getContents().size() > 0) {
-				EObject obj = r.getContents().get(0);
-				if (obj instanceof IQLModel) {
-					files.add((IQLModel)obj);
-				}
-			}
-		}
-		return files;
-	}	
+		
 	
 	@Override
 	public Collection<String> getAllNamespaces() {

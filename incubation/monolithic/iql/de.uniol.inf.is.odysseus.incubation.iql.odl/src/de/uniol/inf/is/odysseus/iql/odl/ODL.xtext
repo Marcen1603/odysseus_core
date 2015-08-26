@@ -2,17 +2,16 @@ grammar de.uniol.inf.is.odysseus.iql.odl.ODL with de.uniol.inf.is.odysseus.iql.b
 
 generate oDL "http://www.uniol.de/inf/is/odysseus/iql/odl/ODL"
 
-
-import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as iql
+import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as basiciql
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvm
 
-ODLModel returns iql::IQLModel:
+ODLModel returns basiciql::IQLModel:
 	{ODLModel}
 	namespaces+=IQLNamespace*
 	(elements+=ODLModelElement)*
 ;
 
-ODLModelElement returns iql::IQLModelElement:
+ODLModelElement returns basiciql::IQLModelElement:
 	{ODLModelElement}
 	(javametadata+=IQLJavaMetadata)*
 	inner=(IQLClass | IQLInterface | ODLOperator)
@@ -25,27 +24,27 @@ ODLOperator returns jvm::JvmGenericType:
 	'}'		
 ;
 
-ODLParameter returns iql::IQLAttribute:
+ODLParameter returns basiciql::IQLAttribute:
 	{ODLParameter}		
 	(optional?='optional')? parameter?='parameter' ('(' (metadataList=IQLMetadataList)? ')')?
 	type=JvmTypeReference simpleName=ID (init=IQLVariableInitialization)? ';'
 ;
 
 
-ODLMethod returns iql::IQLMethod:
+ODLMethod returns basiciql::IQLMethod:
 	{ODLMethod}		
 	(on?='on' | validate?='validate')
 	(simpleName=ID ('(' (parameters+=JvmFormalParameter (',' parameters+=JvmFormalParameter)*)? ')')? (':' returnType=JvmTypeReference)?)?
 	body=IQLStatementBlock
 ;
 
-IQLJavaWords:
-	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
+IQLJavaText:
+	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
 	'+'  | '+='  | '-'  | '-='  | '*'   | '*='   | '/' | '/=' | '%'  | '%=' |
 	'++' | '--'	 | '>'  | '>='  | '<'   | '<='   | '!' | '!=' | '&&' | '||' |
 	'==' | '='   | '~'  | '?:'  | '|'   | '|='   | '^' | '^=' | '&'  | '&=' |
 	'>>' | '>>=' | '<<' | '<<=' | '>>>' | '>>>=' |
 	'['  | ']'   |'{'   |'}'    |  '('  |')'     |
 	 '.' | ':'   | ';'  | ','   | 'null' | 
-	 'on' | 'validate' | 'parameter' | 'optional' | 'operator'
+	 'on' | 'validate' | 'parameter' | 'optional' | 'operator')*
 ;

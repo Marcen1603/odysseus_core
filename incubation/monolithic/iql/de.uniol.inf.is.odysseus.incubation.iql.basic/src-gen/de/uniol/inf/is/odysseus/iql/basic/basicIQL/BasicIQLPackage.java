@@ -440,7 +440,7 @@ public interface BasicIQLPackage extends EPackage
   int IQL_ARGUMENTS_MAP_KEY_VALUE = 11;
 
   /**
-   * The feature id for the '<em><b>Key</b></em>' attribute.
+   * The feature id for the '<em><b>Key</b></em>' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -3813,15 +3813,15 @@ public interface BasicIQLPackage extends EPackage
   EClass getIQLArgumentsMapKeyValue();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue#getKey <em>Key</em>}'.
+   * Returns the meta object for the reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue#getKey <em>Key</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Key</em>'.
+   * @return the meta object for the reference '<em>Key</em>'.
    * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue#getKey()
    * @see #getIQLArgumentsMapKeyValue()
    * @generated
    */
-  EAttribute getIQLArgumentsMapKeyValue_Key();
+  EReference getIQLArgumentsMapKeyValue_Key();
 
   /**
    * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue#getValue <em>Value</em>}'.
@@ -5915,12 +5915,12 @@ public interface BasicIQLPackage extends EPackage
     EClass IQL_ARGUMENTS_MAP_KEY_VALUE = eINSTANCE.getIQLArgumentsMapKeyValue();
 
     /**
-     * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Key</b></em>' reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute IQL_ARGUMENTS_MAP_KEY_VALUE__KEY = eINSTANCE.getIQLArgumentsMapKeyValue_Key();
+    EReference IQL_ARGUMENTS_MAP_KEY_VALUE__KEY = eINSTANCE.getIQLArgumentsMapKeyValue_Key();
 
     /**
      * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.

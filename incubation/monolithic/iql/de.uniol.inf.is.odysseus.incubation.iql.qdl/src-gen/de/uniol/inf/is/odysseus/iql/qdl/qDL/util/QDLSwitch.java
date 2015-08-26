@@ -117,6 +117,22 @@ public class QDLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case QDLPackage.IQL_INSTANCE_OF_EXPRESSION:
+      {
+        IQLInstanceOfExpression iqlInstanceOfExpression = (IQLInstanceOfExpression)theEObject;
+        T result = caseIQLInstanceOfExpression(iqlInstanceOfExpression);
+        if (result == null) result = caseIQLExpression(iqlInstanceOfExpression);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case QDLPackage.IQL_RELATIONAL_EXPRESSION:
+      {
+        IQLRelationalExpression iqlRelationalExpression = (IQLRelationalExpression)theEObject;
+        T result = caseIQLRelationalExpression(iqlRelationalExpression);
+        if (result == null) result = caseIQLExpression(iqlRelationalExpression);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case QDLPackage.IQL_SUBSCRIBE_EXPRESSION:
       {
         IQLSubscribeExpression iqlSubscribeExpression = (IQLSubscribeExpression)theEObject;
@@ -189,6 +205,38 @@ public class QDLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseQDLQuery(QDLQuery object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Instance Of Expression</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Instance Of Expression</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLInstanceOfExpression(IQLInstanceOfExpression object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>IQL Relational Expression</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>IQL Relational Expression</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIQLRelationalExpression(IQLRelationalExpression object)
   {
     return null;
   }

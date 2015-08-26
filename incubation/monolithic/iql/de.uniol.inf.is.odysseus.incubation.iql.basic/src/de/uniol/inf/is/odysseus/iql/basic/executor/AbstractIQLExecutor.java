@@ -72,7 +72,7 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeFactory, U extends I
 		this.typeUtils = typeUtils;
 	}
 
-	protected String getIQLOutputPath() {
+	protected static String getIQLOutputPath() {
 		return OdysseusConfiguration.getHomeDir()+IQL_DIR+File.separator;
 	}
 	
@@ -81,13 +81,9 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeFactory, U extends I
 		try {
 			FileUtils.deleteDirectory(new File(dir));
 		} catch (Exception e) {
-			//e.printStackTrace();
 		}
 	}
-		
-	
-	protected abstract String getLanguageName();
-	
+			
 	protected void deleteResources(Collection<Resource> resources) {
 		for (Resource res : resources) {
 			try {
@@ -114,7 +110,6 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeFactory, U extends I
 			builder.append(getNodeText(type)+System.lineSeparator());
 		}
 		Collection<Resource> resources = new HashSet<>();
-		//ResourceSet resourceSet = resourceSetProvider.get();
 		for (Entry<IQLModel, StringBuilder> entry : fileBuilders.entrySet()) {
 			String text = entry.getValue().toString();
 			String path = outputPath+getFilePath(entry.getKey());
@@ -125,11 +120,15 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeFactory, U extends I
 	
 	private String getFilePath(IQLModel file) {
 		URI uri = file.eResource().getURI();
-		StringBuilder builder = new StringBuilder();
-		for (int i = 2; i< uri.segmentCount(); i++) {
-			builder.append(File.separator+uri.segments()[i]);
+		if (uri.segmentCount() == 1) {
+			return File.separator+uri.segments()[0];
+		} else {
+			StringBuilder builder = new StringBuilder();
+			for (int i = 2; i< uri.segmentCount(); i++) {
+				builder.append(File.separator+uri.segments()[i]);
+			}
+			return builder.toString();
 		}
-		return builder.toString();
 	}
 	
 	private String getNodeText(EObject object) {
@@ -187,7 +186,7 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeFactory, U extends I
 		try(PrintWriter writer = new PrintWriter(file)) {
 			writer.print(text);
 		} catch (FileNotFoundException e) {
-			throw new QueryParseException("error while creating query file",e);
+			throw new QueryParseException("error while creating iql file: "+e.getMessage(),e);
 		}
 		return resourceSet.getResource(URI.createURI(file.toURI().toString()), true);
 	}
@@ -230,7 +229,7 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeFactory, U extends I
 							entries.add(file.getAbsolutePath()+File.separator+e);
 						}
 					} catch (BundleException e) {
-						throw new QueryParseException("error while adding classpath entries of bundle " +bundle.getSymbolicName(),e);
+						throw new QueryParseException("error while adding classpath entries of bundle " +bundle.getSymbolicName()+": "+e.getMessage(),e);
 					}								
 				}
 			}

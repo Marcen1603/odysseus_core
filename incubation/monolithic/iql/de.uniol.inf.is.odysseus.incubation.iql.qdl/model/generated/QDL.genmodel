@@ -15,6 +15,15 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//QDLQuery/metadataList"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//QDLQuery/statements"/>
     </genClasses>
+    <genClasses ecoreClass="QDL.ecore#//IQLInstanceOfExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//IQLInstanceOfExpression/leftOperand"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//IQLInstanceOfExpression/targetRef"/>
+    </genClasses>
+    <genClasses ecoreClass="QDL.ecore#//IQLRelationalExpression">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//IQLRelationalExpression/leftOperand"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute QDL.ecore#//IQLRelationalExpression/op"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//IQLRelationalExpression/rightOperand"/>
+    </genClasses>
     <genClasses ecoreClass="QDL.ecore#//IQLSubscribeExpression">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference QDL.ecore#//IQLSubscribeExpression/leftOperand"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute QDL.ecore#//IQLSubscribeExpression/op"/>

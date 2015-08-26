@@ -27,6 +27,7 @@ import com.google.common.io.Files;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
@@ -76,6 +77,8 @@ public class QDLUiExecutor extends QDLExecutor implements IIQLUiExecutor{
 			
 			String script = generator.createOdysseusScript(qdlQuery, dd, session);
 			QDLServiceBinding.getExecutor().addQuery(script, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), Context.empty());
+		
+			cleanUpDir(outputPath);
 		}
 	}
 	
@@ -102,7 +105,7 @@ public class QDLUiExecutor extends QDLExecutor implements IIQLUiExecutor{
 					try {
 						Files.copy(from, to);
 					} catch (IOException e) {
-						e.printStackTrace();
+						throw new QueryParseException("error while moving user edited files : " +e.getMessage(),e);
 					}
 				}
 			}
@@ -121,7 +124,7 @@ public class QDLUiExecutor extends QDLExecutor implements IIQLUiExecutor{
 				IFolder folder = root.getFolder(path);
 				result.add(folder.getLocation().toFile().getAbsolutePath());
 			} catch (JavaModelException e) {
-				e.printStackTrace();
+				throw new QueryParseException("error while creating classpath entries : " +e.getMessage(),e);
 			}
 		}
 		

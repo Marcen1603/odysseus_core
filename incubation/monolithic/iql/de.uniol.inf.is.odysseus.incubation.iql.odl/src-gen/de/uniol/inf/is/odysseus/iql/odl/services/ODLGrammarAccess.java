@@ -27,7 +27,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cElementsAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cElementsODLModelElementParserRuleCall_2_0 = (RuleCall)cElementsAssignment_2.eContents().get(0);
 		
-		//ODLModel returns iql::IQLModel:
+		//ODLModel returns basiciql::IQLModel:
 		//	{ODLModel} namespaces+=IQLNamespace* elements+=ODLModelElement*;
 		public ParserRule getRule() { return rule; }
 
@@ -62,7 +62,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cInnerIQLInterfaceParserRuleCall_2_0_1 = (RuleCall)cInnerAlternatives_2_0.eContents().get(1);
 		private final RuleCall cInnerODLOperatorParserRuleCall_2_0_2 = (RuleCall)cInnerAlternatives_2_0.eContents().get(2);
 		
-		//ODLModelElement returns iql::IQLModelElement:
+		//ODLModelElement returns basiciql::IQLModelElement:
 		//	{ODLModelElement} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator);
 		public ParserRule getRule() { return rule; }
 
@@ -201,7 +201,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cInitIQLVariableInitializationParserRuleCall_6_0 = (RuleCall)cInitAssignment_6.eContents().get(0);
 		private final Keyword cSemicolonKeyword_7 = (Keyword)cGroup.eContents().get(7);
 		
-		//ODLParameter returns iql::IQLAttribute:
+		//ODLParameter returns basiciql::IQLAttribute:
 		//	{ODLParameter} optional?="optional"? parameter?="parameter" ("(" metadataList=IQLMetadataList? ")")?
 		//	type=JvmTypeReference simpleName=ID init=IQLVariableInitialization? ";";
 		public ParserRule getRule() { return rule; }
@@ -291,7 +291,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cBodyAssignment_3 = (Assignment)cGroup.eContents().get(3);
 		private final RuleCall cBodyIQLStatementBlockParserRuleCall_3_0 = (RuleCall)cBodyAssignment_3.eContents().get(0);
 		
-		//ODLMethod returns iql::IQLMethod:
+		//ODLMethod returns basiciql::IQLMethod:
 		//	{ODLMethod} (on?="on" | validate?="validate") (simpleName=ID ("(" (parameters+=JvmFormalParameter (","
 		//	parameters+=JvmFormalParameter)*)? ")")? (":" returnType=JvmTypeReference)?)? body=IQLStatementBlock;
 		public ParserRule getRule() { return rule; }
@@ -377,10 +377,10 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getBodyIQLStatementBlockParserRuleCall_3_0() { return cBodyIQLStatementBlockParserRuleCall_3_0; }
 	}
 
-	public class IQLJavaWordsElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLJavaWords");
+	public class IQLJavaTextElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "IQLJavaText");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cIQLJavaKeywordsParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cIQL_JAVA_KEYWORDSParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cWSTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		private final RuleCall cIDTerminalRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		private final RuleCall cBOOLEANTerminalRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
@@ -441,21 +441,21 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOptionalKeyword_58 = (Keyword)cAlternatives.eContents().get(58);
 		private final Keyword cOperatorKeyword_59 = (Keyword)cAlternatives.eContents().get(59);
 		
-		//IQLJavaWords:
-		//	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
-		//	| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" |
-		//	"|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
-		//	")" | "." | ":" | ";" | "," | "null" | "on" | "validate" | "parameter" | "optional" | "operator";
+		//IQLJavaText:
+		//	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" |
+		//	"/" | "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:"
+		//	| "|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
+		//	")" | "." | ":" | ";" | "," | "null" | "on" | "validate" | "parameter" | "optional" | "operator")*;
 		public ParserRule getRule() { return rule; }
 
-		//IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/" |
-		//"/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" | "|" |
-		//"|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" | ")" |
-		//"." | ":" | ";" | "," | "null" | "on" | "validate" | "parameter" | "optional" | "operator"
+		//(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
+		//| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" | "|"
+		//| "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" | ")" |
+		//"." | ":" | ";" | "," | "null" | "on" | "validate" | "parameter" | "optional" | "operator")*
 		public Alternatives getAlternatives() { return cAlternatives; }
 
-		//IQLJavaKeywords
-		public RuleCall getIQLJavaKeywordsParserRuleCall_0() { return cIQLJavaKeywordsParserRuleCall_0; }
+		//IQL_JAVA_KEYWORDS
+		public RuleCall getIQL_JAVA_KEYWORDSParserRuleCall_0() { return cIQL_JAVA_KEYWORDSParserRuleCall_0; }
 
 		//WS
 		public RuleCall getWSTerminalRuleCall_1() { return cWSTerminalRuleCall_1; }
@@ -641,7 +641,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	private final ODLOperatorElements pODLOperator;
 	private final ODLParameterElements pODLParameter;
 	private final ODLMethodElements pODLMethod;
-	private final IQLJavaWordsElements pIQLJavaWords;
+	private final IQLJavaTextElements pIQLJavaText;
 	
 	private final Grammar grammar;
 
@@ -657,7 +657,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pODLOperator = new ODLOperatorElements();
 		this.pODLParameter = new ODLParameterElements();
 		this.pODLMethod = new ODLMethodElements();
-		this.pIQLJavaWords = new IQLJavaWordsElements();
+		this.pIQLJavaText = new IQLJavaTextElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -687,7 +687,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	
-	//ODLModel returns iql::IQLModel:
+	//ODLModel returns basiciql::IQLModel:
 	//	{ODLModel} namespaces+=IQLNamespace* elements+=ODLModelElement*;
 	public ODLModelElements getODLModelAccess() {
 		return pODLModel;
@@ -697,7 +697,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getODLModelAccess().getRule();
 	}
 
-	//ODLModelElement returns iql::IQLModelElement:
+	//ODLModelElement returns basiciql::IQLModelElement:
 	//	{ODLModelElement} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | ODLOperator);
 	public ODLModelElementElements getODLModelElementAccess() {
 		return pODLModelElement;
@@ -718,7 +718,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getODLOperatorAccess().getRule();
 	}
 
-	//ODLParameter returns iql::IQLAttribute:
+	//ODLParameter returns basiciql::IQLAttribute:
 	//	{ODLParameter} optional?="optional"? parameter?="parameter" ("(" metadataList=IQLMetadataList? ")")?
 	//	type=JvmTypeReference simpleName=ID init=IQLVariableInitialization? ";";
 	public ODLParameterElements getODLParameterAccess() {
@@ -729,7 +729,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getODLParameterAccess().getRule();
 	}
 
-	//ODLMethod returns iql::IQLMethod:
+	//ODLMethod returns basiciql::IQLMethod:
 	//	{ODLMethod} (on?="on" | validate?="validate") (simpleName=ID ("(" (parameters+=JvmFormalParameter (","
 	//	parameters+=JvmFormalParameter)*)? ")")? (":" returnType=JvmTypeReference)?)? body=IQLStatementBlock;
 	public ODLMethodElements getODLMethodAccess() {
@@ -740,17 +740,17 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getODLMethodAccess().getRule();
 	}
 
-	//IQLJavaWords:
-	//	IQLJavaKeywords | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" | "/"
-	//	| "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:" |
-	//	"|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
-	//	")" | "." | ":" | ";" | "," | "null" | "on" | "validate" | "parameter" | "optional" | "operator";
-	public IQLJavaWordsElements getIQLJavaWordsAccess() {
-		return pIQLJavaWords;
+	//IQLJavaText:
+	//	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER | "+" | "+=" | "-" | "-=" | "*" | "*=" |
+	//	"/" | "/=" | "%" | "%=" | "++" | "--" | ">" | ">=" | "<" | "<=" | "!" | "!=" | "&&" | "||" | "==" | "=" | "~" | "?:"
+	//	| "|" | "|=" | "^" | "^=" | "&" | "&=" | ">>" | ">>=" | "<<" | "<<=" | ">>>" | ">>>=" | "[" | "]" | "{" | "}" | "(" |
+	//	")" | "." | ":" | ";" | "," | "null" | "on" | "validate" | "parameter" | "optional" | "operator")*;
+	public IQLJavaTextElements getIQLJavaTextAccess() {
+		return pIQLJavaText;
 	}
 	
-	public ParserRule getIQLJavaWordsRule() {
-		return getIQLJavaWordsAccess().getRule();
+	public ParserRule getIQLJavaTextRule() {
+		return getIQLJavaTextAccess().getRule();
 	}
 
 	//IQLModel:
@@ -1040,7 +1040,7 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLArgumentsMapKeyValue:
-	//	key=ID "=" value=IQLExpression;
+	//	key=[jvm::JvmIdentifiableElement|QualifiedName] "=" value=IQLExpression;
 	public BasicIQLGrammarAccess.IQLArgumentsMapKeyValueElements getIQLArgumentsMapKeyValueAccess() {
 		return gaBasicIQL.getIQLArgumentsMapKeyValueAccess();
 	}
@@ -1546,27 +1546,17 @@ public class ODLGrammarAccess extends AbstractGrammarElementFinder {
 		return getIQLJavaAccess().getRule();
 	}
 
-	//IQLJavaText:
-	//	IQLJavaWords*;
-	public BasicIQLGrammarAccess.IQLJavaTextElements getIQLJavaTextAccess() {
-		return gaBasicIQL.getIQLJavaTextAccess();
-	}
-	
-	public ParserRule getIQLJavaTextRule() {
-		return getIQLJavaTextAccess().getRule();
-	}
-
-	//IQLJavaKeywords:
+	//IQL_JAVA_KEYWORDS:
 	//	"break" | "case" | "class" | "continue" | "default" | "do" | "else" | "extends" | "for" | "if" | "implements" |
 	//	"instanceof" | "interface" | "new" | "package" | "return" | "super" | "switch" | "this" | "while" | "abstract" |
 	//	"assert" | "catch" | "const" | "enum" | "final" | "finally" | "goto" | "import" | "native" | "private" | "protected"
 	//	| "public" | "static" | "synchronized" | "throw" | "throws" | "transient" | "try" | "volatile" | "strictfp";
-	public BasicIQLGrammarAccess.IQLJavaKeywordsElements getIQLJavaKeywordsAccess() {
-		return gaBasicIQL.getIQLJavaKeywordsAccess();
+	public BasicIQLGrammarAccess.IQL_JAVA_KEYWORDSElements getIQL_JAVA_KEYWORDSAccess() {
+		return gaBasicIQL.getIQL_JAVA_KEYWORDSAccess();
 	}
 	
-	public ParserRule getIQLJavaKeywordsRule() {
-		return getIQLJavaKeywordsAccess().getRule();
+	public ParserRule getIQL_JAVA_KEYWORDSRule() {
+		return getIQL_JAVA_KEYWORDSAccess().getRule();
 	}
 
 	//terminal BOOLEAN returns ecore::EBoolean:

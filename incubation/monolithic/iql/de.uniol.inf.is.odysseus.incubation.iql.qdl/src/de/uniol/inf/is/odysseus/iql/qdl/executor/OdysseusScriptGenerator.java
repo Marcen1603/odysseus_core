@@ -24,6 +24,8 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -40,6 +42,26 @@ public class OdysseusScriptGenerator {
 	@Inject
 	private IQDLTypeFactory factory;
 
+	public ILogicalQuery createLogicalQuery(IQDLQuery query, IDataDictionary dd, ISession session) {
+		query.setDataDictionary(dd);
+		query.setSession(session);		
+		
+		Collection<IQDLOperator> operators = query.execute();
+		Map<ILogicalOperator, IQDLOperator> operatorsMap = new HashMap<>();
+		for (IQDLOperator operator : operators) {
+			operatorsMap.put(operator.getLogicalOperator(), operator);
+		}
+		Collection<IQDLOperator> roots = getRoots(operators);
+		for (IQDLOperator root : roots) {
+			setParameters(root, new HashSet<IQDLOperator>(), operatorsMap, dd, session);
+		}
+		TopAO topAO = createTopAO(roots);
+		
+		ILogicalQuery result = new LogicalQuery();
+		result.setLogicalPlan(topAO, true);
+		return result;
+	}
+	
 	public String createOdysseusScript(IQDLQuery query, IDataDictionary dd, ISession session) {
 		query.setDataDictionary(dd);
 		query.setSession(session);		
@@ -229,4 +251,6 @@ public class OdysseusScriptGenerator {
 		}
 		return roots;
 	}
+
+
 }

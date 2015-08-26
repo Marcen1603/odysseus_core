@@ -2267,7 +2267,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         }
         EList<IQLArgumentsMapKeyValue> _elements = map.getElements();
         IQLArgumentsMapKeyValue el = _elements.get(i);
-        String _key = el.getKey();
+        JvmIdentifiableElement _key = el.getKey();
         JvmTypeReference type = this.helper.getPropertyType(_key, typeRef);
         boolean _notEquals = (!Objects.equal(type, null));
         if (_notEquals) {

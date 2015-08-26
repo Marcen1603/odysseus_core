@@ -10,6 +10,19 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="statements" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLStatement"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IQLInstanceOfExpression" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="leftOperand" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="targetRef" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmTypeReference"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IQLRelationalExpression" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="leftOperand" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="op" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rightOperand" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression"
+        containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IQLSubscribeExpression" eSuperTypes="platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="leftOperand" eType="ecore:EClass platform:/resource/de.uniol.inf.is.odysseus.incubation.iql.basic/model/generated/BasicIQL.ecore#//IQLExpression"
         containment="true"/>

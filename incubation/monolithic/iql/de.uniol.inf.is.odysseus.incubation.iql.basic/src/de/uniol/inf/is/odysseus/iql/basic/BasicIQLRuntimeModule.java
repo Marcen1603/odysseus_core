@@ -7,6 +7,7 @@ import org.eclipse.xtext.common.types.xtext.ClasspathBasedTypeScopeProvider;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
+import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceFactory;
 
@@ -34,7 +35,10 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.basic.linking.BasicIQLLinkingService;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
+import de.uniol.inf.is.odysseus.iql.basic.lookup.BasicIQLLookUp;
+import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLQualifiedNameProvider;
+import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLResourceDescriptionStrategy;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
@@ -61,6 +65,11 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
  */
 @SuppressWarnings({"restriction", "rawtypes"})
 public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.AbstractBasicIQLRuntimeModule {
+
+	public Class<? extends IDefaultResourceDescriptionStrategy> bindResourceDescriptionStrategy() {
+		return BasicIQLResourceDescriptionStrategy.class;
+	}
+	
 	
 	public Class<? extends IIQLJdtTypeProviderFactory> bindJdtTypeProviderFactory() {
 		return IQLNullJdtTypeProviderFactory.class;
@@ -112,6 +121,10 @@ public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.Ab
 	
 	public Class<? extends IIQLTypeCompiler> bindIQLTypeCompiler() {
 		return BasicIQLTypeCompiler.class;
+	}
+	
+	public Class<? extends IIQLLookUp> bindIQLLookUp() {
+		return BasicIQLLookUp.class;
 	}
 	
 	

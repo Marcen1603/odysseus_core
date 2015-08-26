@@ -22,12 +22,20 @@ public class IQLClasspathTypeProvider extends ClasspathTypeProvider{
 	
 	@Override
 	public JvmType findTypeByName(String name) {
-		JvmType type = jdtTypeProvider.findTypeByName(name);
+		JvmType type = null;
+		if (jdtTypeProvider!= null) {
+			type = jdtTypeProvider.findTypeByName(name);
+		}
 		if (type != null) {
 			return type;
 		} else {
 			return super.findTypeByName(name);
 		}
+	}
+	
+	@Override
+	protected JvmType tryFindTypeInIndex(String name, boolean binaryNestedTypeDelimiter) {
+		return null;
 	}
 
 }

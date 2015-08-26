@@ -15,6 +15,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
+
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>IQL Arguments Map Key Value</b></em>'.
@@ -32,24 +34,14 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 public class IQLArgumentsMapKeyValueImpl extends MinimalEObjectImpl.Container implements IQLArgumentsMapKeyValue
 {
   /**
-   * The default value of the '{@link #getKey() <em>Key</em>}' attribute.
+   * The cached value of the '{@link #getKey() <em>Key</em>}' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getKey()
    * @generated
    * @ordered
    */
-  protected static final String KEY_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getKey() <em>Key</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getKey()
-   * @generated
-   * @ordered
-   */
-  protected String key = KEY_EDEFAULT;
+  protected JvmIdentifiableElement key;
 
   /**
    * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
@@ -87,7 +79,27 @@ public class IQLArgumentsMapKeyValueImpl extends MinimalEObjectImpl.Container im
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getKey()
+  public JvmIdentifiableElement getKey()
+  {
+    if (key != null && key.eIsProxy())
+    {
+      InternalEObject oldKey = (InternalEObject)key;
+      key = (JvmIdentifiableElement)eResolveProxy(oldKey);
+      if (key != oldKey)
+      {
+        if (eNotificationRequired())
+          eNotify(new ENotificationImpl(this, Notification.RESOLVE, BasicIQLPackage.IQL_ARGUMENTS_MAP_KEY_VALUE__KEY, oldKey, key));
+      }
+    }
+    return key;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public JvmIdentifiableElement basicGetKey()
   {
     return key;
   }
@@ -97,9 +109,9 @@ public class IQLArgumentsMapKeyValueImpl extends MinimalEObjectImpl.Container im
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setKey(String newKey)
+  public void setKey(JvmIdentifiableElement newKey)
   {
-    String oldKey = key;
+    JvmIdentifiableElement oldKey = key;
     key = newKey;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, BasicIQLPackage.IQL_ARGUMENTS_MAP_KEY_VALUE__KEY, oldKey, key));
@@ -180,7 +192,8 @@ public class IQLArgumentsMapKeyValueImpl extends MinimalEObjectImpl.Container im
     switch (featureID)
     {
       case BasicIQLPackage.IQL_ARGUMENTS_MAP_KEY_VALUE__KEY:
-        return getKey();
+        if (resolve) return getKey();
+        return basicGetKey();
       case BasicIQLPackage.IQL_ARGUMENTS_MAP_KEY_VALUE__VALUE:
         return getValue();
     }
@@ -198,7 +211,7 @@ public class IQLArgumentsMapKeyValueImpl extends MinimalEObjectImpl.Container im
     switch (featureID)
     {
       case BasicIQLPackage.IQL_ARGUMENTS_MAP_KEY_VALUE__KEY:
-        setKey((String)newValue);
+        setKey((JvmIdentifiableElement)newValue);
         return;
       case BasicIQLPackage.IQL_ARGUMENTS_MAP_KEY_VALUE__VALUE:
         setValue((IQLExpression)newValue);
@@ -218,7 +231,7 @@ public class IQLArgumentsMapKeyValueImpl extends MinimalEObjectImpl.Container im
     switch (featureID)
     {
       case BasicIQLPackage.IQL_ARGUMENTS_MAP_KEY_VALUE__KEY:
-        setKey(KEY_EDEFAULT);
+        setKey((JvmIdentifiableElement)null);
         return;
       case BasicIQLPackage.IQL_ARGUMENTS_MAP_KEY_VALUE__VALUE:
         setValue((IQLExpression)null);
@@ -238,28 +251,11 @@ public class IQLArgumentsMapKeyValueImpl extends MinimalEObjectImpl.Container im
     switch (featureID)
     {
       case BasicIQLPackage.IQL_ARGUMENTS_MAP_KEY_VALUE__KEY:
-        return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+        return key != null;
       case BasicIQLPackage.IQL_ARGUMENTS_MAP_KEY_VALUE__VALUE:
         return value != null;
     }
     return super.eIsSet(featureID);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (key: ");
-    result.append(key);
-    result.append(')');
-    return result.toString();
   }
 
 } //IQLArgumentsMapKeyValueImpl

@@ -40,7 +40,7 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getODLModelElementAccess().getInnerAlternatives_2_0(), "rule__ODLModelElement__InnerAlternatives_2_0");
 					put(grammarAccess.getODLOperatorAccess().getMembersAlternatives_5_0(), "rule__ODLOperator__MembersAlternatives_5_0");
 					put(grammarAccess.getODLMethodAccess().getAlternatives_1(), "rule__ODLMethod__Alternatives_1");
-					put(grammarAccess.getIQLJavaWordsAccess().getAlternatives(), "rule__IQLJavaWords__Alternatives");
+					put(grammarAccess.getIQLJavaTextAccess().getAlternatives(), "rule__IQLJavaText__Alternatives");
 					put(grammarAccess.getIQLModelElementAccess().getInnerAlternatives_1_0(), "rule__IQLModelElement__InnerAlternatives_1_0");
 					put(grammarAccess.getIQLClassAccess().getMembersAlternatives_6_0(), "rule__IQLClass__MembersAlternatives_6_0");
 					put(grammarAccess.getIQLInterfaceAccess().getMembersAlternatives_5_0(), "rule__IQLInterface__MembersAlternatives_5_0");
@@ -64,7 +64,7 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives(), "rule__IQLOtherExpressions__Alternatives");
 					put(grammarAccess.getIQLOtherExpressionsAccess().getAlternatives_4_2(), "rule__IQLOtherExpressions__Alternatives_4_2");
 					put(grammarAccess.getIQLLiteralExpressionAccess().getAlternatives(), "rule__IQLLiteralExpression__Alternatives");
-					put(grammarAccess.getIQLJavaKeywordsAccess().getAlternatives(), "rule__IQLJavaKeywords__Alternatives");
+					put(grammarAccess.getIQL_JAVA_KEYWORDSAccess().getAlternatives(), "rule__IQL_JAVA_KEYWORDS__Alternatives");
 					put(grammarAccess.getODLModelAccess().getGroup(), "rule__ODLModel__Group__0");
 					put(grammarAccess.getODLModelElementAccess().getGroup(), "rule__ODLModelElement__Group__0");
 					put(grammarAccess.getODLOperatorAccess().getGroup(), "rule__ODLOperator__Group__0");

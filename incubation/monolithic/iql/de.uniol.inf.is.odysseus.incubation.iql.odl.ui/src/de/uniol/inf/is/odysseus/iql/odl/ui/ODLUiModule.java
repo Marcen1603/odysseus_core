@@ -12,8 +12,11 @@ import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+
+
 
 
 
@@ -31,6 +34,7 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHove
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.IODLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.ODLClasspathTypeProviderFactory;
+import de.uniol.inf.is.odysseus.iql.odl.ui.coloring.ODLAntlrTokenToAttributeIdMapper;
 import de.uniol.inf.is.odysseus.iql.odl.ui.coloring.ODLHighlightingConfiguration;
 import de.uniol.inf.is.odysseus.iql.odl.ui.coloring.ODLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.odl.ui.contentassist.ODLProposalProvider;
@@ -59,6 +63,9 @@ public class ODLUiModule extends de.uniol.inf.is.odysseus.iql.odl.ui.AbstractODL
 	}	
 	
 	
+	public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
+		return ODLAntlrTokenToAttributeIdMapper.class;
+	}
 	
 	public Class<? extends IIQLJdtTypeProviderFactory> bindIQLJdtTypeProviderFactory() {
 		return IQLJdtTypeProviderFactory.class;

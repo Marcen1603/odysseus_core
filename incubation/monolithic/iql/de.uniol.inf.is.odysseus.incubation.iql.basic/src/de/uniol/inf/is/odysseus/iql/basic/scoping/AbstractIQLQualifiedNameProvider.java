@@ -52,7 +52,7 @@ public abstract class AbstractIQLQualifiedNameProvider<U extends IIQLTypeUtils> 
 			return converter.toQualifiedName(decl.getName());
 		}else if (obj instanceof IQLArgumentsMapKeyValue) {
 			IQLArgumentsMapKeyValue keyValue = (IQLArgumentsMapKeyValue)obj;
-			return converter.toQualifiedName(keyValue.getKey());
+			return converter.toQualifiedName(keyValue.getKey().getSimpleName());
 		} else if (obj instanceof JvmFormalParameter) {
 			JvmFormalParameter parameter = (JvmFormalParameter)obj;
 			return converter.toQualifiedName(parameter.getName());

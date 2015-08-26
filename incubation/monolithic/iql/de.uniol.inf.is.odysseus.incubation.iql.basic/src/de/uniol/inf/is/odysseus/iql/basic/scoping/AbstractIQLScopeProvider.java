@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
@@ -31,6 +32,8 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.resource.IResourceDescription;
+import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.Scopes;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
@@ -38,11 +41,15 @@ import org.eclipse.xtext.scoping.impl.ImportNormalizer;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJvmElementCallExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
@@ -77,6 +84,9 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	@Inject
 	protected IQLClasspathTypeProviderFactory factory;
 	
+	@Inject
+	protected IResourceDescriptions resources;
+	
 	protected T typeFactory;
 	
 	public AbstractIQLScopeProvider(T typeFactory, L lookUp, P exprEvaluator, U typeUtils) {
@@ -88,6 +98,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	}
 	
 	protected abstract IScope getJdtScope(ResourceSet set, IIQLJdtTypeProvider typeProvider);
+	
 	
 	public IScope scope_IQLSimpleTypeRef_type(IQLModel model, EReference type) {	
 		Collection<JvmType> types = getAllTypes(model);
@@ -115,10 +126,33 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	@Override
 	public Collection<JvmType> getAllTypes(EObject node) {
 		IQLModel model =  EcoreUtil2.getContainerOfType(node, IQLModel.class);		
-		Collection<JvmType> types = lookUp.getAllTypes(getUsedNamespaces(model), model.eResource());
+		Collection<JvmType> types = new HashSet<>();
+		Collection<IQLModel> files = getAllFiles(node.eResource());
+		for (IQLModel file : files) {
+			types.addAll(EcoreUtil2.getAllContentsOfType(file, IQLClass.class));	
+			types.addAll(EcoreUtil2.getAllContentsOfType(file, IQLInterface.class));	
+		}
+		types.addAll(typeFactory.getVisibleTypes(getUsedNamespaces(model), model.eResource()));
 		return types;
 	}
 	
+	protected Collection<IQLModel> getAllFiles(Resource context) {
+		Collection<IQLModel> files = new HashSet<>();
+		try {
+			for (IResourceDescription res : resources.getAllResourceDescriptions()) {
+				Resource r = EcoreUtil2.getResource(context, res.getURI().toString());
+				if (r.getContents().size() > 0) {
+					EObject obj = r.getContents().get(0);
+					if (obj instanceof IQLModel) {
+						files.add((IQLModel)obj);
+					}
+				}
+			}
+		}catch (Exception e) {		
+		}
+		return files;
+	}
+
 
 	@Override
 	public Collection<IEObjectDescription> getTypes(EObject node) {
@@ -252,6 +286,12 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		return new SimpleScope(elements);
 	}
 	
+	public IScope scope_IQLArgumentsMapKeyValue_key(IQLArgumentsMap argumentsMap, EReference type) {	
+		Collection<IEObjectDescription> elements = new HashSet<>();
+		elements.addAll(getIQLArgumentsMapKeys(argumentsMap));		
+		return new SimpleScope(elements);
+	}	
+	
 	
 	@Override
 	public Collection<IEObjectDescription> getScopeIQLMemberSelection(IQLMemberSelectionExpression expr) {
@@ -326,6 +366,40 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		}
 		return result;
 	}
+	
+
+	
+	
+	@Override
+	public Collection<IEObjectDescription> getIQLArgumentsMapKeys(EObject node) {
+		JvmTypeReference typeRef = null;
+		if (EcoreUtil2.getContainerOfType(node, IQLNewExpression.class) != null) {
+			IQLNewExpression expr = EcoreUtil2.getContainerOfType(node, IQLNewExpression.class);
+			typeRef = expr.getRef();
+		} else if (EcoreUtil2.getContainerOfType(node, IQLAttribute.class) != null) {
+			IQLAttribute attr = EcoreUtil2.getContainerOfType(node, IQLAttribute.class);
+			typeRef = attr.getType();
+		} else if (EcoreUtil2.getContainerOfType(node, IQLVariableStatement.class) != null) {
+			IQLVariableStatement stmt = EcoreUtil2.getContainerOfType(node, IQLVariableStatement.class);
+			typeRef = ((IQLVariableDeclaration)stmt.getVar()).getRef();
+		}
+				
+		Collection<IEObjectDescription> result = new HashSet<>();
+		if (typeRef != null) {
+			Collection<JvmField> attributes = lookUp.getPublicAttributes(typeRef, false);
+			for (JvmField attr : attributes) {
+				result.add(EObjectDescription.create(attr.getSimpleName(), attr));
+			}
+			Collection<JvmOperation> setters = lookUp.getPublicSetters(typeRef);
+			for (JvmOperation op : setters) {
+				String name = op.getSimpleName().substring(3);
+				result.add(EObjectDescription.create(firstCharLowerCase(name), op));
+			}	
+		}
+		return result;
+	}
+	
+
 	
 	protected String firstCharLowerCase(String s) {
 		return Character.toLowerCase(s.charAt(0)) + s.substring(1);

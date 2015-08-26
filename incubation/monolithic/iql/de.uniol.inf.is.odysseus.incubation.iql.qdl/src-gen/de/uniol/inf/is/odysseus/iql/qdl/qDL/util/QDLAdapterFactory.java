@@ -104,6 +104,16 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
         return createQDLQueryAdapter();
       }
       @Override
+      public Adapter caseIQLInstanceOfExpression(IQLInstanceOfExpression object)
+      {
+        return createIQLInstanceOfExpressionAdapter();
+      }
+      @Override
+      public Adapter caseIQLRelationalExpression(IQLRelationalExpression object)
+      {
+        return createIQLRelationalExpressionAdapter();
+      }
+      @Override
       public Adapter caseIQLSubscribeExpression(IQLSubscribeExpression object)
       {
         return createIQLSubscribeExpressionAdapter();
@@ -241,6 +251,36 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createQDLQueryAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression <em>IQL Instance Of Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression
+   * @generated
+   */
+  public Adapter createIQLInstanceOfExpressionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression <em>IQL Relational Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression
+   * @generated
+   */
+  public Adapter createIQLRelationalExpressionAdapter()
   {
     return null;
   }
