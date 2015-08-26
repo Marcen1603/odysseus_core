@@ -4,12 +4,12 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCCSVFileSinkRule;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 
 public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule {
 	

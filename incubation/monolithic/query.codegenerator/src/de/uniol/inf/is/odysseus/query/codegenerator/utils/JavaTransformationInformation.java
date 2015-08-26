@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping;
+package de.uniol.inf.is.odysseus.query.codegenerator.utils;
 
 import java.util.HashMap;
 import java.util.List;

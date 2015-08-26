@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.executor;
 
 
-public abstract class AbstractExecutor implements IExecutor{
+public abstract class AbstractExecutor implements ICExecutor{
 	
 	public String name = "";
 	public String targetPlatform = "";

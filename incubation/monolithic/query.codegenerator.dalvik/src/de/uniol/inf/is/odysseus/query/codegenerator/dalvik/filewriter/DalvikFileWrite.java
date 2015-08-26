@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.jre.filewriter;
+package de.uniol.inf.is.odysseus.query.codegenerator.dalvik.filewriter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,21 +18,18 @@ import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.Activator;
 import de.uniol.inf.is.odysseus.query.codegenerator.executor.ICExecutor;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.Activator;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
+import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.osgi.ExtractOSGIBundle;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.FileHelper;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.UnZip;
 
 
 //TODO add mac support
-public class JavaFileWrite {
+public class DalvikFileWrite {
 	
 	
 	private String fileName;
@@ -50,10 +46,10 @@ public class JavaFileWrite {
 	
 	private Map<ILogicalOperator,Map<String,String>> operatorConfigurationList;
 	
-	private static Logger LOG = LoggerFactory.getLogger(JavaFileWrite.class);
+	private static Logger LOG = LoggerFactory.getLogger(DalvikFileWrite.class);
 	
 	
-	public JavaFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICExecutor executor){
+	public DalvikFileWrite(String fileName, TransformationParameter transformationParameter, Set<String> importList, String osgiBindCode ,String bodyCode,String startCode,  Map<ILogicalOperator,Map<String,String>> operatorConfigurationList, ICExecutor executor){
 		this.fileName = fileName;
 		this.tempPath = transformationParameter.getTempDirectory();
 		this.transformationParameter = transformationParameter;
@@ -72,9 +68,8 @@ public class JavaFileWrite {
 		
 		//create and copy odysseus jars
 		copyOdysseusJar();
-		
-		//create main.java file
-		createMainJavaFile();
+	
+		createMainActivityFragmentFile();
 		
 		//create Utils.java file
 		createUtilsJavaFile();
@@ -84,18 +79,12 @@ public class JavaFileWrite {
 		
 		//create operatorconfiguration files
 		createOperationConfigurationFiles();
-		
-		//create build.xml file
-		createBuildScript();
-		
-		//create .classpath file
-		createClassFile();
 	}
 	
 
 	private void createExecutorFile() {
 	
-		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"\\src\\main");
+		FileHelper fileHelper = new FileHelper(executor.getName()+".java", tempPath+"\\app\\src\\main\\java\\com\\app\\odysseus\\odysseustest");
 		fileHelper.writeToFile(executor.getExecutorCode());
 		
 	}
@@ -106,7 +95,7 @@ public class JavaFileWrite {
 		Bundle bundle = Activator.getContext().getBundle();
 	
 		
-		URL fileURL = bundle.getEntry("templates/java/JavaProject.zip");
+		URL fileURL = bundle.getEntry("templates/dalvik/AndroidProject.zip");
 		File file = null;
 		try {
 		    file = new File(FileLocator.resolve(fileURL).toURI());
@@ -122,10 +111,10 @@ public class JavaFileWrite {
     	
 	}
 	
-	private void createMainJavaFile(){
+	private void createMainActivityFragmentFile(){
 		StringBuilder absolutePath = new StringBuilder();
 		absolutePath.append(tempPath);
-		absolutePath.append("\\src\\main\\");
+		absolutePath.append("\\app\\src\\main\\java\\com\\app\\odysseus\\odysseustest\\");
 		absolutePath.append(fileName);
 		
 		file = new File(absolutePath.toString());
@@ -138,13 +127,14 @@ public class JavaFileWrite {
 			TreeSet<String> sortList = new TreeSet<String>( Collections.reverseOrder() );
 			sortList.addAll(importList);
 			
-			StringTemplate javaMain = new StringTemplate("java","javaMain");
-			javaMain.getSt().add("importList", sortList);
-			javaMain.getSt().add("osgiBindCode", osgiBindCode);
-			javaMain.getSt().add("bodyCode", bodyCode);
-			javaMain.getSt().add("startCode", startCode);
 			
-			writer.write(javaMain.getSt().render()); 
+			StringTemplate dalviMainActivityFragment = new StringTemplate("dalvik","dalvikMainActivityFragment");
+			dalviMainActivityFragment.getSt().add("importList", sortList);
+			dalviMainActivityFragment.getSt().add("osgiBindCode", osgiBindCode);
+			dalviMainActivityFragment.getSt().add("bodyCode", bodyCode);
+			dalviMainActivityFragment.getSt().add("startCode", startCode);
+			
+			writer.write(dalviMainActivityFragment.getSt().render()); 
 			
 			writer.flush();
 			writer.close();
@@ -158,7 +148,7 @@ public class JavaFileWrite {
 	private void createUtilsJavaFile(){
 		StringBuilder absolutePath = new StringBuilder();
 		absolutePath.append(tempPath);
-		absolutePath.append("\\src\\main\\");
+		absolutePath.append("\\app\\src\\main\\java\\com\\app\\odysseus\\odysseustest\\");
 		absolutePath.append("Utils.java");
 		
 		file = new File(absolutePath.toString());
@@ -167,9 +157,9 @@ public class JavaFileWrite {
 			file.createNewFile();
 			writer = new FileWriter(file); 
 			
-			StringTemplate javaUtils = new StringTemplate("java","javaUtils");
-			javaUtils.getSt().add("packageName", "main");
-			writer.write(javaUtils.getSt().render()); 
+			StringTemplate dalvikUtils = new StringTemplate("dalvik","dalvikUtils");
+			dalvikUtils.getSt().add("packageName", "com.app.odysseus.odysseustest");
+			writer.write(dalvikUtils.getSt().render()); 
 			
 			writer.flush();
 			writer.close();
@@ -180,80 +170,13 @@ public class JavaFileWrite {
 	}
 	
 	
-	private void createBuildScript(){
-
-		File buildFile = new File(tempPath+"\\build.xml");
-		try {
-			buildFile.createNewFile();
-			FileWriter buildWriter = new FileWriter(buildFile); 
-			
-			StringTemplate javaAntBuildTemplate = new StringTemplate("java","javaAntBuild");
-			javaAntBuildTemplate.getSt().add("copyJars", copyJars);
-			
-			buildWriter.write(javaAntBuildTemplate.getSt().render());
-			buildWriter.flush();
-			buildWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	
-	}
-	
-	private void createClassFile(){
-		File classpathFile = new File(tempPath+"\\.classpath");
-		
-		try {
-			classpathFile.createNewFile();
-			FileWriter buildProjectWriter = new FileWriter(classpathFile); 
-			
-			StringTemplate javaJarList = new StringTemplate("java","javaClasspath");
-			javaJarList.getSt().add("jarList", copyJars);
-	
-			buildProjectWriter.write(javaJarList.getSt().render());
-			
-			buildProjectWriter.flush();
-			buildProjectWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	
 	private void copyOdysseusJar(){
-		copyJars = ExtractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "lib");
+		copyJars = ExtractOSGIBundle.extractOSGIBundle(importList, transformationParameter.getTempDirectory(), "app\\libs");
 	}
 	
 	
 	private void createOperationConfigurationFiles() {
-		FileWriter infoFile = null;
-		
-		try {
-			 infoFile = new FileWriter(tempPath+"\\operatorConfigurationInfo.txt");
-		
-			for (Entry<ILogicalOperator, Map<String, String>> entry : operatorConfigurationList.entrySet())
-			{
-			    String operatorVariable = JavaTransformationInformation.getInstance().getVariable(entry.getKey());
-			  
-			    
-			    Gson gson = new Gson();
-			    String json = gson.toJson(entry.getValue());
-			    
-				infoFile.write(entry.getKey().getName()+" --> "+ operatorVariable +"\n");
-					
-				FileWriter file = new FileWriter(tempPath+"\\"+operatorVariable+"PO.json");
-				file.write(json);
-				file.flush();
-				file.close();
-			}
-			
-				infoFile.flush();
-				infoFile.close();
-		}catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+
 	}
 	
 	

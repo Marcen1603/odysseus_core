@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.jre.filewriter;
+package de.uniol.inf.is.odysseus.query.codegenerator.utils;
 
 import java.io.File;
 import java.io.FileWriter;

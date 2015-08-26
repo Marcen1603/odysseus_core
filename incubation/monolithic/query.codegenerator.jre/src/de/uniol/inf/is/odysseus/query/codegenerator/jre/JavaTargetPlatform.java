@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.ExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.filewriter.JavaFileWrite;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
@@ -22,6 +21,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecuteShellComand;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 
 public class JavaTargetPlatform extends AbstractTargetPlatform{
 	

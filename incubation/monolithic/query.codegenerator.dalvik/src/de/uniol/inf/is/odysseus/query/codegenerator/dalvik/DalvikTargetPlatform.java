@@ -1,24 +1,27 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.dalvik;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.JavaTransformationInformation;
+import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.filewriter.DalvikFileWrite;
+import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.ExecutorRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 
 public class DalvikTargetPlatform extends AbstractTargetPlatform{
-	
 	
 	private Set<String> importList = new HashSet<String>();
 	private StringBuilder bodyCode;
@@ -58,8 +61,22 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		walkTroughLogicalPlan(queryAnalyseInformation,parameter, transformationConfiguration);
 		
 
-	
-		System.out.println(bodyCode.toString());
+		CodeFragmentInfo osgiBind = CreateJavaDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
+		importList.addAll(osgiBind.getImports());
+		
+		//generate start code
+		CodeFragmentInfo startStreams = CreateJavaDefaultCode.codeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
+		
+		importList.addAll(startStreams.getImports());
+		
+		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), ExecutorRegistry.getExecutor("Java", parameter.getExecutor()));
+		
+		try {
+			dalvikFileWrite.createProject();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -78,7 +95,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		
 		bodyCode = sdfSchemaCode;
 		bodyCode.append(tempBodyCode);
-		
+
 	}
 	
 
@@ -97,13 +114,13 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 				JavaTransformationInformation.getInstance().addOperatorToCodeReady(operator);
 		
 				//generate the default code e.g. SDFSchema
-				//CodeFragmentInfo initOp = CreateJavaDefaultCode.initOperator(operator);
-				//sdfSchemaCode.append(initOp.getCode());
+				CodeFragmentInfo initOp = CreateJavaDefaultCode.initOperator(operator);
+				sdfSchemaCode.append(initOp.getCode());
 				
 				//String operatorCode = initOp.getCode();
 				
 				//add imports for default code
-				//importList.addAll(initOp.getImports());
+				importList.addAll(initOp.getImports());
 				
 				//generate operator code
 				CodeFragmentInfo opCodeFragment = opTrans.getCode(operator);
@@ -113,22 +130,25 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 				//add operator code to java body
 				bodyCode.append(operatorCode);
 				
-				//add import for *PO
-				//importList.addAll(opTrans.getNeededImports());
-	
 				//subcode imports
 				importList.addAll(opCodeFragment.getImports());
 				
 			}
 			
-			for(LogicalSubscription s:operator.getSubscriptions()){
-				generateCode(s.getTarget(),parameter, transformationConfiguration,queryAnalseInformation);
+			//generate subscription
+			CodeFragmentInfo  subscription = CreateJavaDefaultCode.generateSubscription(operator, queryAnalseInformation);
+			if(subscription!= null){
+				bodyCode.append(subscription.getCode());	
+				importList.addAll(subscription.getImports());
 			}
+			
+			
 		}
 		
+		for(LogicalSubscription s:operator.getSubscriptions()){
+			generateCode(s.getTarget(),parameter, transformationConfiguration,queryAnalseInformation);
+		}
 
-	
-	
 		
 	}
 

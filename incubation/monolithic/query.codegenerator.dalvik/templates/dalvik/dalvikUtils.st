@@ -1,4 +1,4 @@
-javaUtils(packageName)::=<<
+dalvikUtils(packageName)::=<<
 package $packageName$;
 
 import java.io.BufferedReader;
