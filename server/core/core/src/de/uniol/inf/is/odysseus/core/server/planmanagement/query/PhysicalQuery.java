@@ -614,18 +614,20 @@ public class PhysicalQuery implements IPhysicalQuery {
 				// this also works for cyclic plans,
 				// since if an operator is already closed, the
 				// following sources will not be called any more.
-				if (curRoot.isSink()) {
-					if (((ISink<?>) curRoot).isOpenFor(this)) {
-						if (queryState == QueryState.SUSPENDED || queryState == QueryState.PARTIAL_SUSPENDED){
-							((ISink<?>) curRoot).resume(this);
-						}
-						((ISink<?>) curRoot).close(this);
-					}
-				} else {
-					((ISource<?>) curRoot).close(this);
-					// throw new IllegalArgumentException(
-					// "Close cannot be called on a a source");
-				}
+				curRoot.close(this);
+				
+//				if (curRoot.isSink()) {
+//					if (((ISink<?>) curRoot).isOpenFor(this)) {
+//						if (queryState == QueryState.SUSPENDED || queryState == QueryState.PARTIAL_SUSPENDED){
+//							((ISink<?>) curRoot).resume(this);
+//						}
+//						((ISink<?>) curRoot).close(this);
+//					}
+//				} else {
+//					((ISource<?>) curRoot).close(this);
+//					// throw new IllegalArgumentException(
+//					// "Close cannot be called on a a source");
+//				}
 			}
 			setState(nextState);
 		} catch (IllegalStateException e) {
