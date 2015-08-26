@@ -52,127 +52,138 @@ import de.uniol.inf.is.odysseus.nexmark.generator.TupleContainer;
  * @see NexmarkServer
  * @author Bernd Hochschulz, Marco Grawunder
  */
-public class NexmarkStreamClientHandler extends Thread implements ITupleContainerListener{
+public class NexmarkStreamClientHandler extends Thread implements ITupleContainerListener {
 
-    Logger logger = LoggerFactory.getLogger(NexmarkStreamClientHandler.class);
+	Logger logger = LoggerFactory.getLogger(NexmarkStreamClientHandler.class);
 
-    // Liste der Verbunden Clients
-    private ArrayList<NEXMarkClient> clients;
+	// Liste der Verbunden Clients
+	private ArrayList<NEXMarkClient> clients;
 
-    private NEXMarkGeneratorConfiguration configuration;
+	private NEXMarkGeneratorConfiguration configuration;
 
-    private NEXMarkGenerator generator;
-    private Socket connection;
-    private NexmarkServer server;
+	private NEXMarkGenerator generator;
+	static private NEXMarkGenerator globalGenerator;
+	final private boolean useGlobalGenerator;
+	private Socket connection;
+	private NexmarkServer server;
 
-    private int sentElements = 0;
+	private int sentElements = 0;
 
-    private boolean noMoreClients;
-    private boolean acceptsNewConnections = true;
+	private boolean noMoreClients;
+	private boolean acceptsNewConnections = true;
 
-    /**
-     * Erzeugt einen Client Handler um eine Verbindung zum Nexmark Benchmark
-     * Server zu bearbeiten
-     * 
-     * @param connection
-     *            - Socket der Verbindung
-     */
-    public NexmarkStreamClientHandler(Socket connection, NexmarkServer server) {
-        this.clients = new ArrayList<NEXMarkClient>();
-        this.connection = connection;
-        this.configuration = server.getConfiguration();
-        this.server = server;
-    }
+	/**
+	 * Erzeugt einen Client Handler um eine Verbindung zum Nexmark Benchmark
+	 * Server zu bearbeiten
+	 * 
+	 * @param connection
+	 *            - Socket der Verbindung
+	 */
+	public NexmarkStreamClientHandler(Socket connection, NexmarkServer server, boolean useGlobalGenerator) {
+		this.clients = new ArrayList<NEXMarkClient>();
+		this.connection = connection;
+		this.configuration = server.getConfiguration();
+		this.server = server;
+		this.useGlobalGenerator = useGlobalGenerator;
+	}
 
-    /**
-     * Fuegt eine neue Verbindung zu diesem ClientHandler hinzu.
-     * 
-     * @param connection
-     *            - die neue Verbindung
-     */
-    public boolean addClient(NEXMarkClient client) {
-        synchronized (clients) {
-            if (!acceptsNewConnections) {
-                return false;
-            }
-            this.clients.add(client);
-            return true;
-        }
-    }
+	/**
+	 * Fuegt eine neue Verbindung zu diesem ClientHandler hinzu.
+	 * 
+	 * @param connection
+	 *            - die neue Verbindung
+	 */
+	public boolean addClient(NEXMarkClient client) {
+		synchronized (clients) {
+			if (!acceptsNewConnections) {
+				return false;
+			}
+			this.clients.add(client);
+			return true;
+		}
+	}
 
-    /**
-     * Bearbeitet eine Anfrage an den Nexmark Benchmark Server. In den
-     * OutputStream des Socktes des jeweiligen Clients werden die
-     * Simulationsdaten geschrieben.
-     */
-    @Override
-    public void run() {
-        try {
-	        generator = new NEXMarkGenerator(configuration, true, this);
-            generator.start();
-	        synchronized (this) {
-				while (!noMoreClients){
+	/**
+	 * Bearbeitet eine Anfrage an den Nexmark Benchmark Server. In den
+	 * OutputStream des Socktes des jeweiligen Clients werden die
+	 * Simulationsdaten geschrieben.
+	 */
+	@Override
+	public void run() {
+		try {
+			if (useGlobalGenerator) {
+				if (globalGenerator == null) {
+					globalGenerator = new NEXMarkGenerator(configuration, true, this);
+					globalGenerator.start();
+				}else{
+					globalGenerator.addListner(this);
+				}
+				generator = globalGenerator;
+			} else {
+				generator = new NEXMarkGenerator(configuration, true, this);
+				generator.start();
+			}
+			synchronized (this) {
+				while (useGlobalGenerator || !noMoreClients) {
 					this.wait(1000);
 				}
 			}
-	        
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            server.removeClientHandler(connection.getInetAddress(), this);
-        }
-    	
-    }
 
-    
-    @Override
-    public void newObject(TupleContainer container) throws IOException{
-    	sendTupleToClients(container.tuple, container.type);
-    	if (noMoreClients) {
-            sendTupleToClients(null, null);
-            generator.interrupt();
-    		throw new IOException("No more clients"); 
-    	}
-    }
-    
-    /**
-     * Sendet ein Tupel an alle verbundenen Clients die den Stream 'type'
-     * angefordert haben. Ist 'type' null wird das Tupel an alle gesendet. Wenn
-     * keine Clients mehr zuhoeren wird 'noMoreClients' auf true gesetzt.
-     * 
-     * @param tuple
-     *            - das zu sendene Tupel
-     * @param type
-     *            - Type des Tupels
-     */
-    private void sendTupleToClients(Tuple<ITimeInterval> tuple, NEXMarkStreamType type) {
-        synchronized (this.clients) {
-            Iterator<NEXMarkClient> iter = clients.iterator();
-            while (iter.hasNext()) {
-                NEXMarkClient client = iter.next();
-                try {
-                    if (type == null || client.streamType == type) {
-                        client.writeObject(tuple, true);
-                    }
-                } catch (IOException e) {
-                    iter.remove();
-                    logger.debug("A '" + client + "' of " + connection.getInetAddress() + " disconnected.");
-                }
-            }
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			server.removeClientHandler(connection.getInetAddress(), this);
+		}
 
-            if (server.getElementLimit() != 0) {
-                sentElements++;
-                if (sentElements >= server.getElementLimit()) {
-                    noMoreClients = true;
-                    acceptsNewConnections = false;
-                }
-            }
+	}
 
-            if (clients.isEmpty()) {
-                noMoreClients = true;
-                acceptsNewConnections = false;
-            }
-        }
-    }
+	@Override
+	public void newObject(TupleContainer container) throws IOException {
+		sendTupleToClients(container.tuple, container.type);
+		if (noMoreClients && !useGlobalGenerator) {
+			sendTupleToClients(null, null);
+			generator.interrupt();
+			throw new IOException("No more clients");
+		}
+	}
+
+	/**
+	 * Sendet ein Tupel an alle verbundenen Clients die den Stream 'type'
+	 * angefordert haben. Ist 'type' null wird das Tupel an alle gesendet. Wenn
+	 * keine Clients mehr zuhoeren wird 'noMoreClients' auf true gesetzt.
+	 * 
+	 * @param tuple
+	 *            - das zu sendene Tupel
+	 * @param type
+	 *            - Type des Tupels
+	 */
+	private void sendTupleToClients(Tuple<ITimeInterval> tuple, NEXMarkStreamType type) {
+		synchronized (this.clients) {
+			Iterator<NEXMarkClient> iter = clients.iterator();
+			while (iter.hasNext()) {
+				NEXMarkClient client = iter.next();
+				try {
+					if (type == null || client.streamType == type) {
+						client.writeObject(tuple, true);
+					}
+				} catch (IOException e) {
+					iter.remove();
+					logger.info("A '" + client + "' of " + connection.getInetAddress() + " disconnected.");
+				}
+			}
+
+			if (server.getElementLimit() != 0) {
+				sentElements++;
+				if (sentElements >= server.getElementLimit()) {
+					noMoreClients = true;
+					acceptsNewConnections = false;
+				}
+			}
+
+			if (clients.isEmpty()) {
+				noMoreClients = true;
+				acceptsNewConnections = false;
+			}
+		}
+	}
 }
-

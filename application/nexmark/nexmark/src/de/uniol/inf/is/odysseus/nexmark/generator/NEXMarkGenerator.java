@@ -31,6 +31,9 @@
 package de.uniol.inf.is.odysseus.nexmark.generator;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -60,7 +63,7 @@ public class NEXMarkGenerator extends Thread {
 
 	private NEXMarkBurstGenerator burstGenerator;
 
-	private ITupleContainerListener listener;
+	private List<ITupleContainerListener> listener = new ArrayList<>();
 
 	/**
 	 * Creates a {@link NEXMarkGenerator}. 
@@ -80,12 +83,21 @@ public class NEXMarkGenerator extends Thread {
 		generator = new TupleStreamGenerator(configuration, calender,
 				deterministic);
 
-		this.listener = listener;
+		this.listener.add(listener);
 
 		burstGenerator = new NEXMarkBurstGenerator(configuration.burstConfig,
 				this, deterministic);
 	}
 
+	public void addListner(ITupleContainerListener listener){
+		this.listener.add(listener);
+	}
+
+	public void removeListner(ITupleContainerListener listener){
+		this.listener.remove(listener);
+	}
+
+	
 	/**
 	 * determines the next tuple to be sent by using the smallest timestamp 
 	 */
@@ -254,16 +266,31 @@ public class NEXMarkGenerator extends Thread {
 					}
 
 					// send tuple
-					listener.newObject(container);
+					fireNewObject(container);
 
 					// determine next tuple
 					setCurrentTuple();
 				}
 			}
-		} catch (IOException e) {
 		} finally {
 			if (burstGenerator != null) {
 				burstGenerator.interrupt();
+			}
+		}
+	}
+	
+	private void fireNewObject(TupleContainer container){
+		Iterator<ITupleContainerListener> iter = this.listener.iterator();
+		while(iter.hasNext()){
+			ITupleContainerListener l = iter.next();
+			try {
+				l.newObject(container);
+			} catch (IOException e) {
+				try{
+					iter.remove();
+				}catch(Exception e2){
+					e2.printStackTrace();
+				}
 			}
 		}
 	}

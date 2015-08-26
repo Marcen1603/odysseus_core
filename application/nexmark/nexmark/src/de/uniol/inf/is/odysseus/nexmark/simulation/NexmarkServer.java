@@ -78,9 +78,9 @@ public class NexmarkServer {
 	 *             - if no connection cannot be established on a port
 	 */
 	public NexmarkServer(int personPort, int auctionPort, int bidPort,
-			int categoryPort, boolean useNIO, String configFile)
+			int categoryPort, boolean useNIO, boolean useGlobalGenerator, String configFile)
 			throws IOException {
-		this(personPort, auctionPort, bidPort, categoryPort, 0, useNIO,
+		this(personPort, auctionPort, bidPort, categoryPort, 0, useNIO, useGlobalGenerator,
 				configFile);
 	}
 
@@ -102,17 +102,17 @@ public class NexmarkServer {
 	 *             - if no connection cannot be established on a port
 	 */
 	public NexmarkServer(int personPort, int auctionPort, int bidPort,
-			int categoryPort, int elementLimit, boolean useNIO,
+			int categoryPort, int elementLimit, boolean useNIO, boolean useGlobalGenerator,
 			String configFile) throws IOException {
 		configuration = new NEXMarkGeneratorConfiguration(configFile);
 		personServer = new NEXMarkStreamServer(personPort, this,
-				NEXMarkStreamType.PERSON, useNIO);
+				NEXMarkStreamType.PERSON, useNIO, useGlobalGenerator);
 		auctionServer = new NEXMarkStreamServer(auctionPort, this,
-				NEXMarkStreamType.AUCTION, useNIO);
+				NEXMarkStreamType.AUCTION, useNIO, useGlobalGenerator);
 		bidServer = new NEXMarkStreamServer(bidPort, this,
-				NEXMarkStreamType.BID, useNIO);
+				NEXMarkStreamType.BID, useNIO, useGlobalGenerator);
 		categoryServer = new NEXMarkStreamServer(categoryPort, this,
-				NEXMarkStreamType.CATEGORY, useNIO);
+				NEXMarkStreamType.CATEGORY, useNIO, useGlobalGenerator);
 
 		this.elementLimit = elementLimit;
 	}
@@ -127,9 +127,9 @@ public class NexmarkServer {
 	 * @throws IOException
 	 *             - if no connection cannot be established on a port
 	 */
-	public NexmarkServer(int startPort, boolean useNIO, String filename)
+	public NexmarkServer(int startPort, boolean useNIO, boolean useGlobalGenerator, String filename)
 			throws IOException {
-		this(startPort, ++startPort, ++startPort, ++startPort, 0, useNIO,
+		this(startPort, ++startPort, ++startPort, ++startPort, 0, useNIO, useGlobalGenerator,
 				filename);
 	}
 
@@ -146,10 +146,10 @@ public class NexmarkServer {
 	 *             - if no connection cannot be established on a port
 	 */
 
-	public NexmarkServer(int startPort, int elementLimit, boolean useNIO,
+	public NexmarkServer(int startPort, int elementLimit, boolean useNIO,boolean useGlobalGenerator,
 			String filename) throws IOException {
 		this(startPort, ++startPort, ++startPort, ++startPort, elementLimit,
-				useNIO, filename);
+				useNIO, useGlobalGenerator, filename);
 	}
 
 	/**
@@ -220,6 +220,7 @@ public class NexmarkServer {
 		int personPort = 0, auctionPort = 0, bidPort = 0, categoryPort = 0;
 		int startPort = 0;
 		int elementLimit = 0;
+		boolean useGlobalGenerator = false;
 		String generatorConfigFile = PROPERTIES_FILE;
 		boolean useNIO = false;
 		for (int i = 0; i < args.length; i++) {
@@ -238,27 +239,29 @@ public class NexmarkServer {
 				useNIO = true;
 			} else if (arg.equals("-genConfigFile") || arg.equals("-gcf")) {
 				generatorConfigFile = args[++i];
+			} else if (arg.equals("-useGlobalGenerator")){
+				useGlobalGenerator = true;
 			}
 		}
 		NexmarkServer server = null;
 		try {
 			if (startPort > 0) {
 				if (elementLimit > 0) {
-					server = new NexmarkServer(startPort, elementLimit, useNIO,
+					server = new NexmarkServer(startPort, elementLimit, useNIO,useGlobalGenerator,
 							generatorConfigFile);
 				} else {
-					server = new NexmarkServer(startPort, useNIO,
+					server = new NexmarkServer(startPort, useNIO,useGlobalGenerator,
 							generatorConfigFile);
 				}
 			} else if (personPort > 0 && auctionPort > 0 && bidPort > 0
 					&& categoryPort > 0) {
 				if (elementLimit > 0) {
 					server = new NexmarkServer(personPort, auctionPort,
-							bidPort, categoryPort, elementLimit, useNIO,
+							bidPort, categoryPort, elementLimit, useNIO,useGlobalGenerator,
 							generatorConfigFile);
 				} else {
 					server = new NexmarkServer(personPort, auctionPort,
-							bidPort, categoryPort, useNIO, generatorConfigFile);
+							bidPort, categoryPort, useNIO, useGlobalGenerator, generatorConfigFile);
 				}
 			} else {
 				throw new IOException();
@@ -287,7 +290,8 @@ public class NexmarkServer {
 				+ "\n  -ports|-p <personPort>, <auctionPort>, <bidPort>, <categoryPort> (to specify specific ports)"
 				+ "\n  -port_range|-pr <startPort> (to specify a port range, personPort is <startPort>, auctionPort is <startPort> + 1, ..."
 				+ "\n  -element_limit|-el <elementLimit> (to specify an optional element Limit. If started with this option only <elementLimit> elements are created."
-				+ "\n  -useNIO use java NIO with channel (otherwise ObjectStream).";
+				+ "\n  -useNIO use java NIO with channel (otherwise ObjectStream)."
+				+ "\n  -userGlobalGenerator if set to true, the generator will not be restartet for new connections, but keeps running with new elements";
 
 		System.err.println(error);
 	}

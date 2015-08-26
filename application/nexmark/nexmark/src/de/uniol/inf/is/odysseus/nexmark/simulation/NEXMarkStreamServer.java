@@ -50,13 +50,15 @@ public class NEXMarkStreamServer extends Thread {
 	private ServerSocket socket;
 	private int port;
 	private NexmarkServer nexmarkServer;
-	private NEXMarkStreamType type;
-	private boolean useNIO;
-
+	final private NEXMarkStreamType type;
+	final private boolean useNIO;
+	final private boolean useGlobalGenerator;
+	
 	public NEXMarkStreamServer(int port, NexmarkServer nexmarkServer, 
-							   NEXMarkStreamType type, boolean useNIO)
+							   NEXMarkStreamType type, boolean useNIO, boolean useGlobalGenerator)
 			throws IOException {
 		this.useNIO = useNIO;
+		this.useGlobalGenerator = useGlobalGenerator;
 		if (useNIO){
 			ServerSocketChannel serverChannel = ServerSocketChannel.open();
 			socket = serverChannel.socket();
@@ -83,7 +85,7 @@ public class NEXMarkStreamServer extends Thread {
 	
 		while (true) {
 			// Wait for Client connection
-			logger.debug("waiting for connection "+type+" on port: " + this.port+ " using NIO="+useNIO);
+			logger.info("waiting for connection "+type+" on port: " + this.port+ " using NIO="+useNIO+" with globaleGen="+useGlobalGenerator);
 			Socket connection = null;
 			try {
 				connection = socket.accept();
@@ -95,7 +97,7 @@ public class NEXMarkStreamServer extends Thread {
 			// break;
 			// }
 
-			logger.debug("Connection from: " + connection.getInetAddress());
+			logger.info("Connection from: " + connection.getInetAddress());
 
 			// Handle client connection
 			NEXMarkClient client = null;
@@ -133,7 +135,7 @@ public class NEXMarkStreamServer extends Thread {
 		// iter.next().interrupt();
 		// }
 
-		logger.debug("NEXMark Simulation Server of type '" + type.name + "' stopped");
+		logger.info("NEXMark Simulation Server of type '" + type.name + "' stopped");
 	}
 
 	private void handleIncomingStreamRequest(Socket connection, NEXMarkClient client) {
@@ -153,19 +155,19 @@ public class NEXMarkStreamServer extends Thread {
 				// nicht, wenn der ClientHandler keine Anfragen mehr entgegen
 				// nimmt aber der Server davon noch nicht benachrichtigt wurde
 				if (!clientHandler.addClient(client)) {
-					clientHandler = new NexmarkStreamClientHandler(connection, nexmarkServer);
+					clientHandler = new NexmarkStreamClientHandler(connection, nexmarkServer, useGlobalGenerator);
 					clientHandler.addClient(client);
 					activeClientHandler.put(ip, clientHandler);
 					clientHandler.start();
 				}
 
-				logger.debug("Added stream '" + client.streamType.name + "' to Client");
+				logger.info("Added stream '" + client.streamType.name + "' to Client");
 			} else {
-				clientHandler = new NexmarkStreamClientHandler(connection, nexmarkServer);
+				clientHandler = new NexmarkStreamClientHandler(connection, nexmarkServer, useGlobalGenerator);
 				clientHandler.addClient(client);
 				activeClientHandler.put(ip, clientHandler);
 				clientHandler.start();
-				logger.debug("New Client with stream '" + client.streamType.name + "'");
+				logger.info("New Client with stream '" + client.streamType.name + "'");
 			}
 		}
 
