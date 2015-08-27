@@ -5,7 +5,6 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
@@ -48,12 +47,11 @@ public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 	
 	public void analyseOperator(ILogicalOperator logicalOperator,QueryAnalyseInformation transformationInformation){
 		
-		CSVFileSink csvFileSinkOP = (CSVFileSink) logicalOperator;
-		
-		
-		transformationInformation.addDataHandler(csvFileSinkOP.getDataHandler());
-		transformationInformation.addProtocolHandler(csvFileSinkOP.getProtocolHandler());
-		transformationInformation.addTransportHandler(csvFileSinkOP.getTransportHandler());
+		AbstractSenderAO abstractSenderAO =(AbstractSenderAO)logicalOperator;
+
+		transformationInformation.addDataHandler(abstractSenderAO.getDataHandler());
+		transformationInformation.addProtocolHandler(abstractSenderAO.getProtocolHandler());
+		transformationInformation.addTransportHandler(abstractSenderAO.getTransportHandler());
 		
 	}
 	
@@ -61,9 +59,13 @@ public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 		
-		CSVFileSink csvfileSink = (CSVFileSink) logicalOperator;
+		AbstractSenderAO abstractSenderAO =(AbstractSenderAO)logicalOperator;
+		
+
 		Map<String,String> optionMap =  new HashMap<String,String>();
-		optionMap = csvfileSink.getOptionsMap();
+		
+	
+		optionMap = abstractSenderAO.getOptionsMap();
 		
 		transformationInformation.addOperatorConfiguration(logicalOperator, optionMap);
 	}

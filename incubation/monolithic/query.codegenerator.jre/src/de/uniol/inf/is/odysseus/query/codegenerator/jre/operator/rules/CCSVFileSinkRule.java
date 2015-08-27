@@ -22,10 +22,12 @@ public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule {
 		CodeFragmentInfo csvFileSink = new CodeFragmentInfo();
 		
 		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
-	
+		
 		CSVFileSink csvFileSinkOP = (CSVFileSink) operator;
-			
-		String filename = csvFileSinkOP.getFilename();
+
+		String filename = "";
+		
+
 		String transportHandler = csvFileSinkOP.getTransportHandler();
 		String dataHandler = csvFileSinkOP.getDataHandler();
 		String wrapper = csvFileSinkOP.getWrapper();

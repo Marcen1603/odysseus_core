@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
@@ -20,9 +19,9 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 	public boolean isExecutable(ILogicalOperator logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 		
-		if(logicalOperator instanceof AbstractAccessAO){
+		if(logicalOperator instanceof CSVFileSource){
 			
-			AbstractAccessAO operator = (AbstractAccessAO) logicalOperator;
+			CSVFileSource operator = (CSVFileSource) logicalOperator;
 			if (operator.getWrapper() != null) {
 				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
 					return true;
@@ -31,6 +30,7 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 					return true;
 				}
 			}
+					
 		}
 	
 		return false;
@@ -39,7 +39,7 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
 
 	@Override
 	public Class<?> getConditionClass() {
-		return AbstractAccessAO.class;
+		return CSVFileSource.class;
 	}
 
 

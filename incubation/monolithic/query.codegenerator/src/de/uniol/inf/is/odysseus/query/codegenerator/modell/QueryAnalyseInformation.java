@@ -151,13 +151,16 @@ public class QueryAnalyseInformation {
 	
 
 	public void addProtocolHandler(String protocolHandlerString) {
-	
+	if(protocolHandlerString !=null ){
 		String fullClassName = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandlerString).getClass().getName();
 		String simpleClassName = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandlerString).getClass().getSimpleName();
 
 		if (!protocolHandler.containsKey(fullClassName)) {
 			protocolHandler.put(fullClassName, simpleClassName);
 		}
+	}
+		
+	
 	}
 	
 
@@ -169,14 +172,17 @@ public class QueryAnalyseInformation {
 	
 	
 	public void addTransportHandler(String transportHandlerString) {
-		
-		String fullClassName = TransportHandlerRegistry.getITransportHandlerClass(transportHandlerString).getClass().getName();
-		String simpleClassName = TransportHandlerRegistry.getITransportHandlerClass(transportHandlerString).getClass().getSimpleName();
-		
-		if (!transportHandler.containsKey(fullClassName)) {
-			transportHandler.put(fullClassName, simpleClassName);
+		if(transportHandlerString != null){
+			
+			String fullClassName = TransportHandlerRegistry.getITransportHandlerClass(transportHandlerString).getClass().getName();
+			String simpleClassName = TransportHandlerRegistry.getITransportHandlerClass(transportHandlerString).getClass().getSimpleName();
+			
+			if (!transportHandler.containsKey(fullClassName)) {
+				transportHandler.put(fullClassName, simpleClassName);
+			}
+			
 		}
-		
+
 	}
 	
 

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.FindSinksLogicalVisitor;
@@ -34,7 +35,7 @@ public class QueryTransformation {
 	public static void startQueryTransformation(TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue ){
 		
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
-		
+	
 		ILogicalQuery queryTopAo = ExecutorServiceBinding.getExecutor().getLogicalQueryById(parameter.getQueryId(), QueryTransformationHelper.getActiveSession());
 		
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(queryTopAo);
@@ -80,9 +81,18 @@ public class QueryTransformation {
 	
 		
 		for(ILogicalOperator topAO : findSinksVisitor.getResult()){
-			for(LogicalSubscription sourceOPSub : topAO.getSubscribedToSource()){
-				transformationInformation.addSinkOp(sourceOPSub.getTarget());
+			if(topAO instanceof TopAO){
+				
+				for(LogicalSubscription sourceOPSub : topAO.getSubscribedToSource()){
+					
+					transformationInformation.addSinkOp(sourceOPSub.getTarget());
+				}
+				
+			}else{
+				transformationInformation.addSinkOp(topAO);
 			}
+			
+			
 		}
 		
 		

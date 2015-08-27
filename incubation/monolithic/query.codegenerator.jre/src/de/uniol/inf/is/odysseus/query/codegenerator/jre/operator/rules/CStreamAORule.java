@@ -41,8 +41,7 @@ public class CStreamAORule extends AbstractCStreamAORule{
 
 		AccessAO accessAO = (AccessAO)logicalPlan;
 		
-	
-		
+
 		String transportHandler = accessAO.getTransportHandler();
 		String dataHandler = accessAO.getDataHandler();
 		String wrapper = accessAO.getWrapper();

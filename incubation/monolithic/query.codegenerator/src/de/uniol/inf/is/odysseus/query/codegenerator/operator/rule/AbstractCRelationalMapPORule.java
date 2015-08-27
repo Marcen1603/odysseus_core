@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -39,8 +40,19 @@ public abstract class AbstractCRelationalMapPORule extends AbstractRule{
 		
 		MapAO mapAO = (MapAO) logicalOperator;
 		
+		
+		
+		
+		
 		for (NamedExpression e : mapAO.getExpressions()) {
-			transformationInformation.addMEPFunction(e.expression.getMEPExpression());
+			
+	
+			
+			IExpression<?> temp = e.expression.getMEPExpression();
+			if(temp.isFunction()){
+				transformationInformation.addMEPFunction(temp);
+			}
+			
 		}
 		
 		
