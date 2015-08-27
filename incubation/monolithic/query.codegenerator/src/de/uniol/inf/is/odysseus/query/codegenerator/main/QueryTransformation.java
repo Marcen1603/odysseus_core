@@ -92,7 +92,18 @@ public class QueryTransformation {
 				}
 				
 			}else{
-				transformationInformation.addSinkOp(topAO);
+				if(topAO instanceof RenameAO){
+					for(LogicalSubscription sourceOPSub : topAO.getSubscribedToSource()){
+						
+						transformationInformation.addSinkOp(sourceOPSub.getTarget());
+					}
+					
+					
+				}else{
+					transformationInformation.addSinkOp(topAO);
+				}
+				
+			
 			}
 			
 			

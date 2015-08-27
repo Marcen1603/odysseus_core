@@ -126,6 +126,8 @@ public class CreateJavaDefaultCode {
 
 		//Open on sink ops
 		for(ILogicalOperator sinkOp : sinkOPs){
+		
+			
 			sinkOpList.add(JavaTransformationInformation.getInstance().getVariable(sinkOp));
 		}
 		
