@@ -123,6 +123,8 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.parallelization.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.parallelization.rcp.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.server.sparql.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.rdf" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.rdf.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
