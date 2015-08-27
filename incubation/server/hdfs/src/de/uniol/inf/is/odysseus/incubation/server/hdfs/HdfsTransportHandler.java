@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class HdfsTransportHandler extends AbstractTransportHandler {
 
-	public static final String NAME = "HDFSTransportHandler";
+	public static final String NAME = "HDFS";
 	private String fsDefaultName;
 	private String pathToFile;
 	private boolean append;
@@ -28,6 +28,8 @@ public class HdfsTransportHandler extends AbstractTransportHandler {
 	private Configuration conf;
 	private FileSystem fs;
 
+	public HdfsTransportHandler(){}
+	
 	public HdfsTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		this.fsDefaultName = options.get("fs.default.name");
