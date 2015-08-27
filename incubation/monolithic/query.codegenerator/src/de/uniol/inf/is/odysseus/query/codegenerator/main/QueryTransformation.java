@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
@@ -24,6 +26,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.ITargetPlatf
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.QueryTransformationHelper;
+import de.uniol.inf.is.odysseus.transform.rules.TDeleteRenameAORule;
 
 public class QueryTransformation {
 	
@@ -137,8 +140,6 @@ public class QueryTransformation {
 				opTrans.analyseOperator(operator,transformationInformation);
 				opTrans.addDataHandlerFromSDFSchema(operator, transformationInformation);
 				opTrans.addOperatorConfiguration(operator, transformationInformation);
-			
-
 			}
 		}
 		
@@ -147,6 +148,21 @@ public class QueryTransformation {
 			analyseOperator(s.getTarget(),parameter, transformationConfiguration);
 		}
 		
+		if(operator instanceof RenameAO){
+			RenameAO renameAO = (RenameAO)operator;
+			
+			TDeleteRenameAORule tdelteRenameAORule =  new TDeleteRenameAORule();
+	
+			if(tdelteRenameAORule.isExecutable(renameAO, null)){
+				RestructHelper.removeOperator(renameAO, true);
+			}
+		
+		}
+		
+		
 	}
+	
+
+
 
 }

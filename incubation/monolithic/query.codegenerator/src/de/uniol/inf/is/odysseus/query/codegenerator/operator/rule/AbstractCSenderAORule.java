@@ -45,7 +45,21 @@ public abstract class AbstractCSenderAORule extends AbstractRule {
 	@Override
 	public void analyseOperator(ILogicalOperator logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
-		// TODO Auto-generated method stub
+		
+		SenderAO dummySenderAO = (SenderAO)logicalOperator;
+		
+		ITenant tenant = UserManagementProvider.getDefaultTenant();
+		ILogicalOperator logicalPlan = DataDictionaryProvider.getDataDictionary(tenant).getSinkForTransformation(dummySenderAO.getSinkname(), null);
+
+		SenderAO senderAO = (SenderAO)logicalPlan;
+		
+		String transportHandler = senderAO.getTransportHandler();
+		String protocolHandler = senderAO.getProtocolHandler();
+		String dataHandler = senderAO.getDataHandler();
+		
+		transformationInformation.addTransportHandler(transportHandler);
+		transformationInformation.addProtocolHandler(protocolHandler);
+		transformationInformation.addDataHandler(dataHandler);
 		
 	}
 

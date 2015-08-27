@@ -26,8 +26,7 @@ public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule {
 		CSVFileSink csvFileSinkOP = (CSVFileSink) operator;
 
 		String filename = "";
-		
-
+	
 		String transportHandler = csvFileSinkOP.getTransportHandler();
 		String dataHandler = csvFileSinkOP.getDataHandler();
 		String wrapper = csvFileSinkOP.getWrapper();
