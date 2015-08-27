@@ -17,7 +17,7 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
-import de.uniol.inf.is.odysseus.sparql.datamodel.INode;
+import de.uniol.inf.is.odysseus.rdf.datamodel.INode;
 
 public
 class ASTGraphGraphPattern extends SimpleNode {

@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.sparql.datamodel.INode;
+import de.uniol.inf.is.odysseus.rdf.datamodel.INode;
 
 public class PropertiesAndObjects {
 	

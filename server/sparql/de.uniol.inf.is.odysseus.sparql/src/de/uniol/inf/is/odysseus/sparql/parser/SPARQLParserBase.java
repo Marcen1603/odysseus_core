@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.sparql.parser;
 
-import de.uniol.inf.is.odysseus.sparql.datamodel.BlankNode;
+import de.uniol.inf.is.odysseus.rdf.datamodel.BlankNode;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ParseException;
 
 public class SPARQLParserBase {

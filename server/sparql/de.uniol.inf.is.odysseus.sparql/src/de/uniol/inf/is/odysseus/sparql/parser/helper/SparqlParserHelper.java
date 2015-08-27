@@ -28,8 +28,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sparql.datamodel.INode;
-import de.uniol.inf.is.odysseus.sparql.datamodel.Triple;
+import de.uniol.inf.is.odysseus.rdf.datamodel.INode;
+import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
 
 @SuppressWarnings({"rawtypes"})
 public class SparqlParserHelper {

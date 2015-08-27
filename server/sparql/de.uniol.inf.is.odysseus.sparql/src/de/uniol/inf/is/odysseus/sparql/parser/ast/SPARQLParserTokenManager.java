@@ -13,10 +13,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.*;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
 import de.uniol.inf.is.odysseus.sparql.parser.*;
 import de.uniol.inf.is.odysseus.sparql.*;
-import de.uniol.inf.is.odysseus.sparql.datamodel.*;
+import de.uniol.inf.is.odysseus.rdf.datamodel.*;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /** Token Manager. */
+@SuppressWarnings("all")
 public class SPARQLParserTokenManager implements SPARQLParserConstants
 {
 

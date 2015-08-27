@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.sparql.parser.helper;
 
-import de.uniol.inf.is.odysseus.sparql.datamodel.Variable;
+import de.uniol.inf.is.odysseus.rdf.datamodel.Variable;
 
 public class Aggregation {
 

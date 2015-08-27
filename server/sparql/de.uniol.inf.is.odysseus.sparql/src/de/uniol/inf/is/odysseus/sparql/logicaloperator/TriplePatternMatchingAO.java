@@ -26,8 +26,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
-import de.uniol.inf.is.odysseus.sparql.datamodel.Triple;
-import de.uniol.inf.is.odysseus.sparql.datamodel.Variable;
+import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
+import de.uniol.inf.is.odysseus.rdf.datamodel.Variable;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SPARQLDirectAttributeResolver;
 
 /**

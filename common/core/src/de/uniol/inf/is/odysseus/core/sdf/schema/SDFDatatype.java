@@ -53,6 +53,9 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype NTUPLE = new SDFDatatype("NTuple",
 			SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.OBJECT);
 
+	public static final SDFDatatype TRIPLE = new SDFDatatype("Triple",
+			SDFDatatype.KindOfDatatype.TUPLE, SDFDatatype.OBJECT);
+	
 	/**
 	 * predefined datatypes
 	 */

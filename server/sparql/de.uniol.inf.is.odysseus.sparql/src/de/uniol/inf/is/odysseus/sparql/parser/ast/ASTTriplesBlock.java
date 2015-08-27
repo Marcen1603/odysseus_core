@@ -19,7 +19,7 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.sparql.datamodel.Triple;
+import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
 
 public
 class ASTTriplesBlock extends SimpleNode {

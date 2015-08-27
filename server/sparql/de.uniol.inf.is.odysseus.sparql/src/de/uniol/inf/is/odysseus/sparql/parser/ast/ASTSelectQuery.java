@@ -20,8 +20,8 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.sparql.datamodel.IRI;
-import de.uniol.inf.is.odysseus.sparql.datamodel.Variable;
+import de.uniol.inf.is.odysseus.rdf.datamodel.IRI;
+import de.uniol.inf.is.odysseus.rdf.datamodel.Variable;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.Aggregation;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.SourceInfo;
 

@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.sparql.datamodel.Triple;
+import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
 
 public class BasicTripleSelectionAO extends SelectAO {
 

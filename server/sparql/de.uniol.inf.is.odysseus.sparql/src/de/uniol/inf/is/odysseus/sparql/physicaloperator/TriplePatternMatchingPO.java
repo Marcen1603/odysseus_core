@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.sparql.datamodel.Triple;
-import de.uniol.inf.is.odysseus.sparql.datamodel.Variable;
+import de.uniol.inf.is.odysseus.rdf.datamodel.Triple;
+import de.uniol.inf.is.odysseus.rdf.datamodel.Variable;
 import de.uniol.inf.is.odysseus.sparql.logicaloperator.TriplePatternMatchingAO;
 
 
