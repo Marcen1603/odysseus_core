@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.views;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,8 +25,8 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingControll
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingControllerListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLockListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.Activator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp.Activator;
 
 public class LoadBalancingView extends ViewPart implements ILoadBalancingControllerListener, ILoadBalancingLockListener, IExcludedQueryRegistryListener {
 	

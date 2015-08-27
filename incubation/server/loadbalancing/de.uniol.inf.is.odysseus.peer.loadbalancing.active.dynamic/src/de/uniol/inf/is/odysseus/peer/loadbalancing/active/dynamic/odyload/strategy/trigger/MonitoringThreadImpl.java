@@ -7,19 +7,20 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThread;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThreadListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.CostEstimationHelper;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
 
-public class MonitoringThread extends Thread {
+public class MonitoringThreadImpl extends Thread implements IMonitoringThread {
 	
 
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(MonitoringThread.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MonitoringThreadImpl.class);
 	
 
 	
@@ -33,7 +34,7 @@ public class MonitoringThread extends Thread {
 		isActive = false;
 	}
 	
-	public MonitoringThread(IPeerResourceUsageManager usageManager, IPeerDictionary peerDictionary,IMonitoringThreadListener listener) {
+	public MonitoringThreadImpl(IPeerResourceUsageManager usageManager, IPeerDictionary peerDictionary,IMonitoringThreadListener listener) {
 		this.listenerList.add(listener);
 		this.usageManager = usageManager;
 		this.peerDictionary = peerDictionary;

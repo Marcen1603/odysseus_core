@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 public class Activator extends AbstractUIPlugin implements BundleActivator {
 	
 	// The plug-in ID
-	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp";
+	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp";
 
 	private static BundleContext context;
 

@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: LoadBalancingRcp
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp;singleton:=true
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.peer.loadbalancing.active.rcp.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.rcp,
  org.apache.log4j,

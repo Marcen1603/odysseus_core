@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunic
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThread;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThreadListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionHandlerListener;
@@ -42,7 +43,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strate
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.QueryCostMap;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.SimulatedAnnealingQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer.QueryTransmissionHandler;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.trigger.MonitoringThread;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.trigger.MonitoringThreadImpl;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.CalcLatencyPOTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.DataratePOTransformer;
@@ -67,7 +68,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 
 	private List<Integer> failedAllocationQueryIDs;
 
-	private MonitoringThread monitoringThread = null;
+	private IMonitoringThread monitoringThread = null;
 
 	private boolean firstAllocationTry = true;
 	
@@ -125,7 +126,7 @@ public class DynamicStrategy implements ILoadBalancingStrategy,
 		synchronized (threadManipulationLock) {
 			if (monitoringThread == null) {
 				LOG.info("Starting to monitor Peer.");
-				monitoringThread = new MonitoringThread(usageManager,peerDictionary, this);
+				monitoringThread = new MonitoringThreadImpl(usageManager,peerDictionary, this);
 				monitoringThread.start();
 			} else {
 				LOG.info("Monitoring Thread already running.");
