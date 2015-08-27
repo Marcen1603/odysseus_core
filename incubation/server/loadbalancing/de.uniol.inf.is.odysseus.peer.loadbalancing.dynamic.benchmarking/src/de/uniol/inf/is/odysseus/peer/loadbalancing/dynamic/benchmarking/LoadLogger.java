@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.benchmarking;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.benchmarking;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

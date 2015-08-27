@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.benchmarking;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.benchmarking;
 
 import java.io.FileWriter;
 import java.io.IOException;

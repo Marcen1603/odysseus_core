@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.benchmarking.ILogLoadService;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQuerySelectionStrategy;
@@ -50,6 +51,17 @@ import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 public class OdyLoadConsole implements CommandProvider {
 	
 	private static ISession activeSession;
+	
+
+	public static void bindLogLoadService(ILogLoadService serv) {
+		loadLogger=serv;
+	}
+	
+	public static void unbindLogLoadService(ILogLoadService serv) {
+		if(loadLogger==serv) {
+			loadLogger=null;
+		}
+	}
 
 	@Override
 	public String getHelp() {
@@ -64,8 +76,17 @@ public class OdyLoadConsole implements CommandProvider {
 		sb.append("    allocate <queryID>                                           - Allocates a queryID with OdyLoad allocator\n");
 		sb.append("    determineCommunicator <queryID>                              - Determines which communicator to use for queryID\n");
 		sb.append("    allocateAndTransfer <queryID>								- Allocates and transfers given QueryID\n");
+		sb.append("    startLogLoad								-Starts logging of System load to file.\n");
+		sb.append("    stopLogLoad							    -Stops logging of System load to file.\n");
+
+		
 		return sb.toString();
 	}
+	
+
+	private static ILogLoadService loadLogger;
+	
+	
 	
 	
 	public void _transformSources(CommandInterpreter ci) {
@@ -363,6 +384,29 @@ public class OdyLoadConsole implements CommandProvider {
 		RestructHelper.collectOperators(query.getLogicalPlan(),opsInQuery);
 		return new LogicalQueryPart(opsInQuery);
 		
+	}
+	
+
+	public void _startLogLoad(CommandInterpreter ci) {
+		final String ERROR_LOADLOGGER = "No Load Logger Bound.";
+		if(loadLogger==null) {
+			ci.println(ERROR_LOADLOGGER);
+			return;
+		}
+		loadLogger.startLogging();
+		ci.println("Logging started.");
+	}
+	
+
+	
+	public void _stopLogLoad(CommandInterpreter ci) {
+		final String ERROR_LOADLOGGER = "No Load Logger Bound.";
+		if(loadLogger==null) {
+			ci.println(ERROR_LOADLOGGER);
+			return;
+		}
+		loadLogger.stopLogging();
+		ci.println("Logging stopped.");
 	}
 	
 }

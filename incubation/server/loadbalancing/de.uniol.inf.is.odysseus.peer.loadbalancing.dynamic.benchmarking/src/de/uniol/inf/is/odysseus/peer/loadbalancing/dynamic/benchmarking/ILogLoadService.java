@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.benchmarking;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.benchmarking;
 
 public interface ILogLoadService {
 	public void startLogging();

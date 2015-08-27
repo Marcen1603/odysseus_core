@@ -49,7 +49,6 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunic
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.benchmarking.ILogLoadService;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateHelper;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator.MovingStateManager;
@@ -89,18 +88,6 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	private static ILoadBalancingController loadBalancingControl;
 	private static IQueryPartController queryPartController;
 	private static ILoadBalancingLock lock;
-	private static ILogLoadService loadLogger;
-	
-	
-	public static void bindLogLoadService(ILogLoadService serv) {
-		loadLogger=serv;
-	}
-	
-	public static void unbindLogLoadService(ILogLoadService serv) {
-		if(loadLogger==serv) {
-			loadLogger=null;
-		}
-	}
 	
 	public static void bindQueryPartController(IQueryPartController serv) {
 		queryPartController=serv;
@@ -229,10 +216,6 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("   Control LoadBalancing\n");
 		sb.append("     initLB <strategyname> <allocatorname>		- Initiate Loadbalancing with load balancing strategy <strategyname> and load balancing allocator <allocatorname>\n");
 		sb.append("     stopLB                            			- Stops the Load Balancing\n");
-		sb.append("   Evaluating LoadBalancing\n");
-		sb.append("     startLogLoad								-Starts logging of System load to file.\n");
-		sb.append("     stopLogLoad								    -Stops logging of System load to file.\n");
-		sb.append("\n");
 		sb.append("   Debug LoadBalancing\n");
 		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername>   - Tries to copy and install a Sender\n");
 		sb.append("    cpJxtaReceiver <oldPipeId> <newPipeId> <newPeername> - Tries to copy and install a Receiver\n");
@@ -425,27 +408,6 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		}
 	}
 	
-	public void _startLogLoad(CommandInterpreter ci) {
-		final String ERROR_LOADLOGGER = "No Load Logger Bound.";
-		if(loadLogger==null) {
-			ci.println(ERROR_LOADLOGGER);
-			return;
-		}
-		loadLogger.startLogging();
-		ci.println("Logging started.");
-	}
-	
-
-	
-	public void _stopLogLoad(CommandInterpreter ci) {
-		final String ERROR_LOADLOGGER = "No Load Logger Bound.";
-		if(loadLogger==null) {
-			ci.println(ERROR_LOADLOGGER);
-			return;
-		}
-		loadLogger.stopLogging();
-		ci.println("Logging stopped.");
-	}
 
 	/**
 	 * Initializes the load balancing process for the peer by calling a given
