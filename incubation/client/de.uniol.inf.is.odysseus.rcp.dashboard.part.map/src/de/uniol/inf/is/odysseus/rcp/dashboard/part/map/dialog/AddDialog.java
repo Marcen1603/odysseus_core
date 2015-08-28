@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfigur
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.NullConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
 
-public class PropertyTitleDialog extends TitleAreaDialog {
+public class AddDialog extends TitleAreaDialog {
 
 	private LinkedList<ILayer> layerOrder;
 
@@ -44,7 +44,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 	private LayerConfiguration layerConfiguration = null;
 
-	public PropertyTitleDialog( Shell parentShell,IPhysicalOperator operator, LinkedList<ILayer> layerOrder) {
+	public AddDialog( Shell parentShell,IPhysicalOperator operator, LinkedList<ILayer> layerOrder) {
 		super(parentShell);
 		this.operator = operator;
 		this.layerOrder = layerOrder;
@@ -128,7 +128,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 						}
 						getRasterLayerConfigurationComposite(configContainer);
 						configContainer.redraw();
-						configContainer.layout();
+						main.layout();
 						layerType = "RasterLayer";
 					}
 				} else if (layerTypesCombo.getText().equals("ThematicLayer")) {
@@ -138,7 +138,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 						}
 						getThematicConfiguration(configContainer);
 						configContainer.redraw();
-						configContainer.layout();
+						main.layout();
 						layerType = "ThematicLayer";
 					}
 				}
@@ -244,6 +244,50 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		final CCombo geometrieSelect = new CCombo(thematicLayer, SWT.BORDER);
 		geometrieSelect.setLayoutData(DialogUtils.getTextDataLayout());
+		
+		Label latLabel = new Label(thematicLayer, SWT.NONE);
+		latLabel.setText("Latitude Attribute:");
+		latLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo latSelect = new CCombo(thematicLayer, SWT.BORDER);
+		latSelect.setLayoutData(DialogUtils.getTextDataLayout());
+		latSelect.setEnabled(false);
+		
+		Label lngLabel = new Label(thematicLayer, SWT.NONE);
+		lngLabel.setText("Longitude Attribute:");
+		lngLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo lngSelect = new CCombo(thematicLayer, SWT.BORDER);
+		lngSelect.setLayoutData(DialogUtils.getTextDataLayout());
+		lngSelect.setEnabled(false);
+		
+		Label geoTypeButtonLabel = new Label (thematicLayer, SWT.NONE);
+		geoTypeButtonLabel.setText("Use Point?");
+		geoTypeButtonLabel.setLayoutData(DialogUtils.getTextDataLayout());
+		
+		final Button geoSelectTypeButton = new Button(thematicLayer, SWT.CHECK);
+		geoSelectTypeButton.setLayoutData(DialogUtils.getTextDataLayout());
+		geoSelectTypeButton.setSelection(true);
+		geoSelectTypeButton.addSelectionListener(new SelectionAdapter() {
+			
+			 @Override
+			    public void widgetSelected(SelectionEvent e)
+			    {
+				 	if(geoSelectTypeButton.getSelection()){
+				 		geometrieSelect.setEnabled(true);
+				 		latSelect.setEnabled(false);
+				 		lngSelect.setEnabled(false);
+				 		layerConfiguration.setUsePoint(true);
+				 	}else{
+				 		geometrieSelect.setEnabled(false);
+				 		latSelect.setEnabled(true);
+				 		lngSelect.setEnabled(true);
+				 		layerConfiguration.setUsePoint(false);
+				 	}
+			    }
+		});
+		
+		
 
 		Label visualizationLabel = new Label(thematicLayer, SWT.NONE);
 		visualizationLabel.setText("Value Attribute:");
@@ -254,13 +298,15 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		// Add a listener -> created right layerConfiguration
 		ThematicSelectionListener thematicSelectionListener = new ThematicSelectionListener(layerConfiguration,
-				mapTypeSelect, geometrieSelect, visualizationSelect, this);
+				mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
 
 		StreamSelectionListener streamSelectionListener = new StreamSelectionListener(operator,
-				layerConfiguration, mapTypeSelect, geometrieSelect, visualizationSelect, this);
+				layerConfiguration, mapTypeSelect, geometrieSelect, latSelect, lngSelect, visualizationSelect, this);
 		mapTypeSelect.addSelectionListener(thematicSelectionListener);
 
 		geometrieSelect.addSelectionListener(thematicSelectionListener);
+		latSelect.addSelectionListener(thematicSelectionListener);
+		lngSelect.addSelectionListener(thematicSelectionListener);
 		visualizationSelect.addSelectionListener(thematicSelectionListener);
 
 		// Initialize selection

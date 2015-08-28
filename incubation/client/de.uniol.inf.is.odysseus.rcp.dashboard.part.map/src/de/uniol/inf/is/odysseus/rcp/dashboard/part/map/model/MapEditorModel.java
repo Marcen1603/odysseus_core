@@ -185,7 +185,8 @@ public class MapEditorModel extends ModelObject {
 				int endIndex = configuration.indexOf(";");
 				String layerConfigurationType = configuration.substring(0, endIndex);
 				String configurationSettings = configuration.substring(endIndex + 1);
-
+				System.out.println("Type: "+ layerConfigurationType);
+				
 				if (layerConfigurationType.equals("BasicLayer")) {
 					loadBasicConfiguration(configurationSettings);
 				} else if (layerConfigurationType.equals("HeatmapLayerConfiguration")) {
@@ -329,6 +330,7 @@ public class MapEditorModel extends ModelObject {
 		startIndex = endIndex + 1;
 		endIndex = string.indexOf(separator, startIndex);
 		String subString = string.substring(startIndex, endIndex);
+		System.out.println("SubString:" + subString);
 		return subString;
 	}
 
@@ -352,7 +354,6 @@ public class MapEditorModel extends ModelObject {
 		} else {
 			layer = addLayer();
 		}
-
 		firePropertyChange(MAP, null, this);
 		layers.addLast(layer);
 	}

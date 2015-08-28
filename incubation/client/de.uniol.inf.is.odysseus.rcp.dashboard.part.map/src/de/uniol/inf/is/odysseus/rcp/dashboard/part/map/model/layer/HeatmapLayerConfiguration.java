@@ -15,6 +15,9 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	private static final long serialVersionUID = -7225910571344993841L;
 
 	private int geometricAttributePosition;
+	private int latAttribute;
+	private int lngAttribute;
+	private boolean usePoint;
 	private int valueAttributePosition;
 	private RGB minColor;	// Save RGB and not color, cause Color is not serializable
 	private RGB maxColor;
@@ -34,6 +37,9 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		super(toCopy.getName());
 		super.setSrid(toCopy.getSrid()); 
 		setGeometricAttributePosition(toCopy.getGeometricAttributePosition()); //Here should be a point
+		setLatAttribute(toCopy.getLatAttribute());
+		setLngAttribute(toCopy.getLngAttribute());
+		setUsePoint(toCopy.usePoint());
 		setValueAttributePosition(toCopy.getValueAttributePosition());
 		setMinColor(toCopy.getMinColor());
 		setMaxColor(toCopy.getMaxColor());
@@ -55,6 +61,9 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		super(toCopy.getName());
 		super.setSrid(toCopy.getSrid());
 		setGeometricAttributePosition(0); //Here should be a point
+		setLatAttribute(0);
+		setLngAttribute(0);
+		setUsePoint(true);
 		setValueAttributePosition(1); // Here should be the value
 		setMinColor(new Color(Display.getDefault(),0,255,0));
 		setMaxColor(new Color(Display.getDefault(),255,0,0));
@@ -74,8 +83,11 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	
 	public HeatmapLayerConfiguration(String name) {
 		super(name);
-		super.setSrid(4326); //???
+		super.setSrid(3857); //???
 		setGeometricAttributePosition(0); //Here should be a point
+		setLatAttribute(0);
+		setLngAttribute(0);
+		setUsePoint(true);
 		setValueAttributePosition(1); // Here should be the value
 		setMinColor(new Color(Display.getDefault(),0,255,0));
 		setMaxColor(new Color(Display.getDefault(),255,0,0));
@@ -93,12 +105,36 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		super.setCoverageGeographic(getLngSW(), getLngNE(), getLatSW(), getLatNE());
 	}	
 
-	public int getGeometricAttributePosition() {
+	public Integer getGeometricAttributePosition() {
 		return geometricAttributePosition;
 	}
 
 	public void setGeometricAttributePosition(int geometricAttributePosition) {
 		this.geometricAttributePosition = geometricAttributePosition;
+	}
+	
+	public Integer getLatAttribute(){
+		return this.latAttribute;
+	}
+	
+	public void setLatAttribute(int latAttribute){
+		this.latAttribute = latAttribute;
+	}
+	
+	public Integer getLngAttribute(){
+		return this.lngAttribute;
+	}
+	
+	public void setLngAttribute(int lngAttribute){
+		this.lngAttribute = lngAttribute;
+	}
+	
+	public void setUsePoint(boolean use){
+		this.usePoint = use;
+	}
+	
+	public boolean usePoint(){
+		return this.usePoint;
 	}
 
 	public Color getMinColor() {

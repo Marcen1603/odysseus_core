@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.EditDialog;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.PropertyTitleDialog;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.AddDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties.MapPropertiesDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
@@ -237,7 +237,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				PropertyTitleDialog addDialog = new PropertyTitleDialog(parent.getShell(), operator,
+				AddDialog addDialog = new AddDialog(parent.getShell(), operator,
 						mapDashboardPart.getMapEditorModel().getLayers());
 				addDialog.create();
 				addDialog.open();

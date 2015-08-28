@@ -18,15 +18,19 @@ public class StreamSelectionListener extends SelectionAdapter {
 	LayerConfiguration config;
 	CCombo combobox;
 	CCombo geometrieSelect;
+	CCombo latSelect;
+	CCombo lngSelect;
 	CCombo visualizationSelect;
-	PropertyTitleDialog propertyDialog;
+	AddDialog propertyDialog;
 
 	public StreamSelectionListener(IPhysicalOperator operator, LayerConfiguration config, CCombo combobox, CCombo geometrieSelect,
-			CCombo visualizationSelect, PropertyTitleDialog propertyDialog) {
+			CCombo latSelect, CCombo lngSelect, CCombo visualizationSelect, AddDialog propertyDialog) {
 		this.operator = operator;
 		this.combobox = combobox;
 		this.propertyDialog = propertyDialog;
 		this.geometrieSelect = geometrieSelect;
+		this.latSelect = latSelect;
+		this.lngSelect = lngSelect;
 		this.visualizationSelect = visualizationSelect;
 	}
 
@@ -40,6 +44,14 @@ public class StreamSelectionListener extends SelectionAdapter {
 		for (int i = 0; i < schema.size(); i++) {
 			geometrieSelect.add(schema.getAttribute(i).getAttributeName(), i);
 		}
+		
+		for (int i = 0; i < schema.size(); i++) {
+			latSelect.add(schema.getAttribute(i).getAttributeName(), i);
+		}
+		
+		for (int i = 0; i < schema.size(); i++) {
+			lngSelect.add(schema.getAttribute(i).getAttributeName(), i);
+		}
 
 		visualizationSelect.removeAll();
 		for (int i = 0; i < schema.size(); i++) {
@@ -49,6 +61,14 @@ public class StreamSelectionListener extends SelectionAdapter {
 		// Pre-select standard attribute-positions
 		if (geometrieSelect.getSelectionIndex() < 0) {
 			geometrieSelect.select(0);
+
+		}
+		if (latSelect.getSelectionIndex() < 0) {
+			latSelect.select(0);
+
+		}
+		if (lngSelect.getSelectionIndex() < 0) {
+			lngSelect.select(0);
 
 		}
 		if (visualizationSelect.getSelectionIndex() < 0) {
@@ -62,6 +82,8 @@ public class StreamSelectionListener extends SelectionAdapter {
 			final HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) this.config;
 
 			heatmapLayerConfiguration.setGeometricAttributePosition(geometrieSelect.getSelectionIndex());
+			heatmapLayerConfiguration.setLatAttribute(latSelect.getSelectionIndex());
+			heatmapLayerConfiguration.setLngAttribute(lngSelect.getSelectionIndex());
 			heatmapLayerConfiguration.setValueAttributePosition(visualizationSelect.getSelectionIndex());
 			this.config = heatmapLayerConfiguration;
 

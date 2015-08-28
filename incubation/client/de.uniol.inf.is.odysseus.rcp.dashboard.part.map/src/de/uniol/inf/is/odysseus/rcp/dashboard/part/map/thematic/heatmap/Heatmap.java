@@ -18,6 +18,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
@@ -53,8 +54,7 @@ public class Heatmap extends RasterLayer {
 	}
 
 	@Override
-	public void init(ScreenManager screenManager, SDFSchema schema,
-			SDFAttribute attribute) {
+	public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
 		this.screenManager = screenManager;
 	}
 
@@ -62,8 +62,7 @@ public class Heatmap extends RasterLayer {
 	public void draw(GC gc) {
 		Color minColor = config.getMinColor();
 		Color maxColor = config.getMaxColor();
-		Image img = createImage(config.getNumTilesWidth(),
-				config.getNumTilesHeight(), minColor, maxColor);
+		Image img = createImage(config.getNumTilesWidth(), config.getNumTilesHeight(), minColor, maxColor);
 		drawImage(gc, img, config.isInterpolation());
 	}
 
@@ -83,9 +82,8 @@ public class Heatmap extends RasterLayer {
 		if (!interpolation)
 			gc.setInterpolation(SWT.NONE);
 
-		gc.drawImage(img, 0, 0, img.getBounds().width, img.getBounds().height,
-				(int) heatMapArea.getMinX(), (int) heatMapArea.getMinY(),
-				(int) heatMapArea.getWidth(), (int) heatMapArea.getHeight());
+		gc.drawImage(img, 0, 0, img.getBounds().width, img.getBounds().height, (int) heatMapArea.getMinX(),
+				(int) heatMapArea.getMinY(), (int) heatMapArea.getWidth(), (int) heatMapArea.getHeight());
 		gc.setInterpolation(SWT.DEFAULT);
 		gc.setAlpha(255);
 
@@ -101,8 +99,7 @@ public class Heatmap extends RasterLayer {
 	 *            pixels in y-direction
 	 * @return Image for the heatmap-overlay with right colors
 	 */
-	private Image createImage(int numberX, int numberY, Color minColor,
-			Color maxColor) {
+	private Image createImage(int numberX, int numberY, Color minColor, Color maxColor) {
 		Image image = new Image(Display.getDefault(), numberX, numberY);
 
 		GC gc = new GC(image);
@@ -143,6 +140,7 @@ public class Heatmap extends RasterLayer {
 	 * @param minColor
 	 * @param maxColor
 	 */
+	@SuppressWarnings("unchecked")
 	private void createColorArray(int x, int y, Color minColor, Color maxColor) {
 		colors = new Color[x][y];
 		hasInformation = new boolean[x][y];
@@ -166,16 +164,24 @@ public class Heatmap extends RasterLayer {
 		searchEnv.init(new Coordinate(49.7, 11.7)); // Maybe somewhere in
 													// Germany
 		// Get everything
-		searchEnv.expandToInclude(new Coordinate(Integer.MIN_VALUE,
-				Integer.MAX_VALUE)); // Top left
-		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE,
-				Integer.MIN_VALUE)); // Bottom right
+		searchEnv.expandToInclude(new Coordinate(Integer.MIN_VALUE, Integer.MAX_VALUE)); // Top
+																							// left
+		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE, Integer.MIN_VALUE)); // Bottom
+																							// right
 
-		
-		//Get this to work
+		// Get this to work
+		// TODO
 		List<?> data = new ArrayList<Object>();
+		ArrayList<Tuple<? extends ITimeInterval>> tempList = new ArrayList<Tuple<? extends ITimeInterval>>(); 
 		try {
-			data = layerUpdater.getElementList();
+			if (this.config.usePoint())
+				data = layerUpdater.query(searchEnv, config.getGeometricAttributePosition());
+			else {
+		data = (List<Tuple<? extends ITimeInterval>>) layerUpdater.getElementList();
+				for (Object tuple : data) {
+					tempList.add((Tuple<? extends ITimeInterval>) tuple);
+				}
+			}
 		} catch (ClassCastException e) {
 			// Do nothing. The setting, which past of the query was the
 			// geometric attribute was wrong
@@ -194,38 +200,49 @@ public class Heatmap extends RasterLayer {
 			// If the user wants the layer to be auto-positioned
 			heatMapArea = new Envelope();
 			zoomEnv = new Envelope();
-			for (Object dataSet : data) {
+			if (this.config.usePoint()) {
+				for (Object dataSet : data) {
 
-				// Get the data from the Tuple (Where it is and value)
-				Tuple<?> tuple = ((DataSet) dataSet).getTuple();
-				GeometryCollection geoColl = (GeometryCollection) tuple
-						.getAttribute(0);
-				Point point = geoColl.getCentroid();
+					// Get the data from the Tuple (Where it is and value)
+					Tuple<?> tuple = ((DataSet) dataSet).getTuple();
+					GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(0);
+					Point point = geoColl.getCentroid();
 
-				// Calculate, where this belongs in the heatmap
+					// Calculate, where this belongs in the heatmap
 
-				int[] transformedPoint = transformation.transformCoord(
-						point.getCoordinate(), srid);
+					int[] transformedPoint = transformation.transformCoord(point.getCoordinate(), srid);
 
-				Envelope tempEnv = new Envelope(new Coordinate(
-						transformedPoint[0], transformedPoint[1]));
+					Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0], transformedPoint[1]));
 
-				// If this point is not in the heatMapArea -> expand heatMapArea
-				heatMapArea.expandToInclude(tempEnv);
-				zoomEnv.expandToInclude(point.getCoordinate());
+					// If this point is not in the heatMapArea -> expand
+					// heatMapArea
+					heatMapArea.expandToInclude(tempEnv);
+					zoomEnv.expandToInclude(point.getCoordinate());
+				}
+			} else {
+				for (Tuple<? extends ITimeInterval> tuple : tempList) {
+					double lat = tuple.getAttribute(this.config.getLatAttribute());
+					double lng = tuple.getAttribute(this.config.getLngAttribute());
+
+					Coordinate coord = new Coordinate(lat, lng);
+					int[] transformedPoint = transformation.transformCoord(coord, srid);
+
+					Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0], transformedPoint[1]));
+
+					// If this point is not in the heatMapArea -> expand
+					// heatMapArea
+					heatMapArea.expandToInclude(tempEnv);
+					zoomEnv.expandToInclude(coord);
+				}
 			}
 		} else {
 			// Position is set by the user
 			// Transform the given area to the screen
-			zoomEnv = new Envelope(new Coordinate(config.getLngSW(),
-					config.getLatSW()), new Coordinate(config.getLngNE(),
-					config.getLatNE()));
-			int[] southWest = transformation.transformCoord(new Coordinate(
-					config.getLngSW(), config.getLatSW()), srid); // SouthWest
-			int[] northEast = transformation.transformCoord(new Coordinate(
-					config.getLngNE(), config.getLatNE()), srid); // northEast
-			heatMapArea = new Envelope(southWest[0], northEast[0],
-					southWest[1], northEast[1]);
+			zoomEnv = new Envelope(new Coordinate(config.getLngSW(), config.getLatSW()),
+					new Coordinate(config.getLngNE(), config.getLatNE()));
+			int[] southWest = transformation.transformCoord(new Coordinate(config.getLngSW(), config.getLatSW()), srid); // SouthWest
+			int[] northEast = transformation.transformCoord(new Coordinate(config.getLngNE(), config.getLatNE()), srid); // northEast
+			heatMapArea = new Envelope(southWest[0], northEast[0], southWest[1], northEast[1]);
 		}
 
 		// If we have just one point -> Expand, so we can see something
@@ -233,62 +250,114 @@ public class Heatmap extends RasterLayer {
 		if (heatMapArea.getWidth() == 0) {
 			heatMapArea.expandBy(20);
 		}
+		totalNumberOfElement = (this.config.usePoint()) ? data.size() : tempList.size();
 
-		totalNumberOfElement = data.size();
 		double tempTotalValue = 0;
-		for (Object dataSet : data) {
+		if (this.config.usePoint()) {
+			for (Object dataSet : data) {
 
-			// Get the data from the Tuple (Where it is and value)
-			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
-			GeometryCollection geoColl = (GeometryCollection) tuple
-					.getAttribute(config.getGeometricAttributePosition());
-			Point point = geoColl.getCentroid();
+				// Get the data from the Tuple (Where it is and value)
+				Tuple<?> tuple = ((DataSet) dataSet).getTuple();
+				GeometryCollection geoColl = (GeometryCollection) tuple
+						.getAttribute(config.getGeometricAttributePosition());
+				Point point = geoColl.getCentroid();
 
-			double value = 0;
-			if (tuple.getAttribute(config.getValueAttributePosition()) instanceof Integer) {
-				value = (int) tuple.getAttribute(config
-						.getValueAttributePosition());
-			} else if (tuple.getAttribute(config.getValueAttributePosition()) instanceof Double) {
-				value = (double) tuple.getAttribute(config
-						.getValueAttributePosition());
-			}
-
-			// Calculate, where this belongs in the heatmap
-			int[] transformedPoint = transformation.transformCoord(
-					point.getCoordinate(), srid);
-
-			Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0],
-					transformedPoint[1]));
-
-			if (heatMapArea.covers(tempEnv)) {
-				// Just calculate with this point if its in the area
-				// (maybe the area the user gave us does not include every point
-				// in the data)
-				// +1 for the points which are exactly on the border
-				// or if we just have a point as area (just one tuple)
-				double partsWidth = (heatMapArea.getWidth() + 1) / x;
-				int posX = (int) ((tempEnv.getMaxX() - heatMapArea.getMinX()) / partsWidth);
-
-				double partsHeight = (heatMapArea.getHeight() + 1) / y;
-				int posY = (int) ((tempEnv.getMaxY() - heatMapArea.getMinY()) / partsHeight);
-
-				// Add the value to the sum of this tile in the heatmap
-				valueSum[posX][posY] += value;
-				// and to the total value
-				tempTotalValue += value;
-
-				// save, that this tile has information
-				hasInformation[posX][posY] = true;
-
-				// Get the maximum and minimum sum
-				if (valueSum[posX][posY] > maxSum) {
-					maxSum = valueSum[posX][posY];
-					this.maxValue = maxSum;
+				double value = 0;
+				if (tuple.getAttribute(config.getValueAttributePosition()) instanceof Integer) {
+					value = (int) tuple.getAttribute(config.getValueAttributePosition());
+				} else if (tuple.getAttribute(config.getValueAttributePosition()) instanceof Double) {
+					value = (double) tuple.getAttribute(config.getValueAttributePosition());
 				}
 
-				if (valueSum[posX][posY] < minSum) {
-					minSum = valueSum[posX][posY];
-					this.minValue = minSum;
+				// Calculate, where this belongs in the heatmap
+				int[] transformedPoint = transformation.transformCoord(point.getCoordinate(), srid);
+
+				Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0], transformedPoint[1]));
+
+				if (heatMapArea.covers(tempEnv)) {
+					// Just calculate with this point if its in the area
+					// (maybe the area the user gave us does not include every
+					// point
+					// in the data)
+					// +1 for the points which are exactly on the border
+					// or if we just have a point as area (just one tuple)
+					double partsWidth = (heatMapArea.getWidth() + 1) / x;
+					int posX = (int) ((tempEnv.getMaxX() - heatMapArea.getMinX()) / partsWidth);
+
+					double partsHeight = (heatMapArea.getHeight() + 1) / y;
+					int posY = (int) ((tempEnv.getMaxY() - heatMapArea.getMinY()) / partsHeight);
+
+					// Add the value to the sum of this tile in the heatmap
+					valueSum[posX][posY] += value;
+					// and to the total value
+					tempTotalValue += value;
+
+					// save, that this tile has information
+					hasInformation[posX][posY] = true;
+
+					// Get the maximum and minimum sum
+					if (valueSum[posX][posY] > maxSum) {
+						maxSum = valueSum[posX][posY];
+						this.maxValue = maxSum;
+					}
+
+					if (valueSum[posX][posY] < minSum) {
+						minSum = valueSum[posX][posY];
+						this.minValue = minSum;
+					}
+				}
+			}
+		} else {
+			for (Tuple<? extends ITimeInterval> tuple : tempList) {
+
+				// Get the data from the Tuple (Where it is and value)
+				double lat = tuple.getAttribute(this.config.getLatAttribute());
+				double lng = tuple.getAttribute(this.config.getLngAttribute());
+				Coordinate coord = new Coordinate(lat, lng);
+
+				double value = 0;
+				if (tuple.getAttribute(config.getValueAttributePosition()) instanceof Integer) {
+					value = (int) tuple.getAttribute(config.getValueAttributePosition());
+				} else if (tuple.getAttribute(config.getValueAttributePosition()) instanceof Double) {
+					value = (double) tuple.getAttribute(config.getValueAttributePosition());
+				}
+
+				// Calculate, where this belongs in the heatmap
+				int[] transformedPoint = transformation.transformCoord(coord, srid);
+
+				Envelope tempEnv = new Envelope(new Coordinate(transformedPoint[0], transformedPoint[1]));
+
+				if (heatMapArea.covers(tempEnv)) {
+					// Just calculate with this point if its in the area
+					// (maybe the area the user gave us does not include every
+					// point
+					// in the data)
+					// +1 for the points which are exactly on the border
+					// or if we just have a point as area (just one tuple)
+					double partsWidth = (heatMapArea.getWidth() + 1) / x;
+					int posX = (int) ((tempEnv.getMaxX() - heatMapArea.getMinX()) / partsWidth);
+
+					double partsHeight = (heatMapArea.getHeight() + 1) / y;
+					int posY = (int) ((tempEnv.getMaxY() - heatMapArea.getMinY()) / partsHeight);
+
+					// Add the value to the sum of this tile in the heatmap
+					valueSum[posX][posY] += value;
+					// and to the total value
+					tempTotalValue += value;
+
+					// save, that this tile has information
+					hasInformation[posX][posY] = true;
+
+					// Get the maximum and minimum sum
+					if (valueSum[posX][posY] > maxSum) {
+						maxSum = valueSum[posX][posY];
+						this.maxValue = maxSum;
+					}
+
+					if (valueSum[posX][posY] < minSum) {
+						minSum = valueSum[posX][posY];
+						this.minValue = minSum;
+					}
 				}
 			}
 		}
@@ -299,8 +368,7 @@ public class Heatmap extends RasterLayer {
 		// the right color for the valueSum
 		for (int ix = 0; ix < colors.length; ix++) {
 			for (int iy = 0; iy < colors[ix].length; iy++) {
-				colors[ix][iy] = getColorForValue(valueSum[ix][iy], minSum,
-						maxSum, minColor, maxColor);
+				colors[ix][iy] = getColorForValue(valueSum[ix][iy], minSum, maxSum, minColor, maxColor);
 			}
 		}
 	}
@@ -320,8 +388,7 @@ public class Heatmap extends RasterLayer {
 	 *            Color for the maximum value in the heatmap, e.g. red
 	 * @return Color of the value
 	 */
-	private Color getColorForValue(double value, double min, double max,
-			Color minColor, Color maxColor) {
+	private Color getColorForValue(double value, double min, double max, Color minColor, Color maxColor) {
 
 		// We don't want negative solutions
 		if (min < 0) {
@@ -341,12 +408,9 @@ public class Heatmap extends RasterLayer {
 		}
 
 		// Mix the colors
-		double r = weightMinColor * minColor.getRed() + valueWeight
-				* maxColor.getRed();
-		double g = weightMinColor * minColor.getGreen() + valueWeight
-				* maxColor.getGreen();
-		double b = weightMinColor * minColor.getBlue() + valueWeight
-				* maxColor.getBlue();
+		double r = weightMinColor * minColor.getRed() + valueWeight * maxColor.getRed();
+		double g = weightMinColor * minColor.getGreen() + valueWeight * maxColor.getGreen();
+		double b = weightMinColor * minColor.getBlue() + valueWeight * maxColor.getBlue();
 
 		// Ensure, that all values are allowed
 		if (r < 0)
@@ -453,25 +517,20 @@ public class Heatmap extends RasterLayer {
 	 */
 	@Override
 	public Envelope getEnvelope() {
-		CoordinateTransform ct = screenManager.getTransformation()
-				.getCoordinateTransform(config.getSrid(),
-						screenManager.getSRID());
+		CoordinateTransform ct = screenManager.getTransformation().getCoordinateTransform(config.getSrid(),
+				screenManager.getSRID());
 		Envelope geoEnv = config.getCoverage();
 
-		if (zoomEnv != null && zoomEnv.getMaxX() != -1
-				&& zoomEnv.getMaxY() != -1) {
+		if (zoomEnv != null && zoomEnv.getMaxX() != -1 && zoomEnv.getMaxY() != -1) {
 			geoEnv = zoomEnv;
 		}
-		ProjCoordinate srcMax = new ProjCoordinate(geoEnv.getMaxX(),
-				geoEnv.getMaxY());
-		ProjCoordinate srcMin = new ProjCoordinate(geoEnv.getMinX(),
-				geoEnv.getMinY());
+		ProjCoordinate srcMax = new ProjCoordinate(geoEnv.getMaxX(), geoEnv.getMaxY());
+		ProjCoordinate srcMin = new ProjCoordinate(geoEnv.getMinX(), geoEnv.getMinY());
 		ProjCoordinate destMax = new ProjCoordinate();
 		ProjCoordinate destMin = new ProjCoordinate();
 		ct.transform(srcMax, destMax);
 		ct.transform(srcMin, destMin);
-		Envelope coverage = new Envelope(destMin.x, destMax.x, destMin.y,
-				destMax.y);
+		Envelope coverage = new Envelope(destMin.x, destMax.x, destMin.y, destMax.y);
 
 		return coverage;
 	}

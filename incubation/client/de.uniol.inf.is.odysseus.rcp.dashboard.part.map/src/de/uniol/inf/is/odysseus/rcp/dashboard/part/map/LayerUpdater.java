@@ -46,7 +46,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements  Serializable, Pr
 
 		this.puffer = new DefaultTISweepArea<Tuple<? extends ITimeInterval>>();
 		
-		maxNumerOfElements = 10;
+		maxNumerOfElements = 1000;
 
 	}
 	
@@ -112,8 +112,11 @@ public class LayerUpdater extends ArrayList<ILayer> implements  Serializable, Pr
 
 			// Update "current-list", timeSlider and all the other things which
 			// rely on the startTimeStamp
-			mapDashboardPart.getScreenManager().setMaxIntervalStart(
-					puffer.getMinTs());
+			if(puffer.getMinTs() != null) {
+				mapDashboardPart.getScreenManager().setMaxIntervalStart(
+						puffer.getMinTs());
+			}
+			
 			this.elementList = this.puffer
 					.queryOverlapsAsList(this.mapDashboardPart
 							.getScreenManager().getInterval());

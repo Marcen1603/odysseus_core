@@ -4,9 +4,7 @@ import java.util.Map;
 
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +29,11 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 
 	private static final Logger LOG = LoggerFactory.getLogger(MapDashboardPart.class);
 
-	
-
 	private String attributeList = "*";
 	private String layerSettings = "";
 
 	private int srid = 0;
-	private int maxData = 100;
+	private int maxData = 1000;
 	private int updateInterval = 5;
 
 	protected ScreenTransformation transformation;
@@ -45,56 +41,61 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 	private MapEditorModel mapModel;
 	private LayerUpdater layerUpdater;
 	private IPhysicalOperator operator;
-	private Thread updateThread;
+	// private Thread updateThread;
 
-	private boolean initiated = false;
 	/**
-	 * Needed to check if the user is still in the wizard to create the mapDashboardpart
+	 * If the MapEditorModel is initiated and the LayerUpdater is connected
+	 */
+	private boolean initiated = false;
+
+	/**
+	 * Needed to check if the user is still in the wizard to create the
+	 * mapDashboardpart
 	 */
 	private boolean wizard = true;
 
 	@Override
 	public void createPartControl(final Composite parent, ToolBar toolbar) {
 		parent.setLayout(new GridLayout(1, false));
-		
+
 		transformation = new ScreenTransformation();
 		screenManager = new ScreenManager(transformation, this);
 		screenManager.setCanvasViewer(screenManager.createCanvas(parent));
-		
-		if(mapModel.getLayers().isEmpty()){
+
+		if (mapModel.getLayers().isEmpty()) {
 			BasicLayer basic = new BasicLayer();
 			basic.setActive(true);
 			mapModel.getLayers().addFirst(basic);
 		}
-		layerUpdater = mapModel.addConnection(this);		
+		layerUpdater = mapModel.addConnection(this);
 		mapModel.init(this);
 
-		updateThread = new Thread(new Runnable() {
+		// updateThread = new Thread(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// while (!parent.isDisposed()) {
+		// final Display disp = PlatformUI.getWorkbench().getDisplay();
+		// if (!disp.isDisposed()) {
+		// disp.asyncExec(new Runnable() {
+		// @Override
+		// public void run() {
+		// if (!screenManager.getCanvas().isDisposed()) {
+		// screenManager.redraw();
+		// }
+		// }
+		// });
+		// }
+		// waiting(updateInterval);
+		// }
+		// }
+		//
+		// });
+		//
+		// updateThread.setName("StreamList Updater");
+		// updateThread.start();
+	}
 
-			@Override
-			public void run() {
-				while (!parent.isDisposed()) {
-					final Display disp = PlatformUI.getWorkbench().getDisplay();
-					if (!disp.isDisposed()) {
-						disp.asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								if (!screenManager.getCanvas().isDisposed()) {
-									screenManager.redraw();
-								}
-							}
-						});
-					}
-					waiting(updateInterval);
-				}
-			}
-
-		});
-
-		updateThread.setName("StreamList Updater");
-		updateThread.start();
-	} 
-	
 	@Override
 	public Map<String, String> onSave() {
 		Map<String, String> toSaveMap = Maps.newHashMap();
@@ -119,7 +120,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		if (layerSettings != null) {
 			mapModel.load(layerSettings);
 		}
-		
+
 		wizard = false;
 	};
 
@@ -130,7 +131,6 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 			return;
 		}
 
-		// TODO IST DAS IN ABHÄNGIGKEIT VOM TIMESLIDER?
 		// SweepArea definiert Element Fenster bzw. die zu visualisierenden
 		// Elemente.
 		@SuppressWarnings("unchecked")
@@ -150,14 +150,15 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 				|| (screenManager.getInterval().getStart().beforeOrEquals(timestamp)
 						&& this.screenManager.getInterval().getEnd().afterOrEquals(timestamp))) {
 			// Add tuple to current list if the new timestamp is in the interval
+
 			layerUpdater.addTuple(tuple);
-			//System.out.println("Tupel:" + tuple);
+			// System.out.println("Tupel:" + tuple);
 		}
 
 		// Prevent an overflow in the puffer
 		layerUpdater.checkForPufferSize();
 
-		//TODO SOLLTE DAS HIER SEIN?
+		// TODO SOLLTE DAS HIER SEIN?
 		// Should we redraw here or just if we added the tupel to the current
 		// list?
 		screenManager.redraw();
@@ -165,7 +166,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 	}
 
 	public void init() {
-		
+
 		if (!initiated) {
 			mapModel = new MapEditorModel();
 
@@ -177,20 +178,20 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 			} else {
 				mapModel.setSrid(srid);
 			}
-			
+
 			layerUpdater = mapModel.addConnection(this);
 			layerUpdater.setMaxPufferSize(maxData);
 			initiated = true;
 		}
 
 	}
-	
-	private static void waiting(long length) {
-		try {
-			Thread.sleep(length);
-		} catch (final InterruptedException e) {
-		}
-	}
+
+	// private static void waiting(long length) {
+	// try {
+	// Thread.sleep(length);
+	// } catch (final InterruptedException e) {
+	// }
+	// }
 
 	@Override
 	public ScreenManager getScreenManager() {
@@ -201,6 +202,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		if (mapModel != null) {
 			mapModel.addLayer(layer);
 			update();
+
 		} else {
 			LOG.error("Map Model is not initialized.");
 		}
@@ -263,7 +265,6 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		update();
 	}
 
-	//TODO CHECK IF THIS IS USED ANYMORE
 	public void renameLayer(ILayer layer, String name) {
 		mapModel.rename(layer, name);
 		update();
@@ -273,7 +274,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		iLayer.setActive(checked);
 		this.screenManager.redraw();
 	}
-	
+
 	public int getMaxData() {
 		return maxData;
 	}
@@ -292,28 +293,25 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 		layerUpdater.setTimeRange(updateInterval);
 	}
 
-	
-	public LayerUpdater getLayerUpdater (){
+	public LayerUpdater getLayerUpdater() {
 		return this.layerUpdater;
 	}
-	
-	public IPhysicalOperator getOperator(){
+
+	public IPhysicalOperator getOperator() {
 		return this.operator;
 	}
-	
-	public void setOperator(IPhysicalOperator operator){
+
+	public void setOperator(IPhysicalOperator operator) {
 		this.operator = operator;
 	}
-	
-	public boolean getWizardBoolean(){
+
+	public boolean getWizardBoolean() {
 		return wizard;
 	}
-
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

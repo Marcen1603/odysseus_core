@@ -12,18 +12,20 @@ public class ThematicSelectionListener extends SelectionAdapter {
 
 	LayerConfiguration config;
 	CCombo combobox;
-	CCombo streamSelectionBox;
 	CCombo geometrieSelect;
+	CCombo latSelect;
+	CCombo lngSelect;
 	CCombo visualizationSelect;
-	PropertyTitleDialog propertyDialog;
+	AddDialog propertyDialog;
 
-	public ThematicSelectionListener(LayerConfiguration config,
-			CCombo comboBox, CCombo geometrieSelect,
-			CCombo visualizationSelect,	PropertyTitleDialog propertyDialog) {
+	public ThematicSelectionListener(LayerConfiguration config, CCombo comboBox, CCombo geometrieSelect,
+			CCombo latSelect, CCombo lngSelect, CCombo visualizationSelect, AddDialog propertyDialog) {
 		this.config = config;
 		this.combobox = comboBox;
 		this.propertyDialog = propertyDialog;
 		this.geometrieSelect = geometrieSelect;
+		this.latSelect = latSelect;
+		this.lngSelect = lngSelect;
 		this.visualizationSelect = visualizationSelect;
 	}
 
@@ -37,53 +39,43 @@ public class ThematicSelectionListener extends SelectionAdapter {
 			final HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) this.config;
 
 			// Set a few standard-properties (covers whole world, has SRID 4326)
-			heatmapLayerConfiguration.setCoverageGeographic(-180.0, 180.0,
-					-85.0511, 85.0511);
-			heatmapLayerConfiguration.setCoverageProjected(-180.0, 180.0,
-					-85.0511, 85.0511);
-			
-			heatmapLayerConfiguration
-					.setGeometricAttributePosition(geometrieSelect
-							.getSelectionIndex());
-			heatmapLayerConfiguration
-					.setValueAttributePosition(visualizationSelect
-							.getSelectionIndex());
-			
+			heatmapLayerConfiguration.setCoverageGeographic(-180.0, 180.0, -85.0511, 85.0511);
+			heatmapLayerConfiguration.setCoverageProjected(-180.0, 180.0, -85.0511, 85.0511);
+
 			heatmapLayerConfiguration.setSrid(4326);
-			heatmapLayerConfiguration
-					.setGeometricAttributePosition(geometrieSelect
-							.getSelectionIndex());
-			heatmapLayerConfiguration
-					.setValueAttributePosition(visualizationSelect
-							.getSelectionIndex());
+			heatmapLayerConfiguration.setGeometricAttributePosition(geometrieSelect.getSelectionIndex());
+			heatmapLayerConfiguration.setLatAttribute(latSelect.getSelectionIndex());
+			heatmapLayerConfiguration.setLngAttribute(lngSelect.getSelectionIndex());
+			heatmapLayerConfiguration.setValueAttributePosition(visualizationSelect.getSelectionIndex());
 			this.config = heatmapLayerConfiguration;
 
 			propertyDialog.setLayerConfiguration(config);
-//		} else if (this.combobox.getText().equals("Tracemap")) {
-//			// User has selected the Tracemap
-//			if (!(this.config instanceof TracemapLayerConfiguration))
-//				this.config = new TracemapLayerConfiguration("");
-//			final TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) this.config;
-//
-//			tracemapLayerConfiguration.setSrid(4326);
-//			
-//			tracemapLayerConfiguration.setQuery(streamSelectionBox.getText());
-//			tracemapLayerConfiguration
-//					.setGeometricAttributePosition(geometrieSelect
-//							.getSelectionIndex());
-//			tracemapLayerConfiguration
-//					.setValueAttributePosition(visualizationSelect
-//							.getSelectionIndex());
-//			
-//			tracemapLayerConfiguration
-//					.setGeometricAttributePosition(geometrieSelect
-//							.getSelectionIndex());
-//			tracemapLayerConfiguration
-//					.setValueAttributePosition(visualizationSelect
-//							.getSelectionIndex());
-//			this.config = tracemapLayerConfiguration;
-//
-//			propertyDialog.setLayerConfiguration(config);
+			// } else if (this.combobox.getText().equals("Tracemap")) {
+			// // User has selected the Tracemap
+			// if (!(this.config instanceof TracemapLayerConfiguration))
+			// this.config = new TracemapLayerConfiguration("");
+			// final TracemapLayerConfiguration tracemapLayerConfiguration =
+			// (TracemapLayerConfiguration) this.config;
+			//
+			// tracemapLayerConfiguration.setSrid(4326);
+			//
+			// tracemapLayerConfiguration.setQuery(streamSelectionBox.getText());
+			// tracemapLayerConfiguration
+			// .setGeometricAttributePosition(geometrieSelect
+			// .getSelectionIndex());
+			// tracemapLayerConfiguration
+			// .setValueAttributePosition(visualizationSelect
+			// .getSelectionIndex());
+			//
+			// tracemapLayerConfiguration
+			// .setGeometricAttributePosition(geometrieSelect
+			// .getSelectionIndex());
+			// tracemapLayerConfiguration
+			// .setValueAttributePosition(visualizationSelect
+			// .getSelectionIndex());
+			// this.config = tracemapLayerConfiguration;
+			//
+			// propertyDialog.setLayerConfiguration(config);
 		}
 	}
 }
