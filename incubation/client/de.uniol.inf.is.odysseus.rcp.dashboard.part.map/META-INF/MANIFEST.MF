@@ -4,8 +4,7 @@ Bundle-Name: Map
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.rcp.dashboard.part.map;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.Activator
-Require-Bundle: com.google.code.gson;bundle-version="2.2.4",
- com.google.guava;bundle-version="18.0.0",
+Require-Bundle: com.google.guava;bundle-version="18.0.0",
  com.vividsolutions.jts;bundle-version="1.0.0",
  org.eclipse.swt,
  org.eclipse.ui;bundle-version="3.7.0",
