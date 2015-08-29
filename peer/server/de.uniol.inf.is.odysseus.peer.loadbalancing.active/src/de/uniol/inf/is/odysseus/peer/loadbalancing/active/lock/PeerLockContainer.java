@@ -11,8 +11,8 @@ import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicatorListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.IMessageDeliveryFailedListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.RepeatingMessageSend;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.common.IMessageDeliveryFailedListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.common.RepeatingMessageSend;
 
 public class PeerLockContainer implements IMessageDeliveryFailedListener, IPeerCommunicatorListener {
 

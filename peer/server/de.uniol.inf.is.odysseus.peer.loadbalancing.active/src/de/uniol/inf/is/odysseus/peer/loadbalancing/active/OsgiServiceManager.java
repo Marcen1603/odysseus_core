@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.common.ILoadBalancingQueryManager;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.common.ILoadBalancingQueryManager;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 /**

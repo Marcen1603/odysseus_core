@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.impl;
 import java.util.HashMap;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
 
 public class LoadBalancingCommunicatorRegistry implements ILoadBalancingCommunicatorRegistry {
 

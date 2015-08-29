@@ -10,33 +10,16 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  Jxta_2.6_Source;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
  org.eclipse.osgi,
  de.uniol.inf.is.odysseus.peer.distribute,
- de.uniol.inf.is.odysseus.server.intervalapproach;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.relational.base;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.datarate_systemload;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.systemload;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.datarate;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.latency;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.peer.util;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.communication;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.network;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.peer.transmission;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.peer.dictionary;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.peer.dictionary;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication,
+ de.uniol.inf.is.odysseus.peer.util;bundle-version="1.0.0"
 Export-Package: de.uniol.inf.is.odysseus.peer.loadbalancing.active,
- de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.inactivequery.communicator,
- de.uniol.inf.is.odysseus.peer.loadbalancing.active.communication.paralleltrack.communicator,
  de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock,
- de.uniol.inf.is.odysseus.peer.loadbalancing.active.movingstate.communicator,
  de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces
 Import-Package: de.uniol.inf.is.odysseus.peer.distribute.util,
- de.uniol.inf.is.odysseus.peer.resource,
- de.uniol.inf.is.odysseus.ruleengine.rule,
- de.uniol.inf.is.odysseus.ruleengine.ruleflow,
- de.uniol.inf.is.odysseus.transform.flow,
- de.uniol.inf.is.odysseus.transform.rule
-Service-Component: OSGI-INF/LoadBalancingCommunicatorRegistry.xml,OSGI-INF/LoadBalancingStrategyRegistry.xml,OSGI-INF/LoadBalancingAllocatorRegistry.xml,
- OSGI-INF/LoadBalancingRuleProvider.xml,OSGI-INF/ParallelTrackCommunicator.xml,OSGI-INF/LoadBalancingConsole.xml,OSGI-INF/MovingStateCommunicator.xml,OSGI-INF/InactiveQueryCommunicator.xml,OSGI-INF/LoadBalancingQueryManager.xml,OSGI-INF/OsgiServiceManager.xml,OSGI-INF/LoadBalancingLock.xml,OSGI-INF/LoadBalancingController.xml,OSGI-INF/ExcludedQueryRegistry.xml
+ de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication
+Service-Component: OSGI-INF/LoadBalancingCommunicatorRegistry.xml,OSGI-INF/LoadBalancingStrategyRegistry.xml,OSGI-INF/LoadBalancingAllocatorRegistry.xml,OSGI-INF/LoadBalancingConsole.xml,OSGI-INF/LoadBalancingLock.xml,OSGI-INF/LoadBalancingController.xml,OSGI-INF/ExcludedQueryRegistry.xml

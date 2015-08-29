@@ -29,7 +29,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
@@ -45,6 +44,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strate
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer.QueryTransmissionHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.trigger.MonitoringThreadImpl;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.CalcLatencyPOTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.DataratePOTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SharedQueryIDModifier;
