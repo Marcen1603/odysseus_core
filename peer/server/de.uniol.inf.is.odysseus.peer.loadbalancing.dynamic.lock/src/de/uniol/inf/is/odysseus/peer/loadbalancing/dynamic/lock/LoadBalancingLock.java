@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock;
 
 import java.util.ArrayList;
 

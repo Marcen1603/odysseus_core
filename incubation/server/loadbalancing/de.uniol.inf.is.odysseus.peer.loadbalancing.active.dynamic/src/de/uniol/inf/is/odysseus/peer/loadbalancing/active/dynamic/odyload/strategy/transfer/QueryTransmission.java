@@ -12,11 +12,11 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.IPeerLockContainerListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.PeerLockContainer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.IPeerLockContainerListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.PeerLockContainer;
 
 
 public class QueryTransmission implements IPeerLockContainerListener, ILoadBalancingListener {

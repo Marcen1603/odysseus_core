@@ -41,9 +41,9 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocato
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
 
 /**
  * Console with debug commands for active LoadBalancing.

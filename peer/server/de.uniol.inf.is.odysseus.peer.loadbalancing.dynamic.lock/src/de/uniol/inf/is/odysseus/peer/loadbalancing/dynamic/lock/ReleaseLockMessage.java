@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock;
 
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
-public class LockNotReleasedMessage implements IMessage {
+public class ReleaseLockMessage implements IMessage{
 
-	public LockNotReleasedMessage() {
+	public ReleaseLockMessage() {
 		
 	}
 	

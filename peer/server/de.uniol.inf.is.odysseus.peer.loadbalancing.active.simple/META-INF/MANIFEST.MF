@@ -20,5 +20,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.peer.loadbalancing.active;bundle-versio
  de.uniol.inf.is.odysseus.peer.network;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.communication;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.peer.dictionary;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication
+ de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication,
+ de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock
 Service-Component: OSGI-INF/Executor.xml,OSGI-INF/SimpleLoadBalancingStrategy.xml,OSGI-INF/ResourceManager.xml,OSGI-INF/PeerDictionary.xml,OSGI-INF/NetworkManager.xml,OSGI-INF/PeerCommunicator.xml,OSGI-INF/LoadBalancingLock.xml

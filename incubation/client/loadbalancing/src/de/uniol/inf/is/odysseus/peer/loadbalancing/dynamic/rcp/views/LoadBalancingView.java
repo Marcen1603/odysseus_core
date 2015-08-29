@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.IExcludedQueryRegistryListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingControllerListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLockListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLockListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp.Activator;
 
 public class LoadBalancingView extends ViewPart implements ILoadBalancingControllerListener, ILoadBalancingLockListener, IExcludedQueryRegistryListener {

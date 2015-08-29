@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServicePro
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.ICommunicatorChooser;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionHandlerListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQueryTransmissionListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
 
 public class QueryTransmissionHandler implements IQueryTransmissionListener {
 	

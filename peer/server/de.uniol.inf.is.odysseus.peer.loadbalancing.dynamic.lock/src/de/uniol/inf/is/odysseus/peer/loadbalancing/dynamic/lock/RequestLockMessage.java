@@ -1,11 +1,10 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.lock;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock;
 
 import de.uniol.inf.is.odysseus.peer.communication.IMessage;
 
-public class LockGrantedMessage implements IMessage {
-
+public class RequestLockMessage implements IMessage {
 	
-	public LockGrantedMessage() {
+	public RequestLockMessage() {
 		
 	}
 	
@@ -19,4 +18,6 @@ public class LockGrantedMessage implements IMessage {
 		
 	}
 
+	
+	
 }
