@@ -13,8 +13,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.ICommunicatorChooser;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 
 public class OdyLoadCommunicatorChooser implements ICommunicatorChooser {
 

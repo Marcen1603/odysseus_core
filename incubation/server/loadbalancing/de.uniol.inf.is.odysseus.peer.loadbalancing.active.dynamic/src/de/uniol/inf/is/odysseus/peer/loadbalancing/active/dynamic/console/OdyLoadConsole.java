@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IQuerySelectionStrategy;
@@ -36,8 +35,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strate
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.GreedyQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.QueryCostMap;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.SimulatedAnnealingQuerySelector;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingAllocatorRegistry;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingStrategyRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.benchmarking.ILogLoadService;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.CalcLatencyPOTransformer;
@@ -46,6 +44,8 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SharedQ
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SinkTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SourceTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.TransformationHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingAllocatorRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingStrategyRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 
 public class OdyLoadConsole implements CommandProvider {

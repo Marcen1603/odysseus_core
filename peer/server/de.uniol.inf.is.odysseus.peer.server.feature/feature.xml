@@ -356,13 +356,6 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.active"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.json"
          download-size="0"
          install-size="0"
@@ -622,6 +615,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic"
          download-size="0"
          install-size="0"
          version="0.0.0"

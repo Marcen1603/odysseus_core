@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.transmission.DataTransmissionException;
 

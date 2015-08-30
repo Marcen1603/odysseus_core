@@ -5,9 +5,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 
 public class Activator extends AbstractUIPlugin implements BundleActivator {

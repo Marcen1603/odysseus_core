@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.impl;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.impl;
 
 import java.util.HashMap;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingAllocatorRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingAllocatorRegistry;
 
 public class LoadBalancingAllocatorRegistry implements ILoadBalancingAllocatorRegistry {
 

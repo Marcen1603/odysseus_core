@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.IExcludedQueryRegistryListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.IExcludedQueryRegistryListener;
 
 public interface IExcludedQueriesRegistry {
 

@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
 
 /**
  * The abstract round robin allocator holds the round robin algorithm. <br />

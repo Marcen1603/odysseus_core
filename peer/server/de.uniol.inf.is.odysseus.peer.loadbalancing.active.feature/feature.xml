@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.feature"
-      label="ActiveLoadbalancingFeature"
+      id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.feature"
+      label="DynamicLoadBalancingFeature"
       version="1.0.0.qualifier">
 
    <description>
@@ -28,13 +28,6 @@ Unless required by applicable law or agreed to in writing, software
    <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.active"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.strategy.simple"
@@ -80,6 +73,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic"
          download-size="0"
          install-size="0"
          version="0.0.0"

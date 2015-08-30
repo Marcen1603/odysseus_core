@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.console;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.console;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,13 +37,13 @@ import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.OsgiServiceManager;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingStrategy;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 
 /**
  * Console with debug commands for active LoadBalancing.

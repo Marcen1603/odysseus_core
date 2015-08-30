@@ -8,11 +8,11 @@ import de.uniol.inf.is.odysseus.costmodel.physical.IPhysicalCostModel;
 import de.uniol.inf.is.odysseus.peer.communication.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingAllocatorRegistry;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingCommunicatorRegistry;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingStrategyRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.IExcludedQueriesRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingAllocatorRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingCommunicatorRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingStrategyRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 

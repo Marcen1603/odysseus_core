@@ -31,13 +31,6 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.active"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing"
          download-size="0"
          install-size="0"
@@ -60,6 +53,13 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.benchmarking"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic"
          download-size="0"
          install-size="0"
          version="0.0.0"

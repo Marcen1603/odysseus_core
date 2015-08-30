@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy.LoadBalancingException;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingAllocatorRegistry;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.ILoadBalancingStrategyRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingStrategy.LoadBalancingException;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingAllocatorRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingStrategyRegistry;
 
 public class LoadBalancingControl implements ILoadBalancingController {
 	

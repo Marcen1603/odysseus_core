@@ -19,9 +19,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.SurveyBasedAllocator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
 
 public class DynamicLoadBalancingAllocator implements ILoadBalancingAllocator {
 	

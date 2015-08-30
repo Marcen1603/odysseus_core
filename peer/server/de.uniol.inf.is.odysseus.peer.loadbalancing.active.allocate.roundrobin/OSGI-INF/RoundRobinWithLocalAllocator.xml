@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.roundrobin.RoundRobinWithLocalAllocator">
   <implementation class="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.roundrobin.RoundRobinWithLocalAllocator"/>
   <service>
-      <provide interface="de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator"/>
+      <provide interface="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator"/>
    </service>
 </scr:component>

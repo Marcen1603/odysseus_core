@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces;
 
 import java.util.Set;
 

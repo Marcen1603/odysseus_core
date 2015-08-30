@@ -28,8 +28,6 @@ import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingAllocator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OdyLoadConstants;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.OsgiServiceProvider;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.interfaces.IMonitoringThread;
@@ -43,7 +41,8 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strate
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.heuristic.SimulatedAnnealingQuerySelector;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.transfer.QueryTransmissionHandler;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.odyload.strategy.trigger.MonitoringThreadImpl;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.CalcLatencyPOTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.DataratePOTransformer;
@@ -51,6 +50,7 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SharedQ
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SinkTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.SourceTransformer;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing.TransformationHelper;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.network.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 

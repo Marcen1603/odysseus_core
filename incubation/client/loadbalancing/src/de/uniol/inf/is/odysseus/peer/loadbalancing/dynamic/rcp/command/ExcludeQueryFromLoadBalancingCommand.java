@@ -6,8 +6,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp.Activator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.IExcludedQueriesRegistry;
 import de.uniol.inf.is.odysseus.rcp.commands.AbstractQueryCommand;
 
 public class ExcludeQueryFromLoadBalancingCommand extends AbstractQueryCommand implements IHandler {

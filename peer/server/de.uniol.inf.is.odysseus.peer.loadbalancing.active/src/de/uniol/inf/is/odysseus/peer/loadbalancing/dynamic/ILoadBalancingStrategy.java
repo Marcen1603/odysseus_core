@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic;
 
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.INamedInterface;

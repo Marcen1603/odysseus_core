@@ -1,8 +1,8 @@
-package de.uniol.inf.is.odysseus.peer.loadbalancing.active.registries.interfaces;
+package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces;
 
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.active.ILoadBalancingStrategy;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingStrategy;
 
 public interface ILoadBalancingStrategyRegistry {
 	public void bindStrategy(ILoadBalancingStrategy serv);
