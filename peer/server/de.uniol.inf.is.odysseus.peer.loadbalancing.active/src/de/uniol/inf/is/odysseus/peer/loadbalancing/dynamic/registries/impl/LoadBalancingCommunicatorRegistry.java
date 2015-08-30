@@ -1,44 +1,39 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.impl;
 
-import java.util.HashMap;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 
-public class LoadBalancingCommunicatorRegistry implements ILoadBalancingCommunicatorRegistry {
+public class LoadBalancingCommunicatorRegistry extends AbstractInterfaceRegistry<ILoadBalancingCommunicator> implements ILoadBalancingCommunicatorRegistry {
 
-	HashMap<String,ILoadBalancingCommunicator> communicators = new HashMap<String,ILoadBalancingCommunicator>();
-	
-	
 	@Override
 	public void bindCommunicator(ILoadBalancingCommunicator serv) {
-		if(!communicators.containsKey(serv.getName())) {
-			communicators.put(serv.getName(), serv);
-		}
+		bindInstance(serv);
+		
 	}
-	
+
 	@Override
 	public void unbindCommunicator(ILoadBalancingCommunicator serv) {
-		if(communicators.containsKey(serv.getName())) {
-			communicators.remove(serv.getName());
-		}
+		unbindInstance(serv);
+		
 	}
-	
+
 	@Override
 	public ILoadBalancingCommunicator getCommunicator(String name) {
-		return communicators.get(name);
+		return getInstance(name);
 	}
-	
+
 	@Override
 	public boolean isCommunicatorBound(String name) {
-		return communicators.containsKey(name);
+		return isInstanceBound(name);
 	}
 
 	@Override
 	public Set<String> getRegisteredCommunicators() {
-		return communicators.keySet();
+		return getRegisteredInstances();
 	}
+
 	
 	
 }

@@ -38,10 +38,10 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.dictionary.IPeerDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.OsgiServiceManager;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication.ILoadBalancingCommunicator;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.control.ILoadBalancingController;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingCommunicatorRegistry;
 
@@ -70,10 +70,16 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 	 */
 	private static IPeerDictionary peerDictionary;
 	private static IServerExecutor executor;
-	private static ILoadBalancingCommunicatorRegistry communicatorRegistry;
 	private static ILoadBalancingController loadBalancingControl;
 	private static IQueryPartController queryPartController;
 	private static ILoadBalancingLock lock;
+	
+
+	private static ILoadBalancingCommunicatorRegistry communicatorRegistry;
+	
+	
+	
+	
 	
 	public static void bindQueryPartController(IQueryPartController serv) {
 		queryPartController=serv;
@@ -140,6 +146,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 			loadBalancingControl=null;
 		}
 	}
+	
 	
 
 	// called by OSGi-DS

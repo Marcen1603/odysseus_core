@@ -516,13 +516,6 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.costmodel"
          download-size="0"
          install-size="0"
@@ -551,7 +544,14 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.strategy.simple"
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.odyload"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -559,20 +559,6 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.roundrobin"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.estimators"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -614,6 +600,20 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicatorchooser.odyload"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.estimators"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock"
          download-size="0"
          install-size="0"
@@ -621,7 +621,49 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic"
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.preprocessing"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.selector.greedy"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.selector.simulatedannealing"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.strategy.simple"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.transmissionhandler.odyload"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.trigger.monitoring"
          download-size="0"
          install-size="0"
          version="0.0.0"

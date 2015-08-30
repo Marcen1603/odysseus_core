@@ -20,9 +20,9 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.IExcludedQueryRegistryListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingController;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingControllerListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.control.ILoadBalancingController;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.listeners.IExcludedQueryRegistryListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.listeners.ILoadBalancingControllerListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLock;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.lock.ILoadBalancingLockListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.rcp.Activator;

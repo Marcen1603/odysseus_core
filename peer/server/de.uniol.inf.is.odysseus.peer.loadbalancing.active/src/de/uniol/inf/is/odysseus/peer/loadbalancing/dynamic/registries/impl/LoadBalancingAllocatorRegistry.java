@@ -1,44 +1,39 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.impl;
 
-import java.util.HashMap;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingAllocatorRegistry;
 
-public class LoadBalancingAllocatorRegistry implements ILoadBalancingAllocatorRegistry {
+public class LoadBalancingAllocatorRegistry extends AbstractInterfaceRegistry<ILoadBalancingAllocator> implements ILoadBalancingAllocatorRegistry {
 
-	HashMap<String,ILoadBalancingAllocator> allocators = new HashMap<String,ILoadBalancingAllocator>();
-	
-	
 	@Override
 	public void bindAllocator(ILoadBalancingAllocator serv) {
-		if(!allocators.containsKey(serv.getName())) {
-			allocators.put(serv.getName(), serv);
-		}
+		bindInstance(serv);
+		
 	}
-	
+
 	@Override
 	public void unbindAllocator(ILoadBalancingAllocator serv) {
-		if(allocators.containsKey(serv.getName())) {
-			allocators.remove(serv.getName());
-		}
+		unbindInstance(serv);
+		
 	}
-	
+
 	@Override
 	public ILoadBalancingAllocator getAllocator(String name) {
-		return allocators.get(name);
+		return getInstance(name);
 	}
-	
+
 	@Override
 	public boolean isAllocatorBound(String name) {
-		return allocators.containsKey(name);
+		return isInstanceBound(name);
 	}
 
 	@Override
 	public Set<String> getRegisteredAllocators() {
-		return allocators.keySet();
+		return getRegisteredInstances();
 	}
+
 	
 	
 }

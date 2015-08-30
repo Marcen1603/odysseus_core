@@ -17,13 +17,6 @@
    </license>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.peer.distribute.allocate.survey"
          download-size="0"
          install-size="0"
@@ -60,6 +53,55 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.odyload"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicatorchooser.odyload"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.selector.greedy"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.selector.simulatedannealing"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.transmissionhandler.odyload"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.trigger.monitoring"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload"
          download-size="0"
          install-size="0"
          version="0.0.0"

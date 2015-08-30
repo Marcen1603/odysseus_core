@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.peer.distribute.util.INamedInterface;
 import net.jxta.peer.PeerID;
 
 /**
@@ -9,7 +10,7 @@ import net.jxta.peer.PeerID;
  * @author Carsten Cordes
  *
  */
-public interface ILoadBalancingCommunicator {
+public interface ILoadBalancingCommunicator extends INamedInterface {
 	/**
 	 * Inititates LoadBalancing between Peer and the volunteering (other) Peer
 	 * @param otherPeer volunteering Peer which can take query Part.

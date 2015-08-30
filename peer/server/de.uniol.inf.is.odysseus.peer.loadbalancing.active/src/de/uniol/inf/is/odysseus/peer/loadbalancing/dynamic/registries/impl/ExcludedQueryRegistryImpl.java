@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.IExcludedQueryRegistryListener;
+import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.listeners.IExcludedQueryRegistryListener;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.IExcludedQueriesRegistry;
 
 public class ExcludedQueryRegistryImpl implements IExcludedQueriesRegistry{

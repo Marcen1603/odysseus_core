@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicatorchooser.odyload
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communicatorchooser.odyload
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic,
+ de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.communication,
+ de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload
+Service-Component: OSGI-INF/OdyLoadCommunicatorChooser.xml
