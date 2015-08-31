@@ -125,7 +125,7 @@ public class OdysseusNetDiscoveryPlugIn implements BundleActivator {
 	}
 
 	private static void stopNodeDiscovery() {
-		if (nodeDiscoverer.isStarted()) {
+		if (nodeDiscoverer != null && nodeDiscoverer.isStarted()) {
 			nodeDiscoverer.stop();
 		}
 	}
