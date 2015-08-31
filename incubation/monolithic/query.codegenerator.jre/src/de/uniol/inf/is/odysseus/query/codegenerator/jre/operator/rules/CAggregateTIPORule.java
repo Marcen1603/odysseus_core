@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.CAggregateItemModel;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
@@ -62,9 +63,9 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule{
 		
 	
 		
-		AggregateAO dummyAggregateAO = new AggregateAO();
-		
-		List<AggregateItem> aggregateItemList = new ArrayList<AggregateItem>();
+
+	
+		List<CAggregateItemModel> cAggregateItemModelList = new ArrayList<CAggregateItemModel>();
 
 		for (AggregateItem item : aggregateAO.getAggregationItems()) {
 
@@ -76,31 +77,23 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule{
 			String outAttributeAttributeName = outAttribute.getAttributeName();
 			String outAttributeSDFDataTypeName = outAttribute.getDatatype().toString();
 			
-			
 
 			
-			aggregateItemList.add(new AggregateItem(functionName, inAttributes, outAttribute));
-			
-			StringTemplate aggregateItemsTIPOTemplate = new StringTemplate("utils","aggregateItemList");
-			aggregateItemsTIPOTemplate.getSt().add("operatorVariable", operatorVariable+"aggreateItemList");
-			aggregateItemsTIPOTemplate.getSt().add("functionName", functionName);
-			aggregateItemsTIPOTemplate.getSt().add("sdfAttributeListTest", item.inAttributes);
-			aggregateItemsTIPOTemplate.getSt().add("outAttributeSourceName", outAttributeSourceName);
-			aggregateItemsTIPOTemplate.getSt().add("outAttributeAttributeName", outAttributeAttributeName);
-			aggregateItemsTIPOTemplate.getSt().add("outAttributeSDFDataTypeName", outAttributeSDFDataTypeName);
-			
-			
-
-			aggregateTIPO.addCode(aggregateItemsTIPOTemplate.getSt().render());
-			
+			cAggregateItemModelList.add(new CAggregateItemModel(functionName, inAttributes,outAttribute,outAttributeSourceName,outAttributeAttributeName,outAttributeSDFDataTypeName));
+		
+	
+		
+	
 		}
 		
 		
-		
-		dummyAggregateAO.setAggregationItems(aggregateItemList);
-		dummyAggregateAO.getAggregations();
-		
+		StringTemplate aggregateItemsTIPOTemplate = new StringTemplate("utils","aggregateItemListNeu");
+		aggregateItemsTIPOTemplate.getSt().add("operatorVariable", operatorVariable);
+		aggregateItemsTIPOTemplate.getSt().add("cAggregateItemModelList", cAggregateItemModelList);
 	
+
+		aggregateTIPO.addCode(aggregateItemsTIPOTemplate.getSt().render());
+		
 		
 		
 		

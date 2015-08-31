@@ -2,7 +2,7 @@ aggregateTIPO(operatorVariable,fastGrouping)::=<<
 
 
 AggregateAO $operatorVariable$dummyAggreagteAO = new AggregateAO();
-$operatorVariable$dummyAggreagteAO.setAggregationItems(aggregateItemList);
+$operatorVariable$dummyAggreagteAO.setAggregationItems($operatorVariable$AggregateItemList);
 
 
 
@@ -21,6 +21,10 @@ AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeIn
 		SDFSchema inputSchema = $operatorVariable$PO.getInputSchema();
 		Map<SDFSchema, Map<AggregateFunction, SDFAttribute\>> aggregations = $operatorVariable$PO
 				.getAggregations();
+
+
+		AggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry =  new AggregateFunctionBuilderRegistry();
+		aggregateFunctionBuilderRegistry.registerAggregateFunctionBuilder(new RelationalAggregateFunctionBuilder());
 
 		for (SDFSchema attrList : aggregations.keySet()) {
 			if (SDFSchema.subset(attrList, inputSchema)) {
@@ -45,10 +49,8 @@ AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeIn
 					}
 					
 					
-					AggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry =  new AggregateFunctionBuilderRegistry();
-					aggregateFunctionBuilderRegistry.registerAggregateFunctionBuilder(new RelationalAggregateFunctionBuilder());
-					
-					
+		
+			
 					
 					IAggregateFunctionBuilder builder = aggregateFunctionBuilderRegistry.getBuilder(
 							inputSchema.getType(), p.getE2().getName());
