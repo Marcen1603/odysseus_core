@@ -10,57 +10,58 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
 public abstract class AbstractCSenderAORule extends AbstractRule {
-	
+
 	public AbstractCSenderAORule(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	public boolean isExecutable(ILogicalOperator logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-			if(logicalOperator instanceof SenderAO){
-				SenderAO senderAO = (SenderAO) logicalOperator;
-			
-				ITenant tenant = UserManagementProvider.getDefaultTenant();
-				ISink<?> sinkPO = DataDictionaryProvider.getDataDictionary(tenant).getSinkplan(senderAO.getSinkname());
-				
-				if(sinkPO != null){
-					return true;
-				}
-			
-			}else{
-				return false;
+		if (logicalOperator instanceof SenderAO) {
+			SenderAO senderAO = (SenderAO) logicalOperator;
+
+			ITenant tenant = UserManagementProvider.getDefaultTenant();
+			ISink<?> sinkPO = DataDictionaryProvider.getDataDictionary(tenant)
+					.getSinkplan(senderAO.getSinkname());
+
+			if (sinkPO != null) {
+				return true;
 			}
-			
+
+		} else {
 			return false;
+		}
+
+		return false;
 	}
-	
-	
+
 	@Override
 	public Class<?> getConditionClass() {
 		return SenderAO.class;
 	}
-	
-	
+
 	@Override
 	public void analyseOperator(ILogicalOperator logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
-		
-		SenderAO dummySenderAO = (SenderAO)logicalOperator;
-		
-		ITenant tenant = UserManagementProvider.getDefaultTenant();
-		ILogicalOperator logicalPlan = DataDictionaryProvider.getDataDictionary(tenant).getSinkForTransformation(dummySenderAO.getSinkname(), null);
 
-		SenderAO senderAO = (SenderAO)logicalPlan;
-		
+		SenderAO dummySenderAO = (SenderAO) logicalOperator;
+
+		ITenant tenant = UserManagementProvider.getDefaultTenant();
+		ILogicalOperator logicalPlan = DataDictionaryProvider
+				.getDataDictionary(tenant).getSinkForTransformation(
+						dummySenderAO.getSinkname(), null);
+
+		SenderAO senderAO = (SenderAO) logicalPlan;
+
 		String transportHandler = senderAO.getTransportHandler();
 		String protocolHandler = senderAO.getProtocolHandler();
 		String dataHandler = senderAO.getDataHandler();
-		
+
 		transformationInformation.addTransportHandler(transportHandler);
 		transformationInformation.addProtocolHandler(protocolHandler);
 		transformationInformation.addDataHandler(dataHandler);
-		
+
 	}
 
 }

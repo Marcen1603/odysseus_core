@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.query.codegenerator.target.platform;
 import java.util.concurrent.BlockingQueue;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.StatusType;
 
 public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	
@@ -12,17 +13,7 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	public AbstractTargetPlatform(String targetPlatformName) {
 		this.setTargetPlatformName(targetPlatformName);
 	}
-
-	public void updateProgressBar(int value, String text){
-		if(progressBarQueue!= null){
-			try {
-				progressBarQueue.put(new ProgressBarUpdate(value, text));
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
+	
 	public BlockingQueue<ProgressBarUpdate> getProgressBarQueue() {
 		return progressBarQueue;
 	}
@@ -38,5 +29,16 @@ public abstract class AbstractTargetPlatform implements ITargetPlatform{
 	public void setTargetPlatformName(String targetPlatformName) {
 		this.targetPlatformName = targetPlatformName;
 	}
+	
+	public void updateProgressBar(int value, String text, StatusType statusType){
+		if(progressBarQueue!= null){
+			try {
+				progressBarQueue.put(new ProgressBarUpdate(value, text,statusType));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	
 }

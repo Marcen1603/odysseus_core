@@ -57,4 +57,6 @@ public class CSlidingAdvanceTimeWindowTIPORule extends AbstractCSlidingAdvanceTi
 		return slidingWindow;
 	}
 
+
+
 }

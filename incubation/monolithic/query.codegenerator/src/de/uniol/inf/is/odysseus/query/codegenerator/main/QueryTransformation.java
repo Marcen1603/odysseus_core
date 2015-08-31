@@ -47,7 +47,7 @@ public class QueryTransformation {
 		walker.prefixWalk(queryTopAo.getLogicalPlan(), copyVisitor);
 		
 		ILogicalOperator savedPlan = copyVisitor.getResult();
-		
+	
 		TransformationConfiguration transformationConfiguration =	ExecutorServiceBinding.getExecutor().getBuildConfigForQuery(queryTopAo).getTransformationConfiguration();
 		
 		analyseQuery(savedPlan, parameter, transformationConfiguration);

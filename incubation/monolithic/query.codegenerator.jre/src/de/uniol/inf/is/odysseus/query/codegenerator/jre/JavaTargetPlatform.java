@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.StatusType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
@@ -44,7 +45,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		this.setProgressBarQueue(progressBarQueue);
 		
 		//add userfeedback
-		updateProgressBar(10, "Start the transformation");
+		updateProgressBar(10, "Start the transformation", StatusType.INFO);
 		
 		//clear transformation infos
 		JavaTransformationInformation.clear();
@@ -52,7 +53,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		JavaTransformationInformation.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
 		
 		//Start Odysseus index
-		updateProgressBar(15, "Index the Odysseus codepath");
+		updateProgressBar(15, "Index the Odysseus codepath",StatusType.INFO);
 		OdysseusIndex.getInstance().search(parameter.getOdysseusPath());
 	
 		bodyCode = new StringBuilder();
@@ -61,7 +62,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		walkTroughLogicalPlan(queryAnalyseInformation,parameter, transformationConfiguration);
 		
 		//generate code for osgi binds
-		updateProgressBar(70, "Generate OSGI emulation code");
+		updateProgressBar(70, "Generate OSGI emulation code",StatusType.INFO);
 		
 		CodeFragmentInfo osgiBind = CreateJavaDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
 		importList.addAll(osgiBind.getImports());
@@ -71,17 +72,17 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		
 		importList.addAll(startStreams.getImports());
 	
-		updateProgressBar(75, "Create Java files");
+		updateProgressBar(75, "Create Java files",StatusType.INFO);
 		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), ExecutorRegistry.getExecutor("Java", parameter.getExecutor()));
 		
 		try {
-			updateProgressBar(80, "Create Java project");
+			updateProgressBar(80, "Create Java project",StatusType.INFO);
 			javaFileWrite.createProject();
 	
-			updateProgressBar(85, "Compile the Java project");
+			updateProgressBar(85, "Compile the Java project",StatusType.INFO);
 			ExecuteShellComand.compileJavaProgram(parameter.getTempDirectory());	
 			
-			updateProgressBar(100, "Transformation finish");
+			updateProgressBar(100, "Transformation finish",StatusType.INFO);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -112,13 +113,15 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 
+
+		
 	
 		IOperatorRule opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
 			if(!JavaTransformationInformation.getInstance().isOperatorCodeReady(operator)){
 				
-				this.getProgressBarQueue().put(new ProgressBarUpdate(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName()));
+				this.getProgressBarQueue().put(new ProgressBarUpdate(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),StatusType.INFO));
 				
 				//add ready
 				JavaTransformationInformation.getInstance().addOperatorToCodeReady(operator);
@@ -154,6 +157,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				bodyCode.append(subscription.getCode());	
 				importList.addAll(subscription.getImports());
 			}
+		}else{
+			updateProgressBar(-1, "No rule available for "+operator.getName()+" is a "+ operator.getClass().getSimpleName()  ,StatusType.WARNING);
 		}
 		
 	

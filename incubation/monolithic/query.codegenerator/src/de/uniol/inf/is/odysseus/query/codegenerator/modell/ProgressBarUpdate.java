@@ -4,10 +4,13 @@ public class ProgressBarUpdate {
 	
 	private String text;
 	private int progressValue;
+	private StatusType statusType;
 	
-	public ProgressBarUpdate(int progressValue,String text){
+	
+	public ProgressBarUpdate(int progressValue,String text, StatusType statusType){
 		this.progressValue = progressValue;
 		this.text =text;
+		this.statusType = statusType;
 	}
 	
 	public String getText() {
@@ -21,6 +24,14 @@ public class ProgressBarUpdate {
 	}
 	public void setProgressValue(int progressValue) {
 		this.progressValue = progressValue;
+	}
+
+	public StatusType getStatusType() {
+		return statusType;
+	}
+
+	public void setStatusType(StatusType statusType) {
+		this.statusType = statusType;
 	}
 	
 }

@@ -1,4 +1,4 @@
-relationalTimestampAttributeTimeIntervalMFactory(operatorVariable,pos,posEnd,clearEnd,timestampAO)::=<<
+applicationTimestampPosGreaterEqualZero(operatorVariable,pos,posEnd,clearEnd,timestampAO)::=<<
 
 
 RelationalTimestampAttributeTimeIntervalMFactory $operatorVariable$MetaUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(

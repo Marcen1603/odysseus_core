@@ -100,6 +100,10 @@ public class CreateJavaDefaultCode {
 			
 			codeFragmentInfo.addCode(relationalTimestampAttributeTimeIntervalMFactoryTemplate.getSt().render());
 			
+			}else {
+
+			
+			
 			}
 			
 		}
@@ -161,6 +165,9 @@ public class CreateJavaDefaultCode {
 		
 		String operatorVariable = transformationInformation.getVariable(operator);
 		
+		if(operatorVariable != null && !(operatorVariable.equals(""))){
+			
+
 		Collection<LogicalSubscription> subscriptionSourceList = operator.getSubscribedToSource();
 		
 		Map<String,LogicalSubscription> targetOpMap = new HashMap<String,LogicalSubscription>();
@@ -189,7 +196,7 @@ public class CreateJavaDefaultCode {
 		   
 		 if(JavaTransformationInformation.getInstance().allOperatorExistForSubscriptions(neededOperator)){
 			 
-	
+
 			StringTemplate startCodeTemplate = new StringTemplate("utils","subscribeToSource");
 			startCodeTemplate.getSt().add("operatorVariable", operatorVariable);  
 			startCodeTemplate.getSt().add("targetOpMap", targetOpMap);  
@@ -198,7 +205,7 @@ public class CreateJavaDefaultCode {
 			
 			return codeFragmentInfo;
 		 }
-		 
+		} 
 		 return null;
 	}
 	

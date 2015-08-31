@@ -9,66 +9,66 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCCSVFileSourceRule extends AbstractRule{
+public abstract class AbstractCCSVFileSourceRule extends AbstractRule {
 
 	public AbstractCCSVFileSourceRule(String name) {
 		super(name);
 	}
 
-
 	public boolean isExecutable(ILogicalOperator logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-		
-		if(logicalOperator instanceof CSVFileSource){
-			
+
+		if (logicalOperator instanceof CSVFileSource) {
+
 			CSVFileSource operator = (CSVFileSource) logicalOperator;
 			if (operator.getWrapper() != null) {
-				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
+						.getWrapper())) {
 					return true;
 				}
-				if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator.getWrapper())) {
+				if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator
+						.getWrapper())) {
 					return true;
 				}
 			}
-					
+
 		}
-	
+
 		return false;
 	}
-
 
 	@Override
 	public Class<?> getConditionClass() {
 		return CSVFileSource.class;
 	}
 
+	public void analyseOperator(ILogicalOperator logicalOperator,
+			QueryAnalyseInformation transformationInformation) {
 
-	public void analyseOperator(ILogicalOperator logicalOperator,QueryAnalyseInformation transformationInformation){
-		
 		CSVFileSource csvFileSource = (CSVFileSource) logicalOperator;
-		
-		transformationInformation.addDataHandler(csvFileSource.getDataHandler());
-		transformationInformation.addProtocolHandler(csvFileSource.getProtocolHandler());
-		transformationInformation.addTransportHandler(csvFileSource.getTransportHandler());
-		
-		
+
+		transformationInformation
+				.addDataHandler(csvFileSource.getDataHandler());
+		transformationInformation.addProtocolHandler(csvFileSource
+				.getProtocolHandler());
+		transformationInformation.addTransportHandler(csvFileSource
+				.getTransportHandler());
+
 		transformationInformation.addIterableSource(logicalOperator);
-		
+
 	}
-	
+
 	@Override
 	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
-		
+
 		CSVFileSource csvFileSourceOP = (CSVFileSource) logicalOperator;
-		Map<String,String> optionMap =  new HashMap<String,String>();
+		Map<String, String> optionMap = new HashMap<String, String>();
 		optionMap = csvFileSourceOP.getOptionsMap();
-		
-	
-		transformationInformation.addOperatorConfiguration(logicalOperator, optionMap);
-		
-	
-		
+
+		transformationInformation.addOperatorConfiguration(logicalOperator,
+				optionMap);
+
 	}
 
 }

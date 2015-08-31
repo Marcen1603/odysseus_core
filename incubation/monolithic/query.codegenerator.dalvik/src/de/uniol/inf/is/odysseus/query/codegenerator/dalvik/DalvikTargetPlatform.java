@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.ExecutorRe
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.StatusType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
@@ -43,7 +44,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		
 		
 		//add userfeedback
-		updateProgressBar(10, "Start the transformation");
+		updateProgressBar(10, "Start the transformation",StatusType.INFO);
 		
 		//clear transformation infos
 		JavaTransformationInformation.clear();
@@ -102,9 +103,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		if(opTrans != null ){
 		
 			if(!JavaTransformationInformation.getInstance().isOperatorCodeReady(operator)){
-				
-				//this.getProgressBarQueue().put(new ProgressBarUpdate(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName()));
-				
+		
 				//add ready
 				JavaTransformationInformation.getInstance().addOperatorToCodeReady(operator);
 		

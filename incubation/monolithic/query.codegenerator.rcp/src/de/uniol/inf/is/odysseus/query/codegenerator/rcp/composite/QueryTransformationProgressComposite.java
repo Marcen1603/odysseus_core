@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -12,7 +13,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 
@@ -20,9 +20,10 @@ public class QueryTransformationProgressComposite extends Composite{
 
 	private static final String NEWLINE = System.getProperty("line.separator");
 	private ProgressBar progressInitializeQuery;
-	private Text textArea;
+	private StyledText textArea;
 	private Button finishButton;
 	private Composite parent;
+	
 	
 	public QueryTransformationProgressComposite(Composite parent, int style, int windowWidth) {
 		super(parent, style);
@@ -47,11 +48,12 @@ public class QueryTransformationProgressComposite extends Composite{
 		progressInitializeQuery.setMinimum(0);
 		progressInitializeQuery.setMaximum(100);
 		
+
 		
-		textArea = new Text(this, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
-		GridData gd_textArea = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_textArea.heightHint = 266;
-		textArea.setLayoutData(gd_textArea);
+		textArea	= new StyledText(this, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		GridData styledtextAreaLayout = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		styledtextAreaLayout.heightHint = 266;
+		textArea.setLayoutData(styledtextAreaLayout);
 		
 		
 		finishButton = new Button(this, SWT.PUSH);
@@ -69,7 +71,8 @@ public class QueryTransformationProgressComposite extends Composite{
 				}
 			}
 		});
-
+		
+	
 	}
 	
 	
@@ -78,19 +81,29 @@ public class QueryTransformationProgressComposite extends Composite{
 	}
 
 	public void updateProgress(ProgressBarUpdate updateInfo) {
-		progressInitializeQuery.setSelection(updateInfo.getProgressValue());
+		
+		if(updateInfo.getProgressValue() != -1){
+			progressInitializeQuery.setSelection(updateInfo.getProgressValue());
+		}
+		
 		
 		StringBuilder tempText = new StringBuilder();
+		
+
 		if(!textArea.getText().equals("")){
 			tempText.append(textArea.getText());
 			tempText.append(NEWLINE);
 		}
 	
-		tempText.append(getCurrentTime()+" - ");
+		tempText.append(getCurrentTime()+" - "+ updateInfo.getStatusType().getText()+": ");
 		tempText.append(updateInfo.getText());
 		
-		textArea.setText(tempText.toString());
 		
+		
+		textArea.setText(tempText.toString());
+	
+		
+		//addStyleRange();
 	}
 	
 
@@ -99,5 +112,25 @@ public class QueryTransformationProgressComposite extends Composite{
 		Date date = new Date();
 		return dateFormat.format(date); //15:59:48
 	}
+	
+	/*
+	private void addStyleRange(){
+		StyleRange styleRange = new StyleRange();
+		styleRange.start = 0;
+		styleRange.length = 8;
+		styleRange.fontStyle = SWT.BOLD;
+
+		textArea.setStyleRange(styleRange);
+		
+		
+		StyleRange styleRange2 = new StyleRange();
+		styleRange2.start = 18;
+		styleRange2.length = 20;
+		styleRange2.fontStyle = SWT.BOLD;
+		textArea.setStyleRange(styleRange2);
+		
+	}
+	
+ */
 	
 }

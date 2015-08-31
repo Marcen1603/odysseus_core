@@ -55,6 +55,7 @@ public class QueryTransformationThread extends Thread {
 						        	   window.updateProgressbar(updateInfo);
 									}
 								}
+							
 							} catch (InterruptedException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -64,14 +65,13 @@ public class QueryTransformationThread extends Thread {
 			      }
 			 }
 		};
-		   
 		checkUpdates.setDaemon(true);
 		checkUpdates.start();
 	
 		QueryTransformation.startQueryTransformation(parameter,queue);
-		window.showFinishButton();
-		
+
 		checkUpdates.interrupt();
+		window.showFinishButton();
 		
 	}
 }

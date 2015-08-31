@@ -11,49 +11,40 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
-public abstract class AbstractCSelectAORule extends AbstractRule{
+public abstract class AbstractCSelectAORule extends AbstractRule {
 
 	public AbstractCSelectAORule(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	public boolean isExecutable(ILogicalOperator logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-		if(logicalOperator instanceof SelectAO){
+		if (logicalOperator instanceof SelectAO) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
-
 
 	@Override
 	public Class<?> getConditionClass() {
 		return SelectAO.class;
 	}
 
+	public void analyseOperator(ILogicalOperator logicalOperator,
+			QueryAnalyseInformation transformationInformation) {
 
-	public void analyseOperator(
-			ILogicalOperator logicalOperator,
-		QueryAnalyseInformation transformationInformation) {
-		
 		SelectAO selectAO = (SelectAO) logicalOperator;
 		IPredicate<?> predicate = selectAO.getPredicate();
-		
-	
+
 		String predicateValue = predicate.toString();
-		IExpression<?> mepExpression  = MEP.getInstance().parse(predicateValue);
+		IExpression<?> mepExpression = MEP.getInstance().parse(predicateValue);
 
-		
-		Map<String,IExpression<?>> mepFunctions = Utils.getAllMEPFunctions(mepExpression);
+		Map<String, IExpression<?>> mepFunctions = Utils
+				.getAllMEPFunctions(mepExpression);
 
-		
 		transformationInformation.addMEPFunction(mepFunctions);
 	}
-	
 
-
-	
-	   
 }

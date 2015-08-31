@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformati
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
-public abstract class AbstractCJoinTIPORule extends AbstractRule{
-	
+public abstract class AbstractCJoinTIPORule extends AbstractRule {
+
 	public AbstractCJoinTIPORule(String name) {
 		super(name);
 	}
@@ -21,9 +21,8 @@ public abstract class AbstractCJoinTIPORule extends AbstractRule{
 	@Override
 	public boolean isExecutable(ILogicalOperator logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-		if(logicalOperator instanceof JoinAO){
-			
-			
+		if (logicalOperator instanceof JoinAO) {
+
 			return true;
 		}
 		return false;
@@ -34,27 +33,27 @@ public abstract class AbstractCJoinTIPORule extends AbstractRule{
 		return JoinTIPO.class;
 	}
 
-	
 	@Override
 	public void analyseOperator(ILogicalOperator logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
-	
+
 		JoinAO joinAO = (JoinAO) logicalOperator;
 
-		String areaName = "TIJoinSA";		
-		
-		if (joinAO.getSweepAreaName() != null){
+		String areaName = "TIJoinSA";
+
+		if (joinAO.getSweepAreaName() != null) {
 			areaName = joinAO.getSweepAreaName();
 		}
-		
+
 		transformationInformation.addSweepArea(areaName);
-		
+
 		IPredicate<?> predicate = joinAO.getPredicate();
 		String predicateValue = predicate.toString();
-		IExpression<?> mepExpression  = MEP.getInstance().parse(predicateValue);
-		
-		Map<String,IExpression<?>> mepFunctions = Utils.getAllMEPFunctions(mepExpression);
-		
+		IExpression<?> mepExpression = MEP.getInstance().parse(predicateValue);
+
+		Map<String, IExpression<?>> mepFunctions = Utils
+				.getAllMEPFunctions(mepExpression);
+
 		transformationInformation.addMEPFunction(mepFunctions);
 	}
 

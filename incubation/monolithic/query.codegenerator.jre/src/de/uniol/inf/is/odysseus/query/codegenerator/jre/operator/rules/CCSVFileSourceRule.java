@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerParameter;
@@ -45,7 +44,8 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 		
 		csvFileSource.addCodeFragmentInfo(CreateJavaDefaultCode.codeForAccessFramework(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
 	
-		TimestampAO timestampAO = Utils.createTimestampAO(operator, null);
+		//important add a timestamp op to the source
+		Utils.createTimestampAO(operator, csvFileSourceOP.getDateFormat());
 		
 		StringTemplate accessPOTemplate = new StringTemplate("operator","accessPO");
 		accessPOTemplate.getSt().add("operatorVariable", operatorVariable);
@@ -53,8 +53,7 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 		accessPOTemplate.getSt().add("readMetaData", csvFileSourceOP.readMetaData());
 		
 		csvFileSource.addCode(accessPOTemplate.getSt().render());
-		csvFileSource.addCodeFragmentInfo(CreateJavaDefaultCode.codeForRelationalTimestampAttributeTimeIntervalMFactory(operator, timestampAO));
-
+	
 		//add imports
 		csvFileSource.addImport(IMetaAttribute.class.getName());
 		csvFileSource.addImport(TimeInterval.class.getName());
