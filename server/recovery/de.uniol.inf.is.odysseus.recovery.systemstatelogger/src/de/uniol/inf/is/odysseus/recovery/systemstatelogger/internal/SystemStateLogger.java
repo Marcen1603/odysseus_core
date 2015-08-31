@@ -28,6 +28,11 @@ public class SystemStateLogger {
 	 * The tag for the system log entry for a startup of Odysseus.
 	 */
 	public static final String TAG_STARTUP = "STARTUP";
+	
+	/**
+	 * The comment for the system log entry for a startup of Odysseus.
+	 */
+	public static final String INFO_STARTUP = "Defined by binding of IExecutor";
 
 	/**
 	 * The tag for the system log entry for a shutdown of Odysseus.
@@ -35,10 +40,9 @@ public class SystemStateLogger {
 	public static final String TAG_SHUTDOWN = "SHUTDOWN";
 
 	/**
-	 * The tag for the system log entry for a startup of Odysseus as well as for
-	 * a shutdown of Odysseus.
+	 * The comment for the system log entry for a shutdown of Odysseus.
 	 */
-	public static final String COMMENT = "Defined by binding/unbinding of IExecutor";
+	public static final String INFO_SHUTDOWN = "Defined by unbinding of IExecutor";
 
 	/**
 	 * The system log, if bound.
@@ -115,7 +119,7 @@ public class SystemStateLogger {
 	private static void tryLogStartup() {
 		if (isSystemStarted()) {
 			cSystemLog.get().write(TAG_STARTUP, System.currentTimeMillis(),
-					COMMENT);
+					INFO_STARTUP);
 		}
 	}
 
@@ -126,7 +130,7 @@ public class SystemStateLogger {
 	private static void tryLogShutDown() {
 		if (cSystemLog.isPresent()) {
 			cSystemLog.get().write(TAG_SHUTDOWN, System.currentTimeMillis(),
-					COMMENT);
+					INFO_SHUTDOWN);
 		} else {
 			cLog.error("Could not write a system log for the shutdown!");
 		}

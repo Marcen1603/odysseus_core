@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 
 /**
  * Entry within a system log contains a tag identifying the action, a time stamp
- * and an optional comment. Each entry will be formated in CSV.
+ * and (optional) additional information. Each entry will be formated in CSV.
  * 
  * @author Michael Brand
  *
@@ -26,29 +26,29 @@ public class SysLogEntry implements ISysLogEntry {
 	private final long mTimeStamp;
 
 	/**
-	 * The optional comment.
+	 * The (optional) additional information.
 	 */
-	private final Optional<String> mComment;
+	private final Optional<String> mInformation;
 
 	/**
-	 * Creates a new entry with comment.
+	 * Creates a new entry with additional information.
 	 * 
 	 * @param tag
 	 *            A string identifying the action.
 	 * @param timeStamp
 	 *            The time stamp of the action in milliseconds.
-	 * @param comment
-	 *            An optional string or null, if there is no comment.
+	 * @param information
+	 *            An optional string or null, if there are no additional information.
 	 */
-	public SysLogEntry(String tag, long timeStamp, String comment) {
+	public SysLogEntry(String tag, long timeStamp, String information) {
 		Preconditions.checkNotNull(tag);
 		this.mTag = tag;
 		this.mTimeStamp = timeStamp;
-		this.mComment = Optional.fromNullable(comment);
+		this.mInformation = Optional.fromNullable(information);
 	}
 
 	/**
-	 * Creates a new entry without comment.
+	 * Creates a new entry without additional information.
 	 * 
 	 * @param tag
 	 *            A string identifying the action.
@@ -69,7 +69,7 @@ public class SysLogEntry implements ISysLogEntry {
 		Preconditions.checkNotNull(other);
 		this.mTag = other.getTag();
 		this.mTimeStamp = other.getTimeStamp();
-		this.mComment = other.getComment();
+		this.mInformation = other.getInformation();
 	}
 
 	@Override
@@ -86,13 +86,13 @@ public class SysLogEntry implements ISysLogEntry {
 		ISysLogEntry other = (ISysLogEntry) obj;
 		return this.mTag.equals(other.getTag())
 				&& this.mTimeStamp == other.getTimeStamp()
-				&& this.mComment.equals(other.getComment());
+				&& this.mInformation.equals(other.getInformation());
 	}
 
 	@Override
 	public int hashCode() {
 		return 7 + 11 * this.mTag.hashCode() + (int) (13 * this.mTimeStamp)
-				+ 17 * this.mComment.hashCode();
+				+ 17 * this.mInformation.hashCode();
 	}
 
 	/**
@@ -101,8 +101,8 @@ public class SysLogEntry implements ISysLogEntry {
 	@Override
 	public String toString() {
 		StringBuffer out = new StringBuffer(this.mTag + ", " + this.mTimeStamp);
-		if (this.mComment.isPresent()) {
-			out.append(", " + this.mComment.get());
+		if (this.mInformation.isPresent()) {
+			out.append(", " + this.mInformation.get());
 		}
 		return out.toString();
 	}
@@ -118,8 +118,8 @@ public class SysLogEntry implements ISysLogEntry {
 	}
 
 	@Override
-	public Optional<String> getComment() {
-		return this.mComment;
+	public Optional<String> getInformation() {
+		return this.mInformation;
 	}
 
 }

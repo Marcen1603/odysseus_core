@@ -61,12 +61,12 @@ public interface ISystemLog {
 	 *            The tag for the given entry.
 	 * @param timeStamp
 	 *            The time stamp in milliseconds for the given entry.
-	 * @param comment
-	 *            The comment for the given entry.
+	 * @param information
+	 *            The additional information for the given entry.
 	 * @return True, if the entry could be written; false, else (e.g., entry is
 	 *         too old).
 	 */
-	public boolean write(String tag, long timeStamp, String comment);
+	public boolean write(String tag, long timeStamp, String information);
 
 	/**
 	 * Writes several entries to the log.

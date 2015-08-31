@@ -401,8 +401,8 @@ public class QueryStateRecoveryComponent
 		for (ISysLogEntry entry : log) {
 			if (QueryStateLogTag.containsTag(entry.getTag())) {
 				cLog.debug("Try to recover '{}'...", entry);
-				if (!entry.getComment().isPresent()) {
-					cLog.error("Comment needed for '" + entry.getTag() + "' system log entries!");
+				if (!entry.getInformation().isPresent()) {
+					cLog.error("Additional information needed for '" + entry.getTag() + "' system log entries!");
 					continue;
 				}
 				QueryStateLogTag enumEntry = QueryStateLogTag.fromString(entry.getTag()).get();
@@ -417,7 +417,7 @@ public class QueryStateRecoveryComponent
 					// case QUERY_REMOVED:
 					// case QUERYSTATE_CHANGED:
 					QueryStateChangedInfo info = (QueryStateChangedInfo) AbstractQueryStateInfo
-							.fromBase64Binary(entry.getComment().get());
+							.fromBase64Binary(entry.getInformation().get());
 					lastSeenEntries.put(new Integer(info.getQueryId()), info);
 					break;
 				}
@@ -429,18 +429,18 @@ public class QueryStateRecoveryComponent
 	}
 
 	/**
-	 * Recovers a script, which was backuped by
+	 * Recovers a script, which was backed up by
 	 * {@link #backupScript(String, List, String, ISession, Context)}.
 	 * 
 	 * @param entry
-	 *            The entry representing a backuped script.
+	 *            The entry representing a script, which has been backed up.
 	 * @param log
 	 *            All system log entries to recover.
 	 * @param executor
 	 *            A present executor.
 	 */
 	private static void recoverScript(ISysLogEntry entry, IServerExecutor executor) {
-		ScriptAddedInfo info = (ScriptAddedInfo) AbstractQueryStateInfo.fromBase64Binary(entry.getComment().get());
+		ScriptAddedInfo info = (ScriptAddedInfo) AbstractQueryStateInfo.fromBase64Binary(entry.getInformation().get());
 		// XXX QueryBuildConfiguration and RecoveryNeeded: Problem is, that the
 		// query build configuration is only used for the outer Odysseus-Script
 		// query. But there, the RecoveryConfigKeyword
@@ -486,7 +486,7 @@ public class QueryStateRecoveryComponent
 	 *            A present executor.
 	 */
 	private static void recoverSourceRemoval(ISysLogEntry entry, IServerExecutor executor) {
-		SourceRemovedInfo info = (SourceRemovedInfo) AbstractQueryStateInfo.fromBase64Binary(entry.getComment().get());
+		SourceRemovedInfo info = (SourceRemovedInfo) AbstractQueryStateInfo.fromBase64Binary(entry.getInformation().get());
 		executor.removeViewOrStream(info.getSourceName(), info.getSession());
 	}
 

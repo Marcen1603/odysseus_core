@@ -209,9 +209,9 @@ public class SystemLog implements ISystemLog {
 	}
 
 	@Override
-	public boolean write(String tag, long timeStamp, String comment) {
+	public boolean write(String tag, long timeStamp, String information) {
 		return write(SystemLogConfiguration
-				.createEntry(tag, timeStamp, comment));
+				.createEntry(tag, timeStamp, information));
 	}
 
 	/**

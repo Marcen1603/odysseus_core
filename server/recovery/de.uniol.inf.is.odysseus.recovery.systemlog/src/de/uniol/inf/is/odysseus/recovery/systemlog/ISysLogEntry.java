@@ -4,7 +4,7 @@ import com.google.common.base.Optional;
 
 /**
  * Entry within a system log contains a tag identifying the action, a time stamp
- * and an optional comment. Each entry will be formated in CSV.
+ * and (optional) additional information. Each entry will be formated in CSV.
  * 
  * @author Michael Brand
  *
@@ -25,13 +25,12 @@ public interface ISysLogEntry {
 	 */
 	public long getTimeStamp();
 
-	// TODO rename to information
 	/**
-	 * Gets the optional comment.
+	 * Gets the (optional) additional information.
 	 * 
-	 * @return An optional string or {@link Optional#absent()}, if there is no
-	 *         comment.
+	 * @return An optional string or {@link Optional#absent()}, if there are no
+	 *         additional information.
 	 */
-	public Optional<String> getComment();
+	public Optional<String> getInformation();
 
 }
