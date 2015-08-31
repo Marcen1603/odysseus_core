@@ -40,6 +40,9 @@ public class BroadcastRequestSender {
 			LOG.info("Binding netty server for broadcasting messages to port {}", BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_PORT);
 			channelFuture = b.bind(BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_PORT).sync();
 			LOG.info("Binding was successful");
+			
+			// TODO: Regelm‰ﬂiges Senden von Nachrichten beginnen (extra-Thread)
+			
 		} catch (InterruptedException e) {
 			throw new OdysseusNetDiscoveryException("Could not start server for sending broadcast messages", e);
 		}
