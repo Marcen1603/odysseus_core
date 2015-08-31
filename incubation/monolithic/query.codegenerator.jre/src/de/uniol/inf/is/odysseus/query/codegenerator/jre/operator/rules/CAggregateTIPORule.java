@@ -3,20 +3,21 @@ package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
-
-
-
-
-
-
+import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAggregateFunctionBuilder;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
@@ -48,8 +49,18 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule{
 		
 		aggregateTIPO.addCodeFragmentInfo(CreateJavaDefaultCode.createCodeForSDFAttributeList(aggregateAO.getGroupingAttributes(), operatorVariable+"GroupingAttribute"));
 		
-	
 
+		List<String> metaAttributeNames = aggregateAO.getInputSchema().getMetaAttributeNames();
+		
+
+		
+		StringTemplate aggregateMetaDataTemplate = new StringTemplate("utils","metaDataMergeFunction");
+		aggregateMetaDataTemplate.getSt().add("operatorVariable", operatorVariable);
+		aggregateMetaDataTemplate.getSt().add("metaAttributeNames", metaAttributeNames);
+
+		aggregateTIPO.addCode(aggregateMetaDataTemplate.getSt().render());
+		
+	
 		
 		AggregateAO dummyAggregateAO = new AggregateAO();
 		
@@ -66,10 +77,7 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule{
 			String outAttributeSDFDataTypeName = outAttribute.getDatatype().toString();
 			
 			
-			/*
-			System.out.println(function);
-			new AggregateFunction(function);
-			*/
+
 			
 			aggregateItemList.add(new AggregateItem(functionName, inAttributes, outAttribute));
 			
@@ -86,6 +94,8 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule{
 			aggregateTIPO.addCode(aggregateItemsTIPOTemplate.getSt().render());
 			
 		}
+		
+		
 		
 		dummyAggregateAO.setAggregationItems(aggregateItemList);
 		dummyAggregateAO.getAggregations();
@@ -107,7 +117,25 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule{
 		aggregateTIPO.addImport(AggregateTIPO.class.getName());
 		aggregateTIPO.addImport(ITimeInterval.class.getName());
 		aggregateTIPO.addImport(IStreamObject.class.getName());
-		aggregateTIPO.addImport(AggregateTIPO.class.getName());
+		aggregateTIPO.addImport(AggregateItem.class.getName());
+		aggregateTIPO.addImport(IMetadataMergeFunction.class.getName());
+		aggregateTIPO.addImport(AggregateAO.class.getName());
+		aggregateTIPO.addImport(AggregateFunction.class.getName());
+		aggregateTIPO.addImport(RelationalAggregateFunctionBuilder.class.getName());
+		aggregateTIPO.addImport(IAggregateFunctionBuilder.class.getName());
+		aggregateTIPO.addImport(IAggregateFunction.class.getName());
+		aggregateTIPO.addImport(FESortedClonablePair.class.getName());
+		aggregateTIPO.addImport(java.util.Map.class.getName());
+		aggregateTIPO.addImport(RelationalGroupProcessor.class.getName());
+		aggregateTIPO.addImport(java.util.Map.Entry.class.getCanonicalName());
+		aggregateTIPO.addImport(AggregateTISweepArea.class.getName());
+		
+	
+		
+	
+		aggregateTIPO.addImport(AggregateFunctionBuilderRegistry.class.getName());
+		
+		
 		
 		return aggregateTIPO;
 	}
