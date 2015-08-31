@@ -4,6 +4,8 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupDir;
 
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.EscapeStringRenderer;
+
 public class StringTemplate {
 	
 	private STGroup group;
@@ -12,6 +14,7 @@ public class StringTemplate {
 	public StringTemplate(String folder, String templateFile){
 		 group = new STGroupDir("templates/"+folder,'$','$');
 		 setSt(group.getInstanceOf(templateFile));
+		 group.registerRenderer(String.class, new EscapeStringRenderer());
 	}
 	
 	public StringTemplate(String templateFile){
