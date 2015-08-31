@@ -12,6 +12,7 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLogListener;
+import de.uniol.inf.is.odysseus.recovery.systemlog.Tag;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
 
 /**
@@ -27,8 +28,7 @@ public class CrashDetector implements ISystemLogListener {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory
-			.getLogger(CrashDetector.class);
+	private static final Logger cLog = LoggerFactory.getLogger(CrashDetector.class);
 
 	/**
 	 * The time stamp in milliseconds of the last startup, if a crash has been
@@ -73,8 +73,7 @@ public class CrashDetector implements ISystemLogListener {
 	/**
 	 * All bound listeners.
 	 */
-	private static final Set<ICrashDetectionListener> cListeners = Sets
-			.newConcurrentHashSet();
+	private static final Set<ICrashDetectionListener> cListeners = Sets.newConcurrentHashSet();
 
 	/**
 	 * Binds a listener.
@@ -110,8 +109,7 @@ public class CrashDetector implements ISystemLogListener {
 		try {
 			listener.onCrashDetected(cLastStartup);
 		} catch (Throwable t) {
-			cLog.error("Error occured for listener "
-					+ listener.getClass().getSimpleName(), t);
+			cLog.error("Error occured for listener " + listener.getClass().getSimpleName(), t);
 		}
 	}
 
@@ -124,22 +122,16 @@ public class CrashDetector implements ISystemLogListener {
 			callListener(listener);
 		}
 		if (cSystemLog.isPresent()) {
-			cSystemLog.get().write(TAG_CRASH, System.currentTimeMillis());
+			cSystemLog.get().write(Tag.CRASH_DETECTED.toString(), System.currentTimeMillis(), CrashDetector.class.getName());
 		}
 	}
-
-	/**
-	 * The tag for the system log entry for a crash of Odysseus.
-	 */
-	private static final String TAG_CRASH = "CRASH DETECTED";
 
 	/**
 	 * Checks, if there has been a crash (last startup after last shutdown) and
 	 * calls its listeners.
 	 */
 	@Override
-	public void onInitialSystemLogRead(List<ISysLogEntry> entries)
-			throws Throwable {
+	public void onInitialSystemLogRead(List<ISysLogEntry> entries) throws Throwable {
 		if (entries.isEmpty()) {
 			return;
 		}
@@ -148,10 +140,9 @@ public class CrashDetector implements ISystemLogListener {
 		int indexOfLastShutdown = -1;
 		int indexOfLastStartup = -1;
 		for (int i = 0; i < entries.size(); i++) {
-			if (entries.get(i).getTag().equals(SystemStateLogger.TAG_STARTUP)) {
+			if (entries.get(i).getTag().equals(Tag.STARTUP.toString())) {
 				indexOfLastStartup = i;
-			} else if (entries.get(i).getTag()
-					.equals(SystemStateLogger.TAG_SHUTDOWN)) {
+			} else if (entries.get(i).getTag().equals(Tag.SHUTDOWN.toString())) {
 				indexOfLastShutdown = i;
 			}
 		}
@@ -170,7 +161,7 @@ public class CrashDetector implements ISystemLogListener {
 	 */
 	@Override
 	public void onSystemLogEntryWritten(ISysLogEntry entry) throws Throwable {
-		if (entry.getTag().equals(SystemStateLogger.TAG_STARTUP)) {
+		if (entry.getTag().equals(Tag.STARTUP.toString())) {
 			cStartup = true;
 			if (canCallListeners()) {
 				callAllListenersAndLog();
@@ -179,8 +170,7 @@ public class CrashDetector implements ISystemLogListener {
 	}
 
 	@Override
-	public void onSystemLogEntriesDeleted(List<ISysLogEntry> entries)
-			throws Throwable {
+	public void onSystemLogEntriesDeleted(List<ISysLogEntry> entries) throws Throwable {
 		// Nothing to do
 	}
 

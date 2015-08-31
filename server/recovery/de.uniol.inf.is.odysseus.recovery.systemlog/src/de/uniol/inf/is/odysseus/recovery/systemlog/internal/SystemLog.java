@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLogListener;
-import de.uniol.inf.is.odysseus.recovery.systemlog.SystemLogConfiguration;
+import de.uniol.inf.is.odysseus.recovery.systemlog.SysLogEntryFactory;
 
 /**
  * Service to log system events like startup and shutdown. <br />
@@ -59,16 +59,14 @@ public class SystemLog implements ISystemLog {
 		cLog.debug("Start loading system log from file...");
 
 		// Get the log file
-		File logFile = new File(SystemLogConfiguration.getSystemLogFile());
+		File logFile = new File(SystemLogController.getSystemLogFile());
 		if (!logFile.exists()) {
 			// Create the log file
 			File dir = logFile.getParentFile();
 			if (dir == null || !logFile.createNewFile()) {
-				throw new IOException("Could not create file: "
-						+ SystemLogConfiguration.getSystemLogFile());
+				throw new IOException("Could not create file: " + SystemLogController.getSystemLogFile());
 			}
-			cLog.debug("Created system log file '{}'.",
-					SystemLogConfiguration.getSystemLogFile());
+			cLog.debug("Created system log file '{}'.", SystemLogController.getSystemLogFile());
 			return;
 		}
 
@@ -76,17 +74,13 @@ public class SystemLog implements ISystemLog {
 		try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				StringTokenizer token = new StringTokenizer(line,
-						SystemLogConfiguration.getSeparator());
+				StringTokenizer token = new StringTokenizer(line, SystemLogController.getSeparator());
 				// There should be 2 or 3 fields
 				if (token.countTokens() < 2) {
-					cLog.error("Ignore system log entry '" + line
-							+ "'. There are too many fields!");
+					cLog.error("Ignore system log entry '" + line + "'. There are too many fields!");
 					continue;
 				} else if (token.countTokens() > 3) {
-					cLog.warn(
-							"System log entry '{}' has more than 3 fields. Additional fields will be ignored!",
-							line);
+					cLog.warn("System log entry '{}' has more than 3 fields. Additional fields will be ignored!", line);
 				}
 				String tag = token.nextToken().trim();
 				long timeStamp = Long.parseLong(token.nextToken().trim());
@@ -94,10 +88,9 @@ public class SystemLog implements ISystemLog {
 				if (token.hasMoreTokens()) {
 					// Comment is optional
 					String comment = token.nextToken().trim();
-					entry = SystemLogConfiguration.createEntry(tag, timeStamp,
-							comment);
+					entry = SysLogEntryFactory.createEntry(tag, timeStamp, comment);
 				} else {
-					entry = SystemLogConfiguration.createEntry(tag, timeStamp);
+					entry = SysLogEntryFactory.createEntry(tag, timeStamp);
 				}
 				synchronized (cEntries) {
 					cEntries.add(entry);
@@ -113,8 +106,7 @@ public class SystemLog implements ISystemLog {
 			try {
 				listener.onInitialSystemLogRead(cEntries);
 			} catch (Throwable t) {
-				cLog.error("Error occured for listener "
-						+ listener.getClass().getSimpleName(), t);
+				cLog.error("Error occured for listener " + listener.getClass().getSimpleName(), t);
 			}
 		}
 		cLogLoaded = true;
@@ -133,8 +125,7 @@ public class SystemLog implements ISystemLog {
 		// Assumption: entries are sorted by time stamp
 		int index;
 		synchronized (cEntries) {
-			for (index = cEntries.size() - 1; index >= 0
-					&& cEntries.get(index).getTimeStamp() >= since; index--) {
+			for (index = cEntries.size() - 1; index >= 0 && cEntries.get(index).getTimeStamp() >= since; index--) {
 				// Nothing to do
 			}
 		}
@@ -153,30 +144,32 @@ public class SystemLog implements ISystemLog {
 	 * 
 	 * @param entry
 	 *            The given entry.
+	 * @param caller
+	 *            The entity, which wants to write the entry.
 	 * @param append
 	 *            True, if former entry shall remain within the log.
-	 * @return True, if the entry could be written; false, else (e.g., entry is
-	 *         too old).
+	 * @return True, if the entry could be written; false, else (e.g., caller
+	 *         has no permission or entry is too old).
 	 */
-	private static boolean write(ISysLogEntry entry, boolean append) {
+	private static boolean write(ISysLogEntry entry, Object caller, boolean append) {
+		// Precondition
+		if (!SystemLogController.validatePermission(entry, caller)) {
+			return false;
+		}
+
 		synchronized (cEntries) {
 			if (!append) {
 				cEntries.clear();
-			} else if (!cEntries.isEmpty()
-					&& entry.getTimeStamp() < cEntries.peekLast()
-							.getTimeStamp()) {
-				cLog.error(
-						"System log entry '{}' to add is not the newest log entry!",
-						entry);
+			} else if (!cEntries.isEmpty() && entry.getTimeStamp() < cEntries.peekLast().getTimeStamp()) {
+				cLog.error("System log entry '{}' to add is not the newest log entry!", entry);
 				return false;
 			}
 			cEntries.add(entry);
 		}
 
 		// Write it into the log file
-		File logFile = new File(SystemLogConfiguration.getSystemLogFile());
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile,
-				append))) {
+		File logFile = new File(SystemLogController.getSystemLogFile());
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, append))) {
 			writer.append(entry.toString());
 			writer.newLine();
 			writer.close();
@@ -191,27 +184,25 @@ public class SystemLog implements ISystemLog {
 			try {
 				listener.onSystemLogEntryWritten(entry);
 			} catch (Throwable t) {
-				cLog.error("Error occured for listener "
-						+ listener.getClass().getSimpleName(), t);
+				cLog.error("Error occured for listener " + listener.getClass().getSimpleName(), t);
 			}
 		}
 		return true;
 	}
 
 	@Override
-	public boolean write(ISysLogEntry entry) {
-		return write(entry, true);
+	public boolean write(ISysLogEntry entry, Object caller) {
+		return write(entry, caller, true);
 	}
 
 	@Override
-	public boolean write(String tag, long timeStamp) {
-		return write(SystemLogConfiguration.createEntry(tag, timeStamp));
+	public boolean write(String tag, long timeStamp, Object caller) {
+		return write(SysLogEntryFactory.createEntry(tag, timeStamp), caller);
 	}
 
 	@Override
-	public boolean write(String tag, long timeStamp, String information) {
-		return write(SystemLogConfiguration
-				.createEntry(tag, timeStamp, information));
+	public boolean write(String tag, long timeStamp, String information, Object caller) {
+		return write(SysLogEntryFactory.createEntry(tag, timeStamp, information), caller);
 	}
 
 	/**
@@ -224,9 +215,9 @@ public class SystemLog implements ISystemLog {
 	 * @return True, if the entries could be written; false, else (e.g., an
 	 *         entry is too old).
 	 */
-	private static boolean write(List<ISysLogEntry> entries, boolean append) {
+	private static boolean write(List<ISysLogEntry> entries, Object caller, boolean append) {
 		for (ISysLogEntry entry : entries) {
-			if (!write(entry, append)) {
+			if (!write(entry, caller, append)) {
 				return false;
 			}
 		}
@@ -234,8 +225,8 @@ public class SystemLog implements ISystemLog {
 	}
 
 	@Override
-	public boolean write(List<ISysLogEntry> entries) {
-		return write(entries, true);
+	public boolean write(List<ISysLogEntry> entries, Object caller) {
+		return write(entries, caller, true);
 	}
 
 	/**
@@ -255,15 +246,13 @@ public class SystemLog implements ISystemLog {
 
 		// Check, what to delete and what to keep
 		synchronized (cEntries) {
-			if (cEntries.isEmpty()
-					|| cEntries.getFirst().getTimeStamp() >= before) {
+			if (cEntries.isEmpty() || cEntries.getFirst().getTimeStamp() >= before) {
 				return;
 			} else if (cEntries.getLast().getTimeStamp() < before) {
 				// Clear the log
 				cEntries.clear();
-				try (BufferedWriter writer = new BufferedWriter(new FileWriter(
-						new File(SystemLogConfiguration.getSystemLogFile()),
-						false))) {
+				try (BufferedWriter writer = new BufferedWriter(
+						new FileWriter(new File(SystemLogController.getSystemLogFile()), false))) {
 					writer.write("");
 					writer.close();
 					cLog.debug("Cleared the system log file.");
@@ -275,27 +264,24 @@ public class SystemLog implements ISystemLog {
 
 			while (cEntries.get(indexOfOldestEntryToKeep).getTimeStamp() < before
 					&& indexOfOldestEntryToKeep < cEntries.size() - 1) {
-				cLog.debug("Entry to be deleted: ",
-						cEntries.get(indexOfOldestEntryToKeep++));
+				cLog.debug("Entry to be deleted: ", cEntries.get(indexOfOldestEntryToKeep++));
 			}
 			if (indexOfOldestEntryToKeep == 0) {
 				return;
 			}
 			entriesToDelete = cEntries.subList(0, indexOfOldestEntryToKeep);
-			entriesToKeep = cEntries.subList(indexOfOldestEntryToKeep,
-					cEntries.size());
+			entriesToKeep = cEntries.subList(indexOfOldestEntryToKeep, cEntries.size());
 		}
 
 		// Overwrite log and file
-		write(entriesToKeep, false);
+		write(entriesToKeep, SystemLog.class.getName(), false);
 
 		// Call listeners
 		for (ISystemLogListener listener : cListeners) {
 			try {
 				listener.onSystemLogEntriesDeleted(entriesToDelete);
 			} catch (Throwable t) {
-				cLog.error("Error occured for listener "
-						+ listener.getClass().getSimpleName(), t);
+				cLog.error("Error occured for listener " + listener.getClass().getSimpleName(), t);
 			}
 		}
 	}
@@ -312,8 +298,7 @@ public class SystemLog implements ISystemLog {
 			try {
 				listener.onInitialSystemLogRead(cEntries);
 			} catch (Throwable t) {
-				cLog.error("Error occured for listener "
-						+ listener.getClass().getSimpleName(), t);
+				cLog.error("Error occured for listener " + listener.getClass().getSimpleName(), t);
 			}
 		}
 	}

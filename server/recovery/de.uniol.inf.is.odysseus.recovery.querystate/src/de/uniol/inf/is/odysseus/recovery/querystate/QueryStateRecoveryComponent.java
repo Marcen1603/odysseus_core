@@ -319,7 +319,7 @@ public class QueryStateRecoveryComponent
 		info.setQueryText(script);
 		info.setSession(user);
 		cSystemLog.get().write(QueryStateLogTag.SCRIPT_ADDED.toString(), System.currentTimeMillis(),
-				info.toBase64Binary());
+				info.toBase64Binary(), QueryStateRecoveryComponent.class.getName());
 
 		// Get data dictionary news
 		if (!cUsedDataDictionaries.values().contains(user)) {
@@ -343,7 +343,7 @@ public class QueryStateRecoveryComponent
 		info.setSourceName(name);
 		info.setSession(user);
 		cSystemLog.get().write(QueryStateLogTag.SOURCE_REMOVED.toString(), System.currentTimeMillis(),
-				info.toBase64Binary());
+				info.toBase64Binary(), QueryStateRecoveryComponent.class.getName());
 	}
 
 	/**
@@ -360,7 +360,7 @@ public class QueryStateRecoveryComponent
 		info.setQueryId(id);
 		info.setSession(user);
 		cSystemLog.get().write(QueryStateLogTag.QUERY_REMOVED.toString(), System.currentTimeMillis(),
-				info.toBase64Binary());
+				info.toBase64Binary(), QueryStateRecoveryComponent.class.getName());
 	}
 
 	/**
@@ -383,7 +383,7 @@ public class QueryStateRecoveryComponent
 		info.setSheddingFactor(sheddingFactor);
 		info.setSession(user);
 		cSystemLog.get().write(QueryStateLogTag.QUERYSTATE_CHANGED.toString(), System.currentTimeMillis(),
-				info.toBase64Binary());
+				info.toBase64Binary(), QueryStateRecoveryComponent.class.getName());
 	}
 
 	/**

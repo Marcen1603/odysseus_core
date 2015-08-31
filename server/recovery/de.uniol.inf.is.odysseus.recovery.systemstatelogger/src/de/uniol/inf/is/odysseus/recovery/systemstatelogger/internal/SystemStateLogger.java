@@ -7,6 +7,7 @@ import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
+import de.uniol.inf.is.odysseus.recovery.systemlog.Tag;
 
 /**
  * Class to add the following actions to the system log: startup and shutdown of
@@ -21,23 +22,12 @@ public class SystemStateLogger {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory
-			.getLogger(SystemStateLogger.class);
+	private static final Logger cLog = LoggerFactory.getLogger(SystemStateLogger.class);
 
-	/**
-	 * The tag for the system log entry for a startup of Odysseus.
-	 */
-	public static final String TAG_STARTUP = "STARTUP";
-	
 	/**
 	 * The comment for the system log entry for a startup of Odysseus.
 	 */
 	public static final String INFO_STARTUP = "Defined by binding of IExecutor";
-
-	/**
-	 * The tag for the system log entry for a shutdown of Odysseus.
-	 */
-	public static final String TAG_SHUTDOWN = "SHUTDOWN";
 
 	/**
 	 * The comment for the system log entry for a shutdown of Odysseus.
@@ -118,8 +108,8 @@ public class SystemStateLogger {
 	 */
 	private static void tryLogStartup() {
 		if (isSystemStarted()) {
-			cSystemLog.get().write(TAG_STARTUP, System.currentTimeMillis(),
-					INFO_STARTUP);
+			cSystemLog.get().write(Tag.STARTUP.toString(), System.currentTimeMillis(), INFO_STARTUP,
+					SystemStateLogger.class.getName());
 		}
 	}
 
@@ -129,8 +119,8 @@ public class SystemStateLogger {
 	 */
 	private static void tryLogShutDown() {
 		if (cSystemLog.isPresent()) {
-			cSystemLog.get().write(TAG_SHUTDOWN, System.currentTimeMillis(),
-					INFO_SHUTDOWN);
+			cSystemLog.get().write(Tag.SHUTDOWN.toString(), System.currentTimeMillis(), INFO_SHUTDOWN,
+					SystemStateLogger.class.getName());
 		} else {
 			cLog.error("Could not write a system log for the shutdown!");
 		}

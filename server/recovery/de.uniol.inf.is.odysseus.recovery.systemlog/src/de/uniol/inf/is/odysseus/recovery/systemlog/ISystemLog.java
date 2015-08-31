@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-// TODO Controller to define, which entities are allowed to write with which tags?
 /**
  * Service to log system events like startup and shutdown. <br />
  * See {@link ISysLogEntry} for how log entries look like and
@@ -37,10 +36,12 @@ public interface ISystemLog {
 	 * 
 	 * @param entry
 	 *            The given entry.
-	 * @return True, if the entry could be written; false, else (e.g., entry is
-	 *         too old).
+	 * @param caller
+	 *            The entity, which wants to write the entry.
+	 * @return True, if the entry could be written; false, else (e.g., caller
+	 *         has no permission or entry is too old).
 	 */
-	public boolean write(ISysLogEntry entry);
+	public boolean write(ISysLogEntry entry, Object caller);
 
 	/**
 	 * Writes an entry to the log.
@@ -49,10 +50,12 @@ public interface ISystemLog {
 	 *            The tag for the given entry.
 	 * @param timeStamp
 	 *            The time stamp in milliseconds for the given entry.
-	 * @return True, if the entry could be written; false, else (e.g., entry is
-	 *         too old).
+	 * @param caller
+	 *            The entity, which wants to write the entry.
+	 * @return True, if the entry could be written; false, else (e.g., caller
+	 *         has no permission or entry is too old).
 	 */
-	public boolean write(String tag, long timeStamp);
+	public boolean write(String tag, long timeStamp, Object caller);
 
 	/**
 	 * Writes an entry to the log.
@@ -63,20 +66,24 @@ public interface ISystemLog {
 	 *            The time stamp in milliseconds for the given entry.
 	 * @param information
 	 *            The additional information for the given entry.
-	 * @return True, if the entry could be written; false, else (e.g., entry is
-	 *         too old).
+	 * @param caller
+	 *            The entity, which wants to write the entry.
+	 * @return True, if the entry could be written; false, else (e.g., caller
+	 *         has no permission or entry is too old).
 	 */
-	public boolean write(String tag, long timeStamp, String information);
+	public boolean write(String tag, long timeStamp, String information, Object caller);
 
 	/**
 	 * Writes several entries to the log.
 	 * 
 	 * @param entries
 	 *            The given entries ordered by time stamp (older entries first).
-	 * @return True, if the entries could be written; false, else (e.g., an
-	 *         entry is too old).
+	 * @param caller
+	 *            The entity, which wants to write the entry.
+	 * @return True, if the entry could be written; false, else (e.g., caller
+	 *         has no permission or entry is too old).
 	 */
-	public boolean write(List<ISysLogEntry> entries);
+	public boolean write(List<ISysLogEntry> entries, Object caller);
 
 	/**
 	 * Registers a listener.
