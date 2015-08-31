@@ -1,18 +1,17 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
-public abstract class AbstractCApplicationTimestamp extends AbstractRule {
+public abstract class AbstractCApplicationTimestamp<T extends TimestampAO> extends AbstractRule<TimestampAO> {
 
 	public AbstractCApplicationTimestamp(String name) {
 		super(name);
 	}
 
-	public boolean isExecutable(ILogicalOperator logicalOperator,
+	public boolean isExecutable(TimestampAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
 		if (logicalOperator instanceof TimestampAO) {
@@ -38,9 +37,6 @@ public abstract class AbstractCApplicationTimestamp extends AbstractRule {
 		return false;	
 	}
 
-	@Override
-	public Class<?> getConditionClass() {
-		return TimestampAO.class;
-	}
+
 
 }

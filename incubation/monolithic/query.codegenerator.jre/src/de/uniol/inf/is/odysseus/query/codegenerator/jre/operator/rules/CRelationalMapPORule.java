@@ -10,14 +10,14 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCRelationalMapPORule;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 
-public class CRelationalMapPORule extends  AbstractCRelationalMapPORule{
+public class CRelationalMapPORule extends  AbstractCRelationalMapPORule<MapAO>{
 	
 	public CRelationalMapPORule() {
 		super(CRelationalMapPORule.class.getName());
 	}
 	
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator logicalOperator) {
+	public CodeFragmentInfo getCode(MapAO logicalOperator) {
 		CodeFragmentInfo mapPO = new CodeFragmentInfo();
 	
 		if(logicalOperator instanceof MapAO){

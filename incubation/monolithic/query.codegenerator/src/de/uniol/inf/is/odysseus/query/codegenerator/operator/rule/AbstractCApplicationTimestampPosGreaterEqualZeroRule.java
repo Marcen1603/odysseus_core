@@ -7,19 +7,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
 
-public abstract class AbstractCApplicationTimestampPosGreaterEqualZeroRule extends AbstractRule {
+public abstract class AbstractCApplicationTimestampPosGreaterEqualZeroRule<T extends TimestampAO> extends AbstractRule<TimestampAO> {
 
 	public AbstractCApplicationTimestampPosGreaterEqualZeroRule(String name) {
 		super(name);
 	}
 
-	@Override
-	public Class<?> getConditionClass() {
-		return TimestampAO.class;
-	}
+
 
 	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
+	public boolean isExecutable(TimestampAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
 		if (logicalOperator instanceof TimestampAO) {

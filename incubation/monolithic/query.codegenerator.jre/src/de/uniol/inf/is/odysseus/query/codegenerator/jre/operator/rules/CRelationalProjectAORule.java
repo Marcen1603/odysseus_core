@@ -10,14 +10,14 @@ import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInfo
 
 
 //TProjectAORule
-public class CRelationalProjectAORule extends AbstractCRelationalProjectAORule{
+public class CRelationalProjectAORule extends AbstractCRelationalProjectAORule<ProjectAO>{
 	
 	public CRelationalProjectAORule() {
 		super(CRelationalProjectAORule.class.getName());
 	}
 
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(ProjectAO operator) {
 		CodeFragmentInfo projectPO = new CodeFragmentInfo();
 		
 

@@ -3,19 +3,19 @@ package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
+public abstract class AbstractCCSVFileSinkRule<T extends CSVFileSink> extends AbstractRule<CSVFileSink> {
 
 	public AbstractCCSVFileSinkRule(String name) {
 		super(name);
 	}
 
-	public boolean isExecutable(ILogicalOperator logicalOperator,
+	public boolean isExecutable(CSVFileSink logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
 		if (logicalOperator instanceof AbstractSenderAO) {
@@ -40,11 +40,9 @@ public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 		return false;
 	}
 
-	public Class<?> getConditionClass() {
-		return AbstractSenderAO.class;
-	}
 
-	public void analyseOperator(ILogicalOperator logicalOperator,
+
+	public void analyseOperator(AbstractSenderAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
 		AbstractSenderAO abstractSenderAO = (AbstractSenderAO) logicalOperator;
@@ -59,7 +57,7 @@ public abstract class AbstractCCSVFileSinkRule extends AbstractRule {
 	}
 
 	@Override
-	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
+	public void addOperatorConfiguration(CSVFileSink logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
 		AbstractSenderAO abstractSenderAO = (AbstractSenderAO) logicalOperator;

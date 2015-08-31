@@ -24,14 +24,14 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreati
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
-public class CJoinTIPORule extends  AbstractCJoinTIPORule{
+public class CJoinTIPORule extends  AbstractCJoinTIPORule<JoinAO>{
 
 	public CJoinTIPORule() {
 		super(CJoinTIPORule.class.getName());
 	}
 
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(JoinAO operator) {
 		
 		CodeFragmentInfo joinTIPO = new CodeFragmentInfo();
 		

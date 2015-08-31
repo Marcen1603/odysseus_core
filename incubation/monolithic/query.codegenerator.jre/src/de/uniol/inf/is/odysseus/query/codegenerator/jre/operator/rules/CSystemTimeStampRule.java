@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
@@ -10,7 +9,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSyste
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SystemTimeIntervalFactory;
 
-public class CSystemTimeStampRule extends AbstractCSystemTimeStampRule{
+public class CSystemTimeStampRule extends AbstractCSystemTimeStampRule<TimestampAO>{
 
 	public CSystemTimeStampRule() {
 		super(CSystemTimeStampRule.class.getName());
@@ -19,7 +18,7 @@ public class CSystemTimeStampRule extends AbstractCSystemTimeStampRule{
 	
 	
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(TimestampAO operator) {
 		CodeFragmentInfo systemTimeCode = new CodeFragmentInfo();
 		
 		//OperatorVariable holen, auf den der Timestamp angewendet werden soll 

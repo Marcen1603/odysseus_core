@@ -9,13 +9,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCCSVFileSourceRule extends AbstractRule {
+public abstract class AbstractCCSVFileSourceRule<T extends CSVFileSource> extends AbstractRule<CSVFileSource> {
 
 	public AbstractCCSVFileSourceRule(String name) {
 		super(name);
 	}
 
-	public boolean isExecutable(ILogicalOperator logicalOperator,
+	public boolean isExecutable(CSVFileSource logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
 		if (logicalOperator instanceof CSVFileSource) {
@@ -37,12 +37,9 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule {
 		return false;
 	}
 
-	@Override
-	public Class<?> getConditionClass() {
-		return CSVFileSource.class;
-	}
 
-	public void analyseOperator(ILogicalOperator logicalOperator,
+
+	public void analyseOperator(CSVFileSource logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
 		CSVFileSource csvFileSource = (CSVFileSource) logicalOperator;
@@ -59,7 +56,7 @@ public abstract class AbstractCCSVFileSourceRule extends AbstractRule {
 	}
 
 	@Override
-	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
+	public void addOperatorConfiguration(CSVFileSource logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
 		CSVFileSource csvFileSourceOP = (CSVFileSource) logicalOperator;

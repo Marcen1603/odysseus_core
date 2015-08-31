@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
+import java.lang.reflect.ParameterizedType;
+
 import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -7,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractRule implements IOperatorRule {
+public abstract class AbstractRule<T extends ILogicalOperator> implements IOperatorRule<T> {
 
 	private ComponentContext context;
 
@@ -37,6 +39,15 @@ public abstract class AbstractRule implements IOperatorRule {
 		return this.targetPlatform;
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	public Class<T> getConditionClass() {
+		ParameterizedType parameterizedType = (ParameterizedType) getClass()
+				.getGenericSuperclass();
+		return (Class<T>) parameterizedType.getActualTypeArguments()[0];
+	}
+
+	
 	/*
 	 * optional
 	 */

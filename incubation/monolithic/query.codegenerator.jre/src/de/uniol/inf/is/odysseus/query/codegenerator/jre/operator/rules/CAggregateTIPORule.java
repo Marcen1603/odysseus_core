@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -27,14 +26,14 @@ import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInfo
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 
 
-public class CAggregateTIPORule extends AbstractAggregateTIPORule{
+public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 	
 	public CAggregateTIPORule() {
 		super(CAggregateTIPORule.class.getName());
 	}
 	
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(AggregateAO operator) {
 		
 		
 		

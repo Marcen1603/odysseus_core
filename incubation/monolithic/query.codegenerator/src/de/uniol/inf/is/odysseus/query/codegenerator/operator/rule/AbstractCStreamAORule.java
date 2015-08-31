@@ -9,14 +9,14 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCStreamAORule extends AbstractRule {
+public abstract class AbstractCStreamAORule<T extends StreamAO> extends AbstractRule<StreamAO> {
 
 	public AbstractCStreamAORule(String name) {
 		super(name);
 	}
 
 	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
+	public boolean isExecutable(StreamAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
 		if (logicalOperator instanceof StreamAO) {
@@ -26,12 +26,9 @@ public abstract class AbstractCStreamAORule extends AbstractRule {
 		}
 	}
 
-	@Override
-	public Class<?> getConditionClass() {
-		return StreamAO.class;
-	}
 
-	public void analyseOperator(ILogicalOperator logicalOperator,
+
+	public void analyseOperator(StreamAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
 		StreamAO streamAO = (StreamAO) logicalOperator;

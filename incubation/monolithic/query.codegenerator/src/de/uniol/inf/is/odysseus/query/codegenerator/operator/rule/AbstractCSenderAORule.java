@@ -9,14 +9,14 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 
-public abstract class AbstractCSenderAORule extends AbstractRule {
+public abstract class AbstractCSenderAORule<T extends SenderAO> extends AbstractRule<SenderAO> {
 
 	public AbstractCSenderAORule(String name) {
 		super(name);
 	}
 
 	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
+	public boolean isExecutable(SenderAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 		if (logicalOperator instanceof SenderAO) {
 			SenderAO senderAO = (SenderAO) logicalOperator;
@@ -36,13 +36,9 @@ public abstract class AbstractCSenderAORule extends AbstractRule {
 		return false;
 	}
 
-	@Override
-	public Class<?> getConditionClass() {
-		return SenderAO.class;
-	}
 
 	@Override
-	public void analyseOperator(ILogicalOperator logicalOperator,
+	public void analyseOperator(SenderAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
 		SenderAO dummySenderAO = (SenderAO) logicalOperator;

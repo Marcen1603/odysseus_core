@@ -12,14 +12,14 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformati
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
-public abstract class AbstractCJoinTIPORule extends AbstractRule {
+public abstract class AbstractCJoinTIPORule<T extends JoinAO> extends AbstractRule<JoinAO> {
 
 	public AbstractCJoinTIPORule(String name) {
 		super(name);
 	}
 
 	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
+	public boolean isExecutable(JoinAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 		if (logicalOperator instanceof JoinAO) {
 
@@ -28,13 +28,10 @@ public abstract class AbstractCJoinTIPORule extends AbstractRule {
 		return false;
 	}
 
-	@Override
-	public Class<?> getConditionClass() {
-		return JoinTIPO.class;
-	}
+
 
 	@Override
-	public void analyseOperator(ILogicalOperator logicalOperator,
+	public void analyseOperator(JoinAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
 		JoinAO joinAO = (JoinAO) logicalOperator;

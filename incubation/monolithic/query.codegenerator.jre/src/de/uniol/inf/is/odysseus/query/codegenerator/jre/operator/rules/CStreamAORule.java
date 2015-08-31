@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCStrea
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
-public class CStreamAORule extends AbstractCStreamAORule{
+public class CStreamAORule extends AbstractCStreamAORule<StreamAO>{
 	
 	public CStreamAORule() {
 		super(CStreamAORule.class.getName());
@@ -28,7 +28,7 @@ public class CStreamAORule extends AbstractCStreamAORule{
 	
 
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(StreamAO operator) {
 	CodeFragmentInfo receiverPO = new CodeFragmentInfo();
 		
 		StreamAO streamAO = (StreamAO)operator;

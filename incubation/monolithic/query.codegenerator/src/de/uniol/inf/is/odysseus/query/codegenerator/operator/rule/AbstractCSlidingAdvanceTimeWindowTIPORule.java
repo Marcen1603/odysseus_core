@@ -1,27 +1,22 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
-public abstract class AbstractCSlidingAdvanceTimeWindowTIPORule extends
-		AbstractRule {
+public abstract class AbstractCSlidingAdvanceTimeWindowTIPORule<T extends TimeWindowAO> extends
+		AbstractRule<TimeWindowAO>{
 
 	public AbstractCSlidingAdvanceTimeWindowTIPORule(String name) {
 		super(name);
 	}
 
-	@Override
-	public Class<? super TimeWindowAO> getConditionClass() {
-		return TimeWindowAO.class;
-	}
 
 	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
+	public boolean isExecutable(TimeWindowAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
-		if (logicalOperator instanceof AbstractWindowAO) {
+	
 
 			AbstractWindowAO operator = (AbstractWindowAO) logicalOperator;
 			switch (operator.getWindowType()) {
@@ -35,8 +30,8 @@ public abstract class AbstractCSlidingAdvanceTimeWindowTIPORule extends
 				return false;
 			}
 
-		}
-		return false;
+	
+	
 	}
 
 }

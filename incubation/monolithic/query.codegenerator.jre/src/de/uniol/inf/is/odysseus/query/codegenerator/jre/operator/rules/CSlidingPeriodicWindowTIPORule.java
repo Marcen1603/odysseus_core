@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWidthAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
@@ -14,7 +15,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSlidi
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingPeriodicWindowTIPO;
 
-public class CSlidingPeriodicWindowTIPORule extends AbstractCSlidingPeriodicWindowTIPORule{
+public class CSlidingPeriodicWindowTIPORule extends AbstractCSlidingPeriodicWindowTIPORule<AbstractWindowAO>{
 	
 	public CSlidingPeriodicWindowTIPORule(){
 		super(CSlidingPeriodicWindowTIPORule.class.getName());
@@ -22,7 +23,7 @@ public class CSlidingPeriodicWindowTIPORule extends AbstractCSlidingPeriodicWind
 
 
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(AbstractWindowAO operator) {
 		CodeFragmentInfo slidingWindow = new CodeFragmentInfo();
 		
 		StringBuilder code = new StringBuilder();

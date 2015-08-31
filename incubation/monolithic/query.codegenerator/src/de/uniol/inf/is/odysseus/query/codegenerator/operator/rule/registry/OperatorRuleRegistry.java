@@ -19,23 +19,28 @@ public class OperatorRuleRegistry {
 	
 	private static Logger LOG = LoggerFactory.getLogger(OperatorRuleRegistry.class);
 	
-	static Map<String, Map<String,IOperatorRule>> operatorRuleList = new HashMap<String, Map<String,IOperatorRule>>();
+	static Map<String, Map<String,IOperatorRule<ILogicalOperator>>> operatorRuleList = new HashMap<String, Map<String,IOperatorRule<ILogicalOperator>>>();
 	
 	
-	public static IOperatorRule getOperatorRules(String targetPlatform, ILogicalOperator operator, TransformationConfiguration transformationConfiguration){
-		List<IOperatorRule> acceptedRules = new ArrayList<IOperatorRule>();
+	public static IOperatorRule<?> getOperatorRules(String targetPlatform, ILogicalOperator operator, TransformationConfiguration transformationConfiguration){
+		List<IOperatorRule<?>> acceptedRules = new ArrayList<IOperatorRule<?>>();
 		
 
 		//targetplatform vorhanden
 		if(operatorRuleList.containsKey(targetPlatform.toLowerCase())){
 			
-			Map<String,IOperatorRule> rules = operatorRuleList.get(targetPlatform.toLowerCase());
+			Map<String,IOperatorRule<ILogicalOperator>> rules = operatorRuleList.get(targetPlatform.toLowerCase());
 			
-			for (Entry<String, IOperatorRule> entry : rules.entrySet())
+			for (Entry<String, IOperatorRule<ILogicalOperator>> entry : rules.entrySet())
 			{
-					if(entry.getValue().isExecutable(operator, transformationConfiguration )){
+				Class<ILogicalOperator> conditionClass = entry.getValue().getConditionClass();
+				//Class<ILogicalOperator> conditionClass = null;
+				if(conditionClass.equals(operator.getClass())){
+					if(entry.getValue().isExecutable(conditionClass.cast(operator), transformationConfiguration )){
 						acceptedRules.add(entry.getValue());
 					}
+				}
+					
 			}
 			
 		}
@@ -60,7 +65,7 @@ public class OperatorRuleRegistry {
 			//Operator noch nicht vorhanden?
 			if(operatorRuleList.get(rule.getTargetPlatform().toLowerCase())== null || !operatorRuleList.get(rule.getTargetPlatform().toLowerCase()).containsKey(rule.getName().toLowerCase())){
 				//Operatorname + ITransformationOperator Map erzeugen
-				Map<String,IOperatorRule> tempMap = new HashMap<String,IOperatorRule>();
+				Map<String,IOperatorRule<ILogicalOperator>> tempMap = new HashMap<String,IOperatorRule<ILogicalOperator>>();
 				tempMap.put(rule.getName(), rule);
 				
 				//verschachtelte Map abspeichern
@@ -72,7 +77,7 @@ public class OperatorRuleRegistry {
 		}else{
 			//Programmiersprache existiert bereits nur Operator hinzufügen			
 			if(!operatorRuleList.get(rule.getTargetPlatform().toLowerCase()).containsKey(rule.getName())){
-				Map<String,IOperatorRule> tempMap = operatorRuleList.get(rule.getTargetPlatform().toLowerCase());
+				Map<String,IOperatorRule<ILogicalOperator>> tempMap = operatorRuleList.get(rule.getTargetPlatform().toLowerCase());
 				tempMap.put(rule.getName(), rule);
 			}else{
 				LOG.debug("Operator "+rule.getName()+" -> "+rule.getTargetPlatform().toLowerCase()+" already added" );

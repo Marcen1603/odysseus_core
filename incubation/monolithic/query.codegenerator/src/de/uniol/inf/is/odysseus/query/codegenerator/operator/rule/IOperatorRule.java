@@ -5,28 +5,28 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 
-public interface IOperatorRule {
+public interface IOperatorRule<T extends ILogicalOperator> {
 
 	public String getName();
 
 	public int getPriority();
 
-	public boolean isExecutable(ILogicalOperator operator,
+	public boolean isExecutable(T operator,
 			TransformationConfiguration transformationConfiguration);
 
 	public String getTargetPlatform();
 
-	public Class<?> getConditionClass();
+	public Class<T> getConditionClass();
 
-	public CodeFragmentInfo getCode(ILogicalOperator operator);
+	public CodeFragmentInfo getCode(T operator);
 
-	public void analyseOperator(ILogicalOperator logicalOperator,
+	public void analyseOperator(T logicalOperator,
 			QueryAnalyseInformation transformationInformation);
 
-	public void addDataHandlerFromSDFSchema(ILogicalOperator logicalOperator,
+	public void addDataHandlerFromSDFSchema(T logicalOperator,
 			QueryAnalyseInformation transformationInformation);
 
-	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
+	public void addOperatorConfiguration(T logicalOperator,
 			QueryAnalyseInformation transformationInformation);
 
 }

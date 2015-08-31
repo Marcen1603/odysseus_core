@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSenderAORule;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 
-public class CSenderAORule extends AbstractCSenderAORule{
+public class CSenderAORule extends AbstractCSenderAORule<SenderAO>{
 	
 	public CSenderAORule() {
 		super(CSenderAORule.class.getName());
@@ -22,7 +22,7 @@ public class CSenderAORule extends AbstractCSenderAORule{
 
 	
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator logicalOperator) {
+	public CodeFragmentInfo getCode(SenderAO logicalOperator) {
 	CodeFragmentInfo senderPO = new CodeFragmentInfo();
 		
 		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(logicalOperator);

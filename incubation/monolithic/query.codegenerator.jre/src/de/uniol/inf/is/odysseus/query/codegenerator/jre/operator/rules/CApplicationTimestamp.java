@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
@@ -10,7 +9,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCAppli
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
-public class CApplicationTimestamp extends AbstractCApplicationTimestamp{
+public class CApplicationTimestamp extends AbstractCApplicationTimestamp<TimestampAO>{
 	
 	
 	public CApplicationTimestamp() {
@@ -18,7 +17,7 @@ public class CApplicationTimestamp extends AbstractCApplicationTimestamp{
 	}
 
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(TimestampAO operator) {
 	CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
 		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator.getSubscribedToSource().iterator().next().getTarget());

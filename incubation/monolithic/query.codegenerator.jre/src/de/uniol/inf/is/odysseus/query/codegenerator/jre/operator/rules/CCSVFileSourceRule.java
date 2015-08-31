@@ -17,14 +17,14 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCCSVFi
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
-public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
+public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule<CSVFileSource>{
 
 	public CCSVFileSourceRule() {
 		super(CCSVFileSourceRule.class.getName());
 	}
 
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(CSVFileSource operator) {
 		CodeFragmentInfo csvFileSource = new CodeFragmentInfo();
 		
 		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);

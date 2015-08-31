@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
@@ -11,14 +10,14 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
-public abstract class AbstractCSelectAORule extends AbstractRule {
+public abstract class AbstractCSelectAORule<T extends SelectAO> extends AbstractRule<SelectAO> {
 
 	public AbstractCSelectAORule(String name) {
 		super(name);
 	}
 
 	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
+	public boolean isExecutable(SelectAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 		if (logicalOperator instanceof SelectAO) {
 			return true;
@@ -27,12 +26,8 @@ public abstract class AbstractCSelectAORule extends AbstractRule {
 		}
 	}
 
-	@Override
-	public Class<?> getConditionClass() {
-		return SelectAO.class;
-	}
 
-	public void analyseOperator(ILogicalOperator logicalOperator,
+	public void analyseOperator(SelectAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
 		SelectAO selectAO = (SelectAO) logicalOperator;

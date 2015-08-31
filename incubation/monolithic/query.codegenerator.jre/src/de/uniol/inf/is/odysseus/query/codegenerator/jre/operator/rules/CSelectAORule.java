@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSelec
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
-public class CSelectAORule extends AbstractCSelectAORule{
+public class CSelectAORule extends AbstractCSelectAORule<SelectAO>{
 
 	public CSelectAORule() {
 		super(CSelectAORule.class.getName());
@@ -20,7 +20,7 @@ public class CSelectAORule extends AbstractCSelectAORule{
 
 
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(SelectAO operator) {
 	CodeFragmentInfo selectPO = new CodeFragmentInfo();
 		
 		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);

@@ -1,23 +1,19 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
-public abstract class AbstractCSlidingPeriodicWindowTIPORule extends
-		AbstractRule {
+public abstract class AbstractCSlidingPeriodicWindowTIPORule<T extends AbstractWindowAO> extends
+		AbstractRule<AbstractWindowAO> {
 
 	public AbstractCSlidingPeriodicWindowTIPORule(String name) {
 		super(name);
 	}
 
-	@Override
-	public Class<?> getConditionClass() {
-		return AbstractWindowAO.class;
-	}
+
 
 	@Override
-	public boolean isExecutable(ILogicalOperator logicalOperator,
+	public boolean isExecutable(AbstractWindowAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
 		if (logicalOperator instanceof AbstractWindowAO) {

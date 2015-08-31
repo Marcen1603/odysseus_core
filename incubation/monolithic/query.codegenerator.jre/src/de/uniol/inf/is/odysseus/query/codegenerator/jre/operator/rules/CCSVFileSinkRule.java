@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
@@ -11,14 +10,14 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCCSVFileSinkRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 
-public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule {
+public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule<CSVFileSink> {
 	
 	public CCSVFileSinkRule() {
 		super(CCSVFileSinkRule.class.getName());
 	}
 
 	@Override
-	public CodeFragmentInfo getCode(ILogicalOperator operator) {
+	public CodeFragmentInfo getCode(CSVFileSink operator) {
 		CodeFragmentInfo csvFileSink = new CodeFragmentInfo();
 		
 		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
