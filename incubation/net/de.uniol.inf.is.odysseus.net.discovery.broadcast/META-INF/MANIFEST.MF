@@ -4,6 +4,9 @@ Bundle-Name: OdysseusNet Broadcast Discovery
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.net.discovery.broadcast
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.net.discovery.broadcast.BroadcastDiscoveryPlugIn
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime,
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ com.google.guava;bundle-version="18.0.0",
+ io.netty;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
