@@ -5,7 +5,6 @@ import org.osgi.framework.BundleContext;
 
 public class BroadcastDiscoveryPlugIn implements BundleActivator {
 
-
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 	}

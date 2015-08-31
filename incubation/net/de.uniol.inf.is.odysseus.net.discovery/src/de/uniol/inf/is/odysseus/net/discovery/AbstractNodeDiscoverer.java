@@ -8,14 +8,13 @@ public abstract class AbstractNodeDiscoverer implements INodeDiscoverer {
 	private INodeManager manager;
 
 	@Override
-	public final void start(INodeManager manager) {
+	public final void start(INodeManager manager) throws OdysseusNetDiscoveryException {
 		this.manager = manager;
 		startImpl(manager);
-		
 		started = true;
 	}
 
-	protected abstract void startImpl(INodeManager manager);
+	protected abstract void startImpl(INodeManager manager) throws OdysseusNetDiscoveryException;
 	
 	protected final INodeManager getNodeManager() {
 		return manager;
