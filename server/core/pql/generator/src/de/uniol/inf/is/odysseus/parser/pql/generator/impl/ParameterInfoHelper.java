@@ -70,6 +70,7 @@ public class ParameterInfoHelper {
 					parameter = parameterType.newInstance();
 				} catch (IllegalAccessException e1) {
 					LOG.error("Could not instantial paramatertype {}", parameterType, e1);
+					continue;
 				}
 				Object parameterValue = null;
 				try {
