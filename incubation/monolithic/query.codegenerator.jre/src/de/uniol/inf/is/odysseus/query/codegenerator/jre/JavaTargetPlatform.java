@@ -31,7 +31,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 	private StringBuilder sdfSchemaCode;
 	
 	public JavaTargetPlatform(){
-		super("Java");
+		super("Jre");
 	}
 	
 	@Override
@@ -68,12 +68,12 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
-		CodeFragmentInfo startStreams = CreateJavaDefaultCode.codeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
+		CodeFragmentInfo startStreams = CreateJavaDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
 		
 		importList.addAll(startStreams.getImports());
 	
 		updateProgressBar(75, "Create Java files",StatusType.INFO);
-		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), ExecutorRegistry.getExecutor("Java", parameter.getExecutor()));
+		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), ExecutorRegistry.getExecutor(parameter.getProgramLanguage(), parameter.getExecutor()));
 		
 		try {
 			updateProgressBar(80, "Create Java project",StatusType.INFO);
@@ -127,7 +127,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 				JavaTransformationInformation.getInstance().addOperatorToCodeReady(operator);
 		
 				//generate the default code e.g. SDFSchema
-				CodeFragmentInfo initOp = CreateJavaDefaultCode.initOperator(operator);
+				CodeFragmentInfo initOp = CreateJavaDefaultCode.getCodeForInitOperator(operator);
 				sdfSchemaCode.append(initOp.getCode());
 				
 				//String operatorCode = initOp.getCode();
@@ -152,7 +152,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			}
 			
 			//generate subscription
-			CodeFragmentInfo  subscription = CreateJavaDefaultCode.generateSubscription(operator, queryAnalseInformation);
+			CodeFragmentInfo  subscription = CreateJavaDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
 			if(subscription!= null){
 				bodyCode.append(subscription.getCode());	
 				importList.addAll(subscription.getImports());

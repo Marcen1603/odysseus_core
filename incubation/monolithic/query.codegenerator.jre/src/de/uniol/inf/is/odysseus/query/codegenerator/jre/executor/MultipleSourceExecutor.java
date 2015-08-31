@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInfo
 public class MultipleSourceExecutor extends AbstractExecutor{
 
 	public MultipleSourceExecutor() {
-		super("MultipleSourceExecutor", "Java");
+		super("MultipleSourceExecutor", "JRE");
 	}
 
 	@Override

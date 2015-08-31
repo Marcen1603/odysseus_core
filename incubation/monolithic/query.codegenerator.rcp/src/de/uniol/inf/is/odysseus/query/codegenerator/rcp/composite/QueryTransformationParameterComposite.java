@@ -152,7 +152,7 @@ public class QueryTransformationParameterComposite extends
 				"Sprache:", TargetPlatformRegistry.getAllTargetPlatform());
 
 		comboExecutor = createComboWithLabel(inputTwoGridComposite,
-				"Executor:", ExecutorRegistry.getAllExecutor("Java"));
+				"Executor:", ExecutorRegistry.getAllExecutor("JRE"));
 
 	}
 

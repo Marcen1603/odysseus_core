@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 public class CreateJavaDefaultCode {
 	
-	public static CodeFragmentInfo initOperator(ILogicalOperator operator){
+	public static CodeFragmentInfo getCodeForInitOperator(ILogicalOperator operator){
 		CodeFragmentInfo sdfSchema = new CodeFragmentInfo();
 		
 		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
@@ -53,7 +53,7 @@ public class CreateJavaDefaultCode {
 		return sdfSchema;
 	}
 	
-	public static CodeFragmentInfo codeForAccessFramework(ProtocolHandlerParameter protocolHandlerParameter, Map<String,String> optionMap, ILogicalOperator operator, ITransportDirection direction){
+	public static CodeFragmentInfo getCodeForAccessFramework(ProtocolHandlerParameter protocolHandlerParameter, Map<String,String> optionMap, ILogicalOperator operator, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 	
 		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
@@ -62,17 +62,17 @@ public class CreateJavaDefaultCode {
 		codeFragmentInfo.addImport(ITransportDirection.class.getName());
 		
 		//generate code for options
-		codeFragmentInfo.addCodeFragmentInfo(getCodeForParameterInfoNeu(optionMap,operatorVariable));
+		codeFragmentInfo.addCodeFragmentInfo(getCodeForOptionMap(optionMap,operatorVariable));
 		
 		//setup transportHandler
-		codeFragmentInfo.addCodeFragmentInfo(getCodeForProtocolHandlerNeu(protocolHandlerParameter, operatorVariable, direction));
+		codeFragmentInfo.addCodeFragmentInfo(getCodeForProtocolHandler(protocolHandlerParameter, operatorVariable, direction));
 	
 
 		return codeFragmentInfo;
 	}
 	
 
-	public static CodeFragmentInfo codeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
+	public static CodeFragmentInfo getCodeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
 		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(forOperator);
@@ -113,14 +113,14 @@ public class CreateJavaDefaultCode {
 	}
 	
 	
-	public static CodeFragmentInfo codeForStartStreams(QueryAnalyseInformation queryAnalyseInform, String executor){
+	public static CodeFragmentInfo getCodeForStartStreams(QueryAnalyseInformation queryAnalyseInform, String executor){
 		
-		return codeForStartStreams(queryAnalyseInform.getSinkOpList(),queryAnalyseInform.getSourceOpList(),queryAnalyseInform.getIterableSources(), executor);
+		return getCodeForStartStreams(queryAnalyseInform.getSinkOpList(),queryAnalyseInform.getSourceOpList(),queryAnalyseInform.getIterableSources(), executor);
 	}
 	
 	
 	
-	public static CodeFragmentInfo codeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs,List<ILogicalOperator> iterableSources, String executor){
+	public static CodeFragmentInfo getCodeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs,List<ILogicalOperator> iterableSources, String executor){
 		CodeFragmentInfo startFragment = new CodeFragmentInfo();
 		
 		String firstOP = JavaTransformationInformation.getInstance().getVariable(sourceOPs.get(0));
@@ -145,7 +145,7 @@ public class CreateJavaDefaultCode {
 		startFragment.addCode(startCodeTemplate.getSt().render());
 		
 		if(!iterableSources.isEmpty()){
-			CodeFragmentInfo executorCode = ExecutorRegistry.getExecutor("Java", executor).getStartCode(iterableSources);
+			CodeFragmentInfo executorCode = ExecutorRegistry.getExecutor("JRE", executor).getStartCode(iterableSources);
 			startFragment.addCodeFragmentInfo(executorCode);
 		}
 		
@@ -160,7 +160,7 @@ public class CreateJavaDefaultCode {
 	}
 	
 	
-	public static CodeFragmentInfo generateSubscription(ILogicalOperator operator, QueryAnalyseInformation transformationInformation) {
+	public static CodeFragmentInfo getCodeForSubscription(ILogicalOperator operator, QueryAnalyseInformation transformationInformation) {
 		CodeFragmentInfo codeFragmentInfo =  new CodeFragmentInfo();
 		
 		String operatorVariable = transformationInformation.getVariable(operator);
@@ -223,7 +223,7 @@ public class CreateJavaDefaultCode {
 	
 	
 
-	public static CodeFragmentInfo getCodeForParameterInfoNeu(Map<String, String> optionMap, String operatorVariable){
+	public static CodeFragmentInfo getCodeForOptionMap(Map<String, String> optionMap, String operatorVariable){
 		CodeFragmentInfo codeFragmentInfo= new CodeFragmentInfo();
 		
 		StringTemplate optionMapTemplate = new StringTemplate("utils","optionMap");
@@ -248,7 +248,7 @@ public class CreateJavaDefaultCode {
 	 */
 
 
-	public static CodeFragmentInfo getCodeForProtocolHandlerNeu(ProtocolHandlerParameter protocolHandlerParameter, String operatorVariable, ITransportDirection direction){
+	public static CodeFragmentInfo getCodeForProtocolHandler(ProtocolHandlerParameter protocolHandlerParameter, String operatorVariable, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		Set<String> imports = new HashSet<String>();
 
@@ -388,7 +388,7 @@ public class CreateJavaDefaultCode {
 	}
 	
 	
-	public static CodeFragmentInfo createCodeForSDFAttributeList(List<SDFAttribute> sdfAttributes, String operatorVariable){
+	public static CodeFragmentInfo getCodeForSDFAttributeList(List<SDFAttribute> sdfAttributes, String operatorVariable){
 		CodeFragmentInfo sdfAttributeList = new CodeFragmentInfo();
 		
 		StringTemplate sdfAttributeListTemplate = new StringTemplate("utils","sdfAttributeList");

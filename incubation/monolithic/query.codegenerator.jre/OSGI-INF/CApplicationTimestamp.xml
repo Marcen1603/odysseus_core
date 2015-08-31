@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules.CApplicationTimestamp">
    <implementation class="de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules.CApplicationTimestamp"/>
-   <property name="targetPlatform" type="String" value="Java"/>
+   <property name="targetPlatform" type="String" value="JRE"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule"/>
    </service>

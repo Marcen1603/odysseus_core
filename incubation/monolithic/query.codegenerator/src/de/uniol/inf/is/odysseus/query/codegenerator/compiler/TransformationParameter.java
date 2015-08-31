@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.query.codegenerator.compiler;
 
 public class TransformationParameter {
 	
-	private String programLanguage;
+	private String targetPlatform;
 	private String tempDirectory;
 	private String destinationDirectory;
 	private String odysseusPath;
@@ -10,8 +10,8 @@ public class TransformationParameter {
 	private int queryId;
 	private String executor;
 	
-	public TransformationParameter(String programLanguage, String tempDirectory, String destinationDirectory, int queryId, String odysseusPath, boolean generateOdysseusJar, String executor){
-		this.programLanguage = programLanguage;
+	public TransformationParameter(String targetPlatform, String tempDirectory, String destinationDirectory, int queryId, String odysseusPath, boolean generateOdysseusJar, String executor){
+		this.targetPlatform = targetPlatform;
 		this.tempDirectory = tempDirectory;
 		this.destinationDirectory = destinationDirectory;
 		this.queryId = queryId;
@@ -22,10 +22,10 @@ public class TransformationParameter {
 	
 	
 	public String getProgramLanguage() {
-		return programLanguage;
+		return targetPlatform;
 	}
 	public void setProgramLanguage(String programLanguage) {
-		this.programLanguage = programLanguage;
+		this.targetPlatform = programLanguage;
 	}
 	public String getDestinationDirectory() {
 		return destinationDirectory;
@@ -51,7 +51,7 @@ public class TransformationParameter {
 	
 	public String getParameterForDebug(){
 		StringBuilder debugParameter = new StringBuilder();
-		debugParameter.append("Programlanguage:" +programLanguage);
+		debugParameter.append("Programlanguage:" +targetPlatform);
 		debugParameter.append("Temp path: "+tempDirectory);
 		debugParameter.append("Target path: "+ destinationDirectory);
 		debugParameter.append("QueryId: "+ queryId);

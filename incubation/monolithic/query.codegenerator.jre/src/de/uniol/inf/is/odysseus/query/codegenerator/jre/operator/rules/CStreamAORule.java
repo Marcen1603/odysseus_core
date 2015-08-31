@@ -49,7 +49,7 @@ public class CStreamAORule extends AbstractCStreamAORule{
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
-		CodeFragmentInfo codeAccessFramwork = CreateJavaDefaultCode.codeForAccessFramework(protocolHandlerParameter, accessAO.getOptionsMap(),operator, direction);
+		CodeFragmentInfo codeAccessFramwork = CreateJavaDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, accessAO.getOptionsMap(),operator, direction);
 		receiverPO.addCodeFragmentInfo(codeAccessFramwork);
 		 
 		StringTemplate receiverPOTemplate = new StringTemplate("operator","receiverPO");

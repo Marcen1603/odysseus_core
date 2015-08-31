@@ -42,7 +42,7 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule{
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
 		
-		csvFileSource.addCodeFragmentInfo(CreateJavaDefaultCode.codeForAccessFramework(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
+		csvFileSource.addCodeFragmentInfo(CreateJavaDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
 	
 		//important add a timestamp op to the source
 		Utils.createTimestampAO(operator, csvFileSourceOP.getDateFormat());

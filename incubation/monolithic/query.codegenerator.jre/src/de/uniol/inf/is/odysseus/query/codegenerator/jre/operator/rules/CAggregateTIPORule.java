@@ -48,7 +48,7 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule{
 		
 		aggregateTIPO.addCodeFragmentInfo(CreateJavaDefaultCode.getCodeForSDFSchema(aggregateAO.getOutputSchemaIntern(0), operatorVariable+"OutputSchemaIntern"));
 		
-		aggregateTIPO.addCodeFragmentInfo(CreateJavaDefaultCode.createCodeForSDFAttributeList(aggregateAO.getGroupingAttributes(), operatorVariable+"GroupingAttribute"));
+		aggregateTIPO.addCodeFragmentInfo(CreateJavaDefaultCode.getCodeForSDFAttributeList(aggregateAO.getGroupingAttributes(), operatorVariable+"GroupingAttribute"));
 		
 
 		List<String> metaAttributeNames = aggregateAO.getInputSchema().getMetaAttributeNames();

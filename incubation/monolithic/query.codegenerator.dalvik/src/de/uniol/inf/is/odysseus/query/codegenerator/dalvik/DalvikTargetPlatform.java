@@ -61,7 +61,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
-		CodeFragmentInfo startStreams = CreateJavaDefaultCode.codeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
+		CodeFragmentInfo startStreams = CreateJavaDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
 		
 		importList.addAll(startStreams.getImports());
 		
@@ -108,7 +108,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 				JavaTransformationInformation.getInstance().addOperatorToCodeReady(operator);
 		
 				//generate the default code e.g. SDFSchema
-				CodeFragmentInfo initOp = CreateJavaDefaultCode.initOperator(operator);
+				CodeFragmentInfo initOp = CreateJavaDefaultCode.getCodeForInitOperator(operator);
 				sdfSchemaCode.append(initOp.getCode());
 				
 				//String operatorCode = initOp.getCode();
@@ -130,7 +130,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 			}
 			
 			//generate subscription
-			CodeFragmentInfo  subscription = CreateJavaDefaultCode.generateSubscription(operator, queryAnalseInformation);
+			CodeFragmentInfo  subscription = CreateJavaDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
 			if(subscription!= null){
 				bodyCode.append(subscription.getCode());	
 				importList.addAll(subscription.getImports());

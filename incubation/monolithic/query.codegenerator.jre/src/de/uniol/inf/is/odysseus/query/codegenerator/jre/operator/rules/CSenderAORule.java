@@ -44,7 +44,7 @@ public class CSenderAORule extends AbstractCSenderAORule{
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
-		CodeFragmentInfo codeAccessFramwork = CreateJavaDefaultCode.codeForAccessFramework(protocolHandlerParameter, senderAO.getOptionsMap(),logicalOperator, direction);
+		CodeFragmentInfo codeAccessFramwork = CreateJavaDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, senderAO.getOptionsMap(),logicalOperator, direction);
 		senderPO.addCodeFragmentInfo(codeAccessFramwork);
 		
 		
