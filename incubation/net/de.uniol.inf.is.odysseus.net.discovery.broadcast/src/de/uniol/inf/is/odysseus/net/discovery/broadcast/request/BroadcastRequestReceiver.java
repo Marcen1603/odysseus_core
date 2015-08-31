@@ -14,7 +14,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
-public class BroadcastRequestSender {
+public class BroadcastRequestReceiver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BroadcastRequestSender.class);
 	
@@ -23,7 +23,7 @@ public class BroadcastRequestSender {
 
 	private ChannelFuture channelFuture;
 
-	public BroadcastRequestSender() {
+	public BroadcastRequestReceiver() {
 		b.group(workerGroup);
 		b.channel(NioDatagramChannel.class);
 		b.handler(new ChannelInitializer<Channel>() {
@@ -37,11 +37,11 @@ public class BroadcastRequestSender {
 
 	public void start() throws OdysseusNetDiscoveryException {
 		try {
-			LOG.info("Binding netty server for broadcasting messages to port {}", BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_PORT);
-			channelFuture = b.bind(BroadcastDiscoveryPlugIn.BROADCAST_REQUEST_PORT).sync();
-			LOG.info("Binding was successful");
+			LOG.info("Binding netty server for receiving broadcasting messages to port {}", BroadcastDiscoveryPlugIn.BROADCAST_ANSWER_PORT);
+			channelFuture = b.bind(BroadcastDiscoveryPlugIn.BROADCAST_ANSWER_PORT).sync();
+			LOG.info("Binding for receiving messages was successful");
 		} catch (InterruptedException e) {
-			throw new OdysseusNetDiscoveryException("Could not start server for sending broadcast messages", e);
+			throw new OdysseusNetDiscoveryException("Could not start server for receiving broadcast messages", e);
 		}
 	}
 
@@ -49,7 +49,7 @@ public class BroadcastRequestSender {
 		workerGroup.shutdownGracefully();
 
 		channelFuture.channel().close();
-		LOG.info("Netty server for broadcasting messages stopped");
+		LOG.info("Netty server for receiving messages stopped");
 	}
 
 }
