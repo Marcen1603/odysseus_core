@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import sun.awt.util.IdentityArrayList;
+import de.uniol.inf.is.odysseus.core.collection.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class OwnerHandler implements IOwnedOperator {

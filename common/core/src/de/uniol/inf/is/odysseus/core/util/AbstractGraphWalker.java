@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.core.util;
 
 import java.util.List;
 
-import sun.awt.util.IdentityArrayList;
+import de.uniol.inf.is.odysseus.core.collection.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.ISubscription;

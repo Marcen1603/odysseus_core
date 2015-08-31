@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.util;
 
 import java.util.List;
 
-import sun.awt.util.IdentityArrayList;
+import de.uniol.inf.is.odysseus.core.collection.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
