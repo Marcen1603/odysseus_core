@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.feature"
-      label="de.uniol.inf.is.odysseus.peer.loadbalancing.active.dynamic.feature"
+      id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload.feature"
+      label="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload.feature"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -102,6 +102,13 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.strategy.odyload"
          download-size="0"
          install-size="0"
          version="0.0.0"
