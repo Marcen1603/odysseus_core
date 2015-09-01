@@ -35,149 +35,126 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
  * 
  */
 public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
-    private static Logger LOG = LoggerFactory.getLogger(ProbabilisticJoinTIPO.class);
+	private static Logger LOG = LoggerFactory.getLogger(ProbabilisticJoinTIPO.class);
 
 	public ProbabilisticJoinTIPO(IMetadataMergeFunction<K> metadataMerge) {
 		super(metadataMerge);
 	}
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void process_next(final T object, final int port) {
-        this.transferFunction.newElement(object, port);
 
-        if (this.isDone()) {
-            // TODO bei den sources abmelden ?? MG: Warum??
-            // propagateDone gemeint?
-            // JJ: weil man schon fertig sein
-            // kann, wenn ein strom keine elemente liefert, der
-            // andere aber noch, dann muss man von dem anderen keine
-            // eingaben mehr verarbeiten, was dazu fuehren kann,
-            // dass ein kompletter teilplan nicht mehr ausgefuehrt
-            // werden muss, man also ressourcen spart
-            return;
-        }
-        if (ProbabilisticJoinTIPO.LOG.isDebugEnabled()) {
-            if (!this.isOpen()) {
-                ProbabilisticJoinTIPO.LOG.error("process next called on non opened operator " + this + " with " + object + " from " + port);
-                return;
-            }
-        }
-        final int otherport = port ^ 1;
-        final Order order = Order.fromOrdinal(port);
-        Iterator<T> qualifies;
-        // Avoid removing elements while querying for potential hits
-        synchronized (this) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void process_next(final T object, final int port) {
+		this.transferFunction.newElement(object, port);
 
-            if (this.inOrder) {
-                this.areas[otherport].purgeElements(object, order);
-            }
+		if (this.isDone()) {
+			// TODO bei den sources abmelden ?? MG: Warum??
+			// propagateDone gemeint?
+			// JJ: weil man schon fertig sein
+			// kann, wenn ein strom keine elemente liefert, der
+			// andere aber noch, dann muss man von dem anderen keine
+			// eingaben mehr verarbeiten, was dazu fuehren kann,
+			// dass ein kompletter teilplan nicht mehr ausgefuehrt
+			// werden muss, man also ressourcen spart
+			return;
+		}
+		if (ProbabilisticJoinTIPO.LOG.isDebugEnabled()) {
+			if (!this.isOpen()) {
+				ProbabilisticJoinTIPO.LOG.error(
+						"process next called on non opened operator " + this + " with " + object + " from " + port);
+				return;
+			}
+		}
+		final int otherport = port ^ 1;
+		final Order order = Order.fromOrdinal(port);
+		Iterator<T> qualifies;
+		// Avoid removing elements while querying for potential hits
+		synchronized (this) {
 
-            // status could change, if the other port was done and
-            // its sweeparea is now empty after purging
-            if (this.isDone()) {
-                this.propagateDone();
-                return;
-            }
+			if (this.inOrder) {
+				this.areas[otherport].purgeElements(object, order);
+			}
 
-            // depending on card, delete hits from areas
-            // deleting if port is ONE-side
-            // cases for ONE_MANY, MANY_ONE:
-            // ONE side element is earlier than MANY side elements, nothing will
-            // be found
-            // and nothing will be removed
-            // ONE side element is later than some MANY side elements, find all
-            // corresponding elements and remove them
-            boolean extract = false;
-            if (this.card != null) {
-                switch (this.card) {
-                    case ONE_ONE:
-                        extract = true;
-                        break;
-                    case MANY_ONE:
-                        extract = port == 1;
-                        break;
-                    case ONE_MANY:
-                        extract = port == 0;
-                        break;
-                    default:
-                        break;
-                }
-            }
+			// status could change, if the other port was done and
+			// its sweeparea is now empty after purging
+			if (this.isDone()) {
+				this.propagateDone();
+				return;
+			}
 
-            qualifies = this.areas[otherport].queryCopy(object, order, extract);
+			// depending on card, delete hits from areas
+			// deleting if port is ONE-side
+			// cases for ONE_MANY, MANY_ONE:
+			// ONE side element is earlier than MANY side elements, nothing will
+			// be found
+			// and nothing will be removed
+			// ONE side element is later than some MANY side elements, find all
+			// corresponding elements and remove them
+			boolean extract = false;
+			if (this.card != null) {
+				switch (this.card) {
+				case ONE_ONE:
+					extract = true;
+					break;
+				case MANY_ONE:
+					extract = port == 1;
+					break;
+				case ONE_MANY:
+					extract = port == 0;
+					break;
+				default:
+					break;
+				}
+			}
 
-            final boolean hit = qualifies.hasNext();
-            while (qualifies.hasNext()) {
-                final T next = qualifies.next();
+			qualifies = this.areas[otherport].queryCopy(object, order, extract);
 
-                next.setMetadata(this.metadataMerge.mergeMetadata(object.getMetadata(), next.getMetadata()));
+			final boolean hit = qualifies.hasNext();
+			while (qualifies.hasNext()) {
+				T next = qualifies.next();
 
-                // TODO: Merge function in cases where key is same!!
+				next.setMetadata(this.metadataMerge.mergeMetadata(object.getMetadata(), next.getMetadata()));
 
-                // Use from right and overwrite with left
-                if (order == Order.LeftRight) {
 
-                    for (final Entry<String, Serializable> a : object.getAdditionalContent().entrySet()) {
-                        next.setAdditionalContent(a.getKey(), a.getValue());
-                    }
-                    for (final Entry<String, Object> a : object.getMetadataMap().entrySet()) {
-                        next.setMetadata(a.getKey(), a.getValue());
-                    }
-                }
-                else if (order == Order.RightLeft) { // Use from Left and
-                                                     // overwrite with right
-                    final Map<String, Serializable> additionalContent = object.getAdditionalContent();
-                    for (final Entry<String, Serializable> a : next.getAdditionalContent().entrySet()) {
-                        additionalContent.put(a.getKey(), a.getValue());
-                    }
-                    next.setAdditionalContent(additionalContent);
-                    final Map<String, Object> metadataMap = object.getMetadataMap();
+				next = (T) next.merge(next, object, metadataMerge, order);
+				
+				this.transferFunction.transfer(next);
 
-                    for (final Entry<String, Object> a : next.getMetadataMap().entrySet()) {
-                        metadataMap.put(a.getKey(), a.getValue());
-                    }
-                    next.setMetadataMap(metadataMap);
-                }
-                this.transferFunction.transfer(next);
-
-            }
-            // Depending on card insert elements into sweep area
-            if ((this.card == null) || (this.card == Cardinalities.MANY_MANY)) {
-                this.areas[port].insert(object);
-            }
-            else {
-                switch (this.card) {
-                    case ONE_ONE:
-                        // If one to one case, a hit cannot be produce another
-                        // hit
-                        if (!hit) {
-                            this.areas[port].insert(object);
-                        }
-                        break;
-                    case ONE_MANY:
-                        // If from left insert
-                        // if from right and no hit, insert (corresponding left
-                        // element not found now)
-                        if ((port == 0) || ((port == 1) && !hit)) {
-                            this.areas[port].insert(object);
-                        }
-                        break;
-                    case MANY_ONE:
-                        // If from rightt insert
-                        // if from left and no hit, insert (corresponding right
-                        // element not found now)
-                        if ((port == 1) || ((port == 0) && !hit)) {
-                            this.areas[port].insert(object);
-                        }
-                        break;
-                    default:
-                        this.areas[port].insert(object);
-                        break;
-                }
-            }
-        }
-    }
+			}
+			// Depending on card insert elements into sweep area
+			if ((this.card == null) || (this.card == Cardinalities.MANY_MANY)) {
+				this.areas[port].insert(object);
+			} else {
+				switch (this.card) {
+				case ONE_ONE:
+					// If one to one case, a hit cannot be produce another
+					// hit
+					if (!hit) {
+						this.areas[port].insert(object);
+					}
+					break;
+				case ONE_MANY:
+					// If from left insert
+					// if from right and no hit, insert (corresponding left
+					// element not found now)
+					if ((port == 0) || ((port == 1) && !hit)) {
+						this.areas[port].insert(object);
+					}
+					break;
+				case MANY_ONE:
+					// If from rightt insert
+					// if from left and no hit, insert (corresponding right
+					// element not found now)
+					if ((port == 1) || ((port == 0) && !hit)) {
+						this.areas[port].insert(object);
+					}
+					break;
+				default:
+					this.areas[port].insert(object);
+					break;
+				}
+			}
+		}
+	}
 }
