@@ -150,13 +150,7 @@ public class TuplePredicate {
 			Tuple<?> r = fromRightChannel[i] ? right : left;
 			values[i] = r.getAttribute(this.attributePositions[i]);
 		}
-		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
-		additionalContent.putAll(left.getAdditionalContent());
-		additionalContent.putAll(right.getAdditionalContent());
 
-		// FIXME Merge meta data
-		// this.expression.bindMetaAttribute();
-//		this.expression.bindAdditionalContent(additionalContent);
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}

@@ -82,11 +82,6 @@ public class KeyValueObjectPredicate extends AbstractPredicate<KeyValueObject<?>
                 values[i] = right.getAttribute(this.neededAttributes.get(i).getURI());
             }
         }
-        Map<String, Serializable> additionalContent = new HashMap<>();
-        additionalContent.putAll(left.getAdditionalContent());
-        additionalContent.putAll(right.getAdditionalContent());
-
-//        this.expression.bindAdditionalContent(additionalContent);
         this.expression.bindVariables(values);
         return ((Boolean) this.expression.getValue()).booleanValue();
     }

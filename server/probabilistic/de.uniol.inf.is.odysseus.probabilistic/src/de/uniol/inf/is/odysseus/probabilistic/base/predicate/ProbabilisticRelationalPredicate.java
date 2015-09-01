@@ -224,12 +224,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 			positions[i] = pos;
 		}
 
-		final Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
-		additionalContent.putAll(left.getAdditionalContent());
-		additionalContent.putAll(right.getAdditionalContent());
-
 		final SDFProbabilisticExpression probabilisticExpression = (SDFProbabilisticExpression) this.expression;
-		// probabilisticExpression.bindAdditionalContent(additionalContent);
 		probabilisticExpression.bindVariables(positions, values);
 		final Object expr = probabilisticExpression.getValue();
 		if (probabilisticExpression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_RESULT)) {
