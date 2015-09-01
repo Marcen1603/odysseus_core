@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
@@ -18,37 +17,32 @@ public abstract class AbstractCCSVFileSourceRule<T extends CSVFileSource> extend
 	public boolean isExecutable(CSVFileSource logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
-		if (logicalOperator instanceof CSVFileSource) {
 
-			CSVFileSource operator = (CSVFileSource) logicalOperator;
-			if (operator.getWrapper() != null) {
-				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
+			if (logicalOperator.getWrapper() != null) {
+				if (Constants.GENERIC_PULL.equalsIgnoreCase(logicalOperator
 						.getWrapper())) {
 					return true;
 				}
-				if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator
+				if (Constants.GENERIC_PUSH.equalsIgnoreCase(logicalOperator
 						.getWrapper())) {
 					return true;
 				}
 			}
 
-		}
 
 		return false;
 	}
 
 
-
+	@Override
 	public void analyseOperator(CSVFileSource logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
-		CSVFileSource csvFileSource = (CSVFileSource) logicalOperator;
-
 		transformationInformation
-				.addDataHandler(csvFileSource.getDataHandler());
-		transformationInformation.addProtocolHandler(csvFileSource
+				.addDataHandler(logicalOperator.getDataHandler());
+		transformationInformation.addProtocolHandler(logicalOperator
 				.getProtocolHandler());
-		transformationInformation.addTransportHandler(csvFileSource
+		transformationInformation.addTransportHandler(logicalOperator
 				.getTransportHandler());
 
 		transformationInformation.addIterableSource(logicalOperator);

@@ -11,20 +11,17 @@ public abstract class AbstractCRelationalProjectAORule<T extends ProjectAO> exte
 		super(name);
 	}
 
+	@Override
 	public boolean isExecutable(ProjectAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
-		if (logicalOperator instanceof ProjectAO) {
-			ProjectAO operator = (ProjectAO) logicalOperator;
 
-			if (operator.getInputSchema().getType() == Tuple.class) {
+			if (logicalOperator.getInputSchema().getType() == Tuple.class) {
 				return true;
 			}
 
 			return false;
-		}
-
-		return false;
+	
 
 	}
 

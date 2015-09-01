@@ -2,17 +2,16 @@ package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
-import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
-public abstract class AbstractCJoinTIPORule<T extends JoinAO> extends AbstractRule<JoinAO> {
+public abstract class AbstractCJoinTIPORule<T extends JoinAO> extends AbstractCIntervalRule<JoinAO> {
 
 	public AbstractCJoinTIPORule(String name) {
 		super(name);
@@ -21,11 +20,13 @@ public abstract class AbstractCJoinTIPORule<T extends JoinAO> extends AbstractRu
 	@Override
 	public boolean isExecutable(JoinAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-		if (logicalOperator instanceof JoinAO) {
+	
+			if (super.isExecutable(logicalOperator, transformationConfiguration)) {
+				return !(logicalOperator instanceof LeftJoinAO);
+			}
+			return false;
+	
 
-			return true;
-		}
-		return false;
 	}
 
 

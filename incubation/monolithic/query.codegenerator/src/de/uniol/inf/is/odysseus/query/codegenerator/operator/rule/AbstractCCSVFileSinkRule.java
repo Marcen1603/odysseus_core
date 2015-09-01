@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
@@ -17,17 +16,14 @@ public abstract class AbstractCCSVFileSinkRule<T extends CSVFileSink> extends Ab
 
 	public boolean isExecutable(CSVFileSink logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-
-		if (logicalOperator instanceof AbstractSenderAO) {
-
-			AbstractSenderAO operator = (AbstractSenderAO) logicalOperator;
-
-			if (operator.getWrapper() != null) {
-				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
+	
+			
+			if (logicalOperator.getWrapper() != null) {
+				if (Constants.GENERIC_PULL.equalsIgnoreCase(logicalOperator
 						.getWrapper())) {
 					return true;
 				}
-				if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator
+				if (Constants.GENERIC_PUSH.equalsIgnoreCase(logicalOperator
 						.getWrapper())) {
 					return true;
 				}
@@ -35,23 +31,19 @@ public abstract class AbstractCCSVFileSinkRule<T extends CSVFileSink> extends Ab
 
 			return false;
 
-		}
-
-		return false;
+	
 	}
 
 
-
-	public void analyseOperator(AbstractSenderAO logicalOperator,
+	@Override
+	public void analyseOperator(CSVFileSink logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
-		AbstractSenderAO abstractSenderAO = (AbstractSenderAO) logicalOperator;
-
-		transformationInformation.addDataHandler(abstractSenderAO
+		transformationInformation.addDataHandler(logicalOperator
 				.getDataHandler());
-		transformationInformation.addProtocolHandler(abstractSenderAO
+		transformationInformation.addProtocolHandler(logicalOperator
 				.getProtocolHandler());
-		transformationInformation.addTransportHandler(abstractSenderAO
+		transformationInformation.addTransportHandler(logicalOperator
 				.getTransportHandler());
 
 	}
@@ -60,11 +52,9 @@ public abstract class AbstractCCSVFileSinkRule<T extends CSVFileSink> extends Ab
 	public void addOperatorConfiguration(CSVFileSink logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
-		AbstractSenderAO abstractSenderAO = (AbstractSenderAO) logicalOperator;
-
 		Map<String, String> optionMap = new HashMap<String, String>();
 
-		optionMap = abstractSenderAO.getOptionsMap();
+		optionMap = logicalOperator.getOptionsMap();
 
 		transformationInformation.addOperatorConfiguration(logicalOperator,
 				optionMap);

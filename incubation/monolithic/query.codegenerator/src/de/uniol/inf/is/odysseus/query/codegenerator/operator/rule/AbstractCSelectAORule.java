@@ -19,19 +19,17 @@ public abstract class AbstractCSelectAORule<T extends SelectAO> extends Abstract
 	@Override
 	public boolean isExecutable(SelectAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-		if (logicalOperator instanceof SelectAO) {
-			return true;
-		} else {
-			return false;
-		}
+
+				return true;
+	
 	}
 
 
+	@Override
 	public void analyseOperator(SelectAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
-		SelectAO selectAO = (SelectAO) logicalOperator;
-		IPredicate<?> predicate = selectAO.getPredicate();
+		IPredicate<?> predicate = logicalOperator.getPredicate();
 
 		String predicateValue = predicate.toString();
 		IExpression<?> mepExpression = MEP.getInstance().parse(predicateValue);

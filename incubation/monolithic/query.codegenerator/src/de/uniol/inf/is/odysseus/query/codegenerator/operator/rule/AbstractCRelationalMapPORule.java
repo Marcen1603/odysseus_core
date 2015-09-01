@@ -16,12 +16,14 @@ public abstract class AbstractCRelationalMapPORule<T extends MapAO> extends Abst
 	@Override
 	public boolean isExecutable(MapAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-		if (logicalOperator instanceof MapAO) {
-			if (((MapAO) logicalOperator).getInputSchema().getType() == Tuple.class) {
+		
+			if (logicalOperator.getInputSchema().getType() == Tuple.class) {
 				return true;
+			}else{
+				return false;
 			}
-		}
-		return false;
+	
+		
 	}
 
 
@@ -29,9 +31,7 @@ public abstract class AbstractCRelationalMapPORule<T extends MapAO> extends Abst
 	public void analyseOperator(MapAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
-		MapAO mapAO = (MapAO) logicalOperator;
-
-		for (NamedExpression e : mapAO.getExpressions()) {
+		for (NamedExpression e : logicalOperator.getExpressions()) {
 
 			IExpression<?> temp = e.expression.getMEPExpression();
 			if (temp.isFunction()) {

@@ -14,15 +14,13 @@ public abstract class AbstractCApplicationTimestamp<T extends TimestampAO> exten
 	public boolean isExecutable(TimestampAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
-		if (logicalOperator instanceof TimestampAO) {
-			TimestampAO timestampAO = (TimestampAO) logicalOperator;
+
+			if(!logicalOperator.isUsingSystemTime()){
 			
-			if(!timestampAO.isUsingSystemTime()){
-			
-				SDFSchema schema = timestampAO.getInputSchema();
-				int pos = schema.indexOf(timestampAO.getStartTimestamp());
+				SDFSchema schema = logicalOperator.getInputSchema();
+				int pos = schema.indexOf(logicalOperator.getStartTimestamp());
 	
-				if (Tuple.class.isAssignableFrom(timestampAO.getInputSchema().getType())) {
+				if (Tuple.class.isAssignableFrom(logicalOperator.getInputSchema().getType())) {
 					if (pos >= 0) {
 							return false;
 				
@@ -33,8 +31,8 @@ public abstract class AbstractCApplicationTimestamp<T extends TimestampAO> exten
 	
 			return false;
 
-		}
-		return false;	
+	
+
 	}
 
 

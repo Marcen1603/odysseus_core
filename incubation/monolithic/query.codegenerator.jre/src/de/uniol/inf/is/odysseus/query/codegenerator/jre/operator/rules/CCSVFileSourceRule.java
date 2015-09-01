@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;

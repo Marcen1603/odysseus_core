@@ -114,9 +114,8 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 
 
-		
 	
-		IOperatorRule opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
+		IOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
 			if(!JavaTransformationInformation.getInstance().isOperatorCodeReady(operator)){
@@ -167,12 +166,5 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		}
 		
 	}
-
-
-
-
-
-
-
 
 }

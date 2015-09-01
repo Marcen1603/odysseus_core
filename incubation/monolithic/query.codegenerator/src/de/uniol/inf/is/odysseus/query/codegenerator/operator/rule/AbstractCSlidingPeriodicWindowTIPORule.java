@@ -1,10 +1,11 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
-public abstract class AbstractCSlidingPeriodicWindowTIPORule<T extends AbstractWindowAO> extends
-		AbstractRule<AbstractWindowAO> {
+public abstract class AbstractCSlidingPeriodicWindowTIPORule<T extends WindowAO> extends
+		AbstractRule<WindowAO> {
 
 	public AbstractCSlidingPeriodicWindowTIPORule(String name) {
 		super(name);
@@ -13,16 +14,16 @@ public abstract class AbstractCSlidingPeriodicWindowTIPORule<T extends AbstractW
 
 
 	@Override
-	public boolean isExecutable(AbstractWindowAO logicalOperator,
+	public boolean isExecutable(WindowAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
-		if (logicalOperator instanceof AbstractWindowAO) {
-			AbstractWindowAO operator = (AbstractWindowAO) logicalOperator;
-			switch (operator.getWindowType()) {
+		if (logicalOperator.getInputSchema().hasMetatype(ITimeInterval.class)){
+
+			switch (logicalOperator.getWindowType()) {
 			case TIME:
-				if (operator.getWindowSlide() == null
-						&& operator.getWindowAdvance() == null
-						|| operator.getWindowSlide() == null) {
+				if (logicalOperator.getWindowSlide() == null
+						&& logicalOperator.getWindowAdvance() == null
+						|| logicalOperator.getWindowSlide() == null) {
 					return false;
 				} else {
 					return true;
@@ -31,7 +32,6 @@ public abstract class AbstractCSlidingPeriodicWindowTIPORule<T extends AbstractW
 				return false;
 
 			}
-
 		}
 		return false;
 

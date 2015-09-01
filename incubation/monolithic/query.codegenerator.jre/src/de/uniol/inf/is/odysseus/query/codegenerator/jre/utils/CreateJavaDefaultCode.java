@@ -48,7 +48,9 @@ public class CreateJavaDefaultCode {
 		
 		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
 		
-		sdfSchema.addCodeFragmentInfo(getCodeForSDFSchema(operator.getOutputSchema(),operatorVariable));
+		if(operatorVariable != null && !operatorVariable.equals("")){
+			sdfSchema.addCodeFragmentInfo(getCodeForSDFSchema(operator.getOutputSchema(),operatorVariable));
+		}
 				
 		return sdfSchema;
 	}

@@ -22,8 +22,8 @@ public class OperatorRuleRegistry {
 	static Map<String, Map<String,IOperatorRule<ILogicalOperator>>> operatorRuleList = new HashMap<String, Map<String,IOperatorRule<ILogicalOperator>>>();
 	
 	
-	public static IOperatorRule<?> getOperatorRules(String targetPlatform, ILogicalOperator operator, TransformationConfiguration transformationConfiguration){
-		List<IOperatorRule<?>> acceptedRules = new ArrayList<IOperatorRule<?>>();
+	public static IOperatorRule<ILogicalOperator> getOperatorRules(String targetPlatform, ILogicalOperator operator, TransformationConfiguration transformationConfiguration){
+		List<IOperatorRule<ILogicalOperator>> acceptedRules = new ArrayList<IOperatorRule<ILogicalOperator>>();
 		
 
 		//targetplatform vorhanden
@@ -57,7 +57,7 @@ public class OperatorRuleRegistry {
 	
 
 					   
-	public static void registerOperatorRule(IOperatorRule rule){
+	public static void registerOperatorRule(IOperatorRule<ILogicalOperator> rule){
 	
 		//Programmiersprache noch nicht vorhanden
 		if(!operatorRuleList.containsKey(rule.getTargetPlatform().toLowerCase())){
@@ -86,7 +86,7 @@ public class OperatorRuleRegistry {
 		
 	}
 	
-	public static void unregisterOperatorRule(IOperatorRule rule){
+	public static void unregisterOperatorRule(IOperatorRule<ILogicalOperator> rule){
 		if(operatorRuleList.containsKey(rule.getTargetPlatform().toLowerCase())){
 			if(operatorRuleList.get(rule.getTargetPlatform().toLowerCase()).containsKey(rule.getName())){
 				operatorRuleList.get(rule.getTargetPlatform().toLowerCase()).remove(rule.getName());

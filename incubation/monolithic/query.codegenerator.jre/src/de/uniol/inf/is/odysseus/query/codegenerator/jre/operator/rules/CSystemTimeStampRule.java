@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
@@ -9,13 +10,14 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSyste
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SystemTimeIntervalFactory;
 
+
 public class CSystemTimeStampRule extends AbstractCSystemTimeStampRule<TimestampAO>{
 
 	public CSystemTimeStampRule() {
 		super(CSystemTimeStampRule.class.getName());
 	}
 
-	
+
 	
 	@Override
 	public CodeFragmentInfo getCode(TimestampAO operator) {

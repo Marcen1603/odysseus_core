@@ -18,22 +18,17 @@ public abstract class AbstractCSenderAORule<T extends SenderAO> extends Abstract
 	@Override
 	public boolean isExecutable(SenderAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-		if (logicalOperator instanceof SenderAO) {
-			SenderAO senderAO = (SenderAO) logicalOperator;
-
+	
 			ITenant tenant = UserManagementProvider.getDefaultTenant();
 			ISink<?> sinkPO = DataDictionaryProvider.getDataDictionary(tenant)
-					.getSinkplan(senderAO.getSinkname());
+					.getSinkplan(logicalOperator.getSinkname());
 
 			if (sinkPO != null) {
 				return true;
+			}else{
+				return false;
 			}
-
-		} else {
-			return false;
-		}
-
-		return false;
+	
 	}
 
 
@@ -41,12 +36,11 @@ public abstract class AbstractCSenderAORule<T extends SenderAO> extends Abstract
 	public void analyseOperator(SenderAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
-		SenderAO dummySenderAO = (SenderAO) logicalOperator;
 
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
 		ILogicalOperator logicalPlan = DataDictionaryProvider
 				.getDataDictionary(tenant).getSinkForTransformation(
-						dummySenderAO.getSinkname(), null);
+						logicalOperator.getSinkname(), null);
 
 		SenderAO senderAO = (SenderAO) logicalPlan;
 

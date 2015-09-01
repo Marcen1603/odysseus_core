@@ -18,16 +18,12 @@ public abstract class AbstractCStreamAORule<T extends StreamAO> extends Abstract
 	@Override
 	public boolean isExecutable(StreamAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
-
-		if (logicalOperator instanceof StreamAO) {
-			return true;
-		} else {
-			return false;
-		}
+				return true;
+	
 	}
 
 
-
+	@Override
 	public void analyseOperator(StreamAO logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 

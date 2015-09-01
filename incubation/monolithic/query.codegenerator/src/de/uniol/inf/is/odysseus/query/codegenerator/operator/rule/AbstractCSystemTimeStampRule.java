@@ -13,13 +13,10 @@ public abstract class AbstractCSystemTimeStampRule<T extends TimestampAO> extend
 	public boolean isExecutable(TimestampAO logicalOperator,
 			TransformationConfiguration transformationConfiguration) {
 
-		if (logicalOperator instanceof TimestampAO) {
-
-			TimestampAO timestampAO= (TimestampAO)logicalOperator;
-			
-			 return timestampAO.isUsingSystemTime();
 		
-		}
-		return false;
+			
+			return logicalOperator.isUsingSystemTime();
+
+	
 	}
 }
