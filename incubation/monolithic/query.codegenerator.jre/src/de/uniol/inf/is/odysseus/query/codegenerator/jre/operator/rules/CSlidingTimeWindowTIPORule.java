@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWidthAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSlidingTimeWindowTIPORule;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingTimeWindowTIPO;
 
-public class CSlidingTimeWindowTIPORule extends AbstractCSlidingTimeWindowTIPORule<WindowAO>{
+public class CSlidingTimeWindowTIPORule extends AbstractCSlidingTimeWindowTIPORule<TimeWindowAO>{
 	
 	public CSlidingTimeWindowTIPORule(){
 		super(CSlidingTimeWindowTIPORule.class.getName());
@@ -23,7 +23,7 @@ public class CSlidingTimeWindowTIPORule extends AbstractCSlidingTimeWindowTIPORu
 
 
 	@Override
-	public CodeFragmentInfo getCode(WindowAO operator) {
+	public CodeFragmentInfo getCode(TimeWindowAO operator) {
 	CodeFragmentInfo slidingWindow = new CodeFragmentInfo();
 		
 		StringBuilder code = new StringBuilder();
