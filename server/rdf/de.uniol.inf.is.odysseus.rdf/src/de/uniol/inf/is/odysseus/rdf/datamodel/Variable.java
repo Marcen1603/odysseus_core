@@ -30,5 +30,5 @@ public class Variable extends AbstractNode implements INode {
 	protected INode cloneWithNewName(String newName) {
 		return new Variable(newName);
 	}
-
+	
 }

@@ -48,14 +48,15 @@ public class Triple<T extends IMetaAttribute> extends AbstractStreamObject<T>{
 			throw new RuntimeException("No value for Object in triple. Object: " + this.object);
 		}
 	}
+
 	public Triple(String subject, String predicate, String  object){
 		this(new Literal(subject), new Literal(predicate), new Literal(object));
 	}
 		
 	public Triple<T> replacePrefixes(Map<String, String> prefixes){
-		INode newSubject = subject.isVariable()?subject.replacePrefixes(prefixes):subject;
-		INode newPredicate = predicate.isVariable()?predicate.replacePrefixes(prefixes):predicate;
-		INode newObject = object.isVariable()?object.replacePrefixes(prefixes):object;
+		INode newSubject = !subject.isVariable()?subject.replacePrefixes(prefixes):subject;
+		INode newPredicate = !predicate.isVariable()?predicate.replacePrefixes(prefixes):predicate;
+		INode newObject = !object.isVariable()?object.replacePrefixes(prefixes):object;
 		return new Triple<T>(newSubject, newPredicate, newObject);
 	}
 	
