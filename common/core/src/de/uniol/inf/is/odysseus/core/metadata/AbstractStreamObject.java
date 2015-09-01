@@ -8,63 +8,63 @@ import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.Order;
 
-abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
-		IStreamObject<T> {
+abstract public class AbstractStreamObject<T extends IMetaAttribute> implements IStreamObject<T> {
 
 	private static final long serialVersionUID = 1480009485404803793L;
-		
-	// activate for testing, if a new object is created
-	//    static long UNIQUE_ID = 0;
-//    long uid = ++UNIQUE_ID;
-//
-//    public long getId() {
-//        return uid;
-//    }
 
-	final private Map<String, Object> metadataMap = new HashMap<String, Object>();
+	private Map<String, Object> metadataMap;
 	private T metadata = null;
-	final private Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+	private Map<String, Serializable> additionalContent;
 
 	public AbstractStreamObject() {
 	}
 
 	@SuppressWarnings("unchecked")
 	protected AbstractStreamObject(AbstractStreamObject<T> other) {
-		this.metadataMap.putAll(other.metadataMap);
+		if (other.metadataMap != null) {
+			this.metadataMap = new HashMap<>(other.metadataMap);
+		}
 		if (other.metadata != null) {
 			this.metadata = (T) other.metadata.clone();
 		}
-		this.additionalContent.putAll(other.additionalContent);
+		if (other.additionalContent != null) {
+			this.additionalContent = new HashMap<>(other.additionalContent);
+		}
 	}
 
 	@Override
-	public Object getMetadata(String name) {
+	final public Object getMetadata(String name) {
 		return metadataMap.get(name);
 	}
 
 	@Override
-	public void setMetadata(String name, Object content) {
+	final public void setMetadata(String name, Object content) {
+		if (metadataMap == null) {
+			metadataMap = new HashMap<>();
+		}
 		metadataMap.put(name, content);
 	}
-	
+
 	@Override
-	public void setMetadataMap(Map<String, Object> metaMap){
-		this.metadataMap.clear();
-		this.metadataMap.putAll(metaMap);
+	final public void setMetadataMap(Map<String, Object> metaMap) {
+		metadataMap = new HashMap<>();
+		if (metaMap != null) {
+			this.metadataMap.putAll(metaMap);
+		}
 	}
-	
+
 	@Override
-	public Map<String, Object> getMetadataMap(){
+	final public Map<String, Object> getMetadataMap() {
 		return Collections.unmodifiableMap(metadataMap);
 	}
 
 	@Override
-	public final T getMetadata() {
+	final public T getMetadata() {
 		return metadata;
 	}
 
 	@Override
-	public void setMetadata(T metadata) {
+	final public void setMetadata(T metadata) {
 		this.metadata = metadata;
 	}
 
@@ -72,23 +72,33 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 	// additional content
 	// -----------------------------------------------------------------
 	@Override
-	public Serializable getAdditionalContent(String name) {
-		return this.additionalContent.get(name);
+	final public Serializable getAdditionalContent(String name) {
+		if (this.additionalContent != null) {
+			return this.additionalContent.get(name);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
-	public void setAdditionalContent(String name, Serializable content) {
+	final public void setAdditionalContent(String name, Serializable content) {
+		if (this.additionalContent == null) {
+			this.additionalContent = new HashMap<>();
+		}
 		this.additionalContent.put(name, content);
 	}
 
 	@Override
-	public Map<String, Serializable> getAdditionalContent() {
+	final public Map<String, Serializable> getAdditionalContent() {
 		return additionalContent;
 	}
 
 	@Override
-	public void setAdditionalContent(Map<String, Serializable> additionalContent) {
-		this.additionalContent.putAll(additionalContent);
+	final public void setAdditionalContent(Map<String, Serializable> additionalContent) {
+		this.additionalContent = new HashMap<>();
+		if (additionalContent != null) {
+			this.additionalContent.putAll(additionalContent);
+		}
 	}
 
 	// -------------------------------------
@@ -96,46 +106,56 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 	// -------------------------------------
 
 	@Override
-	public IStreamObject<T> merge(IStreamObject<T> left,
-			IStreamObject<T> right, IMetadataMergeFunction<T> metamerge,
+	final public IStreamObject<T> merge(IStreamObject<T> left, IStreamObject<T> right, IMetadataMergeFunction<T> metamerge,
 			Order order) {
 		// Preserve meta data
 		T metadateleft = left.getMetadata();
 		T metadateright = right.getMetadata();
 
 		IStreamObject<T> ret = process_merge(left, right, order);
-		ret.setMetadata(metamerge.mergeMetadata(metadateleft,
-				metadateright));
-		
-		// TODO: Merge function in cases where key is same!!
-		
+		ret.setMetadata(metamerge.mergeMetadata(metadateleft, metadateright));
+
 		// Use from right and overwrite with left
 		if (order == Order.LeftRight) {
-			ret.setAdditionalContent(right.getAdditionalContent());
-			for (Entry<String, Serializable> a: left.getAdditionalContent().entrySet()){
-				ret.setAdditionalContent(a.getKey(), a.getValue());
-			}
-			ret.setMetadataMap(right.getMetadataMap());
-			for (Entry<String, Object> a: left.getMetadataMap().entrySet()){
-				ret.setMetadata(a.getKey(), a.getValue());
-			}
-		} else if (order == Order.RightLeft) { // Use from Left and overwrite with right
-			ret.setAdditionalContent(left.getAdditionalContent());
-			for (Entry<String, Serializable> a: right.getAdditionalContent().entrySet()){
-				ret.setAdditionalContent(a.getKey(), a.getValue());
-			}
-			ret.setMetadataMap(left.getMetadataMap());
-			for (Entry<String, Object> a: right.getMetadataMap().entrySet()){
-				ret.setMetadata(a.getKey(), a.getValue());
-			}
-
+			mergeInternal(left, right, ret);
+		} else if (order == Order.RightLeft) { // Use from Left and overwrite
+												// with right
+			mergeInternal(right, left, ret);
 		}
 
 		return ret;
 	}
 
-	protected IStreamObject<T> process_merge(IStreamObject<T> left,
-			IStreamObject<T> right, Order order) {
+	private void mergeInternal(IStreamObject<T> left, IStreamObject<T> right, IStreamObject<T> ret) {
+		// TODO: Merge function in cases where key is same!!
+
+		if (right.getAdditionalContent() != null) {
+			ret.setAdditionalContent(right.getAdditionalContent());
+		}
+		if (left.getAdditionalContent() != null) {
+			if (right.getAdditionalContent() == null) {
+				ret.setAdditionalContent(left.getAdditionalContent());
+			} else {
+				for (Entry<String, Serializable> a : left.getAdditionalContent().entrySet()) {
+					ret.setAdditionalContent(a.getKey(), a.getValue());
+				}
+			}
+		}
+		if (right.getMetadataMap() != null) {
+			ret.setMetadataMap(right.getMetadataMap());
+		}
+		if (left.getMetadataMap() != null) {
+			if (right.getMetadataMap() == null) {
+				ret.setMetadataMap(left.getMetadataMap());
+			} else {
+				for (Entry<String, Object> a : left.getMetadataMap().entrySet()) {
+					ret.setMetadata(a.getKey(), a.getValue());
+				}
+			}
+		}
+	}
+
+	protected IStreamObject<T> process_merge(IStreamObject<T> left, IStreamObject<T> right, Order order) {
 		throw new IllegalArgumentException("Results cannot be merged!");
 	}
 
@@ -143,23 +163,23 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 	abstract public AbstractStreamObject<T> clone();
 
 	@Override
-    abstract public AbstractStreamObject<T> newInstance();
+	abstract public AbstractStreamObject<T> newInstance();
 
-    @Override
+	@Override
 	public boolean isPunctuation() {
 		return false;
 	}
-	
+
 	@Override
 	public int restrictedHashCode(int[] restriction) {
 		// Default implementation will not restrict input
 		return hashCode();
 	}
-	
+
 	@Override
 	public boolean equalsTolerance(Object o, double tolerance) {
 		// Default with no restriction
 		return equals(o);
 	}
-	
+
 }
