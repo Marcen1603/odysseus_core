@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerPar
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCCSVFileSinkRule;
 
 public class CCSVFileSinkRule extends AbstractCCSVFileSinkRule<CSVFileSink> {

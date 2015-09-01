@@ -33,10 +33,10 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.ExecutorRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.CExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerParameter;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
@@ -146,7 +146,7 @@ public class CreateJreDefaultCode {
 		startFragment.addCode(startCodeTemplate.getSt().render());
 		
 		if(!iterableSources.isEmpty()){
-			CodeFragmentInfo executorCode = ExecutorRegistry.getExecutor("JRE", executor).getStartCode(iterableSources);
+			CodeFragmentInfo executorCode = CExecutorRegistry.getExecutor("JRE", executor).getStartCode(iterableSources);
 			startFragment.addCodeFragmentInfo(executorCode);
 		}
 		

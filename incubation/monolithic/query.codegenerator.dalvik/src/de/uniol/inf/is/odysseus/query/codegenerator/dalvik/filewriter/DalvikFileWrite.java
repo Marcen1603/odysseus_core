@@ -17,10 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.Activator;
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.executor.ICExecutor;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.osgi.ExtractOSGIBundle;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.FileHelper;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.UnZip;

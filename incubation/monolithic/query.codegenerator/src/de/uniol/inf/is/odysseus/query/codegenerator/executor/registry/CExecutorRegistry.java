@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.query.codegenerator.executor.ICExecutor;
 
 
-public class ExecutorRegistry {
+public class CExecutorRegistry {
 	
-	private static Logger LOG = LoggerFactory.getLogger(ExecutorRegistry.class);
+	private static Logger LOG = LoggerFactory.getLogger(CExecutorRegistry.class);
 	
 	static Map<String, Map<String,ICExecutor>> executorList= new HashMap<String, Map<String,ICExecutor>>();
 	

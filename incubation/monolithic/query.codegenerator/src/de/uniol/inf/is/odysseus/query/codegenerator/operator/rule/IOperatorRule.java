@@ -2,8 +2,8 @@ package de.uniol.inf.is.odysseus.query.codegenerator.operator.rule;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 
 public interface IOperatorRule<T extends ILogicalOperator> {
 

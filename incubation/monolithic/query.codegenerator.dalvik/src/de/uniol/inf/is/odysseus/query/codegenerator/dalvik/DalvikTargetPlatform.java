@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.filewriter.DalvikFileWrite;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.ExecutorRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.CExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.StatusType;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
@@ -44,7 +44,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		
 		
 		//add userfeedback
-		updateProgressBar(10, "Start the transformation",StatusType.INFO);
+		updateProgressBar(10, "Start the transformation",UpdateMessageStatusType.INFO);
 		
 		//clear transformation infos
 		JreCodegeneratorStatus.clear();
@@ -65,7 +65,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		
 		importList.addAll(startStreams.getImports());
 		
-		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), ExecutorRegistry.getExecutor("Java", parameter.getExecutor()));
+		DalvikFileWrite dalvikFileWrite = new DalvikFileWrite("MainActivityFragment.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CExecutorRegistry.getExecutor("Java", parameter.getExecutor()));
 		
 		try {
 			dalvikFileWrite.createProject();

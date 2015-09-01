@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
+import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRuleComparator;
 
 
 public class OperatorRuleRegistry {

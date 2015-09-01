@@ -9,16 +9,16 @@ import java.util.concurrent.BlockingQueue;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.ExecutorRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.CExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.OdysseusIndex;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
-import de.uniol.inf.is.odysseus.query.codegenerator.modell.StatusType;
-import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
@@ -45,7 +45,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		this.setProgressBarQueue(progressBarQueue);
 		
 		//add userfeedback
-		updateProgressBar(10, "Start the transformation", StatusType.INFO);
+		updateProgressBar(10, "Start the transformation", UpdateMessageStatusType.INFO);
 		
 		//clear transformation infos
 		JreCodegeneratorStatus.clear();
@@ -53,7 +53,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		JreCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
 		
 		//Start Odysseus index
-		updateProgressBar(15, "Index the Odysseus codepath",StatusType.INFO);
+		updateProgressBar(15, "Index the Odysseus codepath",UpdateMessageStatusType.INFO);
 		OdysseusIndex.getInstance().search(parameter.getOdysseusPath());
 	
 		bodyCode = new StringBuilder();
@@ -62,7 +62,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		walkTroughLogicalPlan(queryAnalyseInformation,parameter, transformationConfiguration);
 		
 		//generate code for osgi binds
-		updateProgressBar(70, "Generate OSGI emulation code",StatusType.INFO);
+		updateProgressBar(70, "Generate OSGI emulation code",UpdateMessageStatusType.INFO);
 		
 		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
 		importList.addAll(osgiBind.getImports());
@@ -72,17 +72,17 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 		importList.addAll(startStreams.getImports());
 	
-		updateProgressBar(75, "Create Java files",StatusType.INFO);
-		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), ExecutorRegistry.getExecutor(parameter.getProgramLanguage(), parameter.getExecutor()));
+		updateProgressBar(75, "Create Java files",UpdateMessageStatusType.INFO);
+		JavaFileWrite javaFileWrite = new JavaFileWrite("Main.java",parameter,importList,osgiBind.getCode(),bodyCode.toString(),startStreams.getCode(), queryAnalyseInformation.getOperatorConfigurationList(), CExecutorRegistry.getExecutor(parameter.getProgramLanguage(), parameter.getExecutor()));
 		
 		try {
-			updateProgressBar(80, "Create Java project",StatusType.INFO);
+			updateProgressBar(80, "Create Java project",UpdateMessageStatusType.INFO);
 			javaFileWrite.createProject();
 	
-			updateProgressBar(85, "Compile the Java project",StatusType.INFO);
+			updateProgressBar(85, "Compile the Java project",UpdateMessageStatusType.INFO);
 			ExecuteShellComand.compileJavaProgram(parameter.getTempDirectory());	
 			
-			updateProgressBar(100, "Transformation finish",StatusType.INFO);
+			updateProgressBar(100, "Transformation finish",UpdateMessageStatusType.INFO);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -120,7 +120,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 			if(!JreCodegeneratorStatus.getInstance().isOperatorCodeReady(operator)){
 				
-				this.getProgressBarQueue().put(new ProgressBarUpdate(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),StatusType.INFO));
+				this.getProgressBarQueue().put(new ProgressBarUpdate(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),UpdateMessageStatusType.INFO));
 				
 				//add ready
 				JreCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);
@@ -157,7 +157,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 				importList.addAll(subscription.getImports());
 			}
 		}else{
-			updateProgressBar(-1, "No rule available for "+operator.getName()+" is a "+ operator.getClass().getSimpleName()  ,StatusType.WARNING);
+			updateProgressBar(-1, "No rule available for "+operator.getName()+" is a "+ operator.getClass().getSimpleName()  ,UpdateMessageStatusType.WARNING);
 		}
 		
 	

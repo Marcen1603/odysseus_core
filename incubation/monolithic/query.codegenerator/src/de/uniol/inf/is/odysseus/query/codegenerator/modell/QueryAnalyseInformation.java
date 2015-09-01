@@ -97,12 +97,16 @@ public class QueryAnalyseInformation {
 	
 	public void addMetaData(String metaData){
 		
-		String fullClassName = MetadataRegistry.getMetadataType(metaData).getClass().getName();
-		String simpleClassName = MetadataRegistry.getMetadataType(metaData).getClass().getSimpleName();
-		
-		if (!metaDataTypes.containsKey(fullClassName)) {
-			metaDataTypes.put(fullClassName, simpleClassName);
+		if(metaData != null && !metaData.equals("")){
+			String fullClassName = MetadataRegistry.getMetadataType(metaData).getClass().getName();
+			String simpleClassName = MetadataRegistry.getMetadataType(metaData).getClass().getSimpleName();
+			
+			if (!metaDataTypes.containsKey(fullClassName)) {
+				metaDataTypes.put(fullClassName, simpleClassName);
+			}
 		}
+		
+		
 	}
 	
 	public Map<String, String> getNeededMetaDataTypes() {
@@ -111,12 +115,16 @@ public class QueryAnalyseInformation {
 	
 	
 	public void addDataHandler(String datatype){
-		String fullClassName = DataHandlerRegistry.getIDataHandlerClass(datatype).getClass().getName();
-		String simpleClassName = DataHandlerRegistry.getIDataHandlerClass(datatype).getClass().getSimpleName();
 		
-		if (!dataHandler.containsKey(fullClassName)) {
-			dataHandler.put(fullClassName, simpleClassName);
+		if(datatype != null && !datatype.equals("")){
+			String fullClassName = DataHandlerRegistry.getIDataHandlerClass(datatype).getClass().getName();
+			String simpleClassName = DataHandlerRegistry.getIDataHandlerClass(datatype).getClass().getSimpleName();
+			
+			if (!dataHandler.containsKey(fullClassName)) {
+				dataHandler.put(fullClassName, simpleClassName);
+			}
 		}
+
 	}
 
 	public Map<String, String> getNeededDataHandler() {
@@ -135,13 +143,15 @@ public class QueryAnalyseInformation {
 	
 	public void addMEPFunction(IExpression<?> mepExpression) {
 		
-	String fullClassName =	mepExpression.toFunction().getClass().getName();
-	String simpleClassName = mepExpression.toFunction().getClass().getSimpleName();
+		if(mepExpression != null){
+			String fullClassName =	mepExpression.toFunction().getClass().getName();
+			String simpleClassName = mepExpression.toFunction().getClass().getSimpleName();
 
-		if (!mepFunctions.containsKey(fullClassName)) {
-			mepFunctions.put(fullClassName, simpleClassName);
+				if (!mepFunctions.containsKey(fullClassName)) {
+					mepFunctions.put(fullClassName, simpleClassName);
+				}
 		}
-
+		
 	}
 	
 
@@ -151,16 +161,14 @@ public class QueryAnalyseInformation {
 	
 
 	public void addProtocolHandler(String protocolHandlerString) {
-	if(protocolHandlerString !=null ){
-		String fullClassName = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandlerString).getClass().getName();
-		String simpleClassName = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandlerString).getClass().getSimpleName();
-
-		if (!protocolHandler.containsKey(fullClassName)) {
-			protocolHandler.put(fullClassName, simpleClassName);
-		}
-	}
-		
+		if(protocolHandlerString != null &&  !protocolHandlerString.equals("")){
+			String fullClassName = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandlerString).getClass().getName();
+			String simpleClassName = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandlerString).getClass().getSimpleName();
 	
+			if (!protocolHandler.containsKey(fullClassName)) {
+				protocolHandler.put(fullClassName, simpleClassName);
+			}
+		}
 	}
 	
 
@@ -172,7 +180,7 @@ public class QueryAnalyseInformation {
 	
 	
 	public void addTransportHandler(String transportHandlerString) {
-		if(transportHandlerString != null){
+		if(transportHandlerString != null && !transportHandlerString.equals("")){
 			
 			String fullClassName = TransportHandlerRegistry.getITransportHandlerClass(transportHandlerString).getClass().getName();
 			String simpleClassName = TransportHandlerRegistry.getITransportHandlerClass(transportHandlerString).getClass().getSimpleName();

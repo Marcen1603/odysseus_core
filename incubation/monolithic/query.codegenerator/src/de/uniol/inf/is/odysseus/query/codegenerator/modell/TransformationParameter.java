@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.compiler;
+package de.uniol.inf.is.odysseus.query.codegenerator.modell;
 
 public class TransformationParameter {
 	

@@ -16,8 +16,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.ExecutorRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.CExecutorRegistry;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.rcp.window.QueryTransformationWindow;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
 
@@ -152,7 +152,7 @@ public class QueryTransformationParameterComposite extends
 				"Sprache:", TargetPlatformRegistry.getAllTargetPlatform());
 
 		comboExecutor = createComboWithLabel(inputTwoGridComposite,
-				"Executor:", ExecutorRegistry.getAllExecutor("JRE"));
+				"Executor:", CExecutorRegistry.getAllExecutor("JRE"));
 
 	}
 

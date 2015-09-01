@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.operator;
+package de.uniol.inf.is.odysseus.query.codegenerator.modell;
 
 import java.util.HashSet;
 import java.util.Set;

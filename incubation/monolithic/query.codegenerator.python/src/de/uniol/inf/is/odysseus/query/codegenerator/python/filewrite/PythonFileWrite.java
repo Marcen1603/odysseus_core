@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.TransformationParameter;
 
 
 public class PythonFileWrite {

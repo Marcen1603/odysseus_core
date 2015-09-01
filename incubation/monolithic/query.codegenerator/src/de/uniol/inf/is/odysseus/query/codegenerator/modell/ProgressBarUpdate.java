@@ -1,13 +1,14 @@
 package de.uniol.inf.is.odysseus.query.codegenerator.modell;
 
+import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageStatusType;
+
 public class ProgressBarUpdate {
 	
 	private String text;
 	private int progressValue;
-	private StatusType statusType;
+	private UpdateMessageStatusType statusType;
 	
-	
-	public ProgressBarUpdate(int progressValue,String text, StatusType statusType){
+	public ProgressBarUpdate(int progressValue,String text, UpdateMessageStatusType statusType){
 		this.progressValue = progressValue;
 		this.text =text;
 		this.statusType = statusType;
@@ -26,11 +27,11 @@ public class ProgressBarUpdate {
 		this.progressValue = progressValue;
 	}
 
-	public StatusType getStatusType() {
+	public UpdateMessageStatusType getStatusType() {
 		return statusType;
 	}
 
-	public void setStatusType(StatusType statusType) {
+	public void setStatusType(UpdateMessageStatusType statusType) {
 		this.statusType = statusType;
 	}
 	
