@@ -10,7 +10,7 @@ public abstract class AbstractExecutorCommand implements IExecutorCommand {
 
 	private static final long serialVersionUID = -3132799154172616300L;
 	
-	final private ISession caller;
+	private ISession caller;
 	final private Collection<Integer> empty = new ArrayList<>();
 	final private Collection<Integer> createdQueryIds = new ArrayList<>();
 	
@@ -21,6 +21,11 @@ public abstract class AbstractExecutorCommand implements IExecutorCommand {
 	@Override
 	public ISession getCaller() {
 		return caller;
+	}
+	
+	@Override
+	public void setCaller(ISession caller) {
+		this.caller = caller;
 	}
 	
 	public Collection<Integer> getEmptyCollection() {

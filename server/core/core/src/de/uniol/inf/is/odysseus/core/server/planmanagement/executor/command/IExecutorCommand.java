@@ -13,6 +13,7 @@ public interface IExecutorCommand extends Serializable {
 
 	void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor);
 	ISession getCaller();
+	void setCaller(ISession caller);
 	Collection<Integer> getCreatedQueryIds();
 
 }
