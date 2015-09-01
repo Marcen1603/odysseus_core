@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,18 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		}
 	}
 	
+
+	public SlidingElementWindowTIPO(TimeUnit baseTimeUnit,TimeValueItem windowSize, TimeValueItem windowAdvance,
+			TimeValueItem windowSlide, 
+			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
+		super(WindowType.TUPLE, baseTimeUnit, windowSize, windowAdvance, windowSlide, partitionedBy, inputSchema);
+		advance = this.windowAdvance > 0 ? this.windowAdvance : 1;
+		if (this.windowSize < this.advance) {
+			throw new IllegalArgumentException(
+					"Sorry. Size < Advance currently not implemented!");
+		}
+	}
+
 	protected SlidingElementWindowTIPO(WindowType windowType, 
 			TimeValueItem windowSize, TimeValueItem windowAdvance,
 			TimeValueItem windowSlide, 
