@@ -201,6 +201,7 @@ public class BenchmarkMainExecutionThread extends Thread {
 			if (queryStringLine.trim().startsWith("#PARSER")) {
 				builder.append(benchmarkerExecution.getOdysseusScript());
 				builder.append(ParallelizationBenchmarkerConstants.PRE_TRANSFORM_TOKEN);
+				builder.append(System.lineSeparator());
 			}
 		}
 
