@@ -55,6 +55,7 @@ Export-Package:
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.setting,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.executorcommand,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification,

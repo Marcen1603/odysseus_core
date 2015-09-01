@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationExcepti
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ExecutionConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.executorcommand.IExecutorCommandHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoOptimizerLoadedException;
@@ -67,7 +68,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
  * 
  */
 public interface IServerExecutor extends IExecutor, IPlanScheduling,
-		IPlanManager, IErrorEventHandler, IErrorEventListener, IInfoProvider, IQueryAddedHandler {
+		IPlanManager, IErrorEventHandler, IErrorEventListener, IInfoProvider, IQueryAddedHandler, IExecutorCommandHandler {
 
 	public Collection<Integer> addQuery(String query, String parserID,
 			ISession user, String queryBuildConfigurationName, Context context,

@@ -82,6 +82,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryB
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ISettingChangeListener;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.executorcommand.IExecutorCommandListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.PlanExecutionEvent;
@@ -177,6 +178,12 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 */
 	private List<IPlanModificationListener> planModificationListener = Collections
 			.synchronizedList(new ArrayList<IPlanModificationListener>());
+	
+	/**
+	 * All Listener for executor command events.
+	 */
+	private List<IExecutorCommandListener> executorCommandListener = Collections
+			.synchronizedList(new ArrayList<IExecutorCommandListener>());
 	
 	/**
 	 * All Listener for query added events.
@@ -641,6 +648,19 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			}
 		}
 	}
+	
+	/**
+	 * Sends an executed {@code IExecutorCommand} to all listeners.
+	 */
+	protected synchronized void fireExecutorCommandEvent(IExecutorCommand command) {
+		for (IExecutorCommandListener listener : this.executorCommandListener) {
+			try {
+				listener.executorCommandEvent(command);
+			} catch (Throwable t) {
+				LOG.error("Exception during fireing executor command event", t);
+			}
+		}
+	}
 
 	/**
 	 * firePlanExecutionEvent sendet ein Plan-Scheduling-Event an alle
@@ -882,6 +902,22 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		synchronized (this.planModificationListener) {
 			this.planModificationListener.remove(listener);
 		}
+	}
+	
+	@Override
+	public void addExecutorCommandListener(IExecutorCommandListener listener) {
+		synchronized (this.executorCommandListener) {
+			if(!this.executorCommandListener.contains(listener)) {
+				this.executorCommandListener.add(listener);
+			}
+		}
+	}
+
+	@Override
+	public void removeExecutorCommandListener(IExecutorCommandListener listener) {
+		synchronized (this.executorCommandListener) {
+			this.executorCommandListener.remove(listener);
+		}		
 	}
 	
 	@Override
