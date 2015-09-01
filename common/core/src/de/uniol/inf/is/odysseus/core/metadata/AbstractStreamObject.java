@@ -55,7 +55,11 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 
 	@Override
 	final public Map<String, Object> getMetadataMap() {
-		return Collections.unmodifiableMap(metadataMap);
+		if (metadataMap != null){
+			return Collections.unmodifiableMap(metadataMap);
+		}else{
+			return null;
+		}
 	}
 
 	@Override
