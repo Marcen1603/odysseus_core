@@ -85,10 +85,9 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		if (input.getMetadata() != null)
 			output.setMetadata((M) input.getMetadata().clone());
 
-		// TODO: This is the only place where additional content is really used, removed!
-//		if (keepInputObject) {
-//			output.setAdditionalContent("base",input.clone());
-//		}
+		if (keepInputObject) {
+			output.setMetadata("base",input.clone());
+		}
 		transfer(output);
 	}
 
