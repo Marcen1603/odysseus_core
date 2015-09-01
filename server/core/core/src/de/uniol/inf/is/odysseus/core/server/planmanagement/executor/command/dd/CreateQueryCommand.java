@@ -8,6 +8,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.Abst
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
+/**
+ * This command is typically created from a parser that creates a logical query 
+ * 
+ * @author Marco Grawunder
+ *
+ */
+
 public class CreateQueryCommand extends AbstractExecutorCommand {
 
 	final private ILogicalQuery query;

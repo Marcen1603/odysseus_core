@@ -12,6 +12,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
+/**
+ * This command is used to call addQuery on the executor. This is typically created from Odysseus Script
+ * 
+ * @author Marco Grawunder
+ *
+ */
+
 public class AddQueryCommand extends AbstractExecutorCommand {
 
 	private String queryText;
