@@ -26,8 +26,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.parallelization.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.exception.ParallelizationStrategyException;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
@@ -115,14 +115,14 @@ public class GroupedAggregateTransformationStrategy extends
 	public TransformationResult transform() {
 		List<SDFAttribute> groupingAttributes = operator
 				.getGroupingAttributes();
-
-		// prepare and validate values
-		prepareTransformation(groupingAttributes);
-
-		// create fragment operator
-		createFragmentOperator(groupingAttributes);
-
-		if (transformationResult.getState() == State.FAILED) {
+		try {
+			// prepare and validate values
+			prepareTransformation(groupingAttributes);
+			
+			// create fragment operator
+			createFragmentOperator(groupingAttributes);
+		} catch (ParallelizationStrategyException pse) {
+			transformationResult.setState(State.FAILED);
 			return transformationResult;
 		}
 
@@ -193,13 +193,16 @@ public class GroupedAggregateTransformationStrategy extends
 			AggregateAO newAggregateOperator) {
 		if (configuration.getEndParallelizationId() != null
 				&& !configuration.getEndParallelizationId().isEmpty()) {
+			
+			// check the way to endpoint
+			checkIfWayToEndPointIsValid(operator, configuration);
+			
 			// if a end operator id is set, do post parallelization
 			List<AbstractStaticFragmentAO> fragments = new ArrayList<AbstractStaticFragmentAO>();
 			fragments.add(fragmentAO);
 			ILogicalOperator lastParallelizedOperator = doPostParallelization(
 					operator, newAggregateOperator,
-					configuration.getEndParallelizationId(), i, fragments,
-					configuration);
+					configuration.getEndParallelizationId(), i);
 			union.subscribeToSource(lastParallelizedOperator, i, 0,
 					lastParallelizedOperator.getOutputSchema());
 		} else {
@@ -273,8 +276,9 @@ public class GroupedAggregateTransformationStrategy extends
 	 * creates a fragment operator dynamically based on type
 	 * 
 	 * @param groupingAttributes
+	 * @throws ParallelizationStrategyException 
 	 */
-	private void createFragmentOperator(List<SDFAttribute> groupingAttributes) {
+	private void createFragmentOperator(List<SDFAttribute> groupingAttributes) throws ParallelizationStrategyException {
 		fragmentAO = null;
 		try {
 			fragmentAO = createFragmentAO(
@@ -283,40 +287,35 @@ public class GroupedAggregateTransformationStrategy extends
 					groupingAttributes, null, null);
 			transformationResult.addFragmentOperator(fragmentAO);
 		} catch (InstantiationException | IllegalAccessException e) {
-			transformationResult.setState(State.FAILED);
+			throw new ParallelizationStrategyException("Error creating fragment operator");
 		}
 		if (fragmentAO == null) {
-			transformationResult.setState(State.FAILED);
+			throw new ParallelizationStrategyException("Error creating fragment operator");
 		}
 	}
 
 	/**
 	 * prepares transformation and validates values
 	 * @param groupingAttributes
+	 * @throws ParallelizationStrategyException 
 	 */
-	private void prepareTransformation(List<SDFAttribute> groupingAttributes) {
+	private void prepareTransformation(List<SDFAttribute> groupingAttributes) throws ParallelizationStrategyException {
 		transformationResult = new TransformationResult(State.SUCCESS);
 		
 		// validates if operator and configuration are set
 		if (configuration == null || operator == null){
-			transformationResult.setState(State.FAILED);
-			return;
+			throw new ParallelizationStrategyException("");
 		}
 		
 		// validate settings 
-		if (!super.areSettingsValid(configuration)) {
-			transformationResult.setState(State.FAILED);
-			return;
+		if (configuration.getDegreeOfParallelization() == 1) {
+			throw new ParallelizationStrategyException("");
 		}
 
 		// if there is no grouping
 		if (groupingAttributes.isEmpty()) {
-			transformationResult.setState(State.FAILED);
-			return;
+			throw new ParallelizationStrategyException("Strategy needs gouping attributes");
 		}
-
-		// check the way to endpoint if endoperator id is set
-		checkIfWayToEndPointIsValid(operator, configuration, true);
 
 		transformationResult.setAllowsModificationAfterUnion(true);
 
@@ -350,32 +349,5 @@ public class GroupedAggregateTransformationStrategy extends
 	@Override
 	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return HashFragmentAO.class;
-	}
-
-	/**
-	 * abstract method to allow strategy specific post parallelization works or
-	 * validations. this method is used in postParalleliaztion for each operator
-	 * between start and end
-	 * 
-	 * @param parallelizedOperator
-	 * @param currentExistingOperator
-	 * @param currentClonedOperator
-	 * @param iteration
-	 * @param fragments
-	 * @param settingsForOperator
-	 */
-	@Override
-	protected void doStrategySpecificPostParallelization(
-			ILogicalOperator parallelizedOperator,
-			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration,
-			List<AbstractStaticFragmentAO> fragments,
-			ParallelOperatorConfiguration settingsForOperator) {
-		if (currentExistingOperator instanceof AggregateAO) {
-			SDFAttributeHelper.checkIfAttributesAreEqual(
-					(AggregateAO) currentExistingOperator, iteration,
-					fragments,
-					settingsForOperator.isAssureSemanticCorrectness());
-		}
 	}
 }

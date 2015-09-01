@@ -27,13 +27,11 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.parallelization.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
@@ -165,26 +163,16 @@ public class PostOptimizationHandler {
 
 					// do some validations
 					if (currentOperator instanceof MapAO) {
-						LogicalGraphHelper.validateMapAO(true, currentOperator,
-								false);
+						LogicalGraphHelper.validateMapAO(true, currentOperator);
 					}
 					if (currentOperator instanceof SelectAO) {
 						LogicalGraphHelper.validateSelectAO(true,
-								currentOperator, false);
+								currentOperator);
 					}
 					if (currentOperator instanceof IStatefulAO) {
-						LogicalGraphHelper.validateAggregateAO(true, false,
-								currentOperator, false);
-						if (currentOperator instanceof AggregateAO
-								&& fragmentOperator instanceof HashFragmentAO) {
-							// check if attributes of aggregation are equal to
-							// attributes of fragmentation
-							List<AbstractStaticFragmentAO> fragmentAOs = new ArrayList<AbstractStaticFragmentAO>();
-							fragmentAOs.add((HashFragmentAO) fragmentOperator);
-							SDFAttributeHelper.checkIfAttributesAreEqual(
-									(AggregateAO) currentOperator, iteration,
-									fragmentAOs, true);
-						}
+						throw new IllegalArgumentException(
+								"No stateful operators allowed "
+										+ "in post optimization");
 					}
 
 					// clone existing operator and change uuid and name

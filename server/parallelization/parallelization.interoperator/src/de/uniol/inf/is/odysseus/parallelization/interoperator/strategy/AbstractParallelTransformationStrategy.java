@@ -48,21 +48,6 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 	}
 
 	/**
-	 * checks if the settings are valid for this strategy. If the degree is set
-	 * to 1, no operations are done and the transformation is aborted
-	 * 
-	 * @param settingsForOperator
-	 * @return
-	 */
-	protected boolean areSettingsValid(
-			ParallelOperatorConfiguration settingsForOperator) {
-		if (settingsForOperator.getDegreeOfParallelization() == 1) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
 	 * creates are fragementAO dynamically based on the given type
 	 * 
 	 * @param fragmentClass
@@ -121,8 +106,7 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 	 */
 	protected void checkIfWayToEndPointIsValid(
 			ILogicalOperator operatorForTransformation,
-			ParallelOperatorConfiguration settingsForOperator,
-			boolean aggregatesWithGroupingAllowed) {
+			ParallelOperatorConfiguration settingsForOperator) {
 
 		// get end operator and value for assureSemanticCorrectness
 		String endParallelizationId = settingsForOperator
@@ -132,8 +116,7 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 
 		// check the way to endpoint
 		LogicalGraphHelper.checkWayToEndPoint(operatorForTransformation,
-				aggregatesWithGroupingAllowed, endParallelizationId,
-				assureSemanticCorrectness);
+				endParallelizationId, assureSemanticCorrectness);
 
 	}
 
@@ -152,9 +135,7 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 	 */
 	protected ILogicalOperator doPostParallelization(
 			ILogicalOperator existingOperator, ILogicalOperator newOperator,
-			String endOperatorId, int iteration,
-			List<AbstractStaticFragmentAO> fragments,
-			ParallelOperatorConfiguration settingsForOperator) {
+			String endOperatorId, int iteration) {
 
 		ILogicalOperator lastClonedOperator = newOperator;
 		ILogicalOperator currentExistingOperator = LogicalGraphHelper
@@ -167,7 +148,8 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 					.clone();
 			currentClonedOperator.setName(currentClonedOperator.getName() + "_"
 					+ iteration);
-			currentClonedOperator.setUniqueIdentifier(UUID.randomUUID().toString());
+			currentClonedOperator.setUniqueIdentifier(UUID.randomUUID()
+					.toString());
 
 			CopyOnWriteArrayList<LogicalSubscription> operatorSourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 			operatorSourceSubscriptions.addAll(currentExistingOperator
@@ -193,10 +175,6 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 				}
 			}
 
-			doStrategySpecificPostParallelization(newOperator,
-					currentExistingOperator, currentClonedOperator, iteration,
-					fragments, settingsForOperator);
-
 			// if end operator is reached, break loop and return last cloned
 			// operator
 			lastClonedOperator = currentClonedOperator;
@@ -212,23 +190,4 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 		}
 		return lastClonedOperator;
 	}
-
-	/**
-	 * abstract method to allow strategy specific post parallelization works or
-	 * validations. this method is used in postParalleliaztion for each operator
-	 * between start and end
-	 * 
-	 * @param parallelizedOperator
-	 * @param currentExistingOperator
-	 * @param currentClonedOperator
-	 * @param iteration
-	 * @param fragments
-	 * @param settingsForOperator
-	 */
-	protected abstract void doStrategySpecificPostParallelization(
-			ILogicalOperator parallelizedOperator,
-			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration,
-			List<AbstractStaticFragmentAO> fragments,
-			ParallelOperatorConfiguration settingsForOperator);
 }

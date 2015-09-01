@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.util.GenericDownstreamGraphWalker;
@@ -36,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.GenericUpstreamGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.OperatorIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.parallelization.helper.SDFAttributeHelper;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.exception.SemanticChangeException;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.AbstractParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
@@ -147,56 +147,17 @@ public class LogicalGraphHelper {
 	}
 
 	/**
-	 * Validates if a given aggregate ao is valid or causes a semantic change of
-	 * the existing plan. an exeception is thrown if assureSemanticCorrectness
-	 * is set to true
-	 * 
-	 * @param assureSemanticCorrectness
-	 * @param aggregatesWithGroupingAllowed
-	 * @param currentOperator
-	 * @param possibleSemanticChange
-	 * @return
-	 */
-	public static boolean validateAggregateAO(
-			boolean assureSemanticCorrectness,
-			boolean aggregatesWithGroupingAllowed,
-			ILogicalOperator currentOperator, boolean possibleSemanticChange) {
-		if (currentOperator instanceof AggregateAO) {
-			AggregateAO aggregateOperator = (AggregateAO) currentOperator;
-			if ((!aggregateOperator.getGroupingAttributes().isEmpty() && !aggregatesWithGroupingAllowed)
-					|| aggregateOperator.getGroupingAttributes().isEmpty()) {
-				if (assureSemanticCorrectness) {
-					throw new IllegalArgumentException(
-							"No aggregations allowed between start "
-									+ "and end of parallelization for this strategy");
-				} else {
-					possibleSemanticChange = true;
-				}
-			}
-		} else {
-			if (assureSemanticCorrectness) {
-				throw new IllegalArgumentException(
-						"No stateful operators allowed between start "
-								+ "and end of parallelization");
-			} else {
-				possibleSemanticChange = true;
-			}
-		}
-		return possibleSemanticChange;
-	}
-
-	/**
 	 * Validates a given select operator. the select operator normally is a
 	 * stateless operator, but can contain stateful functions. an exeception is
 	 * thrown if assureSemanticCorrectness is set to true
 	 * 
 	 * @param assureSemanticCorrectness
 	 * @param currentOperator
-	 * @param possibleSemanticChange
 	 * @return
+	 * @throws SemanticChangeException
 	 */
-	public static boolean validateSelectAO(boolean assureSemanticCorrectness,
-			ILogicalOperator currentOperator, boolean possibleSemanticChange) {
+	public static void validateSelectAO(boolean assureSemanticCorrectness,
+			ILogicalOperator currentOperator) throws SemanticChangeException {
 		SelectAO selectOperator = (SelectAO) currentOperator;
 		IPredicate<?> predicate = selectOperator.getPredicate();
 		if (predicate instanceof RelationalPredicate) {
@@ -210,11 +171,12 @@ public class LogicalGraphHelper {
 							"No operators with stateful functions allowed "
 									+ "between start and end of parallelization");
 				} else {
-					possibleSemanticChange = true;
+					throw new SemanticChangeException(
+							"The path between start and end operator contains select"
+							+ " operator with stateful functions");
 				}
 			}
 		}
-		return possibleSemanticChange;
 	}
 
 	/**
@@ -224,11 +186,11 @@ public class LogicalGraphHelper {
 	 * 
 	 * @param assureSemanticCorrectness
 	 * @param currentOperator
-	 * @param possibleSemanticChange
 	 * @return
+	 * @throws SemanticChangeException
 	 */
-	public static boolean validateMapAO(boolean assureSemanticCorrectness,
-			ILogicalOperator currentOperator, boolean possibleSemanticChange) {
+	public static void validateMapAO(boolean assureSemanticCorrectness,
+			ILogicalOperator currentOperator) throws SemanticChangeException {
 		MapAO mapOperator = (MapAO) currentOperator;
 		List<SDFExpression> expressionList = mapOperator.getExpressionList();
 		for (SDFExpression sdfExpression : expressionList) {
@@ -240,11 +202,12 @@ public class LogicalGraphHelper {
 							"No operators with stateful functions allowed "
 									+ "between start and end of parallelization");
 				} else {
-					possibleSemanticChange = true;
+					throw new SemanticChangeException(
+							"The path between start and end operator "
+							+ "contains map operator with stateful functions");
 				}
 			}
 		}
-		return possibleSemanticChange;
 	}
 
 	/**
@@ -281,10 +244,9 @@ public class LogicalGraphHelper {
 	 * @param endParallelizationId
 	 * @param assureSemanticCorrectness
 	 */
-	public static void checkWayToEndPoint(
+	public static boolean checkWayToEndPoint(
 			ILogicalOperator operatorForTransformation,
-			boolean aggregatesWithGroupingAllowed, String endParallelizationId,
-			boolean assureSemanticCorrectness) {
+			String endParallelizationId, boolean assureSemanticCorrectness) {
 		if (endParallelizationId != null && !endParallelizationId.isEmpty()) {
 			ILogicalOperator endOperator = LogicalGraphHelper
 					.findDownstreamOperatorWithId(endParallelizationId,
@@ -308,41 +270,37 @@ public class LogicalGraphHelper {
 						.getNextOperator(operatorForTransformation);
 				while (currentOperator != null) {
 
-					boolean possibleSemanticChange = false;
-
 					// validation if stateful operators or stateful functions
 					// exists is only needed if semantic correctness is needed
-
-					if (currentOperator instanceof IStatefulAO) {
-						possibleSemanticChange = LogicalGraphHelper
-								.validateAggregateAO(assureSemanticCorrectness,
-										aggregatesWithGroupingAllowed,
-										currentOperator, possibleSemanticChange);
-					} else if (currentOperator instanceof SelectAO) {
-						possibleSemanticChange = LogicalGraphHelper
-								.validateSelectAO(assureSemanticCorrectness,
-										currentOperator, possibleSemanticChange);
-					} else if (currentOperator instanceof MapAO) {
-						possibleSemanticChange = LogicalGraphHelper
-								.validateMapAO(assureSemanticCorrectness,
-										currentOperator, possibleSemanticChange);
+					try {
+						if (currentOperator instanceof IStatefulAO) {
+							if (assureSemanticCorrectness) {
+								throw new IllegalArgumentException(
+										"No stateful operators allowed "
+												+ "between start and end of parallelization");
+							} else {
+								throw new SemanticChangeException(
+										"The path between start and end operator contains stateful operators");
+							}
+						} else if (currentOperator instanceof SelectAO) {
+							LogicalGraphHelper.validateSelectAO(
+									assureSemanticCorrectness, currentOperator);
+						} else if (currentOperator instanceof MapAO) {
+							LogicalGraphHelper.validateMapAO(
+									assureSemanticCorrectness, currentOperator);
+						}
+					} catch (SemanticChangeException sce) {
+						INFO_SERVICE
+								.info("Parallelization between start and end id possibly "
+										+ "results in a semantic change of the given plan. Cause: "
+										+ sce.getMessage());
 					}
 
 					// if parameter with id is reached, parallelization is done
 					if (currentOperator.getUniqueIdentifier() != null) {
 						if (currentOperator.getUniqueIdentifier()
 								.equalsIgnoreCase(endParallelizationId)) {
-							if (possibleSemanticChange
-									&& !assureSemanticCorrectness) {
-								INFO_SERVICE
-										.info("Parallelization between start and end id possibly "
-												+ "results in a semantic change of the given plan.");
-							}
-
-							// all operators including end operator are
-							// valid,
-							// validation successful
-							return;
+							return true;
 						}
 					}
 
@@ -353,5 +311,6 @@ public class LogicalGraphHelper {
 				}
 			}
 		}
+		return false;
 	}
 }

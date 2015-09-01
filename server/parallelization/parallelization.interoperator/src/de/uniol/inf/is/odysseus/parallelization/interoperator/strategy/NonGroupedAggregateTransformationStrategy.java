@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.exception.ParallelizationStrategyException;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
@@ -134,10 +135,12 @@ public class NonGroupedAggregateTransformationStrategy extends
 	 */
 	@Override
 	public TransformationResult transform() {
-		prepareTransformation();
-		createFragmentOperator();
-
-		if (transformationResult.getState() == State.FAILED) {
+		
+		try {
+			prepareTransformation();
+			createFragmentOperator();
+		} catch (ParallelizationStrategyException e) {
+			transformationResult.setState(State.FAILED);
 			return transformationResult;
 		}
 
@@ -327,22 +330,21 @@ public class NonGroupedAggregateTransformationStrategy extends
 	 * prepares transformation and validates values
 	 * 
 	 * @param groupingAttributes
+	 * @throws ParallelizationStrategyException 
 	 */
-	private void prepareTransformation() {
+	private void prepareTransformation() throws ParallelizationStrategyException {
 		transformationResult = new TransformationResult(State.SUCCESS);
 		// validates if operator and configuration are set
 		if (configuration == null || operator == null) {
-			transformationResult.setState(State.FAILED);
-			return;
+			throw new ParallelizationStrategyException("");
 		}
 
-		if (!super.areSettingsValid(configuration)) {
-			transformationResult.setState(State.FAILED);
-			return;
+		if (configuration.getDegreeOfParallelization() == 1) {
+			throw new ParallelizationStrategyException("");
 		}
 		if (configuration.getEndParallelizationId() != null
 				&& !configuration.getEndParallelizationId().isEmpty()) {
-			throw new IllegalArgumentException(
+			throw new ParallelizationStrategyException(
 					"Definition of Endpoint for strategy " + this.getName()
 							+ " is not allowed");
 		}
@@ -361,8 +363,9 @@ public class NonGroupedAggregateTransformationStrategy extends
 	 * creates a fragment operator dynamically based on type
 	 * 
 	 * @param groupingAttributes
+	 * @throws ParallelizationStrategyException 
 	 */
-	private void createFragmentOperator() {
+	private void createFragmentOperator() throws ParallelizationStrategyException {
 		try {
 			fragmentAO = createFragmentAO(
 					configuration.getFragementationType(),
@@ -370,10 +373,10 @@ public class NonGroupedAggregateTransformationStrategy extends
 					null);
 			transformationResult.addFragmentOperator(fragmentAO);
 		} catch (InstantiationException | IllegalAccessException e) {
-			transformationResult.setState(State.FAILED);
+			throw new ParallelizationStrategyException("");
 		}
 		if (fragmentAO == null) {
-			transformationResult.setState(State.FAILED);
+			throw new ParallelizationStrategyException("");
 		}
 	}
 
@@ -400,28 +403,4 @@ public class NonGroupedAggregateTransformationStrategy extends
 	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return RoundRobinFragmentAO.class;
 	}
-
-	/**
-	 * abstract method to allow strategy specific post parallelization works or
-	 * validations. this method is used in postParalleliaztion for each operator
-	 * between start and end
-	 * 
-	 * @param parallelizedOperator
-	 * @param currentExistingOperator
-	 * @param currentClonedOperator
-	 * @param iteration
-	 * @param fragments
-	 * @param settingsForOperator
-	 */
-	@Override
-	protected void doStrategySpecificPostParallelization(
-			ILogicalOperator parallelizedOperator,
-			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration,
-			List<AbstractStaticFragmentAO> fragments,
-			ParallelOperatorConfiguration settingsForOperator) {
-		// no operation needed, because post parallelization is not allowed for
-		// this strategy
-	}
-
 }

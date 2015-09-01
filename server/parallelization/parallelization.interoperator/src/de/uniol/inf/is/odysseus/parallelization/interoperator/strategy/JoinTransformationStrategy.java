@@ -26,12 +26,12 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.parallelization.helper.SDFAttributeHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.exception.ParallelizationStrategyException;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult.State;
@@ -112,13 +112,11 @@ public class JoinTransformationStrategy extends
 	 */
 	@Override
 	public TransformationResult transform() {
-		prepareTransformation();
-		if (transformationResult.getState() == State.FAILED) {
-			return transformationResult;
-		}
-		
-		createAndSubscribeFragments();
-		if (transformationResult.getState() == State.FAILED) {
+		try {
+			prepareTransformation();
+			createAndSubscribeFragments();
+		} catch (ParallelizationStrategyException e) {
+			transformationResult.setState(State.FAILED);
 			return transformationResult;
 		}
 
@@ -180,11 +178,13 @@ public class JoinTransformationStrategy extends
 	private void doPostParallelizationIfNeeded(int i, JoinAO newJoinOperator) {
 		if (configuration.getEndParallelizationId() != null
 				&& !configuration.getEndParallelizationId().isEmpty()) {
+			// check if the way to endpoint is valid,
+			checkIfWayToEndPointIsValid(operator, configuration);
+			
 			// if endoperator id is set, do post parallelization
 			ILogicalOperator lastParallelizedOperator = doPostParallelization(
 					operator, newJoinOperator,
-					configuration.getEndParallelizationId(), i, fragments,
-					configuration);
+					configuration.getEndParallelizationId(), i);
 			union.subscribeToSource(lastParallelizedOperator, i, 0,
 					lastParallelizedOperator.getOutputSchema());
 		} else {
@@ -259,8 +259,9 @@ public class JoinTransformationStrategy extends
 	/**
 	 * creates the different fragment operators for both input streams of join
 	 * operator
+	 * @throws ParallelizationStrategyException 
 	 */
-	private void createAndSubscribeFragments() {
+	private void createAndSubscribeFragments() throws ParallelizationStrategyException {
 		int numberOfFragments = 0;
 		fragmentsSinkInPorts = new ArrayList<Pair<AbstractStaticFragmentAO, Integer>>();
 		fragments = new ArrayList<AbstractStaticFragmentAO>();
@@ -287,13 +288,10 @@ public class JoinTransformationStrategy extends
 								numberOfFragments + "", attributesForSource,
 								null, null);
 					} catch (InstantiationException | IllegalAccessException e) {
-						e.printStackTrace();
-						transformationResult.setState(State.FAILED);
-						return;
+						throw new ParallelizationStrategyException("");
 					}
 					if (fragmentAO == null) {
-						transformationResult.setState(State.FAILED);
-						return;
+						throw new ParallelizationStrategyException("");
 					}
 					transformationResult.addFragmentOperator(fragmentAO);
 					storeFragmentOperators(upstreamOperatorSubscription,
@@ -342,23 +340,19 @@ public class JoinTransformationStrategy extends
 
 	/**
 	 * prepares transformation and validates values
+	 * @throws ParallelizationStrategyException 
 	 */
-	private void prepareTransformation() {
+	private void prepareTransformation() throws ParallelizationStrategyException {
 		transformationResult = new TransformationResult(State.SUCCESS);
 		// validates if operator and configuration are set
 		if (configuration == null || operator == null){
-			transformationResult.setState(State.FAILED);
-			return;
+			throw new ParallelizationStrategyException("");
 		}
 		
-		if (!super.areSettingsValid(configuration)) {
-			transformationResult.setState(State.FAILED);
-			return;
+		if (configuration.getDegreeOfParallelization() == 1) {
+			throw new ParallelizationStrategyException("");
 		}
-		// check if the way to endpoint is valid, only if the end operator id is
-		// set
-		checkIfWayToEndPointIsValid(operator, configuration, true);
-
+		
 		transformationResult.setAllowsModificationAfterUnion(true);
 
 		attributes = new HashMap<Integer, List<SDFAttribute>>();
@@ -387,32 +381,5 @@ public class JoinTransformationStrategy extends
 	@Override
 	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return HashFragmentAO.class;
-	}
-
-	/**
-	 * abstract method to allow strategy specific post parallelization works or
-	 * validations. this method is used in postParalleliaztion for each operator
-	 * between start and end
-	 * 
-	 * @param parallelizedOperator
-	 * @param currentExistingOperator
-	 * @param currentClonedOperator
-	 * @param iteration
-	 * @param fragments
-	 * @param settingsForOperator
-	 */
-	@Override
-	protected void doStrategySpecificPostParallelization(
-			ILogicalOperator parallelizedOperator,
-			ILogicalOperator currentExistingOperator,
-			ILogicalOperator currentClonedOperator, int iteration,
-			List<AbstractStaticFragmentAO> fragments,
-			ParallelOperatorConfiguration settingsForOperator) {
-		if (currentExistingOperator instanceof AggregateAO) {
-			SDFAttributeHelper.checkIfAttributesAreEqual(
-					(AggregateAO) currentExistingOperator, iteration,
-					fragments,
-					settingsForOperator.isAssureSemanticCorrectness());
-		}
 	}
 }
