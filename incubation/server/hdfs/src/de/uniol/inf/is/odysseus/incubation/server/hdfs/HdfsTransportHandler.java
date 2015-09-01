@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.incubation.server.hdfs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -17,45 +19,35 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class HdfsTransportHandler extends AbstractTransportHandler {
 
+	private Logger logger = Logger.getLogger(HdfsTransportHandler.class.getName());
+	
 	public static final String NAME = "HDFS";
 	private String fsDefaultName;
 	private String pathToFile;
+	private String username;
 	private boolean append;
 
 	private FSDataOutputStream dfsOutput;
 	private FSDataInputStream dfsInput;
 
-	private Configuration conf;
 	private FileSystem fs;
 
-	public HdfsTransportHandler(){}
-	
+	public HdfsTransportHandler() {
+	}
+
 	public HdfsTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
 		this.fsDefaultName = options.get("fs.default.name");
 		this.pathToFile = options.get("Filename");
 		this.append = Boolean.parseBoolean(options.get("append"));
-
-	}
-
-	public void createConnection() {
+		this.username = options.get("username");
 		
-		System.setProperty("HADOOP_USER_NAME", "hduser");
-		
-		Configuration conf = new Configuration();
-		conf.set("fs.defaultFS", fsDefaultName);
-		try {
-			fs = FileSystem.get(conf);
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
 
 	}
 
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
-
+		
 		HdfsTransportHandler instance = new HdfsTransportHandler(protocolHandler, options);
 
 		protocolHandler.setTransportHandler(instance);
@@ -73,7 +65,7 @@ public class HdfsTransportHandler extends AbstractTransportHandler {
 	public void processInOpen() throws IOException {
 		createConnection();
 		if (!fs.exists(new Path(pathToFile)) || !fs.isFile(new Path(pathToFile)))
-			System.out.println("File doesn't exist!");
+			logger.log(Level.FINE,"File does not exist or it is not a file.");
 		else
 			dfsInput = fs.open(new Path(pathToFile));
 
@@ -82,10 +74,10 @@ public class HdfsTransportHandler extends AbstractTransportHandler {
 	@Override
 	public void processOutOpen() throws IOException {
 		createConnection();
-		if (!fs.exists(new Path(pathToFile)))
-			System.out.println("File already exists!");
+		if (fs.exists(new Path(pathToFile)) && !append)
+			logger.log(Level.FINE,"File already exists!");
 		else
-			dfsOutput = fs.create(new Path(pathToFile));
+			dfsOutput = fs.create(new Path(pathToFile),append);
 
 	}
 
@@ -105,7 +97,11 @@ public class HdfsTransportHandler extends AbstractTransportHandler {
 
 	@Override
 	public void send(byte[] message) throws IOException {
-
+		try {
+			dfsOutput.write(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -122,23 +118,69 @@ public class HdfsTransportHandler extends AbstractTransportHandler {
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		return false;
 	}
-	
-	public void write(byte[] buffer){
+
+	public void createConnection() {
+
+		System.setProperty("HADOOP_USER_NAME", username);
+
+		Configuration conf = new Configuration();
+		conf.set("fs.defaultFS", fsDefaultName);
 		try {
-			dfsOutput.write(buffer);
+			fs = FileSystem.get(conf);
 		} catch (IOException e) {
+
 			e.printStackTrace();
 		}
+
 	}
-	
-	public byte[] read(byte[] buffer){
-		try {
-			dfsInput.read(buffer);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return buffer;
+
+	public String getFsDefaultName() {
+		return fsDefaultName;
 	}
+
+	public void setFsDefaultName(String fsDefaultName) {
+		this.fsDefaultName = fsDefaultName;
+	}
+
+	public String getPathToFile() {
+		return pathToFile;
+	}
+
+	public void setPathToFile(String pathToFile) {
+		this.pathToFile = pathToFile;
+	}
+
+	public boolean isAppend() {
+		return append;
+	}
+
+	public void setAppend(boolean append) {
+		this.append = append;
+	}
+
+	public FSDataOutputStream getDfsOutput() {
+		return dfsOutput;
+	}
+
+	public void setDfsOutput(FSDataOutputStream dfsOutput) {
+		this.dfsOutput = dfsOutput;
+	}
+
+	public FSDataInputStream getDfsInput() {
+		return dfsInput;
+	}
+
+	public void setDfsInput(FSDataInputStream dfsInput) {
+		this.dfsInput = dfsInput;
+	}
+
+	public FileSystem getFs() {
+		return fs;
+	}
+
+	public void setFs(FileSystem fs) {
+		this.fs = fs;
+	}
+
 
 }
