@@ -21,10 +21,12 @@ public class BaDaStRecorderRegistry {
 	
 	// if Odysseus has been crashed, some recorders may exist, when Odysseus restarts
 	static {
-		Set<String> existingRecorders = BaDaStSender.sendLsRecordersComand();
-		for(String recorder : existingRecorders) {
-			// each recorder name has the pattern recordertype_sourcename
-			register(recorder.split("_")[1].trim(), recorder);
+		if(BaDaStSender.isBaDaStServerAvailable()) {
+			Set<String> existingRecorders = BaDaStSender.sendLsRecordersComand();
+			for(String recorder : existingRecorders) {
+				// each recorder name has the pattern recordertype_sourcename
+				register(recorder.split("_")[1].trim(), recorder);
+			}
 		}
 	}
 

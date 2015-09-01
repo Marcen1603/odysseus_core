@@ -28,20 +28,30 @@ public class BaDaStSender {
 	/**
 	 * The logger for this class.
 	 */
-	private static final Logger cLog = LoggerFactory
-			.getLogger(BaDaStSender.class);
+	private static final Logger cLog = LoggerFactory.getLogger(BaDaStSender.class);
 
 	/**
 	 * The host name of the BaDaSt server.
 	 */
-	private static String cHost = OdysseusConfiguration.get("badast.host.name",
-			"localhost");
+	private static String cHost = OdysseusConfiguration.get("badast.host.name", "localhost");
 
 	/**
 	 * The port number of the BaDaSt server.
 	 */
-	private static int cPort = OdysseusConfiguration.getInt(
-			"badast.clientPort", 6789);
+	private static int cPort = OdysseusConfiguration.getInt("badast.clientPort", 6789);
+
+	/**
+	 * Checks, if the BaDaSt application is available.
+	 * 
+	 * @return True, if the server is up.
+	 */
+	public static boolean isBaDaStServerAvailable() {
+		try (Socket clientSocket = new Socket(cHost, cPort)) {
+			return true;
+		} catch (@SuppressWarnings("unused") IOException e) {
+			return false;
+		}
+	}
 
 	/**
 	 * Sends a command to the BaDaSt application.
@@ -52,17 +62,14 @@ public class BaDaStSender {
 	 */
 	public static String sendComand(String command) {
 		try (Socket clientSocket = new Socket(cHost, cPort);
-				DataOutputStream outToServer = new DataOutputStream(
-						clientSocket.getOutputStream());
-				DataInputStream inFromServer = new DataInputStream(
-						clientSocket.getInputStream())) {
+				DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+				DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream())) {
 			outToServer.writeUTF(command);
 			String answer = inFromServer.readUTF();
 			cLog.debug("Info from BaDaSt: {}", answer);
 			return answer;
 		} catch (IOException e) {
-			cLog.error("Could not send command " + command + " to BaDaSt at "
-					+ cHost + ":" + cPort, e);
+			cLog.error("Could not send command " + command + " to BaDaSt at " + cHost + ":" + cPort, e);
 			return null;
 		}
 	}
