@@ -15,7 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.collection;
 
-public class Option {
+import java.io.Serializable;
+
+public class Option implements Serializable {
+	
+	private static final long serialVersionUID = -8166330236620056043L;
 	
 	String name;
 	String value;
