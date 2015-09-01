@@ -24,10 +24,10 @@ Require-Bundle: de.uniol.inf.is.odysseus.iql.basic;visibility:=reexport,
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.iql.basic.ui,
- de.uniol.inf.is.odysseus.iql.basic.ui.coloring,
  de.uniol.inf.is.odysseus.iql.basic.ui.contentassist,
  de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.antlr,
  de.uniol.inf.is.odysseus.iql.basic.ui.executor,
+ de.uniol.inf.is.odysseus.iql.basic.ui.highlighting,
  de.uniol.inf.is.odysseus.iql.basic.ui.hover,
  de.uniol.inf.is.odysseus.iql.basic.ui.internal,
  de.uniol.inf.is.odysseus.iql.basic.ui.outline,

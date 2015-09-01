@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.iql.basic.types.extension;
 
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.ExtensionMethod;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensions;
 
 public class ObjectExtensions implements IIQLTypeExtensions {
@@ -23,7 +24,8 @@ public class ObjectExtensions implements IIQLTypeExtensions {
 		 LoggerFactory.getLogger(obj.getClass()).error(text);
 	}
 	
-	public static void print(Object obj, String text) {
+	@ExtensionMethod(ignoreFirstParameter=false)
+	public static void print(String text) {
 		 System.out.print(text);
 	}
 	

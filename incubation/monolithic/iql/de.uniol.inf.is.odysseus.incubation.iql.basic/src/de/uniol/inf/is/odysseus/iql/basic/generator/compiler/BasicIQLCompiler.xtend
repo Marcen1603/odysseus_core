@@ -4,13 +4,13 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.BasicIQLComp
 import javax.inject.Inject
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.BasicIQLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.BasicIQLTypeDictionary
 
-class BasicIQLCompiler extends AbstractIQLCompiler<BasicIQLCompilerHelper, BasicIQLGeneratorContext, BasicIQLTypeCompiler, BasicIQLStatementCompiler, BasicIQLTypeFactory,  BasicIQLTypeUtils>{
+class BasicIQLCompiler extends AbstractIQLCompiler<BasicIQLCompilerHelper, BasicIQLGeneratorContext, BasicIQLTypeCompiler, BasicIQLStatementCompiler, BasicIQLTypeDictionary,  BasicIQLTypeUtils>{
 	
 	@Inject
-	new(BasicIQLCompilerHelper helper, BasicIQLTypeCompiler typeCompiler, BasicIQLStatementCompiler stmtCompiler, BasicIQLTypeFactory typeFactory, BasicIQLTypeUtils typeUtils) {
-		super(helper, typeCompiler, stmtCompiler, typeFactory, typeUtils)
+	new(BasicIQLCompilerHelper helper, BasicIQLTypeCompiler typeCompiler, BasicIQLStatementCompiler stmtCompiler, BasicIQLTypeDictionary typeDictionary, BasicIQLTypeUtils typeUtils) {
+		super(helper, typeCompiler, stmtCompiler, typeDictionary, typeUtils)
 	}
 	
 	

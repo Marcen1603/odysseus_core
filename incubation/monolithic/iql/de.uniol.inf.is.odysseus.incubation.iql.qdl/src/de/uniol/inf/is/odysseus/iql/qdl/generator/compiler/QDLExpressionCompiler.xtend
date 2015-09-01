@@ -16,14 +16,14 @@ import org.eclipse.xtext.common.types.JvmField
 import org.eclipse.xtext.common.types.JvmOperation
 import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator
 import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext
-import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.IQDLTypeExtensionsFactory
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils
+import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.IQDLTypeExtensionsDictionary
 
-class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLExpressionEvaluator, IQDLTypeUtils, IQDLLookUp, IQDLTypeExtensionsFactory> implements IQDLExpressionCompiler{
+class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLExpressionEvaluator, IQDLTypeUtils, IQDLLookUp, IQDLTypeExtensionsDictionary> implements IQDLExpressionCompiler{
 		
 	@Inject
-	new(IQDLCompilerHelper helper, IQDLTypeCompiler typeCompiler, IQDLExpressionEvaluator exprEvaluator, IQDLTypeUtils typeUtils, IQDLLookUp lookUp, IQDLTypeExtensionsFactory typeOperatorsFactory) {
-		super(helper, typeCompiler, exprEvaluator, typeUtils, lookUp, typeOperatorsFactory)
+	new(IQDLCompilerHelper helper, IQDLTypeCompiler typeCompiler, IQDLExpressionEvaluator exprEvaluator, IQDLTypeUtils typeUtils, IQDLLookUp lookUp, IQDLTypeExtensionsDictionary typeExtensionsDictionary) {
+		super(helper, typeCompiler, exprEvaluator, typeUtils, lookUp, typeExtensionsDictionary)
 	}
 	
 	override String compile(IQLExpression e, IQDLGeneratorContext context) {

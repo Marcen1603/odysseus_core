@@ -6,13 +6,11 @@ import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as basiciql
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvm
 
 ODLModel returns basiciql::IQLModel:
-	{ODLModel}
 	namespaces+=IQLNamespace*
 	(elements+=ODLModelElement)*
 ;
 
 ODLModelElement returns basiciql::IQLModelElement:
-	{ODLModelElement}
 	(javametadata+=IQLJavaMetadata)*
 	inner=(IQLClass | IQLInterface | ODLOperator)
 ; 

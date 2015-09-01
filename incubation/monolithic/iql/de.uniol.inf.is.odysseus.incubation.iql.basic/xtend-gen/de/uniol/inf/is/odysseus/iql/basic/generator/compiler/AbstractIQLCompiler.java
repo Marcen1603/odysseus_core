@@ -22,11 +22,12 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLStatementCompil
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
@@ -38,29 +39,31 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
-public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, S extends IIQLStatementCompiler<G>, F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLCompiler<G> {
+public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, S extends IIQLStatementCompiler<G>, F extends IIQLTypeDictionary, U extends IIQLTypeUtils> implements IIQLCompiler<G> {
   protected H helper;
   
   protected T typeCompiler;
   
-  protected F typeFactory;
+  protected F typeDictionary;
   
   protected S stmtCompiler;
   
   protected U typeUtils;
   
-  public AbstractIQLCompiler(final H helper, final T typeCompiler, final S stmtCompiler, final F typeFactory, final U typeUtils) {
+  public AbstractIQLCompiler(final H helper, final T typeCompiler, final S stmtCompiler, final F typeDictionary, final U typeUtils) {
     this.helper = helper;
     this.typeCompiler = typeCompiler;
     this.stmtCompiler = stmtCompiler;
     this.typeUtils = typeUtils;
-    this.typeFactory = typeFactory;
+    this.typeDictionary = typeDictionary;
   }
   
-  public String compile(final IQLModelElement element, final IQLClass c, final G context) {
+  public String compile(final IQLClass c, final G context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
+      EObject _eContainer = c.eContainer();
+      IQLModelElement element = ((IQLModelElement) _eContainer);
       String _compileClass = this.compileClass(element, c, context);
       builder.append(_compileClass);
       Collection<String> _imports = context.getImports();
@@ -253,10 +256,12 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     return _xblockexpression;
   }
   
-  public String compile(final IQLModelElement element, final IQLInterface interf, final G context) {
+  public String compile(final IQLInterface interf, final G context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
+      EObject _eContainer = interf.eContainer();
+      IQLModelElement element = ((IQLModelElement) _eContainer);
       String _compileInterface = this.compileInterface(element, interf, context);
       builder.append(_compileInterface);
       Collection<String> _imports = context.getImports();

@@ -4,8 +4,6 @@ package de.uniol.inf.is.odysseus.iql.odl.oDL.util;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 
 import de.uniol.inf.is.odysseus.iql.odl.oDL.*;
 
@@ -93,16 +91,6 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
     new ODLSwitch<Adapter>()
     {
       @Override
-      public Adapter caseODLModel(ODLModel object)
-      {
-        return createODLModelAdapter();
-      }
-      @Override
-      public Adapter caseODLModelElement(ODLModelElement object)
-      {
-        return createODLModelElementAdapter();
-      }
-      @Override
       public Adapter caseODLOperator(ODLOperator object)
       {
         return createODLOperatorAdapter();
@@ -116,16 +104,6 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseODLMethod(ODLMethod object)
       {
         return createODLMethodAdapter();
-      }
-      @Override
-      public Adapter caseIQLModel(IQLModel object)
-      {
-        return createIQLModelAdapter();
-      }
-      @Override
-      public Adapter caseIQLModelElement(IQLModelElement object)
-      {
-        return createIQLModelElementAdapter();
       }
       @Override
       public Adapter caseJvmIdentifiableElement(JvmIdentifiableElement object)
@@ -220,36 +198,6 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
 
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel <em>Model</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel
-   * @generated
-   */
-  public Adapter createODLModelAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModelElement <em>Model Element</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModelElement
-   * @generated
-   */
-  public Adapter createODLModelElementAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator <em>Operator</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -290,36 +238,6 @@ public class ODLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createODLMethodAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel <em>IQL Model</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel
-   * @generated
-   */
-  public Adapter createIQLModelAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement <em>IQL Model Element</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
-   * @generated
-   */
-  public Adapter createIQLModelElementAdapter()
   {
     return null;
   }

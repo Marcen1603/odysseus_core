@@ -37,7 +37,7 @@ public class ODLParser extends AbstractContentAssistParser {
 			nameMappings = new HashMap<AbstractElement, String>() {
 				private static final long serialVersionUID = 1L;
 				{
-					put(grammarAccess.getODLModelElementAccess().getInnerAlternatives_2_0(), "rule__ODLModelElement__InnerAlternatives_2_0");
+					put(grammarAccess.getODLModelElementAccess().getInnerAlternatives_1_0(), "rule__ODLModelElement__InnerAlternatives_1_0");
 					put(grammarAccess.getODLOperatorAccess().getMembersAlternatives_5_0(), "rule__ODLOperator__MembersAlternatives_5_0");
 					put(grammarAccess.getODLMethodAccess().getAlternatives_1(), "rule__ODLMethod__Alternatives_1");
 					put(grammarAccess.getIQLJavaTextAccess().getAlternatives(), "rule__IQLJavaText__Alternatives");
@@ -222,10 +222,10 @@ public class ODLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getQualifiedNameAccess().getGroup(), "rule__QualifiedName__Group__0");
 					put(grammarAccess.getQualifiedNameAccess().getGroup_1(), "rule__QualifiedName__Group_1__0");
 					put(grammarAccess.getIQLJavaAccess().getGroup(), "rule__IQLJava__Group__0");
-					put(grammarAccess.getODLModelAccess().getNamespacesAssignment_1(), "rule__ODLModel__NamespacesAssignment_1");
-					put(grammarAccess.getODLModelAccess().getElementsAssignment_2(), "rule__ODLModel__ElementsAssignment_2");
-					put(grammarAccess.getODLModelElementAccess().getJavametadataAssignment_1(), "rule__ODLModelElement__JavametadataAssignment_1");
-					put(grammarAccess.getODLModelElementAccess().getInnerAssignment_2(), "rule__ODLModelElement__InnerAssignment_2");
+					put(grammarAccess.getODLModelAccess().getNamespacesAssignment_0(), "rule__ODLModel__NamespacesAssignment_0");
+					put(grammarAccess.getODLModelAccess().getElementsAssignment_1(), "rule__ODLModel__ElementsAssignment_1");
+					put(grammarAccess.getODLModelElementAccess().getJavametadataAssignment_0(), "rule__ODLModelElement__JavametadataAssignment_0");
+					put(grammarAccess.getODLModelElementAccess().getInnerAssignment_1(), "rule__ODLModelElement__InnerAssignment_1");
 					put(grammarAccess.getODLOperatorAccess().getSimpleNameAssignment_2(), "rule__ODLOperator__SimpleNameAssignment_2");
 					put(grammarAccess.getODLOperatorAccess().getMetadataListAssignment_3_1(), "rule__ODLOperator__MetadataListAssignment_3_1");
 					put(grammarAccess.getODLOperatorAccess().getMembersAssignment_5(), "rule__ODLOperator__MembersAssignment_5");

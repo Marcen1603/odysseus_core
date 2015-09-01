@@ -8,35 +8,35 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.AbstractIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
-public class QDLCompilerHelper extends AbstractIQLCompilerHelper<IQDLLookUp, IQDLTypeFactory, IQDLTypeUtils> implements IQDLCompilerHelper {
+public class QDLCompilerHelper extends AbstractIQLCompilerHelper<IQDLLookUp, IQDLTypeDictionary, IQDLTypeUtils> implements IQDLCompilerHelper {
 	
 	@Inject
-	public QDLCompilerHelper(IQDLLookUp lookUp, IQDLTypeFactory typeFactory, IQDLTypeUtils typeUtils) {
-		super(lookUp, typeFactory, typeUtils);
+	public QDLCompilerHelper(IQDLLookUp lookUp, IQDLTypeDictionary typeDictionary, IQDLTypeUtils typeUtils) {
+		super(lookUp, typeDictionary, typeUtils);
 	}
 	
 	@Override
 	public boolean isSource(JvmTypeReference typeRef) {
-		return typeFactory.isSource(typeRef);
+		return typeDictionary.isSource(typeRef);
 	}
 	
 	
 	@Override
 	public boolean isSourceAttribute(JvmTypeReference typeRef, String name) {
-		return typeFactory.isSourceAttribute(typeUtils.getShortName(typeRef, false), name);
+		return typeDictionary.isSourceAttribute(typeUtils.getShortName(typeRef, false), name);
 	}
 	
 	@Override
 	public boolean isOperator(JvmTypeReference typeRef) {
-		return typeFactory.isOperator(typeRef);
+		return typeDictionary.isOperator(typeRef);
 	}
 	
 	@Override
 	public boolean isParameter(String parameter, JvmTypeReference opType) {
-		return typeFactory.isParameter(parameter, typeUtils.getShortName(opType, false));
+		return typeDictionary.isParameter(parameter, typeUtils.getShortName(opType, false));
 	}
 	
 	@Override
@@ -73,7 +73,7 @@ public class QDLCompilerHelper extends AbstractIQLCompilerHelper<IQDLLookUp, IQD
 	@Override
 	public String getLogicalOperatorName(JvmTypeReference typeRef) {
 		String name = typeUtils.getShortName(typeRef, false);
-		Class<? extends ILogicalOperator> op = typeFactory.getLogicalOperator(name);
+		Class<? extends ILogicalOperator> op = typeDictionary.getLogicalOperator(name);
 		if (op != null) {
 			return op.getSimpleName();
 		}

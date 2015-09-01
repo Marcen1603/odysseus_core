@@ -27,19 +27,19 @@ import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
 import de.uniol.inf.is.odysseus.iql.odl.scoping.IODLScopeProvider;
+import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.EventMethodParameter;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.EventMethodsFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.IEventMethod;
-import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
 
-public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<IODLExpressionEvaluator, IODLTypeFactory, IODLLookUp, IODLScopeProvider, IODLTypeUtils> {
+public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<IODLExpressionEvaluator, IODLTypeDictionary, IODLLookUp, IODLScopeProvider, IODLTypeUtils> {
 
 	@Inject
 	public ODLTemplateProposalProvider(TemplateStore templateStore,
-			ContextTypeRegistry registry, ContextTypeIdHelper helper, IODLExpressionEvaluator exprEvaluator, IODLTypeFactory typeFactory, IODLLookUp lookUp, IODLScopeProvider scopeProvider,IODLTypeUtils typeUtils) {
-		super(templateStore, registry, helper, exprEvaluator, typeFactory, lookUp, scopeProvider, typeUtils);
+			ContextTypeRegistry registry, ContextTypeIdHelper helper, IODLExpressionEvaluator exprEvaluator, IODLTypeDictionary typeDictionary, IODLLookUp lookUp, IODLScopeProvider scopeProvider,IODLTypeUtils typeUtils) {
+		super(templateStore, registry, helper, exprEvaluator, typeDictionary, lookUp, scopeProvider, typeUtils);
 	}
 	
 	protected void createTemplates(String rule, EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
@@ -76,8 +76,8 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		if (parameter != null) {
 			IQLMetadata metadata = EcoreUtil2.getContainerOfType(node, IQLMetadata.class);
 			if (metadata != null) {
-				if (metadata.getName().equals(IODLTypeFactory.PARAMETER_TYPE)) {
-					for (JvmTypeReference typeRef : factory.getAllParameterTypes()) {
+				if (metadata.getName().equals(IODLTypeDictionary.PARAMETER_TYPE)) {
+					for (JvmTypeReference typeRef : typeDictionary.getAllParameterTypes()) {
 						createTypeTemplate(typeUtils.getInnerType(typeRef, false), templateContext, context, acceptor);
 					}
 				}
@@ -88,7 +88,7 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		if (operator != null) {
 			IQLMetadata metadata = EcoreUtil2.getContainerOfType(node, IQLMetadata.class);
 			if (metadata != null) {
-				if (metadata.getName().equals(IODLTypeFactory.OPERATOR_OUTPUT_MODE)) {
+				if (metadata.getName().equals(IODLTypeDictionary.OPERATOR_OUTPUT_MODE)) {
 					for (OutputMode mode : lookUp.getOutputModeValues()) {
 						createMetadataValueTemplate("\""+mode.toString()+"\"", templateContext, context, acceptor);
 					}
@@ -197,13 +197,13 @@ public class ODLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 	
 	
 	protected void createODLParameterProposals(TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		for (JvmTypeReference typeRef : factory.getAllParameterValues()) {
+		for (JvmTypeReference typeRef : typeDictionary.getAllParameterValues()) {
 			createParameterTemplate(typeRef, templateContext, context, acceptor);
 		}		
 	}
 	
 	protected void createParameterTemplate(JvmTypeReference typeRef, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		JvmTypeReference parameterType = factory.getParameterType(typeRef);
+		JvmTypeReference parameterType = typeDictionary.getParameterType(typeRef);
 		String parameterTypeName = typeUtils.getShortName(parameterType, false);
 		
 		String simpleName = typeUtils.getShortName(typeRef, false);

@@ -16,23 +16,24 @@ import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource
 import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext
-import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
 import org.eclipse.xtext.common.types.JvmOperation
+import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary
 
-class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLStatementCompiler, IQDLTypeFactory, IQDLTypeUtils> implements IQDLCompiler{
+class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLStatementCompiler, IQDLTypeDictionary, IQDLTypeUtils> implements IQDLCompiler{
 	
 	@Inject
 	IQDLMetadataMethodCompiler methodCompiler;
 	
 	@Inject
-	new(IQDLCompilerHelper helper, IQDLTypeCompiler typeCompiler, IQDLStatementCompiler stmtCompiler, IQDLTypeFactory typeFactory, IQDLTypeUtils typeUtils) {
-		super(helper, typeCompiler, stmtCompiler, typeFactory, typeUtils)
+	new(IQDLCompilerHelper helper, IQDLTypeCompiler typeCompiler, IQDLStatementCompiler stmtCompiler, IQDLTypeDictionary typeDictionary, IQDLTypeUtils typeUtils) {
+		super(helper, typeCompiler, stmtCompiler, typeDictionary, typeUtils)
 	}
 	
-	override String compile(IQLModelElement element,QDLQuery q, IQDLGeneratorContext context) {
+	override String compile(QDLQuery q, IQDLGeneratorContext context) {
 		var builder = new StringBuilder()
+		var element = q.eContainer as IQLModelElement;
 		builder.append(compileQuery(element, q, context))
 		context.addImport(AbstractQDLQuery.canonicalName)
 		context.addImport(Collection.canonicalName)
@@ -70,7 +71,7 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 			}
 			
 			public «Collection.simpleName»<«IQDLOperator.simpleName»> execute() {
-			 	«FOR source : typeFactory.sources»
+			 	«FOR source : typeDictionary.sources»
 			 		«context.addImport(StreamAO.canonicalName)»
 			 		«context.addImport(DefaultQDLSource.canonicalName)»			 		
 			 		«DefaultQDLSource.simpleName» «source» = getSource("«source»");

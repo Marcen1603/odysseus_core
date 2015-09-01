@@ -28,12 +28,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
 import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLPO
-import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils
 import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
+import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary
 
-class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLStatementCompiler, IODLTypeFactory, IODLTypeUtils> implements IODLCompiler{
+class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLStatementCompiler, IODLTypeDictionary, IODLTypeUtils> implements IODLCompiler{
 	
 	@Inject
 	private IODLMetadataAnnotationCompiler metadataAnnotationCompiler
@@ -42,8 +42,8 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 	private IODLLookUp lookUp;
 	
 	@Inject
-	new(IODLCompilerHelper helper, IODLTypeCompiler typeCompiler, IODLStatementCompiler stmtCompiler, IODLTypeFactory factory, IODLTypeUtils typeUtils) {
-		super(helper, typeCompiler, stmtCompiler, factory, typeUtils)
+	new(IODLCompilerHelper helper, IODLTypeCompiler typeCompiler, IODLStatementCompiler stmtCompiler, IODLTypeDictionary typeDictionary, IODLTypeUtils typeUtils) {
+		super(helper, typeCompiler, stmtCompiler, typeDictionary, typeUtils)
 	}
 	
 	override String compileAO(ODLOperator o, IODLGeneratorContext context) {
@@ -61,9 +61,11 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 		builder.toString
 	}
 	
-	override String compilePO(IQLModelElement element, ODLOperator o, IODLGeneratorContext context) {	
+	override String compilePO(ODLOperator o, IODLGeneratorContext context) {	
 		var builder = new StringBuilder()
+		var element = o.eContainer as IQLModelElement;
 		builder.append(compilePOIntern(element, o, context))
+			
 			
 		for (String i : context.getImports) {
 			builder.insert(0, "import "+ i+ ";"+System.lineSeparator)

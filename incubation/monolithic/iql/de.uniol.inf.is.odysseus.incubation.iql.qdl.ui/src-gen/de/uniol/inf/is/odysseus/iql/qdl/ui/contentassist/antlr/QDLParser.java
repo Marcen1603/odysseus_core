@@ -37,7 +37,7 @@ public class QDLParser extends AbstractContentAssistParser {
 			nameMappings = new HashMap<AbstractElement, String>() {
 				private static final long serialVersionUID = 1L;
 				{
-					put(grammarAccess.getQDLModelElementAccess().getInnerAlternatives_2_0(), "rule__QDLModelElement__InnerAlternatives_2_0");
+					put(grammarAccess.getQDLModelElementAccess().getInnerAlternatives_1_0(), "rule__QDLModelElement__InnerAlternatives_1_0");
 					put(grammarAccess.getIQLRelationalExpressionAccess().getAlternatives_1(), "rule__IQLRelationalExpression__Alternatives_1");
 					put(grammarAccess.getIQLSubscribeAccess().getAlternatives(), "rule__IQLSubscribe__Alternatives");
 					put(grammarAccess.getIQLMetadataValueSingleAccess().getAlternatives(), "rule__IQLMetadataValueSingle__Alternatives");
@@ -223,10 +223,10 @@ public class QDLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getQualifiedNameAccess().getGroup(), "rule__QualifiedName__Group__0");
 					put(grammarAccess.getQualifiedNameAccess().getGroup_1(), "rule__QualifiedName__Group_1__0");
 					put(grammarAccess.getIQLJavaAccess().getGroup(), "rule__IQLJava__Group__0");
-					put(grammarAccess.getQDLModelAccess().getNamespacesAssignment_1(), "rule__QDLModel__NamespacesAssignment_1");
-					put(grammarAccess.getQDLModelAccess().getElementsAssignment_2(), "rule__QDLModel__ElementsAssignment_2");
-					put(grammarAccess.getQDLModelElementAccess().getJavametadataAssignment_1(), "rule__QDLModelElement__JavametadataAssignment_1");
-					put(grammarAccess.getQDLModelElementAccess().getInnerAssignment_2(), "rule__QDLModelElement__InnerAssignment_2");
+					put(grammarAccess.getQDLModelAccess().getNamespacesAssignment_0(), "rule__QDLModel__NamespacesAssignment_0");
+					put(grammarAccess.getQDLModelAccess().getElementsAssignment_1(), "rule__QDLModel__ElementsAssignment_1");
+					put(grammarAccess.getQDLModelElementAccess().getJavametadataAssignment_0(), "rule__QDLModelElement__JavametadataAssignment_0");
+					put(grammarAccess.getQDLModelElementAccess().getInnerAssignment_1(), "rule__QDLModelElement__InnerAssignment_1");
 					put(grammarAccess.getQDLQueryAccess().getSimpleNameAssignment_2(), "rule__QDLQuery__SimpleNameAssignment_2");
 					put(grammarAccess.getQDLQueryAccess().getMetadataListAssignment_3_1(), "rule__QDLQuery__MetadataListAssignment_3_1");
 					put(grammarAccess.getQDLQueryAccess().getStatementsAssignment_4(), "rule__QDLQuery__StatementsAssignment_4");

@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.executor.QDLExecutor;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
@@ -51,8 +51,8 @@ public class QDLUiExecutor extends QDLExecutor implements IIQLUiExecutor{
 	private IJavaProjectProvider javaProjectProvider;
 	
 	@Inject
-	public QDLUiExecutor(IQDLTypeFactory typeFactory, IQDLTypeUtils typeUtils) {
-		super(typeFactory, typeUtils);
+	public QDLUiExecutor(IQDLTypeDictionary typeDictionary, IQDLTypeUtils typeUtils) {
+		super(typeDictionary, typeUtils);
 	}
 
 	@Override

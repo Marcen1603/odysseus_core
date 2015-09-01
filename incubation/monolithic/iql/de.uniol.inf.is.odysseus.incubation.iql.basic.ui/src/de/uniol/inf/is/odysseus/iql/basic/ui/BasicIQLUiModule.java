@@ -18,14 +18,14 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculato
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
-import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLAntlrTokenToAttributeIdMapper;
-import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLHighlightingConfiguration;
-import de.uniol.inf.is.odysseus.iql.basic.ui.coloring.BasicIQLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLProposalProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.contentassist.BasicIQLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.BasicIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.ui.generator.BasicIQLUiGenerator;
+import de.uniol.inf.is.odysseus.iql.basic.ui.highlighting.BasicIQLAntlrTokenToAttributeIdMapper;
+import de.uniol.inf.is.odysseus.iql.basic.ui.highlighting.BasicIQLHighlightingConfiguration;
+import de.uniol.inf.is.odysseus.iql.basic.ui.highlighting.BasicIQLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectDocumentationProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.BasicIQLEObjectHoverProvider;
 import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHover;

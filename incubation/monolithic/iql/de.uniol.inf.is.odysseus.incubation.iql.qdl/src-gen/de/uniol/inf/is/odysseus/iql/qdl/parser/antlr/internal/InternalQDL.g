@@ -78,24 +78,18 @@ ruleQDLModel returns [EObject current=null]
     }
     @after { leaveRule(); }:
 ((
-    {
-        $current = forceCreateModelElement(
-            grammarAccess.getQDLModelAccess().getQDLModelAction_0(),
-            $current);
-    }
-)(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getQDLModelAccess().getNamespacesIQLNamespaceParserRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getQDLModelAccess().getNamespacesIQLNamespaceParserRuleCall_0_0()); 
 	    }
-		lv_namespaces_1_0=ruleIQLNamespace		{
+		lv_namespaces_0_0=ruleIQLNamespace		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getQDLModelRule());
 	        }
        		add(
        			$current, 
        			"namespaces",
-        		lv_namespaces_1_0, 
+        		lv_namespaces_0_0, 
         		"IQLNamespace");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -104,16 +98,16 @@ ruleQDLModel returns [EObject current=null]
 )*(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getQDLModelAccess().getElementsQDLModelElementParserRuleCall_2_0()); 
+	        newCompositeNode(grammarAccess.getQDLModelAccess().getElementsQDLModelElementParserRuleCall_1_0()); 
 	    }
-		lv_elements_2_0=ruleQDLModelElement		{
+		lv_elements_1_0=ruleQDLModelElement		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getQDLModelRule());
 	        }
        		add(
        			$current, 
        			"elements",
-        		lv_elements_2_0, 
+        		lv_elements_1_0, 
         		"QDLModelElement");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -141,24 +135,18 @@ ruleQDLModelElement returns [EObject current=null]
     }
     @after { leaveRule(); }:
 ((
-    {
-        $current = forceCreateModelElement(
-            grammarAccess.getQDLModelElementAccess().getQDLModelElementAction_0(),
-            $current);
-    }
-)(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getQDLModelElementAccess().getJavametadataIQLJavaMetadataParserRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getQDLModelElementAccess().getJavametadataIQLJavaMetadataParserRuleCall_0_0()); 
 	    }
-		lv_javametadata_1_0=ruleIQLJavaMetadata		{
+		lv_javametadata_0_0=ruleIQLJavaMetadata		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getQDLModelElementRule());
 	        }
        		add(
        			$current, 
        			"javametadata",
-        		lv_javametadata_1_0, 
+        		lv_javametadata_0_0, 
         		"IQLJavaMetadata");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -168,46 +156,46 @@ ruleQDLModelElement returns [EObject current=null]
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getQDLModelElementAccess().getInnerIQLClassParserRuleCall_2_0_0()); 
+	        newCompositeNode(grammarAccess.getQDLModelElementAccess().getInnerIQLClassParserRuleCall_1_0_0()); 
 	    }
-		lv_inner_2_1=ruleIQLClass		{
+		lv_inner_1_1=ruleIQLClass		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getQDLModelElementRule());
 	        }
        		set(
        			$current, 
        			"inner",
-        		lv_inner_2_1, 
+        		lv_inner_1_1, 
         		"IQLClass");
 	        afterParserOrEnumRuleCall();
 	    }
 
     |		{ 
-	        newCompositeNode(grammarAccess.getQDLModelElementAccess().getInnerIQLInterfaceParserRuleCall_2_0_1()); 
+	        newCompositeNode(grammarAccess.getQDLModelElementAccess().getInnerIQLInterfaceParserRuleCall_1_0_1()); 
 	    }
-		lv_inner_2_2=ruleIQLInterface		{
+		lv_inner_1_2=ruleIQLInterface		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getQDLModelElementRule());
 	        }
        		set(
        			$current, 
        			"inner",
-        		lv_inner_2_2, 
+        		lv_inner_1_2, 
         		"IQLInterface");
 	        afterParserOrEnumRuleCall();
 	    }
 
     |		{ 
-	        newCompositeNode(grammarAccess.getQDLModelElementAccess().getInnerQDLQueryParserRuleCall_2_0_2()); 
+	        newCompositeNode(grammarAccess.getQDLModelElementAccess().getInnerQDLQueryParserRuleCall_1_0_2()); 
 	    }
-		lv_inner_2_3=ruleQDLQuery		{
+		lv_inner_1_3=ruleQDLQuery		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getQDLModelElementRule());
 	        }
        		set(
        			$current, 
        			"inner",
-        		lv_inner_2_3, 
+        		lv_inner_1_3, 
         		"QDLQuery");
 	        afterParserOrEnumRuleCall();
 	    }

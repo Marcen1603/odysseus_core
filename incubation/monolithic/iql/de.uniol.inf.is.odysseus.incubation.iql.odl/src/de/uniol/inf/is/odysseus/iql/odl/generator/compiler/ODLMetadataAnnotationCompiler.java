@@ -33,6 +33,7 @@ import java.util.Map.Entry;
 
 
 
+
 import javax.inject.Inject;
 
 import org.eclipse.xtext.common.types.JvmTypeReference;
@@ -48,7 +49,7 @@ import de.uniol.inf.is.odysseus.iql.odl.generator.context.IODLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
-import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
 public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotationCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLTypeUtils> implements IODLMetadataAnnotationCompiler{
@@ -58,7 +59,7 @@ public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
 	private static String AO_DEFAULT_Category = LogicalOperatorCategory.ADVANCED;
 	
 	@Inject
-	private IODLTypeFactory typeFactory;
+	private IODLTypeDictionary typeDictionary;
 	
 	@Inject
 	private IODLLookUp lookUp;
@@ -120,7 +121,7 @@ public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
 			}
 		}
 		if (!elements.containsKey("type")) {
-			JvmTypeReference parameterType = typeFactory.getParameterType(parameter.getType());
+			JvmTypeReference parameterType = typeDictionary.getParameterType(parameter.getType());
 			if (parameterType != null) {
 				elements.put("type", typeCompiler.compile(parameterType, context,  true)+".class");
 			}
@@ -134,8 +135,8 @@ public class ODLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
 		if (lookUp.isMap(parameter.getType()) && !elements.containsKey("isMap")) {
 			elements.put("isMap", "true");				
 		}
-		if (elements.containsKey(IODLTypeFactory.PARAMETER_KEY_TYPE)) {
-			elements.put(IODLTypeFactory.PARAMETER_KEY_TYPE, elements.get(IODLTypeFactory.PARAMETER_KEY_TYPE));				
+		if (elements.containsKey(IODLTypeDictionary.PARAMETER_KEY_TYPE)) {
+			elements.put(IODLTypeDictionary.PARAMETER_KEY_TYPE, elements.get(IODLTypeDictionary.PARAMETER_KEY_TYPE));				
 		}
 		
 		StringBuilder b = new StringBuilder();

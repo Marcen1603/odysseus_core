@@ -27,13 +27,14 @@ import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.AbstractQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.impl.query.DefaultQDLSource;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
@@ -43,19 +44,21 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
-public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLStatementCompiler, IQDLTypeFactory, IQDLTypeUtils> implements IQDLCompiler {
+public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLStatementCompiler, IQDLTypeDictionary, IQDLTypeUtils> implements IQDLCompiler {
   @Inject
   private IQDLMetadataMethodCompiler methodCompiler;
   
   @Inject
-  public QDLCompiler(final IQDLCompilerHelper helper, final IQDLTypeCompiler typeCompiler, final IQDLStatementCompiler stmtCompiler, final IQDLTypeFactory typeFactory, final IQDLTypeUtils typeUtils) {
-    super(helper, typeCompiler, stmtCompiler, typeFactory, typeUtils);
+  public QDLCompiler(final IQDLCompilerHelper helper, final IQDLTypeCompiler typeCompiler, final IQDLStatementCompiler stmtCompiler, final IQDLTypeDictionary typeDictionary, final IQDLTypeUtils typeUtils) {
+    super(helper, typeCompiler, stmtCompiler, typeDictionary, typeUtils);
   }
   
-  public String compile(final IQLModelElement element, final QDLQuery q, final IQDLGeneratorContext context) {
+  public String compile(final QDLQuery q, final IQDLGeneratorContext context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
+      EObject _eContainer = q.eContainer();
+      IQLModelElement element = ((IQLModelElement) _eContainer);
       String _compileQuery = this.compileQuery(element, q, context);
       builder.append(_compileQuery);
       String _canonicalName = AbstractQDLQuery.class.getCanonicalName();
@@ -141,7 +144,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       _builder.append("> execute() {");
       _builder.newLineIfNotEmpty();
       {
-        Collection<String> _sources = this.typeFactory.getSources();
+        Collection<String> _sources = this.typeDictionary.getSources();
         for(final String source : _sources) {
           _builder.append("\t \t");
           String _canonicalName = StreamAO.class.getCanonicalName();

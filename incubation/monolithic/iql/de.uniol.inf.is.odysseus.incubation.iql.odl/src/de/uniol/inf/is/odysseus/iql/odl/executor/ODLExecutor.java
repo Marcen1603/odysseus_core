@@ -56,6 +56,8 @@ import java.util.Map;
 
 
 
+
+
 import javax.inject.Inject;
 
 import org.eclipse.emf.common.util.URI;
@@ -98,6 +100,8 @@ import org.eclipse.xtext.junit4.util.ParseHelper;
 
 
 
+
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -110,30 +114,59 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.executor.AbstractIQLExecutor;
 import de.uniol.inf.is.odysseus.iql.basic.typing.OperatorsObservable;
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.IODLCompilerHelper;
-import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
-import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationInventory;
 
 
 
-public class ODLExecutor extends AbstractIQLExecutor<IODLTypeFactory, IODLTypeUtils> {
+public class ODLExecutor extends AbstractIQLExecutor<IODLTypeDictionary, IODLTypeUtils> {
 	
 	protected static final String OPERATORS_DIR = "operators";
 
 	
 	@Inject
-	private ParseHelper<ODLModel> parseHelper;
+	private ParseHelper<IQLModel> parseHelper;
 	
 	
 	@Inject
-	public ODLExecutor(IODLTypeFactory typeFactory, IODLTypeUtils typeUtils) {
-		super(typeFactory, typeUtils);
+	public ODLExecutor(IODLTypeDictionary typeDictionary, IODLTypeUtils typeUtils) {
+		super(typeDictionary, typeUtils);
+	}
+	
+	@Override
+	public List<IExecutorCommand> parse(String text, IDataDictionary dd, ISession session, Context context) throws QueryParseException {		
+		IQLModel model = null;
+		try {
+			model = parseHelper.parse(text);
+		} catch (Exception e) {
+			throw new QueryParseException("error while parsing operator text: "+e.getMessage(),e);
+		}
+		
+		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
+			String outputPath = getIQLOutputPath()+OPERATORS_DIR+File.separator+operator.getSimpleName();
+			
+			cleanUpDir(outputPath);
+			
+			Collection<Resource> resources = createNecessaryIQLFiles(EcoreUtil2.getResourceSet(operator), outputPath,operator);
+			generateJavaFiles(resources);
+			deleteResources(resources);
+			
+			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator), resources));
+			loadOperator(operator, resources);
+			
+			if (!isPersistent(operator)){
+				cleanUpDir(outputPath);
+			}
+		}
+		
+		return new ArrayList<>();		
 	}
 
 	
@@ -194,39 +227,12 @@ public class ODLExecutor extends AbstractIQLExecutor<IODLTypeFactory, IODLTypeUt
 	}
 
 
-	@Override
-	public List<IExecutorCommand> parse(String text, IDataDictionary dd, ISession session, Context context) throws QueryParseException {		
-		ODLModel model = null;
-		try {
-			model = parseHelper.parse(text);
-		} catch (Exception e) {
-			throw new QueryParseException("error while parsing operator text: "+e.getMessage(),e);
-		}
-		
-		for (ODLOperator operator : EcoreUtil2.getAllContentsOfType(model, ODLOperator.class)) {
-			String outputPath = getIQLOutputPath()+OPERATORS_DIR+File.separator+operator.getSimpleName();
-			
-			cleanUpDir(outputPath);
-			
-			Collection<Resource> resources = createNecessaryIQLFiles(EcoreUtil2.getResourceSet(operator), outputPath,operator);
-			generateJavaFiles(resources);
-			deleteResources(resources);
-			
-			compileJavaFiles(outputPath, createClassPathEntries(EcoreUtil2.getResourceSet(operator), resources));
-			loadOperator(operator, resources);
-			
-			if (!isPersistent(operator)){
-				cleanUpDir(outputPath);
-			}
-		}
-		
-		return new ArrayList<>();		
-	}
+
 	
 	protected boolean isPersistent(ODLOperator operator) {
 		if (operator.getMetadataList() != null) {
 			for (IQLMetadata m : operator.getMetadataList().getElements()) {
-				if (m.getName().equalsIgnoreCase(IODLTypeFactory.OPERATOR_PERSISTENT)) {
+				if (m.getName().equalsIgnoreCase(IODLTypeDictionary.OPERATOR_PERSISTENT)) {
 					return true;
 				}
 			}

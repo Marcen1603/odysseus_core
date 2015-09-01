@@ -8,17 +8,17 @@ import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 
-public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLTypeFactory, U extends IIQLTypeUtils> extends MultiLineCommentDocumentationProvider {
+public abstract class AbstractIQLEObjectDocumentationProvider<F extends IIQLTypeDictionary, U extends IIQLTypeUtils> extends MultiLineCommentDocumentationProvider {
 
 	protected U typeUtils;
-	protected F typeFactory;
+	protected F typeDictionary;
 
-	public AbstractIQLEObjectDocumentationProvider(F typeFactory, U typeUtils) {
-		this.typeFactory = typeFactory;
+	public AbstractIQLEObjectDocumentationProvider(F typeDictionary, U typeUtils) {
+		this.typeDictionary = typeDictionary;
 		this.typeUtils = typeUtils;
 	}
 	

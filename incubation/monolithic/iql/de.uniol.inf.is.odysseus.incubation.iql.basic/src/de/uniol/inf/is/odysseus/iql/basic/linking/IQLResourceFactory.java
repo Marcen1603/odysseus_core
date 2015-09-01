@@ -11,14 +11,14 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 
 
 
 public class IQLResourceFactory extends XtextResourceFactory {
 	
 	@Inject
-	private IIQLTypeFactory typeFactory;
+	private IIQLTypeDictionary typeDictionary;
 
 	@Inject
 	public IQLResourceFactory(Provider<XtextResource> resourceProvider) {
@@ -28,8 +28,8 @@ public class IQLResourceFactory extends XtextResourceFactory {
 
 	@Override
 	public Resource createResource(URI uri) {	
-		if (typeFactory.isSystemFile(uriToFileName(uri))) {
-			IQLModel systemFile = typeFactory.getSystemFile(uriToFileName(uri));
+		if (typeDictionary.isSystemFile(uriToFileName(uri))) {
+			IQLModel systemFile = typeDictionary.getSystemFile(uriToFileName(uri));
 			IQLLinkingResource resource = new IQLLinkingResource();
 			resource.setSystemFile(systemFile);
 			resource.setURI(uri);

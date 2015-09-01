@@ -9,16 +9,16 @@ import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.BasicIQLExpressionEvalua
 import de.uniol.inf.is.odysseus.iql.basic.lookup.BasicIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProvider;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.BasicIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 
 public class BasicIQLUiScopeProvider extends BasicIQLScopeProvider {
 	
 	@Inject
-	public BasicIQLUiScopeProvider(BasicIQLTypeFactory typeFactory,
+	public BasicIQLUiScopeProvider(BasicIQLTypeDictionary typeDictionary,
 			BasicIQLLookUp lookUp, BasicIQLExpressionEvaluator exprEvaluator,
 			BasicIQLTypeUtils typeUtils) {
-		super(typeFactory, lookUp, exprEvaluator, typeUtils);
+		super(typeDictionary, lookUp, exprEvaluator, typeUtils);
 	}
 	
 

@@ -25,37 +25,37 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.executor.AbstractIQLExecutor;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 
-public class QDLExecutor extends AbstractIQLExecutor<IQDLTypeFactory, IQDLTypeUtils> {
+public class QDLExecutor extends AbstractIQLExecutor<IQDLTypeDictionary, IQDLTypeUtils> {
 	
 	protected static final String QUERIES_DIR = "queries";
 	
 	
 	@Inject
-	public QDLExecutor(IQDLTypeFactory typeFactory, IQDLTypeUtils typeUtils) {
-		super(typeFactory, typeUtils);
+	public QDLExecutor(IQDLTypeDictionary typeDictionary, IQDLTypeUtils typeUtils) {
+		super(typeDictionary, typeUtils);
 	}
 	
 	@Inject
 	protected OdysseusScriptGenerator generator;
 	
 	@Inject
-	private ParseHelper<QDLModel> parseHelper;
+	private ParseHelper<IQLModel> parseHelper;
 	
 	@Override
 	public List<IExecutorCommand> parse(String text, IDataDictionary dd, ISession session, Context context) throws QueryParseException {
 		List<IExecutorCommand> result = new ArrayList<>();
 		
-		QDLModel model = null;
+		IQLModel model = null;
 		try {
 			model = parseHelper.parse(text);
 		} catch (Exception e) {

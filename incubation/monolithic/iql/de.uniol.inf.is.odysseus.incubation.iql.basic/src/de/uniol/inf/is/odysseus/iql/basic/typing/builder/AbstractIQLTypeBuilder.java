@@ -2,22 +2,19 @@ package de.uniol.inf.is.odysseus.iql.basic.typing.builder;
 
 import javax.inject.Inject;
 
-import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.impl.ClasspathTypeProvider;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLFactory;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
-import de.uniol.inf.is.odysseus.iql.basic.typing.IQLSystemType;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+
+
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 
 
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLTypeBuilder {
+public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeDictionary, U extends IIQLTypeUtils> implements IIQLTypeBuilder {
 
 	@Inject
 	protected IJvmTypeProvider.Factory typeProviderFactory;
@@ -25,49 +22,16 @@ public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeFactory, U extend
 	@Inject
 	protected TypeReferences typeReferences;
 	
-	protected T typeFactory;
+	protected T typeDictionary;
 	protected U typeUtils;
 
-	public AbstractIQLTypeBuilder(T typeFactory, U typeUtils) {
-		this.typeFactory = typeFactory;
+	public AbstractIQLTypeBuilder(T typeDictionary, U typeUtils) {
+		this.typeDictionary = typeDictionary;
 		this.typeUtils = typeUtils;
 	}	
-	
-	
-	public IQLSystemType createOrGetSystemType(Class<?> javaType) {
-		return createSystemType(javaType.getPackage().getName(), javaType.getSimpleName(), javaType);
-	}
-
-	public IQLSystemType createOrGetSystemType(String[] namespaceSegments, String simpleName, Class<?> javaType ) {
-		return createSystemType(createQualifiedName(namespaceSegments), simpleName, javaType);
-	}
-	
-	private IQLSystemType createSystemType(String packageName, String simpleName, Class<?> javaType) {
-		JvmDeclaredType type = null;
-		if (javaType.isInterface()) {
-			type = createInterfaceType(packageName, simpleName, javaType);
-		} else {
-			type = createClassType(packageName, simpleName, javaType);
-		}
-		return new IQLSystemType(type, javaType);
-	}
-	
-	private IQLInterface createInterfaceType(String packageName, String simpleName, Class<?> javaType) {
-		IQLInterface iqlInterface = BasicIQLFactory.eINSTANCE.createIQLInterface();
-		iqlInterface.setPackageName(packageName);
-		iqlInterface.setSimpleName(simpleName);
-		return iqlInterface;		
-	}
-	
-	private IQLClass createClassType(String packageName, String simpleName, Class<?> javaType) {
-		IQLClass iqlClass = BasicIQLFactory.eINSTANCE.createIQLClass();
-		iqlClass.setPackageName(packageName);
-		iqlClass.setSimpleName(simpleName);
-		return iqlClass;		
-	}
-	
+		
 	public void removeSystemType(String[] namespaceSegments, String simpleName) {
-		typeFactory.removeSystemType(createQualifiedName(namespaceSegments, simpleName));
+		typeDictionary.removeSystemType(createQualifiedName(namespaceSegments, simpleName));
 	}
 	
 	protected String createQualifiedName(String[] namespaceSegments) {
@@ -111,7 +75,7 @@ public abstract class AbstractIQLTypeBuilder<T extends IIQLTypeFactory, U extend
 
 	
 	protected ClasspathTypeProvider getTypeProvider() {
-		IJvmTypeProvider p = typeProviderFactory.findOrCreateTypeProvider(typeFactory.getSystemResourceSet());
+		IJvmTypeProvider p = typeProviderFactory.findOrCreateTypeProvider(typeDictionary.getSystemResourceSet());
 		return (ClasspathTypeProvider) p;
 	}
 	

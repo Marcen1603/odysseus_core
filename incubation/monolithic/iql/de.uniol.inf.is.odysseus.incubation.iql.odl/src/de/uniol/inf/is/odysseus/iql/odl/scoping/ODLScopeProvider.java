@@ -22,24 +22,26 @@ import org.eclipse.xtext.scoping.IScope;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.TypeResult;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.AbstractIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
-import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
 import de.uniol.inf.is.odysseus.iql.odl.exprevaluator.IODLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
-import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
 
-public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeFactory, IODLLookUp, IODLExpressionEvaluator, IODLTypeUtils> implements IODLScopeProvider{
+public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeDictionary, IODLLookUp, IODLExpressionEvaluator, IODLTypeUtils> implements IODLScopeProvider{
 
 	@Inject
-	public ODLScopeProvider(IODLTypeFactory typeFactory, IODLLookUp lookUp,IODLExpressionEvaluator exprEvaluator, IODLTypeUtils typeUtils) {
-		super(typeFactory, lookUp, exprEvaluator, typeUtils);
+	public ODLScopeProvider(IODLTypeDictionary typeDictionary, IODLLookUp lookUp,IODLExpressionEvaluator exprEvaluator, IODLTypeUtils typeUtils) {
+		super(typeDictionary, lookUp, exprEvaluator, typeUtils);
 	}
 	
 	@Override
@@ -47,12 +49,12 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeFactory, 
 		Collection<IEObjectDescription> result = new HashSet<>();
 		TypeResult typeResult = exprEvaluator.eval(expr.getLeftOperand());
 		if (!typeResult.isNull() && typeUtils.isArray(typeResult.getRef())) {
-			result.addAll(getScopeIQLAttributeSelection(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()), false, false));
-			result.addAll(getScopeIQLMethodSelection(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()), false, false));
+			result.addAll(getScopeIQLAttributeSelection(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), false, false));
+			result.addAll(getScopeIQLMethodSelection(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), false, false));
 
 		} else if(!typeResult.isNull()){
-			boolean isThis = exprEvaluator.isThis(expr.getLeftOperand());
-			boolean isSuper = exprEvaluator.isSuper(expr.getLeftOperand());
+			boolean isThis = expr.getLeftOperand() instanceof IQLThisExpression;
+			boolean isSuper = expr.getLeftOperand() instanceof IQLSuperExpression;
 			
 			result.addAll(getScopeIQLAttributeSelection(typeResult.getRef(),isThis, isSuper));
 			result.addAll(getScopeIQLMethodSelection(typeResult.getRef(),isThis, isSuper));
@@ -60,8 +62,8 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeFactory, 
 			ODLOperator operator = EcoreUtil2.getContainerOfType(expr, ODLOperator.class);
 
 			if (operator != null && isThis) {
-				result.addAll(getScopeIQLAttributeSelection(exprEvaluator.getSuperType(expr).getRef(),false, true));
-				result.addAll(getScopeIQLMethodSelection(exprEvaluator.getSuperType(expr).getRef(),false, true));
+				result.addAll(getScopeIQLAttributeSelection(lookUp.getSuperType(expr),false, true));
+				result.addAll(getScopeIQLMethodSelection(lookUp.getSuperType(expr),false, true));
 			}
 
 		}
@@ -69,7 +71,7 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeFactory, 
 	}
 
 	@Override
-	public Collection<IEObjectDescription> getIQLJvmElementCallExpression(EObject expr) {
+	public Collection<IEObjectDescription> getScopeIQLJvmElementCallExpression(EObject expr) {
 		JvmDeclaredType type = EcoreUtil2.getContainerOfType(expr, JvmDeclaredType.class);
 		if (type instanceof ODLOperator) {
 			ODLOperator op = (ODLOperator) type;
@@ -115,7 +117,7 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeFactory, 
 				container = container.eContainer();
 			}
 			
-			Collection<JvmTypeReference> importedTypes = typeFactory.getStaticImports(expr);
+			Collection<JvmTypeReference> importedTypes = typeDictionary.getStaticImports(expr);
 
 			JvmTypeReference thisType = typeUtils.createTypeRef(op);
 
@@ -125,7 +127,7 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeFactory, 
 			elements.addAll(lookUp.getPublicMethods(thisType, importedTypes,true));
 			elements.addAll(lookUp.getProtectedMethods(thisType, importedTypes,true));
 			
-			JvmTypeReference superType = exprEvaluator.getSuperType(expr).getRef();
+			JvmTypeReference superType = lookUp.getSuperType(expr);
 
 			elements.addAll(lookUp.getPublicAttributes(superType, importedTypes, true));
 			elements.addAll(lookUp.getProtectedAttributes(superType, importedTypes, true));
@@ -161,7 +163,7 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeFactory, 
 			}
 			return result;
 		} else {
-			return super.getIQLJvmElementCallExpression(expr);
+			return super.getScopeIQLJvmElementCallExpression(expr);
 		}
 	}
 

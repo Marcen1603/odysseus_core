@@ -61,89 +61,6 @@ public interface ODLPackage extends EPackage
   ODLPackage eINSTANCE = de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl.init();
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelImpl <em>Model</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelImpl
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLModel()
-   * @generated
-   */
-  int ODL_MODEL = 0;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_MODEL__NAME = BasicIQLPackage.IQL_MODEL__NAME;
-
-  /**
-   * The feature id for the '<em><b>Namespaces</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_MODEL__NAMESPACES = BasicIQLPackage.IQL_MODEL__NAMESPACES;
-
-  /**
-   * The feature id for the '<em><b>Elements</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_MODEL__ELEMENTS = BasicIQLPackage.IQL_MODEL__ELEMENTS;
-
-  /**
-   * The number of structural features of the '<em>Model</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_MODEL_FEATURE_COUNT = BasicIQLPackage.IQL_MODEL_FEATURE_COUNT + 0;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelElementImpl <em>Model Element</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelElementImpl
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLModelElement()
-   * @generated
-   */
-  int ODL_MODEL_ELEMENT = 1;
-
-  /**
-   * The feature id for the '<em><b>Javametadata</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_MODEL_ELEMENT__JAVAMETADATA = BasicIQLPackage.IQL_MODEL_ELEMENT__JAVAMETADATA;
-
-  /**
-   * The feature id for the '<em><b>Inner</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_MODEL_ELEMENT__INNER = BasicIQLPackage.IQL_MODEL_ELEMENT__INNER;
-
-  /**
-   * The number of structural features of the '<em>Model Element</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ODL_MODEL_ELEMENT_FEATURE_COUNT = BasicIQLPackage.IQL_MODEL_ELEMENT_FEATURE_COUNT + 0;
-
-  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLOperatorImpl <em>Operator</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -151,7 +68,7 @@ public interface ODLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLOperator()
    * @generated
    */
-  int ODL_OPERATOR = 2;
+  int ODL_OPERATOR = 0;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -332,7 +249,7 @@ public interface ODLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLParameter()
    * @generated
    */
-  int ODL_PARAMETER = 3;
+  int ODL_PARAMETER = 1;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -513,7 +430,7 @@ public interface ODLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLMethod()
    * @generated
    */
-  int ODL_METHOD = 4;
+  int ODL_METHOD = 2;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -742,26 +659,6 @@ public interface ODLPackage extends EPackage
 
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel <em>Model</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Model</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModel
-   * @generated
-   */
-  EClass getODLModel();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModelElement <em>Model Element</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Model Element</em>'.
-   * @see de.uniol.inf.is.odysseus.iql.odl.oDL.ODLModelElement
-   * @generated
-   */
-  EClass getODLModelElement();
-
-  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator <em>Operator</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -880,26 +777,6 @@ public interface ODLPackage extends EPackage
    */
   interface Literals
   {
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelImpl <em>Model</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelImpl
-     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLModel()
-     * @generated
-     */
-    EClass ODL_MODEL = eINSTANCE.getODLModel();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelElementImpl <em>Model Element</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLModelElementImpl
-     * @see de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLPackageImpl#getODLModelElement()
-     * @generated
-     */
-    EClass ODL_MODEL_ELEMENT = eINSTANCE.getODLModelElement();
-
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.iql.odl.oDL.impl.ODLOperatorImpl <em>Operator</em>}' class.
      * <!-- begin-user-doc -->

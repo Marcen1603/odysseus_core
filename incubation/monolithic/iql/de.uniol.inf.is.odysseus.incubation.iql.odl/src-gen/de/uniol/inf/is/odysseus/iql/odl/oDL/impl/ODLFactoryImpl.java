@@ -64,36 +64,12 @@ public class ODLFactoryImpl extends EFactoryImpl implements ODLFactory
   {
     switch (eClass.getClassifierID())
     {
-      case ODLPackage.ODL_MODEL: return createODLModel();
-      case ODLPackage.ODL_MODEL_ELEMENT: return createODLModelElement();
       case ODLPackage.ODL_OPERATOR: return createODLOperator();
       case ODLPackage.ODL_PARAMETER: return createODLParameter();
       case ODLPackage.ODL_METHOD: return createODLMethod();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ODLModel createODLModel()
-  {
-    ODLModelImpl odlModel = new ODLModelImpl();
-    return odlModel;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ODLModelElement createODLModelElement()
-  {
-    ODLModelElementImpl odlModelElement = new ODLModelElementImpl();
-    return odlModelElement;
   }
 
   /**

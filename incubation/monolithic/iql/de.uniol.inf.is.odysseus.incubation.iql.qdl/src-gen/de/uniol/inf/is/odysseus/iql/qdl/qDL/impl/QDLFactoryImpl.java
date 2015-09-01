@@ -64,11 +64,7 @@ public class QDLFactoryImpl extends EFactoryImpl implements QDLFactory
   {
     switch (eClass.getClassifierID())
     {
-      case QDLPackage.QDL_MODEL: return createQDLModel();
-      case QDLPackage.QDL_MODEL_ELEMENT: return createQDLModelElement();
       case QDLPackage.QDL_QUERY: return createQDLQuery();
-      case QDLPackage.IQL_INSTANCE_OF_EXPRESSION: return createIQLInstanceOfExpression();
-      case QDLPackage.IQL_RELATIONAL_EXPRESSION: return createIQLRelationalExpression();
       case QDLPackage.IQL_SUBSCRIBE_EXPRESSION: return createIQLSubscribeExpression();
       case QDLPackage.IQL_PORT_EXPRESSION: return createIQLPortExpression();
       case QDLPackage.QDL_METADATA_VALUE_SINGLE_ID: return createQDLMetadataValueSingleID();
@@ -82,54 +78,10 @@ public class QDLFactoryImpl extends EFactoryImpl implements QDLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public QDLModel createQDLModel()
-  {
-    QDLModelImpl qdlModel = new QDLModelImpl();
-    return qdlModel;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public QDLModelElement createQDLModelElement()
-  {
-    QDLModelElementImpl qdlModelElement = new QDLModelElementImpl();
-    return qdlModelElement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public QDLQuery createQDLQuery()
   {
     QDLQueryImpl qdlQuery = new QDLQueryImpl();
     return qdlQuery;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLInstanceOfExpression createIQLInstanceOfExpression()
-  {
-    IQLInstanceOfExpressionImpl iqlInstanceOfExpression = new IQLInstanceOfExpressionImpl();
-    return iqlInstanceOfExpression;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public IQLRelationalExpression createIQLRelationalExpression()
-  {
-    IQLRelationalExpressionImpl iqlRelationalExpression = new IQLRelationalExpressionImpl();
-    return iqlRelationalExpression;
   }
 
   /**

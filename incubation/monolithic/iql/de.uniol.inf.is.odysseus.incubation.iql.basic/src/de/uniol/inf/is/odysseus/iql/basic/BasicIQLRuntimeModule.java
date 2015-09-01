@@ -32,8 +32,10 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.BasicIQLComp
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.BasicIQLGeneratorContext;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
-import de.uniol.inf.is.odysseus.iql.basic.linking.BasicIQLLinkingService;
+import de.uniol.inf.is.odysseus.iql.basic.linking.DefaultIQLMethodFinder;
+import de.uniol.inf.is.odysseus.iql.basic.linking.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingResource;
+import de.uniol.inf.is.odysseus.iql.basic.linking.IQLLinkingService;
 import de.uniol.inf.is.odysseus.iql.basic.linking.IQLResourceFactory;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.BasicIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
@@ -41,22 +43,20 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLQualifiedNameProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLResourceDescriptionStrategy;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.BasicIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLJdtTypeProviderFactory;
-import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLClasspathTypeProviderFactory;
-import de.uniol.inf.is.odysseus.iql.basic.scoping.DefaultIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLNullJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.basic.service.BasicIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.service.IIQLServiceObserver;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.BasicIQLTypeBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.typing.builder.IIQLTypeBuilder;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.BasicIQLTypeDictionary;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.BasicIQLTypingEntryPoint;
 import de.uniol.inf.is.odysseus.iql.basic.typing.entrypoint.IIQLTypingEntryPoint;
-import de.uniol.inf.is.odysseus.iql.basic.typing.extension.BasicIQLTypeExtensionsFactory;
-import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.BasicIQLTypeExtensionsDictionary;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
@@ -102,13 +102,13 @@ public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.Ab
 		return BasicIQLTypeUtils.class;
 	}
 	
-	public Class<? extends IIQLTypeExtensionsFactory> bindTypeOperatorsFactory() {
-		return BasicIQLTypeExtensionsFactory.class;
+	public Class<? extends IIQLTypeExtensionsDictionary> bindTypeExtensionsDictionary() {
+		return BasicIQLTypeExtensionsDictionary.class;
 	}
 	
 	@Override
 	public Class<? extends ILinkingService> bindILinkingService() {
-		return BasicIQLLinkingService.class;
+		return IQLLinkingService.class;
 	}	
 	
 	public Class<? extends IIQLExpressionEvaluatorContext> bindExpressionEvaluatorContext() {
@@ -157,8 +157,8 @@ public class BasicIQLRuntimeModule extends de.uniol.inf.is.odysseus.iql.basic.Ab
 	}
 	
 	
-	public Class<? extends IIQLTypeFactory> bindIQLTypeFactory() {
-		return BasicIQLTypeFactory.class;
+	public Class<? extends IIQLTypeDictionary> bindIQLTypeDictionary() {
+		return BasicIQLTypeDictionary.class;
 	}
 		
 	public Class<? extends IIQLTypeBuilder> bindIQLTypeBuilder() {

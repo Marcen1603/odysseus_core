@@ -4,21 +4,21 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompiler
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 import org.eclipse.xtext.common.types.JvmTypeReference
 import java.util.List
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary
 
-abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, E extends IIQLExpressionCompiler<G>, F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLTypeCompiler<G>{
+abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, E extends IIQLExpressionCompiler<G>, F extends IIQLTypeDictionary, U extends IIQLTypeUtils> implements IIQLTypeCompiler<G>{
 	protected H helper;
 	
-	protected F typeFactory;
+	protected F typeDictionary;
 	
 	protected U typeUtils;
 		
-	new (H helper, F typeFactory, U typeUtils) {
+	new (H helper, F typeDictionary, U typeUtils) {
 		this.helper = helper;
-		this.typeFactory = typeFactory;
+		this.typeDictionary = typeDictionary;
 		this.typeUtils = typeUtils;
 	}
 
@@ -63,10 +63,10 @@ abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends I
 	
 	def String compile(JvmTypeReference typeRef, G context, String nodeText, boolean wrapper) {
 		var innerType = typeUtils.getInnerType(typeRef, false)
-		if (typeFactory.isImportNeeded(innerType, nodeText)) {
-			context.addImport(typeFactory.getImportName(innerType));
+		if (typeDictionary.isImportNeeded(innerType, nodeText)) {
+			context.addImport(typeDictionary.getImportName(innerType));
 		} 
-		'''«typeFactory.getSimpleName(innerType, nodeText, wrapper, false)»'''		
+		'''«typeDictionary.getSimpleName(innerType, nodeText, wrapper, false)»'''		
 	}
 	
 	

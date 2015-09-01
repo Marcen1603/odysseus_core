@@ -23,24 +23,6 @@ public interface QDLFactory extends EFactory
   QDLFactory eINSTANCE = de.uniol.inf.is.odysseus.iql.qdl.qDL.impl.QDLFactoryImpl.init();
 
   /**
-   * Returns a new object of class '<em>Model</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Model</em>'.
-   * @generated
-   */
-  QDLModel createQDLModel();
-
-  /**
-   * Returns a new object of class '<em>Model Element</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Model Element</em>'.
-   * @generated
-   */
-  QDLModelElement createQDLModelElement();
-
-  /**
    * Returns a new object of class '<em>Query</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -48,24 +30,6 @@ public interface QDLFactory extends EFactory
    * @generated
    */
   QDLQuery createQDLQuery();
-
-  /**
-   * Returns a new object of class '<em>IQL Instance Of Expression</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Instance Of Expression</em>'.
-   * @generated
-   */
-  IQLInstanceOfExpression createIQLInstanceOfExpression();
-
-  /**
-   * Returns a new object of class '<em>IQL Relational Expression</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>IQL Relational Expression</em>'.
-   * @generated
-   */
-  IQLRelationalExpression createIQLRelationalExpression();
 
   /**
    * Returns a new object of class '<em>IQL Subscribe Expression</em>'.

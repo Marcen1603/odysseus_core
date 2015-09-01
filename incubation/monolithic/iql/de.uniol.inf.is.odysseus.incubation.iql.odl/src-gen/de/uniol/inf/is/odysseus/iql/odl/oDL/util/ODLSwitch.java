@@ -4,8 +4,6 @@ package de.uniol.inf.is.odysseus.iql.odl.oDL.util;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 
 import de.uniol.inf.is.odysseus.iql.odl.oDL.*;
 
@@ -90,22 +88,6 @@ public class ODLSwitch<T> extends Switch<T>
   {
     switch (classifierID)
     {
-      case ODLPackage.ODL_MODEL:
-      {
-        ODLModel odlModel = (ODLModel)theEObject;
-        T result = caseODLModel(odlModel);
-        if (result == null) result = caseIQLModel(odlModel);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case ODLPackage.ODL_MODEL_ELEMENT:
-      {
-        ODLModelElement odlModelElement = (ODLModelElement)theEObject;
-        T result = caseODLModelElement(odlModelElement);
-        if (result == null) result = caseIQLModelElement(odlModelElement);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case ODLPackage.ODL_OPERATOR:
       {
         ODLOperator odlOperator = (ODLOperator)theEObject;
@@ -154,38 +136,6 @@ public class ODLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Model</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Model</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseODLModel(ODLModel object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Model Element</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Model Element</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseODLModelElement(ODLModelElement object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Operator</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -229,38 +179,6 @@ public class ODLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseODLMethod(ODLMethod object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Model</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Model</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLModel(IQLModel object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Model Element</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Model Element</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLModelElement(IQLModelElement object)
   {
     return null;
   }

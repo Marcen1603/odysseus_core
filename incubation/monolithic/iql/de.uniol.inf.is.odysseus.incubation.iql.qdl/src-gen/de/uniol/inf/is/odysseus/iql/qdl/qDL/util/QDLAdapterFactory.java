@@ -4,8 +4,6 @@ package de.uniol.inf.is.odysseus.iql.qdl.qDL.util;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.*;
 
@@ -89,29 +87,9 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
     new QDLSwitch<Adapter>()
     {
       @Override
-      public Adapter caseQDLModel(QDLModel object)
-      {
-        return createQDLModelAdapter();
-      }
-      @Override
-      public Adapter caseQDLModelElement(QDLModelElement object)
-      {
-        return createQDLModelElementAdapter();
-      }
-      @Override
       public Adapter caseQDLQuery(QDLQuery object)
       {
         return createQDLQueryAdapter();
-      }
-      @Override
-      public Adapter caseIQLInstanceOfExpression(IQLInstanceOfExpression object)
-      {
-        return createIQLInstanceOfExpressionAdapter();
-      }
-      @Override
-      public Adapter caseIQLRelationalExpression(IQLRelationalExpression object)
-      {
-        return createIQLRelationalExpressionAdapter();
       }
       @Override
       public Adapter caseIQLSubscribeExpression(IQLSubscribeExpression object)
@@ -127,16 +105,6 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseQDLMetadataValueSingleID(QDLMetadataValueSingleID object)
       {
         return createQDLMetadataValueSingleIDAdapter();
-      }
-      @Override
-      public Adapter caseIQLModel(IQLModel object)
-      {
-        return createIQLModelAdapter();
-      }
-      @Override
-      public Adapter caseIQLModelElement(IQLModelElement object)
-      {
-        return createIQLModelElementAdapter();
       }
       @Override
       public Adapter caseJvmIdentifiableElement(JvmIdentifiableElement object)
@@ -211,36 +179,6 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
 
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel <em>Model</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel
-   * @generated
-   */
-  public Adapter createQDLModelAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModelElement <em>Model Element</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModelElement
-   * @generated
-   */
-  public Adapter createQDLModelElementAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery <em>Query</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -251,36 +189,6 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createQDLQueryAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression <em>IQL Instance Of Expression</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression
-   * @generated
-   */
-  public Adapter createIQLInstanceOfExpressionAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression <em>IQL Relational Expression</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression
-   * @generated
-   */
-  public Adapter createIQLRelationalExpressionAdapter()
   {
     return null;
   }
@@ -326,36 +234,6 @@ public class QDLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createQDLMetadataValueSingleIDAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel <em>IQL Model</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel
-   * @generated
-   */
-  public Adapter createIQLModelAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement <em>IQL Model Element</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
-   * @generated
-   */
-  public Adapter createIQLModelElementAdapter()
   {
     return null;
   }

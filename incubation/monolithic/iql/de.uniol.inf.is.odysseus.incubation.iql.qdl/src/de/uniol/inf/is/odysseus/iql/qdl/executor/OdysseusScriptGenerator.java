@@ -35,12 +35,12 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.ParameterFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 
 public class OdysseusScriptGenerator {
 	
 	@Inject
-	private IQDLTypeFactory factory;
+	private IQDLTypeDictionary factory;
 
 	public ILogicalQuery createLogicalQuery(IQDLQuery query, IDataDictionary dd, ISession session) {
 		query.setDataDictionary(dd);

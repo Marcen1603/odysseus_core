@@ -36,9 +36,9 @@ import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
 import de.uniol.inf.is.odysseus.iql.odl.types.impl.useroperator.AbstractODLAORule;
 import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLAO;
 import de.uniol.inf.is.odysseus.iql.odl.types.useroperator.IODLPO;
+import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.EventMethodsFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.eventmethods.IEventMethod;
-import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
@@ -57,7 +58,7 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
-public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLStatementCompiler, IODLTypeFactory, IODLTypeUtils> implements IODLCompiler {
+public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLTypeCompiler, IODLStatementCompiler, IODLTypeDictionary, IODLTypeUtils> implements IODLCompiler {
   @Inject
   private IODLMetadataAnnotationCompiler metadataAnnotationCompiler;
   
@@ -65,8 +66,8 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
   private IODLLookUp lookUp;
   
   @Inject
-  public ODLCompiler(final IODLCompilerHelper helper, final IODLTypeCompiler typeCompiler, final IODLStatementCompiler stmtCompiler, final IODLTypeFactory factory, final IODLTypeUtils typeUtils) {
-    super(helper, typeCompiler, stmtCompiler, factory, typeUtils);
+  public ODLCompiler(final IODLCompilerHelper helper, final IODLTypeCompiler typeCompiler, final IODLStatementCompiler stmtCompiler, final IODLTypeDictionary typeDictionary, final IODLTypeUtils typeUtils) {
+    super(helper, typeCompiler, stmtCompiler, typeDictionary, typeUtils);
   }
   
   public String compileAO(final ODLOperator o, final IODLGeneratorContext context) {
@@ -95,10 +96,12 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
     return _xblockexpression;
   }
   
-  public String compilePO(final IQLModelElement element, final ODLOperator o, final IODLGeneratorContext context) {
+  public String compilePO(final ODLOperator o, final IODLGeneratorContext context) {
     String _xblockexpression = null;
     {
       StringBuilder builder = new StringBuilder();
+      EObject _eContainer = o.eContainer();
+      IQLModelElement element = ((IQLModelElement) _eContainer);
       String _compilePOIntern = this.compilePOIntern(element, o, context);
       builder.append(_compilePOIntern);
       Collection<String> _imports = context.getImports();

@@ -10,6 +10,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.ClassUtils;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmConstructor;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmExecutable;
@@ -21,27 +23,39 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.JvmVisibility;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
-import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
-import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.linking.IIQLMethodFinder;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQLTypeExtensionsFactory, U extends IIQLTypeUtils> implements IIQLLookUp{
+public abstract class AbstractIQLLookUp<T extends IIQLTypeDictionary, F extends IIQLTypeExtensionsDictionary, U extends IIQLTypeUtils> implements IIQLLookUp{
 		
-	protected T typeFactory;
+	protected T typeDictionary;
 	protected U typeUtils;
 
-	protected F typeOperatorsFactory;
+	protected F typeExtensionsDictionary;
 	
 	@Inject
 	protected IIQLMethodFinder methodFinder;
 
 
 
-	public AbstractIQLLookUp(T typeFactory, F typeOperatosFactory, U typeUtils) {
-		this.typeFactory = typeFactory;
-		this.typeOperatorsFactory = typeOperatosFactory;
+	public AbstractIQLLookUp(T typeDictionary, F typeExtensionsDictionary, U typeUtils) {
+		this.typeDictionary = typeDictionary;
+		this.typeExtensionsDictionary = typeExtensionsDictionary;
 		this.typeUtils = typeUtils;
+	}
+	
+	@Override
+	public JvmTypeReference getThisType(EObject obj) {
+		JvmDeclaredType c = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
+		return typeUtils.createTypeRef(c);
+	}
+
+	@Override
+	public JvmTypeReference getSuperType(EObject obj) {
+		JvmDeclaredType c = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
+		return c.getExtendedClass();
 	}
 	
 	@Override
@@ -118,8 +132,8 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 				}
 			}
 		}
-		if (extensionAttributes && typeOperatorsFactory.hasTypeExtensions(typeRef)) {
-			Collection<JvmField> col = typeOperatorsFactory.getAllExtensionAttributes(typeRef, visibilities);
+		if (extensionAttributes && typeExtensionsDictionary.hasTypeExtensions(typeRef)) {
+			Collection<JvmField> col = typeExtensionsDictionary.getAllExtensionAttributes(typeRef, visibilities);
 			for (JvmField attr : col) {
 				if (!attributes.containsKey(attr.getSimpleName())) {
 					attributes.put(attr.getSimpleName(), attr);
@@ -138,7 +152,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		}
 		boolean isObject = typeUtils.getLongName(type, true).equals(Object.class.getCanonicalName());
 		if (!isObject && deep && !visitedTypes.contains(Object.class.getCanonicalName())) {
-			findAttributes(typeUtils.createTypeRef(Object.class, typeFactory.getSystemResourceSet()),visitedTypes,attributes, deep, visibilities, onlyStatic,  extensionAttributes);
+			findAttributes(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()),visitedTypes,attributes, deep, visibilities, onlyStatic,  extensionAttributes);
 		}
 	}
 	
@@ -233,8 +247,8 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 				}
 			}
 		}
-		if (extensionMethods && typeOperatorsFactory.hasTypeExtensions(typeRef)) {
-			Collection<JvmOperation> col = typeOperatorsFactory.getAllExtensionMethods(typeRef,visibilities);
+		if (extensionMethods && typeExtensionsDictionary.hasTypeExtensions(typeRef)) {
+			Collection<JvmOperation> col = typeExtensionsDictionary.getAllExtensionMethods(typeRef,visibilities);
 			for (JvmOperation op : col) {
 				String methodId = methodFinder.createExecutableID(op);
 				if (!methods.containsKey(methodId)) {
@@ -256,7 +270,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		
 		boolean isObject = typeUtils.getLongName(type, true).equals(Object.class.getCanonicalName());
 		if (!isObject && deep && !visitedTypes.contains(Object.class.getCanonicalName())) {
-			findMethods(typeUtils.createTypeRef(Object.class, typeFactory.getSystemResourceSet()), visitedTypes, methods, deep, visibilities,onlyStatic,  extensionMethods, ignoreArrays);
+			findMethods(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()), visitedTypes, methods, deep, visibilities,onlyStatic,  extensionMethods, ignoreArrays);
 		}
 	}
 	
@@ -395,7 +409,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		
 		boolean isObject = typeUtils.getLongName(targetRef, true).equals(Object.class.getCanonicalName());
 		if (!isObject) {
-			boolean result = isCastable(typeUtils.createTypeRef(Object.class, typeFactory.getSystemResourceSet()), typeRef);
+			boolean result = isCastable(typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()), typeRef);
 			if (result) {
 				return true;
 			}
@@ -441,7 +455,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		
 		boolean isObject = typeUtils.getLongName(typeRef, true).equals(Object.class.getCanonicalName());
 		if (!isObject) {
-			boolean result = isAssignable(targetRef, typeUtils.createTypeRef(Object.class, typeFactory.getSystemResourceSet()));
+			boolean result = isAssignable(targetRef, typeUtils.createTypeRef(Object.class, typeDictionary.getSystemResourceSet()));
 			if (result) {
 				return true;
 			}
@@ -557,7 +571,7 @@ public abstract class AbstractIQLLookUp<T extends IIQLTypeFactory, F extends IIQ
 		for (Package p : Package.getPackages()) {
 			result.add(p.getName());
 		}
-		result.addAll(typeFactory.getJavaPackages());
+		result.addAll(typeDictionary.getJavaPackages());
 		return result;
 	}
 

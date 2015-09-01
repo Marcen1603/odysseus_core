@@ -56,6 +56,7 @@ import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
 
 
 
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
@@ -71,18 +72,18 @@ import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.IQDLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
-public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<IQDLExpressionEvaluator, IQDLTypeFactory, IQDLLookUp, IQDLScopeProvider, IQDLTypeUtils> {
+public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProvider<IQDLExpressionEvaluator, IQDLTypeDictionary, IQDLLookUp, IQDLScopeProvider, IQDLTypeUtils> {
 
 	@Inject
 	public QDLTemplateProposalProvider(TemplateStore templateStore,
-			ContextTypeRegistry registry, ContextTypeIdHelper helper, IQDLExpressionEvaluator exprEvaluator, IQDLTypeFactory factory, IQDLLookUp lookUp, IQDLScopeProvider scopeProvider, IQDLTypeUtils typeUtils) {
-		super(templateStore, registry, helper, exprEvaluator, factory, lookUp, scopeProvider, typeUtils);
+			ContextTypeRegistry registry, ContextTypeIdHelper helper, IQDLExpressionEvaluator exprEvaluator, IQDLTypeDictionary typeDictionary, IQDLLookUp lookUp, IQDLScopeProvider scopeProvider, IQDLTypeUtils typeUtils) {
+		super(templateStore, registry, helper, exprEvaluator, typeDictionary, lookUp, scopeProvider, typeUtils);
 	}
 	
 	
@@ -130,9 +131,9 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 		} else {
 			typeRef = newExpr.getRef();
 		}
-		if (factory.isOperator(typeRef)) {
-			IOperatorBuilder builder = factory.getOperatorBuilder(typeUtils.getShortName(typeRef, false));
-			IParameter<?> parameter = factory.getOperatorParameter(typeUtils.getShortName(typeRef, false), node.getKey().getSimpleName());
+		if (typeDictionary.isOperator(typeRef)) {
+			IOperatorBuilder builder = typeDictionary.getOperatorBuilder(typeUtils.getShortName(typeRef, false));
+			IParameter<?> parameter = typeDictionary.getOperatorParameter(typeUtils.getShortName(typeRef, false), node.getKey().getSimpleName());
 			if (parameter.getPossibleValueMethod() != null && parameter.getPossibleValueMethod().length()>0) {
 				createParameterPossibleValueTemplates(builder, parameter, templateContext, context, acceptor);
 			}
@@ -143,8 +144,8 @@ public class QDLTemplateProposalProvider extends AbstractIQLTemplateProposalProv
 	@Override
 	protected void createIQLVariableStatementProposals(TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
 		super.createIQLVariableStatementProposals(templateContext, context, acceptor);
-		for (IQLClass operatorType :  factory.getOperatorTypes()) {
-			IOperatorBuilder builder = factory.getOperatorBuilder(operatorType.getSimpleName());
+		for (IQLClass operatorType :  typeDictionary.getOperatorTypes()) {
+			IOperatorBuilder builder = typeDictionary.getOperatorBuilder(operatorType.getSimpleName());
 			createOperatorBuilderTemplate(builder, operatorType, templateContext, context, acceptor);
 		}
 	}

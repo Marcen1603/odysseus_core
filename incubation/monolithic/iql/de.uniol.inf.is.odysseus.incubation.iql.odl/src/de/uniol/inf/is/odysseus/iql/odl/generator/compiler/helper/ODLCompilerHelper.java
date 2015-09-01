@@ -21,14 +21,14 @@ import de.uniol.inf.is.odysseus.iql.odl.lookup.IODLLookUp;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLMethod;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLParameter;
-import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
-public class ODLCompilerHelper extends AbstractIQLCompilerHelper<IODLLookUp, IODLTypeFactory, IODLTypeUtils> implements IODLCompilerHelper {
+public class ODLCompilerHelper extends AbstractIQLCompilerHelper<IODLLookUp, IODLTypeDictionary, IODLTypeUtils> implements IODLCompilerHelper {
 
 	@Inject
-	public ODLCompilerHelper(IODLLookUp lookUp, IODLTypeFactory factory, IODLTypeUtils typeUtils) {
-		super(lookUp, factory, typeUtils);
+	public ODLCompilerHelper(IODLLookUp lookUp, IODLTypeDictionary typeDictionary, IODLTypeUtils typeUtils) {
+		super(lookUp, typeDictionary, typeUtils);
 	}
 	
 	@Override
@@ -60,7 +60,7 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<IODLLookUp, IOD
 
 			}
 		}
-		return typeUtils.createTypeRef(Tuple.class, typeFactory.getSystemResourceSet());
+		return typeUtils.createTypeRef(Tuple.class, typeDictionary.getSystemResourceSet());
 	}
 
 	@Override
@@ -154,6 +154,6 @@ public class ODLCompilerHelper extends AbstractIQLCompilerHelper<IODLLookUp, IOD
 
 	@Override
 	public JvmTypeReference determineMetadataType(ODLOperator operator) {
-		return typeUtils.createTypeRef(IMetaAttribute.class, typeFactory.getSystemResourceSet());
+		return typeUtils.createTypeRef(IMetaAttribute.class, typeDictionary.getSystemResourceSet());
 	}
 }

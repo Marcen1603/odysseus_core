@@ -16,7 +16,7 @@ import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.executor.BasicIQLExecutor;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.BasicIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 
 public class BasicIQLUiExecutor extends BasicIQLExecutor implements IIQLUiExecutor {
@@ -25,8 +25,8 @@ public class BasicIQLUiExecutor extends BasicIQLExecutor implements IIQLUiExecut
 	private IJavaProjectProvider javaProjectProvider;
 	
 	@Inject
-	public BasicIQLUiExecutor(BasicIQLTypeFactory typeFactory,BasicIQLTypeUtils typeUtils) {
-		super(typeFactory, typeUtils);
+	public BasicIQLUiExecutor(BasicIQLTypeDictionary typeDictionary,BasicIQLTypeUtils typeUtils) {
+		super(typeDictionary, typeUtils);
 	}
 
 	@Override

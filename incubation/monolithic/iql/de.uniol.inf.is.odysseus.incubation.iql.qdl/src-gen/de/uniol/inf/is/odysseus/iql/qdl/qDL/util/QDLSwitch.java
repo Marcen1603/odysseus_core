@@ -4,8 +4,6 @@ package de.uniol.inf.is.odysseus.iql.qdl.qDL.util;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.*;
 
@@ -86,22 +84,6 @@ public class QDLSwitch<T> extends Switch<T>
   {
     switch (classifierID)
     {
-      case QDLPackage.QDL_MODEL:
-      {
-        QDLModel qdlModel = (QDLModel)theEObject;
-        T result = caseQDLModel(qdlModel);
-        if (result == null) result = caseIQLModel(qdlModel);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case QDLPackage.QDL_MODEL_ELEMENT:
-      {
-        QDLModelElement qdlModelElement = (QDLModelElement)theEObject;
-        T result = caseQDLModelElement(qdlModelElement);
-        if (result == null) result = caseIQLModelElement(qdlModelElement);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case QDLPackage.QDL_QUERY:
       {
         QDLQuery qdlQuery = (QDLQuery)theEObject;
@@ -114,22 +96,6 @@ public class QDLSwitch<T> extends Switch<T>
         if (result == null) result = caseJvmAnnotationTarget(qdlQuery);
         if (result == null) result = caseJvmType(qdlQuery);
         if (result == null) result = caseJvmIdentifiableElement(qdlQuery);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case QDLPackage.IQL_INSTANCE_OF_EXPRESSION:
-      {
-        IQLInstanceOfExpression iqlInstanceOfExpression = (IQLInstanceOfExpression)theEObject;
-        T result = caseIQLInstanceOfExpression(iqlInstanceOfExpression);
-        if (result == null) result = caseIQLExpression(iqlInstanceOfExpression);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case QDLPackage.IQL_RELATIONAL_EXPRESSION:
-      {
-        IQLRelationalExpression iqlRelationalExpression = (IQLRelationalExpression)theEObject;
-        T result = caseIQLRelationalExpression(iqlRelationalExpression);
-        if (result == null) result = caseIQLExpression(iqlRelationalExpression);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -162,38 +128,6 @@ public class QDLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Model</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Model</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseQDLModel(QDLModel object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Model Element</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Model Element</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseQDLModelElement(QDLModelElement object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Query</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -205,38 +139,6 @@ public class QDLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseQDLQuery(QDLQuery object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Instance Of Expression</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Instance Of Expression</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLInstanceOfExpression(IQLInstanceOfExpression object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Relational Expression</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Relational Expression</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLRelationalExpression(IQLRelationalExpression object)
   {
     return null;
   }
@@ -285,38 +187,6 @@ public class QDLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseQDLMetadataValueSingleID(QDLMetadataValueSingleID object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Model</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Model</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLModel(IQLModel object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>IQL Model Element</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>IQL Model Element</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIQLModelElement(IQLModelElement object)
   {
     return null;
   }

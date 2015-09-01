@@ -24,13 +24,13 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.hover.IQLDispatchingEObjectTextHove
 import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtTypeProviderFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.IQDLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLClasspathTypeProviderFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLAntlrTokenToAttributeIdMapper;
-import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLHighlightingConfiguration;
-import de.uniol.inf.is.odysseus.iql.qdl.ui.coloring.QDLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.contentassist.QDLProposalProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.contentassist.QDLTemplateProposalProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.executor.QDLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.generator.QDLUiGenerator;
+import de.uniol.inf.is.odysseus.iql.qdl.ui.highlighting.QDLAntlrTokenToAttributeIdMapper;
+import de.uniol.inf.is.odysseus.iql.qdl.ui.highlighting.QDLHighlightingConfiguration;
+import de.uniol.inf.is.odysseus.iql.qdl.ui.highlighting.QDLSemanticHighlightingCalculator;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.hover.QDLEObjectDocumentationProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.hover.QDLEObjectHoverProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.ui.scoping.QDLUiScopeProvider;

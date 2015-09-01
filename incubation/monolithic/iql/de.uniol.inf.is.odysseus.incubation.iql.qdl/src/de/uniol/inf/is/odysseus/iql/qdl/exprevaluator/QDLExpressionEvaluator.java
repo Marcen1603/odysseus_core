@@ -4,15 +4,15 @@ import javax.inject.Inject;
 
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.AbstractIQLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.QDLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.QDLTypeExtensionsDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
-public class QDLExpressionEvaluator extends AbstractIQLExpressionEvaluator<IQDLTypeFactory, IQDLLookUp, IQDLExpressionEvaluatorContext, IQDLTypeUtils, QDLTypeExtensionsFactory> implements IQDLExpressionEvaluator{
+public class QDLExpressionEvaluator extends AbstractIQLExpressionEvaluator<IQDLTypeDictionary, IQDLLookUp, IQDLExpressionEvaluatorContext, IQDLTypeUtils, QDLTypeExtensionsDictionary> implements IQDLExpressionEvaluator{
 
 	@Inject
-	public QDLExpressionEvaluator(IQDLTypeFactory typeFactory, IQDLLookUp lookUp, IQDLExpressionEvaluatorContext context, IQDLTypeUtils typeUtils, QDLTypeExtensionsFactory typeExtensionsFactory) {
-		super(typeFactory, lookUp, context, typeUtils, typeExtensionsFactory);
+	public QDLExpressionEvaluator(IQDLTypeDictionary typeDictionary, IQDLLookUp lookUp, IQDLExpressionEvaluatorContext context, IQDLTypeUtils typeUtils, QDLTypeExtensionsDictionary typeExtensionsDictionary) {
+		super(typeDictionary, lookUp, context, typeUtils, typeExtensionsDictionary);
 	}
 
 }

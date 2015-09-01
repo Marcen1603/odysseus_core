@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.BasicIQLUiModule;
 import de.uniol.inf.is.odysseus.iql.basic.ui.executor.IIQLUiExecutor;
 import de.uniol.inf.is.odysseus.iql.odl.executor.ODLExecutor;
 import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
-import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
 public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
@@ -41,8 +41,8 @@ public class ODLUiExecutor extends ODLExecutor implements IIQLUiExecutor{
 	private IJavaProjectProvider javaProjectProvider;
 	
 	@Inject
-	public ODLUiExecutor(IODLTypeFactory typeFactory, IODLTypeUtils typeUtils) {
-		super(typeFactory, typeUtils);
+	public ODLUiExecutor(IODLTypeDictionary typeDictionary, IODLTypeUtils typeUtils) {
+		super(typeDictionary, typeUtils);
 	}
 
 	@Override

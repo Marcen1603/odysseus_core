@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.iql.basic.lookup;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmExecutable;
 import org.eclipse.xtext.common.types.JvmField;
@@ -13,6 +14,7 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLExpression;
 
 
 public interface IIQLLookUp {
+	
 	
 	Collection<JvmField> getPublicAttributes(JvmTypeReference typeRef, Collection<JvmTypeReference> importedTypes, boolean extensionAttributes);
 	Collection<JvmField> getProtectedAttributes(JvmTypeReference typeRef,Collection<JvmTypeReference> importedTypes, boolean extensionAttributes);
@@ -31,6 +33,8 @@ public interface IIQLLookUp {
 
 	Collection<String> getAllNamespaces();
 
+	JvmTypeReference getThisType(EObject obj);	
+	JvmTypeReference getSuperType(EObject obj);
 	
 	boolean isAssignable(JvmTypeReference targetRef, JvmTypeReference typeRef);	
 	boolean isCastable(JvmTypeReference targetRef, JvmTypeReference typeRef);	

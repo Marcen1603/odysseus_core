@@ -73,21 +73,21 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<IQDLTypeBui
 		OperatorsObservable.addListener(this);
 				
 		for (Entry<Resource, ILogicalOperator> entry : dataDictionary.getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession())) {
-			builder.addSource(entry.getValue());
+			builder.createSource(entry.getValue());
 		}
 	}
 	
 	private void initOperators() {
 		
 		for (IOperatorBuilder operatorBuilder : QDLServiceBinding.getOperatorBuilderFactory().getOperatorBuilder()) {
-			builder.addOperator(operatorBuilder);
+			builder.createOperator(operatorBuilder);
 		}		
 		
 	}
 	
 	@Override
 	public void onNewOperator(IOperatorBuilder operatorBuilder) {
-		builder.addOperator(operatorBuilder);
+		builder.createOperator(operatorBuilder);
 		refresProjects();
 	}
 	
@@ -103,7 +103,7 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<IQDLTypeBui
 
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name,ILogicalOperator op) {
-		builder.addSource(op);
+		builder.createSource(op);
 		refresProjects();
 	}
 

@@ -29,16 +29,16 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMemberSelectionExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.basic.linking.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
-import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLMethodFinder;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IIQLScopeProvider;
 import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluator, F extends IIQLTypeFactory, L extends IIQLLookUp, S extends IIQLScopeProvider, U extends IIQLTypeUtils> extends DefaultTemplateProposalProvider {
+public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluator, F extends IIQLTypeDictionary, L extends IIQLLookUp, S extends IIQLScopeProvider, U extends IIQLTypeUtils> extends DefaultTemplateProposalProvider {
 	protected E exprEvaluator;
-	protected F factory;
+	protected F typeDictionary;
 	protected L lookUp;
 	protected S scopeProvider;
 	protected U typeUtils;
@@ -50,10 +50,10 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 	protected IIQLMethodFinder methodFinder;
 	
 	
-	public AbstractIQLTemplateProposalProvider(TemplateStore templateStore,	ContextTypeRegistry registry, ContextTypeIdHelper helper, E exprEvaluator, F factory, L lookUp, S scopeProvider, U typeUtils) {
+	public AbstractIQLTemplateProposalProvider(TemplateStore templateStore,	ContextTypeRegistry registry, ContextTypeIdHelper helper, E exprEvaluator, F typeDictionary, L lookUp, S scopeProvider, U typeUtils) {
 		super(templateStore, registry, helper);
 		this.exprEvaluator = exprEvaluator;
-		this.factory = factory;
+		this.typeDictionary = typeDictionary;
 		this.lookUp = lookUp;
 		this.scopeProvider = scopeProvider;
 		this.typeUtils = typeUtils;
@@ -109,7 +109,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 	}
 	
 	protected void createIQLArgumentsMapKeyValueProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		Collection<IEObjectDescription> elements = scopeProvider.getIQLArgumentsMapKeys(node);
+		Collection<IEObjectDescription> elements = scopeProvider.getScopeIQLArgumentsMapKey(node);
 		for (IEObjectDescription element : elements) {
 			createMapEntryTemplate(element, templateContext, context, acceptor);
 		}
@@ -117,7 +117,7 @@ public class AbstractIQLTemplateProposalProvider<E extends IIQLExpressionEvaluat
 	
 	
 	protected void createIQLJvmElementCallExpressionProposals(EObject node, TemplateContext templateContext,ContentAssistContext context, ITemplateAcceptor acceptor) {
-		Collection<IEObjectDescription> elements = scopeProvider.getIQLJvmElementCallExpression(node);
+		Collection<IEObjectDescription> elements = scopeProvider.getScopeIQLJvmElementCallExpression(node);
 
 		for (IEObjectDescription desc : elements) {
 			EObject el = desc.getEObjectOrProxy();

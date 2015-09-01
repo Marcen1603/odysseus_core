@@ -2197,8 +2197,8 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = RULE_RANGE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6886:12: ( RULE_INT '..' RULE_INT )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6886:14: RULE_INT '..' RULE_INT
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6874:12: ( RULE_INT '..' RULE_INT )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6874:14: RULE_INT '..' RULE_INT
             {
             mRULE_INT(); 
             match(".."); 
@@ -2220,10 +2220,10 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = RULE_BOOLEAN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:14: ( ( 'true' | 'false' ) )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:16: ( 'true' | 'false' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6876:14: ( ( 'true' | 'false' ) )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6876:16: ( 'true' | 'false' )
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:16: ( 'true' | 'false' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6876:16: ( 'true' | 'false' )
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -2241,7 +2241,7 @@ public class InternalODLLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:17: 'true'
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6876:17: 'true'
                     {
                     match("true"); 
 
@@ -2249,7 +2249,7 @@ public class InternalODLLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:24: 'false'
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6876:24: 'false'
                     {
                     match("false"); 
 
@@ -2275,10 +2275,10 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6890:10: ( ( '0' .. '9' )+ )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6890:12: ( '0' .. '9' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6878:10: ( ( '0' .. '9' )+ )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6878:12: ( '0' .. '9' )+
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6890:12: ( '0' .. '9' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6878:12: ( '0' .. '9' )+
             int cnt2=0;
             loop2:
             do {
@@ -2292,7 +2292,7 @@ public class InternalODLLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6890:13: '0' .. '9'
+            	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6878:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -2324,10 +2324,10 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = RULE_DOUBLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6892:13: ( ( '0' .. '9' )* '.' ( '0' .. '9' )+ )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6892:15: ( '0' .. '9' )* '.' ( '0' .. '9' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6880:13: ( ( '0' .. '9' )* '.' ( '0' .. '9' )+ )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6880:15: ( '0' .. '9' )* '.' ( '0' .. '9' )+
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6892:15: ( '0' .. '9' )*
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6880:15: ( '0' .. '9' )*
             loop3:
             do {
                 int alt3=2;
@@ -2340,7 +2340,7 @@ public class InternalODLLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6892:16: '0' .. '9'
+            	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6880:16: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -2353,7 +2353,7 @@ public class InternalODLLexer extends Lexer {
             } while (true);
 
             match('.'); 
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6892:31: ( '0' .. '9' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6880:31: ( '0' .. '9' )+
             int cnt4=0;
             loop4:
             do {
@@ -2367,7 +2367,7 @@ public class InternalODLLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6892:32: '0' .. '9'
+            	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6880:32: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -2399,10 +2399,10 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6894:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6894:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6882:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6882:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6894:11: ( '^' )?
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6882:11: ( '^' )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -2411,7 +2411,7 @@ public class InternalODLLexer extends Lexer {
             }
             switch (alt5) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6894:11: '^'
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6882:11: '^'
                     {
                     match('^'); 
 
@@ -2429,7 +2429,7 @@ public class InternalODLLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6894:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6882:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop6:
             do {
                 int alt6=2;
@@ -2478,10 +2478,10 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt9=2;
             int LA9_0 = input.LA(1);
 
@@ -2499,10 +2499,10 @@ public class InternalODLLexer extends Lexer {
             }
             switch (alt9) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop7:
                     do {
                         int alt7=3;
@@ -2518,7 +2518,7 @@ public class InternalODLLexer extends Lexer {
 
                         switch (alt7) {
                     	case 1 :
-                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:21: '\\\\' .
+                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -2526,7 +2526,7 @@ public class InternalODLLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2551,10 +2551,10 @@ public class InternalODLLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop8:
                     do {
                         int alt8=3;
@@ -2570,7 +2570,7 @@ public class InternalODLLexer extends Lexer {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:54: '\\\\' .
+                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -2578,7 +2578,7 @@ public class InternalODLLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6896:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6884:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2621,12 +2621,12 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6898:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6898:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6886:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6886:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6898:24: ( options {greedy=false; } : . )*
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6886:24: ( options {greedy=false; } : . )*
             loop10:
             do {
                 int alt10=2;
@@ -2651,7 +2651,7 @@ public class InternalODLLexer extends Lexer {
 
                 switch (alt10) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6898:52: .
+            	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6886:52: .
             	    {
             	    matchAny(); 
 
@@ -2681,12 +2681,12 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6900:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6900:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6900:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop11:
             do {
                 int alt11=2;
@@ -2699,7 +2699,7 @@ public class InternalODLLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6900:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -2719,7 +2719,7 @@ public class InternalODLLexer extends Lexer {
                 }
             } while (true);
 
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6900:40: ( ( '\\r' )? '\\n' )?
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:40: ( ( '\\r' )? '\\n' )?
             int alt13=2;
             int LA13_0 = input.LA(1);
 
@@ -2728,9 +2728,9 @@ public class InternalODLLexer extends Lexer {
             }
             switch (alt13) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6900:41: ( '\\r' )? '\\n'
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:41: ( '\\r' )? '\\n'
                     {
-                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6900:41: ( '\\r' )?
+                    // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:41: ( '\\r' )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -2739,7 +2739,7 @@ public class InternalODLLexer extends Lexer {
                     }
                     switch (alt12) {
                         case 1 :
-                            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6900:41: '\\r'
+                            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6888:41: '\\r'
                             {
                             match('\r'); 
 
@@ -2771,10 +2771,10 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6902:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6902:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6890:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6890:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6902:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6890:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt14=0;
             loop14:
             do {
@@ -2828,8 +2828,8 @@ public class InternalODLLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6904:16: ( . )
-            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6904:18: .
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6892:16: ( . )
+            // ../de.uniol.inf.is.odysseus.incubation.iql.odl/src-gen/de/uniol/inf/is/odysseus/iql/odl/parser/antlr/internal/InternalODL.g:6892:18: .
             {
             matchAny(); 
 

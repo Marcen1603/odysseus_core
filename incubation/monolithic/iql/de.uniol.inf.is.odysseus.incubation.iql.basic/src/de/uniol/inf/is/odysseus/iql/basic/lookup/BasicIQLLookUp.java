@@ -7,15 +7,16 @@ import javax.inject.Inject;
 
 
 
-import de.uniol.inf.is.odysseus.iql.basic.typing.extension.BasicIQLTypeExtensionsFactory;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.BasicIQLTypeFactory;
+
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.BasicIQLTypeDictionary;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.BasicIQLTypeExtensionsDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.BasicIQLTypeUtils;
 
-public class BasicIQLLookUp extends AbstractIQLLookUp<BasicIQLTypeFactory, BasicIQLTypeExtensionsFactory, BasicIQLTypeUtils>{
+public class BasicIQLLookUp extends AbstractIQLLookUp<BasicIQLTypeDictionary, BasicIQLTypeExtensionsDictionary, BasicIQLTypeUtils>{
 
 	@Inject
-	public BasicIQLLookUp(BasicIQLTypeFactory typeFactory,BasicIQLTypeExtensionsFactory typeOperatorsFactory, BasicIQLTypeUtils typeUtils) {
-		super(typeFactory, typeOperatorsFactory, typeUtils);
+	public BasicIQLLookUp(BasicIQLTypeDictionary typeDictionary,BasicIQLTypeExtensionsDictionary typeExtensionsDictionary, BasicIQLTypeUtils typeUtils) {
+		super(typeDictionary, typeExtensionsDictionary, typeUtils);
 	}
 
 

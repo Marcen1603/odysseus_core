@@ -8,8 +8,8 @@ public interface IQDLTypeBuilder extends IIQLTypeBuilder{
 
 	void removeSource(ILogicalOperator source);
 
-	void addSource(ILogicalOperator source);
+	void createSource(ILogicalOperator source);
 
-	void addOperator(IOperatorBuilder opBuilder);
+	void createOperator(IOperatorBuilder opBuilder);
 
 }

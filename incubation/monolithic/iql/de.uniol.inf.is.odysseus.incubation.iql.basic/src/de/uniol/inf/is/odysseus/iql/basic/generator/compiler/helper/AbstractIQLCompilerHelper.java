@@ -20,22 +20,22 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends IIQLTypeFactory,  U extends IIQLTypeUtils> implements IIQLCompilerHelper{
+public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends IIQLTypeDictionary,  U extends IIQLTypeUtils> implements IIQLCompilerHelper{
 
 	protected L lookUp;
 	
-	protected F typeFactory;
+	protected F typeDictionary;
 
 	protected U typeUtils;
 
 	
-	public AbstractIQLCompilerHelper(L lookUp, F typeFactory, U typeUtils) {
+	public AbstractIQLCompilerHelper(L lookUp, F typeDictionary, U typeUtils) {
 		this.lookUp = lookUp;
 		this.typeUtils = typeUtils;
-		this.typeFactory = typeFactory;
+		this.typeDictionary = typeDictionary;
 	}
 	
 	@Override

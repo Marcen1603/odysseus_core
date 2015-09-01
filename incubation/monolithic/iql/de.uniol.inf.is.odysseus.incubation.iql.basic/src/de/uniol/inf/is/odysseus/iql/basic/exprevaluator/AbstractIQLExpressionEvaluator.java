@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.iql.basic.exprevaluator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmArrayType;
 import org.eclipse.xtext.common.types.JvmDeclaredType;
@@ -48,27 +47,26 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.context.IIQLExpressionEvaluatorContext;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
 import de.uniol.inf.is.odysseus.iql.basic.types.Range;
-import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
-import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
+import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IIQLTypeExtensionsDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.extension.IQLOperatorOverloadingUtils;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
-public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, L extends IIQLLookUp, C extends IIQLExpressionEvaluatorContext, U extends IIQLTypeUtils, E extends IIQLTypeExtensionsFactory> implements IIQLExpressionEvaluator {
+public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeDictionary, L extends IIQLLookUp, C extends IIQLExpressionEvaluatorContext, U extends IIQLTypeUtils, E extends IIQLTypeExtensionsDictionary> implements IIQLExpressionEvaluator {
 
 	
 	protected L lookUp;
-	protected T typeFactory;
+	protected T typeDictionary;
 	protected C exprEvaluatorContext;
 	protected U typeUtils;
-	protected E typeExtensionsFactory;
+	protected E typeExtensionsDictionary;
 
-	public AbstractIQLExpressionEvaluator(T typeFactory, L lookUp, C exprEvaluatorContext, U typeUtils, E typeExtensionsFactory) {
-		this.typeFactory = typeFactory;
+	public AbstractIQLExpressionEvaluator(T typeDictionary, L lookUp, C exprEvaluatorContext, U typeUtils, E typeExtensionsDictionary) {
+		this.typeDictionary = typeDictionary;
 		this.lookUp = lookUp;
 		this.exprEvaluatorContext = exprEvaluatorContext;
 		this.typeUtils = typeUtils;
-		this.typeExtensionsFactory = typeExtensionsFactory;
+		this.typeExtensionsDictionary = typeExtensionsDictionary;
 	}
 	
 	
@@ -151,49 +149,49 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 	
 	
 	public TypeResult getType(IQLLiteralExpressionDouble expr, C context) {
-		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"doubleToType", expr)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "doubleToType", expr).getReturnType());
+		if (context.getExpectedTypeRef()!= null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),"doubleToType", expr)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), "doubleToType", expr).getReturnType());
 		} else if (context.getExpectedTypeRef() != null) {
 			return new TypeResult(context.getExpectedTypeRef());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef("double", typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef("double", typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionInt expr, C context) {
-		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"intToType", expr)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "intToType", expr).getReturnType());
+		if (context.getExpectedTypeRef()!= null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),"intToType", expr)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), "intToType", expr).getReturnType());
 		} else if (context.getExpectedTypeRef() != null) {
 			return new TypeResult(context.getExpectedTypeRef());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef("int", typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef("int", typeDictionary.getSystemResourceSet()));
 		}
 	}
 
 	
 	public TypeResult getType(IQLLiteralExpressionString expr, C context) {
-		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"stringToType", expr)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "stringToType", expr).getReturnType());
+		if (context.getExpectedTypeRef()!= null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),"stringToType", expr)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), "stringToType", expr).getReturnType());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef(String.class, typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef(String.class, typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionBoolean expr, C context) {
-		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"booleanToType", expr)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "booleanToType", expr).getReturnType());
+		if (context.getExpectedTypeRef()!= null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),"booleanToType", expr)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), "booleanToType", expr).getReturnType());
 		}else if (context.getExpectedTypeRef() != null) {
 			return new TypeResult(context.getExpectedTypeRef());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionRange expr, C context) {
-		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"rangeToType", 2)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "rangeToType", 2).getReturnType());
+		if (context.getExpectedTypeRef()!= null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),"rangeToType", 2)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), "rangeToType", 2).getReturnType());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef(Range.class, typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef(Range.class, typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
@@ -203,18 +201,18 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionList expr, C context) {
-		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"listToType", 1)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "listToType", 1).getReturnType());
+		if (context.getExpectedTypeRef()!= null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),"listToType", 1)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), "listToType", 1).getReturnType());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLiteralExpressionMap expr, C context) {
-		if (context.getExpectedTypeRef()!= null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),"mapToType", 1)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), "listToType", 1).getReturnType());
+		if (context.getExpectedTypeRef()!= null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),"mapToType", 1)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), "listToType", 1).getReturnType());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef(Map.class, typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef(Map.class, typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
@@ -251,7 +249,7 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 		if (innerType instanceof JvmArrayType) {
 			JvmArrayType arrayType = (JvmArrayType) innerType;
 			if (expr.getExpressions().size() > 1 || (expr.getExpressions().size() == 1 && isRange(expr.getExpressions().get(0), context))) {
-				return new TypeResult(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()));
+				return new TypeResult(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()));
 			} else if (arrayType.getDimensions()==1) {
 				return new TypeResult(typeUtils.createTypeRef(arrayType.getComponentType()));
 			} else {
@@ -265,7 +263,7 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 		} else if (innerType instanceof IQLArrayType) {
 			IQLArrayType arrayType = (IQLArrayType) innerType;
 			if (expr.getExpressions().size() > 1 || (expr.getExpressions().size() == 1 && isRange(expr.getExpressions().get(0), context))) {
-				return new TypeResult(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()));
+				return new TypeResult(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()));
 			} else if (arrayType.getDimensions().size()==1) {
 				return new TypeResult(typeUtils.createTypeRef(arrayType.getComponentType()));
 			} else {
@@ -276,8 +274,8 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 				}
 				return new TypeResult(typeUtils.createTypeRef(type));
 			}
-		} else if (typeExtensionsFactory.hasTypeExtensions(result.getRef(),IQLOperatorOverloadingUtils.GET,1)) {
-			JvmOperation op = typeExtensionsFactory.getMethod(result.getRef(), IQLOperatorOverloadingUtils.GET, 1);
+		} else if (typeExtensionsDictionary.hasTypeExtensions(result.getRef(),IQLOperatorOverloadingUtils.GET,1)) {
+			JvmOperation op = typeExtensionsDictionary.getMethod(result.getRef(), IQLOperatorOverloadingUtils.GET, 1);
 			if (op != null) {
 				return new TypeResult(op.getReturnType());
 			} else {
@@ -300,38 +298,38 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 
 	
 	public TypeResult getType(IQLPlusMinusExpression expr, C context) {
-		if (context.getExpectedTypeRef()!= null && expr.getOp().equals("+") && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.SIMPLE_PLUS_PREFIX, 0)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.SIMPLE_PLUS_PREFIX, 0).getReturnType());
-		} else if (context.getExpectedTypeRef()!= null && expr.getOp().equals("-") && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.SIMPLE_MINUS_PREFIX, 0)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.SIMPLE_MINUS_PREFIX, 0).getReturnType());
+		if (context.getExpectedTypeRef()!= null && expr.getOp().equals("+") && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.SIMPLE_PLUS_PREFIX, 0)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.SIMPLE_PLUS_PREFIX, 0).getReturnType());
+		} else if (context.getExpectedTypeRef()!= null && expr.getOp().equals("-") && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.SIMPLE_MINUS_PREFIX, 0)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.SIMPLE_MINUS_PREFIX, 0).getReturnType());
 		} else {
 			return getType(expr.getOperand(), context);
 		}
 	}
 	
 	public TypeResult getType(IQLBooleanNotExpression expr, C context) {
-		if (context.getExpectedTypeRef() != null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.BOOLEAN_NOT_PREFIX, expr.getOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.BOOLEAN_NOT_PREFIX, expr.getOperand()).getReturnType());
+		if (context.getExpectedTypeRef() != null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.BOOLEAN_NOT_PREFIX, expr.getOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.BOOLEAN_NOT_PREFIX, expr.getOperand()).getReturnType());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLPrefixExpression expr, C context) {
-		if (context.getExpectedTypeRef() != null && expr.getOp().equals("++")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.PLUS_PREFIX, 0)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.PLUS_PREFIX, 0).getReturnType());
-		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("--")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MINUS_PREFIX, 0)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.MINUS_PREFIX, 0).getReturnType());
+		if (context.getExpectedTypeRef() != null && expr.getOp().equals("++")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.PLUS_PREFIX, 0)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.PLUS_PREFIX, 0).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("--")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MINUS_PREFIX, 0)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.MINUS_PREFIX, 0).getReturnType());
 		} else {
 			return getType(expr.getOperand(), context);
 		}
 	}
 	
 	public TypeResult getType(IQLPostfixExpression expr, C context) {
-		if (context.getExpectedTypeRef() != null && expr.getOp().equals("++")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.PLUS_POSTFIX, 0)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.PLUS_POSTFIX, 0).getReturnType());
-		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("--")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MINUS_POSTFIX, 0)){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MINUS_POSTFIX, 0).getReturnType());
+		if (context.getExpectedTypeRef() != null && expr.getOp().equals("++")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.PLUS_POSTFIX, 0)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.PLUS_POSTFIX, 0).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("--")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MINUS_POSTFIX, 0)){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MINUS_POSTFIX, 0).getReturnType());
 		} else {
 			return getType(expr.getOperand(), context);
 		}
@@ -355,60 +353,48 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 		return new TypeResult(c.getExtendedClass());
 	}
 	
-	@Override
-	public TypeResult getThisType(EObject obj) {
-		JvmDeclaredType c = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
-		return new TypeResult(typeUtils.createTypeRef(c));
-	}
-
-	@Override
-	public TypeResult getSuperType(EObject obj) {
-		JvmDeclaredType c = EcoreUtil2.getContainerOfType(obj, JvmDeclaredType.class);
-		return new TypeResult(c.getExtendedClass());
-	}
-	
 	
 	public TypeResult getType(IQLRelationalExpression expr, C context) {
-		if (context.getExpectedTypeRef() != null && expr.getOp().equals(">")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.GREATER_THAN, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.GREATER_THAN, expr.getRightOperand()).getReturnType());
-		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("<")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.LESS_THAN, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.LESS_THAN, expr.getRightOperand()).getReturnType());
-		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals(">=")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.GREATER_EQUALS_THAN, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.GREATER_EQUALS_THAN, expr.getRightOperand()).getReturnType());
-		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("<=")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.LESS_EQUALS_THAN, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.LESS_EQUALS_THAN, expr.getRightOperand()).getReturnType());
+		if (context.getExpectedTypeRef() != null && expr.getOp().equals(">")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.GREATER_THAN, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.GREATER_THAN, expr.getRightOperand()).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("<")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.LESS_THAN, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.LESS_THAN, expr.getRightOperand()).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals(">=")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.GREATER_EQUALS_THAN, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.GREATER_EQUALS_THAN, expr.getRightOperand()).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("<=")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.LESS_EQUALS_THAN, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.LESS_EQUALS_THAN, expr.getRightOperand()).getReturnType());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLInstanceOfExpression expr, C context) {
-		return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
+		return new TypeResult(typeUtils.createTypeRef("boolean", typeDictionary.getSystemResourceSet()));
 	}
 	
 	public TypeResult getType(IQLEqualityExpression expr, C context) {
-		if (context.getExpectedTypeRef() != null && expr.getOp().equals("==")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.EQUALS, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.EQUALS, expr.getRightOperand()).getReturnType());
-		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("!=")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.EQUALS_NOT, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.EQUALS_NOT, expr.getRightOperand()).getReturnType());
+		if (context.getExpectedTypeRef() != null && expr.getOp().equals("==")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.EQUALS, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.EQUALS, expr.getRightOperand()).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("!=")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.EQUALS_NOT, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.EQUALS_NOT, expr.getRightOperand()).getReturnType());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLogicalAndExpression expr, C context) {
-		if (context.getExpectedTypeRef() != null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.LOGICAL_AND, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.LOGICAL_AND, expr.getRightOperand()).getReturnType());
+		if (context.getExpectedTypeRef() != null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.LOGICAL_AND, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.LOGICAL_AND, expr.getRightOperand()).getReturnType());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
 	public TypeResult getType(IQLLogicalOrExpression expr, C context) {
-		if (context.getExpectedTypeRef() != null && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.LOGICAL_OR, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.LOGICAL_OR, expr.getRightOperand()).getReturnType());
+		if (context.getExpectedTypeRef() != null && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.LOGICAL_OR, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.LOGICAL_OR, expr.getRightOperand()).getReturnType());
 		} else {
-			return new TypeResult(typeUtils.createTypeRef("boolean", typeFactory.getSystemResourceSet()));
+			return new TypeResult(typeUtils.createTypeRef("boolean", typeDictionary.getSystemResourceSet()));
 		}
 	}
 	
@@ -417,17 +403,17 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 	}	
 	
 	public TypeResult getType(IQLAdditiveExpression expr, C context) {
-		if (context.getExpectedTypeRef() != null && expr.getOp().equals("+")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.PLUS, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.PLUS, expr.getRightOperand()).getReturnType());
-		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("-")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MINUS, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.MINUS, expr.getRightOperand()).getReturnType());
+		if (context.getExpectedTypeRef() != null && expr.getOp().equals("+")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.PLUS, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.PLUS, expr.getRightOperand()).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("-")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MINUS, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.MINUS, expr.getRightOperand()).getReturnType());
 		} else {
 			TypeResult left = getType(expr.getLeftOperand(), context);
 			TypeResult right = getType(expr.getRightOperand(), context);
 			
 			if (!left.isNull() && !right.isNull()) {
 				if (expr.getOp().equals("+") && (typeUtils.isString(left.getRef())||typeUtils.isString(right.getRef()))) {
-					return new TypeResult(typeUtils.createTypeRef(String.class, typeFactory.getSystemResourceSet()));
+					return new TypeResult(typeUtils.createTypeRef(String.class, typeDictionary.getSystemResourceSet()));
 				} else {
 					return new TypeResult(determineType(left.getRef(), right.getRef()));
 				}
@@ -439,12 +425,12 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 	}
 		
 	public TypeResult getType(IQLMultiplicativeExpression expr, C context) {
-		if (context.getExpectedTypeRef() != null && expr.getOp().equals("*")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MULTIPLY, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.MULTIPLY, expr.getRightOperand()).getReturnType());
-		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("/")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.DIVIDE, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.DIVIDE, expr.getRightOperand()).getReturnType());
-		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("%")  && typeExtensionsFactory.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MODULO, expr.getRightOperand())){
-			return new TypeResult(typeExtensionsFactory.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.MODULO, expr.getRightOperand()).getReturnType());
+		if (context.getExpectedTypeRef() != null && expr.getOp().equals("*")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MULTIPLY, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.MULTIPLY, expr.getRightOperand()).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("/")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.DIVIDE, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.DIVIDE, expr.getRightOperand()).getReturnType());
+		} else if (context.getExpectedTypeRef() != null && expr.getOp().equals("%")  && typeExtensionsDictionary.hasTypeExtensions(context.getExpectedTypeRef(),IQLOperatorOverloadingUtils.MODULO, expr.getRightOperand())){
+			return new TypeResult(typeExtensionsDictionary.getMethod(context.getExpectedTypeRef(), IQLOperatorOverloadingUtils.MODULO, expr.getRightOperand()).getReturnType());
 		} else {
 			TypeResult left = getType(expr.getLeftOperand(), context);
 			TypeResult right = getType(expr.getRightOperand(), context);
@@ -460,24 +446,14 @@ public abstract class AbstractIQLExpressionEvaluator<T extends IIQLTypeFactory, 
 	
 	protected JvmTypeReference determineType(JvmTypeReference left, JvmTypeReference right) {
 		if (typeUtils.isDouble(left) || typeUtils.isDouble(right)) {
-			return typeUtils.createTypeRef("double", typeFactory.getSystemResourceSet());
+			return typeUtils.createTypeRef("double", typeDictionary.getSystemResourceSet());
 		} else if (typeUtils.isFloat(left) || typeUtils.isFloat(right)) {
-			return typeUtils.createTypeRef("float", typeFactory.getSystemResourceSet());
+			return typeUtils.createTypeRef("float", typeDictionary.getSystemResourceSet());
 		} else if (typeUtils.isLong(left) || typeUtils.isLong(right)) {
-			return typeUtils.createTypeRef("long", typeFactory.getSystemResourceSet());
+			return typeUtils.createTypeRef("long", typeDictionary.getSystemResourceSet());
 		} else {
-			return typeUtils.createTypeRef("int", typeFactory.getSystemResourceSet());		
+			return typeUtils.createTypeRef("int", typeDictionary.getSystemResourceSet());		
 		}
-	}
-	
-	@Override
-	public boolean isThis(EObject obj) {
-		return obj instanceof IQLThisExpression;
-	}
-
-	@Override
-	public boolean isSuper(EObject obj) {
-		return obj instanceof IQLSuperExpression;
 	}
 	
 }

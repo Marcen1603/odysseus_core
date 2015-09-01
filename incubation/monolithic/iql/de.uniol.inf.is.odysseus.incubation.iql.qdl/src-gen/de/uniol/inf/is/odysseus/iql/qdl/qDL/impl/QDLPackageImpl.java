@@ -4,14 +4,10 @@ package de.uniol.inf.is.odysseus.iql.qdl.qDL.impl;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.BasicIQLPackage;
 
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLInstanceOfExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLPortExpression;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLRelationalExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.IQLSubscribeExpression;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLMetadataValueSingleID;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModel;
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLModelElement;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLPackage;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
 
@@ -37,35 +33,7 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass qdlModelEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass qdlModelElementEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass qdlQueryEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass iqlInstanceOfExpressionEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass iqlRelationalExpressionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -159,26 +127,6 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getQDLModel()
-  {
-    return qdlModelEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getQDLModelElement()
-  {
-    return qdlModelElementEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getQDLQuery()
   {
     return qdlQueryEClass;
@@ -202,76 +150,6 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
   public EReference getQDLQuery_Statements()
   {
     return (EReference)qdlQueryEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getIQLInstanceOfExpression()
-  {
-    return iqlInstanceOfExpressionEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getIQLInstanceOfExpression_LeftOperand()
-  {
-    return (EReference)iqlInstanceOfExpressionEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getIQLInstanceOfExpression_TargetRef()
-  {
-    return (EReference)iqlInstanceOfExpressionEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getIQLRelationalExpression()
-  {
-    return iqlRelationalExpressionEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getIQLRelationalExpression_LeftOperand()
-  {
-    return (EReference)iqlRelationalExpressionEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getIQLRelationalExpression_Op()
-  {
-    return (EAttribute)iqlRelationalExpressionEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getIQLRelationalExpression_RightOperand()
-  {
-    return (EReference)iqlRelationalExpressionEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -404,22 +282,9 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
     isCreated = true;
 
     // Create classes and their features
-    qdlModelEClass = createEClass(QDL_MODEL);
-
-    qdlModelElementEClass = createEClass(QDL_MODEL_ELEMENT);
-
     qdlQueryEClass = createEClass(QDL_QUERY);
     createEReference(qdlQueryEClass, QDL_QUERY__METADATA_LIST);
     createEReference(qdlQueryEClass, QDL_QUERY__STATEMENTS);
-
-    iqlInstanceOfExpressionEClass = createEClass(IQL_INSTANCE_OF_EXPRESSION);
-    createEReference(iqlInstanceOfExpressionEClass, IQL_INSTANCE_OF_EXPRESSION__LEFT_OPERAND);
-    createEReference(iqlInstanceOfExpressionEClass, IQL_INSTANCE_OF_EXPRESSION__TARGET_REF);
-
-    iqlRelationalExpressionEClass = createEClass(IQL_RELATIONAL_EXPRESSION);
-    createEReference(iqlRelationalExpressionEClass, IQL_RELATIONAL_EXPRESSION__LEFT_OPERAND);
-    createEAttribute(iqlRelationalExpressionEClass, IQL_RELATIONAL_EXPRESSION__OP);
-    createEReference(iqlRelationalExpressionEClass, IQL_RELATIONAL_EXPRESSION__RIGHT_OPERAND);
 
     iqlSubscribeExpressionEClass = createEClass(IQL_SUBSCRIBE_EXPRESSION);
     createEReference(iqlSubscribeExpressionEClass, IQL_SUBSCRIBE_EXPRESSION__LEFT_OPERAND);
@@ -460,40 +325,23 @@ public class QDLPackageImpl extends EPackageImpl implements QDLPackage
     setNsURI(eNS_URI);
 
     // Obtain other dependent packages
-    BasicIQLPackage theBasicIQLPackage = (BasicIQLPackage)EPackage.Registry.INSTANCE.getEPackage(BasicIQLPackage.eNS_URI);
     TypesPackage theTypesPackage = (TypesPackage)EPackage.Registry.INSTANCE.getEPackage(TypesPackage.eNS_URI);
+    BasicIQLPackage theBasicIQLPackage = (BasicIQLPackage)EPackage.Registry.INSTANCE.getEPackage(BasicIQLPackage.eNS_URI);
 
     // Create type parameters
 
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    qdlModelEClass.getESuperTypes().add(theBasicIQLPackage.getIQLModel());
-    qdlModelElementEClass.getESuperTypes().add(theBasicIQLPackage.getIQLModelElement());
     qdlQueryEClass.getESuperTypes().add(theTypesPackage.getJvmGenericType());
-    iqlInstanceOfExpressionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLExpression());
-    iqlRelationalExpressionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLExpression());
     iqlSubscribeExpressionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLExpression());
     iqlPortExpressionEClass.getESuperTypes().add(theBasicIQLPackage.getIQLExpression());
     qdlMetadataValueSingleIDEClass.getESuperTypes().add(theBasicIQLPackage.getIQLMetadataValue());
 
     // Initialize classes and features; add operations and parameters
-    initEClass(qdlModelEClass, QDLModel.class, "QDLModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(qdlModelElementEClass, QDLModelElement.class, "QDLModelElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
     initEClass(qdlQueryEClass, QDLQuery.class, "QDLQuery", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getQDLQuery_MetadataList(), theBasicIQLPackage.getIQLMetadataList(), null, "metadataList", null, 0, 1, QDLQuery.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getQDLQuery_Statements(), theBasicIQLPackage.getIQLStatement(), null, "statements", null, 0, 1, QDLQuery.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(iqlInstanceOfExpressionEClass, IQLInstanceOfExpression.class, "IQLInstanceOfExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIQLInstanceOfExpression_LeftOperand(), theBasicIQLPackage.getIQLExpression(), null, "leftOperand", null, 0, 1, IQLInstanceOfExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLInstanceOfExpression_TargetRef(), theTypesPackage.getJvmTypeReference(), null, "targetRef", null, 0, 1, IQLInstanceOfExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(iqlRelationalExpressionEClass, IQLRelationalExpression.class, "IQLRelationalExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getIQLRelationalExpression_LeftOperand(), theBasicIQLPackage.getIQLExpression(), null, "leftOperand", null, 0, 1, IQLRelationalExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getIQLRelationalExpression_Op(), ecorePackage.getEString(), "op", null, 0, 1, IQLRelationalExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIQLRelationalExpression_RightOperand(), theBasicIQLPackage.getIQLExpression(), null, "rightOperand", null, 0, 1, IQLRelationalExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(iqlSubscribeExpressionEClass, IQLSubscribeExpression.class, "IQLSubscribeExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIQLSubscribeExpression_LeftOperand(), theBasicIQLPackage.getIQLExpression(), null, "leftOperand", null, 0, 1, IQLSubscribeExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

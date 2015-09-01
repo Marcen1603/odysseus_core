@@ -42,11 +42,11 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLExecutor<F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLExecutor{
+public abstract class AbstractIQLExecutor<F extends IIQLTypeDictionary, U extends IIQLTypeUtils> implements IIQLExecutor{
 	
 	protected static final String IQL_DIR = "iql";
 	protected static final String JAVA_VERSION = "1.7";
@@ -65,10 +65,10 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeFactory, U extends I
 	protected IOutputConfigurationProvider outputConfigurationProvider;
 	
 	protected U typeUtils;
-	protected F typeFactory;
+	protected F typeDictionary;
 
-	public AbstractIQLExecutor(F typeFactory, U typeUtils) {
-		this.typeFactory = typeFactory;
+	public AbstractIQLExecutor(F typeDictionary, U typeUtils) {
+		this.typeDictionary = typeDictionary;
 		this.typeUtils = typeUtils;
 	}
 
@@ -214,7 +214,7 @@ public abstract class AbstractIQLExecutor<F extends IIQLTypeFactory, U extends I
 	}
 	
 	protected Collection<String> createClassPathEntries(ResourceSet set, Collection<Resource> resources) {
-		Collection<Bundle> bundles = typeFactory.getDependencies();	
+		Collection<Bundle> bundles = typeDictionary.getDependencies();	
 		
 		Collection<String> entries = new ArrayList<>();		
 		for (Bundle bundle : bundles) {

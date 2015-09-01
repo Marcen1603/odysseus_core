@@ -13,14 +13,14 @@ import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import com.google.inject.Inject;
 
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 
 
 
 public class IQLLinkingResource extends LazyLinkingResource {
 
 	@Inject
-	private IIQLTypeFactory typeFactory;
+	private IIQLTypeDictionary typeDictionary;
 	
 	private IQLModel systemFile;
 	
@@ -40,8 +40,8 @@ public class IQLLinkingResource extends LazyLinkingResource {
 
 	private void ensureSystemFilesArePresent() {
 		ResourceSet resourceSet = getResourceSet();
-		for (IQLModel systemFile : typeFactory.getSystemFiles()) {
-			resourceSet.getResource(createURI(systemFile.getName(), typeFactory.getFileExtension()), true);
+		for (IQLModel systemFile : typeDictionary.getSystemFiles()) {
+			resourceSet.getResource(createURI(systemFile.getName(), typeDictionary.getFileExtension()), true);
 		}
 	}
 	

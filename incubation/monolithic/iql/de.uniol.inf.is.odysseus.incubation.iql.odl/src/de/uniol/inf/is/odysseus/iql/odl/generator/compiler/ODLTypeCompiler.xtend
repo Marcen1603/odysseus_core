@@ -4,14 +4,14 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLTypeComp
 import de.uniol.inf.is.odysseus.iql.odl.generator.compiler.helper.IODLCompilerHelper
 import javax.inject.Inject
 import de.uniol.inf.is.odysseus.iql.odl.generator.context.IODLGeneratorContext
-import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils
+import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary
 
-class ODLTypeCompiler extends AbstractIQLTypeCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLExpressionCompiler, IODLTypeFactory,  IODLTypeUtils> implements IODLTypeCompiler{
+class ODLTypeCompiler extends AbstractIQLTypeCompiler<IODLCompilerHelper, IODLGeneratorContext, IODLExpressionCompiler, IODLTypeDictionary,  IODLTypeUtils> implements IODLTypeCompiler{
 	
 	@Inject
-	new(IODLCompilerHelper helper,IODLTypeFactory typeFactory,  IODLTypeUtils typeUtils) {
-		super(helper, typeFactory, typeUtils)
+	new(IODLCompilerHelper helper,IODLTypeDictionary typeDictionary,  IODLTypeUtils typeUtils) {
+		super(helper, typeDictionary, typeUtils)
 	}
 	
 //	override String compile(JvmTypeReference typeRef, ODLGeneratorContext context, String nodeText, boolean wrapper) {

@@ -4,27 +4,13 @@ import org.eclipse.xtext.common.types.JvmDeclaredType;
 
 public class IQLSystemType {
 	
-	private final JvmDeclaredType iqlTypeDef;
+	private final JvmDeclaredType type;	
 	
-	private final Class<?> javaType;
-	
-	
-	public IQLSystemType(JvmDeclaredType iqlTypeDef, Class<?> javaType) {
-		this.iqlTypeDef = iqlTypeDef;
-		this.javaType = javaType;
+	public IQLSystemType(JvmDeclaredType type) {
+		this.type = type;
 	}
 
-
-	public JvmDeclaredType getIqlTypeDef() {
-		return iqlTypeDef;
+	public JvmDeclaredType getType() {
+		return type;
 	}
-
-
-	public Class<?> getJavaType() {
-		return javaType;
-	}
-	
-	
-
-
 }

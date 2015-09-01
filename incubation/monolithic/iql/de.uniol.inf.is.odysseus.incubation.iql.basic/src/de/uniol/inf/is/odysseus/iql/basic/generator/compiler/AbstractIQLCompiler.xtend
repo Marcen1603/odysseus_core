@@ -15,32 +15,33 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
 import org.eclipse.xtext.common.types.JvmOperation
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary
 
-abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, S extends IIQLStatementCompiler<G>, F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLCompiler<G>{
+abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, T extends IIQLTypeCompiler<G>, S extends IIQLStatementCompiler<G>, F extends IIQLTypeDictionary, U extends IIQLTypeUtils> implements IIQLCompiler<G>{
 	
 	protected H helper;
 	
 	protected T typeCompiler;
 	
-	protected F typeFactory;
+	protected F typeDictionary;
 		
 	protected S stmtCompiler;
 		
 	protected U typeUtils;
 		
-	new (H helper, T typeCompiler, S stmtCompiler, F typeFactory, U typeUtils) {
+	new (H helper, T typeCompiler, S stmtCompiler, F typeDictionary, U typeUtils) {
 		this.helper = helper;
 		this.typeCompiler = typeCompiler;
 		this.stmtCompiler = stmtCompiler;	
 		this.typeUtils = typeUtils;
-		this.typeFactory = typeFactory;
+		this.typeDictionary = typeDictionary;
 	}
 	
-	override compile(IQLModelElement element, IQLClass c, G context) {
+	override compile(IQLClass c, G context) {
 		var builder = new StringBuilder()
+		var element = c.eContainer as IQLModelElement;
 		builder.append(compileClass(element, c, context))
 		for (String i : context.imports) {
 			builder.insert(0, "import "+ i+ ";"+System.lineSeparator)
@@ -92,8 +93,9 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 		'''
 	}
 	
-	override compile(IQLModelElement element,IQLInterface interf, G context) {
+	override compile(IQLInterface interf, G context) {
 		var builder = new StringBuilder()
+		var element = interf.eContainer as IQLModelElement;		
 		builder.append(compileInterface(element, interf, context))
 		for (String i : context.imports) {
 			builder.insert(0, "import "+ i+ ";")

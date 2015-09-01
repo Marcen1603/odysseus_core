@@ -51,12 +51,14 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModel;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNamespace;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatementBlock;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLSuperExpression;
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLThisExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
 import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.IIQLExpressionEvaluator;
+import de.uniol.inf.is.odysseus.iql.basic.exprevaluator.TypeResult;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.IIQLLookUp;
-import de.uniol.inf.is.odysseus.iql.basic.typing.TypeResult;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 
 
@@ -67,7 +69,7 @@ import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
  * on how and when to use it
  */
 @SuppressWarnings("restriction")
-public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L extends IIQLLookUp, P extends IIQLExpressionEvaluator, U extends IIQLTypeUtils> extends AbstractDeclarativeScopeProvider implements IIQLScopeProvider {
+public abstract class AbstractIQLScopeProvider<T extends IIQLTypeDictionary, L extends IIQLLookUp, P extends IIQLExpressionEvaluator, U extends IIQLTypeUtils> extends AbstractDeclarativeScopeProvider implements IIQLScopeProvider {
 
 	protected P exprEvaluator;
 	
@@ -87,10 +89,10 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	@Inject
 	protected IResourceDescriptions resources;
 	
-	protected T typeFactory;
+	protected T typeDictionary;
 	
-	public AbstractIQLScopeProvider(T typeFactory, L lookUp, P exprEvaluator, U typeUtils) {
-		this.typeFactory = typeFactory;
+	public AbstractIQLScopeProvider(T typeDictionary, L lookUp, P exprEvaluator, U typeUtils) {
+		this.typeDictionary = typeDictionary;
 		this.lookUp = lookUp;
 		this.exprEvaluator = exprEvaluator;
 		this.typeUtils = typeUtils;
@@ -123,8 +125,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		return new IQLImportScope(createImportNormalizers(model), scope, null, type.getEReferenceType(), true);
 	}
 	
-	@Override
-	public Collection<JvmType> getAllTypes(EObject node) {
+	private Collection<JvmType> getAllTypes(EObject node) {
 		IQLModel model =  EcoreUtil2.getContainerOfType(node, IQLModel.class);		
 		Collection<JvmType> types = new HashSet<>();
 		Collection<IQLModel> files = getAllFiles(node.eResource());
@@ -132,7 +133,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 			types.addAll(EcoreUtil2.getAllContentsOfType(file, IQLClass.class));	
 			types.addAll(EcoreUtil2.getAllContentsOfType(file, IQLInterface.class));	
 		}
-		types.addAll(typeFactory.getVisibleTypes(getUsedNamespaces(model), model.eResource()));
+		types.addAll(typeDictionary.getVisibleTypes(getUsedNamespaces(model), model.eResource()));
 		return types;
 	}
 	
@@ -175,12 +176,12 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	}
 	
 	public IScope scope_IQLJvmElementCallExpression_element(IQLJvmElementCallExpression expr, EReference type) {
-		Collection<IEObjectDescription> elements = getIQLJvmElementCallExpression(expr);
+		Collection<IEObjectDescription> elements = getScopeIQLJvmElementCallExpression(expr);
 		return new SimpleScope(elements);
 	}
 	
 	@Override
-	public Collection<IEObjectDescription> getIQLJvmElementCallExpression(EObject expr) {
+	public Collection<IEObjectDescription> getScopeIQLJvmElementCallExpression(EObject expr) {
 		JvmDeclaredType type = EcoreUtil2.getContainerOfType(expr, JvmDeclaredType.class);
 
 		Collection<JvmIdentifiableElement> elements = new HashSet<>();
@@ -225,7 +226,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		}
 		if (type instanceof IQLClass) {
 			IQLClass clazz = (IQLClass) type;
-			Collection<JvmTypeReference> importedTypes = typeFactory.getStaticImports(expr);
+			Collection<JvmTypeReference> importedTypes = typeDictionary.getStaticImports(expr);
 			elements.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
 			elements.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(clazz), importedTypes, true));
 		
@@ -288,7 +289,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	
 	public IScope scope_IQLArgumentsMapKeyValue_key(IQLArgumentsMap argumentsMap, EReference type) {	
 		Collection<IEObjectDescription> elements = new HashSet<>();
-		elements.addAll(getIQLArgumentsMapKeys(argumentsMap));		
+		elements.addAll(getScopeIQLArgumentsMapKey(argumentsMap));		
 		return new SimpleScope(elements);
 	}	
 	
@@ -299,12 +300,12 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		TypeResult typeResult = exprEvaluator.eval(expr.getLeftOperand());
 		
 		if (typeUtils.isArray(typeResult.getRef())) {
-			result.addAll(getScopeIQLAttributeSelection(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()), false, false));
-			result.addAll(getScopeIQLMethodSelection(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()), false, false));
+			result.addAll(getScopeIQLAttributeSelection(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), false, false));
+			result.addAll(getScopeIQLMethodSelection(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), false, false));
 
 		} else {
-			boolean isThis = exprEvaluator.isThis(expr.getLeftOperand());
-			boolean isSuper = exprEvaluator.isSuper(expr.getLeftOperand());
+			boolean isThis = expr.getLeftOperand() instanceof IQLThisExpression;
+			boolean isSuper = expr.getLeftOperand() instanceof IQLSuperExpression;
 			
 			result.addAll(getScopeIQLAttributeSelection(typeResult.getRef(),isThis, isSuper));
 			result.addAll(getScopeIQLMethodSelection(typeResult.getRef(),isThis, isSuper));
@@ -312,9 +313,8 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		}
 		return result;
 	}
-	
-	@Override
-	public Collection<IEObjectDescription> getScopeIQLAttributeSelection(JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
+
+	protected Collection<IEObjectDescription> getScopeIQLAttributeSelection(JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
 		Collection<JvmField> attributes = null;
 		attributes = lookUp.getPublicAttributes(typeRef, true);
 		if (isThis || isSuper) {
@@ -328,8 +328,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	}
 	
 	
-	@Override
-	public Collection<IEObjectDescription> getScopeIQLMethodSelection(JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
+	protected Collection<IEObjectDescription> getScopeIQLMethodSelection(JvmTypeReference typeRef, boolean isThis, boolean isSuper) {
 		Collection<JvmOperation> methods = null;
 		methods = lookUp.getPublicMethods(typeRef, true);
 		if (isThis || isSuper) {
@@ -371,7 +370,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 	
 	
 	@Override
-	public Collection<IEObjectDescription> getIQLArgumentsMapKeys(EObject node) {
+	public Collection<IEObjectDescription> getScopeIQLArgumentsMapKey(EObject node) {
 		JvmTypeReference typeRef = null;
 		if (EcoreUtil2.getContainerOfType(node, IQLNewExpression.class) != null) {
 			IQLNewExpression expr = EcoreUtil2.getContainerOfType(node, IQLNewExpression.class);
@@ -405,11 +404,10 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 		return Character.toLowerCase(s.charAt(0)) + s.substring(1);
 	}
 	
-	@Override
-	public Collection<String> getUsedNamespaces(EObject obj) {
+	private Collection<String> getUsedNamespaces(EObject obj) {
 		Collection<String> namespaces = new HashSet<>();
 		IQLModel model = EcoreUtil2.getContainerOfType(obj, IQLModel.class);
-		namespaces.addAll(typeFactory.getImplicitImports());
+		namespaces.addAll(typeDictionary.getImplicitImports());
 		for (IQLNamespace namespace : model.getNamespaces()) {
 			String name = namespace.getImportedNamespace();
 			name = name.replaceAll(IQLQualifiedNameConverter.DELIMITER, ".");
@@ -434,7 +432,7 @@ public abstract class AbstractIQLScopeProvider<T extends IIQLTypeFactory, L exte
 			}
 		}
 		
-		for (String name : typeFactory.getImplicitImports()) {
+		for (String name : typeDictionary.getImplicitImports()) {
 			boolean wildcard = name.endsWith("*");
 			if (wildcard) {
 				name = name.substring(0, name.lastIndexOf(".*"));

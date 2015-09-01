@@ -78,24 +78,18 @@ ruleODLModel returns [EObject current=null]
     }
     @after { leaveRule(); }:
 ((
-    {
-        $current = forceCreateModelElement(
-            grammarAccess.getODLModelAccess().getODLModelAction_0(),
-            $current);
-    }
-)(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getODLModelAccess().getNamespacesIQLNamespaceParserRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getODLModelAccess().getNamespacesIQLNamespaceParserRuleCall_0_0()); 
 	    }
-		lv_namespaces_1_0=ruleIQLNamespace		{
+		lv_namespaces_0_0=ruleIQLNamespace		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getODLModelRule());
 	        }
        		add(
        			$current, 
        			"namespaces",
-        		lv_namespaces_1_0, 
+        		lv_namespaces_0_0, 
         		"IQLNamespace");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -104,16 +98,16 @@ ruleODLModel returns [EObject current=null]
 )*(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getODLModelAccess().getElementsODLModelElementParserRuleCall_2_0()); 
+	        newCompositeNode(grammarAccess.getODLModelAccess().getElementsODLModelElementParserRuleCall_1_0()); 
 	    }
-		lv_elements_2_0=ruleODLModelElement		{
+		lv_elements_1_0=ruleODLModelElement		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getODLModelRule());
 	        }
        		add(
        			$current, 
        			"elements",
-        		lv_elements_2_0, 
+        		lv_elements_1_0, 
         		"ODLModelElement");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -141,24 +135,18 @@ ruleODLModelElement returns [EObject current=null]
     }
     @after { leaveRule(); }:
 ((
-    {
-        $current = forceCreateModelElement(
-            grammarAccess.getODLModelElementAccess().getODLModelElementAction_0(),
-            $current);
-    }
-)(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getODLModelElementAccess().getJavametadataIQLJavaMetadataParserRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getODLModelElementAccess().getJavametadataIQLJavaMetadataParserRuleCall_0_0()); 
 	    }
-		lv_javametadata_1_0=ruleIQLJavaMetadata		{
+		lv_javametadata_0_0=ruleIQLJavaMetadata		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getODLModelElementRule());
 	        }
        		add(
        			$current, 
        			"javametadata",
-        		lv_javametadata_1_0, 
+        		lv_javametadata_0_0, 
         		"IQLJavaMetadata");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -168,46 +156,46 @@ ruleODLModelElement returns [EObject current=null]
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getODLModelElementAccess().getInnerIQLClassParserRuleCall_2_0_0()); 
+	        newCompositeNode(grammarAccess.getODLModelElementAccess().getInnerIQLClassParserRuleCall_1_0_0()); 
 	    }
-		lv_inner_2_1=ruleIQLClass		{
+		lv_inner_1_1=ruleIQLClass		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getODLModelElementRule());
 	        }
        		set(
        			$current, 
        			"inner",
-        		lv_inner_2_1, 
+        		lv_inner_1_1, 
         		"IQLClass");
 	        afterParserOrEnumRuleCall();
 	    }
 
     |		{ 
-	        newCompositeNode(grammarAccess.getODLModelElementAccess().getInnerIQLInterfaceParserRuleCall_2_0_1()); 
+	        newCompositeNode(grammarAccess.getODLModelElementAccess().getInnerIQLInterfaceParserRuleCall_1_0_1()); 
 	    }
-		lv_inner_2_2=ruleIQLInterface		{
+		lv_inner_1_2=ruleIQLInterface		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getODLModelElementRule());
 	        }
        		set(
        			$current, 
        			"inner",
-        		lv_inner_2_2, 
+        		lv_inner_1_2, 
         		"IQLInterface");
 	        afterParserOrEnumRuleCall();
 	    }
 
     |		{ 
-	        newCompositeNode(grammarAccess.getODLModelElementAccess().getInnerODLOperatorParserRuleCall_2_0_2()); 
+	        newCompositeNode(grammarAccess.getODLModelElementAccess().getInnerODLOperatorParserRuleCall_1_0_2()); 
 	    }
-		lv_inner_2_3=ruleODLOperator		{
+		lv_inner_1_3=ruleODLOperator		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getODLModelElementRule());
 	        }
        		set(
        			$current, 
        			"inner",
-        		lv_inner_2_3, 
+        		lv_inner_1_3, 
         		"ODLOperator");
 	        afterParserOrEnumRuleCall();
 	    }

@@ -21,77 +21,69 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	public class QDLModelElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "QDLModel");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cQDLModelAction_0 = (Action)cGroup.eContents().get(0);
-		private final Assignment cNamespacesAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNamespacesIQLNamespaceParserRuleCall_1_0 = (RuleCall)cNamespacesAssignment_1.eContents().get(0);
-		private final Assignment cElementsAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cElementsQDLModelElementParserRuleCall_2_0 = (RuleCall)cElementsAssignment_2.eContents().get(0);
+		private final Assignment cNamespacesAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cNamespacesIQLNamespaceParserRuleCall_0_0 = (RuleCall)cNamespacesAssignment_0.eContents().get(0);
+		private final Assignment cElementsAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cElementsQDLModelElementParserRuleCall_1_0 = (RuleCall)cElementsAssignment_1.eContents().get(0);
 		
 		//QDLModel returns basiciql::IQLModel:
-		//	{QDLModel} namespaces+=IQLNamespace* elements+=QDLModelElement*;
+		//	namespaces+=IQLNamespace* elements+=QDLModelElement*;
 		public ParserRule getRule() { return rule; }
 
-		//{QDLModel} namespaces+=IQLNamespace* elements+=QDLModelElement*
+		//namespaces+=IQLNamespace* elements+=QDLModelElement*
 		public Group getGroup() { return cGroup; }
 
-		//{QDLModel}
-		public Action getQDLModelAction_0() { return cQDLModelAction_0; }
-
 		//namespaces+=IQLNamespace*
-		public Assignment getNamespacesAssignment_1() { return cNamespacesAssignment_1; }
+		public Assignment getNamespacesAssignment_0() { return cNamespacesAssignment_0; }
 
 		//IQLNamespace
-		public RuleCall getNamespacesIQLNamespaceParserRuleCall_1_0() { return cNamespacesIQLNamespaceParserRuleCall_1_0; }
+		public RuleCall getNamespacesIQLNamespaceParserRuleCall_0_0() { return cNamespacesIQLNamespaceParserRuleCall_0_0; }
 
 		//elements+=QDLModelElement*
-		public Assignment getElementsAssignment_2() { return cElementsAssignment_2; }
+		public Assignment getElementsAssignment_1() { return cElementsAssignment_1; }
 
 		//QDLModelElement
-		public RuleCall getElementsQDLModelElementParserRuleCall_2_0() { return cElementsQDLModelElementParserRuleCall_2_0; }
+		public RuleCall getElementsQDLModelElementParserRuleCall_1_0() { return cElementsQDLModelElementParserRuleCall_1_0; }
 	}
 
 	public class QDLModelElementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "QDLModelElement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cQDLModelElementAction_0 = (Action)cGroup.eContents().get(0);
-		private final Assignment cJavametadataAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cJavametadataIQLJavaMetadataParserRuleCall_1_0 = (RuleCall)cJavametadataAssignment_1.eContents().get(0);
-		private final Assignment cInnerAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final Alternatives cInnerAlternatives_2_0 = (Alternatives)cInnerAssignment_2.eContents().get(0);
-		private final RuleCall cInnerIQLClassParserRuleCall_2_0_0 = (RuleCall)cInnerAlternatives_2_0.eContents().get(0);
-		private final RuleCall cInnerIQLInterfaceParserRuleCall_2_0_1 = (RuleCall)cInnerAlternatives_2_0.eContents().get(1);
-		private final RuleCall cInnerQDLQueryParserRuleCall_2_0_2 = (RuleCall)cInnerAlternatives_2_0.eContents().get(2);
+		private final Assignment cJavametadataAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cJavametadataIQLJavaMetadataParserRuleCall_0_0 = (RuleCall)cJavametadataAssignment_0.eContents().get(0);
+		private final Assignment cInnerAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Alternatives cInnerAlternatives_1_0 = (Alternatives)cInnerAssignment_1.eContents().get(0);
+		private final RuleCall cInnerIQLClassParserRuleCall_1_0_0 = (RuleCall)cInnerAlternatives_1_0.eContents().get(0);
+		private final RuleCall cInnerIQLInterfaceParserRuleCall_1_0_1 = (RuleCall)cInnerAlternatives_1_0.eContents().get(1);
+		private final RuleCall cInnerQDLQueryParserRuleCall_1_0_2 = (RuleCall)cInnerAlternatives_1_0.eContents().get(2);
 		
 		//QDLModelElement returns basiciql::IQLModelElement:
-		//	{QDLModelElement} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery);
+		//	javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery);
 		public ParserRule getRule() { return rule; }
 
-		//{QDLModelElement} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery)
+		//javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery)
 		public Group getGroup() { return cGroup; }
 
-		//{QDLModelElement}
-		public Action getQDLModelElementAction_0() { return cQDLModelElementAction_0; }
-
 		//javametadata+=IQLJavaMetadata*
-		public Assignment getJavametadataAssignment_1() { return cJavametadataAssignment_1; }
+		public Assignment getJavametadataAssignment_0() { return cJavametadataAssignment_0; }
 
 		//IQLJavaMetadata
-		public RuleCall getJavametadataIQLJavaMetadataParserRuleCall_1_0() { return cJavametadataIQLJavaMetadataParserRuleCall_1_0; }
+		public RuleCall getJavametadataIQLJavaMetadataParserRuleCall_0_0() { return cJavametadataIQLJavaMetadataParserRuleCall_0_0; }
 
 		//inner=(IQLClass | IQLInterface | QDLQuery)
-		public Assignment getInnerAssignment_2() { return cInnerAssignment_2; }
+		public Assignment getInnerAssignment_1() { return cInnerAssignment_1; }
 
 		//IQLClass | IQLInterface | QDLQuery
-		public Alternatives getInnerAlternatives_2_0() { return cInnerAlternatives_2_0; }
+		public Alternatives getInnerAlternatives_1_0() { return cInnerAlternatives_1_0; }
 
 		//IQLClass
-		public RuleCall getInnerIQLClassParserRuleCall_2_0_0() { return cInnerIQLClassParserRuleCall_2_0_0; }
+		public RuleCall getInnerIQLClassParserRuleCall_1_0_0() { return cInnerIQLClassParserRuleCall_1_0_0; }
 
 		//IQLInterface
-		public RuleCall getInnerIQLInterfaceParserRuleCall_2_0_1() { return cInnerIQLInterfaceParserRuleCall_2_0_1; }
+		public RuleCall getInnerIQLInterfaceParserRuleCall_1_0_1() { return cInnerIQLInterfaceParserRuleCall_1_0_1; }
 
 		//QDLQuery
-		public RuleCall getInnerQDLQueryParserRuleCall_2_0_2() { return cInnerQDLQueryParserRuleCall_2_0_2; }
+		public RuleCall getInnerQDLQueryParserRuleCall_1_0_2() { return cInnerQDLQueryParserRuleCall_1_0_2; }
 	}
 
 	public class QDLQueryElements extends AbstractParserRuleElementFinder {
@@ -172,31 +164,33 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cRightOperandIQLSubscribeExpressionParserRuleCall_1_1_1_0 = (RuleCall)cRightOperandAssignment_1_1_1.eContents().get(0);
 		
 		//IQLRelationalExpression returns basiciql::IQLExpression:
-		//	IQLSubscribeExpression (=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference |
-		//	=> ({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*;
+		//	IQLSubscribeExpression (=> ({basiciql::IQLInstanceOfExpression.leftOperand=current} "instanceof")
+		//	targetRef=JvmTypeReference | => ({basiciql::IQLRelationalExpression.leftOperand=current} op=OpRelational)
+		//	rightOperand=IQLSubscribeExpression)*;
 		public ParserRule getRule() { return rule; }
 
-		//IQLSubscribeExpression (=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference | =>
-		//({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*
+		//IQLSubscribeExpression (=> ({basiciql::IQLInstanceOfExpression.leftOperand=current} "instanceof")
+		//targetRef=JvmTypeReference | => ({basiciql::IQLRelationalExpression.leftOperand=current} op=OpRelational)
+		//rightOperand=IQLSubscribeExpression)*
 		public Group getGroup() { return cGroup; }
 
 		//IQLSubscribeExpression
 		public RuleCall getIQLSubscribeExpressionParserRuleCall_0() { return cIQLSubscribeExpressionParserRuleCall_0; }
 
-		//(=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference | =>
-		//({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*
+		//(=> ({basiciql::IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference | =>
+		//({basiciql::IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
-		//=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference
+		//=> ({basiciql::IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference
 		public Group getGroup_1_0() { return cGroup_1_0; }
 
-		//=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof")
+		//=> ({basiciql::IQLInstanceOfExpression.leftOperand=current} "instanceof")
 		public Group getGroup_1_0_0() { return cGroup_1_0_0; }
 
-		//{IQLInstanceOfExpression.leftOperand=current} "instanceof"
+		//{basiciql::IQLInstanceOfExpression.leftOperand=current} "instanceof"
 		public Group getGroup_1_0_0_0() { return cGroup_1_0_0_0; }
 
-		//{IQLInstanceOfExpression.leftOperand=current}
+		//{basiciql::IQLInstanceOfExpression.leftOperand=current}
 		public Action getIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0() { return cIQLInstanceOfExpressionLeftOperandAction_1_0_0_0_0; }
 
 		//"instanceof"
@@ -208,16 +202,16 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 		//JvmTypeReference
 		public RuleCall getTargetRefJvmTypeReferenceParserRuleCall_1_0_1_0() { return cTargetRefJvmTypeReferenceParserRuleCall_1_0_1_0; }
 
-		//=> ({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression
+		//=> ({basiciql::IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression
 		public Group getGroup_1_1() { return cGroup_1_1; }
 
-		//=> ({IQLRelationalExpression.leftOperand=current} op=OpRelational)
+		//=> ({basiciql::IQLRelationalExpression.leftOperand=current} op=OpRelational)
 		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
 
-		//{IQLRelationalExpression.leftOperand=current} op=OpRelational
+		//{basiciql::IQLRelationalExpression.leftOperand=current} op=OpRelational
 		public Group getGroup_1_1_0_0() { return cGroup_1_1_0_0; }
 
-		//{IQLRelationalExpression.leftOperand=current}
+		//{basiciql::IQLRelationalExpression.leftOperand=current}
 		public Action getIQLRelationalExpressionLeftOperandAction_1_1_0_0_0() { return cIQLRelationalExpressionLeftOperandAction_1_1_0_0_0; }
 
 		//op=OpRelational
@@ -781,7 +775,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//QDLModel returns basiciql::IQLModel:
-	//	{QDLModel} namespaces+=IQLNamespace* elements+=QDLModelElement*;
+	//	namespaces+=IQLNamespace* elements+=QDLModelElement*;
 	public QDLModelElements getQDLModelAccess() {
 		return pQDLModel;
 	}
@@ -791,7 +785,7 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//QDLModelElement returns basiciql::IQLModelElement:
-	//	{QDLModelElement} javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery);
+	//	javametadata+=IQLJavaMetadata* inner=(IQLClass | IQLInterface | QDLQuery);
 	public QDLModelElementElements getQDLModelElementAccess() {
 		return pQDLModelElement;
 	}
@@ -811,8 +805,9 @@ public class QDLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IQLRelationalExpression returns basiciql::IQLExpression:
-	//	IQLSubscribeExpression (=> ({IQLInstanceOfExpression.leftOperand=current} "instanceof") targetRef=JvmTypeReference |
-	//	=> ({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*;
+	//	IQLSubscribeExpression (=> ({basiciql::IQLInstanceOfExpression.leftOperand=current} "instanceof")
+	//	targetRef=JvmTypeReference | => ({basiciql::IQLRelationalExpression.leftOperand=current} op=OpRelational)
+	//	rightOperand=IQLSubscribeExpression)*;
 	public IQLRelationalExpressionElements getIQLRelationalExpressionAccess() {
 		return pIQLRelationalExpression;
 	}

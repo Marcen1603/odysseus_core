@@ -6,13 +6,11 @@ import "http://www.uniol.de/inf/is/odysseus/iql/basic/BasicIQL" as basiciql
 import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvm
 
 QDLModel returns basiciql::IQLModel:
-	{QDLModel}
 	namespaces+=IQLNamespace*
 	(elements+=QDLModelElement)*
 ;
 
 QDLModelElement returns basiciql::IQLModelElement:
-	{QDLModelElement}
 	(javametadata+=IQLJavaMetadata)*
 	inner=(IQLClass | IQLInterface | QDLQuery)
 ; 
@@ -25,8 +23,8 @@ QDLQuery returns jvm::JvmGenericType:
 
 IQLRelationalExpression returns basiciql::IQLExpression:
 	IQLSubscribeExpression
-	(=>({IQLInstanceOfExpression.leftOperand=current} 'instanceof') targetRef=JvmTypeReference |
-	 =>({IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*
+	(=>({basiciql::IQLInstanceOfExpression.leftOperand=current} 'instanceof') targetRef=JvmTypeReference |
+	 =>({basiciql::IQLRelationalExpression.leftOperand=current} op=OpRelational) rightOperand=IQLSubscribeExpression)*
 ;
 
 IQLSubscribeExpression returns basiciql::IQLExpression:

@@ -56,10 +56,10 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 	protected void doGenerate(IQLModelElement element, IFileSystemAccess fsa, String outputFolder) {
 		if (element.getInner() instanceof IQLClass) {
 			IQLClass clazz = (IQLClass) element.getInner();
-			fsa.generateFile(outputFolder+clazz.getSimpleName() + ".java", compiler.compile(element, clazz, (G)context.cleanCopy()));
+			fsa.generateFile(outputFolder+clazz.getSimpleName() + ".java", compiler.compile(clazz, (G)context.cleanCopy()));
 		} else if (element.getInner() instanceof IQLInterface) {
 			IQLInterface interf = (IQLInterface) element.getInner();
-			fsa.generateFile(outputFolder+interf.getSimpleName() + ".java", compiler.compile(element, interf, (G)context.cleanCopy()));
+			fsa.generateFile(outputFolder+interf.getSimpleName() + ".java", compiler.compile(interf, (G)context.cleanCopy()));
 		}
 	}
 }

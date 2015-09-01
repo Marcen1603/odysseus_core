@@ -55,7 +55,7 @@ Export-Package: de.uniol.inf.is.odysseus.iql.qdl,
  de.uniol.inf.is.odysseus.iql.qdl.types.query,
  de.uniol.inf.is.odysseus.iql.qdl.types.source,
  de.uniol.inf.is.odysseus.iql.qdl.typing,
- de.uniol.inf.is.odysseus.iql.qdl.typing.factory,
+ de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary,
  de.uniol.inf.is.odysseus.iql.qdl.typing.utils,
  de.uniol.inf.is.odysseus.iql.qdl.validation
 Service-Component: OSGI-INF/QDLServiceBinding.xml,

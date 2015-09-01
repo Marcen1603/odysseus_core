@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompi
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLTypeCompiler;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.helper.IIQLCompilerHelper;
 import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext;
-import de.uniol.inf.is.odysseus.iql.basic.typing.factory.IIQLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import java.util.List;
 import org.eclipse.emf.common.util.EList;
@@ -17,16 +17,16 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.lib.ExclusiveRange;
 
 @SuppressWarnings("all")
-public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, E extends IIQLExpressionCompiler<G>, F extends IIQLTypeFactory, U extends IIQLTypeUtils> implements IIQLTypeCompiler<G> {
+public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends IIQLGeneratorContext, E extends IIQLExpressionCompiler<G>, F extends IIQLTypeDictionary, U extends IIQLTypeUtils> implements IIQLTypeCompiler<G> {
   protected H helper;
   
-  protected F typeFactory;
+  protected F typeDictionary;
   
   protected U typeUtils;
   
-  public AbstractIQLTypeCompiler(final H helper, final F typeFactory, final U typeUtils) {
+  public AbstractIQLTypeCompiler(final H helper, final F typeDictionary, final U typeUtils) {
     this.helper = helper;
-    this.typeFactory = typeFactory;
+    this.typeDictionary = typeDictionary;
     this.typeUtils = typeUtils;
   }
   
@@ -100,13 +100,13 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
     String _xblockexpression = null;
     {
       JvmType innerType = this.typeUtils.getInnerType(typeRef, false);
-      boolean _isImportNeeded = this.typeFactory.isImportNeeded(innerType, nodeText);
+      boolean _isImportNeeded = this.typeDictionary.isImportNeeded(innerType, nodeText);
       if (_isImportNeeded) {
-        String _importName = this.typeFactory.getImportName(innerType);
+        String _importName = this.typeDictionary.getImportName(innerType);
         context.addImport(_importName);
       }
       StringConcatenation _builder = new StringConcatenation();
-      String _simpleName = this.typeFactory.getSimpleName(innerType, nodeText, wrapper, false);
+      String _simpleName = this.typeDictionary.getSimpleName(innerType, nodeText, wrapper, false);
       _builder.append(_simpleName, "");
       _xblockexpression = _builder.toString();
     }

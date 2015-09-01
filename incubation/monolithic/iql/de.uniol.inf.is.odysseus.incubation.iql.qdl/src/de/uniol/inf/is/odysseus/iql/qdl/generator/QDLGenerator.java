@@ -20,7 +20,7 @@ public class QDLGenerator extends AbstractIQLGenerator<IQDLGeneratorContext, IQD
 	protected void doGenerate(IQLModelElement element, IFileSystemAccess fsa, String outputFolder) {
 		if (element.getInner() instanceof QDLQuery) {
 			QDLQuery query = (QDLQuery) element.getInner();
-			fsa.generateFile(outputFolder+query.getSimpleName() + ".java", compiler.compile(element, query,(IQDLGeneratorContext) context.cleanCopy()));
+			fsa.generateFile(outputFolder+query.getSimpleName() + ".java", compiler.compile(query,(IQDLGeneratorContext) context.cleanCopy()));
 		} else {
 			super.doGenerate(element, fsa, outputFolder);			
 		}

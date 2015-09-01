@@ -29,20 +29,20 @@ import de.uniol.inf.is.odysseus.iql.basic.scoping.IQLQualifiedNameConverter;
 import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
 
-public class QDLScopeProvider extends AbstractIQLScopeProvider<IQDLTypeFactory, IQDLLookUp, IQDLExpressionEvaluator, IQDLTypeUtils> implements IQDLScopeProvider {
+public class QDLScopeProvider extends AbstractIQLScopeProvider<IQDLTypeDictionary, IQDLLookUp, IQDLExpressionEvaluator, IQDLTypeUtils> implements IQDLScopeProvider {
 
 	@Inject
-	public QDLScopeProvider(IQDLTypeFactory typeFactory, IQDLLookUp lookUp,IQDLExpressionEvaluator exprEvaluator, IQDLTypeUtils typeUtils) {
-		super(typeFactory, lookUp, exprEvaluator, typeUtils);
+	public QDLScopeProvider(IQDLTypeDictionary typeDictionary, IQDLLookUp lookUp,IQDLExpressionEvaluator exprEvaluator, IQDLTypeUtils typeUtils) {
+		super(typeDictionary, lookUp, exprEvaluator, typeUtils);
 	}
 
 
 	@Override	
-	public Collection<IEObjectDescription> getIQLJvmElementCallExpression(EObject expr) {
+	public Collection<IEObjectDescription> getScopeIQLJvmElementCallExpression(EObject expr) {
 		JvmDeclaredType type = EcoreUtil2.getContainerOfType(expr, JvmDeclaredType.class);
 		if (type instanceof QDLQuery) {
 			QDLQuery query = (QDLQuery) type;
@@ -87,7 +87,7 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<IQDLTypeFactory, 
 				container = container.eContainer();
 			}
 			
-			for (IQLClass source : typeFactory.getSourceTypes()) {
+			for (IQLClass source : typeDictionary.getSourceTypes()) {
 				for (JvmField attr : lookUp.getPublicAttributes(typeUtils.createTypeRef(source), false)) {
 					if (attr.getSimpleName().equalsIgnoreCase(source.getSimpleName())) {
 						elements.add(attr);
@@ -95,14 +95,14 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<IQDLTypeFactory, 
 				}
 			}
 			
-			Collection<JvmTypeReference> importedTypes = typeFactory.getStaticImports(expr);
+			Collection<JvmTypeReference> importedTypes = typeDictionary.getStaticImports(expr);
 			elements.addAll(lookUp.getPublicAttributes(typeUtils.createTypeRef(query), importedTypes, true));
 			elements.addAll(lookUp.getProtectedAttributes(typeUtils.createTypeRef(query), importedTypes, true));
 		
 			elements.addAll(lookUp.getPublicMethods(typeUtils.createTypeRef(query), importedTypes,true));
 			elements.addAll(lookUp.getProtectedMethods(typeUtils.createTypeRef(query), importedTypes,true));
 
-			for (IQLClass source : typeFactory.getSourceTypes()) {
+			for (IQLClass source : typeDictionary.getSourceTypes()) {
 				for (JvmField attr : lookUp.getPublicAttributes(typeUtils.createTypeRef(source), false)) {
 					if (attr.getSimpleName().equalsIgnoreCase(source.getSimpleName())) {
 						elements.add(attr);
@@ -136,7 +136,7 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<IQDLTypeFactory, 
 			} 
 			return result;
 		} else {
-			return super.getIQLJvmElementCallExpression(expr);
+			return super.getScopeIQLJvmElementCallExpression(expr);
 		}	
 	}
 

@@ -10,15 +10,15 @@ import de.uniol.inf.is.odysseus.iql.basic.ui.scoping.IQLJdtBasedTypeScope;
 import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator;
 import de.uniol.inf.is.odysseus.iql.qdl.lookup.IQDLLookUp;
 import de.uniol.inf.is.odysseus.iql.qdl.scoping.QDLScopeProvider;
-import de.uniol.inf.is.odysseus.iql.qdl.typing.factory.IQDLTypeFactory;
+import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils;
 
 
 public class QDLUiScopeProvider extends QDLScopeProvider {
 
 	@Inject
-	public QDLUiScopeProvider(IQDLTypeFactory typeFactory, IQDLLookUp lookUp,	IQDLExpressionEvaluator exprEvaluator, IQDLTypeUtils typeUtils) {
-		super(typeFactory, lookUp, exprEvaluator, typeUtils);
+	public QDLUiScopeProvider(IQDLTypeDictionary typeDictionary, IQDLLookUp lookUp,	IQDLExpressionEvaluator exprEvaluator, IQDLTypeUtils typeUtils) {
+		super(typeDictionary, lookUp, exprEvaluator, typeUtils);
 	}
 	
 

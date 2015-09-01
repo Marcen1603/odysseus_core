@@ -15,56 +15,49 @@ import javax.inject.Inject;
 
 
 
+
+
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmArrayType;
-import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.lookup.AbstractIQLLookUp;
-import de.uniol.inf.is.odysseus.iql.odl.typing.factory.IODLTypeFactory;
-import de.uniol.inf.is.odysseus.iql.odl.typing.typeextension.IODLTypeExtensionsFactory;
+import de.uniol.inf.is.odysseus.iql.odl.oDL.ODLOperator;
+import de.uniol.inf.is.odysseus.iql.odl.typing.dictionary.IODLTypeDictionary;
+import de.uniol.inf.is.odysseus.iql.odl.typing.typeextension.IODLTypeExtensionsDictionary;
 import de.uniol.inf.is.odysseus.iql.odl.typing.utils.IODLTypeUtils;
 
-public class ODLLookUp extends AbstractIQLLookUp<IODLTypeFactory, IODLTypeExtensionsFactory, IODLTypeUtils> implements IODLLookUp{
+public class ODLLookUp extends AbstractIQLLookUp<IODLTypeDictionary, IODLTypeExtensionsDictionary, IODLTypeUtils> implements IODLLookUp{
 
 	@Inject
-	public ODLLookUp(IODLTypeFactory typeFactory, IODLTypeExtensionsFactory typeOperatorsFactory,IODLTypeUtils typeUtils) {
-		super(typeFactory, typeOperatorsFactory, typeUtils);
-	}
-
-	@Override
-	public Collection<JvmOperation> getOnMethods() {
-		Collection<JvmOperation> result = new HashSet<>();
-
-		JvmTypeReference poTypeRef = typeUtils.createTypeRef(AbstractPipe.class, typeFactory.getSystemResourceSet());
-		for (JvmOperation op : super.getProtectedMethods(poTypeRef, false)) {
-			if (op.getSimpleName().startsWith("on")) {
-				result.add(op);
-			}
-		}
-		
-		JvmTypeReference aoTypeRef = typeUtils.createTypeRef(AbstractLogicalOperator.class, typeFactory.getSystemResourceSet());
-		for (JvmOperation op : super.getProtectedMethods(aoTypeRef, false)) {
-			if (op.getSimpleName().startsWith("on")) {
-				result.add(op);
-			}
-		}
-		return result;
+	public ODLLookUp(IODLTypeDictionary typeDictionary, IODLTypeExtensionsDictionary typeExtensionsDictionary,IODLTypeUtils typeUtils) {
+		super(typeDictionary, typeExtensionsDictionary, typeUtils);
 	}
 	
+	@Override
+	public JvmTypeReference getSuperType(EObject obj) {
+		ODLOperator operator = EcoreUtil2.getContainerOfType(obj, ODLOperator.class);
+		if (operator != null) {
+			return typeUtils.createTypeRef(AbstractPipe.class, typeDictionary.getSystemResourceSet());
+		} else {
+			return super.getSuperType(obj);
+		}
+	}
+
 	@Override
 	public Collection<String> getOperatorMetadataKeys() {
 		Collection<String> result = new HashSet<>();
 		for(Method method : LogicalOperator.class.getDeclaredMethods()) {
 			result.add(method.getName());
 		}
-		result.add(IODLTypeFactory.OPERATOR_OUTPUT_MODE);
-		result.add(IODLTypeFactory.OPERATOR_PERSISTENT);
+		result.add(IODLTypeDictionary.OPERATOR_OUTPUT_MODE);
+		result.add(IODLTypeDictionary.OPERATOR_PERSISTENT);
 		return result;
 	}
 	
@@ -85,7 +78,7 @@ public class ODLLookUp extends AbstractIQLLookUp<IODLTypeFactory, IODLTypeExtens
 	
 	@Override
 	public boolean isMap(JvmTypeReference typeRef) {
-		return isAssignable(typeUtils.createTypeRef(Map.class, typeFactory.getSystemResourceSet()), typeRef);
+		return isAssignable(typeUtils.createTypeRef(Map.class, typeDictionary.getSystemResourceSet()), typeRef);
 	}
 	
 	@Override
@@ -100,7 +93,7 @@ public class ODLLookUp extends AbstractIQLLookUp<IODLTypeFactory, IODLTypeExtens
 		} else if (typeUtils.getInnerType(typeRef, true) instanceof JvmArrayType) {
 			return true;
 		} else {
-			return isAssignable(typeUtils.createTypeRef(List.class, typeFactory.getSystemResourceSet()), typeRef);
+			return isAssignable(typeUtils.createTypeRef(List.class, typeDictionary.getSystemResourceSet()), typeRef);
 		}
 	}
 
