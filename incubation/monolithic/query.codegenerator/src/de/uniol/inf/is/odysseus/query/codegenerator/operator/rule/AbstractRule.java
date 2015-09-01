@@ -51,12 +51,14 @@ public abstract class AbstractRule<T extends ILogicalOperator> implements IOpera
 	/*
 	 * optional
 	 */
-	public void analyseOperator(ILogicalOperator logicalOperator,
+	@Override
+	public void analyseOperator(T logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
 	}
 
-	public void addOperatorConfiguration(ILogicalOperator logicalOperator,
+	@Override
+	public void addOperatorConfiguration(T logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
 	}
@@ -78,7 +80,7 @@ public abstract class AbstractRule<T extends ILogicalOperator> implements IOpera
 	/*
 	 * Helper
 	 */
-
+	@Override
 	public void addDataHandlerFromSDFSchema(ILogicalOperator logicalOperator,
 			QueryAnalyseInformation transformationInformation) {
 
