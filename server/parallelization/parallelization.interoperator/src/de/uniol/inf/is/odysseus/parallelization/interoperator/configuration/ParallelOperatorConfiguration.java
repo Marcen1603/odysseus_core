@@ -204,7 +204,7 @@ public class ParallelOperatorConfiguration {
 		}
 	}
 
-	public boolean hasMultithreadingStrategy() {
+	public boolean hasParallelizationStrategy() {
 		return !multithreadingStrategy.isEmpty();
 	}
 

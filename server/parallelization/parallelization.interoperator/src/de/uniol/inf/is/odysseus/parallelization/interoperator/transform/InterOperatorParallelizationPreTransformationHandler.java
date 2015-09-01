@@ -144,13 +144,11 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 								.getOperatorIds().isEmpty())) {
 					// if no operator specific parameters are set, each operator
 					// which has an compatible strategy is parallelized
-					transformationResults
-							.addAll(doAutomaticTransformation(logicalPlan));
+					doAutomaticTransformation(logicalPlan, transformationResults);
 				} else if (parallelOperatorParameter != null
 						&& !parallelOperatorParameter.getOperatorIds()
 								.isEmpty()) {
-					transformationResults
-							.addAll(doCustomTransformation(logicalPlan));
+					doCustomTransformation(logicalPlan, transformationResults);
 				}
 			}
 		} catch (Exception e) {
@@ -171,11 +169,8 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List<TransformationResult> doCustomTransformation(
-			ILogicalOperator logicalPlan) {
-
-		List<TransformationResult> transformationResults = new ArrayList<TransformationResult>();
-
+	private void doCustomTransformation(
+			ILogicalOperator logicalPlan, List<TransformationResult> transformationResults) {
 		// create graph walker with id visitor, returns a map with the id and
 		// the corresponding operator
 		OperatorIdLogicalGraphVisitor<ILogicalOperator> operatorIdVisitor = new OperatorIdLogicalGraphVisitor<ILogicalOperator>(
@@ -193,66 +188,85 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 					&& configurationForOperator != null) {
 				// only do transformation if operator is found and settings
 				// exists
-				if (configurationForOperator.hasMultithreadingStrategy()) {
-					// if setting has an user defined Parallel strategy
-					IParallelTransformationStrategy<? extends ILogicalOperator> selectedStrategy = ParallelTransformationStrategyRegistry
-							.getStrategiesByName(configurationForOperator
-									.getParallelStrategy());
-					// do post calculations and validations for settings
-					configurationForOperator
-							.doPostCalculationsForConfiguration(
-									selectedStrategy,
-									globalDegreeOfParallelization,
-									globalBufferSize, useThreadedBuffer);
-					if (selectedStrategy.getOperatorType() == operatorForTransformation
-							.getClass()) {
-						// evaluate compatibility of strategy and operator
-						int compatibility = selectedStrategy
-								.evaluateCompatibility(operatorForTransformation);
-						if (compatibility > 0) {
-							// if compatibility is greater than 0,
-							// transformation is possible
-							transformationResults.add(selectedStrategy
-									.getNewInstance(operatorForTransformation,
-											configurationForOperator)
-									.transform());
-						} else {
-							// if the selected strategy corresponds to the given
-							// operator type, but is not compatible
-							throw new IllegalArgumentException(
-									"Strategy "
-											+ selectedStrategy.getName()
-											+ " is not compatible with selected operator with id "
-											+ operatorForTransformation
-													.getUniqueIdentifier());
-						}
-					} else {
-						// if the selected strategy is valid for this operator
-						// type (selected by id), throw exception
-						throw new IllegalArgumentException(
-								"Strategy with name "
-										+ configurationForOperator
-												.getParallelStrategy()
-										+ " is not compatible with Operator of type "
-										+ operatorForTransformation.getClass());
-					}
+				if (configurationForOperator.hasParallelizationStrategy()) {
+					doCustomTransformationWithSelectedStrategy(transformationResults, operatorForTransformation,
+							configurationForOperator);
 
 				} else {
-					// if no user defined strategy is given, get the best
-					// strategy for this operator
-					IParallelTransformationStrategy<? extends ILogicalOperator> bestStrategy = getPreferredStrategy(operatorForTransformation);
-					// do post calculations and validations for settings
-					configurationForOperator
-							.doPostCalculationsForConfiguration(bestStrategy,
-									globalDegreeOfParallelization,
-									globalBufferSize, useThreadedBuffer);
-					transformationResults.add(bestStrategy
-							.getNewInstance(operatorForTransformation,
-									configurationForOperator).transform());
+					doCustomTransformationWithBestStrategy(transformationResults, operatorForTransformation,
+							configurationForOperator);
 				}
 			}
 		}
-		return transformationResults;
+	}
+
+	private void doCustomTransformationWithBestStrategy(List<TransformationResult> transformationResults,
+			ILogicalOperator operatorForTransformation,
+			ParallelOperatorConfiguration configurationForOperator) {
+		// if no user defined strategy is given, get the best
+		// strategy for this operator
+		IParallelTransformationStrategy<ILogicalOperator> bestStrategy = getPreferredStrategy(operatorForTransformation);
+		// do post calculations and validations for settings
+		configurationForOperator
+				.doPostCalculationsForConfiguration(bestStrategy,
+						globalDegreeOfParallelization,
+						globalBufferSize, useThreadedBuffer);
+		Class<? extends ILogicalOperator> operatorClass = bestStrategy
+				.getOperatorType();
+		if (operatorClass == operatorForTransformation.getClass()) {
+			transformationResults.add(bestStrategy.getNewInstance()
+					.transform(operatorForTransformation,
+							configurationForOperator));
+		}
+	}
+
+	private void doCustomTransformationWithSelectedStrategy(List<TransformationResult> transformationResults,
+			ILogicalOperator operatorForTransformation,
+			ParallelOperatorConfiguration configurationForOperator) {
+		// if setting has an user defined Parallel strategy
+		IParallelTransformationStrategy<ILogicalOperator> selectedStrategy = ParallelTransformationStrategyRegistry
+				.getStrategiesByName(configurationForOperator
+						.getParallelStrategy());
+		// do post calculations and validations for settings
+		configurationForOperator
+				.doPostCalculationsForConfiguration(
+						selectedStrategy,
+						globalDegreeOfParallelization,
+						globalBufferSize, useThreadedBuffer);
+
+		Class<? extends ILogicalOperator> operatorClass = selectedStrategy
+				.getOperatorType();
+		if (operatorClass == operatorForTransformation.getClass()) {
+			// evaluate compatibility of strategy and operator
+			int compatibility = selectedStrategy
+					.evaluateCompatibility(operatorForTransformation);
+			if (compatibility > 0) {
+				// if compatibility is greater than 0,
+				// transformation is possible
+				transformationResults.add(selectedStrategy
+						.getNewInstance().transform(
+								operatorForTransformation,
+								configurationForOperator));
+			} else {
+				// if the selected strategy corresponds to the given
+				// operator type, but is not compatible
+				throw new IllegalArgumentException(
+						"Strategy "
+								+ selectedStrategy.getName()
+								+ " is not compatible with selected operator with id "
+								+ operatorForTransformation
+										.getUniqueIdentifier());
+			}
+		} else {
+			// if the selected strategy is valid for this operator
+			// type (selected by id), throw exception
+			throw new IllegalArgumentException(
+					"Strategy with name "
+							+ configurationForOperator
+									.getParallelStrategy()
+							+ " is not compatible with Operator of type "
+							+ operatorForTransformation.getClass());
+		}
 	}
 
 	/**
@@ -264,11 +278,9 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List<TransformationResult> doAutomaticTransformation(
-			ILogicalOperator logicalPlan) {
-
-		List<TransformationResult> transformationResults = new ArrayList<TransformationResult>();
-
+	private void doAutomaticTransformation(
+			ILogicalOperator logicalPlan, List<TransformationResult> transformationResults) {
+		
 		// get all strategies which are for an specific logical operator
 		Set<Class<? extends ILogicalOperator>> set = new HashSet<>();
 		List<Class<? extends ILogicalOperator>> validTypes = ParallelTransformationStrategyRegistry
@@ -287,17 +299,21 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 			for (ILogicalOperator operatorForTransformation : collVisitor
 					.getResult()) {
 				// get best strategy
-				IParallelTransformationStrategy<? extends ILogicalOperator> bestStrategy = getPreferredStrategy(operatorForTransformation);
+				IParallelTransformationStrategy<ILogicalOperator> bestStrategy = getPreferredStrategy(operatorForTransformation);
 				// create default settings for this transformation
 				ParallelOperatorConfiguration configuration = ParallelOperatorConfiguration
 						.createDefaultConfiguration(bestStrategy,
 								globalDegreeOfParallelization,
 								globalBufferSize, useThreadedBuffer);
-				transformationResults.add(bestStrategy.getNewInstance(
-						operatorForTransformation, configuration).transform());
+				Class<? extends ILogicalOperator> operatorClass = bestStrategy
+						.getOperatorType();
+				if (operatorClass == operatorForTransformation.getClass()) {
+					transformationResults
+							.add(bestStrategy.getNewInstance().transform(
+									operatorForTransformation, configuration));
+				}
 			}
 		}
-		return transformationResults;
 	}
 
 	/**
@@ -364,19 +380,23 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	 * @param operatorForTransformation
 	 * @return
 	 */
-	private IParallelTransformationStrategy<? extends ILogicalOperator> getPreferredStrategy(
+	private IParallelTransformationStrategy<ILogicalOperator> getPreferredStrategy(
 			ILogicalOperator operatorForTransformation) {
-		List<IParallelTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = ParallelTransformationStrategyRegistry
+		List<IParallelTransformationStrategy<ILogicalOperator>> strategiesForOperator = ParallelTransformationStrategyRegistry
 				.getStrategiesForOperator(operatorForTransformation.getClass());
 		if (!strategiesForOperator.isEmpty()) {
 			// evaluate compatibility of the different
 			// strategies
-			List<FESortedPair<Integer, IParallelTransformationStrategy<? extends ILogicalOperator>>> strategiesWithCompatibility = new ArrayList<FESortedPair<Integer, IParallelTransformationStrategy<? extends ILogicalOperator>>>();
-			for (IParallelTransformationStrategy<? extends ILogicalOperator> strategy : strategiesForOperator) {
-				FESortedPair<Integer, IParallelTransformationStrategy<? extends ILogicalOperator>> strategyWithCompatibility = new FESortedPair<Integer, IParallelTransformationStrategy<? extends ILogicalOperator>>(
-						strategy.evaluateCompatibility(operatorForTransformation),
-						strategy);
-				strategiesWithCompatibility.add(strategyWithCompatibility);
+			List<FESortedPair<Integer, IParallelTransformationStrategy<ILogicalOperator>>> strategiesWithCompatibility = new ArrayList<FESortedPair<Integer, IParallelTransformationStrategy<ILogicalOperator>>>();
+			for (IParallelTransformationStrategy<ILogicalOperator> strategy : strategiesForOperator) {
+				Class<ILogicalOperator> operatorType = strategy
+						.getOperatorType();
+				if (operatorForTransformation.getClass() == operatorType) {
+					FESortedPair<Integer, IParallelTransformationStrategy<ILogicalOperator>> strategyWithCompatibility = new FESortedPair<Integer, IParallelTransformationStrategy<ILogicalOperator>>(
+							strategy.evaluateCompatibility(operatorType
+									.cast(operatorForTransformation)), strategy);
+					strategiesWithCompatibility.add(strategyWithCompatibility);
+				}
 			}
 			Collections.sort(strategiesWithCompatibility,
 					Collections.reverseOrder());

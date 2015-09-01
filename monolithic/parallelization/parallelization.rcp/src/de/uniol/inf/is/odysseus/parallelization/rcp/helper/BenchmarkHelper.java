@@ -78,14 +78,14 @@ public class BenchmarkHelper {
 						.getResult()) {
 					if (operatorForTransformation.getUniqueIdentifier() != null) {
 
-						List<IParallelTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = ParallelTransformationStrategyRegistry
+						List<IParallelTransformationStrategy<ILogicalOperator>> strategiesForOperator = ParallelTransformationStrategyRegistry
 								.getStrategiesForOperator(operatorForTransformation
 										.getClass());
 						if (!strategiesForOperator.isEmpty()) {
-							dataHandler
-							.getBenchmarkInitializationResult().setStrategiesForOperator(
-									operatorForTransformation,
-									strategiesForOperator);
+							dataHandler.getBenchmarkInitializationResult()
+									.setStrategiesForOperator(
+											operatorForTransformation,
+											strategiesForOperator);
 						}
 					}
 				}

@@ -68,21 +68,19 @@ public interface IParallelTransformationStrategy<T extends ILogicalOperator> {
 	 * @param operator
 	 * @return
 	 */
-	int evaluateCompatibility(ILogicalOperator operator);
+	int evaluateCompatibility(T operator);
 
 	/**
 	 * do the specific transformation based on the configuration
 	 * 
 	 * @return
 	 */
-	TransformationResult transform();
+	TransformationResult transform(T operator, ParallelOperatorConfiguration configurationForOperator);
 
 	/**
-	 * returns a new instance of this strategy. this is needed to avoid wrong
-	 * initialized variables
+	 * creates a new instance of this strategy 
 	 * 
-	 * @return
+	 * @return instance of strategy
 	 */
-	 IParallelTransformationStrategy<T> getNewInstance(ILogicalOperator operator, ParallelOperatorConfiguration configurationForOperator);
-
+	IParallelTransformationStrategy<T> getNewInstance();
 }

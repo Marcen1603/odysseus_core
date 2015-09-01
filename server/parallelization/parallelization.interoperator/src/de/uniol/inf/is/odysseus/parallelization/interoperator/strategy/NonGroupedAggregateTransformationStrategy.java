@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -51,38 +50,10 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 public class NonGroupedAggregateTransformationStrategy extends
 		AbstractParallelTransformationStrategy<AggregateAO> {
 
-	private AggregateAO operator;
-	private ParallelOperatorConfiguration configuration;
-	private TransformationResult transformationResult;
 	private UnionAO union;
 	private AbstractStaticFragmentAO fragmentAO;
 	private List<AggregateItem> renamedPAAggregationItems;
 	private List<AggregateItem> renamedCombineAggregationItems;
-
-	@Override
-	public IParallelTransformationStrategy<AggregateAO> getNewInstance(
-			ILogicalOperator operator,
-			ParallelOperatorConfiguration configurationForOperator) {
-		NonGroupedAggregateTransformationStrategy instance = new NonGroupedAggregateTransformationStrategy();
-		if (operator != null) {
-			if (operator instanceof AggregateAO) {
-				instance.operator = (AggregateAO) operator;
-			} else {
-				throw new IllegalArgumentException(
-						"Operator type is invalid for strategy " + getName());
-			}
-		} else {
-			throw new IllegalArgumentException(
-					"Null value for operator is not allowed");
-		}
-		if (configurationForOperator != null) {
-			instance.configuration = configurationForOperator;
-		} else {
-			throw new IllegalArgumentException(
-					"Null value for configuration is not allowed");
-		}
-		return instance;
-	}
 
 	@Override
 	public String getName() {
@@ -98,32 +69,30 @@ public class NonGroupedAggregateTransformationStrategy extends
 	 * @return
 	 */
 	@Override
-	public int evaluateCompatibility(ILogicalOperator operator) {
-		if (operator instanceof AggregateAO) {
-			AggregateAO aggregateOperator = (AggregateAO) operator;
-
-			boolean everyAggregationHasOnlyOneInputAttribut = true;
-			List<AggregateItem> existingAggregationItems = aggregateOperator
-					.getAggregationItems();
-			for (AggregateItem aggregateItem : existingAggregationItems) {
-				if (aggregateItem.inAttributes.size() > 1) {
-					everyAggregationHasOnlyOneInputAttribut = false;
-				}
-			}
-
-			if (everyAggregationHasOnlyOneInputAttribut) {
-				// Only aggregations with one input attribute are allowed
-				// for partial aggregates
-				if (aggregateOperator.getGroupingAttributes().isEmpty()) {
-					return 100;
-				} else {
-					// if the aggregation has an grouping, there is might be a
-					// better strategy
-					return 80;
-				}
+	public int evaluateCompatibility(AggregateAO operator) {
+		boolean everyAggregationHasOnlyOneInputAttribut = true;
+		List<AggregateItem> existingAggregationItems = operator
+				.getAggregationItems();
+		for (AggregateItem aggregateItem : existingAggregationItems) {
+			if (aggregateItem.inAttributes.size() > 1) {
+				everyAggregationHasOnlyOneInputAttribut = false;
 			}
 		}
-		// if the operator is no aggregation, this strategy is incompatible
+
+		if (everyAggregationHasOnlyOneInputAttribut) {
+			// Only aggregations with one input attribute are allowed
+			// for partial aggregates
+			if (operator.getGroupingAttributes().isEmpty()) {
+				return 100;
+			} else {
+				// if the aggregation has an grouping, there is might be a
+				// better strategy
+				return 80;
+			}
+		}
+
+		// if at least one aggregation has more than one input port, this
+		// strategy is not compatible
 		return 0;
 	}
 
@@ -134,9 +103,14 @@ public class NonGroupedAggregateTransformationStrategy extends
 	 * @return
 	 */
 	@Override
-	public TransformationResult transform() {
-		
+	public TransformationResult transform(AggregateAO operator,
+			ParallelOperatorConfiguration configurationForOperator) {
+		super.operator = operator;
+		super.configuration = configurationForOperator;
+		super.transformationResult = new TransformationResult(State.SUCCESS);
+
 		try {
+			super.doValidation();
 			prepareTransformation();
 			createFragmentOperator();
 		} catch (ParallelizationStrategyException e) {
@@ -330,18 +304,10 @@ public class NonGroupedAggregateTransformationStrategy extends
 	 * prepares transformation and validates values
 	 * 
 	 * @param groupingAttributes
-	 * @throws ParallelizationStrategyException 
+	 * @throws ParallelizationStrategyException
 	 */
-	private void prepareTransformation() throws ParallelizationStrategyException {
-		transformationResult = new TransformationResult(State.SUCCESS);
-		// validates if operator and configuration are set
-		if (configuration == null || operator == null) {
-			throw new ParallelizationStrategyException("");
-		}
-
-		if (configuration.getDegreeOfParallelization() == 1) {
-			throw new ParallelizationStrategyException("");
-		}
+	private void prepareTransformation()
+			throws ParallelizationStrategyException {
 		if (configuration.getEndParallelizationId() != null
 				&& !configuration.getEndParallelizationId().isEmpty()) {
 			throw new ParallelizationStrategyException(
@@ -363,9 +329,10 @@ public class NonGroupedAggregateTransformationStrategy extends
 	 * creates a fragment operator dynamically based on type
 	 * 
 	 * @param groupingAttributes
-	 * @throws ParallelizationStrategyException 
+	 * @throws ParallelizationStrategyException
 	 */
-	private void createFragmentOperator() throws ParallelizationStrategyException {
+	private void createFragmentOperator()
+			throws ParallelizationStrategyException {
 		try {
 			fragmentAO = createFragmentAO(
 					configuration.getFragementationType(),
@@ -402,5 +369,10 @@ public class NonGroupedAggregateTransformationStrategy extends
 	@Override
 	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return RoundRobinFragmentAO.class;
+	}
+
+	@Override
+	public IParallelTransformationStrategy<AggregateAO> getNewInstance() {
+		return new NonGroupedAggregateTransformationStrategy();
 	}
 }

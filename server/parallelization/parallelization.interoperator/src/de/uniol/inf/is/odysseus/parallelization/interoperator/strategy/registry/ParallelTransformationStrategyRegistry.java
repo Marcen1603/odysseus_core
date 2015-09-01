@@ -39,10 +39,10 @@ public class ParallelTransformationStrategyRegistry {
 			.getLogger(ParallelTransformationStrategyRegistry.class);
 
 	// strategies for logical operator
-	private static Map<Class<? extends ILogicalOperator>, List<IParallelTransformationStrategy<? extends ILogicalOperator>>> strategiesForLogicalOperator = new HashMap<Class<? extends ILogicalOperator>, List<IParallelTransformationStrategy<? extends ILogicalOperator>>>();
+	private static Map<Class<ILogicalOperator>, List<IParallelTransformationStrategy<ILogicalOperator>>> strategiesForLogicalOperator = new HashMap<Class<ILogicalOperator>, List<IParallelTransformationStrategy<ILogicalOperator>>>();
 
 	// strategies by name
-	private static Map<String, IParallelTransformationStrategy<? extends ILogicalOperator>> strategiesByName = new HashMap<String, IParallelTransformationStrategy<? extends ILogicalOperator>>();
+	private static Map<String, IParallelTransformationStrategy<ILogicalOperator>> strategiesByName = new HashMap<String, IParallelTransformationStrategy<ILogicalOperator>>();
 
 	/**
 	 * registers a new strategy (OSGI method)
@@ -50,18 +50,18 @@ public class ParallelTransformationStrategyRegistry {
 	 * @param parallelTransformationStrategy
 	 */
 	public static void registerStrategy(
-			IParallelTransformationStrategy<?> parallelTransformationStrategy) {
+			IParallelTransformationStrategy<ILogicalOperator> parallelTransformationStrategy) {
 		LOG.debug("Register new ParallelTransformationStrategy "
 				+ parallelTransformationStrategy.getName());
 
 		// strategies by logical operator
-		Class<? extends ILogicalOperator> operatorType = parallelTransformationStrategy
+		Class<ILogicalOperator> operatorType = parallelTransformationStrategy
 				.getOperatorType();
 		if (strategiesForLogicalOperator.containsKey(operatorType)) {
 			strategiesForLogicalOperator.get(operatorType).add(
 					parallelTransformationStrategy);
 		} else {
-			List<IParallelTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = new ArrayList<IParallelTransformationStrategy<? extends ILogicalOperator>>();
+			List<IParallelTransformationStrategy<ILogicalOperator>> strategiesForOperator = new ArrayList<IParallelTransformationStrategy<ILogicalOperator>>();
 			strategiesForOperator.add(parallelTransformationStrategy);
 			strategiesForLogicalOperator.put(operatorType,
 					strategiesForOperator);
@@ -81,7 +81,7 @@ public class ParallelTransformationStrategyRegistry {
 	 * @param parallelTransformationStrategy
 	 */
 	public static void unregisterStrategy(
-			IParallelTransformationStrategy<?> parallelTransformationStrategy) {
+			IParallelTransformationStrategy<ILogicalOperator> parallelTransformationStrategy) {
 		LOG.debug("Remove ParallelTransformationStrategy "
 				+ parallelTransformationStrategy.getName());
 
@@ -89,7 +89,7 @@ public class ParallelTransformationStrategyRegistry {
 		Class<? extends ILogicalOperator> operatorType = parallelTransformationStrategy
 				.getOperatorType();
 		if (strategiesForLogicalOperator.containsKey(operatorType)) {
-			List<IParallelTransformationStrategy<? extends ILogicalOperator>> strategiesForOperator = strategiesForLogicalOperator
+			List<IParallelTransformationStrategy<ILogicalOperator>> strategiesForOperator = strategiesForLogicalOperator
 					.get(operatorType);
 			strategiesForOperator.remove(parallelTransformationStrategy);
 			if (strategiesForOperator.isEmpty()) {
@@ -111,7 +111,7 @@ public class ParallelTransformationStrategyRegistry {
 	 * @param operatorType
 	 * @return list of strategies
 	 */
-	public static List<IParallelTransformationStrategy<? extends ILogicalOperator>> getStrategiesForOperator(
+	public static List<IParallelTransformationStrategy<ILogicalOperator>> getStrategiesForOperator(
 			Class<? extends ILogicalOperator> operatorType) {
 		if (!strategiesForLogicalOperator.containsKey(operatorType)) {
 			LOG.error("ParallelTransformationStrategy for OperatorName "
@@ -128,7 +128,7 @@ public class ParallelTransformationStrategyRegistry {
 	 * @param name
 	 * @return
 	 */
-	public static IParallelTransformationStrategy<? extends ILogicalOperator> getStrategiesByName(
+	public static IParallelTransformationStrategy<ILogicalOperator> getStrategiesByName(
 			String name) {
 		if (strategiesByName.containsKey(name.toLowerCase())) {
 			return strategiesByName.get(name.toLowerCase());

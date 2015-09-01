@@ -24,7 +24,9 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.exception.ParallelizationStrategyException;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RangeFragmentAO;
@@ -36,6 +38,10 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  */
 public abstract class AbstractParallelTransformationStrategy<T extends ILogicalOperator>
 		implements IParallelTransformationStrategy<T> {
+
+	protected T operator;
+	protected ParallelOperatorConfiguration configuration;
+	protected TransformationResult transformationResult;
 
 	/**
 	 * returns the selected operator type
@@ -189,5 +195,16 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 					.getNextOperator(currentExistingOperator);
 		}
 		return lastClonedOperator;
+	}
+
+	public void doValidation() throws ParallelizationStrategyException {
+		// validates if operator and configuration are set
+		if (configuration == null || operator == null) {
+			throw new ParallelizationStrategyException("");
+		}
+
+		if (configuration.getDegreeOfParallelization() == 1) {
+			throw new ParallelizationStrategyException("");
+		}
 	}
 }

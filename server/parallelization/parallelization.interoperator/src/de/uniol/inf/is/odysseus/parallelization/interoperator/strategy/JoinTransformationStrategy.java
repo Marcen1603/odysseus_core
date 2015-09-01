@@ -41,37 +41,10 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 public class JoinTransformationStrategy extends
 		AbstractParallelTransformationStrategy<JoinAO> {
 
-	private JoinAO operator;
-	private ParallelOperatorConfiguration configuration;
-	private TransformationResult transformationResult;
 	private UnionAO union;
 	private List<Pair<AbstractStaticFragmentAO, Integer>> fragmentsSinkInPorts;
 	private List<AbstractStaticFragmentAO> fragments;
 	private Map<Integer, List<SDFAttribute>> attributes;
-
-	@Override
-	public JoinTransformationStrategy getNewInstance(ILogicalOperator operator,
-			ParallelOperatorConfiguration configurationForOperator) {
-		JoinTransformationStrategy instance = new JoinTransformationStrategy();
-		if (operator != null) {
-			if (operator instanceof JoinAO) {
-				instance.operator = (JoinAO) operator;
-			} else {
-				throw new IllegalArgumentException(
-						"Operator type is invalid for strategy " + getName());
-			}
-		} else {
-			throw new IllegalArgumentException(
-					"Null value for operator is not allowed");
-		}
-		if (configurationForOperator != null) {
-			instance.configuration = configurationForOperator;
-		} else {
-			throw new IllegalArgumentException(
-					"Null value for configuration is not allowed");
-		}
-		return instance;
-	}
 
 	@Override
 	public String getName() {
@@ -86,20 +59,18 @@ public class JoinTransformationStrategy extends
 	 * @return
 	 */
 	@Override
-	public int evaluateCompatibility(ILogicalOperator operator) {
-		if (operator instanceof JoinAO) {
-			JoinAO joinOperator = (JoinAO) operator;
-			if (joinOperator.getPredicate() != null) {
-				if (SDFAttributeHelper.getInstance()
-						.validateStructureOfPredicate(joinOperator)) {
-					// if the join operator has an join predicate, this strategy
-					// is
-					// compatible
-					return 100;
-				}
+	public int evaluateCompatibility(JoinAO operator) {
+		if (operator.getPredicate() != null) {
+			if (SDFAttributeHelper.getInstance().validateStructureOfPredicate(
+					operator)) {
+				// if the join operator has an join predicate, this strategy
+				// is
+				// compatible
+				return 100;
 			}
 		}
-		// if operator is not a join or has no join predicate, this strategy
+
+		// if operator has no join predicate, this strategy
 		// doesn't work
 		return 0;
 	}
@@ -111,8 +82,14 @@ public class JoinTransformationStrategy extends
 	 * @return
 	 */
 	@Override
-	public TransformationResult transform() {
+	public TransformationResult transform(JoinAO operator,
+			ParallelOperatorConfiguration configurationForOperator) {
+		super.operator = operator;
+		super.configuration = configurationForOperator;
+		super.transformationResult = new TransformationResult(State.SUCCESS);
+
 		try {
+			super.doValidation();
 			prepareTransformation();
 			createAndSubscribeFragments();
 		} catch (ParallelizationStrategyException e) {
@@ -180,7 +157,7 @@ public class JoinTransformationStrategy extends
 				&& !configuration.getEndParallelizationId().isEmpty()) {
 			// check if the way to endpoint is valid,
 			checkIfWayToEndPointIsValid(operator, configuration);
-			
+
 			// if endoperator id is set, do post parallelization
 			ILogicalOperator lastParallelizedOperator = doPostParallelization(
 					operator, newJoinOperator,
@@ -259,9 +236,11 @@ public class JoinTransformationStrategy extends
 	/**
 	 * creates the different fragment operators for both input streams of join
 	 * operator
-	 * @throws ParallelizationStrategyException 
+	 * 
+	 * @throws ParallelizationStrategyException
 	 */
-	private void createAndSubscribeFragments() throws ParallelizationStrategyException {
+	private void createAndSubscribeFragments()
+			throws ParallelizationStrategyException {
 		int numberOfFragments = 0;
 		fragmentsSinkInPorts = new ArrayList<Pair<AbstractStaticFragmentAO, Integer>>();
 		fragments = new ArrayList<AbstractStaticFragmentAO>();
@@ -340,19 +319,11 @@ public class JoinTransformationStrategy extends
 
 	/**
 	 * prepares transformation and validates values
-	 * @throws ParallelizationStrategyException 
+	 * 
+	 * @throws ParallelizationStrategyException
 	 */
-	private void prepareTransformation() throws ParallelizationStrategyException {
-		transformationResult = new TransformationResult(State.SUCCESS);
-		// validates if operator and configuration are set
-		if (configuration == null || operator == null){
-			throw new ParallelizationStrategyException("");
-		}
-		
-		if (configuration.getDegreeOfParallelization() == 1) {
-			throw new ParallelizationStrategyException("");
-		}
-		
+	private void prepareTransformation()
+			throws ParallelizationStrategyException {
 		transformationResult.setAllowsModificationAfterUnion(true);
 
 		attributes = new HashMap<Integer, List<SDFAttribute>>();
@@ -381,5 +352,10 @@ public class JoinTransformationStrategy extends
 	@Override
 	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return HashFragmentAO.class;
+	}
+
+	@Override
+	public IParallelTransformationStrategy<JoinAO> getNewInstance() {
+		return new JoinTransformationStrategy();
 	}
 }

@@ -44,40 +44,36 @@ public class BenchmarkInitializationResult {
 	private IFile queryFile;
 	private List<String> queryStringArray = new ArrayList<String>();
 	private List<ILogicalQuery> logicalQueries = new ArrayList<ILogicalQuery>();
-	
-	private Map<ILogicalOperator, List<IParallelTransformationStrategy<? extends ILogicalOperator>>> strategiesForOperator = new HashMap<ILogicalOperator, List<IParallelTransformationStrategy<? extends ILogicalOperator>>>();
 
-	
-	
-	
-	public Map<ILogicalOperator, List<IParallelTransformationStrategy<? extends ILogicalOperator>>> getStrategiesForOperator() {
+	private Map<ILogicalOperator, List<IParallelTransformationStrategy<ILogicalOperator>>> strategiesForOperator = new HashMap<ILogicalOperator, List<IParallelTransformationStrategy<ILogicalOperator>>>();
+
+	public Map<ILogicalOperator, List<IParallelTransformationStrategy<ILogicalOperator>>> getStrategiesForOperator() {
 		return strategiesForOperator;
 	}
 
-	public List<IParallelTransformationStrategy<? extends ILogicalOperator>> getStrategiesForOperator(
+	public List<IParallelTransformationStrategy<ILogicalOperator>> getStrategiesForOperator(
 			ILogicalOperator operator) {
 		return strategiesForOperator.get(operator);
 	}
 
 	/**
-	 * adds a list of strategies for an specific operator 
+	 * adds a list of strategies for an specific operator
 	 * 
 	 * @param operator
 	 * @param strategies
 	 */
-	public void setStrategiesForOperator(
-			ILogicalOperator operator,
-			List<IParallelTransformationStrategy<? extends ILogicalOperator>> strategies) {
+	public void setStrategiesForOperator(ILogicalOperator operator,
+			List<IParallelTransformationStrategy<ILogicalOperator>> strategies) {
 		if (!strategiesForOperator.containsKey(operator)) {
 			strategiesForOperator
 					.put(operator,
-							new ArrayList<IParallelTransformationStrategy<? extends ILogicalOperator>>());
+							new ArrayList<IParallelTransformationStrategy<ILogicalOperator>>());
 		}
-		List<IParallelTransformationStrategy<? extends ILogicalOperator>> list = strategiesForOperator
+		List<IParallelTransformationStrategy<ILogicalOperator>> list = strategiesForOperator
 				.get(operator);
 		list.addAll(strategies);
 	}
-	
+
 	public List<ILogicalQuery> getLogicalQueries() {
 		return logicalQueries;
 	}
@@ -89,7 +85,7 @@ public class BenchmarkInitializationResult {
 	public void addLogicalQuery(ILogicalQuery logicalQuery) {
 		this.logicalQueries.add(logicalQuery);
 	}
-	
+
 	public IFile getQueryFile() {
 		return queryFile;
 	}

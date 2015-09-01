@@ -46,37 +46,9 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 public class GroupedAggregateTransformationStrategy extends
 		AbstractParallelTransformationStrategy<AggregateAO> {
 
-	private AggregateAO operator;
-	private ParallelOperatorConfiguration configuration;
-	private TransformationResult transformationResult;
 	private AbstractStaticFragmentAO fragmentAO;
 	private UnionAO union;
-
-	@Override
-	public IParallelTransformationStrategy<AggregateAO> getNewInstance(
-			ILogicalOperator operator,
-			ParallelOperatorConfiguration configurationForOperator) {
-		GroupedAggregateTransformationStrategy instance = new GroupedAggregateTransformationStrategy();
-		if (operator != null) {
-			if (operator instanceof AggregateAO) {
-				instance.operator = (AggregateAO) operator;
-			} else {
-				throw new IllegalArgumentException(
-						"Operator type is invalid for strategy " + getName());
-			}
-		} else {
-			throw new IllegalArgumentException(
-					"Null value for operator is not allowed");
-		}
-		if (configurationForOperator != null) {
-			instance.configuration = configurationForOperator;
-		} else {
-			throw new IllegalArgumentException(
-					"Null value for configuration is not allowed");
-		}
-
-		return instance;
-	}
+	private List<SDFAttribute> groupingAttributes;
 
 	@Override
 	public String getName() {
@@ -91,16 +63,14 @@ public class GroupedAggregateTransformationStrategy extends
 	 * @return
 	 */
 	@Override
-	public int evaluateCompatibility(ILogicalOperator operator) {
-		if (operator instanceof AggregateAO) {
-			AggregateAO aggregateOperator = (AggregateAO) operator;
-			if (!aggregateOperator.getGroupingAttributes().isEmpty()) {
-				// only if the given operator has a grouping, this strategy
-				// works
-				return 100;
-			}
+	public int evaluateCompatibility(AggregateAO operator) {
+		if (!operator.getGroupingAttributes().isEmpty()) {
+			// only if the given operator has a grouping, this strategy
+			// works
+			return 100;
 		}
-		// if operator is no aggregation or has no grouping, this strategy is
+
+		// if operator has no grouping, this strategy is
 		// incompatible
 		return 0;
 	}
@@ -112,15 +82,20 @@ public class GroupedAggregateTransformationStrategy extends
 	 * @return
 	 */
 	@Override
-	public TransformationResult transform() {
-		List<SDFAttribute> groupingAttributes = operator
-				.getGroupingAttributes();
+	public TransformationResult transform(AggregateAO operator,
+			ParallelOperatorConfiguration configurationForOperator) {
+		super.operator = operator;
+		super.configuration = configurationForOperator;
+		super.transformationResult = new TransformationResult(State.SUCCESS);
+
 		try {
+			super.doValidation();
+
 			// prepare and validate values
-			prepareTransformation(groupingAttributes);
-			
+			prepareTransformation();
+
 			// create fragment operator
-			createFragmentOperator(groupingAttributes);
+			createFragmentOperator();
 		} catch (ParallelizationStrategyException pse) {
 			transformationResult.setState(State.FAILED);
 			return transformationResult;
@@ -186,17 +161,18 @@ public class GroupedAggregateTransformationStrategy extends
 	/**
 	 * transform plan until endoperator is reached
 	 * 
-	 * @param i portnumber / iteration
+	 * @param i
+	 *            portnumber / iteration
 	 * @param newAggregateOperator
 	 */
 	private void doPostParallelizationIfNeeded(int i,
 			AggregateAO newAggregateOperator) {
 		if (configuration.getEndParallelizationId() != null
 				&& !configuration.getEndParallelizationId().isEmpty()) {
-			
+
 			// check the way to endpoint
 			checkIfWayToEndPointIsValid(operator, configuration);
-			
+
 			// if a end operator id is set, do post parallelization
 			List<AbstractStaticFragmentAO> fragments = new ArrayList<AbstractStaticFragmentAO>();
 			fragments.add(fragmentAO);
@@ -276,9 +252,10 @@ public class GroupedAggregateTransformationStrategy extends
 	 * creates a fragment operator dynamically based on type
 	 * 
 	 * @param groupingAttributes
-	 * @throws ParallelizationStrategyException 
+	 * @throws ParallelizationStrategyException
 	 */
-	private void createFragmentOperator(List<SDFAttribute> groupingAttributes) throws ParallelizationStrategyException {
+	private void createFragmentOperator()
+			throws ParallelizationStrategyException {
 		fragmentAO = null;
 		try {
 			fragmentAO = createFragmentAO(
@@ -287,34 +264,28 @@ public class GroupedAggregateTransformationStrategy extends
 					groupingAttributes, null, null);
 			transformationResult.addFragmentOperator(fragmentAO);
 		} catch (InstantiationException | IllegalAccessException e) {
-			throw new ParallelizationStrategyException("Error creating fragment operator");
+			throw new ParallelizationStrategyException(
+					"Error creating fragment operator");
 		}
 		if (fragmentAO == null) {
-			throw new ParallelizationStrategyException("Error creating fragment operator");
+			throw new ParallelizationStrategyException(
+					"Error creating fragment operator");
 		}
 	}
 
 	/**
 	 * prepares transformation and validates values
+	 * 
 	 * @param groupingAttributes
-	 * @throws ParallelizationStrategyException 
+	 * @throws ParallelizationStrategyException
 	 */
-	private void prepareTransformation(List<SDFAttribute> groupingAttributes) throws ParallelizationStrategyException {
-		transformationResult = new TransformationResult(State.SUCCESS);
-		
-		// validates if operator and configuration are set
-		if (configuration == null || operator == null){
-			throw new ParallelizationStrategyException("");
-		}
-		
-		// validate settings 
-		if (configuration.getDegreeOfParallelization() == 1) {
-			throw new ParallelizationStrategyException("");
-		}
-
+	private void prepareTransformation()
+			throws ParallelizationStrategyException {
 		// if there is no grouping
+		groupingAttributes = operator.getGroupingAttributes();
 		if (groupingAttributes.isEmpty()) {
-			throw new ParallelizationStrategyException("Strategy needs gouping attributes");
+			throw new ParallelizationStrategyException(
+					"Strategy needs gouping attributes");
 		}
 
 		transformationResult.setAllowsModificationAfterUnion(true);
@@ -349,5 +320,10 @@ public class GroupedAggregateTransformationStrategy extends
 	@Override
 	public Class<? extends AbstractStaticFragmentAO> getPreferredFragmentationType() {
 		return HashFragmentAO.class;
+	}
+
+	@Override
+	public IParallelTransformationStrategy<AggregateAO> getNewInstance() {
+		return new GroupedAggregateTransformationStrategy();
 	}
 }

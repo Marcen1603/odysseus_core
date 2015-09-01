@@ -138,7 +138,7 @@ public class StrategySelectionHelper {
 	private List<StrategySelectionRow> convertData(BenchmarkDataHandler data) {
 		BenchmarkInitializationResult benchmarkInitializationResult = data
 				.getBenchmarkInitializationResult();
-		Map<ILogicalOperator, List<IParallelTransformationStrategy<? extends ILogicalOperator>>> strategiesForOperator = benchmarkInitializationResult
+		Map<ILogicalOperator, List<IParallelTransformationStrategy<ILogicalOperator>>> strategiesForOperator = benchmarkInitializationResult
 				.getStrategiesForOperator();
 
 		List<StrategySelectionRow> rows = new ArrayList<StrategySelectionRow>();
@@ -146,10 +146,10 @@ public class StrategySelectionHelper {
 		int counter = 0;
 		// create a new row for every operator
 		for (ILogicalOperator logicalOperator : strategiesForOperator.keySet()) {
-			List<IParallelTransformationStrategy<? extends ILogicalOperator>> strategies = strategiesForOperator
+			List<IParallelTransformationStrategy<ILogicalOperator>> strategies = strategiesForOperator
 					.get(logicalOperator);
 			// also create new row for each strategy
-			for (IParallelTransformationStrategy<? extends ILogicalOperator> strategy : strategies) {
+			for (IParallelTransformationStrategy<ILogicalOperator> strategy : strategies) {
 				List<Class<? extends AbstractStaticFragmentAO>> allowedFragmentationTypes = strategy
 						.getAllowedFragmentationTypes();
 				// also create new row for each possible fragmentation type
