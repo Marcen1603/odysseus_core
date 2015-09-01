@@ -5,10 +5,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSelectAORule;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class CSelectAORule extends AbstractCSelectAORule<SelectAO>{
@@ -22,7 +22,7 @@ public class CSelectAORule extends AbstractCSelectAORule<SelectAO>{
 	public CodeFragmentInfo getCode(SelectAO operator) {
 	CodeFragmentInfo selectPO = new CodeFragmentInfo();
 		
-		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		SelectAO selectAO = (SelectAO) operator;
 		IPredicate<?> predicate = selectAO.getPredicate();

@@ -8,11 +8,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSlidingElementWindowTIPORule;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingElementWindowTIPO;
 
 public class CSlidingElementWindowTIPORule extends AbstractCSlidingElementWindowTIPORule<ElementWindowAO>{
@@ -26,7 +26,7 @@ public class CSlidingElementWindowTIPORule extends AbstractCSlidingElementWindow
 	public CodeFragmentInfo getCode(ElementWindowAO operator) {
 		CodeFragmentInfo slidingElementWindowCode = new CodeFragmentInfo();
 	
-		String operatorVariable = JavaTransformationInformation.getInstance()
+		String operatorVariable = JreCodegeneratorStatus.getInstance()
 				.getVariable(operator);
 
 		boolean isWindowSlideNull = true;
@@ -38,11 +38,11 @@ public class CSlidingElementWindowTIPORule extends AbstractCSlidingElementWindow
 		List<SDFAttribute> partitonByList = operator.getPartitionBy();
 		TimeUnit baseTimeUnit =operator.getBaseTimeUnit();
 		
-		CodeFragmentInfo sdfInputSchema  = CreateJavaDefaultCode.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
+		CodeFragmentInfo sdfInputSchema  = CreateJreDefaultCode.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
 		slidingElementWindowCode.addCode(sdfInputSchema.getCode());
 		
 		
-		CodeFragmentInfo sdfPartitonSchema  = CreateJavaDefaultCode.getCodeForSDFAttributeList(partitonByList, operatorVariable+"Partition");
+		CodeFragmentInfo sdfPartitonSchema  = CreateJreDefaultCode.getCodeForSDFAttributeList(partitonByList, operatorVariable+"Partition");
 		slidingElementWindowCode.addCode(sdfPartitonSchema.getCode());
 		
 		

@@ -13,11 +13,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.Receive
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCStreamAORule;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
 public class CStreamAORule extends AbstractCStreamAORule<StreamAO>{
@@ -33,7 +33,7 @@ public class CStreamAORule extends AbstractCStreamAORule<StreamAO>{
 		
 		StreamAO streamAO = (StreamAO)operator;
 		
-		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
 		ILogicalOperator logicalPlan = DataDictionaryProvider.getDataDictionary(tenant).getStreamForTransformation(streamAO.getStreamname(),  null);
@@ -49,7 +49,7 @@ public class CStreamAORule extends AbstractCStreamAORule<StreamAO>{
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
-		CodeFragmentInfo codeAccessFramwork = CreateJavaDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, accessAO.getOptionsMap(),operator, direction);
+		CodeFragmentInfo codeAccessFramwork = CreateJreDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, accessAO.getOptionsMap(),operator, direction);
 		receiverPO.addCodeFragmentInfo(codeAccessFramwork);
 		 
 		StringTemplate receiverPOTemplate = new StringTemplate("operator","receiverPO");

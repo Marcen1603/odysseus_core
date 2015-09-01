@@ -8,11 +8,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSenderAORule;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 
 public class CSenderAORule extends AbstractCSenderAORule<SenderAO>{
 	
@@ -25,7 +25,7 @@ public class CSenderAORule extends AbstractCSenderAORule<SenderAO>{
 	public CodeFragmentInfo getCode(SenderAO logicalOperator) {
 	CodeFragmentInfo senderPO = new CodeFragmentInfo();
 		
-		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(logicalOperator);
+		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(logicalOperator);
 		SenderAO dummySenderAO = (SenderAO) logicalOperator;
 
 
@@ -44,7 +44,7 @@ public class CSenderAORule extends AbstractCSenderAORule<SenderAO>{
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(null,transportHandler,dataHandler,wrapper,protocolHandler);
 		
-		CodeFragmentInfo codeAccessFramwork = CreateJavaDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, senderAO.getOptionsMap(),logicalOperator, direction);
+		CodeFragmentInfo codeAccessFramwork = CreateJreDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, senderAO.getOptionsMap(),logicalOperator, direction);
 		senderPO.addCodeFragmentInfo(codeAccessFramwork);
 		
 		

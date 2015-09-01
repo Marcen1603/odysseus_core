@@ -7,11 +7,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWi
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCSlidingAdvanceTimeWindowTIPORule;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
 
 public class CSlidingAdvanceTimeWindowTIPORule extends AbstractCSlidingAdvanceTimeWindowTIPORule<TimeWindowAO>{
@@ -27,7 +27,7 @@ public class CSlidingAdvanceTimeWindowTIPORule extends AbstractCSlidingAdvanceTi
 		
 		StringBuilder code = new StringBuilder();
 
-		String operatorVariable = JavaTransformationInformation.getInstance()
+		String operatorVariable = JreCodegeneratorStatus.getInstance()
 				.getVariable(operator);
 
 		AbstractWindowWithWidthAO windowAO = (AbstractWindowWithWidthAO) operator;
@@ -37,7 +37,7 @@ public class CSlidingAdvanceTimeWindowTIPORule extends AbstractCSlidingAdvanceTi
 		TimeValueItem windowAdvance = windowAO.getWindowAdvance();
 		SDFSchema inputSchema = windowAO.getInputSchema();
 		
-		CodeFragmentInfo sdfInputSchema  = CreateJavaDefaultCode.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
+		CodeFragmentInfo sdfInputSchema  = CreateJreDefaultCode.getCodeForSDFSchema(inputSchema, operatorVariable+"InputSchema");
 		code.append(sdfInputSchema.getCode());
 		 
 		StringTemplate slidingAdvanceTimeWindowTIPOTemplate = new StringTemplate("operator","slidingAdvanceTimeWindowTIPO");

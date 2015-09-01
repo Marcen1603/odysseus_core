@@ -9,7 +9,8 @@ import java.util.concurrent.BlockingQueue;
 import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.dalvik.filewriter.DalvikFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.ExecutorRegistry;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.StatusType;
@@ -17,7 +18,6 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -47,9 +47,9 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		updateProgressBar(10, "Start the transformation",StatusType.INFO);
 		
 		//clear transformation infos
-		JavaTransformationInformation.clear();
+		JreCodegeneratorStatus.clear();
 		
-		JavaTransformationInformation.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
+		JreCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
 	
 		bodyCode = new StringBuilder();
 		sdfSchemaCode  = new StringBuilder();
@@ -57,11 +57,11 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		walkTroughLogicalPlan(queryAnalyseInformation,parameter, transformationConfiguration);
 		
 
-		CodeFragmentInfo osgiBind = CreateJavaDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
+		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
-		CodeFragmentInfo startStreams = CreateJavaDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
+		CodeFragmentInfo startStreams = CreateJreDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
 		
 		importList.addAll(startStreams.getImports());
 		
@@ -102,13 +102,13 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 		IOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
-			if(!JavaTransformationInformation.getInstance().isOperatorCodeReady(operator)){
+			if(!JreCodegeneratorStatus.getInstance().isOperatorCodeReady(operator)){
 		
 				//add ready
-				JavaTransformationInformation.getInstance().addOperatorToCodeReady(operator);
+				JreCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);
 		
 				//generate the default code e.g. SDFSchema
-				CodeFragmentInfo initOp = CreateJavaDefaultCode.getCodeForInitOperator(operator);
+				CodeFragmentInfo initOp = CreateJreDefaultCode.getCodeForInitOperator(operator);
 				sdfSchemaCode.append(initOp.getCode());
 				
 				//String operatorCode = initOp.getCode();
@@ -130,7 +130,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 			}
 			
 			//generate subscription
-			CodeFragmentInfo  subscription = CreateJavaDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
+			CodeFragmentInfo  subscription = CreateJreDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
 			if(subscription!= null){
 				bodyCode.append(subscription.getCode());	
 				importList.addAll(subscription.getImports());

@@ -9,11 +9,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSource;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerParameter;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCCSVFileSourceRule;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.Utils;
 
 public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule<CSVFileSource>{
@@ -26,7 +26,7 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule<CSVFileSource
 	public CodeFragmentInfo getCode(CSVFileSource operator) {
 		CodeFragmentInfo csvFileSource = new CodeFragmentInfo();
 		
-		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		CSVFileSource csvFileSourceOP = (CSVFileSource) operator;
 	
@@ -41,7 +41,7 @@ public class CCSVFileSourceRule extends AbstractCCSVFileSourceRule<CSVFileSource
 		 
 		ProtocolHandlerParameter protocolHandlerParameter = new ProtocolHandlerParameter(filename,transportHandler,dataHandler,wrapper,protocolHandler);
 		
-		csvFileSource.addCodeFragmentInfo(CreateJavaDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
+		csvFileSource.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForAccessFramework(protocolHandlerParameter, csvFileSourceOP.getOptionsMap(),operator, direction));
 	
 		//important add a timestamp op to the source
 		Utils.createTimestampAO(operator, csvFileSourceOP.getDateFormat());

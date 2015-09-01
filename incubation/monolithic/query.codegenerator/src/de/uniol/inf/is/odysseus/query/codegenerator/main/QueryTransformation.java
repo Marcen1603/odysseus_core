@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.Opera
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.ITargetPlatform;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.TargetPlatformRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecutorServiceBinding;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.QueryTransformationHelper;
+import de.uniol.inf.is.odysseus.query.codegenerator.utils.SessionHelper;
 import de.uniol.inf.is.odysseus.transform.rules.TDeleteRenameAORule;
 
 public class QueryTransformation {
@@ -39,7 +39,7 @@ public class QueryTransformation {
 		
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
 	
-		ILogicalQuery queryTopAo = ExecutorServiceBinding.getExecutor().getLogicalQueryById(parameter.getQueryId(), QueryTransformationHelper.getActiveSession());
+		ILogicalQuery queryTopAo = ExecutorServiceBinding.getExecutor().getLogicalQueryById(parameter.getQueryId(), SessionHelper.getActiveSession());
 		
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(queryTopAo);
 		@SuppressWarnings("rawtypes")

@@ -5,9 +5,9 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.codegenerator.executor.AbstractExecutor;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 
 public class MultipleSourceExecutor extends AbstractExecutor{
 
@@ -24,7 +24,7 @@ public class MultipleSourceExecutor extends AbstractExecutor{
 		
 		for(ILogicalOperator sourceOp : operatorList){
 		
-			sourceOpList.add(JavaTransformationInformation.getInstance().getVariable(sourceOp));
+			sourceOpList.add(JreCodegeneratorStatus.getInstance().getVariable(sourceOp));
 		}
 		
 

@@ -18,11 +18,11 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.CAggregateItemModel;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractAggregateTIPORule;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.AggregateTIPO;
 
 
@@ -41,13 +41,13 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 		
 		AggregateAO aggregateAO = (AggregateAO) operator;
 		
-		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
 		
-		aggregateTIPO.addCodeFragmentInfo(CreateJavaDefaultCode.getCodeForSDFSchema(aggregateAO.getInputSchema(), operatorVariable+"Input"));
+		aggregateTIPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema(aggregateAO.getInputSchema(), operatorVariable+"Input"));
 		
-		aggregateTIPO.addCodeFragmentInfo(CreateJavaDefaultCode.getCodeForSDFSchema(aggregateAO.getOutputSchemaIntern(0), operatorVariable+"OutputSchemaIntern"));
+		aggregateTIPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema(aggregateAO.getOutputSchemaIntern(0), operatorVariable+"OutputSchemaIntern"));
 		
-		aggregateTIPO.addCodeFragmentInfo(CreateJavaDefaultCode.getCodeForSDFAttributeList(aggregateAO.getGroupingAttributes(), operatorVariable+"GroupingAttribute"));
+		aggregateTIPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFAttributeList(aggregateAO.getGroupingAttributes(), operatorVariable+"GroupingAttribute"));
 		
 
 		List<String> metaAttributeNames = aggregateAO.getInputSchema().getMetaAttributeNames();

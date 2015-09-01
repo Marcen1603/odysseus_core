@@ -25,10 +25,10 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.executor.ICExecutor;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.Activator;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.osgi.ExtractOSGIBundle;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.FileHelper;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.UnZip;
 
 
@@ -234,7 +234,7 @@ public class JavaFileWrite {
 		
 			for (Entry<ILogicalOperator, Map<String, String>> entry : operatorConfigurationList.entrySet())
 			{
-			    String operatorVariable = JavaTransformationInformation.getInstance().getVariable(entry.getKey());
+			    String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(entry.getKey());
 			  
 			    
 			    Gson gson = new Gson();

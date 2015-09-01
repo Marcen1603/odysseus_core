@@ -13,7 +13,8 @@ import de.uniol.inf.is.odysseus.query.codegenerator.compiler.TransformationParam
 import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.ExecutorRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.filewriter.JavaFileWrite;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.mapping.OdysseusIndex;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.StatusType;
@@ -22,15 +23,14 @@ import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecuteShellComand;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 
-public class JavaTargetPlatform extends AbstractTargetPlatform{
+public class JreTargetPlatform extends AbstractTargetPlatform{
 	
 	private Set<String> importList = new HashSet<String>();
 	private StringBuilder bodyCode;
 	private StringBuilder sdfSchemaCode;
 	
-	public JavaTargetPlatform(){
+	public JreTargetPlatform(){
 		super("Jre");
 	}
 	
@@ -48,9 +48,9 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		updateProgressBar(10, "Start the transformation", StatusType.INFO);
 		
 		//clear transformation infos
-		JavaTransformationInformation.clear();
+		JreCodegeneratorStatus.clear();
 		
-		JavaTransformationInformation.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
+		JreCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
 		
 		//Start Odysseus index
 		updateProgressBar(15, "Index the Odysseus codepath",StatusType.INFO);
@@ -64,11 +64,11 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		//generate code for osgi binds
 		updateProgressBar(70, "Generate OSGI emulation code",StatusType.INFO);
 		
-		CodeFragmentInfo osgiBind = CreateJavaDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
+		CodeFragmentInfo osgiBind = CreateJreDefaultCode.getCodeForOSGIBinds(parameter.getOdysseusPath(), queryAnalyseInformation);
 		importList.addAll(osgiBind.getImports());
 		
 		//generate start code
-		CodeFragmentInfo startStreams = CreateJavaDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
+		CodeFragmentInfo startStreams = CreateJreDefaultCode.getCodeForStartStreams(queryAnalyseInformation, parameter.getExecutor());
 		
 		importList.addAll(startStreams.getImports());
 	
@@ -118,15 +118,15 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 		IOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
-			if(!JavaTransformationInformation.getInstance().isOperatorCodeReady(operator)){
+			if(!JreCodegeneratorStatus.getInstance().isOperatorCodeReady(operator)){
 				
 				this.getProgressBarQueue().put(new ProgressBarUpdate(20, operator.getName()+" is a "+ operator.getClass().getSimpleName() +" --> "+opTrans.getName(),StatusType.INFO));
 				
 				//add ready
-				JavaTransformationInformation.getInstance().addOperatorToCodeReady(operator);
+				JreCodegeneratorStatus.getInstance().addOperatorToCodeReady(operator);
 		
 				//generate the default code e.g. SDFSchema
-				CodeFragmentInfo initOp = CreateJavaDefaultCode.getCodeForInitOperator(operator);
+				CodeFragmentInfo initOp = CreateJreDefaultCode.getCodeForInitOperator(operator);
 				sdfSchemaCode.append(initOp.getCode());
 				
 				//String operatorCode = initOp.getCode();
@@ -151,7 +151,7 @@ public class JavaTargetPlatform extends AbstractTargetPlatform{
 			}
 			
 			//generate subscription
-			CodeFragmentInfo  subscription = CreateJavaDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
+			CodeFragmentInfo  subscription = CreateJreDefaultCode.getCodeForSubscription(operator, queryAnalseInformation);
 			if(subscription!= null){
 				bodyCode.append(subscription.getCode());	
 				importList.addAll(subscription.getImports());

@@ -37,16 +37,15 @@ import de.uniol.inf.is.odysseus.query.codegenerator.executor.registry.ExecutorRe
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.model.ProtocolHandlerParameter;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
-public class CreateJavaDefaultCode {
+public class CreateJreDefaultCode {
 	
 	public static CodeFragmentInfo getCodeForInitOperator(ILogicalOperator operator){
 		CodeFragmentInfo sdfSchema = new CodeFragmentInfo();
 		
-		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
 		
 		if(operatorVariable != null && !operatorVariable.equals("")){
 			sdfSchema.addCodeFragmentInfo(getCodeForSDFSchema(operator.getOutputSchema(),operatorVariable));
@@ -58,7 +57,7 @@ public class CreateJavaDefaultCode {
 	public static CodeFragmentInfo getCodeForAccessFramework(ProtocolHandlerParameter protocolHandlerParameter, Map<String,String> optionMap, ILogicalOperator operator, ITransportDirection direction){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 	
-		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(operator);
+		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(operator);
 
 		//add import
 		codeFragmentInfo.addImport(ITransportDirection.class.getName());
@@ -77,7 +76,7 @@ public class CreateJavaDefaultCode {
 	public static CodeFragmentInfo getCodeForRelationalTimestampAttributeTimeIntervalMFactory(ILogicalOperator forOperator, TimestampAO timestampAO){
 		CodeFragmentInfo codeFragmentInfo = new CodeFragmentInfo();
 		
-		String operatorVariable = JavaTransformationInformation.getInstance().getVariable(forOperator);
+		String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(forOperator);
 		
 		SDFSchema schema = timestampAO.getInputSchema();
 		boolean clearEnd = timestampAO.isClearEnd();
@@ -125,7 +124,7 @@ public class CreateJavaDefaultCode {
 	public static CodeFragmentInfo getCodeForStartStreams(List<ILogicalOperator> sinkOPs, List<ILogicalOperator> sourceOPs,List<ILogicalOperator> iterableSources, String executor){
 		CodeFragmentInfo startFragment = new CodeFragmentInfo();
 		
-		String firstOP = JavaTransformationInformation.getInstance().getVariable(sourceOPs.get(0));
+		String firstOP = JreCodegeneratorStatus.getInstance().getVariable(sourceOPs.get(0));
 		
 		List<String> sinkOpList = new ArrayList<String>();
 
@@ -134,15 +133,15 @@ public class CreateJavaDefaultCode {
 		for(ILogicalOperator sinkOp : sinkOPs){
 		
 			
-			sinkOpList.add(JavaTransformationInformation.getInstance().getVariable(sinkOp));
+			sinkOpList.add(JreCodegeneratorStatus.getInstance().getVariable(sinkOp));
 		}
 		
 	
 		StringTemplate startCodeTemplate = new StringTemplate("java","startCode");
 		startCodeTemplate.getSt().add("firstOP", firstOP);
-		startCodeTemplate.getSt().add("operatorList",JavaTransformationInformation.getInstance().getOperatorList());
+		startCodeTemplate.getSt().add("operatorList",JreCodegeneratorStatus.getInstance().getOperatorList());
 		startCodeTemplate.getSt().add("sinkOpList",sinkOpList);
-		startCodeTemplate.getSt().add("sourceOP",JavaTransformationInformation.getInstance().getVariable(sourceOPs.get(0)));
+		startCodeTemplate.getSt().add("sourceOP",JreCodegeneratorStatus.getInstance().getVariable(sourceOPs.get(0)));
 		
 		startFragment.addCode(startCodeTemplate.getSt().render());
 		
@@ -196,7 +195,7 @@ public class CreateJavaDefaultCode {
 				   }
 		   }
 		   
-		 if(JavaTransformationInformation.getInstance().allOperatorExistForSubscriptions(neededOperator)){
+		 if(JreCodegeneratorStatus.getInstance().allOperatorExistForSubscriptions(neededOperator)){
 			 
 
 			StringTemplate startCodeTemplate = new StringTemplate("utils","subscribeToSource");

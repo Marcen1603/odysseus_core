@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
-import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJavaDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.CodeFragmentInfo;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.AbstractCRelationalMapPORule;
-import de.uniol.inf.is.odysseus.query.codegenerator.utils.JavaTransformationInformation;
 
 public class CRelationalMapPORule extends  AbstractCRelationalMapPORule<MapAO>{
 	
@@ -24,9 +24,9 @@ public class CRelationalMapPORule extends  AbstractCRelationalMapPORule<MapAO>{
 	
 			MapAO mapAO = (MapAO)logicalOperator;
 		
-			String operatorVariable = JavaTransformationInformation.getInstance().getVariable(logicalOperator);
+			String operatorVariable = JreCodegeneratorStatus.getInstance().getVariable(logicalOperator);
 			
-			mapPO.addCodeFragmentInfo(CreateJavaDefaultCode.getCodeForSDFSchema( mapAO.getInputSchema(), operatorVariable+"Input"));
+			mapPO.addCodeFragmentInfo(CreateJreDefaultCode.getCodeForSDFSchema( mapAO.getInputSchema(), operatorVariable+"Input"));
 			 
 			boolean isAllowNullValue = mapAO.isAllowNullValue();
 			boolean isEvaluateOnPunctuation =	mapAO.isEvaluateOnPunctuation();

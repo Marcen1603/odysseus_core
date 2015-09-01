@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.utils;
+package de.uniol.inf.is.odysseus.query.codegenerator.jre.utils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
-public class JavaTransformationInformation{
+public class JreCodegeneratorStatus{
 
-	private static JavaTransformationInformation instance = null;
+	private static JreCodegeneratorStatus instance = null;
 
 	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
 	
@@ -16,9 +16,9 @@ public class JavaTransformationInformation{
 	
 	private int uniqueId = 0;
 	
-	public static JavaTransformationInformation getInstance() {
+	public static JreCodegeneratorStatus getInstance() {
 		if (instance == null) {
-			instance = new JavaTransformationInformation();
+			instance = new JreCodegeneratorStatus();
 		}
 		return instance;
 	}
