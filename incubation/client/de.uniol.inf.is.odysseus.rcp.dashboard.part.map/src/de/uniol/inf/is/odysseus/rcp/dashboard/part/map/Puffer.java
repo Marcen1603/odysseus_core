@@ -22,12 +22,12 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 
-public class LayerUpdater extends ArrayList<ILayer> implements  Serializable, PropertyChangeListener {
+public class Puffer extends ArrayList<ILayer> implements  Serializable, PropertyChangeListener {
 
 	private static final long serialVersionUID = 1092858542289960843L;
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(LayerUpdater.class);
+			.getLogger(Puffer.class);
 
 	private final IMapDashboardAdapter mapDashboardPart;
 	private int maxNumerOfElements;
@@ -40,7 +40,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements  Serializable, Pr
 
 	private List<Tuple<? extends ITimeInterval>> elementList;
 
-	public LayerUpdater(IMapDashboardAdapter mapDashboardPart) {
+	public Puffer(IMapDashboardAdapter mapDashboardPart) {
 		super();
 		this.mapDashboardPart = mapDashboardPart;
 

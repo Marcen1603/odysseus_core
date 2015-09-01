@@ -83,7 +83,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	
 	public HeatmapLayerConfiguration(String name) {
 		super(name);
-		super.setSrid(3857); //???
+		super.setSrid(4326); //???
 		setGeometricAttributePosition(0); //Here should be a point
 		setLatAttribute(0);
 		setLngAttribute(0);

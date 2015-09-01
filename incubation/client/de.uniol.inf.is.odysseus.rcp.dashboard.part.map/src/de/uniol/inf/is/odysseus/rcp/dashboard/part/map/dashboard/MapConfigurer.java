@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.EditDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.AddDialog;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties.MapPropertiesDialog;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties.HeatmapPropertiesDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
@@ -335,7 +335,7 @@ public class MapConfigurer extends AbstractDashboardPartConfigurer<MapDashboardP
 					int index = layerTable.getSelectionIndex();
 
 					if (group.get(index) instanceof Heatmap) {
-						MapPropertiesDialog propertiesDialog = new MapPropertiesDialog(parent.getShell(),
+						HeatmapPropertiesDialog propertiesDialog = new HeatmapPropertiesDialog(parent.getShell(),
 								mapDashboardPart, (Heatmap) group.get(index), operator);
 						propertiesDialog.create();
 						propertiesDialog.open();

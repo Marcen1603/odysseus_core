@@ -35,7 +35,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
@@ -172,7 +172,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 	}
 
 	@Override
-	public void setLayerUpdater(LayerUpdater layerUpdater) {
+	public void setLayerUpdater(Puffer puffer) {
 	}
 	
 	@Override

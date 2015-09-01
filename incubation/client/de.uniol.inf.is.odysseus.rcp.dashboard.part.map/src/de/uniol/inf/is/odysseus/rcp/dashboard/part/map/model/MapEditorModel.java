@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.OwnProperties;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dashboard.MapDashboardPart;
@@ -43,13 +43,12 @@ public class MapEditorModel extends ModelObject {
 
 	private ScreenManager screenManager = null;
 	private OwnProperties ownProperties;
-	private LayerUpdater layerUpdater;
+	private Puffer puffer;
 
 	public void init(MapDashboardPart mapDashboardPart) {
 		
 		for (ILayer layer : layers) {
 			if (layer != null) {
-				System.out.println("Init Layer:"+ layer.getComplexName());
 				layer.init(screenManager, null, null);
 			}
 		}
@@ -122,6 +121,9 @@ public class MapEditorModel extends ModelObject {
 		layerSetting += configuration.getName() + ";";
 		layerSetting += configuration.getSrid() + ";";
 		layerSetting += configuration.getGeometricAttributePosition() + ";";
+		layerSetting += configuration.getLatAttribute() + ";";
+		layerSetting += configuration.getLngAttribute() + ";";
+		layerSetting += configuration.usePoint() + ";";
 		layerSetting += configuration.getValueAttributePosition() + ";";
 
 		// Just get the RGB values. Usually getMinColor would return e.g. "Color
@@ -185,7 +187,6 @@ public class MapEditorModel extends ModelObject {
 				int endIndex = configuration.indexOf(";");
 				String layerConfigurationType = configuration.substring(0, endIndex);
 				String configurationSettings = configuration.substring(endIndex + 1);
-				System.out.println("Type: "+ layerConfigurationType);
 				
 				if (layerConfigurationType.equals("BasicLayer")) {
 					loadBasicConfiguration(configurationSettings);
@@ -278,6 +279,9 @@ public class MapEditorModel extends ModelObject {
 
 		hlc.setSrid(Integer.valueOf(getSubString(configuration, ";")));
 		hlc.setGeometricAttributePosition(Integer.valueOf(getSubString(configuration, ";")));
+		hlc.setLatAttribute(Integer.valueOf(getSubString(configuration, ";")));
+		hlc.setLngAttribute(Integer.valueOf(getSubString(configuration, ";")));
+		hlc.setUsePoint(Boolean.valueOf(getSubString(configuration, ";")));
 		hlc.setValueAttributePosition(Integer.valueOf(getSubString(configuration, ";")));
 
 		r = Integer.valueOf(getSubString(configuration, ","));
@@ -313,7 +317,7 @@ public class MapEditorModel extends ModelObject {
 		
 		Heatmap heatmap = new Heatmap(hlc);
 		heatmap.setActive(Boolean.valueOf(getSubString(configuration, ";")));
-		heatmap.setLayerUpdater(layerUpdater);
+		heatmap.setLayerUpdater(puffer);
 		layers.add(heatmap);
 	}
 
@@ -330,7 +334,6 @@ public class MapEditorModel extends ModelObject {
 		startIndex = endIndex + 1;
 		endIndex = string.indexOf(separator, startIndex);
 		String subString = string.substring(startIndex, endIndex);
-		System.out.println("SubString:" + subString);
 		return subString;
 	}
 
@@ -389,7 +392,7 @@ public class MapEditorModel extends ModelObject {
 
 		// We don't want to set it active manually, too much clicks ...
 		layer.setActive(true);
-		layer.setLayerUpdater(layerUpdater);
+		layer.setLayerUpdater(puffer);
 		return layer;
 	}
 
@@ -521,16 +524,16 @@ public class MapEditorModel extends ModelObject {
 	 * 
 	 * @param mapDashboardPart
 	 */
-	public LayerUpdater addConnection(MapDashboardPart mapDashboardPart) {
+	public Puffer addConnection(MapDashboardPart mapDashboardPart) {
 		this.screenManager = mapDashboardPart.getScreenManager();
-		layerUpdater = new LayerUpdater(mapDashboardPart);
+		puffer = new Puffer(mapDashboardPart);
 		if (screenManager != null) {
 			// If this Model is not opened by a file
-			screenManager.addPropertyChangeListener(layerUpdater);
-			screenManager.addConnection(layerUpdater);
+			screenManager.addPropertyChangeListener(puffer);
+			screenManager.addConnection(puffer);
 		}
 		firePropertyChange(MAP, null, this);
-		return layerUpdater;
+		return puffer;
 	}
 
 	public String[] getLayerNameList() {

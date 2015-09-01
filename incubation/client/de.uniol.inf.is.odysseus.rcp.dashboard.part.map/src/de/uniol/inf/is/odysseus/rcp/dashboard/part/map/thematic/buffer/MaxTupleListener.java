@@ -4,14 +4,14 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Spinner;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
 
 public class MaxTupleListener extends SelectionAdapter{
 	
-	LayerUpdater connection;
+	Puffer connection;
 	Spinner spinner;
 	
-	public MaxTupleListener(LayerUpdater connection, Spinner spinner) {
+	public MaxTupleListener(Puffer connection, Spinner spinner) {
 		this.connection = connection;
 		this.spinner = spinner;
 	}

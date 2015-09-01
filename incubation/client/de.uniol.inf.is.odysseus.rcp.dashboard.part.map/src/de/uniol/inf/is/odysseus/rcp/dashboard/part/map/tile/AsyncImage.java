@@ -93,12 +93,6 @@ public final class AsyncImage implements Runnable {
 	public Image getImage(Display display) {
 		if (image == null) {
 			if (imageData.get() != null) {
-				// This should done for raster image with transparency
-				// for(int x = 0; x < imageData.get().width; x++){
-				// for(int y = 0; y < imageData.get().height; y++){
-				// imageData.get().setAlpha(x,y,100);
-				// }
-				// }
 				 this.tileServer.getCache().remove(tileServer, this.x, this.y,
 				 this.z);
 				image = new Image(display, imageData.get());

@@ -41,13 +41,9 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.style.Style;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.thematic.heatmap.Heatmap;
 
 /**
- * 
- * Dialog to edit the properties of a map
- * 
- * @author Stefan Bothe
- * 
+ * Dialog to edit the properties of a thematic map
  */
-public class MapPropertiesDialog extends TitleAreaDialog {
+public class HeatmapPropertiesDialog extends TitleAreaDialog {
 
 
 
@@ -55,7 +51,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 	
 	private Heatmap heatmap;
 	private IPhysicalOperator operator;
-	private LayerConfiguration layerConfiguration = null;
+	private HeatmapLayerConfiguration layerConfiguration = null;
 
 	/**
 	 * Create the dialog.
@@ -63,7 +59,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 	 * @param parentShell
 	 * @param mapDashboardPart
 	 */
-	public MapPropertiesDialog(Shell parentShell, MapDashboardPart mapDashboardPart, Heatmap heatmap,
+	public HeatmapPropertiesDialog(Shell parentShell, MapDashboardPart mapDashboardPart, Heatmap heatmap,
 			IPhysicalOperator operator) {
 		super(parentShell);
 		this.setShellStyle(SWT.MAX | SWT.RESIZE);
@@ -130,31 +126,93 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		CCombo geoAttrInput = new CCombo(settingsContainer, SWT.BORDER);
 		geoAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
+		
+		Label latLabel = new Label(settingsContainer, SWT.NONE);
+		latLabel.setText("Latitude Attribute:");
+		latLabel.setLayoutData(DialogUtils.getLabelDataLayout());
 
-		// Fill this combobox
-		geoAttrInput.removeAll();
-		SDFSchema schema = operator.getOutputSchema();
+		final CCombo latSelect = new CCombo(settingsContainer, SWT.BORDER);
+		latSelect.setLayoutData(DialogUtils.getTextDataLayout());
+		latSelect.setEnabled(false);
+		
+		Label lngLabel = new Label(settingsContainer, SWT.NONE);
+		lngLabel.setText("Longitude Attribute:");
+		lngLabel.setLayoutData(DialogUtils.getLabelDataLayout());
 
-		for (int i = 0; i < schema.size(); i++) {
-			geoAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
-		}
-		geoAttrInput.select(newConfig.getGeometricAttributePosition());
-
+		final CCombo lngSelect = new CCombo(settingsContainer, SWT.BORDER);
+		lngSelect.setLayoutData(DialogUtils.getTextDataLayout());
+		lngSelect.setEnabled(false);
+		
+		Label geoTypeButtonLabel = new Label (settingsContainer, SWT.NONE);
+		geoTypeButtonLabel.setText("Use Point?");
+		geoTypeButtonLabel.setLayoutData(DialogUtils.getTextDataLayout());
+		
+		final Button geoSelectTypeButton = new Button(settingsContainer, SWT.CHECK);
+		geoSelectTypeButton.setLayoutData(DialogUtils.getTextDataLayout());
+		geoSelectTypeButton.setSelection(true);
+		geoSelectTypeButton.addSelectionListener(new SelectionAdapter() {
+			
+			 @Override
+			    public void widgetSelected(SelectionEvent e)
+			    {
+				 	if(geoSelectTypeButton.getSelection()){
+				 		geoAttrInput.setEnabled(true);
+				 		latSelect.setEnabled(false);
+				 		lngSelect.setEnabled(false);
+				 		layerConfiguration.setUsePoint(true);
+				 	}else{
+				 		geoAttrInput.setEnabled(false);
+				 		latSelect.setEnabled(true);
+				 		lngSelect.setEnabled(true);
+				 		layerConfiguration.setUsePoint(false);
+				 	}
+			    }
+		});
+		
 		// Position of value-Attribute
 		Label valueAttrLabel = new Label(settingsContainer, SWT.NONE);
 		valueAttrLabel.setText("Value-Attribute: ");
 
 		CCombo valueAttrInput = new CCombo(settingsContainer, SWT.NONE);
 		valueAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
+		
+		// Fill the comboboxes
+		geoAttrInput.removeAll();
+		latSelect.removeAll();
+		lngSelect.removeAll();
+		SDFSchema schema = operator.getOutputSchema();
 
 		for (int i = 0; i < schema.size(); i++) {
+			geoAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
+			latSelect.add(schema.getAttribute(i).getAttributeName(), i);
+			lngSelect.add(schema.getAttribute(i).getAttributeName(), i);
 			valueAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
 		}
-
+		
+		//Set the right Attribute
+		geoAttrInput.select(newConfig.getGeometricAttributePosition());
+		latSelect.select(newConfig.getLatAttribute());
+		lngSelect.select(newConfig.getLngAttribute());
+		geoSelectTypeButton.setSelection(newConfig.usePoint());
 		valueAttrInput.select(newConfig.getValueAttributePosition());
 
-		geoAttrInput.addSelectionListener(new AttributeListener(newConfig, geoAttrInput, valueAttrInput, this));
-		valueAttrInput.addSelectionListener(new AttributeListener(newConfig, geoAttrInput, valueAttrInput, this));
+		//Add the SelectionListeners
+		geoAttrInput.addSelectionListener(new AttributeListener(newConfig, geoAttrInput, latSelect, lngSelect, valueAttrInput, this));
+		latSelect.addSelectionListener(new AttributeListener(newConfig, geoAttrInput, latSelect, lngSelect, valueAttrInput, this));
+		lngSelect.addSelectionListener(new AttributeListener(newConfig, geoAttrInput, latSelect, lngSelect, valueAttrInput, this));;
+		valueAttrInput.addSelectionListener(new AttributeListener(newConfig, geoAttrInput, latSelect, lngSelect, valueAttrInput, this));
+		
+		//Check if point is used or not
+		if(newConfig.usePoint()){
+			latSelect.setEnabled(false);
+			lngSelect.setEnabled(false);
+			geoAttrInput.setEnabled(true);
+		}else{
+			latSelect.setEnabled(true);
+			lngSelect.setEnabled(true);
+			geoAttrInput.setEnabled(false);
+		}
+		
 
 		// Colors
 		Label colorMinLabel = new Label(settingsContainer, SWT.NONE);
@@ -192,7 +250,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				Color color = new Color(Display.getDefault(), newColor.red, newColor.green, newColor.blue);
 				correspondingLabel.setBackground(color);
 				heatmapLayerConfiguration.setMinColor(color);
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -231,7 +289,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				Color color = new Color(Display.getDefault(), newColor.red, newColor.green, newColor.blue);
 				correspondingLabel.setBackground(color);
 				heatmapLayerConfiguration.setMaxColor(color);
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -246,7 +304,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setAlpha(spinner.getSelection());
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -261,7 +319,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setNumTilesWidth(spinner.getSelection());
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -275,7 +333,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setNumTilesHeight(spinner.getSelection());
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -291,7 +349,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
 				heatmapLayerConfiguration.setInterpolation(correspondingButton.getSelection());
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -307,7 +365,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
 				heatmapLayerConfiguration.setHideWithoutInformation((correspondingButton.getSelection()));
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -332,7 +390,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLatSW(value);
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -349,7 +407,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLngSW(value);
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -367,7 +425,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLatNE(value);
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -384,7 +442,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				double value = spinner.getSelection() / (Math.pow(10, spinner.getDigits()));
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLngNE(value);
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
 
@@ -398,7 +456,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				manPosNELngInput.setEnabled(!correspondingButton.getSelection());
 				manPosSWLatInput.setEnabled(!correspondingButton.getSelection());
 				manPosSWLngInput.setEnabled(!correspondingButton.getSelection());
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				heatmapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -578,7 +636,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		return layerConfiguration;
 	}
 
-	public void setLayerConfiguration(LayerConfiguration layerConfiguration) {
+	public void setLayerConfiguration(HeatmapLayerConfiguration layerConfiguration) {
 		this.layerConfiguration = layerConfiguration;
 	}
 

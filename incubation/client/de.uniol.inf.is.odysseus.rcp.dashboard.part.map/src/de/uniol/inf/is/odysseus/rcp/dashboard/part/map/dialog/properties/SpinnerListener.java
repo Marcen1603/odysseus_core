@@ -16,12 +16,12 @@ public abstract class SpinnerListener extends SelectionAdapter {
 	
 	LayerConfiguration layerConfig;
 	Spinner spinner;
-	 MapPropertiesDialog mapPropertiesDialog;
+	 HeatmapPropertiesDialog heatmapPropertiesDialog;
 	
-	public SpinnerListener(LayerConfiguration layerConfiguration, Spinner spinner, MapPropertiesDialog mapPropertiesDialog) {
+	public SpinnerListener(LayerConfiguration layerConfiguration, Spinner spinner, HeatmapPropertiesDialog heatmapPropertiesDialog) {
 		this.layerConfig = layerConfiguration;
 		this.spinner = spinner;
-		this.mapPropertiesDialog = mapPropertiesDialog;
+		this.heatmapPropertiesDialog = heatmapPropertiesDialog;
 	}
 	
 	@Override

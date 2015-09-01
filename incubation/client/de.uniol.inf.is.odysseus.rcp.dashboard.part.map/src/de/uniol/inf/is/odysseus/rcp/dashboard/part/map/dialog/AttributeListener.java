@@ -4,7 +4,7 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties.MapPropertiesDialog;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.dialog.properties.HeatmapPropertiesDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 
@@ -12,15 +12,19 @@ public class AttributeListener extends SelectionAdapter {
 
 	LayerConfiguration config;
 	CCombo geoAttributeCombo;
+	CCombo latAttributeCombo;
+	CCombo lngAttributeCombo;
 	CCombo valueAttributeCombo;
-	MapPropertiesDialog mapPropertiesDialog;
+	HeatmapPropertiesDialog heatmapPropertiesDialog;
 
-	public AttributeListener(LayerConfiguration config, CCombo geoAttributeCombo, CCombo valueAttributeCombo,
-			MapPropertiesDialog mapPropertiesDialog) {
+	public AttributeListener(LayerConfiguration config, CCombo geoAttributeCombo, CCombo latAttributeCombo,
+			CCombo lngAttributeCombo, CCombo valueAttributeCombo, HeatmapPropertiesDialog heatmapPropertiesDialog) {
 		this.config = config;
 		this.geoAttributeCombo = geoAttributeCombo;
+		this.latAttributeCombo = latAttributeCombo;
+		this.lngAttributeCombo = lngAttributeCombo;
 		this.valueAttributeCombo = valueAttributeCombo;
-		this.mapPropertiesDialog = mapPropertiesDialog;
+		this.heatmapPropertiesDialog = heatmapPropertiesDialog;
 	}
 
 	@Override
@@ -28,7 +32,7 @@ public class AttributeListener extends SelectionAdapter {
 		if (config instanceof HeatmapLayerConfiguration) {
 			((HeatmapLayerConfiguration) config).setGeometricAttributePosition(geoAttributeCombo.getSelectionIndex());
 			((HeatmapLayerConfiguration) config).setValueAttributePosition(valueAttributeCombo.getSelectionIndex());
-			mapPropertiesDialog.setLayerConfiguration(config);
+			heatmapPropertiesDialog.setLayerConfiguration((HeatmapLayerConfiguration) config);
 		}
 	}
 }

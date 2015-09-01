@@ -26,6 +26,9 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.RasterLayerConfiguration;
 
+/**
+ * Edit dialog for Basic and RasterLayers 
+ */
 public class EditDialog extends TitleAreaDialog {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TitleAreaDialog.class);

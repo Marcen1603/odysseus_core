@@ -9,12 +9,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.model.layer.LayerConfigur
 public abstract class ButtonListener extends SelectionAdapter{
 
 	LayerConfiguration layerConfiguration;
-	MapPropertiesDialog mapPropertiesDialog;
+	HeatmapPropertiesDialog heatmapPropertiesDialog;
 	Button correspondingButton;
 	
-	public ButtonListener(LayerConfiguration layerConfiguration, MapPropertiesDialog mapPropertiesDialog, Button correspondingButton) {
+	public ButtonListener(LayerConfiguration layerConfiguration, HeatmapPropertiesDialog heatmapPropertiesDialog, Button correspondingButton) {
 		this.layerConfiguration = layerConfiguration;
-		this.mapPropertiesDialog = mapPropertiesDialog;
+		this.heatmapPropertiesDialog = heatmapPropertiesDialog;
 		this.correspondingButton = correspondingButton;
 	}
 	

@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.IMapDashboardAdapter;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.layer.BasicLayer;
@@ -39,7 +39,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 	protected ScreenTransformation transformation;
 	protected ScreenManager screenManager;
 	private MapEditorModel mapModel;
-	private LayerUpdater layerUpdater;
+	private Puffer puffer;
 	private IPhysicalOperator operator;
 	// private Thread updateThread;
 
@@ -67,7 +67,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 			basic.setActive(true);
 			mapModel.getLayers().addFirst(basic);
 		}
-		layerUpdater = mapModel.addConnection(this);
+		puffer = mapModel.addConnection(this);
 		mapModel.init(this);
 
 		// updateThread = new Thread(new Runnable() {
@@ -145,18 +145,18 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 			screenManager.setMaxIntervalStart(timestamp);
 		}
 
-		layerUpdater.getPuffer().insert(tuple);
+		puffer.getPuffer().insert(tuple);
 		if (screenManager.getInterval().getEnd().isInfinite()
 				|| (screenManager.getInterval().getStart().beforeOrEquals(timestamp)
 						&& this.screenManager.getInterval().getEnd().afterOrEquals(timestamp))) {
 			// Add tuple to current list if the new timestamp is in the interval
 
-			layerUpdater.addTuple(tuple);
+			puffer.addTuple(tuple);
 			// System.out.println("Tupel:" + tuple);
 		}
 
 		// Prevent an overflow in the puffer
-		layerUpdater.checkForPufferSize();
+		puffer.checkForPufferSize();
 
 		// TODO SOLLTE DAS HIER SEIN?
 		// Should we redraw here or just if we added the tupel to the current
@@ -179,8 +179,8 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 				mapModel.setSrid(srid);
 			}
 
-			layerUpdater = mapModel.addConnection(this);
-			layerUpdater.setMaxPufferSize(maxData);
+			puffer = mapModel.addConnection(this);
+			puffer.setMaxPufferSize(maxData);
 			initiated = true;
 		}
 
@@ -281,7 +281,7 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 
 	public void setMaxData(int maxData) {
 		this.maxData = maxData;
-		layerUpdater.setMaxPufferSize(maxData);
+		puffer.setMaxPufferSize(maxData);
 	}
 
 	public int getUpdateInterval() {
@@ -290,11 +290,11 @@ public class MapDashboardPart extends AbstractDashboardPart implements IMapDashb
 
 	public void setUpdateInterval(int updateInterval) {
 		this.updateInterval = updateInterval;
-		layerUpdater.setTimeRange(updateInterval);
+		puffer.setTimeRange(updateInterval);
 	}
 
-	public LayerUpdater getLayerUpdater() {
-		return this.layerUpdater;
+	public Puffer getLayerUpdater() {
+		return this.puffer;
 	}
 
 	public IPhysicalOperator getOperator() {

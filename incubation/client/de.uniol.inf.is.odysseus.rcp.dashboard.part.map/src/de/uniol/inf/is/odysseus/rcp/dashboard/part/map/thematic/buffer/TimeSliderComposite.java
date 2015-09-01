@@ -20,7 +20,7 @@ import org.mihalis.opal.rangeSlider.RangeSlider;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.LayerUpdater;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.Puffer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.map.ScreenManager;
 
 /**
@@ -106,7 +106,7 @@ public class TimeSliderComposite extends Composite implements PropertyChangeList
 					// It's set to active -> set the values of the slider
 
 					// Update the range (e.g. if a connection was deleted)
-					LayerUpdater connection = manager.getConnection();
+					Puffer connection = manager.getConnection();
 					if (connection != null) {
 						boolean first = true;
 						boolean changedSomething = connection.updateIntervallInScreenManager(first);
@@ -218,7 +218,7 @@ public class TimeSliderComposite extends Composite implements PropertyChangeList
 				timeHead.setText("Time to save");
 
 				
-				LayerUpdater connection = manager.getConnection();
+				Puffer connection = manager.getConnection();
 
 				Label number = new Label(s, SWT.NONE);
 				number.setText(Long.toString(connection.getPufferSize()));
