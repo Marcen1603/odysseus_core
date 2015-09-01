@@ -172,7 +172,7 @@ public class SystemLog implements ISystemLog {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, append))) {
 			writer.append(entry.toString());
 			writer.newLine();
-			writer.close();
+			writer.flush();
 			cLog.debug("Wrote system log entry '{}'", entry);
 		} catch (IOException e) {
 			cLog.error("Could not write into system log file!", e);
