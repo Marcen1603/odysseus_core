@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParallelIntraOperatorSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.value.ParallelIntraOperatorSettingValue;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.value.ParallelIntraOperatorSettingValueElement;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -85,10 +86,12 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 				.parse(parameter);
 		List<String> operatorIds = parseOperatorIds(result
 				.get(IntraOperatorParallelizationKeywordParameter.OPERATORID));
-		int individualDegree = parseDegree(result
-				.get(IntraOperatorParallelizationKeywordParameter.DEGREE_OF_PARALLELIZATION));
-		int individualBuffersize = parseBuffersize(result
-				.get(IntraOperatorParallelizationKeywordParameter.BUFFERSIZE));
+		int individualDegree = parseDegree(
+				result.get(IntraOperatorParallelizationKeywordParameter.DEGREE_OF_PARALLELIZATION),
+				intraOperatorSetting.getValue());
+		int individualBuffersize = parseBuffersize(
+				result.get(IntraOperatorParallelizationKeywordParameter.BUFFERSIZE),
+				intraOperatorSetting.getValue());
 
 		// create individual settings for each operator id
 		for (String operatorId : operatorIds) {
@@ -111,12 +114,14 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 	 * @return
 	 * @throws OdysseusScriptException
 	 */
-	private int parseBuffersize(String string) throws OdysseusScriptException {
-		if (string == null || string.equalsIgnoreCase("AUTO")) {
+	private int parseBuffersize(String bufferString,
+			ParallelIntraOperatorSettingValue parallelIntraOperatorSettingValue)
+			throws OdysseusScriptException {
+		if (bufferString == null) {
 			return IntraOperatorParallelizationConstants.DEFAULT_BUFFERSIZE;
 		} else {
 			try {
-				int buffersize = Integer.parseInt(string);
+				int buffersize = Integer.parseInt(bufferString);
 				if (buffersize > 0) {
 					return buffersize;
 				} else {
@@ -124,8 +129,18 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 							"Value for buffersize is not valid. Value need to be greater 0.");
 				}
 			} catch (NumberFormatException e) {
+				if (bufferString
+						.equalsIgnoreCase(IntraOperatorParallelizationConstants.AUTO)) {
+					return IntraOperatorParallelizationConstants.DEFAULT_BUFFERSIZE;
+				} else if (bufferString
+						.equalsIgnoreCase(IntraOperatorParallelizationConstants.GLOBAL)) {
+					return parallelIntraOperatorSettingValue
+							.getGlobalBuffersize();
+				}
 				throw new OdysseusScriptException(
-						"Value for buffersize is not valid. Degree is no integer.");
+						"Value '"
+								+ bufferString
+								+ "' for buffersize is not valid. Use positive integer values or constants 'AUTO' or 'GLOBAL'");
 			}
 		}
 	}
@@ -135,12 +150,15 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 	 * allowed
 	 * 
 	 * @param degreeOfParallelizationString
+	 * @param parallelIntraOperatorSettingValue
 	 * @return
 	 * @throws OdysseusScriptException
 	 */
-	private int parseDegree(String degreeOfParallelizationString)
+	private int parseDegree(String degreeOfParallelizationString,
+			ParallelIntraOperatorSettingValue parallelIntraOperatorSettingValue)
 			throws OdysseusScriptException {
 
+		try {
 			int degreeOfParallelization = Integer
 					.parseInt(degreeOfParallelizationString);
 			if (degreeOfParallelization < 1) {
@@ -152,6 +170,22 @@ public class IntraOperatorParallelizationPreParserKeyword extends
 				LOG.warn("Degree of parallelization is greater than available cores");
 			}
 			return degreeOfParallelization;
+		} catch (NumberFormatException e) {
+			// degree of parallelization is no integer, so check if it is
+			// constant auto or global
+			if (degreeOfParallelizationString
+					.equalsIgnoreCase(IntraOperatorParallelizationConstants.AUTO)) {
+				return PerformanceDetectionHelper.getNumberOfCores();
+			} else if (degreeOfParallelizationString
+					.equalsIgnoreCase(IntraOperatorParallelizationConstants.GLOBAL)) {
+				return parallelIntraOperatorSettingValue.getGlobalDegree();
+			} else {
+				throw new OdysseusScriptException(
+						"Value '"
+								+ degreeOfParallelizationString
+								+ "' for degree is invalid. Use positive integer values or constants 'AUTO' or 'GLOBAL'");
+			}
+		}
 	}
 
 	/**
