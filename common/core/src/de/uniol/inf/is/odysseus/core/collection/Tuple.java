@@ -754,7 +754,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 		if (getMetadata() != null) {
 			retBuff.append(" | META | " + getMetadata());
-			if (getAdditionalContent().size() > 0) {
+			if (getAdditionalContent() != null && getAdditionalContent().size() > 0) {
 				retBuff.append("|ADD|" + getAdditionalContent());
 			}
 		}
