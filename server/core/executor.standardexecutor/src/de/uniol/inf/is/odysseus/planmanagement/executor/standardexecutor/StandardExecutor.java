@@ -470,6 +470,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 					}
 				}
 			}
+			this.fireExecutorCommandEvent(cmd);
 		}
 
 		// Only go on if there are queries left
