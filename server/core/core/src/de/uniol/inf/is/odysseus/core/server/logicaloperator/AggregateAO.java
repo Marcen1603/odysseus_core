@@ -48,9 +48,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 
 @LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on attributes e.g Min, Max, Count, Avg, Sum and grouping.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Aggregate+%28and+Group%29+operator", category = { LogicalOperatorCategory.BASE })
 public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
-
-	private static final int MAXIMUM_DEGREE = 128;
-
 	private static final long serialVersionUID = 2539966167342852544L;
 
 	final private Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations;
@@ -316,8 +313,7 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 		this.fastGrouping = fastGrouping;
 	}
 
-	@Parameter(type = IntegerParameter.class, optional = true, doc = "Use multiple threads for execution (only possible if grouping attributes are set) Maximum value is: "
-			+ MAXIMUM_DEGREE)
+	@Parameter(type = IntegerParameter.class, optional = true, doc = "Use multiple threads for execution (only possible if grouping attributes are set)")
 	public void setNumberOfThreads(int numberOfThreads) {
 		this.numberOfThreads = numberOfThreads;
 	}
@@ -348,9 +344,6 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 	public boolean isValid() {
 		if (numberOfThreads > 1 && groupingAttributes.isEmpty()) {
 			addError("Mutlithreading is only possible if at least one grouping attribute is set");
-		}
-		if (numberOfThreads > MAXIMUM_DEGREE) {
-			addError("Maximum value for multithreading is " + MAXIMUM_DEGREE);
 		}
 		if (maxBufferSize < 1){
 			addError("Minimum value for buffersize is 1");

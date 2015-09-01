@@ -29,17 +29,9 @@ import java.util.regex.Pattern;
  */
 public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParameter> {
 
-	private static final String PATTERN_PAIRS = "((([a-zA-Z0-9_]+))[,])"
+	private static final String DEFAULT_PATTERN_PARAMETER_VALUE = "((([a-zA-Z0-9_]+))[,])"
 			+ "*(([a-zA-Z0-9_]+))";
-	private static final String PATTERN_WITH_ATTRIBUTESNAMES = "([(][a-zA-Z0-9_]+[=]"
-			+ PATTERN_PAIRS
-			+ "[)])([\\s][(][a-zA-Z0-9_]+[=]"
-			+ PATTERN_PAIRS
-			+ "[)])*";
-	private static final String PATTERN_WITHOUT_ATTRIBUTENAMES = "("
-			+ PATTERN_PAIRS + ")([\\s]" + PATTERN_PAIRS + ")*";
-	private static final String PATTERN_KEYWORD = PATTERN_WITH_ATTRIBUTESNAMES
-			+ "|" + PATTERN_WITHOUT_ATTRIBUTENAMES;
+	
 	private static final String BLANK = " ";
 
 	private Map<Integer, IKeywordParameter> positionMap;
@@ -72,11 +64,11 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 	 * Creates a new instance of this helper with custom regex
 	 * 
 	 * @param parameterClazz - the type of the parameters
-	 * @param regexString - a custom regular expression
+	 * @param ParameterValueRegexString - a custom regular expression
 	 * @return new instance of helper
 	 */
 	public static <T extends Enum<?> & IKeywordParameter> PreParserKeywordParameterHelper<T> newInstance(
-			Class<T> parameterClazz, String regexString) {
+			Class<T> parameterClazz, String parameterValueRegexString) {
 		Map<Integer, IKeywordParameter> positionMap = new HashMap<Integer, IKeywordParameter>();
 		Map<String, IKeywordParameter> nameMap = new HashMap<String, IKeywordParameter>();
 		int numberOfParameters = 0;
@@ -113,12 +105,30 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 			}
 		}
 
+		String regexString = createRegexString(parameterValueRegexString);
+		
 		PreParserKeywordParameterHelper<T> instance = new PreParserKeywordParameterHelper<T>(
 				positionMap, nameMap, regexString, numberOfParameters,
 				numberOfOptionalParameters);
 		instance.validateParametersAndRegex();
 
 		return instance;
+	}
+
+	private static String createRegexString(String parameterValueRegexString) {
+		String patternWithAttributeNames = "([(][a-zA-Z0-9_]+[=]"
+				+ parameterValueRegexString
+				+ "[)])([\\s][(][a-zA-Z0-9_]+[=]"
+				+ parameterValueRegexString
+				+ "[)])*";
+		
+		String patternWithoutAttributeNames = "("
+				+ parameterValueRegexString + ")([\\s]" + parameterValueRegexString + ")*";
+		
+		String patternKeyword = patternWithAttributeNames
+				+ "|" + patternWithoutAttributeNames;
+		
+		return patternKeyword;
 	}
 
 	/**
@@ -128,7 +138,7 @@ public class PreParserKeywordParameterHelper<T extends Enum<?> & IKeywordParamet
 	 */
 	public static <T extends Enum<?> & IKeywordParameter> PreParserKeywordParameterHelper<T> newInstance(
 			Class<T> parameterClass) {
-		return newInstance(parameterClass, PATTERN_KEYWORD);
+		return newInstance(parameterClass, DEFAULT_PATTERN_PARAMETER_VALUE);
 	}
 
 	/**

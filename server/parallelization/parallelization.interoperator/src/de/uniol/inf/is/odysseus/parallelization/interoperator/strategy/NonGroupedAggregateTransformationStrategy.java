@@ -118,7 +118,7 @@ public class NonGroupedAggregateTransformationStrategy extends
 				} else {
 					// if the aggregation has an grouping, there is might be a
 					// better strategy
-					return 50;
+					return 80;
 				}
 			}
 		}

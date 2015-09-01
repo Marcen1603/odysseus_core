@@ -34,7 +34,8 @@ AbstractStaticFragmentPO<T> {
 	
 	public ShuffleFragmentPO(ShuffleFragmentAO fragmentAO) {
 		super(fragmentAO);
-		rand = new Random();
+		long seed = 4711234562348971262l;
+		rand = new Random(seed);
 	}
 
 	/**

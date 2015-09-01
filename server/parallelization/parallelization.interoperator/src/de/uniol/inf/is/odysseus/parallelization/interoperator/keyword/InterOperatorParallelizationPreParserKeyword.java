@@ -71,7 +71,7 @@ public class InterOperatorParallelizationPreParserKeyword extends
 			throws OdysseusScriptException {
 		parameterHelper = PreParserKeywordParameterHelper.newInstance(
 				InterOperatorParallelizationKeywordParameter.class,
-				InterOperatorParallelizationConstants.PATTERN_KEYWORD);
+				InterOperatorParallelizationConstants.PATTERN_CUSTOM_PARAMETER_VALUE);
 		parameterHelper.validateParameterString(parameter);
 	}
 
