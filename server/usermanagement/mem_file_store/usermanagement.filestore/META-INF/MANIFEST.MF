@@ -8,3 +8,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core, de.uniol.inf.is.odysseus.core.ser
 Import-Package: org.osgi.service.component,
  org.slf4j
 Service-Component: OSGI-INF/Usermanagement.xml
+Export-Package: de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain
