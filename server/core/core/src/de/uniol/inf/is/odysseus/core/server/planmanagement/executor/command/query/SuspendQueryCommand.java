@@ -2,23 +2,20 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.que
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class SuspendQueryCommand extends AbstractExecutorCommand {
+public class SuspendQueryCommand extends AbstractQueryCommand {
 
-	private String queryName;
+	private static final long serialVersionUID = -3356752433778827323L;
 
 	public SuspendQueryCommand(ISession caller, String queryName) {
-		super(caller);
-		this.queryName = queryName;
+		super(caller, queryName);
 	}
-	
+
 	@Override
-	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um,
-			IServerExecutor executor) {
-		executor.suspendQuery(queryName, getCaller());
+	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
+		executor.suspendQuery(getQueryName(), getCaller());
 	}
 
 }

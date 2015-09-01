@@ -3,34 +3,33 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.que
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class WaitForQueryCommand extends AbstractExecutorCommand {
+public class WaitForQueryCommand extends AbstractQueryCommand {
 
-	private String queryName;
+	private static final long serialVersionUID = 4983670569148411012L;
+
 	private long testPeriod;
 	private long maxWaitingTime;
 
 	public WaitForQueryCommand(ISession caller, String queryName, long testPeriod, long maxWaitingTime) {
-		super(caller);
-		this.queryName = queryName;
+		super(caller, queryName);
 		this.testPeriod = testPeriod;
 		this.maxWaitingTime = maxWaitingTime;
 	}
 
 	@Override
-	public synchronized void execute(IDataDictionaryWritable dd, IUserManagementWritable um,
-			IServerExecutor executor) {
+	public synchronized void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
 		try {
 			long start = System.currentTimeMillis();
-			while ((executor.getQueryState(queryName) != QueryState.INACTIVE && executor.getQueryState(queryName) != QueryState.UNDEF)
-					&& !(maxWaitingTime > 0 && System.currentTimeMillis()>start+maxWaitingTime)) {
+			while ((executor.getQueryState(getQueryName()) != QueryState.INACTIVE
+					&& executor.getQueryState(getQueryName()) != QueryState.UNDEF)
+					&& !(maxWaitingTime > 0 && System.currentTimeMillis() > start + maxWaitingTime)) {
 				this.wait(testPeriod);
 			}
 		} catch (Exception e) {
-			
+
 		}
 	}
 

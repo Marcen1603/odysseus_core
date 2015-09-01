@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class CreateSinkCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = 3174837187255297524L;
+	
 	final private String name;
 	final private ILogicalOperator sinkAO;
 
@@ -24,6 +26,8 @@ public class CreateSinkCommand extends AbstractExecutorCommand {
 		dd.addSink(name, sinkAO, getCaller());
 	}
 
-
+	public String getName() {
+		return name;
+	}
 	
 }

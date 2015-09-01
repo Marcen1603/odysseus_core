@@ -13,6 +13,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class GrantRoleCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = -8161792315196569321L;
+	
 	private String userName;
 	private List<String> roles;
 

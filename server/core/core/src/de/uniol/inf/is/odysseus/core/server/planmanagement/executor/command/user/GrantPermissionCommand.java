@@ -16,6 +16,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class GrantPermissionCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = -4220212834457736408L;
+	
 	private String userName;
 	private List<IPermission> operations;
 	private List<String> objects;

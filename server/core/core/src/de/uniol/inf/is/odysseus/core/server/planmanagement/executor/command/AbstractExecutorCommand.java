@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public abstract class AbstractExecutorCommand implements IExecutorCommand {
 
+	private static final long serialVersionUID = -3132799154172616300L;
+	
 	final private ISession caller;
 	final private Collection<Integer> empty = new ArrayList<>();
 	final private Collection<Integer> createdQueryIds = new ArrayList<>();

@@ -9,6 +9,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class AbstractDropStreamOrViewCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = 640941802555170500L;
+	
 	private String name;
 	private boolean ifExits;
 
@@ -33,6 +35,10 @@ public class AbstractDropStreamOrViewCommand extends AbstractExecutorCommand {
 
 	private void dropViewOrStream(IDataDictionaryWritable dd) {
 		dd.removeViewOrStream(name, getCaller());
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 }

@@ -9,6 +9,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class DropSinkCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = -6356946239267417635L;
+	
 	private String sinkname;
 	private boolean ifExists;
 
@@ -28,6 +30,10 @@ public class DropSinkCommand extends AbstractExecutorCommand {
 		} else {
 			dd.removeSink(sinkname, getCaller());
 		}
+	}
+	
+	public String getName() {
+		return sinkname;
 	}
 
 }

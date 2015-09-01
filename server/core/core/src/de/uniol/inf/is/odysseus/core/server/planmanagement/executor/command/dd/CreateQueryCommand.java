@@ -17,6 +17,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class CreateQueryCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = -6389713977544787145L;
+	
 	final private ILogicalQuery query;
 
 	public CreateQueryCommand(ILogicalQuery query, ISession caller) {

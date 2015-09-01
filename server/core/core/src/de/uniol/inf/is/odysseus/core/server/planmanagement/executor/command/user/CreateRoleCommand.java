@@ -9,6 +9,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class CreateRoleCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = 7925767614212952294L;
+	
 	private String rolename;
 
 	public CreateRoleCommand(String rolename, ISession caller) {

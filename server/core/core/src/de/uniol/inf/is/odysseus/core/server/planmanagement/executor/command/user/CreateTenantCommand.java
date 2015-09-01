@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class CreateTenantCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = 3942783181328876548L;
+	
 	private String tenantname;
 
 	public CreateTenantCommand(String tenantname, ISession caller) {

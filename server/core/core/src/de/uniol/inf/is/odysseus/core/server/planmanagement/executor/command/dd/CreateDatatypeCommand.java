@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class CreateDatatypeCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = 567854863615540518L;
+	
 	private SDFDatatype newType;
 
 	public CreateDatatypeCommand(SDFDatatype newType, ISession caller) {

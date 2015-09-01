@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class DropRoleCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = -2680536306987144307L;
+	
 	private String rolename;
 
 	public DropRoleCommand(String rolename, ISession caller) {

@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class CreateUserCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = 1185066985125334970L;
+	
 	private String username;
 	private String password;
 

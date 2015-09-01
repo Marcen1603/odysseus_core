@@ -12,6 +12,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class RevokeRoleCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = -1687779312244535476L;
+	
 	private String userName;
 	private List<String> roles;
 

@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class ChangeUserPasswordCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = 3195756655622930842L;
+	
 	private String username;
 	private String password;
 

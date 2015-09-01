@@ -9,6 +9,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class SleepCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = 7472996273182029181L;
+	
 	private long millis;
 
 	public SleepCommand(long millis, ISession caller) {

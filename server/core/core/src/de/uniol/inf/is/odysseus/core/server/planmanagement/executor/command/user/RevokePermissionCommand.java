@@ -14,6 +14,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class RevokePermissionCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = -4520504360577308790L;
+	
 	private String userName;
 	private List<IPermission> operations;
 	private List<String> objects;

@@ -2,23 +2,20 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.que
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class RemoveQueryCommand extends AbstractExecutorCommand {
+public class RemoveQueryCommand extends AbstractQueryCommand {
 
-	private String queryName;
+	private static final long serialVersionUID = 9067097180730550228L;
 
 	public RemoveQueryCommand(ISession caller, String queryName) {
-		super(caller);
-		this.queryName = queryName;
+		super(caller, queryName);
 	}
-	
+
 	@Override
-	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um,
-			IServerExecutor executor) {
-		executor.removeQuery(queryName, getCaller());
+	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
+		executor.removeQuery(getQueryName(), getCaller());
 	}
 
 }

@@ -21,6 +21,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class AddQueryCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = -161042295238718034L;
+	
 	private String queryText;
 	private String parserID;
 	private String transCfgName;

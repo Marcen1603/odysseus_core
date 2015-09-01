@@ -17,6 +17,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class CreateViewCommand extends AbstractExecutorCommand {
 
+	private static final long serialVersionUID = 8887521233288850027L;
+	
 	private ILogicalOperator rootAO;
 	private String name;
 
