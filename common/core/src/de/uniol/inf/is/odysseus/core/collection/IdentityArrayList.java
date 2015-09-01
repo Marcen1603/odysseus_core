@@ -163,23 +163,5 @@ public class IdentityArrayList<E> extends AbstractList<E>implements List<E>, Ran
 			throw new IndexOutOfBoundsException(index + ">" + currentSize);
 		}
 	}
-
-	
-	public static void main(String[] args) {
-		List<Integer> idList = new IdentityArrayList<>(10);
-		Integer eins = new Integer(1);
-		Integer zwei = new Integer(2);
-		Integer drei = new Integer(3);
-		Integer vier = new Integer(4);
-		idList.add(eins);
-		System.out.println(idList);
-		idList.add(zwei);
-		System.out.println(idList);
-		System.out.println(idList.contains(drei));
-		idList.add(drei);
-		System.out.println(idList);
-		System.out.println(idList.contains(drei));
-		
-	}
 	
 }
