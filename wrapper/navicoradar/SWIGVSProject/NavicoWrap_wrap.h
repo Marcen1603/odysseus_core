@@ -15,7 +15,7 @@ class SwigDirector_NavicoRadarWrapper : public NavicoRadarWrapper, public Swig::
 
 public:
     void swig_connect_director(JNIEnv *jenv, jobject jself, jclass jcls, bool swig_mem_own, bool weak_global);
-    SwigDirector_NavicoRadarWrapper(JNIEnv *jenv, int AntennaHeightMiliMeter, int RangeMeter, std::string RadarSerial, signed char *UnlockKey, int UnlockKeylength);
+    SwigDirector_NavicoRadarWrapper(JNIEnv *jenv, int AntennaHeightMiliMeter, int RangeMeter, std::string RadarSerial, std::string UnlockKeyStr);
     virtual void onSpokeUpdate(void *buffer, long size);
     virtual void onCat240SpokeUpdate(void *buffer, long size);
     virtual void onTargetUpdate(void *buffer, long size);

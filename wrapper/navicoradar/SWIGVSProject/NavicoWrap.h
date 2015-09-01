@@ -124,7 +124,7 @@ class NavicoRadarWrapper : public Navico::Protocol::NRP::iImageClientStateObserv
 {
 
 public:
-	NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMeter, std::string RadarSerial, signed char* UnlockKey, int UnlockKeylength) throw(std::exception);
+	NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMeter, std::string RadarSerial,  std::string UnlockKeyStr) throw(std::exception);
 	~NavicoRadarWrapper(){ /*delCallback();*/ };
 
 	void	start(); //start Radar 

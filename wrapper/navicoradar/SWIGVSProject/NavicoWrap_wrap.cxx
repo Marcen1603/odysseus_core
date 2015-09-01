@@ -669,7 +669,7 @@ SWIGINTERN void SWIG_JavaException(JNIEnv *jenv, int code, const char *msg) {
 
 #include "NavicoWrap_wrap.h"
 
-SwigDirector_NavicoRadarWrapper::SwigDirector_NavicoRadarWrapper(JNIEnv *jenv, int AntennaHeightMiliMeter, int RangeMeter, std::string RadarSerial, signed char *UnlockKey, int UnlockKeylength) : NavicoRadarWrapper(AntennaHeightMiliMeter, RangeMeter, RadarSerial, UnlockKey, UnlockKeylength), Swig::Director(jenv) {
+SwigDirector_NavicoRadarWrapper::SwigDirector_NavicoRadarWrapper(JNIEnv *jenv, int AntennaHeightMiliMeter, int RangeMeter, std::string RadarSerial, std::string UnlockKeyStr) : NavicoRadarWrapper(AntennaHeightMiliMeter, RangeMeter, RadarSerial, UnlockKeyStr), Swig::Director(jenv) {
 }
 
 void SwigDirector_NavicoRadarWrapper::onSpokeUpdate(void *buffer, long size) {
@@ -875,13 +875,12 @@ SWIGEXPORT jint JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_N
 }
 
 
-SWIGEXPORT jlong JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_NavicoRadarJavaJNI_new_1NavicoRadarWrapper(JNIEnv *jenv, jclass jcls, jint jarg1, jint jarg2, jstring jarg3, jlong jarg4, jint jarg5) {
+SWIGEXPORT jlong JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_NavicoRadarJavaJNI_new_1NavicoRadarWrapper(JNIEnv *jenv, jclass jcls, jint jarg1, jint jarg2, jstring jarg3, jstring jarg4) {
   jlong jresult = 0 ;
   int arg1 ;
   int arg2 ;
   std::string arg3 ;
-  signed char *arg4 = (signed char *) 0 ;
-  int arg5 ;
+  std::string arg4 ;
   NavicoRadarWrapper *result = 0 ;
   
   (void)jenv;
@@ -896,10 +895,16 @@ SWIGEXPORT jlong JNICALL Java_de_uniol_inf_is_odysseus_wrapper_navicoradar_SWIG_
   if (!arg3_pstr) return 0;
   (&arg3)->assign(arg3_pstr);
   jenv->ReleaseStringUTFChars(jarg3, arg3_pstr); 
-  arg4 = *(signed char **)&jarg4; 
-  arg5 = (int)jarg5; 
+  if(!jarg4) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return 0;
+  } 
+  const char *arg4_pstr = (const char *)jenv->GetStringUTFChars(jarg4, 0); 
+  if (!arg4_pstr) return 0;
+  (&arg4)->assign(arg4_pstr);
+  jenv->ReleaseStringUTFChars(jarg4, arg4_pstr); 
   try {
-    result = (NavicoRadarWrapper *)new SwigDirector_NavicoRadarWrapper(jenv,arg1,arg2,arg3,arg4,arg5);
+    result = (NavicoRadarWrapper *)new SwigDirector_NavicoRadarWrapper(jenv,arg1,arg2,arg3,arg4);
   }
   catch(std::exception &_e) {
     {

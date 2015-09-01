@@ -50,8 +50,8 @@ public class NavicoRadarWrapper {
     NavicoRadarJavaJNI.NavicoRadarWrapper_change_ownership(this, swigCPtr, true);
   }
 
-  public NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMeter, String RadarSerial, SWIGTYPE_p_signed_char UnlockKey, int UnlockKeylength) throws java.lang.RuntimeException {
-    this(NavicoRadarJavaJNI.new_NavicoRadarWrapper(AntennaHeightMiliMeter, RangeMeter, RadarSerial, SWIGTYPE_p_signed_char.getCPtr(UnlockKey), UnlockKeylength), true);
+  public NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMeter, String RadarSerial, String UnlockKeyStr) throws java.lang.RuntimeException {
+    this(NavicoRadarJavaJNI.new_NavicoRadarWrapper(AntennaHeightMiliMeter, RangeMeter, RadarSerial, UnlockKeyStr), true);
     NavicoRadarJavaJNI.NavicoRadarWrapper_director_connect(this, swigCPtr, swigCMemOwn, true);
   }
 

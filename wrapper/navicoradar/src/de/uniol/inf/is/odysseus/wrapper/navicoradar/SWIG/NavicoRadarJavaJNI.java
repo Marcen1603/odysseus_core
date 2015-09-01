@@ -10,7 +10,7 @@ package de.uniol.inf.is.odysseus.wrapper.navicoradar.SWIG;
 
 public class NavicoRadarJavaJNI {
   public final static native int NUM_OF_SAMPLES_get();
-  public final static native long new_NavicoRadarWrapper(int jarg1, int jarg2, String jarg3, long jarg4, int jarg5) throws java.lang.RuntimeException;
+  public final static native long new_NavicoRadarWrapper(int jarg1, int jarg2, String jarg3, String jarg4) throws java.lang.RuntimeException;
   public final static native void delete_NavicoRadarWrapper(long jarg1);
   public final static native void NavicoRadarWrapper_start(long jarg1, NavicoRadarWrapper jarg1_);
   public final static native void NavicoRadarWrapper_stop(long jarg1, NavicoRadarWrapper jarg1_);

@@ -3,6 +3,7 @@
 #include <sstream> // C++ Standard string Stream Library
 #include <vector> // STL dynamic array
 #include <string> // STL string class
+#include <iomanip>      // std::setprecision
 
 #include <ImageClient.h>
 #include <ImageClientObserver.h>
@@ -27,10 +28,25 @@ enum radarSensorState_en
 using namespace std;
 using namespace Navico::Protocol;
 
+uint8_t* hexstringToArray(std::string hexString)
+{
+ uint8_t hexArray[sizeof(hexString.size()/2)];
+ int len = sizeof(hexString.size()/2);
+		 if (len <= 0 || (len & 1) != 0 || (len >>= 1) > (hexString.size()/2));
+		 else {
+				for (int i = 0; i < len; ++i)
+				{
+					bool ok = false;
+					std::string buffer = hexString.substr( 2*i, 2 );
+					if(strtol(buffer.c_str(), NULL, 16) < 256) ok = true;
+					if (ok)	hexArray[ i ] = strtol(buffer.c_str(), NULL, 16);
+					else{ return NULL;}
+				}
+		 }
+  return &hexArray[0];
+}
 
-
-
-NavicoRadarWrapper::NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMeter, std::string RadarSerial, signed char* UnlockKey, int UnlockKeylength) 
+NavicoRadarWrapper::NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMeter, std::string RadarSerial, std::string UnlockKeyStr) 
 {
 	this->mAntennaHeight = AntennaHeightMiliMeter;
 	this->mRangeMeter = RangeMeter;
@@ -66,12 +82,29 @@ NavicoRadarWrapper::NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMete
 	bool retB = 0;
 	unsigned int numberOfRadars;
 	std::string serNumbLock = "1304303409";
-	if(!RadarSerial.empty())
-	std::string serNumbLock = RadarSerial;
+	if(!RadarSerial.empty()) serNumbLock.assign(RadarSerial);
 	uint8_t unlockKey[] = { 0xEE, 0xB8, 0x1B, 0xBE, 0x12, 0x0F, 0xE0, 0x04, 0x1B, 0xE3, 0x22, 0xA7, 0xEA, 0xA3, 0x8E, 0x46, 0x21, 0xE7, 0xB3, 0xA9, 0xD3, 0x4D, 0x3B, 0x6B, 0x6C, 0x7B, 0xF9, 0x72,
-			0x39, 0xF6, 0x66, 0xBE, 0x79, 0x09, 0x58, 0xC7, 0x25, 0xDF, 0x70, 0x83, 0xF9, 0x19, 0xE4, 0xF9, 0x98, 0x88, 0x92, 0xEA, 0xA4, 0xB7, 0x6F, 0xEB, 0xD1, 0x29, 0x02, 0x73, 0x79, 0xEB, 0xD4,
-			0x08, 0xFF, 0x91, 0x3C, 0xA7 };
-	if(NULL != UnlockKey && 0 != UnlockKeylength) memcpy(&unlockKey,UnlockKey,UnlockKeylength);
+							0x39, 0xF6, 0x66, 0xBE, 0x79, 0x09, 0x58, 0xC7, 0x25, 0xDF, 0x70, 0x83, 0xF9, 0x19, 0xE4, 0xF9, 0x98, 0x88, 0x92, 0xEA, 0xA4, 0xB7, 0x6F, 0xEB, 0xD1, 0x29, 0x02, 0x73, 0x79, 0xEB, 0xD4,
+							0x08, 0xFF, 0x91, 0x3C, 0xA7 };
+	//if(NULL != UnlockKeyStr && 0 != UnlockKeylength) memcpy(&unlockKey,UnlockKey,UnlockKeylength);
+	
+	if(!UnlockKeyStr.empty()) //hexString conversion from Navico
+	{
+		 int len = sizeof(unlockKey);
+		 if (len <= 0 || (len & 1) != 0 || (len >>= 1) > (UnlockKeyStr.size()/2));
+		 else {
+				for (int i = 0; i < len; ++i)
+				{
+					bool ok = false;
+					std::string buffer = UnlockKeyStr.substr( 2*i, 2 );
+					if(strtol(buffer.c_str(), NULL, 16) < 256) ok = true;
+					if (ok)	unlockKey[ i ] = strtol(buffer.c_str(), NULL, 16);
+					else{ uint8_t unlockKey[] = { 0xEE, 0xB8, 0x1B, 0xBE, 0x12, 0x0F, 0xE0, 0x04, 0x1B, 0xE3, 0x22, 0xA7, 0xEA, 0xA3, 0x8E, 0x46, 0x21, 0xE7, 0xB3, 0xA9, 0xD3, 0x4D, 0x3B, 0x6B, 0x6C, 0x7B, 0xF9, 0x72,
+								0x39, 0xF6, 0x66, 0xBE, 0x79, 0x09, 0x58, 0xC7, 0x25, 0xDF, 0x70, 0x83, 0xF9, 0x19, 0xE4, 0xF9, 0x98, 0x88, 0x92, 0xEA, 0xA4, 0xB7, 0x6F, 0xEB, 0xD1, 0x29, 0x02, 0x73, 0x79, 0xEB, 0xD4,
+								0x08, 0xFF, 0x91, 0x3C, 0xA7 };break;}
+				}
+		 }
+	}
 	m_pMultiRadar = tMultiRadarClient::GetInstance();
 	m_pMultiRadar->AddRadarListObserver(this);
 	m_pMultiRadar->AddUnlockStateObserver(this);
@@ -101,19 +134,7 @@ NavicoRadarWrapper::NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMete
 			ret = 0;
 			std::cout << "Navico Radar: Radar " << serNumbLock.c_str() << " Unlocked Succesfull"<<std::endl;
 		}
-		if (15 > this->mRangeMeter) {
-			this->mRangeMeter = 15;
-		}
-
-		if (false == retB) retB = m_pImageClient->SetRange(this->mRangeMeter);
-		if(retB == false) std::cout << "Navico Radar: Radar Range Not set" <<std::endl;
-		else std::cout << "Navico Radar: Radar Range Set to "<< this->mRangeMeter <<std::endl; retB = false;
-		if (false == retB) retB = m_pImageClient->SetAntennaHeight(this->mAntennaHeight);
-		if(retB == false) std::cout << "Navico Radar: Radar Height Not Set" <<std::endl;
-		else std::cout << "Navico Radar: Radar Height Set to "<< this->mAntennaHeight/1000.0 <<"m" <<std::endl; retB = false;
 		
-		//m_pImageClient->SetGuardZoneEnable(0,1);
-		//m_pImageClient->SetGuardZoneSetup(0, getStartRangeMeter(), getEndRangeMeter(), getBearingDegree(), getWidthDegree());
 
 		while (false == retB) retB = m_pImageClient->AddSpokeObserver(this);
 		retB = false;
@@ -128,13 +149,6 @@ NavicoRadarWrapper::NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMete
 		retB = false;
 		std::cout << "Navico Radar: Multi Radar Target TrackingObserver added"<<std::endl;
 		
-		if(false == retB) retB = m_pTargetTrackingClient->SetDangerDistance((uint32_t) mDangerDistance);
-		if(retB == false) std::cout << "Navico Radar: Radar Tracking Danger Distance Not Set" <<std::endl;
-		else std::cout << "Navico Radar: Radar Tracking Danger Distance Set to "<< mDangerDistance <<std::endl; retB = false;
-		
-		if(false == retB) retB = m_pTargetTrackingClient->SetDangerTime((uint32_t) mDangerTime);
-		if(retB == false) std::cout << "Navico Radar: Radar Tracking Danger Time Not set" <<std::endl;
-		else	std::cout << "Navico Radar: Radar Tracking Danger Time Set to "<< mDangerTime <<std::endl; retB = false;
 		
 		/*for (unsigned int i = 1; i <= numberOfRadars; i++)
 		 {*/
@@ -150,6 +164,27 @@ NavicoRadarWrapper::NavicoRadarWrapper(int AntennaHeightMiliMeter, int RangeMete
 					while (false == retB)  retB = m_pImageClient->SetPower(1); //From Power off to Standby
 					retB = false;
 					initState = configuredRadar;
+					if (15 > this->mRangeMeter) {
+						this->mRangeMeter = 15;
+					}
+
+					if (false == retB) retB = m_pImageClient->SetRange(this->mRangeMeter);
+					if(retB == false) std::cout << "Navico Radar: Radar Range Not set" <<std::endl;
+					else std::cout << "Navico Radar: Radar Range Set to "<< this->mRangeMeter <<std::endl; retB = false;
+					if (false == retB) retB = m_pImageClient->SetAntennaHeight(this->mAntennaHeight);
+					if(retB == false) std::cout << "Navico Radar: Radar Height Not Set" <<std::endl;
+					else std::cout << "Navico Radar: Radar Height Set to "<< this->mAntennaHeight/1000.0 <<"m" <<std::endl; retB = false;
+		
+		//m_pImageClient->SetGuardZoneEnable(0,1);
+		//m_pImageClient->SetGuardZoneSetup(0, getStartRangeMeter(), getEndRangeMeter(), getBearingDegree(), getWidthDegree());
+					
+		if(false == retB) retB = m_pTargetTrackingClient->SetDangerDistance((uint32_t) mDangerDistance);
+		if(retB == false) std::cout << "Navico Radar: Radar Tracking Danger Distance Not Set" <<std::endl;
+		else std::cout << "Navico Radar: Radar Tracking Danger Distance Set to "<< mDangerDistance <<std::endl; retB = false;
+		
+		if(false == retB) retB = m_pTargetTrackingClient->SetDangerTime((uint32_t) mDangerTime);
+		if(retB == false) std::cout << "Navico Radar: Radar Tracking Danger Time Not set" <<std::endl;
+		else	std::cout << "Navico Radar: Radar Tracking Danger Time Set to "<< mDangerTime <<std::endl; retB = false;
 
 					std::cout << "Radar Image Client EOK"<<std::endl;
 					break;
@@ -306,7 +341,7 @@ bool NavicoRadarWrapper::SetBoatSpeed(int speedType, double speed, int headingTy
 {
 	if(m_pTargetTrackingClient)
 	{
-		std::cout << "Navico Radar: Set Boat Speed and Heading" <<std::endl;
+		//std::cout << "Navico Radar: Set Boat Speed and Heading" <<std::endl;
 		return m_pTargetTrackingClient->SetBoatSpeed((Navico::Protocol::NRP::eSpeedType) speedType, speed,(Navico::Protocol::NRP::eDirectionType) headingType, heading); 
 	}
 	return 0;}
@@ -333,10 +368,18 @@ void NavicoRadarWrapper::UpdateSpoke(const NRP::Spoke::t9174Spoke *pSpoke) {
 		m_pPPIController->SetFrameBuffer((intptr_t)m_pPPIImage,(2*NUM_OF_SAMPLES), (2*NUM_OF_SAMPLES), &gNavicoLUT,(2 * NUM_OF_SAMPLES) / 2, (2 * NUM_OF_SAMPLES) / 2 ); 
 		m_pPPIController->SetTrailsTime(300);
 		m_pPPIController->SetRangeInterpolation(Navico::Image::tPPIRangeInterpolation::eRangeInterpolationPeak);
+		m_pPPIController->SetRangeResolution(mRangeMeter/((float)(2*NUM_OF_SAMPLES)));
 	}
 
 	m_pPPIController->Process( pSpoke ); 
-	onPictureUpdate(m_pPPIImage, ((2*NUM_OF_SAMPLES)*(2*NUM_OF_SAMPLES)*sizeof(Navico::tColor)));
+	int count123;
+	if(count123=100)
+	{
+			onPictureUpdate(m_pPPIImage, ((2*NUM_OF_SAMPLES)*(2*NUM_OF_SAMPLES)*sizeof(Navico::tColor)));
+        	count123=0;
+	}
+	count123++;
+	//onPictureUpdate(m_pPPIImage, ((2*NUM_OF_SAMPLES)*(2*NUM_OF_SAMPLES)*sizeof(Navico::tColor)));
 	
 	uint32_t azimuth;
 		uint32_t startAzimuth;
@@ -508,9 +551,23 @@ void NavicoRadarWrapper::UpdateRadarList(const char* pSerialNumber, iRadarListOb
 
 int NavicoRadarWrapper::GetUnlockKey(const char* pSerialNumber, const uint8_t* pLockID, unsigned lockIDSize, uint8_t* pUnlockKey, unsigned maxUnlockKeySize) {
 	int retval;
-	uint8_t unlockKey[] = { 0xEE, 0xB8, 0x1B, 0xBE, 0x12, 0x0F, 0xE0, 0x04, 0x1B, 0xE3, 0x22, 0xA7, 0xEA, 0xA3, 0x8E, 0x46, 0x21, 0xE7, 0xB3, 0xA9, 0xD3, 0x4D, 0x3B, 0x6B, 0x6C, 0x7B, 0xF9, 0x72,
+	if(NULL == pSerialNumber) return -1;
+	std::string unlockString;
+	std::string serNumb(pSerialNumber);
+	if(serNumb.compare("1304303409"))
+	unlockString = "EEB81BBE120FE0041BE322A7EAA38E4621E7B3A9D34D3B6B6C7BF97239F666BE790958C725DF7083F919E4F9988892EAA4B76FEBD129027379EBD408FF913CA7";
+	/*uint8_t unlockKey[] = { 0xEE, 0xB8, 0x1B, 0xBE, 0x12, 0x0F, 0xE0, 0x04, 0x1B, 0xE3, 0x22, 0xA7, 0xEA, 0xA3, 0x8E, 0x46, 0x21, 0xE7, 0xB3, 0xA9, 0xD3, 0x4D, 0x3B, 0x6B, 0x6C, 0x7B, 0xF9, 0x72,
 			0x39, 0xF6, 0x66, 0xBE, 0x79, 0x09, 0x58, 0xC7, 0x25, 0xDF, 0x70, 0x83, 0xF9, 0x19, 0xE4, 0xF9, 0x98, 0x88, 0x92, 0xEA, 0xA4, 0xB7, 0x6F, 0xEB, 0xD1, 0x29, 0x02, 0x73, 0x79, 0xEB, 0xD4,
-			0x08, 0xFF, 0x91, 0x3C, 0xA7 };
+			0x08, 0xFF, 0x91, 0x3C, 0xA7 };*/
+	if(serNumb.compare("1405303984"))
+	unlockString = "22EA4981EC17C268E421BBACDE3F16D560F0864320A4EF253525A2895B713B6B16DF892FDC924CE69011EB3DB2F0F5F4FEC6493968C0016B58A9EBE1C9B17291";
+	if(serNumb.compare("1405303985"))
+	unlockString = "A6CFDB8E64F4A770DB48740BE0EDB5732F355C688CE3EC2C6CC3EADC49C430E5F49A92C5CFBB67AC7E1A643F0B7545FEC55CA5777DE85A4BAF5345B802427DC3";
+	if(serNumb.compare("1406302796"))
+	unlockString = "5540A0503B12479AC8AA18BD9CFE9F8C088353AFFBF0ADE3D3E4B803B6FD53CADB66EDF69E3C7788059DA88DD4A2D713FD1CD1856582DD38B03E41E2F28CE6DF";
+	if(unlockString.empty()) return -1;
+	uint8_t  *unlockKey = hexstringToArray(unlockString);
+
 	if (maxUnlockKeySize >= sizeof unlockKey) {
 		for (int i = 0; i < sizeof unlockKey; i++) {
 			pUnlockKey[i] = unlockKey[i];
@@ -522,10 +579,8 @@ int NavicoRadarWrapper::GetUnlockKey(const char* pSerialNumber, const uint8_t* p
 }
 
 void NavicoRadarWrapper::UpdateUnlockState(const char* pSerialNumber, int lockState) {
-	std::string serNumbLock = "1304303409";
-	if (serNumbLock.compare(pSerialNumber)) {
 		int myRadarLockState = lockState;
-	}
+
 }
 
 
@@ -561,57 +616,64 @@ void NavicoRadarWrapper::UpdateTarget( const NRP::tTrackedTarget* pTarget )
 		onTargetUpdate(&target, sizeof(target));
 		
 		std::stringstream ttm;
-		ttm << "$RATTM,";
-		ttm << (pTarget->targetID) << ",";
-		if (pTarget->infoAbsoluteValid)
+		ttm << "$RATTM,"; // Beginning Sender ID RA = Radar, Sentence ID TTM = Tracked Target Status (Message)
+		if(10>pTarget->targetID)ttm << "0"; //Target ID < 10 begin with a Zero
+		ttm << (pTarget->targetID) << ","; //Fill Target ID ARPA Assigned Target Number 00-99
+		if (pTarget->infoAbsoluteValid) //Orientation True
 		{
-			ttm << pTarget->infoAbsolute.distance_m << ".000,";
-			ttm << (pTarget->infoAbsolute.bearing_ddeg / 10.0)<< ",";
+			//ttm.precision(1);
+			ttm << std::fixed << std::setprecision(1) << (pTarget->infoAbsolute.distance_m/1852.0) << ","; //Target Distance in NM from m
+			ttm << (pTarget->infoAbsolute.bearing_ddeg / 10.0)<< ","; //Target Bearing from Ownship in degrees from deci degrees
 			ttm << "T,";
-			ttm << (pTarget->infoAbsolute.speed_dmps / 10.0)<< ",";
-			ttm << (pTarget->infoAbsolute.course_ddeg / 10.0)<< ",";
+			ttm << ((pTarget->infoAbsolute.speed_dmps / 10.0) * 1.94384449)<< ","; // Target speed in knots from deci m/s
+			ttm << (pTarget->infoAbsolute.course_ddeg / 10.0)<< ","; //Target course in degrees rom deci degrees
 			ttm << "T,";
 		}
-		else
+		else //Orientation Relative
 		{
-			ttm << pTarget->infoRelative.distance_m<< ".000,";
-			ttm << (pTarget->infoRelative.bearing_ddeg / 10.0)<< ",";
+			ttm << std::fixed << std::setprecision(1) << (pTarget->infoRelative.distance_m/1852.0) << ","; //Target Distance in NM from m
+			ttm << (pTarget->infoRelative.bearing_ddeg / 10.0)<< ","; //Target Bearing from Ownship in degrees rom deci degrees
 			ttm << "R,";
-			ttm << (pTarget->infoRelative.speed_dmps / 10.0)<< ",";
-			ttm << (pTarget->infoRelative.course_ddeg / 10.0)<< ",";
+			ttm << ((pTarget->infoRelative.speed_dmps / 10.0) * 1.94384449)<< ",";// Target speed in knots from deci m/s
+			ttm << (pTarget->infoRelative.course_ddeg / 10.0)<< ","; //Target course in degrees rom deci degrees
 			ttm << "R,";
 		}		
-		ttm << (pTarget->CPA_m)/1000.0 << ",";
-		ttm << (pTarget->TCPA_sec) << ".0,";
-		ttm << "K,";
-		ttm << (int)pTarget->serverTargetID << ",";
-		switch(pTarget->targetState)
+		ttm << std::fixed << std::setprecision(1) << (pTarget->CPA_m)/1000.0 << ","; //Closest point of Approach in km from m
+		if(pTarget->towardsCPA) ttm << (pTarget->TCPA_sec)/60.0 << ","; //Time to closest point of approach 
+		else ttm << -1.0*(pTarget->TCPA_sec)/60.0 << ","; // a negative number indicates the target is past its CPA
+		ttm << "K,"; //Distance and Speed Units N is NM and knots, K is Kilometres, S is statute miles
+		ttm /*<< (int)pTarget->serverTargetID*/ << ","; //Target Label on ARPA (TAR01)
+
+		switch(pTarget->targetState) // Target Status T = Tracking / L = Lost / Q = Acquiring
 		{
 			case Navico::Protocol::NRP::eAcquiringTarget:	ttm << "Q,";
-															break;      ///< Attempting to acquire target
+															break;     ///< Attempting to acquire target
 			case Navico::Protocol::NRP::eSafeTarget:		ttm << "T,";
-															break;            ///< Target acquired and not on a collision course
+															break;     ///< Target acquired and not on a collision course
 			case Navico::Protocol::NRP::eDangerousTarget:	ttm << "T,";
-															break;      ///< Target acquired and may be on a collision course
+															break;     ///< Target acquired and may be on a collision course
 			case Navico::Protocol::NRP::eLostTarget:		ttm << "L,";
 															break;     ///< Target has been lost and needs to be cancelled an reacquired
 			case Navico::Protocol::NRP::eAcquireFailure:	ttm << "L,";
-															break;       ///< Failed to acquire a target
-			case Navico::Protocol::NRP::eOutOfRange:		ttm << "Q,";
-															break;            ///< Target is now out of range
+															break;     ///< Failed to acquire a target
+			case Navico::Protocol::NRP::eOutOfRange:		ttm << "L,";
+															break;     ///< Target is now out of range
 			case Navico::Protocol::NRP::eLostOutOfRange:	ttm << "L,";
-															break;        ///< Target lost due to staying out of range
+															break;     ///< Target lost due to staying out of range
 			case Navico::Protocol::NRP::eFailAcquireMax:	ttm << "L,";
 															break;     ///< Acquire failed because no target IDs were free
 			case Navico::Protocol::NRP::eFailAcquirePos:	ttm << "L,";
-															break;   ///< Acquire failed because the position was invalid
+															break;     ///< Acquire failed because the position was invalid
 				default:									ttm << "L,";
 				break;
 		}
-		
-		ttm << "|,"; //Reference Targets are Calibration Targets
-		
+		if(pTarget->trueTarget)ttm << ","; //Reference Targets are Calibration Targets
+		else ttm << "R,";
 
+		//ttm.precision(2);
+		ttm << ","; // UTC Time Stamp
+		if(Navico::Protocol::NRP::eAcquireType::eAutoAcquired == pTarget->autoAcquired) ttm << "A"; // Target acqusition automatic
+		else if(Navico::Protocol::NRP::eAcquireType::eManualAcquired == pTarget->autoAcquired) ttm << "M"; //Target acquisition Manual
 		ttm << "*" << computeCheckSum(ttm.str());
 	    onTargetUpdateTTM(ttm.str());
 }

@@ -43,7 +43,9 @@ public class NavicoRadarTransportHandler extends AbstractPushTransportHandler im
 	private int antennaHeightMiliMeter;
 	private int rangeMeter;
 	private String radarSerial;
-	private int unlockKeylength;
+	private String radarUnlockKey;
+	//private ByteBuffer unlockKey;
+	
 	
 	public NavicoRadarTransportHandler() 
 	{
@@ -57,7 +59,10 @@ public class NavicoRadarTransportHandler extends AbstractPushTransportHandler im
 	{
 		super(protocolHandler, options);
 		
-		radarSerial = "";
+		radarSerial = options.get("radarserial",null);
+		radarUnlockKey = options.get("radarunlockkey",null);
+		rangeMeter = options.getInt("range", 0);
+		antennaHeightMiliMeter  = options.getInt("heightmm", 0);
 	}	
 
 	@Override
@@ -72,7 +77,7 @@ public class NavicoRadarTransportHandler extends AbstractPushTransportHandler im
 	{
 		synchronized (processLock)
 		{
-			navico = new NavicoRadarWrapper(antennaHeightMiliMeter, rangeMeter, radarSerial, null, unlockKeylength)
+			navico = new NavicoRadarWrapper(antennaHeightMiliMeter, rangeMeter, radarSerial, radarUnlockKey)
 			{
 				@Override public void onSpokeUpdate(ByteBuffer buffer) 
 				{
@@ -105,23 +110,30 @@ public class NavicoRadarTransportHandler extends AbstractPushTransportHandler im
 	
 	protected void onTargetUpdate(ByteBuffer target) 
 	{
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
-		tuple.setAttribute(0, "Test target");
+		/*Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
+		tuple.setAttribute(0, "NoTTM");
 		tuple.setAttribute(1, new ByteBufferWrapper(target));
-		fireProcess(tuple);
+		fireProcess(tuple);*/
 	}
 
 	protected void onSpokeUpdate(ByteBuffer spoke) 
 	{
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
-		tuple.setAttribute(0, "Test spoke");
+		/*Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
+		tuple.setAttribute(0, "NoTTM");
 		tuple.setAttribute(1, new ByteBufferWrapper(spoke));
-		fireProcess(tuple);
+		fireProcess(tuple);*/
 	}
 	
 	protected void onTargetUpdateTTM(String ttmMessage) {
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
+		tuple.setAttribute(0, ttmMessage);
+		fireProcess(tuple);
 		System.out.println("TTM: " + ttmMessage);
-/*		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
+//		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
+//		tuple.setAttribute(0, "TTM Radar Track");
+//		tuple.setAttribute(1, ttmMessage);
+//		fireProcess(tuple);	
+ /* Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
 		tuple.setAttribute(0, ttmMessage);
 		tuple.setAttribute(1, null);
 		fireProcess(tuple);*/
@@ -129,10 +141,10 @@ public class NavicoRadarTransportHandler extends AbstractPushTransportHandler im
 
 	protected void onCat240SpokeUpdate(ByteBuffer cat240spoke) 
 	{
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
+		/*Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
 		tuple.setAttribute(0, "Test cat240spoke");
 		tuple.setAttribute(1, new ByteBufferWrapper(cat240spoke));
-		fireProcess(tuple);
+		fireProcess(tuple);*/
 	}
 	
     private static class ImageCanvas extends JComponent 
@@ -165,12 +177,16 @@ public class NavicoRadarTransportHandler extends AbstractPushTransportHandler im
 	JFrame frame;
 	ImageCanvas canvas;
 	BufferedImage img;
+	
 	protected void onPictureUpdate(ByteBuffer picture) 
 	{
+		picture.rewind(); // Attention!!!!
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(2, false);
-		tuple.setAttribute(0, "Test picture");
+		tuple.setAttribute(0, "NoTTM");
 		tuple.setAttribute(1, new ByteBufferWrapper(picture));
 		fireProcess(tuple);
+		
+		if (1==1) return; //Attention!!!!!
 		
 		if (frame == null)
 		{
