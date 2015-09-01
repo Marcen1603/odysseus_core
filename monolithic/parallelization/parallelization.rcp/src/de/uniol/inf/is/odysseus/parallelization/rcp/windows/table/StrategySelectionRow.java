@@ -92,7 +92,7 @@ public class StrategySelectionRow {
 					// check if the way from start to end operator is valid (no
 					// splits or stateful operators etc)
 					LogicalGraphHelper.checkWayToEndPoint(logicalOperator,
-							false, endOperatorId, true);
+							endOperatorId, true);
 				} catch (Exception e) {
 					throw new IllegalArgumentException("Way from start id "
 							+ uniqueOperatorid + " to end operator id "
@@ -104,7 +104,8 @@ public class StrategySelectionRow {
 		// check if the degrees are valid
 		if (!customDegrees.isEmpty()) {
 			String[] splittedDegrees = customDegrees.trim().split(",");
-			// the number of custom degrees need to be less or equal with the global degrees
+			// the number of custom degrees need to be less or equal with the
+			// global degrees
 			if (splittedDegrees.length > globalDegrees.size()) {
 				throw new IllegalArgumentException(
 						"Number of custom degrees need to be less or equal than global degrees");
