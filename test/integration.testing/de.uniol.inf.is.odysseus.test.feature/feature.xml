@@ -31,10 +31,6 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <includes
-         id="de.uniol.inf.is.odysseus.probabilistic.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.keyvalue.feature"
          version="0.0.0"/>
 
