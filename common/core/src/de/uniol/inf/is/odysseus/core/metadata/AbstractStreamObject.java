@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.metadata;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +13,6 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 
 	private Map<String, Object> metadataMap;
 	private T metadata = null;
-	private Map<String, Serializable> additionalContent;
 
 	public AbstractStreamObject() {
 	}
@@ -26,9 +24,6 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 		}
 		if (other.metadata != null) {
 			this.metadata = (T) other.metadata.clone();
-		}
-		if (other.additionalContent != null) {
-			this.additionalContent = new HashMap<>(other.additionalContent);
 		}
 	}
 
@@ -72,39 +67,6 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 		this.metadata = metadata;
 	}
 
-	// -----------------------------------------------------------------
-	// additional content
-	// -----------------------------------------------------------------
-	@Override
-	final public Serializable getAdditionalContent(String name) {
-		if (this.additionalContent != null) {
-			return this.additionalContent.get(name);
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	final public void setAdditionalContent(String name, Serializable content) {
-		if (this.additionalContent == null) {
-			this.additionalContent = new HashMap<>();
-		}
-		this.additionalContent.put(name, content);
-	}
-
-	@Override
-	final public Map<String, Serializable> getAdditionalContent() {
-		return additionalContent;
-	}
-
-	@Override
-	final public void setAdditionalContent(Map<String, Serializable> additionalContent) {
-		this.additionalContent = new HashMap<>();
-		if (additionalContent != null) {
-			this.additionalContent.putAll(additionalContent);
-		}
-	}
-
 	// -------------------------------------
 	// Merge
 	// -------------------------------------
@@ -133,18 +95,6 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements 
 	private void mergeInternal(IStreamObject<T> left, IStreamObject<T> right, IStreamObject<T> ret) {
 		// TODO: Merge function in cases where key is same!!
 
-		if (right.getAdditionalContent() != null) {
-			ret.setAdditionalContent(right.getAdditionalContent());
-		}
-		if (left.getAdditionalContent() != null) {
-			if (right.getAdditionalContent() == null) {
-				ret.setAdditionalContent(left.getAdditionalContent());
-			} else {
-				for (Entry<String, Serializable> a : left.getAdditionalContent().entrySet()) {
-					ret.setAdditionalContent(a.getKey(), a.getValue());
-				}
-			}
-		}
 		if (right.getMetadataMap() != null) {
 			ret.setMetadataMap(right.getMetadataMap());
 		}

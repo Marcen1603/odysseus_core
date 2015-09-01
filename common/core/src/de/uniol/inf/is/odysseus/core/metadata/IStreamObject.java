@@ -60,40 +60,6 @@ public interface IStreamObject<M extends IMetaAttribute> extends
 
 	void setMetadataMap(Map<String, Object> metaMap);
 	Map<String, Object> getMetadataMap();
-
-	
-    /**
-     * Retrieve attached additional content data
-     * 
-     * @return The stored additional content
-     */
-    Map<String, Serializable> getAdditionalContent();
-
-    /**
-     * Retrieve attached additional content data
-     * 
-     * @param name
-     *            The name (key) of the additional content
-     * @return The stored additional content
-     */
-    Serializable getAdditionalContent(String name);
-
-    /**
-     * Set the additional content
-     * 
-     * @param additionalContent
-     */
-    void setAdditionalContent(Map<String, Serializable> additionalContent);
-
-    /**
-     * Set the additional content
-     * 
-     * @param name
-     *            The name (key) of the additional content
-     * @param content
-     *            The content
-     */
-    void setAdditionalContent(String name, Serializable content);
     
     /**
      * 

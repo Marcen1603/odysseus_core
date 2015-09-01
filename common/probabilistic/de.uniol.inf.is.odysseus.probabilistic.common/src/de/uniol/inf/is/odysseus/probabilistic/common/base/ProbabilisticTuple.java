@@ -621,9 +621,6 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
             }
         }
 		retBuff.append(" | META | " + getMetadata());
-		if (getAdditionalContent() != null && getAdditionalContent().size() > 0) {
-			retBuff.append("|ADD|" + getAdditionalContent());
-		}
 
         return retBuff.toString();
     }
