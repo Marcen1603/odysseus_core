@@ -40,16 +40,13 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 	private static final String CONTROL_NOT_BOUND = "Load Balancing Control not (yet) bound.";
 	
 	private static final String STRATEGY_LABEL = "Strategy:";
-	private static final String ALLOCATOR_LABEL = "Allocator:";
 	private static final String STATUS_DESCRIPTION_LABEL = "Current Status:";
 	private static final String STATUS_LOCK = "Lock Status:";
 	private static final String EXCLUDED_LABEL = "Excluded Queries:";
 	
 	private String selectedStrategy = "";
-	private String selectedAllocator ="";
 	
 	private Combo strategyCombo;
-	private Combo allocatorCombo;
 	private Label statusLabel;
 	private Label lockLabel;
 	private Button unlockButton;
@@ -98,7 +95,7 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		createLoadBalancingStatusAndLockStatusView(controller, lock,
 				rootComposite);
 		
-		createStrategyAndAllocatorChooser(rootComposite);
+		createStrategyChooser(rootComposite);
 		
 		createExcludedQueriesListView(rootComposite);
 		
@@ -107,7 +104,6 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		createRightButtonComposite(lock, rootComposite);
 				
 		populateStrategyList(controller);
-		populateAllocatorList(controller);
 	}
 
 	private void createExcludedQueriesListView(Composite rootComposite) {
@@ -130,7 +126,6 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 				ILoadBalancingController controller = Activator.getLoadBalancingController();
 
 				if (controller != null){
-					controller.setLoadBalancingAllocator(selectedAllocator);
 					controller.setLoadBalancingStrategy(selectedStrategy);
 					controller.startLoadBalancing();
 				}
@@ -162,7 +157,6 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 
 				if (controller != null){
 					populateStrategyList(controller);
-					populateAllocatorList(controller);
 				}
 			}
 		});
@@ -213,7 +207,7 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		});
 	}
 
-	private void createStrategyAndAllocatorChooser(Composite rootComposite) {
+	private void createStrategyChooser(Composite rootComposite) {
 		createLabel(rootComposite,STRATEGY_LABEL);
 		strategyCombo = new Combo(rootComposite,SWT.READ_ONLY);
 		strategyCombo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
@@ -222,17 +216,6 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectedStrategy = ((Combo)e.getSource()).getText();
-			}
-		});
-		
-		createLabel(rootComposite,ALLOCATOR_LABEL);
-		allocatorCombo = new Combo(rootComposite, SWT.READ_ONLY);
-		allocatorCombo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		
-		allocatorCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				selectedAllocator = ((Combo)e.getSource()).getText();
 			}
 		});
 	}
@@ -301,14 +284,7 @@ public class LoadBalancingView extends ViewPart implements ILoadBalancingControl
 		String[] stringArray = strategies.toArray(new String[strategies.size()]);
 		strategyCombo.setItems(stringArray);
 	}
-	
-	private void populateAllocatorList(ILoadBalancingController controller) {
-		Set<String> allocators = controller.getAvailableAllocators();
-		String[] stringArray = allocators.toArray(new String[allocators.size()]);
-		allocatorCombo.setItems(stringArray);
-	}
-
-	
+		
 	
 	@Override
 	public synchronized void notifyLoadBalancingStatusChanged(boolean isRunning) {

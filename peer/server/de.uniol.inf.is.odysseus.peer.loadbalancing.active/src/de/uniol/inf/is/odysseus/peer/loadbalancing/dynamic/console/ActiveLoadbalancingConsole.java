@@ -168,7 +168,6 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("   Diagnostic Commands\n");
 		sb.append("     lsParts		             	 				- Lists all queryParts installed on peer with ids\n");
 		sb.append("     lsLBStrategies	              				- Lists all available load balancing strategies\n");
-		sb.append("     lsLBAllocators	              				- Lists all available load balancing allocators\n");
 		sb.append("     lsLBCommunicators                 		    - Lists all available load balancing communicators\n");
 		sb.append("     testLog                                     - Outputs different log levels.\n");
 		sb.append("     printSubscriptions <queryId>                - Prints detais about all Subscriptions in a query.\n");
@@ -183,7 +182,7 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		sb.append("     qv                                          - Shows a Console based QueryView\n");
 		sb.append("\n");
 		sb.append("   Control LoadBalancing\n");
-		sb.append("     initLB <strategyname> <allocatorname>		- Initiate Loadbalancing with load balancing strategy <strategyname> and load balancing allocator <allocatorname>\n");
+		sb.append("     initLB <strategyname>						- Initiate Loadbalancing with load balancing strategy <strategyname>\n");
 		sb.append("     stopLB                            			- Stops the Load Balancing\n");
 		sb.append("   Debug LoadBalancing\n");
 		sb.append("    cpJxtaSender <oldPipeId> <newPipeId> <newPeername>   - Tries to copy and install a Sender\n");
@@ -349,9 +348,8 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 		Preconditions.checkNotNull(ci, "Command interpreter must be not null!");
 
 		final String ERROR_ALREADY_RUNNING = "A load balancing is already running!";
-		final String ERROR_USAGE = "usage: initLB <peername> <strategyname> <allocatorname>";
+		final String ERROR_USAGE = "usage: initLB <strategyname>";
 		final String ERROR_STRATEGY = "No load balancing strategy found with the name ";
-		final String ERROR_ALLOCATOR = "No load balancing allocator found with the name ";
 
 		final String ERROR_NO_CONTROLLER = "No Load Balancing controller bound.";
 		
@@ -378,17 +376,6 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 		}
 
-		String allocatorName = ci.nextArgument();
-		if (Strings.isNullOrEmpty(allocatorName)) {
-			ci.println(ERROR_USAGE);
-			return;
-
-		}
-
-		if (!loadBalancingControl.setLoadBalancingAllocator(allocatorName)) {
-			ci.println(ERROR_ALLOCATOR + allocatorName);
-			return;
-		}
 		
 		loadBalancingControl.startLoadBalancing();
 
@@ -804,28 +791,6 @@ public class ActiveLoadbalancingConsole implements CommandProvider {
 
 	}
 
-	/**
-	 * Lists all available {@link ILoadBalancingAllocator}s bound via OSGI-DS.
-	 * 
-	 * @param ci
-	 *            The {@link CommandInterpreter} instance.
-	 */
-	public void _lsLBAllocators(CommandInterpreter ci) {
-
-		final String ERROR_NO_CONTROLLER = "No Load Balancing controller bound.";
-		if(loadBalancingControl==null) {
-			ci.println(ERROR_NO_CONTROLLER);
-			return;
-		}			
-
-		ci.println("Available load balancing Allocators:");
-		for (String allocatorName : loadBalancingControl.getAvailableAllocators()) {
-
-			ci.println(allocatorName);
-
-		}
-
-	}
 
 	/**
 	 * Lists all available {@link ILoadBalancingCommunicator} implementations

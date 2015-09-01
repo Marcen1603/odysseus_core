@@ -8,11 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingAllocator;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingStrategy;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.ILoadBalancingStrategy.LoadBalancingException;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.listeners.ILoadBalancingControllerListener;
-import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingAllocatorRegistry;
 import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.registries.interfaces.ILoadBalancingStrategyRegistry;
 
 public class LoadBalancingControlImpl implements ILoadBalancingController {
@@ -26,15 +24,12 @@ public class LoadBalancingControlImpl implements ILoadBalancingController {
 	
 	private ILoadBalancingStrategy currentStrategy;
 	private ILoadBalancingStrategy chosenStrategy;
-	private ILoadBalancingAllocator currentAllocator;
-	private ILoadBalancingAllocator chosenAllocator;
 	
 	private ArrayList<ILoadBalancingControllerListener> listeners = Lists.newArrayList();
 	
 	
 	private boolean isRunning = false;
 	
-	private ILoadBalancingAllocatorRegistry allocators;
 	private ILoadBalancingStrategyRegistry strategies;
 	
 	
@@ -51,17 +46,6 @@ public class LoadBalancingControlImpl implements ILoadBalancingController {
 		}
 	}
 	
-	public void bindLoadBalancingAllocatorRegistry(ILoadBalancingAllocatorRegistry serv) {
-		this.allocators=serv;
-	}
-	
-
-	public void unbindLoadBalancingAllocatorRegistry(ILoadBalancingAllocatorRegistry serv) {
-		if(this.allocators==serv) {
-			this.allocators=null;
-		}
-	}
-	
 	@Override
 	public synchronized boolean setLoadBalancingStrategy(String strategyName) {
 		if(!strategies.isStrategyBound(strategyName)) {
@@ -73,16 +57,6 @@ public class LoadBalancingControlImpl implements ILoadBalancingController {
 		return true;
 	}
 
-	@Override
-	public synchronized boolean setLoadBalancingAllocator(String allocatorName) {
-		if(!allocators.isAllocatorBound(allocatorName)) {
-			LOG.error("Allocator {} not found.",allocatorName);
-			return false;
-		}
-		chosenAllocator = allocators.getAllocator(allocatorName);
-		LOG.debug("Allocator {} chosen.",allocatorName);
-		return true;
-	}
 
 	@Override
 	public synchronized boolean isLoadBalancingRunning() {
@@ -97,13 +71,6 @@ public class LoadBalancingControlImpl implements ILoadBalancingController {
 		return currentStrategy.getName();
 	}
 
-	@Override
-	public synchronized String getSelectedLoadBalancingAllocator() {
-		if(this.currentAllocator==null)
-			return "";
-		
-		return currentAllocator.getName();
-	}
 
 	@Override
 	public synchronized void stopLoadBalancing() {
@@ -119,11 +86,6 @@ public class LoadBalancingControlImpl implements ILoadBalancingController {
 	}
 	
 
-	@Override
-	public synchronized Set<String> getAvailableAllocators() {
-		return allocators.getRegisteredAllocators();
-	}
-	
 	
 
 	@Override
@@ -136,15 +98,8 @@ public class LoadBalancingControlImpl implements ILoadBalancingController {
 			LOG.error("No Strategy chosen.");
 			return;
 		}
-		if(chosenAllocator == null) {
-			LOG.error("No allocator chosen.");
-			return;
-		}
 		
-		currentAllocator=chosenAllocator;
 		currentStrategy=chosenStrategy;
-		
-		currentStrategy.setAllocator(currentAllocator);
 		
 		try {
 			currentStrategy.startMonitoring();
@@ -154,7 +109,6 @@ public class LoadBalancingControlImpl implements ILoadBalancingController {
 			e.printStackTrace();
 			stopLoadBalancing();
 		}
-		
 		notifyListeners();
 	}
 
