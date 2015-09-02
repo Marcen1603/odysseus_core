@@ -36,5 +36,7 @@ public interface IIQLCompilerHelper {
 	Collection<IQLMethod> getMethods(EObject obj);
 
 	IQLClass getClass(IQLStatement stmt);
+	
+	boolean isJvmArray(JvmTypeReference typeRef);
 
 }

@@ -172,8 +172,8 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	}
 		
 	@Override
-	public IQLSystemType addSystemType(JvmGenericType type) {
-		IQLSystemType systemType=  new IQLSystemType(type);
+	public IQLSystemType addSystemType(JvmGenericType type, Class<?> javaType) {
+		IQLSystemType systemType=  new IQLSystemType(type, javaType);
 		systemTypes.put(systemType.getType().getPackageName()+"."+systemType.getType().getSimpleName(), systemType);		
 		String packageName = type.getPackageName();
 		IQLModel systemFile = systemFiles.get(packageName);
@@ -331,7 +331,13 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	@Override
 	public String getImportName(JvmType type) {		
 		String name = typeUtils.getLongName(type, false);
-		return name;	
+		IQLSystemType systemType = this.getSystemType(name);
+		if (systemType != null) {
+			Class<?> javaType = systemType.getJavaType();
+			return javaType.getCanonicalName();
+		} else {
+			return name;	
+		}
 	}
 	
 	@Override
@@ -364,19 +370,29 @@ public abstract class AbstractIQLTypeDictionary<U extends IIQLTypeUtils, I exten
 	public String getSimpleName(JvmType type, String text, boolean wrapper, boolean array) {
 		String qualifiedName = typeUtils.getLongName(type, array);	
 		String simpleName = typeUtils.getShortName(type, array);	
-		Class<?> javaType = null;
-		try {
-			javaType =  Class.forName(qualifiedName);
-		} catch (ClassNotFoundException e) {
-		}
-		if (wrapper && typeUtils.isPrimitive(type)) {
-			return toWrapper(qualifiedName);
-		} else if (!isImportNeeded(type, text)) {
-			return text;				
-		} else if (javaType != null) {
-			return javaType.getSimpleName();
+		IQLSystemType systemType = this.getSystemType(qualifiedName);
+		if (systemType != null) {
+			if (!isImportNeeded(type, text)) {
+				return converter.toJavaString(text);
+			} else {
+				Class<?> javaType = systemType.getJavaType();
+				return javaType.getSimpleName();
+			}
 		} else {
-			return simpleName;
+			Class<?> javaType = null;
+			try {
+				javaType =  Class.forName(qualifiedName);
+			} catch (ClassNotFoundException e) {
+			}
+			if (wrapper && typeUtils.isPrimitive(type)) {
+				return toWrapper(qualifiedName);
+			} else if (!isImportNeeded(type, text)) {
+				return text;				
+			} else if (javaType != null) {
+				return javaType.getSimpleName();
+			} else {
+				return simpleName;
+			}
 		}
 	}
 	

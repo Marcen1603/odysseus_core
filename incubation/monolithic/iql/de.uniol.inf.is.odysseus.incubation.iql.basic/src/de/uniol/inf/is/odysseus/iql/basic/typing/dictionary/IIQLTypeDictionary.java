@@ -34,7 +34,7 @@ public interface IIQLTypeDictionary {
 	Collection<IQLModel> getSystemFiles();	
 	ResourceSet getSystemResourceSet();
 		
-	IQLSystemType addSystemType(JvmGenericType type);
+	IQLSystemType addSystemType(JvmGenericType type, Class<?> javaType);
 	void removeSystemType(String name);	
 	IQLSystemType getSystemType(String name);
 	boolean isSystemType(String name);

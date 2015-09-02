@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmArrayType;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
@@ -36,6 +37,11 @@ public abstract class AbstractIQLCompilerHelper<L extends IIQLLookUp, F extends 
 		this.lookUp = lookUp;
 		this.typeUtils = typeUtils;
 		this.typeDictionary = typeDictionary;
+	}
+	
+	@Override
+	public boolean isJvmArray(JvmTypeReference typeRef) {
+		return typeUtils.getInnerType(typeRef, true) instanceof JvmArrayType;
 	}
 	
 	@Override

@@ -68,7 +68,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		sourceAttr.setType(typeUtils.createTypeRef(sourceClass));
 		sourceClass.getMembers().add(sourceAttr);
 		
-		typeDictionary.addSystemType(sourceClass);
+		typeDictionary.addSystemType(sourceClass, DefaultQDLSource.class);
 		typeDictionary.addSource(name, source, sourceClass);
 	}
 	
@@ -106,7 +106,7 @@ public class QDLTypeBuilder extends AbstractIQLTypeBuilder<IQDLTypeDictionary, I
 		Map<String, Parameter> parameterTypes = new HashMap<>();
 
 		typeDictionary.removeSystemType(createQualifiedName(OPERATORS_NAMESPACE, name));
-		typeDictionary.addSystemType(opClass);
+		typeDictionary.addSystemType(opClass, DefaultQDLOperator.class);
 		typeDictionary.addOperator(opBuilder, opClass, parameters, parameterTypes);
 		
 		BeanInfo beanInfo = null;

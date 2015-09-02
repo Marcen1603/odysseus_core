@@ -205,6 +205,11 @@ public abstract class AbstractIQLTypeUtils implements IIQLTypeUtils {
 		}
 	}
 	
+	@Override
+	public int getArrayDim(JvmTypeReference typeRef) {
+		return getArraySize(getInnerType(typeRef, true));
+	}
+	
 	protected JvmType getInnerType(JvmType type, boolean array) {
 		 if (type instanceof IQLArrayType && array) {
 			return type;

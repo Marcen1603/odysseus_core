@@ -256,7 +256,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 		if (col != null) {
 			for (IIQLTypeExtensions extensions : col) {
 				JvmTypeReference typeExtRef = typeExtensionsRefs.get(extensions);
-				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeExtRef, true, false);
+				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeExtRef, true);
 				JvmOperation op = methodFinder.findMethod(methods, method, args);
 				if (op != null) {
 					return extensions;
@@ -298,7 +298,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 		if (col != null) {
 			for (IIQLTypeExtensions extensions : col) {
 				JvmTypeReference extRef = typeExtensionsRefs.get(extensions);
-				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(extRef, true, false);
+				Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(extRef, true);
 				JvmOperation op = methodFinder.findMethod(methods, methodName, arguments);
 				if (op != null) {
 					return extensions;
@@ -375,7 +375,7 @@ public abstract class AbstractIQLTypeExtensionsDictionary<F extends IIQLTypeDict
 	public JvmOperation getMethod(JvmTypeReference typeRef, String method,	List<IQLExpression> arguments) {
 		JvmTypeReference ext = typeExtensionsRefs.get(findTypeExtensions(typeRef, method, arguments));
 		JvmDeclaredType type = (JvmDeclaredType)  typeUtils.getInnerType(ext, false);
-		Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeUtils.createTypeRef(type), true, false);
+		Collection<JvmOperation> methods = lookUp.getDeclaredPublicMethods(typeUtils.createTypeRef(type), true);
 		return methodFinder.findMethod(methods, method, arguments);
 	}
 

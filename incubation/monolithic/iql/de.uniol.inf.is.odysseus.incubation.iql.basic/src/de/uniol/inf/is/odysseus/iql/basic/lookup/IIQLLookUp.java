@@ -25,7 +25,7 @@ public interface IIQLLookUp {
 	Collection<JvmOperation> getProtectedMethods(JvmTypeReference typeRef,Collection<JvmTypeReference> importedTypes, boolean extensionMethods);		
 	Collection<JvmOperation> getPublicMethods(JvmTypeReference typeRef, boolean extensionMethods);	
 	Collection<JvmOperation> getProtectedMethods(JvmTypeReference typeRef, boolean extensionMethods);		
-	Collection<JvmOperation> getDeclaredPublicMethods(JvmTypeReference typeRef,	boolean onlyStatic, boolean ignoreArrays);
+	Collection<JvmOperation> getDeclaredPublicMethods(JvmTypeReference typeRef,	boolean onlyStatic);
 
 	Collection<JvmExecutable> getPublicConstructors(JvmTypeReference typeRef);
 	JvmExecutable findConstructor(JvmTypeReference typeRef, List<IQLExpression> arguments);

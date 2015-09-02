@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.iql.qdl.exprevaluator.IQDLExpressionEvaluator
 import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.qdl.typing.utils.IQDLTypeUtils
 import de.uniol.inf.is.odysseus.iql.qdl.typing.typeextension.IQDLTypeExtensionsDictionary
+import de.uniol.inf.is.odysseus.iql.basic.types.IQLUtils
 
 class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHelper, IQDLGeneratorContext, IQDLTypeCompiler, IQDLExpressionEvaluator, IQDLTypeUtils, IQDLLookUp, IQDLTypeExtensionsDictionary> implements IQDLExpressionCompiler{
 		
@@ -91,7 +92,10 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHe
 			}
 		} else if (helper.isOperator(left)){
 			var pName = field.simpleName;
-			if (helper.isParameter(pName, left)) {
+			if (helper.isParameter(pName, left) && helper.isJvmArray(field.type) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))){
+				c.addImport(IQLUtils.canonicalName)				
+				'''«IQLUtils.simpleName».toList(«compile(e.leftOperand, c)».getParameter("«pName»"))'''
+			} else if (helper.isParameter(pName, left)){
 				'''«compile(e.leftOperand, c)».getParameter("«pName»")'''
 			} else {
 				super.compile(e, left, field, c);
@@ -103,7 +107,11 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHe
 	
 	override String compile(IQLMemberSelectionExpression e, JvmTypeReference left, JvmOperation method, IQDLGeneratorContext c) {	
 		if (helper.isOperator(left)){
-			if (helper.isParameterGetter(method, left)) {
+			if (helper.isParameterGetter(method, left) && helper.isJvmArray(method.returnType) && (c.expectedTypeRef == null || !helper.isJvmArray(c.expectedTypeRef))){
+				var name = helper.getParameterOfGetter(method)
+				c.addImport(IQLUtils.canonicalName)	
+				'''«IQLUtils.simpleName».toList(«compile(e.leftOperand, c)».getParameter("«name»"))'''
+			} else if (helper.isParameterGetter(method, left)) {
 				var name = helper.getParameterOfGetter(method)
 				'''«compile(e.leftOperand, c)».getParameter("«name»")'''
 			} else if (helper.isParameterSetter(method , left)) {
@@ -120,10 +128,15 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHe
 	override String compileAssignmentExpr(IQLAssignmentExpression e, IQLMemberSelectionExpression selExpr, IQDLGeneratorContext c) {
 		if (e.op.equals("=") && selExpr.sel.member instanceof JvmField) {
 			var field = selExpr.sel.member as JvmField
-			var left = exprEvaluator.eval(selExpr.leftOperand);
-			if (!left.isNull && helper.isOperator(left.ref) && helper.isParameter(field.simpleName, left.ref)) {
+			var leftType = exprEvaluator.eval(selExpr.leftOperand);
+			var rightType = exprEvaluator.eval(e.rightOperand);
+			if (!leftType.isNull && helper.isOperator(leftType.ref) && helper.isParameter(field.simpleName, leftType.ref) && helper.isJvmArray(field.type) && !rightType.isNull && !helper.isJvmArray(rightType.ref)){
+				c.addImport(IQLUtils.canonicalName)
+				var dim = typeUtils.getArrayDim(field.type);
+				'''«compile(selExpr.leftOperand, c)».setParameter("«field.simpleName»",«IQLUtils.simpleName».toArray«dim»(«compile(e.rightOperand, c)»))'''		
+			} else if (!leftType.isNull && helper.isOperator(leftType.ref) && helper.isParameter(field.simpleName, leftType.ref)) {
 				'''«compile(selExpr.leftOperand, c)».setParameter("«field.simpleName»",«compile(e.rightOperand, c)»)'''		
-			} else {
+			}else {
 				super.compileAssignmentExpr(e, selExpr, c);
 			}
 		} else {

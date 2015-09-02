@@ -23,7 +23,8 @@ public interface IIQLTypeUtils {
 	String getShortName(JvmType type, boolean array);
 	
 	int getArraySize(JvmType type);	
-		
+	int getArrayDim(JvmTypeReference type);	
+
 	boolean isArray(JvmTypeReference typeRef);
 	boolean isUserDefinedType(JvmTypeReference typeRef, boolean array);
 	boolean isUserDefinedType(JvmType type, boolean array);	
