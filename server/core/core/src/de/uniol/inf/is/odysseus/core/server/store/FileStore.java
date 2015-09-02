@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
+import de.uniol.inf.is.odysseus.core.util.OsgiObjectInputStream;
 
 public class FileStore<IDType extends Serializable & Comparable<? extends IDType>, STORETYPE extends Serializable>
 		extends AbstractStore<IDType, STORETYPE> {
