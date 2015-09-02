@@ -1,5 +1,10 @@
 package de.uniol.inf.is.odysseus.core.objecthandler;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -9,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.util.OsgiObjectInputStream;
 
 public class ByteBufferUtil {
 
@@ -82,4 +88,36 @@ public class ByteBufferUtil {
 			}
 		}
 	}
+	
+	/**
+	 * Encode an object to a byte array.
+	 * 
+	 * @param obj
+	 *            The object to encode.
+	 * @return A byte array.
+	 * @throws IOException if any error occurs.
+	 */
+	public static byte[] toByteArray(Serializable obj) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+			oos.writeObject(obj);
+			return baos.toByteArray();
+		}
+	}
+
+	/**
+	 * Decode an object from a byte array using {@code OsgiObjectInputStream}.
+	 * 
+	 * @param bytes
+	 *            A byte array to decode.
+	 * @return The decoded object.
+	 * @throws ClassNotFoundException if the class of the decoded object could not be found.
+	 * @throws IOException if any other error occurs.
+	 */
+	public static Serializable fromByteArray(byte[] bytes) throws ClassNotFoundException, IOException {
+		try (OsgiObjectInputStream oois = new OsgiObjectInputStream(new ByteArrayInputStream(bytes))) {
+			return (Serializable) oois.readObject();
+		}
+	}
+	
 }
