@@ -34,28 +34,47 @@ public class QueryTransformation {
 
 	private static QueryAnalyseInformation transformationInformation;
 	
-	@SuppressWarnings("unchecked")
+	private static boolean renameRemoved = false;
+	private static boolean newRound = false;
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void startQueryTransformation(TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue ){
 		
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
+		
+		transformationInformation = new QueryAnalyseInformation();
 	
+		//get query
 		ILogicalQuery queryTopAo = ExecutorServiceBinding.getExecutor().getLogicalQueryById(parameter.getQueryId(), SessionHelper.getActiveSession());
 		
+		//get transformationConfiguration for the query
+		TransformationConfiguration transformationConfiguration =	ExecutorServiceBinding.getExecutor().getBuildConfigForQuery(queryTopAo).getTransformationConfiguration();
+		
+		//copy logicalGraph
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(queryTopAo);
-		@SuppressWarnings("rawtypes")
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(queryTopAo.getLogicalPlan(), copyVisitor);
 		
 		ILogicalOperator savedPlan = copyVisitor.getResult();
 	
-		TransformationConfiguration transformationConfiguration =	ExecutorServiceBinding.getExecutor().getBuildConfigForQuery(queryTopAo).getTransformationConfiguration();
+		//find sources in logicalPlan
+		FindSourcesLogicalVisitor<ILogicalOperator> findSourcesVisitor = new FindSourcesLogicalVisitor<ILogicalOperator>();
+		GenericGraphWalker walkerSources = new GenericGraphWalker();
+		walkerSources.prefixWalk(savedPlan, findSourcesVisitor);
 		
-		analyseQuery(savedPlan, parameter, transformationConfiguration);
+		transformationInformation.addSourceOp(findSourcesVisitor.getResult());
 		
+		//remove all RenameAO 
+		do{
+			prepareLogicalPlan(transformationInformation.getSourceOpList());
+		}while(newRound);
+		
+		analyseLogicalPlan(savedPlan, parameter, transformationConfiguration);
 		
 		
 		ITargetPlatform targetPlatform = TargetPlatformRegistry.getTargetPlatform(parameter.getProgramLanguage());
 		
+
 		try {
 			targetPlatform.convertQueryToStandaloneSystem(savedPlan,transformationInformation, parameter, queue, transformationConfiguration);
 		} catch (InterruptedException e) {
@@ -67,12 +86,46 @@ public class QueryTransformation {
 
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static void analyseQuery(ILogicalOperator query,TransformationParameter parameter, TransformationConfiguration transformationConfiguration){
+
+	private static void prepareLogicalPlan(List<ILogicalOperator> sourceOps){
+		renameRemoved = false;
 		
-		transformationInformation = new QueryAnalyseInformation();
+		for(ILogicalOperator ss : sourceOps){
+			removeAO(ss);
+		}
 		
+		if(renameRemoved){
+			newRound = true;
+		}else{
+			newRound= false;
+		}
+	}
 	
+	private static void removeAO(ILogicalOperator operator){
+		
+		for(LogicalSubscription s:operator.getSubscriptions()){
+			removeAO(s.getTarget());
+		}
+		
+		if(operator instanceof RenameAO){
+			RenameAO renameAO = (RenameAO)operator;
+			
+			TDeleteRenameAORule tdelteRenameAORule =  new TDeleteRenameAORule();
+	
+			if(tdelteRenameAORule.isExecutable(renameAO, null)){
+				RestructHelper.removeOperator(renameAO, true);
+				renameRemoved = true;
+			}else{
+				System.out.println("Kann nicht entfernt werden!");
+			}
+		
+		}
+	}
+	
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static void analyseLogicalPlan(ILogicalOperator query,TransformationParameter parameter, TransformationConfiguration transformationConfiguration){
+		
 		
 		for(String metaDataType : transformationConfiguration.getDefaultMetaTypeSet()){
 			transformationInformation.addMetaData(metaDataType);	
@@ -102,36 +155,19 @@ public class QueryTransformation {
 				}else{
 					transformationInformation.addSinkOp(topAO);
 				}
-				
-			
 			}
-			
-			
 		}
 		
-		
-		FindSourcesLogicalVisitor<ILogicalOperator> findSourcesVisitor = new FindSourcesLogicalVisitor<ILogicalOperator>();
-		GenericGraphWalker walkerSources = new GenericGraphWalker();
-		walkerSources.prefixWalk(query, findSourcesVisitor);
-		
-		transformationInformation.addSourceOp(findSourcesVisitor.getResult());
-		
 		try {
-			walkTroughLogicalPlan(transformationInformation.getSourceOpList(),parameter, transformationConfiguration);
+			
+			for(ILogicalOperator sourceOperator: transformationInformation.getSourceOpList()){
+				analyseOperator(sourceOperator,parameter, transformationConfiguration);
+			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	
-		
-	}
-	
-	private static void walkTroughLogicalPlan(List<ILogicalOperator> operatorSources,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
-		
-		for(ILogicalOperator sourceOperator: operatorSources){
-				analyseOperator(sourceOperator,parameter, transformationConfiguration);
-		}
 		
 	}
 	
@@ -154,21 +190,11 @@ public class QueryTransformation {
 			}
 		}
 		
-	
+
 		for(LogicalSubscription s:operator.getSubscriptions()){
 			analyseOperator(s.getTarget(),parameter, transformationConfiguration);
 		}
-		
-		if(operator instanceof RenameAO){
-			RenameAO renameAO = (RenameAO)operator;
-			
-			TDeleteRenameAORule tdelteRenameAORule =  new TDeleteRenameAORule();
-	
-			if(tdelteRenameAORule.isExecutable(renameAO, null)){
-				RestructHelper.removeOperator(renameAO, true);
-			}
-		
-		}
+
 		
 		
 	}

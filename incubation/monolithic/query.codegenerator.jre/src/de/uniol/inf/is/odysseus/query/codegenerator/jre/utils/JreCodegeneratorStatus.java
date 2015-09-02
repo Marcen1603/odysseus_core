@@ -14,6 +14,31 @@ public class JreCodegeneratorStatus{
 	
 	private Map<ILogicalOperator,String> codeReady  = new HashMap<ILogicalOperator, String>();
 	
+	
+	private Map<ILogicalOperator, Integer> moreInputs = new HashMap<ILogicalOperator, Integer>();
+	
+	
+	public boolean operateCanCreate(ILogicalOperator operator){
+		if(moreInputs.containsKey(operator)){
+			Integer inputAnzahl = moreInputs.get(operator);
+			
+			if(inputAnzahl == 1){
+				return true;
+			}else{
+				inputAnzahl= inputAnzahl-1;
+				return false;
+			}
+		}
+		
+		int temp = operator.getSubscribedToSource().size();
+		moreInputs.put(operator, temp-1);
+		
+		return false;
+	}
+	
+	
+	
+	
 	private int uniqueId = 0;
 	
 	public static JreCodegeneratorStatus getInstance() {

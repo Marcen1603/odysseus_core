@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
 import de.uniol.inf.is.odysseus.persistentqueries.DirectTransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
+import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.CreateJreDefaultCode;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.JreCodegeneratorStatus;
 import de.uniol.inf.is.odysseus.query.codegenerator.jre.utils.StringTemplate;
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.CodeFragmentInfo;
@@ -47,7 +48,13 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule<JoinAO>{
 		
 		IPredicate<?> predicate = joinAO.getPredicate();
 		
-		String predicateValue = predicate.toString();
+		
+		String predicateValue = "";
+		
+		if(predicate != null){
+			
+			predicateValue =predicate.toString();
+		}
 		String transferFuntion = "";
 		
 		if (joinAO.isAssureOrder()) {
@@ -86,12 +93,17 @@ public class CJoinTIPORule extends  AbstractCJoinTIPORule<JoinAO>{
 		joinTIPOTemplate.getSt().add("areaName", areaName);
 		joinTIPOTemplate.getSt().add("predicateValue", predicateValue);
 		joinTIPOTemplate.getSt().add("transferFuntion", transferFuntion);
+		
+	
+		
 		joinTIPOTemplate.getSt().add("input0",  JreCodegeneratorStatus.getInstance().getVariable(logicalSubscritions[0].getTarget()));
 		joinTIPOTemplate.getSt().add("input1",  JreCodegeneratorStatus.getInstance().getVariable(logicalSubscritions[1].getTarget()));
 		
 		
+		joinTIPO.addCodeFragmentInfo((CreateJreDefaultCode.getCodeForSDFSchema(logicalSubscritions[0].getSchema(), operatorVariable+"leftSchema")));
+		joinTIPO.addCodeFragmentInfo((CreateJreDefaultCode.getCodeForSDFSchema(logicalSubscritions[1].getSchema(), operatorVariable+"rightSchema")));
 		
-	
+		
 		joinTIPO.addCode(joinTIPOTemplate.getSt().render());
 		
 		joinTIPO.addImport(IMetadataMergeFunction.class.getName());

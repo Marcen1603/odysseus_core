@@ -2,12 +2,15 @@ package de.uniol.inf.is.odysseus.query.codegenerator.jre.operator.rules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
@@ -61,29 +64,49 @@ public class CAggregateTIPORule extends AbstractAggregateTIPORule<AggregateAO>{
 		aggregateTIPO.addCode(aggregateMetaDataTemplate.getSt().render());
 		
 	
-		
-
 	
 		List<CAggregateItemModel> cAggregateItemModelList = new ArrayList<CAggregateItemModel>();
-
-		for (AggregateItem item : aggregateAO.getAggregationItems()) {
-
-			String functionName = item.aggregateFunction.getName();
-			List<SDFAttribute> inAttributes = item.inAttributes;
-			SDFAttribute outAttribute = item.outAttribute;
-			
-			String outAttributeSourceName = outAttribute.getSourceName();
-			String outAttributeAttributeName = outAttribute.getAttributeName();
-			String outAttributeSDFDataTypeName = outAttribute.getDatatype().toString();
-			
-
-			
-			cAggregateItemModelList.add(new CAggregateItemModel(functionName, inAttributes,outAttribute,outAttributeSourceName,outAttributeAttributeName,outAttributeSDFDataTypeName));
-		
 	
 		
-	
+		
+		List<AggregateItem> aggregateItemList = new ArrayList<AggregateItem>();
+		
+		
+		for (Entry<SDFSchema, Map<AggregateFunction, SDFAttribute>> entry : aggregateAO.getAggregations().entrySet())
+		{
+		    for (Entry<AggregateFunction, SDFAttribute> entryNeu : entry.getValue().entrySet())
+			{
+		    	SDFAttribute outAttribute = entryNeu.getValue();
+		    	SDFAttribute attribute =entry.getKey().get(0);
+		    
+		    	AggregateFunction function = entryNeu.getKey();
+		    	
+		    	aggregateItemList.add(new AggregateItem(function.getName(), attribute, outAttribute));
+
+			}
+		  
 		}
+		
+		
+	
+		if(aggregateItemList!=null){
+			for (AggregateItem item : aggregateItemList) {
+
+				String functionName = item.aggregateFunction.getName();
+				List<SDFAttribute> inAttributes = item.inAttributes;
+				SDFAttribute outAttribute = item.outAttribute;
+				
+				String outAttributeSourceName = outAttribute.getSourceName();
+				String outAttributeAttributeName = outAttribute.getAttributeName();
+				String outAttributeSDFDataTypeName = outAttribute.getDatatype().toString();
+				
+				cAggregateItemModelList.add(new CAggregateItemModel(functionName, inAttributes,outAttribute,outAttributeSourceName,outAttributeAttributeName,outAttributeSDFDataTypeName));
+			
+			}
+		}
+		
+		
+	
 		
 		
 		StringTemplate aggregateItemsTIPOTemplate = new StringTemplate("utils","aggregateItemListNeu");

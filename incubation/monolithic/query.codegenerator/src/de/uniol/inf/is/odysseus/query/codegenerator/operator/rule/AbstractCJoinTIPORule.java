@@ -44,15 +44,19 @@ public abstract class AbstractCJoinTIPORule<T extends JoinAO> extends AbstractCI
 		}
 
 		transformationInformation.addSweepArea(areaName);
-
+		
 		IPredicate<?> predicate = joinAO.getPredicate();
-		String predicateValue = predicate.toString();
-		IExpression<?> mepExpression = MEP.getInstance().parse(predicateValue);
+		
+		if(predicate != null){
+			String predicateValue = predicate.toString();
+			IExpression<?> mepExpression = MEP.getInstance().parse(predicateValue);
 
-		Map<String, IExpression<?>> mepFunctions = Utils
-				.getAllMEPFunctions(mepExpression);
+			Map<String, IExpression<?>> mepFunctions = Utils
+					.getAllMEPFunctions(mepExpression);
 
-		transformationInformation.addMEPFunction(mepFunctions);
+			transformationInformation.addMEPFunction(mepFunctions);
+		}
+	
 	}
 
 }

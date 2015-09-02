@@ -29,7 +29,7 @@ joinTIPO(operatorVariable,input0MetaAttributeNamesCode, input1MetaAttributeNames
 		DirectAttributeResolver $operatorVariable$DirectAttriuteResolver = new DirectAttributeResolver($operatorVariable$SDFSchema);
 		RelationalPredicateBuilder $operatorVariable$RelationalPredicateBuilder = new  RelationalPredicateBuilder();
 		RelationalPredicate $operatorVariable$Predicate = (RelationalPredicate)$operatorVariable$RelationalPredicateBuilder.createPredicate($operatorVariable$DirectAttriuteResolver, "$predicateValue$");
-		$operatorVariable$Predicate.init($input0$SDFSchema, $input1$SDFSchema);
+		$operatorVariable$Predicate.init($operatorVariable$leftSchemaSDFSchema, $operatorVariable$rightSchemaSDFSchema);
 		
 		$operatorVariable$PO.setOutputSchema($operatorVariable$SDFSchema);
 	

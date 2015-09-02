@@ -14,6 +14,8 @@ public class CAggregateItemModel {
 	String outAttributeAttributeName = "";
 	String outAttributeSDFDataTypeName = "";
 	
+	String outAttributeAttributeNameEscaped = "";
+	
 	
 	public CAggregateItemModel(String functionName, List<SDFAttribute> inAttributes, SDFAttribute outAttribute, String outAttributeSourceName, String outAttributeAttributeName,String outAttributeSDFDataTypeName){
 		 this.functionName = functionName;
@@ -22,9 +24,12 @@ public class CAggregateItemModel {
 		
 		 this.outAttributeSourceName = outAttributeSourceName;
 		 this.outAttributeAttributeName = outAttributeAttributeName;
-		 this. outAttributeSDFDataTypeName = outAttributeSDFDataTypeName;
+		 this.outAttributeSDFDataTypeName = outAttributeSDFDataTypeName;
+		 
+		 this.outAttributeAttributeNameEscaped = outAttributeAttributeName.replace("(", "_").replace(")", "_").replace(".", "_");
 	}
 
+	
 
 	public String getFunctionName() {
 		return functionName;
@@ -69,6 +74,7 @@ public class CAggregateItemModel {
 	public String getOutAttributeAttributeName() {
 		return outAttributeAttributeName;
 	}
+	
 
 
 	public void setOutAttributeAttributeName(String outAttributeAttributeName) {
@@ -83,6 +89,19 @@ public class CAggregateItemModel {
 
 	public void setOutAttributeSDFDataTypeName(String outAttributeSDFDataTypeName) {
 		this.outAttributeSDFDataTypeName = outAttributeSDFDataTypeName;
+	}
+
+
+
+	public String getOutAttributeAttributeNameEscaped() {
+		return outAttributeAttributeNameEscaped;
+	}
+
+
+
+	public void setOutAttributeAttributeNameEscaped(
+			String outAttributeAttributeNameEscaped) {
+		this.outAttributeAttributeNameEscaped = outAttributeAttributeNameEscaped;
 	}
 	
 

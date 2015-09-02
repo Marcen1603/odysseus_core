@@ -109,12 +109,9 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 	}
 	
-
-	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
-		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
-
-
 	
+	private void codegen(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
+		
 		IOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
 		
@@ -164,6 +161,22 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		for(LogicalSubscription s:operator.getSubscriptions()){
 			generateCode(s.getTarget(),parameter, transformationConfiguration,queryAnalseInformation);
 		}
+	}
+
+	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
+		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
+
+
+
+		if(operator.getSubscribedToSource().size() >= 2){
+			if(JreCodegeneratorStatus.getInstance().operateCanCreate(operator)){
+				codegen(operator,parameter, transformationConfiguration,queryAnalseInformation);
+			}
+		}else{
+			codegen(operator,parameter, transformationConfiguration,queryAnalseInformation);
+		}
+		
+		
 		
 	}
 

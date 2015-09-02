@@ -77,9 +77,9 @@ AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeIn
 				
 
 RelationalGroupProcessor $operatorVariable$RGroupProcessor = new RelationalGroupProcessor(
-				aggregate2PO.getInputSchema(), $operatorVariable$SDFSchema,
-				aggregate2PO.getGroupingAttribute(),
-				aggregate2PO.getAggregations(), aggregate2PO.isFastGrouping());
+				$operatorVariable$PO.getInputSchema(), $operatorVariable$SDFSchema,
+				$operatorVariable$PO.getGroupingAttribute(),
+				$operatorVariable$PO.getAggregations(), $operatorVariable$PO.isFastGrouping());
 				
 				
 		$operatorVariable$PO.setGroupProcessor($operatorVariable$RGroupProcessor);
