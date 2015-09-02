@@ -11,5 +11,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.slf4j,
  de.uniol.inf.is.odysseus.recovery.systemlog,
  de.uniol.inf.is.odysseus.recovery.systemstatelogger,
- de.uniol.inf.is.odysseus.script.parser
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.usermanagement.filestore;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.relational.base;bundle-version="1.0.0"
 Service-Component: OSGI-INF/QueryStateRecoveryComponent.xml

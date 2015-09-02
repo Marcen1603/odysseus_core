@@ -1,42 +1,65 @@
 package de.uniol.inf.is.odysseus.recovery.querystate;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferUtil;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AbstractDropStreamOrViewCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateSinkCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropSinkCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.AbstractQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.PartialQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.RemoveQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.ResumeQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.StartQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.StopQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.SuspendQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.executorcommand.IExecutorCommandListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.queryadded.IQueryAddedListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.AbstractRecoveryExecutor;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryExecutor;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.AbstractQueryStateInfo;
-import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryRemovedInfo;
-import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.QueryStateChangedInfo;
-import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.ScriptAddedInfo;
-import de.uniol.inf.is.odysseus.recovery.querystate.querystateinfo.SourceRemovedInfo;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
 
-// TODO use IExecutorCommand instead of an own data structure. Use different listeners to get those commands.
 /**
  * The query state recovery component handles the backup and recovery of queries
  * (queries and their states, sources, sinks). <br />
@@ -55,18 +78,8 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
  *
  */
 @SuppressWarnings(value = { "nls" })
-public class QueryStateRecoveryComponent
-		implements IQueryAddedListener, ICrashDetectionListener, IDataDictionaryListener, IPlanModificationListener {
-
-	/*
-	 * XXX QueryStateRecoveryComponent-Optimization: For now, this component
-	 * reads the relevant entries as a history and restores them ignoring the
-	 * future. So a source may be added are directly dropped during recovery.
-	 * The reason is, that the complete Odysseus script (may contain more than
-	 * one query) is stored and recovered. To identify different log entries,
-	 * which belong together (e.g., creation and drop), the restored script
-	 * could be parsed.
-	 */
+public class QueryStateRecoveryComponent implements IExecutorCommandListener, ICrashDetectionListener,
+		IPlanModificationListener, IDataDictionaryListener {
 
 	/**
 	 * The logger for this class.
@@ -74,154 +87,139 @@ public class QueryStateRecoveryComponent
 	static final Logger cLog = LoggerFactory.getLogger(QueryStateRecoveryComponent.class);
 
 	/**
-	 * The name for backup threads.
-	 */
-	private static final String cBackupThreadName = "QueryStateBackup";
-
-	/**
-	 * The name for backup recovery.
-	 */
-	private static final String cReoveryThreadName = "QueryStateRecovery";
-
-	/**
 	 * Recovery will be started.
 	 */
 	@Override
 	public void onCrashDetected(final long lastStartup) throws Throwable {
-		new Thread(cReoveryThreadName) {
-
-			@Override
-			public void run() {
-				if (!cSystemLog.isPresent()) {
-					cLog.error("Could not start recovery, because no system log is bound!");
-				} else if (!cExecutor.isPresent()) {
-					cLog.error("Could not start recovery, because no executor is bound!");
-				} else {
-					cLog.debug("Starting recovery...");
-					recoverFromLog(cSystemLog.get().read(lastStartup), cExecutor.get());
-					cLog.debug("Recovery finished.");
-				}
-			}
-
-		}.start();
-
-	}
-
-	/**
-	 * Only for Odysseus Script queries a backup will be created.
-	 */
-	@Override
-	public void queryAddedEvent(final String query, final List<Integer> queryIds,
-			final QueryBuildConfiguration buildConfig, final String parserId, final ISession user,
-			final Context context) {
-		if (parserId.equals(OdysseusScriptParser.PARSER_NAME)) {
-			new Thread(cBackupThreadName) {
-
-				@Override
-				public void run() {
-					if (!cSystemLog.isPresent()) {
-						cLog.error("Could not start backup, because no system log is bound!");
-					} else if (!cExecutor.isPresent()) {
-						cLog.error("Could not start backup, because no executor is bound!");
-					} else {
-						cLog.debug("Starting backup...");
-						backupScript(query, queryIds, parserId, user, context, cExecutor.get());
-						cLog.debug("Backup finished.");
-					}
-				}
-
-			}.start();
+		if (!cSystemLog.isPresent()) {
+			cLog.error("Could not start recovery, because no system log is bound!");
+		} else if (!cExecutor.isPresent()) {
+			cLog.error("Could not start recovery, because no executor is bound!");
+		} else {
+			cLog.debug("Starting recovery...");
+			recoverFromLog(cSystemLog.get().read(lastStartup), cExecutor.get());
+			cLog.debug("Recovery finished.");
 		}
 	}
 
-	/**
-	 * The removal of a source will be logged.
-	 */
 	@Override
-	public void removedViewDefinition(final IDataDictionary sender, final String name, ILogicalOperator op) {
-		new Thread(cBackupThreadName) {
-
-			@Override
-			public void run() {
-				if (!cSystemLog.isPresent()) {
-					cLog.error("Could not start backup, because no system log is bound!");
-				} else {
-					cLog.debug("Starting backup...");
-					backupSourceRemoval(name, cUsedDataDictionaries.get(sender));
-					cLog.debug("Backup finished.");
-				}
-			}
-
-		}.start();
+	public void executorCommandEvent(final IExecutorCommand command) {
+		backupExecutorCommand(command, System.currentTimeMillis());
 	}
 
-	/**
-	 * The removal of a query and query state changes will be logged.
-	 */
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		PlanModificationEventType eventType = (PlanModificationEventType) eventArgs.getEventType();
-		final IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
-		final int queryId = query.getID();
-		final ISession caller = query.getSession();
-		switch (eventType) {
-		case QUERY_REMOVE:
-			new Thread(cBackupThreadName) {
-
-				@Override
-				public void run() {
-					if (!cSystemLog.isPresent()) {
-						cLog.error("Could not start backup, because no system log is bound!");
-					} else {
-						cLog.debug("Starting backup...");
-						backupQueryRemoval(queryId, caller);
-						cLog.debug("Backup finished.");
-					}
-				}
-
-			}.start();
-			break;
+		IPhysicalQuery query = (IPhysicalQuery) eventArgs.getValue();
+		ISession caller = query.getSession();
+		String queryName = query.getName();
+		IExecutorCommand command = null;
+		switch ((PlanModificationEventType) eventArgs.getEventType()) {
 		case QUERY_PARTIAL:
+			command = new PartialQueryCommand(caller, queryName, query.getSheddingFactor());
+			break;
+		case QUERY_REMOVE:
+			command = new RemoveQueryCommand(caller, queryName);
+			break;
 		case QUERY_RESUME:
+			command = new ResumeQueryCommand(caller, queryName);
+			break;
 		case QUERY_START:
+			command = new StartQueryCommand(caller, queryName);
+			break;
 		case QUERY_STOP:
+			command = new StopQueryCommand(caller, queryName);
+			break;
 		case QUERY_SUSPEND:
-			new Thread(cBackupThreadName) {
-
-				@Override
-				public void run() {
-					if (!cSystemLog.isPresent()) {
-						cLog.error("Could not start backup, because no system log is bound!");
-					} else {
-						cLog.debug("Starting backup...");
-						backupQueryStateChange(queryId, query.getState(), query.getSheddingFactor(), caller);
-						cLog.debug("Backup finished.");
-					}
-				}
-
-			}.start();
+			command = new SuspendQueryCommand(caller, queryName);
 			break;
 		default:
-			// Nothing to do.
-			break;
+			/*
+			 * Nothing to do for: PLAN_REOPTIMIZE, QUERY_ADDED, QUERY_REOPTIMIZE
+			 */
+			return;
+		}
+		backupExecutorCommand(command, System.currentTimeMillis());
+	}
+
+	@Override
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+		// Is done by executorCommandEvent
+	}
+
+	@Override
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+		// Is done by executorCommandEvent
+	}
+
+	@Override
+	public void dataDictionaryChanged(IDataDictionary sender) {
+		ISession caller = getSessionForDD(sender).get();
+		Optional<String> sink = getNewSinkFromDD(sender, caller);
+		if (sink.isPresent()) {
+			// IExecutorCommand is also delivered by executorCommandEvent
+		} else {
+			sink = getRemovedSinkFromDD(sender, caller);
+			if (sink.isPresent()) {
+				backupExecutorCommand(new DropSinkCommand(sink.get(), true, caller), System.currentTimeMillis());
+				cKnownSinks.get(caller).remove(sink.get());
+			}
 		}
 	}
 
 	/**
-	 * No-Op. Already done by
-	 * {@link #addedViewDefinition(IDataDictionary, String, ILogicalOperator)}.
+	 * A mapping of all known sinks for each caller.
 	 */
-	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		// Nothing to do.
+	private static final Map<ISession, Set<String>> cKnownSinks = Maps.newHashMap();
+
+	/**
+	 * Checks, if a new sink is added to a given data dictionary.
+	 * 
+	 * @param sender
+	 *            The {@code IDataDictionary} to check.
+	 * @param caller
+	 *            The caller.
+	 * @return An {@code Optional} of the sink name or {@code Optional#absent()}
+	 *         , if there is no new sink.
+	 */
+	private static Optional<String> getNewSinkFromDD(IDataDictionary dd, ISession caller) {
+		if (cKnownSinks.containsKey(caller)) {
+			for (Entry<Resource, ILogicalOperator> sink : dd.getSinks(caller)) {
+				String sinkName = sink.getKey().getResourceName();
+				if (!cKnownSinks.get(caller).contains(sinkName)) {
+					return Optional.of(sinkName);
+				}
+			}
+		}
+		return Optional.absent();
 	}
 
 	/**
-	 * No-Op, because the only logged events are source creations and removals.
+	 * Checks, if a sink is removed from a given data dictionary.
+	 * 
+	 * @param sender
+	 *            The {@code IDataDictionary} to check.
+	 * @param caller
+	 *            The caller.
+	 * @return An {@code Optional} of the sink name or {@code Optional#absent()}
+	 *         , if there is no sink removed.
 	 */
-	@Override
-	public void dataDictionaryChanged(IDataDictionary sender) {
-		// Nothing to do.
+	private static Optional<String> getRemovedSinkFromDD(IDataDictionary dd, ISession caller) {
+		if (cKnownSinks.containsKey(caller)) {
+			boolean foundSink;
+			for (String sinkName : cKnownSinks.get(caller)) {
+				foundSink = false;
+				for (Entry<Resource, ILogicalOperator> sink : dd.getSinks(caller)) {
+					if (sink.getKey().getResourceName().equals(sinkName)) {
+						foundSink = true;
+						break;
+					}
+				}
+				if (!foundSink) {
+					return Optional.of(sinkName);
+				}
+			}
+		}
+		return Optional.absent();
 	}
 
 	/**
@@ -254,12 +252,46 @@ public class QueryStateRecoveryComponent
 	/**
 	 * The server executor, if bound.
 	 */
-	static Optional<IServerExecutor> cExecutor = Optional.absent();
+	private static Optional<IServerExecutor> cExecutor = Optional.absent();
 
 	/**
-	 * All sessions used to retrieve data dictionary updates.
+	 * All known {@code IDataDictionaries}.
 	 */
-	static Map<IDataDictionary, ISession> cUsedDataDictionaries = Maps.newConcurrentMap();
+	private static final Set<IPair<ISession, IDataDictionary>> cKnownDDs = Sets.newHashSet();
+
+	/**
+	 * Gets the {@code IDataDictionary} for a given caller.
+	 * 
+	 * @param caller
+	 *            The given caller.
+	 * @return An {@code Optional} of the {@code IDataDictionary} for
+	 *         {@code caller}, or {@code Optional#absent()}, if there is none.
+	 */
+	private static Optional<IDataDictionary> getDataDictionaryForCaller(ISession caller) {
+		for (IPair<ISession, IDataDictionary> pair : cKnownDDs) {
+			if (pair.getE1().equals(caller)) {
+				return Optional.of(pair.getE2());
+			}
+		}
+		return Optional.absent();
+	}
+
+	/**
+	 * Gets the {@code ISession} for a given data dictionary.
+	 * 
+	 * @param dd
+	 *            The given {@code IDataDictionary}.
+	 * @return An {@code Optional} of the {@code ISession} for {@code dd}, or
+	 *         {@code Optional#absent()}, if there is none.
+	 */
+	private static Optional<ISession> getSessionForDD(IDataDictionary dd) {
+		for (IPair<ISession, IDataDictionary> pair : cKnownDDs) {
+			if (pair.getE2().equals(dd)) {
+				return Optional.of(pair.getE1());
+			}
+		}
+		return Optional.absent();
+	}
 
 	/**
 	 * Binds an implementation of the server executor.
@@ -269,8 +301,9 @@ public class QueryStateRecoveryComponent
 	 */
 	public void bindServerExecutor(IExecutor executor) {
 		if (IServerExecutor.class.isInstance(executor)) {
-			((IServerExecutor) executor).addQueryAddedListener(this);
-			((IServerExecutor) executor).addPlanModificationListener(this);
+			IServerExecutor serverExe = (IServerExecutor) executor;
+			serverExe.addExecutorCommandListener(this);
+			serverExe.addPlanModificationListener(this);
 			cExecutor = Optional.of((IServerExecutor) executor);
 		}
 	}
@@ -283,107 +316,104 @@ public class QueryStateRecoveryComponent
 	 */
 	public void unbindServerExecutor(IExecutor executor) {
 		if (cExecutor.isPresent() && cExecutor.get() == executor) {
-			((IServerExecutor) executor).removeQueryAddedListener(this);
-			((IServerExecutor) executor).removePlanModificationListener(this);
+			IServerExecutor serverExe = (IServerExecutor) executor;
+			serverExe.removeExecutorCommandListener(this);
+			serverExe.removePlanModificationListener(this);
 			cExecutor = Optional.absent();
-			for (IDataDictionary usedDict : cUsedDataDictionaries.keySet()) {
-				usedDict.removeListener(this);
+			for (IPair<ISession, IDataDictionary> dd : cKnownDDs) {
+				dd.getE2().removeListener(this);
 			}
-			cUsedDataDictionaries.clear();
 		}
 	}
 
 	/**
-	 * Backups a new script (new source definition and/or query).
+	 * Encode an {@code IExecutorCommand} to a Base64Binary.
 	 * 
-	 * @param script
-	 *            The script to backup.
-	 * @param queryIds
-	 *            The ids of the contained queries (source definitions have no
-	 *            query id).
-	 * @param parserId
-	 *            The used parser.
-	 * @param user
-	 *            The caller.
-	 * @param context
-	 *            The context.
-	 * @param executor
-	 *            A present executor.
+	 * @param command
+	 *            The command to encode.
+	 * @return A string representing the binary.
 	 */
-	void backupScript(String script, List<Integer> queryIds, String parserId, ISession user, Context context,
-			IServerExecutor executor) {
-		ScriptAddedInfo info = new ScriptAddedInfo();
-		info.setContext(context);
-		info.setParserId(parserId);
-		info.setQueryIds(queryIds);
-		info.setQueryText(script);
-		info.setSession(user);
-		cSystemLog.get().write(QueryStateLogTag.SCRIPT_ADDED.toString(), System.currentTimeMillis(),
-				info.toBase64Binary(), QueryStateRecoveryComponent.class.getName());
-
-		// Get data dictionary news
-		if (!cUsedDataDictionaries.values().contains(user)) {
-			IDataDictionary dict = executor.getDataDictionary(user);
-			dict.addListener(this);
-			cUsedDataDictionaries.put(dict, user);
+	private static String executorCommandToBase64Binary(IExecutorCommand command) {
+		try {
+			return new String(DatatypeConverter.printBase64Binary(ByteBufferUtil.toByteArray(command)));
+		} catch (IOException e) {
+			cLog.error("Info is not serializable!", e);
+			return null;
 		}
 	}
 
 	/**
-	 * Backups a source removal event. <br />
-	 * Precondition: system log is bound.
+	 * Decode an {@code IExecutorCommand} from a Base64Binary.
 	 * 
-	 * @param name
-	 *            The name of the removed source.
-	 * @param user
-	 *            The caller.
+	 * @param str
+	 *            A string representing the binary.
+	 * @return The decoded command.
 	 */
-	static void backupSourceRemoval(String name, ISession user) {
-		SourceRemovedInfo info = new SourceRemovedInfo();
-		info.setSourceName(name);
-		info.setSession(user);
-		cSystemLog.get().write(QueryStateLogTag.SOURCE_REMOVED.toString(), System.currentTimeMillis(),
-				info.toBase64Binary(), QueryStateRecoveryComponent.class.getName());
+	private static IExecutorCommand executorCommandFromBase64Binary(String str) {
+		try {
+			return (IExecutorCommand) ByteBufferUtil.fromByteArray(DatatypeConverter.parseBase64Binary(str));
+		} catch (IOException e) {
+			cLog.error("Executor command is not serializable!", e);
+			return null;
+		} catch (ClassNotFoundException e) {
+			cLog.error("Unknown class for decoding!", e);
+			return null;
+		}
 	}
 
 	/**
-	 * Backups a query removal event. <br />
-	 * Precondition: system log is bound.
+	 * Backups a new {@code IExecutorCommand}, which can be an added source,
+	 * sink or query, or a removed source or sink, or the change of a query
+	 * state.
 	 * 
-	 * @param id
-	 *            The id of the removed query.
-	 * @param user
-	 *            The caller.
+	 * @param command
+	 *            The {@code IExecutorCommand} to save.
+	 * @param timestamp
+	 *            The time stamp for the log entry.
 	 */
-	static void backupQueryRemoval(int id, ISession user) {
-		QueryRemovedInfo info = new QueryRemovedInfo();
-		info.setQueryId(id);
-		info.setSession(user);
-		cSystemLog.get().write(QueryStateLogTag.QUERY_REMOVED.toString(), System.currentTimeMillis(),
-				info.toBase64Binary(), QueryStateRecoveryComponent.class.getName());
-	}
+	private void backupExecutorCommand(IExecutorCommand command, long timestamp) {
+		ISession caller = command.getCaller();
+		if (!getDataDictionaryForCaller(caller).isPresent()) {
+			IDataDictionary dd = cExecutor.get().getDataDictionary(caller);
+			dd.addListener(this);
+			cKnownDDs.add(new Pair<>(caller, dd));
+		}
 
-	/**
-	 * Backups a query state change event. <br />
-	 * Precondition: system log is bound.
-	 * 
-	 * @param id
-	 *            The id of the query.
-	 * @param state
-	 *            The new state of the query.
-	 * @param sheddingFactor
-	 *            The shedding factor of the query.
-	 * @param user
-	 *            The caller.
-	 */
-	static void backupQueryStateChange(int id, QueryState state, int sheddingFactor, ISession user) {
-		QueryStateChangedInfo info = new QueryStateChangedInfo();
-		info.setQueryId(id);
-		info.setQueryState(state);
-		info.setSheddingFactor(sheddingFactor);
-		info.setSession(user);
-		cSystemLog.get().write(QueryStateLogTag.QUERYSTATE_CHANGED.toString(), System.currentTimeMillis(),
-				info.toBase64Binary(), QueryStateRecoveryComponent.class.getName());
+		QueryStateLogTag tag = null;
+		if (AbstractDropStreamOrViewCommand.class.isInstance(command)) {
+			// Source dropped
+			tag = QueryStateLogTag.SOURCE_REMOVED;
+		} else if (CreateQueryCommand.class.isInstance(command)) {
+			// New query
+			// Note: There is also an AddQueryCommand, but the
+			// CreateQueryCommand is the one returned by the parsers.
+			tag = QueryStateLogTag.QUERY_ADDED;
+		} else if (CreateSinkCommand.class.isInstance(command)) {
+			// New sink
+			tag = QueryStateLogTag.SINK_ADDED;
+			String sinkName = ((CreateSinkCommand) command).getName();
+			if (cKnownSinks.containsKey(caller)) {
+				cKnownSinks.get(caller).add(sinkName);
+			} else {
+				cKnownSinks.put(caller, Sets.newHashSet(sinkName));
+			}
+		} else if (CreateStreamCommand.class.isInstance(command) || CreateViewCommand.class.isInstance(command)) {
+			// New source
+			tag = QueryStateLogTag.SOURCE_ADDED;
+		} else if (DropSinkCommand.class.isInstance(command)) {
+			// Sink dropped
+			tag = QueryStateLogTag.SINK_REMOVED;
+		} else if (PartialQueryCommand.class.isInstance(command) || RemoveQueryCommand.class.isInstance(command)
+				|| ResumeQueryCommand.class.isInstance(command) || StartQueryCommand.class.isInstance(command)
+				|| StopQueryCommand.class.isInstance(command) || SuspendQueryCommand.class.isInstance(command)) {
+			// Query state changed
+			tag = QueryStateLogTag.QUERYSTATE_CHANGED;
+		}
+
+		if (tag != null) {
+			cSystemLog.get().write(tag.toString(), timestamp, executorCommandToBase64Binary(command),
+					QueryStateRecoveryComponent.class.getName());
+		}
 	}
 
 	/**
@@ -394,61 +424,166 @@ public class QueryStateRecoveryComponent
 	 * @param executor
 	 *            A present executor.
 	 */
-	static void recoverFromLog(List<ISysLogEntry> log, IServerExecutor executor) {
-		// Mapping of the last seen log entry (the contained info, but not yet
-		// recovered) for each query (state change or removal, not creation).
-		Map<Integer, QueryStateChangedInfo> lastSeenEntries = Maps.newHashMap();
-		for (ISysLogEntry entry : log) {
-			if (QueryStateLogTag.containsTag(entry.getTag())) {
-				cLog.debug("Try to recover '{}'...", entry);
-				if (!entry.getInformation().isPresent()) {
-					cLog.error("Additional information needed for '" + entry.getTag() + "' system log entries!");
-					continue;
-				}
-				QueryStateLogTag enumEntry = QueryStateLogTag.fromString(entry.getTag()).get();
-				switch (enumEntry) {
-				case SCRIPT_ADDED:
-					recoverScript(entry, executor);
-					break;
-				case SOURCE_REMOVED:
-					recoverSourceRemoval(entry, executor);
-					break;
-				default:
-					// case QUERY_REMOVED:
-					// case QUERYSTATE_CHANGED:
-					QueryStateChangedInfo info = (QueryStateChangedInfo) AbstractQueryStateInfo
-							.fromBase64Binary(entry.getInformation().get());
-					lastSeenEntries.put(new Integer(info.getQueryId()), info);
-					break;
-				}
+	private static void recoverFromLog(List<ISysLogEntry> log, IServerExecutor executor) {
+		List<IExecutorCommand> executionOrder = determineExecutionOrder(log);
+		for (IExecutorCommand command : executionOrder) {
+			// Session is expired. Need a new session for the user of the
+			// original command
+			IUserManagementWritable userManagement = (IUserManagementWritable) UserManagementProvider
+					.getUsermanagement(true);
+			ISession newSession = userManagement.getSessionManagement().loginAs(command.getCaller().getUser().getName(),
+					command.getCaller().getTenant(), userManagement.getSessionManagement().loginSuperUser(null));
+
+			if (CreateQueryCommand.class.isInstance(command)) {
+				// it is not allowed to execute them directly
+				recoverCreateQueryCommand((CreateQueryCommand) command, newSession, executor);
+			} else {
+				command.setCaller(newSession);
+				command.execute(
+						(IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(newSession.getTenant()),
+						(IUserManagementWritable) UserManagementProvider.getUsermanagement(true), executor);
 			}
-		}
-		for (Integer queryId : lastSeenEntries.keySet()) {
-			recoverQueryStateChange(lastSeenEntries.get(queryId), executor);
 		}
 	}
 
 	/**
-	 * Recovers a script, which was backed up by
-	 * {@link #backupScript(String, List, String, ISession, Context)}.
+	 * Recovers a {@code CreateQueryCommand}. <br />
+	 * It needs to be handled in a special way, because it is not allowed to
+	 * execute it direct.
 	 * 
-	 * @param entry
-	 *            The entry representing a script, which has been backed up.
-	 * @param log
-	 *            All system log entries to recover.
+	 * @param command
+	 *            The {@code CreateQueryCommand} to execute.
+	 * @param caller
+	 *            The new caller object for the command.
 	 * @param executor
 	 *            A present executor.
 	 */
-	private static void recoverScript(ISysLogEntry entry, IServerExecutor executor) {
-		ScriptAddedInfo info = (ScriptAddedInfo) AbstractQueryStateInfo.fromBase64Binary(entry.getInformation().get());
-		// XXX QueryBuildConfiguration and RecoveryNeeded: Problem is, that the
-		// query build configuration is only used for the outer Odysseus-Script
-		// query. But there, the RecoveryConfigKeyword
-		// is not executed. Within the inner queries (e.g., PQL), the keyword is
-		// executed, but the query build configuration is set to normal
-		// workaround is to modify the script.
-		String modifiedQueryText = insertRecoveryNeededArgument(info.getQueryText());
-		executor.addQuery(modifiedQueryText, info.getParserId(), info.getSession(), info.getContext());
+	private static void recoverCreateQueryCommand(CreateQueryCommand command, ISession caller,
+			IServerExecutor executor) {
+		String queryText = insertRecoveryNeededArgument(command.getQuery().getQueryText());
+		executor.addQuery(queryText, command.getQuery().getParserId(), caller, Context.empty());
+	}
+
+	/**
+	 * Determines those {@code IExecutorCommands}, which have to be recovered
+	 * and their order.
+	 * 
+	 * @param log
+	 *            All {@code ISysLogEntries} since the last startup.
+	 * @return A list of {@code IExecutorCommands}, which have to be recovered.
+	 *         Order is important.
+	 */
+	private static List<IExecutorCommand> determineExecutionOrder(List<ISysLogEntry> log) {
+		/*
+		 * Not all events have to be recovered, e.g., several state changes of
+		 * the same query. Sort commands for each query, source, sink. Key =
+		 * related query Value.e1 = first command (creation of query) Value.e2 =
+		 * last command (last state change)
+		 */
+		Map<ILogicalQuery, Pair<IExecutorCommand, IExecutorCommand>> commandsPerQuery = Maps.newHashMap();
+		Map<String, IExecutorCommand> commandPerSource = Maps.newHashMap();
+		Map<String, IExecutorCommand> commandPerSink = Maps.newHashMap();
+		List<IExecutorCommand> executionOrder = Lists.newArrayList();
+		for (ISysLogEntry entry : log) {
+			if (QueryStateLogTag.containsTag(entry.getTag())) {
+				if (!entry.getInformation().isPresent()) {
+					cLog.error("Additional information needed for '" + entry.getTag() + "' system log entries!");
+					continue;
+				}
+				IExecutorCommand command = executorCommandFromBase64Binary(entry.getInformation().get());
+				if (AbstractDropStreamOrViewCommand.class.isInstance(command)) {
+					// Source dropped -> No command needs to be recovered for
+					// that source
+					String sourcename = ((AbstractDropStreamOrViewCommand) command).getName();
+					IExecutorCommand commandToRemove = commandPerSource.get(sourcename);
+					commandPerSource.remove(sourcename);
+					executionOrder.remove(commandToRemove);
+				} else if (CreateQueryCommand.class.isInstance(command)) {
+					// New query -> First command for that query
+					// Note: There is also an AddQueryCommand, but the
+					// CreateQueryCommand is the one returned by the parsers.
+					commandsPerQuery.put(((CreateQueryCommand) command).getQuery(),
+							new Pair<IExecutorCommand, IExecutorCommand>(command, null));
+					executionOrder.add(command);
+				} else if (CreateSinkCommand.class.isInstance(command)) {
+					// New sink -> First command for that sink
+					commandPerSink.put(((CreateSinkCommand) command).getName(), command);
+					executionOrder.add(command);
+				} else if (CreateStreamCommand.class.isInstance(command)) {
+					// New source -> First command for that source
+					LinkedList<IExecutorCommand> cmds = new LinkedList<>();
+					cmds.add(command);
+					commandPerSource.put(((CreateStreamCommand) command).getName(), command);
+					executionOrder.add(command);
+				} else if (CreateViewCommand.class.isInstance(command)) {
+					// New source -> First command for that source
+					LinkedList<IExecutorCommand> cmds = new LinkedList<>();
+					cmds.add(command);
+					commandPerSource.put(((CreateViewCommand) command).getName(), command);
+					executionOrder.add(command);
+				} else if (DropSinkCommand.class.isInstance(command)) {
+					// Sink dropped -> No command needs to be recovered for that
+					// sink
+					String sinkname = ((DropSinkCommand) command).getName();
+					IExecutorCommand commandToRemove = commandPerSink.get(sinkname);
+					commandPerSink.remove(sinkname);
+					executionOrder.remove(commandToRemove);
+				} else if (RemoveQueryCommand.class.isInstance(command)) {
+					// Query removed -> No command needs to be recovered for
+					// that
+					// query
+					Optional<ILogicalQuery> removedQuery = findQueryByName(commandsPerQuery.keySet(),
+							((RemoveQueryCommand) command).getQueryName());
+					if (removedQuery.isPresent()) {
+						Optional<IExecutorCommand> firstCommand = Optional
+								.fromNullable(commandsPerQuery.get(removedQuery.get()).getE1());
+						if (firstCommand.isPresent()) {
+							executionOrder.remove(firstCommand.get());
+						}
+						Optional<IExecutorCommand> lastCommand = Optional
+								.fromNullable(commandsPerQuery.get(removedQuery.get()).getE2());
+						if (lastCommand.isPresent()) {
+							executionOrder.remove(lastCommand.get());
+						}
+						commandsPerQuery.remove(removedQuery.get());
+					}
+				} else if (AbstractQueryCommand.class.isInstance(command)) {
+					// Query state changed
+					Optional<ILogicalQuery> modifiedQuery = findQueryByName(commandsPerQuery.keySet(),
+							((AbstractQueryCommand) command).getQueryName());
+					if (modifiedQuery.isPresent()) {
+						Optional<IExecutorCommand> lastCommand = Optional
+								.fromNullable(commandsPerQuery.get(modifiedQuery.get()).getE2());
+						if (lastCommand.isPresent()) {
+							executionOrder.remove(lastCommand.get());
+						}
+						commandsPerQuery.get(modifiedQuery.get()).setE2(command);
+						executionOrder.add(command);
+					}
+				}
+			}
+		}
+		return executionOrder;
+	}
+
+	/**
+	 * Find a query by its name.
+	 * 
+	 * @param queries
+	 *            A collection of queries to search within.
+	 * @param queryName
+	 *            The name of the wanted query.
+	 * @return An {@code Optional} of a query, which is within {@code queries}
+	 *         and which's name is {@code queryName}, or
+	 *         {@code Optional#absent()}, if there is none.
+	 */
+	private static Optional<ILogicalQuery> findQueryByName(Collection<ILogicalQuery> queries, String queryName) {
+		for (ILogicalQuery query : queries) {
+			if (query.getName().equals(queryName)) {
+				return Optional.of(query);
+			}
+		}
+		return Optional.absent();
 	}
 
 	/**
@@ -475,50 +610,6 @@ public class QueryStateRecoveryComponent
 			modifiedQueryText = out.toString();
 		}
 		return modifiedQueryText;
-	}
-
-	/**
-	 * Recovers a source removal event (removes the source again).
-	 * 
-	 * @param entry
-	 *            The entry representing a source removal.
-	 * @param executor
-	 *            A present executor.
-	 */
-	private static void recoverSourceRemoval(ISysLogEntry entry, IServerExecutor executor) {
-		SourceRemovedInfo info = (SourceRemovedInfo) AbstractQueryStateInfo.fromBase64Binary(entry.getInformation().get());
-		executor.removeViewOrStream(info.getSourceName(), info.getSession());
-	}
-
-	/**
-	 * Recovers a query state change event (changes the query state again).
-	 * 
-	 * @param info
-	 *            The info representing a query state change.
-	 * @param executor
-	 *            A present executor.
-	 */
-	private static void recoverQueryStateChange(QueryStateChangedInfo info, IServerExecutor executor) {
-		int queryID = info.getQueryId();
-		ISession caller = info.getSession();
-		switch (info.getQueryState()) {
-		case INACTIVE:
-			executor.stopQuery(queryID, caller);
-			break;
-		case PARTIAL:
-			executor.partialQuery(queryID, info.getSheddingFactor(), caller);
-			break;
-		case PARTIAL_SUSPENDED:
-		case SUSPENDED:
-			executor.suspendQuery(queryID, caller);
-			break;
-		case RUNNING:
-			executor.startQuery(queryID, caller);
-			break;
-		default:
-			// case UNDEF:
-			executor.removeQuery(queryID, caller);
-		}
 	}
 
 }

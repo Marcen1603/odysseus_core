@@ -57,15 +57,40 @@ public enum Tag {
 	},
 
 	/**
-	 * The tag for system log entries identifying an added script (queries
-	 * and/or sources).
+	 * The tag for system log entries identifying an added query.
 	 */
-	SCRIPT_ADDED(Arrays.asList("de.uniol.inf.is.odysseus.recovery.systemlog.internal.SystemLog",
+	QUERY_ADDED(Arrays.asList("de.uniol.inf.is.odysseus.recovery.systemlog.internal.SystemLog",
 			"de.uniol.inf.is.odysseus.recovery.querystate.QueryStateRecoveryComponent")) {
 
 		@Override
 		public String toString() {
-			return "SCRIPTADDED";
+			return "QUERYADDED";
+		}
+
+	},
+
+	/**
+	 * The tag for system log entries identifying an added sink.
+	 */
+	SINK_ADDED(Arrays.asList("de.uniol.inf.is.odysseus.recovery.systemlog.internal.SystemLog",
+			"de.uniol.inf.is.odysseus.recovery.querystate.QueryStateRecoveryComponent")) {
+
+		@Override
+		public String toString() {
+			return "SINKADDED";
+		}
+
+	},
+
+	/**
+	 * The tag for system log entries identifying an added source.
+	 */
+	SOURCE_ADDED(Arrays.asList("de.uniol.inf.is.odysseus.recovery.systemlog.internal.SystemLog",
+			"de.uniol.inf.is.odysseus.recovery.querystate.QueryStateRecoveryComponent")) {
+
+		@Override
+		public String toString() {
+			return "SOURCEADDED";
 		}
 
 	},
@@ -84,14 +109,14 @@ public enum Tag {
 	},
 
 	/**
-	 * The tag for system log entries identifying a removed query.
+	 * The tag for system log entries identifying a removed sink.
 	 */
-	QUERY_REMOVED(Arrays.asList("de.uniol.inf.is.odysseus.recovery.systemlog.internal.SystemLog",
+	SINK_REMOVED(Arrays.asList("de.uniol.inf.is.odysseus.recovery.systemlog.internal.SystemLog",
 			"de.uniol.inf.is.odysseus.recovery.querystate.QueryStateRecoveryComponent")) {
 
 		@Override
 		public String toString() {
-			return "QUERYREMOVED";
+			return "SINKREMOVED";
 		}
 
 	},

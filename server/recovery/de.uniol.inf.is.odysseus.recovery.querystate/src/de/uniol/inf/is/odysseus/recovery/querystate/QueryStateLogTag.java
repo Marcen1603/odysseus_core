@@ -13,14 +13,37 @@ import com.google.common.base.Optional;
 public enum QueryStateLogTag {
 
 	/**
-	 * The tag for system log entries identifying an added script (queries
-	 * and/or sources).
+	 * The tag for system log entries identifying an added query.
 	 */
-	SCRIPT_ADDED {
+	QUERY_ADDED {
 
 		@Override
 		public String toString() {
-			return "SCRIPTADDED";
+			return "QUERYADDED";
+		}
+
+	},
+
+	/**
+	 * The tag for system log entries identifying an added sink.
+	 */
+	SINK_ADDED {
+
+		@Override
+		public String toString() {
+			return "SINKADDED";
+		}
+
+	},
+
+	/**
+	 * The tag for system log entries identifying an added source.
+	 */
+	SOURCE_ADDED {
+
+		@Override
+		public String toString() {
+			return "SOURCEADDED";
 		}
 
 	},
@@ -38,13 +61,13 @@ public enum QueryStateLogTag {
 	},
 
 	/**
-	 * The tag for system log entries identifying a removed query.
+	 * The tag for system log entries identifying a removed sink.
 	 */
-	QUERY_REMOVED {
+	SINK_REMOVED {
 
 		@Override
 		public String toString() {
-			return "QUERYREMOVED";
+			return "SINKREMOVED";
 		}
 
 	},
