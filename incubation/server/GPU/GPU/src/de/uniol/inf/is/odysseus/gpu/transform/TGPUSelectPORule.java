@@ -12,7 +12,7 @@ public class TGPUSelectPORule extends AbstractTransformationRule<SelectAO> {
 
 	@Override
 	public int getPriority() {
-		return 0; // TODO: muss geändert
+		return 100; // TODO: muss geändert
 	}
 	
 	@SuppressWarnings("rawtypes")
