@@ -46,7 +46,10 @@ public class BaDaStSender {
 	 * @return True, if the server is up.
 	 */
 	public static boolean isBaDaStServerAvailable() {
-		try (Socket clientSocket = new Socket(cHost, cPort)) {
+		try (Socket clientSocket = new Socket(cHost, cPort);
+				DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+				DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream())) {
+			outToServer.writeUTF("command=lsRecorders");
 			return true;
 		} catch (@SuppressWarnings("unused") IOException e) {
 			return false;
