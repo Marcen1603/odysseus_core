@@ -154,8 +154,15 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		return this.delegateSink.getInputSchema(port);
 	}
 
+	// Returns the output mode of port 0
 	abstract public OutputMode getOutputMode();
 
+	// Returns the output mode of the specified port
+	// Default implementation returns output mode of port 0
+	public OutputMode getOutputMode(int port)
+	{
+		return getOutputMode();
+	}
 
 //	@Override
 //	public boolean needsClone(int port) {
