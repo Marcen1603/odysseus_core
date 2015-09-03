@@ -83,7 +83,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	}
 
 	@Override
-	protected void process_next(R object, int port) {
+	protected synchronized void process_next(R object, int port) {
 		if (useInputPortAsOutputPort) {
 			transferArea.transfer(object, port);
 		} else {
@@ -108,7 +108,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
+	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
 		if (useInputPortAsOutputPort) {
 			transferArea.sendPunctuation(punctuation, port);
 		} else {
