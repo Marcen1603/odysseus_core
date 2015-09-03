@@ -44,7 +44,11 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		validate(punctuation.getTime(), port);
+		if (validate(punctuation.getTime(), port)){
+			sendPunctuation(punctuation);
+		}else{
+			sendPunctuation(punctuation, Integer.MAX_VALUE);
+		}
 	}
 
 	@Override
