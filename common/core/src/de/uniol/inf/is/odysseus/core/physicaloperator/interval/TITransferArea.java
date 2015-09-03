@@ -16,9 +16,12 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.interval;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -49,34 +52,30 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	private long puncWritten;
 	private long puncSuppressed;
 
-	private class OutputQueueComparator implements
-			Comparator<SerializablePair<IStreamable, Integer>>, Serializable {
+	private class OutputQueueComparator implements Comparator<SerializablePair<IStreamable, Integer>>, Serializable {
 
 		private static final long serialVersionUID = 5321893137959979782L;
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public int compare(SerializablePair<IStreamable, Integer> left,
-				SerializablePair<IStreamable, Integer> right) {
-			PointInTime l = left.getE1().isPunctuation() ? ((IPunctuation) left
-					.getE1()).getTime() : ((W) left.getE1()).getMetadata()
-					.getStart();
-			PointInTime r = right.getE1().isPunctuation() ? ((IPunctuation) right
-					.getE1()).getTime() : ((W) right.getE1()).getMetadata()
-					.getStart();
+		public int compare(SerializablePair<IStreamable, Integer> left, SerializablePair<IStreamable, Integer> right) {
+			PointInTime l = left.getE1().isPunctuation() ? ((IPunctuation) left.getE1()).getTime()
+					: ((W) left.getE1()).getMetadata().getStart();
+			PointInTime r = right.getE1().isPunctuation() ? ((IPunctuation) right.getE1()).getTime()
+					: ((W) right.getE1()).getMetadata().getStart();
 
-								
 			int c = l.compareTo(r);
-			if (c == 0){
+			if (c == 0) {
 				return Long.compare(l.tiBreaker, r.tiBreaker);
 			}
 			return c;
 		}
 
 	}
+	
+	private final OutputQueueComparator outputQueueComp = new OutputQueueComparator();
 
-	static final transient Logger logger = LoggerFactory
-			.getLogger(TITransferArea.class);
+	static final transient Logger logger = LoggerFactory.getLogger(TITransferArea.class);
 
 	// remember the last time stamp for each input port
 	// can contain null, if no element is seen
@@ -96,13 +95,13 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public TITransferArea() {
 		minTs = new HashMap<>();
 		isDone = new HashMap<>();
-		outputQueue = new PriorityQueue<>(11, new OutputQueueComparator());
+		outputQueue = new PriorityQueue<>(11, outputQueueComp);
 	}
 
 	private TITransferArea(TITransferArea<R, W> tiTransferFunction) {
 		minTs = new HashMap<>(tiTransferFunction.minTs);
 		isDone = new HashMap<>(tiTransferFunction.isDone);
-		outputQueue = new PriorityQueue<>(11, new OutputQueueComparator());
+		outputQueue = new PriorityQueue<>(11, outputQueueComp);
 		outputQueue.addAll(tiTransferFunction.outputQueue);
 	}
 
@@ -147,25 +146,27 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void newElement(IStreamable object, int inPort) {
-		PointInTime start;
-		if (object.isPunctuation()) {
-			start = ((IPunctuation) object).getTime();
-		} else {
-			start = ((R) object).getMetadata().getStart();
-		}
+		synchronized (this.outputQueue) {
 
-		// watermark is needed if new sources are connected at runtime
-		// if watermark == null no object has ever been transferred --> init
-		// phase
-		// else treat only objects that are at least from time watermark
-		if (watermark == null || start.afterOrEquals(watermark)) {
-			newHeartbeat(start, inPort);
-		} else {
-			if (!isAllDone()) {
-				if (!object.isPunctuation()) {
-					logger.warn("Removed out of order element!" + object
-							+ " - (" + this.po + "(" + this.po.getName()
-							+ ")) watermark is " + watermark + " d=" + isDone);
+			PointInTime start;
+			if (object.isPunctuation()) {
+				start = ((IPunctuation) object).getTime();
+			} else {
+				start = ((R) object).getMetadata().getStart();
+			}
+
+			// watermark is needed if new sources are connected at runtime
+			// if watermark == null no object has ever been transferred --> init
+			// phase
+			// else treat only objects that are at least from time watermark
+			if (watermark == null || start.afterOrEquals(watermark)) {
+				newHeartbeat(start, inPort);
+			} else {
+				if (!isAllDone()) {
+					if (!object.isPunctuation()) {
+						logger.warn("Removed out of order element!" + object + " - (" + this.po + "("
+								+ this.po.getName() + ")) watermark is " + watermark + " d=" + isDone);
+					}
 				}
 			}
 		}
@@ -179,22 +180,17 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			// if watermark == null no object has ever been transferred --> init
 			// phase
 			// else treat only objects that are at least from time watermark
-			if (watermark == null
-					|| object.getMetadata().getStart().afterOrEquals(watermark)) {
-				if (watermark != null && object.isPunctuation()
-						&& object.getMetadata().getStart().equals(watermark)) {
+			if (watermark == null || object.getMetadata().getStart().afterOrEquals(watermark)) {
+				if (watermark != null && object.isPunctuation() && object.getMetadata().getStart().equals(watermark)) {
 					// ignore puncutations that do not change the watermark!
 				} else {
-					outputQueue.add(new SerializablePair<IStreamable, Integer>(
-							object, toPort));
+					outputQueue.add(new SerializablePair<IStreamable, Integer>(object, toPort));
 					sendData();
 				}
 			} else {
 				if (!isAllDone()) {
-					logger.warn("Out of order element read " + object
-							+ " before last send element " + watermark
-							+ " ! Ignoring" + " - (" + this.po + "("
-							+ po.getName() + ")) d=" + isDone);
+					logger.warn("Out of order element read " + object + " before last send element " + watermark
+							+ " ! Ignoring" + " - (" + this.po + "(" + po.getName() + ")) d=" + isDone);
 				}
 			}
 		}
@@ -213,10 +209,8 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			// if watermark == null no object has ever been transferred --> init
 			// phase
 			// else treat only objects that are at least from time watermark
-			if (watermark == null
-					|| punctuation.getTime().afterOrEquals(watermark)) {
-				outputQueue.add(new SerializablePair<IStreamable, Integer>(
-						punctuation, toPort));
+			if (watermark == null || punctuation.getTime().afterOrEquals(watermark)) {
+				outputQueue.add(new SerializablePair<IStreamable, Integer>(punctuation, toPort));
 				sendData();
 			} else {
 				// logger.warn("Out of order element read " + punctuation
@@ -238,8 +232,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			while (!this.outputQueue.isEmpty()) {
 				Pair<IStreamable, Integer> elem = this.outputQueue.poll();
 				if (elem.getE1().isPunctuation()) {
-					po.sendPunctuation((IPunctuation) elem.getE1(),
-							elem.getE2());
+					po.sendPunctuation((IPunctuation) elem.getE1(), elem.getE2());
 				} else {
 					elementsWritten++;
 					po.transfer((W) elem.getE1(), elem.getE2());
@@ -283,22 +276,23 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void newHeartbeat(PointInTime heartbeat, int inPort) {
+		synchronized (this.outputQueue) {
 
-		// watermark is needed if new sources are connected at runtime
-		// if watermark == null no object has ever been transferred --> init
-		// phase
-		// else treat only objects that are at least from time watermark
-		if (watermark == null || heartbeat.afterOrEquals(watermark)) {
+			// watermark is needed if new sources are connected at runtime
+			// if watermark == null no object has ever been transferred --> init
+			// phase
+			// else treat only objects that are at least from time watermark
+			if (watermark == null || heartbeat.afterOrEquals(watermark)) {
 
-			synchronized (minTs) {
-				minTs.put(inPort, heartbeat);
-			}
-			sendData();
-		} else {
-			if (!isAllDone()) {
-				logger.warn("Out of order element read " + heartbeat
-						+ " from port " + inPort + " before last send element "
-						+ watermark + " ! Ignoring" + " - (" + this.po + ")");
+				synchronized (minTs) {
+					minTs.put(inPort, heartbeat);
+				}
+				sendData();
+			} else {
+				if (!isAllDone()) {
+					logger.warn("Out of order element read " + heartbeat + " from port " + inPort
+							+ " before last send element " + watermark + " ! Ignoring" + " - (" + this.po + ")");
+				}
 			}
 		}
 	}
@@ -321,8 +315,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				Pair<IStreamable, Integer> elem = this.outputQueue.peek();
 				while (elem != null) {
 					if (elem.getE1().isPunctuation()) {
-						PointInTime ts = ((IPunctuation) elem.getE1())
-								.getTime();
+						PointInTime ts = ((IPunctuation) elem.getE1()).getTime();
 
 						if ((ts.beforeOrEquals(minimum))) {
 							this.outputQueue.poll();
@@ -330,34 +323,25 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 							// suppress following heartbeats
 							if (((IPunctuation) elem.getE1()).isHeartbeat()) {
 								Pair<IStreamable, Integer> elem2;
-								while (((elem2 = outputQueue.peek()) != null)
-										&& elem2.getE1().isPunctuation()
-										&& ((IPunctuation) elem2.getE1())
-												.isHeartbeat()
-										&& ((IPunctuation) elem2.getE1())
-												.getTime().beforeOrEquals(
-														minimum)) {
+								while (((elem2 = outputQueue.peek()) != null) && elem2.getE1().isPunctuation()
+										&& ((IPunctuation) elem2.getE1()).isHeartbeat()
+										&& ((IPunctuation) elem2.getE1()).getTime().beforeOrEquals(minimum)) {
 									elem = this.outputQueue.poll();
 									puncSuppressed++;
 								}
 							}
 
-							po.sendPunctuation((IPunctuation) elem.getE1(),
-									elem.getE2());
-							lastSendObject = ((IPunctuation) elem.getE1())
-									.getTime();
+							po.sendPunctuation((IPunctuation) elem.getE1(), elem.getE2());
+							lastSendObject = ((IPunctuation) elem.getE1()).getTime();
 							elem = this.outputQueue.peek();
 						} else {
 							elem = null;
 						}
 					} else {
-						ITimeInterval metadata = ((W) elem.getE1())
-								.getMetadata();
-						if (metadata != null
-								&& (metadata.getStart().beforeOrEquals(minimum))) {
+						ITimeInterval metadata = ((W) elem.getE1()).getMetadata();
+						if (metadata != null && (metadata.getStart().beforeOrEquals(minimum))) {
 							this.outputQueue.poll();
-							lastSendObject = ((W) elem.getE1()).getMetadata()
-									.getStart();
+							lastSendObject = ((W) elem.getE1()).getMetadata().getStart();
 							elementsWritten++;
 							po.transfer((W) elem.getE1(), elem.getE2());
 							elem = this.outputQueue.peek();
@@ -414,9 +398,10 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void dump() {
-		System.out.println("Elements in Queue (could be out of order!)");
-		Iterator<SerializablePair<IStreamable, Integer>> iter = outputQueue
-				.iterator();
+		System.out.println("Elements in Queue");
+		List<SerializablePair<IStreamable, Integer>> out = new ArrayList<>(outputQueue);
+		Collections.sort(out, outputQueueComp);
+		Iterator<SerializablePair<IStreamable, Integer>> iter = out.iterator();
 		while (iter.hasNext()) {
 			System.out.println(iter.next());
 		}
