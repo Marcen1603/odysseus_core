@@ -124,7 +124,7 @@ public class HeatmapPropertiesDialog extends TitleAreaDialog {
 		Label geoAttrLabel = new Label(settingsContainer, SWT.NONE);
 		geoAttrLabel.setText("Geometry Attribute: ");
 
-		CCombo geoAttrInput = new CCombo(settingsContainer, SWT.BORDER);
+		final CCombo geoAttrInput = new CCombo(settingsContainer, SWT.BORDER);
 		geoAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
 		
 		Label latLabel = new Label(settingsContainer, SWT.NONE);
