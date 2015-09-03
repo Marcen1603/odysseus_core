@@ -31,9 +31,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ReceiveAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -142,7 +145,24 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	private static AbstractWindowAO createWindow(ASTWindow windowNode,
 			ILogicalOperator inputOp) {
-		AbstractWindowAO window = new WindowAO();
+		AbstractWindowAO window;
+		switch (windowNode.getType()){
+		case PREDICATE:
+			window = new PredicateWindowAO();
+			break;
+		case TIME:
+			window = new TimeWindowAO();
+			break;
+		case TUPLE:
+			window =  new ElementWindowAO(); 
+			break;
+		case UNBOUNDED:
+			window =  new WindowAO(); 
+			break;
+		default:
+			window =  new WindowAO(); 
+		}
+		
 		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
 
 		if (windowNode.isPartitioned()) {
