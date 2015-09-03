@@ -18,9 +18,9 @@ import de.uniol.inf.is.odysseus.query.codegenerator.modell.enums.UpdateMessageSt
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.IOperatorRule;
 import de.uniol.inf.is.odysseus.query.codegenerator.operator.rule.registry.OperatorRuleRegistry;
 import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.AbstractTargetPlatform;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 
 public class DalvikTargetPlatform extends AbstractTargetPlatform{
 	
@@ -145,5 +145,7 @@ public class DalvikTargetPlatform extends AbstractTargetPlatform{
 
 		
 	}
+
+
 
 }

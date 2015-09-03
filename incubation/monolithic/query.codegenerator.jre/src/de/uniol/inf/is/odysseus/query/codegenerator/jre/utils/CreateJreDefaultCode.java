@@ -335,7 +335,7 @@ public class CreateJreDefaultCode {
 	}
 	
 	
-	public static CodeFragmentInfo getCodeForOSGIBinds(String odysseusPath, de.uniol.inf.is.odysseus.query.codegenerator.modell.QueryAnalyseInformation transformationInforamtion){
+	public static CodeFragmentInfo getCodeForOSGIBinds(String odysseusPath, QueryAnalyseInformation transformationInforamtion){
 		CodeFragmentInfo osgiBinds = new CodeFragmentInfo();
 		
 		osgiBinds.addCodeFragmentInfo(getCodeFragmentForRegistry("registerFunction",transformationInforamtion.getNeededMEPFunctions(), MEP.class));

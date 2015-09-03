@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 
 import de.uniol.inf.is.odysseus.query.codegenerator.modell.ProgressBarUpdate;
 
+
 public class QueryTransformationProgressComposite extends Composite{
 
 	private static final String NEWLINE = System.getProperty("line.separator");

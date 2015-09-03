@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.query.codegenerator.main;
+package de.uniol.inf.is.odysseus.query.codegenerator.analyse;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.query.codegenerator.target.platform.registry.Tar
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.SessionHelper;
 import de.uniol.inf.is.odysseus.transform.rules.TDeleteRenameAORule;
-
 public class QueryTransformation{
 	
 	private static Logger LOG = LoggerFactory.getLogger(QueryTransformation.class);
