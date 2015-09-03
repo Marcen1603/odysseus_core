@@ -186,6 +186,14 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		// interrupt worker threads to finish work
 		workerThreadGroup.interrupt();
 
+		for (ThreadedAggregateTIPOWorker<Q, R, W> thread : threadMap.values()) {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 		// has only one port, so process_done can be called when first input
 		// port calls done
 		IGroupProcessor<R, W> g = getGroupProcessor();
@@ -213,6 +221,15 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 	protected void process_close() {
 		// interrupt worker threads to finish work
 		workerThreadGroup.interrupt();
+
+		for (ThreadedAggregateTIPOWorker<Q, R, W> thread : threadMap.values()) {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 		super.process_close();
 	}
 
@@ -248,7 +265,8 @@ public class ThreadedAggregateTIPO<Q extends ITimeInterval, R extends IStreamObj
 		map.putAll(super.getKeyValues());
 		map.put("Number of threads", String.valueOf(degree));
 		map.put("Buffersize", String.valueOf(maxBufferSize));
-		map.put("Use RoundRobin allocation", String.valueOf(useRoundRobinAllocation));
+		map.put("Use RoundRobin allocation",
+				String.valueOf(useRoundRobinAllocation));
 		return map;
 
 	}

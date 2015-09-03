@@ -143,6 +143,10 @@ public class JoinTransformationStrategy extends
 					downstreamOperatorSubscription.getSourceOutPort(),
 					union.getOutputSchema());
 		}
+		
+		for (AbstractStaticFragmentAO fragmentAO : transformationResult.getFragmentOperators()) {
+			fragmentAO.initialize();
+		}
 	}
 
 	/**
@@ -204,7 +208,7 @@ public class JoinTransformationStrategy extends
 		buffer.setName("Buffer_" + bufferCounter);
 		buffer.setThreaded(configuration.isUseThreadedBuffer());
 		buffer.setMaxBufferSize(configuration.getBufferSize());
-		buffer.setDrainAtClose(false);
+		
 		return buffer;
 	}
 

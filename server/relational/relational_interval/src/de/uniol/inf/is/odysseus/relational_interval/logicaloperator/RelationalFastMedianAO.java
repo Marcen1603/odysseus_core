@@ -46,7 +46,7 @@ public class RelationalFastMedianAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public AbstractLogicalOperator clone() {
+	public RelationalFastMedianAO clone() {
 		return new RelationalFastMedianAO(this);
 	}
 

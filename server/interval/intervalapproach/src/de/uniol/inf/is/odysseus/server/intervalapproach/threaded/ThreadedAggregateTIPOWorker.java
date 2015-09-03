@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach.threaded;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -38,6 +39,7 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 
 	private ThreadedAggregateTIPO<Q, R, W> tipo;
 	private ArrayBlockingQueue<Pair<Long, R>> queue;
+	private LinkedList<Pair<Long, R>> restQueue;
 	private int threadNumber;
 
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
@@ -53,20 +55,28 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 	@Override
 	public void run() {
 		while (true) {
-			// check if thread is interrupted
-			if (isInterrupted()) {
-				break;
-			}
-			
 			// get values from queue
 			Pair<Long, R> pair = null;
 			Long groupId;
 			R object;
-			try {
-				pair = queue.take();
-			} catch (InterruptedException e) {
-				break;
+			
+			if (Thread.currentThread().isInterrupted() && queue.isEmpty()){
+				if (this.restQueue.isEmpty()){
+					break;
+				} else {
+					pair = restQueue.poll();
+				}
+			} else {
+				try {
+					pair = queue.take();					
+				} catch (InterruptedException e) {
+					restQueue = new LinkedList<Pair<Long, R>>(queue);
+					queue.clear();
+					interrupt();
+					continue;
+				}				
 			}
+			
 			groupId = pair.getE1();
 			object = pair.getE2();
 
@@ -85,6 +95,5 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 				}
 			}
 		}
-
 	}
 }

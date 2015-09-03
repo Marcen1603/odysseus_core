@@ -77,6 +77,7 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 		fragmentAO.setNumberOfFragments(degreeOfParallelization);
 		fragmentAO.setName(fragmentAO.getName() + namePostfix); // set postfix
 		fragmentAO.setUniqueIdentifier(UUID.randomUUID().toString());
+		fragmentAO.setHeartbeatrate(0);
 
 		if (fragmentAO instanceof HashFragmentAO) {
 			// do some hash specific configurations
