@@ -42,24 +42,24 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 			BlockingQueue<ProgressBarUpdate> progressBarQueue,
 			TransformationConfiguration transformationConfiguration)
 			throws InterruptedException  {
-		this.setProgressBarQueue(progressBarQueue);
-		
-		//add userfeedback
-		updateProgressBar(10, "Start the transformation", UpdateMessageStatusType.INFO);
-		
 		//clear transformation infos
 		JreCodegeneratorStatus.clear();
 		
 		JreCodegeneratorStatus.getInstance().setOperatorList(queryAnalyseInformation.getOperatorList());
 		
+		this.setProgressBarQueue(progressBarQueue);
+		
+		//add userfeedback
+		updateProgressBar(10, "Start the transformation", UpdateMessageStatusType.INFO);
+		
+		bodyCode = new StringBuilder();
+		sdfSchemaCode  = new StringBuilder();
+		
 		//Start Odysseus index
 		updateProgressBar(15, "Index the Odysseus codepath",UpdateMessageStatusType.INFO);
 		OdysseusIndex.getInstance().search(parameter.getOdysseusPath());
 	
-		bodyCode = new StringBuilder();
-		sdfSchemaCode  = new StringBuilder();
-		
-		walkTroughLogicalPlan(queryAnalyseInformation,parameter, transformationConfiguration);
+		transformQuery(queryAnalyseInformation,parameter, transformationConfiguration);
 		
 		//generate code for osgi binds
 		updateProgressBar(70, "Generate OSGI emulation code",UpdateMessageStatusType.INFO);
@@ -86,17 +86,15 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
 	}
 	
 
-	private void walkTroughLogicalPlan(QueryAnalyseInformation queryAnalyseInformation,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
+	private void transformQuery(QueryAnalyseInformation queryAnalyseInformation,TransformationParameter parameter, TransformationConfiguration transformationConfiguration) throws InterruptedException{
 		
 		List<ILogicalOperator> operatorSources = queryAnalyseInformation.getSourceOpList();
 		
 		for(ILogicalOperator sourceOperator: operatorSources){
-				generateCode(sourceOperator,parameter, transformationConfiguration,queryAnalyseInformation);
+				preCheckOperator(sourceOperator,parameter, transformationConfiguration,queryAnalyseInformation);
 		}
 		
 		
@@ -109,8 +107,21 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 	}
 	
+	private void preCheckOperator(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
+		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
+
+		if(operator.getSubscribedToSource().size() >= 2){
+			if(JreCodegeneratorStatus.getInstance().operateCanCreate(operator)){
+				generateOperatorCode(operator,parameter, transformationConfiguration,queryAnalseInformation);
+			}
+		}else{
+			generateOperatorCode(operator,parameter, transformationConfiguration,queryAnalseInformation);
+		}
+			
+	}
 	
-	private void codegen(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
+
+	private void generateOperatorCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
 		
 		IOperatorRule<ILogicalOperator> opTrans = OperatorRuleRegistry.getOperatorRules(parameter.getProgramLanguage(), operator, transformationConfiguration);
 		if(opTrans != null ){
@@ -159,25 +170,10 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		
 	
 		for(LogicalSubscription s:operator.getSubscriptions()){
-			generateCode(s.getTarget(),parameter, transformationConfiguration,queryAnalseInformation);
+			preCheckOperator(s.getTarget(),parameter, transformationConfiguration,queryAnalseInformation);
 		}
 	}
 
-	private void generateCode(ILogicalOperator operator,  TransformationParameter parameter, TransformationConfiguration transformationConfiguration,QueryAnalyseInformation queryAnalseInformation) throws InterruptedException{
-		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 
-
-
-		if(operator.getSubscribedToSource().size() >= 2){
-			if(JreCodegeneratorStatus.getInstance().operateCanCreate(operator)){
-				codegen(operator,parameter, transformationConfiguration,queryAnalseInformation);
-			}
-		}else{
-			codegen(operator,parameter, transformationConfiguration,queryAnalseInformation);
-		}
-		
-		
-		
-	}
 
 }

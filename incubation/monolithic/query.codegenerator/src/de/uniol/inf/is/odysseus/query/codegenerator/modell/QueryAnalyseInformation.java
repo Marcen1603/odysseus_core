@@ -24,8 +24,7 @@ public class QueryAnalyseInformation {
 	private Map<String, String> sweepAreas = new HashMap<String, String>();
 	
 	private List<ILogicalOperator> iIterableSource = new ArrayList<ILogicalOperator>();
-	
-	
+
 	private Map<ILogicalOperator, String> operatorList  = new HashMap<ILogicalOperator, String>();
 
 	private Map<ILogicalOperator,Map<String,String>> operatorConfigurationList =  new HashMap<ILogicalOperator,Map<String,String>>();

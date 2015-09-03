@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.query.codegenerator.utils.ExecutorServiceBinding
 import de.uniol.inf.is.odysseus.query.codegenerator.utils.SessionHelper;
 import de.uniol.inf.is.odysseus.transform.rules.TDeleteRenameAORule;
 
-public class QueryTransformation {
+public class QueryTransformation{
 	
 	private static Logger LOG = LoggerFactory.getLogger(QueryTransformation.class);
 
@@ -39,6 +39,8 @@ public class QueryTransformation {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void startQueryTransformation(TransformationParameter parameter,BlockingQueue<ProgressBarUpdate> queue ){
+		
+
 		
 		LOG.debug("Start query transformation!"+ parameter.getParameterForDebug());
 		
