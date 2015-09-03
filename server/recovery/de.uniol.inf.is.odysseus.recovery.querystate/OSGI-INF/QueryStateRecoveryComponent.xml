@@ -4,6 +4,6 @@
    <reference bind="bindSystemLog" cardinality="0..1" interface="de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog" name="ISystemLog" policy="dynamic" unbind="unbindSystemLog"/>
    <reference bind="bindServerExecutor" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="dynamic" unbind="unbindServerExecutor"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener"/>
+      <provide interface="de.uniol.inf.is.odysseus.recovery.systemstatelogger.ISystemStateEventListener"/>
    </service>
 </scr:component>

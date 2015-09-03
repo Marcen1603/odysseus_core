@@ -1,13 +1,17 @@
 package de.uniol.inf.is.odysseus.recovery.systemstatelogger.internal;
 
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
+import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ISystemStateEventListener;
 
 /**
  * Class to add the following actions to the system log: startup and shutdown of
@@ -118,11 +122,81 @@ public class SystemStateLogger {
 	}
 
 	/**
+	 * All bound listeners.
+	 */
+	private static final Set<ISystemStateEventListener> cListeners = Sets.newConcurrentHashSet();
+
+	/**
+	 * Binds a listener.
+	 * 
+	 * @param listener
+	 *            A new listener.
+	 */
+	public static void bindListener(ISystemStateEventListener listener) {
+		cListeners.add(listener);
+		if (isSystemStarted()) {
+			callListener(listener, true);
+		}
+	}
+
+	/**
+	 * Unregisters a listener.
+	 * 
+	 * @param listener
+	 *            A listener to unregister.
+	 */
+	public static void unbindListener(ISystemStateEventListener listener) {
+		cListeners.remove(listener);
+	}
+
+	/**
+	 * Calls {@link ISystemStateEventListener#onSystemStartup()} or
+	 * {@link ISystemStateEventListener#onSystemShutdown()} for a listener.
+	 * 
+	 * @param listener
+	 *            The listener to call.
+	 * @param startup
+	 *            if true, {@link ISystemStateEventListener#onSystemStartup()}
+	 *            is called, otherwise
+	 *            {@link ISystemStateEventListener#onSystemShutdown()} is
+	 *            called.
+	 */
+	private static void callListener(ISystemStateEventListener listener, boolean startup) {
+		try {
+			if (startup) {
+				listener.onSystemStartup();
+			} else {
+				listener.onSystemShutdown();
+			}
+		} catch (Throwable t) {
+			cLog.error("Error occured for listener " + listener.getClass().getSimpleName(), t);
+		}
+	}
+
+	/**
+	 * Calls {@link ISystemStateEventListener#onSystemStartup()} or
+	 * {@link ISystemStateEventListener#onSystemShutdown()} for all bound
+	 * listener.
+	 * 
+	 * @param startup
+	 *            if true, {@link ISystemStateEventListener#onSystemStartup()}
+	 *            is called, otherwise
+	 *            {@link ISystemStateEventListener#onSystemShutdown()} is
+	 *            called.
+	 */
+	private static void callAllListeners(boolean startup) {
+		for (ISystemStateEventListener listener : cListeners) {
+			callListener(listener, startup);
+		}
+	}
+
+	/**
 	 * Checks, if Odysseus is started and logs it, if started.
 	 */
 	private static void tryLogStartup() {
 		if (isSystemStarted()) {
 			cSystemLog.get().write(cStartupTag, System.currentTimeMillis(), INFO_STARTUP, SystemStateLogger.class);
+			callAllListeners(true);
 		}
 	}
 
@@ -133,6 +207,7 @@ public class SystemStateLogger {
 	private static void tryLogShutDown() {
 		if (cSystemLog.isPresent()) {
 			cSystemLog.get().write(cShutdownTag, System.currentTimeMillis(), INFO_SHUTDOWN, SystemStateLogger.class);
+			callAllListeners(false);
 		} else {
 			cLog.error("Could not write a system log for the shutdown!");
 		}

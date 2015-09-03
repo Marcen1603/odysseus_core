@@ -12,7 +12,7 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLogListener;
-import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
+import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ISystemStateEventListener;
 
 /**
  * Class to check, if there has been a crash of Odysseus. It uses the system log
@@ -79,7 +79,7 @@ public class CrashDetector implements ISystemLogListener {
 	/**
 	 * All bound listeners.
 	 */
-	private static final Set<ICrashDetectionListener> cListeners = Sets.newConcurrentHashSet();
+	private static final Set<ISystemStateEventListener> cListeners = Sets.newConcurrentHashSet();
 
 	/**
 	 * Binds a listener.
@@ -87,7 +87,7 @@ public class CrashDetector implements ISystemLogListener {
 	 * @param listener
 	 *            A new listener.
 	 */
-	public static void bindListener(ICrashDetectionListener listener) {
+	public static void bindListener(ISystemStateEventListener listener) {
 		cListeners.add(listener);
 		if (canCallListeners()) {
 			callListener(listener);
@@ -100,18 +100,18 @@ public class CrashDetector implements ISystemLogListener {
 	 * @param listener
 	 *            A listener to unregister.
 	 */
-	public static void unbindListener(ICrashDetectionListener listener) {
+	public static void unbindListener(ISystemStateEventListener listener) {
 		cListeners.remove(listener);
 	}
 
 	/**
-	 * Calls {@link ICrashDetectionListener#onCrashDetected(long)} with
+	 * Calls {@link ISystemStateEventListener#onCrashDetected(long)} with
 	 * {@value #cLastStartup} for a listener.
 	 * 
 	 * @param listener
 	 *            The listener to call.
 	 */
-	private static void callListener(ICrashDetectionListener listener) {
+	private static void callListener(ISystemStateEventListener listener) {
 		try {
 			listener.onCrashDetected(cLastStartup);
 		} catch (Throwable t) {
@@ -120,11 +120,11 @@ public class CrashDetector implements ISystemLogListener {
 	}
 
 	/**
-	 * Calls {@link ICrashDetectionListener#onCrashDetected(long)} with
+	 * Calls {@link ISystemStateEventListener#onCrashDetected(long)} with
 	 * {@value #cLastStartup} for all bound listeners and logs the crash.
 	 */
 	private static void callAllListenersAndLog() {
-		for (ICrashDetectionListener listener : cListeners) {
+		for (ISystemStateEventListener listener : cListeners) {
 			callListener(listener);
 		}
 		if (cSystemLog.isPresent()) {

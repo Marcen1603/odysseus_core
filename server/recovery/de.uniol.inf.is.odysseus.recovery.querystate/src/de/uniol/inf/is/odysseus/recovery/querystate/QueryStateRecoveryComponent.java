@@ -57,7 +57,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
-import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
+import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ISystemStateEventListener;
 import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
 
 /**
@@ -78,7 +78,7 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.RecoveryConfigKeyword;
  *
  */
 @SuppressWarnings(value = { "nls" })
-public class QueryStateRecoveryComponent implements IExecutorCommandListener, ICrashDetectionListener,
+public class QueryStateRecoveryComponent implements IExecutorCommandListener, ISystemStateEventListener,
 		IPlanModificationListener, IDataDictionaryListener {
 
 	/**
@@ -100,6 +100,16 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IC
 			recoverFromLog(cSystemLog.get().read(lastStartup), cExecutor.get());
 			cLog.debug("Recovery finished.");
 		}
+	}
+
+	@Override
+	public void onSystemStartup() throws Throwable {
+		// Nothing to do.
+	}
+
+	@Override
+	public void onSystemShutdown() throws Throwable {
+		// Nothing to do.
 	}
 
 	@Override
