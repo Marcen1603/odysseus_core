@@ -29,7 +29,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AggregateTISweepArea;
 
 /**
- * Worker thread for processing data stream objects, gets elements from blocking queue and executes them 
+ * Worker thread for processing data stream objects, gets elements from blocking
+ * queue and executes them
  * 
  * @author ChrisToenjesDeye
  *
@@ -39,12 +40,12 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 
 	private ThreadedAggregateTIPO<Q, R, W> tipo;
 	private ArrayBlockingQueue<Pair<Long, R>> queue;
-	private LinkedList<Pair<Long, R>> restQueue;
+	private LinkedList<Pair<Long, R>> lastElementsQueue;
 	private int threadNumber;
 
 	public ThreadedAggregateTIPOWorker(ThreadGroup threadGroup,
-			ThreadedAggregateTIPO<Q, R, W> threadedAggregateTIPO, int threadNumber,
-			ArrayBlockingQueue<Pair<Long, R>> queue) {
+			ThreadedAggregateTIPO<Q, R, W> threadedAggregateTIPO,
+			int threadNumber, ArrayBlockingQueue<Pair<Long, R>> queue) {
 		super(threadGroup, "Threaded aggregate worker thread" + threadNumber);
 		super.setDaemon(true);
 		this.threadNumber = threadNumber;
@@ -54,46 +55,49 @@ public class ThreadedAggregateTIPOWorker<Q extends ITimeInterval, R extends IStr
 
 	@Override
 	public void run() {
-		while (true) {
+		// process every element
+		while (!Thread.currentThread().isInterrupted()) {
 			// get values from queue
 			Pair<Long, R> pair = null;
-			Long groupId;
-			R object;
-			
-			if (Thread.currentThread().isInterrupted() && queue.isEmpty()){
-				if (this.restQueue.isEmpty()){
-					break;
-				} else {
-					pair = restQueue.poll();
-				}
-			} else {
-				try {
-					pair = queue.take();					
-				} catch (InterruptedException e) {
-					restQueue = new LinkedList<Pair<Long, R>>(queue);
-					queue.clear();
-					interrupt();
-					continue;
-				}				
-			}
-			
-			groupId = pair.getE1();
-			object = pair.getE2();
 
-			if (groupId != null && object != null){
-				// get sweep area from groupId
-				AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = tipo.getSweepAreaForGroup(groupId);
-				
-				// if sweep area is found, process aggregation
-				if (sa != null){
-					synchronized (sa) {
-						List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo
-								.updateSA(sa, object, tipo.isOutputPA());
-						tipo.createOutput(results, groupId, object.getMetadata().getStart(),
-								threadNumber);
-					}
+			try {
+				pair = queue.take();
+			} catch (InterruptedException e) {
+				interrupt();
+				continue;
+			}
+			processElement(pair);	
+		}
+		
+		// process last elements of queue
+		if (!queue.isEmpty()){
+			lastElementsQueue = new LinkedList<Pair<Long, R>>(queue);
+			queue.clear();
+			for (Pair<Long, R> pair : lastElementsQueue) {
+				processElement(pair);
+			}
+		}
+	}
+	
+	private void processElement(Pair<Long, R> pair){
+		Long groupId = pair.getE1();
+		R object = pair.getE2();
+
+		if (groupId != null && object != null) {
+			// get sweep area from groupId
+			AggregateTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = tipo
+					.getSweepAreaForGroup(groupId);
+
+			// if sweep area is found, process aggregation
+			if (sa != null) {
+				synchronized (sa) {
+					List<PairMap<SDFSchema, AggregateFunction, W, Q>> results = tipo
+							.updateSA(sa, object, tipo.isOutputPA());
+					tipo.createOutput(results, groupId, object
+							.getMetadata().getStart(), threadNumber);
 				}
 			}
 		}
+		
 	}
 }

@@ -171,7 +171,6 @@ public class NonGroupedAggregateTransformationStrategy extends
 		combinePAAggregateOperator.setName(operator.getName() + "_combinePA");
 		combinePAAggregateOperator.setUniqueIdentifier(UUID.randomUUID()
 				.toString());
-		combinePAAggregateOperator.setDebug(true);
 		combinePAAggregateOperator.clearAggregations();
 		combinePAAggregateOperator
 				.setAggregationItems(renamedCombineAggregationItems);
