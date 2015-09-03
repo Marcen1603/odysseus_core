@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
 /**
  * Helper class to store operator states into a file.
@@ -56,13 +57,14 @@ public class OperatorStateStore {
 	 * 
 	 * @param operators
 	 *            The operators, which states have to be stored.
-	 * @param queryId
-	 *            The id of the query (for identification).
+	 * @param query
+	 *            The logical query, which was transformed to the physical one.
 	 * @throws IOException
 	 *             if any error occurs.
 	 */
-	public static void store(Collection<IStatefulPO> operators, int queryId) throws IOException {
-		File file = new File(cRecoveryDir + File.separator + cFileNamePrefix + queryId + cFileNameEnding);
+	public static void store(Collection<IStatefulPO> operators, ILogicalQuery query) throws IOException {
+		File file = new File(
+				cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode() + cFileNameEnding);
 		try (FileOutputStream fout = new FileOutputStream(file);
 				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
 			for (IStatefulPO operator : operators) {
@@ -77,16 +79,18 @@ public class OperatorStateStore {
 	 * 
 	 * @param operators
 	 *            The operators, which states have to be loaded.
-	 * @param queryId
-	 *            The id of the query (for identification).
+	 * @param query
+	 *            The logical query, which was transformed to the physical one.
 	 * @throws IOException
 	 *             if any error occurs.
 	 * @throws ClassNotFoundException
 	 *             if the class of an object, which is read from file, can not
 	 *             be found.
 	 */
-	public static void load(Collection<IStatefulPO> operators, int queryId) throws IOException, ClassNotFoundException {
-		File file = new File(cRecoveryDir + File.separator + cFileNamePrefix + queryId + cFileNameEnding);
+	public static void load(Collection<IStatefulPO> operators, ILogicalQuery query)
+			throws IOException, ClassNotFoundException {
+		File file = new File(
+				cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode() + cFileNameEnding);
 		if (!file.exists()) {
 			cLog.error("File '{}' to load operator states from does not exist!", file.getName());
 			return;
@@ -101,6 +105,50 @@ public class OperatorStateStore {
 				cLog.debug("Loaded state of '{}' from file '{}'", operator, file.getName());
 			}
 		}
+	}
+
+	/**
+	 * Creates a backup of the file, which contains the operator states for a
+	 * given query. <br />
+	 * The file has the same name but ends with "_old".
+	 * 
+	 * @param query
+	 *            The logical query, which was transformed to the physical one.
+	 * @throws IOException
+	 *             if any error occurs.
+	 * @throws ClassNotFoundException
+	 *             if the class of an object, which is read from file, can not
+	 *             be found.
+	 */
+	public static void backupFile(ILogicalQuery query) throws IOException, ClassNotFoundException {
+		File fileToLoad = new File(
+				cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode() + cFileNameEnding);
+		File fileToStore = new File(cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode()
+				+ "_old" + cFileNameEnding);
+		if (!fileToLoad.exists()) {
+			cLog.error("File '{}' to load operator states from does not exist!", fileToLoad.getName());
+			return;
+		}
+		try (FileInputStream fin = new FileInputStream(fileToLoad);
+				ObjectInputStream ois = new ObjectInputStream(fin);
+				FileOutputStream fout = new FileOutputStream(fileToStore);
+				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
+			oos.writeObject(ois.readObject());
+			cLog.debug("Saved operator states of query '{}' in file '{}'", new Integer(query.getID()),
+					fileToStore.getName());
+		}
+	}
+
+	/**
+	 * Deletes the file, which contains the operator states for a given query.
+	 * 
+	 * @param query
+	 *            The query.
+	 */
+	public static void deleteFile(ILogicalQuery query) {
+		File file = new File(
+				cRecoveryDir + File.separator + cFileNamePrefix + query.getQueryText().hashCode() + cFileNameEnding);
+		file.delete();
 	}
 
 }

@@ -26,6 +26,11 @@ public class SourceBackupPO<StreamObject extends IStreamObject<IMetaAttribute>>
 		extends AbstractSourceRecoveryPO<StreamObject> {
 
 	/**
+	 * The version of this class for serialization.
+	 */
+	private static final long serialVersionUID = -4581956886043879444L;
+
+	/**
 	 * Creates a new {@link SourceBackupPO}.
 	 * 
 	 * @param logical

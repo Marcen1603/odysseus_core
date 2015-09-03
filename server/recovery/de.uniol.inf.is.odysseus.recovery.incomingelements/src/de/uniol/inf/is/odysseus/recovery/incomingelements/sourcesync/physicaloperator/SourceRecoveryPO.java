@@ -31,6 +31,11 @@ public class SourceRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 		extends AbstractSourceRecoveryPO<StreamObject> {
 
 	/**
+	 * The version of this class for serialization.
+	 */
+	private static final long serialVersionUID = -2660605545656846436L;
+
+	/**
 	 * The protocol handler to use in recovery mode.
 	 */
 	final IProtocolHandler<StreamObject> mRecoveryProtocolHandler;

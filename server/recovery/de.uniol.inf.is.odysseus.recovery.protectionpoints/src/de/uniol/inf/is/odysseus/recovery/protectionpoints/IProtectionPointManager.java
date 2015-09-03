@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.recovery.protectionpoints;
 
+import java.io.Serializable;
+
 /**
  * Entity to manage protection points. After a protection point manager is
  * configured ({@link #newInstance(ProtectionPointUnit, long)}) and started (
@@ -10,7 +12,7 @@ package de.uniol.inf.is.odysseus.recovery.protectionpoints;
  * @author Michael Brand
  *
  */
-public interface IProtectionPointManager {
+public interface IProtectionPointManager extends Serializable {
 
 	/**
 	 * Gets the name.
@@ -33,8 +35,8 @@ public interface IProtectionPointManager {
 	 * @throws IllegalArgumentException
 	 *             if {@code period} is not greater than 0.
 	 */
-	public IProtectionPointManager newInstance(ProtectionPointUnit unit,
-			long period) throws NullPointerException, IllegalArgumentException;
+	public IProtectionPointManager newInstance(ProtectionPointUnit unit, long period)
+			throws NullPointerException, IllegalArgumentException;
 
 	/**
 	 * Creates a new protection point manager as a copy of this one. <br />
@@ -79,7 +81,7 @@ public interface IProtectionPointManager {
 	 * Starts the manager.
 	 */
 	public void start();
-	
+
 	/**
 	 * Stops the manager.
 	 */

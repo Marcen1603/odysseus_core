@@ -30,8 +30,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointHandler;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManagerRegistry;
 
-//TODO copy and clear file, if Odysseus shuts down regularly
-//TODO name file not with queryid but with a hash of the querytext
 /**
  * The operator state recovery component handles the backup and recovery of
  * operator states.
@@ -42,6 +40,11 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManager
 @SuppressWarnings(value = { "nls" })
 public class OperatorStateRecoveryComponent
 		implements IRecoveryComponent, IProtectionPointHandler, IPlanModificationListener {
+
+	/**
+	 * The version of this class for serialization.
+	 */
+	private static final long serialVersionUID = -4945704252875069921L;
 
 	/**
 	 * The logger for this class.
@@ -106,14 +109,14 @@ public class OperatorStateRecoveryComponent
 	 * The ids of all queries (and the session, which called the creation),
 	 * backup is activated for.
 	 */
-	private final Set<IPair<Integer, ISession>> mQueryIdsForBackup = Sets.newHashSet();
+	private static final Set<IPair<Integer, ISession>> cQueryIdsForBackup = Sets.newHashSet();
 
 	@Override
 	public List<ILogicalQuery> activateBackup(QueryBuildConfiguration qbConfig, ISession caller,
 			List<ILogicalQuery> queries) {
 		for (ILogicalQuery query : queries) {
 			int queryId = query.getID();
-			this.mQueryIdsForBackup.add(new Pair<>(new Integer(queryId), caller));
+			cQueryIdsForBackup.add(new Pair<>(new Integer(queryId), caller));
 			ProtectionPointManagerRegistry.getInstance(queryId).addHandler(this);
 		}
 		return queries;
@@ -125,11 +128,11 @@ public class OperatorStateRecoveryComponent
 			cLog.error("No executor bound!");
 			return;
 		}
-		for (IPair<Integer, ISession> queryId : this.mQueryIdsForBackup) {
+		for (IPair<Integer, ISession> queryId : cQueryIdsForBackup) {
 			OperatorStateStore.store(
 					collectStateFulOperators(
 							cExecutor.get().getPhysicalRoots(queryId.getE1().intValue(), queryId.getE2())),
-					queryId.getE1().intValue());
+					cExecutor.get().getLogicalQueryById(queryId.getE1().intValue(), queryId.getE2()));
 		}
 	}
 
@@ -181,12 +184,37 @@ public class OperatorStateRecoveryComponent
 		Integer queryId = new Integer(query.getID());
 		if (cQueryIdsForRecovery.contains(queryId) && PlanModificationEventType.QUERY_ADDED.equals(eventType)) {
 			try {
-				OperatorStateStore.load(collectStateFulOperators(query.getRoots()), queryId.intValue());
+				OperatorStateStore.load(collectStateFulOperators(query.getRoots()), query.getLogicalQuery());
 				cQueryIdsForRecovery.remove(queryId);
 			} catch (ClassNotFoundException | IOException e) {
 				cLog.error("Could not load operator state!", e);
 			}
+		} else if (queryIdsForBackupContainsId(queryId) && PlanModificationEventType.QUERY_REMOVE.equals(eventType)) {
+			try {
+				OperatorStateStore.backupFile(query.getLogicalQuery());
+				OperatorStateStore.deleteFile(query.getLogicalQuery());
+			} catch (ClassNotFoundException | IOException e) {
+				cLog.error("Could not load operator state!", e);
+			}
 		}
+	}
+
+	/**
+	 * Checks, if {@link #cQueryIdsForBackup} contains an entry with a given
+	 * query id.
+	 * 
+	 * @param queryId
+	 *            The query id.
+	 * @return True, if {@link #cQueryIdsForBackup} contains an entry with a
+	 *         given query id; false else.
+	 */
+	private static boolean queryIdsForBackupContainsId(Integer queryId) {
+		for (IPair<Integer, ISession> entry : cQueryIdsForBackup) {
+			if (entry.getE1().equals(queryId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

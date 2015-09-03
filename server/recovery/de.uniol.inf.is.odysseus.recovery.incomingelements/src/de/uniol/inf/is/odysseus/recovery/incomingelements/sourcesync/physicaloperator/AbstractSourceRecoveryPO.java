@@ -57,6 +57,11 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 		extends AbstractPipe<StreamObject, StreamObject>implements IStatefulPO, IProtectionPointHandler {
 
 	/**
+	 * The version of this class for serialization.
+	 */
+	private static final long serialVersionUID = 2075517070263761810L;
+
+	/**
 	 * Abstract transfer handler just to avoid the need to implement all
 	 * methods.
 	 * 

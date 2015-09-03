@@ -32,6 +32,11 @@ public class SystemTimeProtectionPointManager implements
 		IProtectionPointManager {
 
 	/**
+	 * The version of this class for serialization.
+	 */
+	private static final long serialVersionUID = 7063160623393779668L;
+
+	/**
 	 * The logger for this class.
 	 */
 	private static final Logger cLog = LoggerFactory
