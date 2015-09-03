@@ -145,13 +145,13 @@ public class SystemLog implements ISystemLog {
 	 * @param entry
 	 *            The given entry.
 	 * @param caller
-	 *            The entity, which wants to write the entry.
+	 *            The class, which wants to write the entry.
 	 * @param append
 	 *            True, if former entry shall remain within the log.
 	 * @return True, if the entry could be written; false, else (e.g., caller
 	 *         has no permission or entry is too old).
 	 */
-	private static boolean write(ISysLogEntry entry, Object caller, boolean append) {
+	private static boolean write(ISysLogEntry entry, Class<?> caller, boolean append) {
 		// Precondition
 		if (!SystemLogController.validatePermission(entry, caller)) {
 			return false;
@@ -191,17 +191,17 @@ public class SystemLog implements ISystemLog {
 	}
 
 	@Override
-	public boolean write(ISysLogEntry entry, Object caller) {
+	public boolean write(ISysLogEntry entry, Class<?> caller) {
 		return write(entry, caller, true);
 	}
 
 	@Override
-	public boolean write(String tag, long timeStamp, Object caller) {
+	public boolean write(String tag, long timeStamp, Class<?> caller) {
 		return write(SysLogEntryFactory.createEntry(tag, timeStamp), caller);
 	}
 
 	@Override
-	public boolean write(String tag, long timeStamp, String information, Object caller) {
+	public boolean write(String tag, long timeStamp, String information, Class<?> caller) {
 		return write(SysLogEntryFactory.createEntry(tag, timeStamp, information), caller);
 	}
 
@@ -210,12 +210,14 @@ public class SystemLog implements ISystemLog {
 	 * 
 	 * @param entries
 	 *            The given entries ordered by time stamp (older entries first).
+	 * @param caller
+	 *            The class, which wants to write the entries.
 	 * @param append
 	 *            True, if former entry shall remain within the log.
 	 * @return True, if the entries could be written; false, else (e.g., an
 	 *         entry is too old).
 	 */
-	private static boolean write(List<ISysLogEntry> entries, Object caller, boolean append) {
+	private static boolean write(List<ISysLogEntry> entries, Class<?> caller, boolean append) {
 		for (ISysLogEntry entry : entries) {
 			if (!write(entry, caller, append)) {
 				return false;
@@ -225,7 +227,7 @@ public class SystemLog implements ISystemLog {
 	}
 
 	@Override
-	public boolean write(List<ISysLogEntry> entries, Object caller) {
+	public boolean write(List<ISysLogEntry> entries, Class<?> caller) {
 		return write(entries, caller, true);
 	}
 
@@ -274,7 +276,7 @@ public class SystemLog implements ISystemLog {
 		}
 
 		// Overwrite log and file
-		write(entriesToKeep, SystemLog.class.getName(), false);
+		write(entriesToKeep, SystemLog.class, false);
 
 		// Call listeners
 		for (ISystemLogListener listener : cListeners) {

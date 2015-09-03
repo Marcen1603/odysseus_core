@@ -412,7 +412,7 @@ public class QueryStateRecoveryComponent implements IExecutorCommandListener, IC
 
 		if (tag != null) {
 			cSystemLog.get().write(tag.toString(), timestamp, executorCommandToBase64Binary(command),
-					QueryStateRecoveryComponent.class.getName());
+					QueryStateRecoveryComponent.class);
 		}
 	}
 

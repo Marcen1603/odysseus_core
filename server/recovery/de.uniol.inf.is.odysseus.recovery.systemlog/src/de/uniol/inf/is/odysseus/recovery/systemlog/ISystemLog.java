@@ -37,11 +37,11 @@ public interface ISystemLog {
 	 * @param entry
 	 *            The given entry.
 	 * @param caller
-	 *            The entity, which wants to write the entry.
+	 *            The class, which wants to write the entry.
 	 * @return True, if the entry could be written; false, else (e.g., caller
 	 *         has no permission or entry is too old).
 	 */
-	public boolean write(ISysLogEntry entry, Object caller);
+	public boolean write(ISysLogEntry entry, Class<?> caller);
 
 	/**
 	 * Writes an entry to the log.
@@ -51,11 +51,11 @@ public interface ISystemLog {
 	 * @param timeStamp
 	 *            The time stamp in milliseconds for the given entry.
 	 * @param caller
-	 *            The entity, which wants to write the entry.
+	 *            The class, which wants to write the entry.
 	 * @return True, if the entry could be written; false, else (e.g., caller
 	 *         has no permission or entry is too old).
 	 */
-	public boolean write(String tag, long timeStamp, Object caller);
+	public boolean write(String tag, long timeStamp, Class<?> caller);
 
 	/**
 	 * Writes an entry to the log.
@@ -67,11 +67,11 @@ public interface ISystemLog {
 	 * @param information
 	 *            The additional information for the given entry.
 	 * @param caller
-	 *            The entity, which wants to write the entry.
+	 *            The class, which wants to write the entry.
 	 * @return True, if the entry could be written; false, else (e.g., caller
 	 *         has no permission or entry is too old).
 	 */
-	public boolean write(String tag, long timeStamp, String information, Object caller);
+	public boolean write(String tag, long timeStamp, String information, Class<?> caller);
 
 	/**
 	 * Writes several entries to the log.
@@ -79,11 +79,11 @@ public interface ISystemLog {
 	 * @param entries
 	 *            The given entries ordered by time stamp (older entries first).
 	 * @param caller
-	 *            The entity, which wants to write the entry.
+	 *            The class, which wants to write the entry.
 	 * @return True, if the entry could be written; false, else (e.g., caller
 	 *         has no permission or entry is too old).
 	 */
-	public boolean write(List<ISysLogEntry> entries, Object caller);
+	public boolean write(List<ISysLogEntry> entries, Class<?> caller);
 
 	/**
 	 * Registers a listener.

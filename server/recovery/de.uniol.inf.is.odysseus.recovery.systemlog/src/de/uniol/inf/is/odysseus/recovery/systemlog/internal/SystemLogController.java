@@ -1,20 +1,24 @@
 package de.uniol.inf.is.odysseus.recovery.systemlog.internal;
 
+import java.util.Map;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
-import de.uniol.inf.is.odysseus.recovery.systemlog.Tag;
 
 /**
  * Controller to regulate the write access to the system log. <br />
  * Because not every entity has the permission to write certain tags (
  * {@link ISysLogEntry#getTag()}), this controller checks the rights of the
- * caller before writing to the system log.
+ * caller before writing to the system log. <br />
+ * The class {@link SystemLog} has the permission to write every tag. For all
+ * other classes, the class writing the first entry with a given tag, has the
+ * permission for that tag.
  * 
  * @author Michael Brand
  *
@@ -29,19 +33,38 @@ public class SystemLogController implements BundleActivator {
 	private static final long cDefaultThreshold = (long) (Math.pow(10, 3) * Math.pow(60, 2) * 24 * 30);
 
 	/**
+	 * A map of system log tags (keys) and classes (values), which have the
+	 * permission to write the given tag.
+	 */
+	private static final Map<String, Class<?>> cPermissions = Maps.newHashMap();
+
+	/**
+	 * The system log class has the permission to write all tags.
+	 */
+	private static final Class<?> cWildCard = SystemLog.class;
+
+	/**
 	 * Checks, if {@code caller} has the permission to write a given system log
 	 * entry.
 	 * 
 	 * @param entry
 	 *            The system log entry to write.
 	 * @param caller
-	 *            The entity, which wants to write {@code entry}.
+	 *            The class, which wants to write {@code entry}.
 	 * @return True, if {@code caller} has the permission to write {@code entry}
-	 *         ; false, else.
+	 *         , false, else.
 	 */
-	public static boolean validatePermission(ISysLogEntry entry, Object caller) {
-		Optional<Tag> tag = Tag.fromString(entry.getTag());
-		return tag.isPresent() && tag.get().getGrantedNames().contains(caller.toString());
+	public static boolean validatePermission(ISysLogEntry entry, Class<?> caller) {
+		String tag = entry.getTag();
+		if (cWildCard.equals(caller)) {
+			return true;
+		} else if (cPermissions.containsKey(tag) && cPermissions.get(tag).equals(caller)) {
+			return true;
+		} else if (!cPermissions.containsKey(tag)) {
+			cPermissions.put(tag, caller);
+			return true;
+		}
+		return false;
 	}
 
 	/**

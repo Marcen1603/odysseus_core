@@ -12,7 +12,6 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISysLogEntry;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLog;
 import de.uniol.inf.is.odysseus.recovery.systemlog.ISystemLogListener;
-import de.uniol.inf.is.odysseus.recovery.systemlog.Tag;
 import de.uniol.inf.is.odysseus.recovery.systemstatelogger.ICrashDetectionListener;
 
 /**
@@ -29,6 +28,13 @@ public class CrashDetector implements ISystemLogListener {
 	 * The logger for this class.
 	 */
 	private static final Logger cLog = LoggerFactory.getLogger(CrashDetector.class);
+
+	/**
+	 * The system log tag for a detected crash.
+	 * 
+	 * @see ISysLogEntry#getTag()
+	 */
+	public static final String cCrashTag = "CRASHDETECTED";
 
 	/**
 	 * The time stamp in milliseconds of the last startup, if a crash has been
@@ -122,7 +128,7 @@ public class CrashDetector implements ISystemLogListener {
 			callListener(listener);
 		}
 		if (cSystemLog.isPresent()) {
-			cSystemLog.get().write(Tag.CRASH_DETECTED.toString(), System.currentTimeMillis(), CrashDetector.class.getName());
+			cSystemLog.get().write(cCrashTag, System.currentTimeMillis(), CrashDetector.class);
 		}
 	}
 
@@ -140,9 +146,9 @@ public class CrashDetector implements ISystemLogListener {
 		int indexOfLastShutdown = -1;
 		int indexOfLastStartup = -1;
 		for (int i = 0; i < entries.size(); i++) {
-			if (entries.get(i).getTag().equals(Tag.STARTUP.toString())) {
+			if (entries.get(i).getTag().equals(SystemStateLogger.cStartupTag)) {
 				indexOfLastStartup = i;
-			} else if (entries.get(i).getTag().equals(Tag.SHUTDOWN.toString())) {
+			} else if (entries.get(i).getTag().equals(SystemStateLogger.cShutdownTag)) {
 				indexOfLastShutdown = i;
 			}
 		}
@@ -161,7 +167,7 @@ public class CrashDetector implements ISystemLogListener {
 	 */
 	@Override
 	public void onSystemLogEntryWritten(ISysLogEntry entry) throws Throwable {
-		if (entry.getTag().equals(Tag.STARTUP.toString())) {
+		if (entry.getTag().equals(SystemStateLogger.cStartupTag)) {
 			cStartup = true;
 			if (canCallListeners()) {
 				callAllListenersAndLog();
