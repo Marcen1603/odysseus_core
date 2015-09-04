@@ -12,6 +12,16 @@ import de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa.datamodel.Medu
 public class MedusaLoadBalancingConsole implements CommandProvider {
 	
 	private static IPeerDictionary peerDictionary;
+	
+	public static void bindPeerDictionary(IPeerDictionary serv) {
+		peerDictionary = serv;
+	}
+	
+	public static void unbindPeerDictionary(IPeerDictionary serv) {
+		if(peerDictionary==serv) {
+			peerDictionary = null;
+		}
+	}
 
 	@Override
 	public String getHelp() {
