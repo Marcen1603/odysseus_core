@@ -103,15 +103,15 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 
 	public void insert(T value) {
 		synchronized (elements) {
-			int pos = Collections.binarySearch(elements, value, comp);
-			if (pos < 0){
-				elements.add((-(pos) - 1), value);
-			}else{
-				elements.add(pos,value);
-			}			
-//			elements.add(value);
-//			// TODO: Maybe, this could be optimized. But mostly the collections are very small ...
-//			Collections.sort(elements, comp);
+//			int pos = Collections.binarySearch(elements, value, comp);
+//			if (pos < 0){
+//				elements.add((-(pos) - 1), value);
+//			}else{
+//				elements.add(pos,value);
+//			}			
+			elements.add(value);
+			// TODO: Maybe, this could be optimized. But mostly the collections are very small ...
+			Collections.sort(elements, comp);
 		}
 	}
 
@@ -135,5 +135,15 @@ public class AggregateTISweepArea<T extends IStreamObject<? extends ITimeInterva
 		// }
 		// }
 		// return sorted;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < elements.size(); i++) {
+			builder.append(elements.get(i)+" "+elements.get(i).getMetadata()+" \n");
+		}
+		return builder.toString();
+
 	}
 }
