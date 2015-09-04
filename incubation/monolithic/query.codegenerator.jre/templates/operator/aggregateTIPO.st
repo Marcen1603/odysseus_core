@@ -15,20 +15,20 @@ AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeIn
 				
 				
 		
-		SDFSchema outputSchema = $operatorVariable$PO.getInternalOutputSchema();
-		List<SDFAttribute> outAttributes = new ArrayList<>(
-				outputSchema.getAttributes());
-		SDFSchema inputSchema = $operatorVariable$PO.getInputSchema();
-		Map<SDFSchema, Map<AggregateFunction, SDFAttribute\>> aggregations = $operatorVariable$PO
+		SDFSchema $operatorVariable$OutputSchema = $operatorVariable$PO.getInternalOutputSchema();
+		List<SDFAttribute> $operatorVariable$OutAttributes = new ArrayList<>(
+				$operatorVariable$OutputSchema.getAttributes());
+		SDFSchema $operatorVariable$InputSchema = $operatorVariable$PO.getInputSchema();
+		Map<SDFSchema, Map<AggregateFunction, SDFAttribute\>> $operatorVariable$Aggregations = $operatorVariable$PO
 				.getAggregations();
 
 
 		AggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry =  new AggregateFunctionBuilderRegistry();
 		aggregateFunctionBuilderRegistry.registerAggregateFunctionBuilder(new RelationalAggregateFunctionBuilder());
 
-		for (SDFSchema attrList : aggregations.keySet()) {
-			if (SDFSchema.subset(attrList, inputSchema)) {
-				Map<AggregateFunction, SDFAttribute> funcs = aggregations
+		for (SDFSchema attrList : $operatorVariable$Aggregations.keySet()) {
+			if (SDFSchema.subset(attrList, $operatorVariable$InputSchema)) {
+				Map<AggregateFunction, SDFAttribute> funcs = $operatorVariable$Aggregations
 						.get(attrList);
 				for (Entry<AggregateFunction, SDFAttribute> e : funcs
 						.entrySet()) {
@@ -39,7 +39,7 @@ AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeIn
 					String datatype = null;
 					for (int i = 0; i < p.getE1().size(); ++i) {
 						SDFAttribute attr = p.getE1().get(i);
-						posArray[i] = inputSchema.indexOf(attr);
+						posArray[i] = $operatorVariable$InputSchema.indexOf(attr);
 						if (attr.getDatatype().isPartialAggregate()) {
 							partialAggregateInput = true;
 						}
@@ -53,7 +53,7 @@ AggregateTIPO<ITimeInterval, IStreamObject<ITimeInterval>, IStreamObject<ITimeIn
 			
 					
 					IAggregateFunctionBuilder builder = aggregateFunctionBuilderRegistry.getBuilder(
-							inputSchema.getType(), p.getE2().getName());
+							$operatorVariable$InputSchema.getType(), p.getE2().getName());
 					if (builder == null) {
 						throw new RuntimeException(
 								"Could not find a builder for "

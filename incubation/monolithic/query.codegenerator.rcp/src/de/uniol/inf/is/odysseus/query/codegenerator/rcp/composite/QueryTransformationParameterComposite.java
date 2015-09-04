@@ -218,6 +218,7 @@ public class QueryTransformationParameterComposite extends
 					"Please check your input\nNo access to the Odysseus code folder: "
 							+ txtOdysseusCode.getText());
 		}
+		
 
 	}
 

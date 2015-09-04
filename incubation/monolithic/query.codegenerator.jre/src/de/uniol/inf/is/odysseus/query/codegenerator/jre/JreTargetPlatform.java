@@ -111,7 +111,7 @@ public class JreTargetPlatform extends AbstractTargetPlatform{
 		System.out.println("Operator-Name: "+operator.getName()+" "+ operator.getClass().getSimpleName());
 
 		if(operator.getSubscribedToSource().size() >= 2){
-			if(JreCodegeneratorStatus.getInstance().operateCanCreate(operator)){
+			if(JreCodegeneratorStatus.getInstance().isOperatorReadyforCodegeneration(operator)){
 				generateOperatorCode(operator,parameter, transformationConfiguration,queryAnalseInformation);
 			}
 		}else{
