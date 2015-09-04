@@ -79,7 +79,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	protected void init(SDFSchema schema, SDFExpression[] expr) {		
 		this.expressions = new RelationalExpression[expr.length];
 		for (int i = 0; i < expr.length; ++i) {
-			this.expressions[i] = new RelationalExpression<T>(expr[i].clone());
+			this.expressions[i] = new RelationalExpression<T>(expr[i]);
 			this.expressions[i].initVars(schema);
 		}
 	}
