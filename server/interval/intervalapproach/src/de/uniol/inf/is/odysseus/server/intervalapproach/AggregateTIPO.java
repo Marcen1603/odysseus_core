@@ -359,6 +359,7 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 						.getValue().extractElementsBefore(timestamp);
 				if (debug) {
 					System.err.println("AREA FOR GROUP " + entry.getKey());
+					System.err.println(entry.getValue().toString());
 				}
 				produceResults(results, entry.getKey());
 
