@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 
 import java.io.Serializable;
 
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.mep.IStatefulFunction;
@@ -15,6 +16,11 @@ public class CounterFunction extends AbstractFunction<Long> implements IStateful
 		super("counter",0,null,SDFDatatype.LONG,false);
 	}
 	
+	private CounterFunction(CounterFunction other) {
+		this();
+		this.lastValue = other.lastValue;
+	}
+
 	@Override
 	public Long getValue() {
 		return lastValue++;
@@ -30,4 +36,9 @@ public class CounterFunction extends AbstractFunction<Long> implements IStateful
 		this.lastValue = (Long) state;
 	}
 
+	@Override
+	public IExpression<Long> clone() {
+		return new CounterFunction(this);
+	}
+	
 }

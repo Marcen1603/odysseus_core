@@ -21,5 +21,7 @@ public interface IStatefulFunction {
 	 * @param state
 	 */
 	void setState(Serializable state);
+	
+	
 
 }
