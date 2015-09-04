@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.mep;
 
+import java.net.NetworkInterface;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -367,10 +368,16 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 				+ " must implement determineType function");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public IExpression<T> clone() {
 		// Remark: stateful functions must override this method!
-		return this;
+		try {
+			return getClass().newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 	
 }
