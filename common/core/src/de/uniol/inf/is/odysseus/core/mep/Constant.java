@@ -42,7 +42,7 @@ public class Constant<T> implements IExpression<T> {
 	 * The value of this
 	 */
 	private final T value;
-	private SDFDatatype type;
+	final private SDFDatatype type;
 
 	static {
 		DOUBLE_FORMATTER.setGroupingUsed(false);
