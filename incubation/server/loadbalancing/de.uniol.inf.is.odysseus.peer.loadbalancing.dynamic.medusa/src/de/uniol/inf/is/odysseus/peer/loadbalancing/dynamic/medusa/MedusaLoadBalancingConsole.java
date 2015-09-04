@@ -27,26 +27,17 @@ public class MedusaLoadBalancingConsole implements CommandProvider {
 	public String getHelp() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Load Balancing: Medusa Strategy specific commands.\n");
-		sb.append("medusaGetMaxLoad                -  Shows maximum Load Value this computer can achieve\n");
-		sb.append("medusaGetMaxCosts               -  Shows maximum Price this computer will take for one load unit\n");
 		sb.append("medusaGetCurrentLoad            -  Shows current Load according to Medusa Strategy\n");
 		sb.append("medusaGetCurrentCosts           - Shows current Costs according to Medusa Strategy\n");
 		sb.append("medusaShowCosts <percentage>    - Shows costs for particular percentage.\n");
 		sb.append("medusaShowCostDifference <percentage1> <percentage2> - shows Difference in Costs between two points\n");
-		sb.append("medusaMinPrice                    - Shows minimum Price given to other Peers\n");
-		sb.append("medusaMaxPrice                    - Shows maximum Price given to other Peers\n");
+		sb.append("showContracts					- Lists all price contracts with other Peers\n");
+		sb.append("calcMarginCost <percentage>       - Shows margin Cost if cpu is <percentage> used\n");
+		sb.append("calcCurrentMarginCost             - Shows current margin cost\n");
 		
 		return sb.toString();
 	}
 	
-	public static void _medusaGetMaxLoad(CommandInterpreter ci) {
-		ci.println(PriceCalculator.getMaximumLoad());
-	}
-	
-
-	public static void _medusaGetMaxCosts(CommandInterpreter ci) {
-		ci.println(PriceCalculator.getMaximumCosts());
-	}
 
 	public static void _medusaGetCurrentCosts(CommandInterpreter ci) {
 		ci.println(PriceCalculator.getCurrentCosts());
@@ -119,13 +110,6 @@ public class MedusaLoadBalancingConsole implements CommandProvider {
 		
 	}
 	
-	public static void _medusaMinPrice(CommandInterpreter ci) {
-		ci.println(PriceCalculator.getMinPrice());
-	}
-	
-	public static void _medusaMaxPrice(CommandInterpreter ci) {
-		ci.println(PriceCalculator.getMaxPrice());
-	}
 	
 	public static void _showContracts(CommandInterpreter ci) {
 		for(MedusaPricingContract contract : ContractRegistry.getAllContracts()) {
@@ -133,13 +117,38 @@ public class MedusaLoadBalancingConsole implements CommandProvider {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Contract with ");
 			sb.append(peerName);
-			sb.append(" MIN_PRICE:");
-			sb.append(contract.getMinPrice());
-			sb.append(" MAX_PRICE:");
-			sb.append(contract.getMaxPrice());
+			sb.append(" Price:");
+			sb.append(contract.getPrice());
 			ci.println(sb.toString());
 		}
 		
 	}
+	
+	public static void _calcMarginCost(CommandInterpreter ci) {
+		final String ERROR_USAGE = "Usage: calcMarginCost <percentage1> ";
+		
+		String percentageString = ci.nextArgument();
+		if (Strings.isNullOrEmpty(percentageString)) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+
+		double percentage1;
+
+		try {
+			percentage1 = Double.parseDouble(percentageString);
+		} catch (NumberFormatException e) {
+			ci.println(ERROR_USAGE);
+			return;
+		}
+		
+		ci.println(PriceCalculator.calcMarginCost(percentage1));
+	}
+	
+	public static void _calcCurrentMarginCost(CommandInterpreter ci) {
+		
+		ci.println(PriceCalculator.calcCurrentMarginCost());
+	}
+	
 	
 }
