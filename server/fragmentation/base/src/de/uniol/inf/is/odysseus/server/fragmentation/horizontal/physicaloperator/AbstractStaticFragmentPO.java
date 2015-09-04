@@ -25,134 +25,135 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
  * @author Christian Kuka <christian@kuka.cc>
  */
 public abstract class AbstractStaticFragmentPO<T extends IStreamObject<IMetaAttribute>> extends AbstractFragmentPO<T> {
-    private static final Logger log = LoggerFactory.getLogger(AbstractStaticFragmentPO.class);
+	private static final Logger log = LoggerFactory.getLogger(AbstractStaticFragmentPO.class);
 
-    /**
-     * The rate heartbeats are send.
-     */
-    private final int heartbeatRate;
+	/**
+	 * The rate heartbeats are send.
+	 */
+	private final int heartbeatRate;
 
-    /**
-     * The current amount of heartbeats.
-     */
-    private int[] heartbeatCounter;
+	/**
+	 * The current amount of heartbeats.
+	 */
+	private int[] heartbeatCounter;
 
-    /**
-     * The number of fragments.
-     */
-    protected final int numFragments;
+	/**
+	 * The number of fragments.
+	 */
+	protected final int numFragments;
 
-    /**
-     * How many elements are send to which port
-     */
-    protected final long[] elementsSend;
+	/**
+	 * How many elements are send to which port
+	 */
+	protected final long[] elementsSend;
 
-    /**
-     * Constructs a new {@link AbstractStaticFragmentPO}.
-     * 
-     * @param fragmentAO
-     *            the {@link AbstractFragmentAO} transformed to this
-     *            {@link AbstractStaticFragmentPO}.
-     */
-    public AbstractStaticFragmentPO(AbstractStaticFragmentAO fragmentAO) {
-        super(fragmentAO);
-        this.numFragments = (int) fragmentAO.getNumberOfFragments();
-        this.heartbeatCounter = new int[this.numFragments];
-        this.heartbeatRate = fragmentAO.getHeartbeatrate();
-        this.elementsSend = new long[this.numFragments];
-    }
+	/**
+	 * Constructs a new {@link AbstractStaticFragmentPO}.
+	 * 
+	 * @param fragmentAO
+	 *            the {@link AbstractFragmentAO} transformed to this
+	 *            {@link AbstractStaticFragmentPO}.
+	 */
+	public AbstractStaticFragmentPO(AbstractStaticFragmentAO fragmentAO) {
+		super(fragmentAO);
+		this.numFragments = (int) fragmentAO.getNumberOfFragments();
+		this.heartbeatCounter = new int[this.numFragments];
+		this.heartbeatRate = fragmentAO.getHeartbeatrate();
+		this.elementsSend = new long[this.numFragments];
+	}
 
-    @Override
-    public OutputMode getOutputMode() {
+	@Override
+	public OutputMode getOutputMode() {
 
-        return OutputMode.INPUT;
+		return OutputMode.INPUT;
 
-    }
+	}
 
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void process_next(T object, int port) {
-        int outPort = this.route(object);
-        elementsSend[outPort]++;
-        AbstractStaticFragmentPO.log.trace("Routed " + object + " to output port " + outPort);
-        this.transfer(object, outPort);
+	@Override
+	@SuppressWarnings("unchecked")
+	protected void process_next(T object, int port) {
+		int outPort = this.route(object);
+		elementsSend[outPort]++;
+		AbstractStaticFragmentPO.log.trace("Routed " + object + " to output port " + outPort);
+		this.transfer(object, outPort);
 
-        sendHeartbeats(outPort, ((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart());
-    }
+		sendHeartbeats(outPort, ((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart());
+	}
 
-    @Override
-    public void processPunctuation(IPunctuation punctuation, int port) {
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
 
-        // Send punctuations to all fragments!
-        for (int outPort = 0; outPort < numFragments; outPort++) {
-            AbstractStaticFragmentPO.log.trace("Routed " + punctuation + " to output port " + outPort);
-            this.sendPunctuation(punctuation, outPort);
-        }
-    }
+		// Send punctuations to all fragments!
+		for (int outPort = 0; outPort < numFragments; outPort++) {
+			AbstractStaticFragmentPO.log.trace("Routed " + punctuation + " to output port " + outPort);
+			this.sendPunctuation(punctuation, outPort);
+		}
+	}
 
-    /**
-     * Send heartbeats in order to communicate the temporal advance to all
-     * ports.
-     * 
-     * @param exceptionPort
-     *            The port, where the current element is routed. There will no
-     *            heartbeat send.
-     * @param currentPoT
-     *            The {@link PointInTime} of the current element.
-     */
-    private void sendHeartbeats(int exceptionPort, PointInTime currentPoT) {
+	/**
+	 * Send heartbeats in order to communicate the temporal advance to all
+	 * ports.
+	 * 
+	 * @param exceptionPort
+	 *            The port, where the current element is routed. There will no
+	 *            heartbeat send.
+	 * @param currentPoT
+	 *            The {@link PointInTime} of the current element.
+	 */
+	private void sendHeartbeats(int exceptionPort, PointInTime currentPoT) {
 
-        final Heartbeat heartbeat = Heartbeat.createNewHeartbeat(currentPoT);
+		if (heartbeatRate > 0) {
 
-        for (int p = 0; p < this.numFragments; p++) {
+			final Heartbeat heartbeat = Heartbeat.createNewHeartbeat(currentPoT);
 
-            if (p != exceptionPort) {
+			for (int p = 0; p < this.numFragments; p++) {
 
-                if (heartbeatCounter[p] < heartbeatRate) {
-                    heartbeatCounter[p]++;
-                }
-                else {
-                    this.sendPunctuation(heartbeat, p);
-                    heartbeatCounter[p] = 0;
-                }
-            }
+				if (p != exceptionPort) {
 
-        }
-    }
+					if (heartbeatCounter[p] < heartbeatRate) {
+						heartbeatCounter[p]++;
+					} else {
+						this.sendPunctuation(heartbeat, p);
+						heartbeatCounter[p] = 0;
+					}
+				}
 
+			}
+		}
+	}
 
-    @Override
-    public Map<String, String> getKeyValues() {
-        Map<String, String> map = new HashMap<>();
-        map.put("Distribution", dumpArray(elementsSend));
-        return map;
-    }
+	@Override
+	public Map<String, String> getKeyValues() {
+		Map<String, String> map = new HashMap<>();
+		map.put("Distribution", dumpArray(elementsSend));
+		return map;
+	}
 
-    private String dumpArray(long[] a) {
-        StringBuffer b = new StringBuffer("[");
-        String SEP = "";
-        for (int i = 0; i < a.length; i++) {
-            b.append(SEP).append(a[i]);
-            SEP = ",";
-        }
-        b.append("]");
-        return b.toString();
-    }
+	private String dumpArray(long[] a) {
+		StringBuffer b = new StringBuffer("[");
+		String SEP = "";
+		for (int i = 0; i < a.length; i++) {
+			b.append(SEP).append(a[i]);
+			SEP = ",";
+		}
+		b.append("]");
+		return b.toString();
+	}
 
-    @Override
-    public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-        if (!(ipo instanceof AbstractStaticFragmentPO)) {
-            return false;
-        }
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof AbstractStaticFragmentPO)) {
+			return false;
+		}
 
-        @SuppressWarnings("unchecked")
-        AbstractStaticFragmentPO<T> other = (AbstractStaticFragmentPO<T>) ipo;
+		@SuppressWarnings("unchecked")
+		AbstractStaticFragmentPO<T> other = (AbstractStaticFragmentPO<T>) ipo;
 
-        if (this.numFragments != other.numFragments) {
-            return false;
-        }
+		if (this.numFragments != other.numFragments) {
+			return false;
+		}
 
-        return super.isSemanticallyEqual(ipo);
-    }
+		return super.isSemanticallyEqual(ipo);
+	}
 
 }
