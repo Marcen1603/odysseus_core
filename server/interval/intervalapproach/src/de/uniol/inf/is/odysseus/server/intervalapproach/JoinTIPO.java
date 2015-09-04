@@ -134,7 +134,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.areas = areas;
 		if (this.joinPredicate != null) {
 			areas[0].setQueryPredicate(this.joinPredicate);
-			areas[1].setQueryPredicate(this.joinPredicate);
+			areas[1].setQueryPredicate(this.joinPredicate.clone());
 		}
 	}
 
@@ -152,7 +152,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.joinPredicate = joinPredicate;
 		if (this.areas != null && this.joinPredicate != null) {
 			areas[0].setQueryPredicate(this.joinPredicate);
-			areas[1].setQueryPredicate(this.joinPredicate);
+			areas[1].setQueryPredicate(this.joinPredicate.clone());
 		}
 	}
 
