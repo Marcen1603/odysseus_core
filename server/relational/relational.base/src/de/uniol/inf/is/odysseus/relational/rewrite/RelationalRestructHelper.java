@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
@@ -241,30 +242,40 @@ public class RelationalRestructHelper {
         return RestructHelper.simpleOperatorSwitch(father, son);
     }
 
-    private static Collection<ILogicalOperator> switchOperatorInternal(SelectAO father, BinaryLogicalOp son, Collection<ILogicalOperator> toInsert) {
-        SelectAO selLeft = father;
-        SelectAO selRight = new SelectAO(father.getPredicate());
-        toInsert.add(selRight);
+    private static Collection<ILogicalOperator> switchOperatorInternal(SelectAO father, AbstractLogicalOperator son, Collection<ILogicalOperator> toInsert) {
+        SelectAO[] toAdd = new SelectAO[son.getNumberOfInputs()];
+        toAdd[0] = father;
+        
+        for (int i=1;i<son.getNumberOfInputs();i++){
+        	toAdd[i] = new SelectAO(father.getPredicate().clone());
+        	toInsert.add(toAdd[i]);
+        }
 
         Collection<ILogicalOperator> ret = removeOperator(father);
-        ret.add(selLeft);
-
-        ret.addAll(RestructHelper.insertOperator(selLeft, son, 0, 0, 0));
-        ret.addAll(RestructHelper.insertOperator(selRight, son, 1, 0, 0));
+        ret.add(toAdd[0]);
+        // TODO: check if 0,0 as last param is ok should be retrieved from father subscription?
+        for (int i=0;i<son.getNumberOfInputs();i++){
+        	ret.addAll(RestructHelper.insertOperator(toAdd[i], son, i, 0, 0));
+        }
         return ret;
     }
 
-    private static Collection<ILogicalOperator> switchOperatorInternal(ProjectAO father, BinaryLogicalOp son, Collection<ILogicalOperator> toInsert) {
-        ProjectAO projLeft = father;
-        ProjectAO projRight = new ProjectAO();
-        projRight.setOutputSchemaWithList(father.getOutputSchemaWithList());
-        toInsert.add(projRight);
+    private static Collection<ILogicalOperator> switchOperatorInternal(ProjectAO father, AbstractLogicalOperator son, Collection<ILogicalOperator> toInsert) {
+    	ProjectAO[] toAdd = new ProjectAO[son.getNumberOfInputs()];
+    	toAdd[0] = father;
+    	for (int i=1;i<son.getNumberOfInputs();i++){
+    		toAdd[i] = new ProjectAO();
+    		toAdd[i].setOutputSchemaWithList(father.getOutputSchemaWithList());
+    		toInsert.add(toAdd[i]);
+    	}
 
         Collection<ILogicalOperator> ret = removeOperator(father);
-        ret.add(projLeft);
-
-        ret.addAll(RestructHelper.insertOperator(projLeft, son, 0, 0, 0));
-        ret.addAll(RestructHelper.insertOperator(projRight, son, 1, 0, 0));
+        ret.add(toAdd[0]);
+        
+        // TODO: check if 0,0 as last param is ok should be retrieved from father subscription?
+        for (int i=0;i<son.getNumberOfInputs();i++){
+        	ret.addAll(RestructHelper.insertOperator(toAdd[i], son, i, 0, 0));
+        }
         return ret;
     }
 
