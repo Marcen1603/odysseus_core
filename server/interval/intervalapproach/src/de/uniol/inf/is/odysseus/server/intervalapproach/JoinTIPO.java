@@ -59,8 +59,8 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  * @param <T>
  *            Datentyp
  */
-public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
-		extends AbstractPipe<T, T> implements IHasPredicate, IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
+public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> extends AbstractPipe<T, T>
+		implements IHasPredicate, IStatefulOperator, IStatefulPO, IPhysicalOperatorKeyValueProvider {
 	private static Logger _logger = null;
 
 	private static Logger getLogger() {
@@ -88,10 +88,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		this.metadataMerge = metadataMerge;
 	}
 
-	public JoinTIPO(IDataMergeFunction<T, K> dataMerge,
-			IMetadataMergeFunction<K> metadataMerge,
-			ITransferArea<T, T> transferFunction,
-			ITimeIntervalSweepArea<T>[] areas) {
+	public JoinTIPO(IDataMergeFunction<T, K> dataMerge, IMetadataMergeFunction<K> metadataMerge,
+			ITransferArea<T, T> transferFunction, ITimeIntervalSweepArea<T>[] areas) {
 		this.dataMerge = dataMerge;
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
@@ -127,7 +125,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	public void setDataMerge(IDataMergeFunction<T, K> dataMerge) {
 		this.dataMerge = dataMerge;
 	}
-	
+
 	public IMetadataMergeFunction<K> getMetadataMerge() {
 		return metadataMerge;
 	}
@@ -202,8 +200,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		if (getLogger().isDebugEnabled()) {
 			if (!isOpen()) {
 				getLogger().error(
-						"process next called on non opened operator " + this
-								+ " with " + object + " from " + port);
+						"process next called on non opened operator " + this + " with " + object + " from " + port);
 				return;
 			}
 		}
@@ -254,8 +251,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			boolean hit = qualifies.hasNext();
 			while (qualifies.hasNext()) {
 				T next = qualifies.next();
-				T newElement = dataMerge.merge(object, next, metadataMerge,
-						order);
+				T newElement = dataMerge.merge(object, next, metadataMerge, order);
 				transferFunction.transfer(newElement);
 
 			}
@@ -313,10 +309,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	protected synchronized void process_done() {
-//		if (isOpen()) {
-//			areas[0].clear();
-//			areas[1].clear();
-//		}
+		// if (isOpen()) {
+		// areas[0].clear();
+		// areas[1].clear();
+		// }
 	}
 
 	@Override
@@ -331,8 +327,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			if (getSubscribedToSource(0).isDone()) {
 				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
 			}
-			return getSubscribedToSource(1).isDone()
-					&& getSubscribedToSource(0).isDone() && areas[1].isEmpty();
+			return getSubscribedToSource(1).isDone() && getSubscribedToSource(0).isDone() && areas[1].isEmpty();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// Can happen if sources are unsubscribed while asking for done
 			// Ignore
@@ -352,15 +347,16 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		return creationFunction;
 	}
 
-	public void setCreationFunction(
-			IDummyDataCreationFunction<K, T> creationFunction) {
+	public void setCreationFunction(IDummyDataCreationFunction<K, T> creationFunction) {
 		this.creationFunction = creationFunction;
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (punctuation.isHeartbeat()) {
-			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
+			synchronized (this) {
+				this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
+			}
 		}
 		this.transferFunction.sendPunctuation(punctuation);
 		this.transferFunction.newElement(punctuation, port);
@@ -378,12 +374,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			return false;
 		}
 
-		if (!dataMerge.getClass().toString()
-				.equals(jtipo.dataMerge.getClass().toString())
-				|| !metadataMerge.getClass().toString()
-						.equals(jtipo.metadataMerge.getClass().toString())
-				|| !creationFunction.getClass().toString()
-						.equals(jtipo.creationFunction.getClass().toString())) {
+		if (!dataMerge.getClass().toString().equals(jtipo.dataMerge.getClass().toString())
+				|| !metadataMerge.getClass().toString().equals(jtipo.metadataMerge.getClass().toString())
+				|| !creationFunction.getClass().toString().equals(jtipo.creationFunction.getClass().toString())) {
 			return false;
 		}
 
@@ -407,12 +400,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			return false;
 		}
 
-		if (!dataMerge.getClass().toString()
-				.equals(jtipo.dataMerge.getClass().toString())
-				|| !metadataMerge.getClass().toString()
-						.equals(jtipo.metadataMerge.getClass().toString())
-				|| !creationFunction.getClass().toString()
-						.equals(jtipo.creationFunction.getClass().toString())) {
+		if (!dataMerge.getClass().toString().equals(jtipo.dataMerge.getClass().toString())
+				|| !metadataMerge.getClass().toString().equals(jtipo.metadataMerge.getClass().toString())
+				|| !creationFunction.getClass().toString().equals(jtipo.creationFunction.getClass().toString())) {
 			return false;
 		}
 
@@ -481,17 +471,18 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 						tempRemovePredicate = ((DefaultTISweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i])
 								.getRemovePredicate();
 					} else {
-						throw new IllegalArgumentException("sweepArea type "+ this.areas[i].getName() +" is not supported");
+						throw new IllegalArgumentException(
+								"sweepArea type " + this.areas[i].getName() + " is not supported");
 					}
 
 					// set the sweep area from the state
 					this.areas[i] = state.getSweepAreas()[i];
 
 					// set and initialize query and remove predicate
-					if (this.joinPredicate != null && tempRemovePredicate != null){
+					if (this.joinPredicate != null && tempRemovePredicate != null) {
 						this.areas[i].setQueryPredicate(this.joinPredicate);
 						this.areas[i].setRemovePredicate(tempRemovePredicate);
-						this.areas[i].init();						
+						this.areas[i].init();
 					} else {
 						throw new IllegalArgumentException("query predicate or remove predicate must not be null");
 					}
@@ -509,10 +500,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
-		map.put("Left Area Size", areas[0].size()+"");
-		map.put("Right Area Size", areas[1].size()+"");
-		map.put("OutputQueue", transferFunction.size()+"");
-		map.put("Watermark",transferFunction.getWatermark()+"");
+		map.put("Left Area Size", areas[0].size() + "");
+		map.put("Right Area Size", areas[1].size() + "");
+		map.put("OutputQueue", transferFunction.size() + "");
+		map.put("Watermark", transferFunction.getWatermark() + "");
 		return map;
 	}
 }
