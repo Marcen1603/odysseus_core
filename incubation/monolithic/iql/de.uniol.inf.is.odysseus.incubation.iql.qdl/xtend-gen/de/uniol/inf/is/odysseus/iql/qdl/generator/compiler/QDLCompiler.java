@@ -143,6 +143,17 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       _builder.append(_simpleName_1, "\t");
       _builder.append("> execute() {");
       _builder.newLineIfNotEmpty();
+      _builder.append("\t\t");
+      String _simpleName_2 = Collection.class.getSimpleName();
+      _builder.append(_simpleName_2, "\t\t");
+      _builder.append("<");
+      String _simpleName_3 = IQDLOperator.class.getSimpleName();
+      _builder.append(_simpleName_3, "\t\t");
+      _builder.append("> operators = new ");
+      String _simpleName_4 = ArrayList.class.getSimpleName();
+      _builder.append(_simpleName_4, "\t\t");
+      _builder.append("<>();");
+      _builder.newLineIfNotEmpty();
       {
         Collection<String> _sources = this.typeDictionary.getSources();
         for(final String source : _sources) {
@@ -156,27 +167,22 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
           _builder.append("\t\t\t \t\t");
           _builder.newLineIfNotEmpty();
           _builder.append("\t \t");
-          String _simpleName_2 = DefaultQDLSource.class.getSimpleName();
-          _builder.append(_simpleName_2, "\t \t");
+          String _simpleName_5 = DefaultQDLSource.class.getSimpleName();
+          _builder.append(_simpleName_5, "\t \t");
           _builder.append(" ");
           _builder.append(source, "\t \t");
-          _builder.append(" = getSource(\"");
+          _builder.append(" = getSource");
+          String _lowerCase = source.toLowerCase();
+          _builder.append(_lowerCase, "\t \t");
+          _builder.append("(new ");
+          String _simpleName_6 = DefaultQDLSource.class.getSimpleName();
+          _builder.append(_simpleName_6, "\t \t");
+          _builder.append("(\"");
           _builder.append(source, "\t \t");
-          _builder.append("\");");
+          _builder.append("\"), operators);");
           _builder.newLineIfNotEmpty();
         }
       }
-      _builder.append("\t \t");
-      String _simpleName_3 = Collection.class.getSimpleName();
-      _builder.append(_simpleName_3, "\t \t");
-      _builder.append("<");
-      String _simpleName_4 = IQDLOperator.class.getSimpleName();
-      _builder.append(_simpleName_4, "\t \t");
-      _builder.append("> operators = new ");
-      String _simpleName_5 = ArrayList.class.getSimpleName();
-      _builder.append(_simpleName_5, "\t \t");
-      _builder.append("<>();");
-      _builder.newLineIfNotEmpty();
       {
         EList<IQLStatement> _statements_1 = block.getStatements();
         for(final IQLStatement stmt : _statements_1) {
@@ -192,6 +198,44 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       _builder.append("\t");
       _builder.append("}");
       _builder.newLine();
+      _builder.append("\t");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.newLine();
+      {
+        Collection<String> _sources_1 = this.typeDictionary.getSources();
+        for(final String source_1 : _sources_1) {
+          _builder.append("\t");
+          _builder.append("private ");
+          String _simpleName_7 = DefaultQDLSource.class.getSimpleName();
+          _builder.append(_simpleName_7, "\t");
+          _builder.append(" getSource");
+          String _lowerCase_1 = source_1.toLowerCase();
+          _builder.append(_lowerCase_1, "\t");
+          _builder.append("(");
+          String _simpleName_8 = DefaultQDLSource.class.getSimpleName();
+          _builder.append(_simpleName_8, "\t");
+          _builder.append(" type, ");
+          String _simpleName_9 = Collection.class.getSimpleName();
+          _builder.append(_simpleName_9, "\t");
+          _builder.append("<");
+          String _simpleName_10 = IQDLOperator.class.getSimpleName();
+          _builder.append(_simpleName_10, "\t");
+          _builder.append("> operators) {");
+          _builder.newLineIfNotEmpty();
+          _builder.append("\t");
+          _builder.append("\t");
+          _builder.append("operators.add(type);");
+          _builder.newLine();
+          _builder.append("\t");
+          _builder.append("\t");
+          _builder.append("return type;");
+          _builder.newLine();
+          _builder.append("\t");
+          _builder.append("}");
+          _builder.newLine();
+        }
+      }
       _builder.append("\t");
       _builder.newLine();
       {

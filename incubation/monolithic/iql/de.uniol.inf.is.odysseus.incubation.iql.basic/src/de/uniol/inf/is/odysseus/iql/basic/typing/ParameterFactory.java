@@ -9,16 +9,10 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.BitVector;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AccessAOSourceParameter;
@@ -48,7 +42,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ValidatedFileNameParameter;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class ParameterFactory {
 	
@@ -142,29 +135,5 @@ public class ParameterFactory {
 			}
 		}
 		return true;
-	}
-
-	public static Object toParameter(Object parameterValue,	Class<? extends IParameter<?>> parameterType, ILogicalOperator operator, ISession session, IDataDictionary dd) {
-		try {
-			IParameter<?> parameter = parameterType.newInstance();
-			parameter.setInputValue(parameterValue);
-			parameter.setCaller(session);
-			parameter.setDataDictionary(dd);
-			List<SDFSchema> schemata = new ArrayList<>();
-			for (LogicalSubscription subs : operator.getSubscribedToSource()) {
-				System.out.println(subs.getTarget().getOutputSchema());
-				System.out.println(subs.getSchema());
-
-				//schemata.add(subs.getTarget().getOutputSchema());
-				schemata.add(subs.getSchema());
-
-			}
-			IAttributeResolver attributeResolver = new DirectAttributeResolver(schemata);
-			parameter.setAttributeResolver(attributeResolver);
-			return parameter.getValue();
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 }

@@ -71,17 +71,25 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 			}
 			
 			public «Collection.simpleName»<«IQDLOperator.simpleName»> execute() {
+				«Collection.simpleName»<«IQDLOperator.simpleName»> operators = new «ArrayList.simpleName»<>();
 			 	«FOR source : typeDictionary.sources»
 			 		«context.addImport(StreamAO.canonicalName)»
 			 		«context.addImport(DefaultQDLSource.canonicalName)»			 		
-			 		«DefaultQDLSource.simpleName» «source» = getSource("«source»");
+			 		«DefaultQDLSource.simpleName» «source» = getSource«source.toLowerCase»(new «DefaultQDLSource.simpleName»("«source»"), operators);
 				«ENDFOR»
-			 	«Collection.simpleName»<«IQDLOperator.simpleName»> operators = new «ArrayList.simpleName»<>();
 			 	«FOR stmt : block.statements»
 			 		«stmtCompiler.compile(stmt, context)»
 				«ENDFOR»			 	
 				return operators;
 			}
+			
+			
+			«FOR source : typeDictionary.sources»
+				private «DefaultQDLSource.simpleName» getSource«source.toLowerCase»(«DefaultQDLSource.simpleName» type, «Collection.simpleName»<«IQDLOperator.simpleName»> operators) {
+					operators.add(type);
+					return type;
+				}
+			«ENDFOR»
 			
 			«FOR a : varStmts»
 				«var decl = a.^var as IQLVariableDeclaration»

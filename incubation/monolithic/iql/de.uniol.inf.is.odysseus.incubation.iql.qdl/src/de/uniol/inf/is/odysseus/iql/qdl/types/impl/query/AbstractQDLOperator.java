@@ -1,38 +1,47 @@
 package de.uniol.inf.is.odysseus.iql.qdl.types.impl.query;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
+import de.uniol.inf.is.odysseus.iql.qdl.types.IQLSubscription;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 
 public abstract class AbstractQDLOperator implements IQDLOperator {
-	private ILogicalOperator operator;
+	private String name;
 	private Map<String, Object> parameters = new HashMap<String, Object>();
-	
-	public AbstractQDLOperator(ILogicalOperator operator) {
-		this.operator = operator;
-	}
-	
-	public AbstractQDLOperator(String operator) {
-		this.operator = QDLServiceBinding.createOperator(operator);
-	}
-	
-	public AbstractQDLOperator(String operator, IQDLOperator source) {
-		this.operator = QDLServiceBinding.createOperator(operator);
+	private Set<IQLSubscription> subscriptions = new HashSet<>();
+	private Set<IQLSubscription> subscriptionsToSource = new HashSet<>();
+
+	public AbstractQDLOperator(String name) {
+		this.name = name;
+	}	
+
+	public AbstractQDLOperator(String name, IQDLOperator source) {
+		this.name = name;
 		source.subscribeSink(this);		
 	}
 	
-	public AbstractQDLOperator(String operator, IQDLOperator source1, IQDLOperator source2) {
-		this.operator = QDLServiceBinding.createOperator(operator);
+	public AbstractQDLOperator(String name, IQDLOperator source1, IQDLOperator source2) {
+		this.name = name;
 		source1.subscribeSink(this);	
 		source2.subscribeSink(this);
 	}
 	
 	@Override
-	public ILogicalOperator getLogicalOperator() {
-		return operator;
+	public Set<IQLSubscription> getSubscriptions() {
+		return subscriptions;
+	}
+	
+	@Override
+	public Set<IQLSubscription> getSubscriptionsToSource() {
+		return subscriptionsToSource;
+	}
+	
+	@Override
+	public String getName() {
+		return name;
 	}
 	
 	public void setParameter(String name, Object parameter) {
@@ -49,39 +58,30 @@ public abstract class AbstractQDLOperator implements IQDLOperator {
 	}
 	
 	@Override
-	public void subscribeSink(IQDLOperator sink, int sinkInPort,int sourceOutPort) {
-		operator.subscribeSink(sink.getLogicalOperator(), sinkInPort, sourceOutPort, operator.getOutputSchema(sourceOutPort));
-	}
-
-	@Override
-	public void subscribeToSource(IQDLOperator source, int sinkInPort, int sourceOutPort) {
-		operator.subscribeToSource(source.getLogicalOperator(), sinkInPort, sourceOutPort, source.getLogicalOperator().getOutputSchema(sourceOutPort));
-	}
-	
-	@Override
 	public void subscribeSink(IQDLOperator sink, int sourceOutPort) {
-		int sinkInPort = sink.getLogicalOperator().getSubscribedToSource().size();
-		operator.subscribeSink(sink.getLogicalOperator(), sinkInPort, sourceOutPort, operator.getOutputSchema(sourceOutPort));
+		IQLSubscription subs = new IQLSubscription(this, sink, sourceOutPort, sink.getSubscriptionsToSource().size());
+		subscriptions.add(subs);
+		sink.getSubscriptionsToSource().add(subs);
 	}
 
 	@Override
 	public void subscribeToSource(IQDLOperator source, int sourceOutPort) {
-		int sinkInPort = this.getLogicalOperator().getSubscribedToSource().size();
-		operator.subscribeToSource(source.getLogicalOperator(), sinkInPort, sourceOutPort, source.getLogicalOperator().getOutputSchema(sourceOutPort));
+		source.subscribeSink(this, sourceOutPort);
 	}
 	
 	@Override
 	public void subscribeSink(IQDLOperator sink) {
-		int sinkInPort= sink.getLogicalOperator().getSubscribedToSource().size();
-		int sourceOutPort = 0;
-		operator.subscribeSink(sink.getLogicalOperator(), sinkInPort, sourceOutPort, operator.getOutputSchema(sourceOutPort));
+		subscribeSink(sink, 0);
 	}
 
 	@Override
 	public void subscribeToSource(IQDLOperator source) {
-		int sinkInPort = this.getLogicalOperator().getSubscribedToSource().size();
-		int sourceOutPort = 0;
-		operator.subscribeToSource(source.getLogicalOperator(), sinkInPort, sourceOutPort, source.getLogicalOperator().getOutputSchema(sourceOutPort));
+		source.subscribeSink(this);
+	}
+	
+	@Override
+	public boolean isSource() {
+		return false;
 	}
 	
 }

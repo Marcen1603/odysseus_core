@@ -2,17 +2,11 @@ package de.uniol.inf.is.odysseus.iql.qdl.types.impl.query;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.QDLSubscribableWithPort;
@@ -23,21 +17,6 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	
 	private List<IPair<String, Object>> metadata = new ArrayList<>();
 	
-	private Map<String, StreamAO> sources = new HashMap<>();
-
-	private ISession session;
-	
-	private IDataDictionary dataDictionary;
-
-	@Override
-	public void setSession(ISession session) {
-		this.session = session;
-	}
-	
-	@Override
-	public void setDataDictionary(IDataDictionary dataDictionary) {
-		this.dataDictionary = dataDictionary;
-	}
 
 	@Override
 	public List<IPair<String, Object>> getMetadata() {
@@ -49,27 +28,7 @@ public abstract class AbstractQDLQuery implements IQDLQuery {
 	}
 	
 	
-	protected DefaultQDLSource getSource(String name) {
-		String sourceName = name.toLowerCase();
-		StreamAO streamAO = sources.get(sourceName);
-		if (streamAO == null) {
-			SourceParameter source = new SourceParameter();
-			source.setName("Source");
-			source.setInputValue(sourceName);
-			source.setDataDictionary(dataDictionary);		
-			source.setCaller(session);
-			
-			AccessAO accessAO = source.getValue();
-			streamAO = new StreamAO();
-			streamAO.setSource(accessAO);
-			streamAO.setName(sourceName);
-			
-			sources.put(name, streamAO);
-		}	
-		DefaultQDLSource result = new DefaultQDLSource(streamAO);
-		return result;
-	}
-	
+
 	public List<IQDLOperator> subscribeToSource(Collection<?> sinks, Collection<?> sources) {
 		List<IQDLOperator> result = new ArrayList<>();
 		for (Object sink : sinks) {			

@@ -75,7 +75,7 @@ class QDLExpressionCompiler extends AbstractIQLExpressionCompiler<IQDLCompilerHe
 				'''getOperator«typeUtils.getShortName(e.ref, false)»«e.ref.hashCode»(new «typeCompiler.compile(e.ref, context, false)»("«typeUtils.getShortName(e.ref, false)»"), operators)'''
 			}
 		} else if (helper.isSource(e.ref)) {
-				'''getSource("«typeUtils.getShortName(e.ref, false)»")'''
+				'''getSource«typeUtils.getShortName(e.ref, false).toLowerCase»(new «typeCompiler.compile(e.ref, context, false)»("«typeUtils.getShortName(e.ref, false)»"), operators)'''
 		} else {
 			super.compile(e, context);
 		}

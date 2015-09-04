@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -26,13 +25,20 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SourceParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.iql.basic.typing.ParameterFactory;
 import de.uniol.inf.is.odysseus.iql.qdl.service.QDLServiceBinding;
+import de.uniol.inf.is.odysseus.iql.qdl.types.IQLSubscription;
 import de.uniol.inf.is.odysseus.iql.qdl.types.operator.IQDLOperator;
 import de.uniol.inf.is.odysseus.iql.qdl.types.query.IQDLQuery;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
@@ -43,19 +49,26 @@ public class OdysseusScriptGenerator {
 	private IQDLTypeDictionary factory;
 
 	public ILogicalQuery createLogicalQuery(IQDLQuery query, IDataDictionary dd, ISession session) {
-		query.setDataDictionary(dd);
-		query.setSession(session);		
 		
 		Collection<IQDLOperator> operators = query.execute();
-		Map<ILogicalOperator, IQDLOperator> operatorsMap = new HashMap<>();
+		Map<IQDLOperator, ILogicalOperator> operatorsMap = new HashMap<>();
+		Map<String, StreamAO> sourcesMap = new HashMap<>();
+
 		for (IQDLOperator operator : operators) {
-			operatorsMap.put(operator.getLogicalOperator(), operator);
+			if (operator.isSource()) {
+				operatorsMap.put(operator, getSource(operator.getName(), sourcesMap, dd , session));
+			} else {
+				operatorsMap.put(operator, QDLServiceBinding.createOperator(operator.getName()));
+			}
 		}
+		
 		Collection<IQDLOperator> roots = getRoots(operators);
+		Collection<IQDLOperator> visitedOperators = new HashSet<>();
 		for (IQDLOperator root : roots) {
-			setParameters(root, new HashSet<IQDLOperator>(), operatorsMap, dd, session);
+			createLogicalGraph(root, operatorsMap,visitedOperators, dd , session);
 		}
-		TopAO topAO = createTopAO(roots);
+		
+		TopAO topAO = createTopAO(roots, operatorsMap);
 		
 		ILogicalQuery result = new LogicalQuery();
 		result.setLogicalPlan(topAO, true);
@@ -63,37 +76,171 @@ public class OdysseusScriptGenerator {
 	}
 	
 	public String createOdysseusScript(IQDLQuery query, IDataDictionary dd, ISession session) {
-		query.setDataDictionary(dd);
-		query.setSession(session);		
-		
-		Collection<IQDLOperator> operators = query.execute();
-		Map<ILogicalOperator, IQDLOperator> operatorsMap = new HashMap<>();
-		for (IQDLOperator operator : operators) {
-			operatorsMap.put(operator.getLogicalOperator(), operator);
-		}
-		Collection<IQDLOperator> roots = getRoots(operators);
-		for (IQDLOperator root : roots) {
-			setParameters(root, new HashSet<IQDLOperator>(), operatorsMap, dd, session);
-		}
-		TopAO topAO = createTopAO(roots);
-		String pql = QDLServiceBinding.getPQLGenerator().generatePQLStatement(topAO);	
+		ILogicalQuery logQuery = createLogicalQuery(query, dd, session);
+		String pql = QDLServiceBinding.getPQLGenerator().generatePQLStatement(logQuery.getLogicalPlan());	
 		String script = setPreParserKeywords(query, pql);
 		return script;
 	}
 	
+	private ILogicalOperator getSource(String name, Map<String, StreamAO> sourcesMap, IDataDictionary dd, ISession session) {
+		String sourceName = name.toLowerCase();
+		StreamAO streamAO = sourcesMap.get(sourceName);
+		if (streamAO == null) {
+			SourceParameter source = new SourceParameter();
+			source.setName("Source");
+			source.setInputValue(sourceName);
+			source.setDataDictionary(dd);		
+			source.setCaller(session);
+			
+			AccessAO accessAO = source.getValue();
+			streamAO = new StreamAO();
+			streamAO.setSource(accessAO);
+			streamAO.setName(sourceName);
+			
+			sourcesMap.put(name, streamAO);
+		}	
+		return streamAO;
+	}
+
 	
-	private void setParameters(IQDLOperator operator, Set<IQDLOperator> visitedOperators, Map<ILogicalOperator, IQDLOperator> operatorsMap, IDataDictionary dd, ISession session) {
-		if (!visitedOperators.contains(operator)) {
-			visitedOperators.add(operator);
-			for (LogicalSubscription sub : operator.getLogicalOperator().getSubscribedToSource()) {
-				if (operatorsMap.containsKey(sub.getTarget())) {
-					setParameters(operatorsMap.get(sub.getTarget()), visitedOperators, operatorsMap, dd, session);
+	private Collection<IQDLOperator> getRoots(Collection<IQDLOperator> operators) {
+		Collection<IQDLOperator> roots = new HashSet<>();
+		for (IQDLOperator op : operators) {
+			if (!op.isSource() && op.getSubscriptions().size() == 0) {
+				roots.add(op);
+			}
+		}
+		return roots;
+	}
+	
+	private void createLogicalGraph(IQDLOperator root, Map<IQDLOperator, ILogicalOperator> operatorsMap, Collection<IQDLOperator> visitedOperators, IDataDictionary dd, ISession session) {
+		if (!visitedOperators.contains(root)) {
+			visitedOperators.add(root);
+			for (IQLSubscription subs : root.getSubscriptionsToSource()) {
+				createLogicalGraph(subs.getSource(), operatorsMap, visitedOperators, dd, session);
+				ILogicalOperator sourceOp = operatorsMap.get(subs.getSource());
+				ILogicalOperator targetOp = operatorsMap.get(subs.getTarget());
+				targetOp.subscribeToSource(sourceOp, subs.getSinkInPort(), subs.getSourceOutPort(),  sourceOp.getOutputSchema(subs.getSourceOutPort()));
+			}
+			if (!root.isSource()) {
+				setParameters(root, operatorsMap.get(root), session, dd);
+			}
+		}
+	}
+	
+	
+	@SuppressWarnings({ "unchecked" })
+	private void setParameters(IQDLOperator operator, ILogicalOperator logicalOp, ISession session, IDataDictionary dd) {		
+		Class<? extends ILogicalOperator> opClass = factory.getOperatorBuilder(logicalOp.getName()).getOperatorClass();
+		BeanInfo beanInfo = null;
+		try {
+			beanInfo = Introspector.getBeanInfo(opClass, Object.class);
+		} catch (IntrospectionException e) {
+			e.printStackTrace();
+			return;
+		}
+			
+		Map<String, Object> parameters = operator.getParameters();
+		for (PropertyDescriptor curProperty : beanInfo.getPropertyDescriptors()) {
+			Method writeMethod = curProperty.getWriteMethod();
+			Method readMethod = curProperty.getReadMethod();
+			if (readMethod != null && writeMethod != null && writeMethod.isAnnotationPresent(Parameter.class)) {
+				Parameter parameterAnnotation = writeMethod.getAnnotation(Parameter.class);
+				String parameterName = parameterAnnotation.name();
+				if (Strings.isNullOrEmpty(parameterName)) {
+					parameterName = curProperty.getName();
+				}
+				if (!parameters.containsKey(parameterName.toLowerCase())) {
+					continue;
+				}
+				Class<? extends IParameter<?>> valueParameterType = (Class<? extends IParameter<?>>) parameterAnnotation.type();
+				Class<? extends IParameter<?>> keyParameterType = (Class<? extends IParameter<?>>) parameterAnnotation.keytype();
+
+				boolean isList = parameterAnnotation.isList();
+				boolean isMap = parameterAnnotation.isMap();
+		
+				Class<?> valueType = ParameterFactory.getParameterValue(valueParameterType);
+				Class<?> keyType = null;
+
+				if (isMap) {
+					keyType = ParameterFactory.getParameterValue(keyParameterType);
+				}
+				
+				Object parameterValue = getParameterValue(parameters.get(parameterName.toLowerCase()), valueParameterType, valueType, keyParameterType, keyType, isList, isMap, logicalOp, session, dd);
+				try {
+					writeMethod.invoke(logicalOp, parameterValue);
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+ 			}
+			
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Object getParameterValue(Object parameterValue, Class<? extends IParameter<?>> valueParameterType, Class<?> valueType, Class<? extends IParameter<?>> keyParameterType, Class<?> keyType, boolean isList, boolean isMap, ILogicalOperator operator, ISession session, IDataDictionary dd) {
+		if (isList) {
+			List<Object> result = new ArrayList<>();
+			for (Object element : (List<?>) parameterValue) {
+				if (ParameterFactory.isComplexParameterType(valueParameterType)) {
+					result.add(toParameter(element, valueParameterType, operator, session, dd));
+				} else {
+					result.add(element);
 				}
 			}
-			setParameters(operator, session, dd);
-		}
-		
+			return result;
+		} else if (isMap) {
+			Map<Object, Object> result = new HashMap<>();
+			for (Entry<Object, Object> e : ((Map<Object, Object>) parameterValue).entrySet()) {
+				Object key = null;
+				Object value = null;
+				if (ParameterFactory.isComplexParameterType(keyParameterType)) {
+					key = toParameter(e.getKey(), keyParameterType, operator, session, dd);
+				} else {
+					key = e.getKey();
+				}
+				if (ParameterFactory.isComplexParameterType(valueParameterType)) {
+					value = toParameter(e.getValue(), valueParameterType, operator, session, dd);
+				} else {
+					value = e.getValue();
+				}
+				result.put(key, value);
+			}
+			return result;
+		} else {
+			return toParameter(parameterValue, valueParameterType, operator, session, dd);
+		}		
 	}
+	
+	private Object toParameter(Object parameterValue,	Class<? extends IParameter<?>> parameterType, ILogicalOperator operator, ISession session, IDataDictionary dd) {
+		try {
+			IParameter<?> parameter = parameterType.newInstance();
+			parameter.setInputValue(parameterValue);
+			parameter.setCaller(session);
+			parameter.setDataDictionary(dd);
+			List<SDFSchema> schemata = new ArrayList<>();
+			for (LogicalSubscription subs : operator.getSubscribedToSource()) {
+				schemata.add(subs.getSchema());
+			}
+			IAttributeResolver attributeResolver = new DirectAttributeResolver(schemata);
+			parameter.setAttributeResolver(attributeResolver);
+			return parameter.getValue();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private TopAO createTopAO(Collection<IQDLOperator> roots, Map<IQDLOperator, ILogicalOperator> operatorsMap) {
+		TopAO topAO = new TopAO();
+		int i = 0; 
+		for (IQDLOperator op : roots) {
+			ILogicalOperator root = operatorsMap.get(op);
+			root.subscribeSink(topAO, i++, 0, root.getOutputSchema());
+		}
+		return topAO;
+	}
+	
 	
 	private String setPreParserKeywords(IQDLQuery query, String pql) {
 		StringBuilder b = new StringBuilder();
@@ -146,111 +293,6 @@ public class OdysseusScriptGenerator {
 			return obj.toString();
 		}
 	}
-
 	
-	@SuppressWarnings({ "unchecked" })
-	private void setParameters(IQDLOperator operator, ISession session, IDataDictionary dd) {		
-		Class<? extends ILogicalOperator> opClass = factory.getOperatorBuilder(operator.getLogicalOperator().getName()).getOperatorClass();
-		BeanInfo beanInfo = null;
-		try {
-			beanInfo = Introspector.getBeanInfo(opClass, Object.class);
-		} catch (IntrospectionException e) {
-			e.printStackTrace();
-			return;
-		}
-			
-		Map<String, Object> parameters = operator.getParameters();
-		for (PropertyDescriptor curProperty : beanInfo.getPropertyDescriptors()) {
-			Method writeMethod = curProperty.getWriteMethod();
-			Method readMethod = curProperty.getReadMethod();
-			if (readMethod != null && writeMethod != null && writeMethod.isAnnotationPresent(Parameter.class)) {
-				Parameter parameterAnnotation = writeMethod.getAnnotation(Parameter.class);
-				String parameterName = parameterAnnotation.name();
-				if (Strings.isNullOrEmpty(parameterName)) {
-					parameterName = curProperty.getName();
-				}
-				if (!parameters.containsKey(parameterName.toLowerCase())) {
-					continue;
-				}
-				Class<? extends IParameter<?>> valueParameterType = (Class<? extends IParameter<?>>) parameterAnnotation.type();
-				Class<? extends IParameter<?>> keyParameterType = (Class<? extends IParameter<?>>) parameterAnnotation.keytype();
-
-				boolean isList = parameterAnnotation.isList();
-				boolean isMap = parameterAnnotation.isMap();
-		
-				Class<?> valueType = ParameterFactory.getParameterValue(valueParameterType);
-				Class<?> keyType = null;
-
-				if (isMap) {
-					keyType = ParameterFactory.getParameterValue(keyParameterType);
-				}
-				
-				Object parameterValue = getParameterValue(parameters.get(parameterName.toLowerCase()), valueParameterType, valueType, keyParameterType, keyType, isList, isMap, operator.getLogicalOperator(), session, dd);
-				try {
-					writeMethod.invoke(operator.getLogicalOperator(), parameterValue);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
-				}
- 			}
-			
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Object getParameterValue(Object parameterValue, Class<? extends IParameter<?>> valueParameterType, Class<?> valueType, Class<? extends IParameter<?>> keyParameterType, Class<?> keyType, boolean isList, boolean isMap, ILogicalOperator operator, ISession session, IDataDictionary dd) {
-		if (isList) {
-			List<Object> result = new ArrayList<>();
-			for (Object element : (List<?>) parameterValue) {
-				if (ParameterFactory.isComplexParameterType(valueParameterType)) {
-					result.add(ParameterFactory.toParameter(element, valueParameterType, operator, session, dd));
-				} else {
-					result.add(element);
-				}
-			}
-			return result;
-		} else if (isMap) {
-			Map<Object, Object> result = new HashMap<>();
-			for (Entry<Object, Object> e : ((Map<Object, Object>) parameterValue).entrySet()) {
-				Object key = null;
-				Object value = null;
-				if (ParameterFactory.isComplexParameterType(keyParameterType)) {
-					key = ParameterFactory.toParameter(e.getKey(), keyParameterType, operator, session, dd);
-				} else {
-					key = e.getKey();
-				}
-				if (ParameterFactory.isComplexParameterType(valueParameterType)) {
-					value = ParameterFactory.toParameter(e.getValue(), valueParameterType, operator, session, dd);
-				} else {
-					value = e.getValue();
-				}
-				result.put(key, value);
-			}
-			return result;
-		} else {
-			return ParameterFactory.toParameter(parameterValue, valueParameterType, operator, session, dd);
-		}		
-	}
-	
-
-	public TopAO createTopAO(Collection<IQDLOperator> sources) {
-		TopAO topAO = new TopAO();
-		int i = 0; 
-		for (IQDLOperator op : sources) {
-			topAO.subscribeToSource(op.getLogicalOperator(), i++, 0, op.getLogicalOperator().getOutputSchema());
-		}
-		return topAO;
-	}
-
-	
-	private Collection<IQDLOperator> getRoots(Collection<IQDLOperator> operators) {
-		Collection<IQDLOperator> roots = new HashSet<>();
-		for (IQDLOperator op : operators) {
-			if (op.getLogicalOperator().getSubscriptions().size() == 0) {
-				roots.add(op);
-			}
-		}
-		return roots;
-	}
-
 
 }

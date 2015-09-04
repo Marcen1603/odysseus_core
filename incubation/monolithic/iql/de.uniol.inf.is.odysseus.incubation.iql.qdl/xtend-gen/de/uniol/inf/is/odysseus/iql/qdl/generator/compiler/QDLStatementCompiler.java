@@ -199,10 +199,17 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<IQDLCompi
       boolean _isSource = this.helper.isSource(typeRef);
       if (_isSource) {
         StringConcatenation _builder = new StringConcatenation();
-        _builder.append("getSource(\"");
+        _builder.append("getSource");
         String _shortName = this.typeUtils.getShortName(typeRef, false);
-        _builder.append(_shortName, "");
-        _builder.append("\")");
+        String _lowerCase = _shortName.toLowerCase();
+        _builder.append(_lowerCase, "");
+        _builder.append("(new ");
+        String _compile = this.typeCompiler.compile(typeRef, context, false);
+        _builder.append(_compile, "");
+        _builder.append("(\"");
+        String _shortName_1 = this.typeUtils.getShortName(typeRef, false);
+        _builder.append(_shortName_1, "");
+        _builder.append("\"), operators)");
         _xifexpression_3 = _builder.toString();
       } else {
         _xifexpression_3 = super.compile(init, typeRef, context);

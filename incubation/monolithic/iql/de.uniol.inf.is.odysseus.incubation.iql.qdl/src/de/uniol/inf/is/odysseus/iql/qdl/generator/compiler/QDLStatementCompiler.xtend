@@ -39,7 +39,7 @@ class QDLStatementCompiler extends AbstractIQLStatementCompiler<IQDLCompilerHelp
 				super.compile(init, typeRef, context);
 			}
 		} else if (helper.isSource(typeRef)) {
-			'''getSource("«typeUtils.getShortName(typeRef, false)»")'''
+			'''getSource«typeUtils.getShortName(typeRef, false).toLowerCase»(new «typeCompiler.compile(typeRef, context, false)»("«typeUtils.getShortName(typeRef, false)»"), operators)'''
 		} else {
 			super.compile(init, typeRef, context);
 		}
