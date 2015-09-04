@@ -113,7 +113,7 @@ public class SDFExpression implements Serializable, IClone {
 			IExpressionParser expressionParser) {
 		this.expressionParser = expressionParser;
 		if (expre != null) {
-			this.expression = expre;
+			this.expression = expre.clone();
 			this.expressionString = expression.toString();
 		} else {
 			expressionString = value.trim();
