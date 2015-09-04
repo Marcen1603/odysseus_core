@@ -20,12 +20,22 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 
 public class SimplePlanPrinter<T> {
 
 	private List<T> visited = new ArrayList<T>();
+	private final boolean printDetails;
+
+	public SimplePlanPrinter() {
+		this(false);
+	}
+
+	public SimplePlanPrinter(boolean printDetails) {
+		this.printDetails = printDetails;
+	}
 
 	public void clear() {
 		visited.clear();
@@ -39,24 +49,24 @@ public class SimplePlanPrinter<T> {
 	}
 
 	private void dumpPlan(T object, int depth, StringBuffer builder) {
-		
+
 		if (!contains(visited, object)) {
 			visited.add(object);
-			builder.append(getObjectName(object));
+			builder.append(getObjectName(object, printDetails));
 			builder.append('\n');
 			if (object instanceof ISubscriber) {
 				@SuppressWarnings("unchecked")
 				ISubscriber<?, ISubscription<T>> objectSub = (ISubscriber<?, ISubscription<T>>) object;
-				for (ISubscription<T> sub : objectSub.getSubscribedToSource()) {		
+				for (ISubscription<T> sub : objectSub.getSubscribedToSource()) {
 					builder.append(getIndent(depth));
-					builder.append(sub.getSinkInPort() + " <- " + sub.getSourceOutPort()+" ");
+					builder.append(sub.getSinkInPort() + " <- " + sub.getSourceOutPort() + " ");
 					dumpPlan(sub.getTarget(), depth + 1, builder);
 				}
 			}
 		} else {
-			builder.append(getObjectName(object));
+			builder.append(getObjectName(object,printDetails));
 			builder.append('\n');
-			builder.append(getIndent(depth+1) + "[see above for following operators]\n");
+			builder.append(getIndent(depth + 1) + "[see above for following operators]\n");
 		}
 	}
 
@@ -69,18 +79,23 @@ public class SimplePlanPrinter<T> {
 		return false;
 	}
 
-	private static String getObjectName(Object object){
+	private static String getObjectName(Object object, boolean withDetails) {
 		StringBuffer name = new StringBuffer();
-		name.append(object.getClass().getSimpleName()+" ("+object.hashCode()+")");
-		if (object  instanceof IOwnedOperator){
-			name.append(" Owner: "+((IOwnedOperator)object).getOwnerIDs());
+		name.append(object.getClass().getSimpleName() + " (" + object.hashCode() + ")");
+		if (object instanceof IOwnedOperator) {
+			name.append(" Owner: " + ((IOwnedOperator) object).getOwnerIDs());
 		}
 		if (object instanceof JoinAO) {
 			name.append(" Predicate: " + ((JoinAO) object).getPredicate());
 		}
+		if (withDetails) {
+			if (object instanceof ILogicalOperator) {
+				name.append(" " + ((ILogicalOperator) object).getParameterInfos());
+			}
+		}
 		return name.toString();
 	}
-	
+
 	private static String getIndent(int depth) {
 		String str = "";
 		while (depth > 0) {

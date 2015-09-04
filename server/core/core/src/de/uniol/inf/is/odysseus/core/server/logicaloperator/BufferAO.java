@@ -78,6 +78,7 @@ public class BufferAO extends UnaryLogicalOp {
 	@Parameter(type = StringParameter.class, optional = true)
 	public void setBuffername(String buffername) {
 		this.buffername = buffername;
+        this.addParameterInfo("BUFFERNAME", buffername);
 	}
 	
 	public String getBuffername() {
@@ -87,6 +88,7 @@ public class BufferAO extends UnaryLogicalOp {
 	@Parameter(type = LongParameter.class, optional = true)
 	public void setMaxBufferSize(long maxBufferSize) {
 		this.maxBufferSize = maxBufferSize;
+        this.addParameterInfo("MaxBufferSize", maxBufferSize);
 	}
 	
 	public long getMaxBufferSize() {
@@ -96,6 +98,7 @@ public class BufferAO extends UnaryLogicalOp {
 	@Parameter(type = BooleanParameter.class, optional= true, doc ="If set to true, this buffer will not be scheduled by the scheduler, but uses an own thread. Handle with care!")
 	public void setThreaded(boolean threaded) {
 		this.threaded = threaded;
+        this.addParameterInfo("Threaded", threaded);
 	}
 
 	public boolean isThreaded() {
@@ -105,6 +108,7 @@ public class BufferAO extends UnaryLogicalOp {
 	@Parameter(type = BooleanParameter.class, optional= true, doc ="If set to true (default is false), this buffer be emptied when calling close. Remark: Could lead to longer termination time!")
 	public void setDrainAtClose(boolean drainAtClose) {
 		this.drainAtClose = drainAtClose;
+        this.addParameterInfo("DrainAtClose", drainAtClose);		
 	}
 
 	public boolean isDrainAtClose() {

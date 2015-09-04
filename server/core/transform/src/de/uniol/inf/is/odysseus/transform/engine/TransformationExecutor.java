@@ -59,11 +59,17 @@ public class TransformationExecutor implements ITransformation {
 			TransformationConfiguration config, ISession caller,
 			IDataDictionary dd) throws TransformationException {
 		LOGGER.info("Starting transformation of " + logicalOp + "...");
-		if (LOGGER.isDebugEnabled()) {
+		if (LOGGER.isTraceEnabled()){
+			SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>(true);
+			LOGGER.debug("Before transformation: \n"
+					+ planPrinter.createString(logicalOp));
+			
+		}else if (LOGGER.isDebugEnabled()) {
 			SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
 			LOGGER.debug("Before transformation: \n"
 					+ planPrinter.createString(logicalOp));
 		}
+		
 		ArrayList<IPhysicalOperator> resultPlan = new ArrayList<IPhysicalOperator>();
 		TopAO top = null;
 		if (logicalOp instanceof TopAO) {
