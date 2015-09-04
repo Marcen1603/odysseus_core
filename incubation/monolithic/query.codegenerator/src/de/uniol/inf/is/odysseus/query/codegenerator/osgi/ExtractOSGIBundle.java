@@ -107,8 +107,7 @@ public class ExtractOSGIBundle {
 		    commands[0] = "cmd";
 		    commands[1] = "/c";
             /* Command to execute */
-		    commands[2] = volume[0]+": && cd "+path+" && xcopy "+path+"src\\* "+path+"bin /s /e /c /y && jar cvf "+name+".jar *.properties *.jar -C bin . && cd "+path+" && xcopy "+name+".jar "+tempPath+"\\"+copyToFolder +"/Y";
-		    
+		    commands[2] = volume[0]+": && cd "+path+" && xcopy "+path+"src\\* "+path+"bin /s /e /c /y && jar cvf "+tempPath+"\\"+copyToFolder +"\\"+name+".jar *.properties *.jar -C bin .";
             ExecuteShellComand.excecuteCommand(commands);
             
             copyJars.add(name+".jar");
