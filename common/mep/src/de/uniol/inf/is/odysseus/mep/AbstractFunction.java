@@ -15,9 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.mep;
 
-import java.net.NetworkInterface;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -369,19 +369,18 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	}
 
 	@Override
-	public IExpression<T> clone() {
+	public IExpression<T> clone(Map<Variable, Variable> vars) {
 		// Remark: stateful functions must override this method!
 		try {
 			@SuppressWarnings("unchecked")
 			AbstractFunction<T> newFunction = getClass().newInstance();
 			newFunction.arguments = new IExpression<?>[this.arguments.length];
 			for (int i = 0; i < arguments.length; i++) {
-				newFunction.arguments[i] = arguments[i].clone();
+				newFunction.arguments[i] = arguments[i].clone(vars);
 			}
 			
 			// TODO?
 //			private TimeUnit baseTimeUnit = TimeUnit.MILLISECONDS;
-//
 //			private List<ISession> sessions;
 			return newFunction;			
 		} catch (InstantiationException | IllegalAccessException e) {

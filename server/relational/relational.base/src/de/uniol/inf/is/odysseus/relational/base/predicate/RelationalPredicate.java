@@ -126,8 +126,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = getValue(input, i);
 		}
-//		this.expression.bindMetaAttribute(input.getMetadata());
-//		this.expression.bindAdditionalContent(input.getAdditionalContent());
+
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
 	}

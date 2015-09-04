@@ -16,9 +16,9 @@
 package de.uniol.inf.is.odysseus.core.mep;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  *
  * @param <T>
  */
-public interface IExpression<T> extends Serializable, IClone{
+public interface IExpression<T> extends Serializable{
 	
 	/**
 	 * Returns the value of this expression
@@ -118,6 +118,6 @@ public interface IExpression<T> extends Serializable, IClone{
 	
 	public SDFDatatype determineType(IExpression<?>[] args);
 
-	public IExpression<T> clone();
+	public IExpression<T> clone(Map<Variable,Variable> vars);
 	
 }

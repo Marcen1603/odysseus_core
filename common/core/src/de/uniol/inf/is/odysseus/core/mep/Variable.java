@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.mep;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * @author Marco Grawunder
  *
  */
-public class Variable implements IExpression<Object>, IClone {
+public class Variable implements IExpression<Object> {
 
 	Logger LOG = LoggerFactory.getLogger(Variable.class);
 
@@ -86,7 +87,7 @@ public class Variable implements IExpression<Object>, IClone {
 		if (variable.value instanceof IClone){
 			this.value = ((IClone)variable.value).clone();
 		}else{
-			this.value = null;
+			this.value = variable.value;
 		}
 		this.position = variable.position;
 		this.identifier = variable.identifier;
@@ -279,8 +280,15 @@ public class Variable implements IExpression<Object>, IClone {
 	}
 
 	@Override
-	public IExpression<Object> clone(){
-		return new Variable(this);
+	public IExpression<Object> clone(Map<Variable, Variable> vars) {
+		// Variables are unique, so if the variable is cloned onces, it must
+		// not be cloned again in the same expression
+		Variable ret = vars.get(this);
+		if (ret == null){
+			ret = new Variable(this);
+			vars.put(this,ret);
+		}
+		return ret;
 	}
 	
 }

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.mep;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -149,7 +150,7 @@ public class Constant<T> implements IExpression<T> {
 		return false;
 	}
 	
-	public IExpression<T> clone(){
+	public IExpression<T> clone(Map<Variable, Variable> vars){
 		return this;
 	}
 
