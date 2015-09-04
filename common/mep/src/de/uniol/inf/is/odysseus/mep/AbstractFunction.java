@@ -368,12 +368,22 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 				+ " must implement determineType function");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public IExpression<T> clone() {
 		// Remark: stateful functions must override this method!
 		try {
-			return getClass().newInstance();
+			@SuppressWarnings("unchecked")
+			AbstractFunction<T> newFunction = getClass().newInstance();
+			newFunction.arguments = new IExpression<?>[this.arguments.length];
+			for (int i = 0; i < arguments.length; i++) {
+				newFunction.arguments[i] = arguments[i].clone();
+			}
+			
+			// TODO?
+//			private TimeUnit baseTimeUnit = TimeUnit.MILLISECONDS;
+//
+//			private List<ISession> sessions;
+			return newFunction;			
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
