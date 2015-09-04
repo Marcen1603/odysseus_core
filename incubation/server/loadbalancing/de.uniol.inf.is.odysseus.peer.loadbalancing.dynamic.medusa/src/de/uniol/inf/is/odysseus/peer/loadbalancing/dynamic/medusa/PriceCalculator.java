@@ -80,7 +80,7 @@ public class PriceCalculator {
 	
 	
 	public static void init() {
-		CPU_MAX = 3500;
+		CPU_MAX = getCpuMhz();
 		LOCAL_COST_EXPONENT = getLocalCostExponent(CPU_MAX);
 	}
 	
