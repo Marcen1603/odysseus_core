@@ -367,4 +367,10 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 				+ " must implement determineType function");
 	}
 
+	@Override
+	public IExpression<T> clone() {
+		// Remark: stateful functions must override this method!
+		return this;
+	}
+	
 }

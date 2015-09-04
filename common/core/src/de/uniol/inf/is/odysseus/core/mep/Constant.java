@@ -148,6 +148,10 @@ public class Constant<T> implements IExpression<T> {
 	public boolean determineTypeFromInput() {
 		return false;
 	}
+	
+	public IExpression<T> clone(){
+		return this;
+	}
 
 
 }

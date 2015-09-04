@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
  */
 @LogicalOperator(minInputPorts = 2, maxInputPorts = Integer.MAX_VALUE, name = "UNION", doc = "Merges different input streams. (Typically preserves input order. Depending on the processing model)", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Union+operator", category = {
         LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET })
-public class UnionAO extends BinaryLogicalOp implements IStatefulAO{
+public class UnionAO extends AbstractLogicalOperator implements IStatefulAO{
 
 	private static final long serialVersionUID = 2828756253165671692L;
 
@@ -71,7 +71,7 @@ public class UnionAO extends BinaryLogicalOp implements IStatefulAO{
 		if (useInputPortAsOutputPort){
 			return getInputSchema(pos);
 		}else{
-			return getInputSchema(LEFT);
+			return getInputSchema(0);
 		}
 	}
 	

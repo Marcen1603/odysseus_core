@@ -21,6 +21,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
@@ -30,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * @author Marco Grawunder
  *
  */
-public class Variable implements IExpression<Object> {
+public class Variable implements IExpression<Object>, IClone {
 
 	Logger LOG = LoggerFactory.getLogger(Variable.class);
 
@@ -79,6 +80,21 @@ public class Variable implements IExpression<Object> {
 	public Variable(String id, SDFDatatype type) {
 		this.identifier = id;
 		this.type = type;
+	}
+
+	public Variable(Variable variable) {
+		if (variable.value instanceof IClone){
+			this.value = ((IClone)variable.value).clone();
+		}else{
+			this.value = null;
+		}
+		this.position = variable.position;
+		this.identifier = variable.identifier;
+		this.type = variable.type;
+		if (variable.acceptedTypes != null){
+			this.acceptedTypes = new SDFDatatype[variable.acceptedTypes.length];
+			System.arraycopy(variable.getAcceptedTypes(), 0, this.acceptedTypes, 0, variable.acceptedTypes.length);
+		}	
 	}
 
 	/**
@@ -262,4 +278,9 @@ public class Variable implements IExpression<Object> {
 		return false;
 	}
 
+	@Override
+	public IExpression<Object> clone(){
+		return new Variable(this);
+	}
+	
 }

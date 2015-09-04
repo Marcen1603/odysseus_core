@@ -46,7 +46,7 @@ public class EnrichAO extends BinaryLogicalOp implements IHasPredicate {
 		super(enrichAO);
 		this.minimumSize = enrichAO.minimumSize;
 		if (enrichAO.predicate != null){
-			this.predicate = enrichAO.predicate;
+			this.predicate = enrichAO.predicate.clone();
 		}
 	}
 

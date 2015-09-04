@@ -43,7 +43,9 @@ public class ValueAreaAnomalyDetectionAO extends UnaryLogicalOp implements IHasP
 		this.maxValue = ao.getMaxValue();
 		this.sendAllAnomalies = ao.sendAllAnomalies();
 		this.nameOfValue = ao.getNameOfValue();
-		this.predicate = ao.getPredicate();
+		if (ao.getPredicate() != null){
+			this.predicate = ao.getPredicate().clone();
+		}
 	}
 
 	@Parameter(type = DoubleParameter.class, name = "minValue", optional = false, doc = "The minimal value which is still allowed.")

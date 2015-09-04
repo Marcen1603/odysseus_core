@@ -57,7 +57,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		super(joinAO);
 		this.card = joinAO.card;
 		if (joinAO.predicate != null) {
-			this.predicate = joinAO.predicate;
+			this.predicate = joinAO.predicate.clone();
 		}
 		this.assureOrder = joinAO.assureOrder;
 		this.sweepAreaName = joinAO.sweepAreaName;
