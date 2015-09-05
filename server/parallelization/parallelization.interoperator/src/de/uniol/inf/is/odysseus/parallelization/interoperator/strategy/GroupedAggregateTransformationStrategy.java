@@ -154,7 +154,9 @@ public class GroupedAggregateTransformationStrategy extends
 	}
 
 	
-
+	/**
+	 * returns a new instance of this strategy
+	 */
 	@Override
 	public IParallelTransformationStrategy<AggregateAO> getNewInstance() {
 		return new GroupedAggregateTransformationStrategy();

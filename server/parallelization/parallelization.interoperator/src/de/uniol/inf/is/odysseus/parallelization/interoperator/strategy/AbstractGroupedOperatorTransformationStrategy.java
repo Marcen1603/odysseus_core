@@ -15,12 +15,20 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGrap
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
-public abstract class AbstractGroupedOperatorTransformationStrategy<T extends ILogicalOperator> extends AbstractParallelTransformationStrategy<T>{
+/**
+ * abstract class for inter operator parallelization strategies, which uses
+ * grouping of the operator for fragmentation of the datastream (e.g.
+ * aggregation or fastmedian)
+ * 
+ * @author ChrisToenjesDeye
+ */
+public abstract class AbstractGroupedOperatorTransformationStrategy<T extends ILogicalOperator>
+		extends AbstractParallelTransformationStrategy<T> {
 
 	protected AbstractStaticFragmentAO fragmentAO;
 	protected UnionAO union;
 	protected List<SDFAttribute> groupingAttributes;
-	
+
 	/**
 	 * connect fragmented data stream with union
 	 */
@@ -53,7 +61,7 @@ public abstract class AbstractGroupedOperatorTransformationStrategy<T extends IL
 					union.getOutputSchema());
 		}
 	}
-	
+
 	/**
 	 * transform plan until endoperator is reached
 	 * 
@@ -82,7 +90,7 @@ public abstract class AbstractGroupedOperatorTransformationStrategy<T extends IL
 					newOperator.getOutputSchema());
 		}
 	}
-	
+
 	/**
 	 * creates a new Buffer operator
 	 * 
@@ -108,7 +116,7 @@ public abstract class AbstractGroupedOperatorTransformationStrategy<T extends IL
 		union.setUniqueIdentifier(UUID.randomUUID().toString());
 		transformationResult.setUnionOperator(union);
 	}
-	
+
 	/**
 	 * subscribes the created fragment operator to existing upstream operator
 	 */
@@ -153,7 +161,7 @@ public abstract class AbstractGroupedOperatorTransformationStrategy<T extends IL
 					"Error creating fragment operator");
 		}
 	}
-	
+
 	/**
 	 * returns a list of compatible fragmentation types (e.g. HashFragementAO)
 	 * 

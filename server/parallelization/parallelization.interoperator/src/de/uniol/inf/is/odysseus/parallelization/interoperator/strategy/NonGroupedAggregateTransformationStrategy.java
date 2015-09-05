@@ -372,6 +372,9 @@ public class NonGroupedAggregateTransformationStrategy extends
 		return RoundRobinFragmentAO.class;
 	}
 
+	/**
+	 * returns a new instance of this strategy
+	 */
 	@Override
 	public IParallelTransformationStrategy<AggregateAO> getNewInstance() {
 		return new NonGroupedAggregateTransformationStrategy();

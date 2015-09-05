@@ -358,6 +358,9 @@ public class JoinTransformationStrategy extends
 		return HashFragmentAO.class;
 	}
 
+	/**
+	 * returns a new instance of this strategy
+	 */
 	@Override
 	public IParallelTransformationStrategy<JoinAO> getNewInstance() {
 		return new JoinTransformationStrategy();

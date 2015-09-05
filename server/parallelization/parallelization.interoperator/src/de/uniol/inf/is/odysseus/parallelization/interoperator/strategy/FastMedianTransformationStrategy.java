@@ -13,6 +13,16 @@ import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.RelationalFa
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.HashFragmentAO;
 
+/**
+ * Inter operator parallelization strategy for RelationalFastMedianAO operators,
+ * which contains grouping and not calculate global median. this strategy used a
+ * HashFragmentation on the input stream, clones the specific median operator
+ * and combines the datastream with a union operator. the fragmentation is based
+ * on the grouping attributes
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class FastMedianTransformationStrategy extends
 		AbstractGroupedOperatorTransformationStrategy<RelationalFastMedianAO> {
 
@@ -21,10 +31,20 @@ public class FastMedianTransformationStrategy extends
 		return "FastMedianTransformationStrategy";
 	}
 
+	/**
+	 * evaluates the compatibility of this strategy with a given operator. this
+	 * strategy is compatible if the median contains a grouping and no global
+	 * median calculation
+	 * 
+	 * @param operator
+	 * @return
+	 */
 	@Override
 	public int evaluateCompatibility(RelationalFastMedianAO operator) {
-		if (!operator.getGroupingAttributes().isEmpty()) {
-			// only if the given operator has a grouping, this strategy
+		if (!operator.getGroupingAttributes().isEmpty()
+				&& !operator.isAppendGlobalMedian()) {
+			// only if the given operator has a grouping and no global median,
+			// this strategy
 			// works
 			return 100;
 		}
@@ -34,6 +54,12 @@ public class FastMedianTransformationStrategy extends
 		return 0;
 	}
 
+	/**
+	 * do the specific transformation based on the configuration. Instance need
+	 * to be initialized via newInstance method
+	 * 
+	 * @return
+	 */
 	@Override
 	public TransformationResult transform(RelationalFastMedianAO operator,
 			ParallelOperatorConfiguration configurationForOperator) {
@@ -77,7 +103,13 @@ public class FastMedianTransformationStrategy extends
 		doFinalConnection();
 		return transformationResult;
 	}
-	
+
+	/**
+	 * clones the existing fast median operator, based on iteration for naming
+	 * 
+	 * @param i
+	 * @return
+	 */
 	private RelationalFastMedianAO cloneFastMedianOperator(int i) {
 		RelationalFastMedianAO newFastMedianOperator = operator.clone();
 		newFastMedianOperator.setName(operator.getName() + "_" + i);
@@ -102,7 +134,7 @@ public class FastMedianTransformationStrategy extends
 
 		transformationResult.setAllowsModificationAfterUnion(true);
 	}
-	
+
 	/**
 	 * returns a list of compatible fragmentation types (e.g. HashFragementAO)
 	 * 
@@ -126,6 +158,9 @@ public class FastMedianTransformationStrategy extends
 		return HashFragmentAO.class;
 	}
 
+	/**
+	 * returns a new instance of this strategy
+	 */
 	@Override
 	public IParallelTransformationStrategy<RelationalFastMedianAO> getNewInstance() {
 		return new FastMedianTransformationStrategy();
