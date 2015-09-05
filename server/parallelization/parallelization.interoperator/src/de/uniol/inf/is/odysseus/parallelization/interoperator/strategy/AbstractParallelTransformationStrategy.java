@@ -32,8 +32,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.RangeFragmentAO;
 
 /**
- * abstract class for inter operator parallelization strategies which uses
- * grouping for fragmentation (e.g. aggregation or fastmedian)
+ * abstract class for inter operator parallelization strategies 
  * 
  * @author ChrisToenjesDeye
  */
