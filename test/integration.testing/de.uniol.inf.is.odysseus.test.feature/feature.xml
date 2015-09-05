@@ -46,6 +46,10 @@ Unless required by applicable law or agreed to in writing, software
          id="de.uniol.inf.is.odysseus.server.fragmentation.base.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.parallelization.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.test"
          download-size="0"
@@ -67,12 +71,6 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.test.component.operator"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.test.component.compile"
          download-size="0"
          install-size="0"
@@ -82,8 +80,7 @@ Unless required by applicable law or agreed to in writing, software
          id="de.uniol.inf.is.odysseus.test.component.keyvalue"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.pattern"
@@ -98,5 +95,23 @@ Unless required by applicable law or agreed to in writing, software
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.test.component.parallelization"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.test.component.operator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.test.component.probabilistic"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
