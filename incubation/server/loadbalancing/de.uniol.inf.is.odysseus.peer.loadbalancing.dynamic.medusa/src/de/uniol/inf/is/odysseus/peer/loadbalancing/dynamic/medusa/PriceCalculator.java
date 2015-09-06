@@ -1,15 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 
 public class PriceCalculator {
 	
-	private static final double MAX_LOAD = 100.0;
 	
-	private static final double LOWER_BOUND = 50;
+	private static final double LOWER_BOUND = 70;
 	private static final double UPPER_BOUND = 90;
 	
 	//private static final Logger LOG = LoggerFactory.getLogger(PriceCalculator.class);
@@ -44,19 +40,12 @@ public class PriceCalculator {
 		}
 		return calcCurrentMarginCost();
 	}
+
 	
 	public static double calcCurrentMarginCost() {
 		return calcMarginCost(getCurrentLoad());
 	}
 
-	public static double getMaximumCosts() {
-		return calculateLocalCosts(MAX_LOAD);
-	}
-	
-	public static double getMaximumLoad() {
-		return MAX_LOAD;
-	}
-	
 	public static double getCurrentCosts() {
 		double absoluteUsage = usageManager.getLocalResourceUsage().getCpuMax()-usageManager.getLocalResourceUsage().getCpuFree();
 		double relativeUsageInPercent = (absoluteUsage/usageManager.getLocalResourceUsage().getCpuMax())*100.0;

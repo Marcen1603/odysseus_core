@@ -32,4 +32,15 @@ public class ContractRegistry {
 	public static Collection<MedusaPricingContract> getAllContracts() {
 		return contracts.values();
 	}
+	
+	public static PeerID getCheapestOffer() {
+		double min = Double.POSITIVE_INFINITY;
+		PeerID cheapestPeer = null;
+		for(MedusaPricingContract contract : contracts.values()) {
+			if(contract.getPrice()<min) {
+				cheapestPeer = contract.getContractPartner();
+			}
+		}
+		return cheapestPeer;
+	}
 }

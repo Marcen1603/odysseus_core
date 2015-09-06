@@ -18,5 +18,6 @@ Require-Bundle: org.eclipse.osgi,
  de.uniol.inf.is.odysseus.peer.dictionary,
  de.uniol.inf.is.odysseus.peer.network,
  de.uniol.inf.is.odysseus.peer.communication
-Service-Component: OSGI-INF/MedusaPriceCalculator.xml,OSGI-INF/MedusaLoadBalancingConsole.xml,OSGI-INF/PeerContractCommunicator.xml,
- OSGI-INF/PeerDictionaryListener.xml
+Service-Component: OSGI-INF/MedusaPriceCalculator.xml,OSGI-INF/MedusaLoadBalancingConsole.xml,OSGI-INF/PeerContractCommunicator.xml
+Export-Package: de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa,
+ de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa.datamodel
