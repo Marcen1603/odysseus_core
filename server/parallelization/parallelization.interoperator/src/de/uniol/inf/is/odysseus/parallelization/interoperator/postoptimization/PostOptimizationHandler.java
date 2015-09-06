@@ -412,11 +412,11 @@ public class PostOptimizationHandler {
 			// we know that both fragment have the same type
 			// and we know that one is a hash fragment, so
 			// both can be casted
-			List<HashFragmentAO> thisFragmentations = new ArrayList<HashFragmentAO>();
+			List<HashFragmentAO> currentFragmentations = new ArrayList<HashFragmentAO>();
 			for (AbstractStaticFragmentAO fragmentAO : currentTransformationResult
 					.getFragmentOperators()) {
 				if (fragmentAO instanceof HashFragmentAO) {
-					thisFragmentations.add((HashFragmentAO) fragmentAO);
+					currentFragmentations.add((HashFragmentAO) fragmentAO);
 				}
 			}
 
@@ -429,26 +429,28 @@ public class PostOptimizationHandler {
 			}
 
 			Pair<HashFragmentAO, HashFragmentAO> equalFragmentOperators = getFragmentOperatorsWithEqualAttributes(
-					thisFragmentations, otherFragmentations);
+					currentFragmentations, otherFragmentations);
 
 			if (equalFragmentOperators == null) {
 				return;
 			} else {
 				// remove all fragment operators that does
 				// not match
-				currentTransformationResult.getFragmentOperators().clear();
-				currentTransformationResult
-						.addFragmentOperator(equalFragmentOperators.getE1());
+				AbstractStaticFragmentAO currentFragmentOperator = equalFragmentOperators
+						.getE1();
+				AbstractStaticFragmentAO otherFragmentOperator = equalFragmentOperators
+						.getE2();
 
-				otherTransformationResult.getFragmentOperators().clear();
-				otherTransformationResult
-						.addFragmentOperator(equalFragmentOperators.getE2());
+				addPostOptimizationElement(postOptimizationElements,
+						currentTransformationResult, currentFragmentOperator,
+						otherTransformationResult, otherFragmentOperator);
 			}
 
+		} else {
+			addPostOptimizationElement(postOptimizationElements,
+					currentTransformationResult, otherTransformationResult);
 		}
 
-		addPostOptimizationElement(postOptimizationElements,
-				currentTransformationResult, otherTransformationResult);
 	}
 
 	/**
@@ -463,10 +465,34 @@ public class PostOptimizationHandler {
 			List<PostOptimizationElement> postOptimizationElements,
 			TransformationResult currentTransformationResult,
 			TransformationResult otherTransformationResult) {
+		addPostOptimizationElement(postOptimizationElements,
+				currentTransformationResult, currentTransformationResult
+						.getFragmentOperators().get(0),
+				otherTransformationResult, otherTransformationResult
+						.getFragmentOperators().get(0));
+	}
+
+	/**
+	 * creates a optimization element out of two transformation results that
+	 * matches and the specified fragment operators
+	 * @param postOptimizationElements
+	 * @param currentTransformationResult
+	 * @param currentFragmentOperator
+	 * @param otherTransformationResult
+	 * @param otherFragmentOperator
+	 */
+	private static void addPostOptimizationElement(
+			List<PostOptimizationElement> postOptimizationElements,
+			TransformationResult currentTransformationResult,
+			AbstractStaticFragmentAO currentFragmentOperator,
+			TransformationResult otherTransformationResult,
+			AbstractStaticFragmentAO otherFragmentOperator) {
 		if (!doPostOptimizationElementAlreadyExists(postOptimizationElements,
-				currentTransformationResult, otherTransformationResult)) {
+				currentTransformationResult, currentFragmentOperator,
+				otherTransformationResult, otherFragmentOperator)) {
 			PostOptimizationElement postOptimizationElement = createOrderedMatchingPair(
-					currentTransformationResult, otherTransformationResult);
+					currentTransformationResult, currentFragmentOperator,
+					otherTransformationResult, otherFragmentOperator);
 			if (postOptimizationElement != null) {
 				if (postOptimizationElement.allowsModificationAfterUnion()) {
 					postOptimizationElements.add(postOptimizationElement);
@@ -480,18 +506,21 @@ public class PostOptimizationHandler {
 	 * important for later processing these elements
 	 * 
 	 * @param currentTransformationResult
+	 * @param currentFragmentOperator 
 	 * @param otherTransformationResult
+	 * @param otherFragmentOperator 
 	 * @return
 	 */
 	private static PostOptimizationElement createOrderedMatchingPair(
 			TransformationResult currentTransformationResult,
-			TransformationResult otherTransformationResult) {
+			AbstractStaticFragmentAO currentFragmentOperator,
+			TransformationResult otherTransformationResult,
+			AbstractStaticFragmentAO otherFragmentOperator) {
 		PostOptimizationElement postOptimizationElement = new PostOptimizationElement();
 
 		// check order
 		ILogicalOperator result = LogicalGraphHelper
-				.findDownstreamOperatorWithId(otherTransformationResult
-						.getFragmentOperators().get(0).getUniqueIdentifier()
+				.findDownstreamOperatorWithId(otherFragmentOperator.getUniqueIdentifier()
 						.toString(),
 						currentTransformationResult.getUnionOperator());
 		if (result != null) {
@@ -503,12 +532,10 @@ public class PostOptimizationHandler {
 			postOptimizationElement
 					.setAllowsModificationAfterUnion(currentTransformationResult
 							.allowsModificationAfterUnion());
-			postOptimizationElement.setEndOperator(otherTransformationResult
-					.getFragmentOperators().get(0));
+			postOptimizationElement.setEndOperator(otherFragmentOperator);
 		} else {
 			ILogicalOperator result2 = LogicalGraphHelper
-					.findDownstreamOperatorWithId(currentTransformationResult
-							.getFragmentOperators().get(0)
+					.findDownstreamOperatorWithId(currentFragmentOperator
 							.getUniqueIdentifier().toString(),
 							otherTransformationResult.getUnionOperator());
 			if (result2 != null) {
@@ -522,8 +549,7 @@ public class PostOptimizationHandler {
 						.setAllowsModificationAfterUnion(otherTransformationResult
 								.allowsModificationAfterUnion());
 				postOptimizationElement
-						.setEndOperator(currentTransformationResult
-								.getFragmentOperators().get(0));
+						.setEndOperator(currentFragmentOperator);
 			} else {
 				INFO_SERVICE
 						.warning("Cannot find connection between union and fragment operators");
@@ -540,13 +566,17 @@ public class PostOptimizationHandler {
 	 * 
 	 * @param postOptimizationElements
 	 * @param currentTransformationResult
+	 * @param currentFragmentOperator
 	 * @param otherTransformationResult
+	 * @param otherFragmentOperator
 	 * @return
 	 */
 	private static boolean doPostOptimizationElementAlreadyExists(
 			List<PostOptimizationElement> postOptimizationElements,
 			TransformationResult currentTransformationResult,
-			TransformationResult otherTransformationResult) {
+			AbstractStaticFragmentAO currentFragmentOperator,
+			TransformationResult otherTransformationResult,
+			AbstractStaticFragmentAO otherFragmentOperator) {
 		// for each existing post optimization element
 		for (PostOptimizationElement element : postOptimizationElements) {
 			// check first possible element combination
@@ -558,9 +588,7 @@ public class PostOptimizationHandler {
 					&& element
 							.getEndOperator()
 							.getUniqueIdentifier()
-							.equals(otherTransformationResult
-									.getFragmentOperators().get(0)
-									.getUniqueIdentifier())) {
+							.equals(otherFragmentOperator.getUniqueIdentifier())) {
 				return true;
 				// and second possible element combination
 			} else if (element
@@ -571,8 +599,7 @@ public class PostOptimizationHandler {
 					&& element
 							.getEndOperator()
 							.getUniqueIdentifier()
-							.equals(currentTransformationResult
-									.getFragmentOperators().get(0)
+							.equals(currentFragmentOperator
 									.getUniqueIdentifier())) {
 				return true;
 			}

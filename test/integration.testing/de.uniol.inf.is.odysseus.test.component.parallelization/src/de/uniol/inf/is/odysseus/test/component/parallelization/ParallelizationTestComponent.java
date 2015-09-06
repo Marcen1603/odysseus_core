@@ -75,11 +75,39 @@ public class ParallelizationTestComponent
 				"test/interoperator/join/expected_output.csv", true));
 
 		// endoperator
-		// TODO
+		tests.add(new ParallelizationTest(
+				"test/interoperator/endoperator/NoEndoperator.qry",
+				"test/interoperator/endoperator/expected_output.csv", true));
+		tests.add(new ParallelizationTest(
+				"test/interoperator/endoperator/EndoperatorOneOperator.qry",
+				"test/interoperator/endoperator/expected_output.csv", true));
+		tests.add(new ParallelizationTest(
+				"test/interoperator/endoperator/EndoperatorMultipleOperators.qry",
+				"test/interoperator/endoperator/expected_output.csv", true));
 
+		
+		
 		// optimization
-		// TODO
-
+		tests.add(new ParallelizationTest(
+				"test/interoperator/optimization/NoOptimization1.qry",
+				"test/interoperator/optimization/expected_output1.csv", true));
+		tests.add(new ParallelizationTest(
+				"test/interoperator/optimization/Optimization1.qry",
+				"test/interoperator/optimization/expected_output1.csv", true));
+		tests.add(new ParallelizationTest(
+				"test/interoperator/optimization/NoOptimization2.qry",
+				"test/interoperator/optimization/expected_output2.csv", true));
+		tests.add(new ParallelizationTest(
+				"test/interoperator/optimization/Optimization2.qry",
+				"test/interoperator/optimization/expected_output2.csv", true));
+		tests.add(new ParallelizationTest(
+				"test/interoperator/optimization/NoOptimization3.qry",
+				"test/interoperator/optimization/expected_output3.csv", true));
+		tests.add(new ParallelizationTest(
+				"test/interoperator/optimization/Optimization3.qry",
+				"test/interoperator/optimization/expected_output3.csv", true));
+		
+		
 		// INTRA-OPERATOR PARALLELIZATION
 		// Aggregate
 		tests.add(new ParallelizationTest(

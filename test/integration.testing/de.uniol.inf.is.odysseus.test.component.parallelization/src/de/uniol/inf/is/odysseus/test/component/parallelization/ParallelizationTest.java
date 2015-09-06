@@ -24,7 +24,7 @@ public class ParallelizationTest {
 		this.enabled = enabled;
 	}
 
-	private URL getURL(String file) {
+	private URL getURL(String file) { 
 		return Activator.getContext().getBundle().getEntry(file);
 	}
 
