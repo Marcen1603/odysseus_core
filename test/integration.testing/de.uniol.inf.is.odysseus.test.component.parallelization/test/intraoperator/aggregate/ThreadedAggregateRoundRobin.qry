@@ -25,7 +25,7 @@ out = AGGREGATE({ID = 'threadaggregateId',
                               ],                                                                  
                             GROUP_BY = ['bidder'],
                               FASTGROUPING = true,
-                              NUMBEROFTHREADS = 4,
+                              NUMBEROFTHREADS = 8,
                               USEROUNDROBINALLOCATION = true                                                               
                             },
                             windowBid)

@@ -1,6 +1,6 @@
 #PARSER PQL
 #PARALLELIZATION (type=INTER_OPERATOR) (degree=AUTO) (buffersize=AUTO) (optimization=true)
-#INTEROPERATOR (id=aggregateId) (degree=4) (buffersize=GLOBAL) (strategy=GroupedAggregateTransformationStrategy) (fragment=HashFragmentAO)
+#INTEROPERATOR (id=aggregateId) (degree=8) (buffersize=GLOBAL) (strategy=GroupedAggregateTransformationStrategy) (fragment=HashFragmentAO)
 #RUNQUERY
  
  

@@ -1,5 +1,5 @@
 #PARSER PQL
-#PARALLELIZATION (degree=2) (type=INTER_OPERATOR) (threadedbuffer=true) (buffersize=AUTO) (optimization=true) 
+#PARALLELIZATION (degree=8) (type=INTER_OPERATOR) (threadedbuffer=true) (buffersize=AUTO) (optimization=true) 
 #DOREWRITE false
 #RUNQUERY
  
