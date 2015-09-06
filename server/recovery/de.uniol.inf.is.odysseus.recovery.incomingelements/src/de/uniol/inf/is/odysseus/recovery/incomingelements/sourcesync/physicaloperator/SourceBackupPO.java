@@ -10,12 +10,12 @@ import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloper
  * Physical operator to be placed directly after source access operators. <br />
  * <br />
  * It transfers all incoming elements without delay. But it adjusts it's offset
- * as a Kafka consumer: It reads stored elements from Kafka server and checks
- * which offset the first element of process_next has (initial state) and which
- * offset the first element after a protection point has. All elements with a
- * lower index shall not be considered for this operator/query in case of
- * recovery, because they are either not processed (initial state) or before the
- * last protection point.
+ * as an {@code ISubscriber}: It reads stored elements from a publish subscribe
+ * system and checks which offset the first element of process_next has (initial
+ * state) and which offset the first element after a protection point has. All
+ * elements with a lower index shall not be considered for this operator/query
+ * in case of recovery, because they are either not processed (initial state) or
+ * before the last protection point.
  * 
  * @author Michael Brand
  * 

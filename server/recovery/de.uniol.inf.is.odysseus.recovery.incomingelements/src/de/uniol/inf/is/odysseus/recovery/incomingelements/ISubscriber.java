@@ -1,15 +1,14 @@
-package de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder;
+package de.uniol.inf.is.odysseus.recovery.incomingelements;
 
 import java.nio.ByteBuffer;
 
 /**
- * Interface for classes, which want to be fed with data consumed from a Kafka
- * server (stored data stream elements).
+ * Interface for classes, which want to be fed with data consumed from a publish swubscribe system (stored data stream elements).
  * 
  * @author Michael Brand
  *
  */
-public interface IKafkaConsumer {
+public interface ISubscriber {
 
 	/**
 	 * Called, if a new message is consumed.

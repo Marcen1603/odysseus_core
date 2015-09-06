@@ -23,8 +23,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.IKafkaConsumer;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.KafkaConsumerAccess;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriber;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriberController;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.SubscriberControllerFactory;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointHandler;
 
@@ -34,18 +35,18 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointHandle
  * It can operate in backup mode or in recovery mode.<br />
  * <br />
  * In backup mode, it transfers all incoming elements without delay. But it
- * adjusts it's offset as a Kafka consumer: It reads stored elements from Kafka
- * server and checks which offset the first element of process_next has (initial
- * state) and which offset the first element after a protection point has. All
- * elements with a lower index shall not be considered for this operator/query
- * in case of recovery, because they are either not processed (initial state) or
- * before the last protection point. <br />
+ * adjusts it's offset as an {@code ISubscriber}: It reads stored elements from
+ * a publish subscribe system and checks which offset the first element of
+ * process_next has (initial state) and which offset the first element after a
+ * protection point has. All elements with a lower index shall not be considered
+ * for this operator/query in case of recovery, because they are either not
+ * processed (initial state) or before the last protection point. <br />
  * <br />
- * In recovery mode, it acts as a Kafka consumer and pushes data stream elements
- * from there to it's next operators, until it gets the same elements from both
- * Kafka and original source. Elements from the original source will be
- * discarded in this time. But they are not lost, since they are backed up by
- * BaDaSt.
+ * In recovery mode, it acts as an {@code ISubscriber} and pushes data stream
+ * elements from public subscribe system to it's next operators, until it gets
+ * the same elements from both public subscribe system and original source.
+ * Elements from the original source will be discarded in this time. But they
+ * are not lost, since they are backed up by BaDaSt.
  * 
  * @author Michael Brand
  * 
@@ -117,8 +118,8 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 
 	/**
 	 * Reference is the first element to be backed up. So the offset of
-	 * {@link #mReference} stored on the Kafka server will be stored within
-	 * {@link BaDaStAccessState}.
+	 * {@link #mReference} stored on the publish subscribe system will be stored
+	 * within {@link BaDaStAccessState}.
 	 */
 	IStreamable mReference;
 
@@ -135,14 +136,15 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	final IProtocolHandler<StreamObject> mBackupProtocolHandler;
 
 	/**
-	 * The access to the Kafka server to use in backup mode.
+	 * The access to the publish subscribe system to use in backup mode.
 	 */
-	KafkaConsumerAccess mBackupKafkaAccess;
+	ISubscriberController mBackupSubscriberController;
 
 	/**
-	 * The handler of messages consumed from Kafka in backup mode.
+	 * The handler of messages consumed from the publish subscribe system in
+	 * backup mode.
 	 */
-	private final IKafkaConsumer mBackupKafkaConsumer = new IKafkaConsumer() {
+	private final ISubscriber mBackupSubscriber = new ISubscriber() {
 
 		@Override
 		public void onNewMessage(ByteBuffer message, long offset) throws Throwable {
@@ -156,8 +158,8 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	};
 
 	/**
-	 * Transfer handler for the objects from Kafka server in backup mode. Not
-	 * for the objects from the source operator.
+	 * Transfer handler for the objects from the publish subscribe system in
+	 * backup mode. Not for the objects from the source operator.
 	 */
 	private final ITransferHandler<StreamObject> mBackupTransferHandler = new AbstractSourceRecoveryTransferHandler() {
 
@@ -165,9 +167,9 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 		public void transfer_intern(IStreamable object, int port) {
 			if (AbstractSourceRecoveryPO.this.mReference.equals(object)) {
 				AbstractSourceRecoveryPO.this.mOffset = AbstractSourceRecoveryPO.this.mCurrentOffsets.getFirst();
-				if (AbstractSourceRecoveryPO.this.mBackupKafkaAccess != null) {
-					AbstractSourceRecoveryPO.this.mBackupKafkaAccess.interrupt();
-					AbstractSourceRecoveryPO.this.mBackupKafkaAccess = null;
+				if (AbstractSourceRecoveryPO.this.mBackupSubscriberController != null) {
+					AbstractSourceRecoveryPO.this.mBackupSubscriberController.interrupt();
+					AbstractSourceRecoveryPO.this.mBackupSubscriberController = null;
 				}
 			}
 			// At this point a complete tuple is read out. This means
@@ -236,15 +238,15 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 	@Override
 	protected void process_close() {
 		this.mOffset = new Long(0l);
-		if (this.mBackupKafkaAccess != null) {
-			this.mBackupKafkaAccess.interrupt();
+		if (this.mBackupSubscriberController != null) {
+			this.mBackupSubscriberController.interrupt();
 		}
 		super.process_close();
 	}
 
 	/**
-	 * Adjusts the offset as a Kafka Consumer, if {@code object} is the first
-	 * element or punctuation to be processed by this operator.
+	 * Adjusts the offset as an {@code ISubscriber}, if {@code object} is the
+	 * first element or punctuation to be processed by this operator.
 	 * 
 	 * @param object
 	 *            The first element to process.
@@ -255,16 +257,16 @@ public abstract class AbstractSourceRecoveryPO<StreamObject extends IStreamObjec
 			if (this.mNeedToAdjustOffset) {
 				this.mNeedToAdjustOffset = false;
 				this.mReference = object;
-				// Kafka Consumer access has to be deleted and new created for
+				// ISubscriberController has to be deleted and new created for
 				// every protection point reaching, because otherwise an
 				// IllegalThreadStateException occurs.
-				if (this.mBackupKafkaAccess != null) {
-					this.mBackupKafkaAccess.interrupt();
-					this.mBackupKafkaAccess = null;
+				if (this.mBackupSubscriberController != null) {
+					this.mBackupSubscriberController.interrupt();
+					this.mBackupSubscriberController = null;
 				}
-				this.mBackupKafkaAccess = new KafkaConsumerAccess(
-						this.mSourceAccess.getAccessAOName().getResourceName(), this.mBackupKafkaConsumer);
-				this.mBackupKafkaAccess.start();
+				this.mBackupSubscriberController = SubscriberControllerFactory
+						.createController(this.mSourceAccess.getAccessAOName().getResourceName(), this.mBackupSubscriber, 0L);
+				this.mBackupSubscriberController.start();
 			}
 		}
 

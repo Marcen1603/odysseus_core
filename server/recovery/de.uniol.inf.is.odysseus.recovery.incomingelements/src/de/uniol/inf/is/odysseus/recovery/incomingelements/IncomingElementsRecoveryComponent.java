@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IOperatorWalker;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStRecorderRegistry;
-import de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder.BaDaStSender;
 import de.uniol.inf.is.odysseus.recovery.incomingelements.sourcesync.logicaloperator.SourceRecoveryAO;
 import de.uniol.inf.is.odysseus.recovery.protectionpoints.ProtectionPointManagerRegistry;
 

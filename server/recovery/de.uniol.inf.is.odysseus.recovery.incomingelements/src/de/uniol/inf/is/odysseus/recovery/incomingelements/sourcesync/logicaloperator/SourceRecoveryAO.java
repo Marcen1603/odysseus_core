@@ -11,18 +11,18 @@ import de.uniol.inf.is.odysseus.recovery.protectionpoints.IProtectionPointManage
  * It can operate in backup mode or in recovery mode.<br />
  * <br />
  * In backup mode, it transfers all incoming elements without delay. But it
- * adjusts it's offset as a Kafka consumer: It reads stored elements from Kafka
- * server and checks which offset the first element of process_next has (initial
- * state) and which offset the first element after a protection point has. All
- * elements with a lower index shall not be considered for this operator/query
- * in case of recovery, because they are either not processed (initial state) or
- * before the last protection point. <br />
+ * adjusts it's offset as an {@code ISubscriber}: It reads stored elements from
+ * a publish subscribe system and checks which offset the first element of
+ * process_next has (initial state) and which offset the first element after a
+ * protection point has. All elements with a lower index shall not be considered
+ * for this operator/query in case of recovery, because they are either not
+ * processed (initial state) or before the last protection point. <br />
  * <br />
- * In recovery mode, it acts as a Kafka consumer and pushes data stream elements
- * from there to it's next operators, until it gets the same elements from both
- * Kafka and original source. Elements from the original source will be
- * discarded in this time. But they are not lost, since they are backed up by
- * BaDaSt.
+ * In recovery mode, it acts as an {@code ISubscriber} and pushes data stream
+ * elements from public subscribe system to it's next operators, until it gets
+ * the same elements from both public subscribe system and original source.
+ * Elements from the original source will be discarded in this time. But they
+ * are not lost, since they are backed up by BaDaSt.
  * 
  * @author Michael Brand
  */

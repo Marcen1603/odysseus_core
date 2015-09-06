@@ -5,8 +5,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractOperatorState;
 /**
  * State for source recovery operators ({@link SourceBackupPO} and
  * {@link SourceRecoveryPO}). Contains one object: <br />
- * The offset of the data stream element stored on the Kafka server, which is
- * the first to recover.
+ * The offset of the data stream element stored on the publish subscribe system,
+ * which is the first to recover.
  * 
  * @author Michael Brand
  *
@@ -19,15 +19,16 @@ public class SourceRecoveryState extends AbstractOperatorState {
 	private static final long serialVersionUID = -4773386206264312937L;
 
 	/**
-	 * The offset for the Kafka consumer.
+	 * The offset of the data stream element stored on the publish subscribe
+	 * system, which is the first to recover.
 	 */
 	private final long mOffset;
 
 	/**
-	 * Gets the offset for the Kafka consumer.
+	 * Gets the offset.
 	 * 
-	 * @return The offset of the data stream element stored on the Kafka server,
-	 *         which is the first to recover.
+	 * @return The offset of the data stream element stored on the publish
+	 *         subscribe system, which is the first to recover.
 	 */
 	public long getOffset() {
 		return this.mOffset;
@@ -37,8 +38,8 @@ public class SourceRecoveryState extends AbstractOperatorState {
 	 * Creates a new state.
 	 * 
 	 * @param offset
-	 *            The offset of the data stream element stored on the Kafka
-	 *            server, which is the first to recover.
+	 *            The offset of the data stream element stored on the publish
+	 *            subscribe system, which is the first to recover.
 	 */
 	public SourceRecoveryState(long offset) {
 		this.mOffset = offset;

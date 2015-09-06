@@ -1,8 +1,14 @@
-package de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder;
+package de.uniol.inf.is.odysseus.recovery.incomingelements.kafka;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriber;
+import de.uniol.inf.is.odysseus.recovery.incomingelements.ISubscriberController;
 import kafka.api.FetchRequest;
 import kafka.api.FetchRequestBuilder;
 import kafka.api.OffsetRequest;
@@ -14,18 +20,13 @@ import kafka.javaapi.OffsetResponse;
 import kafka.javaapi.consumer.SimpleConsumer;
 import kafka.message.MessageAndOffset;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
-
 /**
  * Consumes data, which is stored on a Kafka server. <br />
  * <br />
  * In the context of this recovery component, this are stored elements of a
  * certain data stream (source name = topic). <br />
  * <br />
- * Create a new consumer and call {@link #start()} afterwards. <br />
+ * Create a new subscriber and call {@link #start()} afterwards. <br />
  * <br />
  * Based on example from
  * https://cwiki.apache.org/confluence/display/KAFKA/0.8.0+SimpleConsumer+
@@ -35,25 +36,22 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
  *
  */
 @SuppressWarnings(value = { "nls" })
-public class KafkaConsumerAccess extends Thread {
+public class KafkaSubscriberController extends Thread implements ISubscriberController {
 
 	/**
 	 * The logger for this class.
 	 */
-	static final Logger cLog = LoggerFactory
-			.getLogger(KafkaConsumerAccess.class);
+	static final Logger cLog = LoggerFactory.getLogger(KafkaSubscriberController.class);
 
 	/**
 	 * Host name of the Broker.
 	 */
-	static final String cHost = OdysseusConfiguration.get("kafka.host.name",
-			"localhost");
+	static final String cHost = OdysseusConfiguration.get("kafka.host.name", "localhost");
 
 	/**
 	 * Port of the Broker.
 	 */
-	static final int cPort = OdysseusConfiguration.getInt("kafka.clientPort",
-			9092);
+	static final int cPort = OdysseusConfiguration.getInt("kafka.clientPort", 9092);
 
 	/**
 	 * The socket timeout threshold for the {@link SimpleConsumer}.
@@ -91,7 +89,7 @@ public class KafkaConsumerAccess extends Thread {
 	/**
 	 * The listener to be updated while reading.
 	 */
-	final IKafkaConsumer mListener;
+	final ISubscriber mListener;
 
 	/**
 	 * The offset from where to read.
@@ -116,8 +114,7 @@ public class KafkaConsumerAccess extends Thread {
 	 * @param offset
 	 *            The offset from where to read.
 	 */
-	public KafkaConsumerAccess(String topic, int partition,
-			IKafkaConsumer consumer, long offset) {
+	public KafkaSubscriberController(String topic, int partition, ISubscriber consumer, long offset) {
 		super("Consumer_" + topic + "_" + partition);
 		this.mTopic = topic;
 		this.mPartition = partition;
@@ -135,8 +132,7 @@ public class KafkaConsumerAccess extends Thread {
 	 * @param offset
 	 *            The offset from where to read.
 	 */
-	public KafkaConsumerAccess(String topic, IKafkaConsumer consumer,
-			long offset) {
+	public KafkaSubscriberController(String topic, ISubscriber consumer, long offset) {
 		this(topic, 0, consumer, offset);
 	}
 
@@ -150,8 +146,7 @@ public class KafkaConsumerAccess extends Thread {
 	 * @param consumer
 	 *            The consumer to be updated while reading.
 	 */
-	public KafkaConsumerAccess(String topic, int partition,
-			IKafkaConsumer consumer) {
+	public KafkaSubscriberController(String topic, int partition, ISubscriber consumer) {
 		this(topic, partition, consumer, -1);
 		this.mOffset = getEarliestOffset();
 	}
@@ -165,7 +160,7 @@ public class KafkaConsumerAccess extends Thread {
 	 * @param consumer
 	 *            The consumer to be updated while reading.
 	 */
-	public KafkaConsumerAccess(String topic, IKafkaConsumer consumer) {
+	public KafkaSubscriberController(String topic, ISubscriber consumer) {
 		this(topic, 0, consumer);
 	}
 
@@ -181,44 +176,36 @@ public class KafkaConsumerAccess extends Thread {
 
 			@Override
 			public void run() {
-				SimpleConsumer consumer = new SimpleConsumer(cHost, cPort,
-						cTimeOut, cBufferSize, getName());
+				SimpleConsumer consumer = new SimpleConsumer(cHost, cPort, cTimeOut, cBufferSize, getName());
 				int errorsInARow = 0;
-				long readOffset = KafkaConsumerAccess.this.mOffset;
-				while (KafkaConsumerAccess.this.mContinueConsumption) {
+				long readOffset = KafkaSubscriberController.this.mOffset;
+				while (KafkaSubscriberController.this.mContinueConsumption) {
 					try {
 						if (consumer == null) {
-							consumer = new SimpleConsumer(cHost, cPort,
-									cTimeOut, cBufferSize, getName());
+							consumer = new SimpleConsumer(cHost, cPort, cTimeOut, cBufferSize, getName());
 						}
-						FetchRequest req = new FetchRequestBuilder()
-								.clientId(getName())
-								.addFetch(KafkaConsumerAccess.this.mTopic,
-										KafkaConsumerAccess.this.mPartition,
-										readOffset, cFetchSize).build();
+						FetchRequest req = new FetchRequestBuilder().clientId(getName())
+								.addFetch(KafkaSubscriberController.this.mTopic,
+										KafkaSubscriberController.this.mPartition, readOffset, cFetchSize)
+								.build();
 						FetchResponse fetchResponse = consumer.fetch(req);
 
 						if (fetchResponse.hasError()) {
-							short errorCode = fetchResponse.errorCode(
-									KafkaConsumerAccess.this.mTopic,
-									KafkaConsumerAccess.this.mPartition);
+							short errorCode = fetchResponse.errorCode(KafkaSubscriberController.this.mTopic,
+									KafkaSubscriberController.this.mPartition);
 							throw ErrorMapping.exceptionFor(errorCode);
 						}
 
 						long numRead = 0;
-						for (MessageAndOffset messageAndOffset : fetchResponse
-								.messageSet(KafkaConsumerAccess.this.mTopic,
-										KafkaConsumerAccess.this.mPartition)) {
+						for (MessageAndOffset messageAndOffset : fetchResponse.messageSet(
+								KafkaSubscriberController.this.mTopic, KafkaSubscriberController.this.mPartition)) {
 							long currentOffset = messageAndOffset.offset();
 							if (currentOffset < readOffset) {
-								cLog.error("Found an old offset: "
-										+ currentOffset + " Expecting: "
-										+ readOffset);
+								cLog.error("Found an old offset: " + currentOffset + " Expecting: " + readOffset);
 								continue;
 							}
 							readOffset = messageAndOffset.nextOffset();
-							KafkaConsumerAccess.this.mListener.onNewMessage(
-									messageAndOffset.message().payload(),
+							KafkaSubscriberController.this.mListener.onNewMessage(messageAndOffset.message().payload(),
 									messageAndOffset.offset());
 							numRead++;
 						}
@@ -226,21 +213,20 @@ public class KafkaConsumerAccess extends Thread {
 						errorsInARow = Math.max(--errorsInARow, 0);
 						if (numRead == 0) {
 							// Wait for new messages
-							KafkaConsumerAccess.sleep();
+							KafkaSubscriberController.sleep();
 						}
 					} catch (Throwable t) {
 						// Don't know what error may arise from Kafka. Try to
 						// continue
 						// but shut down for continuous errors.
-						cLog.error("Error while consuming from Kafka. Reason: "
-								+ t.getMessage() + ". Error counter = "
+						cLog.error("Error while consuming from Kafka. Reason: " + t.getMessage() + ". Error counter = "
 								+ ++errorsInARow);
-						if(consumer != null) {
+						if (consumer != null) {
 							consumer.close();
 							consumer = null;
 						}
 						if (errorsInARow == 10) {
-							KafkaConsumerAccess.this.mContinueConsumption = false;
+							KafkaSubscriberController.this.mContinueConsumption = false;
 						}
 					}
 				}
@@ -269,28 +255,22 @@ public class KafkaConsumerAccess extends Thread {
 	 *         elements are already deleted from Kafka server.
 	 */
 	private long getEarliestOffset() {
-		SimpleConsumer consumer = new SimpleConsumer(cHost, cPort, cTimeOut,
-				cBufferSize, getName());
+		SimpleConsumer consumer = new SimpleConsumer(cHost, cPort, cTimeOut, cBufferSize, getName());
 		long offset = -1;
 		try {
-			TopicAndPartition topicAndPartition = new TopicAndPartition(
-					this.mTopic, this.mPartition);
+			TopicAndPartition topicAndPartition = new TopicAndPartition(this.mTopic, this.mPartition);
 			Map<TopicAndPartition, PartitionOffsetRequestInfo> requestInfo = new HashMap<>();
-			requestInfo.put(topicAndPartition, new PartitionOffsetRequestInfo(
-					OffsetRequest.EarliestTime(), 1));
-			kafka.javaapi.OffsetRequest request = new kafka.javaapi.OffsetRequest(
-					requestInfo, kafka.api.OffsetRequest.CurrentVersion(),
-					getName());
+			requestInfo.put(topicAndPartition, new PartitionOffsetRequestInfo(OffsetRequest.EarliestTime(), 1));
+			kafka.javaapi.OffsetRequest request = new kafka.javaapi.OffsetRequest(requestInfo,
+					kafka.api.OffsetRequest.CurrentVersion(), getName());
 			OffsetResponse response = consumer.getOffsetsBefore(request);
 			if (response.hasError()) {
-				short errorCode = response.errorCode(this.mTopic,
-						this.mPartition);
+				short errorCode = response.errorCode(this.mTopic, this.mPartition);
 				throw ErrorMapping.exceptionFor(errorCode);
 			}
 			offset = response.offsets(this.mTopic, this.mPartition)[0];
 		} catch (Throwable t) {
-			cLog.error("Error while reading earliest offset from Kafka. Reason: "
-					+ t.getMessage() + ".");
+			cLog.error("Error while reading earliest offset from Kafka. Reason: " + t.getMessage() + ".");
 		} finally {
 			consumer.close();
 		}

@@ -5,6 +5,8 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.recovery.incomingelements.BaDaStSender;
+
 /**
  * Registry for BaDaSt recorders.
  * 

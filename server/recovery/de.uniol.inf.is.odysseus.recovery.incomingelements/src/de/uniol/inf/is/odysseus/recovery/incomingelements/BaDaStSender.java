@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.recovery.incomingelements.badastrecorder;
+package de.uniol.inf.is.odysseus.recovery.incomingelements;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
