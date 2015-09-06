@@ -551,6 +551,13 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.medusa"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.allocator.odyload"
          download-size="0"
          install-size="0"
@@ -621,6 +628,13 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.medusa"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.odyload"
          download-size="0"
          install-size="0"
@@ -642,7 +656,28 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.selector.medusa"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.selector.simulatedannealing"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.strategy.medusa"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.strategy.odyload"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -663,14 +698,14 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.trigger.monitoring"
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.trigger.medusa"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.strategy.odyload"
+         id="de.uniol.inf.is.odysseus.peer.loadbalancing.dynamic.trigger.monitoring"
          download-size="0"
          install-size="0"
          version="0.0.0"
