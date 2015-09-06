@@ -118,7 +118,6 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 		trigger.removeListener(this);
 		trigger.setInactive();
 
-		firstAllocationTry = true;
 
 		LOG.info("Re-Allocation of queries triggered.");
 
@@ -148,6 +147,8 @@ public abstract class AbstractFiveStepStrategy implements ILoadBalancingStrategy
 			restartMonitoring();
 			return;
 		}
+
+		firstAllocationTry = true;
 		allocateAndTransferQueries(chosenResult);
 	}
 

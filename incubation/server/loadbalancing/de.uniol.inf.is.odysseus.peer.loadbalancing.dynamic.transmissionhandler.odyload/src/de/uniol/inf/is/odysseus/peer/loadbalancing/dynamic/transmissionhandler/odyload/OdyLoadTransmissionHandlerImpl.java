@@ -169,6 +169,7 @@ public class OdyLoadTransmissionHandlerImpl implements IQueryTransmissionHandler
 			nextTransmission.initiateTransmission(this, communicatorChooser.chooseCommunicator(nextTransmission.getQueryId(), getActiveSession()));
 		}
 		else {
+			LOG.warn("No transmission to be processed.");
 			notifyListeners();
 		}
 	}
