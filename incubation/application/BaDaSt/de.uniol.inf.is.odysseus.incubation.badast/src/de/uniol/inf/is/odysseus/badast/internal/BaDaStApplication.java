@@ -7,13 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 
-import kafka.server.KafkaConfig;
-import kafka.server.KafkaServerStartable;
-
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.zookeeper.server.ServerConfig;
-import org.apache.zookeeper.server.ZooKeeperServerMain;
-import org.apache.zookeeper.server.quorum.QuorumPeerConfig;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.slf4j.Logger;
@@ -21,13 +15,13 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.badast.BaDaStConfiguration;
 import de.uniol.inf.is.odysseus.badast.BaDaStException;
+import de.uniol.inf.is.odysseus.badast.kafka.KafkaSystem;
 
-// TODO encapsulate kafka: in BaDaSt and in Odysseus operators
 // XXX Replace Kafka source code with Kafka jar file. First try to do it resulted in run-time errors for the Kafka server.
 /**
  * BaDaSt - Backup of Data Streams application. <br />
  * <br />
- * Starts first a ZooKeeper server and afterwards a Kafka server. <br />
+ * Starts first a publish subscribe system and a BaDaSt server. <br />
  * <br />
  * Type help in the OSGi console to see all BaDaSt commands.
  * 
@@ -43,192 +37,87 @@ public class BaDaStApplication implements IApplication {
 	static final Logger cLog = LoggerFactory.getLogger(BaDaStApplication.class);
 
 	/**
-	 * The only instance.
+	 * The publish subscribe system to use.
 	 */
-	private static BaDaStApplication cInstance;
+	private Thread mPubSubSystem;
 
 	/**
-	 * Gets the only instance.
-	 * 
-	 * @return The application.
+	 * The BaDaSt server.
 	 */
-	public static BaDaStApplication getInstance() {
-		if (cInstance == null) {
-			cInstance = new BaDaStApplication();
+	private Thread mBaDaStServer = new Thread("BaDaSt Server") {
+
+		/**
+		 * True, if the server shall be interrupted.
+		 */
+		private boolean mToBeInterrupted = false;
+
+		@Override
+		public void interrupt() {
+			this.mToBeInterrupted = true;
+			super.interrupt();
 		}
-		return cInstance;
-	}
 
-	/**
-	 * The Kafka Server.
-	 */
-	KafkaServerStartable mKafkaServer;
-
-	/**
-	 * Starts first a ZooKeeper server and afterwards a Kafka server.
-	 */
-	public void start() {
-		configureLogging();
-		startZooKeeperServer();
-		wait_();
-		startKafkaServer();
-		wait_();
-		startBaDaStServer();
-	}
-
-	/**
-	 * Configures the slf4j logging framework with properties from
-	 * /config/log4j.properties.
-	 */
-	private static void configureLogging() {
-		PropertyConfigurator.configure(BaDaStApplication.class.getClassLoader()
-				.getResource("log4j.properties"));
-	}
-
-	/**
-	 * Starts a ZooKeeper server in a new Thread.
-	 */
-	private static void startZooKeeperServer() {
-		new Thread("ZooKeeper Server") {
-
-			@Override
-			public void run() {
-				try {
-					QuorumPeerConfig qpConfig = new QuorumPeerConfig();
-					qpConfig.parseProperties(BaDaStConfiguration
-							.getZooKeeperConfig());
-					ServerConfig sConfig = new ServerConfig();
-					sConfig.readFrom(qpConfig);
-					ZooKeeperServerMain server = new ZooKeeperServerMain();
-					server.runFromConfig(sConfig);
-				} catch (Exception e) {
-					cLog.error("ZooKeeper failed!", e);
-					return;
-				}
-			}
-
-		}.start();
-	}
-
-	/**
-	 * Waits one second.
-	 */
-	private static void wait_() {
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			cLog.error("ZooKeeper/Kafka failed!", e);
-			return;
-		}
-	}
-
-	/**
-	 * Starts a Kafka server in a new Thread.
-	 */
-	private void startKafkaServer() {
-		new Thread("Kafka Server") {
-
-			@Override
-			public void run() {
-				try {
-					KafkaConfig config = new KafkaConfig(
-							BaDaStConfiguration.getKafkaConfig());
-					BaDaStApplication.this.mKafkaServer = new KafkaServerStartable(
-							config);
-					BaDaStApplication.this.mKafkaServer.startup();
-				} catch (Exception e) {
-					cLog.error("Kafka failed!", e);
-					return;
-				}
-			}
-
-		}.start();
-	}
-
-	/**
-	 * Starts a BaDaSt server in a new Thread.
-	 */
-	private static void startBaDaStServer() {
-		new Thread("BaDaSt Server") {
-
-			/**
-			 * True, if the server shall be interrupted.
-			 */
-			private boolean mToBeInterrupted = false;
-
-			@Override
-			public void interrupt() {
-				this.mToBeInterrupted = true;
-				super.interrupt();
-			}
-
-			@Override
-			public void run() {
-				this.mToBeInterrupted = false;
-				Properties config = BaDaStConfiguration.getBaDaStConfig();
-				try (ServerSocket serverSocket = new ServerSocket(
-						Integer.parseInt((String) config.get("clientPort")))) {
-					while (!this.mToBeInterrupted) {
-						try (Socket connectionSocket = serverSocket.accept();
-								DataInputStream inFromClient = new DataInputStream(
-										connectionSocket.getInputStream());
-								DataOutputStream outToClient = new DataOutputStream(
-										connectionSocket.getOutputStream())) {
-							handleCommandFromClient(inFromClient, outToClient);
-						}
+		@Override
+		public void run() {
+			this.mToBeInterrupted = false;
+			Properties config = BaDaStConfiguration.getBaDaStConfig();
+			try (ServerSocket serverSocket = new ServerSocket(Integer.parseInt((String) config.get("clientPort")))) {
+				while (!this.mToBeInterrupted) {
+					try (Socket connectionSocket = serverSocket.accept();
+							DataInputStream inFromClient = new DataInputStream(connectionSocket.getInputStream());
+							DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream())) {
+						handleCommandFromClient(inFromClient, outToClient);
 					}
-
-				} catch (Exception e) {
-					cLog.error("BaDaSt failed!", e);
-					return;
 				}
-			}
 
-			/**
-			 * Handles an incoming command: parsing, executing, answering.
-			 * 
-			 * @param inFromClient
-			 *            The incoming stream.
-			 * @param outToClient
-			 *            The outgoing stream.
-			 * @throws IOException
-			 *             if any error occurs.
-			 */
-			private void handleCommandFromClient(DataInputStream inFromClient,
-					DataOutputStream outToClient) throws IOException {
-				String message = inFromClient.readUTF();
-				String answer = null;
-				try {
-					Properties args = BaDaStCommandProvider.parse(message);
-					String command = (String) args
-							.remove(BaDaStCommandProvider.COMMAND_CONFIG);
-					answer = BaDaStCommandProvider.execute(command, args);
-				} catch (BaDaStException e) {
-					answer = "Could not execute " + message + "! "
-							+ e.getMessage();
-				} finally {
-					outToClient.writeUTF(answer);
-				}
+			} catch (Exception e) {
+				cLog.error("BaDaSt failed!", e);
+				return;
 			}
+		}
 
-		}.start();
-		cLog.info("BaDaSt server started.");
-	}
+		/**
+		 * Handles an incoming command: parsing, executing, answering.
+		 * 
+		 * @param inFromClient
+		 *            The incoming stream.
+		 * @param outToClient
+		 *            The outgoing stream.
+		 * @throws IOException
+		 *             if any error occurs.
+		 */
+		private void handleCommandFromClient(DataInputStream inFromClient, DataOutputStream outToClient)
+				throws IOException {
+			String message = inFromClient.readUTF();
+			String answer = null;
+			try {
+				Properties args = BaDaStCommandProvider.parse(message);
+				String command = (String) args.remove(BaDaStCommandProvider.COMMAND_CONFIG);
+				answer = BaDaStCommandProvider.execute(command, args);
+			} catch (BaDaStException e) {
+				answer = "Could not execute " + message + "! " + e.getMessage();
+			} finally {
+				outToClient.writeUTF(answer);
+			}
+		}
+
+	};
 
 	@Override
 	public void stop() {
-		if (this.mKafkaServer != null) {
-			this.mKafkaServer.shutdown();
+		if (this.mPubSubSystem != null) {
+			this.mPubSubSystem.interrupt();
 		}
-		if (cInstance != null && cInstance == this) {
-			cInstance = null;
-		}
+		this.mBaDaStServer.interrupt();
 	}
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		context.applicationRunning();
-		(cInstance = this).start();
+		PropertyConfigurator.configure(BaDaStApplication.class.getClassLoader().getResource("log4j.properties"));
+		this.mPubSubSystem = new KafkaSystem();
+		this.mPubSubSystem.start();
+		this.mBaDaStServer.start();
 		return IApplicationContext.EXIT_ASYNC_RESULT;
 	}
 

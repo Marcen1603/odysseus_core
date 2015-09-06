@@ -4,30 +4,30 @@ import java.io.BufferedInputStream;
 import java.net.Socket;
 import java.util.Properties;
 
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-
 import de.uniol.inf.is.odysseus.badast.ABaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.AbstractBaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.BaDaStException;
 import de.uniol.inf.is.odysseus.badast.IBaDaStRecorder;
-import de.uniol.inf.is.odysseus.badast.KafkaProducerFactory;
+import de.uniol.inf.is.odysseus.badast.IPublisher;
+import de.uniol.inf.is.odysseus.badast.PublisherFactory;
+import de.uniol.inf.is.odysseus.badast.Record;
 
 /**
- * BaDaSt recorders act as subscriber for data sources and as publisher for
- * Kafka. <br />
+ * BaDaSt recorders act as subscriber for data sources and as publisher for the
+ * used publish subscribe system. <br />
  * <br />
  * This recorder is for sources, which send data by TCP. It needs
  * {@link #SOURCENAME_CONFIG}, {@link #HOST_CONFIG} and {@link #PORT_CONFIG} as
  * entries of the configuration. {@link #BUFFERSIZE_CONFIG} can optionally be
- * set. The recorder publishes the read bytes as byte arrays to Kafka.
+ * set. The recorder publishes the read bytes as byte arrays to the used publish
+ * subscribe system.
  * 
  * @author Michael Brand
  */
 @SuppressWarnings(value = { "nls" })
 @ABaDaStRecorder(type = TCPRecorder.TYPE, parameters = { AbstractBaDaStRecorder.SOURCENAME_CONFIG,
 		TCPRecorder.HOST_CONFIG, TCPRecorder.PORT_CONFIG, TCPRecorder.BUFFERSIZE_CONFIG + " (optional)" })
-public class TCPRecorder extends AbstractBaDaStRecorder<byte[]> {
+public class TCPRecorder extends AbstractBaDaStRecorder {
 
 	/**
 	 * The type of the recorder.
@@ -60,23 +60,37 @@ public class TCPRecorder extends AbstractBaDaStRecorder<byte[]> {
 	 */
 	private boolean mContinueReading;
 
+	/**
+	 * The publisher for the used publish subscribe system.
+	 */
+	private IPublisher<String, byte[]> mPublisher;
+
 	@Override
 	public void close() throws Exception {
+		if (this.mPublisher != null) {
+			this.mPublisher.close();
+		}
 		this.mContinueReading = false;
+	}
+
+	@Override
+	protected void initialize(Properties cfg) throws BaDaStException {
+		super.initialize(cfg);
+		this.mPublisher = PublisherFactory.createStringByteArrayPublisher(getName());
 	}
 
 	@Override
 	public void start() throws BaDaStException {
 		this.mContinueReading = true;
 		final int buffersize = Integer.parseInt(this.getConfig().getProperty(BUFFERSIZE_CONFIG, BUFFERSIZE_DEFAULT));
+		final String topic = this.getConfig().getProperty(SOURCENAME_CONFIG);
 		try (Socket clientSocket = new Socket(this.getConfig().getProperty(HOST_CONFIG),
 				Integer.parseInt(this.getConfig().getProperty(PORT_CONFIG)));
 				BufferedInputStream inStream = new BufferedInputStream(clientSocket.getInputStream(), buffersize)) {
 			while (this.mContinueReading) {
 				byte[] readBytes = new byte[buffersize];
 				inStream.read(readBytes);
-				this.getProducer().send(
-						new ProducerRecord<String, byte[]>(this.getConfig().getProperty(SOURCENAME_CONFIG), readBytes));
+				this.mPublisher.publish(new Record<>(topic, readBytes));
 			}
 		} catch (Exception e) {
 			throw new BaDaStException("Could not read from server!", e);
@@ -84,15 +98,10 @@ public class TCPRecorder extends AbstractBaDaStRecorder<byte[]> {
 	}
 
 	@Override
-	public IBaDaStRecorder<byte[]> newInstance(Properties cfg) throws BaDaStException {
+	public IBaDaStRecorder newInstance(Properties cfg) throws BaDaStException {
 		TCPRecorder writer = new TCPRecorder();
 		writer.initialize(cfg);
 		return writer;
-	}
-
-	@Override
-	protected KafkaProducer<String, byte[]> createKafkaProducer() throws BaDaStException {
-		return KafkaProducerFactory.createKafkaProducerByteArray(getName());
 	}
 
 	@Override

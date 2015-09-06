@@ -64,12 +64,12 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * All available recorder types. Key is the type, value is a not initialized
 	 * recorder of that type.
 	 */
-	private static final Map<String, IBaDaStRecorder<?>> cRecorderTypes = Maps.newHashMap();
+	private static final Map<String, IBaDaStRecorder> cRecorderTypes = Maps.newHashMap();
 
 	// Fill the mapping with all recorder types, which are not bound by
 	// OSGi
 	static {
-		try(IBaDaStRecorder<String> fileRecorder = new FileRecorder(); IBaDaStRecorder<byte[]> tcpRecorder = new TCPRecorder()) {		
+		try (IBaDaStRecorder fileRecorder = new FileRecorder(); IBaDaStRecorder tcpRecorder = new TCPRecorder()) {
 			cRecorderTypes.put(FileRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), fileRecorder);
 			cRecorderTypes.put(TCPRecorder.class.getAnnotation(ABaDaStRecorder.class).type(), tcpRecorder);
 		} catch (Exception e) {
@@ -85,17 +85,17 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 *            The implementation of {@link IBaDaStRecorder} with an unique
 	 *            type to bind.
 	 */
-	public static void bindReader(IBaDaStRecorder<?> recorder) {
+	public static void bindRecorder(IBaDaStRecorder recorder) {
 		cRecorderTypes.put(recorder.getClass().getAnnotation(ABaDaStRecorder.class).type(), recorder);
 	}
 
 	/**
-	 * Uninds a recorder.
+	 * Unbinds a recorder.
 	 * 
 	 * @param recorder
 	 *            The implementation of {@link IBaDaStRecorder} to unbind.
 	 */
-	public static void unbindReader(IBaDaStRecorder<?> recorder) {
+	public static void unbindRecorder(IBaDaStRecorder recorder) {
 		cRecorderTypes.remove(recorder.getClass().getAnnotation(ABaDaStRecorder.class).type());
 	}
 
@@ -103,7 +103,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * All available (already created) recorder (initialized recorders, not
 	 * types). Key is the name, value is an initialized recorder with that name.
 	 */
-	static final Map<String, IBaDaStRecorder<?>> cRecorders = Maps.newHashMap();
+	static final Map<String, IBaDaStRecorder> cRecorders = Maps.newHashMap();
 
 	/**
 	 * Lists all available recorder types.
@@ -239,7 +239,7 @@ public class BaDaStCommandProvider implements CommandProvider {
 	 * @return A success message or failure message.
 	 */
 	private static String createRecorder(Properties cfg) {
-		
+
 		String type;
 		try {
 			type = cfg.getProperty(TYPE_CONFIG);
@@ -247,15 +247,15 @@ public class BaDaStCommandProvider implements CommandProvider {
 		} catch (BaDaStException e) {
 			return e.getMessage();
 		}
-		
+
 		StringBuffer out = new StringBuffer();
-		try( IBaDaStRecorder<?> reader = cRecorderTypes.get(type).newInstance(cfg)) {
-			validateNameShallNotExist(reader.getName());
-			cRecorders.put(reader.getName(), reader);
-			out.append("Created BaDaSt recorder " + reader.getName());
+		try (IBaDaStRecorder recorder = cRecorderTypes.get(type).newInstance(cfg)) {
+			validateNameShallNotExist(recorder.getName());
+			cRecorders.put(recorder.getName(), recorder);
+			out.append("Created BaDaSt recorder " + recorder.getName());
 		} catch (Exception e) {
 			return e.getMessage();
-		} 
+		}
 		return out.toString();
 	}
 
@@ -430,8 +430,8 @@ public class BaDaStCommandProvider implements CommandProvider {
 				public void run() {
 					SimpleConsumer consumer = new SimpleConsumer("localhost", 9092, 100000, 64 * 1024, clientid);
 					long readOffset = offset;
-					FetchRequest req = new FetchRequestBuilder().clientId(clientid).addFetch(sourcename, 0, readOffset, 100000)
-							.build();
+					FetchRequest req = new FetchRequestBuilder().clientId(clientid)
+							.addFetch(sourcename, 0, readOffset, 100000).build();
 					FetchResponse fetchResponse = consumer.fetch(req);
 
 					long numRead = 0;

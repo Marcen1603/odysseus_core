@@ -3,13 +3,13 @@ package de.uniol.inf.is.odysseus.badast;
 import java.util.Properties;
 
 /**
- * BaDaSt recorders act as subscriber for data sources and as publisher for
- * Kafka. <br />
+ * BaDaSt recorders act as subscriber for data sources and as publisher for the
+ * used publish subscribe system. <br />
  * <br />
  * Individual recorder implementations are to be designed for certain types of
  * data sources (e.g., a simple file source). They connect to the data source,
- * read the outgoing data streams and publish them to a Kafka server to store
- * them. <br />
+ * read the outgoing data streams and publish them to the used publish subscribe
+ * system to store them. <br />
  * <br />
  * Concrete implementations have to be annotated with {@link ABaDaStRecorder}
  * and there must be a component definition to make the implementation
@@ -18,10 +18,10 @@ import java.util.Properties;
  * @author Michael Brand
  *
  * @param <V>
- *            The type of the values to store on the Kafka server. Either String
- *            or byte array.
+ *            The type of the values to store on the used publish subscribe
+ *            system.
  */
-public interface IBaDaStRecorder<V> extends AutoCloseable {
+public interface IBaDaStRecorder extends AutoCloseable {
 
 	/**
 	 * Gets the name of the recorder.
@@ -40,7 +40,7 @@ public interface IBaDaStRecorder<V> extends AutoCloseable {
 
 	/**
 	 * Starts the recorder: subscribe to the data source, read it and publish it
-	 * to a Kafka server.
+	 * to the used publish subscribe system.
 	 * 
 	 * @throws BaDaStException
 	 *             if any error occurs.
@@ -55,10 +55,8 @@ public interface IBaDaStRecorder<V> extends AutoCloseable {
 	 *            for different recorder types.
 	 * @return A new recorder of the same type.
 	 * @throws BaDaStException
-	 *             if any error occurs, e.g., missing key value pairs or if the
-	 *             Kafka producer could not be created.
+	 *             if any error occurs, e.g., missing key value pairs.
 	 */
-	public IBaDaStRecorder<V> newInstance(Properties cfg)
-			throws BaDaStException;
+	public IBaDaStRecorder newInstance(Properties cfg) throws BaDaStException;
 
 }

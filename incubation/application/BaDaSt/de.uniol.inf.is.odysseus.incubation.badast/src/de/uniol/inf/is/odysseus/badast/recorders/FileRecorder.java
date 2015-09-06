@@ -4,29 +4,28 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Properties;
 
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-
 import de.uniol.inf.is.odysseus.badast.ABaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.AbstractBaDaStRecorder;
 import de.uniol.inf.is.odysseus.badast.BaDaStException;
 import de.uniol.inf.is.odysseus.badast.IBaDaStRecorder;
-import de.uniol.inf.is.odysseus.badast.KafkaProducerFactory;
+import de.uniol.inf.is.odysseus.badast.IPublisher;
+import de.uniol.inf.is.odysseus.badast.PublisherFactory;
+import de.uniol.inf.is.odysseus.badast.Record;
 
 /**
- * BaDaSt recorders act as subscriber for data sources and as publisher for
- * Kafka. <br />
+ * BaDaSt recorders act as subscriber for data sources and as publisher for the
+ * used publish subscribe system. <br />
  * <br />
  * This recorder is for file sources and needs {@link #SOURCENAME_CONFIG} and
  * {@link #FILENAME_CONFIG} as entries of the configuration. It publishes the
- * read lines as Strings to Kafka.
+ * read lines as Strings to the used publish subscribe system.
  * 
  * @author Michael Brand
  */
 @SuppressWarnings(value = { "nls" })
 @ABaDaStRecorder(type = FileRecorder.TYPE, parameters = { AbstractBaDaStRecorder.SOURCENAME_CONFIG,
 		FileRecorder.FILENAME_CONFIG })
-public class FileRecorder extends AbstractBaDaStRecorder<String> {
+public class FileRecorder extends AbstractBaDaStRecorder {
 
 	/**
 	 * The type of the recorder.
@@ -44,14 +43,23 @@ public class FileRecorder extends AbstractBaDaStRecorder<String> {
 	 */
 	private boolean mContinueReading;
 
+	/**
+	 * The publisher for the used publish subscribe system.
+	 */
+	private IPublisher<String, String> mPublisher;
+
 	@Override
 	public void close() throws Exception {
 		this.mContinueReading = false;
+		if (this.mPublisher != null) {
+			this.mPublisher.close();
+		}
 	}
 
 	@Override
-	protected KafkaProducer<String, String> createKafkaProducer() throws BaDaStException {
-		return KafkaProducerFactory.createKafkaProducerString(getName());
+	protected void initialize(Properties cfg) throws BaDaStException {
+		super.initialize(cfg);
+		this.mPublisher = PublisherFactory.createStringStringPublisher(getName());
 	}
 
 	@Override
@@ -63,13 +71,13 @@ public class FileRecorder extends AbstractBaDaStRecorder<String> {
 	public void start() throws BaDaStException {
 		validate();
 		this.mContinueReading = true;
+		String topic = this.getConfig().getProperty(SOURCENAME_CONFIG);
 		try (BufferedReader reader = new BufferedReader(
 				new FileReader(this.getConfig().getProperty(FILENAME_CONFIG)))) {
 			String line;
 			while ((line = reader.readLine()) != null && this.mContinueReading) {
 				String out = line + "\n";
-				this.getProducer()
-						.send(new ProducerRecord<String, String>(this.getConfig().getProperty(SOURCENAME_CONFIG), out));
+				this.mPublisher.publish(new Record<>(topic, out));
 			}
 		} catch (Exception e) {
 			throw new BaDaStException("Could not read from file source!", e);
@@ -77,7 +85,7 @@ public class FileRecorder extends AbstractBaDaStRecorder<String> {
 	}
 
 	@Override
-	public IBaDaStRecorder<String> newInstance(Properties cfg) throws BaDaStException {
+	public IBaDaStRecorder newInstance(Properties cfg) throws BaDaStException {
 		FileRecorder writer = new FileRecorder();
 		writer.initialize(cfg);
 		return writer;
