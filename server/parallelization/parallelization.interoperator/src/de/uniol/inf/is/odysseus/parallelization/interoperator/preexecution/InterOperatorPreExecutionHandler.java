@@ -282,12 +282,8 @@ public class InterOperatorPreExecutionHandler extends
 						.getNumberOfCores();
 				if (availableCores <= 1) {
 					throw new OdysseusScriptException(
-							"AUTO detection of parallelization degree is not possible, because there is only on core detected.");
+							"AUTO detection of parallelization degree is not possible, because there is only one core detected.");
 				}
-
-				INFO_SERVICE.info("Number of detected cores is "
-						+ availableCores
-						+ ". Degree of parallelization is set to this value.");
 				this.globalDegreeOfParallelization = availableCores;
 			}
 		}

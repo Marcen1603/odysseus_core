@@ -197,10 +197,6 @@ public class IntraOperatorPreExecutionHandler extends
 					throw new OdysseusScriptException(
 							"AUTO detection of parallelization degree is not possible, because there is only on core detected.");
 				}
-
-				INFO_SERVICE.info("Number of detected cores is "
-						+ availableCores
-						+ ". Degree of parallelization is set to this value.");
 				this.globalDegreeOfParallelization = availableCores;
 			}
 		}
