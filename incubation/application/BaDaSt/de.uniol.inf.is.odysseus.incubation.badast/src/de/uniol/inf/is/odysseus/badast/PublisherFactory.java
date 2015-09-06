@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.badast;
 
-import de.uniol.inf.is.odysseus.badast.kafka.StringByteArrayKafkaPublisher;
-import de.uniol.inf.is.odysseus.badast.kafka.StringStringKafkaPublisher;
+import de.uniol.inf.is.odysseus.badast.kafka.ByteArrayKafkaPublisher;
+import de.uniol.inf.is.odysseus.badast.kafka.StringKafkaPublisher;
 
 /**
  * Factory to create {@code IPublishers}.
@@ -19,8 +19,8 @@ public class PublisherFactory {
 	 *            The id for the publisher.
 	 * @return A new created {@code IPublisher}.
 	 */
-	public static IPublisher<String, String> createStringStringPublisher(String id) {
-		return new StringStringKafkaPublisher(id);
+	public static IPublisher<String> createStringStringPublisher(String id) {
+		return new StringKafkaPublisher(id);
 	}
 
 	/**
@@ -31,8 +31,8 @@ public class PublisherFactory {
 	 *            The id for the publisher.
 	 * @return A new created {@code IPublisher}.
 	 */
-	public static IPublisher<String, byte[]> createStringByteArrayPublisher(String id) {
-		return new StringByteArrayKafkaPublisher(id);
+	public static IPublisher<byte[]> createStringByteArrayPublisher(String id) {
+		return new ByteArrayKafkaPublisher(id);
 	}
 
 }

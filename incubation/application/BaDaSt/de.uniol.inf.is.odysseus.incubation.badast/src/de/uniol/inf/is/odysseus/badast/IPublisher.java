@@ -7,13 +7,11 @@ import org.apache.zookeeper.KeeperException.BadArgumentsException;
  * given topic to the used publish subscribe system.
  * 
  * @author Michael Brand
- *
- * @param <Topic>
- *            The type of the topic.
+ * 
  * @param <Message>
  *            The type of the message.
  */
-public interface IPublisher<Topic, Message> extends AutoCloseable {
+public interface IPublisher<Message> extends AutoCloseable {
 
 	/**
 	 * Publishes a given record.
@@ -23,6 +21,6 @@ public interface IPublisher<Topic, Message> extends AutoCloseable {
 	 * @throws BaDaStException
 	 *             if any error occurs.
 	 */
-	public void publish(Record<Topic, Message> record) throws BadArgumentsException;
+	public void publish(Record<Message> record) throws BadArgumentsException;
 
 }

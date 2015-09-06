@@ -10,18 +10,18 @@ import de.uniol.inf.is.odysseus.badast.IPublisher;
 import de.uniol.inf.is.odysseus.badast.Record;
 
 /**
- * A {@code StringStringKafkaPublisher} uses a {@code KafkaProducer} to publish
- * a given String message with a given String topic to a Kafka server.
+ * A {@code StringByteArrayKafkaPublisher} uses a {@code KafkaProducer} to
+ * publish a given ByteArray message with a given topic to a Kafka server.
  * 
  * @author Michael Brand
  */
 @SuppressWarnings(value = { "nls" })
-public class StringStringKafkaPublisher implements IPublisher<String, String> {
+public class ByteArrayKafkaPublisher implements IPublisher<byte[]> {
 
 	/**
 	 * The used Kafka producer.
 	 */
-	protected final KafkaProducer<String, String> mProducer;
+	protected final KafkaProducer<String, byte[]> mProducer;
 
 	/**
 	 * Creates a new publisher for Kafka.
@@ -29,16 +29,16 @@ public class StringStringKafkaPublisher implements IPublisher<String, String> {
 	 * @param id
 	 *            The id for the Kafka producer.
 	 */
-	public StringStringKafkaPublisher(String id) {
+	public ByteArrayKafkaPublisher(String id) {
 		Properties cfg = KafkaConfiguration.getProducerConfig();
 		cfg.put("client.id", id);
-		cfg.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		cfg.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
 		this.mProducer = new KafkaProducer<>(cfg);
 	}
 
 	@Override
-	public void publish(Record<String, String> record) throws BadArgumentsException {
-		this.mProducer.send(new ProducerRecord<String, String>(record.getTopic(), record.getMessage()));
+	public void publish(Record<byte[]> record) throws BadArgumentsException {
+		this.mProducer.send(new ProducerRecord<String, byte[]>(record.getTopic(), record.getMessage()));
 	}
 
 	@Override

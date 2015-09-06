@@ -63,7 +63,7 @@ public class TCPRecorder extends AbstractBaDaStRecorder {
 	/**
 	 * The publisher for the used publish subscribe system.
 	 */
-	private IPublisher<String, byte[]> mPublisher;
+	private IPublisher<byte[]> mPublisher;
 
 	@Override
 	public void close() throws Exception {

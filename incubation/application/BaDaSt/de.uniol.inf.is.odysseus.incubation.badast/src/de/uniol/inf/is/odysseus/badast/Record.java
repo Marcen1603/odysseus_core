@@ -8,12 +8,10 @@ import java.io.Serializable;
  * 
  * @author Michael Brand
  *
- * @param <Topic>
- *            The type of the topic.
  * @param <Message>
  *            The type of the message.
  */
-public class Record<Topic, Message> implements Serializable {
+public class Record<Message> implements Serializable {
 
 	/**
 	 * The version of this class for serialization.
@@ -23,7 +21,7 @@ public class Record<Topic, Message> implements Serializable {
 	/**
 	 * The topic for the used publish subscribe system.
 	 */
-	private final Topic mTopic;
+	private final String mTopic;
 
 	/**
 	 * The message for the used publish subscribe system.
@@ -38,7 +36,7 @@ public class Record<Topic, Message> implements Serializable {
 	 * @param message
 	 *            The message for the used publish subscribe system.
 	 */
-	public Record(Topic topic, Message message) {
+	public Record(String topic, Message message) {
 		this.mTopic = topic;
 		this.mMessage = message;
 	}
@@ -48,7 +46,7 @@ public class Record<Topic, Message> implements Serializable {
 	 * 
 	 * @return The topic for the used publish subscribe system.
 	 */
-	public Topic getTopic() {
+	public String getTopic() {
 		return this.mTopic;
 	}
 

@@ -46,7 +46,7 @@ public class FileRecorder extends AbstractBaDaStRecorder {
 	/**
 	 * The publisher for the used publish subscribe system.
 	 */
-	private IPublisher<String, String> mPublisher;
+	private IPublisher<String> mPublisher;
 
 	@Override
 	public void close() throws Exception {
